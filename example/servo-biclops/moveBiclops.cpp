@@ -167,12 +167,10 @@ int main(int argc, const char **argv)
 
     robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     q[0] = vpMath::rad(10);
     q[1] = vpMath::rad(20);
@@ -184,12 +182,10 @@ int main(int argc, const char **argv)
 
     robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     std::cout << "Set STATE_VELOCITY_CONTROL" << std::endl;
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
@@ -200,8 +196,7 @@ int main(int argc, const char **argv)
               << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
@@ -220,8 +215,7 @@ int main(int argc, const char **argv)
               << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
@@ -240,8 +234,7 @@ int main(int argc, const char **argv)
               << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
@@ -260,8 +253,7 @@ int main(int argc, const char **argv)
               << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     qdot[0] = vpMath::rad(-5);
@@ -281,8 +273,7 @@ int main(int argc, const char **argv)
               << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0])
-              << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
   } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
@@ -290,8 +281,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  vpERROR_TRACE(
-      "You do not have a biclops robot connected to your computer...");
+  vpERROR_TRACE("You do not have a biclops robot connected to your computer...");
   return 0;
 }
 

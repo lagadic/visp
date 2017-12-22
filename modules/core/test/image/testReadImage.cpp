@@ -55,8 +55,7 @@
 #define GETOPTARGS "cdi:p:h"
 
 void usage(const char *name, const char *badparam, std::string ipath);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath);
 
 /*
 
@@ -109,8 +108,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath)
 {
   const char *optarg_;
   int c;
@@ -182,8 +180,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }

@@ -69,10 +69,8 @@ typedef long int integer;
 typedef int integer;
 #endif
 
-extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a,
-                       integer *lda, double *s, double *u, integer *ldu,
-                       double *vt, integer *ldvt, double *work,
-                       integer *lwork, integer *iwork, integer *info);
+extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu,
+                       double *vt, integer *ldvt, double *work, integer *lwork, integer *iwork, integer *info);
 
 #include <stdio.h>
 #include <string.h>
@@ -165,10 +163,8 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
   memcpy(V.data, opencvV.data, (size_t)(8 * opencvV.rows * opencvV.cols));
   V = V.transpose();
   memcpy(w.data, opencvW.data, (size_t)(8 * opencvW.rows * opencvW.cols));
-  this->resize((unsigned int)opencvSVD.u.rows,
-               (unsigned int)opencvSVD.u.cols);
-  memcpy(this->data, opencvSVD.u.data,
-         (size_t)(8 * opencvSVD.u.rows * opencvSVD.u.cols));
+  this->resize((unsigned int)opencvSVD.u.rows, (unsigned int)opencvSVD.u.cols);
+  memcpy(this->data, opencvSVD.u.data, (size_t)(8 * opencvSVD.u.rows * opencvSVD.u.cols));
 }
 
 #endif
@@ -264,18 +260,14 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
   double *vt = this->data;
 
   lwork = -1;
-  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork,
-          iwork, &info);
+  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info);
   lwork = (int)wkopt;
   work = new double[static_cast<unsigned int>(lwork)];
 
-  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork,
-          iwork, &info);
+  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info);
 
   if (info > 0) {
-    throw(
-        vpMatrixException(vpMatrixException::fatalError,
-                          "The algorithm computing SVD failed to converge."));
+    throw(vpMatrixException(vpMatrixException::fatalError, "The algorithm computing SVD failed to converge."));
   }
 
   V = V.transpose();
@@ -463,20 +455,16 @@ void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
   w.resize(this->getCols());
   V.resize(this->getCols(), this->getCols());
 
-  Eigen::Map<
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >
-      M(this->data, this->getRows(), this->getCols());
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > M(this->data, this->getRows(),
+                                                                                        this->getCols());
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeThinU |
-                                               Eigen::ComputeThinV);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   Eigen::Map<Eigen::VectorXd> w_(w.data, w.size());
-  Eigen::Map<
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >
-      V_(V.data, V.getRows(), V.getCols());
-  Eigen::Map<
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >
-      U_(this->data, this->getRows(), this->getCols());
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > V_(V.data, V.getRows(),
+                                                                                         V.getCols());
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > U_(this->data, this->getRows(),
+                                                                                         this->getCols());
   w_ = svd.singularValues();
   V_ = svd.matrixV();
   U_ = svd.matrixU();

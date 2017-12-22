@@ -86,22 +86,17 @@ const double eps = 1e-6;
  ****************************************************************************
  */
 
-void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd,
-                 vpMatrix &p, vpMatrix &pnd, vpMatrix &pn, vpMatrix &M,
-                 vpMatrix &Mdp);
-void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour,
-           vpMatrix &H);
+void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &pnd, vpMatrix &pn,
+                 vpMatrix &M, vpMatrix &Mdp);
+void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpMatrix &H);
 void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H);
-void HLM(unsigned int q_cible, unsigned int nbpt, double *xm, double *ym,
-         double *xmi, double *ymi, vpMatrix &H);
+void HLM(unsigned int q_cible, unsigned int nbpt, double *xm, double *ym, double *xmi, double *ymi, vpMatrix &H);
 
-void HLM(unsigned int q_cible, const std::vector<double> &xm,
-         const std::vector<double> &ym, const std::vector<double> &xmi,
-         const std::vector<double> &ymi, vpMatrix &H);
+void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<double> &ym,
+         const std::vector<double> &xmi, const std::vector<double> &ymi, vpMatrix &H);
 
-void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd,
-                 vpMatrix &p, vpMatrix &pnd, vpMatrix &pn, vpMatrix &M,
-                 vpMatrix &Mdp)
+void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &pnd, vpMatrix &pn,
+                 vpMatrix &M, vpMatrix &Mdp)
 {
   unsigned int i, j, k;
   unsigned int cont_pts; /* */
@@ -188,8 +183,7 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd,
  * DATES DE MISE A JOUR :
  *
  ****************************************************************************/
-void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour,
-           vpMatrix &H)
+void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpMatrix &H)
 {
   unsigned int i, j;
 
@@ -264,8 +258,7 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour,
   /** cas d'erreur : plus de 2 valeurs singulieres =0 **/
   if (contZeros > 2) {
     // vpERROR_TRACE("matrix is rank deficient");
-    throw(vpMatrixException(vpMatrixException::matrixError,
-                            "matrix is rank deficient"));
+    throw(vpMatrixException(vpMatrixException::matrixError, "matrix is rank deficient"));
   }
 
   H.resize(3, 3);
@@ -353,8 +346,7 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
 
   if (cont_pts < 5) {
     // vpERROR_TRACE(" not enough point to compute the homography ... ");
-    throw(vpMatrixException(vpMatrixException::matrixError,
-                            "Not enough point to compute the homography"));
+    throw(vpMatrixException(vpMatrixException::matrixError, "Not enough point to compute the homography"));
   }
 
   // nl = cont_pts*(cont_pts-1)*(cont_pts-2)/6 ;
@@ -430,24 +422,18 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
                + pn[j][0] * pn[k][0] * pn[i][1] * pnd[i][2]             //
                      * (pnd[j][1] * pnd[k][2] - pnd[j][2] * pnd[k][1]); //
         /* coeff a*b */
-        C[4] = pn[i][0] * pn[k][1] * pn[j][2] //
-                   * (pnd[k][0] * pnd[j][1] * pnd[i][2] -
-                      pnd[j][0] * pnd[i][1] * pnd[k][2]) //
-               + pn[k][0] * pn[i][1] * pn[j][2]          //
-                     * (pnd[j][0] * pnd[k][1] * pnd[i][2] -
-                        pnd[i][0] * pnd[j][1] * pnd[k][2]) //
-               + pn[i][0] * pn[j][1] * pn[k][2]            //
-                     * (pnd[k][0] * pnd[i][1] * pnd[j][2] -
-                        pnd[j][0] * pnd[k][1] * pnd[i][2]) //
-               + pn[j][0] * pn[i][1] * pn[k][2]            //
-                     * (pnd[i][0] * pnd[k][1] * pnd[j][2] -
-                        pnd[k][0] * pnd[j][1] * pnd[i][2]) //
-               + pn[k][0] * pn[j][1] * pn[i][2]            //
-                     * (pnd[j][0] * pnd[i][1] * pnd[k][2] -
-                        pnd[i][0] * pnd[k][1] * pnd[j][2]) //
-               + pn[j][0] * pn[k][1] * pn[i][2]            //
-                     * (pnd[i][0] * pnd[j][1] * pnd[k][2] -
-                        pnd[k][0] * pnd[i][1] * pnd[j][2]); //
+        C[4] = pn[i][0] * pn[k][1] * pn[j][2]                                                   //
+                   * (pnd[k][0] * pnd[j][1] * pnd[i][2] - pnd[j][0] * pnd[i][1] * pnd[k][2])    //
+               + pn[k][0] * pn[i][1] * pn[j][2]                                                 //
+                     * (pnd[j][0] * pnd[k][1] * pnd[i][2] - pnd[i][0] * pnd[j][1] * pnd[k][2])  //
+               + pn[i][0] * pn[j][1] * pn[k][2]                                                 //
+                     * (pnd[k][0] * pnd[i][1] * pnd[j][2] - pnd[j][0] * pnd[k][1] * pnd[i][2])  //
+               + pn[j][0] * pn[i][1] * pn[k][2]                                                 //
+                     * (pnd[i][0] * pnd[k][1] * pnd[j][2] - pnd[k][0] * pnd[j][1] * pnd[i][2])  //
+               + pn[k][0] * pn[j][1] * pn[i][2]                                                 //
+                     * (pnd[j][0] * pnd[i][1] * pnd[k][2] - pnd[i][0] * pnd[k][1] * pnd[j][2])  //
+               + pn[j][0] * pn[k][1] * pn[i][2]                                                 //
+                     * (pnd[i][0] * pnd[j][1] * pnd[k][2] - pnd[k][0] * pnd[i][1] * pnd[j][2]); //
 
         cont = cont + 1;
         /* construction de la matrice CtC */
@@ -519,8 +505,7 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
   cont = 0;
   for (j = 0; j < nc; j++) {
     // if (fabs(sv[j]) == svSorted[cont]) vect = j ;
-    if (std::fabs(sv[j] - svSorted[cont]) <=
-        std::fabs(vpMath::maximum(sv[j], svSorted[cont])))
+    if (std::fabs(sv[j] - svSorted[cont]) <= std::fabs(vpMath::maximum(sv[j], svSorted[cont])))
       vect = j;
     if (std::fabs(sv[j] / svSorted[nc - 1]) < eps)
       cont_zeros = cont_zeros + 1;
@@ -608,9 +593,8 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
   }
 }
 
-void HLM(unsigned int q_cible, const std::vector<double> &xm,
-         const std::vector<double> &ym, const std::vector<double> &xmi,
-         const std::vector<double> &ymi, vpMatrix &H)
+void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<double> &ym,
+         const std::vector<double> &xmi, const std::vector<double> &ymi, vpMatrix &H)
 {
   unsigned int nbpt = (unsigned int)xm.size();
 
@@ -674,21 +658,16 @@ void HLM(unsigned int q_cible, const std::vector<double> &xm,
 
   \sa DLT() when the scene is planar.
 */
-void vpHomography::HLM(const std::vector<double> &xb,
-                       const std::vector<double> &yb,
-                       const std::vector<double> &xa,
-                       const std::vector<double> &ya, bool isplanar,
-                       vpHomography &aHb)
+void vpHomography::HLM(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                       const std::vector<double> &ya, bool isplanar, vpHomography &aHb)
 {
   unsigned int n = (unsigned int)xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for HLM shomography estimation"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for HLM shomography estimation"));
 
   // 4 point are required
   if (n < 4)
-    throw(vpException(vpException::fatalError,
-                      "There must be at least 4 matched points"));
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
   // The reference plane is the plane build from the 3 first points.
   unsigned int q_cible;

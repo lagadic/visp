@@ -47,8 +47,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpParseArgv.h>
-#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) ||                     \
-     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) ||                    \
+#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) ||          \
      defined(VISP_HAVE_OPENCV))
 
 /*!
@@ -64,8 +63,7 @@
 typedef enum { vpX11, vpGTK, vpGDI, vpD3D, vpCV } vpDisplayType;
 
 void usage(const char *name, const char *badparam, vpDisplayType &dtype);
-bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list,
-                bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, bool &click_allowed, bool &display);
 
 /*!
 
@@ -145,8 +143,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list,
-                bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -224,8 +221,7 @@ int main(int argc, const char **argv)
 #endif
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_dtype, opt_list, opt_click_allowed,
-                   opt_display) == false) {
+    if (getOptions(argc, argv, opt_dtype, opt_list, opt_click_allowed, opt_display) == false) {
       exit(-1);
     }
 
@@ -276,8 +272,7 @@ int main(int argc, const char **argv)
       d2 = new vpDisplayX;
 #else
       std::cout << "  Sorry, X11 video device is not available.\n";
-      std::cout << "Use \"" << argv[0]
-                << " -l\" to print the list of available devices.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
@@ -288,8 +283,7 @@ int main(int argc, const char **argv)
       d2 = new vpDisplayGTK;
 #else
       std::cout << "  Sorry, GTK video device is not available.\n";
-      std::cout << "Use \"" << argv[0]
-                << " -l\" to print the list of available devices.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
@@ -300,8 +294,7 @@ int main(int argc, const char **argv)
       d2 = new vpDisplayGDI;
 #else
       std::cout << "  Sorry, GDI video device is not available.\n";
-      std::cout << "Use \"" << argv[0]
-                << " -l\" to print the list of available devices.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
@@ -312,21 +305,18 @@ int main(int argc, const char **argv)
       d2 = new vpDisplayD3D;
 #else
       std::cout << "  Sorry, D3D video device is not available.\n";
-      std::cout << "Use \"" << argv[0]
-                << " -l\" to print the list of available devices.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
     case vpCV:
-      std::cout << "Requested OpenCV display functionnalities..."
-                << std::endl;
+      std::cout << "Requested OpenCV display functionnalities..." << std::endl;
 #if defined(VISP_HAVE_OPENCV)
       d1 = new vpDisplayOpenCV;
       d2 = new vpDisplayOpenCV;
 #else
       std::cout << "  Sorry, OpenCV video device is not available.\n";
-      std::cout << "Use \"" << argv[0]
-                << " -l\" to print the list of available devices.\n";
+      std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;

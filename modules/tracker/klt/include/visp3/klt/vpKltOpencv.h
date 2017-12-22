@@ -86,26 +86,16 @@ public:
   void addFeature(const long &id, const float &x, const float &y);
   void addFeature(const cv::Point2f &f);
 
-  void display(const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::red,
-               unsigned int thickness = 1);
-  static void display(const vpImage<unsigned char> &I,
-                      const std::vector<cv::Point2f> &features,
-                      const vpColor &color = vpColor::green,
+  void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::red, unsigned int thickness = 1);
+  static void display(const vpImage<unsigned char> &I, const std::vector<cv::Point2f> &features,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2f> &features,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<unsigned char> &I, const std::vector<cv::Point2f> &features,
+                      const std::vector<long> &featuresid, const vpColor &color = vpColor::green,
                       unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I,
-                      const std::vector<cv::Point2f> &features,
-                      const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
-  static void display(const vpImage<unsigned char> &I,
-                      const std::vector<cv::Point2f> &features,
-                      const std::vector<long> &featuresid,
-                      const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I,
-                      const std::vector<cv::Point2f> &features,
-                      const std::vector<long> &featuresid,
-                      const vpColor &color = vpColor::green,
+  static void display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2f> &features,
+                      const std::vector<long> &featuresid, const vpColor &color = vpColor::green,
                       unsigned int thickness = 1);
 
   //! Get the size of the averaging block used to track the features.
@@ -146,16 +136,14 @@ public:
 
   void initTracking(const cv::Mat &I, const cv::Mat &mask = cv::Mat());
   void initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts);
-  void initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts,
-                    const std::vector<long> &ids);
+  void initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts, const std::vector<long> &ids);
 
   vpKltOpencv &operator=(const vpKltOpencv &copy);
   void track(const cv::Mat &I);
   void setBlockSize(const int blockSize);
   void setHarrisFreeParameter(double harris_k);
   void setInitialGuess(const std::vector<cv::Point2f> &guess_pts);
-  void setInitialGuess(const std::vector<cv::Point2f> &init_pts,
-                       const std::vector<cv::Point2f> &guess_pts,
+  void setInitialGuess(const std::vector<cv::Point2f> &init_pts, const std::vector<cv::Point2f> &guess_pts,
                        const std::vector<long> &fid);
   void setMaxFeatures(const int maxCount);
   void setMinDistance(double minDistance);
@@ -171,9 +159,8 @@ public:
 
 protected:
   cv::Mat m_gray, m_prevGray;
-  std::vector<cv::Point2f>
-      m_points[2]; //!< Previous [0] and current [1] keypoint location
-  std::vector<long> m_points_id; //!< Keypoint id
+  std::vector<cv::Point2f> m_points[2]; //!< Previous [0] and current [1] keypoint location
+  std::vector<long> m_points_id;        //!< Keypoint id
   int m_maxCount;
   cv::TermCriteria m_termcrit;
   int m_winSize;
@@ -241,21 +228,20 @@ private:
   int maxFeatures;         // Maximum number of features to track (Default 50)
   int globalcountFeatures; // Keep over time for ID
 
-  int win_size;   // Size of search window for tracker (default 10)
-  double quality; // Multiplier for the maxmin eigenvalue; specifies minimal
-                  // accepted quality of image corners (default 0.01)
-  double min_distance; // Limit, specifying minimum possible distance between
-                       // returned corners; Euclidian distance is used.
-                       // (default 10)
-  double
-      harris_free_parameter; // Harris detector free parameter. (default 0.04)
-  int block_size; // Size of the averaging block used by the corner detector
-                  // (default 3)
-  int use_harris; // 0 use a simple Minimum EigenValue Detector, != 0  use
-                  // Harris (default 1)
-  int pyramid_level; // Number of level for the tracker's gaussian pyramid
-                     // data (default 3)
-  int _tid; // tracker id for multiple trackers
+  int win_size;                 // Size of search window for tracker (default 10)
+  double quality;               // Multiplier for the maxmin eigenvalue; specifies minimal
+                                // accepted quality of image corners (default 0.01)
+  double min_distance;          // Limit, specifying minimum possible distance between
+                                // returned corners; Euclidian distance is used.
+                                // (default 10)
+  double harris_free_parameter; // Harris detector free parameter. (default 0.04)
+  int block_size;               // Size of the averaging block used by the corner detector
+                                // (default 3)
+  int use_harris;               // 0 use a simple Minimum EigenValue Detector, != 0  use
+                                // Harris (default 1)
+  int pyramid_level;            // Number of level for the tracker's gaussian pyramid
+                                // data (default 3)
+  int _tid;                     // tracker id for multiple trackers
 
   IplImage *image;        // Image buffer
   IplImage *prev_image;   // Image buffer for the previous iteration
@@ -279,8 +265,8 @@ private:
 
   bool *lostDuringTrack; // Result of the tracker for every feature : 1 =
                          // lost, 0 = still present
-  char *status; // Result of the tracker for every features : 0 = lost, 1 =
-                // found
+  char *status;          // Result of the tracker for every features : 0 = lost, 1 =
+                         // found
 
   // EVENT FUNCTION POINTERS
   funcevent OnInitialize;
@@ -303,8 +289,7 @@ public:
   void addFeature(const int &id, const float &x, const float &y);
 
   // Draw the tracked features on the given image
-  void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red,
-               unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1);
 
   //! Get the block size
   int getBlockSize() const { return block_size; }
@@ -340,8 +325,7 @@ public:
   // Detect corners in the image. Initialize the tracker
   void initTracking(const IplImage *I, const IplImage *mask = NULL);
   void initTracking(const IplImage *I, CvPoint2D32f *pts, int size);
-  void initTracking(const IplImage *I, CvPoint2D32f *pts, long *fid,
-                    int size);
+  void initTracking(const IplImage *I, CvPoint2D32f *pts, long *fid, int size);
   vpKltOpencv &operator=(const vpKltOpencv &copy);
   // Track !
   void track(const IplImage *I);
@@ -374,8 +358,7 @@ public:
     harris_free_parameter = input;
   }
   void setInitialGuess(CvPoint2D32f **guess_pts);
-  void setInitialGuess(CvPoint2D32f **init_pts, CvPoint2D32f **guess_pts,
-                       long *fid, int size);
+  void setInitialGuess(CvPoint2D32f **init_pts, CvPoint2D32f **guess_pts, long *fid, int size);
   /*!
     Is a feature valid (e.g. : test if not too close to borders) ->
     event(id_tracker, x, y)
@@ -452,25 +435,15 @@ public:
 
   // Static Functions
 public:
-  static void display(const vpImage<unsigned char> &I,
-                      const CvPoint2D32f *features_list,
-                      const int &nbFeatures, vpColor color = vpColor::green,
-                      unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I,
-                      const CvPoint2D32f *features_list,
-                      const int &nbFeatures, vpColor color = vpColor::green,
-                      unsigned int thickness = 1);
+  static void display(const vpImage<unsigned char> &I, const CvPoint2D32f *features_list, const int &nbFeatures,
+                      vpColor color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const CvPoint2D32f *features_list, const int &nbFeatures,
+                      vpColor color = vpColor::green, unsigned int thickness = 1);
 
-  static void display(const vpImage<unsigned char> &I,
-                      const CvPoint2D32f *features_list,
-                      const long *featuresid_list, const int &nbFeatures,
-                      vpColor color = vpColor::green,
-                      unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I,
-                      const CvPoint2D32f *features_list,
-                      const long *featuresid_list, const int &nbFeatures,
-                      vpColor color = vpColor::green,
-                      unsigned int thickness = 1);
+  static void display(const vpImage<unsigned char> &I, const CvPoint2D32f *features_list, const long *featuresid_list,
+                      const int &nbFeatures, vpColor color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const CvPoint2D32f *features_list, const long *featuresid_list,
+                      const int &nbFeatures, vpColor color = vpColor::green, unsigned int thickness = 1);
 };
 
 #endif

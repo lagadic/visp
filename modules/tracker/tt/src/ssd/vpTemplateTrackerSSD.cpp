@@ -40,8 +40,7 @@
 
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
-vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp)
-  : vpTemplateTracker(warp), DI(), temp()
+vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp) : vpTemplateTracker(warp), DI(), temp()
 {
   dW.resize(2, nbParam);
   G.resize(nbParam);
@@ -55,8 +54,7 @@ vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp)
   DI.resize(2);
 }
 
-double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I,
-                                     const vpColVector &tp)
+double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double erreur = 0;
   double IW;
@@ -73,8 +71,7 @@ double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I,
 
     double j2 = X2[0];
     double i2 = X2[1];
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       double Tij = ptTemplate[point].val;
       if (!blur)
         IW = I.getValue(i2, j2);
@@ -92,8 +89,7 @@ double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I,
   return erreur / Nbpoint;
 }
 
-double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I,
-                                    const vpColVector &tp)
+double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double erreur = 0;
   double IW;
@@ -115,8 +111,7 @@ double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I,
 
     double j2 = X2[0];
     double i2 = X2[1];
-    if ((j2 < I.getWidth() - 1) && (i2 < I.getHeight() - 1) && (i2 > 0) &&
-        (j2 > 0)) {
+    if ((j2 < I.getWidth() - 1) && (i2 < I.getHeight() - 1) && (i2 > 0) && (j2 > 0)) {
       double Tij = ptTemplate[point].val;
       IW = I.getValue(i2, j2);
       // IW=getSubPixBspline4(I,i2,j2);

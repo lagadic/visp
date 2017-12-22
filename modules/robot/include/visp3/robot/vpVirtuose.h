@@ -127,7 +127,9 @@ metric conventions:
   - Inertia components in kg.m2
 
   The following sample code shows how to connect to the haptic device to get
-its current joint position: \code #include <visp3/robot/vpVirtuose.h>
+its current joint position:
+\code
+#include <visp3/robot/vpVirtuose.h>
 
 int main()
 {

@@ -197,11 +197,9 @@ int main(int argc, const char **argv)
     robot.setSamplingTime(sampling_time);
 
     // Set initial position of the object in the camera frame
-    vpHomogeneousMatrix cMo(0, 0.1, 0.3, vpMath::rad(35), vpMath::rad(25),
-                            vpMath::rad(75));
+    vpHomogeneousMatrix cMo(0, 0.1, 0.3, vpMath::rad(35), vpMath::rad(25), vpMath::rad(75));
     // Set desired position of the object in the camera frame
-    vpHomogeneousMatrix cdMo(0.0, 0.0, 0.5, vpMath::rad(90), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix cdMo(0.0, 0.0, 0.5, vpMath::rad(90), vpMath::rad(0), vpMath::rad(0));
     // Set initial position of the object in the world frame
     vpHomogeneousMatrix wMo(0.0, 0.0, 0, 0, 0, 0);
     // Position of the camera in the world frame
@@ -245,17 +243,15 @@ int main(int argc, const char **argv)
     vpWireFrameSimulator sim;
 
     // Set the scene
-    sim.initScene(vpWireFrameSimulator::CYLINDER,
-                  vpWireFrameSimulator::D_STANDARD);
+    sim.initScene(vpWireFrameSimulator::CYLINDER, vpWireFrameSimulator::D_STANDARD);
 
     // Initialize simulator frames
-    sim.set_fMo(wMo); // Position of the object in the world reference frame
+    sim.set_fMo(wMo);                   // Position of the object in the world reference frame
     sim.setCameraPositionRelObj(cMo);   // initial position of the camera
     sim.setDesiredCameraPosition(cdMo); // desired position of the camera
 
     // Set the External camera position
-    vpHomogeneousMatrix camMf(
-        vpHomogeneousMatrix(0.0, 0, 3.5, vpMath::rad(0), vpMath::rad(30), 0));
+    vpHomogeneousMatrix camMf(vpHomogeneousMatrix(0.0, 0, 3.5, vpMath::rad(0), vpMath::rad(30), 0));
     sim.setExternalCameraPosition(camMf);
 
     // Set the parameters of the cameras (internal and external)
@@ -278,18 +274,15 @@ int main(int argc, const char **argv)
 
       // Display the object frame the world reference frame and the camera
       // frame
-      vpDisplay::displayFrame(Iext, camMf * sim.get_fMo() * cMo.inverse(),
-                              camera, 0.2, vpColor::none);
-      vpDisplay::displayFrame(Iext, camMf * sim.get_fMo(), camera, 0.2,
-                              vpColor::none);
+      vpDisplay::displayFrame(Iext, camMf * sim.get_fMo() * cMo.inverse(), camera, 0.2, vpColor::none);
+      vpDisplay::displayFrame(Iext, camMf * sim.get_fMo(), camera, 0.2, vpColor::none);
       vpDisplay::displayFrame(Iext, camMf, camera, 0.2, vpColor::none);
 
       vpDisplay::flush(Iint);
       vpDisplay::flush(Iext);
 
       std::cout << "Click on a display" << std::endl;
-      while (!vpDisplay::getClick(Iint, false) &&
-             !vpDisplay::getClick(Iext, false)) {
+      while (!vpDisplay::getClick(Iint, false) && !vpDisplay::getClick(Iext, false)) {
       };
     }
 
@@ -388,15 +381,10 @@ int main(int argc, const char **argv)
 
         // Display the object frame the world reference frame and the camera
         // frame
-        vpDisplay::displayFrame(Iext,
-                                sim.getExternalCameraPosition() *
-                                    sim.get_fMo() * cMo.inverse(),
-                                camera, 0.2, vpColor::none);
-        vpDisplay::displayFrame(
-            Iext, sim.getExternalCameraPosition() * sim.get_fMo(), camera,
-            0.2, vpColor::none);
-        vpDisplay::displayFrame(Iext, sim.getExternalCameraPosition(), camera,
-                                0.2, vpColor::none);
+        vpDisplay::displayFrame(Iext, sim.getExternalCameraPosition() * sim.get_fMo() * cMo.inverse(), camera, 0.2,
+                                vpColor::none);
+        vpDisplay::displayFrame(Iext, sim.getExternalCameraPosition() * sim.get_fMo(), camera, 0.2, vpColor::none);
+        vpDisplay::displayFrame(Iext, sim.getExternalCameraPosition(), camera, 0.2, vpColor::none);
         ;
 
         vpDisplay::flush(Iint);
@@ -405,8 +393,7 @@ int main(int argc, const char **argv)
 
       vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     task.print();

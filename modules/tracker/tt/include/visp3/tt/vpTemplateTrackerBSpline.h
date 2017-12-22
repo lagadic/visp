@@ -56,8 +56,7 @@ class VISP_EXPORT vpTemplateTrackerBSpline
 public:
   static double Bspline4(double diff);
 
-  static double getSubPixBspline4(const vpImage<double> &I, double r,
-                                  double t);
+  static double getSubPixBspline4(const vpImage<double> &I, double r, double t);
 };
 #endif
 #endif

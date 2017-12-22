@@ -127,8 +127,7 @@
     vpImage<vpRGBa> Iext(480,640,255);
 
     //Set the type of scene to use
-    sim.initScene(vpWireFrameSimulator::PLATE,
-  vpWireFrameSimulator::D_STANDARD);
+    sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
 
     //Set the initial pose of the camera
     sim.setCameraPositionRelObj(vpHomogeneousMatrix(0,0,0.5,vpMath::rad(0),vpMath::rad(10),0));
@@ -160,13 +159,13 @@ public:
       Type of scene used to display the object at the current position.
     */
   typedef enum {
-    THREE_PTS, //!< A 40cm by 40cm plate with 3 points at coordinates (0,0,0),
-               //!< (0.1,0,0), (0,0.1,0). Each point is represented by a
-               //!< circle with 2cm radius.
-    CUBE,      //!< A 12.5cm size cube.
-    PLATE,     //!< A 40cm by 40cm plate with 4 points at coordinates
-           //!< (-0.1,-0.1,0), (0.1,-0.1,0), (0.1,0.1,0), (0.1,0.1,0). Each
-           //!< point is represented by a circle with 2cm radius.
+    THREE_PTS,   //!< A 40cm by 40cm plate with 3 points at coordinates (0,0,0),
+                 //!< (0.1,0,0), (0,0.1,0). Each point is represented by a
+                 //!< circle with 2cm radius.
+    CUBE,        //!< A 12.5cm size cube.
+    PLATE,       //!< A 40cm by 40cm plate with 4 points at coordinates
+                 //!< (-0.1,-0.1,0), (0.1,-0.1,0), (0.1,0.1,0), (0.1,0.1,0). Each
+                 //!< point is represented by a circle with 2cm radius.
     SMALL_PLATE, //!< 4 points at coordinates (-0.03,-0.03,0), (0.03,-0.03,0),
                  //!< (0.03,0.03,0), (0.03,0.03,0). Each point is represented
                  //!< by a circle with 1cm radius.
@@ -179,22 +178,22 @@ public:
                  //!< (-0.05,-0.05,0). Each point is represented by a circle
                  //!< with 2cm radius.
     DIAMOND,     //!< A 40cm by 40cm plate with 4 points at coordinates
-             //!< (0,-0.1,0), (0.1,0,0), (0,0.1,0), (-0.1,0,0). Each point is
-             //!< represented by a circle with 2cm radius.
+                 //!< (0,-0.1,0), (0.1,0,0), (0,0.1,0), (-0.1,0,0). Each point is
+                 //!< represented by a circle with 2cm radius.
     TRAPEZOID,   //!< A 40cm by 40cm plate with 4 points at coordinates
                  //!< (-0.025,-0.05,0), (-0.075,0.05,0), (0.075,0.05,0),
                  //!< (0.025,-0.05,0). Each point is represented by a circle
                  //!< with 2cm radius.
     THREE_LINES, //!< Three parallel lines with equation y=-5, y=0, y=5.
     ROAD,        //!< Three parallel lines representing a road.
-    TIRE,     //!< A tire represented by 2 circles with radius 10cm and 15cm.
-    PIPE,     //!< A pipe represented by a cylinder of 25 cm length and 15cm
-              //!< radius.
-    CIRCLE,   //!< A 10cm radius circle.
-    SPHERE,   //!< A 15cm radius sphere.
-    CYLINDER, //!< A cylinder of 80cm length and 10cm radius.
-    PLAN, //!< A plane represented by a 56cm by 56cm plate with a grid of 49
-          //!< squares inside.
+    TIRE,        //!< A tire represented by 2 circles with radius 10cm and 15cm.
+    PIPE,        //!< A pipe represented by a cylinder of 25 cm length and 15cm
+                 //!< radius.
+    CIRCLE,      //!< A 10cm radius circle.
+    SPHERE,      //!< A 15cm radius sphere.
+    CYLINDER,    //!< A cylinder of 80cm length and 10cm radius.
+    PLAN,        //!< A plane represented by a 56cm by 56cm plate with a grid of 49
+                 //!< squares inside.
     POINT_CLOUD, //!< A plate with 8 points at coordinates (0.05,0,0),
                  //!< (0.15,0.05,0), (0.2,0.2,0), (-0.05,0.2,0),
                  //!< (-0.15,-0.1,0), (-0.1,-0.1,0), (-0.05,0.05,0) and
@@ -213,8 +212,8 @@ public:
   typedef enum {
     D_STANDARD, //!<  The object displayed at the desired position is the same
                 //!<  than the scene object defined in vpSceneObject.
-    D_CIRCLE, //!<  The object displayed at the desired position is a circle.
-    D_TOOL    //!< A cylindrical tool is attached to the camera.
+    D_CIRCLE,   //!<  The object displayed at the desired position is a circle.
+    D_TOOL      //!< A cylindrical tool is attached to the camera.
   } vpSceneDesiredObject;
 
   typedef enum { CT_LINE, CT_POINT } vpCameraTrajectoryDisplayType;
@@ -299,14 +298,10 @@ public:
     fMoList.clear();
   }
 
-  void displayTrajectory(const vpImage<unsigned char> &I,
-                         const std::list<vpHomogeneousMatrix> &list_cMo,
-                         const std::list<vpHomogeneousMatrix> &list_fMo,
-                         const vpHomogeneousMatrix &camMf);
-  void displayTrajectory(const vpImage<vpRGBa> &I,
-                         const std::list<vpHomogeneousMatrix> &list_cMo,
-                         const std::list<vpHomogeneousMatrix> &list_fMo,
-                         const vpHomogeneousMatrix &camMf);
+  void displayTrajectory(const vpImage<unsigned char> &I, const std::list<vpHomogeneousMatrix> &list_cMo,
+                         const std::list<vpHomogeneousMatrix> &list_fMo, const vpHomogeneousMatrix &camMf);
+  void displayTrajectory(const vpImage<vpRGBa> &I, const std::list<vpHomogeneousMatrix> &list_cMo,
+                         const std::list<vpHomogeneousMatrix> &list_fMo, const vpHomogeneousMatrix &camMf);
 
   /*!
       Get the parameters of the virtual external camera.
@@ -315,22 +310,16 @@ public:
 
       \return It returns the camera parameters.
     */
-  vpCameraParameters
-  getExternalCameraParameters(const vpImage<unsigned char> &I) const
+  vpCameraParameters getExternalCameraParameters(const vpImage<unsigned char> &I) const
   {
     // if(px_ext != 1 && py_ext != 1)
     // we assume px_ext and py_ext > 0
-    if ((std::fabs(px_ext - 1.) >
-         vpMath::maximum(px_ext, 1.) *
-             std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) *
-                                     std::numeric_limits<double>::epsilon()))
-      return vpCameraParameters(px_ext, py_ext, I.getWidth() / 2,
-                                I.getHeight() / 2);
+    if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon()))
+      return vpCameraParameters(px_ext, py_ext, I.getWidth() / 2, I.getHeight() / 2);
     else {
       unsigned int size = vpMath::minimum(I.getWidth(), I.getHeight()) / 2;
-      return vpCameraParameters(size, size, I.getWidth() / 2,
-                                I.getHeight() / 2);
+      return vpCameraParameters(size, size, I.getWidth() / 2, I.getHeight() / 2);
     }
   }
   /*!
@@ -340,22 +329,16 @@ public:
 
      \return It returns the camera parameters.
    */
-  vpCameraParameters
-  getExternalCameraParameters(const vpImage<vpRGBa> &I) const
+  vpCameraParameters getExternalCameraParameters(const vpImage<vpRGBa> &I) const
   {
     // if(px_ext != 1 && py_ext != 1)
     // we assume px_ext and py_ext > 0
-    if ((std::fabs(px_ext - 1.) >
-         vpMath::maximum(px_ext, 1.) *
-             std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) *
-                                     std::numeric_limits<double>::epsilon()))
-      return vpCameraParameters(px_ext, py_ext, I.getWidth() / 2,
-                                I.getHeight() / 2);
+    if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon()))
+      return vpCameraParameters(px_ext, py_ext, I.getWidth() / 2, I.getHeight() / 2);
     else {
       unsigned int size = vpMath::minimum(I.getWidth(), I.getHeight()) / 2;
-      return vpCameraParameters(size, size, I.getWidth() / 2,
-                                I.getHeight() / 2);
+      return vpCameraParameters(size, size, I.getWidth() / 2, I.getHeight() / 2);
     }
   }
   /*!
@@ -365,14 +348,10 @@ public:
      \return the main external camera position relative to the the world
      reference frame.
    */
-  inline vpHomogeneousMatrix getExternalCameraPosition() const
-  {
-    return rotz * camMf;
-  }
+  inline vpHomogeneousMatrix getExternalCameraPosition() const { return rotz * camMf; }
 
   void getExternalImage(vpImage<unsigned char> &I);
-  void getExternalImage(vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &camMf);
+  void getExternalImage(vpImage<unsigned char> &I, const vpHomogeneousMatrix &camMf);
   void getExternalImage(vpImage<vpRGBa> &I);
   void getExternalImage(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &camMf);
 
@@ -383,22 +362,16 @@ public:
 
       \return It returns the camera parameters.
     */
-  vpCameraParameters
-  getInternalCameraParameters(const vpImage<unsigned char> &I) const
+  vpCameraParameters getInternalCameraParameters(const vpImage<unsigned char> &I) const
   {
     // if(px_int != 1 && py_int != 1)
     // we assume px_int and py_int > 0
-    if ((std::fabs(px_int - 1.) >
-         vpMath::maximum(px_int, 1.) *
-             std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) *
-                                     std::numeric_limits<double>::epsilon()))
-      return vpCameraParameters(px_int, py_int, I.getWidth() / 2,
-                                I.getHeight() / 2);
+    if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon()))
+      return vpCameraParameters(px_int, py_int, I.getWidth() / 2, I.getHeight() / 2);
     else {
       unsigned int size = vpMath::minimum(I.getWidth(), I.getHeight()) / 2;
-      return vpCameraParameters(size, size, I.getWidth() / 2,
-                                I.getHeight() / 2);
+      return vpCameraParameters(size, size, I.getWidth() / 2, I.getHeight() / 2);
     }
   }
   /*!
@@ -408,22 +381,16 @@ public:
 
       \return It returns the camera parameters.
     */
-  vpCameraParameters
-  getInternalCameraParameters(const vpImage<vpRGBa> &I) const
+  vpCameraParameters getInternalCameraParameters(const vpImage<vpRGBa> &I) const
   {
     // if(px_int != 1 && py_int != 1)
     // we assume px_int and py_int > 0
-    if ((std::fabs(px_int - 1.) >
-         vpMath::maximum(px_int, 1.) *
-             std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) *
-                                     std::numeric_limits<double>::epsilon()))
-      return vpCameraParameters(px_int, py_int, I.getWidth() / 2,
-                                I.getHeight() / 2);
+    if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon()))
+      return vpCameraParameters(px_int, py_int, I.getWidth() / 2, I.getHeight() / 2);
     else {
       unsigned int size = vpMath::minimum(I.getWidth(), I.getHeight()) / 2;
-      return vpCameraParameters(size, size, I.getWidth() / 2,
-                                I.getHeight() / 2);
+      return vpCameraParameters(size, size, I.getWidth() / 2, I.getHeight() / 2);
     }
   }
 
@@ -446,8 +413,7 @@ public:
   void get_cMo_History(std::list<vpHomogeneousMatrix> &cMo_history)
   {
     cMo_history.clear();
-    for (std::list<vpHomogeneousMatrix>::const_iterator it = poseList.begin();
-         it != poseList.end(); ++it) {
+    for (std::list<vpHomogeneousMatrix>::const_iterator it = poseList.begin(); it != poseList.end(); ++it) {
       cMo_history.push_back(rotz * (*it));
     }
   }
@@ -465,24 +431,17 @@ public:
 
       \param fMo_history : The list of the homogeneous matrices fMo.
     */
-  void get_fMo_History(std::list<vpHomogeneousMatrix> &fMo_history)
-  {
-    fMo_history = fMoList;
-  }
+  void get_fMo_History(std::list<vpHomogeneousMatrix> &fMo_history) { fMo_history = fMoList; }
 
-  void initScene(const vpSceneObject &obj,
-                 const vpSceneDesiredObject &desiredObject);
+  void initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desiredObject);
   void initScene(const char *obj, const char *desiredObject);
   void initScene(const vpSceneObject &obj);
   void initScene(const char *obj);
 
-  void initScene(const vpSceneObject &obj,
-                 const vpSceneDesiredObject &desiredObject,
+  void initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desiredObject,
                  const std::list<vpImageSimulator> &imObj);
-  void initScene(const char *obj, const char *desiredObject,
-                 const std::list<vpImageSimulator> &imObj);
-  void initScene(const vpSceneObject &obj,
-                 const std::list<vpImageSimulator> &imObj);
+  void initScene(const char *obj, const char *desiredObject, const std::list<vpImageSimulator> &imObj);
+  void initScene(const vpSceneObject &obj, const std::list<vpImageSimulator> &imObj);
   void initScene(const char *obj, const std::list<vpImageSimulator> &imObj);
 
   /*!
@@ -520,10 +479,7 @@ public:
 
       \param factor : The ration for the camera size.
     */
-  inline void setCameraSizeFactor(const float factor)
-  {
-    cameraFactor = factor;
-  }
+  inline void setCameraSizeFactor(const float factor) { cameraFactor = factor; }
 
   /*!
       Set the color used to display the camera trajectory in the external
@@ -540,8 +496,7 @@ public:
 
       \param camTraj_type : The chosen way to display the camera trajectory.
     */
-  inline void setCameraTrajectoryDisplayType(
-      const vpCameraTrajectoryDisplayType &camTraj_type)
+  inline void setCameraTrajectoryDisplayType(const vpCameraTrajectoryDisplayType &camTraj_type)
   {
     this->camTrajType = camTraj_type;
   }
@@ -557,10 +512,7 @@ public:
 
       \param cdMo_ : The desired pose of the camera.
     */
-  void setDesiredCameraPosition(const vpHomogeneousMatrix &cdMo_)
-  {
-    this->cdMo = rotz * cdMo_;
-  }
+  void setDesiredCameraPosition(const vpHomogeneousMatrix &cdMo_) { this->cdMo = rotz * cdMo_; }
   /*!
       Set the color used to display the object at the desired position.
 
@@ -575,10 +527,7 @@ public:
 
       \param do_display : Set to true to display the camera trajectory.
     */
-  void setDisplayCameraTrajectory(const bool &do_display)
-  {
-    this->displayCameraTrajectory = do_display;
-  }
+  void setDisplayCameraTrajectory(const bool &do_display) { this->displayCameraTrajectory = do_display; }
 
   /*!
       Set the internal camera parameters.
@@ -609,10 +558,7 @@ public:
   /*!
     Specify the thickness of the graphics drawings.
     */
-  void setGraphicsThickness(unsigned int thickness)
-  {
-    this->thickness_ = thickness;
-  }
+  void setGraphicsThickness(unsigned int thickness) { this->thickness_ = thickness; }
 
   /*!
       Set the internal camera parameters.
@@ -632,46 +578,31 @@ public:
 
       \param nbPt : The desired number of position which are saved.
     */
-  inline void setNbPtTrajectory(const unsigned int nbPt)
-  {
-    nbrPtLimit = nbPt;
-  }
+  inline void setNbPtTrajectory(const unsigned int nbPt) { nbrPtLimit = nbPt; }
 
   /*!
       Set the pose between the object and the fixed world frame.
 
       \param fMo_ : The pose between the object and the fixed world frame.
     */
-  void set_fMo(const vpHomogeneousMatrix &fMo_)
-  {
-    this->fMo = fMo_; /*this->cMo = fMc.inverse()*fMo;*/
-  }
+  void set_fMo(const vpHomogeneousMatrix &fMo_) { this->fMo = fMo_; /*this->cMo = fMc.inverse()*fMo;*/ }
   //@}
 
 protected:
   /** @name Protected Member Functions Inherited from vpWireFrameSimulator */
   //@{
-  void display_scene(Matrix mat, Bound_scene &sc, const vpImage<vpRGBa> &I,
-                     const vpColor &color);
-  void display_scene(Matrix mat, Bound_scene &sc,
-                     const vpImage<unsigned char> &I, const vpColor &color);
+  void display_scene(Matrix mat, Bound_scene &sc, const vpImage<vpRGBa> &I, const vpColor &color);
+  void display_scene(Matrix mat, Bound_scene &sc, const vpImage<unsigned char> &I, const vpColor &color);
   vpHomogeneousMatrix navigation(const vpImage<vpRGBa> &I, bool &changed);
-  vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I,
-                                 bool &changed);
-  vpImagePoint projectCameraTrajectory(const vpImage<vpRGBa> &I,
-                                       const vpHomogeneousMatrix &cMo,
+  vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I, bool &changed);
+  vpImagePoint projectCameraTrajectory(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                        const vpHomogeneousMatrix &fMo);
-  vpImagePoint projectCameraTrajectory(const vpImage<unsigned char> &I,
-                                       const vpHomogeneousMatrix &cMo,
+  vpImagePoint projectCameraTrajectory(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                        const vpHomogeneousMatrix &fMo);
-  vpImagePoint projectCameraTrajectory(const vpImage<vpRGBa> &I,
-                                       const vpHomogeneousMatrix &cMo,
-                                       const vpHomogeneousMatrix &fMo,
-                                       const vpHomogeneousMatrix &cMf);
-  vpImagePoint projectCameraTrajectory(const vpImage<unsigned char> &I,
-                                       const vpHomogeneousMatrix &cMo,
-                                       const vpHomogeneousMatrix &fMo,
-                                       const vpHomogeneousMatrix &cMf);
+  vpImagePoint projectCameraTrajectory(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                                       const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
+  vpImagePoint projectCameraTrajectory(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                       const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
   //@}
 };
 

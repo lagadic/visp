@@ -23,8 +23,7 @@ int main()
     vpDisplay::setTitle(I, "Monkey");
     vpDisplay::display(I);
 
-    vpDisplay::displayRectangle(I, vpImagePoint(90, 90), 70, 90, vpColor::red,
-                                false, 2);
+    vpDisplay::displayRectangle(I, vpImagePoint(90, 90), 70, 90, vpColor::red, false, 2);
     vpDisplay::flush(I);
 
     vpImage<vpRGBa> O;
@@ -34,8 +33,7 @@ int main()
       vpImageIo::write(I, "monkey-out.jpg");
       vpImageIo::write(O, "monkey-out-with-overlay.jpg");
     } catch (...) {
-      std::cout << "Cannot write the image: unsupported format..."
-                << std::endl;
+      std::cout << "Cannot write the image: unsupported format..." << std::endl;
     }
 
     vpDisplay::getClick(I);

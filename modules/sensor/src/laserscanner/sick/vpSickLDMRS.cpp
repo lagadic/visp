@@ -36,8 +36,7 @@
  *
  *****************************************************************************/
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 
 #include <errno.h>
 #include <fcntl.h>
@@ -70,8 +69,7 @@
   body messages.
 */
 vpSickLDMRS::vpSickLDMRS()
-  : socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true),
-    maxlen_body(104000)
+  : socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true), maxlen_body(104000)
 {
   ip = "131.254.12.119";
   port = 12002;
@@ -142,8 +140,7 @@ bool vpSickLDMRS::setup()
     FD_SET(static_cast<unsigned int>(socket_fd), &myset);
     res = select(socket_fd + 1, NULL, &myset, NULL, &tv);
     if (res < 0 && errno != EINTR) {
-      fprintf(stderr, "Error connecting to server %d - %s\n", errno,
-              strerror(errno));
+      fprintf(stderr, "Error connecting to server %d - %s\n", errno, strerror(errno));
       return false;
     } else if (res > 0) {
       fprintf(stderr, "ok");
@@ -217,15 +214,13 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   uintptr = (unsigned int *)(body + 6);
   unsigned int seconds = uintptr[1];
   unsigned int fractional = uintptr[0];
-  double startTimestamp =
-      seconds + fractional / 4294967296.; // 4294967296. = 2^32
+  double startTimestamp = seconds + fractional / 4294967296.; // 4294967296. = 2^32
 
   // get the end timestamp
   uintptr = (unsigned int *)(body + 14);
   seconds = uintptr[1];
   fractional = uintptr[0];
-  double endTimestamp =
-      seconds + fractional / 4294967296.; // 4294967296. = 2^32
+  double endTimestamp = seconds + fractional / 4294967296.; // 4294967296. = 2^32
 
   // compute the time offset to bring the measures in the Unix time reference
   if (isFirstMeasure) {

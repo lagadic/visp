@@ -67,10 +67,7 @@ class VISP_EXPORT vpDirectShowSampleGrabberI : public ISampleGrabberCB
   STDMETHODIMP QueryInterface(REFIID riid, void **ppvObject);
 
   // not implemented
-  STDMETHODIMP SampleCB(double Time, IMediaSample *pSample)
-  {
-    return E_NOTIMPL;
-  }
+  STDMETHODIMP SampleCB(double Time, IMediaSample *pSample) { return E_NOTIMPL; }
 
   // our callback function
   STDMETHODIMP BufferCB(double Time, BYTE *pBuffer, long BufferLen);

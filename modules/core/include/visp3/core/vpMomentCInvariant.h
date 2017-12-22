@@ -78,38 +78,41 @@ get shortcuts.
 
   The example below shows how to retrieve the \f$C_2\f$ invariant:
   \code
-#include <iostream>
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentCommon.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/core/vpMomentCInvariant.h>
+#include <visp3/core/vpMomentCommon.h>
+#include <iostream>
 
 int main()
 {
   vpPoint p;
   std::vector<vpPoint> vec_p;
 
-  p.set_x(6); p.set_y(-1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(3); // coordinates in meters in the
-image plane (vertex 2) vec_p.push_back(p); p.set_x(0); p.set_y(1.2); //
-coordinates in meters in the image plane (vertex 1) vec_p.push_back(p);
-  p.set_x(-7); p.set_y(-4); // coordinates in meters in the image plane
-(vertex 2) vec_p.push_back(p);
+  p.set_x(6); p.set_y(-1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(3); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
+  p.set_x(0); p.set_y(1.2); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
+  p.set_x(-7); p.set_y(-4); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
 
-  vpMomentObject obj(5); // Create an image moment object with 5 as maximum
-order obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
+  vpMomentObject obj(5); // Create an image moment object with 5 as maximum order
+  obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
   obj.fromVector(vec_p);
 
   //initialisation with default values
-  vpMomentCommon
-db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),vpMomentCommon::getAlpha(obj),1.);
+  vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),
+                    vpMomentCommon::getAlpha(obj),1.);
   bool success;
 
   db.updateAll(obj); // Update AND compute all moments
 
   //get C-invariant
-  const vpMomentCInvariant& C = static_cast<const
-vpMomentCInvariant&>(db.get("vpMomentCInvariant",success)); if(success)
+  const vpMomentCInvariant& C
+    = static_cast<const vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
+  if(success)
       std::cout << C.get(1) << std:: endl; // print C2 invariant
   else
       std::cout << "vpMomentCInvariant not found." << std::endl;
@@ -129,18 +132,15 @@ private:
   std::vector<double> c;
   std::vector<double> s;
   double K;
-  void computeI(const vpMomentCentered &momentCentered,
-                std::vector<double> &I);
+  void computeI(const vpMomentCentered &momentCentered, std::vector<double> &I);
 
   /* To calculate Sx and Sy from normalized moments */
   void calcSxSy(double &sx, double &sy) const;
   void calcSxSyNormalized(double &sx, double &sy) const;
-  std::vector<double>
-      cn; // same as s above but calculated from normalized moments
-  std::vector<double>
-      sn;     // same as c above but calculated from normalized moments
-  double In1; // same as I1 in Sx,Sy formulae but calculated from normalized
-              // moments
+  std::vector<double> cn; // same as s above but calculated from normalized moments
+  std::vector<double> sn; // same as c above but calculated from normalized moments
+  double In1;             // same as I1 in Sx,Sy formulae but calculated from normalized
+                          // moments
   bool flg_sxsynormalization_;
 
 public:
@@ -282,7 +282,6 @@ public:
    */
   inline const std::vector<double> &getMomentVector() const { return values; }
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMomentCInvariant &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCInvariant &v);
 };
 #endif

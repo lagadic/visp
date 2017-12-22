@@ -82,9 +82,9 @@ public:
 #ifdef WINRT_8_1
     m_mutex = CreateMutexEx(NULL, NULL, 0, NULL);
 #else
-    m_mutex = CreateMutex(NULL,                 // default security attributes
-                          FALSE,                // initially not owned
-                          NULL);                // unnamed mutex
+    m_mutex = CreateMutex(NULL,                   // default security attributes
+                          FALSE,                  // initially not owned
+                          NULL);                  // unnamed mutex
 #endif
     if (m_mutex == NULL) {
       std::cout << "CreateMutex error: " << GetLastError() << std::endl;
@@ -101,7 +101,7 @@ public:
 #ifdef WINRT_8_1
     dwWaitResult = WaitForSingleObjectEx(m_mutex, INFINITE, FALSE);
 #else
-    dwWaitResult = WaitForSingleObject(m_mutex, // handle to mutex
+    dwWaitResult = WaitForSingleObject(m_mutex,   // handle to mutex
                                        INFINITE); // no time-out interval
 #endif
     if (dwWaitResult == WAIT_FAILED)
@@ -130,8 +130,11 @@ public:
     \brief Class that allows protection by mutex.
 
     The following example shows how to use this class to protect a portion of
-code from concurrent access. The scope of the mutex lock/unlock is determined
-by the constructor/destructor. \code #include <visp3/core/vpMutex.h>
+    code from concurrent access. The scope of the mutex lock/unlock is determined
+    by the constructor/destructor.
+
+\code
+ #include <visp3/core/vpMutex.h>
 
 int main()
 {

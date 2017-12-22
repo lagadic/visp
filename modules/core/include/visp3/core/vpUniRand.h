@@ -49,8 +49,10 @@
 
   The algorithms and notations used are described in \cite Gentle:2004.
 
-  The following example shows how to use this class to generate 10 numbers
-between 0 and 5. \code #include <iostream> #include <visp3/core/vpUniRand.h>
+  The following example shows how to use this class to generate 10 numbers between 0 and 5.
+\code
+#include <iostream>
+#include <visp3/core/vpUniRand.h>
 
 int main()
 {
@@ -79,8 +81,7 @@ protected:
 public:
   //! Default constructor.
   explicit vpUniRand(const long seed = 0)
-    : a(16807), m(2147483647), q(127773), r(2836), normalizer(2147484721.0),
-      x((seed) ? seed : 739806647)
+    : a(16807), m(2147483647), q(127773), r(2836), normalizer(2147484721.0), x((seed) ? seed : 739806647)
   {
   }
 

@@ -69,26 +69,17 @@ int main(int argc, const char **argv)
     char *string_val = NULL;
 
     vpParseArgv::vpArgvInfo argTable[] = {
-        {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&bool_val,
-         "Bool enabled."},
-        {"-integer", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&int_val,
-         "An integer value."},
-        {"-long", vpParseArgv::ARGV_LONG, (char *)NULL, (char *)&long_val,
-         "A long value."},
-        {"-float", vpParseArgv::ARGV_FLOAT, (char *)NULL, (char *)&float_val,
-         "A float value."},
-        {"-double", vpParseArgv::ARGV_DOUBLE, (char *)NULL,
-         (char *)&double_val, "A double value."},
-        {"-string", vpParseArgv::ARGV_STRING, (char *)NULL,
-         (char *)&string_val, "A chain value."},
-        {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL,
-         "Print the help."},
-        {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL,
-         (char *)NULL}};
+        {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&bool_val, "Bool enabled."},
+        {"-integer", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&int_val, "An integer value."},
+        {"-long", vpParseArgv::ARGV_LONG, (char *)NULL, (char *)&long_val, "A long value."},
+        {"-float", vpParseArgv::ARGV_FLOAT, (char *)NULL, (char *)&float_val, "A float value."},
+        {"-double", vpParseArgv::ARGV_DOUBLE, (char *)NULL, (char *)&double_val, "A double value."},
+        {"-string", vpParseArgv::ARGV_STRING, (char *)NULL, (char *)&string_val, "A chain value."},
+        {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL, "Print the help."},
+        {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL, (char *)NULL}};
 
     // Read the command line options
-    if (vpParseArgv::parse(&argc, argv, argTable,
-                           vpParseArgv::ARGV_NO_DEFAULTS)) {
+    if (vpParseArgv::parse(&argc, argv, argTable, vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (-1);
     }
 
@@ -103,13 +94,11 @@ int main(int argc, const char **argv)
     else
       cout << "  String  value: \"\"" << endl << endl;
 
-    cout << "Call  " << argv[0]
-         << " -h to see how to change these parameters." << endl;
+    cout << "Call  " << argv[0] << " -h to see how to change these parameters." << endl;
 
     return 0;
   } catch (const vpException &e) {
-    std::cout << "Catch a ViSP exception: " << e.getStringMessage()
-              << std::endl;
+    std::cout << "Catch a ViSP exception: " << e.getStringMessage() << std::endl;
     return 1;
   }
 }

@@ -9,8 +9,7 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-void display_trajectory(const vpImage<unsigned char> &I,
-                        const std::vector<vpDot2> &dot);
+void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot);
 
 /*!
   Given an image of a target, this class provided virtual
@@ -25,8 +24,7 @@ public:
     \param filename : File name corresponding to an image of a target.
     \param cam : Intrinsic camera parameters.
     */
-  vpVirtualGrabber(const std::string &filename, const vpCameraParameters &cam)
-    : sim_(), target_(), cam_()
+  vpVirtualGrabber(const std::string &filename, const vpCameraParameters &cam) : sim_(), target_(), cam_()
   {
     // The target is a square 20cm by 2cm square
     // Initialise the 3D coordinates of the target corners
@@ -76,8 +74,7 @@ private:
   vpCameraParameters cam_;
 };
 
-void display_trajectory(const vpImage<unsigned char> &I,
-                        const std::vector<vpDot2> &dot)
+void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot)
 {
   static std::vector<vpImagePoint> traj[4];
   for (unsigned int i = 0; i < 4; i++) {
@@ -92,12 +89,10 @@ void display_trajectory(const vpImage<unsigned char> &I,
 
 int main()
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
-    defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10),
-                            vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
     vpImage<unsigned char> I(480, 640, 255);
     vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2);
@@ -127,10 +122,8 @@ int main()
 #endif
 
     vpDisplay::display(I);
-    vpDisplay::displayText(
-        I, 10, 10,
-        "Click in the 4 dots to initialise the tracking and start the servo",
-        vpColor::red);
+    vpDisplay::displayText(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo",
+                           vpColor::red);
     vpDisplay::flush(I);
 
     vpFeaturePoint p[4], pd[4];

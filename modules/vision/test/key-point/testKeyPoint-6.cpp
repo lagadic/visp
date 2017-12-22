@@ -56,8 +56,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
   Print the program options.
@@ -101,8 +100,7 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -249,8 +247,7 @@ int main(int argc, const char **argv)
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
     descriptorNames.push_back("BRISK");
 #endif
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                 \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || (VISP_HAVE_OPENCV_VERSION < 0x030000)
     descriptorNames.push_back("BRIEF");
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020402)
     descriptorNames.push_back("FREAK");
@@ -260,8 +257,7 @@ int main(int argc, const char **argv)
     descriptorNames.push_back("DAISY");
     descriptorNames.push_back("LATCH");
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) &&                                \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
     descriptorNames.push_back("VGG");
     descriptorNames.push_back("BoostDesc");
 #endif
@@ -275,49 +271,38 @@ int main(int argc, const char **argv)
     std::vector<cv::KeyPoint> kpts;
 
     keyPoints.detect(I, kpts);
-    std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-              << detectorName << " method." << std::endl;
+    std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
     if (kpts.empty()) {
-      std::cerr << "No keypoints detected with " << detectorName
-                << " and image:" << filename << "." << std::endl;
+      std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
       return EXIT_FAILURE;
     }
 
-    for (std::vector<std::string>::const_iterator itd =
-             descriptorNames.begin();
-         itd != descriptorNames.end(); ++itd) {
+    for (std::vector<std::string>::const_iterator itd = descriptorNames.begin(); itd != descriptorNames.end(); ++itd) {
       keyPoints.setExtractor(*itd);
 
       if (*itd == "KAZE") {
         detectorName = "KAZE";
         keyPoints.setDetector(detectorName);
         keyPoints.detect(I, kpts);
-        std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-                  << detectorName << " method." << std::endl;
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
         if (kpts.empty()) {
-          std::cerr << "No keypoints detected with " << detectorName
-                    << " and image:" << filename << "." << std::endl;
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
           return EXIT_FAILURE;
         }
       } else if (*itd == "AKAZE") {
         detectorName = "AKAZE";
         keyPoints.setDetector(detectorName);
         keyPoints.detect(I, kpts);
-        std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-                  << detectorName << " method." << std::endl;
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
         if (kpts.empty()) {
-          std::cerr << "No keypoints detected with " << detectorName
-                    << " and image:" << filename << "." << std::endl;
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
           return EXIT_FAILURE;
         }
       } else if (*itd == "BoostDesc") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) &&                                \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
-        cv::Ptr<cv::Feature2D> boostDesc =
-            keyPoints.getExtractor("BoostDesc");
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
+        cv::Ptr<cv::Feature2D> boostDesc = keyPoints.getExtractor("BoostDesc");
         // Init BIN BOOST descriptor for FAST keypoints
-        boostDesc = cv::xfeatures2d::BoostDesc::create(
-            cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
+        boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
       }
 
@@ -327,20 +312,17 @@ int main(int argc, const char **argv)
       t = vpTime::measureTimeMs() - t;
 
       std::cout << "Descriptor: " << descriptor.rows << "x" << descriptor.cols
-                << " (rows x cols) ; type="
-                << getOpenCVType(descriptor.type()) << " for " << *itd
-                << " method in " << t << " ms." << std::endl;
+                << " (rows x cols) ; type=" << getOpenCVType(descriptor.type()) << " for " << *itd << " method in " << t
+                << " ms." << std::endl;
       if (descriptor.empty()) {
-        std::cerr << "No descriptor extracted with " << *itd
-                  << " and image:" << filename << "." << std::endl;
+        std::cerr << "No descriptor extracted with " << *itd << " and image:" << filename << "." << std::endl;
         return EXIT_FAILURE;
       }
 
       if (opt_display) {
         vpDisplay::display(I);
 
-        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin();
-             it != kpts.end(); ++it) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
           vpImagePoint imPt;
           imPt.set_uv(it->pt.x, it->pt.y);
 
@@ -357,56 +339,43 @@ int main(int argc, const char **argv)
 
     std::cout << "\n\n";
 
-    std::map<vpKeyPoint::vpFeatureDescriptorType, std::string>
-        mapOfDescriptorNames = keyPoints.getExtractorNames();
+    std::map<vpKeyPoint::vpFeatureDescriptorType, std::string> mapOfDescriptorNames = keyPoints.getExtractorNames();
 
     for (int i = 0; i < vpKeyPoint::DESCRIPTOR_TYPE_SIZE; i++) {
       keyPoints.setExtractor((vpKeyPoint::vpFeatureDescriptorType)i);
 
-      if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i] ==
-          "KAZE") {
+      if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i] == "KAZE") {
         detectorName = "KAZE";
         keyPoints.setDetector(detectorName);
         keyPoints.detect(I, kpts);
-        std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-                  << detectorName << " method." << std::endl;
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
         if (kpts.empty()) {
-          std::cerr << "No keypoints detected with " << detectorName
-                    << " and image:" << filename << "." << std::endl;
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
           return EXIT_FAILURE;
         }
-      } else if (mapOfDescriptorNames[(
-                     vpKeyPoint::vpFeatureDescriptorType)i] == "AKAZE") {
+      } else if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i] == "AKAZE") {
         detectorName = "AKAZE";
         keyPoints.setDetector(detectorName);
         keyPoints.detect(I, kpts);
-        std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-                  << detectorName << " method." << std::endl;
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
         if (kpts.empty()) {
-          std::cerr << "No keypoints detected with " << detectorName
-                    << " and image:" << filename << "." << std::endl;
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
           return EXIT_FAILURE;
         }
-      } else if (mapOfDescriptorNames[(
-                     vpKeyPoint::vpFeatureDescriptorType)i] == "BoostDesc") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) &&                                \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
+      } else if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i] == "BoostDesc") {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
         detectorName = "FAST";
         keyPoints.setDetector(detectorName);
         keyPoints.detect(I, kpts);
-        std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-                  << detectorName << " method." << std::endl;
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
         if (kpts.empty()) {
-          std::cerr << "No keypoints detected with " << detectorName
-                    << " and image:" << filename << "." << std::endl;
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
           return EXIT_FAILURE;
         }
 
-        cv::Ptr<cv::Feature2D> boostDesc =
-            keyPoints.getExtractor("BoostDesc");
+        cv::Ptr<cv::Feature2D> boostDesc = keyPoints.getExtractor("BoostDesc");
         // Init BIN BOOST descriptor for FAST keypoints
-        boostDesc = cv::xfeatures2d::BoostDesc::create(
-            cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
+        boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
       }
 
@@ -415,25 +384,20 @@ int main(int argc, const char **argv)
       keyPoints.extract(I, kpts, descriptor);
       t = vpTime::measureTimeMs() - t;
 
-      std::cout
-          << "Descriptor: " << descriptor.rows << "x" << descriptor.cols
-          << " (rows x cols) ; type=" << getOpenCVType(descriptor.type())
-          << " for "
-          << mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i]
-          << " method in " << t << " ms." << std::endl;
+      std::cout << "Descriptor: " << descriptor.rows << "x" << descriptor.cols
+                << " (rows x cols) ; type=" << getOpenCVType(descriptor.type()) << " for "
+                << mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i] << " method in " << t << " ms."
+                << std::endl;
       if (descriptor.empty()) {
-        std::cerr
-            << "No descriptor extracted with "
-            << mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i]
-            << " and image:" << filename << "." << std::endl;
+        std::cerr << "No descriptor extracted with " << mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType)i]
+                  << " and image:" << filename << "." << std::endl;
         return EXIT_FAILURE;
       }
 
       if (opt_display) {
         vpDisplay::display(I);
 
-        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin();
-             it != kpts.end(); ++it) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
           vpImagePoint imPt;
           imPt.set_uv(it->pt.x, it->pt.y);
 

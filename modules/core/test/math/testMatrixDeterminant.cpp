@@ -111,10 +111,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, unsigned int &nb_matrices,
-                unsigned int &nb_iterations, bool &use_plot_file,
-                std::string &plotfile, unsigned int &nbrows,
-                unsigned int &nbcols, bool &verbose)
+bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned int &nb_iterations,
+                bool &use_plot_file, std::string &plotfile, unsigned int &nbrows, unsigned int &nbcols, bool &verbose)
 {
   const char *optarg_;
   int c;
@@ -181,13 +179,11 @@ vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
   return A;
 }
 
-void create_bench(unsigned int nb_matrices, unsigned int nb_rows,
-                  unsigned int nb_cols, bool verbose,
+void create_bench(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
                   std::vector<vpMatrix> &bench)
 {
   if (verbose)
-    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows
-              << " by " << nb_cols << " matrices" << std::endl;
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_cols << " matrices" << std::endl;
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M = make_random_matrix(nb_rows, nb_cols);
@@ -195,15 +191,13 @@ void create_bench(unsigned int nb_matrices, unsigned int nb_rows,
   }
 }
 
-void test_det_default(bool verbose, const std::vector<vpMatrix> &bench,
-                      double &time, std::vector<double> &result)
+void test_det_default(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using default method" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
-              << bench[0].AtA().getCols() << std::endl;
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
@@ -214,15 +208,13 @@ void test_det_default(bool verbose, const std::vector<vpMatrix> &bench,
 }
 
 #if defined(VISP_HAVE_EIGEN3)
-void test_det_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
-                     double &time, std::vector<double> &result)
+void test_det_eigen3(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using Eigen3 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
-              << bench[0].AtA().getCols() << std::endl;
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
@@ -234,15 +226,13 @@ void test_det_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
 #endif
 
 #if defined(VISP_HAVE_GSL)
-void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench,
-                  double &time, std::vector<double> &result)
+void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using GSL 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
-              << bench[0].AtA().getCols() << std::endl;
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
@@ -254,15 +244,13 @@ void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench,
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
-void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench,
-                     double &time, std::vector<double> &result)
+void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using Lapack 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
-              << bench[0].AtA().getCols() << std::endl;
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
@@ -274,15 +262,13 @@ void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench,
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-void test_det_opencv(bool verbose, const std::vector<vpMatrix> &bench,
-                     double &time, std::vector<double> &result)
+void test_det_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using OpenCV 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
-              << bench[0].AtA().getCols() << std::endl;
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
@@ -293,8 +279,7 @@ void test_det_opencv(bool verbose, const std::vector<vpMatrix> &bench,
 }
 #endif
 
-void save_time(const std::string &method, bool verbose, bool use_plot_file,
-               std::ofstream &of, double time)
+void save_time(const std::string &method, bool verbose, bool use_plot_file, std::ofstream &of, double time)
 {
   if (use_plot_file)
     of << time << "\t";
@@ -306,8 +291,8 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file,
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_GSL) ||                   \
-    defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_GSL) || defined(VISP_HAVE_LAPACK) ||                                \
+    (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -318,8 +303,8 @@ int main(int argc, const char *argv[])
     std::ofstream of;
 
     // Read the command line options
-    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file,
-                   plotfile, nb_rows, nb_cols, verbose) == false) {
+    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file, plotfile, nb_rows, nb_cols, verbose) ==
+        false) {
       exit(-1);
     }
 
@@ -395,8 +380,8 @@ int main(int argc, const char *argv[])
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_opencv[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and OpenCV: "
-                    << result_gsl[i] << " " << result_opencv[i] << std::endl;
+          std::cout << "Determinant differ between GSL and OpenCV: " << result_gsl[i] << " " << result_opencv[i]
+                    << std::endl;
           ret = EXIT_FAILURE;
         }
       }
@@ -405,8 +390,8 @@ int main(int argc, const char *argv[])
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_lapack[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and Lapack: "
-                    << result_gsl[i] << " " << result_lapack[i] << std::endl;
+          std::cout << "Determinant differ between GSL and Lapack: " << result_gsl[i] << " " << result_lapack[i]
+                    << std::endl;
           ret = EXIT_FAILURE;
         }
       }
@@ -415,8 +400,8 @@ int main(int argc, const char *argv[])
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_eigen3[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and Eigen3: "
-                    << result_gsl[i] << " " << result_eigen3[i] << std::endl;
+          std::cout << "Determinant differ between GSL and Eigen3: " << result_gsl[i] << " " << result_eigen3[i]
+                    << std::endl;
           ret = EXIT_FAILURE;
         }
       }
@@ -425,8 +410,7 @@ int main(int argc, const char *argv[])
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_lapack[i] - result_opencv[i]) > 1e-6) {
-          std::cout << "Determinant differ between Lapack and OpenCV: "
-                    << result_lapack[i] << " " << result_opencv[i]
+          std::cout << "Determinant differ between Lapack and OpenCV: " << result_lapack[i] << " " << result_opencv[i]
                     << std::endl;
           ret = EXIT_FAILURE;
         }
@@ -436,8 +420,7 @@ int main(int argc, const char *argv[])
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_opencv[i]) > 1e-6) {
-          std::cout << "Determinant differ between Eigen3 and OpenCV: "
-                    << result_eigen3[i] << " " << result_opencv[i]
+          std::cout << "Determinant differ between Eigen3 and OpenCV: " << result_eigen3[i] << " " << result_opencv[i]
                     << std::endl;
           ret = EXIT_FAILURE;
         }
@@ -447,8 +430,7 @@ int main(int argc, const char *argv[])
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_lapack[i]) > 1e-6) {
-          std::cout << "Determinant differ between Eigen3 and Lapack: "
-                    << result_eigen3[i] << " " << result_lapack[i]
+          std::cout << "Determinant differ between Eigen3 and Lapack: " << result_eigen3[i] << " " << result_lapack[i]
                     << std::endl;
           ret = EXIT_FAILURE;
         }

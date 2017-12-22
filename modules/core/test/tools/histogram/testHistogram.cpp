@@ -102,8 +102,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                unsigned int &nbThreads)
+bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &nbThreads)
 {
   const char *optarg_;
   int c;
@@ -150,9 +149,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   \param nbBins : Number of histogram bins.
   \param nbThreads : Number of computation threads.
 */
-unsigned int histogramSum(const vpImage<unsigned char> &I,
-                          const unsigned int nbBins,
-                          const unsigned int nbThreads)
+unsigned int histogramSum(const vpImage<unsigned char> &I, const unsigned int nbBins, const unsigned int nbThreads)
 {
   unsigned int sum = 0;
 
@@ -172,8 +169,7 @@ unsigned int histogramSum(const vpImage<unsigned char> &I,
   \param I : Input color image.
   \param nbBins : Number of histogram bins.
 */
-bool compareHistogram(const vpImage<unsigned char> &I,
-                      const unsigned int nbBins)
+bool compareHistogram(const vpImage<unsigned char> &I, const unsigned int nbBins)
 {
   vpHistogram histogram_single_threaded;
   histogram_single_threaded.calculate(I, nbBins, 1);
@@ -184,10 +180,8 @@ bool compareHistogram(const vpImage<unsigned char> &I,
   unsigned int sum = 0;
   for (unsigned int cpt = 0; cpt < nbBins; cpt++) {
     if (histogram_single_threaded[cpt] != histogram_multi_threaded[cpt]) {
-      std::cerr << "histogram_single_threaded[" << cpt
-                << "]=" << histogram_single_threaded[cpt]
-                << " ; histogram_multi_threaded[" << cpt
-                << "]=" << histogram_multi_threaded[cpt] << std::endl;
+      std::cerr << "histogram_single_threaded[" << cpt << "]=" << histogram_single_threaded[cpt]
+                << " ; histogram_multi_threaded[" << cpt << "]=" << histogram_multi_threaded[cpt] << std::endl;
 
       return false;
     }
@@ -196,8 +190,7 @@ bool compareHistogram(const vpImage<unsigned char> &I,
   }
 
   if (sum != I.getSize()) {
-    std::cerr << "Sum of histogram is different with the image size!"
-              << std::endl;
+    std::cerr << "Sum of histogram is different with the image size!" << std::endl;
     return false;
   }
 
@@ -236,8 +229,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -246,13 +238,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -287,19 +276,13 @@ int main(int argc, const char **argv)
     }
     t_multithread = vpTime::measureTimeMs() - t_multithread;
 
-    std::cout << "sum_single_thread=" << sum_single_thread
-              << " ; t_single_thread=" << t_single_thread
-              << " ms ; mean=" << t_single_thread / (double)nbIterations
-              << " ms" << std::endl;
-    std::cout << "sum_single_multithread=" << sum_single_multithread
-              << " ; t_multithread=" << t_multithread
-              << " ms ; mean=" << t_multithread / (double)nbIterations
-              << " ms" << std::endl;
-    std::cout << "Speed-up=" << t_single_thread / (double)t_multithread << "X"
-              << std::endl;
+    std::cout << "sum_single_thread=" << sum_single_thread << " ; t_single_thread=" << t_single_thread
+              << " ms ; mean=" << t_single_thread / (double)nbIterations << " ms" << std::endl;
+    std::cout << "sum_single_multithread=" << sum_single_multithread << " ; t_multithread=" << t_multithread
+              << " ms ; mean=" << t_multithread / (double)nbIterations << " ms" << std::endl;
+    std::cout << "Speed-up=" << t_single_thread / (double)t_multithread << "X" << std::endl;
 
-    if (sum_single_thread != I.getSize() ||
-        sum_single_multithread != I.getSize()) {
+    if (sum_single_thread != I.getSize() || sum_single_multithread != I.getSize()) {
       std::cerr << "Problem with histogram!" << std::endl;
       return -1;
     }
@@ -317,9 +300,8 @@ int main(int argc, const char **argv)
     if (histogram.getSize() == 256) {
       for (unsigned int cpt = 0; cpt < 256; cpt++) {
         if (histogram[cpt] != 0) {
-          std::cerr << "Problem with histogram computation: histogram[" << cpt
-                    << "]=" << histogram[cpt] << " but should be zero!"
-                    << std::endl;
+          std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
+                    << " but should be zero!" << std::endl;
         }
       }
     } else {
@@ -335,15 +317,13 @@ int main(int argc, const char **argv)
       for (unsigned int cpt = 0; cpt < 256; cpt++) {
         if (cpt == 100) {
           if (histogram[cpt] != I_test.getSize()) {
-            std::cerr << "Problem with histogram computation: histogram["
-                      << cpt << "]=" << histogram[cpt]
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
                       << " but should be: " << I_test.getSize() << std::endl;
             return -1;
           }
         } else {
           if (histogram[cpt] != 0) {
-            std::cerr << "Problem with histogram computation: histogram["
-                      << cpt << "]=" << histogram[cpt]
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
                       << " but should be zero!" << std::endl;
           }
         }
@@ -361,15 +341,13 @@ int main(int argc, const char **argv)
       for (unsigned int cpt = 0; cpt < 256; cpt++) {
         if (cpt == 50) {
           if (histogram[cpt] != I_test.getSize()) {
-            std::cerr << "Problem with histogram computation: histogram["
-                      << cpt << "]=" << histogram[cpt]
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
                       << " but should be: " << I_test.getSize() << std::endl;
             return -1;
           }
         } else {
           if (histogram[cpt] != 0) {
-            std::cerr << "Problem with histogram computation: histogram["
-                      << cpt << "]=" << histogram[cpt]
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
                       << " but should be zero!" << std::endl;
           }
         }

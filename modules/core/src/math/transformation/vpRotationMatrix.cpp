@@ -112,10 +112,8 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
 vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
 {
   if ((M.getCols() != 3) && (M.getRows() != 3)) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot set a (3x3) rotation matrix from a (%dx%d) matrix",
-        M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot set a (3x3) rotation matrix from a (%dx%d) matrix",
+                      M.getRows(), M.getCols()));
   }
 
   for (unsigned int i = 0; i < 3; i++) {
@@ -167,10 +165,8 @@ vpRotationMatrix vpRotationMatrix::operator*(const vpRotationMatrix &R) const
 vpMatrix vpRotationMatrix::operator*(const vpMatrix &M) const
 {
   if (M.getRows() != 3 || M.getCols() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot set a (3x3) rotation matrix from a (%dx%d) matrix",
-        M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot set a (3x3) rotation matrix from a (%dx%d) matrix",
+                      M.getRows(), M.getCols()));
   }
   vpMatrix p(3, 3);
 
@@ -238,8 +234,7 @@ vpColVector vpRotationMatrix::operator*(const vpColVector &v) const
   Multiply a rotation matrix by a translation vector and return the resulting
   translation vector.
  */
-vpTranslationVector vpRotationMatrix::
-operator*(const vpTranslationVector &tv) const
+vpTranslationVector vpRotationMatrix::operator*(const vpTranslationVector &tv) const
 {
   vpTranslationVector p;
 
@@ -309,17 +304,13 @@ bool vpRotationMatrix::isARotationMatrix() const
   // test if it is a basis
   // test || Ci || = 1
   for (i = 0; i < 3; i++) {
-    if ((sqrt(vpMath::sqr(RtR[0][i]) + vpMath::sqr(RtR[1][i]) +
-              vpMath::sqr(RtR[2][i])) -
-         1) > threshold)
+    if ((sqrt(vpMath::sqr(RtR[0][i]) + vpMath::sqr(RtR[1][i]) + vpMath::sqr(RtR[2][i])) - 1) > threshold)
       isRotation = false;
   }
 
   // test || Ri || = 1
   for (i = 0; i < 3; i++) {
-    if ((sqrt(vpMath::sqr(RtR[i][0]) + vpMath::sqr(RtR[i][1]) +
-              vpMath::sqr(RtR[i][2])) -
-         1) > threshold)
+    if ((sqrt(vpMath::sqr(RtR[i][0]) + vpMath::sqr(RtR[i][1]) + vpMath::sqr(RtR[i][2])) - 1) > threshold)
       isRotation = false;
   }
 
@@ -336,76 +327,46 @@ vpRotationMatrix::vpRotationMatrix() : vpArray2D<double>(3, 3) { eye(); }
   Copy contructor that construct a 3-by-3 rotation matrix from another
   rotation matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M)
-  : vpArray2D<double>(3, 3)
-{
-  (*this) = M;
-}
+vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double>(3, 3) { (*this) = M; }
 /*!
   Construct a 3-by-3 rotation matrix from an homogeneous matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M)
-  : vpArray2D<double>(3, 3)
-{
-  buildFrom(M);
-}
+vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 3) { buildFrom(M); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}\f$ angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu)
-  : vpArray2D<double>(3, 3)
-{
-  buildFrom(tu);
-}
+vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpArray2D<double>(3, 3) { buildFrom(tu); }
 
 /*!
   Construct a 3-by-3 rotation matrix from a pose vector.
  */
-vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p)
-  : vpArray2D<double>(3, 3)
-{
-  buildFrom(p);
-}
+vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3, 3) { buildFrom(p); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler)
-  : vpArray2D<double>(3, 3)
-{
-  buildFrom(euler);
-}
+vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(3, 3) { buildFrom(euler); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(x,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz)
-  : vpArray2D<double>(3, 3)
-{
-  buildFrom(Rxyz);
-}
+vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>(3, 3) { buildFrom(Rxyz); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,x) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx)
-  : vpArray2D<double>(3, 3)
-{
-  buildFrom(Rzyx);
-}
+vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(3, 3) { buildFrom(Rzyx); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy,
-                                   const double tuz)
-  : vpArray2D<double>(3, 3)
+vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy, const double tuz) : vpArray2D<double>(3, 3)
 {
   buildFrom(tux, tuy, tuz);
 }
@@ -413,11 +374,7 @@ vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy,
 /*!
   Construct a 3-by-3 rotation matrix from quaternion angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q)
-  : vpArray2D<double>(3, 3)
-{
-  buildFrom(q);
-}
+vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3) { buildFrom(q); }
 
 /*!
   Return the rotation matrix transpose which is also the inverse of the
@@ -643,9 +600,7 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyxVector &v)
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
-vpRotationMatrix vpRotationMatrix::buildFrom(const double tux,
-                                             const double tuy,
-                                             const double tuz)
+vpRotationMatrix vpRotationMatrix::buildFrom(const double tux, const double tuy, const double tuz)
 {
   vpThetaUVector tu(tux, tuy, tuz);
   buildFrom(tu);
@@ -733,9 +688,7 @@ Last column:
 vpColVector vpRotationMatrix::getCol(const unsigned int j) const
 {
   if (j >= getCols())
-    throw(vpException(
-        vpException::dimensionError,
-        "Unable to extract a column vector from the homogeneous matrix"));
+    throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));
   unsigned int nb_rows = getRows();
   vpColVector c(nb_rows);
   for (unsigned int i = 0; i < nb_rows; i++)

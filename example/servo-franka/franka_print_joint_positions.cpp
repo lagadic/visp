@@ -19,14 +19,11 @@
  * https://frankaemika.github.io/docs for more details.
  */
 
-template <class T, size_t N>
-std::ostream &operator<<(std::ostream &ostream, const std::array<T, N> &array)
+template <class T, size_t N> std::ostream &operator<<(std::ostream &ostream, const std::array<T, N> &array)
 {
   ostream << "[";
-  std::copy(array.cbegin(), array.cend() - 1,
-            std::ostream_iterator<T>(ostream, ","));
-  std::copy(array.cend() - 1, array.cend(),
-            std::ostream_iterator<T>(ostream));
+  std::copy(array.cbegin(), array.cend() - 1, std::ostream_iterator<T>(ostream, ","));
+  std::copy(array.cend() - 1, array.cend(), std::ostream_iterator<T>(ostream));
   ostream << "]";
   return ostream;
 }
@@ -34,8 +31,7 @@ std::ostream &operator<<(std::ostream &ostream, const std::array<T, N> &array)
 int main(int argc, char **argv)
 {
   if (argc != 2) {
-    std::cerr << "Usage: ./print_joint_positions <robot-hostname>"
-              << std::endl;
+    std::cerr << "Usage: ./print_joint_positions <robot-hostname>" << std::endl;
     return -1;
   }
 
@@ -45,8 +41,7 @@ int main(int argc, char **argv)
     franka::RobotState state = robot.readOnce();
 
     franka::Model model(robot.loadModel());
-    for (franka::Frame frame = franka::Frame::kJoint1;
-         frame <= franka::Frame::kEndEffector; frame++) {
+    for (franka::Frame frame = franka::Frame::kJoint1; frame <= franka::Frame::kEndEffector; frame++) {
       std::cout << model.pose(frame, state) << std::endl;
     }
   } catch (franka::Exception const &e) {
@@ -58,9 +53,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "This example needs libfranka to control Panda robot."
-            << std::endl;
-}
+int main() { std::cout << "This example needs libfranka to control Panda robot." << std::endl; }
 #endif

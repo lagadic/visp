@@ -46,9 +46,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "This example needs libfranka to control Panda robot."
-            << std::endl;
-}
+int main() { std::cout << "This example needs libfranka to control Panda robot." << std::endl; }
 #endif

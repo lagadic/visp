@@ -57,8 +57,8 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) ||                  \
-    defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) ||                              \
+    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 #if defined(VISP_HAVE_PIONEER)
 #define TEST_COULD_BE_ACHIEVED
@@ -198,10 +198,8 @@ int main(int argc, char **argv)
     vpDot2 dot;
     dot.setGraphics(true);
     dot.setComputeMoments(true);
-    dot.setEllipsoidShapePrecision(
-        0.); // to track a blob without any constraint on the shape
-    dot.setGrayLevelPrecision(
-        0.9); // to set the blob gray level bounds for binarisation
+    dot.setEllipsoidShapePrecision(0.);       // to track a blob without any constraint on the shape
+    dot.setGrayLevelPrecision(0.9);           // to set the blob gray level bounds for binarisation
     dot.setEllipsoidBadPointsPercentage(0.5); // to be accept 50% of bad inner
                                               // and outside points with bad
                                               // gray level
@@ -291,8 +289,7 @@ int main(int argc, char **argv)
       // reference frame
       v = task.computeControlLaw();
 
-      std::cout << "Send velocity to the pionner: " << v[0] << " m/s "
-                << vpMath::deg(v[1]) << " deg/s" << std::endl;
+      std::cout << "Send velocity to the pionner: " << v[0] << " m/s " << vpMath::deg(v[1]) << " deg/s" << std::endl;
 
       // Send the velocity to the robot
       robot.setVelocity(vpRobot::REFERENCE_FRAME, v);
@@ -322,10 +319,5 @@ int main(int argc, char **argv)
   }
 }
 #else
-int main()
-{
-  std::cout
-      << "You don't have the right 3rd party libraries to run this example..."
-      << std::endl;
-}
+int main() { std::cout << "You don't have the right 3rd party libraries to run this example..." << std::endl; }
 #endif

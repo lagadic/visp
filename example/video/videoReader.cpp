@@ -58,16 +58,14 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
-    defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:p:h"
 
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string ppath);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, bool &click_allowed, bool &display);
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed,
+                bool &display);
 
 /*!
 
@@ -79,8 +77,7 @@ Print the program options.
 \param ppath : Personal video path.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string ppath)
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
   fprintf(stdout, "\n\
 Read a video file on the disk.\n\
@@ -133,8 +130,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -187,13 +183,11 @@ int main(int argc, const char **argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  videoReader.cpp" << std::endl << std::endl;
 
     std::cout << "  reading a video file" << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -205,8 +199,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed,
-                   opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display) == false) {
       exit(-1);
     }
 
@@ -220,8 +213,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -230,13 +222,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
       usage(argv[0], NULL, ipath, opt_ppath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  video path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  video path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -318,8 +307,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "Sorry, no display is available. We quit this example."
-            << std::endl;
+  std::cout << "Sorry, no display is available. We quit this example." << std::endl;
   return 0;
 }
 #endif

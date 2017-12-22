@@ -63,22 +63,17 @@
 #else
 #error Unknown machine endianness detected.
 #endif
-#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) ||                    \
-    defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
+#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
 #define VISP_BIG_ENDIAN
-#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) ||                    \
-    defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
+#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) || defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
 #define VISP_LITTLE_ENDIAN
-#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) ||           \
-    defined(__powerpc__) || defined(__ppc__) || defined(__hpux) ||           \
-    defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
+#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || defined(__ppc__) ||         \
+    defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
 
 #define VISP_BIG_ENDIAN
-#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) ||          \
-    defined(__ia64__) || defined(_M_IX86) || defined(_M_IA64) ||             \
-    defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) ||           \
-    defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) ||         \
-    defined(_M_X64)
+#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
+    defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
+    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64)
 
 #define VISP_LITTLE_ENDIAN
 #else
@@ -110,8 +105,7 @@ inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches)
 //   \param match : Point to convert in ViSP type.
 //   \return The train index.
 // */
-inline vpImagePoint
-matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair)
+inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair)
 {
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
@@ -129,17 +123,14 @@ matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair)
 #ifdef VISP_BIG_ENDIAN
 // Swap 16 bits by shifting to the right the first byte and by shifting to the
 // left the second byte
-uint16_t swap16bits(const uint16_t val)
-{
-  return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00));
-}
+uint16_t swap16bits(const uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00)); }
 
 // Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
 // the left the last 2 bytes
 uint32_t swap32bits(const uint32_t val)
 {
-  return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) |
-          ((val << 8) & 0x00FF0000) | ((val << 24) & 0xFF000000));
+  return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
+          ((val << 24) & 0xFF000000));
 }
 
 // Swap a float, the union is necessary because of the representation of a
@@ -246,8 +237,7 @@ void readBinaryDoubleLE(std::ifstream &file, double &double_value)
 }
 
 // Write an unsigned short in little endian
-void writeBinaryUShortLE(std::ofstream &file,
-                         const unsigned short ushort_value)
+void writeBinaryUShortLE(std::ofstream &file, const unsigned short ushort_value)
 {
 #ifdef VISP_BIG_ENDIAN
   // Swap bytes order to little endian
@@ -322,32 +312,22 @@ void writeBinaryDoubleLE(std::ofstream &file, const double double_value)
   \param matcherName : Name of the matcher.
   \param filterType : Filtering matching method chosen.
  */
-vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType,
-                       const vpFeatureDescriptorType &descriptorType,
-                       const std::string &matcherName,
-                       const vpFilterMatchingType &filterType)
-  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0),
-    m_detectionMethod(detectionScore), m_detectionScore(0.15),
-    m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(),
-    m_detectors(), m_extractionTime(0.), m_extractorNames(), m_extractors(),
-    m_filteredMatches(), m_filterType(filterType),
-    m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(),
-    m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
-    m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
-    m_matchingTime(0.), m_matchRansacKeyPointsToPoints(),
-    m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
-    m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(),
-    m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(),
-    m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
-    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useAffineDetection(false),
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatureDescriptorType &descriptorType,
+                       const std::string &matcherName, const vpFilterMatchingType &filterType)
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
+    m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(), m_detectors(),
+    m_extractionTime(0.), m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
+    m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(),
+    m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
+    m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
+    m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
+    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
+    m_useAffineDetection(false),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
-    m_useConsensusPercentage(false), m_useKnn(false),
-    m_useMatchTrainToQuery(false), m_useRansacVVS(true),
+    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
     m_useSingleMatchFilter(true)
 {
   initFeatureNames();
@@ -367,32 +347,22 @@ vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType,
   \param matcherName : Name of the matcher.
   \param filterType : Filtering matching method chosen.
  */
-vpKeyPoint::vpKeyPoint(const std::string &detectorName,
-                       const std::string &extractorName,
-                       const std::string &matcherName,
-                       const vpFilterMatchingType &filterType)
-  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0),
-    m_detectionMethod(detectionScore), m_detectionScore(0.15),
-    m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(),
-    m_detectors(), m_extractionTime(0.), m_extractorNames(), m_extractors(),
-    m_filteredMatches(), m_filterType(filterType),
-    m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(),
-    m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
-    m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
-    m_matchingTime(0.), m_matchRansacKeyPointsToPoints(),
-    m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
-    m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(),
-    m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(),
-    m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
-    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useAffineDetection(false),
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extractorName,
+                       const std::string &matcherName, const vpFilterMatchingType &filterType)
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
+    m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(), m_detectors(),
+    m_extractionTime(0.), m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
+    m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(),
+    m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
+    m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
+    m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
+    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
+    m_useAffineDetection(false),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
-    m_useConsensusPercentage(false), m_useKnn(false),
-    m_useMatchTrainToQuery(false), m_useRansacVVS(true),
+    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
     m_useSingleMatchFilter(true)
 {
   initFeatureNames();
@@ -412,32 +382,22 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName,
   multiple extractors. \param matcherName : Name of the matcher. \param
   filterType : Filtering matching method chosen.
  */
-vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames,
-                       const std::vector<std::string> &extractorNames,
-                       const std::string &matcherName,
-                       const vpFilterMatchingType &filterType)
-  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0),
-    m_detectionMethod(detectionScore), m_detectionScore(0.15),
-    m_detectionThreshold(100.0), m_detectionTime(0.),
-    m_detectorNames(detectorNames), m_detectors(), m_extractionTime(0.),
-    m_extractorNames(extractorNames), m_extractors(), m_filteredMatches(),
-    m_filterType(filterType), m_imageFormat(jpgImageFormat), m_knnMatches(),
-    m_mapOfImageId(), m_mapOfImages(), m_matcher(),
-    m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0),
-    m_matchingRatioThreshold(0.85), m_matchingTime(0.),
-    m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200),
-    m_nbRansacMinInlierCount(100), m_objectFilteredPoints(), m_poseTime(0.),
-    m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(),
-    m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
-    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useAffineDetection(false),
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
+                       const std::string &matcherName, const vpFilterMatchingType &filterType)
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
+    m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(detectorNames),
+    m_detectors(), m_extractionTime(0.), m_extractorNames(extractorNames), m_extractors(), m_filteredMatches(),
+    m_filterType(filterType), m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(),
+    m_matcher(), m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0),
+    m_matchingRatioThreshold(0.85), m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200),
+    m_nbRansacMinInlierCount(100), m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(),
+    m_queryFilteredKeyPoints(), m_queryKeyPoints(), m_ransacConsensusPercentage(20.0), m_ransacInliers(),
+    m_ransacOutliers(), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01), m_trainDescriptors(),
+    m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
-    m_useConsensusPercentage(false), m_useKnn(false),
-    m_useMatchTrainToQuery(false), m_useRansacVVS(true),
+    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
     m_useSingleMatchFilter(true)
 {
   initFeatureNames();
@@ -452,8 +412,7 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames,
    \param mask : Mask containing the location of the image pixels after the
    transformation \param Ai : Inverse affine matrix
  */
-void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img,
-                            cv::Mat &mask, cv::Mat &Ai)
+void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask, cv::Mat &Ai)
 {
   int h = img.rows;
   int w = img.cols;
@@ -483,8 +442,7 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img,
     cv::Rect rect = cv::boundingRect(tcorners);
     A = (cv::Mat_<float>(2, 3) << c, -s, -rect.x, s, c, -rect.y);
 
-    cv::warpAffine(img, img, A, cv::Size(rect.width, rect.height),
-                   cv::INTER_LINEAR, cv::BORDER_REPLICATE);
+    cv::warpAffine(img, img, A, cv::Size(rect.width, rect.height), cv::INTER_LINEAR, cv::BORDER_REPLICATE);
   }
   // if (tilt != 1.0) {
   if (std::fabs(tilt - 1.0) > std::numeric_limits<double>::epsilon()) {
@@ -509,10 +467,7 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img,
    \param I : Input reference image.
    \return The number of detected keypoints in the image \p I.
  */
-unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I)
-{
-  return buildReference(I, vpRect());
-}
+unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I) { return buildReference(I, vpRect()); }
 
 /*!
    Build the reference keypoints list in a region of interest in the image.
@@ -523,10 +478,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I)
    \param width : Width of the region of interest.
    \return The number of detected keypoints in the current image I.
  */
-unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
-                                        const vpImagePoint &iP,
-                                        const unsigned int height,
-                                        const unsigned int width)
+unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                                        const unsigned int height, const unsigned int width)
 {
 
   return buildReference(I, vpRect(iP, width, height));
@@ -539,8 +492,7 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
    \param rectangle : Rectangle of the region of interest.
    \return The number of detected keypoints in the current image I.
  */
-unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
-                                        const vpRect &rectangle)
+unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
   // Reset variables used when dealing with 3D models
   // So as no 3D point list is passed, we dont need this variables
@@ -558,16 +510,14 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
 
     // Flatten the different train lists
     m_trainKeyPoints.clear();
-    for (std::vector<std::vector<cv::KeyPoint> >::const_iterator it =
-             listOfTrainKeyPoints.begin();
+    for (std::vector<std::vector<cv::KeyPoint> >::const_iterator it = listOfTrainKeyPoints.begin();
          it != listOfTrainKeyPoints.end(); ++it) {
       m_trainKeyPoints.insert(m_trainKeyPoints.end(), it->begin(), it->end());
     }
 
     bool first = true;
-    for (std::vector<cv::Mat>::const_iterator it =
-             listOfTrainDescriptors.begin();
-         it != listOfTrainDescriptors.end(); ++it) {
+    for (std::vector<cv::Mat>::const_iterator it = listOfTrainDescriptors.begin(); it != listOfTrainDescriptors.end();
+         ++it) {
       if (first) {
         first = false;
         it->copyTo(m_trainDescriptors);
@@ -582,9 +532,7 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
 
   // Save the correspondence keypoint class_id with the training image_id in a
   // map  Used to display the matching with all the training images
-  for (std::vector<cv::KeyPoint>::const_iterator it =
-           m_trainKeyPoints.begin();
-       it != m_trainKeyPoints.end(); ++it) {
+  for (std::vector<cv::KeyPoint>::const_iterator it = m_trainKeyPoints.begin(); it != m_trainKeyPoints.end(); ++it) {
     m_mapOfImageId[it->class_id] = m_currentImageId;
   }
 
@@ -614,10 +562,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
    keypoints with those already present. \param class_id : The class id to be
    set to the input cv::KeyPoint if != -1.
  */
-void vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
-                                std::vector<cv::KeyPoint> &trainKeyPoints,
-                                std::vector<cv::Point3f> &points3f,
-                                const bool append, const int class_id)
+void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoints,
+                                std::vector<cv::Point3f> &points3f, const bool append, const int class_id)
 {
   cv::Mat trainDescriptors;
   // Copy the input list of keypoints
@@ -631,20 +577,15 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
     // as the value
     std::map<size_t, size_t> mapOfKeypointHashes;
     size_t cpt = 0;
-    for (std::vector<cv::KeyPoint>::const_iterator
-             it = trainKeyPoints_tmp.begin();
-         it != trainKeyPoints_tmp.end(); ++it, cpt++) {
+    for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end();
+         ++it, cpt++) {
       mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
     }
 
     std::vector<cv::Point3f> trainPoints_tmp;
-    for (std::vector<cv::KeyPoint>::const_iterator it =
-             trainKeyPoints.begin();
-         it != trainKeyPoints.end(); ++it) {
-      if (mapOfKeypointHashes.find(myKeypointHash(*it)) !=
-          mapOfKeypointHashes.end()) {
-        trainPoints_tmp.push_back(
-            points3f[mapOfKeypointHashes[myKeypointHash(*it)]]);
+    for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
+      if (mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
+        trainPoints_tmp.push_back(points3f[mapOfKeypointHashes[myKeypointHash(*it)]]);
       }
     }
 
@@ -652,8 +593,7 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
     points3f = trainPoints_tmp;
   }
 
-  buildReference(I, trainKeyPoints, trainDescriptors, points3f, append,
-                 class_id);
+  buildReference(I, trainKeyPoints, trainDescriptors, points3f, append, class_id);
 }
 
 /*!
@@ -668,11 +608,9 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
    present. \param class_id : The class id to be set to the input cv::KeyPoint
    if != -1.
  */
-void vpKeyPoint::buildReference(
-    const vpImage<unsigned char> &I,
-    const std::vector<cv::KeyPoint> &trainKeyPoints,
-    const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-    const bool append, const int class_id)
+void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoints,
+                                const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                                const bool append, const int class_id)
 {
   if (!append) {
     m_currentImageId = 0;
@@ -687,17 +625,15 @@ void vpKeyPoint::buildReference(
   std::vector<cv::KeyPoint> trainKeyPoints_tmp = trainKeyPoints;
   // Set class_id if != -1
   if (class_id != -1) {
-    for (std::vector<cv::KeyPoint>::iterator it = trainKeyPoints_tmp.begin();
-         it != trainKeyPoints_tmp.end(); ++it) {
+    for (std::vector<cv::KeyPoint>::iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end(); ++it) {
       it->class_id = class_id;
     }
   }
 
   // Save the correspondence keypoint class_id with the training image_id in a
   // map  Used to display the matching with all the training images
-  for (std::vector<cv::KeyPoint>::const_iterator it =
-           trainKeyPoints_tmp.begin();
-       it != trainKeyPoints_tmp.end(); ++it) {
+  for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end();
+       ++it) {
     m_mapOfImageId[it->class_id] = m_currentImageId;
   }
 
@@ -705,20 +641,16 @@ void vpKeyPoint::buildReference(
   m_mapOfImages[m_currentImageId] = I;
 
   // Append reference lists
-  this->m_trainKeyPoints.insert(this->m_trainKeyPoints.end(),
-                                trainKeyPoints_tmp.begin(),
-                                trainKeyPoints_tmp.end());
+  this->m_trainKeyPoints.insert(this->m_trainKeyPoints.end(), trainKeyPoints_tmp.begin(), trainKeyPoints_tmp.end());
   if (!append) {
     trainDescriptors.copyTo(this->m_trainDescriptors);
   } else {
     this->m_trainDescriptors.push_back(trainDescriptors);
   }
-  this->m_trainPoints.insert(this->m_trainPoints.end(), points3f.begin(),
-                             points3f.end());
+  this->m_trainPoints.insert(this->m_trainPoints.end(), points3f.begin(), points3f.end());
 
   // Convert OpenCV type to ViSP type for compatibility
-  vpConvert::convertFromOpenCV(this->m_trainKeyPoints,
-                               referenceImagePointsList);
+  vpConvert::convertFromOpenCV(this->m_trainKeyPoints, referenceImagePointsList);
   vpConvert::convertFromOpenCV(this->m_trainPoints, m_trainVpPoints);
 
   // Add train descriptors in matcher object
@@ -743,10 +675,8 @@ void vpKeyPoint::buildReference(
    between the world and the camera frames. \param point : 3D coordinate in
    the world/object frame computed.
  */
-void vpKeyPoint::compute3D(const cv::KeyPoint &candidate,
-                           const std::vector<vpPoint> &roi,
-                           const vpCameraParameters &cam,
-                           const vpHomogeneousMatrix &cMo, cv::Point3f &point)
+void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
+                           const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point)
 {
   /* compute plane equation */
   std::vector<vpPoint>::const_iterator it_roi = roi.begin();
@@ -758,8 +688,7 @@ void vpKeyPoint::compute3D(const cv::KeyPoint &candidate,
   pts[2] = *it_roi;
   vpPlane Po(pts[0], pts[1], pts[2]);
   double xc = 0.0, yc = 0.0;
-  vpPixelMeterConversion::convertPoint(cam, candidate.pt.x, candidate.pt.y,
-                                       xc, yc);
+  vpPixelMeterConversion::convertPoint(cam, candidate.pt.x, candidate.pt.y, xc, yc);
   double Z = -Po.getD() / (Po.getA() * xc + Po.getB() * yc + Po.getC());
   double X = xc * Z;
   double Y = yc * Z;
@@ -770,8 +699,7 @@ void vpKeyPoint::compute3D(const cv::KeyPoint &candidate,
   point_cam[3] = 1;
   vpColVector point_obj(4);
   point_obj = cMo.inverse() * point_cam;
-  point = cv::Point3f((float)point_obj[0], (float)point_obj[1],
-                      (float)point_obj[2]);
+  point = cv::Point3f((float)point_obj[0], (float)point_obj[1], (float)point_obj[2]);
 }
 
 /*!
@@ -789,10 +717,8 @@ void vpKeyPoint::compute3D(const cv::KeyPoint &candidate,
    between the world and the camera frames. \param point : 3D coordinate in
    the world/object frame computed.
  */
-void vpKeyPoint::compute3D(const vpImagePoint &candidate,
-                           const std::vector<vpPoint> &roi,
-                           const vpCameraParameters &cam,
-                           const vpHomogeneousMatrix &cMo, vpPoint &point)
+void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi,
+                           const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point)
 {
   /* compute plane equation */
   std::vector<vpPoint>::const_iterator it_roi = roi.begin();
@@ -833,12 +759,11 @@ void vpKeyPoint::compute3D(const vpImagePoint &candidate,
    the world/object frame) of keypoints located only on faces. \param
    descriptors : Optional parameter, pointer to the descriptors to filter.
  */
-void vpKeyPoint::compute3DForPointsInPolygons(
-    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    std::vector<cv::KeyPoint> &candidates,
-    const std::vector<vpPolygon> &polygons,
-    const std::vector<std::vector<vpPoint> > &roisPt,
-    std::vector<cv::Point3f> &points, cv::Mat *descriptors)
+void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                              std::vector<cv::KeyPoint> &candidates,
+                                              const std::vector<vpPolygon> &polygons,
+                                              const std::vector<std::vector<vpPoint> > &roisPt,
+                                              std::vector<cv::Point3f> &points, cv::Mat *descriptors)
 {
 
   std::vector<cv::KeyPoint> candidatesToCheck = candidates;
@@ -848,19 +773,15 @@ void vpKeyPoint::compute3DForPointsInPolygons(
   cv::Point3f pt;
   cv::Mat desc;
 
-  std::vector<std::pair<cv::KeyPoint, size_t> > pairOfCandidatesToCheck(
-      candidatesToCheck.size());
+  std::vector<std::pair<cv::KeyPoint, size_t> > pairOfCandidatesToCheck(candidatesToCheck.size());
   for (size_t i = 0; i < candidatesToCheck.size(); i++) {
-    pairOfCandidatesToCheck[i] =
-        std::pair<cv::KeyPoint, size_t>(candidatesToCheck[i], i);
+    pairOfCandidatesToCheck[i] = std::pair<cv::KeyPoint, size_t>(candidatesToCheck[i], i);
   }
 
   size_t cpt1 = 0;
   std::vector<vpPolygon> polygons_tmp = polygons;
-  for (std::vector<vpPolygon>::iterator it1 = polygons_tmp.begin();
-       it1 != polygons_tmp.end(); ++it1, cpt1++) {
-    std::vector<std::pair<cv::KeyPoint, size_t> >::iterator it2 =
-        pairOfCandidatesToCheck.begin();
+  for (std::vector<vpPolygon>::iterator it1 = polygons_tmp.begin(); it1 != polygons_tmp.end(); ++it1, cpt1++) {
+    std::vector<std::pair<cv::KeyPoint, size_t> >::iterator it2 = pairOfCandidatesToCheck.begin();
 
     while (it2 != pairOfCandidatesToCheck.end()) {
       imPt.set_ij(it2->first.pt.y, it2->first.pt.x);
@@ -902,12 +823,11 @@ void vpKeyPoint::compute3DForPointsInPolygons(
    faces. \param descriptors : Optional parameter, pointer to the descriptors
    to filter
  */
-void vpKeyPoint::compute3DForPointsInPolygons(
-    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    std::vector<vpImagePoint> &candidates,
-    const std::vector<vpPolygon> &polygons,
-    const std::vector<std::vector<vpPoint> > &roisPt,
-    std::vector<vpPoint> &points, cv::Mat *descriptors)
+void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                              std::vector<vpImagePoint> &candidates,
+                                              const std::vector<vpPolygon> &polygons,
+                                              const std::vector<std::vector<vpPoint> > &roisPt,
+                                              std::vector<vpPoint> &points, cv::Mat *descriptors)
 {
 
   std::vector<vpImagePoint> candidatesToCheck = candidates;
@@ -916,19 +836,15 @@ void vpKeyPoint::compute3DForPointsInPolygons(
   vpPoint pt;
   cv::Mat desc;
 
-  std::vector<std::pair<vpImagePoint, size_t> > pairOfCandidatesToCheck(
-      candidatesToCheck.size());
+  std::vector<std::pair<vpImagePoint, size_t> > pairOfCandidatesToCheck(candidatesToCheck.size());
   for (size_t i = 0; i < candidatesToCheck.size(); i++) {
-    pairOfCandidatesToCheck[i] =
-        std::pair<vpImagePoint, size_t>(candidatesToCheck[i], i);
+    pairOfCandidatesToCheck[i] = std::pair<vpImagePoint, size_t>(candidatesToCheck[i], i);
   }
 
   size_t cpt1 = 0;
   std::vector<vpPolygon> polygons_tmp = polygons;
-  for (std::vector<vpPolygon>::iterator it1 = polygons_tmp.begin();
-       it1 != polygons_tmp.end(); ++it1, cpt1++) {
-    std::vector<std::pair<vpImagePoint, size_t> >::iterator it2 =
-        pairOfCandidatesToCheck.begin();
+  for (std::vector<vpPolygon>::iterator it1 = polygons_tmp.begin(); it1 != polygons_tmp.end(); ++it1, cpt1++) {
+    std::vector<std::pair<vpImagePoint, size_t> >::iterator it2 = pairOfCandidatesToCheck.begin();
 
     while (it2 != pairOfCandidatesToCheck.end()) {
       if (it1->isInside(it2->first)) {
@@ -965,12 +881,10 @@ void vpKeyPoint::compute3DForPointsInPolygons(
    pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsOnCylinders(
-    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    std::vector<cv::KeyPoint> &candidates,
+    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, std::vector<cv::KeyPoint> &candidates,
     const std::vector<vpCylinder> &cylinders,
-    const std::vector<std::vector<std::vector<vpImagePoint> > >
-        &vectorOfCylinderRois,
-    std::vector<cv::Point3f> &points, cv::Mat *descriptors)
+    const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois, std::vector<cv::Point3f> &points,
+    cv::Mat *descriptors)
 {
   std::vector<cv::KeyPoint> candidatesToCheck = candidates;
   candidates.clear();
@@ -979,32 +893,26 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
 
   // Keep only keypoints on cylinders
   size_t cpt_keypoint = 0;
-  for (std::vector<cv::KeyPoint>::const_iterator
-           it1 = candidatesToCheck.begin();
-       it1 != candidatesToCheck.end(); ++it1, cpt_keypoint++) {
+  for (std::vector<cv::KeyPoint>::const_iterator it1 = candidatesToCheck.begin(); it1 != candidatesToCheck.end();
+       ++it1, cpt_keypoint++) {
     size_t cpt_cylinder = 0;
 
     // Iterate through the list of vpCylinders
-    for (std::vector<std::vector<std::vector<vpImagePoint> > >::const_iterator
-             it2 = vectorOfCylinderRois.begin();
+    for (std::vector<std::vector<std::vector<vpImagePoint> > >::const_iterator it2 = vectorOfCylinderRois.begin();
          it2 != vectorOfCylinderRois.end(); ++it2, cpt_cylinder++) {
       // Iterate through the list of the bounding boxes of the current
       // vpCylinder
-      for (std::vector<std::vector<vpImagePoint> >::const_iterator it3 =
-               it2->begin();
-           it3 != it2->end(); ++it3) {
+      for (std::vector<std::vector<vpImagePoint> >::const_iterator it3 = it2->begin(); it3 != it2->end(); ++it3) {
         if (vpPolygon::isInside(*it3, it1->pt.y, it1->pt.x)) {
           candidates.push_back(*it1);
 
           // Calculate the 3D coordinates for each keypoint located on
           // cylinders
           double xm = 0.0, ym = 0.0;
-          vpPixelMeterConversion::convertPoint(cam, it1->pt.x, it1->pt.y, xm,
-                                               ym);
+          vpPixelMeterConversion::convertPoint(cam, it1->pt.x, it1->pt.y, xm, ym);
           double Z = cylinders[cpt_cylinder].computeZ(xm, ym);
 
-          if (!vpMath::isNaN(Z) &&
-              Z > std::numeric_limits<double>::epsilon()) {
+          if (!vpMath::isNaN(Z) && Z > std::numeric_limits<double>::epsilon()) {
             vpColVector point_cam(4);
             point_cam[0] = xm * Z;
             point_cam[1] = ym * Z;
@@ -1014,8 +922,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
             point_obj = cMo.inverse() * point_cam;
             vpPoint pt;
             pt.setWorldCoordinates(point_obj);
-            points.push_back(cv::Point3f(
-                (float)pt.get_oX(), (float)pt.get_oY(), (float)pt.get_oZ()));
+            points.push_back(cv::Point3f((float)pt.get_oX(), (float)pt.get_oY(), (float)pt.get_oZ()));
 
             if (descriptors != NULL) {
               desc.push_back(descriptors->row((int)cpt_keypoint));
@@ -1049,12 +956,10 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
    parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsOnCylinders(
-    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    std::vector<vpImagePoint> &candidates,
+    const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, std::vector<vpImagePoint> &candidates,
     const std::vector<vpCylinder> &cylinders,
-    const std::vector<std::vector<std::vector<vpImagePoint> > >
-        &vectorOfCylinderRois,
-    std::vector<vpPoint> &points, cv::Mat *descriptors)
+    const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois, std::vector<vpPoint> &points,
+    cv::Mat *descriptors)
 {
   std::vector<vpImagePoint> candidatesToCheck = candidates;
   candidates.clear();
@@ -1063,32 +968,26 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
 
   // Keep only keypoints on cylinders
   size_t cpt_keypoint = 0;
-  for (std::vector<vpImagePoint>::const_iterator
-           it1 = candidatesToCheck.begin();
-       it1 != candidatesToCheck.end(); ++it1, cpt_keypoint++) {
+  for (std::vector<vpImagePoint>::const_iterator it1 = candidatesToCheck.begin(); it1 != candidatesToCheck.end();
+       ++it1, cpt_keypoint++) {
     size_t cpt_cylinder = 0;
 
     // Iterate through the list of vpCylinders
-    for (std::vector<std::vector<std::vector<vpImagePoint> > >::const_iterator
-             it2 = vectorOfCylinderRois.begin();
+    for (std::vector<std::vector<std::vector<vpImagePoint> > >::const_iterator it2 = vectorOfCylinderRois.begin();
          it2 != vectorOfCylinderRois.end(); ++it2, cpt_cylinder++) {
       // Iterate through the list of the bounding boxes of the current
       // vpCylinder
-      for (std::vector<std::vector<vpImagePoint> >::const_iterator it3 =
-               it2->begin();
-           it3 != it2->end(); ++it3) {
+      for (std::vector<std::vector<vpImagePoint> >::const_iterator it3 = it2->begin(); it3 != it2->end(); ++it3) {
         if (vpPolygon::isInside(*it3, it1->get_i(), it1->get_j())) {
           candidates.push_back(*it1);
 
           // Calculate the 3D coordinates for each keypoint located on
           // cylinders
           double xm = 0.0, ym = 0.0;
-          vpPixelMeterConversion::convertPoint(cam, it1->get_u(),
-                                               it1->get_v(), xm, ym);
+          vpPixelMeterConversion::convertPoint(cam, it1->get_u(), it1->get_v(), xm, ym);
           double Z = cylinders[cpt_cylinder].computeZ(xm, ym);
 
-          if (!vpMath::isNaN(Z) &&
-              Z > std::numeric_limits<double>::epsilon()) {
+          if (!vpMath::isNaN(Z) && Z > std::numeric_limits<double>::epsilon()) {
             vpColVector point_cam(4);
             point_cam[0] = xm * Z;
             point_cam[1] = ym * Z;
@@ -1129,18 +1028,13 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
    OpenCV pose estimation method. \return True if the pose has been computed,
    false otherwise (not enough points, or size list mismatch).
  */
-bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints,
-                             const std::vector<cv::Point3f> &objectPoints,
-                             const vpCameraParameters &cam,
-                             vpHomogeneousMatrix &cMo,
-                             std::vector<int> &inlierIndex,
-                             double &elapsedTime,
-                             bool (*func)(vpHomogeneousMatrix *))
+bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
+                             const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
+                             double &elapsedTime, bool (*func)(vpHomogeneousMatrix *))
 {
   double t = vpTime::measureTimeMs();
 
-  if (imagePoints.size() < 4 || objectPoints.size() < 4 ||
-      imagePoints.size() != objectPoints.size()) {
+  if (imagePoints.size() < 4 || objectPoints.size() < 4 || imagePoints.size() != objectPoints.size()) {
     elapsedTime = (vpTime::measureTimeMs() - t);
     std::cerr << "Not enough points to compute the pose (at least 4 points "
                  "are needed)."
@@ -1150,14 +1044,13 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints,
   }
 
   cv::Mat cameraMatrix =
-      (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0,
-       cam.get_py(), cam.get_v0(), 0, 0, 1);
+      (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
   cv::Mat rvec, tvec;
 
   // Bug with OpenCV < 2.4.0 when zero distorsion is provided by an empty
   // array.  http://code.opencv.org/issues/1700 ;
-  // http://code.opencv.org/issues/1718  what(): Distortion coefficients must be
-  // 1x4, 4x1, 1x5, 5x1, 1x8 or 8x1 floating-point vector in function
+  // http://code.opencv.org/issues/1718  what(): Distortion coefficients must
+  // be 1x4, 4x1, 1x5, 5x1, 1x8 or 8x1 floating-point vector in function
   // cvProjectPoints2  Fixed in OpenCV 2.4.0 (r7558)
   //  cv::Mat distCoeffs;
   cv::Mat distCoeffs = cv::Mat::zeros(1, 5, CV_64F);
@@ -1165,18 +1058,17 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints,
   try {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     // OpenCV 3.0.0 (2014/12/12)
-    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
-                       rvec, tvec, false, m_nbRansacIterations,
+    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, false, m_nbRansacIterations,
                        (float)m_ransacReprojectionError,
                        0.99, // confidence=0.99 (default) – The probability
                              // that the algorithm produces a useful result.
                        inlierIndex, cv::SOLVEPNP_ITERATIVE);
 // SOLVEPNP_ITERATIVE (default): Iterative method is based on
 // Levenberg-Marquardt optimization.  In this case the function finds such a
-// pose that minimizes reprojection error, that is the sum of squared distances
-// between the observed projections imagePoints and the projected (using
-// projectPoints() ) objectPoints .  SOLVEPNP_P3P: Method is based on the paper
-// of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution
+// pose that minimizes reprojection error, that is the sum of squared
+// distances between the observed projections imagePoints and the projected
+// (using projectPoints() ) objectPoints .  SOLVEPNP_P3P: Method is based on
+// the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution
 // Classification  for the Perspective-Three-Point Problem”. In this case the
 // function requires exactly four object and image points.  SOLVEPNP_EPNP:
 // Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the
@@ -1185,31 +1077,26 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints,
 // Roumeliotis. “A Direct Least-Squares (DLS)  Method for PnP”.  SOLVEPNP_UPNP
 // Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto,
 // F.Moreno-Noguer. “Exhaustive Linearization for Robust Camera Pose and Focal
-//Length Estimation”. In this case the function also  estimates the parameters
-// f_x and f_y assuming that both have the same value. Then the cameraMatrix is
-// updated with the  estimated focal length.
+// Length Estimation”. In this case the function also  estimates the
+// parameters
+// f_x and f_y assuming that both have the same value. Then the cameraMatrix
+// is updated with the  estimated focal length.
 #else
     int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
     if (m_useConsensusPercentage) {
-      nbInlierToReachConsensus =
-          (int)(m_ransacConsensusPercentage / 100.0 *
-                (double)m_queryFilteredKeyPoints.size());
+      nbInlierToReachConsensus = (int)(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
     }
 
-    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
-                       rvec, tvec, false, m_nbRansacIterations,
-                       (float)m_ransacReprojectionError,
-                       nbInlierToReachConsensus, inlierIndex);
+    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, false, m_nbRansacIterations,
+                       (float)m_ransacReprojectionError, nbInlierToReachConsensus, inlierIndex);
 #endif
   } catch (cv::Exception &e) {
     std::cerr << e.what() << std::endl;
     elapsedTime = (vpTime::measureTimeMs() - t);
     return false;
   }
-  vpTranslationVector translationVec(tvec.at<double>(0), tvec.at<double>(1),
-                                     tvec.at<double>(2));
-  vpThetaUVector thetaUVector(rvec.at<double>(0), rvec.at<double>(1),
-                              rvec.at<double>(2));
+  vpTranslationVector translationVec(tvec.at<double>(0), tvec.at<double>(1), tvec.at<double>(2));
+  vpThetaUVector thetaUVector(rvec.at<double>(0), rvec.at<double>(1), rvec.at<double>(2));
   cMo = vpHomogeneousMatrix(translationVec, thetaUVector);
 
   if (func != NULL) {
@@ -1237,15 +1124,11 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints,
    Function pointer to filter the pose in Ransac pose estimation, if we want
    to eliminate the poses which do not respect some criterion
  */
-bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints,
-                             vpHomogeneousMatrix &cMo,
-                             std::vector<vpPoint> &inliers,
-                             double &elapsedTime,
-                             bool (*func)(vpHomogeneousMatrix *))
+bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
+                             std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *))
 {
   std::vector<unsigned int> inlierIndex;
-  return computePose(objectVpPoints, cMo, inliers, inlierIndex, elapsedTime,
-                     func);
+  return computePose(objectVpPoints, cMo, inliers, inlierIndex, elapsedTime, func);
 }
 
 /*!
@@ -1262,11 +1145,8 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints,
    the pose in Ransac pose estimation, if we want to eliminate the poses which
    do not respect some criterion
  */
-bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints,
-                             vpHomogeneousMatrix &cMo,
-                             std::vector<vpPoint> &inliers,
-                             std::vector<unsigned int> &inlierIndex,
-                             double &elapsedTime,
+bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
+                             std::vector<vpPoint> &inliers, std::vector<unsigned int> &inlierIndex, double &elapsedTime,
                              bool (*func)(vpHomogeneousMatrix *))
 {
   double t = vpTime::measureTimeMs();
@@ -1281,17 +1161,14 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints,
 
   vpPose pose;
 
-  for (std::vector<vpPoint>::const_iterator it = objectVpPoints.begin();
-       it != objectVpPoints.end(); ++it) {
+  for (std::vector<vpPoint>::const_iterator it = objectVpPoints.begin(); it != objectVpPoints.end(); ++it) {
     pose.addPoint(*it);
   }
 
-  unsigned int nbInlierToReachConsensus =
-      (unsigned int)m_nbRansacMinInlierCount;
+  unsigned int nbInlierToReachConsensus = (unsigned int)m_nbRansacMinInlierCount;
   if (m_useConsensusPercentage) {
     nbInlierToReachConsensus =
-        (unsigned int)(m_ransacConsensusPercentage / 100.0 *
-                       (double)m_queryFilteredKeyPoints.size());
+        (unsigned int)(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
   }
 
   pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
@@ -1343,9 +1220,8 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints,
    detected keypoints and the location of the projection of the 3D model with
    the estimated pose.
  */
-double vpKeyPoint::computePoseEstimationError(
-    const std::vector<std::pair<cv::KeyPoint, cv::Point3f> > &matchKeyPoints,
-    const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo_est)
+double vpKeyPoint::computePoseEstimationError(const std::vector<std::pair<cv::KeyPoint, cv::Point3f> > &matchKeyPoints,
+                                              const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo_est)
 {
   if (matchKeyPoints.size() == 0) {
     // return std::numeric_limits<double>::max(); // create an error under
@@ -1356,8 +1232,7 @@ double vpKeyPoint::computePoseEstimationError(
   std::vector<double> errors(matchKeyPoints.size());
   size_t cpt = 0;
   vpPoint pt;
-  for (std::vector<std::pair<cv::KeyPoint, cv::Point3f> >::const_iterator
-           it = matchKeyPoints.begin();
+  for (std::vector<std::pair<cv::KeyPoint, cv::Point3f> >::const_iterator it = matchKeyPoints.begin();
        it != matchKeyPoints.end(); ++it, cpt++) {
     pt.set_oX(it->second.x);
     pt.set_oY(it->second.y);
@@ -1365,8 +1240,7 @@ double vpKeyPoint::computePoseEstimationError(
     pt.project(cMo_est);
     double u = 0.0, v = 0.0;
     vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), u, v);
-    errors[cpt] = std::sqrt((u - it->first.pt.x) * (u - it->first.pt.x) +
-                            (v - it->first.pt.y) * (v - it->first.pt.y));
+    errors[cpt] = std::sqrt((u - it->first.pt.x) * (u - it->first.pt.x) + (v - it->first.pt.y) * (v - it->first.pt.y));
   }
 
   return std::accumulate(errors.begin(), errors.end(), 0.0) / errors.size();
@@ -1380,8 +1254,7 @@ double vpKeyPoint::computePoseEstimationError(
    \param ICurrent : Current image.
    \param IMatching : Image matching.
  */
-void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef,
-                                     vpImage<unsigned char> &ICurrent,
+void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsigned char> &ICurrent,
                                      vpImage<unsigned char> &IMatching)
 {
   // Image matching side by side
@@ -1400,8 +1273,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef,
    \param ICurrent : Current image.
    \param IMatching : Image initialized with appropriate size.
  */
-void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent,
-                                     vpImage<unsigned char> &IMatching)
+void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching)
 {
   // Nb images in the training database + the current image we want to detect
   // the object
@@ -1418,8 +1290,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent,
   } else {
     // Multiple training images, display them as a mosaic image
     //(unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
-    unsigned int nbImgSqrt =
-        (unsigned int)vpMath::round(std::sqrt((double)nbImg));
+    unsigned int nbImgSqrt = (unsigned int)vpMath::round(std::sqrt((double)nbImg));
 
     // Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -1433,9 +1304,8 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent,
 
     unsigned int maxW = ICurrent.getWidth();
     unsigned int maxH = ICurrent.getHeight();
-    for (std::map<int, vpImage<unsigned char> >::const_iterator it =
-             m_mapOfImages.begin();
-         it != m_mapOfImages.end(); ++it) {
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it) {
       if (maxW < it->second.getWidth()) {
         maxW = it->second.getWidth();
       }
@@ -1456,9 +1326,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent,
    \param keyPoints : Output list of the detected keypoints.
    \param rectangle : Optional rectangle of the region of interest.
  */
-void vpKeyPoint::detect(const vpImage<unsigned char> &I,
-                        std::vector<cv::KeyPoint> &keyPoints,
-                        const vpRect &rectangle)
+void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, const vpRect &rectangle)
 {
   double elapsedTime;
   detect(I, keyPoints, elapsedTime, rectangle);
@@ -1472,9 +1340,7 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I,
    \param mask : Optional 8-bit integer mask to detect only where mask[i][j]
    != 0.
  */
-void vpKeyPoint::detect(const cv::Mat &matImg,
-                        std::vector<cv::KeyPoint> &keyPoints,
-                        const cv::Mat &mask)
+void vpKeyPoint::detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &mask)
 {
   double elapsedTime;
   detect(matImg, keyPoints, elapsedTime, mask);
@@ -1488,9 +1354,8 @@ void vpKeyPoint::detect(const cv::Mat &matImg,
    \param elapsedTime : Elapsed time.
    \param rectangle : Optional rectangle of the region of interest.
  */
-void vpKeyPoint::detect(const vpImage<unsigned char> &I,
-                        std::vector<cv::KeyPoint> &keyPoints,
-                        double &elapsedTime, const vpRect &rectangle)
+void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+                        const vpRect &rectangle)
 {
   cv::Mat matImg;
   vpImageConvert::convert(I, matImg, false);
@@ -1516,15 +1381,13 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I,
    \param mask : Optional 8-bit integer mask to detect only where mask[i][j]
    != 0.
  */
-void vpKeyPoint::detect(const cv::Mat &matImg,
-                        std::vector<cv::KeyPoint> &keyPoints,
-                        double &elapsedTime, const cv::Mat &mask)
+void vpKeyPoint::detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+                        const cv::Mat &mask)
 {
   double t = vpTime::measureTimeMs();
   keyPoints.clear();
 
-  for (std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator
-           it = m_detectors.begin();
+  for (std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator it = m_detectors.begin();
        it != m_detectors.end(); ++it) {
     std::vector<cv::KeyPoint> kp;
     it->second->detect(matImg, kp, mask);
@@ -1541,23 +1404,16 @@ void vpKeyPoint::detect(const cv::Mat &matImg,
    \param ICurrent : Input current image.
    \param size : Size of the displayed cross.
  */
-void vpKeyPoint::display(const vpImage<unsigned char> &IRef,
-                         const vpImage<unsigned char> &ICurrent,
-                         unsigned int size)
+void vpKeyPoint::display(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent, unsigned int size)
 {
   std::vector<vpImagePoint> vpQueryImageKeyPoints;
   getQueryKeyPoints(vpQueryImageKeyPoints);
   std::vector<vpImagePoint> vpTrainImageKeyPoints;
   getTrainKeyPoints(vpTrainImageKeyPoints);
 
-  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin();
-       it != m_filteredMatches.end(); ++it) {
-    vpDisplay::displayCross(IRef,
-                            vpTrainImageKeyPoints[(size_t)(it->trainIdx)],
-                            size, vpColor::red);
-    vpDisplay::displayCross(ICurrent,
-                            vpQueryImageKeyPoints[(size_t)(it->queryIdx)],
-                            size, vpColor::green);
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+    vpDisplay::displayCross(IRef, vpTrainImageKeyPoints[(size_t)(it->trainIdx)], size, vpColor::red);
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, vpColor::green);
   }
 }
 
@@ -1568,16 +1424,13 @@ void vpKeyPoint::display(const vpImage<unsigned char> &IRef,
    \param size : Size of the displayed crosses.
    \param color : Color of the crosses.
  */
-void vpKeyPoint::display(const vpImage<unsigned char> &ICurrent,
-                         unsigned int size, const vpColor &color)
+void vpKeyPoint::display(const vpImage<unsigned char> &ICurrent, unsigned int size, const vpColor &color)
 {
   std::vector<vpImagePoint> vpQueryImageKeyPoints;
   getQueryKeyPoints(vpQueryImageKeyPoints);
 
-  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin();
-       it != m_filteredMatches.end(); ++it) {
-    vpDisplay::displayCross(
-        ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, color);
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, color);
   }
 }
 
@@ -1592,11 +1445,8 @@ void vpKeyPoint::display(const vpImage<unsigned char> &ICurrent,
   \param color : Color to use, if none, we pick randomly a color for each pair
   of matching.
  */
-void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef,
-                                 vpImage<unsigned char> &IMatching,
-                                 unsigned int crossSize,
-                                 unsigned int lineThickness,
-                                 const vpColor &color)
+void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<unsigned char> &IMatching,
+                                 unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
   srand((unsigned int)time(NULL));
@@ -1608,20 +1458,17 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef,
   getTrainKeyPoints(trainImageKeyPoints);
 
   vpImagePoint leftPt, rightPt;
-  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin();
-       it != m_filteredMatches.end(); ++it) {
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
     if (randomColor) {
       currentColor = vpColor((rand() % 256), (rand() % 256), (rand() % 256));
     }
 
     leftPt = trainImageKeyPoints[(size_t)(it->trainIdx)];
-    rightPt = vpImagePoint(
-        queryImageKeyPoints[(size_t)(it->queryIdx)].get_i(),
-        queryImageKeyPoints[(size_t)it->queryIdx].get_j() + IRef.getWidth());
+    rightPt = vpImagePoint(queryImageKeyPoints[(size_t)(it->queryIdx)].get_i(),
+                           queryImageKeyPoints[(size_t)it->queryIdx].get_j() + IRef.getWidth());
     vpDisplay::displayCross(IMatching, leftPt, crossSize, currentColor);
     vpDisplay::displayCross(IMatching, rightPt, crossSize, currentColor);
-    vpDisplay::displayLine(IMatching, leftPt, rightPt, currentColor,
-                           lineThickness);
+    vpDisplay::displayLine(IMatching, leftPt, rightPt, currentColor, lineThickness);
   }
 }
 
@@ -1636,10 +1483,9 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef,
    available. \param crossSize : Size of the displayed crosses. \param
    lineThickness : Thickness of the displayed line.
  */
-void vpKeyPoint::displayMatching(
-    const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching,
-    const std::vector<vpImagePoint> &ransacInliers, unsigned int crossSize,
-    unsigned int lineThickness)
+void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching,
+                                 const std::vector<vpImagePoint> &ransacInliers, unsigned int crossSize,
+                                 unsigned int lineThickness)
 {
   if (m_mapOfImages.empty() || m_mapOfImageId.empty()) {
     // No training images so return
@@ -1656,8 +1502,7 @@ void vpKeyPoint::displayMatching(
     displayMatching(m_mapOfImages.begin()->second, IMatching, crossSize);
   } else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt(
-        (double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 
@@ -1668,9 +1513,8 @@ void vpKeyPoint::displayMatching(
     std::map<int, int> mapOfImageIdIndex;
     int cpt = 0;
     unsigned int maxW = ICurrent.getWidth(), maxH = ICurrent.getHeight();
-    for (std::map<int, vpImage<unsigned char> >::const_iterator
-             it = m_mapOfImages.begin();
-         it != m_mapOfImages.end(); ++it, cpt++) {
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it, cpt++) {
       mapOfImageIdIndex[it->first] = cpt;
 
       if (maxW < it->second.getWidth()) {
@@ -1687,19 +1531,15 @@ void vpKeyPoint::displayMatching(
     int medianI = nbHeight / 2;
     int medianJ = nbWidth / 2;
     int medianIndex = medianI * nbWidth + medianJ;
-    for (std::vector<cv::KeyPoint>::const_iterator it =
-             m_trainKeyPoints.begin();
-         it != m_trainKeyPoints.end(); ++it) {
+    for (std::vector<cv::KeyPoint>::const_iterator it = m_trainKeyPoints.begin(); it != m_trainKeyPoints.end(); ++it) {
       vpImagePoint topLeftCorner;
       int current_class_id_index = 0;
       if (mapOfImageIdIndex[m_mapOfImageId[it->class_id]] < medianIndex) {
-        current_class_id_index =
-            mapOfImageIdIndex[m_mapOfImageId[it->class_id]];
+        current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]];
       } else {
         // Shift of one unity the index of the training images which are after
         // the current image
-        current_class_id_index =
-            mapOfImageIdIndex[m_mapOfImageId[it->class_id]] + 1;
+        current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]] + 1;
       }
 
       int indexI = current_class_id_index / nbWidth;
@@ -1707,71 +1547,48 @@ void vpKeyPoint::displayMatching(
       topLeftCorner.set_ij((int)maxH * indexI, (int)maxW * indexJ);
 
       // Display cross for keypoints in the learning database
-      vpDisplay::displayCross(
-          IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
-          (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
+                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
 
     vpImagePoint topLeftCorner((int)maxH * medianI, (int)maxW * medianJ);
-    for (std::vector<cv::KeyPoint>::const_iterator it =
-             m_queryKeyPoints.begin();
-         it != m_queryKeyPoints.end(); ++it) {
+    for (std::vector<cv::KeyPoint>::const_iterator it = m_queryKeyPoints.begin(); it != m_queryKeyPoints.end(); ++it) {
       // Display cross for keypoints detected in the current image
-      vpDisplay::displayCross(
-          IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
-          (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
+                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
     }
-    for (std::vector<vpImagePoint>::const_iterator it = ransacInliers.begin();
-         it != ransacInliers.end(); ++it) {
+    for (std::vector<vpImagePoint>::const_iterator it = ransacInliers.begin(); it != ransacInliers.end(); ++it) {
       // Display green circle for RANSAC inliers
-      vpDisplay::displayCircle(
-          IMatching, (int)(it->get_v() + topLeftCorner.get_i()),
-          (int)(it->get_u() + topLeftCorner.get_j()), 4, vpColor::green);
+      vpDisplay::displayCircle(IMatching, (int)(it->get_v() + topLeftCorner.get_i()),
+                               (int)(it->get_u() + topLeftCorner.get_j()), 4, vpColor::green);
     }
-    for (std::vector<vpImagePoint>::const_iterator it =
-             m_ransacOutliers.begin();
-         it != m_ransacOutliers.end(); ++it) {
+    for (std::vector<vpImagePoint>::const_iterator it = m_ransacOutliers.begin(); it != m_ransacOutliers.end(); ++it) {
       // Display red circle for RANSAC outliers
-      vpDisplay::displayCircle(
-          IMatching, (int)(it->get_i() + topLeftCorner.get_i()),
-          (int)(it->get_j() + topLeftCorner.get_j()), 4, vpColor::red);
+      vpDisplay::displayCircle(IMatching, (int)(it->get_i() + topLeftCorner.get_i()),
+                               (int)(it->get_j() + topLeftCorner.get_j()), 4, vpColor::red);
     }
 
-    for (std::vector<cv::DMatch>::const_iterator it =
-             m_filteredMatches.begin();
-         it != m_filteredMatches.end(); ++it) {
+    for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
       int current_class_id = 0;
-      if (mapOfImageIdIndex
-              [m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx]
-                                  .class_id]] < medianIndex) {
-        current_class_id = mapOfImageIdIndex
-            [m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]];
+      if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] < medianIndex) {
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]];
       } else {
         // Shift of one unity the index of the training images which are after
         // the current image
-        current_class_id =
-            mapOfImageIdIndex
-                [m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx]
-                                    .class_id]] +
-            1;
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] + 1;
       }
 
       int indexI = current_class_id / nbWidth;
       int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end(
-          (int)maxH * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
-          (int)maxW * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
-      vpImagePoint start(
-          (int)maxH * medianI +
-              m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
-          (int)maxW * medianJ +
-              m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
+      vpImagePoint end((int)maxH * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
+                       (int)maxW * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
+      vpImagePoint start((int)maxH * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
+                         (int)maxW * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
 
       // Draw line for matching keypoints detected in the current image and
       // those detected  in the training images
-      vpDisplay::displayLine(IMatching, start, end, vpColor::green,
-                             lineThickness);
+      vpDisplay::displayLine(IMatching, start, end, vpColor::green, lineThickness);
     }
   }
 }
@@ -1786,9 +1603,7 @@ void vpKeyPoint::displayMatching(
    train points, when a keypoint cannot be extracted, we need to remove the
    corresponding 3D point.
  */
-void vpKeyPoint::extract(const vpImage<unsigned char> &I,
-                         std::vector<cv::KeyPoint> &keyPoints,
-                         cv::Mat &descriptors,
+void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                          std::vector<cv::Point3f> *trainPoints)
 {
   double elapsedTime;
@@ -1805,9 +1620,7 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I,
    train points, when a keypoint cannot be extracted, we need to remove the
    corresponding 3D point.
  */
-void vpKeyPoint::extract(const cv::Mat &matImg,
-                         std::vector<cv::KeyPoint> &keyPoints,
-                         cv::Mat &descriptors,
+void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                          std::vector<cv::Point3f> *trainPoints)
 {
   double elapsedTime;
@@ -1824,10 +1637,8 @@ void vpKeyPoint::extract(const cv::Mat &matImg,
    trainPoints : Pointer to the list of 3D train points, when a keypoint
    cannot be extracted, we need to remove the corresponding 3D point.
  */
-void vpKeyPoint::extract(const vpImage<unsigned char> &I,
-                         std::vector<cv::KeyPoint> &keyPoints,
-                         cv::Mat &descriptors, double &elapsedTime,
-                         std::vector<cv::Point3f> *trainPoints)
+void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+                         double &elapsedTime, std::vector<cv::Point3f> *trainPoints)
 {
   cv::Mat matImg;
   vpImageConvert::convert(I, matImg, false);
@@ -1844,17 +1655,13 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I,
    trainPoints : Pointer to the list of 3D train points, when a keypoint
    cannot be extracted, we need to remove the corresponding 3D point.
  */
-void vpKeyPoint::extract(const cv::Mat &matImg,
-                         std::vector<cv::KeyPoint> &keyPoints,
-                         cv::Mat &descriptors, double &elapsedTime,
-                         std::vector<cv::Point3f> *trainPoints)
+void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+                         double &elapsedTime, std::vector<cv::Point3f> *trainPoints)
 {
   double t = vpTime::measureTimeMs();
   bool first = true;
 
-  for (std::map<std::string,
-                cv::Ptr<cv::DescriptorExtractor> >::const_iterator itd =
-           m_extractors.begin();
+  for (std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator itd = m_extractors.begin();
        itd != m_extractors.end(); ++itd) {
     if (first) {
       first = false;
@@ -1873,20 +1680,15 @@ void vpKeyPoint::extract(const cv::Mat &matImg,
           // keypoint as the value
           std::map<size_t, size_t> mapOfKeypointHashes;
           size_t cpt = 0;
-          for (std::vector<cv::KeyPoint>::const_iterator
-                   it = keyPoints_tmp.begin();
-               it != keyPoints_tmp.end(); ++it, cpt++) {
+          for (std::vector<cv::KeyPoint>::const_iterator it = keyPoints_tmp.begin(); it != keyPoints_tmp.end();
+               ++it, cpt++) {
             mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
           }
 
           std::vector<cv::Point3f> trainPoints_tmp;
-          for (std::vector<cv::KeyPoint>::const_iterator it =
-                   keyPoints.begin();
-               it != keyPoints.end(); ++it) {
-            if (mapOfKeypointHashes.find(myKeypointHash(*it)) !=
-                mapOfKeypointHashes.end()) {
-              trainPoints_tmp.push_back(
-                  (*trainPoints)[mapOfKeypointHashes[myKeypointHash(*it)]]);
+          for (std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
+            if (mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
+              trainPoints_tmp.push_back((*trainPoints)[mapOfKeypointHashes[myKeypointHash(*it)]]);
             }
           }
 
@@ -1912,26 +1714,21 @@ void vpKeyPoint::extract(const cv::Mat &matImg,
         // keypoint as the value
         std::map<size_t, size_t> mapOfKeypointHashes;
         size_t cpt = 0;
-        for (std::vector<cv::KeyPoint>::const_iterator
-                 it = keyPoints_tmp.begin();
-             it != keyPoints_tmp.end(); ++it, cpt++) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = keyPoints_tmp.begin(); it != keyPoints_tmp.end();
+             ++it, cpt++) {
           mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
         }
 
         std::vector<cv::Point3f> trainPoints_tmp;
         cv::Mat descriptors_tmp;
-        for (std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin();
-             it != keyPoints.end(); ++it) {
-          if (mapOfKeypointHashes.find(myKeypointHash(*it)) !=
-              mapOfKeypointHashes.end()) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
+          if (mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
             if (trainPoints != NULL && !trainPoints->empty()) {
-              trainPoints_tmp.push_back(
-                  (*trainPoints)[mapOfKeypointHashes[myKeypointHash(*it)]]);
+              trainPoints_tmp.push_back((*trainPoints)[mapOfKeypointHashes[myKeypointHash(*it)]]);
             }
 
             if (!descriptors.empty()) {
-              descriptors_tmp.push_back(descriptors.row(
-                  (int)mapOfKeypointHashes[myKeypointHash(*it)]));
+              descriptors_tmp.push_back(descriptors.row((int)mapOfKeypointHashes[myKeypointHash(*it)]));
             }
           }
         }
@@ -1992,8 +1789,7 @@ void vpKeyPoint::filterMatches()
       mean /= m_queryDescriptors.rows;
     }
 
-    double sq_sum = std::inner_product(
-        distance_vec.begin(), distance_vec.end(), distance_vec.begin(), 0.0);
+    double sq_sum = std::inner_product(distance_vec.begin(), distance_vec.end(), distance_vec.begin(), 0.0);
     double stdev = std::sqrt(sq_sum / distance_vec.size() - mean * mean);
     double threshold = min_dist + stdev;
 
@@ -2001,27 +1797,20 @@ void vpKeyPoint::filterMatches()
       if (m_knnMatches[i].size() >= 2) {
         // Calculate ratio of the descriptor distance between the two nearest
         // neighbors of the keypoint
-        float ratio =
-            m_knnMatches[i][0].distance / m_knnMatches[i][1].distance;
+        float ratio = m_knnMatches[i][0].distance / m_knnMatches[i][1].distance;
         //        float ratio = std::sqrt((vecMatches[i][0].distance *
         //        vecMatches[i][0].distance)
         //            / (vecMatches[i][1].distance *
         //            vecMatches[i][1].distance));
         double dist = m_knnMatches[i][0].distance;
 
-        if (ratio < m_matchingRatioThreshold ||
-            (m_filterType == stdAndRatioDistanceThreshold &&
-             dist < threshold)) {
-          m.push_back(cv::DMatch((int)queryKpts.size(),
-                                 m_knnMatches[i][0].trainIdx,
-                                 m_knnMatches[i][0].distance));
+        if (ratio < m_matchingRatioThreshold || (m_filterType == stdAndRatioDistanceThreshold && dist < threshold)) {
+          m.push_back(cv::DMatch((int)queryKpts.size(), m_knnMatches[i][0].trainIdx, m_knnMatches[i][0].distance));
 
           if (!m_trainPoints.empty()) {
-            trainPts.push_back(
-                m_trainPoints[(size_t)m_knnMatches[i][0].trainIdx]);
+            trainPts.push_back(m_trainPoints[(size_t)m_knnMatches[i][0].trainIdx]);
           }
-          queryKpts.push_back(
-              m_queryKeyPoints[(size_t)m_knnMatches[i][0].queryIdx]);
+          queryKpts.push_back(m_queryKeyPoints[(size_t)m_knnMatches[i][0].queryIdx]);
         }
       }
     }
@@ -2046,22 +1835,20 @@ void vpKeyPoint::filterMatches()
     }
     mean /= m_queryDescriptors.rows;
 
-    double sq_sum = std::inner_product(
-        distance_vec.begin(), distance_vec.end(), distance_vec.begin(), 0.0);
+    double sq_sum = std::inner_product(distance_vec.begin(), distance_vec.end(), distance_vec.begin(), 0.0);
     double stdev = std::sqrt(sq_sum / distance_vec.size() - mean * mean);
 
     // Define a threshold where we keep all keypoints whose the descriptor
     // distance falls below a factor of the  minimum descriptor distance (for
-    // all the query keypoints)  or below the minimum descriptor distance + the
-    // standard deviation (calculated on all the query descriptor distances)
-    double threshold = m_filterType == constantFactorDistanceThreshold
-                           ? m_matchingFactorThreshold * min_dist
-                           : min_dist + stdev;
+    // all the query keypoints)  or below the minimum descriptor distance +
+    // the standard deviation (calculated on all the query descriptor
+    // distances)
+    double threshold =
+        m_filterType == constantFactorDistanceThreshold ? m_matchingFactorThreshold * min_dist : min_dist + stdev;
 
     for (size_t i = 0; i < m_matches.size(); i++) {
       if (m_matches[i].distance <= threshold) {
-        m.push_back(cv::DMatch((int)queryKpts.size(), m_matches[i].trainIdx,
-                               m_matches[i].distance));
+        m.push_back(cv::DMatch((int)queryKpts.size(), m_matches[i].trainIdx, m_matches[i].distance));
 
         if (!m_trainPoints.empty()) {
           trainPts.push_back(m_trainPoints[(size_t)m_matches[i].trainIdx]);
@@ -2080,17 +1867,14 @@ void vpKeyPoint::filterMatches()
 
     std::map<int, int> mapOfTrainIdx;
     // Count the number of query points matched to the same train point
-    for (std::vector<cv::DMatch>::const_iterator it = m.begin();
-         it != m.end(); ++it) {
+    for (std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
       mapOfTrainIdx[it->trainIdx]++;
     }
 
     // Keep matches with only one correspondence
-    for (std::vector<cv::DMatch>::const_iterator it = m.begin();
-         it != m.end(); ++it) {
+    for (std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
       if (mapOfTrainIdx[it->trainIdx] == 1) {
-        mTmp.push_back(
-            cv::DMatch((int)queryKptsTmp.size(), it->trainIdx, it->distance));
+        mTmp.push_back(cv::DMatch((int)queryKptsTmp.size(), it->trainIdx, it->distance));
 
         if (!m_trainPoints.empty()) {
           trainPtsTmp.push_back(m_trainPoints[(size_t)it->trainIdx]);
@@ -2139,10 +1923,7 @@ void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) const
    \param keyPoints : List of query keypoints (or keypoints detected in the
    current image).
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const
-{
-  keyPoints = m_queryFilteredKeyPoints;
-}
+void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const { keyPoints = m_queryFilteredKeyPoints; }
 
 /*!
    Get the query keypoints list in ViSP type.
@@ -2150,30 +1931,21 @@ void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const
    \param keyPoints : List of query keypoints (or keypoints detected in the
    current image).
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const
-{
-  keyPoints = currentImagePointsList;
-}
+void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const { keyPoints = currentImagePointsList; }
 
 /*!
    Get the train keypoints list in OpenCV type.
 
    \param keyPoints : List of train keypoints (or reference keypoints).
  */
-void vpKeyPoint::getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const
-{
-  keyPoints = m_trainKeyPoints;
-}
+void vpKeyPoint::getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const { keyPoints = m_trainKeyPoints; }
 
 /*!
    Get the train keypoints list in ViSP type.
 
    \param keyPoints : List of train keypoints (or reference keypoints).
  */
-void vpKeyPoint::getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) const
-{
-  keyPoints = referenceImagePointsList;
-}
+void vpKeyPoint::getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) const { keyPoints = referenceImagePointsList; }
 
 /*!
    Get the train points (the 3D coordinates in the object frame) list in
@@ -2181,10 +1953,7 @@ void vpKeyPoint::getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) const
 
    \param points : List of train points (or reference points).
  */
-void vpKeyPoint::getTrainPoints(std::vector<cv::Point3f> &points) const
-{
-  points = m_trainPoints;
-}
+void vpKeyPoint::getTrainPoints(std::vector<cv::Point3f> &points) const { points = m_trainPoints; }
 
 /*!
    Get the train points (the 3D coordinates in the object frame) list in ViSP
@@ -2192,10 +1961,7 @@ void vpKeyPoint::getTrainPoints(std::vector<cv::Point3f> &points) const
 
    \param points : List of train points (or reference points).
  */
-void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) const
-{
-  points = m_trainVpPoints;
-}
+void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) const { points = m_trainVpPoints; }
 
 /*!
    Initialize method for RANSAC parameters and for detectors, extractors and
@@ -2204,20 +1970,16 @@ void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) const
 void vpKeyPoint::init()
 {
 // Require 2.4.0 <= opencv < 3.0.0
-#if defined(VISP_HAVE_OPENCV_NONFREE) &&                                     \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020400) &&                                \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   // The following line must be called in order to use SIFT or SURF
   if (!cv::initModule_nonfree()) {
-    std::cerr << "Cannot init module non free, SIFT or SURF cannot be used."
-              << std::endl;
+    std::cerr << "Cannot init module non free, SIFT or SURF cannot be used." << std::endl;
   }
 #endif
 
   // Use k-nearest neighbors (knn) to retrieve the two best matches for a
   // keypoint  So this is useful only for ratioDistanceThreshold method
-  if (m_filterType == ratioDistanceThreshold ||
-      m_filterType == stdAndRatioDistanceThreshold) {
+  if (m_filterType == ratioDistanceThreshold || m_filterType == stdAndRatioDistanceThreshold) {
     m_useKnn = true;
   }
 
@@ -2239,8 +2001,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   if (m_detectors[detectorName] == NULL) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: " << detectorName
-           << " or it is not available in OpenCV version: " << std::hex
-           << VISP_HAVE_OPENCV_VERSION << ".";
+           << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 #else
@@ -2255,171 +2016,138 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 
   if (detectorNameTmp == "SIFT") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    cv::Ptr<cv::FeatureDetector> siftDetector =
-        cv::xfeatures2d::SIFT::create();
+    cv::Ptr<cv::FeatureDetector> siftDetector = cv::xfeatures2d::SIFT::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = siftDetector;
     } else {
-      std::cerr << "You should not use SIFT with Pyramid feature detection!"
-                << std::endl;
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
+      std::cerr << "You should not use SIFT with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: SIFT. OpenCV version  "
-           << std::hex << VISP_HAVE_OPENCV_VERSION
+    ss_msg << "Fail to initialize the detector: SIFT. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (detectorNameTmp == "SURF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    cv::Ptr<cv::FeatureDetector> surfDetector =
-        cv::xfeatures2d::SURF::create();
+    cv::Ptr<cv::FeatureDetector> surfDetector = cv::xfeatures2d::SURF::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = surfDetector;
     } else {
-      std::cerr << "You should not use SURF with Pyramid feature detection!"
-                << std::endl;
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(surfDetector);
+      std::cerr << "You should not use SURF with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(surfDetector);
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: SURF. OpenCV version  "
-           << std::hex << VISP_HAVE_OPENCV_VERSION
+    ss_msg << "Fail to initialize the detector: SURF. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (detectorNameTmp == "FAST") {
-    cv::Ptr<cv::FeatureDetector> fastDetector =
-        cv::FastFeatureDetector::create();
+    cv::Ptr<cv::FeatureDetector> fastDetector = cv::FastFeatureDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = fastDetector;
     } else {
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
   } else if (detectorNameTmp == "MSER") {
     cv::Ptr<cv::FeatureDetector> fastDetector = cv::MSER::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = fastDetector;
     } else {
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
   } else if (detectorNameTmp == "ORB") {
     cv::Ptr<cv::FeatureDetector> orbDetector = cv::ORB::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = orbDetector;
     } else {
-      std::cerr << "You should not use ORB with Pyramid feature detection!"
-                << std::endl;
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(orbDetector);
+      std::cerr << "You should not use ORB with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(orbDetector);
     }
   } else if (detectorNameTmp == "BRISK") {
     cv::Ptr<cv::FeatureDetector> briskDetector = cv::BRISK::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = briskDetector;
     } else {
-      std::cerr << "You should not use BRISK with Pyramid feature detection!"
-                << std::endl;
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(briskDetector);
+      std::cerr << "You should not use BRISK with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(briskDetector);
     }
   } else if (detectorNameTmp == "KAZE") {
     cv::Ptr<cv::FeatureDetector> kazeDetector = cv::KAZE::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = kazeDetector;
     } else {
-      std::cerr << "You should not use KAZE with Pyramid feature detection!"
-                << std::endl;
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(kazeDetector);
+      std::cerr << "You should not use KAZE with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(kazeDetector);
     }
   } else if (detectorNameTmp == "AKAZE") {
     cv::Ptr<cv::FeatureDetector> akazeDetector = cv::AKAZE::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = akazeDetector;
     } else {
-      std::cerr << "You should not use AKAZE with Pyramid feature detection!"
-                << std::endl;
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(akazeDetector);
+      std::cerr << "You should not use AKAZE with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(akazeDetector);
     }
   } else if (detectorNameTmp == "GFTT") {
     cv::Ptr<cv::FeatureDetector> gfttDetector = cv::GFTTDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = gfttDetector;
     } else {
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(gfttDetector);
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(gfttDetector);
     }
   } else if (detectorNameTmp == "SimpleBlob") {
-    cv::Ptr<cv::FeatureDetector> simpleBlobDetector =
-        cv::SimpleBlobDetector::create();
+    cv::Ptr<cv::FeatureDetector> simpleBlobDetector = cv::SimpleBlobDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = simpleBlobDetector;
     } else {
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(simpleBlobDetector);
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(simpleBlobDetector);
     }
   } else if (detectorNameTmp == "STAR") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    cv::Ptr<cv::FeatureDetector> starDetector =
-        cv::xfeatures2d::StarDetector::create();
+    cv::Ptr<cv::FeatureDetector> starDetector = cv::xfeatures2d::StarDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = starDetector;
     } else {
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(starDetector);
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(starDetector);
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: STAR. OpenCV version  "
-           << std::hex << VISP_HAVE_OPENCV_VERSION
+    ss_msg << "Fail to initialize the detector: STAR. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (detectorNameTmp == "AGAST") {
-    cv::Ptr<cv::FeatureDetector> agastDetector =
-        cv::AgastFeatureDetector::create();
+    cv::Ptr<cv::FeatureDetector> agastDetector = cv::AgastFeatureDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = agastDetector;
     } else {
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(agastDetector);
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(agastDetector);
     }
   } else if (detectorNameTmp == "MSD") {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D)
-    cv::Ptr<cv::FeatureDetector> msdDetector =
-        cv::xfeatures2d::MSDDetector::create();
+    cv::Ptr<cv::FeatureDetector> msdDetector = cv::xfeatures2d::MSDDetector::create();
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = msdDetector;
     } else {
-      std::cerr << "You should not use MSD with Pyramid feature detection!"
-                << std::endl;
-      m_detectors[detectorName] =
-          cv::makePtr<PyramidAdaptedFeatureDetector>(msdDetector);
+      std::cerr << "You should not use MSD with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(msdDetector);
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: MSD. OpenCV version "
-           << std::hex << VISP_HAVE_OPENCV_VERSION
+    ss_msg << "Fail to initialize the detector: MSD. OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
 #else
     std::stringstream ss_msg;
-    ss_msg << "Feature " << detectorName
-           << " is not available in OpenCV version: " << std::hex
+    ss_msg << "Feature " << detectorName << " is not available in OpenCV version: " << std::hex
            << VISP_HAVE_OPENCV_VERSION << " (require >= OpenCV 3.1).";
 #endif
   } else {
-    std::cerr << "The detector:" << detectorNameTmp << " is not available."
-              << std::endl;
+    std::cerr << "The detector:" << detectorNameTmp << " is not available." << std::endl;
   }
 
   bool detectorInitialized = false;
@@ -2432,8 +2160,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   if (!detectorInitialized) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: " << detectorNameTmp
-           << " or it is not available in OpenCV version: " << std::hex
-           << VISP_HAVE_OPENCV_VERSION << ".";
+           << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 
@@ -2448,8 +2175,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
  */
 void vpKeyPoint::initDetectors(const std::vector<std::string> &detectorNames)
 {
-  for (std::vector<std::string>::const_iterator it = detectorNames.begin();
-       it != detectorNames.end(); ++it) {
+  for (std::vector<std::string>::const_iterator it = detectorNames.begin(); it != detectorNames.end(); ++it) {
     initDetector(*it);
   }
 }
@@ -2462,28 +2188,24 @@ void vpKeyPoint::initDetectors(const std::vector<std::string> &detectorNames)
 void vpKeyPoint::initExtractor(const std::string &extractorName)
 {
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
-  m_extractors[extractorName] =
-      cv::DescriptorExtractor::create(extractorName);
+  m_extractors[extractorName] = cv::DescriptorExtractor::create(extractorName);
 #else
   if (extractorName == "SIFT") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_extractors[extractorName] = cv::xfeatures2d::SIFT::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  "
-           << std::hex << VISP_HAVE_OPENCV_VERSION
+    ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (extractorName == "SURF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
     // Use extended set of SURF descriptors (128 instead of 64)
-    m_extractors[extractorName] =
-        cv::xfeatures2d::SURF::create(100, 4, 3, true);
+    m_extractors[extractorName] = cv::xfeatures2d::SURF::create(100, 4, 3, true);
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: SURF. OpenCV version  "
-           << std::hex << VISP_HAVE_OPENCV_VERSION
+    ss_msg << "Fail to initialize the extractor: SURF. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
@@ -2496,20 +2218,17 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
     m_extractors[extractorName] = cv::xfeatures2d::FREAK::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (extractorName == "BRIEF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_extractors[extractorName] =
-        cv::xfeatures2d::BriefDescriptorExtractor::create();
+    m_extractors[extractorName] = cv::xfeatures2d::BriefDescriptorExtractor::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (extractorName == "KAZE") {
@@ -2521,9 +2240,8 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
     m_extractors[extractorName] = cv::xfeatures2d::DAISY::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (extractorName == "LATCH") {
@@ -2531,22 +2249,19 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
     m_extractors[extractorName] = cv::xfeatures2d::LATCH::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (extractorName == "LUCID") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
     //    m_extractors[extractorName] = cv::xfeatures2d::LUCID::create(1, 2);
     // Not possible currently, need a color image
-    throw vpException(vpException::badValue,
-                      "Not possible currently as it needs a color image.");
+    throw vpException(vpException::badValue, "Not possible currently as it needs a color image.");
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (extractorName == "VGG") {
@@ -2555,16 +2270,14 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
     m_extractors[extractorName] = cv::xfeatures2d::VGG::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " but requires at least OpenCV 3.2.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " but requires at least OpenCV 3.2.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if (extractorName == "BoostDesc") {
@@ -2573,34 +2286,29 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
     m_extractors[extractorName] = cv::xfeatures2d::BoostDesc::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: " << extractorName
-           << ". OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
-           << " but requires at least OpenCV 3.2.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version " << std::hex
+           << VISP_HAVE_OPENCV_VERSION << " but requires at least OpenCV 3.2.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else {
-    std::cerr << "The extractor:" << extractorName << " is not available."
-              << std::endl;
+    std::cerr << "The extractor:" << extractorName << " is not available." << std::endl;
   }
 #endif
 
   if (m_extractors[extractorName] == NULL) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: " << extractorName
-           << " or it is not available in OpenCV version: " << std::hex
-           << VISP_HAVE_OPENCV_VERSION << ".";
+           << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   if (extractorName == "SURF") {
     // Use extended set of SURF descriptors (128 instead of 64)
     m_extractors[extractorName]->set("extended", 1);
@@ -2614,27 +2322,22 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
 
    \param extractorNames : List of extractor names.
  */
-void vpKeyPoint::initExtractors(
-    const std::vector<std::string> &extractorNames)
+void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames)
 {
-  for (std::vector<std::string>::const_iterator it = extractorNames.begin();
-       it != extractorNames.end(); ++it) {
+  for (std::vector<std::string>::const_iterator it = extractorNames.begin(); it != extractorNames.end(); ++it) {
     initExtractor(*it);
   }
 
   int descriptorType = CV_32F;
   bool firstIteration = true;
-  for (std::map<std::string,
-                cv::Ptr<cv::DescriptorExtractor> >::const_iterator it =
-           m_extractors.begin();
+  for (std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator it = m_extractors.begin();
        it != m_extractors.end(); ++it) {
     if (firstIteration) {
       firstIteration = false;
       descriptorType = it->second->descriptorType();
     } else {
       if (descriptorType != it->second->descriptorType()) {
-        throw vpException(vpException::fatalError,
-                          "All the descriptors must have the same type !");
+        throw vpException(vpException::fatalError, "All the descriptors must have the same type !");
       }
     }
   }
@@ -2650,8 +2353,7 @@ void vpKeyPoint::initFeatureNames()
   m_mapOfDetectorNames[DETECTOR_BRISK] = "BRISK";
   m_mapOfDetectorNames[DETECTOR_GFTT] = "GFTT";
   m_mapOfDetectorNames[DETECTOR_SimpleBlob] = "SimpleBlob";
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) ||                                 \
-    (defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
   m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
 #endif
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
@@ -2663,8 +2365,7 @@ void vpKeyPoint::initFeatureNames()
   m_mapOfDetectorNames[DETECTOR_AKAZE] = "AKAZE";
   m_mapOfDetectorNames[DETECTOR_AGAST] = "AGAST";
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) &&                                \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
   m_mapOfDetectorNames[DETECTOR_MSD] = "MSD";
 #endif
 #endif
@@ -2672,8 +2373,7 @@ void vpKeyPoint::initFeatureNames()
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
   m_mapOfDescriptorNames[DESCRIPTOR_ORB] = "ORB";
   m_mapOfDescriptorNames[DESCRIPTOR_BRISK] = "BRISK";
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) ||                                 \
-    (defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
   m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
   m_mapOfDescriptorNames[DESCRIPTOR_BRIEF] = "BRIEF";
 #endif
@@ -2689,8 +2389,7 @@ void vpKeyPoint::initFeatureNames()
   m_mapOfDescriptorNames[DESCRIPTOR_LATCH] = "LATCH";
 #endif
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) &&                                \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_VGG] = "VGG";
   m_mapOfDescriptorNames[DESCRIPTOR_BoostDesc] = "BoostDesc";
 #endif
@@ -2706,17 +2405,14 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
 {
   int descriptorType = CV_32F;
   bool firstIteration = true;
-  for (std::map<std::string,
-                cv::Ptr<cv::DescriptorExtractor> >::const_iterator it =
-           m_extractors.begin();
+  for (std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator it = m_extractors.begin();
        it != m_extractors.end(); ++it) {
     if (firstIteration) {
       firstIteration = false;
       descriptorType = it->second->descriptorType();
     } else {
       if (descriptorType != it->second->descriptorType()) {
-        throw vpException(vpException::fatalError,
-                          "All the descriptors must have the same type !");
+        throw vpException(vpException::fatalError, "All the descriptors must have the same type !");
       }
     }
   }
@@ -2731,27 +2427,22 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
 
     if (descriptorType == CV_8U) {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-      m_matcher = cv::makePtr<cv::FlannBasedMatcher>(
-          cv::makePtr<cv::flann::LshIndexParams>(12, 20, 2));
+      m_matcher = cv::makePtr<cv::FlannBasedMatcher>(cv::makePtr<cv::flann::LshIndexParams>(12, 20, 2));
 #else
-      m_matcher =
-          new cv::FlannBasedMatcher(new cv::flann::LshIndexParams(12, 20, 2));
+      m_matcher = new cv::FlannBasedMatcher(new cv::flann::LshIndexParams(12, 20, 2));
 #endif
     } else {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-      m_matcher = cv::makePtr<cv::FlannBasedMatcher>(
-          cv::makePtr<cv::flann::KDTreeIndexParams>());
+      m_matcher = cv::makePtr<cv::FlannBasedMatcher>(cv::makePtr<cv::flann::KDTreeIndexParams>());
 #else
-      m_matcher =
-          new cv::FlannBasedMatcher(new cv::flann::KDTreeIndexParams());
+      m_matcher = new cv::FlannBasedMatcher(new cv::flann::KDTreeIndexParams());
 #endif
     }
   } else {
     m_matcher = cv::DescriptorMatcher::create(matcherName);
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   if (m_matcher != NULL && !m_useKnn && matcherName == "BruteForce") {
     m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
   }
@@ -2760,8 +2451,7 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
   if (m_matcher == NULL) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the matcher: " << matcherName
-           << " or it is not available in OpenCV version: " << std::hex
-           << VISP_HAVE_OPENCV_VERSION << ".";
+           << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 }
@@ -2774,8 +2464,7 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
    \param IMatching : Matching image for displaying all the matching between
    the query keypoints and those detected in the training images.
  */
-void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &IRef,
-                                     const vpImage<unsigned char> &ICurrent,
+void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent,
                                      vpImage<unsigned char> &IMatching)
 {
   vpImagePoint topLeftCorner(0, 0);
@@ -2791,8 +2480,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &IRef,
    \param IMatching : Matching image for displaying all the matching between
    the query keypoints and those detected in the training images
  */
-void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent,
-                                     vpImage<unsigned char> &IMatching)
+void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching)
 {
   // Nb images in the training database + the current image we want to detect
   // the object
@@ -2808,8 +2496,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent,
     insertImageMatching(m_mapOfImages.begin()->second, ICurrent, IMatching);
   } else {
     // Multiple training images, display them as a mosaic image
-    int nbImgSqrt = vpMath::round(std::sqrt(
-        (double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 
@@ -2818,9 +2505,8 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent,
     }
 
     unsigned int maxW = ICurrent.getWidth(), maxH = ICurrent.getHeight();
-    for (std::map<int, vpImage<unsigned char> >::const_iterator it =
-             m_mapOfImages.begin();
-         it != m_mapOfImages.end(); ++it) {
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it) {
       if (maxW < it->second.getWidth()) {
         maxW = it->second.getWidth();
       }
@@ -2837,9 +2523,8 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent,
     int medianIndex = medianI * nbWidth + medianJ;
 
     int cpt = 0;
-    for (std::map<int, vpImage<unsigned char> >::const_iterator
-             it = m_mapOfImages.begin();
-         it != m_mapOfImages.end(); ++it, cpt++) {
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it, cpt++) {
       int local_cpt = cpt;
       if (cpt >= medianIndex) {
         // Shift of one unity the index of the training images which are after
@@ -2920,8 +2605,7 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile)
     m_ransacThreshold = xmlp.getRansacThreshold();
     m_ransacConsensusPercentage = xmlp.getRansacConsensusPercentage();
 
-    if (m_filterType == ratioDistanceThreshold ||
-        m_filterType == stdAndRatioDistanceThreshold) {
+    if (m_filterType == ratioDistanceThreshold || m_filterType == stdAndRatioDistanceThreshold) {
       m_useKnn = true;
     } else {
       m_useKnn = false;
@@ -2929,8 +2613,7 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile)
 
     init();
   } catch (...) {
-    throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ",
-                      configFile.c_str());
+    throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
   }
 }
 #endif
@@ -2943,8 +2626,7 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile)
    otherwise it is in XML mode. \param append : If true, concatenate the
    learning data, otherwise reset the variables.
  */
-void vpKeyPoint::loadLearningData(const std::string &filename,
-                                  const bool binaryMode, const bool append)
+void vpKeyPoint::loadLearningData(const std::string &filename, const bool binaryMode, const bool append)
 {
   int startClassId = 0;
   int startImageId = 0;
@@ -2955,17 +2637,15 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
     m_mapOfImages.clear();
   } else {
     // In append case, find the max index of keypoint class Id
-    for (std::map<int, int>::const_iterator it = m_mapOfImageId.begin();
-         it != m_mapOfImageId.end(); ++it) {
+    for (std::map<int, int>::const_iterator it = m_mapOfImageId.begin(); it != m_mapOfImageId.end(); ++it) {
       if (startClassId < it->first) {
         startClassId = it->first;
       }
     }
 
     // In append case, find the max index of images Id
-    for (std::map<int, vpImage<unsigned char> >::const_iterator it =
-             m_mapOfImages.begin();
-         it != m_mapOfImages.end(); ++it) {
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it) {
       if (startImageId < it->first) {
         startImageId = it->first;
       }
@@ -3060,15 +2740,13 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
       readBinaryIntLE(file, octave);
       readBinaryIntLE(file, class_id);
       readBinaryIntLE(file, image_id);
-      cv::KeyPoint keyPoint(cv::Point2f(u, v), size, angle, response, octave,
-                            (class_id + startClassId));
+      cv::KeyPoint keyPoint(cv::Point2f(u, v), size, angle, response, octave, (class_id + startClassId));
       m_trainKeyPoints.push_back(keyPoint);
 
       if (image_id != -1) {
 #ifdef VISP_HAVE_MODULE_IO
         // No training images if image_id == -1
-        m_mapOfImageId[m_trainKeyPoints.back().class_id] =
-            image_id + startImageId;
+        m_mapOfImageId[m_trainKeyPoints.back().class_id] = image_id + startImageId;
 #endif
       }
 
@@ -3138,8 +2816,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
     if (!append || m_trainDescriptors.empty()) {
       trainDescriptorsTmp.copyTo(m_trainDescriptors);
     } else {
-      cv::vconcat(m_trainDescriptors, trainDescriptorsTmp,
-                  m_trainDescriptors);
+      cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
 
     file.close();
@@ -3173,22 +2850,18 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
 
     cv::Mat trainDescriptorsTmp;
 
-    for (first_level_node = root_element->children; first_level_node;
-         first_level_node = first_level_node->next) {
+    for (first_level_node = root_element->children; first_level_node; first_level_node = first_level_node->next) {
 
       std::string name((char *)first_level_node->name);
-      if (first_level_node->type == XML_ELEMENT_NODE &&
-          name == "TrainingImageInfo") {
+      if (first_level_node->type == XML_ELEMENT_NODE && name == "TrainingImageInfo") {
         xmlNodePtr image_info_node = NULL;
 
-        for (image_info_node = first_level_node->children; image_info_node;
-             image_info_node = image_info_node->next) {
+        for (image_info_node = first_level_node->children; image_info_node; image_info_node = image_info_node->next) {
           name = std::string((char *)image_info_node->name);
 
           if (name == "trainImg") {
             // Read image_id
-            xmlChar *image_id_property =
-                xmlGetProp(image_info_node, BAD_CAST "image_id");
+            xmlChar *image_id_property = xmlGetProp(image_info_node, BAD_CAST "image_id");
             int id = 0;
             if (image_id_property) {
               id = std::atoi((char *)image_id_property);
@@ -3210,31 +2883,25 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
 #endif
           }
         }
-      } else if (first_level_node->type == XML_ELEMENT_NODE &&
-                 name == "DescriptorsInfo") {
+      } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorsInfo") {
         xmlNodePtr descriptors_info_node = NULL;
-        for (descriptors_info_node = first_level_node->children;
-             descriptors_info_node;
+        for (descriptors_info_node = first_level_node->children; descriptors_info_node;
              descriptors_info_node = descriptors_info_node->next) {
           if (descriptors_info_node->type == XML_ELEMENT_NODE) {
             name = std::string((char *)descriptors_info_node->name);
 
             if (name == "nrows") {
-              nRows =
-                  std::atoi((char *)descriptors_info_node->children->content);
+              nRows = std::atoi((char *)descriptors_info_node->children->content);
             } else if (name == "ncols") {
-              nCols =
-                  std::atoi((char *)descriptors_info_node->children->content);
+              nCols = std::atoi((char *)descriptors_info_node->children->content);
             } else if (name == "type") {
-              descriptorType =
-                  std::atoi((char *)descriptors_info_node->children->content);
+              descriptorType = std::atoi((char *)descriptors_info_node->children->content);
             }
           }
         }
 
         trainDescriptorsTmp = cv::Mat(nRows, nCols, descriptorType);
-      } else if (first_level_node->type == XML_ELEMENT_NODE &&
-                 name == "DescriptorInfo") {
+      } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorInfo") {
         xmlNodePtr point_node = NULL;
         double u = 0.0, v = 0.0, size = 0.0, angle = 0.0, response = 0.0;
         int octave = 0, class_id = 0, image_id = 0;
@@ -3242,8 +2909,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
 
         std::stringstream ss;
 
-        for (point_node = first_level_node->children; point_node;
-             point_node = point_node->next) {
+        for (point_node = first_level_node->children; point_node; point_node = point_node->next) {
           if (point_node->type == XML_ELEMENT_NODE) {
             name = std::string((char *)point_node->name);
 
@@ -3253,29 +2919,24 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
             } else if (name == "v") {
               v = std::strtod((char *)point_node->children->content, &pEnd);
             } else if (name == "size") {
-              size =
-                  std::strtod((char *)point_node->children->content, &pEnd);
+              size = std::strtod((char *)point_node->children->content, &pEnd);
             } else if (name == "angle") {
-              angle =
-                  std::strtod((char *)point_node->children->content, &pEnd);
+              angle = std::strtod((char *)point_node->children->content, &pEnd);
             } else if (name == "response") {
-              response =
-                  std::strtod((char *)point_node->children->content, &pEnd);
+              response = std::strtod((char *)point_node->children->content, &pEnd);
             } else if (name == "octave") {
               octave = std::atoi((char *)point_node->children->content);
             } else if (name == "class_id") {
               class_id = std::atoi((char *)point_node->children->content);
-              cv::KeyPoint keyPoint(
-                  cv::Point2f((float)u, (float)v), (float)size, (float)angle,
-                  (float)response, octave, (class_id + startClassId));
+              cv::KeyPoint keyPoint(cv::Point2f((float)u, (float)v), (float)size, (float)angle, (float)response, octave,
+                                    (class_id + startClassId));
               m_trainKeyPoints.push_back(keyPoint);
             } else if (name == "image_id") {
               image_id = std::atoi((char *)point_node->children->content);
               if (image_id != -1) {
 #ifdef VISP_HAVE_MODULE_IO
                 // No training images if image_id == -1
-                m_mapOfImageId[m_trainKeyPoints.back().class_id] =
-                    image_id + startImageId;
+                m_mapOfImageId[m_trainKeyPoints.back().class_id] = image_id + startImageId;
 #endif
               }
             } else if (name == "oX") {
@@ -3284,20 +2945,17 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
               oY = std::atof((char *)point_node->children->content);
             } else if (name == "oZ") {
               oZ = std::atof((char *)point_node->children->content);
-              m_trainPoints.push_back(
-                  cv::Point3f((float)oX, (float)oY, (float)oZ));
+              m_trainPoints.push_back(cv::Point3f((float)oX, (float)oY, (float)oZ));
             } else if (name == "desc") {
               xmlNodePtr descriptor_value_node = NULL;
               j = 0;
 
-              for (descriptor_value_node = point_node->children;
-                   descriptor_value_node;
+              for (descriptor_value_node = point_node->children; descriptor_value_node;
                    descriptor_value_node = descriptor_value_node->next) {
 
                 if (descriptor_value_node->type == XML_ELEMENT_NODE) {
                   // Read descriptors values
-                  std::string parseStr(
-                      (char *)descriptor_value_node->children->content);
+                  std::string parseStr((char *)descriptor_value_node->children->content);
                   ss.clear();
                   ss.str(parseStr);
 
@@ -3307,8 +2965,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
                       // Parse the numeric value [0 ; 255] to an int
                       int parseValue;
                       ss >> parseValue;
-                      trainDescriptorsTmp.at<unsigned char>(i, j) =
-                          (unsigned char)parseValue;
+                      trainDescriptorsTmp.at<unsigned char>(i, j) = (unsigned char)parseValue;
                     } break;
 
                     case CV_8S:
@@ -3343,8 +3000,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
                       break;
                     }
                   } else {
-                    std::cerr << "Error when converting:" << ss.str()
-                              << std::endl;
+                    std::cerr << "Error when converting:" << ss.str() << std::endl;
                   }
 
                   j++;
@@ -3360,8 +3016,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
     if (!append || m_trainDescriptors.empty()) {
       trainDescriptorsTmp.copyTo(m_trainDescriptors);
     } else {
-      cv::vconcat(m_trainDescriptors, trainDescriptorsTmp,
-                  m_trainDescriptors);
+      cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
 
     /*free the document */
@@ -3400,8 +3055,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename,
    \param matches : Output list of matches.
    \param elapsedTime : Elapsed time.
  */
-void vpKeyPoint::match(const cv::Mat &trainDescriptors,
-                       const cv::Mat &queryDescriptors,
+void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDescriptors,
                        std::vector<cv::DMatch> &matches, double &elapsedTime)
 {
   double t = vpTime::measureTimeMs();
@@ -3414,30 +3068,24 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors,
 
       // Match train descriptors to query descriptors
       cv::Ptr<cv::DescriptorMatcher> matcherTmp = m_matcher->clone(true);
-      matcherTmp->knnMatch(trainDescriptors, queryDescriptors, knnMatchesTmp,
-                           2);
+      matcherTmp->knnMatch(trainDescriptors, queryDescriptors, knnMatchesTmp, 2);
 
-      for (std::vector<std::vector<cv::DMatch> >::const_iterator it1 =
-               knnMatchesTmp.begin();
+      for (std::vector<std::vector<cv::DMatch> >::const_iterator it1 = knnMatchesTmp.begin();
            it1 != knnMatchesTmp.end(); ++it1) {
         std::vector<cv::DMatch> tmp;
-        for (std::vector<cv::DMatch>::const_iterator it2 = it1->begin();
-             it2 != it1->end(); ++it2) {
-          tmp.push_back(
-              cv::DMatch(it2->trainIdx, it2->queryIdx, it2->distance));
+        for (std::vector<cv::DMatch>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
+          tmp.push_back(cv::DMatch(it2->trainIdx, it2->queryIdx, it2->distance));
         }
         m_knnMatches.push_back(tmp);
       }
 
       matches.resize(m_knnMatches.size());
-      std::transform(m_knnMatches.begin(), m_knnMatches.end(),
-                     matches.begin(), knnToDMatch);
+      std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
     } else {
       // Match query descriptors to train descriptors
       m_matcher->knnMatch(queryDescriptors, m_knnMatches, 2);
       matches.resize(m_knnMatches.size());
-      std::transform(m_knnMatches.begin(), m_knnMatches.end(),
-                     matches.begin(), knnToDMatch);
+      std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
     }
   } else {
     matches.clear();
@@ -3448,10 +3096,8 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors,
       cv::Ptr<cv::DescriptorMatcher> matcherTmp = m_matcher->clone(true);
       matcherTmp->match(trainDescriptors, queryDescriptors, matchesTmp);
 
-      for (std::vector<cv::DMatch>::const_iterator it = matchesTmp.begin();
-           it != matchesTmp.end(); ++it) {
-        matches.push_back(
-            cv::DMatch(it->trainIdx, it->queryIdx, it->distance));
+      for (std::vector<cv::DMatch>::const_iterator it = matchesTmp.begin(); it != matchesTmp.end(); ++it) {
+        matches.push_back(cv::DMatch(it->trainIdx, it->queryIdx, it->distance));
       }
     } else {
       // Match query descriptors to train descriptors
@@ -3468,10 +3114,7 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors,
    \param I : Input current image.
    \return The number of matched keypoints.
  */
-unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I)
-{
-  return matchPoint(I, vpRect());
-}
+unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I) { return matchPoint(I, vpRect()); }
 
 /*!
    Match keypoints detected in a region of interest of the image with those
@@ -3483,9 +3126,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I)
    \param width : Width of the region of interest
    \return The number of matched keypoints
  */
-unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
-                                    const vpImagePoint &iP,
-                                    const unsigned int height,
+unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
                                     const unsigned int width)
 {
   return matchPoint(I, vpRect(iP, width, height));
@@ -3499,8 +3140,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    \param rectangle : Rectangle of the region of interest
    \return The number of matched keypoints
  */
-unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
-                                    const vpRect &rectangle)
+unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
   if (m_trainDescriptors.empty()) {
     std::cerr << "Reference is empty." << std::endl;
@@ -3521,16 +3161,14 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
 
     // Flatten the different train lists
     m_queryKeyPoints.clear();
-    for (std::vector<std::vector<cv::KeyPoint> >::const_iterator it =
-             listOfQueryKeyPoints.begin();
+    for (std::vector<std::vector<cv::KeyPoint> >::const_iterator it = listOfQueryKeyPoints.begin();
          it != listOfQueryKeyPoints.end(); ++it) {
       m_queryKeyPoints.insert(m_queryKeyPoints.end(), it->begin(), it->end());
     }
 
     bool first = true;
-    for (std::vector<cv::Mat>::const_iterator it =
-             listOfQueryDescriptors.begin();
-         it != listOfQueryDescriptors.end(); ++it) {
+    for (std::vector<cv::Mat>::const_iterator it = listOfQueryDescriptors.begin(); it != listOfQueryDescriptors.end();
+         ++it) {
       if (first) {
         first = false;
         it->copyTo(m_queryDescriptors);
@@ -3556,13 +3194,9 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
       // Add only query keypoints matched with a train keypoints
       m_queryFilteredKeyPoints.clear();
       m_filteredMatches.clear();
-      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin();
-           it != m_matches.end(); ++it) {
-        m_filteredMatches.push_back(
-            cv::DMatch((int)m_queryFilteredKeyPoints.size(), it->trainIdx,
-                       it->distance));
-        m_queryFilteredKeyPoints.push_back(
-            m_queryKeyPoints[(size_t)it->queryIdx]);
+      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
+        m_filteredMatches.push_back(cv::DMatch((int)m_queryFilteredKeyPoints.size(), it->trainIdx, it->distance));
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t)it->queryIdx]);
       }
     } else {
       m_queryFilteredKeyPoints = m_queryKeyPoints;
@@ -3574,8 +3208,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
       // Add 3D object points such as the same index in
       // m_queryFilteredKeyPoints and in m_objectFilteredPoints
       // matches to the same train object
-      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin();
-           it != m_matches.end(); ++it) {
+      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         // m_matches is normally ordered following the queryDescriptor index
         m_objectFilteredPoints.push_back(m_trainPoints[(size_t)it->trainIdx]);
       }
@@ -3583,8 +3216,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
   }
 
   // Convert OpenCV type to ViSP type for compatibility
-  vpConvert::convertFromOpenCV(m_queryFilteredKeyPoints,
-                               currentImagePointsList);
+  vpConvert::convertFromOpenCV(m_queryFilteredKeyPoints, currentImagePointsList);
   vpConvert::convertFromOpenCV(m_filteredMatches, matchedReferencePoints);
 
   return static_cast<unsigned int>(m_filteredMatches.size());
@@ -3603,11 +3235,8 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    Interest) to consider \return True if the matching and the pose estimation
    are OK, false otherwise
  */
-bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
-                            const vpCameraParameters &cam,
-                            vpHomogeneousMatrix &cMo,
-                            bool (*func)(vpHomogeneousMatrix *),
-                            const vpRect &rectangle)
+bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                            bool (*func)(vpHomogeneousMatrix *), const vpRect &rectangle)
 {
   double error, elapsedTime;
   return matchPoint(I, cam, cMo, error, elapsedTime, func, rectangle);
@@ -3629,11 +3258,8 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    Interest) to consider \return True if the matching and the pose estimation
    are OK, false otherwise
  */
-bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
-                            const vpCameraParameters &cam,
-                            vpHomogeneousMatrix &cMo, double &error,
-                            double &elapsedTime,
-                            bool (*func)(vpHomogeneousMatrix *),
+bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                            double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *),
                             const vpRect &rectangle)
 {
   // Check if we have training descriptors
@@ -3656,16 +3282,14 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
 
     // Flatten the different train lists
     m_queryKeyPoints.clear();
-    for (std::vector<std::vector<cv::KeyPoint> >::const_iterator it =
-             listOfQueryKeyPoints.begin();
+    for (std::vector<std::vector<cv::KeyPoint> >::const_iterator it = listOfQueryKeyPoints.begin();
          it != listOfQueryKeyPoints.end(); ++it) {
       m_queryKeyPoints.insert(m_queryKeyPoints.end(), it->begin(), it->end());
     }
 
     bool first = true;
-    for (std::vector<cv::Mat>::const_iterator it =
-             listOfQueryDescriptors.begin();
-         it != listOfQueryDescriptors.end(); ++it) {
+    for (std::vector<cv::Mat>::const_iterator it = listOfQueryDescriptors.begin(); it != listOfQueryDescriptors.end();
+         ++it) {
       if (first) {
         first = false;
         it->copyTo(m_queryDescriptors);
@@ -3693,13 +3317,9 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
       // Add only query keypoints matched with a train keypoints
       m_queryFilteredKeyPoints.clear();
       m_filteredMatches.clear();
-      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin();
-           it != m_matches.end(); ++it) {
-        m_filteredMatches.push_back(
-            cv::DMatch((int)m_queryFilteredKeyPoints.size(), it->trainIdx,
-                       it->distance));
-        m_queryFilteredKeyPoints.push_back(
-            m_queryKeyPoints[(size_t)it->queryIdx]);
+      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
+        m_filteredMatches.push_back(cv::DMatch((int)m_queryFilteredKeyPoints.size(), it->trainIdx, it->distance));
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t)it->queryIdx]);
       }
     } else {
       m_queryFilteredKeyPoints = m_queryKeyPoints;
@@ -3711,8 +3331,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
       // Add 3D object points such as the same index in
       // m_queryFilteredKeyPoints and in m_objectFilteredPoints
       // matches to the same train object
-      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin();
-           it != m_matches.end(); ++it) {
+      for (std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         // m_matches is normally ordered following the queryDescriptor index
         m_objectFilteredPoints.push_back(m_trainPoints[(size_t)it->trainIdx]);
       }
@@ -3720,8 +3339,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
   }
 
   // Convert OpenCV type to ViSP type for compatibility
-  vpConvert::convertFromOpenCV(m_queryFilteredKeyPoints,
-                               currentImagePointsList);
+  vpConvert::convertFromOpenCV(m_queryFilteredKeyPoints, currentImagePointsList);
   vpConvert::convertFromOpenCV(m_filteredMatches, matchedReferencePoints);
 
   // error = std::numeric_limits<double>::max(); // create an error under
@@ -3735,14 +3353,12 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
     size_t cpt = 0;
     // Create a list of vpPoint with 2D coordinates (current keypoint
     // location) + 3D coordinates (world/object coordinates)
-    for (std::vector<cv::Point3f>::const_iterator
-             it = m_objectFilteredPoints.begin();
+    for (std::vector<cv::Point3f>::const_iterator it = m_objectFilteredPoints.begin();
          it != m_objectFilteredPoints.end(); ++it, cpt++) {
       vpPoint pt;
       pt.setWorldCoordinates(it->x, it->y, it->z);
 
-      vpImagePoint imP(m_queryFilteredKeyPoints[cpt].pt.y,
-                       m_queryFilteredKeyPoints[cpt].pt.x);
+      vpImagePoint imP(m_queryFilteredKeyPoints[cpt].pt.y, m_queryFilteredKeyPoints[cpt].pt.x);
 
       double x = 0.0, y = 0.0;
       vpPixelMeterConversion::convertPoint(cam, imP, x, y);
@@ -3755,35 +3371,27 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
     std::vector<vpPoint> inliers;
     std::vector<unsigned int> inlierIndex;
 
-    bool res = computePose(objectVpPoints, cMo, inliers, inlierIndex,
-                           m_poseTime, func);
+    bool res = computePose(objectVpPoints, cMo, inliers, inlierIndex, m_poseTime, func);
 
     std::map<unsigned int, bool> mapOfInlierIndex;
     m_matchRansacKeyPointsToPoints.clear();
 
-    for (std::vector<unsigned int>::const_iterator it = inlierIndex.begin();
-         it != inlierIndex.end(); ++it) {
-      m_matchRansacKeyPointsToPoints.push_back(
-          std::pair<cv::KeyPoint, cv::Point3f>(
-              m_queryFilteredKeyPoints[(size_t)(*it)],
-              m_objectFilteredPoints[(size_t)(*it)]));
+    for (std::vector<unsigned int>::const_iterator it = inlierIndex.begin(); it != inlierIndex.end(); ++it) {
+      m_matchRansacKeyPointsToPoints.push_back(std::pair<cv::KeyPoint, cv::Point3f>(
+          m_queryFilteredKeyPoints[(size_t)(*it)], m_objectFilteredPoints[(size_t)(*it)]));
       mapOfInlierIndex[*it] = true;
     }
 
     for (size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
       if (mapOfInlierIndex.find((unsigned int)i) == mapOfInlierIndex.end()) {
-        m_ransacOutliers.push_back(
-            vpImagePoint(m_queryFilteredKeyPoints[i].pt.y,
-                         m_queryFilteredKeyPoints[i].pt.x));
+        m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
       }
     }
 
-    error =
-        computePoseEstimationError(m_matchRansacKeyPointsToPoints, cam, cMo);
+    error = computePoseEstimationError(m_matchRansacKeyPointsToPoints, cam, cMo);
 
     m_ransacInliers.resize(m_matchRansacKeyPointsToPoints.size());
-    std::transform(m_matchRansacKeyPointsToPoints.begin(),
-                   m_matchRansacKeyPointsToPoints.end(),
+    std::transform(m_matchRansacKeyPointsToPoints.begin(), m_matchRansacKeyPointsToPoints.end(),
                    m_ransacInliers.begin(), matchRansacToVpImage);
 
     elapsedTime += m_poseTime;
@@ -3793,35 +3401,27 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
     std::vector<cv::Point2f> imageFilteredPoints;
     cv::KeyPoint::convert(m_queryFilteredKeyPoints, imageFilteredPoints);
     std::vector<int> inlierIndex;
-    bool res = computePose(imageFilteredPoints, m_objectFilteredPoints, cam,
-                           cMo, inlierIndex, m_poseTime);
+    bool res = computePose(imageFilteredPoints, m_objectFilteredPoints, cam, cMo, inlierIndex, m_poseTime);
 
     std::map<int, bool> mapOfInlierIndex;
     m_matchRansacKeyPointsToPoints.clear();
 
-    for (std::vector<int>::const_iterator it = inlierIndex.begin();
-         it != inlierIndex.end(); ++it) {
-      m_matchRansacKeyPointsToPoints.push_back(
-          std::pair<cv::KeyPoint, cv::Point3f>(
-              m_queryFilteredKeyPoints[(size_t)(*it)],
-              m_objectFilteredPoints[(size_t)(*it)]));
+    for (std::vector<int>::const_iterator it = inlierIndex.begin(); it != inlierIndex.end(); ++it) {
+      m_matchRansacKeyPointsToPoints.push_back(std::pair<cv::KeyPoint, cv::Point3f>(
+          m_queryFilteredKeyPoints[(size_t)(*it)], m_objectFilteredPoints[(size_t)(*it)]));
       mapOfInlierIndex[*it] = true;
     }
 
     for (size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
       if (mapOfInlierIndex.find((int)i) == mapOfInlierIndex.end()) {
-        m_ransacOutliers.push_back(
-            vpImagePoint(m_queryFilteredKeyPoints[i].pt.y,
-                         m_queryFilteredKeyPoints[i].pt.x));
+        m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
       }
     }
 
-    error =
-        computePoseEstimationError(m_matchRansacKeyPointsToPoints, cam, cMo);
+    error = computePoseEstimationError(m_matchRansacKeyPointsToPoints, cam, cMo);
 
     m_ransacInliers.resize(m_matchRansacKeyPointsToPoints.size());
-    std::transform(m_matchRansacKeyPointsToPoints.begin(),
-                   m_matchRansacKeyPointsToPoints.end(),
+    std::transform(m_matchRansacKeyPointsToPoints.begin(), m_matchRansacKeyPointsToPoints.end(),
                    m_ransacInliers.begin(), matchRansacToVpImage);
 
     elapsedTime += m_poseTime;
@@ -3848,12 +3448,10 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    \param rectangle : Rectangle corresponding to the ROI (Region of Interest)
    to consider \return True if the object is present, false otherwise
  */
-bool vpKeyPoint::matchPointAndDetect(
-    const vpImage<unsigned char> &I, vpRect &boundingBox,
-    vpImagePoint &centerOfGravity, const bool isPlanarObject,
-    std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
-    double *meanDescriptorDistance, double *detection_score,
-    const vpRect &rectangle)
+bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox,
+                                     vpImagePoint &centerOfGravity, const bool isPlanarObject,
+                                     std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
+                                     double *meanDescriptorDistance, double *detection_score, const vpRect &rectangle)
 {
   if (imPts1 != NULL && imPts2 != NULL) {
     imPts1->clear();
@@ -3863,8 +3461,7 @@ bool vpKeyPoint::matchPointAndDetect(
   matchPoint(I, rectangle);
 
   double meanDescriptorDistanceTmp = 0.0;
-  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin();
-       it != m_filteredMatches.end(); ++it) {
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
     meanDescriptorDistanceTmp += (double)it->distance;
   }
 
@@ -3885,20 +3482,16 @@ bool vpKeyPoint::matchPointAndDetect(
     std::vector<cv::Point2f> points2(m_filteredMatches.size());
 
     for (size_t i = 0; i < m_filteredMatches.size(); i++) {
-      points1[i] = cv::Point2f(
-          m_trainKeyPoints[(size_t)m_filteredMatches[i].trainIdx].pt);
-      points2[i] = cv::Point2f(
-          m_queryFilteredKeyPoints[(size_t)m_filteredMatches[i].queryIdx].pt);
+      points1[i] = cv::Point2f(m_trainKeyPoints[(size_t)m_filteredMatches[i].trainIdx].pt);
+      points2[i] = cv::Point2f(m_queryFilteredKeyPoints[(size_t)m_filteredMatches[i].queryIdx].pt);
     }
 
     std::vector<vpImagePoint> inliers;
     if (isPlanarObject) {
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
-      cv::Mat homographyMatrix =
-          cv::findHomography(points1, points2, CV_RANSAC);
+      cv::Mat homographyMatrix = cv::findHomography(points1, points2, CV_RANSAC);
 #else
-      cv::Mat homographyMatrix =
-          cv::findHomography(points1, points2, cv::RANSAC);
+      cv::Mat homographyMatrix = cv::findHomography(points1, points2, cv::RANSAC);
 #endif
 
       for (size_t i = 0; i < m_filteredMatches.size(); i++) {
@@ -3909,46 +3502,35 @@ bool vpKeyPoint::matchPointAndDetect(
         realPoint.at<double>(2, 0) = 1.f;
 
         cv::Mat reprojectedPoint = homographyMatrix * realPoint;
-        double err_x = (reprojectedPoint.at<double>(0, 0) /
-                        reprojectedPoint.at<double>(2, 0)) -
-                       points2[i].x;
-        double err_y = (reprojectedPoint.at<double>(1, 0) /
-                        reprojectedPoint.at<double>(2, 0)) -
-                       points2[i].y;
+        double err_x = (reprojectedPoint.at<double>(0, 0) / reprojectedPoint.at<double>(2, 0)) - points2[i].x;
+        double err_y = (reprojectedPoint.at<double>(1, 0) / reprojectedPoint.at<double>(2, 0)) - points2[i].y;
         double reprojectionError = std::sqrt(err_x * err_x + err_y * err_y);
 
         if (reprojectionError < 6.0) {
-          inliers.push_back(
-              vpImagePoint((double)points2[i].y, (double)points2[i].x));
+          inliers.push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
           if (imPts1 != NULL) {
-            imPts1->push_back(
-                vpImagePoint((double)points1[i].y, (double)points1[i].x));
+            imPts1->push_back(vpImagePoint((double)points1[i].y, (double)points1[i].x));
           }
 
           if (imPts2 != NULL) {
-            imPts2->push_back(
-                vpImagePoint((double)points2[i].y, (double)points2[i].x));
+            imPts2->push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
           }
         }
       }
     } else if (m_filteredMatches.size() >= 8) {
       cv::Mat fundamentalInliers;
-      cv::Mat fundamentalMatrix = cv::findFundamentalMat(
-          points1, points2, cv::FM_RANSAC, 3, 0.99, fundamentalInliers);
+      cv::Mat fundamentalMatrix = cv::findFundamentalMat(points1, points2, cv::FM_RANSAC, 3, 0.99, fundamentalInliers);
 
       for (size_t i = 0; i < (size_t)fundamentalInliers.rows; i++) {
         if (fundamentalInliers.at<uchar>((int)i, 0)) {
-          inliers.push_back(
-              vpImagePoint((double)points2[i].y, (double)points2[i].x));
+          inliers.push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
 
           if (imPts1 != NULL) {
-            imPts1->push_back(
-                vpImagePoint((double)points1[i].y, (double)points1[i].x));
+            imPts1->push_back(vpImagePoint((double)points1[i].y, (double)points1[i].x));
           }
 
           if (imPts2 != NULL) {
-            imPts2->push_back(
-                vpImagePoint((double)points2[i].y, (double)points2[i].x));
+            imPts2->push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
           }
         }
       }
@@ -3962,8 +3544,7 @@ bool vpKeyPoint::matchPointAndDetect(
 
       // Compute the center of gravity
       double meanU = 0.0, meanV = 0.0;
-      for (std::vector<vpImagePoint>::const_iterator it = inliers.begin();
-           it != inliers.end(); ++it) {
+      for (std::vector<vpImagePoint>::const_iterator it = inliers.begin(); it != inliers.end(); ++it) {
         meanU += it->get_u();
         meanV += it->get_v();
       }
@@ -4006,24 +3587,19 @@ bool vpKeyPoint::matchPointAndDetect(
    consider \return True if the matching and the pose estimation are OK, false
    otherwise.
  */
-bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I,
-                                     const vpCameraParameters &cam,
-                                     vpHomogeneousMatrix &cMo, double &error,
-                                     double &elapsedTime, vpRect &boundingBox,
-                                     vpImagePoint &centerOfGravity,
-                                     bool (*func)(vpHomogeneousMatrix *),
+bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+                                     vpHomogeneousMatrix &cMo, double &error, double &elapsedTime, vpRect &boundingBox,
+                                     vpImagePoint &centerOfGravity, bool (*func)(vpHomogeneousMatrix *),
                                      const vpRect &rectangle)
 {
-  bool isMatchOk =
-      matchPoint(I, cam, cMo, error, elapsedTime, func, rectangle);
+  bool isMatchOk = matchPoint(I, cam, cMo, error, elapsedTime, func, rectangle);
   if (isMatchOk) {
     // Use the pose estimated to project the model points in the image
     vpPoint pt;
     vpImagePoint imPt;
     std::vector<vpImagePoint> modelImagePoints(m_trainVpPoints.size());
     size_t cpt = 0;
-    for (std::vector<vpPoint>::const_iterator it = m_trainVpPoints.begin();
-         it != m_trainVpPoints.end(); ++it, cpt++) {
+    for (std::vector<vpPoint>::const_iterator it = m_trainVpPoints.begin(); it != m_trainVpPoints.end(); ++it, cpt++) {
       pt = *it;
       pt.project(cMo);
       vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
@@ -4037,9 +3613,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I,
 
     // Compute the center of gravity of the current inlier keypoints
     double meanU = 0.0, meanV = 0.0;
-    for (std::vector<vpImagePoint>::const_iterator it =
-             m_ransacInliers.begin();
-         it != m_ransacInliers.end(); ++it) {
+    for (std::vector<vpImagePoint>::const_iterator it = m_ransacInliers.begin(); it != m_ransacInliers.end(); ++it) {
       meanU += it->get_u();
       meanV += it->get_v();
     }
@@ -4066,11 +3640,10 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I,
     \param listOfAffineI : Optional parameter, list of images after affine
    transformations
  */
-void vpKeyPoint::detectExtractAffine(
-    const vpImage<unsigned char> &I,
-    std::vector<std::vector<cv::KeyPoint> > &listOfKeypoints,
-    std::vector<cv::Mat> &listOfDescriptors,
-    std::vector<vpImage<unsigned char> > *listOfAffineI)
+void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
+                                     std::vector<std::vector<cv::KeyPoint> > &listOfKeypoints,
+                                     std::vector<cv::Mat> &listOfDescriptors,
+                                     std::vector<vpImage<unsigned char> > *listOfAffineI)
 {
 #if 0
   cv::Mat img;
@@ -4150,16 +3723,14 @@ void vpKeyPoint::detectExtractAffine(
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for
 #endif
-  for (int cpt = 0; cpt < static_cast<int>(listOfAffineParams.size());
-       cpt++) {
+  for (int cpt = 0; cpt < static_cast<int>(listOfAffineParams.size()); cpt++) {
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat descriptors;
 
     cv::Mat timg, mask, Ai;
     img.copyTo(timg);
 
-    affineSkew(listOfAffineParams[(size_t)cpt].first,
-               listOfAffineParams[(size_t)cpt].second, timg, mask, Ai);
+    affineSkew(listOfAffineParams[(size_t)cpt].first, listOfAffineParams[(size_t)cpt].second, timg, mask, Ai);
 
     if (listOfAffineI != NULL) {
       cv::Mat img_disp;
@@ -4177,8 +3748,7 @@ void vpKeyPoint::detectExtractAffine(
     cv::waitKey(0);
 #endif
 
-    for (std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator
-             it = m_detectors.begin();
+    for (std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator it = m_detectors.begin();
          it != m_detectors.end(); ++it) {
       std::vector<cv::KeyPoint> kp;
       it->second->detect(timg, kp, mask);
@@ -4254,8 +3824,7 @@ void vpKeyPoint::reset()
   m_trainPoints.clear();
   m_trainVpPoints.clear();
   m_useAffineDetection = false;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   m_useBruteForceCrossCheck = true;
 #endif
   m_useConsensusPercentage = false;
@@ -4278,9 +3847,7 @@ void vpKeyPoint::reset()
    in XML mode \param saveTrainingImages : If true, save also the training
    images on disk
  */
-void vpKeyPoint::saveLearningData(const std::string &filename,
-                                  bool binaryMode,
-                                  const bool saveTrainingImages)
+void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, const bool saveTrainingImages)
 {
   std::string parent = vpIoTools::getParent(filename);
   if (!parent.empty()) {
@@ -4293,13 +3860,10 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
     // Save the training image files in the same directory
     unsigned int cpt = 0;
 
-    for (std::map<int, vpImage<unsigned char> >::const_iterator
-             it = m_mapOfImages.begin();
-         it != m_mapOfImages.end(); ++it, cpt++) {
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it, cpt++) {
       if (cpt > 999) {
-        throw vpException(
-            vpException::fatalError,
-            "The number of training images to save is too big !");
+        throw vpException(vpException::fatalError, "The number of training images to save is too big !");
       }
 
       std::stringstream ss;
@@ -4329,8 +3893,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
 
       std::string imgFilename = ss.str();
       mapOfImgPath[it->first] = imgFilename;
-      vpImageIo::write(it->second,
-                       parent + (!parent.empty() ? "/" : "") + imgFilename);
+      vpImageIo::write(it->second, parent + (!parent.empty() ? "/" : "") + imgFilename);
     }
 #else
     std::cout << "Warning: in vpKeyPoint::saveLearningData() training images "
@@ -4342,9 +3905,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
 
   bool have3DInfo = m_trainPoints.size() > 0;
   if (have3DInfo && m_trainPoints.size() != m_trainKeyPoints.size()) {
-    throw vpException(
-        vpException::fatalError,
-        "List of keypoints and list of 3D points have different size !");
+    throw vpException(vpException::fatalError, "List of keypoints and list of 3D points have different size !");
   }
 
   if (binaryMode) {
@@ -4360,8 +3921,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
     writeBinaryIntLE(file, nbImgs);
 
 #ifdef VISP_HAVE_MODULE_IO
-    for (std::map<int, std::string>::const_iterator it = mapOfImgPath.begin();
-         it != mapOfImgPath.end(); ++it) {
+    for (std::map<int, std::string>::const_iterator it = mapOfImgPath.begin(); it != mapOfImgPath.end(); ++it) {
       // Write image_id
       int id = it->first;
       //      file.write((char *)(&id), sizeof(id));
@@ -4438,12 +3998,8 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
 
 // Write image_id
 #ifdef VISP_HAVE_MODULE_IO
-      std::map<int, int>::const_iterator it_findImgId =
-          m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
-      int image_id =
-          (saveTrainingImages && it_findImgId != m_mapOfImageId.end())
-              ? it_findImgId->second
-              : -1;
+      std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
+      int image_id = (saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1;
       //      file.write((char *)(&image_id), sizeof(image_id));
       writeBinaryIntLE(file, image_id);
 #else
@@ -4453,8 +4009,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
 #endif
 
       if (have3DInfo) {
-        float oX = m_trainPoints[i_].x, oY = m_trainPoints[i_].y,
-              oZ = m_trainPoints[i_].z;
+        float oX = m_trainPoints[i_].x, oY = m_trainPoints[i_].y, oZ = m_trainPoints[i_].z;
         // Write oX
         //        file.write((char *)(&oX), sizeof(oX));
         writeBinaryFloatLE(file, oX);
@@ -4477,16 +4032,14 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
           break;
 
         case CV_8S:
-          file.write((char *)(&m_trainDescriptors.at<char>(i, j)),
-                     sizeof(m_trainDescriptors.at<char>(i, j)));
+          file.write((char *)(&m_trainDescriptors.at<char>(i, j)), sizeof(m_trainDescriptors.at<char>(i, j)));
           break;
 
         case CV_16U:
           //          file.write((char *)(&m_trainDescriptors.at<unsigned
           //          short int>(i, j)), sizeof(m_trainDescriptors.at<unsigned
           //          short int>(i, j)));
-          writeBinaryUShortLE(
-              file, m_trainDescriptors.at<unsigned short int>(i, j));
+          writeBinaryUShortLE(file, m_trainDescriptors.at<unsigned short int>(i, j));
           break;
 
         case CV_16S:
@@ -4514,8 +4067,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
           break;
 
         default:
-          throw vpException(vpException::fatalError,
-                            "Problem with the data type of descriptors !");
+          throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
           break;
         }
       }
@@ -4525,9 +4077,8 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
   } else {
 #ifdef VISP_HAVE_XML2
     xmlDocPtr doc = NULL;
-    xmlNodePtr root_node = NULL, image_node = NULL, image_info_node = NULL,
-               descriptors_info_node = NULL, descriptor_node = NULL,
-               desc_node = NULL;
+    xmlNodePtr root_node = NULL, image_node = NULL, image_info_node = NULL, descriptors_info_node = NULL,
+               descriptor_node = NULL, desc_node = NULL;
 
     /*
      * this initialize the library and check potential ABI mismatches
@@ -4547,24 +4098,19 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
     std::stringstream ss;
 
     // Write the training images info
-    image_node =
-        xmlNewChild(root_node, NULL, BAD_CAST "TrainingImageInfo", NULL);
+    image_node = xmlNewChild(root_node, NULL, BAD_CAST "TrainingImageInfo", NULL);
 
 #ifdef VISP_HAVE_MODULE_IO
-    for (std::map<int, std::string>::const_iterator it = mapOfImgPath.begin();
-         it != mapOfImgPath.end(); ++it) {
-      image_info_node = xmlNewChild(image_node, NULL, BAD_CAST "trainImg",
-                                    BAD_CAST it->second.c_str());
+    for (std::map<int, std::string>::const_iterator it = mapOfImgPath.begin(); it != mapOfImgPath.end(); ++it) {
+      image_info_node = xmlNewChild(image_node, NULL, BAD_CAST "trainImg", BAD_CAST it->second.c_str());
       ss.str("");
       ss << it->first;
-      xmlNewProp(image_info_node, BAD_CAST "image_id",
-                 BAD_CAST ss.str().c_str());
+      xmlNewProp(image_info_node, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
     }
 #endif
 
     // Write information about descriptors
-    descriptors_info_node =
-        xmlNewChild(root_node, NULL, BAD_CAST "DescriptorsInfo", NULL);
+    descriptors_info_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorsInfo", NULL);
 
     int nRows = m_trainDescriptors.rows, nCols = m_trainDescriptors.cols;
     int descriptorType = m_trainDescriptors.type();
@@ -4572,100 +4118,80 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
     // Write the number of rows
     ss.str("");
     ss << nRows;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "nrows",
-                BAD_CAST ss.str().c_str());
+    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "nrows", BAD_CAST ss.str().c_str());
 
     // Write the number of cols
     ss.str("");
     ss << nCols;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "ncols",
-                BAD_CAST ss.str().c_str());
+    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "ncols", BAD_CAST ss.str().c_str());
 
     // Write the descriptors type
     ss.str("");
     ss << descriptorType;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "type",
-                BAD_CAST ss.str().c_str());
+    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "type", BAD_CAST ss.str().c_str());
 
     for (int i = 0; i < nRows; i++) {
       unsigned int i_ = (unsigned int)i;
-      descriptor_node =
-          xmlNewChild(root_node, NULL, BAD_CAST "DescriptorInfo", NULL);
+      descriptor_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorInfo", NULL);
 
       ss.str("");
       // max_digits10 == 9 for float
       ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.x;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "u",
-                  BAD_CAST ss.str().c_str());
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "u", BAD_CAST ss.str().c_str());
 
       ss.str("");
       // max_digits10 == 9 for float
       ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.y;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "v",
-                  BAD_CAST ss.str().c_str());
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "v", BAD_CAST ss.str().c_str());
 
       ss.str("");
       // max_digits10 == 9 for float
       ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].size;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "size",
-                  BAD_CAST ss.str().c_str());
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "size", BAD_CAST ss.str().c_str());
 
       ss.str("");
       // max_digits10 == 9 for float
       ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].angle;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "angle",
-                  BAD_CAST ss.str().c_str());
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "angle", BAD_CAST ss.str().c_str());
 
       ss.str("");
       // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9)
-         << m_trainKeyPoints[i_].response;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "response",
-                  BAD_CAST ss.str().c_str());
+      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].response;
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "response", BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].octave;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "octave",
-                  BAD_CAST ss.str().c_str());
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "octave", BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].class_id;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "class_id",
-                  BAD_CAST ss.str().c_str());
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "class_id", BAD_CAST ss.str().c_str());
 
       ss.str("");
 #ifdef VISP_HAVE_MODULE_IO
-      std::map<int, int>::const_iterator it_findImgId =
-          m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
-      ss << ((saveTrainingImages && it_findImgId != m_mapOfImageId.end())
-                 ? it_findImgId->second
-                 : -1);
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id",
-                  BAD_CAST ss.str().c_str());
+      std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
+      ss << ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
 #else
       ss << -1;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id",
-                  BAD_CAST ss.str().c_str());
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
 #endif
 
       if (have3DInfo) {
         ss.str("");
         // max_digits10 == 9 for float
         ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].x;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oX",
-                    BAD_CAST ss.str().c_str());
+        xmlNewChild(descriptor_node, NULL, BAD_CAST "oX", BAD_CAST ss.str().c_str());
 
         ss.str("");
         // max_digits10 == 9 for float
         ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].y;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oY",
-                    BAD_CAST ss.str().c_str());
+        xmlNewChild(descriptor_node, NULL, BAD_CAST "oY", BAD_CAST ss.str().c_str());
 
         ss.str("");
         // max_digits10 == 9 for float
         ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].z;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oZ",
-                    BAD_CAST ss.str().c_str());
+        xmlNewChild(descriptor_node, NULL, BAD_CAST "oZ", BAD_CAST ss.str().c_str());
       }
 
       desc_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "desc", NULL);
@@ -4706,23 +4232,19 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
 
         case CV_32F:
           // max_digits10 == 9 for float
-          ss << std::fixed << std::setprecision(9)
-             << m_trainDescriptors.at<float>(i, j);
+          ss << std::fixed << std::setprecision(9) << m_trainDescriptors.at<float>(i, j);
           break;
 
         case CV_64F:
           // max_digits10 == 17 for double
-          ss << std::fixed << std::setprecision(17)
-             << m_trainDescriptors.at<double>(i, j);
+          ss << std::fixed << std::setprecision(17) << m_trainDescriptors.at<double>(i, j);
           break;
 
         default:
-          throw vpException(vpException::fatalError,
-                            "Problem with the data type of descriptors !");
+          throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
           break;
         }
-        xmlNewChild(desc_node, NULL, BAD_CAST "val",
-                    BAD_CAST ss.str().c_str());
+        xmlNewChild(desc_node, NULL, BAD_CAST "val", BAD_CAST ss.str().c_str());
       }
     }
 
@@ -4746,24 +4268,16 @@ void vpKeyPoint::saveLearningData(const std::string &filename,
 // From OpenCV 2.4.11 source code.
 struct KeypointResponseGreaterThanThreshold {
   KeypointResponseGreaterThanThreshold(float _value) : value(_value) {}
-  inline bool operator()(const cv::KeyPoint &kpt) const
-  {
-    return kpt.response >= value;
-  }
+  inline bool operator()(const cv::KeyPoint &kpt) const { return kpt.response >= value; }
   float value;
 };
 
 struct KeypointResponseGreater {
-  inline bool operator()(const cv::KeyPoint &kp1,
-                         const cv::KeyPoint &kp2) const
-  {
-    return kp1.response > kp2.response;
-  }
+  inline bool operator()(const cv::KeyPoint &kp1, const cv::KeyPoint &kp2) const { return kp1.response > kp2.response; }
 };
 
 // takes keypoints and culls them by the response
-void vpKeyPoint::KeyPointsFilter::retainBest(
-    std::vector<cv::KeyPoint> &keypoints, int n_points)
+void vpKeyPoint::KeyPointsFilter::retainBest(std::vector<cv::KeyPoint> &keypoints, int n_points)
 {
   // this is only necessary if the keypoints size is greater than the number
   // of desired points.
@@ -4774,15 +4288,13 @@ void vpKeyPoint::KeyPointsFilter::retainBest(
     }
     // first use nth element to partition the keypoints into the best and
     // worst.
-    std::nth_element(keypoints.begin(), keypoints.begin() + n_points,
-                     keypoints.end(), KeypointResponseGreater());
+    std::nth_element(keypoints.begin(), keypoints.begin() + n_points, keypoints.end(), KeypointResponseGreater());
     // this is the boundary response, and in the case of FAST may be ambiguous
     float ambiguous_response = keypoints[(size_t)(n_points - 1)].response;
     // use std::partition to grab all of the keypoints with the boundary
     // response.
     std::vector<cv::KeyPoint>::const_iterator new_end = std::partition(
-        keypoints.begin() + n_points, keypoints.end(),
-        KeypointResponseGreaterThanThreshold(ambiguous_response));
+        keypoints.begin() + n_points, keypoints.end(), KeypointResponseGreaterThanThreshold(ambiguous_response));
     // resize the keypoints, given this new end point. nth_element and
     // partition reordered the points inplace
     keypoints.resize((size_t)(new_end - keypoints.begin()));
@@ -4792,37 +4304,28 @@ void vpKeyPoint::KeyPointsFilter::retainBest(
 struct RoiPredicate {
   RoiPredicate(const cv::Rect &_r) : r(_r) {}
 
-  bool operator()(const cv::KeyPoint &keyPt) const
-  {
-    return !r.contains(keyPt.pt);
-  }
+  bool operator()(const cv::KeyPoint &keyPt) const { return !r.contains(keyPt.pt); }
 
   cv::Rect r;
 };
 
-void vpKeyPoint::KeyPointsFilter::runByImageBorder(
-    std::vector<cv::KeyPoint> &keypoints, cv::Size imageSize, int borderSize)
+void vpKeyPoint::KeyPointsFilter::runByImageBorder(std::vector<cv::KeyPoint> &keypoints, cv::Size imageSize,
+                                                   int borderSize)
 {
   if (borderSize > 0) {
-    if (imageSize.height <= borderSize * 2 ||
-        imageSize.width <= borderSize * 2)
+    if (imageSize.height <= borderSize * 2 || imageSize.width <= borderSize * 2)
       keypoints.clear();
     else
-      keypoints.erase(
-          std::remove_if(keypoints.begin(), keypoints.end(),
-                         RoiPredicate(cv::Rect(
-                             cv::Point(borderSize, borderSize),
-                             cv::Point(imageSize.width - borderSize,
-                                       imageSize.height - borderSize)))),
-          keypoints.end());
+      keypoints.erase(std::remove_if(keypoints.begin(), keypoints.end(),
+                                     RoiPredicate(cv::Rect(
+                                         cv::Point(borderSize, borderSize),
+                                         cv::Point(imageSize.width - borderSize, imageSize.height - borderSize)))),
+                      keypoints.end());
   }
 }
 
 struct SizePredicate {
-  SizePredicate(float _minSize, float _maxSize)
-    : minSize(_minSize), maxSize(_maxSize)
-  {
-  }
+  SizePredicate(float _minSize, float _maxSize) : minSize(_minSize), maxSize(_maxSize) {}
 
   bool operator()(const cv::KeyPoint &keyPt) const
   {
@@ -4833,16 +4336,13 @@ struct SizePredicate {
   float minSize, maxSize;
 };
 
-void vpKeyPoint::KeyPointsFilter::runByKeypointSize(
-    std::vector<cv::KeyPoint> &keypoints, float minSize, float maxSize)
+void vpKeyPoint::KeyPointsFilter::runByKeypointSize(std::vector<cv::KeyPoint> &keypoints, float minSize, float maxSize)
 {
   CV_Assert(minSize >= 0);
   CV_Assert(maxSize >= 0);
   CV_Assert(minSize <= maxSize);
 
-  keypoints.erase(std::remove_if(keypoints.begin(), keypoints.end(),
-                                 SizePredicate(minSize, maxSize)),
-                  keypoints.end());
+  keypoints.erase(std::remove_if(keypoints.begin(), keypoints.end(), SizePredicate(minSize, maxSize)), keypoints.end());
 }
 
 class MaskPredicate
@@ -4851,8 +4351,7 @@ public:
   MaskPredicate(const cv::Mat &_mask) : mask(_mask) {}
   bool operator()(const cv::KeyPoint &key_pt) const
   {
-    return mask.at<uchar>((int)(key_pt.pt.y + 0.5f),
-                          (int)(key_pt.pt.x + 0.5f)) == 0;
+    return mask.at<uchar>((int)(key_pt.pt.y + 0.5f), (int)(key_pt.pt.x + 0.5f)) == 0;
   }
 
 private:
@@ -4860,15 +4359,12 @@ private:
   MaskPredicate &operator=(const MaskPredicate &);
 };
 
-void vpKeyPoint::KeyPointsFilter::runByPixelsMask(
-    std::vector<cv::KeyPoint> &keypoints, const cv::Mat &mask)
+void vpKeyPoint::KeyPointsFilter::runByPixelsMask(std::vector<cv::KeyPoint> &keypoints, const cv::Mat &mask)
 {
   if (mask.empty())
     return;
 
-  keypoints.erase(
-      std::remove_if(keypoints.begin(), keypoints.end(), MaskPredicate(mask)),
-      keypoints.end());
+  keypoints.erase(std::remove_if(keypoints.begin(), keypoints.end(), MaskPredicate(mask)), keypoints.end());
 }
 
 struct KeyPoint_LessThan {
@@ -4877,38 +4373,33 @@ struct KeyPoint_LessThan {
   {
     const cv::KeyPoint &kp1 = (*kp)[/*(size_t)*/ i];
     const cv::KeyPoint &kp2 = (*kp)[/*(size_t)*/ j];
-    if (!vpMath::equal(
-            kp1.pt.x, kp2.pt.x,
-            std::numeric_limits<float>::epsilon())) { // if (kp1.pt.x !=
-                                                      // kp2.pt.x) {
+    if (!vpMath::equal(kp1.pt.x, kp2.pt.x,
+                       std::numeric_limits<float>::epsilon())) { // if (kp1.pt.x !=
+                                                                 // kp2.pt.x) {
       return kp1.pt.x < kp2.pt.x;
     }
 
-    if (!vpMath::equal(
-            kp1.pt.y, kp2.pt.y,
-            std::numeric_limits<float>::epsilon())) { // if (kp1.pt.y !=
-                                                      // kp2.pt.y) {
+    if (!vpMath::equal(kp1.pt.y, kp2.pt.y,
+                       std::numeric_limits<float>::epsilon())) { // if (kp1.pt.y !=
+                                                                 // kp2.pt.y) {
       return kp1.pt.y < kp2.pt.y;
     }
 
-    if (!vpMath::equal(
-            kp1.size, kp2.size,
-            std::numeric_limits<float>::epsilon())) { // if (kp1.size !=
-                                                      // kp2.size) {
+    if (!vpMath::equal(kp1.size, kp2.size,
+                       std::numeric_limits<float>::epsilon())) { // if (kp1.size !=
+                                                                 // kp2.size) {
       return kp1.size > kp2.size;
     }
 
-    if (!vpMath::equal(
-            kp1.angle, kp2.angle,
-            std::numeric_limits<float>::epsilon())) { // if (kp1.angle !=
-                                                      // kp2.angle) {
+    if (!vpMath::equal(kp1.angle, kp2.angle,
+                       std::numeric_limits<float>::epsilon())) { // if (kp1.angle !=
+                                                                 // kp2.angle) {
       return kp1.angle < kp2.angle;
     }
 
-    if (!vpMath::equal(
-            kp1.response, kp2.response,
-            std::numeric_limits<float>::epsilon())) { // if (kp1.response !=
-                                                      // kp2.response) {
+    if (!vpMath::equal(kp1.response, kp2.response,
+                       std::numeric_limits<float>::epsilon())) { // if (kp1.response !=
+                                                                 // kp2.response) {
       return kp1.response > kp2.response;
     }
 
@@ -4925,8 +4416,7 @@ struct KeyPoint_LessThan {
   const std::vector<cv::KeyPoint> *kp;
 };
 
-void vpKeyPoint::KeyPointsFilter::removeDuplicated(
-    std::vector<cv::KeyPoint> &keypoints)
+void vpKeyPoint::KeyPointsFilter::removeDuplicated(std::vector<cv::KeyPoint> &keypoints)
 {
   size_t i, j, n = keypoints.size();
   std::vector<size_t> kpidx(n);
@@ -4941,14 +4431,10 @@ void vpKeyPoint::KeyPointsFilter::removeDuplicated(
     cv::KeyPoint &kp2 = keypoints[kpidx[j]];
     //    if (kp1.pt.x != kp2.pt.x || kp1.pt.y != kp2.pt.y || kp1.size !=
     //    kp2.size || kp1.angle != kp2.angle) {
-    if (!vpMath::equal(kp1.pt.x, kp2.pt.x,
-                       std::numeric_limits<float>::epsilon()) ||
-        !vpMath::equal(kp1.pt.y, kp2.pt.y,
-                       std::numeric_limits<float>::epsilon()) ||
-        !vpMath::equal(kp1.size, kp2.size,
-                       std::numeric_limits<float>::epsilon()) ||
-        !vpMath::equal(kp1.angle, kp2.angle,
-                       std::numeric_limits<float>::epsilon())) {
+    if (!vpMath::equal(kp1.pt.x, kp2.pt.x, std::numeric_limits<float>::epsilon()) ||
+        !vpMath::equal(kp1.pt.y, kp2.pt.y, std::numeric_limits<float>::epsilon()) ||
+        !vpMath::equal(kp1.size, kp2.size, std::numeric_limits<float>::epsilon()) ||
+        !vpMath::equal(kp1.angle, kp2.angle, std::numeric_limits<float>::epsilon())) {
       j = i;
     } else {
       mask[kpidx[i]] = 0;
@@ -4969,8 +4455,8 @@ void vpKeyPoint::KeyPointsFilter::removeDuplicated(
 /*
  *  PyramidAdaptedFeatureDetector
  */
-vpKeyPoint::PyramidAdaptedFeatureDetector::PyramidAdaptedFeatureDetector(
-    const cv::Ptr<cv::FeatureDetector> &_detector, int _maxLevel)
+vpKeyPoint::PyramidAdaptedFeatureDetector::PyramidAdaptedFeatureDetector(const cv::Ptr<cv::FeatureDetector> &_detector,
+                                                                         int _maxLevel)
   : detector(_detector), maxLevel(_maxLevel)
 {
 }
@@ -4980,16 +4466,14 @@ bool vpKeyPoint::PyramidAdaptedFeatureDetector::empty() const
   return detector.empty() || (cv::FeatureDetector *)detector->empty();
 }
 
-void vpKeyPoint::PyramidAdaptedFeatureDetector::detect(
-    cv::InputArray image, CV_OUT std::vector<cv::KeyPoint> &keypoints,
-    cv::InputArray mask)
+void vpKeyPoint::PyramidAdaptedFeatureDetector::detect(cv::InputArray image,
+                                                       CV_OUT std::vector<cv::KeyPoint> &keypoints, cv::InputArray mask)
 {
   detectImpl(image.getMat(), keypoints, mask.getMat());
 }
 
-void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(
-    const cv::Mat &image, std::vector<cv::KeyPoint> &keypoints,
-    const cv::Mat &mask) const
+void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image, std::vector<cv::KeyPoint> &keypoints,
+                                                           const cv::Mat &mask) const
 {
   cv::Mat src = image;
   cv::Mat src_mask = mask;
@@ -5006,8 +4490,7 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(
     // Detect on current level of the pyramid
     std::vector<cv::KeyPoint> new_pts;
     detector->detect(src, new_pts, src_mask);
-    std::vector<cv::KeyPoint>::iterator it = new_pts.begin(),
-                                        end = new_pts.end();
+    std::vector<cv::KeyPoint>::iterator it = new_pts.begin(), end = new_pts.end();
     for (; it != end; ++it) {
       it->pt.x *= multiplier;
       it->pt.y *= multiplier;

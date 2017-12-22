@@ -99,8 +99,7 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpLine &t)
   \param line : The cylinder edge used to create the line feature.
   It can be vpCylinder::line1 or vpCylinder::line2.
 */
-void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t,
-                              const int line)
+void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t, const int line)
 {
   try {
 
@@ -114,8 +113,8 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t,
 
     double R = t.getR();
 
-    double D = vpMath::sqr(x0) + vpMath::sqr(y0) + vpMath::sqr(z0) -
-               vpMath::sqr(R) - vpMath::sqr(a * x0 + b * y0 + c * z0);
+    double D =
+        vpMath::sqr(x0) + vpMath::sqr(y0) + vpMath::sqr(z0) - vpMath::sqr(R) - vpMath::sqr(a * x0 + b * y0 + c * z0);
 
     double alpha1 = (1 - a * a) * x0 - a * b * y0 - a * c * z0;
     double beta1 = -a * b * x0 + (1 - b * b) * y0 - b * c * z0;
@@ -193,8 +192,7 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t,
   s.setABCD(A,B,C,D);
   \endcode
 */
-void vpFeatureBuilder::create(vpFeatureLine &s, const vpCameraParameters &cam,
-                              const vpMeLine &t)
+void vpFeatureBuilder::create(vpFeatureLine &s, const vpCameraParameters &cam, const vpMeLine &t)
 {
   try {
     double rhop = t.getRho();

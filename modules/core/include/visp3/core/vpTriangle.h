@@ -78,11 +78,9 @@ public:
 
   vpTriangle &operator=(const vpTriangle &tri);
 
-  vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2,
-             const vpImagePoint &iP3);
+  vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 
-  void buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2,
-                 const vpImagePoint &iP3);
+  void buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 
   bool inTriangle(const vpImagePoint &iP, double threshold = 0.00001);
 
@@ -93,8 +91,7 @@ public:
     \param iP2 : second apex.
     \param iP3 : third apex.
   */
-  void getTriangleApexes(vpImagePoint &iP1, vpImagePoint &iP2,
-                         vpImagePoint &iP3) const
+  void getTriangleApexes(vpImagePoint &iP1, vpImagePoint &iP2, vpImagePoint &iP3) const
   {
     iP1 = apex1;
     iP2 = apex2;
@@ -110,8 +107,7 @@ public:
   inline double getArea() const { return this->area; }
 
 private:
-  void init(const vpImagePoint &iP1, const vpImagePoint &iP2,
-            const vpImagePoint &iP3);
+  void init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
 };
 
 #endif

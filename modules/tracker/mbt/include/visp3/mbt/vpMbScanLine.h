@@ -81,15 +81,11 @@ public:
 
   //! Structure to define a scanline intersection.
   struct vpMbScanLineSegment {
-    vpMbScanLineSegment()
-      : type(START), edge(), p(0), P1(0), P2(0), Z1(0), Z2(0), ID(0),
-        b_sample_Y(false)
-    {
-    }
+    vpMbScanLineSegment() : type(START), edge(), p(0), P1(0), P2(0), Z1(0), Z2(0), ID(0), b_sample_Y(false) {}
     vpMbScanLineType type;
     vpMbScanLineEdge edge;
-    double p; // This value can be either x or y-coordinate value depending if
-              // the structure is used in X or Y-axis scanlines computation.
+    double p;      // This value can be either x or y-coordinate value depending if
+                   // the structure is used in X or Y-axis scanlines computation.
     double P1, P2; // Same comment as previous value.
     double Z1, Z2;
     int ID;
@@ -98,8 +94,7 @@ public:
 
   //! vpMbScanLineEdge Comparator.
   struct vpMbScanLineEdgeComparator {
-    inline bool operator()(const vpMbScanLineEdge &l0,
-                           const vpMbScanLineEdge &l1) const
+    inline bool operator()(const vpMbScanLineEdge &l0, const vpMbScanLineEdge &l1) const
     {
       for (unsigned int i = 0; i < 3; ++i)
         if (l0.first[i] < l1.first[i])
@@ -117,18 +112,14 @@ public:
 
   //! vpMbScanLineSegment Comparators.
   struct vpMbScanLineSegmentComparator {
-    inline bool operator()(const vpMbScanLineSegment &a,
-                           const vpMbScanLineSegment &b) const
+    inline bool operator()(const vpMbScanLineSegment &a, const vpMbScanLineSegment &b) const
     {
       // return a.p == b.p ? a.type < b.type : a.p < b.p;
-      return (std::fabs(a.p - b.p) <= std::numeric_limits<double>::epsilon())
-                 ? a.type < b.type
-                 : a.p < b.p;
+      return (std::fabs(a.p - b.p) <= std::numeric_limits<double>::epsilon()) ? a.type < b.type : a.p < b.p;
     }
 
-    inline bool
-    operator()(const std::pair<double, vpMbScanLineSegment> &a,
-               const std::pair<double, vpMbScanLineSegment> &b) const
+    inline bool operator()(const std::pair<double, vpMbScanLineSegment> &a,
+                           const std::pair<double, vpMbScanLineSegment> &b) const
     {
       return a.first < b.first;
     }
@@ -140,8 +131,7 @@ private:
   unsigned int maskBorder;
   vpImage<unsigned char> mask;
   vpImage<int> primitive_ids;
-  std::map<vpMbScanLineEdge, std::set<int>, vpMbScanLineEdgeComparator>
-      visibility_samples;
+  std::map<vpMbScanLineEdge, std::set<int>, vpMbScanLineEdgeComparator> visibility_samples;
   double depthTreshold;
 
 public:
@@ -154,11 +144,8 @@ public:
   vpMbScanLine();
   ~vpMbScanLine();
 
-  void drawScene(
-      const std::vector<std::vector<std::pair<vpPoint, unsigned int> > *>
-          &polygons,
-      std::vector<int> listPolyIndices, const vpCameraParameters &K,
-      unsigned int w, unsigned int h);
+  void drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigned int> > *> &polygons,
+                 std::vector<int> listPolyIndices, const vpCameraParameters &K, unsigned int w, unsigned int h);
 
   /*!
     If there is one polygon behind another,
@@ -172,8 +159,7 @@ public:
   const vpImage<unsigned char> &getMask() const { return mask; }
   const vpImage<int> &getPrimitiveIDs() const { return primitive_ids; }
 
-  void queryLineVisibility(const vpPoint &a, const vpPoint &b,
-                           std::vector<std::pair<vpPoint, vpPoint> > &lines,
+  void queryLineVisibility(const vpPoint &a, const vpPoint &b, std::vector<std::pair<vpPoint, vpPoint> > &lines,
                            const bool &displayResults = false);
 
   /*!
@@ -187,36 +173,26 @@ public:
   void setMaskBorder(const unsigned int &mb) { maskBorder = mb; }
 
 private:
-  void createScanLinesFromLocals(
-      std::vector<std::vector<vpMbScanLineSegment> > &scanlines,
-      std::vector<std::vector<vpMbScanLineSegment> > &localScanlines,
-      const unsigned int &size);
+  void createScanLinesFromLocals(std::vector<std::vector<vpMbScanLineSegment> > &scanlines,
+                                 std::vector<std::vector<vpMbScanLineSegment> > &localScanlines,
+                                 const unsigned int &size);
 
-  void drawLineY(const vpColVector &a, const vpColVector &b,
-                 const vpMbScanLineEdge &line_ID, const int ID,
+  void drawLineY(const vpColVector &a, const vpColVector &b, const vpMbScanLineEdge &line_ID, const int ID,
                  std::vector<std::vector<vpMbScanLineSegment> > &scanlines);
 
-  void drawLineX(const vpColVector &a, const vpColVector &b,
-                 const vpMbScanLineEdge &line_ID, const int ID,
+  void drawLineX(const vpColVector &a, const vpColVector &b, const vpMbScanLineEdge &line_ID, const int ID,
                  std::vector<std::vector<vpMbScanLineSegment> > &scanlines);
 
-  void
-  drawPolygonY(const std::vector<std::pair<vpPoint, unsigned int> > &polygon,
-               const int ID,
-               std::vector<std::vector<vpMbScanLineSegment> > &scanlines);
+  void drawPolygonY(const std::vector<std::pair<vpPoint, unsigned int> > &polygon, const int ID,
+                    std::vector<std::vector<vpMbScanLineSegment> > &scanlines);
 
-  void
-  drawPolygonX(const std::vector<std::pair<vpPoint, unsigned int> > &polygon,
-               const int ID,
-               std::vector<std::vector<vpMbScanLineSegment> > &scanlines);
+  void drawPolygonX(const std::vector<std::pair<vpPoint, unsigned int> > &polygon, const int ID,
+                    std::vector<std::vector<vpMbScanLineSegment> > &scanlines);
 
   // Static functions
-  static vpMbScanLineEdge makeMbScanLineEdge(const vpPoint &a,
-                                             const vpPoint &b);
-  static void createVectorFromPoint(const vpPoint &p, vpColVector &v,
-                                    const vpCameraParameters &K);
-  static double getAlpha(double x, double X0, double Z0, double X1,
-                         double Z1);
+  static vpMbScanLineEdge makeMbScanLineEdge(const vpPoint &a, const vpPoint &b);
+  static void createVectorFromPoint(const vpPoint &p, vpColVector &v, const vpCameraParameters &K);
+  static double getAlpha(double x, double X0, double Z0, double X1, double Z1);
   static double mix(double a, double b, double alpha);
   static vpPoint mix(const vpPoint &a, const vpPoint &b, double alpha);
   static double norm(const vpPoint &a, const vpPoint &b);

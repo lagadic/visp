@@ -88,8 +88,7 @@ int main(int argc, const char *argv[])
 #else
       cap >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
-      bool face_found = face_detector.detect(
-          frame); // We pass frame to avoid an internal image conversion
+      bool face_found = face_detector.detect(frame); // We pass frame to avoid an internal image conversion
 #endif
       //! [Acquisition]
 
@@ -102,20 +101,16 @@ int main(int argc, const char *argv[])
         for (size_t i = 0; i < face_detector.getNbObjects(); i++) {
           vpRect bbox = face_detector.getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green, false, 4);
-          vpDisplay::displayText(
-              I, (int)bbox.getTop() - 10, (int)bbox.getLeft(),
-              "Message: \"" + face_detector.getMessage(i) + "\"",
-              vpColor::red);
+          vpDisplay::displayText(I, (int)bbox.getTop() - 10, (int)bbox.getLeft(),
+                                 "Message: \"" + face_detector.getMessage(i) + "\"", vpColor::red);
         }
       }
-      vpDisplay::displayText(I, (int)I.getHeight() - 25, 10,
-                             "Click to quit...", vpColor::red);
+      vpDisplay::displayText(I, (int)I.getHeight() - 25, 10, "Click to quit...", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // a click to exit
         break;
 
-      std::cout << "Loop time: " << vpTime::measureTimeMs() - t << " ms"
-                << std::endl;
+      std::cout << "Loop time: " << vpTime::measureTimeMs() - t << " ms" << std::endl;
     }
   } catch (vpException &e) {
     std::cout << e.getMessage() << std::endl;

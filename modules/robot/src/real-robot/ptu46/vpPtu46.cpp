@@ -52,10 +52,10 @@
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
 const unsigned int vpPtu46::ndof = 2; /*<! Pan and tilt are considered. */
-const float vpPtu46::L = 0.0765f; /*! Horizontal offset along the last joint,
-                                   from last joint to camera frame. */
-const float vpPtu46::h = 0.068f;  /*<! Vertical offset from last joint to
-                                   camera frame. */
+const float vpPtu46::L = 0.0765f;     /*! Horizontal offset along the last joint,
+                                       from last joint to camera frame. */
+const float vpPtu46::h = 0.068f;      /*<! Vertical offset from last joint to
+                                       camera frame. */
 
 /*!
   Compute the direct geometric model of the camera: fMc
@@ -71,8 +71,7 @@ void vpPtu46::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for ptu-46 articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
   }
 
   double q1 = q[0]; // pan
@@ -170,8 +169,7 @@ void vpPtu46::init() { return; }
 /* --- DISPLAY ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpPtu46 & /* constant */)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPtu46 & /* constant */)
 {
   os << "Geometric parameters: " << std::endl
      << "L: "
@@ -255,8 +253,7 @@ void vpPtu46::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for ptu-46 articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
   }
 
   double s2 = sin(q[1]);
@@ -283,8 +280,7 @@ void vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for ptu-46 articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
   }
 
   fJe.resize(6, 2);

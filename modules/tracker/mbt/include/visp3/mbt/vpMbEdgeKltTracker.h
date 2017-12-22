@@ -47,8 +47,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) &&                                         \
-    (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpPoseVector.h>
@@ -106,12 +105,13 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.getCameraParameters(cam);   // Get the camera parameters used by the
-tracker (from the configuration file). tracker.loadModel("cube.cao");      //
-Load the 3d model in cao format. No 3rd party library is required
-  tracker.initClick(I, "cube.init");  // Initialise manually the pose by
-clicking on the image points associated to the 3d points contained in the
-cube.init file.
+  // Load the 3d model in cao format. No 3rd party library is required
+  tracker.loadModel("cube.cao");
+  // Get the camera parameters used by the tracker (from the configuration file).
+  tracker.getCameraParameters(cam);
+  // Initialise manually the pose by clicking on the image points associated to the 3d points contained in the
+  // cube.init file.
+  tracker.initClick(I, "cube.init");
 
   while(true){
     // Acquire a new image
@@ -119,13 +119,14 @@ cube.init file.
     tracker.track(I);     // Track the object on this image
     tracker.getPose(cMo); // Get the pose
 
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at
-the computed pose. vpDisplay::flush(I);
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
+    vpDisplay::flush(I);
   }
 
 #if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbEdgeKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
+  vpXmlParser::cleanup();
+#endif
 
   return 0;
 #endif
@@ -148,8 +149,7 @@ int main()
 #if defined VISP_HAVE_OPENCV
   vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
   vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then
-computed using the tracker.
+  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker.
 
   //acquire an image
   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
@@ -157,8 +157,8 @@ computed using the tracker.
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coin
-is required, if coin is not installed .cao file can be used.
+  // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao");
   tracker.initFromPose(I, cMo); // initialise the tracker with the given pose.
 
   while(true){
@@ -168,8 +168,9 @@ is required, if coin is not installed .cao file can be used.
   }
 
 #if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbEdgeKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
+  vpXmlParser::cleanup();
+#endif
 
   return 0;
 #endif
@@ -206,30 +207,29 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.getCameraParameters(cam); // Get the camera parameters used by the
-tracker (from the configuration file). tracker.loadModel("cube.cao"); // load
-the 3d model, to read .wrl model coin is required, if coin is not installed
-.cao file can be used.
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+  // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao");
 
   while(true){
     // acquire a new image
     // Get the pose using any method
     vpDisplay::display(I);
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the
-model at the computed pose. vpDisplay::flush(I);
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
+    vpDisplay::flush(I);
   }
 
 #endif
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbEdgeKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
+ vpXmlParser::cleanup();
+#endif
 
   return 0;
 #endif
 }
 \endcode
 */
-class VISP_EXPORT vpMbEdgeKltTracker : public vpMbKltTracker,
-                                       public vpMbEdgeTracker
+class VISP_EXPORT vpMbEdgeKltTracker : public vpMbKltTracker, public vpMbEdgeTracker
 {
 protected:
   //! The threshold used in the robust estimation of KLT.
@@ -251,16 +251,10 @@ public:
   vpMbEdgeKltTracker();
   virtual ~vpMbEdgeKltTracker();
 
-  virtual void display(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false);
-  virtual void display(const vpImage<vpRGBa> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false);
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   virtual inline vpColVector getError() const { return m_error_hybrid; }
 
@@ -271,20 +265,14 @@ public:
 
     \return Near clipping value.
    */
-  virtual inline double getNearClippingDistance() const
-  {
-    return vpMbKltTracker::getNearClippingDistance();
-  }
+  virtual inline double getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
 
   void loadConfigFile(const char *configFile);
   virtual void loadConfigFile(const std::string &configFile);
 
-  void reInitModel(const vpImage<unsigned char> &I,
-                   const std::string &cad_name,
-                   const vpHomogeneousMatrix &cMo_,
+  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo_,
                    const bool verbose = false);
-  void reInitModel(const vpImage<unsigned char> &I, const char *cad_name,
-                   const vpHomogeneousMatrix &cMo,
+  void reInitModel(const vpImage<unsigned char> &I, const char *cad_name, const vpHomogeneousMatrix &cMo,
                    const bool verbose = false);
   void resetTracker();
 
@@ -297,30 +285,21 @@ public:
 
     \param flags : New clipping flags.
    */
-  virtual void setClipping(const unsigned int &flags)
-  {
-    vpMbEdgeTracker::setClipping(flags);
-  }
+  virtual void setClipping(const unsigned int &flags) { vpMbEdgeTracker::setClipping(flags); }
 
   /*!
     Set the far distance for clipping.
 
     \param dist : Far clipping value.
    */
-  virtual void setFarClippingDistance(const double &dist)
-  {
-    vpMbEdgeTracker::setFarClippingDistance(dist);
-  }
+  virtual void setFarClippingDistance(const double &dist) { vpMbEdgeTracker::setFarClippingDistance(dist); }
 
   /*!
     Set the near distance for clipping.
 
     \param dist : Near clipping value.
    */
-  virtual void setNearClippingDistance(const double &dist)
-  {
-    vpMbEdgeTracker::setNearClippingDistance(dist);
-  }
+  virtual void setNearClippingDistance(const double &dist) { vpMbEdgeTracker::setNearClippingDistance(dist); }
 
   /*!
     Use Ogre3D for visibility tests
@@ -349,25 +328,20 @@ public:
     vpMbKltTracker::setScanLineVisibilityTest(v);
   }
 
-  virtual void setPose(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
   /*!
     Set if the projection error criteria has to be computed.
 
     \param flag : True if the projection error criteria has to be computed,
     false otherwise
   */
-  virtual void setProjectionErrorComputation(const bool &flag)
-  {
-    vpMbEdgeTracker::setProjectionErrorComputation(flag);
-  }
+  virtual void setProjectionErrorComputation(const bool &flag) { vpMbEdgeTracker::setProjectionErrorComputation(flag); }
 
   virtual void testTracking() {}
   virtual void track(const vpImage<unsigned char> &I);
 
 protected:
-  virtual void computeVVS(const vpImage<unsigned char> &I,
-                          const unsigned int &nbInfos, unsigned int &nbrow,
+  virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
                           const unsigned int lvl = 0);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
@@ -375,24 +349,20 @@ protected:
   using vpMbTracker::computeVVSPoseEstimation;
 
   virtual void init(const vpImage<unsigned char> &I);
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &,
-                          const double r, const int idFace = 0,
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double r, const int idFace = 0,
                           const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, const double r,
-                            const int idFace, const std::string &name = "");
+  virtual void initCylinder(const vpPoint &, const vpPoint &, const double r, const int idFace,
+                            const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
   unsigned int initMbtTracking(const unsigned int level = 0);
 
-  bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt,
-                    vpColVector &w_klt, const unsigned int lvl = 0);
+  bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt,
+                    const unsigned int lvl = 0);
   void postTrackingMbt(vpColVector &w, const unsigned int level = 0);
 
-  unsigned int trackFirstLoop(const vpImage<unsigned char> &I,
-                              vpColVector &factor,
-                              const unsigned int lvl = 0);
-  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L,
-                       vpColVector &_error, vpHomogeneousMatrix &cMo,
+  unsigned int trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, const unsigned int lvl = 0);
+  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error, vpHomogeneousMatrix &cMo,
                        const unsigned int lvl = 0);
 };
 

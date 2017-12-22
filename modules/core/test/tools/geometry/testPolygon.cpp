@@ -55,8 +55,7 @@
 #define GETOPTARGS "cdm:h"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &opt_display,
-                bool &opt_click, int &method);
+bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click, int &method);
 
 /*!
 
@@ -104,8 +103,7 @@ OPTIONS: \n\
   \param opt_click : activates the mouse click.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, bool &opt_display,
-                bool &opt_click, int &method)
+bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click, int &method)
 {
   const char *optarg_;
   int c;
@@ -205,8 +203,7 @@ int main(int argc, const char **argv)
     std::cout << " center : " << p3.getCenter() << std::endl;
 
     if (opt_display) {
-#if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GTK) ||                    \
-    (defined VISP_HAVE_GDI)
+#if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GTK) || (defined VISP_HAVE_GDI)
       display.init(I, 10, 10, "Test vpPolygon");
 #endif
       vpDisplay::display(I);
@@ -216,19 +213,15 @@ int main(int argc, const char **argv)
       vpDisplay::displayCross(I, p2.getCenter(), 5, vpColor::red);
       p3.display(I, vpColor::blue, 1);
       vpDisplay::displayCross(I, p3.getCenter(), 5, vpColor::lightBlue);
-      vpDisplay::displayText(I, vpImagePoint(10, 10), "Click to finish",
-                             vpColor::red);
+      vpDisplay::displayText(I, vpImagePoint(10, 10), "Click to finish", vpColor::red);
       vpDisplay::flush(I);
 
       if (opt_click)
         vpDisplay::getClick(I);
 
       vpDisplay::display(I);
-      vpDisplay::displayText(I, vpImagePoint(10, 10),
-                             "Left click to add a point", vpColor::red);
-      vpDisplay::displayText(I, vpImagePoint(20, 10),
-                             "Right click to build the polygon",
-                             vpColor::red);
+      vpDisplay::displayText(I, vpImagePoint(10, 10), "Left click to add a point", vpColor::red);
+      vpDisplay::displayText(I, vpImagePoint(20, 10), "Right click to build the polygon", vpColor::red);
       vpDisplay::flush(I);
       if (opt_click) {
         vpPolygon p4;
@@ -243,12 +236,9 @@ int main(int argc, const char **argv)
         vpDisplay::getClick(I);
 
         vpRect bbox = p4.getBoundingBox();
-        for (unsigned int i = (unsigned int)floor(bbox.getTop());
-             i < (unsigned int)ceil(bbox.getBottom()); ++i) {
-          for (unsigned int j = (unsigned int)floor(bbox.getLeft());
-               j < (unsigned int)ceil(bbox.getRight()); ++j) {
-            if (p4.isInside(vpImagePoint(i, j),
-                            (vpPolygon::PointInPolygonMethod)method)) {
+        for (unsigned int i = (unsigned int)floor(bbox.getTop()); i < (unsigned int)ceil(bbox.getBottom()); ++i) {
+          for (unsigned int j = (unsigned int)floor(bbox.getLeft()); j < (unsigned int)ceil(bbox.getRight()); ++j) {
+            if (p4.isInside(vpImagePoint(i, j), (vpPolygon::PointInPolygonMethod)method)) {
               vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
             }
           }
@@ -259,9 +249,7 @@ int main(int argc, const char **argv)
         vpDisplay::getClick(I);
         for (unsigned int i = 0; i < I.getHeight(); ++i) {
           for (unsigned int j = 0; j < I.getWidth(); ++j) {
-            if (vpPolygon::isInside(
-                    p4.getCorners(), i, j,
-                    (vpPolygon::PointInPolygonMethod)method)) {
+            if (vpPolygon::isInside(p4.getCorners(), i, j, (vpPolygon::PointInPolygonMethod)method)) {
               vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::green);
             }
           }
@@ -283,31 +271,25 @@ int main(int argc, const char **argv)
 
         double t_benchmark = vpTime::measureTimeMs();
         for (unsigned int i = 0; i < I_segmentIntersection.getHeight(); i++) {
-          for (unsigned int j = 0; j < I_segmentIntersection.getWidth();
-               j++) {
-            if (polygon_benchmark.isInside(
-                    vpImagePoint(i, j),
-                    vpPolygon::PnPolySegmentIntersection)) {
+          for (unsigned int j = 0; j < I_segmentIntersection.getWidth(); j++) {
+            if (polygon_benchmark.isInside(vpImagePoint(i, j), vpPolygon::PnPolySegmentIntersection)) {
               I_segmentIntersection[i][j] = 255;
             }
           }
         }
         t_benchmark = vpTime::measureTimeMs() - t_benchmark;
-        std::cout << "PnPolySegmentIntersection: " << t_benchmark << " ms"
-                  << std::endl;
+        std::cout << "PnPolySegmentIntersection: " << t_benchmark << " ms" << std::endl;
 
         t_benchmark = vpTime::measureTimeMs();
         for (unsigned int i = 0; i < I_rayCasting.getHeight(); i++) {
           for (unsigned int j = 0; j < I_rayCasting.getWidth(); j++) {
-            if (polygon_benchmark.isInside(vpImagePoint(i, j),
-                                           vpPolygon::PnPolyRayCasting)) {
+            if (polygon_benchmark.isInside(vpImagePoint(i, j), vpPolygon::PnPolyRayCasting)) {
               I_rayCasting[i][j] = 255;
             }
           }
         }
         t_benchmark = vpTime::measureTimeMs() - t_benchmark;
-        std::cout << "PnPolyRayCasting: " << t_benchmark << " ms"
-                  << std::endl;
+        std::cout << "PnPolyRayCasting: " << t_benchmark << " ms" << std::endl;
 
 #if defined VISP_HAVE_X11
         vpDisplayX display1, display2;
@@ -317,19 +299,14 @@ int main(int argc, const char **argv)
         vpDisplayGDI display1, display2;
 #endif
 
-#if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GTK) ||                    \
-    (defined VISP_HAVE_GDI)
-        display1.init(I_segmentIntersection, 10, 10,
-                      "Segment Intersection test");
-        display2.init(I_rayCasting,
-                      (int)I_segmentIntersection.getWidth() + 10, 10,
-                      "Ray Casting test");
+#if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GTK) || (defined VISP_HAVE_GDI)
+        display1.init(I_segmentIntersection, 10, 10, "Segment Intersection test");
+        display2.init(I_rayCasting, (int)I_segmentIntersection.getWidth() + 10, 10, "Ray Casting test");
 #endif
 
         vpDisplay::display(I_segmentIntersection);
         vpDisplay::display(I_rayCasting);
-        vpDisplay::displayText(I_rayCasting, 20, 20, "Click to quit.",
-                               vpColor::red);
+        vpDisplay::displayText(I_rayCasting, 20, 20, "Click to quit.", vpColor::red);
         vpDisplay::flush(I_segmentIntersection);
         vpDisplay::flush(I_rayCasting);
 

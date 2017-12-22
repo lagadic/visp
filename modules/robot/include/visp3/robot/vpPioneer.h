@@ -113,8 +113,7 @@ private:
   void set_cMe()
   {
     // Position of the camera in the mobile platform frame
-    double l =
-        0.13; // distance between the camera frame and the mobile robot frame
+    double l = 0.13;         // distance between the camera frame and the mobile robot frame
     vpTranslationVector cte; // meters
     vpRxyzVector cre;        // radian
     cte.set(0, 0, -l);

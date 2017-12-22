@@ -48,9 +48,8 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 vpPlotCurve::vpPlotCurve()
-  : color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0),
-    lastPoint(), pointListx(), pointListy(), pointListz(), legend(), xmin(0),
-    xmax(0), ymin(0), ymax(0)
+  : color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0), lastPoint(), pointListx(), pointListy(),
+    pointListz(), legend(), xmin(0), xmax(0), ymin(0), ymax(0)
 {
 }
 
@@ -61,9 +60,7 @@ vpPlotCurve::~vpPlotCurve()
   pointListz.clear();
 }
 
-void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I,
-                            const vpImagePoint &iP, const double x,
-                            const double y)
+void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const double x, const double y)
 {
   nbPoint++;
 
@@ -98,8 +95,7 @@ void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I,
   pointListz.push_back(0.0);
 }
 
-void vpPlotCurve::plotList(const vpImage<unsigned char> &I, const double xorg,
-                           const double yorg, const double zoomx,
+void vpPlotCurve::plotList(const vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx,
                            const double zoomy)
 {
   std::list<double>::const_iterator it_ptListx = pointListx.begin();

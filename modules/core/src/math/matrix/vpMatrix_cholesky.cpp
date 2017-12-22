@@ -60,10 +60,8 @@ typedef long int integer;
 typedef int integer;
 #endif
 
-extern "C" void dpotrf_(char *uplo, integer *n, double *a, integer *lda,
-                        integer *info);
-extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda,
-                       integer *info);
+extern "C" void dpotrf_(char *uplo, integer *n, double *a, integer *lda, integer *info);
+extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer *info);
 #endif
 
 /*!
@@ -159,24 +157,19 @@ int main()
 vpMatrix vpMatrix::inverseByCholeskyLapack() const
 {
   if (rowNum != colNum) {
-    throw(vpMatrixException(
-        vpMatrixException::matrixError,
-        "Cannot inverse a non-square matrix (%ux%u) by Cholesky", rowNum,
-        colNum));
+    throw(vpMatrixException(vpMatrixException::matrixError, "Cannot inverse a non-square matrix (%ux%u) by Cholesky",
+                            rowNum, colNum));
   }
 
   integer rowNum_ = (integer)this->getRows();
-  integer lda = (integer)
-      rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
   integer info;
 
   vpMatrix A = *this;
   dpotrf_((char *)"L", &rowNum_, A.data, &lda, &info);
 
   if (info != 0)
-    throw(vpException(
-        vpException::fatalError,
-        "Cannot inverse by Cholesky with Lapack: error in dpotrf_()"));
+    throw(vpException(vpException::fatalError, "Cannot inverse by Cholesky with Lapack: error in dpotrf_()"));
 
   dpotri_((char *)"L", &rowNum_, A.data, &lda, &info);
   if (info != 0) {
@@ -234,9 +227,7 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
 {
   if (rowNum != colNum) {
     throw(
-        vpException(vpException::fatalError,
-                    "Cannot inverse a non square matrix (%ux%u) by Cholesky",
-                    rowNum, colNum));
+        vpException(vpException::fatalError, "Cannot inverse a non square matrix (%ux%u) by Cholesky", rowNum, colNum));
   }
 
   cv::Mat M(rowNum, colNum, CV_64F, this->data);

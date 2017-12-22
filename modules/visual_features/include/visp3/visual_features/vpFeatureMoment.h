@@ -112,8 +112,11 @@ which order you want to initialize the object. An object of order 6 should be
 sufficient for all classic implementations of vpFeatureMoment.
 
 Here is an example of how to use a vpFeatureMoment (in this case
-vpFeatureMomentBasic). \code #include <visp3/core/vpMomentBasic.h> #include
-<visp3/core/vpMomentDatabase.h> #include <visp3/core/vpMomentObject.h>
+vpFeatureMomentBasic).
+\code
+#include <visp3/core/vpMomentBasic.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
@@ -123,15 +126,15 @@ int main()
   vpPoint p;
   std::vector<vpPoint> vec_p; // vector that contains the vertices
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane (vertex 2) vec_p.push_back(p);
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
 
-  //////////////////////////////REFERENCE
-VALUES//////////////////////////////// vpMomentObject obj(3); // Init object
-of order 3 because we need
-  // vpFeatureMomentBasic of order 2 which
+  //////////////////////////////REFERENCE VALUES////////////////////////////////
+  // Init object of order 3 because we need vpFeatureMomentBasic of order 2 which
   // implies third-order moment primitives
+  vpMomentObject obj(3);
   obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
   obj.fromVector(vec_p);
 
@@ -143,8 +146,9 @@ of order 3 because we need
 
   vpFeatureMomentBasic fmb(mdb,0,0,1,NULL);
 
-  //update and compute the vpMoment BEFORE doing any operations with
-vpFeatureMoment bm.update(obj); bm.compute();
+  //update and compute the vpMoment BEFORE doing any operations with vpFeatureMoment
+  bm.update(obj);
+  bm.compute();
 
   fmb.update(0,0,1); //update the vpFeatureMoment with a plane
   //configuration
@@ -197,12 +201,9 @@ public:
   your feature will often have a matrix size of n lines. You can specify the
   number of lines by this parameter.
   */
-  vpFeatureMoment(vpMomentDatabase &data_base, double A_ = 0.0,
-                  double B_ = 0.0, double C_ = 0.0,
-                  vpFeatureMomentDatabase *featureMoments = NULL,
-                  unsigned int nbmatrices = 1)
-    : vpBasicFeature(), moment(NULL), moments(data_base),
-      featureMomentsDataBase(featureMoments),
+  vpFeatureMoment(vpMomentDatabase &data_base, double A_ = 0.0, double B_ = 0.0, double C_ = 0.0,
+                  vpFeatureMomentDatabase *featureMoments = NULL, unsigned int nbmatrices = 1)
+    : vpBasicFeature(), moment(NULL), moments(data_base), featureMomentsDataBase(featureMoments),
       interaction_matrices(nbmatrices), A(A_), B(B_), C(C_), _name()
   {
   }
@@ -213,11 +214,9 @@ public:
   //@{
   virtual void compute_interaction(void);
   vpBasicFeature *duplicate() const;
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   int getDimension(unsigned int select = FEATURE_ALL) const;
@@ -240,8 +239,7 @@ public:
   void update(double A, double B, double C);
 
   //@}
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpFeatureMoment &featM);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &featM);
 };
 
 /*!
@@ -265,9 +263,8 @@ Duplication is mostly used internally in ViSP.
 class VISP_EXPORT vpMomentGenericFeature : public vpFeatureMoment
 {
 public:
-  vpMomentGenericFeature(vpMomentDatabase &data_base, double A_, double B_,
-                         double C_, vpFeatureMomentDatabase *featureMoments,
-                         const vpMoment *p_moment)
+  vpMomentGenericFeature(vpMomentDatabase &data_base, double A_, double B_, double C_,
+                         vpFeatureMomentDatabase *featureMoments, const vpMoment *p_moment)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments)
   {
     this->moment = p_moment;

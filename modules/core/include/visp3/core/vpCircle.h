@@ -61,14 +61,13 @@ public:
   void init();
   vpCircle();
   explicit vpCircle(const vpColVector &oP);
-  vpCircle(const double A, const double B, const double C, const double X0,
-           const double Y0, const double Z0, const double R);
+  vpCircle(const double A, const double B, const double C, const double X0, const double Y0, const double Z0,
+           const double R);
   virtual ~vpCircle();
 
   void setWorldCoordinates(const vpColVector &oP);
-  void setWorldCoordinates(const double A, const double B, const double C,
-                           const double X0, const double Y0, const double Z0,
-                           const double R);
+  void setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
+                           const double Z0, const double R);
 
   double getA() const { return cP[0]; }
   double getB() const { return cP[1]; }
@@ -85,13 +84,10 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                const unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
   vpCircle *duplicate() const;
 
   //###################
@@ -99,10 +95,8 @@ public:
   //###################
 
 public:
-  static void computeIntersectionPoint(const vpCircle &circle,
-                                       const vpCameraParameters &cam,
-                                       const double &rho, const double &theta,
-                                       double &i, double &j);
+  static void computeIntersectionPoint(const vpCircle &circle, const vpCameraParameters &cam, const double &rho,
+                                       const double &theta, double &i, double &j);
 };
 
 #endif

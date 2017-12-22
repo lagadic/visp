@@ -81,11 +81,7 @@ vpAdaptiveGain::vpAdaptiveGain() : coeff_a(), coeff_b(), coeff_c(), lambda(1.)
 
   \param c : Value of the constant gain. A typical value is 0.5.
 */
-vpAdaptiveGain::vpAdaptiveGain(double c)
-  : coeff_a(), coeff_b(), coeff_c(), lambda(1.)
-{
-  initFromConstant(c);
-}
+vpAdaptiveGain::vpAdaptiveGain(double c) : coeff_a(), coeff_b(), coeff_c(), lambda(1.) { initFromConstant(c); }
 
 /*!
   Constructor that initializes the gain as adaptive.
@@ -97,8 +93,7 @@ vpAdaptiveGain::vpAdaptiveGain(double c)
   \f$\lambda'_0\f$.
 
 */
-vpAdaptiveGain::vpAdaptiveGain(double gain_at_zero, double gain_at_infinity,
-                               double slope_at_zero)
+vpAdaptiveGain::vpAdaptiveGain(double gain_at_zero, double gain_at_infinity, double slope_at_zero)
   : coeff_a(), coeff_b(), coeff_c(), lambda(1.)
 {
   initStandard(gain_at_zero, gain_at_infinity, slope_at_zero);
@@ -134,8 +129,7 @@ void vpAdaptiveGain::initFromConstant(const double c)
 */
 void vpAdaptiveGain::initFromVoid(void)
 {
-  this->initStandard(vpAdaptiveGain::DEFAULT_LAMBDA_ZERO,
-                     vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY,
+  this->initStandard(vpAdaptiveGain::DEFAULT_LAMBDA_ZERO, vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY,
                      vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE);
   return;
 }
@@ -150,9 +144,7 @@ void vpAdaptiveGain::initFromVoid(void)
   expected slope of \f$\lambda(||{\bf e}||)\f$ when \f$||{\bf e}||=0\f$:
   \f$\lambda'_0\f$.
 */
-void vpAdaptiveGain::initStandard(const double gain_at_zero,
-                                  const double gain_at_infinity,
-                                  const double slope_at_zero)
+void vpAdaptiveGain::initStandard(const double gain_at_zero, const double gain_at_infinity, const double slope_at_zero)
 {
   this->coeff_a = gain_at_zero - gain_at_infinity;
   // if (0 == this ->coeff_a)
@@ -285,10 +277,7 @@ double vpAdaptiveGain::limitValue(void) const
 
   \sa value()
 */
-double vpAdaptiveGain::operator()(const double x) const
-{
-  return this->value(x);
-}
+double vpAdaptiveGain::operator()(const double x) const { return this->value(x); }
 
 /*!
   Gets the value of the gain at infinity (ie the value of \f$\lambda_\infty =
@@ -311,10 +300,7 @@ double vpAdaptiveGain::operator()(void) const { return this->limitValue(); }
 
   \return It returns the value of the computed gain.
 */
-double vpAdaptiveGain::operator()(const vpColVector &x) const
-{
-  return this->value(x.infinityNorm());
-}
+double vpAdaptiveGain::operator()(const vpColVector &x) const { return this->value(x.infinityNorm()); }
 
 /* --------------------------------------------------------------------------
  */
@@ -330,11 +316,9 @@ double vpAdaptiveGain::operator()(const vpColVector &x) const
   \param os : The stream where to print the adaptive gain parameters.
   \param lambda : The adaptive gain containing the parameters to print.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpAdaptiveGain &lambda)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lambda)
 {
-  os << "Zero= " << lambda.coeff_a + lambda.coeff_c
-     << "\tInf= " << lambda.coeff_c
+  os << "Zero= " << lambda.coeff_a + lambda.coeff_c << "\tInf= " << lambda.coeff_c
      << "\tSlope= " << lambda.coeff_a * lambda.coeff_b;
 
   return os;

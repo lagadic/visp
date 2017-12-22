@@ -59,80 +59,52 @@
 class VISP_EXPORT vpTemplateTrackerMIBSpline
 {
 public:
-  static void PutPVBsplineD(double *Prt, int cr, double er, int ct, double et,
-                            int Nc, double val, const int &degre);
-  static void PutPVBsplineD3(double *Prt, int cr, double er, int ct,
-                             double et, int Nc, double val);
-  static void PutPVBsplineD4(double *Prt, int cr, double er, int ct,
-                             double et, int Nc, double val);
+  static void PutPVBsplineD(double *Prt, int cr, double er, int ct, double et, int Nc, double val, const int &degre);
+  static void PutPVBsplineD3(double *Prt, int cr, double er, int ct, double et, int Nc, double val);
+  static void PutPVBsplineD4(double *Prt, int cr, double er, int ct, double et, int Nc, double val);
 
-  static void PutTotPVBspline(double *Prt, int cr, double &er, int ct,
-                              double &et, int Nc, double *val,
+  static void PutTotPVBspline(double *Prt, int cr, double &er, int ct, double &et, int Nc, double *val,
                               unsigned int &NbParam, int &degree);
-  static void PutTotPVBspline(double *Prt, double *dPrt, double *d2Prt,
-                              int cr, double &er, int ct, double &et, int Ncb,
-                              double *val, unsigned int &NbParam,
-                              int &degree);
-  static void PutTotPVBspline3(double *Prt, int cr, double &er, int ct,
-                               double &et, int Nc, double *val,
+  static void PutTotPVBspline(double *Prt, double *dPrt, double *d2Prt, int cr, double &er, int ct, double &et, int Ncb,
+                              double *val, unsigned int &NbParam, int &degree);
+  static void PutTotPVBspline3(double *Prt, int cr, double &er, int ct, double &et, int Nc, double *val,
                                unsigned int &NbParam);
-  static void PutTotPVBspline3(double *Prt, double *dPrt, double *d2Prt,
-                               int cr, double &er, int ct, double &et,
+  static void PutTotPVBspline3(double *Prt, double *dPrt, double *d2Prt, int cr, double &er, int ct, double &et,
                                int Ncb, double *val, unsigned int &NbParam);
-  static void PutTotPVBspline4(double *Prt, int cr, double er, int ct,
-                               double et, int Nc, double *val,
+  static void PutTotPVBspline4(double *Prt, int cr, double er, int ct, double et, int Nc, double *val,
                                unsigned int &NbParam);
-  static void PutTotPVBspline4(double *Prt, double *dPrt, double *d2Prt,
-                               int cr, double er, int ct, double et, int Ncb,
+  static void PutTotPVBspline4(double *Prt, double *dPrt, double *d2Prt, int cr, double er, int ct, double et, int Ncb,
                                double *val, unsigned int &NbParam);
 
   // AY Optimisation
-  static void PutTotPVBspline3(double *Prt, double &er, double *et,
-                               unsigned int NbParam);
-  static void PutTotPVBspline4(double *Prt, double &er, double *et,
-                               unsigned int NbParam);
+  static void PutTotPVBspline3(double *Prt, double &er, double *et, unsigned int NbParam);
+  static void PutTotPVBspline4(double *Prt, double &er, double *et, unsigned int NbParam);
   //
 
-  static void PutTotPVBsplineNoSecond(double *Prt, int &cr, double &er,
-                                      int &ct, double &et, int &Nc,
-                                      double *val, unsigned int &NbParam,
-                                      int &degree);
-  static void PutTotPVBsplineNoSecond(double *Prt, double *dPrt, int &cr,
-                                      double &er, int &ct, double &et,
-                                      int &Ncb, double *val,
+  static void PutTotPVBsplineNoSecond(double *Prt, int &cr, double &er, int &ct, double &et, int &Nc, double *val,
                                       unsigned int &NbParam, int &degree);
-  static void PutTotPVBspline3NoSecond(double *Prt, int &cr, double &er,
-                                       int &ct, double &et, int &Nc,
-                                       double *val, unsigned int &NbParam);
-  static void PutTotPVBspline3NoSecond(double *Prt, double *dPrt, int &cr,
-                                       double &er, int &ct, double &et,
-                                       int &Ncb, double *val,
+  static void PutTotPVBsplineNoSecond(double *Prt, double *dPrt, int &cr, double &er, int &ct, double &et, int &Ncb,
+                                      double *val, unsigned int &NbParam, int &degree);
+  static void PutTotPVBspline3NoSecond(double *Prt, int &cr, double &er, int &ct, double &et, int &Nc, double *val,
                                        unsigned int &NbParam);
-  static void PutTotPVBspline4NoSecond(double *Prt, int &cr, double &er,
-                                       int &ct, double &et, int &Nc,
+  static void PutTotPVBspline3NoSecond(double *Prt, double *dPrt, int &cr, double &er, int &ct, double &et, int &Ncb,
                                        double *val, unsigned int &NbParam);
-  static void PutTotPVBspline4NoSecond(double *Prt, double *dPrt, int &cr,
-                                       double &er, int &ct, double &et,
-                                       int &Ncb, double *val,
+  static void PutTotPVBspline4NoSecond(double *Prt, int &cr, double &er, int &ct, double &et, int &Nc, double *val,
                                        unsigned int &NbParam);
+  static void PutTotPVBspline4NoSecond(double *Prt, double *dPrt, int &cr, double &er, int &ct, double &et, int &Ncb,
+                                       double *val, unsigned int &NbParam);
 
-  static void PutTotPVBsplinePrtTout(double *Prt, int &cr, double &er,
-                                     int &ct, double &et, int &Nc,
+  static void PutTotPVBsplinePrtTout(double *Prt, int &cr, double &er, int &ct, double &et, int &Nc,
                                      unsigned int &NbParam, int &degree);
-  static void PutTotPVBspline3PrtTout(double *Prt, int &cr, double &er,
-                                      int &ct, double &et, int &Nc,
+  static void PutTotPVBspline3PrtTout(double *Prt, int &cr, double &er, int &ct, double &et, int &Nc,
                                       unsigned int &NbParam);
-  static void PutTotPVBspline4PrtTout(double *Prt, int &cr, double &er,
-                                      int &ct, double &et, int &Nc,
+  static void PutTotPVBspline4PrtTout(double *Prt, int &cr, double &er, int &ct, double &et, int &Nc,
                                       unsigned int &NbParam);
 
-  static void PutTotPVBsplinePrt(double *Prt, int &cr, double &er, int &ct,
-                                 double &et, int &Ncb, unsigned int &NbParam,
+  static void PutTotPVBsplinePrt(double *Prt, int &cr, double &er, int &ct, double &et, int &Ncb, unsigned int &NbParam,
                                  int &degree);
-  static void PutTotPVBspline3Prt(double *Prt, int &cr, double &er, int &ct,
-                                  double &et, int &Ncb);
-  static void PutTotPVBspline4Prt(double *Prt, int &cr, double &er, int &ct,
-                                  double &et, int &Ncb);
+  static void PutTotPVBspline3Prt(double *Prt, int &cr, double &er, int &ct, double &et, int &Ncb);
+  static void PutTotPVBspline4Prt(double *Prt, int &cr, double &er, int &ct, double &et, int &Ncb);
 
   static double Bspline3(double diff);
   static double Bspline4i(double diff, int &interv);

@@ -161,8 +161,7 @@ vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
 /*! compute the error between two visual features from a subset of the
   possible features
  */
-vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star,
-                                           const unsigned int select)
+vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, const unsigned int select)
 {
   vpColVector e(0);
 
@@ -214,10 +213,8 @@ void vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
   \param thickness : Thickness of the feature representation.
 
 */
-void vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
-                                      const vpImage<unsigned char> &I,
-                                      const vpColor &color,
-                                      unsigned int thickness) const
+void vpFeatureVanishingPoint::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                                      const vpColor &color, unsigned int thickness) const
 {
   try {
     double x, y;
@@ -241,9 +238,7 @@ void vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
   \param thickness : Thickness of the feature representation.
 
 */
-void vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
-                                      const vpImage<vpRGBa> &I,
-                                      const vpColor &color,
+void vpFeatureVanishingPoint::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                       unsigned int thickness) const
 {
   try {

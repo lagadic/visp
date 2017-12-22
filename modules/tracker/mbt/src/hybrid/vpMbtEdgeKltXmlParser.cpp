@@ -110,11 +110,9 @@ void vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool klt_node = false;
   bool lod_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case vpMbtEdgeKltXmlParser::camera: {
@@ -150,65 +148,42 @@ void vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!camera_node) {
-    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)"
-              << std::endl;
-    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)"
-              << std::endl;
-    std::cout << "camera : px : " << this->cam.get_px() << " (default)"
-              << std::endl;
-    std::cout << "camera : py : " << this->cam.get_py() << " (default)"
-              << std::endl;
+    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)" << std::endl;
+    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)" << std::endl;
+    std::cout << "camera : px : " << this->cam.get_px() << " (default)" << std::endl;
+    std::cout << "camera : py : " << this->cam.get_py() << " (default)" << std::endl;
   }
 
   if (!face_node) {
-    std::cout << "face : Angle Appear : " << angleAppear << " (default)"
-              << std::endl;
-    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)"
-              << std::endl;
+    std::cout << "face : Angle Appear : " << angleAppear << " (default)" << std::endl;
+    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)" << std::endl;
   }
 
   if (!klt_node) {
-    std::cout << "klt : Mask Border : " << maskBorder << " (default)"
-              << std::endl;
-    std::cout << "klt : Max Features : " << maxFeatures << " (default)"
-              << std::endl;
-    std::cout << "klt : Windows Size : " << winSize << " (default)"
-              << std::endl;
-    std::cout << "klt : Quality : " << qualityValue << " (default)"
-              << std::endl;
-    std::cout << "klt : Min Distance : " << minDist << " (default)"
-              << std::endl;
-    std::cout << "klt : Harris Parameter : " << harrisParam << " (default)"
-              << std::endl;
-    std::cout << "klt : Block Size : " << blockSize << " (default)"
-              << std::endl;
-    std::cout << "klt : Pyramid Levels : " << pyramidLevels << " (default)"
-              << std::endl;
+    std::cout << "klt : Mask Border : " << maskBorder << " (default)" << std::endl;
+    std::cout << "klt : Max Features : " << maxFeatures << " (default)" << std::endl;
+    std::cout << "klt : Windows Size : " << winSize << " (default)" << std::endl;
+    std::cout << "klt : Quality : " << qualityValue << " (default)" << std::endl;
+    std::cout << "klt : Min Distance : " << minDist << " (default)" << std::endl;
+    std::cout << "klt : Harris Parameter : " << harrisParam << " (default)" << std::endl;
+    std::cout << "klt : Block Size : " << blockSize << " (default)" << std::endl;
+    std::cout << "klt : Pyramid Levels : " << pyramidLevels << " (default)" << std::endl;
   }
 
   if (!ecm_node) {
-    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize()
-              << " (default)" << std::endl;
-    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber()
-              << " (default)" << std::endl;
-    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : threshold : " << this->m_ecm.getThreshold()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu1 : " << this->m_ecm.getMu1()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu2 : " << this->m_ecm.getMu2()
-              << " (default)" << std::endl;
-    std::cout << "ecm : sample : sample_step : "
-              << this->m_ecm.getSampleStep() << " (default)" << std::endl;
+    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize() << " (default)" << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber() << " (default)" << std::endl;
+    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : threshold : " << this->m_ecm.getThreshold() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu1 : " << this->m_ecm.getMu1() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu2 : " << this->m_ecm.getMu2() << " (default)" << std::endl;
+    std::cout << "ecm : sample : sample_step : " << this->m_ecm.getSampleStep() << " (default)" << std::endl;
   }
 
   if (!lod_node) {
     std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
-    std::cout << "lod : min line length threshold : "
-              << minLineLengthThreshold << " (default)" << std::endl;
-    std::cout << "lod : min polygon area threshold : "
-              << minPolygonAreaThreshold << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 

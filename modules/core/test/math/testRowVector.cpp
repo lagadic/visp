@@ -48,20 +48,17 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRowVector.h>
 
-bool test(const std::string &s, const vpRowVector &v,
-          const std::vector<double> &bench)
+bool test(const std::string &s, const vpRowVector &v, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
   std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v
-            << "]" << std::endl;
+  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v << "]" << std::endl;
   if (bench.size() != v.size()) {
     std::cout << "Test fails: bad size wrt bench" << std::endl;
     return false;
   }
   for (unsigned int i = 0; i < v.size(); i++) {
-    if (std::fabs(v[i] - bench[i]) >
-        std::fabs(v[i]) * std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(v[i] - bench[i]) > std::fabs(v[i]) * std::numeric_limits<double>::epsilon()) {
       std::cout << "Test fails: bad content" << std::endl;
       return false;
     }

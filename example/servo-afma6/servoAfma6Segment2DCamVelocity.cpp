@@ -149,8 +149,7 @@ int main()
     seg.display(cam, I, vpColor::red);
     vpDisplay::flush(I);
     std::cout << "define the destination segment" << std::endl;
-    for (std::vector<vpDot>::iterator i = dot_d.begin(); i != dot_d.end();
-         ++i) {
+    for (std::vector<vpDot>::iterator i = dot_d.begin(); i != dot_d.end(); ++i) {
       vpImagePoint ip;
       vpDisplay::getClick(I, ip);
       *i = vpDot(ip);
@@ -189,8 +188,7 @@ int main()
       vpDisplay::display(I);
 
       // Achieve the tracking of the dot in the image
-      for (std::vector<vpDot>::iterator i = dot.begin(); i != dot.end();
-           ++i) {
+      for (std::vector<vpDot>::iterator i = dot.begin(); i != dot.end(); ++i) {
         i->track(I);
       }
 

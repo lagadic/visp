@@ -19,9 +19,7 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--name")
         videoname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--name <video name>] [--help]\n"
-                  << std::endl;
+        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
         return 0;
       }
     }
@@ -37,8 +35,7 @@ int main(int argc, char **argv)
               << "xml,"
 #endif
               << "cao or wrl]" << std::endl;
-    std::cout << "Tracker optional config files: " << objectname << ".[ppm]"
-              << std::endl;
+    std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
     //! [Image]
     vpImage<unsigned char> I;
@@ -155,14 +152,12 @@ int main(int argc, char **argv)
   }
 #ifdef VISP_HAVE_OGRE
   catch (Ogre::Exception &e) {
-    std::cout << "Catch an Ogre exception: " << e.getDescription()
-              << std::endl;
+    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
   }
 #endif
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example."
-            << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }

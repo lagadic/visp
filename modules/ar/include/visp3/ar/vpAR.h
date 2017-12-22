@@ -125,9 +125,9 @@ int main()
 
   vpTime::wait(300);
 
-  //Load the cad model.
-  simu.load("./4points.iv"); //4points.iv can be downloaded on the website
-with the image package
+  // Load the cad model. 4points.iv can be downloaded on the website
+  // with the image package
+  simu.load("./4points.iv");
 
   //Initialize the internal camera parameters.
   simu.setInternalCameraParameters(cam);
@@ -151,8 +151,7 @@ public:
   vpAR() : background(false){};
 
   virtual ~vpAR();
-  void initInternalViewer(const unsigned int width, const unsigned int height,
-                          vpImageType type = grayImage);
+  void initInternalViewer(const unsigned int width, const unsigned int height, vpImageType type = grayImage);
   void setImage(vpImage<unsigned char> &I);
   void setImage(vpImage<vpRGBa> &I);
 };

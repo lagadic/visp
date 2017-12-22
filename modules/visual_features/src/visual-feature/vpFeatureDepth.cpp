@@ -99,10 +99,7 @@ vpFeatureDepth::vpFeatureDepth() : x(0), y(0), Z(1.) { init(); }
 
   \param LogZoverZstar : \f$ log(\frac{Z}{Z^*}) \f$ value to set.
 */
-void vpFeatureDepth::set_LogZoverZstar(const double LogZoverZstar)
-{
-  s[0] = LogZoverZstar;
-}
+void vpFeatureDepth::set_LogZoverZstar(const double LogZoverZstar) { s[0] = LogZoverZstar; }
 
 /*!
   Get the value of \f$ log(\frac{Z}{Z^*}) \f$ which represents the logarithm
@@ -184,9 +181,7 @@ double vpFeatureDepth::get_Z() const { return Z; }
   \param Z_ : \f$ Z \f$ value to set.
   \param LogZoverZstar : \f$ log(\frac{Z}{Z^*}) \f$ value to set.
 */
-void vpFeatureDepth::set_xyZLogZoverZstar(const double x_, const double y_,
-                                          const double Z_,
-                                          const double LogZoverZstar)
+void vpFeatureDepth::set_xyZLogZoverZstar(const double x_, const double y_, const double Z_, const double LogZoverZstar)
 {
   set_x(x_);
   set_y(y_);
@@ -212,7 +207,8 @@ void vpFeatureDepth::set_xyZLogZoverZstar(const double x_, const double y_,
   \return The interaction matrix computed from the point feature.
 
   The code below shows how to compute the interaction matrix associated to the
-  visual feature \f$ s = log(\frac{Z}{Z^*}) \f$. \code
+  visual feature \f$ s = log(\frac{Z}{Z^*}) \f$.
+  \code
   // Creation of the current feature s
   vpFeatureDepth s;
   s.buildFrom(0, 0, 5, log(5/1)); //The current depth is 5 metters and the
@@ -259,16 +255,14 @@ vpMatrix vpFeatureDepth::interaction(const unsigned int select)
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z_) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   if (FEATURE_ALL & select) {
@@ -320,14 +314,12 @@ vpMatrix vpFeatureDepth::interaction(const unsigned int select)
   s.error(s_star);
   \endcode
 */
-vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star,
-                                  const unsigned int select)
+vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, const unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6) {
     vpERROR_TRACE("s* should be zero ! ");
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "s* should be zero !"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "s* should be zero !"));
   }
 
   vpColVector e(1);
@@ -377,8 +369,7 @@ void vpFeatureDepth::print(const unsigned int select) const
   \param Z_ : The \f$ Z \f$ parameter.
   \param LogZoverZstar : The \f$ log(\frac{Z}{Z^*}) \f$ parameter.
 */
-void vpFeatureDepth::buildFrom(const double x_, const double y_,
-                               const double Z_, const double LogZoverZstar)
+void vpFeatureDepth::buildFrom(const double x_, const double y_, const double Z_, const double LogZoverZstar)
 {
 
   s[0] = LogZoverZstar;
@@ -391,16 +382,14 @@ void vpFeatureDepth::buildFrom(const double x_, const double y_,
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   for (unsigned int i = 0; i < nbParameters; i++)
@@ -428,10 +417,8 @@ vpFeatureDepth *vpFeatureDepth::duplicate() const
   Not implemented.
 
 */
-void vpFeatureDepth::display(const vpCameraParameters & /* cam */,
-                             const vpImage<unsigned char> & /* I */,
-                             const vpColor & /* color */,
-                             unsigned int /* thickness */) const
+void vpFeatureDepth::display(const vpCameraParameters & /* cam */, const vpImage<unsigned char> & /* I */,
+                             const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 
@@ -447,10 +434,8 @@ void vpFeatureDepth::display(const vpCameraParameters & /* cam */,
   Not implemented.
 
  */
-void vpFeatureDepth::display(const vpCameraParameters & /* cam */,
-                             const vpImage<vpRGBa> & /* I */,
-                             const vpColor & /* color */,
-                             unsigned int /* thickness */) const
+void vpFeatureDepth::display(const vpCameraParameters & /* cam */, const vpImage<vpRGBa> & /* I */,
+                             const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 

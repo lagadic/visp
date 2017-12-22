@@ -46,8 +46,7 @@
   (option to use a different calculation mode for sx and sy)
 */
 vpMomentCInvariant::vpMomentCInvariant(bool flg_sxsynormalization)
-  : I(16), II(4), c(4), s(4), K(0.0), cn(4), sn(4), In1(0.0),
-    flg_sxsynormalization_(flg_sxsynormalization)
+  : I(16), II(4), c(4), s(4), K(0.0), cn(4), sn(4), In1(0.0), flg_sxsynormalization_(flg_sxsynormalization)
 {
   values.resize(14);
 }
@@ -57,8 +56,7 @@ vpMomentCInvariant::vpMomentCInvariant(bool flg_sxsynormalization)
   final invariants. \param momentCentered : centered moments \param I :
   invariant output values
 */
-void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered,
-                                  std::vector<double> &I_val)
+void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered, std::vector<double> &I_val)
 {
 
   double mu30 = momentCentered.get(3, 0);
@@ -120,33 +118,24 @@ void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered,
 
   I_val[1] = -mu20 * mu02 + mu11_2;
   I_val[2] = zeta_2 + 4 * mu11_2;
-  I_val[3] = (mu30 - 3 * mu12) * (mu30 - 3 * mu12) +
-             (mu03 - 3 * mu21) * (mu03 - 3 * mu21);
+  I_val[3] = (mu30 - 3 * mu12) * (mu30 - 3 * mu12) + (mu03 - 3 * mu21) * (mu03 - 3 * mu21);
   I_val[4] = (mu30 + mu12) * (mu30 + mu12) + (mu21 + mu03) * (mu21 + mu03);
-  I_val[5] = -mu30_2 * mu03_2 +
-             (-4 * mu12_3 + 6 * mu21 * mu12 * mu03) * mu30 -
-             4 * mu21_3 * mu03 + 3 * mu21_2 * mu12_2;
-  I_val[6] = 3 * mu12_4 + 2 * mu30 * mu12_3 +
-             (3 * mu30_2 - 6 * mu03 * mu21) * mu12_2 -
-             6 * mu30 * mu21 * (mu21 + mu03) * mu12 + 2 * mu30_2 * mu03_2 +
-             2 * mu21_3 * mu03 + 3 * mu21_2 * mu03_2 + 3 * mu21_4;
-  I_val[7] =
-      (3 * mu21 + 2 * mu03) * mu12_3 + 3 * mu30 * (mu03 + 2 * mu21) * mu12_2 -
-      3 * mu21 * (mu30 + mu03 + mu21) * (-mu30 + mu03 + mu21) * mu12 +
-      mu30 * (-mu30_2 * mu03 - 2 * mu21_3 - 3 * mu03 * mu21_2 + mu03_3);
+  I_val[5] = -mu30_2 * mu03_2 + (-4 * mu12_3 + 6 * mu21 * mu12 * mu03) * mu30 - 4 * mu21_3 * mu03 + 3 * mu21_2 * mu12_2;
+  I_val[6] = 3 * mu12_4 + 2 * mu30 * mu12_3 + (3 * mu30_2 - 6 * mu03 * mu21) * mu12_2 -
+             6 * mu30 * mu21 * (mu21 + mu03) * mu12 + 2 * mu30_2 * mu03_2 + 2 * mu21_3 * mu03 + 3 * mu21_2 * mu03_2 +
+             3 * mu21_4;
+  I_val[7] = (3 * mu21 + 2 * mu03) * mu12_3 + 3 * mu30 * (mu03 + 2 * mu21) * mu12_2 -
+             3 * mu21 * (mu30 + mu03 + mu21) * (-mu30 + mu03 + mu21) * mu12 +
+             mu30 * (-mu30_2 * mu03 - 2 * mu21_3 - 3 * mu03 * mu21_2 + mu03_3);
   // I_val[8]=3*mu21_4-3*mu21_3*mu03+(3*mu03_2+kappa-6*mu12_2)*mu21_2-mu03*(-15*mu12_2+kappa)*mu21-(-3*mu12_2*mu30+(2*kappa-3*mu03_2)*mu12+kappa*mu30)*mu12;
-  I_val[8] = 3 * mu03 * mu21_3 - 2 * mu03_2 * mu21_2 + mu21_2 * mu30_2 +
-             3 * mu12_2 * mu03 * mu21 - mu03 * mu21 * mu30_2 - mu03_3 * mu21 +
-             3 * mu12_3 * mu30 - 2 * mu12_2 * mu30_2 + mu12_2 * mu03_2 -
-             mu12 * mu30_3 - mu12 * mu30 * mu03_2 + 3 * mu12 * mu30 * mu21_2 -
-             6 * mu12 * mu30 * mu03 * mu21;
+  I_val[8] = 3 * mu03 * mu21_3 - 2 * mu03_2 * mu21_2 + mu21_2 * mu30_2 + 3 * mu12_2 * mu03 * mu21 -
+             mu03 * mu21 * mu30_2 - mu03_3 * mu21 + 3 * mu12_3 * mu30 - 2 * mu12_2 * mu30_2 + mu12_2 * mu03_2 -
+             mu12 * mu30_3 - mu12 * mu30 * mu03_2 + 3 * mu12 * mu30 * mu21_2 - 6 * mu12 * mu30 * mu03 * mu21;
   I_val[9] = omicron * omicron;
 
   I_val[10] = mu40 * mu04 - 4 * mu31 * mu13 + 3 * mu22_2;
-  I_val[11] = 3 * mu13_2 + 2 * mu31 * mu13 + (-3 * mu40 - 3 * mu04) * mu22 -
-              2 * mu40 * mu04 + 3 * mu31_2;
-  I_val[12] = 3 * mu04_2 + (2 * mu40 + 12 * mu22) * mu04 + 3 * mu40_2 +
-              12 * mu40 * mu22 + 16 * mu31 * mu13;
+  I_val[11] = 3 * mu13_2 + 2 * mu31 * mu13 + (-3 * mu40 - 3 * mu04) * mu22 - 2 * mu40 * mu04 + 3 * mu31_2;
+  I_val[12] = 3 * mu04_2 + (2 * mu40 + 12 * mu22) * mu04 + 3 * mu40_2 + 12 * mu40 * mu22 + 16 * mu31 * mu13;
   I_val[13] = omega_2 + nu_2;
   I_val[14] = ro_2 + gamma_2;
   I_val[15] = delta_2 + phi_2;
@@ -175,17 +164,12 @@ void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered,
    * Sx and Sy The pij doubles below are the respective centered moment values
    * mu_ij scaled by mu20 + mu02
    */
-  double p20 =
-      momentCentered.get(2, 0) /
-      II[3]; // II[3] is the normalization factor for the 2nd order moments
+  double p20 = momentCentered.get(2, 0) / II[3]; // II[3] is the normalization factor for the 2nd order moments
   double p11 = momentCentered.get(1, 1) / II[3];
   double p02 = momentCentered.get(0, 2) / II[3];
 
   double d =
-      sqrt(std::fabs(a)) /
-      (II[3] *
-       sqrt(std::fabs(
-           II[3]))); // d is the normalization factor for 3rd order moments
+      sqrt(std::fabs(a)) / (II[3] * sqrt(std::fabs(II[3]))); // d is the normalization factor for 3rd order moments
   double p30 = momentCentered.get(3, 0) * d;
   double p21 = momentCentered.get(2, 1) * d;
   double p12 = momentCentered.get(1, 2) * d;
@@ -211,17 +195,14 @@ void vpMomentCInvariant::computeI(const vpMomentCentered &momentCentered,
 void vpMomentCInvariant::compute()
 {
   if (getObject().getOrder() < 5)
-    throw vpException(vpException::notInitialized,
-                      "Order is not high enough for vpMomentCInvariant. "
-                      "Specify at least order 5.");
+    throw vpException(vpException::notInitialized, "Order is not high enough for vpMomentCInvariant. "
+                                                   "Specify at least order 5.");
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(
-          getMoments().get("vpMomentCentered", found_moment_centered)));
+      (static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered)));
 
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
   computeI(momentCentered, I);
   double II3_2 = II[3] * II[3];
@@ -285,10 +266,7 @@ void vpMomentCInvariant::calcSxSyNormalized(double &sx, double &sy) const
   Prints the temporary invariants.  Used for debug purposes only
   \param index : index of the temporary invariant
 */
-void vpMomentCInvariant::printI(unsigned int index)
-{
-  std::cout << "I(" << index << ")=" << I[index] << std::endl;
-}
+void vpMomentCInvariant::printI(unsigned int index) { std::cout << "I(" << index << ")=" << I[index] << std::endl; }
 
 /*!
   Print out all invariants that were computed
@@ -297,9 +275,8 @@ void vpMomentCInvariant::printI(unsigned int index)
  */
 void vpMomentCInvariant::printInvariants(std::ostream &os) const
 {
-  for (unsigned int i = 1; i < I.size();
-       ++i) { // i = 1 since vector I has been indexed from 1 in
-              // vpMomentCinvariant
+  for (unsigned int i = 1; i < I.size(); ++i) { // i = 1 since vector I has been indexed from 1 in
+                                                // vpMomentCinvariant
     os << "I[" << i << "]=" << I[i] << std::endl;
   }
   os << std::endl;
@@ -308,8 +285,7 @@ void vpMomentCInvariant::printInvariants(std::ostream &os) const
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpMomentCInvariant &c)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCInvariant &c)
 {
   for (unsigned int i = 0; i < c.values.size(); i++) {
     os << c.values[i] << "," << std::endl;

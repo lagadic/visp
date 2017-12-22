@@ -80,10 +80,8 @@ void computeTheta(double &theta, vpColVector &K, const vpImagePoint &iP)
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
 vpMeEllipse::vpMeEllipse()
-  : K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0),
-    alpha2(2 * M_PI), ce(0.), se(0.), angle(), m00(0.), mu11(0.), mu20(0.),
-    mu02(0.), m10(0.), m01(0.), m11(0.), m02(0.), m20(0.),
-    thresholdWeight(0.2), expecteddensity(0.)
+  : K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0), alpha2(2 * M_PI), ce(0.), se(0.), angle(), m00(0.),
+    mu11(0.), mu20(0.), mu02(0.), m10(0.), m01(0.), m11(0.), m02(0.), m20(0.), thresholdWeight(0.2), expecteddensity(0.)
 {
   // redimensionnement du vecteur de parametre
   // i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
@@ -101,11 +99,9 @@ vpMeEllipse::vpMeEllipse()
   Copy constructor.
 */
 vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse)
-  : vpMeTracker(meellipse), K(meellipse.K), iPc(meellipse.iPc), a(0.), b(0.),
-    e(0.), iP1(meellipse.iP1), iP2(meellipse.iP2), alpha1(0),
-    alpha2(2 * M_PI), ce(0.), se(0.), angle(meellipse.angle), m00(0.),
-    mu11(0.), mu20(0.), mu02(0.), m10(0.), m01(0.), m11(0.), m02(0.), m20(0.),
-    thresholdWeight(0.2), expecteddensity(0.)
+  : vpMeTracker(meellipse), K(meellipse.K), iPc(meellipse.iPc), a(0.), b(0.), e(0.), iP1(meellipse.iP1),
+    iP2(meellipse.iP2), alpha1(0), alpha2(2 * M_PI), ce(0.), se(0.), angle(meellipse.angle), m00(0.), mu11(0.),
+    mu20(0.), mu02(0.), m10(0.), m01(0.), m11(0.), m02(0.), m20(0.), thresholdWeight(0.2), expecteddensity(0.)
 {
   a = meellipse.a;
   b = meellipse.b;
@@ -153,16 +149,14 @@ vpMeEllipse::~vpMeEllipse()
 void vpMeEllipse::sample(const vpImage<unsigned char> &I)
 {
   if (!me) {
-    throw(vpException(vpException::fatalError,
-                      "Moving edges on ellipse tracking not initialized"));
+    throw(vpException(vpException::fatalError, "Moving edges on ellipse tracking not initialized"));
   }
 
   int height = (int)I.getHeight();
   int width = (int)I.getWidth();
 
   // if (me->getSampleStep()==0)
-  if (std::fabs(me->getSampleStep()) <=
-      std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
     std::cout << "In vpMeEllipse::sample: ";
     std::cout << "function called with sample step = 0";
     // return fatalError;
@@ -197,8 +191,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I)
     computeTheta(theta, K, iP11);
 
     // If point is in the image, add to the sample list
-    if (!outOfImage(vpMath::round(iP11.get_i()), vpMath::round(iP11.get_j()),
-                    0, height, width)) {
+    if (!outOfImage(vpMath::round(iP11.get_i()), vpMath::round(iP11.get_j()), 0, height, width)) {
       vpMeSite pix;
       pix.init((int)iP11.get_i(), (int)iP11.get_j(), theta);
       pix.setDisplay(selectDisplay);
@@ -233,13 +226,11 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I)
 void vpMeEllipse::reSample(const vpImage<unsigned char> &I)
 {
   if (!me) {
-    throw(vpException(vpException::fatalError,
-                      "Moving edges on ellipse tracking not initialized"));
+    throw(vpException(vpException::fatalError, "Moving edges on ellipse tracking not initialized"));
   }
 
   unsigned int n = numberOfSignal();
-  expecteddensity =
-      (alpha2 - alpha1) / vpMath::rad((double)me->getSampleStep());
+  expecteddensity = (alpha2 - alpha1) / vpMath::rad((double)me->getSampleStep());
   if ((double)n < 0.5 * expecteddensity) {
     sample(I);
     vpMeTracker::track(I);
@@ -284,8 +275,7 @@ void vpMeEllipse::getParameters()
   ce = cos(e);
   se = sin(e);
 
-  double num = 2.0 * (k[0] * iPc.get_i() * iPc.get_i() +
-                      2.0 * k[2] * iPc.get_j() * iPc.get_i() +
+  double num = 2.0 * (k[0] * iPc.get_i() * iPc.get_i() + 2.0 * k[2] * iPc.get_j() * iPc.get_i() +
                       k[1] * iPc.get_j() * iPc.get_j() - k[5]);
   double a2 = num / (k[0] + k[1] + sq);
   double b2 = num / (k[0] + k[1] - sq);
@@ -314,8 +304,7 @@ void vpMeEllipse::printParameters()
   \param pt1 : First point whose \f$ alpha \f$ angle is computed.
   \param pt2 : Second point whose \f$ alpha \f$ angle is computed.
 */
-void vpMeEllipse::computeAngle(const vpImagePoint &pt1,
-                               const vpImagePoint &pt2)
+void vpMeEllipse::computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt2)
 {
   getParameters();
 
@@ -338,8 +327,7 @@ void vpMeEllipse::computeAngle(const vpImagePoint &pt1,
     double j11 = iPc.get_j() + ce * j1 + se * i1;
     double i11 = iPc.get_i() - se * j1 + ce * i1;
 
-    double d =
-        vpMath::sqr(pt1.get_i() - i11) + vpMath::sqr(pt1.get_j() - j11);
+    double d = vpMath::sqr(pt1.get_i() - i11) + vpMath::sqr(pt1.get_j() - j11);
     if (d < dmin1) {
       dmin1 = d;
       alpha1 = k;
@@ -355,8 +343,7 @@ void vpMeEllipse::computeAngle(const vpImagePoint &pt1,
   if (alpha2 < alpha1)
     alpha2 += 2 * M_PI;
   // else if (alpha2 == alpha1)
-  else if (std::fabs(alpha2 - alpha1) <
-           std::fabs(alpha1) * std::numeric_limits<double>::epsilon())
+  else if (std::fabs(alpha2 - alpha1) < std::fabs(alpha1) * std::numeric_limits<double>::epsilon())
     alpha2 += 2 * M_PI;
 }
 
@@ -369,8 +356,7 @@ void vpMeEllipse::updateTheta()
 {
   vpMeSite p_me;
   double theta;
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-       ++it) {
+  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     p_me = *it;
     vpImagePoint iP;
     iP.set_i(p_me.ifloat);
@@ -415,8 +401,7 @@ void vpMeEllipse::suppressPoints()
 void vpMeEllipse::seekExtremities(const vpImage<unsigned char> &I)
 {
   if (!me) {
-    throw(vpException(vpException::fatalError,
-                      "Moving edges on ellipse tracking not initialized"));
+    throw(vpException(vpException::fatalError, "Moving edges on ellipse tracking not initialized"));
   }
 
   int rows = (int)I.getHeight();
@@ -532,8 +517,7 @@ void vpMeEllipse::setExtremities()
   // Loop through list of sites to track
   std::list<double>::const_iterator itAngle = angle.begin();
 
-  for (std::list<vpMeSite>::const_iterator itList = list.begin();
-       itList != list.end(); ++itList) {
+  for (std::list<vpMeSite>::const_iterator itList = list.begin(); itList != list.end(); ++itList) {
     vpMeSite s = *itList; // current reference pixel
     double alpha = *itAngle;
     if (alpha < alphamin) {
@@ -584,16 +568,14 @@ void vpMeEllipse::leastSquare()
   unsigned int nos_1 = numberOfSignal();
 
   if (list.size() < 3) {
-    throw(vpException(vpException::dimensionError,
-                      "Not enought moving edges to track the ellipse"));
+    throw(vpException(vpException::dimensionError, "Not enought moving edges to track the ellipse"));
   }
 
   vpMatrix A(numberOfSignal(), 5);
   vpColVector x(5);
 
   unsigned int k = 0;
-  for (std::list<vpMeSite>::const_iterator it = list.begin();
-       it != list.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
     p_me = *it;
     if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
       A[k][0] = vpMath::sqr(p_me.jfloat);
@@ -627,8 +609,7 @@ void vpMeEllipse::leastSquare()
   }
 
   k = 0;
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-       ++it) {
+  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     p_me = *it;
     if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
       if (w[k] < thresholdWeight) {
@@ -699,8 +680,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
   \param n : The number of points in the list.
   \param iP : A pointer to a list of points belonging to the ellipse edge.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
-                               const unsigned int n, vpImagePoint *iP)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP)
 {
   vpMatrix A(n, 5);
   vpColVector b_(n);
@@ -729,8 +709,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
 
   computeAngle(iP1, iP2);
 
-  expecteddensity =
-      (alpha2 - alpha1) / vpMath::rad((double)me->getSampleStep());
+  expecteddensity = (alpha2 - alpha1) / vpMath::rad((double)me->getSampleStep());
 
   display(I, vpColor::green);
   sample(I);
@@ -755,8 +734,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
   \param iP : A vector of points belonging to the ellipse edge used to
   initialize the tracking.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
-                               const std::vector<vpImagePoint> &iP)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP)
 {
   unsigned int n = (unsigned int)(iP.size());
   vpMatrix A(n, 5);
@@ -786,8 +764,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
 
   computeAngle(iP1, iP2);
 
-  expecteddensity =
-      (alpha2 - alpha1) / vpMath::rad((double)me->getSampleStep());
+  expecteddensity = (alpha2 - alpha1) / vpMath::rad((double)me->getSampleStep());
 
   display(I, vpColor::green);
   sample(I);
@@ -800,10 +777,8 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
   vpDisplay::flush(I);
 }
 
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
-                               const vpImagePoint &ic, double a_p, double b_p,
-                               double e_p, double low_alpha,
-                               double high_alpha)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double a_p, double b_p,
+                               double e_p, double low_alpha, double high_alpha)
 {
   iPc = ic;
   a = a_p;
@@ -881,12 +856,9 @@ void vpMeEllipse::computeMoments()
   m00 = M_PI * a * b;
   m10 = m00 * iPc.get_i();
   m01 = m00 * iPc.get_j();
-  m20 = m00 * (a * a + b * b * tane * tane) / (4 * (1 + tane * tane)) +
-        m00 * iPc.get_i() * iPc.get_i();
-  m02 = m00 * (a * a * tane * tane + b * b) / (4 * (1 + tane * tane)) +
-        m00 * iPc.get_j() * iPc.get_j();
-  m11 = m00 * tane * (a * a - b * b) / (4 * (1 + tane * tane)) +
-        m00 * iPc.get_i() * iPc.get_j();
+  m20 = m00 * (a * a + b * b * tane * tane) / (4 * (1 + tane * tane)) + m00 * iPc.get_i() * iPc.get_i();
+  m02 = m00 * (a * a * tane * tane + b * b) / (4 * (1 + tane * tane)) + m00 * iPc.get_j() * iPc.get_j();
+  m11 = m00 * tane * (a * a - b * b) / (4 * (1 + tane * tane)) + m00 * iPc.get_i() * iPc.get_j();
   mu11 = m11 - iPc.get_j() * m10;
   mu02 = m02 - iPc.get_j() * m01;
   mu20 = m20 - iPc.get_i() * m10;
@@ -897,8 +869,7 @@ void vpMeEllipse::computeMoments()
 /*!
  * \brief computeAngle
  */
-void vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1, int ip2,
-                               int jp2, double &_alpha2)
+void vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1, int ip2, int jp2, double &_alpha2)
 {
   getParameters();
 
@@ -938,8 +909,7 @@ void vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1, int ip2,
   if (alpha2 < alpha1)
     alpha2 += 2 * M_PI;
 
-  vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  "
-              << alpha2 << std::endl;
+  vpCDEBUG(1) << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl;
 }
 
 /*!
@@ -952,8 +922,7 @@ void vpMeEllipse::computeAngle(int ip1, int jp1, int ip2, int jp2)
   computeAngle(ip1, jp1, a1, ip2, jp2, a2);
 }
 
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
-                               const unsigned int n, unsigned *i, unsigned *j)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j)
 {
   vpMatrix A(n, 5);
   vpColVector b_(n);
@@ -1022,11 +991,9 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I,
 
   \param thickness : Thickness of the drawings.
 */
-void vpMeEllipse::display(const vpImage<unsigned char> &I,
-                          const vpImagePoint &center, const double &A,
-                          const double &B, const double &E,
-                          const double &smallalpha, const double &highalpha,
-                          const vpColor &color, unsigned int thickness)
+void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+                          const double &E, const double &smallalpha, const double &highalpha, const vpColor &color,
+                          unsigned int thickness)
 {
   double j1, i1;
   vpImagePoint iP11;
@@ -1102,11 +1069,9 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I,
 
   \param thickness : Thickness of the drawings.
 */
-void vpMeEllipse::display(const vpImage<vpRGBa> &I,
-                          const vpImagePoint &center, const double &A,
-                          const double &B, const double &E,
-                          const double &smallalpha, const double &highalpha,
-                          const vpColor &color, unsigned int thickness)
+void vpMeEllipse::display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+                          const double &E, const double &smallalpha, const double &highalpha, const vpColor &color,
+                          unsigned int thickness)
 {
   double j1, i1;
   vpImagePoint iP11;

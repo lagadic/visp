@@ -76,8 +76,7 @@
   To get a vpPylonGrabber, use the following code.
   \code
   vpPylonFactory &factory = vpPylonFactory::instance();
-  vpPylonGrabber *g =
-  factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
+  vpPylonGrabber *g = factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
   \endcode
 
   To use this class install first Pylon SDK\n
@@ -320,8 +319,7 @@ public:
     https://www.ptgrey.com/kb/11020?countryid=237
     \sa getExposure()
    */
-  virtual float setExposure(bool exposure_on, bool exposure_auto,
-                            float exposure_value) = 0;
+  virtual float setExposure(bool exposure_on, bool exposure_auto, float exposure_value) = 0;
   /*!
     Set camera gain mode and value.
     \param gain_auto : If true set auto gain, if false set manual gain
@@ -367,8 +365,7 @@ public:
 
     \sa loadUserSet()
    */
-  virtual bool saveUserSet(UserSetName user_set,
-                           bool set_default = false) = 0;
+  virtual bool saveUserSet(UserSetName user_set, bool set_default = false) = 0;
   /*!
     \brief Sets the configuration set to be used as the default startup
     set.

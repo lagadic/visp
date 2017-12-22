@@ -50,8 +50,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                      \
-    defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
@@ -77,8 +76,7 @@ int main()
   try {
     //////////////////////////////////////////
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(0.3, 0.2, 3, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(40));
+    vpHomogeneousMatrix cMo(0.3, 0.2, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(40));
     vpHomogeneousMatrix wMo; // Set to identity
     vpHomogeneousMatrix wMc; // Camera position in the world frame
 

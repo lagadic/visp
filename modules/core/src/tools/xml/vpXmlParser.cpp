@@ -82,10 +82,7 @@ vpXmlParser::~vpXmlParser()
 
   \param _twin : The parser to copy.
 */
-vpXmlParser::vpXmlParser(const vpXmlParser &_twin)
-  : nodeMap(_twin.nodeMap), main_tag(_twin.main_tag)
-{
-}
+vpXmlParser::vpXmlParser(const vpXmlParser &_twin) : nodeMap(_twin.nodeMap), main_tag(_twin.main_tag) {}
 
 /* utilities functions to read/write data from an xml document */
 
@@ -103,8 +100,7 @@ vpXmlParser::vpXmlParser(const vpXmlParser &_twin)
 char *vpXmlParser::xmlReadCharChild(xmlDocPtr doc, xmlNodePtr node)
 {
   if (node->xmlChildrenNode == NULL) {
-    std::string errorMsg = "Empty node " + std::string((char *)node->name) +
-                           ", cannot read char*";
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read char*";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
@@ -124,8 +120,7 @@ char *vpXmlParser::xmlReadCharChild(xmlDocPtr doc, xmlNodePtr node)
 std::string vpXmlParser::xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node)
 {
   if (node->xmlChildrenNode == NULL) {
-    std::string errorMsg = "Empty node " + std::string((char *)node->name) +
-                           ", cannot read std::string";
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read std::string";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
@@ -149,8 +144,7 @@ std::string vpXmlParser::xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node)
 int vpXmlParser::xmlReadIntChild(xmlDocPtr doc, xmlNodePtr node)
 {
   if (node->xmlChildrenNode == NULL) {
-    std::string errorMsg =
-        "Empty node " + std::string((char *)node->name) + ", cannot read int";
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
@@ -181,12 +175,10 @@ int vpXmlParser::xmlReadIntChild(xmlDocPtr doc, xmlNodePtr node)
 
   \return the unsigned integer value in the node
 */
-unsigned int vpXmlParser::xmlReadUnsignedIntChild(xmlDocPtr doc,
-                                                  xmlNodePtr node)
+unsigned int vpXmlParser::xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node)
 {
   if (node->xmlChildrenNode == NULL) {
-    std::string errorMsg = "Empty node " + std::string((char *)node->name) +
-                           ", cannot read unsigned int";
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read unsigned int";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
@@ -220,8 +212,7 @@ unsigned int vpXmlParser::xmlReadUnsignedIntChild(xmlDocPtr doc,
 double vpXmlParser::xmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node)
 {
   if (node->xmlChildrenNode == NULL) {
-    std::string errorMsg = "Empty node " + std::string((char *)node->name) +
-                           ", cannot read double";
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read double";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
@@ -254,8 +245,7 @@ double vpXmlParser::xmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node)
 float vpXmlParser::xmlReadFloatChild(xmlDocPtr doc, xmlNodePtr node)
 {
   if (node->xmlChildrenNode == NULL) {
-    std::string errorMsg = "Empty node " + std::string((char *)node->name) +
-                           ", cannot read float";
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read float";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
@@ -292,8 +282,7 @@ float vpXmlParser::xmlReadFloatChild(xmlDocPtr doc, xmlNodePtr node)
 bool vpXmlParser::xmlReadBoolChild(xmlDocPtr doc, xmlNodePtr node)
 {
   if (node->xmlChildrenNode == NULL) {
-    std::string errorMsg = "Empty node " + std::string((char *)node->name) +
-                           ", cannot read bool";
+    std::string errorMsg = "Empty node " + std::string((char *)node->name) + ", cannot read bool";
     std::cerr << errorMsg << std::endl;
     throw vpException(vpException::fatalError, errorMsg);
   }
@@ -301,9 +290,7 @@ bool vpXmlParser::xmlReadBoolChild(xmlDocPtr doc, xmlNodePtr node)
   bool val_bool;
 
   val_char = (char *)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
-  val_bool =
-      val_char[0] !=
-      '0'; // reading only 1st character : bool xml storage is '0' or '1'
+  val_bool = val_char[0] != '0'; // reading only 1st character : bool xml storage is '0' or '1'
 
   xmlFree((xmlChar *)val_char);
   return val_bool;
@@ -316,8 +303,7 @@ bool vpXmlParser::xmlReadBoolChild(xmlDocPtr doc, xmlNodePtr node)
   \param label : label (name of the data) of the node
   \param value : pointer to the array of character to write
 */
-void vpXmlParser::xmlWriteCharChild(xmlNodePtr node, const char *label,
-                                    const char *value)
+void vpXmlParser::xmlWriteCharChild(xmlNodePtr node, const char *label, const char *value)
 {
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)value);
@@ -331,8 +317,7 @@ void vpXmlParser::xmlWriteCharChild(xmlNodePtr node, const char *label,
   \param label : label (name of the data) of the node
   \param value : std::string to write;
 */
-void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label,
-                                      const std::string &value)
+void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label, const std::string &value)
 {
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)value.c_str());
@@ -346,8 +331,7 @@ void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label,
   \param label : label (name of the data) of the node
   \param value : integer to write
 */
-void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label,
-                                   const int value)
+void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, const int value)
 {
   char str[100];
   sprintf(str, "%d", value);
@@ -363,8 +347,7 @@ void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label,
   \param label : label (name of the data) of the node
   \param value : unsigned integer to write
 */
-void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label,
-                                           const unsigned int value)
+void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, const unsigned int value)
 {
   char str[100];
   sprintf(str, "%u", value);
@@ -380,8 +363,7 @@ void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label,
   \param label : label (name of the data) of the node
   \param value : double to write
 */
-void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label,
-                                      const double value)
+void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, const double value)
 {
   char str[100];
   sprintf(str, "%lf", value);
@@ -397,8 +379,7 @@ void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label,
   \param label : label (name of the data) of the node
   \param value : float to write
 */
-void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label,
-                                     const float value)
+void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, const float value)
 {
   char str[100];
   sprintf(str, "%f", value);
@@ -414,8 +395,7 @@ void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label,
   \param label : label (name of the data) of the node
   \param value : boolean to write (true or false)
 */
-void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label,
-                                    const bool value)
+void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, const bool value)
 {
   char str[2];
   sprintf(str, "%d", (int)value);
@@ -475,9 +455,7 @@ void vpXmlParser::save(const std::string &filename, const bool append)
   xmlDocPtr doc;
   xmlNodePtr root_node;
 
-  doc = xmlReadFile(filename.c_str(), NULL,
-                    XML_PARSE_NOWARNING + XML_PARSE_NOERROR +
-                        XML_PARSE_NOBLANKS);
+  doc = xmlReadFile(filename.c_str(), NULL, XML_PARSE_NOWARNING + XML_PARSE_NOERROR + XML_PARSE_NOBLANKS);
   if (doc == NULL) {
     doc = xmlNewDoc((xmlChar *)"1.0");
     root_node = xmlNewNode(NULL, (xmlChar *)main_tag.c_str());
@@ -486,8 +464,7 @@ void vpXmlParser::save(const std::string &filename, const bool append)
     if (!append) {
       xmlFreeDoc(doc);
       if (remove(filename.c_str()) != 0)
-        throw vpException(vpException::ioError,
-                          "Cannot remove existing xml file");
+        throw vpException(vpException::ioError, "Cannot remove existing xml file");
 
       doc = xmlNewDoc((xmlChar *)"1.0");
       root_node = xmlNewNode(NULL, (xmlChar *)main_tag.c_str());

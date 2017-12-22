@@ -27,20 +27,17 @@ int main()
   vpDEBUG_TRACE("C-like debug trace");  // stdout
   vpDERROR_TRACE("C-like error trace"); // stderr
 
-  vpDEBUG_TRACE(
-      2,
-      "C-like debug trace level 2"); // std::cout if VP_DEBUG_MODE value >= 2
-  vpDERROR_TRACE(
-      2,
-      "C-like error trace level 2"); // std::cerr if VP_DEBUG_MODE value >= 2
+  vpDEBUG_TRACE(2,
+                "C-like debug trace level 2"); // std::cout if VP_DEBUG_MODE value >= 2
+  vpDERROR_TRACE(2,
+                 "C-like error trace level 2"); // std::cerr if VP_DEBUG_MODE value >= 2
 
   // C++-like trace printings if VP_TRACE defined
   vpCTRACE << "C++-like trace" << std::endl;       // std::cout
   vpCERROR << "C++-like error trace" << std::endl; // std::cerr
 
   // C++-like debug printings if VP_DEBUG defined
-  vpCDEBUG(2) << "C++-like debug trace level 2"
-              << std::endl; // std::cout if VP_DEBUG_MODE value >= 2
+  vpCDEBUG(2) << "C++-like debug trace level 2" << std::endl; // std::cout if VP_DEBUG_MODE value >= 2
 
   vpOUT_FCT("main()"); // std::cout if VP_TRACE defined
 }

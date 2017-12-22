@@ -16,8 +16,7 @@ int main()
     g.setFramerate(4); // 30 fps
     g.open(I);
 
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_GDI
     vpDisplayGDI d(I);

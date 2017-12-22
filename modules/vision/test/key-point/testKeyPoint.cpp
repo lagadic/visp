@@ -57,8 +57,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -104,8 +103,7 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -175,16 +173,13 @@ int main(int argc, const char **argv)
     std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
     // Build the name of the image files
-    std::string filenameRef =
-        vpIoTools::createFilePath(dirname, "image0000.pgm");
+    std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");
     vpImageIo::read(Iref, filenameRef);
-    std::string filenameCur =
-        vpIoTools::createFilePath(dirname, "image%04d.pgm");
+    std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.pgm");
 
     // Init keypoints
     vpKeyPoint keypoints("ORB", "ORB", "BruteForce-Hamming");
-    std::cout << "Build " << keypoints.buildReference(Iref)
-              << " reference points." << std::endl;
+    std::cout << "Build " << keypoints.buildReference(Iref) << " reference points." << std::endl;
 
     vpVideoReader g;
     g.setFileName(filenameCur);

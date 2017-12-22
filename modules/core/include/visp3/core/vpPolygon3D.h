@@ -89,18 +89,12 @@ public:
   double distFarClip;
 
 private:
-  bool getClippedPointsFovGeneric(const vpPoint &p1, const vpPoint &p2,
-                                  vpPoint &p1Clipped, vpPoint &p2Clipped,
-                                  unsigned int &p1ClippedInfo,
-                                  unsigned int &p2ClippedInfo,
-                                  const vpColVector &normal,
+  bool getClippedPointsFovGeneric(const vpPoint &p1, const vpPoint &p2, vpPoint &p1Clipped, vpPoint &p2Clipped,
+                                  unsigned int &p1ClippedInfo, unsigned int &p2ClippedInfo, const vpColVector &normal,
                                   const unsigned int &flag);
 
-  bool getClippedPointsDistance(const vpPoint &p1, const vpPoint &p2,
-                                vpPoint &p1Clipped, vpPoint &p2Clipped,
-                                unsigned int &p1ClippedInfo,
-                                unsigned int &p2ClippedInfo,
-                                const unsigned int &flag,
+  bool getClippedPointsDistance(const vpPoint &p1, const vpPoint &p2, vpPoint &p1Clipped, vpPoint &p2Clipped,
+                                unsigned int &p1ClippedInfo, unsigned int &p2ClippedInfo, const unsigned int &flag,
                                 const double &distance);
 
 public:
@@ -112,8 +106,7 @@ public:
 
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void
-  computePolygonClipped(const vpCameraParameters &cam = vpCameraParameters());
+  void computePolygonClipped(const vpCameraParameters &cam = vpCameraParameters());
 
   /*!
     Get the clipping used.
@@ -143,13 +136,9 @@ public:
 
     \return number of corner of the face at the previous computation
   */
-  inline unsigned int getNbCornerInsidePrevImage() const
-  {
-    return nbCornersInsidePrev;
-  }
+  inline unsigned int getNbCornerInsidePrevImage() const { return nbCornersInsidePrev; }
 
-  unsigned int getNbCornerInsideImage(const vpImage<unsigned char> &I,
-                                      const vpCameraParameters &cam);
+  unsigned int getNbCornerInsideImage(const vpImage<unsigned char> &I, const vpCameraParameters &cam);
 
   /*!
     Get the near distance for clipping.
@@ -162,22 +151,15 @@ public:
 
   std::vector<vpImagePoint> getRoi(const vpCameraParameters &cam);
 
-  std::vector<vpImagePoint> getRoi(const vpCameraParameters &cam,
-                                   const vpHomogeneousMatrix &cMo);
+  std::vector<vpImagePoint> getRoi(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo);
 
-  void getRoiClipped(const vpCameraParameters &cam,
-                     std::vector<vpImagePoint> &roi);
+  void getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint> &roi);
 
-  void getRoiClipped(const vpCameraParameters &cam,
-                     std::vector<vpImagePoint> &roi,
-                     const vpHomogeneousMatrix &cMo);
+  void getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint> &roi, const vpHomogeneousMatrix &cMo);
 
-  void
-  getRoiClipped(const vpCameraParameters &cam,
-                std::vector<std::pair<vpImagePoint, unsigned int> > &roi);
+  void getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint, unsigned int> > &roi);
 
-  void getRoiClipped(const vpCameraParameters &cam,
-                     std::vector<std::pair<vpImagePoint, unsigned int> > &roi,
+  void getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint, unsigned int> > &roi,
                      const vpHomogeneousMatrix &cMo);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -189,8 +171,7 @@ public:
 //@}
 #endif
 
-  void
-  getPolygonClipped(std::vector<std::pair<vpPoint, unsigned int> > &poly);
+  void getPolygonClipped(std::vector<std::pair<vpPoint, unsigned int> > &poly);
 
   void getPolygonClipped(std::vector<vpPoint> &poly);
 
@@ -230,15 +211,12 @@ public:
   }
 
 public:
-  static void getClippedPolygon(
-      const std::vector<vpPoint> &ptIn, std::vector<vpPoint> &ptOut,
-      const vpHomogeneousMatrix &cMo, const unsigned int &clippingFlags,
-      const vpCameraParameters &cam = vpCameraParameters(),
-      const double &znear = 0.001, const double &zfar = 100);
-  static void getMinMaxRoi(const std::vector<vpImagePoint> &roi, int &i_min,
-                           int &i_max, int &j_min, int &j_max);
-  static bool roiInsideImage(const vpImage<unsigned char> &I,
-                             const std::vector<vpImagePoint> &corners);
+  static void getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vector<vpPoint> &ptOut,
+                                const vpHomogeneousMatrix &cMo, const unsigned int &clippingFlags,
+                                const vpCameraParameters &cam = vpCameraParameters(), const double &znear = 0.001,
+                                const double &zfar = 100);
+  static void getMinMaxRoi(const std::vector<vpImagePoint> &roi, int &i_min, int &i_max, int &j_min, int &j_max);
+  static bool roiInsideImage(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &corners);
 };
 
 #endif

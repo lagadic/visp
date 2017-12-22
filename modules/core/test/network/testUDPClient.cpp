@@ -66,21 +66,16 @@ int main()
     DataType data_type(1234.56789, 123450);
     char data[sizeof(data_type.double_val) + sizeof(data_type.int_val)];
     memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
-    memcpy(data + sizeof(data_type.double_val), &data_type.int_val,
-           sizeof(data_type.int_val));
-    std::string msg(data,
-                    sizeof(data_type.double_val) + sizeof(data_type.int_val));
-    if (client.send(msg) !=
-        (int)sizeof(data_type.double_val) + sizeof(data_type.int_val))
+    memcpy(data + sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
+    std::string msg(data, sizeof(data_type.double_val) + sizeof(data_type.int_val));
+    if (client.send(msg) != (int)sizeof(data_type.double_val) + sizeof(data_type.int_val))
       std::cerr << "Error client.send()!" << std::endl;
 
     if (client.receive(msg)) {
       data_type.double_val = *reinterpret_cast<const double *>(msg.c_str());
-      data_type.int_val = *reinterpret_cast<const int *>(
-          msg.c_str() + sizeof(data_type.double_val));
+      data_type.int_val = *reinterpret_cast<const int *>(msg.c_str() + sizeof(data_type.double_val));
 
-      std::cout << "Receive from the server double_val: "
-                << data_type.double_val << " ; int_val: " << data_type.int_val
+      std::cout << "Receive from the server double_val: " << data_type.double_val << " ; int_val: " << data_type.int_val
                 << std::endl;
     }
 

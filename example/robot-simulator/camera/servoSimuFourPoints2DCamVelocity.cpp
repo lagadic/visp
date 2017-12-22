@@ -154,15 +154,12 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout << " Eye-in-hand task control,  articular velocity are computed"
-              << std::endl;
+    std::cout << " Eye-in-hand task control,  articular velocity are computed" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo 4 points " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // sets the initial camera location with respect to the object
@@ -191,8 +188,7 @@ int main(int argc, const char **argv)
     // sets the desired position of the point
     vpFeaturePoint p[4];
     for (i = 0; i < 4; i++)
-      vpFeatureBuilder::create(
-          p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
+      vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the point
     vpFeaturePoint pd[4];
@@ -231,8 +227,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     while (iter++ < 1500) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // Set the Jacobian (expressed in the end-effector frame)
@@ -264,8 +259,7 @@ int main(int argc, const char **argv)
       // send the camera velocity to the controller ") ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     // Display task information

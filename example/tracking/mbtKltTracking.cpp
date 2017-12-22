@@ -45,9 +45,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_MODULE_KLT) &&        \
-    defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_DISPLAY) &&               \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) &&                     \
+    defined(VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -138,12 +137,9 @@ OPTIONS:                                               \n\
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &configFile, std::string &modelFile,
-                std::string &initFile, long &lastFrame,
-                bool &displayKltPoints, bool &click_allowed, bool &display,
-                bool &cao3DModel, bool &useOgre, bool &showOgreConfigDialog,
-                bool &useScanline, bool &computeCovariance)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
+                std::string &initFile, long &lastFrame, bool &displayKltPoints, bool &click_allowed, bool &display,
+                bool &cao3DModel, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline, bool &computeCovariance)
 {
   const char *optarg_;
   int c;
@@ -244,10 +240,9 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile,
-                    opt_initFile, opt_lastFrame, displayKltPoints,
-                    opt_click_allowed, opt_display, cao3DModel, useOgre,
-                    showOgreConfigDialog, useScanline, computeCovariance)) {
+    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayKltPoints,
+                    opt_click_allowed, opt_display, cao3DModel, useOgre, showOgreConfigDialog, useScanline,
+                    computeCovariance)) {
       return (-1);
     }
 
@@ -255,13 +250,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
 
       return (-1);
     }
@@ -292,9 +284,7 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileWrl);
 #else
-          std::cerr
-              << "Coin is not detected in ViSP. Use the .cao model instead."
-              << std::endl;
+          std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
 #endif
         }
@@ -305,9 +295,7 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileWrl);
 #else
-          std::cerr
-              << "Coin is not detected in ViSP. Use the .cao model instead."
-              << std::endl;
+          std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
 #endif
         }
@@ -416,8 +404,7 @@ int main(int argc, const char **argv)
     if (opt_display && opt_click_allowed) {
       while (!vpDisplay::getClick(I, false)) {
         vpDisplay::display(I);
-        vpDisplay::displayText(
-            I, 15, 10, "click after positioning the object", vpColor::red);
+        vpDisplay::displayText(I, 15, 10, "click after positioning the object", vpColor::red);
         vpDisplay::flush(I);
       }
     }
@@ -437,8 +424,7 @@ int main(int argc, const char **argv)
       // display the 3D model at the given pose
       tracker.display(I, cMo, cam, vpColor::red);
     } else {
-      vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719,
-                               2.063603907, 1.110231561, -0.4392789872);
+      vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
       tracker.initFromPose(I, cMoi);
     }
 
@@ -486,8 +472,7 @@ int main(int argc, const char **argv)
         // Specify the clipping to use
         tracker.setNearClippingDistance(0.01);
         tracker.setFarClippingDistance(0.90);
-        tracker.setClipping(tracker.getClipping() |
-                            vpMbtPolygon::FOV_CLIPPING);
+        tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
 //   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
 //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
@@ -502,8 +487,7 @@ int main(int argc, const char **argv)
 
       // Test to set an initial pose
       if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 50) {
-        cMo.buildFrom(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458,
-                      0.8611798108, -0.3491961946);
+        cMo.buildFrom(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458, 0.8611798108, -0.3491961946);
         vpTRACE("Test set pose");
         tracker.setPose(I, cMo);
         //        if (opt_display) {
@@ -540,16 +524,13 @@ int main(int argc, const char **argv)
       }
 
       if (computeCovariance) {
-        std::cout << "Covariance matrix: \n"
-                  << tracker.getCovarianceMatrix() << std::endl
-                  << std::endl;
+        std::cout << "Covariance matrix: \n" << tracker.getCovarianceMatrix() << std::endl << std::endl;
       }
 
       vpDisplay::flush(I);
     }
 
-    std::cout << "Reached last frame: " << reader.getFrameIndex()
-              << std::endl;
+    std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;
 
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I);

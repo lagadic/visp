@@ -71,8 +71,7 @@ int main()
     kdu_dist = 0.1771165148;
 
     cam.initPersProjWithoutDistortion(px, py, u0, v0);
-    camDist.initPersProjWithDistortion(px_dist, py_dist, u0_dist, v0_dist,
-                                       kud_dist, kdu_dist);
+    camDist.initPersProjWithDistortion(px_dist, py_dist, u0_dist, v0_dist, kud_dist, kdu_dist);
 
     double u1 = 320;
     double v1 = 240;

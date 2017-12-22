@@ -39,7 +39,7 @@
 #include <visp3/core/vpServer.h>
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
-#include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
+#include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
 /*!
@@ -48,10 +48,8 @@
 vpServer::vpServer() : adress(), port(0), started(false), max_clients(10)
 {
   int protocol = 0;
-  emitter.socketFileDescriptorEmitter =
-      socket(AF_INET, SOCK_STREAM, protocol);
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
 #else
   if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
@@ -72,25 +70,20 @@ vpServer::vpServer() : adress(), port(0), started(false), max_clients(10)
 
   \param port_serv : server's port.
 */
-vpServer::vpServer(const int &port_serv)
-  : adress(), port(0), started(false), max_clients(10)
+vpServer::vpServer(const int &port_serv) : adress(), port(0), started(false), max_clients(10)
 {
   int protocol = 0;
-  emitter.socketFileDescriptorEmitter =
-      socket(AF_INET, SOCK_STREAM, protocol);
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
 #else
   if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
 #endif
   {
-    vpERROR_TRACE(
-        "vpServer::vpServer(const int &port_serv), cannot open socket.");
+    vpERROR_TRACE("vpServer::vpServer(const int &port_serv), cannot open socket.");
   }
   emitter.emitterAddress.sin_family = AF_INET;
-  emitter.emitterAddress.sin_addr.s_addr =
-      INADDR_ANY; // inet_addr("127.0.0.1");;
+  emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY; // inet_addr("127.0.0.1");;
   emitter.emitterAddress.sin_port = htons((unsigned short)port_serv);
 
   adress = inet_ntoa(emitter.emitterAddress.sin_addr);
@@ -107,10 +100,8 @@ vpServer::vpServer(const std::string &adress_serv, const int &port_serv)
   : adress(), port(0), started(false), max_clients(10)
 {
   int protocol = 0;
-  emitter.socketFileDescriptorEmitter =
-      socket(AF_INET, SOCK_STREAM, protocol);
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
 #else
   if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
@@ -132,16 +123,14 @@ vpServer::vpServer(const std::string &adress_serv, const int &port_serv)
 */
 vpServer::~vpServer()
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   close(emitter.socketFileDescriptorEmitter);
 #else // Win32
   closesocket((unsigned)emitter.socketFileDescriptorEmitter);
 #endif
 
   for (unsigned int i = 0; i < receptor_list.size(); i++)
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     close(receptor_list[i].socketFileDescriptorReceptor);
 #else // Win32
     closesocket((unsigned)receptor_list[i].socketFileDescriptorReceptor);
@@ -156,15 +145,12 @@ vpServer::~vpServer()
 bool vpServer::start()
 {
   int serverStructLength = sizeof(emitter.emitterAddress);
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  int bindResult = bind(emitter.socketFileDescriptorEmitter,
-                        (struct sockaddr *)&emitter.emitterAddress,
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  int bindResult = bind(emitter.socketFileDescriptorEmitter, (struct sockaddr *)&emitter.emitterAddress,
                         (unsigned)serverStructLength);
 #else // Win32
-  int bindResult =
-      bind((unsigned)emitter.socketFileDescriptorEmitter,
-           (struct sockaddr *)&emitter.emitterAddress, serverStructLength);
+  int bindResult = bind((unsigned)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&emitter.emitterAddress,
+                        serverStructLength);
 #endif
 
   if (bindResult < 0) {
@@ -184,16 +170,15 @@ bool vpServer::start()
   // connections based version, however.
   if (emitter.socketFileDescriptorEmitter > 0) {
     int set_option = 1;
-    if (0 == setsockopt(emitter.socketFileDescriptorEmitter, SOL_SOCKET,
-                        SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
+    if (0 ==
+        setsockopt(emitter.socketFileDescriptorEmitter, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
     } else {
       std::cout << "Failed to set socket signal option" << std::endl;
     }
   }
 #endif // SO_NOSIGPIPE
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   listen(emitter.socketFileDescriptorEmitter, (int)max_clients);
 #else // Win32
   listen((unsigned)emitter.socketFileDescriptorEmitter, (int)max_clients);
@@ -232,8 +217,7 @@ bool vpServer::checkForConnections()
   FD_SET((unsigned)emitter.socketFileDescriptorEmitter, &readFileDescriptor);
 
   for (unsigned int i = 0; i < receptor_list.size(); i++) {
-    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor,
-           &readFileDescriptor);
+    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor);
 
     if (i == 0)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
@@ -242,33 +226,26 @@ bool vpServer::checkForConnections()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value =
-      select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
   if (value == -1) {
     // vpERROR_TRACE( "vpServer::run(), select()" );
     return false;
   } else if (value == 0) {
     return false;
   } else {
-    if (FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter,
-                 &readFileDescriptor)) {
+    if (FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter, &readFileDescriptor)) {
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      client.socketFileDescriptorReceptor =
-          accept(emitter.socketFileDescriptorEmitter,
-                 (struct sockaddr *)&client.receptorAddress,
-                 &client.receptorAddressSize);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+      client.socketFileDescriptorReceptor = accept(
+          emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress, &client.receptorAddressSize);
 #else // Win32
       client.socketFileDescriptorReceptor =
-          accept((unsigned int)emitter.socketFileDescriptorEmitter,
-                 (struct sockaddr *)&client.receptorAddress,
+          accept((unsigned int)emitter.socketFileDescriptorEmitter, (struct sockaddr *)&client.receptorAddress,
                  &client.receptorAddressSize);
 #endif
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       if ((client.socketFileDescriptorReceptor) == -1)
 #else
       if ((client.socketFileDescriptorReceptor) == INVALID_SOCKET)
@@ -276,32 +253,22 @@ bool vpServer::checkForConnections()
         vpERROR_TRACE("vpServer::run(), accept()");
 
       client.receptorIP = inet_ntoa(client.receptorAddress.sin_addr);
-      printf("New client connected : %s\n",
-             inet_ntoa(client.receptorAddress.sin_addr));
+      printf("New client connected : %s\n", inet_ntoa(client.receptorAddress.sin_addr));
       receptor_list.push_back(client);
 
       return true;
     } else {
       for (unsigned int i = 0; i < receptor_list.size(); i++) {
-        if (FD_ISSET(
-                (unsigned int)receptor_list[i].socketFileDescriptorReceptor,
-                &readFileDescriptor)) {
+        if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
           char deco;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
-          ssize_t numbytes =
-              recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1,
-                   MSG_PEEK);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+          ssize_t numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #else // Win32
-          int numbytes = recv(
-              (unsigned int)receptor_list[i].socketFileDescriptorReceptor,
-              &deco, 1, MSG_PEEK);
+          int numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #endif
 
           if (numbytes == 0) {
-            std::cout << "Disconnected : "
-                      << inet_ntoa(receptor_list[i].receptorAddress.sin_addr)
-                      << std::endl;
+            std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
             receptor_list.erase(receptor_list.begin() + (int)i);
             return 0;
           }

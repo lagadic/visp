@@ -61,10 +61,7 @@ vpRect::vpRect() : left(0), top(0), width(0), height(0) {}
   \param w : rectangle width.
   \param h : rectangle height.
 */
-vpRect::vpRect(double l, double t, double w, double h)
-  : left(l), top(t), width(w), height(h)
-{
-}
+vpRect::vpRect(double l, double t, double w, double h) : left(l), top(t), width(w), height(h) {}
 
 /*!
   Constructs a rectangle with \e topLeft the top-left corner location
@@ -96,10 +93,7 @@ vpRect::vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight)
 /*!
   Constructs a rectangle that is a copy of \e r.
 */
-vpRect::vpRect(const vpRect &r) : left(0), top(0), width(0), height(0)
-{
-  *this = r;
-}
+vpRect::vpRect(const vpRect &r) : left(0), top(0), width(0), height(0) { *this = r; }
 
 /*!
 
@@ -119,11 +113,7 @@ vpRect &vpRect::operator=(const vpRect &r)
   \param ip : Vector of image points. At least 1 points is mandatory,
   otherwise an exception is thrown.
 */
-vpRect::vpRect(const std::vector<vpImagePoint> &ip)
-  : left(0), top(0), width(0), height(0)
-{
-  set(ip);
-}
+vpRect::vpRect(const std::vector<vpImagePoint> &ip) : left(0), top(0), width(0), height(0) { set(ip); }
 
 /*!
   Check if an image point belongs to the rectangle.
@@ -134,8 +124,8 @@ vpRect::vpRect(const std::vector<vpImagePoint> &ip)
 */
 bool vpRect::isInside(const vpImagePoint &ip) const
 {
-  return (ip.get_i() <= this->getBottom() && ip.get_i() >= this->getTop() &&
-          ip.get_j() <= this->getRight() && ip.get_j() >= this->getLeft());
+  return (ip.get_i() <= this->getBottom() && ip.get_i() >= this->getTop() && ip.get_j() <= this->getRight() &&
+          ip.get_j() >= this->getLeft());
 }
 
 /*!
@@ -178,8 +168,7 @@ void vpRect::set(const vpImagePoint &topLeft, double w, double h)
 void vpRect::set(const std::vector<vpImagePoint> &ip)
 {
   if (ip.size() < 1)
-    throw(vpException(vpException::dimensionError,
-                      "At least 1 point is requested to build a rectangle"));
+    throw(vpException(vpException::dimensionError, "At least 1 point is requested to build a rectangle"));
   double minu, maxu;
   double minv, maxv;
   minu = maxu = ip[0].get_u();
@@ -233,14 +222,10 @@ bool vpRect::operator==(const vpRect &r) const
 {
   // return (top == r.top && left == r.left && width == r.width && height ==
   // r.height);
-  return (std::fabs(top - r.top) <=
-              std::fabs(top) * std::numeric_limits<double>::epsilon() &&
-          std::fabs(left - r.left) <=
-              std::fabs(left) * std::numeric_limits<double>::epsilon() &&
-          std::fabs(width - r.width) <=
-              std::fabs(width) * std::numeric_limits<double>::epsilon() &&
-          std::fabs(height - r.height) <=
-              std::fabs(height) * std::numeric_limits<double>::epsilon());
+  return (std::fabs(top - r.top) <= std::fabs(top) * std::numeric_limits<double>::epsilon() &&
+          std::fabs(left - r.left) <= std::fabs(left) * std::numeric_limits<double>::epsilon() &&
+          std::fabs(width - r.width) <= std::fabs(width) * std::numeric_limits<double>::epsilon() &&
+          std::fabs(height - r.height) <= std::fabs(height) * std::numeric_limits<double>::epsilon());
 }
 
 /*!
@@ -304,13 +289,12 @@ vpRect vpRect::operator&(const vpRect &r) const
 */
 VISP_EXPORT bool inRectangle(const vpImagePoint &ip, const vpRect &rect)
 {
-  return (ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() &&
-          ip.get_j() <= rect.getRight() && ip.get_j() >= rect.getLeft());
+  return (ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() && ip.get_j() <= rect.getRight() &&
+          ip.get_j() >= rect.getLeft());
 }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r)
 {
-  os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", "
-     << r.getHeight();
+  os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", " << r.getHeight();
   return os;
 }

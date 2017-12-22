@@ -306,10 +306,7 @@ void vpAfma4::get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const
   end-effector frame.
 
 */
-void vpAfma4::get_cMe(vpHomogeneousMatrix &cMe) const
-{
-  cMe = this->_eMc.inverse();
-}
+void vpAfma4::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = this->_eMc.inverse(); }
 
 /*!
 
@@ -506,8 +503,7 @@ void vpAfma4::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   \sa get_eJe() and get_fJe()
 
 */
-void vpAfma4::get_fJe_inverse(const vpColVector &q,
-                              vpMatrix &fJe_inverse) const
+void vpAfma4::get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse) const
 {
   fJe_inverse.resize(4, 6);
   fJe_inverse = 0;
@@ -582,14 +578,12 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma4 &afma4)
   vpRxyzVector rxyz(eRc);
 
   os << "Joint Max:" << std::endl
-     << "\t" << afma4._joint_max[0] << "\t" << afma4._joint_max[1] << "\t"
-     << afma4._joint_max[2] << "\t" << afma4._joint_max[3] << "\t"
-     << std::endl
+     << "\t" << afma4._joint_max[0] << "\t" << afma4._joint_max[1] << "\t" << afma4._joint_max[2] << "\t"
+     << afma4._joint_max[3] << "\t" << std::endl
 
      << "Joint Min: " << std::endl
-     << "\t" << afma4._joint_min[0] << "\t" << afma4._joint_min[1] << "\t"
-     << afma4._joint_min[2] << "\t" << afma4._joint_min[3] << "\t"
-     << std::endl
+     << "\t" << afma4._joint_min[0] << "\t" << afma4._joint_min[1] << "\t" << afma4._joint_min[2] << "\t"
+     << afma4._joint_min[3] << "\t" << std::endl
 
      << "a1: " << std::endl
      << "\t" << afma4._a1 << "\t" << std::endl
@@ -601,13 +595,11 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma4 &afma4)
      << "\t" << afma4._d4 << "\t" << std::endl
 
      << "eMc: " << std::endl
-     << "\tTranslation (m): " << afma4._eMc[0][3] << " " << afma4._eMc[1][3]
-     << " " << afma4._eMc[2][3] << "\t" << std::endl
-     << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " "
-     << rxyz[2] << "\t" << std::endl
-     << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " "
-     << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2]) << "\t"
-     << std::endl;
+     << "\tTranslation (m): " << afma4._eMc[0][3] << " " << afma4._eMc[1][3] << " " << afma4._eMc[2][3] << "\t"
+     << std::endl
+     << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " " << rxyz[2] << "\t" << std::endl
+     << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " " << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2])
+     << "\t" << std::endl;
 
   return os;
 }

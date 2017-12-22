@@ -104,8 +104,6 @@
 
   \include tutorial-me-ellipse-tracker.cpp
 
-  */
-/*
   The code below shows how to use this class.
 \code
 #include <visp3/core/vpConfig.h>
@@ -130,8 +128,8 @@ int main()
   vpMbtMeEllipse ellipse;
   ellipse.setMe(&me);
 
-  // Initialize the tracking. You have to click on five different points
-belonging to the ellipse. ellipse.initTracking(I);
+  // Initialize the tracking. You have to click on five different points belonging to the ellipse.
+  ellipse.initTracking(I);
 
   while ( 1 )
   {
@@ -155,9 +153,7 @@ public:
   vpMbtMeEllipse(const vpMbtMeEllipse &meellipse);
   virtual ~vpMbtMeEllipse();
 
-  void computeProjectionError(const vpImage<unsigned char> &_I,
-                              double &_sumErrorRad,
-                              unsigned int &_nbFeatures);
+  void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures);
 
   void display(const vpImage<unsigned char> &I, vpColor col);
   void display(const vpImage<unsigned char> &I)
@@ -221,13 +217,12 @@ public:
     E = e;
   }
 
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic,
-                    double mu20_p, double mu11_p, double mu02_p);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
+                    double mu02_p);
 
   void track(const vpImage<unsigned char> &Im);
 
-  void updateParameters(const vpImage<unsigned char> &I,
-                        const vpImagePoint &ic, double mu20_p, double mu11_p,
+  void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
                         double mu02_p);
 
 protected:

@@ -55,17 +55,11 @@
   The algorithm implemented in this class is described in \cite Dame12a and
   \cite Marchand16a.
 */
-class VISP_EXPORT vpTemplateTrackerMIForwardAdditional
-  : public vpTemplateTrackerMI
+class VISP_EXPORT vpTemplateTrackerMIForwardAdditional : public vpTemplateTrackerMI
 {
 public:
   /*! Minimization method. */
-  typedef enum {
-    USE_NEWTON,
-    USE_LMA,
-    USE_GRADIENT,
-    USE_QUASINEWTON
-  } vpMinimizationTypeMIForwardAdditional;
+  typedef enum { USE_NEWTON, USE_LMA, USE_GRADIENT, USE_QUASINEWTON } vpMinimizationTypeMIForwardAdditional;
 
 private:
   vpMinimizationTypeMIForwardAdditional minimizationMethod;
@@ -107,17 +101,13 @@ protected:
 public:
   //! Default constructor.
   vpTemplateTrackerMIForwardAdditional()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), evolRMS(0),
-      x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(),
-      KQuasiNewton()
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0),
+      p_prec(), G_prec(), KQuasiNewton()
   {
   }
   explicit vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
   void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
-  void setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method)
-  {
-    minimizationMethod = method;
-  }
+  void setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method) { minimizationMethod = method; }
 };
 
 #endif

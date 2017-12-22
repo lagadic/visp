@@ -51,10 +51,8 @@
 
 */
 vpMbXmlParser::vpMbXmlParser()
-  : cam(), angleAppear(70), angleDisappear(80), hasNearClipping(false),
-    nearClipping(false), hasFarClipping(false), farClipping(false),
-    fovClipping(false), useLod(false), minLineLengthThreshold(50.0),
-    minPolygonAreaThreshold(2500.0)
+  : cam(), angleAppear(70), angleDisappear(80), hasNearClipping(false), nearClipping(false), hasFarClipping(false),
+    farClipping(false), fovClipping(false), useLod(false), minLineLengthThreshold(50.0), minPolygonAreaThreshold(2500.0)
 
 {
   init();
@@ -127,11 +125,9 @@ void vpMbXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool face_node = false;
   bool lod_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case camera: {
@@ -156,29 +152,21 @@ void vpMbXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!camera_node) {
-    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)"
-              << std::endl;
-    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)"
-              << std::endl;
-    std::cout << "camera : px : " << this->cam.get_px() << " (default)"
-              << std::endl;
-    std::cout << "camera : py : " << this->cam.get_py() << " (default)"
-              << std::endl;
+    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)" << std::endl;
+    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)" << std::endl;
+    std::cout << "camera : px : " << this->cam.get_px() << " (default)" << std::endl;
+    std::cout << "camera : py : " << this->cam.get_py() << " (default)" << std::endl;
   }
 
   if (!face_node) {
-    std::cout << "face : Angle Appear : " << angleAppear << " (default)"
-              << std::endl;
-    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)"
-              << std::endl;
+    std::cout << "face : Angle Appear : " << angleAppear << " (default)" << std::endl;
+    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)" << std::endl;
   }
 
   if (!lod_node) {
     std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
-    std::cout << "lod : min line length threshold : "
-              << minLineLengthThreshold << " (default)" << std::endl;
-    std::cout << "lod : min polygon area threshold : "
-              << minPolygonAreaThreshold << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 
@@ -203,11 +191,9 @@ void vpMbXmlParser::read_camera(xmlDocPtr doc, xmlNodePtr node)
   double d_px = this->cam.get_px();
   double d_py = this->cam.get_py();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case u0: {
@@ -238,26 +224,22 @@ void vpMbXmlParser::read_camera(xmlDocPtr doc, xmlNodePtr node)
   this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0);
 
   if (!u0_node)
-    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)"
-              << std::endl;
+    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)" << std::endl;
   else
     std::cout << "camera : u0 : " << this->cam.get_u0() << std::endl;
 
   if (!v0_node)
-    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)"
-              << std::endl;
+    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)" << std::endl;
   else
     std::cout << "camera : v0 : " << this->cam.get_v0() << std::endl;
 
   if (!px_node)
-    std::cout << "camera : px : " << this->cam.get_px() << " (default)"
-              << std::endl;
+    std::cout << "camera : px : " << this->cam.get_px() << " (default)" << std::endl;
   else
     std::cout << "camera : px : " << this->cam.get_px() << std::endl;
 
   if (!py_node)
-    std::cout << "camera : py : " << this->cam.get_py() << " (default)"
-              << std::endl;
+    std::cout << "camera : py : " << this->cam.get_py() << " (default)" << std::endl;
   else
     std::cout << "camera : py : " << this->cam.get_py() << std::endl;
 }
@@ -278,11 +260,9 @@ void vpMbXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
   bool far_clipping_node = false;
   bool fov_clipping_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case angle_appear: {
@@ -320,14 +300,12 @@ void vpMbXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!angle_appear_node)
-    std::cout << "face : Angle Appear : " << angleAppear << " (default)"
-              << std::endl;
+    std::cout << "face : Angle Appear : " << angleAppear << " (default)" << std::endl;
   else
     std::cout << "face : Angle Appear : " << angleAppear << std::endl;
 
   if (!angle_disappear_node)
-    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)"
-              << std::endl;
+    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)" << std::endl;
   else
     std::cout << "face : Angle Disappear : " << angleDisappear << std::endl;
 
@@ -351,11 +329,9 @@ void vpMbXmlParser::read_lod(xmlDocPtr doc, xmlNodePtr node)
   bool min_line_length_threshold_node = false;
   bool min_polygon_area_threshold_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case use_lod:
@@ -385,18 +361,14 @@ void vpMbXmlParser::read_lod(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "lod : use lod : " << useLod << std::endl;
 
   if (!min_line_length_threshold_node)
-    std::cout << "lod : min line length threshold : "
-              << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
   else
-    std::cout << "lod : min line length threshold : "
-              << minLineLengthThreshold << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << std::endl;
 
   if (!min_polygon_area_threshold_node)
-    std::cout << "lod : min polygon area threshold : "
-              << minPolygonAreaThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   else
-    std::cout << "lod : min polygon area threshold : "
-              << minPolygonAreaThreshold << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << std::endl;
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

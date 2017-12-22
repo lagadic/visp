@@ -102,8 +102,7 @@ public:
   explicit vpTranslationVector(const vpPoseVector &p);
   explicit vpTranslationVector(const vpColVector &v);
 
-  vpTranslationVector buildFrom(const double tx, const double ty,
-                                const double tz);
+  vpTranslationVector buildFrom(const double tx, const double ty, const double tz);
   vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
   vpTranslationVector buildFrom(const vpPoseVector &p);
   vpTranslationVector buildFrom(const vpColVector &v);
@@ -134,24 +133,19 @@ public:
   //! Operator that allows to set a value of an element \f$t_i\f$: t[i] = x
   inline double &operator[](unsigned int n) { return *(data + n); }
   //! Operator that allows to get the value of an element \f$t_i\f$: x = t[i]
-  inline const double &operator[](unsigned int n) const
-  {
-    return *(data + n);
-  }
+  inline const double &operator[](unsigned int n) const { return *(data + n); }
 
   /*!
     This function is not applicable to a translation vector that is always a
     3-by-1 column vector.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError,
-                      "Cannot resize a translation vector"));
+    throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
   };
 
   void set(const double tx, const double ty, const double tz);
@@ -163,8 +157,7 @@ public:
 
   vpRowVector t() const;
 
-  static vpTranslationVector cross(const vpTranslationVector &a,
-                                   const vpTranslationVector &b);
+  static vpTranslationVector cross(const vpTranslationVector &a, const vpTranslationVector &b);
   static vpMatrix skew(const vpTranslationVector &tv);
   static void skew(const vpTranslationVector &tv, vpMatrix &M);
 };

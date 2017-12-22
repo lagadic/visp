@@ -36,8 +36,7 @@
 #include <cstring>
 #include <sstream>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
@@ -70,8 +69,7 @@ vpUDPClient::vpUDPClient(const std::string &hostname, const int port)
 
 vpUDPClient::~vpUDPClient()
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   close(m_socketFileDescriptor);
 #else
   closesocket(m_socketFileDescriptor);
@@ -84,8 +82,7 @@ void vpUDPClient::init(const std::string &hostname, const int port)
 #if defined(_WIN32)
   if (WSAStartup(MAKEWORD(2, 2), &m_wsa) != 0) {
     std::stringstream ss;
-    ss << "Failed WSAStartup for the server, error code: "
-       << WSAGetLastError();
+    ss << "Failed WSAStartup for the server, error code: " << WSAGetLastError();
     throw vpException(vpException::fatalError, ss.str());
   }
 #endif
@@ -97,8 +94,7 @@ void vpUDPClient::init(const std::string &hostname, const int port)
 #else
   if (m_socketFileDescriptor < 0)
 #endif
-    throw vpException(vpException::fatalError,
-                      "Error opening UDP socket for the client!");
+    throw vpException(vpException::fatalError, "Error opening UDP socket for the client!");
 
   /* build the server's Internet address */
   memset(&m_serverAddress, 0, sizeof(m_serverAddress));
@@ -113,8 +109,7 @@ void vpUDPClient::init(const std::string &hostname, const int port)
   hints.ai_socktype = SOCK_DGRAM;
   hints.ai_protocol = IPPROTO_UDP;
 
-  DWORD dwRetval =
-      getaddrinfo(hostname.c_str(), ss.str().c_str(), &hints, &result);
+  DWORD dwRetval = getaddrinfo(hostname.c_str(), ss.str().c_str(), &hints, &result);
   if (dwRetval != 0) {
     ss.str("");
     ss << "getaddrinfo failed with error: " << dwRetval;
@@ -165,8 +160,7 @@ int vpUDPClient::receive(std::string &msg, const int timeoutMs)
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
   }
-  int retval = select((int)m_socketFileDescriptor + 1, &s, NULL, NULL,
-                      timeoutMs > 0 ? &timeout : NULL);
+  int retval = select((int)m_socketFileDescriptor + 1, &s, NULL, NULL, timeoutMs > 0 ? &timeout : NULL);
 
   if (retval == -1) {
     std::cerr << "Error select!" << std::endl;
@@ -175,8 +169,7 @@ int vpUDPClient::receive(std::string &msg, const int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0,
-                          (struct sockaddr *)&m_serverAddress,
+    int length = recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_serverAddress,
                           (socklen_t *)&m_serverLength);
     if (length <= 0) {
       return length < 0 ? -1 : 0;
@@ -206,10 +199,13 @@ int vpUDPClient::receive(std::string &msg, const int timeoutMs)
   server.send(os.str(), hostname, port);
   \endcode
   To send directly the byte data (assuming the same integer representation on
-  the server and the client): \code int val = 1024; char data[sizeof(val)];
+  the server and the client):
+  \code
+  int val = 1024;
+  char data[sizeof(val)];
   memcpy(data, &val, sizeof(val));
-  std::string msg(data, sizeof(val)); //required to avoid the string being
-  splitted with the first \0 character server.send(msg, hostname, port);
+  std::string msg(data, sizeof(val)); //required to avoid the string being splitted with the first \0 character
+  server.send(msg, hostname, port);
   \endcode
 */
 int vpUDPClient::send(const std::string &msg)
@@ -220,12 +216,11 @@ int vpUDPClient::send(const std::string &msg)
   }
 
 /* send the message to the server */
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  return sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0,
-                (struct sockaddr *)&m_serverAddress, m_serverLength);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  return sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress,
+                m_serverLength);
 #else
-  return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0,
-                (struct sockaddr *)&m_serverAddress, m_serverLength);
+  return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_serverAddress,
+                m_serverLength);
 #endif
 }

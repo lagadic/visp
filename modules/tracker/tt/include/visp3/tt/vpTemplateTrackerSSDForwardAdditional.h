@@ -52,17 +52,11 @@
   The algorithm implemented in this class is described in \cite Baker04a and
   \cite Marchand16a.
  */
-class VISP_EXPORT vpTemplateTrackerSSDForwardAdditional
-  : public vpTemplateTrackerSSD
+class VISP_EXPORT vpTemplateTrackerSSDForwardAdditional : public vpTemplateTrackerSSD
 {
 public:
   /*! Minimization method. */
-  typedef enum {
-    USE_NEWTON,
-    USE_LMA,
-    USE_GRADIENT,
-    USE_QUASINEWTON
-  } vpMinimizationTypeSSDForwardAdditional;
+  typedef enum { USE_NEWTON, USE_LMA, USE_GRADIENT, USE_QUASINEWTON } vpMinimizationTypeSSDForwardAdditional;
 
 private:
   vpMinimizationTypeSSDForwardAdditional minimizationMethod;
@@ -78,9 +72,6 @@ protected:
 public:
   explicit vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp);
 
-  void setMinimizationMethod(vpMinimizationTypeSSDForwardAdditional method)
-  {
-    minimizationMethod = method;
-  }
+  void setMinimizationMethod(vpMinimizationTypeSSDForwardAdditional method) { minimizationMethod = method; }
 };
 #endif

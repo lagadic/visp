@@ -62,11 +62,10 @@
   Basic constructor
 */
 vpMbtDistanceCylinder::vpMbtDistanceCylinder()
-  : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1), featureline1(),
-    featureline2(), isTrackedCylinder(true), meline1(NULL), meline2(NULL),
-    cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(), error(),
-    nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(NULL),
-    hiddenface(NULL), index_polygon(-1), isvisible(false)
+  : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1), featureline1(), featureline2(), isTrackedCylinder(true),
+    meline1(NULL), meline2(NULL), cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(), error(),
+    nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(NULL), hiddenface(NULL), index_polygon(-1),
+    isvisible(false)
 {
 }
 
@@ -117,8 +116,7 @@ void vpMbtDistanceCylinder::project(const vpHomogeneousMatrix &cMo)
   \param _p2 : The second extremity on the axis.
   \param r : Radius of the cylinder.
 */
-void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2,
-                                      const double r)
+void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r)
 {
   c = new vpCylinder;
   p1 = new vpPoint;
@@ -148,16 +146,12 @@ void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2,
   ABC = V1 - V2;
 
   // Build our extremity circles
-  cercle1->setWorldCoordinates(ABC[0], ABC[1], ABC[2], _p1.get_oX(),
-                               _p1.get_oY(), _p1.get_oZ(), r);
-  cercle2->setWorldCoordinates(ABC[0], ABC[1], ABC[2], _p2.get_oX(),
-                               _p2.get_oY(), _p2.get_oZ(), r);
+  cercle1->setWorldCoordinates(ABC[0], ABC[1], ABC[2], _p1.get_oX(), _p1.get_oY(), _p1.get_oZ(), r);
+  cercle2->setWorldCoordinates(ABC[0], ABC[1], ABC[2], _p2.get_oX(), _p2.get_oY(), _p2.get_oZ(), r);
 
   // Build our cylinder
-  c->setWorldCoordinates(ABC[0], ABC[1], ABC[2],
-                         (_p1.get_oX() + _p2.get_oX()) / 2.0,
-                         (_p1.get_oY() + _p2.get_oY()) / 2.0,
-                         (_p1.get_oZ() + _p2.get_oZ()) / 2.0, r);
+  c->setWorldCoordinates(ABC[0], ABC[1], ABC[2], (_p1.get_oX() + _p2.get_oX()) / 2.0,
+                         (_p1.get_oY() + _p2.get_oY()) / 2.0, (_p1.get_oZ() + _p2.get_oZ()) / 2.0, r);
 }
 
 /*!
@@ -185,8 +179,7 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param cMo : The pose of the camera used to initialize the moving edges.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I,
-                                           const vpHomogeneousMatrix &cMo)
+bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     // Perspective projection
@@ -226,10 +219,8 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I,
     meline2->setInitRange(0);
 
     // Conversion meter to pixels
-    vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(),
-                                        rho1, theta1);
-    vpMeterPixelConversion::convertLine(cam, c->getRho2(), c->getTheta2(),
-                                        rho2, theta2);
+    vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(), rho1, theta1);
+    vpMeterPixelConversion::convertLine(cam, c->getRho2(), c->getTheta2(), rho2, theta2);
 
     // Determine intersections between circles and limbos
     double i11, i12, i21, i22, j11, j12, j21, j22;
@@ -324,8 +315,7 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCylinder::trackMovingEdge(
-    const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
 {
   if (isvisible) {
     try {
@@ -356,8 +346,7 @@ void vpMbtDistanceCylinder::trackMovingEdge(
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I,
-                                             const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     // Perspective projection
@@ -386,10 +375,8 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I,
     double rho2, theta2;
 
     // Conversion meter to pixels
-    vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(),
-                                        rho1, theta1);
-    vpMeterPixelConversion::convertLine(cam, c->getRho2(), c->getTheta2(),
-                                        rho2, theta2);
+    vpMeterPixelConversion::convertLine(cam, c->getRho1(), c->getTheta1(), rho1, theta1);
+    vpMeterPixelConversion::convertLine(cam, c->getRho2(), c->getTheta2(), rho2, theta2);
 
     // Determine intersections between circles and limbos
     double i11, i12, i21, i22, j11, j12, j21, j22;
@@ -493,8 +480,7 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I,
-                                             const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (meline1 != NULL)
     delete meline1;
@@ -520,11 +506,8 @@ void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I,
   \param thickness : The thickness of the lines.
   \param displayFullModel : When true, display the circle even if non visible.
 */
-void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I,
-                                    const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &camera,
-                                    const vpColor &col,
-                                    const unsigned int thickness,
+void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                    const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                     const bool displayFullModel)
 {
   if ((isvisible && isTrackedCylinder) || displayFullModel) {
@@ -553,10 +536,8 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I,
     double rho2, theta2;
 
     // Meters to pixels conversion
-    vpMeterPixelConversion::convertLine(camera, c->getRho1(), c->getTheta1(),
-                                        rho1, theta1);
-    vpMeterPixelConversion::convertLine(camera, c->getRho2(), c->getTheta2(),
-                                        rho2, theta2);
+    vpMeterPixelConversion::convertLine(camera, c->getRho1(), c->getTheta1(), rho1, theta1);
+    vpMeterPixelConversion::convertLine(camera, c->getRho2(), c->getTheta2(), rho2, theta2);
 
     // Determine intersections between circles and limbos
     double i11, i12, i21, i22, j11, j12, j21, j22;
@@ -590,11 +571,8 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I,
   \param thickness : The thickness of the lines.
   \param displayFullModel : When true, display the circle even if non visible.
 */
-void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I,
-                                    const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &camera,
-                                    const vpColor &col,
-                                    const unsigned int thickness,
+void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                                    const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                     const bool displayFullModel)
 {
   if ((isvisible && isTrackedCylinder) || displayFullModel) {
@@ -623,10 +601,8 @@ void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I,
     double rho2, theta2;
 
     // Meters to pixels conversion
-    vpMeterPixelConversion::convertLine(camera, c->getRho1(), c->getTheta1(),
-                                        rho1, theta1);
-    vpMeterPixelConversion::convertLine(camera, c->getRho2(), c->getTheta2(),
-                                        rho2, theta2);
+    vpMeterPixelConversion::convertLine(camera, c->getRho1(), c->getTheta1(), rho1, theta1);
+    vpMeterPixelConversion::convertLine(camera, c->getRho2(), c->getTheta2(), rho2, theta2);
 
     // Determine intersections between circles and limbos
     double i11, i12, i21, i22, j11, j12, j21, j22;
@@ -664,8 +640,7 @@ void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I,
 
     \param I : The image.
 */
-void vpMbtDistanceCylinder::displayMovingEdges(
-    const vpImage<unsigned char> &I)
+void vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   if (meline1 != NULL) {
     meline1->display(I);
@@ -697,8 +672,8 @@ void vpMbtDistanceCylinder::initInteractionMatrixError()
   Compute the interaction matrix and the error vector corresponding to the
   cylinder.
 */
-void vpMbtDistanceCylinder::computeInteractionMatrixError(
-    const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I)
+void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo,
+                                                          const vpImage<unsigned char> &I)
 {
   if (isvisible) {
     // Perspective projection
@@ -748,9 +723,8 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(
 
     vpMeSite p;
     unsigned int j = 0;
-    for (std::list<vpMeSite>::const_iterator it =
-             meline1->getMeList().begin();
-         it != meline1->getMeList().end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
+         ++it) {
       double x = (double)it->j;
       double y = (double)it->i;
 
@@ -768,16 +742,13 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(
       error[j] = rho1 - (x * co1 + y * si1);
 
       if (disp)
-        vpDisplay::displayCross(I, it->i, it->j,
-                                (unsigned int)(error[j] * 100),
-                                vpColor::orange, 1);
+        vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j] * 100), vpColor::orange, 1);
 
       j++;
     }
 
-    for (std::list<vpMeSite>::const_iterator it =
-             meline2->getMeList().begin();
-         it != meline2->getMeList().end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
+         ++it) {
       double x = (double)it->j;
       double y = (double)it->i;
 
@@ -795,8 +766,7 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(
       error[j] = rho2 - (x * co2 + y * si2);
 
       if (disp)
-        vpDisplay::displayCross(
-            I, it->i, it->j, (unsigned int)(error[j] * 100), vpColor::red, 1);
+        vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j] * 100), vpColor::red, 1);
 
       j++;
     }

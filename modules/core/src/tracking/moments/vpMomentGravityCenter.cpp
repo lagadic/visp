@@ -51,29 +51,21 @@ void vpMomentGravityCenter::compute()
 /*!
   Default constructor.
 */
-vpMomentGravityCenter::vpMomentGravityCenter() : vpMoment()
-{
-  values.resize(2);
-}
+vpMomentGravityCenter::vpMomentGravityCenter() : vpMoment() { values.resize(2); }
 
 /*!
   Returns a vector of the two gravity center coordinates.
   \return Coordinates in the following moment: \f$(x_g,y_g)\f$.
 */
-const std::vector<double> &vpMomentGravityCenter::get() const
-{
-  return values;
-}
+const std::vector<double> &vpMomentGravityCenter::get() const { return values; }
 
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpMomentGravityCenter &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenter &m)
 {
   os << (__FILE__) << std::endl;
-  os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")"
-     << std::endl;
+  os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
   return os;
 }
 

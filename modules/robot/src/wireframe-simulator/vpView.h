@@ -86,60 +86,57 @@
 #define PARALLEL 0
 #define PERSPECTIVE 1
 
-#define vpDEFAULT_EYE                                                        \
-  {                                                                          \
-    0.0, 0.0, 1.0                                                            \
+#define vpDEFAULT_EYE                                                                                                  \
+  {                                                                                                                    \
+    0.0, 0.0, 1.0                                                                                                      \
   }
-#define vpDEFAULT_TARGET                                                     \
-  {                                                                          \
-    0.0, 0.0, 0.0                                                            \
+#define vpDEFAULT_TARGET                                                                                               \
+  {                                                                                                                    \
+    0.0, 0.0, 0.0                                                                                                      \
   }
 #define vpDEFAULT_FOCAL 1.0
 #define vpDEFAULT_ANGLE 45.0
 #define vpDEFAULT_TWIST 0.0
 #define vpDEFAULT_SPEED 0.0
-#define vpDEFAULT_CAMERA                                                     \
-  {                                                                          \
-    vpDEFAULT_EYE, vpDEFAULT_TARGET, vpDEFAULT_FOCAL, vpDEFAULT_ANGLE,       \
-        vpDEFAULT_TWIST, vpDEFAULT_SPEED                                     \
+#define vpDEFAULT_CAMERA                                                                                               \
+  {                                                                                                                    \
+    vpDEFAULT_EYE, vpDEFAULT_TARGET, vpDEFAULT_FOCAL, vpDEFAULT_ANGLE, vpDEFAULT_TWIST, vpDEFAULT_SPEED                \
   }
 
-#define vpDEFAULT_COP                                                        \
-  {                                                                          \
-    0.0, 0.0, 1.0                                                            \
+#define vpDEFAULT_COP                                                                                                  \
+  {                                                                                                                    \
+    0.0, 0.0, 1.0                                                                                                      \
   }
-#define vpDEFAULT_VRP                                                        \
-  {                                                                          \
-    0.0, 0.0, 0.0                                                            \
+#define vpDEFAULT_VRP                                                                                                  \
+  {                                                                                                                    \
+    0.0, 0.0, 0.0                                                                                                      \
   }
-#define vpDEFAULT_VPN                                                        \
-  {                                                                          \
-    0.0, 0.0, -1.0                                                           \
+#define vpDEFAULT_VPN                                                                                                  \
+  {                                                                                                                    \
+    0.0, 0.0, -1.0                                                                                                     \
   }
-#define vpDEFAULT_VUP                                                        \
-  {                                                                          \
-    0.0, 1.0, 0.0                                                            \
+#define vpDEFAULT_VUP                                                                                                  \
+  {                                                                                                                    \
+    0.0, 1.0, 0.0                                                                                                      \
   }
-#define vpDEFAULT_VWD                                                        \
-  {                                                                          \
-    -1.0, 1.0, -1.0, 1.0                                                     \
+#define vpDEFAULT_VWD                                                                                                  \
+  {                                                                                                                    \
+    -1.0, 1.0, -1.0, 1.0                                                                                               \
   }
-#define vpDEFAULT_DEPTH                                                      \
-  {                                                                          \
-    0.0, 1.0                                                                 \
+#define vpDEFAULT_DEPTH                                                                                                \
+  {                                                                                                                    \
+    0.0, 1.0                                                                                                           \
   }
 #define vpDEFAULT_TYPE PERSPECTIVE
 
-#define vpDEFAULT_VIEW                                                       \
-  {                                                                          \
-    vpDEFAULT_TYPE, vpDEFAULT_COP, vpDEFAULT_VRP, vpDEFAULT_VPN,             \
-        vpDEFAULT_VUP, vpDEFAULT_VWD, vpDEFAULT_DEPTH                        \
+#define vpDEFAULT_VIEW                                                                                                 \
+  {                                                                                                                    \
+    vpDEFAULT_TYPE, vpDEFAULT_COP, vpDEFAULT_VRP, vpDEFAULT_VPN, vpDEFAULT_VUP, vpDEFAULT_VWD, vpDEFAULT_DEPTH         \
   }
 
-#define vpDEFAULT_WC                                                         \
-  {                                                                          \
-    1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,    \
-        0.0, 1.0                                                             \
+#define vpDEFAULT_WC                                                                                                   \
+  {                                                                                                                    \
+    1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0                                     \
   }
 
 /*

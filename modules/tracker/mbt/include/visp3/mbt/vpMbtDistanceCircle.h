@@ -126,19 +126,14 @@ public:
   vpMbtDistanceCircle();
   ~vpMbtDistanceCircle();
 
-  void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3,
-                 const double r);
+  void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r);
 
   void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
 
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1,
-               const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam, const vpColor &col,
-               const unsigned int thickness = 1,
-               const bool displayFullModel = false);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
   void displayMovingEdges(const vpImage<unsigned char> &I);
 
   /*!
@@ -146,10 +141,7 @@ public:
 
    \param camera : The vpCameraParameters used to store the camera parameters.
   */
-  inline void getCameraParameters(vpCameraParameters &camera)
-  {
-    camera = this->cam;
-  }
+  inline void getCameraParameters(vpCameraParameters &camera) { camera = this->cam; }
 
   /*!
     Get the index of the circle.
@@ -183,8 +175,7 @@ public:
 
   void initInteractionMatrixError();
 
-  bool initMovingEdge(const vpImage<unsigned char> &I,
-                      const vpHomogeneousMatrix &cMo);
+  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
   /*!
    Return if the circle is used for tracking.
 
@@ -199,17 +190,13 @@ public:
   */
   inline bool isVisible() const { return isvisible; }
 
-  void reinitMovingEdge(const vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &cMo);
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   /*!
    Set the camera paramters.
    \param camera : The camera parameters.
   */
-  inline void setCameraParameters(const vpCameraParameters &camera)
-  {
-    this->cam = camera;
-  }
+  inline void setCameraParameters(const vpCameraParameters &camera) { this->cam = camera; }
 
   /*!
     Set if the circle has to considered during tracking phase.
@@ -239,20 +226,14 @@ public:
 
     \param circle_name : The name of the circle.
   */
-  inline void setName(const std::string &circle_name)
-  {
-    this->name = circle_name;
-  }
+  inline void setName(const std::string &circle_name) { this->name = circle_name; }
 
   /*!
     Set the name of the circle.
 
     \param circle_name : The name of the circle.
   */
-  inline void setName(const char *circle_name)
-  {
-    this->name = std::string(circle_name);
-  }
+  inline void setName(const char *circle_name) { this->name = std::string(circle_name); }
 
   /*!
     Set a boolean parameter to indicates if the circle is visible in the image
@@ -262,11 +243,9 @@ public:
   */
   inline void setVisible(bool _isvisible) { isvisible = _isvisible; }
 
-  void trackMovingEdge(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo);
+  void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
-  void updateMovingEdge(const vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &cMo);
+  void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
 private:
   void project(const vpHomogeneousMatrix &cMo);

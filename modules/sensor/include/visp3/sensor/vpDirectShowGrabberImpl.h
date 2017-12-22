@@ -132,8 +132,7 @@ Enumeration of video subtypes.
   bool setFormat(unsigned int width, unsigned int height, double framerate);
 
   // get capture format
-  void getFormat(unsigned int &width, unsigned int &height,
-                 double &framerate);
+  void getFormat(unsigned int &width, unsigned int &height, double &framerate);
 
   // set capture MediaType
   bool setMediaType(int mediaTypeID);
@@ -147,27 +146,23 @@ Enumeration of video subtypes.
 private:
   CComPtr<IGraphBuilder> pGraph; // our DS filter graph
 
-  CComPtr<ICaptureGraphBuilder2>
-      pBuild; // the interface to the capture graph builder
-              // used to build the filter graph
+  CComPtr<ICaptureGraphBuilder2> pBuild; // the interface to the capture graph builder
+                                         // used to build the filter graph
 
   CComPtr<IBaseFilter> pCapSource; // the capture source filter
 
-  CComPtr<ISampleGrabber>
-      pGrabberI; // the sample grabber's interface and filter
+  CComPtr<ISampleGrabber> pGrabberI; // the sample grabber's interface and filter
   CComPtr<IBaseFilter> pGrabberFilter;
 
   CComPtr<IMediaControl> pControl; // The DS filter graph control interface
   CComPtr<IMediaEvent> pEvent;     // The DS filter graph event interface
 
-  vpDirectShowSampleGrabberI
-      sgCB; // Interface used to implement the frame grabber callback
+  vpDirectShowSampleGrabberI sgCB; // Interface used to implement the frame grabber callback
 
   HRESULT hr; // contains the result of the last operation
 
-  static vpDirectShowDevice
-      *deviceList; // This contains the list of the available capture devices
-                   // it is shared by all the DirectShow Grabbers
+  static vpDirectShowDevice *deviceList; // This contains the list of the available capture devices
+                                         // it is shared by all the DirectShow Grabbers
 
   static unsigned int nbDevices; // the number of available devices
   int currentDevice;             // the number of the current device
@@ -182,8 +177,7 @@ private:
 
   // selects a random video input from the enumeration and returns the
   // associated filter
-  bool selectRandomSource(CComPtr<IEnumMoniker> &ppVideoInputEnum,
-                          CComPtr<IBaseFilter> &pCapSource);
+  bool selectRandomSource(CComPtr<IEnumMoniker> &ppVideoInputEnum, CComPtr<IBaseFilter> &pCapSource);
 
   // creates the filter graph
   bool createGraph();
@@ -195,8 +189,7 @@ private:
   bool checkSourceType(CComPtr<IPin> &pCapSourcePin);
 
   // connects the filters as needed
-  bool connectSourceToGrabber(CComPtr<IBaseFilter> &pCapSource,
-                              CComPtr<IBaseFilter> &pGrabberFilter);
+  bool connectSourceToGrabber(CComPtr<IBaseFilter> &pCapSource, CComPtr<IBaseFilter> &pGrabberFilter);
 
   // used to convert HRESULT-associated error message to a string
   void HRtoStr(std::string str);

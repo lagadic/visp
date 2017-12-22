@@ -40,8 +40,7 @@ int main(int argc, const char *argv[])
     g.setScale(opt_scale);
     g.open(I);
 
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);

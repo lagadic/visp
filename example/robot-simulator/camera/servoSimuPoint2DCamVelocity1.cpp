@@ -162,8 +162,7 @@ int main(int argc, const char **argv)
 
     // sets the current position of the visual feature
     vpFeaturePoint p;
-    vpFeatureBuilder::create(
-        p, point); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p, point); // retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
@@ -187,8 +186,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     while (iter++ < 100) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // get the robot position
@@ -207,8 +205,7 @@ int main(int argc, const char **argv)
       // send the camera velocity to the controller
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     // Display task information

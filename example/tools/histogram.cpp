@@ -75,8 +75,7 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using X11, display some\n\
@@ -124,8 +123,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, const std::string &user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user)
 {
   const char *optarg_;
   int c;
@@ -224,8 +222,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -234,13 +231,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -282,8 +276,7 @@ int main(int argc, const char **argv)
     vpTRACE("List of peaks");
     vpTRACE("Nb peaks: %d", nbpeaks);
     if (nbpeaks) {
-      for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin();
-           it != peaks.end(); ++it) {
+      for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin(); it != peaks.end(); ++it) {
         vpHistogramPeak p = *it;
         vpTRACE("Peak: gray level: %d value: %d", p.getLevel(), p.getValue());
       }
@@ -296,8 +289,7 @@ int main(int argc, const char **argv)
     vpTRACE("Sorted list of peaks");
     vpTRACE("Nb peaks: %d", nbpeaks);
     if (nbpeaks) {
-      for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin();
-           it != peaks.end(); ++it) {
+      for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin(); it != peaks.end(); ++it) {
         vpHistogramPeak p = *it;
         vpTRACE("Peak: gray level: %d value: %d", p.getLevel(), p.getValue());
       }
@@ -309,9 +301,8 @@ int main(int argc, const char **argv)
     if (nbpeaks != 2) {
       std::cout << "Not a bimodal histogram..." << std::endl;
     } else {
-      vpTRACE("Bimodal histogram: main peak1: %d-%d second peak2: %d-%d",
-              peak1.getLevel(), peak1.getValue(), peak2.getLevel(),
-              peak2.getValue());
+      vpTRACE("Bimodal histogram: main peak1: %d-%d second peak2: %d-%d", peak1.getLevel(), peak1.getValue(),
+              peak2.getLevel(), peak2.getValue());
     }
 
     // Get the valey between the two highest peaks
@@ -328,15 +319,12 @@ int main(int argc, const char **argv)
       // Search the two valeys around peak1
       unsigned ret = h.getValey(distance, peak1, valeyl, valeyr);
       if (ret == 0x00) {
-        vpTRACE("No left and right valey for peak %d-%d...", peak1.getLevel(),
-                peak1.getValue());
+        vpTRACE("No left and right valey for peak %d-%d...", peak1.getLevel(), peak1.getValue());
       } else if (ret == 0x10) {
-        vpTRACE("No right valey for peak %d-%d...", peak1.getLevel(),
-                peak1.getValue());
+        vpTRACE("No right valey for peak %d-%d...", peak1.getLevel(), peak1.getValue());
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
       } else if (ret == 0x01) {
-        vpTRACE("No left valey for peak %d-%d...", peak1.getLevel(),
-                peak1.getValue());
+        vpTRACE("No left valey for peak %d-%d...", peak1.getLevel(), peak1.getValue());
         vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
       } else if (ret == 0x11) {
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
@@ -347,15 +335,12 @@ int main(int argc, const char **argv)
       // Search the two valeys around peak2
       unsigned ret = h.getValey(distance, peak2, valeyl, valeyr);
       if (ret == 0x00) {
-        vpTRACE("No left and right valey for peak %d-%d...", peak2.getLevel(),
-                peak2.getValue());
+        vpTRACE("No left and right valey for peak %d-%d...", peak2.getLevel(), peak2.getValue());
       } else if (ret == 0x10) {
-        vpTRACE("No right valey for peak %d-%d...", peak2.getLevel(),
-                peak2.getValue());
+        vpTRACE("No right valey for peak %d-%d...", peak2.getLevel(), peak2.getValue());
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
       } else if (ret == 0x01) {
-        vpTRACE("No left valey for peak %d-%d...", peak2.getLevel(),
-                peak2.getValue());
+        vpTRACE("No left valey for peak %d-%d...", peak2.getLevel(), peak2.getValue());
         vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
       } else if (ret == 0x11) {
         vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
@@ -370,9 +355,8 @@ int main(int argc, const char **argv)
     if (h.getPeaks(distance, peakl, peakr, valey) == false) {
       std::cout << "Not a bimodal histogram..." << std::endl;
     } else {
-      vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d",
-              valey.getLevel(), valey.getValue(), peakl.getLevel(),
-              peakl.getValue(), peakr.getLevel(), peakr.getValue());
+      vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d", valey.getLevel(), valey.getValue(),
+              peakl.getLevel(), peakl.getValue(), peakr.getLevel(), peakr.getValue());
     }
     return 0;
   } catch (vpException &e) {

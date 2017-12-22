@@ -9,14 +9,10 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-void display_trajectory(const vpImage<unsigned char> &I,
-                        std::vector<vpPoint> &point,
-                        const vpHomogeneousMatrix &cMo,
+void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam);
 
-void display_trajectory(const vpImage<unsigned char> &I,
-                        std::vector<vpPoint> &point,
-                        const vpHomogeneousMatrix &cMo,
+void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam)
 {
   static std::vector<vpImagePoint> traj[4];
@@ -24,8 +20,7 @@ void display_trajectory(const vpImage<unsigned char> &I,
   for (unsigned int i = 0; i < 4; i++) {
     // Project the point at the given camera position
     point[i].project(cMo);
-    vpMeterPixelConversion::convertPoint(cam, point[i].get_x(),
-                                         point[i].get_y(), cog);
+    vpMeterPixelConversion::convertPoint(cam, point[i].get_x(), point[i].get_y(), cog);
     traj[i].push_back(cog);
   }
   for (unsigned int i = 0; i < 4; i++) {
@@ -39,8 +34,7 @@ int main()
 {
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10),
-                            vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
     std::vector<vpPoint> point(4);
     point[0].setWorldCoordinates(-0.1, -0.1, 0);
@@ -83,13 +77,11 @@ int main()
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-    vpCameraParameters cam(840, 840, Iint.getWidth() / 2,
-                           Iint.getHeight() / 2);
+    vpCameraParameters cam(840, 840, Iint.getWidth() / 2, Iint.getHeight() / 2);
     vpHomogeneousMatrix cextMo(0, 0, 3, 0, 0, 0);
 
     vpWireFrameSimulator sim;
-    sim.initScene(vpWireFrameSimulator::PLATE,
-                  vpWireFrameSimulator::D_STANDARD);
+    sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
     sim.setCameraPositionRelObj(cMo);
     sim.setDesiredCameraPosition(cdMo);
     sim.setExternalCameraPosition(cextMo);

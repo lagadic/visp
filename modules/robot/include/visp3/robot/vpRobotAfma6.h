@@ -122,8 +122,8 @@ int main() {}
   \code
   // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distortion parameter
-  robot.init(vpAfma6::TOOL_CCMOP,
-vpCameraParameters::perspectiveProjWithDistortion); \endcode
+  robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
+  \endcode
 
   You can get the intrinsic camera parameters of the image I
   acquired with the camera, with:
@@ -258,30 +258,22 @@ public: /* Methode publiques */
 
   void closeGripper();
 
-  void getDisplacement(vpRobot::vpControlFrameType frame,
-                       vpColVector &displacement);
+  void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
 
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpColVector &position);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpColVector &position, double &timestamp);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
 
   double getPositioningVelocity(void);
   bool getPowerState();
   double getTime() const;
 
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &velocity);
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &velocity, double &timestamp);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity, double &timestamp);
 
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
-  vpColVector getVelocity(const vpRobot::vpControlFrameType frame,
-                          double &timestamp);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame, double &timestamp);
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
@@ -291,9 +283,9 @@ public: /* Methode publiques */
   void init(void);
   void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc);
   void init(vpAfma6::vpAfma6ToolType tool, const std::string &filename);
-  void init(vpAfma6::vpAfma6ToolType tool,
-            vpCameraParameters::vpCameraParametersProjType projModel =
-                vpCameraParameters::perspectiveProjWithoutDistortion);
+  void
+  init(vpAfma6::vpAfma6ToolType tool,
+       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   void move(const std::string &filename);
   void move(const std::string &filename, const double velocity);
@@ -307,13 +299,10 @@ public: /* Methode publiques */
   static bool savePosFile(const std::string &filename, const vpColVector &q);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
-  void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpPoseVector &pose);
-  void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &position);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1,
-                   const double pos2, const double pos3, const double pos4,
-                   const double pos5, const double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpPoseVector &pose);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2, const double pos3,
+                   const double pos4, const double pos5, const double pos6);
   void setPosition(const std::string &filename);
   void setPositioningVelocity(const double velocity);
   void set_eMc(const vpHomogeneousMatrix &eMc);
@@ -324,8 +313,7 @@ public: /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
 
   void stopMotion();
 };

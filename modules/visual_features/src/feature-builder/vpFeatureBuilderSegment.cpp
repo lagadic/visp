@@ -57,9 +57,7 @@
   segment.
 
 */
-void vpFeatureBuilder::create(vpFeatureSegment &s,
-                              const vpCameraParameters &cam, const vpDot &d1,
-                              const vpDot &d2)
+void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2)
 {
   double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
@@ -93,9 +91,7 @@ void vpFeatureBuilder::create(vpFeatureSegment &s,
   segment.
 
 */
-void vpFeatureBuilder::create(vpFeatureSegment &s,
-                              const vpCameraParameters &cam, const vpDot2 &d1,
-                              const vpDot2 &d2)
+void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot2 &d1, const vpDot2 &d2)
 {
   double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
@@ -130,9 +126,7 @@ void vpFeatureBuilder::create(vpFeatureSegment &s,
   the second point of the segment.
 
 */
-void vpFeatureBuilder::create(vpFeatureSegment &s,
-                              const vpCameraParameters &cam,
-                              const vpImagePoint &ip1,
+void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpImagePoint &ip1,
                               const vpImagePoint &ip2)
 {
   double x1 = 0, y1 = 0, x2 = 0, y2 = 0;

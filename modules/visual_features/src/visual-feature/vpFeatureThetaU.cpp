@@ -98,8 +98,7 @@ vpFeatureThetaU::vpFeatureThetaU() : rotation(vpFeatureThetaU::cdRc)
   visual feature.
 
 */
-vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r)
-  : rotation(r)
+vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r) : rotation(r)
 {
   // vpTRACE("0x%x", this);
   init();
@@ -127,9 +126,7 @@ vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r)
   \param r [in] : The rotation representation of \f$ \theta u \f$.
 */
 
-vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu,
-                                 vpFeatureThetaURotationRepresentationType r)
-  : rotation(r)
+vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu, vpFeatureThetaURotationRepresentationType r) : rotation(r)
 {
   init();
 
@@ -153,9 +150,7 @@ vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu,
 
 */
 
-vpFeatureThetaU::vpFeatureThetaU(vpRotationMatrix &R,
-                                 vpFeatureThetaURotationRepresentationType r)
-  : rotation(r)
+vpFeatureThetaU::vpFeatureThetaU(vpRotationMatrix &R, vpFeatureThetaURotationRepresentationType r) : rotation(r)
 {
   init();
 
@@ -182,9 +177,7 @@ vpFeatureThetaU::vpFeatureThetaU(vpRotationMatrix &R,
 
 
 */
-vpFeatureThetaU::vpFeatureThetaU(vpHomogeneousMatrix &M,
-                                 vpFeatureThetaURotationRepresentationType r)
-  : rotation(r)
+vpFeatureThetaU::vpFeatureThetaU(vpHomogeneousMatrix &M, vpFeatureThetaURotationRepresentationType r) : rotation(r)
 {
   init();
   vpRotationMatrix R;
@@ -273,11 +266,7 @@ void vpFeatureThetaU::buildFrom(const vpHomogeneousMatrix &M)
   vpFeatureThetaU::cRcd. \sa getFeatureThetaURotationType()
 
 */
-void vpFeatureThetaU::setFeatureThetaURotationType(
-    const vpFeatureThetaURotationRepresentationType r)
-{
-  rotation = r;
-}
+void vpFeatureThetaU::setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r) { rotation = r; }
 
 /*!
 
@@ -327,8 +316,7 @@ void vpFeatureThetaU::set_TUz(const double tu_z)
   vpFeatureThetaU::cRcd. \sa setFeatureThetaURotationType()
 
 */
-vpFeatureThetaU::vpFeatureThetaURotationRepresentationType
-vpFeatureThetaU::getFeatureThetaURotationType() const
+vpFeatureThetaU::vpFeatureThetaURotationRepresentationType vpFeatureThetaU::getFeatureThetaURotationType() const
 {
   return rotation;
 }
@@ -399,8 +387,8 @@ double vpFeatureThetaU::get_TUz() const { return s[2]; }
   subset visual feature:
 
   \code
-  vpMatrix L_xy = s.interaction( vpFeatureThetaU::selectTUx() |
-  vpFeatureThetaU::selectTUy() ); \endcode
+  vpMatrix L_xy = s.interaction( vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy() );
+  \endcode
 
   L_xy is here now a 2 by 6 matrix. The first line corresponds to
   the \f$ \theta u_x \f$ visual feature while the second one to the \f$
@@ -466,8 +454,7 @@ vpMatrix vpFeatureThetaU::interaction(const unsigned int select)
 
     vpMatrix skew_u;
     skew_u = vpColVector::skew(u);
-    U2 += (1 - vpMath::sinc(theta) / vpMath::sqr(vpMath::sinc(theta / 2.0))) *
-          skew_u * skew_u;
+    U2 += (1 - vpMath::sinc(theta) / vpMath::sqr(vpMath::sinc(theta / 2.0))) * skew_u * skew_u;
   }
 
   if (rotation == cdRc) {
@@ -573,18 +560,16 @@ vpMatrix vpFeatureThetaU::interaction(const unsigned int select)
   vpFeatureThetaU::selectTUz() );
 
   // Compute the error vector e = (s-s*) for the ThetaU_y, ThetaU_z feature
-  vpColVector e = s.error(s_star, vpFeatureThetaU::selectTUy() |
-  vpFeatureThetaU::selectTUz()); \endcode
+  vpColVector e = s.error(s_star, vpFeatureThetaU::selectTUy() | vpFeatureThetaU::selectTUz());
+  \endcode
 
 */
-vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star,
-                                   const unsigned int select)
+vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, const unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6) {
     vpERROR_TRACE("s* should be zero ! ");
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "s* should be zero !"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "s* should be zero !"));
   }
 
   vpColVector e(0);
@@ -677,10 +662,8 @@ vpFeatureThetaU *vpFeatureThetaU::duplicate() const
   Not implemented.
 
 */
-void vpFeatureThetaU::display(const vpCameraParameters & /* cam */,
-                              const vpImage<unsigned char> & /* I */,
-                              const vpColor & /* color */,
-                              unsigned int /* thickness */) const
+void vpFeatureThetaU::display(const vpCameraParameters & /* cam */, const vpImage<unsigned char> & /* I */,
+                              const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 
@@ -696,10 +679,8 @@ void vpFeatureThetaU::display(const vpCameraParameters & /* cam */,
   Not implemented.
 
  */
-void vpFeatureThetaU::display(const vpCameraParameters & /* cam */,
-                              const vpImage<vpRGBa> & /* I */,
-                              const vpColor & /* color */,
-                              unsigned int /* thickness */) const
+void vpFeatureThetaU::display(const vpCameraParameters & /* cam */, const vpImage<vpRGBa> & /* I */,
+                              const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 
@@ -730,8 +711,8 @@ void vpFeatureThetaU::display(const vpCameraParameters & /* cam */,
   ...
   // Add the (ThetaU_x, ThetaU_y) subset features from the 3D ThetaU
   // rotation to the task
-  task.addFeature(tu, vpFeatureThetaU::selectTUx() |
-  vpFeatureThetaU::selectTUy()); \endcode
+  task.addFeature(tu, vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy());
+  \endcode
 
   \sa selectTUy(), selectTUz()
 */
@@ -755,8 +736,8 @@ unsigned int vpFeatureThetaU::selectTUx() { return FEATURE_LINE[0]; }
   ...
   // Add the (ThetaU_x, ThetaU_y) subset features from the 3D ThetaU
   // rotation to the task
-  task.addFeature(tu, vpFeatureThetaU::selectTUx() |
-  vpFeatureThetaU::selectTUy()); \endcode
+  task.addFeature(tu, vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy());
+  \endcode
 
   \sa selectTUx(), selectTUz()
 */

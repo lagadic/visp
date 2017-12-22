@@ -12,8 +12,7 @@
 
 int main(int argc, const char **argv)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) &&                                \
-    (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
   int opt_device = 0;
   int opt_barcode = 0; // 0=QRCode, 1=DataMatrix
 
@@ -99,21 +98,18 @@ int main(int argc, const char **argv)
           std::vector<vpImagePoint> p = detector->getPolygon(i);
           vpRect bbox = detector->getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green);
-          vpDisplay::displayText(
-              I, (int)bbox.getTop() - 20, (int)bbox.getLeft(),
-              "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
+          vpDisplay::displayText(I, (int)bbox.getTop() - 20, (int)bbox.getLeft(),
+                                 "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
           for (size_t j = 0; j < p.size(); j++) {
             vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
             std::ostringstream number;
             number << j;
-            vpDisplay::displayText(I, p[j] + vpImagePoint(10, 0),
-                                   number.str(), vpColor::blue);
+            vpDisplay::displayText(I, p[j] + vpImagePoint(10, 0), number.str(), vpColor::blue);
           }
         }
       }
 
-      vpDisplay::displayText(I, (int)I.getHeight() - 25, 10,
-                             "Click to quit...", vpColor::red);
+      vpDisplay::displayText(I, (int)I.getHeight() - 25, 10, "Click to quit...", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // a click to exit
         break;

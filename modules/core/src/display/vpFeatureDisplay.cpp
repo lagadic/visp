@@ -61,11 +61,8 @@
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureDisplay::displayPoint(double x, double y,
-                                    const vpCameraParameters &cam,
-                                    const vpImage<unsigned char> &I,
-                                    const vpColor &color,
-                                    unsigned int thickness)
+void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                                    const vpColor &color, unsigned int thickness)
 {
   try {
     vpImagePoint ip; // pixel coordinates in float
@@ -84,11 +81,8 @@ void vpFeatureDisplay::displayPoint(double x, double y,
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureDisplay::displayLine(double rho, double theta,
-                                   const vpCameraParameters &cam,
-                                   const vpImage<unsigned char> &I,
-                                   const vpColor &color,
-                                   unsigned int thickness)
+void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam,
+                                   const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
 
   try {
@@ -134,12 +128,9 @@ void vpFeatureDisplay::displayLine(double rho, double theta,
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
-                                       double rho2, double theta2,
-                                       const vpCameraParameters &cam,
-                                       const vpImage<unsigned char> &I,
-                                       const vpColor &color,
-                                       unsigned int thickness)
+void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, double theta2,
+                                       const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                                       const vpColor &color, unsigned int thickness)
 {
   try {
     displayLine(rho1, theta1, cam, I, color, thickness);
@@ -161,17 +152,13 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
 
   \sa vpDisplay::displayEllipse()
 */
-void vpFeatureDisplay::displayEllipse(double x, double y, double mu20,
-                                      double mu11, double mu02,
-                                      const vpCameraParameters &cam,
-                                      const vpImage<unsigned char> &I,
-                                      const vpColor &color,
-                                      unsigned int thickness)
+void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu11, double mu02,
+                                      const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                                      const vpColor &color, unsigned int thickness)
 {
   try {
     unsigned int number_of_points = 45;
-    const double incr =
-        2 * M_PI / (double)number_of_points; // angle increment
+    const double incr = 2 * M_PI / (double)number_of_points; // angle increment
     unsigned int i = 0;
 
     double s = sqrt(vpMath::sqr(mu20 - mu02) + 4 * mu11 * mu11);
@@ -232,11 +219,8 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double mu20,
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureDisplay::displayPoint(double x, double y,
-                                    const vpCameraParameters &cam,
-                                    const vpImage<vpRGBa> &I,
-                                    const vpColor &color,
-                                    unsigned int thickness)
+void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+                                    const vpColor &color, unsigned int thickness)
 {
   try {
     vpImagePoint ip; // pixel coordinates in float
@@ -256,11 +240,8 @@ void vpFeatureDisplay::displayPoint(double x, double y,
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureDisplay::displayLine(double rho, double theta,
-                                   const vpCameraParameters &cam,
-                                   const vpImage<vpRGBa> &I,
-                                   const vpColor &color,
-                                   unsigned int thickness)
+void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+                                   const vpColor &color, unsigned int thickness)
 {
 
   try {
@@ -306,11 +287,8 @@ void vpFeatureDisplay::displayLine(double rho, double theta,
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
-                                       double rho2, double theta2,
-                                       const vpCameraParameters &cam,
-                                       const vpImage<vpRGBa> &I,
-                                       const vpColor &color,
+void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, double theta2,
+                                       const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                        unsigned int thickness)
 {
   try {
@@ -334,17 +312,13 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
 
   \sa vpDisplay::displayEllipse()
 */
-void vpFeatureDisplay::displayEllipse(double x, double y, double mu20,
-                                      double mu11, double mu02,
-                                      const vpCameraParameters &cam,
-                                      const vpImage<vpRGBa> &I,
-                                      const vpColor &color,
+void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu11, double mu02,
+                                      const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                       unsigned int thickness)
 {
   try {
     unsigned int number_of_points = 45;
-    const double incr =
-        2 * M_PI / (double)number_of_points; // angle increment
+    const double incr = 2 * M_PI / (double)number_of_points; // angle increment
     unsigned int i = 0;
 
     double s = sqrt(vpMath::sqr(mu20 - mu02) + 4 * mu11 * mu11);

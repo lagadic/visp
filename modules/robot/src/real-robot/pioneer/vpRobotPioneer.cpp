@@ -98,8 +98,7 @@ vpRobotPioneer::~vpRobotPioneer()
   dimension vector. \exception vpRobotException::wrongStateError : If the
   specified control frame is not supported.
   */
-void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
-                                 const vpColVector &vel)
+void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel)
 {
   init();
 
@@ -113,8 +112,7 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
   } */
 
   if (vel.size() != 2) {
-    throw(vpRobotException(vpRobotException::dimensionError,
-                           "Velocity vector is not a 2 dimension vector"));
+    throw(vpRobotException(vpRobotException::dimensionError, "Velocity vector is not a 2 dimension vector"));
   }
 
   vpColVector vel_max(2);
@@ -140,9 +138,8 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
                   vel_sat[1] * 1000.); // convert velocity in mm/s
     this->unlock();
   } else {
-    throw vpRobotException(
-        vpRobotException::wrongStateError,
-        "Cannot send the robot velocity in the specified control frame");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot send the robot velocity in the specified control frame");
   }
 }
 
@@ -189,8 +186,7 @@ void vpRobotPioneer::init()
 
   \sa getVelocity(const vpRobot::vpControlFrameType)
   */
-void vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame,
-                                 vpColVector &velocity)
+void vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity)
 {
   init();
   velocity.resize(2);
@@ -206,9 +202,8 @@ void vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame,
     velocity[1] = vpMath::rad(this->getRotVel());
     this->unlock();
   } else {
-    throw vpRobotException(
-        vpRobotException::wrongStateError,
-        "Cannot get the robot volocity in the specified control frame");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot get the robot volocity in the specified control frame");
   }
 }
 
@@ -232,8 +227,7 @@ void vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame,
 
   \sa getVelocity(const vpRobot::vpControlFrameType, vpColVector &)
   */
-vpColVector
-vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame)
+vpColVector vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame)
 {
   vpColVector velocity;
   getVelocity(frame, velocity);

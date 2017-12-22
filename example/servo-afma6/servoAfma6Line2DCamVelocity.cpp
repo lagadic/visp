@@ -106,16 +106,12 @@ int main()
     vpServo task;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a line " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     vpMeLine line;
@@ -176,8 +172,7 @@ int main()
     vpTRACE("\t loop");
     vpColVector v;
     for (;;) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
 
       try {
         g.acquire(I);

@@ -54,19 +54,16 @@
 
 static unsigned int cpt = 0;
 
-bool test(const std::string &s, const vpArray2D<double> &v,
-          const std::vector<double> &bench)
+bool test(const std::string &s, const vpArray2D<double> &v, const std::vector<double> &bench)
 {
   std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v
-            << "]" << std::endl;
+  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v << "]" << std::endl;
   if (bench.size() != v.size()) {
     std::cout << "Test fails: bad size wrt bench" << std::endl;
     return false;
   }
   for (unsigned int i = 0; i < v.size(); i++) {
-    if (std::fabs(v.data[i] - bench[i]) >
-        std::fabs(v.data[i]) * std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(v.data[i] - bench[i]) > std::fabs(v.data[i]) * std::numeric_limits<double>::epsilon()) {
       std::cout << "Test fails: bad content" << std::endl;
       return false;
     }
@@ -75,15 +72,12 @@ bool test(const std::string &s, const vpArray2D<double> &v,
   return true;
 }
 
-bool test(const std::string &s, const vpRotationVector &v,
-          const double &bench)
+bool test(const std::string &s, const vpRotationVector &v, const double &bench)
 {
   std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v
-            << "]" << std::endl;
+  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v << "]" << std::endl;
   for (unsigned int i = 0; i < v.size(); i++) {
-    if (std::fabs(v[i] - bench) >
-        std::fabs(v[i]) * std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(v[i] - bench) > std::fabs(v[i]) * std::numeric_limits<double>::epsilon()) {
       std::cout << "Test fails: bad content" << std::endl;
       return false;
     }
@@ -115,8 +109,7 @@ int main()
 
       std::cout << "** Test " << ++cpt << std::endl;
       for (unsigned int i = 0; i < r3.size(); i++) {
-        if (std::fabs(r3[i] - bench1[i]) >
-            std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
+        if (std::fabs(r3[i] - bench1[i]) > std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
           return EXIT_FAILURE;
         }
@@ -151,8 +144,7 @@ int main()
 
       std::cout << "** Test " << ++cpt << std::endl;
       for (unsigned int i = 0; i < r3.size(); i++) {
-        if (std::fabs(r3[i] - bench1[i]) >
-            std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
+        if (std::fabs(r3[i] - bench1[i]) > std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
           return EXIT_FAILURE;
         }
@@ -187,8 +179,7 @@ int main()
 
       std::cout << "** Test " << ++cpt << std::endl;
       for (unsigned int i = 0; i < r3.size(); i++) {
-        if (std::fabs(r3[i] - bench1[i]) >
-            std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
+        if (std::fabs(r3[i] - bench1[i]) > std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
           return EXIT_FAILURE;
         }
@@ -223,8 +214,7 @@ int main()
 
       std::cout << "** Test " << ++cpt << std::endl;
       for (unsigned int i = 0; i < r3.size(); i++) {
-        if (std::fabs(r3[i] - bench1[i]) >
-            std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
+        if (std::fabs(r3[i] - bench1[i]) > std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
           return EXIT_FAILURE;
         }
@@ -240,8 +230,7 @@ int main()
         return EXIT_FAILURE;
     }
     {
-      vpQuaternionVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10),
-                            vpMath::rad(10));
+      vpQuaternionVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(4, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
         return EXIT_FAILURE;
@@ -254,15 +243,13 @@ int main()
         return EXIT_FAILURE;
 
       vpQuaternionVector r3;
-      r3.set(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10),
-             vpMath::rad(10));
+      r3.set(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       if (test("r3", r3, bench1) == false)
         return EXIT_FAILURE;
 
       std::cout << "** Test " << ++cpt << std::endl;
       for (unsigned int i = 0; i < r3.size(); i++) {
-        if (std::fabs(r3[i] - bench1[i]) >
-            std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
+        if (std::fabs(r3[i] - bench1[i]) > std::fabs(r3[i]) * std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
           return EXIT_FAILURE;
         }
@@ -281,10 +268,8 @@ int main()
       vpRotationMatrix R;
       for (int i = -10; i < 10; i++) {
         for (int j = -10; j < 10; j++) {
-          vpThetaUVector tu(vpMath::rad(90 + i), vpMath::rad(170 + j),
-                            vpMath::rad(45));
-          tu.buildFrom(vpRotationMatrix(
-              tu)); // put some coherence into rotation convention
+          vpThetaUVector tu(vpMath::rad(90 + i), vpMath::rad(170 + j), vpMath::rad(45));
+          tu.buildFrom(vpRotationMatrix(tu)); // put some coherence into rotation convention
 
           std::cout << "Initialization " << std::endl;
 
@@ -295,8 +280,7 @@ int main()
           std::cout << "theta=" << vpMath::deg(theta) << std::endl;
           std::cout << "u=" << u << std::endl;
 
-          std::cout << "From vpThetaUVector to vpRotationMatrix "
-                    << std::endl;
+          std::cout << "From vpThetaUVector to vpRotationMatrix " << std::endl;
           R.buildFrom(tu);
 
           std::cout << "Matrix R";
@@ -307,31 +291,26 @@ int main()
 
           std::cout << R << std::endl;
 
-          std::cout << "From vpRotationMatrix to vpQuaternionVector "
-                    << std::endl;
+          std::cout << "From vpRotationMatrix to vpQuaternionVector " << std::endl;
           vpQuaternionVector q(R);
           std::cout << q << std::endl;
 
           R.buildFrom(q);
-          std::cout << "From vpQuaternionVector to vpRotationMatrix  "
-                    << std::endl;
+          std::cout << "From vpQuaternionVector to vpRotationMatrix  " << std::endl;
 
           std::cout << "From vpRotationMatrix to vpRxyzVector " << std::endl;
           vpRxyzVector RxyzBuildFromR(R);
           std::cout << RxyzBuildFromR << std::endl;
 
           std::cout << "From vpRxyzVector to vpThetaUVector " << std::endl;
-          std::cout << "  use From vpRxyzVector to vpRotationMatrix "
-                    << std::endl;
-          std::cout << "  use From vpRotationMatrix to vpThetaUVector "
-                    << std::endl;
+          std::cout << "  use From vpRxyzVector to vpRotationMatrix " << std::endl;
+          std::cout << "  use From vpRotationMatrix to vpThetaUVector " << std::endl;
 
           vpThetaUVector tuBuildFromEu;
           tuBuildFromEu.buildFrom(R);
 
           std::cout << std::endl;
-          std::cout << "result : should equivalent to the first one "
-                    << std::endl;
+          std::cout << "result : should equivalent to the first one " << std::endl;
 
           double theta2;
           vpColVector u2;
@@ -340,17 +319,12 @@ int main()
           std::cout << "theta=" << vpMath::deg(theta2) << std::endl;
           std::cout << "u=" << u2 << std::endl;
 
-          assert(vpMath::abs(theta2 - theta) <
-                 std::numeric_limits<double>::epsilon() * 1e10);
-          assert(vpMath::abs(u[0] - u2[0]) <
-                 std::numeric_limits<double>::epsilon() * 1e10);
-          assert(vpMath::abs(u[1] - u2[1]) <
-                 std::numeric_limits<double>::epsilon() * 1e10);
-          assert(vpMath::abs(u[2] - u2[2]) <
-                 std::numeric_limits<double>::epsilon() * 1e10);
+          assert(vpMath::abs(theta2 - theta) < std::numeric_limits<double>::epsilon() * 1e10);
+          assert(vpMath::abs(u[0] - u2[0]) < std::numeric_limits<double>::epsilon() * 1e10);
+          assert(vpMath::abs(u[1] - u2[1]) < std::numeric_limits<double>::epsilon() * 1e10);
+          assert(vpMath::abs(u[2] - u2[2]) < std::numeric_limits<double>::epsilon() * 1e10);
         }
-        vpRzyzVector rzyz(vpMath::rad(180), vpMath::rad(120),
-                          vpMath::rad(45));
+        vpRzyzVector rzyz(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45));
         std::cout << "Initialization vpRzyzVector " << std::endl;
         std::cout << rzyz << std::endl;
         std::cout << "From vpRzyzVector to vpRotationMatrix  " << std::endl;
@@ -360,8 +334,7 @@ int main()
         rzyz_final.buildFrom(R);
         std::cout << rzyz_final << std::endl;
 
-        vpRzyxVector rzyx(vpMath::rad(180), vpMath::rad(120),
-                          vpMath::rad(45));
+        vpRzyxVector rzyx(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45));
         std::cout << "Initialization vpRzyxVector " << std::endl;
         std::cout << rzyx << std::endl;
         std::cout << "From vpRzyxVector to vpRotationMatrix  " << std::endl;

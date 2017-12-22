@@ -46,8 +46,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) &&                                         \
-    ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -86,8 +85,7 @@
   platforms, the libpthread third-party library need to be
   installed. On Windows, we use the native threading capabilities.
 */
-class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator,
-                                              public vpRobotSimulator
+class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, public vpRobotSimulator
 {
 public:
   vpImage<vpRGBa> I;
@@ -225,17 +223,12 @@ public:
   {
     // if(px_ext != 1 && py_ext != 1)
     // we assume px_ext and py_ext > 0
-    if ((std::fabs(px_ext - 1.) >
-         vpMath::maximum(px_ext, 1.) *
-             std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) *
-                                     std::numeric_limits<double>::epsilon()))
-      return vpCameraParameters(px_ext, py_ext, I.getWidth() / 2,
-                                I.getHeight() / 2);
+    if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon()))
+      return vpCameraParameters(px_ext, py_ext, I.getWidth() / 2, I.getHeight() / 2);
     else {
       unsigned int size = vpMath::minimum(I.getWidth(), I.getHeight()) / 2;
-      return vpCameraParameters(size, size, I.getWidth() / 2,
-                                I.getHeight() / 2);
+      return vpCameraParameters(size, size, I.getWidth() / 2, I.getHeight() / 2);
     }
   }
   /*!
@@ -262,8 +255,7 @@ public:
   vpHomogeneousMatrix get_fMo() const { return fMo; }
 
   /* Display functions */
-  void initScene(const vpSceneObject &obj,
-                 const vpSceneDesiredObject &desiredObject);
+  void initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desiredObject);
   void initScene(const char *obj, const char *desiredObject);
   void initScene(const vpSceneObject &obj);
   void initScene(const char *obj);
@@ -284,8 +276,7 @@ public:
     \param _constantSamplingTimeMode : The new value of the
     constantSamplingTimeMode flag.
   */
-  inline void
-  setConstantSamplingTimeMode(const bool _constantSamplingTimeMode)
+  inline void setConstantSamplingTimeMode(const bool _constantSamplingTimeMode)
   {
     constantSamplingTimeMode = _constantSamplingTimeMode;
   }
@@ -323,10 +314,7 @@ public:
 
     \param dispType : Type of display. Can be MODEL_3D or MODEL_DH.
   */
-  inline void setDisplayRobotType(const vpDisplayRobotType dispType)
-  {
-    displayType = dispType;
-  }
+  inline void setDisplayRobotType(const vpDisplayRobotType dispType) { displayType = dispType; }
   /*!
     Set the external camera point of view.
 
@@ -340,10 +328,7 @@ public:
   /*!
     Specify the thickness of the graphics drawings.
     */
-  void setGraphicsThickness(unsigned int thickness)
-  {
-    this->thickness_ = thickness;
-  }
+  void setGraphicsThickness(unsigned int thickness) { this->thickness_ = thickness; }
 
   /*!
     Set the sampling time.
@@ -357,10 +342,8 @@ public:
   */
   inline void setSamplingTime(const double &delta_t)
   {
-    if (delta_t <
-        static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3)) {
-      this->delta_t_ =
-          static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3);
+    if (delta_t < static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3)) {
+      this->delta_t_ = static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3);
     } else {
       this->delta_t_ = delta_t;
     }
@@ -391,15 +374,13 @@ protected:
 #if defined(_WIN32)
   static DWORD WINAPI launcher(LPVOID lpParam)
   {
-    (static_cast<vpRobotWireFrameSimulator *>(lpParam))
-        ->updateArticularPosition();
+    (static_cast<vpRobotWireFrameSimulator *>(lpParam))->updateArticularPosition();
     return 0;
   }
 #elif defined(VISP_HAVE_PTHREAD)
   static void *launcher(void *arg)
   {
-    (reinterpret_cast<vpRobotWireFrameSimulator *>(arg))
-        ->updateArticularPosition();
+    (reinterpret_cast<vpRobotWireFrameSimulator *>(arg))->updateArticularPosition();
     // pthread_exit((void*) 0);
     return NULL;
   }

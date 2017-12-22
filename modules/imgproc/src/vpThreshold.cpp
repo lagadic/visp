@@ -52,8 +52,7 @@ bool isBimodal(const std::vector<float> &hist_float)
   int modes = 0;
 
   for (size_t cpt = 1; cpt < hist_float.size() - 1; cpt++) {
-    if (hist_float[cpt - 1] < hist_float[cpt] &&
-        hist_float[cpt] > hist_float[cpt + 1]) {
+    if (hist_float[cpt - 1] < hist_float[cpt] && hist_float[cpt] > hist_float[cpt + 1]) {
       modes++;
     }
 
@@ -77,14 +76,11 @@ int computeThresholdHuang(const vpHistogram &hist)
 
   // Find first and last non-empty bin
   size_t first, last;
-  for (first = 0;
-       first < (size_t)hist.getSize() && hist[(unsigned char)first] == 0;
-       first++) {
+  for (first = 0; first < (size_t)hist.getSize() && hist[(unsigned char)first] == 0; first++) {
     // do nothing
   }
 
-  for (last = (size_t)hist.getSize() - 1;
-       last > first && hist[(unsigned char)last] == 0; last--) {
+  for (last = (size_t)hist.getSize() - 1; last > first && hist[(unsigned char)last] == 0; last--) {
     // do nothing
   }
 
@@ -167,22 +163,19 @@ int computeThresholdIntermodes(const vpHistogram &hist)
   while (!isBimodal(hist_float)) {
     // Smooth with a 3 point running mean filter
     for (size_t cpt = 1; cpt < hist_float.size() - 1; cpt++) {
-      hist_float[cpt] =
-          (hist_float[cpt - 1] + hist_float[cpt] + hist_float[cpt + 1]) / 3;
+      hist_float[cpt] = (hist_float[cpt - 1] + hist_float[cpt] + hist_float[cpt + 1]) / 3;
     }
 
     // First value
     hist_float[0] = (hist_float[0] + hist_float[1]) / 2.0f;
 
     // Last value
-    hist_float[hist_float.size() - 1] =
-        (hist_float.size() - 2 + hist_float.size() - 1) / 2.0f;
+    hist_float[hist_float.size() - 1] = (hist_float.size() - 2 + hist_float.size() - 1) / 2.0f;
 
     iter++;
 
     if (iter > 10000) {
-      std::cerr << "Intermodes Threshold not found after 10000 iterations!"
-                << std::endl;
+      std::cerr << "Intermodes Threshold not found after 10000 iterations!" << std::endl;
       return -1;
     }
   }
@@ -190,8 +183,7 @@ int computeThresholdIntermodes(const vpHistogram &hist)
   // The threshold is the mean between the two peaks.
   int tt = 0;
   for (size_t cpt = 1; cpt < hist_float.size() - 1; cpt++) {
-    if (hist_float[cpt - 1] < hist_float[cpt] &&
-        hist_float[cpt] > hist_float[cpt + 1]) {
+    if (hist_float[cpt - 1] < hist_float[cpt] && hist_float[cpt] > hist_float[cpt + 1]) {
       // Mode
       tt += (int)cpt;
     }
@@ -200,8 +192,7 @@ int computeThresholdIntermodes(const vpHistogram &hist)
   return (int)std::floor(tt / 2.0); // vpMath::round(tt / 2.0);
 }
 
-int computeThresholdIsoData(const vpHistogram &hist,
-                            const unsigned int imageSize)
+int computeThresholdIsoData(const vpHistogram &hist, const unsigned int imageSize)
 {
   int threshold = 0;
 
@@ -219,16 +210,14 @@ int computeThresholdIsoData(const vpHistogram &hist,
 
   // STEP 2: compute Mean above T (MAT) and Mean below T (MBT) using T from
   float MBT = sum_ip[(size_t)(T - 2)] / cumsum[(size_t)(T - 2)];
-  float MAT = (sum_ip.back() - sum_ip[(size_t)(T - 1)]) /
-              (cumsum.back() - cumsum[(size_t)(T - 1)]);
+  float MAT = (sum_ip.back() - sum_ip[(size_t)(T - 1)]) / (cumsum.back() - cumsum[(size_t)(T - 1)]);
 
   int T2 = vpMath::round((MAT + MBT) / 2.0f);
 
   //% STEP 3 to n: repeat step 2 if T(i)~=T(i-1)
   while (std::abs(T2 - T) >= 1) {
     MBT = sum_ip[(size_t)(T2 - 2)] / cumsum[(size_t)(T2 - 2)];
-    MAT = (sum_ip.back() - sum_ip[(size_t)(T2 - 1)]) /
-          (cumsum.back() - cumsum[(size_t)(T2 - 1)]);
+    MAT = (sum_ip.back() - sum_ip[(size_t)(T2 - 1)]) / (cumsum.back() - cumsum[(size_t)(T2 - 1)]);
 
     T = T2;
     T2 = vpMath::round((MAT + MBT) / 2.0f);
@@ -238,8 +227,7 @@ int computeThresholdIsoData(const vpHistogram &hist,
   return threshold;
 }
 
-int computeThresholdMean(const vpHistogram &hist,
-                         const unsigned int imageSize)
+int computeThresholdMean(const vpHistogram &hist, const unsigned int imageSize)
 {
   // C. A. Glasbey, "An analysis of histogram-based thresholding algorithms,"
   // CVGIP: Graphical Models and Image Processing, vol. 55, pp. 532-537, 1993.
@@ -252,8 +240,7 @@ int computeThresholdMean(const vpHistogram &hist,
   return (int)std::floor(sum_ip / imageSize);
 }
 
-int computeThresholdOtsu(const vpHistogram &hist,
-                         const unsigned int imageSize)
+int computeThresholdOtsu(const vpHistogram &hist, const unsigned int imageSize)
 {
   // Otsu, N (1979), "A threshold selection method from gray-level
   // histograms",  IEEE Trans. Sys., Man., Cyber. 9: 62-66,
@@ -326,8 +313,7 @@ int computeThresholdTriangle(vpHistogram &hist)
 
   // First / last index when hist(cpt) == 0
   left_bound = left_bound > 0 ? left_bound - 1 : left_bound;
-  right_bound =
-      right_bound < (int)hist.getSize() - 1 ? right_bound + 1 : right_bound;
+  right_bound = right_bound < (int)hist.getSize() - 1 ? right_bound + 1 : right_bound;
 
   // Use the largest bound
   bool flip = false;
@@ -385,10 +371,8 @@ int computeThresholdTriangle(vpHistogram &hist)
   \param backgroundValue : Value to set to the background.
   \param foregroundValue : Value to set to the foreground.
 */
-unsigned char vp::autoThreshold(vpImage<unsigned char> &I,
-                                const vpAutoThresholdMethod &method,
-                                const unsigned char backgroundValue,
-                                const unsigned char foregroundValue)
+unsigned char vp::autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
+                                const unsigned char backgroundValue, const unsigned char foregroundValue)
 {
   if (I.getSize() == 0) {
     return 0;
@@ -429,8 +413,8 @@ unsigned char vp::autoThreshold(vpImage<unsigned char> &I,
 
   if (threshold != -1) {
     // Threshold
-    vpImageTools::binarise(I, (unsigned char)threshold, (unsigned char)255,
-                           backgroundValue, foregroundValue, foregroundValue);
+    vpImageTools::binarise(I, (unsigned char)threshold, (unsigned char)255, backgroundValue, foregroundValue,
+                           foregroundValue);
   }
 
   return threshold;

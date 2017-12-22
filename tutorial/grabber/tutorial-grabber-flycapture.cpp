@@ -10,16 +10,14 @@ int main()
   try {
     vpImage<unsigned char> I; // Create a gray level image container
     //! [vpFlyCaptureGrabber construction]
-    vpFlyCaptureGrabber
-        g; // Create a grabber based on FlyCapture SDK third party lib
+    vpFlyCaptureGrabber g; // Create a grabber based on FlyCapture SDK third party lib
     //! [vpFlyCaptureGrabber construction]
 
     //! [vpFlyCaptureGrabber settings]
     try {
       g.setShutter(true); // Turn auto shutter on
       g.setGain(true);    // Turn auto gain on
-      g.setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8,
-                                 FlyCapture2::FRAMERATE_60);
+      g.setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8, FlyCapture2::FRAMERATE_60);
     } catch (...) { // If settings are not available just catch execption to
                     // continue with default settings
     }
@@ -28,8 +26,7 @@ int main()
     g.open(I);
     //! [vpFlyCaptureGrabber open]
 
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);

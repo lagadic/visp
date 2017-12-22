@@ -67,25 +67,29 @@ vpMomentDatabase where it can be accessed.
 
   All moments in a database can access each other freely at any time. They can
 also verify if a moment is present in the database or not. Here is a example
-of a dependency between two moments using a vpMomentDatabase: \code #include
-<iostream> #include <visp3/core/vpMomentCentered.h> #include
-<visp3/core/vpMomentDatabase.h> #include <visp3/core/vpMomentGravityCenter.h>
+of a dependency between two moments using a vpMomentDatabase:
+
+\code
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentCentered.h>
+#include <iostream>
 
 int main()
 {
   vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains the vertices of the
-contour polygon
+  std::vector<vpPoint> vec_p; // vector that contains the vertices of the contour polygon
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane (vertex 2) vec_p.push_back(p); vpMomentObject obj(1); // Create an
-image moment object with 1 as
-                         // maximum order (sufficient for gravity center)
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
+  vpMomentObject obj(1); // Create an image moment object with 1 as
+       // maximum order (sufficient for gravity center)
   obj.setType(vpMomentObject::DISCRETE); // The object is defined by
-                                         // two discrete points
+           // two discrete points
   obj.fromVector(vec_p); // Init the dense object with the polygon
 
   vpMomentDatabase db;
@@ -94,7 +98,7 @@ image moment object with 1 as
 
   g.linkTo(db); //add gravity center to database
   mc.linkTo(db); //centered moments depend on gravity, add them to the
-                 //database to grant access
+     //database to grant access
 
   db.updateAll(obj); // All of the moments must be updated, not just mc
 
@@ -103,9 +107,8 @@ image moment object with 1 as
   g.compute(); // compute the moment
   mc.compute(); //compute centered moments AFTER gravity center
 
-  std::cout << "Gravity center: " << g << std:: endl; // print gravity center
-moment std::cout << "Centered moments: " << mc << std:: endl; // print
-centered moment
+  std::cout << "Gravity center: " << g << std:: endl; // print gravity center moment
+  std::cout << "Centered moments: " << mc << std:: endl; // print centered moment
 
   return 0;
 }
@@ -130,10 +133,7 @@ class VISP_EXPORT vpMomentDatabase
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct cmp_str {
-    bool operator()(char const *a, char const *b) const
-    {
-      return std::strcmp(a, b) < 0;
-    }
+    bool operator()(char const *a, char const *b) const { return std::strcmp(a, b) < 0; }
   };
 #endif
   std::map<const char *, vpMoment *, cmp_str> moments;
@@ -157,8 +157,7 @@ public:
   //@}
 
   friend class vpMoment;
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMomentDatabase &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &v);
 };
 
 #endif

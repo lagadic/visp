@@ -101,10 +101,8 @@ protected:
                                // to each control Points
 
 protected:
-  static vpMatrix computeCurveDers(double l_u, unsigned int l_i,
-                                   unsigned int l_p, unsigned int l_der,
-                                   std::vector<double> &l_knots,
-                                   std::vector<vpImagePoint> &l_controlPoints,
+  static vpMatrix computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
+                                   std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                    std::vector<double> &l_weights);
   vpMatrix computeCurveDers(double u, unsigned int der);
 
@@ -134,69 +132,48 @@ public:
   inline void set_weights(const std::list<double> &list)
   {
     weights.clear();
-    for (std::list<double>::const_iterator it = list.begin();
-         it != list.end(); ++it) {
+    for (std::list<double>::const_iterator it = list.begin(); it != list.end(); ++it) {
       weights.push_back(*it);
     }
   }
 
-  static vpImagePoint
-  computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p,
-                    std::vector<double> &l_knots,
-                    std::vector<vpImagePoint> &l_controlPoints,
-                    std::vector<double> &l_weights);
+  static vpImagePoint computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
+                                        std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights);
   vpImagePoint computeCurvePoint(double u);
 
-  static vpImagePoint *
-  computeCurveDersPoint(double l_u, unsigned int l_i, unsigned int l_p,
-                        unsigned int l_der, std::vector<double> &l_knots,
-                        std::vector<vpImagePoint> &l_controlPoints,
-                        std::vector<double> &l_weights);
+  static vpImagePoint *computeCurveDersPoint(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
+                                             std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
+                                             std::vector<double> &l_weights);
   vpImagePoint *computeCurveDersPoint(double u, unsigned int der);
 
-  static void curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s,
-                           unsigned int l_r, unsigned int l_p,
-                           std::vector<double> &l_knots,
-                           std::vector<vpImagePoint> &l_controlPoints,
+  static void curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsigned int l_r, unsigned int l_p,
+                           std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                            std::vector<double> &l_weights);
   void curveKnotIns(double u, unsigned int s = 0, unsigned int r = 1);
 
-  static void refineKnotVectCurve(double *l_x, unsigned int l_r,
-                                  unsigned int l_p,
-                                  std::vector<double> &l_knots,
-                                  std::vector<vpImagePoint> &l_controlPoints,
-                                  std::vector<double> &l_weights);
+  static void refineKnotVectCurve(double *l_x, unsigned int l_r, unsigned int l_p, std::vector<double> &l_knots,
+                                  std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights);
   void refineKnotVectCurve(double *x, unsigned int r);
 
-  static unsigned int
-  removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num,
-                  double l_TOL, unsigned int l_s, unsigned int l_p,
-                  std::vector<double> &l_knots,
-                  std::vector<vpImagePoint> &l_controlPoints,
-                  std::vector<double> &l_weights);
-  unsigned int removeCurveKnot(double l_u, unsigned int l_r,
-                               unsigned int l_num, double l_TOL);
+  static unsigned int removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num, double l_TOL, unsigned int l_s,
+                                      unsigned int l_p, std::vector<double> &l_knots,
+                                      std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights);
+  unsigned int removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num, double l_TOL);
 
-  static void globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints,
-                                unsigned int l_p,
-                                std::vector<double> &l_knots,
-                                std::vector<vpImagePoint> &l_controlPoints,
+  static void globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, unsigned int l_p,
+                                std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                 std::vector<double> &l_weights);
   void globalCurveInterp(vpList<vpMeSite> &l_crossingPoints);
   void globalCurveInterp(const std::list<vpImagePoint> &l_crossingPoints);
   void globalCurveInterp(const std::list<vpMeSite> &l_crossingPoints);
   void globalCurveInterp();
 
-  static void globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints,
-                                unsigned int l_p, unsigned int l_n,
-                                std::vector<double> &l_knots,
-                                std::vector<vpImagePoint> &l_controlPoints,
+  static void globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, unsigned int l_p, unsigned int l_n,
+                                std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                 std::vector<double> &l_weights);
   void globalCurveApprox(vpList<vpMeSite> &l_crossingPoints, unsigned int n);
-  void globalCurveApprox(const std::list<vpImagePoint> &l_crossingPoints,
-                         unsigned int n);
-  void globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints,
-                         unsigned int n);
+  void globalCurveApprox(const std::list<vpImagePoint> &l_crossingPoints, unsigned int n);
+  void globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints, unsigned int n);
   void globalCurveApprox(unsigned int n);
 };
 

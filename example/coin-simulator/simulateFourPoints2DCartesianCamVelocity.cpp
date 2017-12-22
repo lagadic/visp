@@ -124,8 +124,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
 {
   const char *optarg;
   int c;
@@ -173,15 +172,12 @@ static void *mainLoop(void *_simu)
   robot.setSamplingTime(sampling_time);
 
   std::cout << std::endl;
-  std::cout << "-------------------------------------------------------"
-            << std::endl;
+  std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << " Test program for vpServo " << std::endl;
-  std::cout << " Eye-in-hand task control, articular velocities are computed"
-            << std::endl;
+  std::cout << " Eye-in-hand task control, articular velocities are computed" << std::endl;
   std::cout << " Simulation " << std::endl;
   std::cout << " task : servo 4 points " << std::endl;
-  std::cout << "-------------------------------------------------------"
-            << std::endl;
+  std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << std::endl;
 
   // Sets the initial camera location
@@ -223,8 +219,7 @@ static void *mainLoop(void *_simu)
   // Sets the desired position of the point
   vpFeaturePoint p[4];
   for (int i = 0; i < 4; i++)
-    vpFeatureBuilder::create(
-        p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
   // Sets the desired position of the point
   vpFeaturePoint pd[4];
@@ -260,8 +255,7 @@ static void *mainLoop(void *_simu)
   std::cout << "Display task information" << std::endl;
   task.print();
 
-  vpTime::wait(
-      1000); // Sleep 1s to ensure that all the thread are initialized
+  vpTime::wait(1000); // Sleep 1s to ensure that all the thread are initialized
 
   unsigned int iter = 0;
   // visual servo loop
@@ -338,8 +332,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -348,13 +341,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 

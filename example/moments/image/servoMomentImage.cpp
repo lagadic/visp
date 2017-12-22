@@ -78,14 +78,11 @@ int main()
   std::cout << "You should install pthread third-party library." << std::endl;
 }
 // No display available
-#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) &&               \
-    !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) &&                   \
+#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) &&  \
     !defined(VISP_HAVE_GTK)
 int main()
 {
-  std::cout
-      << "Can't run this example since no display capability is available."
-      << std::endl;
+  std::cout << "Can't run this example since no display capability is available." << std::endl;
   std::cout << "You should install one of the following third-party library: "
                "X11, OpenCV, GDI, GTK."
             << std::endl;
@@ -115,11 +112,9 @@ int main()
 {
   try {
     // intial pose
-    vpHomogeneousMatrix cMo(-0.1, -0.1, 1.5, -vpMath::rad(20),
-                            -vpMath::rad(20), -vpMath::rad(30));
+    vpHomogeneousMatrix cMo(-0.1, -0.1, 1.5, -vpMath::rad(20), -vpMath::rad(20), -vpMath::rad(30));
     // Desired pose
-    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(
-        0.0, -0.0, 1.0, vpMath::rad(0), vpMath::rad(0), -vpMath::rad(0)));
+    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0, -0.0, 1.0, vpMath::rad(0), vpMath::rad(0), -vpMath::rad(0)));
 
     // init the simulation
     init(cMo, cdMo);
@@ -152,11 +147,11 @@ vpHomogeneousMatrix cdMo;
 vpSimulatorCamera robot;           // robot used in this simulation
 vpImage<vpRGBa> Iint(480, 640, 0); // internal image used for interface
                                    // display
-vpServo task;           // servoing task
-vpCameraParameters cam; // robot camera parameters
-double _error;          // current error
-vpImageSimulator imsim; // image simulator used to simulate the
-                        // perspective-projection camera
+vpServo task;                      // servoing task
+vpCameraParameters cam;            // robot camera parameters
+double _error;                     // current error
+vpImageSimulator imsim;            // image simulator used to simulate the
+                                   // perspective-projection camera
 
 // several images used in the simulation
 vpImage<unsigned char> cur_img(480, 640, 0);
@@ -234,8 +229,7 @@ void init(vpHomogeneousMatrix &_cMo, vpHomogeneousMatrix &_cdMo)
   cMo = _cMo;   // init source matrix
   cdMo = _cdMo; // init destination matrix
 
-  interaction_type =
-      vpServo::CURRENT; // use interaction matrix for current position
+  interaction_type = vpServo::CURRENT; // use interaction matrix for current position
 
   displayInt.init(Iint, 700, 0, "Visual servoing with moments");
 
@@ -275,12 +269,10 @@ void initFeatures()
   ////////////////////////////////////
   // don't need to be specific, vpMomentCommon automatically loads
   // Xg,Yg,An,Ci,Cj,Alpha moments
-  moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst),
-                               vpMomentCommon::getMu3(dst),
+  moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst), vpMomentCommon::getMu3(dst),
                                vpMomentCommon::getAlpha(dst), vec[2], true);
-  momentsDes = new vpMomentCommon(
-      vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst),
-      vpMomentCommon::getAlpha(dst), vec[2], true);
+  momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst),
+                                  vpMomentCommon::getAlpha(dst), vec[2], true);
   // same thing with common features
   featureMoments = new vpFeatureMomentCommon(*moments);
   featureMomentsDes = new vpFeatureMomentCommon(*momentsDes);
@@ -294,17 +286,13 @@ void initFeatures()
   // setup the interaction type
   task.setInteractionMatrixType(interaction_type);
   //////////////////////////////////add useful features to
-  ///task//////////////////////////////
-  task.addFeature(featureMoments->getFeatureGravityNormalized(),
-                  featureMomentsDes->getFeatureGravityNormalized());
-  task.addFeature(featureMoments->getFeatureAn(),
-                  featureMomentsDes->getFeatureAn());
+  /// task//////////////////////////////
+  task.addFeature(featureMoments->getFeatureGravityNormalized(), featureMomentsDes->getFeatureGravityNormalized());
+  task.addFeature(featureMoments->getFeatureAn(), featureMomentsDes->getFeatureAn());
   // the moments are different in case of a symmetric object
-  task.addFeature(featureMoments->getFeatureCInvariant(),
-                  featureMomentsDes->getFeatureCInvariant(),
+  task.addFeature(featureMoments->getFeatureCInvariant(), featureMomentsDes->getFeatureCInvariant(),
                   (1 << 10) | (1 << 11));
-  task.addFeature(featureMoments->getFeatureAlpha(),
-                  featureMomentsDes->getFeatureAlpha());
+  task.addFeature(featureMoments->getFeatureAlpha(), featureMomentsDes->getFeatureAlpha());
 
   task.setLambda(1.);
 }
@@ -397,8 +385,7 @@ void execute(unsigned int nbIter)
     vpMatrix tmpry, U;
     vpColVector singularvals;
     Linteraction.svd(singularvals, tmpry);
-    double condno = static_cast<double>(singularvals.getMaxValue() /
-                                        singularvals.getMinValue());
+    double condno = static_cast<double>(singularvals.getMaxValue() / singularvals.getMinValue());
     std::cout << "Condition Number: " << condno << std::endl;
 #endif
   }
@@ -414,10 +401,7 @@ void execute(unsigned int nbIter)
   delete featureMomentsDes;
 }
 
-void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type)
-{
-  interaction_type = type;
-}
+void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type) { interaction_type = type; }
 double error() { return _error; }
 
 void planeToABC(vpPlane &pl, double &A, double &B, double &C)
@@ -441,15 +425,13 @@ void init_visp_plot(vpPlot &ViSP_plot)
    * Initialize ViSP Plotting
    * -------------------------------------
    */
-  const unsigned int NbGraphs = 3; // No. of graphs
-  const unsigned int NbCurves_in_graph[NbGraphs] = {
-      6, 6, 6}; // Curves in each graph
+  const unsigned int NbGraphs = 3;                            // No. of graphs
+  const unsigned int NbCurves_in_graph[NbGraphs] = {6, 6, 6}; // Curves in each graph
 
   ViSP_plot.init(NbGraphs, 800, 800, 10, 10, "Visual Servoing results...");
 
   vpColor Colors[6] = {// Colour for s1, s2, s3,  in 1st plot
-                       vpColor::red,    vpColor::green, vpColor::blue,
-                       vpColor::orange, vpColor::cyan,  vpColor::purple};
+                       vpColor::red, vpColor::green, vpColor::blue, vpColor::orange, vpColor::cyan, vpColor::purple};
 
   for (unsigned int p = 0; p < NbGraphs; p++) {
     ViSP_plot.initGraph(p, NbCurves_in_graph[p]);

@@ -71,9 +71,8 @@ void vpSimulatorCamera::init()
   qmin = NULL;
   qmax = NULL;
 
-  setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
-  setMaxRotationVelocity(
-      vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
+  setMaxTranslationVelocity(1.);           // vx, vy and vz max set to 1 m/s
+  setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
 }
 
 /*!
@@ -112,18 +111,12 @@ void vpSimulatorCamera::get_eJe(vpMatrix &eJe_) { eJe_ = this->eJe; }
   Get the camera position in the world frame.
 
 */
-void vpSimulatorCamera::getPosition(vpHomogeneousMatrix &wMc) const
-{
-  wMc = this->wMc_;
-}
+void vpSimulatorCamera::getPosition(vpHomogeneousMatrix &wMc) const { wMc = this->wMc_; }
 /*!
   Return the camera position in the world frame.
 
 */
-vpHomogeneousMatrix vpSimulatorCamera::getPosition() const
-{
-  return (this->wMc_);
-}
+vpHomogeneousMatrix vpSimulatorCamera::getPosition() const { return (this->wMc_); }
 
 /*
   Get the current position of the camera.
@@ -146,8 +139,7 @@ vpHomogeneousMatrix vpSimulatorCamera::getPosition() const
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector).
 */
-void vpSimulatorCamera::getPosition(const vpRobot::vpControlFrameType frame,
-                                    vpColVector &q)
+void vpSimulatorCamera::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   q.resize(6);
 
@@ -173,9 +165,7 @@ void vpSimulatorCamera::getPosition(const vpRobot::vpControlFrameType frame,
     break;
   }
   case vpRobot::MIXT_FRAME:
-    std::cout
-        << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()"
-        << std::endl;
+    std::cout << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
   }
 }
 
@@ -201,8 +191,7 @@ void vpSimulatorCamera::getPosition(const vpRobot::vpControlFrameType frame,
   \sa setSamplingTime()
 
 */
-void vpSimulatorCamera::setVelocity(const vpRobot::vpControlFrameType frame,
-                                    const vpColVector &v)
+void vpSimulatorCamera::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
     setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
@@ -227,16 +216,14 @@ void vpSimulatorCamera::setVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot set a velocity in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the reference frame:"
+                                                              "functionality not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot set a velocity in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
+                                                              "functionality not implemented");
 
     break;
   }

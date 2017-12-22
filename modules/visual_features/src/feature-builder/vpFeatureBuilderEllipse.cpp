@@ -114,8 +114,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpSphere &t)
     double Z0 = t.cP[2];
     double R = t.cP[3];
 
-    double d =
-        vpMath::sqr(X0) + vpMath::sqr(Y0) + vpMath::sqr(Z0) - vpMath::sqr(R);
+    double d = vpMath::sqr(X0) + vpMath::sqr(Y0) + vpMath::sqr(Z0) - vpMath::sqr(R);
 
     double A = X0 / d;
     double B = Y0 / d;
@@ -150,8 +149,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpSphere &t)
 
   \param t : The vpDot used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s,
-                              const vpCameraParameters &cam, const vpDot &t)
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot &t)
 {
   try {
 
@@ -208,8 +206,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
 
   \param t : The vpDot2 used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s,
-                              const vpCameraParameters &cam, const vpDot2 &t)
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot2 &t)
 {
   try {
 
@@ -268,9 +265,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
 
   \param t : The vpMeEllipse used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s,
-                              const vpCameraParameters &cam,
-                              const vpMeEllipse &t)
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &t)
 {
   try {
 

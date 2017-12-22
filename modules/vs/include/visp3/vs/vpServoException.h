@@ -89,11 +89,7 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpServoException(const int id, const std::string &msg)
-    : vpException(id, msg)
-  {
-    ;
-  }
+  vpServoException(const int id, const std::string &msg) : vpException(id, msg) { ; }
   explicit vpServoException(const int id) : vpException(id) { ; }
 };
 

@@ -121,17 +121,14 @@ public:
   // copy constructor
   vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V);
   // constructor from an homogeneous transformation
-  explicit vpVelocityTwistMatrix(const vpHomogeneousMatrix &M,
-                                 bool full = true);
+  explicit vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full = true);
 
   // Construction from Translation and rotation (matrix parameterization)
-  vpVelocityTwistMatrix(const vpTranslationVector &t,
-                        const vpRotationMatrix &R);
+  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   // Construction from Translation and rotation (ThetaU parameterization)
-  vpVelocityTwistMatrix(const vpTranslationVector &t,
-                        const vpThetaUVector &thetau);
-  vpVelocityTwistMatrix(const double tx, const double ty, const double tz,
-                        const double tux, const double tuy, const double tuz);
+  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpVelocityTwistMatrix(const double tx, const double ty, const double tz, const double tux, const double tuy,
+                        const double tuz);
 
   vpVelocityTwistMatrix(const vpRotationMatrix &R);
   vpVelocityTwistMatrix(const vpThetaUVector &thetau);
@@ -141,12 +138,9 @@ public:
   */
   virtual ~vpVelocityTwistMatrix(){};
 
-  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,
-                                  const vpRotationMatrix &R);
-  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,
-                                  const vpThetaUVector &thetau);
-  vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M,
-                                  bool full = true);
+  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
   vpVelocityTwistMatrix buildFrom(const vpRotationMatrix &R);
   vpVelocityTwistMatrix buildFrom(const vpThetaUVector &thetau);
 
@@ -165,22 +159,19 @@ public:
 
   vpVelocityTwistMatrix &operator=(const vpVelocityTwistMatrix &V);
 
-  int print(std::ostream &s, unsigned int length,
-            char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 
   /*!
     This function is not applicable to a velocity twist matrix that is always
     a 6-by-6 matrix. \exception vpException::fatalError When this function is
     called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError,
-                      "Cannot resize a velocity twist matrix"));
+    throw(vpException(vpException::fatalError, "Cannot resize a velocity twist matrix"));
   };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

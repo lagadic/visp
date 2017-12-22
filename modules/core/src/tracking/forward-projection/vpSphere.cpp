@@ -50,8 +50,7 @@ void vpSphere::init()
 
 void vpSphere::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
 
-void vpSphere::setWorldCoordinates(const double X0, const double Y0,
-                                   const double Z0, const double R)
+void vpSphere::setWorldCoordinates(const double X0, const double Y0, const double Z0, const double R)
 {
   oP[0] = X0;
   oP[1] = Y0;
@@ -67,8 +66,7 @@ vpSphere::vpSphere(const vpColVector &oP_)
   setWorldCoordinates(oP_);
 }
 
-vpSphere::vpSphere(const double X0, const double Y0, const double Z0,
-                   const double R)
+vpSphere::vpSphere(const double X0, const double Y0, const double Z0, const double R)
 {
   init();
   setWorldCoordinates(X0, Y0, Z0, R);
@@ -143,10 +141,7 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
   //  std::cout << p.t() ;
 }
 //! perspective projection of the circle
-void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo)
-{
-  changeFrame(cMo, cP);
-}
+void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP); }
 
 //! Perspective projection of the circle.
 void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
@@ -172,22 +167,17 @@ vpSphere *vpSphere::duplicate() const
 }
 
 // non destructive wrt. cP and p
-void vpSphere::display(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &color,
-                       const unsigned int thickness)
+void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &color, const unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);
   projection(_cP, _p);
-  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I,
-                                   color, thickness);
+  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
 }
 
-void vpSphere::display(const vpImage<unsigned char> &I,
-                       const vpCameraParameters &cam, const vpColor &color,
+void vpSphere::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                        const unsigned int thickness)
 {
-  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I,
-                                   color, thickness);
+  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
 }

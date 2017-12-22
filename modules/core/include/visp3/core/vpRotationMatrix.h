@@ -93,8 +93,7 @@ public:
   vpRotationMatrix buildFrom(const vpRxyzVector &v);
   vpRotationMatrix buildFrom(const vpRzyxVector &v);
   vpRotationMatrix buildFrom(const vpQuaternionVector &q);
-  vpRotationMatrix buildFrom(const double tux, const double tuy,
-                             const double tuz);
+  vpRotationMatrix buildFrom(const double tux, const double tuy, const double tuz);
 
   void eye();
 
@@ -128,14 +127,12 @@ public:
     3-by-3 matrix.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError,
-                      "Cannot resize a rotation matrix"));
+    throw(vpException(vpException::fatalError, "Cannot resize a rotation matrix"));
   };
 
   // transpose

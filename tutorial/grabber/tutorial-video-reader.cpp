@@ -23,9 +23,7 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--name")
         videoname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--name <video name>] [--help]\n"
-                  << std::endl;
+        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
         return 0;
       }
     }
@@ -42,8 +40,7 @@ int main(int argc, char **argv)
     //! [vpVideoReader open]
     std::cout << "video name: " << videoname << std::endl;
     std::cout << "video framerate: " << g.getFramerate() << "Hz" << std::endl;
-    std::cout << "video dimension: " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "video dimension: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);
@@ -78,7 +75,6 @@ int main(int argc, char **argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example."
-            << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }

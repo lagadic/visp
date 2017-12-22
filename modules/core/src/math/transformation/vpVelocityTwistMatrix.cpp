@@ -55,8 +55,7 @@
 
   \param V : Velocity twist matrix to copy.
 */
-vpVelocityTwistMatrix &vpVelocityTwistMatrix::
-operator=(const vpVelocityTwistMatrix &V)
+vpVelocityTwistMatrix &vpVelocityTwistMatrix::operator=(const vpVelocityTwistMatrix &V)
 {
   for (int i = 0; i < 6; i++) {
     for (int j = 0; j < 6; j++) {
@@ -83,10 +82,7 @@ void vpVelocityTwistMatrix::eye()
 /*!
   Initialize a velocity twist transformation matrix as identity.
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpArray2D<double>(6, 6)
-{
-  eye();
-}
+vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpArray2D<double>(6, 6) { eye(); }
 
 /*!
   Initialize a velocity twist transformation matrix from another velocity
@@ -94,11 +90,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpArray2D<double>(6, 6)
 
   \param V : Velocity twist matrix used as initializer.
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V)
-  : vpArray2D<double>(6, 6)
-{
-  *this = V;
-}
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : vpArray2D<double>(6, 6) { *this = V; }
 
 /*!
 
@@ -118,9 +110,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V)
   {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M,
-                                             bool full)
-  : vpArray2D<double>(6, 6)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(6, 6)
 {
   if (full)
     buildFrom(M);
@@ -142,8 +132,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M,
   vector \f$R\f$ .
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
-                                             const vpThetaUVector &thetau)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau)
   : vpArray2D<double>(6, 6)
 {
   buildFrom(t, thetau);
@@ -161,8 +150,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
   vector \f$R\f$ .
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau)
-  : vpArray2D<double>(6, 6)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau) : vpArray2D<double>(6, 6)
 {
   buildFrom(thetau);
 }
@@ -180,8 +168,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpThetaUVector &thetau)
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
-                                             const vpRotationMatrix &R)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R)
   : vpArray2D<double>(6, 6)
 {
   buildFrom(t, R);
@@ -198,11 +185,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R)
-  : vpArray2D<double>(6, 6)
-{
-  buildFrom(R);
-}
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R) : vpArray2D<double>(6, 6) { buildFrom(R); }
 
 /*!
 
@@ -219,11 +202,8 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpRotationMatrix &R)
   \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in
   radians used to initialize \f$R\f$.
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const double tx, const double ty,
-                                             const double tz,
-                                             const double tux,
-                                             const double tuy,
-                                             const double tuz)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const double tx, const double ty, const double tz, const double tux,
+                                             const double tuy, const double tuz)
   : vpArray2D<double>(6, 6)
 {
   vpTranslationVector t(tx, ty, tz);
@@ -237,8 +217,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const double tx, const double ty,
   an other velocity twist transformation matrix.
 
 */
-vpVelocityTwistMatrix vpVelocityTwistMatrix::
-operator*(const vpVelocityTwistMatrix &V) const
+vpVelocityTwistMatrix vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatrix &V) const
 {
   vpVelocityTwistMatrix p;
 
@@ -276,8 +255,8 @@ int main()
 
   vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
 
-  vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera
-frame to end-effector robot.get_cVe(cVe);
+  vpVelocityTwistMatrix cVe;  // Velocity skew transformation from camera frame to end-effector
+  robot.get_cVe(cVe);
 
   vpMatrix eJe;       // Robot jacobian
   robot.get_eJe(eJe);
@@ -295,10 +274,8 @@ matrix.
 vpMatrix vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 {
   if (6 != M.getRows()) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot multiply a (6x6) velocity twist matrix by a (%dx%d) matrix",
-        M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot multiply a (6x6) velocity twist matrix by a (%dx%d) matrix",
+                      M.getRows(), M.getCols()));
   }
 
   vpMatrix p(6, M.getCols());
@@ -359,8 +336,7 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
 {
   for (unsigned int i = 0; i < 3; i++) {
     for (unsigned int j = 0; j < 3; j++) {
@@ -386,9 +362,7 @@ vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
-                                 const vpRotationMatrix &R)
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R)
 {
   vpMatrix skewaR = t.skew(t) * R;
 
@@ -418,9 +392,7 @@ vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
   matrix \f${\bf R}\f$.
 
 */
-vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
-                                 const vpThetaUVector &thetau)
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau)
 {
   buildFrom(t, vpRotationMatrix(thetau));
   return (*this);
@@ -438,8 +410,7 @@ vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
   matrix \f${\bf R}\f$.
 
 */
-vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
 {
   buildFrom(vpRotationMatrix(thetau));
   return (*this);
@@ -463,8 +434,7 @@ vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
   {\bf 0}_{3\times 3} & {\bf R} \end{array} \right] \f]
 
 */
-vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
+vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
 {
   if (full)
     buildFrom(M.getTranslationVector(), M.getRotationMatrix());
@@ -491,10 +461,7 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::inverse() const
 }
 
 //! Invert the velocity twist matrix.
-void vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &V) const
-{
-  V = inverse();
-}
+void vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &V) const { V = inverse(); }
 
 //! Extract the rotation matrix from the velocity twist matrix.
 void vpVelocityTwistMatrix::extract(vpRotationMatrix &R) const
@@ -539,8 +506,7 @@ void vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
 
   \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
 */
-int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length,
-                                 char const *intro) const
+int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char const *intro) const
 {
   typedef std::string::size_type size_type;
 

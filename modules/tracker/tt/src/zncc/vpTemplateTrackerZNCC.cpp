@@ -39,8 +39,7 @@
  *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerZNCC.h>
 
-vpTemplateTrackerZNCC::vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp)
-  : vpTemplateTracker(warp), DI(), temp()
+vpTemplateTrackerZNCC::vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp) : vpTemplateTracker(warp), DI(), temp()
 {
   dW.resize(2, nbParam);
   G.resize(nbParam);
@@ -54,8 +53,7 @@ vpTemplateTrackerZNCC::vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp)
   DI.resize(2);
 }
 
-double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I,
-                                      const vpColVector &tp)
+double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double IW, Tij;
   int i, j;
@@ -76,8 +74,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I,
 
     j2 = X2[0];
     i2 = X2[1];
-    if ((j2 < I.getWidth() - 1) && (i2 < I.getHeight() - 1) && (i2 > 0) &&
-        (j2 > 0)) {
+    if ((j2 < I.getWidth() - 1) && (i2 < I.getHeight() - 1) && (i2 > 0) && (j2 > 0)) {
       Tij = ptTemplate[point].val;
       if (!blur)
         IW = I.getValue(i2, j2);
@@ -91,8 +88,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I,
   }
   ratioPixelIn = (double)Nbpoint / (double)templateSize;
   if (!Nbpoint) {
-    throw(vpException(vpException::divideByZeroError,
-                      "Cannot get cost: size = 0"));
+    throw(vpException(vpException::divideByZeroError, "Cannot get cost: size = 0"));
   }
 
   moyTij = moyTij / Nbpoint;
@@ -110,8 +106,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I,
 
     j2 = X2[0];
     i2 = X2[1];
-    if ((j2 < I.getWidth() - 1) && (i2 < I.getHeight() - 1) && (i2 > 0) &&
-        (j2 > 0)) {
+    if ((j2 < I.getWidth() - 1) && (i2 < I.getHeight() - 1) && (i2 > 0) && (j2 > 0)) {
       Tij = ptTemplate[point].val;
       if (!blur)
         IW = I.getValue(i2, j2);

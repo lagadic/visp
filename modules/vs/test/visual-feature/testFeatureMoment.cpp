@@ -48,12 +48,10 @@
 #include <limits>
 
 // initialize scene in the interface
-void initScene(const vpHomogeneousMatrix &cMo,
-               const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
+void initScene(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
                vpMomentObject &dst);
 
-vpMatrix execute(const vpHomogeneousMatrix &cMo,
-                 const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
+vpMatrix execute(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
                  vpMomentObject &dst); // launch the test
 void planeToABC(const vpPlane &pl, double &A, double &B, double &C);
 int test(double x, double y, double z, double alpha);
@@ -66,8 +64,7 @@ int main()
     int sum = 0;
     for (double i = -0.2; i < 0.2; i += 0.1) {
       for (double j = -0.2; j < 0.2; j += 0.1) {
-        for (double k = -vpMath::rad(30); k < vpMath::rad(30);
-             k += vpMath::rad(10)) {
+        for (double k = -vpMath::rad(30); k < vpMath::rad(30); k += vpMath::rad(10)) {
           for (double l = 0.5; l < 1.5; l += 0.1) {
             sum += test(i, j, l, k);
           }
@@ -89,8 +86,7 @@ int test(double x, double y, double z, double alpha)
   // intial pose
   vpHomogeneousMatrix cMo(x, y, z, -vpMath::rad(0), vpMath::rad(0), alpha);
   // Desired pose
-  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(
-      0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), -vpMath::rad(0)));
+  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), -vpMath::rad(0)));
 
   // source and destination objects for moment manipulation
   vpMomentObject src(6);
@@ -155,8 +151,7 @@ int test(double x, double y, double z, double alpha)
   return 0;
 }
 
-void initScene(const vpHomogeneousMatrix &cMo,
-               const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
+void initScene(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
                vpMomentObject &dst)
 {
   std::vector<vpPoint> src_pts;
@@ -183,8 +178,7 @@ void initScene(const vpHomogeneousMatrix &cMo,
   dst.fromVector(dst_pts);
 }
 
-vpMatrix execute(const vpHomogeneousMatrix &cMo,
-                 const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
+vpMatrix execute(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo, vpMomentObject &src,
                  vpMomentObject &dst)
 {
   vpServo::vpServoIteractionMatrixType interaction_type = vpServo::CURRENT;
@@ -219,12 +213,10 @@ vpMatrix execute(const vpHomogeneousMatrix &cMo,
   ////////////////////////////////////
   // don't need to be specific, vpMomentCommon automatically loads
   // Xg,Yg,An,Ci,Cj,Alpha moments
-  vpMomentCommon moments(vpMomentCommon ::getSurface(dst),
-                         vpMomentCommon::getMu3(dst),
-                         vpMomentCommon::getAlpha(dst), vec[2]);
-  vpMomentCommon momentsDes(vpMomentCommon::getSurface(dst),
-                            vpMomentCommon::getMu3(dst),
-                            vpMomentCommon::getAlpha(dst), vec[2]);
+  vpMomentCommon moments(vpMomentCommon ::getSurface(dst), vpMomentCommon::getMu3(dst), vpMomentCommon::getAlpha(dst),
+                         vec[2]);
+  vpMomentCommon momentsDes(vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst), vpMomentCommon::getAlpha(dst),
+                            vec[2]);
   // same thing with common features
   vpFeatureMomentCommon featureMoments(moments);
   vpFeatureMomentCommon featureMomentsDes(momentsDes);
@@ -238,17 +230,13 @@ vpMatrix execute(const vpHomogeneousMatrix &cMo,
   // setup the interaction type
   task.setInteractionMatrixType(interaction_type);
   //////////////////////////////////add useful features to
-  ///task//////////////////////////////
-  task.addFeature(featureMoments.getFeatureGravityNormalized(),
-                  featureMomentsDes.getFeatureGravityNormalized());
-  task.addFeature(featureMoments.getFeatureAn(),
-                  featureMomentsDes.getFeatureAn());
+  /// task//////////////////////////////
+  task.addFeature(featureMoments.getFeatureGravityNormalized(), featureMomentsDes.getFeatureGravityNormalized());
+  task.addFeature(featureMoments.getFeatureAn(), featureMomentsDes.getFeatureAn());
   // the moments are different in case of a symmetric object
-  task.addFeature(featureMoments.getFeatureCInvariant(),
-                  featureMomentsDes.getFeatureCInvariant(),
+  task.addFeature(featureMoments.getFeatureCInvariant(), featureMomentsDes.getFeatureCInvariant(),
                   (1 << 10) | (1 << 11));
-  task.addFeature(featureMoments.getFeatureAlpha(),
-                  featureMomentsDes.getFeatureAlpha());
+  task.addFeature(featureMoments.getFeatureAlpha(), featureMomentsDes.getFeatureAlpha());
 
   task.setLambda(0.4);
 

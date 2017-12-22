@@ -139,8 +139,7 @@ void malloc_Bound(Bound *bp, Type type, int polygonal, Index fn, Index pn)
 
   if ((bp->point.nbr = pn) == 0) /* points	*/
     bp->point.ptr = NULL;
-  else if ((bp->point.ptr = (Point3f *)malloc(pn * sizeof(Point3f))) ==
-           NULL) {
+  else if ((bp->point.ptr = (Point3f *)malloc(pn * sizeof(Point3f))) == NULL) {
     perror(proc_name);
     exit(1);
   }
@@ -184,8 +183,7 @@ void malloc_huge_Bound(Bound *bp)
 #else
   malloc_Bound(bp, (Type)BND_NULL, TRUE, FACE_NBR, POINT_NBR);
 #endif /* face_normal */
-  if ((bp->face.ptr->vertex.ptr =
-           (Index *)malloc(FACE_NBR * VERTEX_NBR * sizeof(Index))) == NULL) {
+  if ((bp->face.ptr->vertex.ptr = (Index *)malloc(FACE_NBR * VERTEX_NBR * sizeof(Index))) == NULL) {
     static char proc_name[] = "malloc_Huge_Bound";
     perror(proc_name);
     exit(1);
@@ -205,8 +203,7 @@ void malloc_Bound_scene(Bound_scene *bsp, const char *name, Index bn)
 {
   static char proc_name[] = "malloc_Bound_scene";
 
-  if ((bsp->name = (char *)malloc((strlen(name) + 1) * sizeof(char))) ==
-      NULL) {
+  if ((bsp->name = (char *)malloc((strlen(name) + 1) * sizeof(char))) == NULL) {
     perror(proc_name);
     exit(1);
   }

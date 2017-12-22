@@ -151,15 +151,12 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout << " Eye-in-hand task control,  articular velocity are computed"
-              << std::endl;
+    std::cout << " Eye-in-hand task control,  articular velocity are computed" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a point " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // sets the initial camera location
@@ -181,8 +178,7 @@ int main(int argc, const char **argv)
 
     // sets the current position of the visual feature
     vpFeaturePoint p;
-    vpFeatureBuilder::create(
-        p, point); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p, point); // retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the visual feature
     vpFeaturePoint pd;
@@ -215,8 +211,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     while (iter++ < 100) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // Set the Jacobian (expressed in the end-effector frame)
@@ -231,11 +226,10 @@ int main(int argc, const char **argv)
 
       // new point position
       point.track(cMo);
-      vpFeatureBuilder::create(
-          p, point);         // retrieve x,y and Z of the vpPoint structure
-      pd.buildFrom(0, 0, 1); // Since vpServo::MEAN interaction matrix is
-                             // used, we need to update the desired feature at
-                             // each iteration
+      vpFeatureBuilder::create(p, point); // retrieve x,y and Z of the vpPoint structure
+      pd.buildFrom(0, 0, 1);              // Since vpServo::MEAN interaction matrix is
+                                          // used, we need to update the desired feature at
+                                          // each iteration
 
       // compute the control law
       v = task.computeControlLaw();
@@ -243,8 +237,7 @@ int main(int argc, const char **argv)
       // send the camera velocity to the controller
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     // Display task information

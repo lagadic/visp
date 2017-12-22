@@ -91,8 +91,7 @@ public:
   */
   inline const char *name() const { return "vpMomentCentered"; }
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMomentCentered &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &v);
   void printWithIndices(std::ostream &os) const;
   void printDependencies(std::ostream &os) const;
 
@@ -108,15 +107,24 @@ where order is the object's order.
 vpMomentObject::get()[j*order+i].
 
   For example, if the maximal order is 3, the following values are provided:
+
   \code
 u00 u10 u20 u01 u11 u21 u02 u12 u12 u30 u03
   \endcode
+
   To have a better reading of the moments you can picture them as a triangular
-matrix: \code u00 u10 u20 u30 u01 u11 u21 x u02 u12  x  x u30 x    x  x
+  matrix:
+
+  \code
+u00 u10 u20 u30 u01 u11 u21 x u02 u12  x  x u30 x    x  x
   \endcode
+
   The moments of the same order are on each of the matrix reverse diagonals.
   To access for example to the centered moment \f$\mu_{12}\f$, you should use
-this kind of code: \code vpMomentCentered mc;
+  this kind of code:
+
+  \code
+vpMomentCentered mc;
 //[...]
 mc.compute();
 double mu12;
@@ -124,9 +132,6 @@ mu12 = mc.get()[2*(obj.getOrder()+1)+1]; // i=1 and j=2
 mu12 = mc.get(1,2); // the same
   \endcode
 */
-inline const std::vector<double> &vpMomentCentered::get() const
-{
-  return vpMoment::get();
-}
+inline const std::vector<double> &vpMomentCentered::get() const { return vpMoment::get(); }
 
 #endif

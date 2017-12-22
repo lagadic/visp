@@ -57,8 +57,7 @@ vpVideoWriter::vpVideoWriter()
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
     writer(), fourcc(0), framerate(0.),
 #endif
-    formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false),
-    frameCount(0), firstFrame(0), width(0), height(0)
+    formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0), firstFrame(0), width(0), height(0)
 {
   initFileName = false;
   firstFrame = 0;
@@ -94,13 +93,11 @@ void vpVideoWriter::setFileName(const char *filename)
 {
   if (!filename || *filename == '\0') {
     vpERROR_TRACE("filename empty ");
-    throw(vpImageException(vpImageException::noFileNameError,
-                           "filename empty "));
+    throw(vpImageException(vpImageException::noFileNameError, "filename empty "));
   }
 
   if (strlen(filename) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the file name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the file name"));
   }
 
   strcpy(this->fileName, filename);
@@ -108,8 +105,7 @@ void vpVideoWriter::setFileName(const char *filename)
   formatType = getFormat(fileName);
 
   if (formatType == FORMAT_UNKNOWN) {
-    throw(vpException(vpException::badValue,
-                      "Filename extension not supported"));
+    throw(vpException(vpException::badValue, "Filename extension not supported"));
   }
 
   initFileName = true;
@@ -126,10 +122,7 @@ void vpVideoWriter::setFileName(const char *filename)
 
   \param filename : filename template of an image sequence.
 */
-void vpVideoWriter::setFileName(const std::string &filename)
-{
-  setFileName(filename.c_str());
-}
+void vpVideoWriter::setFileName(const std::string &filename) { setFileName(filename.c_str()); }
 
 /*!
   Sets all the parameters needed to write the video or the image sequence.
@@ -140,29 +133,24 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
 {
   if (!initFileName) {
     vpERROR_TRACE("The generic filename has to be set");
-    throw(vpImageException(vpImageException::noFileNameError,
-                           "filename empty"));
+    throw(vpImageException(vpImageException::noFileNameError, "filename empty"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM ||
-      formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
+  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
     width = I.getWidth();
     height = I.getHeight();
-  } else if (formatType == FORMAT_AVI || formatType == FORMAT_MPEG ||
-             formatType == FORMAT_MPEG4 || formatType == FORMAT_MOV) {
+  } else if (formatType == FORMAT_AVI || formatType == FORMAT_MPEG || formatType == FORMAT_MPEG4 ||
+             formatType == FORMAT_MOV) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writer = cv::VideoWriter(fileName, fourcc, framerate,
-                             cv::Size((int)I.getWidth(), (int)I.getHeight()));
+    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
 
     if (!writer.isOpened()) {
       // vpERROR_TRACE("Could not open encode the video with opencv");
-      throw(vpException(vpException::fatalError,
-                        "Could not open encode the video with opencv"));
+      throw(vpException(vpException::fatalError, "Could not open encode the video with opencv"));
     }
 #else
-    throw(vpException(vpException::fatalError,
-                      "To encode video files ViSP should be build with "
-                      "opencv 3rd >= 2.1.0 party libraries."));
+    throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with "
+                                               "opencv 3rd >= 2.1.0 party libraries."));
 #endif
   }
 
@@ -180,29 +168,24 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
 {
   if (!initFileName) {
     vpERROR_TRACE("The generic filename has to be set");
-    throw(vpImageException(vpImageException::noFileNameError,
-                           "filename empty"));
+    throw(vpImageException(vpImageException::noFileNameError, "filename empty"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM ||
-      formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
+  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
     width = I.getWidth();
     height = I.getHeight();
-  } else if (formatType == FORMAT_AVI || formatType == FORMAT_MPEG ||
-             formatType == FORMAT_MPEG4 || formatType == FORMAT_MOV) {
+  } else if (formatType == FORMAT_AVI || formatType == FORMAT_MPEG || formatType == FORMAT_MPEG4 ||
+             formatType == FORMAT_MOV) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writer = cv::VideoWriter(fileName, fourcc, framerate,
-                             cv::Size((int)I.getWidth(), (int)I.getHeight()));
+    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
 
     if (!writer.isOpened()) {
       vpERROR_TRACE("Could not encode the video with opencv");
-      throw(vpException(vpException::ioError,
-                        "Could not encode the video with opencv"));
+      throw(vpException(vpException::ioError, "Could not encode the video with opencv"));
     }
 #else
-    throw(vpException(vpException::fatalError,
-                      "To encode video files ViSP should be build with "
-                      "opencv 3rd >= 2.1.0 party libraries."));
+    throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with "
+                                               "opencv 3rd >= 2.1.0 party libraries."));
 #endif
   }
 
@@ -227,8 +210,7 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
     throw(vpException(vpException::notInitialized, "file not yet opened"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM ||
-      formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
+  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
 
     sprintf(name, fileName, frameCount);
@@ -261,8 +243,7 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
     throw(vpException(vpException::notInitialized, "file not yet opened"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM ||
-      formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
+  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
 
     sprintf(name, fileName, frameCount);
@@ -301,8 +282,7 @@ void vpVideoWriter::close()
 
   \return Returns the format.
 */
-vpVideoWriter::vpVideoFormatType
-vpVideoWriter::getFormat(const char *filename)
+vpVideoWriter::vpVideoFormatType vpVideoWriter::getFormat(const char *filename)
 {
   std::string sfilename(filename);
 

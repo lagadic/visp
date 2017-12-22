@@ -56,9 +56,8 @@
   Default constructor.
 */
 vpDisplay::vpDisplay()
-  : m_displayHasBeenInitialized(false), m_windowXPosition(0),
-    m_windowYPosition(0), m_width(0), m_height(0), m_title(), m_scale(1),
-    m_scaleType(SCALE_DEFAULT)
+  : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0), m_width(0), m_height(0), m_title(),
+    m_scale(1), m_scaleType(SCALE_DEFAULT)
 {
 }
 
@@ -66,11 +65,9 @@ vpDisplay::vpDisplay()
   Copy constructor.
 */
 vpDisplay::vpDisplay(const vpDisplay &d)
-  : m_displayHasBeenInitialized(d.m_displayHasBeenInitialized),
-    m_windowXPosition(d.m_windowXPosition),
-    m_windowYPosition(d.m_windowYPosition), m_width(d.m_width),
-    m_height(d.m_height), m_title(d.m_title), m_scale(d.m_scale),
-    m_scaleType(d.m_scaleType)
+  : m_displayHasBeenInitialized(d.m_displayHasBeenInitialized), m_windowXPosition(d.m_windowXPosition),
+    m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
+    m_scale(d.m_scale), m_scaleType(d.m_scaleType)
 {
 }
 
@@ -144,8 +141,7 @@ int main()
 }
   \endcode
 */
-void vpDisplay::getImage(const vpImage<unsigned char> &Isrc,
-                         vpImage<vpRGBa> &Idest)
+void vpDisplay::getImage(const vpImage<unsigned char> &Isrc, vpImage<vpRGBa> &Idest)
 {
   if (Isrc.display != NULL) {
     (Isrc.display)->getImage(Idest);
@@ -238,10 +234,8 @@ void vpDisplay::setDownScalingFactor(unsigned int scale)
   if (!m_displayHasBeenInitialized)
     m_scale = scale;
   else {
-    std::cout
-        << "Warning: Cannot apply the down scaling factor " << scale
-        << " to the display window since the display is initialized yet..."
-        << std::endl;
+    std::cout << "Warning: Cannot apply the down scaling factor " << scale
+              << " to the display window since the display is initialized yet..." << std::endl;
   }
 }
 
@@ -250,25 +244,20 @@ void vpDisplay::setDownScalingFactor(unsigned int scale)
  * to display the image given the resolution of the screen. \param width,
  * height : Image size. \return
  */
-unsigned int vpDisplay::computeAutoScale(unsigned int width,
-                                         unsigned int height)
+unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height)
 {
   unsigned int screen_width, screen_height;
   getScreenSize(screen_width, screen_height);
-  double wscale =
-      (std::max)(1., ceil(2. * (double)width / (double)screen_width));
-  double hscale =
-      (std::max)(1., ceil(2. * (double)height / (double)screen_height));
-  unsigned int scale = (unsigned int)(std::max)(
-      1u, (std::max)((unsigned int)wscale, (unsigned int)hscale));
+  double wscale = (std::max)(1., ceil(2. * (double)width / (double)screen_width));
+  double hscale = (std::max)(1., ceil(2. * (double)height / (double)screen_height));
+  unsigned int scale = (unsigned int)(std::max)(1u, (std::max)((unsigned int)wscale, (unsigned int)hscale));
   return scale;
 }
 
 /*!
  * Set the down scaling factor either in auto mode or set manually.
  */
-void vpDisplay::setScale(vpScaleType scaleType, unsigned int width,
-                         unsigned int height)
+void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int height)
 {
   switch (scaleType) {
   case vpDisplay::SCALE_AUTO:
@@ -324,8 +313,11 @@ int main()
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI d;
 #endif
-  d.setDownScalingFactor(vpDisplay::SCALE_4); // Display in a 160 by 120
-windows size d.init(I); vpDisplay::display(I); vpDisplay::flush(I);
+  // Display in a 160 by 120 windows size
+  d.setDownScalingFactor(vpDisplay::SCALE_4);
+  d.init(I);
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
   vpDisplay::getClick(I); // wait for a click to quit
 }
    \endcode

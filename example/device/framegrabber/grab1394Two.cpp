@@ -73,27 +73,18 @@
 #define GETOPTARGS "b:c:df:g:hH:L:mn:io:p:rsT:v:W:"
 #define DUAL_ACQ
 
-void usage(const char *name, const char *badparam, unsigned int camera,
-           const unsigned int &nframes, const std::string &opath,
-           const unsigned int &roi_left, const unsigned int &roi_top,
-           const unsigned int &roi_width, const unsigned int &roi_height,
-           const unsigned int &ringbuffersize,
+void usage(const char *name, const char *badparam, unsigned int camera, const unsigned int &nframes,
+           const std::string &opath, const unsigned int &roi_left, const unsigned int &roi_top,
+           const unsigned int &roi_width, const unsigned int &roi_height, const unsigned int &ringbuffersize,
            const unsigned int &panControl);
-void read_options(int argc, const char **argv, bool &multi,
-                  unsigned int &camera, unsigned int &nframes,
-                  bool &verbose_info, bool &verbose_settings,
-                  bool &videomode_is_set,
-                  vp1394TwoGrabber::vp1394TwoVideoModeType &videomode,
-                  bool &framerate_is_set,
-                  vp1394TwoGrabber::vp1394TwoFramerateType &framerate,
-                  bool &colorcoding_is_set,
-                  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding,
-                  bool &ringbuffersize_is_set, unsigned int &ringbuffersize,
-                  bool &display, bool &save, std::string &opath,
-                  unsigned int &roi_left, unsigned int &roi_top,
-                  unsigned int &roi_width, unsigned int &roi_height,
-                  bool &reset, unsigned int &panControl,
-                  bool &panControl_is_set);
+void read_options(int argc, const char **argv, bool &multi, unsigned int &camera, unsigned int &nframes,
+                  bool &verbose_info, bool &verbose_settings, bool &videomode_is_set,
+                  vp1394TwoGrabber::vp1394TwoVideoModeType &videomode, bool &framerate_is_set,
+                  vp1394TwoGrabber::vp1394TwoFramerateType &framerate, bool &colorcoding_is_set,
+                  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding, bool &ringbuffersize_is_set,
+                  unsigned int &ringbuffersize, bool &display, bool &save, std::string &opath, unsigned int &roi_left,
+                  unsigned int &roi_top, unsigned int &roi_width, unsigned int &roi_height, bool &reset,
+                  unsigned int &panControl, bool &panControl_is_set);
 
 /*!
 
@@ -110,11 +101,10 @@ void read_options(int argc, const char **argv, bool &multi,
   \param panControl : Pan control value.
 
 */
-void usage(const char *name, const char *badparam, unsigned int camera,
-           const unsigned int &nframes, const std::string &opath,
-           const unsigned int &roi_left, const unsigned int &roi_top,
-           const unsigned int &roi_width, const unsigned int &roi_height,
-           const unsigned int &ringbuffersize, const unsigned int &panControl)
+void usage(const char *name, const char *badparam, unsigned int camera, const unsigned int &nframes,
+           const std::string &opath, const unsigned int &roi_left, const unsigned int &roi_top,
+           const unsigned int &roi_width, const unsigned int &roi_height, const unsigned int &ringbuffersize,
+           const unsigned int &panControl)
 {
   if (badparam)
     fprintf(stderr, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -221,9 +211,8 @@ OPTIONS                                                    Default\n\
      program was not properly stopped by a CTRL-C.\n\
             \n\
   -h      : Print this help.\n\
-            \n", name, name, name, name, name, name, name, name, name,
-          roi_left, roi_top, roi_width, roi_height, camera, nframes,
-          ringbuffersize, panControl, opath.c_str());
+            \n", name, name, name, name, name, name, name, name, name, roi_left, roi_top, roi_width, roi_height,
+          camera, nframes, ringbuffersize, panControl, opath.c_str());
 }
 
 /*!
@@ -268,21 +257,14 @@ OPTIONS                                                    Default\n\
   has to be set.
 
 */
-void read_options(int argc, const char **argv, bool &multi,
-                  unsigned int &camera, unsigned int &nframes,
-                  bool &verbose_info, bool &verbose_settings,
-                  bool &videomode_is_set,
-                  vp1394TwoGrabber::vp1394TwoVideoModeType &videomode,
-                  bool &framerate_is_set,
-                  vp1394TwoGrabber::vp1394TwoFramerateType &framerate,
-                  bool &colorcoding_is_set,
-                  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding,
-                  bool &ringbuffersize_is_set, unsigned int &ringbuffersize,
-                  bool &display, bool &save, std::string &opath,
-                  unsigned int &roi_left, unsigned int &roi_top,
-                  unsigned int &roi_width, unsigned int &roi_height,
-                  bool &reset, unsigned int &panControl,
-                  bool &panControl_is_set)
+void read_options(int argc, const char **argv, bool &multi, unsigned int &camera, unsigned int &nframes,
+                  bool &verbose_info, bool &verbose_settings, bool &videomode_is_set,
+                  vp1394TwoGrabber::vp1394TwoVideoModeType &videomode, bool &framerate_is_set,
+                  vp1394TwoGrabber::vp1394TwoFramerateType &framerate, bool &colorcoding_is_set,
+                  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding, bool &ringbuffersize_is_set,
+                  unsigned int &ringbuffersize, bool &display, bool &save, std::string &opath, unsigned int &roi_left,
+                  unsigned int &roi_top, unsigned int &roi_width, unsigned int &roi_height, bool &reset,
+                  unsigned int &panControl, bool &panControl_is_set)
 {
   /*
    * Lecture des options.
@@ -351,8 +333,8 @@ void read_options(int argc, const char **argv, bool &multi,
       break;
     case 'h':
     case '?':
-      usage(argv[0], NULL, camera, nframes, opath, roi_left, roi_top,
-            roi_width, roi_height, ringbuffersize, panControl);
+      usage(argv[0], NULL, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize,
+            panControl);
       exit(0);
       break;
     }
@@ -360,8 +342,7 @@ void read_options(int argc, const char **argv, bool &multi,
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, camera, nframes, opath, roi_left, roi_top, roi_width,
-          roi_height, ringbuffersize, panControl);
+    usage(argv[0], NULL, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize, panControl);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     exit(-1);
@@ -406,12 +387,9 @@ int main(int argc, const char **argv)
     // Default output path for image saving
     std::string opath = "/tmp/I%d-%04d.ppm";
 
-    read_options(argc, argv, multi, camera, nframes, verbose_info,
-                 verbose_settings, videomode_is_set, videomode,
-                 framerate_is_set, framerate, colorcoding_is_set, colorcoding,
-                 ringbuffersize_is_set, ringbuffersize, display, save, opath,
-                 roi_left, roi_top, roi_width, roi_height, reset, panControl,
-                 panControl_is_set);
+    read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, videomode_is_set, videomode,
+                 framerate_is_set, framerate, colorcoding_is_set, colorcoding, ringbuffersize_is_set, ringbuffersize,
+                 display, save, opath, roi_left, roi_top, roi_width, roi_height, reset, panControl, panControl_is_set);
 
     // Create a grabber
     vp1394TwoGrabber g(reset);
@@ -432,12 +410,9 @@ int main(int argc, const char **argv)
     if (multi) {
       // ckeck if two cameras are connected
       if (ncameras < 2) {
-        std::cout << "You have only " << ncameras
-                  << " camera connected on the bus." << std::endl;
-        std::cout << "It is not possible to active multi-camera acquisition."
-                  << std::endl;
-        std::cout << "Disable -m command line option, or connect an other "
-                  << std::endl;
+        std::cout << "You have only " << ncameras << " camera connected on the bus." << std::endl;
+        std::cout << "It is not possible to active multi-camera acquisition." << std::endl;
+        std::cout << "Disable -m command line option, or connect an other " << std::endl;
         std::cout << "cameras on the bus." << std::endl;
         g.close();
         return (0);
@@ -446,8 +421,7 @@ int main(int argc, const char **argv)
     if (camera >= ncameras) {
       std::cout << "You have only " << ncameras;
       std::cout << " camera connected on the bus." << std::endl;
-      std::cout << "It is not possible to select camera " << camera
-                << std::endl;
+      std::cout << "It is not possible to select camera " << camera << std::endl;
       std::cout << "Check your -c <camera> command line option." << std::endl;
       g.close();
       return (0);
@@ -479,12 +453,9 @@ int main(int argc, const char **argv)
           std::list<vp1394TwoGrabber::vp1394TwoVideoModeType> lmode;
           std::list<vp1394TwoGrabber::vp1394TwoFramerateType> lfps;
           std::list<vp1394TwoGrabber::vp1394TwoColorCodingType> lcoding;
-          std::list<vp1394TwoGrabber::vp1394TwoVideoModeType>::const_iterator
-              it_lmode;
-          std::list<vp1394TwoGrabber::vp1394TwoFramerateType>::const_iterator
-              it_lfps;
-          std::list<vp1394TwoGrabber::vp1394TwoColorCodingType>::
-              const_iterator it_lcoding;
+          std::list<vp1394TwoGrabber::vp1394TwoVideoModeType>::const_iterator it_lmode;
+          std::list<vp1394TwoGrabber::vp1394TwoFramerateType>::const_iterator it_lfps;
+          std::list<vp1394TwoGrabber::vp1394TwoColorCodingType>::const_iterator it_lcoding;
           uint64_t guid;
 
           g.getVideoMode(curmode);
@@ -493,51 +464,37 @@ int main(int argc, const char **argv)
           g.getVideoModeSupported(lmode);
           g.getGuid(guid);
 
-          std::cout
-              << "----------------------------------------------------------"
-              << std::endl
-              << "---- Video modes and framerates supported by camera "
-              << i + offset << " ----" << std::endl
-              << "---- with guid 0x" << std::hex << guid
-              << "                       ----" << std::endl
-              << "---- * is for the current settings                    ----"
-              << std::endl
-              << "---- between ( ) you have the corresponding option    ----"
-              << std::endl
-              << "---- to use.                                          ----"
-              << std::endl
-              << "----------------------------------------------------------"
-              << std::endl;
+          std::cout << "----------------------------------------------------------" << std::endl
+                    << "---- Video modes and framerates supported by camera " << i + offset << " ----" << std::endl
+                    << "---- with guid 0x" << std::hex << guid << "                       ----" << std::endl
+                    << "---- * is for the current settings                    ----" << std::endl
+                    << "---- between ( ) you have the corresponding option    ----" << std::endl
+                    << "---- to use.                                          ----" << std::endl
+                    << "----------------------------------------------------------" << std::endl;
 
-          for (it_lmode = lmode.begin(); it_lmode != lmode.end();
-               ++it_lmode) {
+          for (it_lmode = lmode.begin(); it_lmode != lmode.end(); ++it_lmode) {
             // Parse the list of supported modes
             vp1394TwoGrabber::vp1394TwoVideoModeType supmode = *it_lmode;
             if (curmode == supmode)
-              std::cout << " * "
-                        << vp1394TwoGrabber::videoMode2string(supmode)
-                        << " (-v " << (int)supmode << ")" << std::endl;
+              std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << (int)supmode << ")"
+                        << std::endl;
             else
-              std::cout << "   "
-                        << vp1394TwoGrabber::videoMode2string(supmode)
-                        << " (-v " << (int)supmode << ")" << std::endl;
+              std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << (int)supmode << ")"
+                        << std::endl;
 
             if (g.isVideoModeFormat7(supmode)) {
               // Format 7 video mode; no framerate setting, but color
               // coding setting
               g.getColorCodingSupported(supmode, lcoding);
-              for (it_lcoding = lcoding.begin(); it_lcoding != lcoding.end();
-                   ++it_lcoding) {
+              for (it_lcoding = lcoding.begin(); it_lcoding != lcoding.end(); ++it_lcoding) {
                 vp1394TwoGrabber::vp1394TwoColorCodingType supcoding;
                 supcoding = *it_lcoding;
                 if ((curmode == supmode) && (supcoding == curcoding))
-                  std::cout << "    * "
-                            << vp1394TwoGrabber::colorCoding2string(supcoding)
-                            << " (-g " << (int)supcoding << ")" << std::endl;
+                  std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << (int)supcoding
+                            << ")" << std::endl;
                 else
-                  std::cout << "      "
-                            << vp1394TwoGrabber::colorCoding2string(supcoding)
-                            << " (-g " << (int)supcoding << ")" << std::endl;
+                  std::cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << (int)supcoding
+                            << ")" << std::endl;
               }
             } else {
 
@@ -546,19 +503,15 @@ int main(int argc, const char **argv)
               for (it_lfps = lfps.begin(); it_lfps != lfps.end(); ++it_lfps) {
                 vp1394TwoGrabber::vp1394TwoFramerateType supfps = *it_lfps;
                 if ((curmode == supmode) && (supfps == curfps))
-                  std::cout << "    * "
-                            << vp1394TwoGrabber::framerate2string(supfps)
-                            << " (-f " << (int)supfps << ")" << std::endl;
+                  std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << (int)supfps << ")"
+                            << std::endl;
                 else
-                  std::cout << "      "
-                            << vp1394TwoGrabber::framerate2string(supfps)
-                            << " (-f " << (int)supfps << ")" << std::endl;
+                  std::cout << "      " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << (int)supfps << ")"
+                            << std::endl;
               }
             }
           }
-          std::cout
-              << "----------------------------------------------------------"
-              << std::endl;
+          std::cout << "----------------------------------------------------------" << std::endl;
         }
       }
       return 0;
@@ -619,8 +572,7 @@ int main(int argc, const char **argv)
       // Acquire the first image
       if (grab_color[i]) {
         g.acquire(Ic[i]);
-        std::cout << "Image size for camera " << i + offset
-                  << " : width: " << Ic[i].getWidth()
+        std::cout << "Image size for camera " << i + offset << " : width: " << Ic[i].getWidth()
                   << " height: " << Ic[i].getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
@@ -635,8 +587,7 @@ int main(int argc, const char **argv)
 #endif
       } else {
         g.acquire(Ig[i]);
-        std::cout << "Image size for camera " << i + offset
-                  << " : width: " << Ig[i].getWidth()
+        std::cout << "Image size for camera " << i + offset << " : width: " << Ig[i].getWidth()
                   << " height: " << Ig[i].getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
@@ -703,8 +654,7 @@ int main(int argc, const char **argv)
     }
 
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
-    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps"
-              << std::endl;
+    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
 
     // Release the framegrabber
     g.close();

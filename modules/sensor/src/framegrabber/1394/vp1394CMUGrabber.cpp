@@ -53,8 +53,7 @@
 vp1394CMUGrabber::vp1394CMUGrabber()
   : index(0), // If a camera was not selected the first one (index = 0) will
               // be used
-    _format(-1), _mode(-1), _fps(-1), _modeauto(true), _gain(0), _shutter(0),
-    _color(vp1394CMUGrabber::UNKNOWN)
+    _format(-1), _mode(-1), _fps(-1), _modeauto(true), _gain(0), _shutter(0), _color(vp1394CMUGrabber::UNKNOWN)
 {
   // public members
   init = false;
@@ -93,25 +92,20 @@ void vp1394CMUGrabber::selectCamera(int cam_id)
   if (camerror != CAM_SUCCESS) {
     switch (camerror) {
     case CAM_ERROR_PARAM_OUT_OF_RANGE:
-      vpERROR_TRACE("vp1394CMUGrabber error: Found no camera number %i",
-                    index);
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError,
-          "The required camera is not present"));
+      vpERROR_TRACE("vp1394CMUGrabber error: Found no camera number %i", index);
+      throw(
+          vpFrameGrabberException(vpFrameGrabberException::initializationError, "The required camera is not present"));
       break;
     case CAM_ERROR_BUSY:
       vpERROR_TRACE("vp1394CMUGrabber error: The camera %i is busy", index);
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError,
-          "The required camera is in use by other application"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                    "The required camera is in use by other application"));
       break;
     case CAM_ERROR:
       vpERROR_TRACE("vp1394CMUGrabber error: General I/O error when "
                     "selecting camera number %i",
                     index);
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError,
-          "Resolve camera can not be used"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Resolve camera can not be used"));
       break;
     }
     close();
@@ -128,9 +122,7 @@ void vp1394CMUGrabber::initCamera()
 
     if (camera->CheckLink() != CAM_SUCCESS) {
       vpERROR_TRACE("C1394Camera error: Found no cameras on the 1394 bus");
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError,
-          "The is no detected camera"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "The is no detected camera"));
     }
 
     camerror = camera->InitCamera();
@@ -138,23 +130,18 @@ void vp1394CMUGrabber::initCamera()
       switch (camerror) {
       case CAM_ERROR_NOT_INITIALIZED:
         vpERROR_TRACE("vp1394CMUGrabber error: No camera selected", index);
-        throw(vpFrameGrabberException(
-            vpFrameGrabberException::initializationError,
-            "The is no selected camera"));
+        throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "The is no selected camera"));
         break;
       case CAM_ERROR_BUSY:
         vpERROR_TRACE("vp1394CMUGrabber error: The camera %i is busy", index);
-        throw(vpFrameGrabberException(
-            vpFrameGrabberException::initializationError,
-            "The required camera is in use by other application"));
+        throw(vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                      "The required camera is in use by other application"));
         break;
       case CAM_ERROR:
         vpERROR_TRACE("vp1394CMUGrabber error: General I/O error when "
                       "selecting camera number %i",
                       index);
-        throw(vpFrameGrabberException(
-            vpFrameGrabberException::initializationError,
-            "Resolve camera can not be used"));
+        throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Resolve camera can not be used"));
         break;
       }
       close();
@@ -185,9 +172,7 @@ void vp1394CMUGrabber::initCamera()
       vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition "
                     "from IEEE 1394 camera number %i",
                     index);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Error while starting image acquisition"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Error while starting image acquisition"));
     }
 
     init = true;
@@ -263,9 +248,8 @@ void vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
   default:
     close();
     vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
-    throw(vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Format conversion not implemented. "
-                                  "Acquisition failed."));
+    throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Format conversion not implemented. "
+                                                                       "Acquisition failed."));
     break;
   };
 
@@ -328,9 +312,8 @@ void vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
   default:
     close();
     vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
-    throw(vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Format conversion not implemented. "
-                                  "Acquisition failed."));
+    throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Format conversion not implemented. "
+                                                                       "Acquisition failed."));
     break;
   };
 }
@@ -348,9 +331,7 @@ void vp1394CMUGrabber::close()
       vpERROR_TRACE("vp1394CMUGrabber error: Can't stop image acquisition "
                     "from IEEE 1394 camera number %i",
                     index);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Error while stopping image acquisition"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Error while stopping image acquisition"));
     }
   }
 
@@ -443,8 +424,7 @@ void vp1394CMUGrabber::setGain(unsigned short gain)
 
    \sa setAutoShutter(), setShutter()
    */
-void vp1394CMUGrabber::getShutterMinMax(unsigned short &min,
-                                        unsigned short &max)
+void vp1394CMUGrabber::getShutterMinMax(unsigned short &min, unsigned short &max)
 {
   initCamera();
 
@@ -588,8 +568,7 @@ void vp1394CMUGrabber::setVideoMode(unsigned long format, unsigned long mode)
       vpERROR_TRACE("vp1394CMUGrabber error: The image format is not "
                     "supported by the IEEE 1394 camera number %i",
                     index);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Video mode not supported"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Video mode not supported"));
     }
 
     if (camera->IsAcquiring()) {
@@ -599,9 +578,7 @@ void vp1394CMUGrabber::setVideoMode(unsigned long format, unsigned long mode)
         vpERROR_TRACE("vp1394CMUGrabber error: Can't stop image acquisition "
                       "from IEEE 1394 camera number %i",
                       index);
-        throw(vpFrameGrabberException(
-            vpFrameGrabberException::otherError,
-            "Error while stopping image acquisition"));
+        throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Error while stopping image acquisition"));
       }
     }
 
@@ -610,8 +587,7 @@ void vp1394CMUGrabber::setVideoMode(unsigned long format, unsigned long mode)
       vpERROR_TRACE("vp1394CMUGrabber error: Can't set video format of IEEE "
                     "1394 camera number %i",
                     index);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't set video format"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set video format"));
     }
 
     if (camera->SetVideoMode(_mode) != CAM_SUCCESS) {
@@ -619,8 +595,7 @@ void vp1394CMUGrabber::setVideoMode(unsigned long format, unsigned long mode)
       vpERROR_TRACE("vp1394CMUGrabber error: Can't set video mode of IEEE "
                     "1394 camera number %i",
                     index);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't set video mode"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set video mode"));
     }
 
     // start acquisition
@@ -629,9 +604,7 @@ void vp1394CMUGrabber::setVideoMode(unsigned long format, unsigned long mode)
       vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition "
                     "from IEEE 1394 camera number %i",
                     index);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Error while starting image acquisition"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Error while starting image acquisition"));
     }
 
     // Update Image dimension
@@ -680,8 +653,7 @@ void vp1394CMUGrabber::setFramerate(unsigned long fps)
                     "by the IEEE 1394 camera number %i for the selected "
                     "image format",
                     index);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "The frame rate is not supported"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "The frame rate is not supported"));
     }
 
     if (camera->IsAcquiring()) {
@@ -691,9 +663,7 @@ void vp1394CMUGrabber::setFramerate(unsigned long fps)
         vpERROR_TRACE("vp1394CMUGrabber error: Can't stop image acquisition "
                       "from IEEE 1394 camera number %i",
                       index);
-        throw(vpFrameGrabberException(
-            vpFrameGrabberException::otherError,
-            "Error while stopping image acquisition"));
+        throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Error while stopping image acquisition"));
       }
     }
     if (camera->SetVideoFrameRate(_fps) != CAM_SUCCESS) {
@@ -701,8 +671,7 @@ void vp1394CMUGrabber::setFramerate(unsigned long fps)
       vpERROR_TRACE("vp1394CMUGrabber error: Can't set video frame rate of "
                     "IEEE 1394 camera number %i",
                     index);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't set video frame rate"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set video frame rate"));
     }
     // start acquisition
     if (camera->StartImageAcquisition() != CAM_SUCCESS) {
@@ -710,9 +679,7 @@ void vp1394CMUGrabber::setFramerate(unsigned long fps)
       vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition "
                     "from IEEE 1394 camera number %i",
                     index);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Error while starting image acquisition"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Error while starting image acquisition"));
     }
   }
 }

@@ -137,18 +137,13 @@ public:
 
   void buildFrom(vpPoint &_p1, vpPoint &_p2);
 
-  bool closeToImageBorder(const vpImage<unsigned char> &I,
-                          const unsigned int threshold);
+  bool closeToImageBorder(const vpImage<unsigned char> &I, const unsigned int threshold);
   void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
 
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1,
-               const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam, const vpColor &col,
-               const unsigned int thickness = 1,
-               const bool displayFullModel = false);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
   void displayMovingEdges(const vpImage<unsigned char> &I);
 
   /*!
@@ -156,10 +151,7 @@ public:
 
    \param camera : The vpCameraParameters used to store the camera parameters.
   */
-  inline void getCameraParameters(vpCameraParameters &camera) const
-  {
-    camera = this->cam;
-  }
+  inline void getCameraParameters(vpCameraParameters &camera) const { camera = this->cam; }
 
   /*!
     Get the index of the line.
@@ -193,8 +185,7 @@ public:
 
   void initInteractionMatrixError();
 
-  bool initMovingEdge(const vpImage<unsigned char> &I,
-                      const vpHomogeneousMatrix &cMo);
+  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   /*!
    Return if the line is used for tracking.
@@ -210,17 +201,13 @@ public:
   */
   inline bool isVisible() const { return isvisible; }
 
-  void reinitMovingEdge(const vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &cMo);
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   /*!
    Set the camera paramters.
    \param camera : The camera parameters.
   */
-  inline void setCameraParameters(const vpCameraParameters &camera)
-  {
-    this->cam = camera;
-  }
+  inline void setCameraParameters(const vpCameraParameters &camera) { this->cam = camera; }
 
   /*!
     Set the index of the line.
@@ -243,20 +230,14 @@ public:
 
     \param line_name : The name of the line.
   */
-  inline void setName(const std::string &line_name)
-  {
-    this->name = line_name;
-  }
+  inline void setName(const std::string &line_name) { this->name = line_name; }
 
   /*!
     Set the name of the line.
 
     \param line_name : The name of the line.
   */
-  inline void setName(const char *line_name)
-  {
-    this->name = std::string(line_name);
-  }
+  inline void setName(const char *line_name) { this->name = std::string(line_name); }
 
   void setTracked(const std::string &name, const bool &track);
 
@@ -268,11 +249,9 @@ public:
   */
   void setVisible(bool _isvisible) { isvisible = _isvisible; }
 
-  void trackMovingEdge(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo);
+  void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
-  void updateMovingEdge(const vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &cMo);
+  void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   void updateTracked();
 

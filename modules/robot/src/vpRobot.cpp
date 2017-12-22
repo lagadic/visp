@@ -52,19 +52,17 @@ const double vpRobot::maxRotationVelocityDefault = 0.7;
 
 vpRobot::vpRobot(void)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-    maxTranslationVelocity(maxTranslationVelocityDefault),
-    maxRotationVelocity(maxRotationVelocityDefault), nDof(0), eJe(),
-    eJeAvailable(false), fJe(), fJeAvailable(false),
-    areJointLimitsAvailable(false), qmin(NULL), qmax(NULL), verbose_(true)
+    maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
+    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(NULL), qmax(NULL),
+    verbose_(true)
 {
 }
 
 vpRobot::vpRobot(const vpRobot &robot)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-    maxTranslationVelocity(maxTranslationVelocityDefault),
-    maxRotationVelocity(maxRotationVelocityDefault), nDof(0), eJe(),
-    eJeAvailable(false), fJe(), fJeAvailable(false),
-    areJointLimitsAvailable(false), qmin(NULL), qmax(NULL), verbose_(true)
+    maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
+    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(NULL), qmax(NULL),
+    verbose_(true)
 {
   *this = robot;
 }
@@ -162,14 +160,11 @@ int main()
 }
   \endcode
   */
-vpColVector vpRobot::saturateVelocities(const vpColVector &v_in,
-                                        const vpColVector &v_max,
-                                        bool verbose)
+vpColVector vpRobot::saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose)
 {
   unsigned int size = v_in.size();
   if (size != v_max.size())
-    throw vpRobotException(vpRobotException::dimensionError,
-                           "Velocity vectors should have the same dimension");
+    throw vpRobotException(vpRobotException::dimensionError, "Velocity vectors should have the same dimension");
 
   double scale = 1; // global scale factor to saturate all the axis
   for (unsigned int i = 0; i < size; i++) {
@@ -182,8 +177,7 @@ vpColVector vpRobot::saturateVelocities(const vpColVector &v_in,
         scale = scale_i;
 
       if (verbose)
-        std::cout << "Excess velocity " << v_in[i] << " axis nr. " << i
-                  << std::endl;
+        std::cout << "Excess velocity " << v_in[i] << " axis nr. " << i << std::endl;
     }
   }
 
@@ -204,15 +198,13 @@ vpColVector vpRobot::saturateVelocities(const vpColVector &v_in,
   \file vpRobot.cpp
   \brief class that defines a generic virtual robot
 */
-vpRobot::vpRobotStateType
-vpRobot::setRobotState(const vpRobot::vpRobotStateType newState)
+vpRobot::vpRobotStateType vpRobot::setRobotState(const vpRobot::vpRobotStateType newState)
 {
   stateRobot = newState;
   return newState;
 }
 
-vpRobot::vpControlFrameType
-vpRobot::setRobotFrame(vpRobot::vpControlFrameType newFrame)
+vpRobot::vpControlFrameType vpRobot::setRobotFrame(vpRobot::vpControlFrameType newFrame)
 {
   frameRobot = newFrame;
   return newFrame;
@@ -256,10 +248,7 @@ void vpRobot::setMaxTranslationVelocity(const double v_max)
 
   \return Maximum translation velocity expressed in m/s.
 */
-double vpRobot::getMaxTranslationVelocity(void) const
-{
-  return this->maxTranslationVelocity;
-}
+double vpRobot::getMaxTranslationVelocity(void) const { return this->maxTranslationVelocity; }
 /*!
 
   Set the maximal rotation velocity that can be sent to the robot  during a
@@ -281,7 +270,4 @@ void vpRobot::setMaxRotationVelocity(const double w_max)
 
   \return Maximum rotation velocity expressed in rad/s.
 */
-double vpRobot::getMaxRotationVelocity(void) const
-{
-  return this->maxRotationVelocity;
-}
+double vpRobot::getMaxRotationVelocity(void) const { return this->maxRotationVelocity; }

@@ -53,8 +53,7 @@
   The algorithm implemented in this class is described in \cite Baker04a and
   \cite Marchand16a.
  */
-class VISP_EXPORT vpTemplateTrackerSSDInverseCompositional
-  : public vpTemplateTrackerSSD
+class VISP_EXPORT vpTemplateTrackerSSDInverseCompositional : public vpTemplateTrackerSSD
 {
 protected:
   bool compoInitialised;
@@ -77,8 +76,7 @@ protected:
   void initPosEvalRMS(const vpColVector &p);
 
 public:
-  explicit vpTemplateTrackerSSDInverseCompositional(
-      vpTemplateTrackerWarp *warp);
+  explicit vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp);
 
   /*! Use only the strong gradient pixels to compute the Jabobian. By default
    * this feature is disabled. */

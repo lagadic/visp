@@ -107,8 +107,8 @@ int main()
   // Read the nearest key frame from the 3th frame
   reader.getFrame(I, 2);
 
-  // After positionning the video reader use acquire to read the video frame
-by frame reader.acquire(I);
+  // After positionning the video reader use acquire to read the video frame by frame
+  reader.acquire(I);
 
   return 0;
 #endif
@@ -146,7 +146,9 @@ int main()
   \endcode
 
   Note that it is also possible to access to a specific frame using
-getFrame(). \code #include <visp3/io/vpVideoReader.h>
+getFrame().
+\code
+#include <visp3/io/vpVideoReader.h>
 
 int main()
 {
@@ -371,10 +373,7 @@ public:
 
   \sa setFrameStep()
 */
-  inline void setFrameStep(const long frame_step)
-  {
-    this->frameStep = frame_step;
-  }
+  inline void setFrameStep(const long frame_step) { this->frameStep = frame_step; }
 
 private:
   vpVideoFormatType getFormat(const char *filename);
@@ -383,8 +382,7 @@ private:
   void findLastFrameIndex();
   bool isImageExtensionSupported();
   bool isVideoExtensionSupported();
-  long extractImageIndex(const std::string &imageName,
-                         const std::string &format);
+  long extractImageIndex(const std::string &imageName, const std::string &format);
   bool checkImageNameFormat(const std::string &format);
   void getProperties();
 };

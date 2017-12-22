@@ -81,8 +81,7 @@ public:
     \param ParamM : Parameters of the warping function.
     \param dW : Resulting derivative matrix.
   */
-  virtual void dWarp(const vpColVector &X1, const vpColVector &X2,
-                     const vpColVector &ParamM, vpMatrix &dW) = 0;
+  virtual void dWarp(const vpColVector &X1, const vpColVector &X2, const vpColVector &ParamM, vpMatrix &dW) = 0;
 
   /*!
     Compute the compositionnal derivative of the warping function according to
@@ -95,13 +94,11 @@ public:
     initial warping function parameters (p=0). \param dW : Resulting
     compositionnal derivative matrix.
   */
-  virtual void dWarpCompo(const vpColVector &X1, const vpColVector &X2,
-                          const vpColVector &ParamM, const double *dwdp0,
+  virtual void dWarpCompo(const vpColVector &X1, const vpColVector &X2, const vpColVector &ParamM, const double *dwdp0,
                           vpMatrix &dW) = 0;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  void findWarp(const double *ut0, const double *vt0, const double *u,
-                const double *v, int nb_pt, vpColVector &p);
+  void findWarp(const double *ut0, const double *vt0, const double *u, const double *v, int nb_pt, vpColVector &p);
 #endif
 
   /*!
@@ -115,8 +112,7 @@ public:
     columns) of the point (i,j). \param dIdW : Resulting derivative matrix
     (Image according to the warping function).
   */
-  virtual void getdW0(const int &i, const int &j, const double &dy,
-                      const double &dx, double *dIdW) = 0;
+  virtual void getdW0(const int &i, const int &j, const double &dy, const double &dx, double *dIdW) = 0;
 
   /*!
     Compute the derivative of the warping function according to the initial
@@ -135,8 +131,7 @@ public:
     \param Z : Zone to consider.
     \param p : Parameters of the warping function.
   */
-  double getDistanceBetweenZoneAndWarpedZone(const vpTemplateTrackerZone &Z,
-                                             const vpColVector &p);
+  double getDistanceBetweenZoneAndWarpedZone(const vpTemplateTrackerZone &Z, const vpColVector &p);
 
   /*!
     Get the number of parameters of the warping function.
@@ -151,8 +146,7 @@ public:
     \param ParamM : Parameters of the warping function.
     \param ParamMinv : Inverse parameters.
   */
-  virtual void getParamInverse(const vpColVector &ParamM,
-                               vpColVector &ParamMinv) const = 0;
+  virtual void getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const = 0;
 
   /*!
     Get the parameters of the warping function one level down.
@@ -160,8 +154,7 @@ public:
     \param p : Current parameters of the warping function.
     \param pdown : Resulting parameters on level down.
   */
-  virtual void getParamPyramidDown(const vpColVector &p,
-                                   vpColVector &pdown) = 0;
+  virtual void getParamPyramidDown(const vpColVector &p, vpColVector &pdown) = 0;
 
   /*!
     Get the parameters of the warping function one level up.
@@ -186,8 +179,7 @@ public:
     \param p2 : Second displacement.
     \param pres : Displacement resulting from the composition of p1 and p2.
   */
-  virtual void pRondp(const vpColVector &p1, const vpColVector &p2,
-                      vpColVector &pres) const = 0;
+  virtual void pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &pres) const = 0;
 
   /*!
     Set the number of parameters of the warping function.
@@ -210,8 +202,7 @@ public:
     \param u : Resulting u coordinates.
     \param v : resulting v coordinates.
   */
-  void warp(const double *ut0, const double *vt0, int nb_pt,
-            const vpColVector &p, double *u, double *v);
+  void warp(const double *ut0, const double *vt0, int nb_pt, const vpColVector &p, double *u, double *v);
 
   /*!
     Warp a point.
@@ -222,8 +213,7 @@ public:
     \param j2 : j coordinate (along the columns) of the warped point.
     \param ParamM : Parameters of the warp.
   */
-  virtual void warpX(const int &i, const int &j, double &i2, double &j2,
-                     const vpColVector &ParamM) = 0;
+  virtual void warpX(const int &i, const int &j, double &i2, double &j2, const vpColVector &ParamM) = 0;
 
   /*!
     Warp a point.
@@ -232,8 +222,7 @@ public:
     \param vXres : Coordinates of the warped point.
     \param ParamM : Parameters of the warping function.
   */
-  virtual void warpX(const vpColVector &vX, vpColVector &vXres,
-                     const vpColVector &ParamM) = 0;
+  virtual void warpX(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM) = 0;
 
   /*!
     Inverse Warp a point.
@@ -242,8 +231,7 @@ public:
     \param vXres : Coordinates of the warped point.
     \param ParamM : Parameters of the warping function.
   */
-  virtual void warpXInv(const vpColVector &vX, vpColVector &vXres,
-                        const vpColVector &ParamM) = 0;
+  virtual void warpXInv(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM) = 0;
 
   /*!
     Warp a triangle and store the result in a new zone.
@@ -253,8 +241,7 @@ public:
     estimated by the template tracker and returned using
     vpTemplateTracker::getp(). \param out : Resulting triangle.
   */
-  void warpTriangle(const vpTemplateTrackerTriangle &in, const vpColVector &p,
-                    vpTemplateTrackerTriangle &out);
+  void warpTriangle(const vpTemplateTrackerTriangle &in, const vpColVector &p, vpTemplateTrackerTriangle &out);
 
   /*!
     Warp a zone and store the result in a new zone.
@@ -264,8 +251,7 @@ public:
     estimated by the template tracker and returned using
     vpTemplateTracker::getp(). \param out : Resulting zone.
   */
-  void warpZone(const vpTemplateTrackerZone &in, const vpColVector &p,
-                vpTemplateTrackerZone &out);
+  void warpZone(const vpTemplateTrackerZone &in, const vpColVector &p, vpTemplateTrackerZone &out);
 };
 
 #endif

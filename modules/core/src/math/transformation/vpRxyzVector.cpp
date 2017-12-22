@@ -52,9 +52,7 @@
 vpRxyzVector::vpRxyzVector() : vpRotationVector(3) {}
 
 /*! Copy constructor. */
-vpRxyzVector::vpRxyzVector(const vpRxyzVector &rxyz) : vpRotationVector(rxyz)
-{
-}
+vpRxyzVector::vpRxyzVector(const vpRxyzVector &rxyz) : vpRotationVector(rxyz) {}
 
 /*!
   Constructor from 3 angles (in radian).
@@ -62,9 +60,7 @@ vpRxyzVector::vpRxyzVector(const vpRxyzVector &rxyz) : vpRotationVector(rxyz)
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
 */
-vpRxyzVector::vpRxyzVector(const double phi, const double theta,
-                           const double psi)
-  : vpRotationVector(3)
+vpRxyzVector::vpRxyzVector(const double phi, const double theta, const double psi) : vpRotationVector(3)
 {
   buildFrom(phi, theta, psi);
 }
@@ -74,10 +70,7 @@ vpRxyzVector::vpRxyzVector(const double phi, const double theta,
   angles from a rotation matrix.
   \param R : Rotation matrix used to initialize the Euler angles.
 */
-vpRxyzVector::vpRxyzVector(const vpRotationMatrix &R) : vpRotationVector(3)
-{
-  buildFrom(R);
-}
+vpRxyzVector::vpRxyzVector(const vpRotationMatrix &R) : vpRotationVector(3) { buildFrom(R); }
 
 /*!
   Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -85,19 +78,14 @@ vpRxyzVector::vpRxyzVector(const vpRotationMatrix &R) : vpRotationVector(3)
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input to initialize the Euler angles.
 */
-vpRxyzVector::vpRxyzVector(const vpThetaUVector &tu) : vpRotationVector(3)
-{
-  buildFrom(tu);
-}
+vpRxyzVector::vpRxyzVector(const vpThetaUVector &tu) : vpRotationVector(3) { buildFrom(tu); }
 
 /*! Copy constructor from a 3-dimension vector. */
 vpRxyzVector::vpRxyzVector(const vpColVector &rxyz) : vpRotationVector(3)
 {
   if (rxyz.size() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot construct a R-xyz vector from a %d-dimension col vector",
-        rxyz.size()));
+    throw(vpException(vpException::dimensionError, "Cannot construct a R-xyz vector from a %d-dimension col vector",
+                      rxyz.size()));
   }
   for (unsigned int i = 0; i < 3; i++)
     data[i] = rxyz[i];
@@ -123,8 +111,7 @@ vpRxyzVector vpRxyzVector::buildFrom(const vpRotationMatrix &R)
   double si = sin(phi);
   double co = cos(phi);
   double theta = atan2(R[0][2], -si * R[1][2] + co * R[2][2]);
-  double psi =
-      atan2(co * R[1][0] + si * R[2][0], co * R[1][1] + si * R[2][1]);
+  double psi = atan2(co * R[1][0] + si * R[2][0], co * R[1][1] + si * R[2][1]);
 
   buildFrom(phi, theta, psi);
 
@@ -152,8 +139,7 @@ vpRxyzVector vpRxyzVector::buildFrom(const vpThetaUVector &tu)
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
 */
-void vpRxyzVector::buildFrom(const double phi, const double theta,
-                             const double psi)
+void vpRxyzVector::buildFrom(const double phi, const double theta, const double psi)
 {
   data[0] = phi;
   data[1] = theta;
@@ -213,10 +199,8 @@ int main()
 vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
 {
   if (rxyz.size() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot set a R-xyz vector from a %d-dimension col vector",
-        rxyz.size()));
+    throw(vpException(vpException::dimensionError, "Cannot set a R-xyz vector from a %d-dimension col vector",
+                      rxyz.size()));
   }
   for (unsigned int i = 0; i < 3; i++)
     data[i] = rxyz[i];

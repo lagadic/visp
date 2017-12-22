@@ -38,8 +38,7 @@
 
 #include <visp3/robot/vpSimulatorViper850.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) &&                                         \
-    ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -61,9 +60,8 @@ const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
   Basic constructor
 */
 vpSimulatorViper850::vpSimulatorViper850()
-  : vpRobotWireFrameSimulator(), vpViper850(), q_prev_getdis(),
-    first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
-    zeroPos(), reposPos(), toolCustom(false), arm_dir()
+  : vpRobotWireFrameSimulator(), vpViper850(), q_prev_getdis(), first_time_getdis(true),
+    positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
@@ -115,9 +113,8 @@ vpSimulatorViper850::vpSimulatorViper850()
 
 */
 vpSimulatorViper850::vpSimulatorViper850(bool do_display)
-  : vpRobotWireFrameSimulator(do_display), q_prev_getdis(),
-    first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
-    zeroPos(), reposPos(), toolCustom(false), arm_dir()
+  : vpRobotWireFrameSimulator(do_display), q_prev_getdis(), first_time_getdis(true),
+    positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
@@ -213,8 +210,7 @@ void vpSimulatorViper850::init()
 {
   // set arm_dir from #define VISP_ROBOT_ARMS_DIR if it exists
   // VISP_ROBOT_ARMS_DIR may contain multiple locations separated by ";"
-  std::vector<std::string> arm_dirs = vpIoTools::splitChain(
-      std::string(VISP_ROBOT_ARMS_DIR), std::string(";"));
+  std::vector<std::string> arm_dirs = vpIoTools::splitChain(std::string(VISP_ROBOT_ARMS_DIR), std::string(";"));
   bool armDirExists = false;
   for (size_t i = 0; i < arm_dirs.size(); i++)
     if (vpIoTools::checkDirectory(arm_dirs[i]) == true) { // directory exists
@@ -225,11 +221,9 @@ void vpSimulatorViper850::init()
   if (!armDirExists) {
     try {
       arm_dir = vpIoTools::getenv("VISP_ROBOT_ARMS_DIR");
-      std::cout << "The simulator uses data from VISP_ROBOT_ARMS_DIR="
-                << arm_dir << std::endl;
+      std::cout << "The simulator uses data from VISP_ROBOT_ARMS_DIR=" << arm_dir << std::endl;
     } catch (...) {
-      std::cout << "Cannot get VISP_ROBOT_ARMS_DIR environment variable"
-                << std::endl;
+      std::cout << "Cannot get VISP_ROBOT_ARMS_DIR environment variable" << std::endl;
     }
   }
 
@@ -288,10 +282,8 @@ void vpSimulatorViper850::initDisplay()
   robotArms = NULL;
   robotArms = new Bound_scene[6];
   initArms();
-  setExternalCameraPosition(
-      vpHomogeneousMatrix(0.0, 0.5, 1.5, vpMath::rad(90), 0, 0));
-  cameraParam.initPersProjWithoutDistortion(558.5309599, 556.055053, 320,
-                                            240);
+  setExternalCameraPosition(vpHomogeneousMatrix(0.0, 0.5, 1.5, vpMath::rad(90), 0, 0));
+  cameraParam.initPersProjWithoutDistortion(558.5309599, 556.055053, 320, 240);
   setExternalCameraParameters(cameraParam);
   vpCameraParameters tmp;
   getCameraParameters(tmp, 640, 480);
@@ -315,9 +307,7 @@ void vpSimulatorViper850::initDisplay()
 
   \sa vpCameraParameters, init()
 */
-void vpSimulatorViper850::init(
-    vpViper850::vpToolType tool,
-    vpCameraParameters::vpCameraParametersProjType proj_model)
+void vpSimulatorViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraParametersProjType proj_model)
 {
   this->projModel = proj_model;
 
@@ -348,8 +338,7 @@ void vpSimulatorViper850::init(
   case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:
   case vpViper850::TOOL_CUSTOM:
   case vpViper850::TOOL_GENERIC_CAMERA: {
-    std::cout << "This tool is not handled in vpSimulatorViper850.cpp"
-              << std::endl;
+    std::cout << "This tool is not handled in vpSimulatorViper850.cpp" << std::endl;
     break;
   }
   }
@@ -371,21 +360,18 @@ void vpSimulatorViper850::init(
   \warning The image size must be : 640x480 !
 */
 
-void vpSimulatorViper850::getCameraParameters(
-    vpCameraParameters &cam, const unsigned int &image_width,
-    const unsigned int &image_height)
+void vpSimulatorViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
+                                              const unsigned int &image_height)
 {
   if (toolCustom) {
-    cam.initPersProjWithoutDistortion(px_int, py_int, image_width / 2,
-                                      image_height / 2);
+    cam.initPersProjWithoutDistortion(px_int, py_int, image_width / 2, image_height / 2);
   }
   // Set default parameters
   switch (getToolType()) {
   case vpViper850::TOOL_MARLIN_F033C_CAMERA: {
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
-      std::cout << "Get default camera parameters for camera \""
-                << vpViper850::CONST_MARLIN_F033C_CAMERA_NAME << "\""
+      std::cout << "Get default camera parameters for camera \"" << vpViper850::CONST_MARLIN_F033C_CAMERA_NAME << "\""
                 << std::endl;
       cam.initPersProjWithoutDistortion(1232.0, 1233.0, 320, 240);
     } else {
@@ -397,8 +383,7 @@ void vpSimulatorViper850::getCameraParameters(
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
-      std::cout << "Get default camera parameters for camera \""
-                << vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\""
+      std::cout << "Get default camera parameters for camera \"" << vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\""
                 << std::endl;
       cam.initPersProjWithoutDistortion(868.0, 869.0, 320, 240);
     } else {
@@ -410,8 +395,7 @@ void vpSimulatorViper850::getCameraParameters(
   case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:
   case vpViper850::TOOL_CUSTOM:
   case vpViper850::TOOL_GENERIC_CAMERA: {
-    std::cout << "This tool is not handled in vpSimulatorViper850.cpp"
-              << std::endl;
+    std::cout << "This tool is not handled in vpSimulatorViper850.cpp" << std::endl;
     break;
   }
   }
@@ -426,8 +410,7 @@ void vpSimulatorViper850::getCameraParameters(
 
   \warning The image size must be : 640x480 !
 */
-void vpSimulatorViper850::getCameraParameters(
-    vpCameraParameters &cam, const vpImage<unsigned char> &I_)
+void vpSimulatorViper850::getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I_)
 {
   getCameraParameters(cam, I_.getWidth(), I_.getHeight());
 }
@@ -440,8 +423,7 @@ void vpSimulatorViper850::getCameraParameters(
 
   \warning The image size must be : 640x480 !
 */
-void vpSimulatorViper850::getCameraParameters(vpCameraParameters &cam,
-                                              const vpImage<vpRGBa> &I_)
+void vpSimulatorViper850::getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I_)
 {
   getCameraParameters(cam, I_.getWidth(), I_.getHeight());
 }
@@ -477,9 +459,9 @@ void vpSimulatorViper850::updateArticularPosition()
       computeArticularVelocity();
 
       double ellapsedTime = (tcur - tprev) * 1e-3;
-      if (constantSamplingTimeMode) { // if we want a constant velocity, we
-                                      // force the ellapsed time to the given
-                                      // samplingTime
+      if (constantSamplingTimeMode) {     // if we want a constant velocity, we
+                                          // force the ellapsed time to the given
+                                          // samplingTime
         ellapsedTime = getSamplingTime(); // in second
       }
 
@@ -487,50 +469,37 @@ void vpSimulatorViper850::updateArticularPosition()
       vpColVector articularVelocities = get_artVel();
 
       if (jointLimit) {
-        double art = articularCoordinates[jointLimitArt - 1] +
-                     ellapsedTime * articularVelocities[jointLimitArt - 1];
-        if (art <= joint_min[jointLimitArt - 1] ||
-            art >= joint_max[jointLimitArt - 1]) {
+        double art = articularCoordinates[jointLimitArt - 1] + ellapsedTime * articularVelocities[jointLimitArt - 1];
+        if (art <= joint_min[jointLimitArt - 1] || art >= joint_max[jointLimitArt - 1]) {
           if (verbose_) {
-            std::cout << "Joint " << jointLimitArt - 1 << " reaches a limit: "
-                      << vpMath::deg(joint_min[jointLimitArt - 1]) << " < "
-                      << vpMath::deg(art) << " < "
-                      << vpMath::deg(joint_max[jointLimitArt - 1])
-                      << std::endl;
+            std::cout << "Joint " << jointLimitArt - 1
+                      << " reaches a limit: " << vpMath::deg(joint_min[jointLimitArt - 1]) << " < " << vpMath::deg(art)
+                      << " < " << vpMath::deg(joint_max[jointLimitArt - 1]) << std::endl;
           }
           articularVelocities = 0.0;
         } else
           jointLimit = false;
       }
 
-      articularCoordinates[0] =
-          articularCoordinates[0] + ellapsedTime * articularVelocities[0];
-      articularCoordinates[1] =
-          articularCoordinates[1] + ellapsedTime * articularVelocities[1];
-      articularCoordinates[2] =
-          articularCoordinates[2] + ellapsedTime * articularVelocities[2];
-      articularCoordinates[3] =
-          articularCoordinates[3] + ellapsedTime * articularVelocities[3];
-      articularCoordinates[4] =
-          articularCoordinates[4] + ellapsedTime * articularVelocities[4];
-      articularCoordinates[5] =
-          articularCoordinates[5] + ellapsedTime * articularVelocities[5];
+      articularCoordinates[0] = articularCoordinates[0] + ellapsedTime * articularVelocities[0];
+      articularCoordinates[1] = articularCoordinates[1] + ellapsedTime * articularVelocities[1];
+      articularCoordinates[2] = articularCoordinates[2] + ellapsedTime * articularVelocities[2];
+      articularCoordinates[3] = articularCoordinates[3] + ellapsedTime * articularVelocities[3];
+      articularCoordinates[4] = articularCoordinates[4] + ellapsedTime * articularVelocities[4];
+      articularCoordinates[5] = articularCoordinates[5] + ellapsedTime * articularVelocities[5];
 
       int jl = isInJointLimit();
 
       if (jl != 0 && jointLimit == false) {
         if (jl < 0)
-          ellapsedTime = (joint_min[(unsigned int)(-jl - 1)] -
-                          articularCoordinates[(unsigned int)(-jl - 1)]) /
+          ellapsedTime = (joint_min[(unsigned int)(-jl - 1)] - articularCoordinates[(unsigned int)(-jl - 1)]) /
                          (articularVelocities[(unsigned int)(-jl - 1)]);
         else
-          ellapsedTime = (joint_max[(unsigned int)(jl - 1)] -
-                          articularCoordinates[(unsigned int)(jl - 1)]) /
+          ellapsedTime = (joint_max[(unsigned int)(jl - 1)] - articularCoordinates[(unsigned int)(jl - 1)]) /
                          (articularVelocities[(unsigned int)(jl - 1)]);
 
         for (unsigned int i = 0; i < 6; i++)
-          articularCoordinates[i] =
-              articularCoordinates[i] + ellapsedTime * articularVelocities[i];
+          articularCoordinates[i] = articularCoordinates[i] + ellapsedTime * articularVelocities[i];
 
         jointLimit = true;
         jointLimitArt = (unsigned int)fabs((double)jl);
@@ -543,10 +512,8 @@ void vpSimulatorViper850::updateArticularPosition()
 
       if (displayAllowed) {
         vpDisplay::display(I);
-        vpDisplay::displayFrame(I, getExternalCameraPosition(), cameraParam,
-                                0.2, vpColor::none, thickness_);
-        vpDisplay::displayFrame(I, getExternalCameraPosition() * fMi[7],
-                                cameraParam, 0.1, vpColor::none, thickness_);
+        vpDisplay::displayFrame(I, getExternalCameraPosition(), cameraParam, 0.2, vpColor::none, thickness_);
+        vpDisplay::displayFrame(I, getExternalCameraPosition() * fMi[7], cameraParam, 0.1, vpColor::none, thickness_);
       }
 
       if (displayType == MODEL_3D && displayAllowed) {
@@ -567,25 +534,20 @@ void vpSimulatorViper850::updateArticularPosition()
         vpPoint pt(0, 0, 0);
 
         pt.track(getExternalCameraPosition());
-        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                             pt.get_y(), iP_1);
+        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP_1);
         pt.track(getExternalCameraPosition() * fMit[0]);
-        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                             pt.get_y(), iP);
+        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP);
         vpDisplay::displayLine(I, iP_1, iP, vpColor::green, thickness_);
         for (int k = 1; k < 7; k++) {
           pt.track(getExternalCameraPosition() * fMit[k - 1]);
-          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                               pt.get_y(), iP_1);
+          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP_1);
 
           pt.track(getExternalCameraPosition() * fMit[k]);
-          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                               pt.get_y(), iP);
+          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP);
 
           vpDisplay::displayLine(I, iP_1, iP, vpColor::green, thickness_);
         }
-        vpDisplay::displayCamera(I, getExternalCameraPosition() * fMit[7],
-                                 cameraParam, 0.1, vpColor::green,
+        vpDisplay::displayCamera(I, getExternalCameraPosition() * fMit[7], cameraParam, 0.1, vpColor::green,
                                  thickness_);
       }
 
@@ -709,15 +671,11 @@ void vpSimulatorViper850::compute_fMi()
   fMit[4][1][3] = quickcomp3;
   fMit[4][2][3] = c23 * d4 + a3 * s23 - a2 * s2 + d1;
 
-  fMit[5][0][0] = c1 * (c23 * (c4 * c5 * c6 - s4 * s6) - s23 * s5 * c6) -
-                  s1 * (s4 * c5 * c6 + c4 * s6);
-  fMit[5][1][0] = -s1 * (c23 * (-c4 * c5 * c6 + s4 * s6) + s23 * s5 * c6) +
-                  c1 * (s4 * c5 * c6 + c4 * s6);
+  fMit[5][0][0] = c1 * (c23 * (c4 * c5 * c6 - s4 * s6) - s23 * s5 * c6) - s1 * (s4 * c5 * c6 + c4 * s6);
+  fMit[5][1][0] = -s1 * (c23 * (-c4 * c5 * c6 + s4 * s6) + s23 * s5 * c6) + c1 * (s4 * c5 * c6 + c4 * s6);
   fMit[5][2][0] = s23 * (s4 * s6 - c4 * c5 * c6) - c23 * s5 * c6;
-  fMit[5][0][1] = -c1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) +
-                  s1 * (s4 * c5 * s6 - c4 * c6);
-  fMit[5][1][1] = -s1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) -
-                  c1 * (s4 * c5 * s6 - c4 * c6);
+  fMit[5][0][1] = -c1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) + s1 * (s4 * c5 * s6 - c4 * c6);
+  fMit[5][1][1] = -s1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) - c1 * (s4 * c5 * s6 - c4 * c6);
   fMit[5][2][1] = s23 * (c4 * c5 * s6 + s4 * c6) + c23 * s5 * s6;
   fMit[5][0][2] = c1 * (c23 * c4 * s5 + s23 * c5) - s1 * s4 * s5;
   fMit[5][1][2] = s1 * (c23 * c4 * s5 + s23 * c5) + c1 * s4 * s5;
@@ -726,27 +684,18 @@ void vpSimulatorViper850::compute_fMi()
   fMit[5][1][3] = quickcomp3;
   fMit[5][2][3] = s23 * a3 + c23 * d4 - a2 * s2 + d1;
 
-  fMit[6][0][0] = c1 * (c23 * (c4 * c5 * c6 - s4 * s6) - s23 * s5 * c6) -
-                  s1 * (s4 * c5 * c6 + c4 * s6);
-  fMit[6][1][0] = -s1 * (c23 * (-c4 * c5 * c6 + s4 * s6) + s23 * s5 * c6) +
-                  c1 * (s4 * c5 * c6 + c4 * s6);
+  fMit[6][0][0] = c1 * (c23 * (c4 * c5 * c6 - s4 * s6) - s23 * s5 * c6) - s1 * (s4 * c5 * c6 + c4 * s6);
+  fMit[6][1][0] = -s1 * (c23 * (-c4 * c5 * c6 + s4 * s6) + s23 * s5 * c6) + c1 * (s4 * c5 * c6 + c4 * s6);
   fMit[6][2][0] = s23 * (s4 * s6 - c4 * c5 * c6) - c23 * s5 * c6;
-  fMit[6][0][1] = -c1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) +
-                  s1 * (s4 * c5 * s6 - c4 * c6);
-  fMit[6][1][1] = -s1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) -
-                  c1 * (s4 * c5 * s6 - c4 * c6);
+  fMit[6][0][1] = -c1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) + s1 * (s4 * c5 * s6 - c4 * c6);
+  fMit[6][1][1] = -s1 * (c23 * (c4 * c5 * s6 + s4 * c6) - s23 * s5 * s6) - c1 * (s4 * c5 * s6 - c4 * c6);
   fMit[6][2][1] = s23 * (c4 * c5 * s6 + s4 * c6) + c23 * s5 * s6;
   fMit[6][0][2] = c1 * (c23 * c4 * s5 + s23 * c5) - s1 * s4 * s5;
   fMit[6][1][2] = s1 * (c23 * c4 * s5 + s23 * c5) + c1 * s4 * s5;
   fMit[6][2][2] = -s23 * c4 * s5 + c23 * c5;
-  fMit[6][0][3] =
-      c1 * (c23 * (c4 * s5 * d6 - a3) + s23 * (c5 * d6 + d4) + a1 + a2 * c2) -
-      s1 * s4 * s5 * d6;
-  fMit[6][1][3] =
-      s1 * (c23 * (c4 * s5 * d6 - a3) + s23 * (c5 * d6 + d4) + a1 + a2 * c2) +
-      c1 * s4 * s5 * d6;
-  fMit[6][2][3] =
-      s23 * (a3 - c4 * s5 * d6) + c23 * (c5 * d6 + d4) - a2 * s2 + d1;
+  fMit[6][0][3] = c1 * (c23 * (c4 * s5 * d6 - a3) + s23 * (c5 * d6 + d4) + a1 + a2 * c2) - s1 * s4 * s5 * d6;
+  fMit[6][1][3] = s1 * (c23 * (c4 * s5 * d6 - a3) + s23 * (c5 * d6 + d4) + a1 + a2 * c2) + c1 * s4 * s5 * d6;
+  fMit[6][2][3] = s23 * (a3 - c4 * s5 * d6) + c23 * (c5 * d6 + d4) - a2 * s2 + d1;
 
   vpHomogeneousMatrix cMe;
   get_cMe(cMe);
@@ -776,8 +725,7 @@ Change the robot state.
 
 \param newState : New requested robot state.
 */
-vpRobot::vpRobotStateType
-vpSimulatorViper850::setRobotState(vpRobot::vpRobotStateType newState)
+vpRobot::vpRobotStateType vpSimulatorViper850::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState) {
   case vpRobot::STATE_STOP: {
@@ -789,8 +737,7 @@ vpSimulatorViper850::setRobotState(vpRobot::vpRobotStateType newState)
   }
   case vpRobot::STATE_POSITION_CONTROL: {
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
-      std::cout
-          << "Change the control mode from velocity to position control.\n";
+      std::cout << "Change the control mode from velocity to position control.\n";
       stopMotion();
     } else {
       // std::cout << "Change the control mode from stop to position
@@ -886,17 +833,14 @@ int main()
 }
   \endcode
 */
-void vpSimulatorViper850::setVelocity(const vpRobot::vpControlFrameType frame,
-                                      const vpColVector &vel)
+void vpSimulatorViper850::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
-    vpERROR_TRACE(
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    throw vpRobotException(
-        vpRobotException::wrongStateError,
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    vpERROR_TRACE("Cannot send a velocity to the robot "
+                  "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot send a velocity to the robot "
+                           "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }
 
   vpColVector vel_sat(6);
@@ -1105,8 +1049,7 @@ int main()
 }
   \endcode
 */
-void vpSimulatorViper850::getVelocity(const vpRobot::vpControlFrameType frame,
-                                      vpColVector &vel)
+void vpSimulatorViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &vel)
 {
   vel.resize(6);
 
@@ -1158,8 +1101,7 @@ void vpSimulatorViper850::getVelocity(const vpRobot::vpControlFrameType frame,
 
   \sa getVelocity(const vpRobot::vpControlFrameType frame, vpColVector & vel)
 */
-void vpSimulatorViper850::getVelocity(const vpRobot::vpControlFrameType frame,
-                                      vpColVector &vel, double &timestamp)
+void vpSimulatorViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &vel, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
   getVelocity(frame, vel);
@@ -1207,8 +1149,7 @@ int main()
 }
   \endcode
 */
-vpColVector
-vpSimulatorViper850::getVelocity(vpRobot::vpControlFrameType frame)
+vpColVector vpSimulatorViper850::getVelocity(vpRobot::vpControlFrameType frame)
 {
   vpColVector vel(6);
   getVelocity(frame, vel);
@@ -1228,9 +1169,7 @@ vpSimulatorViper850::getVelocity(vpRobot::vpControlFrameType frame)
 
   \sa getVelocity(vpRobot::vpControlFrameType frame)
 */
-vpColVector
-vpSimulatorViper850::getVelocity(vpRobot::vpControlFrameType frame,
-                                 double &timestamp)
+vpColVector vpSimulatorViper850::getVelocity(vpRobot::vpControlFrameType frame, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
   vpColVector vel(6);
@@ -1327,8 +1266,7 @@ like:
   \endcode
 
 */
-void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,
-                                      const vpColVector &q)
+void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q)
 {
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState()) {
     vpERROR_TRACE("Robot was not in position-based control\n"
@@ -1379,8 +1317,7 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,
         }
       } else {
         vpERROR_TRACE("Positionning error.");
-        throw vpRobotException(vpRobotException::positionOutOfRangeError,
-                               "Position out of range.");
+        throw vpRobotException(vpRobotException::positionOutOfRangeError, "Position out of range.");
       }
     } while (errsqr > 1e-8 && nbSol > 0);
 
@@ -1444,9 +1381,8 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Positionning error. Mixt frame not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Positionning error: "
-                           "Mixt frame not implemented.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "Mixt frame not implemented.");
   }
   }
 }
@@ -1508,17 +1444,14 @@ int main()
   robot.setPositioningVelocity(20);
 
   // Moves the robot in the camera frame
-  robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5,
-pos6);
+  robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5, pos6);
 }
   \endcode
 
   \sa setPosition()
 */
-void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,
-                                      const double pos1, const double pos2,
-                                      const double pos3, const double pos4,
-                                      const double pos5, const double pos6)
+void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2,
+                                      const double pos3, const double pos4, const double pos5, const double pos6)
 {
   try {
     vpColVector position(6);
@@ -1580,8 +1513,7 @@ void vpSimulatorViper850::setPosition(const char *filename)
 
   if (ret == false) {
     vpERROR_TRACE("Bad position in \"%s\"", filename);
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Bad position in filename.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Bad position in filename.");
   }
   this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
   this->setPosition(vpRobot::ARTICULAR_FRAME, q);
@@ -1634,8 +1566,7 @@ int main()
   }
 
   // Create a rotation matrix from the Rxyz rotation angles
-  vpRotationMatrix fRc(frc); // reference frame to camera frame rotation
-matrix
+  vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
 
   // Create the camera to fix frame transformation in terms of a
   // homogeneous matrix
@@ -1648,8 +1579,7 @@ double &timestamp) \sa setPosition(const vpRobot::vpControlFrameType frame,
 const vpColVector & r)
 
 */
-void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
-                                      vpColVector &q)
+void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   q.resize(6);
 
@@ -1684,9 +1614,8 @@ void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
 
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Positionning error. Mixt frame not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Positionning error: "
-                           "Mixt frame not implemented.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "Mixt frame not implemented.");
   }
   }
 }
@@ -1717,8 +1646,7 @@ void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
 
   \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
  */
-void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
-                                      vpColVector &q, double &timestamp)
+void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
   getPosition(frame, q);
@@ -1735,8 +1663,7 @@ void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
 
   \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &)
 */
-void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
-                                      vpPoseVector &position)
+void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position)
 {
   vpColVector posRxyz;
   // recupere  position en Rxyz
@@ -1763,8 +1690,7 @@ void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
   representation.
 
  */
-void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
-                                      vpPoseVector &position,
+void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position,
                                       double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
@@ -1779,8 +1705,7 @@ void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
   All the value must be in radian. \param limitMax : The maximum joint limits
   are given in a vector of size 6. All the value must be in radian.
 */
-void vpSimulatorViper850::setJointLimit(const vpColVector &limitMin,
-                                        const vpColVector &limitMax)
+void vpSimulatorViper850::setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax)
 {
   if (limitMin.getRows() != 6 || limitMax.getRows() != 6) {
     vpTRACE("Joint limit vector has not a size of 6 !");
@@ -1905,8 +1830,8 @@ int vpSimulatorViper850::isInJointLimit()
   }
 
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis "
-              << fabs((float)artNumb) << " on joint limit!" << std::endl;
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!"
+              << std::endl;
 
   return artNumb;
 }
@@ -1928,8 +1853,7 @@ int vpSimulatorViper850::isInJointLimit()
   Euler Rxyz representation.
 
 */
-void vpSimulatorViper850::getDisplacement(vpRobot::vpControlFrameType frame,
-                                          vpColVector &displacement)
+void vpSimulatorViper850::getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement)
 {
   displacement.resize(6);
   displacement = 0;
@@ -1999,8 +1923,11 @@ R: 0.1 0.3 -0.25 -80.5 80 0
 an error occurs.
 
 The code below shows how to read a position from a file and move the robot to
-this position. \code #include <visp3/core/vpColVector.h> #include
-<visp3/core/vpConfig.h> #include <visp3/robot/vpSimulatorViper850.h>
+this position.
+\code
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpSimulatorViper850.h>
 
 int main()
 {
@@ -2020,15 +1947,13 @@ int main()
   robot.readPosFile("current.pos", q); // Set the joint position from the file
 
   robot.setPositioningVelocity(5); // Positioning velocity set to 5%
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint
-position
+  robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
 }
 \endcode
 
 \sa savePosFile()
 */
-bool vpSimulatorViper850::readPosFile(const std::string &filename,
-                                      vpColVector &q)
+bool vpSimulatorViper850::readPosFile(const std::string &filename, vpColVector &q)
 {
   std::ifstream fd(filename.c_str(), std::ios::in);
 
@@ -2047,10 +1972,8 @@ bool vpSimulatorViper850::readPosFile(const std::string &filename,
   while (std::getline(fd, line)) {
     lineNum++;
     if (lineNum == 1) {
-      if (!(line.compare(0, id.size(), id) ==
-            0)) { // check if Viper850 position file
-        std::cout << "Error: this position file " << filename
-                  << " is not for Viper850 robot" << std::endl;
+      if (!(line.compare(0, id.size(), id) == 0)) { // check if Viper850 position file
+        std::cout << "Error: this position file " << filename << " is not for Viper850 robot" << std::endl;
         return false;
       }
     }
@@ -2059,8 +1982,7 @@ bool vpSimulatorViper850::readPosFile(const std::string &filename,
     }
     if ((line.compare(0, key.size(), key) == 0)) { // decode position
       // check if there are at least njoint values in the line
-      std::vector<std::string> chain =
-          vpIoTools::splitChain(line, std::string(" "));
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
       if (chain.size() < njoint + 1) // try to split with tab separator
         chain = vpIoTools::splitChain(line, std::string("\t"));
       if (chain.size() < njoint + 1)
@@ -2082,8 +2004,7 @@ bool vpSimulatorViper850::readPosFile(const std::string &filename,
   fd.close();
 
   if (!pos_found) {
-    std::cout << "Error: unable to find a position for Viper850 robot in "
-              << filename << std::endl;
+    std::cout << "Error: unable to find a position for Viper850 robot in " << filename << std::endl;
     return false;
   }
 
@@ -2111,8 +2032,7 @@ bool vpSimulatorViper850::readPosFile(const std::string &filename,
 
   \sa readPosFile()
 */
-bool vpSimulatorViper850::savePosFile(const std::string &filename,
-                                      const vpColVector &q)
+bool vpSimulatorViper850::savePosFile(const std::string &filename, const vpColVector &q)
 {
 
   FILE *fd;
@@ -2129,9 +2049,8 @@ bool vpSimulatorViper850::savePosFile(const std::string &filename,
 #\n\n");
 
   // Save positions in mm and deg
-  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n", vpMath::deg(q[0]),
-          vpMath::deg(q[1]), vpMath::deg(q[2]), vpMath::deg(q[3]),
-          vpMath::deg(q[4]), vpMath::deg(q[5]));
+  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n", vpMath::deg(q[0]), vpMath::deg(q[1]), vpMath::deg(q[2]),
+          vpMath::deg(q[3]), vpMath::deg(q[4]), vpMath::deg(q[5]));
 
   fclose(fd);
   return (true);
@@ -2166,10 +2085,7 @@ void vpSimulatorViper850::move(const char *filename)
   \param cMe : Transformation between the camera frame and the
   end-effector frame.
 */
-void vpSimulatorViper850::get_cMe(vpHomogeneousMatrix &cMe)
-{
-  vpViper850::get_cMe(cMe);
-}
+void vpSimulatorViper850::get_cMe(vpHomogeneousMatrix &cMe) { vpViper850::get_cMe(cMe); }
 
 /*!
   Get the twist transformation \f$^c{\bf V}_e\f$ from camera frame to
@@ -2259,12 +2175,10 @@ void vpSimulatorViper850::initArms()
   // set scene_dir from #define VISP_SCENE_DIR if it exists
   // VISP_SCENES_DIR may contain multiple locations separated by ";"
   std::string scene_dir_;
-  std::vector<std::string> scene_dirs =
-      vpIoTools::splitChain(std::string(VISP_SCENES_DIR), std::string(";"));
+  std::vector<std::string> scene_dirs = vpIoTools::splitChain(std::string(VISP_SCENES_DIR), std::string(";"));
   bool sceneDirExists = false;
   for (size_t i = 0; i < scene_dirs.size(); i++)
-    if (vpIoTools::checkDirectory(scene_dirs[i]) ==
-        true) { // directory exists
+    if (vpIoTools::checkDirectory(scene_dirs[i]) == true) { // directory exists
       scene_dir_ = scene_dirs[i];
       sceneDirExists = true;
       break;
@@ -2272,24 +2186,19 @@ void vpSimulatorViper850::initArms()
   if (!sceneDirExists) {
     try {
       scene_dir_ = vpIoTools::getenv("VISP_SCENES_DIR");
-      std::cout << "The simulator uses data from VISP_SCENES_DIR="
-                << scene_dir_ << std::endl;
+      std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir_ << std::endl;
     } catch (...) {
-      std::cout << "Cannot get VISP_SCENES_DIR environment variable"
-                << std::endl;
+      std::cout << "Cannot get VISP_SCENES_DIR environment variable" << std::endl;
     }
   }
 
-  unsigned int name_length =
-      30; // the size of this kind of string "/viper850_arm2.bnd"
+  unsigned int name_length = 30; // the size of this kind of string "/viper850_arm2.bnd"
   if (scene_dir_.size() > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Viper850 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Viper850 simulator");
 
   unsigned int full_length = (unsigned int)scene_dir_.size() + name_length;
   if (full_length > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Viper850 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Viper850 simulator");
 
   char *name_cam = new char[full_length];
 
@@ -2298,12 +2207,10 @@ void vpSimulatorViper850::initArms()
   set_scene(name_cam, &camera, cameraFactor);
 
   if (arm_dir.size() > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Viper850 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Viper850 simulator");
   full_length = (unsigned int)arm_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Viper850 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Viper850 simulator");
 
   char *name_arm = new char[full_length];
   strcpy(name_arm, arm_dir.c_str());
@@ -2362,17 +2269,13 @@ void vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I_)
   double v;
   // if(px_ext != 1 && py_ext != 1)
   // we assume px_ext and py_ext > 0
-  if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) *
-                                    std::numeric_limits<double>::epsilon()) &&
-      (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) *
-                                   std::numeric_limits<double>::epsilon())) {
+  if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
+      (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I_.getWidth() / (2 * px_ext);
     v = (double)I_.getHeight() / (2 * py_ext);
   } else {
-    u = (double)I_.getWidth() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float w44o[4][4], w44cext[4][4], x, y, z;
@@ -2440,8 +2343,7 @@ void vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I_)
 
   \return false if the robot kinematics is not able to reach the cMo position.
 */
-bool vpSimulatorViper850::initialiseCameraRelativeToObject(
-    const vpHomogeneousMatrix &cMo_)
+bool vpSimulatorViper850::initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo_)
 {
   vpColVector stop(6);
   bool status = true;
@@ -2452,8 +2354,7 @@ bool vpSimulatorViper850::initialiseCameraRelativeToObject(
   fMc_ = fMo * cMo_.inverse();
 
   vpColVector articularCoordinates = get_artCoord();
-  unsigned int nbSol =
-      getInverseKinematics(fMc_, articularCoordinates, verbose_);
+  unsigned int nbSol = getInverseKinematics(fMc_, articularCoordinates, verbose_);
 
   if (nbSol == 0) {
     status = false;
@@ -2461,8 +2362,7 @@ bool vpSimulatorViper850::initialiseCameraRelativeToObject(
   }
 
   if (verbose_)
-    std::cout << "Used joint coordinates (rad): " << articularCoordinates.t()
-              << std::endl;
+    std::cout << "Used joint coordinates (rad): " << articularCoordinates.t() << std::endl;
 
   set_artCoord(articularCoordinates);
 
@@ -2484,8 +2384,7 @@ bool vpSimulatorViper850::initialiseCameraRelativeToObject(
 
   \param cMo_ : the desired pose of the camera.
 */
-void vpSimulatorViper850::initialiseObjectRelativeToCamera(
-    const vpHomogeneousMatrix &cMo_)
+void vpSimulatorViper850::initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo_)
 {
   vpColVector stop(6);
   stop = 0;

@@ -50,10 +50,8 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if ((defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                    \
-      defined(VISP_HAVE_GDI)) &&                                             \
-     (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                               \
-     (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if ((defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) &&                                   \
+     (VISP_HAVE_OPENCV_VERSION >= 0x020000) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
 
 #include <iomanip>
 #include <iostream>
@@ -75,9 +73,8 @@
 #define GETOPTARGS "hlcdb:i:p"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &isLearning,
-                std::string &dataFile, bool &click_allowed, bool &display,
-                bool &displayPoints, std::string &ipath);
+bool getOptions(int argc, const char **argv, bool &isLearning, std::string &dataFile, bool &click_allowed,
+                bool &display, bool &displayPoints, std::string &ipath);
 
 /*!
 
@@ -149,9 +146,8 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &isLearning,
-                std::string &dataFile, bool &click_allowed, bool &display,
-                bool &displayPoints, std::string &ipath)
+bool getOptions(int argc, const char **argv, bool &isLearning, std::string &dataFile, bool &click_allowed,
+                bool &display, bool &displayPoints, std::string &ipath)
 {
   const char *optarg_;
   int c;
@@ -223,8 +219,8 @@ int main(int argc, const char **argv)
     }
 
     // Read the command line options
-    if (getOptions(argc, argv, isLearning, dataFile, opt_click_allowed,
-                   opt_display, displayPoints, opt_ipath) == false) {
+    if (getOptions(argc, argv, isLearning, dataFile, opt_click_allowed, opt_display, displayPoints, opt_ipath) ==
+        false) {
       exit(-1);
     }
 
@@ -239,8 +235,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -249,13 +244,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -291,8 +283,7 @@ int main(int argc, const char **argv)
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable."
-                << std::endl;
+                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       exit(-1);
     }
 
@@ -331,16 +322,14 @@ int main(int argc, const char **argv)
           std::cout << corners[i] << std::endl;
         }
       } else {
-        corners[0].set_ij(50, I.getWidth() -
-                                  100); // small ROI for the automated test
+        corners[0].set_ij(50, I.getWidth() - 100); // small ROI for the automated test
         corners[1].set_ij(I.getHeight() - 100, I.getWidth() - 2);
       }
 
       if (opt_display) {
         // Display the rectangle which defines the part of the image where the
         // reference points are computed.
-        vpDisplay::displayRectangle(Iref, corners[0], corners[1],
-                                    vpColor::green);
+        vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
         vpDisplay::flush(Iref);
       }
 
@@ -360,12 +349,10 @@ int main(int argc, const char **argv)
       }
       double t0 = vpTime::measureTimeMs();
       planar.buildReference(Iref, roi);
-      std::cout << "build reference in " << vpTime::measureTimeMs() - t0
-                << " ms" << std::endl;
+      std::cout << "build reference in " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
       t0 = vpTime::measureTimeMs();
       planar.recordDetector(objectName, dataFile);
-      std::cout << "record detector in " << vpTime::measureTimeMs() - t0
-                << " ms" << std::endl;
+      std::cout << "record detector in " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
     } else {
       if (!vpIoTools::checkFilename(dataFile)) {
         vpERROR_TRACE("cannot load the database with the specified name. Has "
@@ -390,9 +377,7 @@ int main(int argc, const char **argv)
 
     if (opt_display && opt_click_allowed) {
       std::cout << "Click on the reference image to continue" << std::endl;
-      vpDisplay::displayText(Iref, vpImagePoint(15, 15),
-                             "Click on the reference image to continue",
-                             vpColor::red);
+      vpDisplay::displayText(Iref, vpImagePoint(15, 15), "Click on the reference image to continue", vpColor::red);
       vpDisplay::flush(Iref);
       vpDisplay::getClick(Iref);
     }
@@ -416,8 +401,7 @@ int main(int argc, const char **argv)
       double t0 = vpTime::measureTimeMs();
       // detection  of the reference planar surface
       bool isDetected = planar.matchPoint(I);
-      std::cout << "matching in " << vpTime::measureTimeMs() - t0 << " ms"
-                << std::endl;
+      std::cout << "matching in " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
 
       if (isDetected) {
         vpHomography H;
@@ -426,8 +410,7 @@ int main(int argc, const char **argv)
         if (opt_display) {
           if (isLearning) {
             vpDisplay::display(Iref);
-            vpDisplay::displayRectangle(Iref, corners[0], corners[1],
-                                        vpColor::green);
+            vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
             planar.display(Iref, I, displayPoints);
             vpDisplay::flush(Iref);
           } else {
@@ -455,8 +438,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-#if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                   \
-       defined(VISP_HAVE_GDI)))
+#if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
   vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
 #else
   vpERROR_TRACE("You do not have OpenCV-2.0.0 or a more recent release...");

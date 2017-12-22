@@ -65,33 +65,25 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   bool found_FeatureMoment_centered;
 
   bool found_featuremoment_basic;
-  vpFeatureMomentBasic &featureMomentBasic =
-      (static_cast<vpFeatureMomentBasic &>(featureMomentsDataBase->get(
-          "vpFeatureMomentBasic", found_featuremoment_basic)));
+  vpFeatureMomentBasic &featureMomentBasic = (static_cast<vpFeatureMomentBasic &>(
+      featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
 
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(
-          moments.get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
   const vpMomentObject &momentObject = moment->getObject();
-  const vpMomentAreaNormalized &momentSurfaceNormalized =
-      static_cast<const vpMomentAreaNormalized &>(moments.get(
-          "vpMomentAreaNormalized", found_moment_surface_normalized));
-  vpFeatureMomentCentered &featureMomentCentered =
-      (static_cast<vpFeatureMomentCentered &>(featureMomentsDataBase->get(
-          "vpFeatureMomentCentered", found_FeatureMoment_centered)));
+  const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
+      moments.get("vpMomentAreaNormalized", found_moment_surface_normalized));
+  vpFeatureMomentCentered &featureMomentCentered = (static_cast<vpFeatureMomentCentered &>(
+      featureMomentsDataBase->get("vpFeatureMomentCentered", found_FeatureMoment_centered)));
 
   if (!found_FeatureMoment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpFeatureMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
   if (!found_moment_surface_normalized)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentAreaNormalized not found");
+    throw vpException(vpException::notInitialized, "vpMomentAreaNormalized not found");
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
   if (!found_featuremoment_basic)
-    throw vpException(vpException::notInitialized,
-                      "vpFeatureMomentBasic not found");
+    throw vpException(vpException::notInitialized, "vpFeatureMomentBasic not found");
   interaction_matrices.resize(1);
   interaction_matrices[0].resize(1, 6);
   double normalized_multiplier;
@@ -99,16 +91,14 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   vpMatrix La;
   if (momentObject.getType() == vpMomentObject::DISCRETE) {
     a = momentCentered.get(2, 0) + momentCentered.get(0, 2);
-    La = featureMomentCentered.interaction(2, 0) +
-         featureMomentCentered.interaction(0, 2);
+    La = featureMomentCentered.interaction(2, 0) + featureMomentCentered.interaction(0, 2);
   } else {
     a = momentObject.get(0, 0);
     La = featureMomentBasic.interaction(0, 0);
   }
 
   normalized_multiplier =
-      (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) *
-      sqrt(momentSurfaceNormalized.getDesiredSurface() / a);
+      (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) * sqrt(momentSurfaceNormalized.getDesiredSurface() / a);
   interaction_matrices[0] = normalized_multiplier * La;
 }
 
@@ -139,25 +129,19 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   bool found_moment_gravity;
 
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(
-          moments.get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(
-          moments.get("vpMomentGravityCenter", found_moment_gravity));
+      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
   const vpMomentObject &momentObject = moment->getObject();
-  const vpMomentAreaNormalized &momentSurfaceNormalized =
-      static_cast<const vpMomentAreaNormalized &>(moments.get(
-          "vpMomentAreaNormalized", found_moment_surface_normalized));
+  const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
+      moments.get("vpMomentAreaNormalized", found_moment_surface_normalized));
 
   if (!found_moment_surface_normalized)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentAreaNormalized not found");
+    throw vpException(vpException::notInitialized, "vpMomentAreaNormalized not found");
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
   if (!found_moment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
   interaction_matrices.resize(1);
   interaction_matrices[0].resize(1, 6);
   double n11 = momentCentered.get(1, 1) / momentObject.get(0, 0);
@@ -189,10 +173,8 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
     Anvx = An * A * e20 + An * B * e11;
     Anvy = An * A * e11 + An * B * e02;
 
-    Anwx =
-        (n02 * e01 + n11 * e10 - e03 - e21) * An - Xn * e11 + (-1 - e02) * Yn;
-    Anwy =
-        (e12 + e30 - n11 * e01 - n20 * e10) * An + (2 - e02) * Xn + Yn * e11;
+    Anwx = (n02 * e01 + n11 * e10 - e03 - e21) * An - Xn * e11 + (-1 - e02) * Yn;
+    Anwy = (e12 + e30 - n11 * e01 - n20 * e10) * An + (2 - e02) * Xn + Yn * e11;
 
     Anvz = -An * C + B * Anwx - A * Anwy;
 

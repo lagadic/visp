@@ -81,11 +81,9 @@ public:
   // void buildFrom(const vpPoint &p) ;
   void buildFrom(const double _x, const double _y);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   //! feature duplication
@@ -93,8 +91,7 @@ public:
 
   //! compute the error between two visual features from a subset
   //! a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
   //! compute the error between a visual features and zero
   vpColVector error(const unsigned int select = FEATURE_ALL);
 

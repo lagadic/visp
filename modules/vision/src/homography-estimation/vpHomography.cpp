@@ -63,37 +63,29 @@ vpHomography::vpHomography() : vpArray2D<double>(3, 3), aMb(), bP() { eye(); }
   \brief initialize an homography from another homography
 */
 
-vpHomography::vpHomography(const vpHomography &H)
-  : vpArray2D<double>(3, 3), aMb(), bP()
-{
-  *this = H;
-}
+vpHomography::vpHomography(const vpHomography &H) : vpArray2D<double>(3, 3), aMb(), bP() { *this = H; }
 
 /*!
   \brief initialize an homography from another homography
 */
-vpHomography::vpHomography(const vpHomogeneousMatrix &M, const vpPlane &p)
-  : vpArray2D<double>(3, 3), aMb(), bP()
+vpHomography::vpHomography(const vpHomogeneousMatrix &M, const vpPlane &p) : vpArray2D<double>(3, 3), aMb(), bP()
 {
   buildFrom(M, p);
 }
 
-vpHomography::vpHomography(const vpThetaUVector &tu,
-                           const vpTranslationVector &atb, const vpPlane &p)
+vpHomography::vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
   : vpArray2D<double>(3, 3), aMb(), bP()
 {
   buildFrom(tu, atb, p);
 }
 
-vpHomography::vpHomography(const vpRotationMatrix &aRb,
-                           const vpTranslationVector &atb, const vpPlane &p)
+vpHomography::vpHomography(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &p)
   : vpArray2D<double>(3, 3), aMb(), bP()
 {
   buildFrom(aRb, atb, p);
 }
 
-vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p)
-  : vpArray2D<double>(3, 3), aMb(), bP()
+vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p) : vpArray2D<double>(3, 3), aMb(), bP()
 {
   buildFrom(arb, p);
 }
@@ -105,8 +97,7 @@ void vpHomography::buildFrom(const vpHomogeneousMatrix &M, const vpPlane &p)
   build();
 }
 
-void vpHomography::buildFrom(const vpThetaUVector &tu,
-                             const vpTranslationVector &atb, const vpPlane &p)
+void vpHomography::buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
 {
   insert(tu);
   insert(atb);
@@ -114,8 +105,7 @@ void vpHomography::buildFrom(const vpThetaUVector &tu,
   build();
 }
 
-void vpHomography::buildFrom(const vpRotationMatrix &aRb,
-                             const vpTranslationVector &atb, const vpPlane &p)
+void vpHomography::buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &p)
 {
   insert(aRb);
   insert(atb);
@@ -206,8 +196,7 @@ void vpHomography::save(std::ofstream &f) const
   if (!f.fail()) {
     f << *this;
   } else {
-    throw(vpException(vpException::ioError,
-                      "Cannot write the homography to the output stream"));
+    throw(vpException(vpException::ioError, "Cannot write the homography to the output stream"));
   }
 }
 
@@ -247,10 +236,8 @@ vpHomography vpHomography::operator*(const vpHomography &H) const
 vpColVector vpHomography::operator*(const vpColVector &b) const
 {
   if (b.size() != 3)
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot multiply an homography by a vector of dimension %d",
-        b.size()));
+    throw(vpException(vpException::dimensionError, "Cannot multiply an homography by a vector of dimension %d",
+                      b.size()));
 
   vpColVector a(3);
   for (unsigned int i = 0; i < 3; i++) {
@@ -333,8 +320,7 @@ vpHomography vpHomography::operator/(const double &v) const
 {
   vpHomography H;
   if (std::fabs(v) <= std::numeric_limits<double>::epsilon())
-    throw vpMatrixException(vpMatrixException::divideByZeroError,
-                            "Divide by zero in method /=(double v)");
+    throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /=(double v)");
 
   double vinv = 1 / v;
 
@@ -350,8 +336,7 @@ vpHomography &vpHomography::operator/=(double v)
 {
   // if (x == 0)
   if (std::fabs(v) <= std::numeric_limits<double>::epsilon())
-    throw vpMatrixException(vpMatrixException::divideByZeroError,
-                            "Divide by zero in method /=(double v)");
+    throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /=(double v)");
 
   double vinv = 1 / v;
 
@@ -386,8 +371,7 @@ vpHomography &vpHomography::operator=(const vpHomography &H)
 vpHomography &vpHomography::operator=(const vpMatrix &H)
 {
   if (H.getRows() != 3 || H.getCols() != 3)
-    throw(vpException(vpException::dimensionError,
-                      "The matrix is not an homography"));
+    throw(vpException(vpException::dimensionError, "The matrix is not an homography"));
 
   for (unsigned int i = 0; i < 3; i++)
     for (unsigned int j = 0; j < 3; j++)
@@ -412,8 +396,7 @@ void vpHomography::load(std::ifstream &f)
         f >> (*this)[i][j];
       }
   } else {
-    throw(vpException(vpException::ioError,
-                      "Cannot read the homography from the input stream"));
+    throw(vpException(vpException::ioError, "Cannot read the homography from the input stream"));
   }
 }
 
@@ -438,11 +421,9 @@ void vpHomography::build()
   bP.getNormal(n);
 
   double d = bP.getD();
-  vpMatrix aHb =
-      aRb -
-      atb * n.t() / d; // the d used in the equation is such as nX=d is the
-                       // plane equation. So if the plane is described by
-                       // Ax+By+Cz+D=0, d=-D
+  vpMatrix aHb = aRb - atb * n.t() / d; // the d used in the equation is such as nX=d is the
+                                        // plane equation. So if the plane is described by
+                                        // Ax+By+Cz+D=0, d=-D
 
   for (unsigned int i = 0; i < 3; i++)
     for (unsigned int j = 0; j < 3; j++)
@@ -457,8 +438,7 @@ void vpHomography::build()
   \f]
   //note d => -d verifier
 */
-void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb,
-                         const vpPlane &bP)
+void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, const vpPlane &bP)
 {
   vpColVector n(3);
   vpColVector atb(3);
@@ -472,11 +452,9 @@ void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb,
   bP.getNormal(n);
 
   double d = bP.getD();
-  vpMatrix aHb_ =
-      aRb -
-      atb * n.t() / d; // the d used in the equation is such as nX=d is the
-                       // plane equation. So if the plane is described by
-                       // Ax+By+Cz+D=0, d=-D
+  vpMatrix aHb_ = aRb - atb * n.t() / d; // the d used in the equation is such as nX=d is the
+                                         // plane equation. So if the plane is described by
+                                         // Ax+By+Cz+D=0, d=-D
 
   for (unsigned int i = 0; i < 3; i++)
     for (unsigned int j = 0; j < 3; j++)
@@ -519,9 +497,7 @@ void vpHomography::setIdentity() { eye(); }
   \return The coordinates in pixel of the point with coordinates
   \f$(u_b,v_b)\f$.
   */
-vpImagePoint vpHomography::project(const vpCameraParameters &cam,
-                                   const vpHomography &bHa,
-                                   const vpImagePoint &iPa)
+vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomography &bHa, const vpImagePoint &iPa)
 {
   double xa = iPa.get_u();
   double ya = iPa.get_v();
@@ -592,23 +568,17 @@ vpPoint vpHomography::project(const vpHomography &bHa, const vpPoint &Pa)
 
   \sa DLT(), ransac()
  */
-void vpHomography::robust(const std::vector<double> &xb,
-                          const std::vector<double> &yb,
-                          const std::vector<double> &xa,
-                          const std::vector<double> &ya, vpHomography &aHb,
-                          std::vector<bool> &inliers, double &residual,
-                          double weights_threshold, unsigned int niter,
-                          bool normalization)
+void vpHomography::robust(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                          const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inliers,
+                          double &residual, double weights_threshold, unsigned int niter, bool normalization)
 {
   unsigned int n = (unsigned int)xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for robust homography estimation"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for robust homography estimation"));
 
   // 4 point are required
   if (n < 4)
-    throw(vpException(vpException::fatalError,
-                      "There must be at least 4 matched points"));
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
   try {
     std::vector<double> xan, yan, xbn, ybn;
@@ -711,8 +681,7 @@ void vpHomography::robust(const std::vector<double> &xb,
 
     if (normalization) {
       // H after denormalization
-      vpHomography::HartleyDenormalization(aHbn, aHb, xg1, yg1, coef1, xg2,
-                                           yg2, coef2);
+      vpHomography::HartleyDenormalization(aHbn, aHb, xg1, yg1, coef1, xg2, yg2, coef2);
     } else {
       aHb = aHbn;
     }
@@ -736,8 +705,7 @@ void vpHomography::robust(const std::vector<double> &xb,
 
     residual = sqrt(residual / nbinliers);
   } catch (...) {
-    throw(vpException(vpException::fatalError,
-                      "Cannot estimate an homography"));
+    throw(vpException(vpException::fatalError, "Cannot estimate an homography"));
   }
 }
 

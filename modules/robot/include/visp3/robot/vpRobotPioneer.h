@@ -66,9 +66,7 @@
   about the model of the robot, see vpPioneer documentation.
 
 */
-class VISP_EXPORT vpRobotPioneer : public vpRobot,
-                                   public vpPioneer,
-                                   public ArRobot
+class VISP_EXPORT vpRobotPioneer : public vpRobot, public vpPioneer, public ArRobot
 {
 private: /* Not allowed functions. */
   /*!
@@ -105,12 +103,10 @@ private: // Set as private since not implemented
     Get a displacement (frame as to ve specified) between two successive
     position control. \warning Not implemented.
   */
-  void getDisplacement(const vpRobot::vpControlFrameType /*frame*/,
-                       vpColVector & /*q*/){};
+  void getDisplacement(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/){};
 
 public:
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &velocity);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity);
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
 
 private: // Set as private since not implemented
@@ -118,8 +114,7 @@ private: // Set as private since not implemented
     Get the robot position (frame has to be specified).
     \warning Not implemented.
   */
-  void getPosition(const vpRobot::vpControlFrameType /*frame*/,
-                   vpColVector & /*q*/){};
+  void getPosition(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/){};
 
 public:
   void init();
@@ -129,12 +124,10 @@ private: // Set as private since not implemented
     Set a displacement (frame has to be specified) in position control.
     \warning Not implemented.
   */
-  void setPosition(const vpRobot::vpControlFrameType /*frame*/,
-                   const vpColVector & /*q*/){};
+  void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/){};
 
 public:
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
 
   /*!
     Enable or disable sonar device usage.

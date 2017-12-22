@@ -7,9 +7,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 //! [Include]
 #include <visp3/imgproc/vpImgproc.h>
 //! [Include]
@@ -17,8 +15,7 @@
 namespace
 {
 //! [Bresenham's line algorithm]
-vpImagePoint switchToOctantZeroFrom(const int octant,
-                                    const vpImagePoint &imPt)
+vpImagePoint switchToOctantZeroFrom(const int octant, const vpImagePoint &imPt)
 {
   vpImagePoint imPt_switched = imPt;
 
@@ -62,8 +59,7 @@ vpImagePoint switchToOctantZeroFrom(const int octant,
   return imPt_switched;
 }
 
-vpImagePoint switchFromOctantZeroTo(const int octant,
-                                    const vpImagePoint &imPt)
+vpImagePoint switchFromOctantZeroTo(const int octant, const vpImagePoint &imPt)
 {
   vpImagePoint imPt_switched = imPt;
 
@@ -139,8 +135,8 @@ int getOctant(const vpImagePoint &imPt1, const vpImagePoint &imPt2)
   }
 }
 
-void drawLine(vpImage<unsigned char> &I, const unsigned char value,
-              const vpImagePoint &imPt1_, const vpImagePoint &imPt2_)
+void drawLine(vpImage<unsigned char> &I, const unsigned char value, const vpImagePoint &imPt1_,
+              const vpImagePoint &imPt2_)
 {
   vpImagePoint imPt1((int)imPt1_.get_v(), (int)imPt1_.get_u());
   vpImagePoint imPt2((int)imPt2_.get_v(), (int)imPt2_.get_u());
@@ -158,10 +154,8 @@ void drawLine(vpImage<unsigned char> &I, const unsigned char value,
     vpImagePoint currentPt(y, x);
     currentPt = switchFromOctantZeroTo(octant, currentPt);
 
-    unsigned int i = std::min(I.getHeight() - 1,
-                              (unsigned int)std::max(0.0, currentPt.get_i()));
-    unsigned int j = std::min(I.getWidth() - 1,
-                              (unsigned int)std::max(0.0, currentPt.get_j()));
+    unsigned int i = std::min(I.getHeight() - 1, (unsigned int)std::max(0.0, currentPt.get_i()));
+    unsigned int j = std::min(I.getWidth() - 1, (unsigned int)std::max(0.0, currentPt.get_j()));
     I[i][j] = value;
 
     if (D >= 0) {
@@ -180,9 +174,7 @@ void drawLine(vpImage<unsigned char> &I, const unsigned char value,
 int main()
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
   //! [Create bitmap]
@@ -228,11 +220,9 @@ int main()
       continue;
 
     for (size_t j = 0; j < polygons[i].getCorners().size() - 1; j++)
-      drawLine(mask, 255, polygons[i].getCorners()[j],
-               polygons[i].getCorners()[j + 1]);
+      drawLine(mask, 255, polygons[i].getCorners()[j], polygons[i].getCorners()[j + 1]);
 
-    drawLine(mask, 255, polygons[i].getCorners().front(),
-             polygons[i].getCorners().back());
+    drawLine(mask, 255, polygons[i].getCorners().front(), polygons[i].getCorners().back());
   }
   //! [Draw polygon lines]
 

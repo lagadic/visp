@@ -141,16 +141,12 @@ int main()
     // exit(1) ;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the joint space"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the joint space" << std::endl;
     std::cout << " Use of the Afma6 robot " << std::endl;
     std::cout << " task : servo a point " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     vpDot2 dot;
@@ -167,8 +163,7 @@ int main()
 
     vpTRACE("sets the current position of the visual feature ");
     vpFeaturePoint p;
-    vpFeatureBuilder::create(
-        p, cam, dot); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p, cam, dot); // retrieve x,y and Z of the vpPoint structure
 
     p.set_Z(1);
     vpTRACE("sets the desired position of the visual feature ");
@@ -248,8 +243,7 @@ int main()
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to joint translation velocities in m/s
       // v[3], v[4], v[5] correspond to joint rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
-           << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -259,8 +253,7 @@ int main()
       //   velocities in m/s
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
-      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3]
-           << " " << qvel[4] << " " << qvel[5] << " ";
+      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -270,8 +263,7 @@ int main()
       //   positions in m
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
-      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4]
-           << " " << q[5] << " ";
+      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is

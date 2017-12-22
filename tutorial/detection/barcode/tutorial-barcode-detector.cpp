@@ -11,9 +11,8 @@
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) &&                  \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) &&                                                            \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
   try {
     vpImage<unsigned char> I;
@@ -38,10 +37,7 @@ int main(int argc, const char **argv)
       if (std::string(argv[i]) == "--code-type")
         opt_barcode = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout
-            << "Usage: " << argv[0]
-            << " [--code-type <0 for QRcode | 1 for DataMatrix>] [--help]"
-            << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--code-type <0 for QRcode | 1 for DataMatrix>] [--help]" << std::endl;
         return 0;
       }
     }
@@ -68,8 +64,7 @@ int main(int argc, const char **argv)
     //! [Detection]
     std::ostringstream legend;
     legend << detector->getNbObjects() << " bar code detected";
-    vpDisplay::displayText(I, (int)I.getHeight() - 30, 10, legend.str(),
-                           vpColor::red);
+    vpDisplay::displayText(I, (int)I.getHeight() - 30, 10, legend.str(), vpColor::red);
 
     //! [Parse detected codes]
     if (status) {
@@ -81,21 +76,18 @@ int main(int argc, const char **argv)
         //! [Get location]
         vpDisplay::displayRectangle(I, bbox, vpColor::green);
         //! [Get message]
-        vpDisplay::displayText(
-            I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(),
-            "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
+        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(),
+                               "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
         //! [Get message]
         for (size_t j = 0; j < p.size(); j++) {
           vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
           std::ostringstream number;
           number << j;
-          vpDisplay::displayText(I, p[j] + vpImagePoint(15, 5), number.str(),
-                                 vpColor::blue);
+          vpDisplay::displayText(I, p[j] + vpImagePoint(15, 5), number.str(), vpColor::blue);
         }
       }
 
-      vpDisplay::displayText(I, (int)I.getHeight() - 15, 10,
-                             "A click to quit...", vpColor::red);
+      vpDisplay::displayText(I, (int)I.getHeight() - 15, 10, "A click to quit...", vpColor::red);
       vpDisplay::flush(I);
       vpDisplay::getClick(I);
     }

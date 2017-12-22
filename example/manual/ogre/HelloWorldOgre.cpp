@@ -56,8 +56,7 @@ int main()
 {
   try {
 #if defined(VISP_HAVE_OGRE)
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) ||                  \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
     // Image to stock gathered data
     // Here we acquire a color image. The consequence will be that
@@ -126,8 +125,7 @@ int main()
     // - rotation of 180 deg along robot x axis to have head over feet
     // - rotation of -90 deg along y axis to have robot facing the camera
     ogre.setScale("Robot", 0.001f, 0.001f, 0.001f);
-    ogre.setRotation("Robot",
-                     vpRotationMatrix(vpRxyzVector(M_PI, -M_PI / 2, 0)));
+    ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI, -M_PI / 2, 0)));
 
     // Update projection matrix
     cMo[2][3] = 0.5; // Z = 0.5 meter
@@ -150,8 +148,7 @@ int main()
       ogre.display(I, cMo);
     }
 #else
-    std::cout << "You need an available framegrabber to run this example"
-              << std::endl;
+    std::cout << "You need an available framegrabber to run this example" << std::endl;
 #endif
 #else
     std::cout << "You need Ogre3D to run this example" << std::endl;

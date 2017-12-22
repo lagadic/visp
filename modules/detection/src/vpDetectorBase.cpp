@@ -42,9 +42,7 @@
 /*!
         Default constructor.
 */
-vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0)
-{
-}
+vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0) {}
 
 /*!
         Returns ith object container box as a vector of points.
@@ -54,10 +52,8 @@ std::vector<vpImagePoint> &vpDetectorBase::getPolygon(size_t i)
   if (i < m_polygon.size())
     return m_polygon[i];
   else
-    throw(vpException(
-        vpException::badValue,
-        "Bad index to retrieve object %d. Only %d objects are detected.", i,
-        m_polygon.size()));
+    throw(vpException(vpException::badValue, "Bad index to retrieve object %d. Only %d objects are detected.", i,
+                      m_polygon.size()));
 }
 
 /*!
@@ -68,10 +64,8 @@ std::string &vpDetectorBase::getMessage(size_t i)
   if (i < m_polygon.size())
     return m_message[i];
   else
-    throw(vpException(
-        vpException::badValue,
-        "Bad index to retrieve object %d . Only %d objects are detected.", i,
-        m_polygon.size()));
+    throw(vpException(vpException::badValue, "Bad index to retrieve object %d . Only %d objects are detected.", i,
+                      m_polygon.size()));
 }
 
 /*!

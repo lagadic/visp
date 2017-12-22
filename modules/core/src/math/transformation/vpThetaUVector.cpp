@@ -52,18 +52,13 @@ const double vpThetaUVector::minimum = 0.0001;
 /*! Default constructor that initialize all the 3 angles to zero. */
 vpThetaUVector::vpThetaUVector() : vpRotationVector(3) {}
 /*! Copy constructor. */
-vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu)
-  : vpRotationVector(tu)
-{
-}
+vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu) : vpRotationVector(tu) {}
 /*! Copy constructor from a 3-dimension vector. */
 vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(3)
 {
   if (tu.size() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot construct a theta-u vector from a %d-dimension col vector",
-        tu.size()));
+    throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension col vector",
+                      tu.size()));
   }
   for (unsigned int i = 0; i < 3; i++)
     data[i] = tu[i];
@@ -72,67 +67,41 @@ vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(3)
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from an homogeneous matrix.
 */
-vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix &M)
-  : vpRotationVector(3)
-{
-  buildFrom(M);
-}
+vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix &M) : vpRotationVector(3) { buildFrom(M); }
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from a pose vector.
 */
-vpThetaUVector::vpThetaUVector(const vpPoseVector &p) : vpRotationVector(3)
-{
-  buildFrom(p);
-}
+vpThetaUVector::vpThetaUVector(const vpPoseVector &p) : vpRotationVector(3) { buildFrom(p); }
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from a rotation matrix.
 */
-vpThetaUVector::vpThetaUVector(const vpRotationMatrix &R)
-  : vpRotationVector(3)
-{
-  buildFrom(R);
-}
+vpThetaUVector::vpThetaUVector(const vpRotationMatrix &R) : vpRotationVector(3) { buildFrom(R); }
 
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-x
 representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpRzyxVector &rzyx) : vpRotationVector(3)
-{
-  buildFrom(rzyx);
-}
+vpThetaUVector::vpThetaUVector(const vpRzyxVector &rzyx) : vpRotationVector(3) { buildFrom(rzyx); }
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-z
 representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpRzyzVector &rzyz) : vpRotationVector(3)
-{
-  buildFrom(rzyz);
-}
+vpThetaUVector::vpThetaUVector(const vpRzyzVector &rzyz) : vpRotationVector(3) { buildFrom(rzyz); }
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from an Euler x-y-z
 representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpRxyzVector &rxyz) : vpRotationVector(3)
-{
-  buildFrom(rxyz);
-}
+vpThetaUVector::vpThetaUVector(const vpRxyzVector &rxyz) : vpRotationVector(3) { buildFrom(rxyz); }
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from a quaternion
 representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q)
-  : vpRotationVector(4)
-{
-  buildFrom(q);
-}
+vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(4) { buildFrom(q); }
 
 /*!
   Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
 */
-vpThetaUVector::vpThetaUVector(const double tux, const double tuy,
-                               const double tuz)
-  : vpRotationVector(3)
+vpThetaUVector::vpThetaUVector(const double tux, const double tuy, const double tuz) : vpRotationVector(3)
 {
   buildFrom(tux, tuy, tuz);
 }
@@ -168,8 +137,7 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
 {
   double s, c, theta;
 
-  s = (R[1][0] - R[0][1]) * (R[1][0] - R[0][1]) +
-      (R[2][0] - R[0][2]) * (R[2][0] - R[0][2]) +
+  s = (R[1][0] - R[0][1]) * (R[1][0] - R[0][1]) + (R[2][0] - R[0][2]) * (R[2][0] - R[0][2]) +
       (R[2][1] - R[1][2]) * (R[2][1] - R[1][2]);
   s = sqrt(s) / 2.0;
   c = (R[0][0] + R[1][1] + R[2][2] - 1.0) / 2.0;
@@ -312,10 +280,8 @@ int main()
 vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
 {
   if (tu.size() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot set a theta-u vector from a %d-dimension col vector",
-        tu.size()));
+    throw(vpException(vpException::dimensionError, "Cannot set a theta-u vector from a %d-dimension col vector",
+                      tu.size()));
   }
   for (unsigned int i = 0; i < 3; i++)
     data[i] = tu[i];
@@ -339,8 +305,7 @@ vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
 
 int main()
 {
-  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20),
-vpMath::rad(30));
+  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
 
   double theta;
   vpColVector u;
@@ -379,21 +344,16 @@ representation.
 
 int main()
 {
-  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20),
-vpMath::rad(30));
+  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
 
-  std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta()
-<< std::endl; std::cout << "u    : " <<
-M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
+  std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta() << std::endl;
+  std::cout << "u    : " << M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
 }
   \endcode
 
   \sa getTheta(), extract()
 */
-double vpThetaUVector::getTheta() const
-{
-  return sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
-}
+double vpThetaUVector::getTheta() const { return sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]); }
 
 /*!
 
@@ -409,12 +369,10 @@ representation.
 
 int main()
 {
-  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20),
-vpMath::rad(30));
+  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), pMath::rad(30));
 
-  std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta()
-<< std::endl; std::cout << "u    : " <<
-M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
+  std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta() << std::endl;
+  std::cout << "u    : " << M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
 }
   \endcode
 
@@ -438,8 +396,7 @@ vpColVector vpThetaUVector::getU() const
 /*!
   Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
 */
-void vpThetaUVector::buildFrom(const double tux, const double tuy,
-                               const double tuz)
+void vpThetaUVector::buildFrom(const double tux, const double tuy, const double tuz)
 {
   data[0] = tux;
   data[1] = tuy;

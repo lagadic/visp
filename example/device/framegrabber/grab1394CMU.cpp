@@ -60,10 +60,8 @@
 // List of allowed command line options
 #define GETOPTARGS "dhn:o:"
 
-void usage(const char *name, const char *badparam, unsigned &nframes,
-           std::string &opath);
-bool getOptions(int argc, const char **argv, bool &display,
-                unsigned int &nframes, bool &save, std::string &opath);
+void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath);
+bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframes, bool &save, std::string &opath);
 
 /*!
 
@@ -75,8 +73,7 @@ bool getOptions(int argc, const char **argv, bool &display,
   \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned &nframes,
-           std::string &opath)
+void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath)
 {
   fprintf(stdout, "\n\
 Acquire images using CMU 1394 Digital Camera SDK (available under Windows only) and display\n\
@@ -122,8 +119,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &display,
-                unsigned int &nframes, bool &save, std::string &opath)
+bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframes, bool &save, std::string &opath)
 {
   const char *optarg_;
   int c;
@@ -202,19 +198,16 @@ int main(int argc, const char **argv)
   vp1394CMUGrabber g;
   unsigned short gain_min, gain_max;
   g.getGainMinMax(gain_min, gain_max);
-  std::cout << "Gain range [" << gain_min << ", " << gain_max << "]"
-            << std::endl;
+  std::cout << "Gain range [" << gain_min << ", " << gain_max << "]" << std::endl;
   unsigned short shutter_min, shutter_max;
   g.getShutterMinMax(shutter_min, shutter_max);
-  std::cout << "Shutter range [" << shutter_min << ", " << shutter_max << "]"
-            << std::endl;
+  std::cout << "Shutter range [" << shutter_min << ", " << shutter_max << "]" << std::endl;
   g.setFramerate(4); // 30 fps
   std::cout << "Actual framerate: " << g.getFramerate() << std::endl;
   g.setVideoMode(0, 0);
   g.acquire(I);
 
-  std::cout << "Image size: width : " << I.getWidth()
-            << " height: " << I.getHeight() << std::endl;
+  std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
 #if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
@@ -263,8 +256,7 @@ int main(int argc, const char **argv)
       ttotal += tloop;
     }
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
-    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps"
-              << std::endl;
+    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
   } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
@@ -273,8 +265,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "This example requires CMU 1394 Digital Camera SDK. "
-            << std::endl;
+  std::cout << "This example requires CMU 1394 Digital Camera SDK. " << std::endl;
   return 0;
 }
 #endif

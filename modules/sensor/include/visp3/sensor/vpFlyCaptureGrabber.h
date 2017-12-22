@@ -88,8 +88,7 @@ int main()
   vpImage<unsigned char> I;
   char filename[255];
   vpFlyCaptureGrabber g;
-  std::cout << "Number of cameras detected: " << g.getNumCameras() <<
-std::endl;
+  std::cout << "Number of cameras detected: " << g.getNumCameras() << std::endl;
 
   g.setCameraIndex(0); // Default camera is the first on the bus
   g.getCameraInfo(std::cout);
@@ -161,10 +160,9 @@ public:
   void disconnect();
 
   float getBrightness();
-  std::ostream &
-  getCameraInfo(std::ostream &os); // Cannot be const since
-                                   // FlyCapture2::Camera::GetCameraInfo()
-                                   // isn't
+  std::ostream &getCameraInfo(std::ostream &os); // Cannot be const since
+                                                 // FlyCapture2::Camera::GetCameraInfo()
+                                                 // isn't
   FlyCapture2::Camera *getCameraHandler();
   /*! Return the index of the active camera. */
   unsigned int getCameraIndex() const { return m_index; };
@@ -183,8 +181,7 @@ public:
   //! Return true if the camera capture is started.
   bool isCaptureStarted() const { return m_capture; }
   bool isFormat7Supported(FlyCapture2::Mode format7_mode);
-  bool isVideoModeAndFrameRateSupported(FlyCapture2::VideoMode video_mode,
-                                        FlyCapture2::FrameRate frame_rate);
+  bool isVideoModeAndFrameRateSupported(FlyCapture2::VideoMode video_mode, FlyCapture2::FrameRate frame_rate);
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);
 
@@ -195,18 +192,14 @@ public:
   void setCameraIndex(unsigned int index);
   void setCameraPower(bool on);
   void setCameraSerial(unsigned int serial);
-  float setExposure(bool exposure_on, bool exposure_auto,
-                    float exposure_value = 0);
+  float setExposure(bool exposure_on, bool exposure_auto, float exposure_value = 0);
   float setGain(bool gain_auto, float gain_value = 0);
-  void setFormat7VideoMode(FlyCapture2::Mode format7_mode,
-                           FlyCapture2::PixelFormat pixel_format,
-                           unsigned int width, unsigned int height);
+  void setFormat7VideoMode(FlyCapture2::Mode format7_mode, FlyCapture2::PixelFormat pixel_format, unsigned int width,
+                           unsigned int height);
   float setFrameRate(float frame_rate);
-  unsigned int setSharpness(bool sharpness_on, bool sharpness_auto,
-                            unsigned int sharpness_value = 0);
+  unsigned int setSharpness(bool sharpness_on, bool sharpness_auto, unsigned int sharpness_value = 0);
   float setShutter(bool auto_shutter, float shutter_ms = 10);
-  void setVideoModeAndFrameRate(FlyCapture2::VideoMode video_mode,
-                                FlyCapture2::FrameRate frame_rate);
+  void setVideoModeAndFrameRate(FlyCapture2::VideoMode video_mode, FlyCapture2::FrameRate frame_rate);
 
   void startCapture();
   void stopCapture();
@@ -216,14 +209,11 @@ protected:
     ABS_VALUE, //!< Consider FlyCapture2::Property::absValue
     VALUE_A,   //!< Consider FlyCapture2::Property::valueA
   } PropertyValue;
-  std::pair<unsigned int, unsigned int>
-  centerRoi(unsigned int size, unsigned int max_size, unsigned int step);
+  std::pair<unsigned int, unsigned int> centerRoi(unsigned int size, unsigned int max_size, unsigned int step);
   FlyCapture2::Property getProperty(FlyCapture2::PropertyType prop_type);
-  FlyCapture2::PropertyInfo
-  getPropertyInfo(FlyCapture2::PropertyType prop_type);
+  FlyCapture2::PropertyInfo getPropertyInfo(FlyCapture2::PropertyType prop_type);
   void open();
-  void setProperty(const FlyCapture2::PropertyType &prop_type, bool on,
-                   bool auto_on, float value,
+  void setProperty(const FlyCapture2::PropertyType &prop_type, bool on, bool auto_on, float value,
                    PropertyValue prop_value = ABS_VALUE);
 
 protected:

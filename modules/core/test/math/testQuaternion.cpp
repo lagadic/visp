@@ -56,26 +56,19 @@ int main()
     std::cout << "q3=" << q3 << std::endl;
     if (!vpMath::equal(q3.x(), 2.6, std::numeric_limits<double>::epsilon()) ||
         !vpMath::equal(q3.y(), 0.4, std::numeric_limits<double>::epsilon()) ||
-        !vpMath::equal(q3.z(), -3.0,
-                       std::numeric_limits<double>::epsilon()) ||
+        !vpMath::equal(q3.z(), -3.0, std::numeric_limits<double>::epsilon()) ||
         !vpMath::equal(q3.w(), 4.0, std::numeric_limits<double>::epsilon())) {
-      throw vpException(vpException::fatalError,
-                        "Problem with addition of two quaternions !");
+      throw vpException(vpException::fatalError, "Problem with addition of two quaternions !");
     }
 
     // Test subtraction of two quaternions
     vpQuaternionVector q4 = q3 - q1;
     std::cout << "q4=" << q4 << std::endl;
-    if (!vpMath::equal(q4.x(), q2.x(),
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q4.y(), q2.y(),
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q4.z(), q2.z(),
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q4.w(), q2.w(),
-                       std::numeric_limits<double>::epsilon() * 1e4)) {
-      throw vpException(vpException::fatalError,
-                        "Problem with subtraction of two quaternions !");
+    if (!vpMath::equal(q4.x(), q2.x(), std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q4.y(), q2.y(), std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q4.z(), q2.z(), std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q4.w(), q2.w(), std::numeric_limits<double>::epsilon() * 1e4)) {
+      throw vpException(vpException::fatalError, "Problem with subtraction of two quaternions !");
     }
 
     // Test multiplication of two quaternions
@@ -84,61 +77,44 @@ int main()
     vpQuaternionVector q6(3.9, -1.0, -3.0, 4.0);
     vpQuaternionVector q7 = q5 * q6;
     std::cout << "q7=" << q7 << std::endl;
-    if (!vpMath::equal(q7.x(), 3.0,
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q7.y(), 36.7,
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q7.z(), -6.6,
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q7.w(), 1.3,
-                       std::numeric_limits<double>::epsilon() * 1e4)) {
-      throw vpException(vpException::fatalError,
-                        "Problem with multiplication of two quaternions !");
+    if (!vpMath::equal(q7.x(), 3.0, std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q7.y(), 36.7, std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q7.z(), -6.6, std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q7.w(), 1.3, std::numeric_limits<double>::epsilon() * 1e4)) {
+      throw vpException(vpException::fatalError, "Problem with multiplication of two quaternions !");
     }
 
     // Test quaternion conjugate
     vpQuaternionVector q7_conj = q7.conjugate();
     std::cout << "q7_conj=" << q7_conj << std::endl;
-    if (!vpMath::equal(q7_conj.x(), -3.0,
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q7_conj.y(), -36.7,
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q7_conj.z(), 6.6,
-                       std::numeric_limits<double>::epsilon() * 1e4) ||
-        !vpMath::equal(q7_conj.w(), 1.3,
-                       std::numeric_limits<double>::epsilon() * 1e4)) {
-      throw vpException(vpException::fatalError,
-                        "Problem with quaternion conjugate !");
+    if (!vpMath::equal(q7_conj.x(), -3.0, std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q7_conj.y(), -36.7, std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q7_conj.z(), 6.6, std::numeric_limits<double>::epsilon() * 1e4) ||
+        !vpMath::equal(q7_conj.w(), 1.3, std::numeric_limits<double>::epsilon() * 1e4)) {
+      throw vpException(vpException::fatalError, "Problem with quaternion conjugate !");
     }
 
     // Test quaternion inverse
     vpQuaternionVector q7_inv = q7.inverse();
     std::cout << "q7_inv=" << q7_inv << std::endl;
-    if (!vpMath::equal(q7_inv.x(), -0.00214111, 0.000001) ||
-        !vpMath::equal(q7_inv.y(), -0.026193, 0.000001) ||
-        !vpMath::equal(q7_inv.z(), 0.00471045, 0.000001) ||
-        !vpMath::equal(q7_inv.w(), 0.000927816, 0.000001)) {
-      throw vpException(vpException::fatalError,
-                        "Problem with quaternion inverse !");
+    if (!vpMath::equal(q7_inv.x(), -0.00214111, 0.000001) || !vpMath::equal(q7_inv.y(), -0.026193, 0.000001) ||
+        !vpMath::equal(q7_inv.z(), 0.00471045, 0.000001) || !vpMath::equal(q7_inv.w(), 0.000927816, 0.000001)) {
+      throw vpException(vpException::fatalError, "Problem with quaternion inverse !");
     }
 
     // Test quaternion norm
     double q7_norm = q7.magnitude();
     std::cout << "q7_norm=" << q7_norm << std::endl;
     if (!vpMath::equal(q7_norm, 37.4318, 0.0001)) {
-      throw vpException(vpException::fatalError,
-                        "Problem with quaternion magnitude !");
+      throw vpException(vpException::fatalError, "Problem with quaternion magnitude !");
     }
 
     // Test quaternion normalization
     q7.normalize();
     std::cout << "q7_unit=" << q7 << std::endl;
-    if (!vpMath::equal(q7.x(), 0.0801457, 0.00001) ||
-        !vpMath::equal(q7.y(), 0.98045, 0.00001) ||
-        !vpMath::equal(q7.z(), -0.176321, 0.00001) ||
-        !vpMath::equal(q7.w(), 0.0347298, 0.00001)) {
-      throw vpException(vpException::fatalError,
-                        "Problem with quaternion normalization !");
+    if (!vpMath::equal(q7.x(), 0.0801457, 0.00001) || !vpMath::equal(q7.y(), 0.98045, 0.00001) ||
+        !vpMath::equal(q7.z(), -0.176321, 0.00001) || !vpMath::equal(q7.w(), 0.0347298, 0.00001)) {
+      throw vpException(vpException::fatalError, "Problem with quaternion normalization !");
     }
 
     // Test copy constructor

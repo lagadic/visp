@@ -49,10 +49,8 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 
 //! Line coordinates conversion (rho,theta).
-void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
-                                         const double &rho_m,
-                                         const double &theta_m, double &rho_p,
-                                         double &theta_p)
+void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m,
+                                         double &rho_p, double &theta_p)
 {
   double co = cos(theta_m);
   double si = sin(theta_m);
@@ -64,8 +62,7 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
   }
 
   theta_p = atan2(cam.px * si, cam.py * co);
-  rho_p =
-      (cam.px * cam.py * rho_m + cam.u0 * cam.py * co + cam.v0 * cam.px * si);
+  rho_p = (cam.px * cam.py * rho_m + cam.u0 * cam.py * co + cam.v0 * cam.px * si);
   rho_p /= d;
 }
 
@@ -88,15 +85,12 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
   double mu20_p, mu11_p, mu02_p;
   circle.changeFrame(cMo);
   circle.projection();
-  vpMeterPixelConversion::convertEllipse(cam, circle, center_p, mu20_p,
-  mu11_p, mu02_p); vpDisplay::displayEllipse(I, center_p, mu20_p, mu11_p,
-  mu02_p); \endcode
+  vpMeterPixelConversion::convertEllipse(cam, circle, center_p, mu20_p, mu11_p, mu02_p);
+  vpDisplay::displayEllipse(I, center_p, mu20_p, mu11_p, mu02_p);
+  \endcode
  */
-void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam,
-                                            const vpCircle &circle,
-                                            vpImagePoint &center,
-                                            double &mu20_p, double &mu11_p,
-                                            double &mu02_p)
+void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center,
+                                            double &mu20_p, double &mu11_p, double &mu02_p)
 {
   // Get the parameters of the ellipse in the image plane
   double xc_m = circle.p[0];

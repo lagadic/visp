@@ -60,8 +60,7 @@ void vpMeTracker::init()
 }
 
 vpMeTracker::vpMeTracker()
-  : list(), me(NULL), init_range(1), nGoodElement(0),
-    selectDisplay(vpMeSite::NONE)
+  : list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -71,8 +70,7 @@ vpMeTracker::vpMeTracker()
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
-  : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0),
-    selectDisplay(vpMeSite::NONE)
+  : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -117,39 +115,29 @@ vpMeTracker &vpMeTracker::operator=(vpMeTracker &p_me)
   return *this;
 }
 
-static bool isSuppressZero(const vpMeSite &P)
-{
-  return (P.getState() == vpMeSite::NO_SUPPRESSION);
-}
+static bool isSuppressZero(const vpMeSite &P) { return (P.getState() == vpMeSite::NO_SUPPRESSION); }
 
 unsigned int vpMeTracker::numberOfSignal()
 {
   unsigned int number_signal = 0;
 
   // Loop through all the points tracked from the contour
-  number_signal = static_cast<unsigned int>(
-      std::count_if(list.begin(), list.end(), isSuppressZero));
+  number_signal = static_cast<unsigned int>(std::count_if(list.begin(), list.end(), isSuppressZero));
   return number_signal;
 }
 
-unsigned int vpMeTracker::totalNumberOfSignal()
-{
-  return (unsigned int)list.size();
-}
+unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size(); }
 
 int vpMeTracker::outOfImage(int i, int j, int half, int rows, int cols)
 {
-  return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) &&
-            (j < cols - (half + 2))));
+  return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) && (j < cols - (half + 2))));
 }
 
-int vpMeTracker::outOfImage(const vpImagePoint &iP, int half, int rows,
-                            int cols)
+int vpMeTracker::outOfImage(const vpImagePoint &iP, int half, int rows, int cols)
 {
   int i = vpMath::round(iP.get_i());
   int j = vpMath::round(iP.get_j());
-  return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) &&
-            (j < cols - (half + 2))));
+  return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) && (j < cols - (half + 2))));
 }
 
 /*!
@@ -163,8 +151,7 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
-    throw(vpTrackingException(vpTrackingException::initializationError,
-                              "Moving edges not initialized"));
+    throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
   // Must set range to 0
@@ -177,8 +164,7 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
   vpImagePoint ip1, ip2;
 
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-       ++it) {
+  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite refp = *it; // current reference pixel
 
     d++;
@@ -246,22 +232,19 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
-    throw(vpTrackingException(vpTrackingException::initializationError,
-                              "Moving edges not initialized"));
+    throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
   if (list.empty()) {
     vpDERROR_TRACE(2, "Tracking error: too few pixel to track");
-    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                              "too few pixel to track"));
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "too few pixel to track"));
   }
 
   vpImagePoint ip1, ip2;
   nGoodElement = 0;
   //  int d =0;
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-       ++it) {
+  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite s = *it; // current reference pixel
 
     //    d++ ;
@@ -320,12 +303,10 @@ void vpMeTracker::display(const vpImage<unsigned char> &I)
 #if (DEBUG_LEVEL1)
   {
     std::cout << "begin vpMeTracker::displayList() " << std::endl;
-    std::cout << " There are " << list.size() << " sites in the list "
-              << std::endl;
+    std::cout << " There are " << list.size() << " sites in the list " << std::endl;
   }
 #endif
-  for (std::list<vpMeSite>::const_iterator it = list.begin();
-       it != list.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite p_me = *it;
     p_me.display(I);
   }
@@ -337,11 +318,9 @@ void vpMeTracker::display(const vpImage<unsigned char> &I)
   \param w : vector
   \param index_w : index
 */
-void vpMeTracker::display(const vpImage<unsigned char> &I, vpColVector &w,
-                          unsigned int &index_w)
+void vpMeTracker::display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w)
 {
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-       ++it) {
+  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite P = *it;
 
     if (P.getState() == vpMeSite::NO_SUPPRESSION) {

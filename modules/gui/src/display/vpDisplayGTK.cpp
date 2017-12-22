@@ -85,11 +85,9 @@
 
 */
 vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(),
-    green(), cyan(), orange(), white(), black(), gdkcolor(), lightBlue(),
-    darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(),
-    lightGray(), gray(), darkGray(), colormap(NULL), font(NULL),
-    vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
+    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
+    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -118,13 +116,10 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType)
   and the columns.
 
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int x, int y,
-                           const std::string &title, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(),
-    green(), cyan(), orange(), white(), black(), gdkcolor(), lightBlue(),
-    darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(),
-    lightGray(), gray(), darkGray(), colormap(NULL), font(NULL),
-    vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int x, int y, const std::string &title, vpScaleType scaleType)
+  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
+    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
+    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I, x, y, title);
@@ -150,11 +145,9 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int x, int y,
   and the columns.
 */
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(),
-    green(), cyan(), orange(), white(), black(), gdkcolor(), lightBlue(),
-    darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(),
-    lightGray(), gray(), darkGray(), colormap(NULL), font(NULL),
-    vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
+    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
+    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -181,13 +174,10 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType)
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int x, int y,
-                           const std::string &title, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(),
-    green(), cyan(), orange(), white(), black(), gdkcolor(), lightBlue(),
-    darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(),
-    lightGray(), gray(), darkGray(), colormap(NULL), font(NULL),
-    vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
+  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
+    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
+    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I, x, y, title);
@@ -216,11 +206,9 @@ int main()
   \endcode
 */
 vpDisplayGTK::vpDisplayGTK(int x, int y, const std::string &title)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(),
-    green(), cyan(), orange(), white(), black(), gdkcolor(), lightBlue(),
-    darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(),
-    lightGray(), gray(), darkGray(), colormap(NULL), font(NULL),
-    vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
+    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
+    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
 {
   m_windowXPosition = x;
   m_windowYPosition = y;
@@ -247,11 +235,9 @@ int main()
   \endcode
 */
 vpDisplayGTK::vpDisplayGTK()
-  : vpDisplay(), widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(),
-    yellow(), green(), cyan(), orange(), white(), black(), gdkcolor(),
-    lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(),
-    purple(), lightGray(), gray(), darkGray(), colormap(NULL), font(NULL),
-    vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+  : vpDisplay(), widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(),
+    white(), black(), gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(),
+    lightGray(), gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
 
 {
 }
@@ -269,12 +255,10 @@ vpDisplayGTK::~vpDisplayGTK() { closeDisplay(); }
   \param title : Window title.
 
 */
-void vpDisplayGTK::init(vpImage<unsigned char> &I, int x, int y,
-                        const std::string &title)
+void vpDisplayGTK::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "Image not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
   if (x != -1)
@@ -286,8 +270,7 @@ void vpDisplayGTK::init(vpImage<unsigned char> &I, int x, int y,
     m_title = title;
 
   setScale(m_scaleType, I.getWidth(), I.getHeight());
-  init(I.getWidth(), I.getHeight(), m_windowXPosition, m_windowYPosition,
-       m_title);
+  init(I.getWidth(), I.getHeight(), m_windowXPosition, m_windowYPosition, m_title);
 
   I.display = this;
   m_displayHasBeenInitialized = true;
@@ -302,12 +285,10 @@ void vpDisplayGTK::init(vpImage<unsigned char> &I, int x, int y,
   \param title : Window title.
 
 */
-void vpDisplayGTK::init(vpImage<vpRGBa> &I, int x, int y,
-                        const std::string &title)
+void vpDisplayGTK::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "Image not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
   if (x != -1)
@@ -319,8 +300,7 @@ void vpDisplayGTK::init(vpImage<vpRGBa> &I, int x, int y,
     m_title = title;
 
   setScale(m_scaleType, I.getWidth(), I.getHeight());
-  init(I.getWidth(), I.getHeight(), m_windowXPosition, m_windowYPosition,
-       m_title);
+  init(I.getWidth(), I.getHeight(), m_windowXPosition, m_windowYPosition, m_title);
 
   I.display = this;
   m_displayHasBeenInitialized = true;
@@ -333,8 +313,7 @@ void vpDisplayGTK::init(vpImage<vpRGBa> &I, int x, int y,
   \param title : Window title.
 
 */
-void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y,
-                        const std::string &title)
+void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y, const std::string &title)
 {
   /* Initialisation of thegdk et gdk_rgb library */
   int *argc = NULL;
@@ -350,12 +329,9 @@ void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y,
   /* Create the window*/
   widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-  gtk_widget_add_events(widget, GDK_BUTTON_PRESS_MASK |
-                                    GDK_BUTTON_RELEASE_MASK |
-                                    GDK_POINTER_MOTION_MASK);
+  gtk_widget_add_events(widget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
 
-  gtk_window_set_default_size(GTK_WINDOW(widget), (gint)m_width,
-                              (gint)m_height);
+  gtk_window_set_default_size(GTK_WINDOW(widget), (gint)m_width, (gint)m_height);
 
   if (x != -1)
     m_windowXPosition = x;
@@ -369,8 +345,7 @@ void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y,
   gdk_rgb_init();
 
   /* Create background pixmap */
-  m_background =
-      gdk_pixmap_new(widget->window, (gint)m_width, (gint)m_height, -1);
+  m_background = gdk_pixmap_new(widget->window, (gint)m_width, (gint)m_height, -1);
 
   /* Create graphic context */
   m_gc = gdk_gc_new(widget->window);
@@ -378,8 +353,7 @@ void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y,
   /* get the colormap  */
   colormap = gdk_window_get_colormap(widget->window);
 
-  col = new GdkColor
-      *[vpColor::id_unknown]; // id_unknown = number of predefined colors
+  col = new GdkColor *[vpColor::id_unknown]; // id_unknown = number of predefined colors
 
   /* Create color */
   gdk_color_parse("light blue", &lightBlue);
@@ -459,8 +433,7 @@ void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y,
   if (font == NULL)
     font = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
   if (font == NULL)
-    font = gdk_font_load(
-        "-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
+    font = gdk_font_load("-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
 
   m_title = title;
   if (!title.empty())
@@ -483,10 +456,7 @@ void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y,
 
   \sa displayCharString()
 */
-void vpDisplayGTK::setFont(const std::string &fontname)
-{
-  font = gdk_font_load((const gchar *)fontname.c_str());
-}
+void vpDisplayGTK::setFont(const std::string &fontname) { font = gdk_font_load((const gchar *)fontname.c_str()); }
 
 /*!
   Set the window title.
@@ -499,8 +469,7 @@ void vpDisplayGTK::setTitle(const std::string &title)
     if (!title.empty())
       gdk_window_set_title(widget->window, m_title.c_str());
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -519,8 +488,7 @@ void vpDisplayGTK::setWindowPosition(int winx, int winy)
   if (m_displayHasBeenInitialized) {
     gtk_window_move(GTK_WINDOW(widget), winx, winy);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -541,22 +509,19 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
   if (m_displayHasBeenInitialized) {
     if (m_scale == 1) {
       /* Copie de l'image dans le pixmap fond */
-      gdk_draw_gray_image(m_background, m_gc, 0, 0, (gint)m_width,
-                          (gint)m_height, GDK_RGB_DITHER_NONE, I.bitmap,
+      gdk_draw_gray_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE, I.bitmap,
                           (gint)m_width);
     } else {
       vpImage<unsigned char> sampled;
       I.subsample(m_scale, m_scale, sampled);
-      gdk_draw_gray_image(m_background, m_gc, 0, 0, (gint)m_width,
-                          (gint)m_height, GDK_RGB_DITHER_NONE, sampled.bitmap,
+      gdk_draw_gray_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE, sampled.bitmap,
                           (gint)m_width);
     }
 
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -577,29 +542,24 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I,
-                                   const vpImagePoint &iP,
-                                   const unsigned int w, const unsigned int h)
+void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int w,
+                                   const unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     vpImage<unsigned char> Itemp;
-    vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale,
-                       m_scale);
+    vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
     int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
     int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
 
-    gdk_draw_gray_image(m_background, m_gc, (gint)j_min, (gint)i_min,
-                        (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),
-                        GDK_RGB_DITHER_NONE, Itemp.bitmap,
-                        (gint)Itemp.getWidth());
+    gdk_draw_gray_image(m_background, m_gc, (gint)j_min, (gint)i_min, (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),
+                        GDK_RGB_DITHER_NONE, Itemp.bitmap, (gint)Itemp.getWidth());
 
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -620,16 +580,13 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
   if (m_displayHasBeenInitialized) {
     if (m_scale == 1) {
       /* Copie de l'image dans le pixmap fond */
-      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, (gint)m_width,
-                            (gint)m_height, GDK_RGB_DITHER_NONE,
+      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE,
                             (unsigned char *)I.bitmap, (gint)(4 * m_width));
     } else {
       vpImage<vpRGBa> sampled;
       I.subsample(m_scale, m_scale, sampled);
-      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, (gint)m_width,
-                            (gint)m_height, GDK_RGB_DITHER_NONE,
-                            (unsigned char *)sampled.bitmap,
-                            (gint)(4 * m_width));
+      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE,
+                            (unsigned char *)sampled.bitmap, (gint)(4 * m_width));
     }
     /* Permet de fermer la fenetre si besoin (cas des sequences d'images) */
     // while (g_main_iteration(FALSE));
@@ -637,8 +594,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -659,29 +615,24 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I,
-                                   const vpImagePoint &iP,
-                                   const unsigned int w, const unsigned int h)
+void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int w,
+                                   const unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     vpImage<vpRGBa> Itemp;
-    vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale,
-                       m_scale);
+    vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
     int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
     int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
 
-    gdk_draw_rgb_32_image(m_background, m_gc, (gint)j_min, (gint)i_min,
-                          (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),
-                          GDK_RGB_DITHER_NONE, (unsigned char *)Itemp.bitmap,
-                          (gint)Itemp.getWidth() * 4);
+    gdk_draw_rgb_32_image(m_background, m_gc, (gint)j_min, (gint)i_min, (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),
+                          GDK_RGB_DITHER_NONE, (unsigned char *)Itemp.bitmap, (gint)Itemp.getWidth() * 4);
 
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -690,10 +641,7 @@ void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I,
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImage(const unsigned char * /* I */)
-{
-  vpTRACE(" not implemented ");
-}
+void vpDisplayGTK::displayImage(const unsigned char * /* I */) { vpTRACE(" not implemented "); }
 
 /*!
   Close the window.
@@ -726,8 +674,7 @@ void vpDisplayGTK::flushDisplay()
     gdk_window_clear(widget->window);
     gdk_flush();
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -735,26 +682,21 @@ void vpDisplayGTK::flushDisplay()
   Flushes the display buffer.
   It's necessary to use this function to see the results of any drawing.
 */
-void vpDisplayGTK::flushDisplayROI(const vpImagePoint & /*iP*/,
-                                   const unsigned int /*width*/,
+void vpDisplayGTK::flushDisplayROI(const vpImagePoint & /*iP*/, const unsigned int /*width*/,
                                    const unsigned int /*height*/)
 {
   if (m_displayHasBeenInitialized) {
     gdk_window_clear(widget->window);
     gdk_flush();
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
 /*!
   \warning Not implemented yet.
 */
-void vpDisplayGTK::clearDisplay(const vpColor & /* color */)
-{
-  vpTRACE("Not implemented");
-}
+void vpDisplayGTK::clearDisplay(const vpColor & /* color */) { vpTRACE("Not implemented"); }
 
 /*!
   Display an arrow from image point \e ip1 to image point \e ip2.
@@ -763,10 +705,8 @@ void vpDisplayGTK::clearDisplay(const vpColor & /* color */)
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplayGTK::displayArrow(const vpImagePoint &ip1,
-                                const vpImagePoint &ip2, const vpColor &color,
-                                unsigned int w, unsigned int h,
-                                unsigned int thickness)
+void vpDisplayGTK::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
+                                unsigned int h, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     double a = ip2.get_i() - ip1.get_i();
@@ -801,8 +741,7 @@ void vpDisplayGTK::displayArrow(const vpImagePoint &ip1,
       displayLine(ip1, ip2, color, thickness);
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -817,8 +756,7 @@ void vpDisplayGTK::displayArrow(const vpImagePoint &ip1,
 
   \sa setFont()
 */
-void vpDisplayGTK::displayCharString(const vpImagePoint &ip, const char *text,
-                                     const vpColor &color)
+void vpDisplayGTK::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
     if (color.id < vpColor::id_unknown)
@@ -831,14 +769,12 @@ void vpDisplayGTK::displayCharString(const vpImagePoint &ip, const char *text,
       gdk_gc_set_foreground(m_gc, &gdkcolor);
     }
     if (font != NULL)
-      gdk_draw_string(
-          m_background, font, m_gc, vpMath::round(ip.get_u() / m_scale),
-          vpMath::round(ip.get_v() / m_scale), (const gchar *)text);
+      gdk_draw_string(m_background, font, m_gc, vpMath::round(ip.get_u() / m_scale),
+                      vpMath::round(ip.get_v() / m_scale), (const gchar *)text);
     else
       std::cout << "Cannot draw string: no font is selected" << std::endl;
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 /*!
@@ -850,9 +786,8 @@ void vpDisplayGTK::displayCharString(const vpImagePoint &ip, const char *text,
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
-void vpDisplayGTK::displayCircle(const vpImagePoint &center,
-                                 unsigned int radius, const vpColor &color,
-                                 bool fill, unsigned int thickness)
+void vpDisplayGTK::displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
+                                 unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -868,26 +803,18 @@ void vpDisplayGTK::displayCircle(const vpImagePoint &center,
       gdk_gc_set_foreground(m_gc, &gdkcolor);
     }
 
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID,
-                               GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
 
     if (fill == false)
-      gdk_draw_arc(m_background, m_gc, FALSE,
-                   vpMath::round((center.get_u() - radius) / m_scale),
-                   vpMath::round((center.get_v() - radius) / m_scale),
-                   (gint)(2. * radius / m_scale),
-                   (gint)(2. * radius / m_scale), 23040,
-                   23040); /* 23040 = 360*64 */
+      gdk_draw_arc(m_background, m_gc, FALSE, vpMath::round((center.get_u() - radius) / m_scale),
+                   vpMath::round((center.get_v() - radius) / m_scale), (gint)(2. * radius / m_scale),
+                   (gint)(2. * radius / m_scale), 23040, 23040); /* 23040 = 360*64 */
     else
-      gdk_draw_arc(m_background, m_gc, TRUE,
-                   vpMath::round((center.get_u() - radius) / m_scale),
-                   vpMath::round((center.get_v() - radius) / m_scale),
-                   (gint)(2. * radius / m_scale),
-                   (gint)(2. * radius / m_scale), 23040,
-                   23040); /* 23040 = 360*64 */
+      gdk_draw_arc(m_background, m_gc, TRUE, vpMath::round((center.get_u() - radius) / m_scale),
+                   vpMath::round((center.get_v() - radius) / m_scale), (gint)(2. * radius / m_scale),
+                   (gint)(2. * radius / m_scale), 23040, 23040); /* 23040 = 360*64 */
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 /*!
@@ -897,8 +824,7 @@ void vpDisplayGTK::displayCircle(const vpImagePoint &center,
   \param color : Cross color.
   \param thickness : Thickness of the lines used to display the cross.
 */
-void vpDisplayGTK::displayCross(const vpImagePoint &ip, unsigned int size,
-                                const vpColor &color, unsigned int thickness)
+void vpDisplayGTK::displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     double i = ip.get_i();
@@ -920,8 +846,7 @@ void vpDisplayGTK::displayCross(const vpImagePoint &ip, unsigned int size,
   }
 
   else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 /*!
@@ -930,9 +855,7 @@ void vpDisplayGTK::displayCross(const vpImagePoint &ip, unsigned int size,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplayGTK::displayDotLine(const vpImagePoint &ip1,
-                                  const vpImagePoint &ip2,
-                                  const vpColor &color,
+void vpDisplayGTK::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                                   unsigned int thickness)
 {
 
@@ -950,17 +873,12 @@ void vpDisplayGTK::displayDotLine(const vpImagePoint &ip1,
       gdk_gc_set_foreground(m_gc, &gdkcolor);
     }
 
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_ON_OFF_DASH,
-                               GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / m_scale),
-                  vpMath::round(ip1.get_v() / m_scale),
-                  vpMath::round(ip2.get_u() / m_scale),
-                  vpMath::round(ip2.get_v() / m_scale));
-    gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
-                               GDK_JOIN_BEVEL);
+    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale),
+                  vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale));
+    gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -970,8 +888,7 @@ void vpDisplayGTK::displayDotLine(const vpImagePoint &ip1,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplayGTK::displayLine(const vpImagePoint &ip1,
-                               const vpImagePoint &ip2, const vpColor &color,
+void vpDisplayGTK::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                                unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
@@ -988,15 +905,11 @@ void vpDisplayGTK::displayLine(const vpImagePoint &ip1,
       gdk_gc_set_foreground(m_gc, &gdkcolor);
     }
 
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID,
-                               GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / m_scale),
-                  vpMath::round(ip1.get_v() / m_scale),
-                  vpMath::round(ip2.get_u() / m_scale),
-                  vpMath::round(ip2.get_v() / m_scale));
+    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale),
+                  vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale));
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -1006,8 +919,7 @@ void vpDisplayGTK::displayLine(const vpImagePoint &ip1,
   \param color : Point color.
   \param thickness : Point thickness.
 */
-void vpDisplayGTK::displayPoint(const vpImagePoint &ip, const vpColor &color,
-                                unsigned int thickness)
+void vpDisplayGTK::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (color.id < vpColor::id_unknown)
@@ -1021,16 +933,13 @@ void vpDisplayGTK::displayPoint(const vpImagePoint &ip, const vpColor &color,
     }
 
     if (thickness == 1) {
-      gdk_draw_point(m_background, m_gc, vpMath::round(ip.get_u() / m_scale),
-                     vpMath::round(ip.get_v() / m_scale));
+      gdk_draw_point(m_background, m_gc, vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale));
     } else {
-      gdk_draw_rectangle(
-          m_background, m_gc, TRUE, vpMath::round(ip.get_u() / m_scale),
-          vpMath::round(ip.get_v() / m_scale), thickness, thickness);
+      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(ip.get_u() / m_scale),
+                         vpMath::round(ip.get_v() / m_scale), thickness, thickness);
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -1047,10 +956,8 @@ void vpDisplayGTK::displayPoint(const vpImagePoint &ip, const vpColor &color,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft,
-                                    unsigned int w, unsigned int h,
-                                    const vpColor &color, bool fill,
-                                    unsigned int thickness)
+void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color,
+                                    bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -1065,26 +972,19 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft,
       gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
       gdk_gc_set_foreground(m_gc, &gdkcolor);
     }
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID,
-                               GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
 
     if (fill == false)
-      gdk_draw_rectangle(m_background, m_gc, FALSE,
-                         vpMath::round(topLeft.get_u() / m_scale),
-                         vpMath::round(topLeft.get_v() / m_scale),
-                         (gint)w / m_scale, (gint)h / m_scale);
+      gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(topLeft.get_u() / m_scale),
+                         vpMath::round(topLeft.get_v() / m_scale), (gint)w / m_scale, (gint)h / m_scale);
     else
-      gdk_draw_rectangle(m_background, m_gc, TRUE,
-                         vpMath::round(topLeft.get_u() / m_scale),
-                         vpMath::round(topLeft.get_v() / m_scale),
-                         (gint)w / m_scale, (gint)h / m_scale);
+      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(topLeft.get_u() / m_scale),
+                         vpMath::round(topLeft.get_v() / m_scale), (gint)w / m_scale, (gint)h / m_scale);
 
     if (thickness > 1)
-      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
-                                 GDK_JOIN_BEVEL);
+      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -1100,10 +1000,8 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft,
-                                    const vpImagePoint &bottomRight,
-                                    const vpColor &color, bool fill,
-                                    unsigned int thickness)
+void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
+                                    bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -1119,27 +1017,22 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft,
       gdk_gc_set_foreground(m_gc, &gdkcolor);
     }
 
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID,
-                               GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
 
     int w = vpMath::round(bottomRight.get_u() - topLeft.get_u());
     int h = vpMath::round(bottomRight.get_v() - topLeft.get_v());
 
     if (fill == false)
-      gdk_draw_rectangle(
-          m_background, m_gc, FALSE, vpMath::round(topLeft.get_u() / m_scale),
-          vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
+      gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(topLeft.get_u() / m_scale),
+                         vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
     else
-      gdk_draw_rectangle(
-          m_background, m_gc, TRUE, vpMath::round(topLeft.get_u() / m_scale),
-          vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
+      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(topLeft.get_u() / m_scale),
+                         vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
 
     if (thickness > 1)
-      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
-                                 GDK_JOIN_BEVEL);
+      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -1155,9 +1048,7 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft,
   false.
 
 */
-void vpDisplayGTK::displayRectangle(const vpRect &rectangle,
-                                    const vpColor &color, bool fill,
-                                    unsigned int thickness)
+void vpDisplayGTK::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (color.id < vpColor::id_unknown)
@@ -1173,29 +1064,22 @@ void vpDisplayGTK::displayRectangle(const vpRect &rectangle,
     if (thickness == 1)
       thickness = 0;
 
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID,
-                               GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
 
     if (fill == false)
-      gdk_draw_rectangle(m_background, m_gc, FALSE,
-                         vpMath::round(rectangle.getLeft() / m_scale),
-                         vpMath::round(rectangle.getTop() / m_scale),
-                         vpMath::round(rectangle.getWidth() / m_scale),
+      gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(rectangle.getLeft() / m_scale),
+                         vpMath::round(rectangle.getTop() / m_scale), vpMath::round(rectangle.getWidth() / m_scale),
                          vpMath::round(rectangle.getHeight() / m_scale));
 
     else
-      gdk_draw_rectangle(m_background, m_gc, TRUE,
-                         vpMath::round(rectangle.getLeft() / m_scale),
-                         vpMath::round(rectangle.getTop() / m_scale),
-                         vpMath::round(rectangle.getWidth() / m_scale),
+      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(rectangle.getLeft() / m_scale),
+                         vpMath::round(rectangle.getTop() / m_scale), vpMath::round(rectangle.getWidth() / m_scale),
                          vpMath::round(rectangle.getHeight() / m_scale));
 
     if (thickness > 1)
-      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
-                                 GDK_JOIN_BEVEL);
+      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -1229,8 +1113,7 @@ bool vpDisplayGTK::getClick(bool blocking)
         //	printf("event %d type %d on window %p My window %p\n",
         // cpt, ev->type, ev->any.window, widget->window);
 
-        if (ev->any.window == widget->window &&
-            ev->type == GDK_BUTTON_PRESS) {
+        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
           ret = true;
           // printf("Click detection\n");
         }
@@ -1242,8 +1125,7 @@ bool vpDisplayGTK::getClick(bool blocking)
       }
     } while (ret == false && blocking == true);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
 }
@@ -1274,8 +1156,7 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
     do {
       GdkEvent *ev = NULL;
       while ((ev = gdk_event_get()) != NULL) {
-        if (ev->any.window == widget->window &&
-            ev->type == GDK_BUTTON_PRESS) {
+        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
           u = ((GdkEventButton *)ev)->x;
           v = ((GdkEventButton *)ev)->y;
           ip.set_u(u * m_scale);
@@ -1290,8 +1171,7 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
       }
     } while (ret == false && blocking == true);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
 }
@@ -1315,9 +1195,7 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
   button is pressed, the location of the mouse pointer is updated in
   \e ip.
 */
-bool vpDisplayGTK::getClick(vpImagePoint &ip,
-                            vpMouseButton::vpMouseButtonType &button,
-                            bool blocking)
+bool vpDisplayGTK::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
   bool ret = false;
 
@@ -1326,8 +1204,7 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip,
     do {
       GdkEvent *ev = NULL;
       while ((ev = gdk_event_get())) {
-        if (ev->any.window == widget->window &&
-            ev->type == GDK_BUTTON_PRESS) {
+        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
           u = ((GdkEventButton *)ev)->x;
           v = ((GdkEventButton *)ev)->y;
           ip.set_u(u * m_scale);
@@ -1355,8 +1232,7 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip,
 
     } while (ret == false && blocking == true);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
 }
@@ -1384,9 +1260,7 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip,
   \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
 
 */
-bool vpDisplayGTK::getClickUp(vpImagePoint &ip,
-                              vpMouseButton::vpMouseButtonType &button,
-                              bool blocking)
+bool vpDisplayGTK::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
   bool ret = false;
 
@@ -1397,8 +1271,7 @@ bool vpDisplayGTK::getClickUp(vpImagePoint &ip,
     do {
       GdkEvent *ev = NULL;
       while ((ev = gdk_event_get()) != NULL) {
-        if (ev->any.window == widget->window &&
-            ev->type == GDK_BUTTON_RELEASE) {
+        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_RELEASE) {
           u = ((GdkEventButton *)ev)->x;
           v = ((GdkEventButton *)ev)->y;
           ip.set_u(u * m_scale);
@@ -1426,8 +1299,7 @@ bool vpDisplayGTK::getClickUp(vpImagePoint &ip,
 
     } while (ret == false && blocking == true);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
 }
@@ -1445,8 +1317,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
     /*
      */
 
-    ImageGtk =
-        gdk_image_get(m_background, 0, 0, (gint)m_width, (gint)m_height);
+    ImageGtk = gdk_image_get(m_background, 0, 0, (gint)m_width, (gint)m_height);
 
     I.resize(m_height, m_width);
     guint32 pixel;
@@ -1467,8 +1338,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
 
@@ -1528,8 +1398,7 @@ bool vpDisplayGTK::getKeyboardEvent(bool blocking)
       }
     } while (ret == false && blocking == true);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
 }
@@ -1582,8 +1451,7 @@ bool vpDisplayGTK::getKeyboardEvent(std::string &key, bool blocking)
       }
     } while (ret == false && blocking == true);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
 }
@@ -1618,8 +1486,7 @@ bool vpDisplayGTK::getPointerMotionEvent(vpImagePoint &ip)
       gdk_event_free(ev);
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
 }
@@ -1642,8 +1509,7 @@ bool vpDisplayGTK::getPointerPosition(vpImagePoint &ip)
     ip.set_u(u * m_scale);
     ip.set_v(v * m_scale);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "GTK not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 
   return true;

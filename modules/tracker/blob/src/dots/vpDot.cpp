@@ -91,13 +91,10 @@ void vpDot::init()
 }
 
 vpDot::vpDot()
-  : m00(0.), m01(0.), m10(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.),
-    mu02(0.), ip_connexities_list(), ip_edges_list(),
-    connexityType(CONNEXITY_4), cog(), u_min(0), u_max(0), v_min(0), v_max(0),
-    graphics(false), thickness(1), maxDotSizePercentage(0.25),
-    gray_level_out(0), mean_gray_level(0), gray_level_min(128),
-    gray_level_max(255), grayLevelPrecision(0.85), gamma(1.5),
-    compute_moment(false), nbMaxPoint(0)
+  : m00(0.), m01(0.), m10(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), ip_connexities_list(),
+    ip_edges_list(), connexityType(CONNEXITY_4), cog(), u_min(0), u_max(0), v_min(0), v_max(0), graphics(false),
+    thickness(1), maxDotSizePercentage(0.25), gray_level_out(0), mean_gray_level(0), gray_level_min(128),
+    gray_level_max(255), grayLevelPrecision(0.85), gamma(1.5), compute_moment(false), nbMaxPoint(0)
 {
 }
 
@@ -107,13 +104,10 @@ vpDot::vpDot()
   \param ip : An image point with sub-pixel coordinates.
  */
 vpDot::vpDot(const vpImagePoint &ip)
-  : m00(0.), m01(0.), m10(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.),
-    mu02(0.), ip_connexities_list(), ip_edges_list(),
-    connexityType(CONNEXITY_4), cog(ip), u_min(0), u_max(0), v_min(0),
-    v_max(0), graphics(false), thickness(1), maxDotSizePercentage(0.25),
-    gray_level_out(0), mean_gray_level(0), gray_level_min(128),
-    gray_level_max(255), grayLevelPrecision(0.85), gamma(1.5),
-    compute_moment(false), nbMaxPoint(0)
+  : m00(0.), m01(0.), m10(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.), ip_connexities_list(),
+    ip_edges_list(), connexityType(CONNEXITY_4), cog(ip), u_min(0), u_max(0), v_min(0), v_max(0), graphics(false),
+    thickness(1), maxDotSizePercentage(0.25), gray_level_out(0), mean_gray_level(0), gray_level_min(128),
+    gray_level_max(255), grayLevelPrecision(0.85), gamma(1.5), compute_moment(false), nbMaxPoint(0)
 {
 }
 
@@ -121,13 +115,10 @@ vpDot::vpDot(const vpImagePoint &ip)
   \brief Copy constructor.
  */
 vpDot::vpDot(const vpDot &d)
-  : vpTracker(d), m00(0.), m01(0.), m10(0.), m11(0.), m20(0.), m02(0.),
-    mu11(0.), mu20(0.), mu02(0.), ip_connexities_list(), ip_edges_list(),
-    connexityType(CONNEXITY_4), cog(), u_min(0), u_max(0), v_min(0), v_max(0),
-    graphics(false), thickness(1), maxDotSizePercentage(0.25),
-    gray_level_out(0), mean_gray_level(0), gray_level_min(128),
-    gray_level_max(255), grayLevelPrecision(0.85), gamma(1.5),
-    compute_moment(false), nbMaxPoint(0)
+  : vpTracker(d), m00(0.), m01(0.), m10(0.), m11(0.), m20(0.), m02(0.), mu11(0.), mu20(0.), mu02(0.),
+    ip_connexities_list(), ip_edges_list(), connexityType(CONNEXITY_4), cog(), u_min(0), u_max(0), v_min(0), v_max(0),
+    graphics(false), thickness(1), maxDotSizePercentage(0.25), gray_level_out(0), mean_gray_level(0),
+    gray_level_min(128), gray_level_max(255), grayLevelPrecision(0.85), gamma(1.5), compute_moment(false), nbMaxPoint(0)
 {
   *this = d;
 }
@@ -199,8 +190,7 @@ void vpDot::setGrayLevelOut()
     if (gray_level_max == 255) {
       // gray_level_min = 0 and gray_level_max = 255: this should not occur
       // vpERROR_TRACE("Unable to choose a good \"out\" level") ;
-      throw(vpTrackingException(vpTrackingException::initializationError,
-                                "Unable to choose a good \"out\" level"));
+      throw(vpTrackingException(vpTrackingException::initializationError, "Unable to choose a good \"out\" level"));
     }
     gray_level_out = static_cast<unsigned char>(gray_level_max + 1u);
   }
@@ -223,8 +213,7 @@ void vpDot::setGrayLevelOut()
   \sa setGrayLevelOut()
 */
 
-bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u,
-                    unsigned int v, double &mean_value, double &u_cog,
+bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value, double &u_cog,
                     double &v_cog, double &n)
 {
   std::vector<bool> checkTab(I.getWidth() * I.getHeight(), false);
@@ -247,8 +236,7 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u,
   \sa setGrayLevelOut()
 */
 
-bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u,
-                    unsigned int v, double &mean_value, double &u_cog,
+bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value, double &u_cog,
                     double &v_cog, double &n, std::vector<bool> &checkTab)
 {
 
@@ -280,17 +268,15 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u,
     if (n > nbMaxPoint) {
       //      vpERROR_TRACE("Too many point %lf (%lf%% of image size). "
       //		    "This threshold can be modified using the
-      //setMaxDotSize() " 		    "method.", 		    n, n /
+      // setMaxDotSize() " 		    "method.", 		    n, n /
       //(I.getWidth() * I.getHeight()), 		    nbMaxPoint,
-      //maxDotSizePercentage) ;
+      // maxDotSizePercentage) ;
 
-      throw(vpTrackingException(
-          vpTrackingException::featureLostError,
-          "Too many point %lf (%lf%% of image size). "
-          "This threshold can be modified using the setMaxDotSize() "
-          "method.",
-          n, n / (I.getWidth() * I.getHeight()), nbMaxPoint,
-          maxDotSizePercentage));
+      throw(vpTrackingException(vpTrackingException::featureLostError,
+                                "Too many point %lf (%lf%% of image size). "
+                                "This threshold can be modified using the setMaxDotSize() "
+                                "method.",
+                                n, n / (I.getWidth() * I.getHeight()), nbMaxPoint, maxDotSizePercentage));
     }
 
     // Bounding box update
@@ -457,8 +443,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
   }
 #else
   // If the dot is not found, search around using a spiral
-  if (!connexe(I, (unsigned int)u, (unsigned int)v, mean_gray_level, u_cog,
-               v_cog, npoint)) {
+  if (!connexe(I, (unsigned int)u, (unsigned int)v, mean_gray_level, u_cog, v_cog, npoint)) {
     bool sol = false;
 
     unsigned int right = 1;
@@ -478,8 +463,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
           ip_edges_list.clear();
 
           this->mean_gray_level = 0;
-          if (connexe(I, (unsigned int)u_ + k, (unsigned int)(v_),
-                      mean_gray_level, u_cog, v_cog, npoint)) {
+          if (connexe(I, (unsigned int)u_ + k, (unsigned int)(v_), mean_gray_level, u_cog, v_cog, npoint)) {
             sol = true;
             u = u_ + k;
             v = v_;
@@ -497,8 +481,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
 
           this->mean_gray_level = 0;
 
-          if (connexe(I, (unsigned int)(u_), (unsigned int)(v_ + k),
-                      mean_gray_level, u_cog, v_cog, npoint)) {
+          if (connexe(I, (unsigned int)(u_), (unsigned int)(v_ + k), mean_gray_level, u_cog, v_cog, npoint)) {
             sol = true;
             u = u_;
             v = v_ + k;
@@ -516,8 +499,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
 
           this->mean_gray_level = 0;
 
-          if (connexe(I, (unsigned int)(u_ - k), (unsigned int)(v_),
-                      mean_gray_level, u_cog, v_cog, npoint)) {
+          if (connexe(I, (unsigned int)(u_ - k), (unsigned int)(v_), mean_gray_level, u_cog, v_cog, npoint)) {
             sol = true;
             u = u_ - k;
             v = v_;
@@ -535,8 +517,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
 
           this->mean_gray_level = 0;
 
-          if (connexe(I, (unsigned int)(u_), (unsigned int)(v_ - k),
-                      mean_gray_level, u_cog, v_cog, npoint)) {
+          if (connexe(I, (unsigned int)(u_), (unsigned int)(v_ - k), mean_gray_level, u_cog, v_cog, npoint)) {
             sol = true;
             u = u_;
             v = v_ - k;
@@ -548,8 +529,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
 
     if (sol == false) {
       // vpERROR_TRACE("Dot has been lost") ;
-      throw(vpTrackingException(vpTrackingException::featureLostError,
-                                "Dot has been lost"));
+      throw(vpTrackingException(vpTrackingException::featureLostError, "Dot has been lost"));
     }
   }
 
@@ -575,13 +555,11 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
   if (Ip - (1 - grayLevelPrecision) < 0) {
     gray_level_min = 0;
   } else {
-    gray_level_min =
-        (unsigned int)(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
+    gray_level_min = (unsigned int)(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
     if (gray_level_min > 255)
       gray_level_min = 255;
   }
-  gray_level_max =
-      (unsigned int)(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
+  gray_level_max = (unsigned int)(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
@@ -590,8 +568,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
 
   if (npoint < 5) {
     // vpERROR_TRACE("Dot to small") ;
-    throw(vpTrackingException(vpTrackingException::featureLostError,
-                              "Dot to small"));
+    throw(vpTrackingException(vpTrackingException::featureLostError, "Dot to small"));
   }
 
   if (npoint > nbMaxPoint) {
@@ -605,8 +582,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
                               "Too many point %lf (%lf%%). Max allowed is "
                               "%lf (%lf%%). This threshold can be modified "
                               "using the setMaxDotSize() method.",
-                              npoint, npoint / (I.getWidth() * I.getHeight()),
-                              nbMaxPoint, maxDotSizePercentage));
+                              npoint, npoint / (I.getWidth() * I.getHeight()), nbMaxPoint, maxDotSizePercentage));
   }
 }
 
@@ -627,8 +603,7 @@ void vpDot::setMaxDotSize(double percentage)
   if (percentage <= 0.0 || percentage > 1.0) {
     // print a warning. We keep the default percentage
     vpTRACE("Max dot size percentage is requested to be set to %lf.",
-            "Value should be in ]0:1]. Value will be set to %lf.", percentage,
-            maxDotSizePercentage);
+            "Value should be in ]0:1]. Value will be set to %lf.", percentage, maxDotSizePercentage);
   } else {
     maxDotSizePercentage = percentage;
   }
@@ -670,13 +645,11 @@ void vpDot::initTracking(const vpImage<unsigned char> &I)
   if (Ip - (1 - grayLevelPrecision) < 0) {
     gray_level_min = 0;
   } else {
-    gray_level_min =
-        (unsigned int)(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
+    gray_level_min = (unsigned int)(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
     if (gray_level_min > 255)
       gray_level_min = 255;
   }
-  gray_level_max =
-      (unsigned int)(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
+  gray_level_max = (unsigned int)(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
 
@@ -710,8 +683,7 @@ void vpDot::initTracking(const vpImage<unsigned char> &I)
 
   \sa track()
 */
-void vpDot::initTracking(const vpImage<unsigned char> &I,
-                         const vpImagePoint &ip)
+void vpDot::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip)
 {
 
   cog = ip;
@@ -724,13 +696,11 @@ void vpDot::initTracking(const vpImage<unsigned char> &I,
   if (Ip - (1 - grayLevelPrecision) < 0) {
     gray_level_min = 0;
   } else {
-    gray_level_min =
-        (unsigned int)(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
+    gray_level_min = (unsigned int)(255 * pow(Ip - (1 - grayLevelPrecision), gamma));
     if (gray_level_min > 255)
       gray_level_min = 255;
   }
-  gray_level_max =
-      (unsigned int)(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
+  gray_level_max = (unsigned int)(255 * pow(Ip + (1 - grayLevelPrecision), gamma));
   if (gray_level_max > 255)
     gray_level_max = 255;
   try {
@@ -767,8 +737,7 @@ void vpDot::initTracking(const vpImage<unsigned char> &I,
 
   \sa track(), getCog()
 */
-void vpDot::initTracking(const vpImage<unsigned char> &I,
-                         const vpImagePoint &ip, unsigned int level_min,
+void vpDot::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int level_min,
                          unsigned int level_max)
 {
 
@@ -818,8 +787,7 @@ void vpDot::track(const vpImage<unsigned char> &I)
 
     if (graphics) {
       // display a red cross at the center of gravity's location in the image.
-      vpDisplay::displayCross(I, this->cog, 3 * thickness + 8, vpColor::red,
-                              thickness);
+      vpDisplay::displayCross(I, this->cog, 3 * thickness + 8, vpColor::red, thickness);
     }
 
   } catch (vpException &e) {
@@ -855,8 +823,7 @@ void vpDot::track(const vpImage<unsigned char> &I, vpImagePoint &ip)
   \param color : The color used for the display.
   \param thick : Thickness of the displayed cross located at the dot cog.
 */
-void vpDot::display(const vpImage<unsigned char> &I, vpColor color,
-                    unsigned int thick) const
+void vpDot::display(const vpImage<unsigned char> &I, vpColor color, unsigned int thick) const
 {
   vpDisplay::displayCross(I, cog, 3 * thickness + 8, color, thick);
   std::list<vpImagePoint>::const_iterator it;
@@ -910,9 +877,8 @@ void vpDot::setGrayLevelPrecision(const double &precision)
 
   \param thickness : Thickness of the dot.
 */
-void vpDot::display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
-                    const std::list<vpImagePoint> &edges_list, vpColor color,
-                    unsigned int thickness)
+void vpDot::display(const vpImage<unsigned char> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
+                    vpColor color, unsigned int thickness)
 {
   vpDisplay::displayCross(I, cog, 3 * thickness + 8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
@@ -936,9 +902,8 @@ void vpDot::display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
 
   \param thickness : Thickness of the dot.
 */
-void vpDot::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog,
-                    const std::list<vpImagePoint> &edges_list, vpColor color,
-                    unsigned int thickness)
+void vpDot::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
+                    vpColor color, unsigned int thickness)
 {
   vpDisplay::displayCross(I, cog, 3 * thickness + 8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
@@ -953,7 +918,4 @@ void vpDot::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog,
   details about the orientation of the frame see the vpImagePoint
   documentation) to the stream \e os, and returns a reference to the stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot &d)
-{
-  return (os << "(" << d.getCog() << ")");
-};
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot &d) { return (os << "(" << d.getCog() << ")"); };

@@ -73,12 +73,12 @@ class VISP_EXPORT vpXmlConfigParserKeyPoint : public vpXmlParser
 public:
   /*! Predefined xml node identifier. */
   typedef enum {
-    conf,            /*!< Identifier associated to the root tag. */
-    detector,        /*!< Identifier associated to the detector tag. */
-    extractor,       /*!< Identifier associated to the extractor tag. */
-    matcher,         /*!< Identifier associated to the matcher tag. */
-    name,            /*!< Identifier associated to the name tag. */
-    matching_method, /*!< Identifier associated to the matching_method tag. */
+    conf,                               /*!< Identifier associated to the root tag. */
+    detector,                           /*!< Identifier associated to the detector tag. */
+    extractor,                          /*!< Identifier associated to the extractor tag. */
+    matcher,                            /*!< Identifier associated to the matcher tag. */
+    name,                               /*!< Identifier associated to the name tag. */
+    matching_method,                    /*!< Identifier associated to the matching_method tag. */
     constant_factor_distance_threshold, /*!< Identifier associated to the
                                            constant_factor_distance_threshold
                                            tag. */
@@ -89,39 +89,39 @@ public:
     std_and_ratio_distance_threshold,   /*!< Identifier associated to the
                                            std_and_ratio_distance_threshold tag.
                                          */
-    no_filter_matching, /*!< Identifier associated to the no_filter_matching
-                           tag. */
-    matching_factor_threshold, /*!< Identifier associated to the
-                                  matching_factor_threshold tag. */
-    matching_ratio_threshold,  /*!< Identifier associated to the
-                                  matching_ratio_threshold tag. */
-    ransac,         /*!< Identifier associated to the ransac tag. */
-    use_ransac_vvs, /*!< Identifier associated to the use_ransac_vvs tag. */
-    use_ransac_consensus_percentage, /*!< Identifier associated to the
-                                        use_ransac_consensus_percentage tag.
-                                      */
-    nb_ransac_iterations,            /*!< Identifier associated to the
-                                        nb_ransac_iterations tag. */
-    ransac_reprojection_error,       /*!< Identifier associated to the
-                                        ransac_reprojection_error tag. */
-    nb_ransac_min_inlier_count,      /*!< Identifier associated to the
-                                        nb_ransac_min_inlier_count tag. */
-    ransac_threshold, /*!< Identifier associated to the ransac_threshold tag.
-                       */
-    ransac_consensus_percentage /*!< Identifier associated to the
-                                   ransac_consensus_percentage tag. */
+    no_filter_matching,                 /*!< Identifier associated to the no_filter_matching
+                                           tag. */
+    matching_factor_threshold,          /*!< Identifier associated to the
+                                           matching_factor_threshold tag. */
+    matching_ratio_threshold,           /*!< Identifier associated to the
+                                           matching_ratio_threshold tag. */
+    ransac,                             /*!< Identifier associated to the ransac tag. */
+    use_ransac_vvs,                     /*!< Identifier associated to the use_ransac_vvs tag. */
+    use_ransac_consensus_percentage,    /*!< Identifier associated to the
+                                           use_ransac_consensus_percentage tag.
+                                         */
+    nb_ransac_iterations,               /*!< Identifier associated to the
+                                           nb_ransac_iterations tag. */
+    ransac_reprojection_error,          /*!< Identifier associated to the
+                                           ransac_reprojection_error tag. */
+    nb_ransac_min_inlier_count,         /*!< Identifier associated to the
+                                           nb_ransac_min_inlier_count tag. */
+    ransac_threshold,                   /*!< Identifier associated to the ransac_threshold tag.
+                                         */
+    ransac_consensus_percentage         /*!< Identifier associated to the
+                                           ransac_consensus_percentage tag. */
   } vpNodeIdentifier;
 
   /*! Enumerator for the different filtering matching method. */
   typedef enum {
     constantFactorDistanceThreshold, /*!< Keep all the points below a constant
                                         factor threshold. */
-    stdDistanceThreshold, /*!< Keep all the points below a minimal distance +
-                             the standard deviation. */
-    ratioDistanceThreshold, /*!< Keep all the points enough discriminated. */
-    stdAndRatioDistanceThreshold, /*!< Keep all the points which fall with the
-                                     two conditions. */
-    noFilterMatching              /*!< No filtering. */
+    stdDistanceThreshold,            /*!< Keep all the points below a minimal distance +
+                                        the standard deviation. */
+    ratioDistanceThreshold,          /*!< Keep all the points enough discriminated. */
+    stdAndRatioDistanceThreshold,    /*!< Keep all the points which fall with the
+                                        two conditions. */
+    noFilterMatching                 /*!< No filtering. */
   } vpMatchingMethodEnum;
 
 private:
@@ -187,30 +187,21 @@ public:
     \return The factor value for the filtering method:
     constantFactorDistanceThreshold.
   */
-  inline double getMatchingFactorThreshold() const
-  {
-    return m_matchingFactorThreshold;
-  }
+  inline double getMatchingFactorThreshold() const { return m_matchingFactorThreshold; }
 
   /*!
     Get the filtering method.
 
     \return The filtering method.
   */
-  inline vpMatchingMethodEnum getMatchingMethod() const
-  {
-    return m_matchingMethod;
-  }
+  inline vpMatchingMethodEnum getMatchingMethod() const { return m_matchingMethod; }
 
   /*!
     Get the ratio value.
 
     \return The factor value for the filtering method: ratioDistanceThreshold.
   */
-  inline double getMatchingRatioThreshold() const
-  {
-    return m_matchingRatioThreshold;
-  }
+  inline double getMatchingRatioThreshold() const { return m_matchingRatioThreshold; }
 
   /*!
     Get the maximum number of iterations for the Ransac method.
@@ -224,20 +215,14 @@ public:
 
     \return The minimum number of inliers for the Ransac method.
   */
-  inline int getNbRansacMinInlierCount() const
-  {
-    return m_nbRansacMinInlierCount;
-  }
+  inline int getNbRansacMinInlierCount() const { return m_nbRansacMinInlierCount; }
 
   /*!
     Get the percentage value of inliers for the Ransac method.
 
     \return The percentage value of inliers for the Ransac method.
   */
-  inline double getRansacConsensusPercentage() const
-  {
-    return m_ransacConsensusPercentage;
-  }
+  inline double getRansacConsensusPercentage() const { return m_ransacConsensusPercentage; }
 
   /*!
     Get the maximum reprojection error for a candidate inlier for the Ransac
@@ -245,10 +230,7 @@ public:
 
     \return The maximum reprojection error for the Ransac method.
   */
-  inline double getRansacReprojectionError() const
-  {
-    return m_ransacReprojectionError;
-  }
+  inline double getRansacReprojectionError() const { return m_ransacReprojectionError; }
 
   /*!
     Get the maximum error for a candidate inlier for the Ransac method.
@@ -263,10 +245,7 @@ public:
 
     \return True to use a percentage value for inliers, false otherwise.
   */
-  inline bool getUseRansacConsensusPercentage() const
-  {
-    return m_useRansacConsensusPercentage;
-  }
+  inline bool getUseRansacConsensusPercentage() const { return m_useRansacConsensusPercentage; }
 
   /*!
     Get the flag state to choose between OpenCV Ransac pose estimation or ViSP

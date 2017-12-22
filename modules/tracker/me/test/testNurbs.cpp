@@ -65,8 +65,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -112,8 +111,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -239,50 +237,41 @@ int main(int argc, const char **argv)
     std::list<double> knots_cur;
     Nurbs.get_knots(knots_cur);
     unsigned int i_display = 0;
-    for (std::list<double>::const_iterator it = knots_cur.begin();
-         it != knots_cur.end(); ++it, ++i_display) {
+    for (std::list<double>::const_iterator it = knots_cur.begin(); it != knots_cur.end(); ++it, ++i_display) {
       std::cout << i_display << " ---> " << *it << std::endl;
     }
     std::cout << "The control points are :" << std::endl;
     std::list<vpImagePoint> controlPoints_cur;
     Nurbs.get_controlPoints(controlPoints_cur);
     i_display = 0;
-    for (std::list<vpImagePoint>::const_iterator
-             it = controlPoints_cur.begin();
-         it != controlPoints_cur.end(); ++it, ++i_display) {
+    for (std::list<vpImagePoint>::const_iterator it = controlPoints_cur.begin(); it != controlPoints_cur.end();
+         ++it, ++i_display) {
       std::cout << i_display << " ---> " << *it << std::endl;
     }
     std::cout << "The associated weights are :" << std::endl;
     std::list<double> weights_cur;
     Nurbs.get_weights(weights_cur);
     i_display = 0;
-    for (std::list<double>::const_iterator it = weights_cur.begin();
-         it != weights_cur.end(); ++it, ++i_display) {
+    for (std::list<double>::const_iterator it = weights_cur.begin(); it != weights_cur.end(); ++it, ++i_display) {
       std::cout << i_display << " ---> " << *it << std::endl;
     }
 
     unsigned int i = Nurbs.findSpan(5 / 2.0);
-    std::cout << "The knot interval number for the value u = 5/2 is : " << i
-              << std::endl;
+    std::cout << "The knot interval number for the value u = 5/2 is : " << i << std::endl;
 
     vpBasisFunction *N = NULL;
     N = Nurbs.computeBasisFuns(5 / 2.0);
-    std::cout << "The nonvanishing basis functions N(u=5/2) are :"
-              << std::endl;
+    std::cout << "The nonvanishing basis functions N(u=5/2) are :" << std::endl;
     for (unsigned int j = 0; j < Nurbs.get_p() + 1; j++)
       std::cout << N[j].value << std::endl;
 
     vpBasisFunction **N2 = NULL;
     N2 = Nurbs.computeDersBasisFuns(5 / 2.0, 2);
-    std::cout
-        << "The first derivatives of the basis functions N'(u=5/2) are :"
-        << std::endl;
+    std::cout << "The first derivatives of the basis functions N'(u=5/2) are :" << std::endl;
     for (unsigned int j = 0; j < Nurbs.get_p() + 1; j++)
       std::cout << N2[1][j].value << std::endl;
 
-    std::cout
-        << "The second derivatives of the basis functions N''(u=5/2) are :"
-        << std::endl;
+    std::cout << "The second derivatives of the basis functions N''(u=5/2) are :" << std::endl;
     for (unsigned int j = 0; j < Nurbs.get_p() + 1; j++)
       std::cout << N2[2][j].value << std::endl;
 
@@ -293,8 +282,7 @@ int main(int argc, const char **argv)
         vpDisplay::displayCross(I, pt, 4, vpColor::red);
         u += 0.01;
       }
-      for (std::list<vpImagePoint>::const_iterator it = controlPoints.begin();
-           it != controlPoints.end(); ++it) {
+      for (std::list<vpImagePoint>::const_iterator it = controlPoints.begin(); it != controlPoints.end(); ++it) {
         vpDisplay::displayCross(I, *it, 4, vpColor::green);
       }
 
@@ -324,8 +312,7 @@ int main(int argc, const char **argv)
         u += 0.01;
       }
 
-      for (std::list<vpImagePoint>::const_iterator it = controlPoints.begin();
-           it != controlPoints.end(); ++it) {
+      for (std::list<vpImagePoint>::const_iterator it = controlPoints.begin(); it != controlPoints.end(); ++it) {
         vpDisplay::displayCross(I2, *it, 4, vpColor::green);
       }
       vpDisplay::flush(I2);
@@ -354,8 +341,7 @@ int main(int argc, const char **argv)
         u += 0.01;
       }
 
-      for (std::list<vpImagePoint>::const_iterator it = controlPoints.begin();
-           it != controlPoints.end(); ++it) {
+      for (std::list<vpImagePoint>::const_iterator it = controlPoints.begin(); it != controlPoints.end(); ++it) {
         vpDisplay::displayCross(I3, *it, 4, vpColor::green);
       }
 
@@ -382,8 +368,7 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "This example requires a video device. " << std::endl
-            << "You should install X11, GTK, OpenCV, GDI or Direct3D"
-            << std::endl
+            << "You should install X11, GTK, OpenCV, GDI or Direct3D" << std::endl
             << "to be able to execute this example." << std::endl;
   return 0;
 }

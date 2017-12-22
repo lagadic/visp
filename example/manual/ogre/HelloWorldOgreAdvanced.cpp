@@ -63,8 +63,8 @@ private:
   Ogre::AnimationState *mAnimationState;
 
 public:
-  vpAROgreAdvanced(const vpCameraParameters &cam = vpCameraParameters(),
-                   unsigned int width = 640, unsigned int height = 480)
+  vpAROgreAdvanced(const vpCameraParameters &cam = vpCameraParameters(), unsigned int width = 640,
+                   unsigned int height = 480)
     : vpAROgre(cam, width, height)
   {
     mAnimationState = NULL;
@@ -76,8 +76,7 @@ protected:
     // Create the Entity
     Ogre::Entity *robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
-    Ogre::SceneNode *RobotNode =
-        mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
+    Ogre::SceneNode *RobotNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
     // RobotNode->setPosition((Ogre::Real)-0.3, (Ogre::Real)0.2,
     // (Ogre::Real)0);
     RobotNode->attachObject(robot);
@@ -110,8 +109,7 @@ int main()
 {
   try {
 #if defined(VISP_HAVE_OGRE)
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) ||                  \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
     // Image to store gathered data
     // Here we acquire a grey level image. The consequence will be that
@@ -179,8 +177,7 @@ int main()
       ogre.display(I, cMo);
     }
 #else
-    std::cout << "You need an available framegrabber to run this example"
-              << std::endl;
+    std::cout << "You need an available framegrabber to run this example" << std::endl;
 #endif
 #else
     std::cout << "You need Ogre3D to run this example" << std::endl;

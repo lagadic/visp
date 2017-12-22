@@ -131,8 +131,7 @@ private:
   //#endif
 
 public:
-  vpMomentCommon(double dstSurface, const std::vector<double> &ref,
-                 double refAlpha, double dstZ = 1.0,
+  vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ = 1.0,
                  bool flg_sxsyfromnormalized = false);
   virtual ~vpMomentCommon();
 

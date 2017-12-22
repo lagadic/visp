@@ -75,13 +75,15 @@ is to reduce the time to convergence in order to speed up the servo.
 
   The following example shows how to use this class in order to use an
 adaptive gain with the following parameters \f$\lambda_0 = 4\f$,
-\f$\lambda_\infty = 0.4 \f$ and \f$\lambda'_0 = 30\f$. \code #include
-<visp3/vs/vpAdaptiveGain.h> #include <visp3/vs/vpServo.h>
+\f$\lambda_\infty = 0.4 \f$ and \f$\lambda'_0 = 30\f$.
+
+\code
+#include <visp3/vs/vpAdaptiveGain.h>
+#include <visp3/vs/vpServo.h>
 
 int main()
 {
-  vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and
-lambda'(0)=30
+  vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
 
   vpServo servo;
   servo.setLambda(lambda);
@@ -95,8 +97,11 @@ lambda'(0)=30
 
   This other example shows how to use this class in order to set a constant
 gain \f$\lambda = 0.5\f$ that will ensure an exponential decrease of the task
-error. \code #include <visp3/vs/vpAdaptiveGain.h> #include
-<visp3/vs/vpServo.h>
+error.
+
+\code
+#include <visp3/vs/vpAdaptiveGain.h>
+#include <visp3/vs/vpServo.h>
 
 int main()
 {
@@ -135,15 +140,13 @@ public:
 
   vpAdaptiveGain();
   explicit vpAdaptiveGain(double c);
-  vpAdaptiveGain(double gain_at_zero, double gain_at_infinity,
-                 double slope_at_zero);
+  vpAdaptiveGain(double gain_at_zero, double gain_at_infinity, double slope_at_zero);
 
   /* --- INIT ---------------------------------------------------------------
    */
   void initFromConstant(double c);
   void initFromVoid(void);
-  void initStandard(double gain_at_zero, double gain_at_infinity,
-                    double slope_at_zero);
+  void initStandard(double gain_at_zero, double gain_at_infinity, double slope_at_zero);
 
   /* --- MODIFIORS ----------------------------------------------------------
    */
@@ -201,8 +204,7 @@ public:
 
   /* --- IOSTREAM -----------------------------------------------------------
    */
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpAdaptiveGain &lambda);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lambda);
 };
 
 #endif

@@ -137,8 +137,7 @@ public:
       \param mean_val : Mean value.
       \param noise_seed : Seed of the noise
     */
-  vpGaussRand(const double sigma_val, const double mean_val,
-              const long noise_seed = 0)
+  vpGaussRand(const double sigma_val, const double mean_val, const long noise_seed = 0)
     : vpUniRand(noise_seed), mean(mean_val), sigma(sigma_val)
   {
   }

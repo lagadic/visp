@@ -63,16 +63,10 @@ struct Histogram_Param_t {
   unsigned int *m_histogram;
   const vpImage<unsigned char> *m_I;
 
-  Histogram_Param_t()
-    : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL)
-  {
-  }
+  Histogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL) {}
 
-  Histogram_Param_t(const unsigned int start_index,
-                    const unsigned int end_index,
-                    const vpImage<unsigned char> *const I)
-    : m_start_index(start_index), m_end_index(end_index), m_lut(),
-      m_histogram(NULL), m_I(I)
+  Histogram_Param_t(const unsigned int start_index, const unsigned int end_index, const vpImage<unsigned char> *const I)
+    : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(NULL), m_I(I)
   {
   }
 
@@ -172,8 +166,7 @@ vpHistogram::vpHistogram(const vpHistogram &h) : histogram(NULL), size(256)
 
   \sa calculate()
 */
-vpHistogram::vpHistogram(const vpImage<unsigned char> &I)
-  : histogram(NULL), size(256)
+vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : histogram(NULL), size(256)
 {
   init();
 
@@ -242,9 +235,7 @@ void vpHistogram::init(unsigned size_)
   \param nbins : Number of bins to compute the histogram.
   \param nbThreads : Number of threads to use for the computation.
 */
-void vpHistogram::calculate(const vpImage<unsigned char> &I,
-                            const unsigned int nbins,
-                            const unsigned int nbThreads)
+void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins, const unsigned int nbThreads)
 {
   if (size != nbins) {
     if (histogram != NULL) {
@@ -254,10 +245,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I,
 
     size = nbins > 256 ? 256 : (nbins > 0 ? nbins : 256);
     if (nbins > 256 || nbins == 0) {
-      std::cerr
-          << "nbins=" << nbins
-          << " , nbins should be between ]0 ; 256] ; use by default nbins=256"
-          << std::endl;
+      std::cerr << "nbins=" << nbins << " , nbins should be between ]0 ; 256] ; use by default nbins=256" << std::endl;
     }
     histogram = new unsigned int[size];
   }
@@ -311,8 +299,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I,
         end_index = start_index + last_step;
       }
 
-      Histogram_Param_t *histogram_param =
-          new Histogram_Param_t(start_index, end_index, &I);
+      Histogram_Param_t *histogram_param = new Histogram_Param_t(start_index, end_index, &I);
       histogram_param->m_histogram = new unsigned int[size];
       memset(histogram_param->m_histogram, 0, size * sizeof(unsigned int));
       memcpy(histogram_param->m_lut, lut, 256 * sizeof(unsigned int));
@@ -320,9 +307,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I,
       histogramParams.push_back(histogram_param);
 
       // Start the threads
-      vpThread *histogram_thread =
-          new vpThread((vpThread::Fn)computeHistogramThread,
-                       (vpThread::Args)histogram_param);
+      vpThread *histogram_thread = new vpThread((vpThread::Fn)computeHistogramThread, (vpThread::Args)histogram_param);
       threadpool.push_back(histogram_thread);
     }
 
@@ -364,15 +349,13 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I,
   from the current histogram. Useful to plot a 3 channels histogram for a RGB
   image for example to keep a coherent vertical scale between the channels.
 */
-void vpHistogram::display(const vpImage<unsigned char> &I,
-                          const vpColor &color, const unsigned int thickness,
+void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color, const unsigned int thickness,
                           const unsigned int maxValue_)
 {
   unsigned int width = I.getWidth(), height = I.getHeight();
   // Minimal width and height are 36 px
   if (width < 36 || height < 36) {
-    std::cerr << "Image I must have at least width >= 36 && height >= 36 !"
-              << std::endl;
+    std::cerr << "Image I must have at least width >= 36 && height >= 36 !" << std::endl;
     return;
   }
 
@@ -386,8 +369,7 @@ void vpHistogram::display(const vpImage<unsigned char> &I,
   }
 
   if (maxValue == 0) {
-    throw(vpException(vpException::divideByZeroError,
-                      "Cannot display histogram; max value=0"));
+    throw(vpException(vpException::divideByZeroError, "Cannot display histogram; max value=0"));
   }
   // Keep 12 free pixels at the top
   unsigned int max_height = height - 12;
@@ -398,10 +380,8 @@ void vpHistogram::display(const vpImage<unsigned char> &I,
     unsigned int value1 = histogram[i - 1];
     unsigned int value2 = histogram[i];
 
-    vpImagePoint startPt((height - 1) - (value1 * ratio_height),
-                         (i - 1) * ratio_width);
-    vpImagePoint endPt((height - 1) - (value2 * ratio_height),
-                       (i * ratio_width));
+    vpImagePoint startPt((height - 1) - (value1 * ratio_height), (i - 1) * ratio_width);
+    vpImagePoint endPt((height - 1) - (value2 * ratio_height), (i * ratio_width));
     vpDisplay::displayLine(I, startPt, endPt, color, thickness);
   }
 }
@@ -430,8 +410,7 @@ void vpHistogram::smooth(const unsigned int fsize)
 {
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");
-    throw(vpImageException(vpImageException::notInitializedError,
-                           "Histogram array not initialised"));
+    throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
 
   vpHistogram h;
@@ -471,8 +450,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
 {
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");
-    throw(vpImageException(vpImageException::notInitializedError,
-                           "Histogram array not initialised"));
+    throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
 
   int prev_slope;    // Previous histogram inclination
@@ -488,8 +466,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
   prev_slope = 1;
 
   for (unsigned i = 0; i < size - 1; i++) {
-    int next_slope = (int)histogram[i + 1] -
-                     (int)histogram[i]; // Next histogram inclination
+    int next_slope = (int)histogram[i + 1] - (int)histogram[i]; // Next histogram inclination
 
     //     if ((prev_slope < 0) && (next_slope > 0) ) {
     //       sum_level += i;
@@ -547,8 +524,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
   - 0: if no peaks were found.
 
 */
-unsigned vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peak1,
-                               vpHistogramPeak &peak2)
+unsigned vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peak1, vpHistogramPeak &peak2)
 {
   std::list<vpHistogramPeak> peaks;
   unsigned nbpeaks; // Number of peaks in the histogram (ie local maxima)
@@ -571,8 +547,7 @@ unsigned vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peak1,
   // Parse the peaks list to get the peak with a distance greater
   // than dist to the highest
   peak1 = peaks.front();
-  for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin();
-       it != peaks.end(); ++it) {
+  for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin(); it != peaks.end(); ++it) {
     vpHistogramPeak p = *it;
     if (abs(p.getLevel() - peak1.getLevel()) > dist) {
       // The second peak is found
@@ -601,8 +576,7 @@ unsigned vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peak1,
   \return true if the histogram is bimodal, false otherwise.
 */
 
-bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl,
-                           vpHistogramPeak &peakr, vpHistogramValey &valey)
+bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogramPeak &peakr, vpHistogramValey &valey)
 {
   unsigned char *peak;         // Local maxima values
   int prev_slope;              // Previous histogram inclination
@@ -614,7 +588,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl,
   unsigned int nbmini;     // Minimum numbers
   unsigned int sumindmini; // Sum
   unsigned int mini;       // current minimum
-  unsigned int nbpeaks; // Number of peaks in the histogram (ie local maxima)
+  unsigned int nbpeaks;    // Number of peaks in the histogram (ie local maxima)
 
   // Init the valey
   valey.set(0, 0);
@@ -626,8 +600,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl,
   nbpeaks = 0;
   prev_slope = 1;
   for (unsigned i = 0; i < size - 1; i++) {
-    int next_slope = (int)histogram[i + 1] -
-                     (int)histogram[i]; // Next histogram inclination
+    int next_slope = (int)histogram[i + 1] - (int)histogram[i]; // Next histogram inclination
     if (next_slope == 0)
       continue;
     // Peak detection
@@ -760,8 +733,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
 {
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");
-    throw(vpImageException(vpImageException::notInitializedError,
-                           "Histogram array not initialised"));
+    throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
 
   int prev_slope;     // Previous histogram inclination
@@ -777,8 +749,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
   prev_slope = -1;
 
   for (unsigned i = 0; i < size - 1; i++) {
-    int next_slope = (int)histogram[i + 1] -
-                     (int)histogram[i]; // Next histogram inclination
+    int next_slope = (int)histogram[i + 1] - (int)histogram[i]; // Next histogram inclination
 
     if ((prev_slope < 0) && (next_slope == 0)) {
       sum_level += i + 1;
@@ -827,9 +798,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
 
   \return true if a valey was found, false otherwise.
 */
-bool vpHistogram::getValey(const vpHistogramPeak &peak1,
-                           const vpHistogramPeak &peak2,
-                           vpHistogramValey &valey)
+bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &peak2, vpHistogramValey &valey)
 {
 
   // Set the left and right peaks
@@ -893,9 +862,7 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1,
   \return 0x11 : If two valeys around the peak were found.
 
 */
-unsigned vpHistogram::getValey(unsigned char dist,
-                               const vpHistogramPeak &peak,
-                               vpHistogramValey &valeyl,
+unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, vpHistogramValey &valeyl,
                                vpHistogramValey &valeyr)
 {
   unsigned int ret = 0x11;
@@ -1025,8 +992,7 @@ unsigned vpHistogram::getValey(unsigned char dist,
     mini = peak.getValue();
     sumindmini = 0;
     nbmini = 0;
-    for (unsigned i = (unsigned int)peak.getLevel() + 1;
-         i <= (unsigned int)peakr.getLevel(); i++) {
+    for (unsigned i = (unsigned int)peak.getLevel() + 1; i <= (unsigned int)peakr.getLevel(); i++) {
       if (histogram[i] < mini) {
         mini = histogram[i];
         nbmini = 1;
@@ -1083,10 +1049,7 @@ unsigned vpHistogram::sort(std::list<vpHistogramPeak> &peaks)
   \return true if the file could be written, false otherwise.
 */
 
-bool vpHistogram::write(const std::string &filename)
-{
-  return (this->write(filename.c_str()));
-}
+bool vpHistogram::write(const std::string &filename) { return (this->write(filename.c_str())); }
 
 /*!
 

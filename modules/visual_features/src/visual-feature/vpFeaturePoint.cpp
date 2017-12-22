@@ -160,8 +160,7 @@ double vpFeaturePoint::get_y() const { return s[1]; }
   \param y_ : \f$ y \f$ value to set.
   \param Z_ : \f$ Z \f$ value to set.
 */
-void vpFeaturePoint::set_xyZ(const double x_, const double y_,
-                             const double Z_)
+void vpFeaturePoint::set_xyZ(const double x_, const double y_, const double Z_)
 {
   set_x(x_);
   set_y(y_);
@@ -251,16 +250,14 @@ vpMatrix vpFeaturePoint::interaction(const unsigned int select)
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z_) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   if (vpFeaturePoint::selectX() & select) {
@@ -312,7 +309,8 @@ vpMatrix vpFeaturePoint::interaction(const unsigned int select)
   feature.
 
   The code below shows how to use this method to manipulate the \f$ x \f$
-  subset: \code
+  subset:
+  \code
   // Creation of the current feature s
   vpFeaturePoint s;
   s.buildFrom(0, 0, 1);
@@ -328,8 +326,7 @@ vpMatrix vpFeaturePoint::interaction(const unsigned int select)
   s.error(s_star, vpFeaturePoint::selectX());
   \endcode
 */
-vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star,
-                                  const unsigned int select)
+vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, const unsigned int select)
 {
   vpColVector e(0);
 
@@ -395,8 +392,7 @@ void vpFeaturePoint::print(const unsigned int select) const
   \param y_ : The \f$ y \f$ parameter.
   \param Z_ : The \f$ Z \f$ parameter.
 */
-void vpFeaturePoint::buildFrom(const double x_, const double y_,
-                               const double Z_)
+void vpFeaturePoint::buildFrom(const double x_, const double y_, const double Z_)
 {
 
   s[0] = x_;
@@ -408,16 +404,14 @@ void vpFeaturePoint::buildFrom(const double x_, const double y_,
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z_) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   for (unsigned int i = 0; i < nbParameters; i++)
@@ -434,9 +428,7 @@ void vpFeaturePoint::buildFrom(const double x_, const double y_,
   \param thickness : Thickness of the feature representation.
 
 */
-void vpFeaturePoint::display(const vpCameraParameters &cam,
-                             const vpImage<unsigned char> &I,
-                             const vpColor &color,
+void vpFeaturePoint::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                              unsigned int thickness) const
 {
   try {
@@ -462,8 +454,7 @@ void vpFeaturePoint::display(const vpCameraParameters &cam,
   \param thickness : Thickness of the feature representation.
 
 */
-void vpFeaturePoint::display(const vpCameraParameters &cam,
-                             const vpImage<vpRGBa> &I, const vpColor &color,
+void vpFeaturePoint::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                              unsigned int thickness) const
 {
   try {

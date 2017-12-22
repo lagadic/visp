@@ -66,8 +66,9 @@ class vpMomentDatabase;
   for \f$ L_{y_{n}} \f$. You can use these shortcut selectors as follows:
 
   \code
-  task.addFeature(db_src.getFeatureGravityNormalized(),db_dst.getFeatureGravityNormalized(),vpFeatureMomentGravityCenterNormalized::selectXn()
-  | vpFeatureMomentGravityCenterNormalized::selectYn()); \endcode
+  task.addFeature(db_src.getFeatureGravityNormalized(), db_dst.getFeatureGravityNormalized(),
+                  vpFeatureMomentGravityCenterNormalized::selectXn() | vpFeatureMomentGravityCenterNormalized::selectYn());
+  \endcode
 
   The behaviour of this feature is very similar to
   vpFeatureMomentGravityCenter which also contains a sample code demonstrating
@@ -86,8 +87,7 @@ class vpMomentDatabase;
     - vpFeatureMomentAreaNormalized
 
 */
-class VISP_EXPORT vpFeatureMomentGravityCenterNormalized
-  : public vpFeatureMoment
+class VISP_EXPORT vpFeatureMomentGravityCenterNormalized : public vpFeatureMoment
 {
 public:
   /*!
@@ -102,9 +102,8 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentGravityCenterNormalized(
-      vpMomentDatabase &database, double A_, double B_, double C_,
-      vpFeatureMomentDatabase *featureMoments = NULL)
+  vpFeatureMomentGravityCenterNormalized(vpMomentDatabase &database, double A_, double B_, double C_,
+                                         vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(database, A_, B_, C_, featureMoments, 2)
   {
   }
@@ -116,10 +115,7 @@ public:
   /*!
       feature name
     */
-  const char *name() const
-  {
-    return "vpFeatureMomentGravityCenterNormalized";
-  }
+  const char *name() const { return "vpFeatureMomentGravityCenterNormalized"; }
 
   /*!
     Shortcut selector for \f$x_n\f$.
@@ -220,8 +216,10 @@ the following methods: vpFeatureMomentGravityCenterNormalized::selectXn for
 L_{y_{n}} \f$. You can use these shortcut selectors as follows:
 
   \code
-  task.addFeature(db_src.getFeatureGravityNormalized(),db_dst.getFeatureGravityNormalized(),vpFeatureMomentGravityCenterNormalized::selectXn()
-| vpFeatureMomentGravityCenterNormalized::selectYn()); \endcode
+  task.addFeature(db_src.getFeatureGravityNormalized(),db_dst.getFeatureGravityNormalized(),
+                  vpFeatureMomentGravityCenterNormalized::selectXn() |
+                  vpFeatureMomentGravityCenterNormalized::selectYn());
+  \endcode
 
   The behaviour of this feature is very similar to
 vpFeatureMomentGravityCenter which also contains a sample code demonstrating a
@@ -240,8 +238,7 @@ and 3 in discrete mode.
     - vpFeatureMomentAreaNormalized
 
 */
-class VISP_EXPORT vpFeatureMomentGravityCenterNormalized
-  : public vpFeatureMoment
+class VISP_EXPORT vpFeatureMomentGravityCenterNormalized : public vpFeatureMoment
 {
 public:
   /*!
@@ -256,9 +253,8 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentGravityCenterNormalized(
-      vpMomentDatabase &data_base, double A_, double B_, double C_,
-      vpFeatureMomentDatabase *featureMoments = NULL)
+  vpFeatureMomentGravityCenterNormalized(vpMomentDatabase &data_base, double A_, double B_, double C_,
+                                         vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 2)
   {
   }
@@ -270,10 +266,7 @@ public:
   /*!
       feature name
     */
-  const char *name() const
-  {
-    return "vpFeatureMomentGravityCenterNormalized";
-  }
+  const char *name() const { return "vpFeatureMomentGravityCenterNormalized"; }
 
   /*!
     Shortcut selector for \f$x_n\f$.

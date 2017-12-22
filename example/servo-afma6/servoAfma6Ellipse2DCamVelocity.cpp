@@ -108,16 +108,12 @@ int main()
     vpDisplay::flush(I);
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a point " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     vpDot dot;
@@ -189,8 +185,7 @@ int main()
     std::cout << "beta 5" << std::endl;
     std::cin >> beta;
     for (;;) {
-      std::cout << "---------------------------------------------" << iter++
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter++ << std::endl;
 
       g.acquire(I);
       vpDisplay::display(I);
@@ -209,8 +204,7 @@ int main()
         if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
           gain = lambda_av;
         else {
-          gain =
-              alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
+          gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
         }
       } else
         gain = lambda_av;

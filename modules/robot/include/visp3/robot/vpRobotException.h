@@ -132,10 +132,7 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpRobotException(const int id, const std::string &msg)
-    : vpException(id, msg)
-  {
-  }
+  vpRobotException(const int id, const std::string &msg) : vpException(id, msg) {}
   explicit vpRobotException(const int id) : vpException(id) {}
 };
 

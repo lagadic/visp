@@ -57,27 +57,23 @@
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
 const char *vp1394TwoGrabber::strVideoMode[DC1394_VIDEO_MODE_NUM] = {
-    "MODE_160x120_YUV444",   "MODE_320x240_YUV422",   "MODE_640x480_YUV411",
-    "MODE_640x480_YUV422",   "MODE_640x480_RGB8",     "MODE_640x480_MONO8",
-    "MODE_640x480_MONO16",   "MODE_800x600_YUV422",   "MODE_800x600_RGB8",
-    "MODE_800x600_MONO8",    "MODE_1024x768_YUV422",  "MODE_1024x768_RGB8",
-    "MODE_1024x768_MONO8",   "MODE_800x600_MONO16",   "MODE_1024x768_MONO16",
-    "MODE_1280x960_YUV422",  "MODE_1280x960_RGB8",    "MODE_1280x960_MONO8",
-    "MODE_1600x1200_YUV422", "MODE_1600x1200_RGB8",   "MODE_1600x1200_MONO8",
-    "MODE_1280x960_MONO16",  "MODE_1600x1200_MONO16", "MODE_EXIF",
-    "MODE_FORMAT7_0",        "MODE_FORMAT7_1",        "MODE_FORMAT7_2",
-    "MODE_FORMAT7_3",        "MODE_FORMAT7_4",        "MODE_FORMAT7_5",
-    "MODE_FORMAT7_6",        "MODE_FORMAT7_7"};
+    "MODE_160x120_YUV444",  "MODE_320x240_YUV422",  "MODE_640x480_YUV411",   "MODE_640x480_YUV422",
+    "MODE_640x480_RGB8",    "MODE_640x480_MONO8",   "MODE_640x480_MONO16",   "MODE_800x600_YUV422",
+    "MODE_800x600_RGB8",    "MODE_800x600_MONO8",   "MODE_1024x768_YUV422",  "MODE_1024x768_RGB8",
+    "MODE_1024x768_MONO8",  "MODE_800x600_MONO16",  "MODE_1024x768_MONO16",  "MODE_1280x960_YUV422",
+    "MODE_1280x960_RGB8",   "MODE_1280x960_MONO8",  "MODE_1600x1200_YUV422", "MODE_1600x1200_RGB8",
+    "MODE_1600x1200_MONO8", "MODE_1280x960_MONO16", "MODE_1600x1200_MONO16", "MODE_EXIF",
+    "MODE_FORMAT7_0",       "MODE_FORMAT7_1",       "MODE_FORMAT7_2",        "MODE_FORMAT7_3",
+    "MODE_FORMAT7_4",       "MODE_FORMAT7_5",       "MODE_FORMAT7_6",        "MODE_FORMAT7_7"};
 
 const char *vp1394TwoGrabber::strFramerate[DC1394_FRAMERATE_NUM] = {
     "FRAMERATE_1_875", "FRAMERATE_3_75", "FRAMERATE_7_5", "FRAMERATE_15",
     "FRAMERATE_30",    "FRAMERATE_60",   "FRAMERATE_120", "FRAMERATE_240"};
 
 const char *vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM] = {
-    "COLOR_CODING_MONO8",  "COLOR_CODING_YUV411",  "COLOR_CODING_YUV422",
-    "COLOR_CODING_YUV444", "COLOR_CODING_RGB8",    "COLOR_CODING_MONO16",
-    "COLOR_CODING_RGB16",  "COLOR_CODING_MONO16S", "COLOR_CODING_RGB16S",
-    "COLOR_CODING_RAW8",   "COLOR_CODING_RAW16",
+    "COLOR_CODING_MONO8",  "COLOR_CODING_YUV411", "COLOR_CODING_YUV422", "COLOR_CODING_YUV444",
+    "COLOR_CODING_RGB8",   "COLOR_CODING_MONO16", "COLOR_CODING_RGB16",  "COLOR_CODING_MONO16S",
+    "COLOR_CODING_RGB16S", "COLOR_CODING_RAW8",   "COLOR_CODING_RAW16",
 };
 
 /*!
@@ -126,8 +122,8 @@ int main()
 
 */
 vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
-  : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0), verbose(false),
-    camIsOpen(NULL), num_buffers(4), // ring buffer size
+  : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0), verbose(false), camIsOpen(NULL),
+    num_buffers(4), // ring buffer size
     isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
 #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     ,
@@ -202,23 +198,25 @@ int main()
 
   g.setCamera(last); // To dial with the last camera on the bus
   while(1)
-    g.acquire(I);// I contains the frame captured by the last camera on the
-bus #endif
+    g.acquire(I);// I contains the frame captured by the last camera on the bus
+#endif
 }
   \endcode
 
   If more than one camera is connected, it is also possible to select a
-specific camera by its GUID: \code #include <visp3/core/vpConfig.h> #include
-<visp3/core/vpImage.h> #include <visp3/io/vpImageIo.h> #include
-<visp3/sensor/vp1394TwoGrabber.h>
+specific camera by its GUID:
+\code
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
 #if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I; // Create a gray level image container
   bool reset = false; // Disable bus reset during construction
-  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third
-party lib
+  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
 
   unsigned int ncameras; // Number of cameras on the bus
   ncameras = g.getNumCameras();
@@ -300,16 +298,13 @@ void vp1394TwoGrabber::setCamera(uint64_t cam_id)
       }
     }
     if (is_guid == false) {
-      std::cout << "Error: The camera with guid 0x" << std::hex << cam_id
-                << " is not present" << std::endl;
+      std::cout << "Error: The camera with guid 0x" << std::hex << cam_id << " is not present" << std::endl;
       std::cout << num_cameras << " camera(s) connected" << std::endl;
       for (unsigned int i = 0; i < num_cameras; i++) {
-        std::cout << " - camera " << i << " with guid 0x" << std::hex
-                  << cameras[i]->guid << std::endl;
+        std::cout << " - camera " << i << " with guid 0x" << std::hex << cameras[i]->guid << std::endl;
       }
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "The required camera is not present"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "The required camera is not present"));
     }
   } else {
     this->camera_id = (unsigned int)cam_id; // The input cam_id is not a
@@ -342,8 +337,7 @@ void vp1394TwoGrabber::getCamera(uint64_t &cam_id)
   } else {
     close();
     vpERROR_TRACE("No cameras found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No cameras found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No cameras found"));
   }
 }
 
@@ -368,8 +362,7 @@ uint64_t vp1394TwoGrabber::getCamera()
   } else {
     close();
     vpERROR_TRACE("No cameras found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No cameras found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No cameras found"));
   }
 }
 
@@ -459,36 +452,30 @@ void vp1394TwoGrabber::setVideoMode(vp1394TwoVideoModeType videomode)
   open();
   if (!num_cameras) {
     close();
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   if (!isVideoModeSupported(videomode)) {
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Video mode not supported by camera %d",
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Video mode not supported by camera %d",
                                   camera_id));
   }
   // Stop dma capture if started
   setTransmission(DC1394_OFF);
   setCapture(DC1394_OFF);
 
-  if (dc1394_video_set_mode(camera, (dc1394video_mode_t)videomode) !=
-      DC1394_SUCCESS) {
+  if (dc1394_video_set_mode(camera, (dc1394video_mode_t)videomode) != DC1394_SUCCESS) {
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't set video mode"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set video mode"));
   }
 
   setCapture(DC1394_ON);
   setTransmission(DC1394_ON);
 
   // Updates image size from new video mode
-  if (dc1394_get_image_size_from_video_mode(
-          camera, (dc1394video_mode_t)videomode, &this->width,
-          &this->height) != DC1394_SUCCESS) {
+  if (dc1394_get_image_size_from_video_mode(camera, (dc1394video_mode_t)videomode, &this->width, &this->height) !=
+      DC1394_SUCCESS) {
 
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get image size"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get image size"));
   }
 }
 
@@ -513,8 +500,7 @@ void vp1394TwoGrabber::getVideoMode(vp1394TwoVideoModeType &videomode)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394video_mode_t _videomode;
@@ -522,8 +508,7 @@ void vp1394TwoGrabber::getVideoMode(vp1394TwoVideoModeType &videomode)
 
     close();
     vpERROR_TRACE("Can't get current video mode");
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get current video mode"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get current video mode"));
   }
   videomode = (vp1394TwoVideoModeType)_videomode;
 }
@@ -545,8 +530,7 @@ void vp1394TwoGrabber::getVideoMode(vp1394TwoVideoModeType &videomode)
 
   \sa setVideoMode(), getVideoMode(), getCamera()
 */
-uint32_t vp1394TwoGrabber::getVideoModeSupported(
-    std::list<vp1394TwoVideoModeType> &videomodes)
+uint32_t vp1394TwoGrabber::getVideoModeSupported(std::list<vp1394TwoVideoModeType> &videomodes)
 {
   // Refresh the list of supported modes
   videomodes.clear();
@@ -554,25 +538,21 @@ uint32_t vp1394TwoGrabber::getVideoModeSupported(
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   dc1394video_modes_t _videomodes;
 
   // get video modes:
-  if (dc1394_video_get_supported_modes(camera, &_videomodes) !=
-      DC1394_SUCCESS) {
+  if (dc1394_video_get_supported_modes(camera, &_videomodes) != DC1394_SUCCESS) {
 
     close();
     vpERROR_TRACE("Can't get video modes");
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get video modes"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get video modes"));
   }
 
   // parse the video modes to add in the list
   for (unsigned i = 0; i < _videomodes.num; i++) {
-    vp1394TwoVideoModeType _mode =
-        (vp1394TwoVideoModeType)_videomodes.modes[i];
+    vp1394TwoVideoModeType _mode = (vp1394TwoVideoModeType)_videomodes.modes[i];
     videomodes.push_back(_mode);
   }
 
@@ -599,19 +579,16 @@ bool vp1394TwoGrabber::isVideoModeSupported(vp1394TwoVideoModeType videomode)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   dc1394video_modes_t _videomodes;
 
   // get video modes:
-  if (dc1394_video_get_supported_modes(camera, &_videomodes) !=
-      DC1394_SUCCESS) {
+  if (dc1394_video_get_supported_modes(camera, &_videomodes) != DC1394_SUCCESS) {
 
     close();
     vpERROR_TRACE("Can't get video modes");
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get video modes"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get video modes"));
   }
 
   // parse the video modes to check with the desired
@@ -710,8 +687,7 @@ void vp1394TwoGrabber::setFramerate(vp1394TwoFramerateType fps)
   open();
   if (!num_cameras) {
     close();
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   vp1394TwoVideoModeType cur_videomode;
@@ -720,8 +696,7 @@ void vp1394TwoGrabber::setFramerate(vp1394TwoFramerateType fps)
     return;
 
   if (!isFramerateSupported(cur_videomode, fps)) {
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Framerate not supported by camera %d",
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Framerate not supported by camera %d",
                                   camera_id));
   }
 
@@ -729,12 +704,10 @@ void vp1394TwoGrabber::setFramerate(vp1394TwoFramerateType fps)
   setTransmission(DC1394_OFF);
   setCapture(DC1394_OFF);
 
-  if (dc1394_video_set_framerate(camera, (dc1394framerate_t)fps) !=
-      DC1394_SUCCESS) {
+  if (dc1394_video_set_framerate(camera, (dc1394framerate_t)fps) != DC1394_SUCCESS) {
 
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't set framerate"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set framerate"));
   }
 
   setCapture(DC1394_ON);
@@ -762,16 +735,14 @@ void vp1394TwoGrabber::getFramerate(vp1394TwoFramerateType &fps)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   dc1394framerate_t _fps;
   if (dc1394_video_get_framerate(camera, &_fps) != DC1394_SUCCESS) {
 
     close();
     vpERROR_TRACE("Can't get current framerate");
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get current framerate"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get current framerate"));
   }
   fps = (vp1394TwoFramerateType)_fps;
 }
@@ -807,14 +778,12 @@ void vp1394TwoGrabber::getFramerate(vp1394TwoFramerateType &fps)
 
   \sa setFramerate(), getFramerate(), setCamera()
 */
-uint32_t vp1394TwoGrabber::getFramerateSupported(
-    vp1394TwoVideoModeType mode, std::list<vp1394TwoFramerateType> &fps)
+uint32_t vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode, std::list<vp1394TwoFramerateType> &fps)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   // Refresh the list of supported framerates
@@ -837,13 +806,10 @@ uint32_t vp1394TwoGrabber::getFramerateSupported(
     break;
   default: {
     dc1394framerates_t _fps;
-    if (dc1394_video_get_supported_framerates(
-            camera, (dc1394video_mode_t)mode, &_fps) != DC1394_SUCCESS) {
+    if (dc1394_video_get_supported_framerates(camera, (dc1394video_mode_t)mode, &_fps) != DC1394_SUCCESS) {
       close();
-      vpERROR_TRACE("Could not query supported frametates for mode %d\n",
-                    mode);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Could not query supported framerates"));
+      vpERROR_TRACE("Could not query supported frametates for mode %d\n", mode);
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not query supported framerates"));
     }
     if (_fps.num == 0)
       return 0;
@@ -888,14 +854,12 @@ uint32_t vp1394TwoGrabber::getFramerateSupported(
   supported.
   \sa setFramerate(), getFramerate(), setCamera()
  */
-bool vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode,
-                                            vp1394TwoFramerateType fps)
+bool vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode, vp1394TwoFramerateType fps)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   switch (mode) {
@@ -915,13 +879,10 @@ bool vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode,
     break;
   default: {
     dc1394framerates_t _fps;
-    if (dc1394_video_get_supported_framerates(
-            camera, (dc1394video_mode_t)mode, &_fps) != DC1394_SUCCESS) {
+    if (dc1394_video_get_supported_framerates(camera, (dc1394video_mode_t)mode, &_fps) != DC1394_SUCCESS) {
       close();
-      vpERROR_TRACE("Could not query supported frametates for mode %d\n",
-                    mode);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Could not query supported framerates"));
+      vpERROR_TRACE("Could not query supported frametates for mode %d\n", mode);
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not query supported framerates"));
     }
     if (_fps.num == 0)
       return 0;
@@ -988,21 +949,18 @@ void vp1394TwoGrabber::setColorCoding(vp1394TwoColorCodingType coding)
 {
   if (!num_cameras) {
     close();
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394video_mode_t _videomode;
   if (dc1394_video_get_mode(camera, &_videomode) != DC1394_SUCCESS) {
 
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get current video mode"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get current video mode"));
   }
 
   if (!isColorCodingSupported((vp1394TwoVideoModeType)_videomode, coding)) {
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Color coding not supported by camera %d",
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Color coding not supported by camera %d",
                                   camera_id));
   }
 
@@ -1011,13 +969,10 @@ void vp1394TwoGrabber::setColorCoding(vp1394TwoColorCodingType coding)
     setTransmission(DC1394_OFF);
     setCapture(DC1394_OFF);
 
-    if (dc1394_format7_set_color_coding(camera, _videomode,
-                                        (dc1394color_coding_t)coding) !=
-        DC1394_SUCCESS) {
+    if (dc1394_format7_set_color_coding(camera, _videomode, (dc1394color_coding_t)coding) != DC1394_SUCCESS) {
 
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't set color coding"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set color coding"));
     }
 
     setCapture(DC1394_ON);
@@ -1047,43 +1002,33 @@ void vp1394TwoGrabber::getColorCoding(vp1394TwoColorCodingType &coding)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   dc1394video_mode_t _videomode;
   if (dc1394_video_get_mode(camera, &_videomode) != DC1394_SUCCESS) {
 
     close();
     vpERROR_TRACE("Can't get current video mode");
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get current video mode"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get current video mode"));
   }
 
   dc1394color_coding_t _coding;
   if (dc1394_is_video_mode_scalable(_videomode)) {
     // Format 7 video mode
-    if (dc1394_format7_get_color_coding(camera, _videomode, &_coding) !=
-        DC1394_SUCCESS) {
+    if (dc1394_format7_get_color_coding(camera, _videomode, &_coding) != DC1394_SUCCESS) {
 
       close();
       vpERROR_TRACE("Can't get current color coding");
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't query current color coding"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't query current color coding"));
     }
-  } else if (dc1394_is_video_mode_still_image(
-                 (dc1394video_mode_t)_videomode)) {
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "No color coding for format 6 video mode"));
+  } else if (dc1394_is_video_mode_still_image((dc1394video_mode_t)_videomode)) {
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "No color coding for format 6 video mode"));
   } else {
     // Not Format 7 and not Format 6 video modes
-    if (dc1394_get_color_coding_from_video_mode(
-            camera, (dc1394video_mode_t)_videomode, &_coding) !=
-        DC1394_SUCCESS) {
+    if (dc1394_get_color_coding_from_video_mode(camera, (dc1394video_mode_t)_videomode, &_coding) != DC1394_SUCCESS) {
       close();
-      vpERROR_TRACE("Could not query supported color coding for mode %d\n",
-                    _videomode);
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't query current color coding"));
+      vpERROR_TRACE("Could not query supported color coding for mode %d\n", _videomode);
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't query current color coding"));
     }
   }
   coding = (vp1394TwoColorCodingType)_coding;
@@ -1110,14 +1055,13 @@ void vp1394TwoGrabber::getColorCoding(vp1394TwoColorCodingType &coding)
 
   \sa setColorCoding(), getColorCoding(), setCamera()
 */
-uint32_t vp1394TwoGrabber::getColorCodingSupported(
-    vp1394TwoVideoModeType mode, std::list<vp1394TwoColorCodingType> &codings)
+uint32_t vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
+                                                   std::list<vp1394TwoColorCodingType> &codings)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   // Refresh the list of supported framerates
@@ -1126,14 +1070,10 @@ uint32_t vp1394TwoGrabber::getColorCodingSupported(
   if (dc1394_is_video_mode_scalable((dc1394video_mode_t)mode)) {
     // Format 7 video mode
     dc1394color_codings_t _codings;
-    if (dc1394_format7_get_color_codings(camera, (dc1394video_mode_t)mode,
-                                         &_codings) != DC1394_SUCCESS) {
+    if (dc1394_format7_get_color_codings(camera, (dc1394video_mode_t)mode, &_codings) != DC1394_SUCCESS) {
       close();
-      vpERROR_TRACE("Could not query supported color codings for mode %d\n",
-                    mode);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Could not query supported color codings"));
+      vpERROR_TRACE("Could not query supported color codings for mode %d\n", mode);
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not query supported color codings"));
     }
     if (_codings.num == 0)
       return 0;
@@ -1148,14 +1088,10 @@ uint32_t vp1394TwoGrabber::getColorCodingSupported(
   } else {
     // Not Format 7 and not Format 6 video modes
     dc1394color_coding_t _coding;
-    if (dc1394_get_color_coding_from_video_mode(
-            camera, (dc1394video_mode_t)mode, &_coding) != DC1394_SUCCESS) {
+    if (dc1394_get_color_coding_from_video_mode(camera, (dc1394video_mode_t)mode, &_coding) != DC1394_SUCCESS) {
       close();
-      vpERROR_TRACE("Could not query supported color coding for mode %d\n",
-                    mode);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Could not query supported color coding"));
+      vpERROR_TRACE("Could not query supported color coding for mode %d\n", mode);
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not query supported color coding"));
     }
     codings.push_back((vp1394TwoColorCodingType)_coding);
     return 1;
@@ -1182,27 +1118,21 @@ uint32_t vp1394TwoGrabber::getColorCodingSupported(
   not supported.
   \sa setColorCoding(), getColorCoding(), setCamera()
  */
-bool vp1394TwoGrabber::isColorCodingSupported(vp1394TwoVideoModeType mode,
-                                              vp1394TwoColorCodingType coding)
+bool vp1394TwoGrabber::isColorCodingSupported(vp1394TwoVideoModeType mode, vp1394TwoColorCodingType coding)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   if (dc1394_is_video_mode_scalable((dc1394video_mode_t)mode)) {
     // Format 7 video mode
     dc1394color_codings_t _codings;
-    if (dc1394_format7_get_color_codings(camera, (dc1394video_mode_t)mode,
-                                         &_codings) != DC1394_SUCCESS) {
+    if (dc1394_format7_get_color_codings(camera, (dc1394video_mode_t)mode, &_codings) != DC1394_SUCCESS) {
       close();
-      vpERROR_TRACE("Could not query supported color codings for mode %d\n",
-                    mode);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Could not query supported color codings"));
+      vpERROR_TRACE("Could not query supported color codings for mode %d\n", mode);
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not query supported color codings"));
     }
     if (_codings.num == 0)
       return 0;
@@ -1218,14 +1148,10 @@ bool vp1394TwoGrabber::isColorCodingSupported(vp1394TwoVideoModeType mode,
   } else {
     // Not Format 7 and not Format 6 video modes
     dc1394color_coding_t _coding;
-    if (dc1394_get_color_coding_from_video_mode(
-            camera, (dc1394video_mode_t)mode, &_coding) != DC1394_SUCCESS) {
+    if (dc1394_get_color_coding_from_video_mode(camera, (dc1394video_mode_t)mode, &_coding) != DC1394_SUCCESS) {
       close();
-      vpERROR_TRACE("Could not query supported color coding for mode %d\n",
-                    mode);
-      throw(
-          vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Could not query supported color coding"));
+      vpERROR_TRACE("Could not query supported color coding for mode %d\n", mode);
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not query supported color coding"));
       return false;
     }
     if (coding == (vp1394TwoColorCodingType)_coding)
@@ -1266,15 +1192,13 @@ bool vp1394TwoGrabber::isColorCodingSupported(vp1394TwoVideoModeType mode,
 
   \sa isVideoModeFormat7()
 */
-void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
-                                     unsigned int w, unsigned int h)
+void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top, unsigned int w, unsigned int h)
 {
   open();
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394video_mode_t _videomode;
@@ -1282,8 +1206,7 @@ void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
 
     close();
     vpERROR_TRACE("Can't get current video mode");
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Can't get current video mode"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get current video mode"));
   }
   if (dc1394_is_video_mode_scalable(_videomode)) {
     // Stop dma capture if started
@@ -1291,13 +1214,11 @@ void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
     setCapture(DC1394_OFF);
     // Format 7 video mode
     unsigned int max_width, max_height;
-    if (dc1394_format7_get_max_image_size(camera, _videomode, &max_width,
-                                          &max_height) != DC1394_SUCCESS) {
+    if (dc1394_format7_get_max_image_size(camera, _videomode, &max_width, &max_height) != DC1394_SUCCESS) {
 
       close();
       vpERROR_TRACE("Can't get format7 max image size");
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't get format7 max image size"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get format7 max image size"));
     }
 #if 0
     vpTRACE("left: %d top: %d width: %d height: %d", left, top,
@@ -1308,13 +1229,11 @@ void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
 
     if (left > max_width) {
       vpERROR_TRACE("Can't set format7 ROI");
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't set format7 ROI"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set format7 ROI"));
     }
     if (top > max_height) {
       vpERROR_TRACE("Can't set format7 ROI");
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't set format7 ROI"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't set format7 ROI"));
     }
 
     int32_t roi_width;
@@ -1338,26 +1257,22 @@ void vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
       roi_height = DC1394_USE_MAX_AVAIL;
     }
 
-    if (dc1394_format7_set_roi(
-            camera, _videomode,
-            (dc1394color_coding_t)DC1394_QUERY_FROM_CAMERA, // color_coding
-            DC1394_USE_MAX_AVAIL /*DC1394_QUERY_FROM_CAMERA*/
-            ,                    // bytes_per_packet
-            (int32_t)left,       // left
-            (int32_t)top,        // top
-            roi_width, roi_height) != DC1394_SUCCESS) {
+    if (dc1394_format7_set_roi(camera, _videomode,
+                               (dc1394color_coding_t)DC1394_QUERY_FROM_CAMERA, // color_coding
+                               DC1394_USE_MAX_AVAIL                            /*DC1394_QUERY_FROM_CAMERA*/
+                               ,                                               // bytes_per_packet
+                               (int32_t)left,                                  // left
+                               (int32_t)top,                                   // top
+                               roi_width, roi_height) != DC1394_SUCCESS) {
       close();
       vpERROR_TRACE("Can't set format7 roi");
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't get current video mode"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get current video mode"));
     }
     // Update the image size
-    if (dc1394_format7_get_image_size(camera, _videomode, &this->width,
-                                      &this->height) != DC1394_SUCCESS) {
+    if (dc1394_format7_get_image_size(camera, _videomode, &this->width, &this->height) != DC1394_SUCCESS) {
       close();
       vpERROR_TRACE("Can't get format7 image size");
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Can't get format7 image size"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Can't get format7 image size"));
     }
 
     setCapture(DC1394_ON);
@@ -1391,17 +1306,14 @@ void vp1394TwoGrabber::initialize(bool reset)
       dc1394_camera_free_list(list);
       close();
       vpERROR_TRACE("Failed to enumerate cameras\n");
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError,
-          "Failed to enumerate cameras"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Failed to enumerate cameras"));
     }
 
     if (list->num == 0) {
       dc1394_camera_free_list(list);
       close();
       vpERROR_TRACE("No cameras found");
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError, "No cameras found"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No cameras found"));
     }
 
     if (cameras != NULL)
@@ -1414,8 +1326,7 @@ void vp1394TwoGrabber::initialize(bool reset)
     for (unsigned int i = 0; i < list->num; i++) {
       cameras[i] = dc1394_camera_new(d, list->ids[i].guid);
       if (!cameras[i]) {
-        vpTRACE("Failed to initialize camera with guid \"%ld\"\n",
-                list->ids[i].guid);
+        vpTRACE("Failed to initialize camera with guid \"%ld\"\n", list->ids[i].guid);
         continue;
       }
       // Update the number of working cameras
@@ -1446,17 +1357,14 @@ void vp1394TwoGrabber::initialize(bool reset)
                     "  - if the kernel modules `ieee1394',`raw1394' and "
                     "`ohci1394' are loaded \n"
                     "  - if you have read/write access to /dev/raw1394\n\n");
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError,
-          "Unable to look for cameras"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Unable to look for cameras"));
     }
 #endif
 
     if (num_cameras == 0) {
       close();
       vpERROR_TRACE("No cameras found");
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError, "No cameras found"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No cameras found"));
     }
 
     // allocation for the parameters
@@ -1471,14 +1379,12 @@ void vp1394TwoGrabber::initialize(bool reset)
       close();
       vpERROR_TRACE("Bad camera id: %u", camera_id);
       vpERROR_TRACE("Only %u camera on the bus.", num_cameras);
-      throw(vpFrameGrabberException(
-          vpFrameGrabberException::initializationError, "Bad camera id"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Bad camera id"));
     }
 
     if (verbose) {
       std::cout << "------ Bus information ------" << std::endl;
-      std::cout << "Number of camera(s) on the bus : " << num_cameras
-                << std::endl;
+      std::cout << "Number of camera(s) on the bus : " << num_cameras << std::endl;
       std::cout << "-----------------------------" << std::endl;
     }
 
@@ -1509,17 +1415,15 @@ void vp1394TwoGrabber::open()
     dc1394switch_t status = DC1394_OFF;
 
     //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
-    //libdc1394-2.0.0-rc7
+    // libdc1394-2.0.0-rc7
     dc1394_video_get_transmission(cameras[camera_id], &status);
     if (status != DC1394_OFF) {
       //#endif
-      if (dc1394_video_set_transmission(cameras[camera_id], DC1394_OFF) !=
-          DC1394_SUCCESS)
+      if (dc1394_video_set_transmission(cameras[camera_id], DC1394_OFF) != DC1394_SUCCESS)
         vpTRACE("Could not stop ISO transmission");
       else {
         vpTime::wait(500);
-        if (dc1394_video_get_transmission(cameras[camera_id], &status) !=
-            DC1394_SUCCESS)
+        if (dc1394_video_get_transmission(cameras[camera_id], &status) != DC1394_SUCCESS)
           vpTRACE("Could get ISO status");
         else {
           if (status == DC1394_ON) {
@@ -1531,7 +1435,7 @@ void vp1394TwoGrabber::open()
 #endif
         }
         //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
-        //libdc1394-2.0.0-rc7
+        // libdc1394-2.0.0-rc7
       }
       //#endif
     }
@@ -1557,8 +1461,7 @@ void vp1394TwoGrabber::close()
       for (unsigned int i = 0; i < num_cameras; i++) {
         if (camIsOpen[i]) {
           camera = cameras[i];
-          this->camera_id =
-              i; // set camera id for the function updateDataStructToCam
+          this->camera_id = i; // set camera id for the function updateDataStructToCam
           setTransmission(DC1394_OFF);
           setCapture(DC1394_OFF);
           if (isDataModified[i]) {
@@ -1568,37 +1471,18 @@ void vp1394TwoGrabber::close()
             } catch (...) {
             }
             // reset mode (manual, auto, ...)
-            if (dc1394_feature_set_mode(camera, DC1394_FEATURE_BRIGHTNESS,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_EXPOSURE,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_SHARPNESS,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_HUE,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_SATURATION,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_GAMMA,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_SHUTTER,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_GAIN,
-                                        initialShutterMode[i]) !=
-                    DC1394_SUCCESS ||
-                dc1394_feature_set_mode(camera, DC1394_FEATURE_IRIS,
-                                        initialShutterMode[i])) {
+            if (dc1394_feature_set_mode(camera, DC1394_FEATURE_BRIGHTNESS, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_EXPOSURE, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_SHARPNESS, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_HUE, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_SATURATION, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_GAMMA, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_SHUTTER, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_GAIN, initialShutterMode[i]) != DC1394_SUCCESS ||
+                dc1394_feature_set_mode(camera, DC1394_FEATURE_IRIS, initialShutterMode[i])) {
 
               vpERROR_TRACE("Unable to reset the initial mode");
-              throw(vpFrameGrabberException(
-                  vpFrameGrabberException::settingError,
-                  "Unable to reset the initial mode"));
+              throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to reset the initial mode"));
             }
           }
           if (dc1394_camera_set_power(camera, DC1394_OFF) != DC1394_SUCCESS)
@@ -1670,8 +1554,7 @@ void vp1394TwoGrabber::setRingBufferSize(unsigned int size)
 {
   if (size < 1) {
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Could not set ring buffer size"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not set ring buffer size"));
   }
 
   if (size != num_buffers) {
@@ -1693,10 +1576,7 @@ void vp1394TwoGrabber::setRingBufferSize(unsigned int size)
 
   \sa setRingBufferSize()
 */
-unsigned int vp1394TwoGrabber::getRingBufferSize() const
-{
-  return num_buffers;
-}
+unsigned int vp1394TwoGrabber::getRingBufferSize() const { return num_buffers; }
 
 /*!
   Enable auto shutter. It is also possible to set auto shutter min
@@ -1742,8 +1622,7 @@ void vp1394TwoGrabber::setAutoShutter(bool enable)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394feature_mode_t mode;
@@ -1753,20 +1632,16 @@ void vp1394TwoGrabber::setAutoShutter(bool enable)
     mode = DC1394_FEATURE_MODE_MANUAL;
   }
 
-  if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON) !=
-      DC1394_SUCCESS) {
+  if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set shutter on. \n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Cannot set shutter on"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set shutter on"));
   }
 
-  if (dc1394_feature_set_mode(camera, DC1394_FEATURE_SHUTTER, mode) !=
-      DC1394_SUCCESS) {
+  if (dc1394_feature_set_mode(camera, DC1394_FEATURE_SHUTTER, mode) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set auto shutter. \n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Cannot set auto shutter"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set auto shutter"));
   }
 }
 /*!
@@ -1809,19 +1684,15 @@ int main()
 
   \sa setAutoShutter(), getAutoShutter()
 */
-void vp1394TwoGrabber::setAutoShutter(unsigned int minvalue,
-                                      unsigned int maxvalue)
+void vp1394TwoGrabber::setAutoShutter(unsigned int minvalue, unsigned int maxvalue)
 {
   setAutoShutter();
 
-  if (dc1394_avt_set_auto_shutter(camera, minvalue, maxvalue) !=
-      DC1394_SUCCESS) {
+  if (dc1394_avt_set_auto_shutter(camera, minvalue, maxvalue) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set auto shutter min and max values. Is the
     //       camera an AVT one?\n");
     close();
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::settingError,
-        "Cannot set auto shutter min and max values"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set auto shutter min and max values"));
   }
 }
 
@@ -1837,24 +1708,19 @@ void vp1394TwoGrabber::setAutoShutter(unsigned int minvalue,
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 */
-void vp1394TwoGrabber::getAutoShutter(unsigned int &minvalue,
-                                      unsigned int &maxvalue)
+void vp1394TwoGrabber::getAutoShutter(unsigned int &minvalue, unsigned int &maxvalue)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
-  if (dc1394_avt_get_auto_shutter(camera, &minvalue, &maxvalue) !=
-      DC1394_SUCCESS) {
+  if (dc1394_avt_get_auto_shutter(camera, &minvalue, &maxvalue) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot get auto shutter min and max values. Is the
     //       camera an AVT one?\n");
     close();
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::settingError,
-        "Cannot get auto shutter min and max values"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot get auto shutter min and max values"));
   }
 }
 
@@ -1902,8 +1768,7 @@ void vp1394TwoGrabber::setAutoGain(bool enable)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394feature_mode_t mode;
@@ -1913,20 +1778,16 @@ void vp1394TwoGrabber::setAutoGain(bool enable)
     mode = DC1394_FEATURE_MODE_MANUAL;
   }
 
-  if (dc1394_feature_set_power(camera, DC1394_FEATURE_GAIN, DC1394_ON) !=
-      DC1394_SUCCESS) {
+  if (dc1394_feature_set_power(camera, DC1394_FEATURE_GAIN, DC1394_ON) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set shutter on. \n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Cannot set shutter on"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set shutter on"));
   }
 
-  if (dc1394_feature_set_mode(camera, DC1394_FEATURE_GAIN, mode) !=
-      DC1394_SUCCESS) {
+  if (dc1394_feature_set_mode(camera, DC1394_FEATURE_GAIN, mode) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set auto gain. \n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Cannot set auto gain"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set auto gain"));
   }
 }
 /*!
@@ -1969,18 +1830,15 @@ int main()
 
   \sa setAutoGain(), getAutoGain()
 */
-void vp1394TwoGrabber::setAutoGain(unsigned int minvalue,
-                                   unsigned int maxvalue)
+void vp1394TwoGrabber::setAutoGain(unsigned int minvalue, unsigned int maxvalue)
 {
   setAutoGain();
 
-  if (dc1394_avt_set_auto_gain(camera, minvalue, maxvalue) !=
-      DC1394_SUCCESS) {
+  if (dc1394_avt_set_auto_gain(camera, minvalue, maxvalue) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set auto gain min and max values. Is the
     //       camera an AVT one?\n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Cannot set auto gain min and max values"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set auto gain min and max values"));
   }
 }
 
@@ -1996,23 +1854,19 @@ void vp1394TwoGrabber::setAutoGain(unsigned int minvalue,
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 */
-void vp1394TwoGrabber::getAutoGain(unsigned int &minvalue,
-                                   unsigned int &maxvalue)
+void vp1394TwoGrabber::getAutoGain(unsigned int &minvalue, unsigned int &maxvalue)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
-  if (dc1394_avt_get_auto_gain(camera, &minvalue, &maxvalue) !=
-      DC1394_SUCCESS) {
+  if (dc1394_avt_get_auto_gain(camera, &minvalue, &maxvalue) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot get auto gain min and max values. Is the
     //       camera an AVT one?\n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Cannot get auto gain min and max values"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot get auto gain min and max values"));
   }
 }
 
@@ -2038,22 +1892,18 @@ void vp1394TwoGrabber::setCapture(dc1394switch_t _switch)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   if (_switch == DC1394_ON) {
     // if (dc1394_capture_setup(camera, num_buffers) != DC1394_SUCCESS) {
     // To be compatible with libdc1394 svn 382 version
-    if (dc1394_capture_setup(camera, num_buffers,
-                             DC1394_CAPTURE_FLAGS_DEFAULT) !=
-        DC1394_SUCCESS) {
+    if (dc1394_capture_setup(camera, num_buffers, DC1394_CAPTURE_FLAGS_DEFAULT) != DC1394_SUCCESS) {
       vpERROR_TRACE("Unable to setup camera capture-\n"
                     "make sure that the video mode and framerate are "
                     "supported by your camera.\n");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Could not setup dma capture"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not setup dma capture"));
     }
   } else { // _switch == DC1394_OFF
     dc1394error_t code = dc1394_capture_stop(camera);
@@ -2061,8 +1911,7 @@ void vp1394TwoGrabber::setCapture(dc1394switch_t _switch)
     if (code != DC1394_SUCCESS && code != DC1394_CAPTURE_IS_NOT_SET) {
       vpERROR_TRACE("Unable to stop camera capture\n");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Could not setup dma capture"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not setup dma capture"));
     }
   }
 }
@@ -2086,8 +1935,7 @@ void vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394switch_t status = DC1394_OFF;
@@ -2095,8 +1943,7 @@ void vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
   if (dc1394_video_get_transmission(camera, &status) != DC1394_SUCCESS) {
     vpERROR_TRACE("Unable to get transmision status");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Could not setup dma capture"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not setup dma capture"));
   }
 
   //    if (status!=_switch){
@@ -2106,8 +1953,7 @@ void vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
                   "make sure that the video mode and framerate are "
                   "supported by your camera.\n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Could not setup dma capture"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not setup dma capture"));
   }
 
   if (_switch == DC1394_ON) {
@@ -2119,8 +1965,7 @@ void vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
       if (dc1394_video_get_transmission(camera, &status) != DC1394_SUCCESS) {
         vpERROR_TRACE("Unable to get transmision status");
         close();
-        throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                      "Could not setup dma capture"));
+        throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Could not setup dma capture"));
       }
     }
   }
@@ -2166,8 +2011,7 @@ void vp1394TwoGrabber::setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394operation_mode_t op_mode;
@@ -2179,54 +2023,44 @@ void vp1394TwoGrabber::setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed)
       //       vpERROR_TRACE("Camera is not 1394B mode capable. \n"
       // 		    "Set the iso speed lower or equal to 400Mbps");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Camera is not 1394B mode capable"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Camera is not 1394B mode capable"));
     }
 
-    if (dc1394_video_set_operation_mode(
-            camera, DC1394_OPERATION_MODE_1394B) != DC1394_SUCCESS) {
+    if (dc1394_video_set_operation_mode(camera, DC1394_OPERATION_MODE_1394B) != DC1394_SUCCESS) {
       //       vpERROR_TRACE("Cannot set camera to 1394B mode. \n");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Cannot set camera to 1394B mode"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set camera to 1394B mode"));
     }
 
     if (dc1394_video_get_operation_mode(camera, &op_mode) != DC1394_SUCCESS) {
       //       vpERROR_TRACE("Failed to set 1394B mode. \n");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Failed to set 1394B mode"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Failed to set 1394B mode"));
     }
   } else {
-    if (dc1394_video_set_operation_mode(
-            camera, DC1394_OPERATION_MODE_LEGACY) != DC1394_SUCCESS) {
+    if (dc1394_video_set_operation_mode(camera, DC1394_OPERATION_MODE_LEGACY) != DC1394_SUCCESS) {
       //       vpERROR_TRACE("Cannot set camera to 1394A mode. \n");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Cannot set camera to 1394A mode"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set camera to 1394A mode"));
     }
 
     if (dc1394_video_get_operation_mode(camera, &op_mode) != DC1394_SUCCESS) {
       //       vpERROR_TRACE("Failed to set 1394A mode. \n");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Failed to set 1394A mode"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Failed to set 1394A mode"));
     }
   }
 
-  if (dc1394_video_set_iso_speed(camera, (dc1394speed_t)isospeed) !=
-      DC1394_SUCCESS) {
+  if (dc1394_video_set_iso_speed(camera, (dc1394speed_t)isospeed) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set requested iso speed. \n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Cannot set requested iso speed"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set requested iso speed"));
   }
 
   if (dc1394_video_get_iso_speed(camera, &speed) != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Failed to set iso speed. \n");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Failed to set iso speed"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Failed to set iso speed"));
   }
 }
 
@@ -2306,14 +2140,12 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue()
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   dc1394video_frame_t *frame = NULL;
 
-  if (dc1394_capture_dequeue(camera, DC1394_CAPTURE_POLICY_WAIT, &frame) !=
-      DC1394_SUCCESS) {
+  if (dc1394_capture_dequeue(camera, DC1394_CAPTURE_POLICY_WAIT, &frame) != DC1394_SUCCESS) {
     vpERROR_TRACE("Error: Failed to capture from camera %d\n", camera_id);
   }
 
@@ -2421,9 +2253,7 @@ int main()
 
   \sa enqueue()
 */
-dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I,
-                                               uint64_t &timestamp,
-                                               uint32_t &id)
+dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id)
 {
 
   open();
@@ -2447,28 +2277,23 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I,
   switch (frame->color_coding) {
   case DC1394_COLOR_CODING_MONO8:
   case DC1394_COLOR_CODING_RAW8:
-    memcpy(I.bitmap, (unsigned char *)frame->image,
-           size * sizeof(unsigned char));
+    memcpy(I.bitmap, (unsigned char *)frame->image, size * sizeof(unsigned char));
     break;
   case DC1394_COLOR_CODING_MONO16:
   case DC1394_COLOR_CODING_RAW16:
-    vpImageConvert::MONO16ToGrey((unsigned char *)frame->image, I.bitmap,
-                                 size);
+    vpImageConvert::MONO16ToGrey((unsigned char *)frame->image, I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV411:
-    vpImageConvert::YUV411ToGrey((unsigned char *)frame->image, I.bitmap,
-                                 size);
+    vpImageConvert::YUV411ToGrey((unsigned char *)frame->image, I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV422:
-    vpImageConvert::YUV422ToGrey((unsigned char *)frame->image, I.bitmap,
-                                 size);
+    vpImageConvert::YUV422ToGrey((unsigned char *)frame->image, I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV444:
-    vpImageConvert::YUV444ToGrey((unsigned char *)frame->image, I.bitmap,
-                                 size);
+    vpImageConvert::YUV444ToGrey((unsigned char *)frame->image, I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_RGB8:
@@ -2478,9 +2303,8 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I,
   default:
     close();
     vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
-    throw(vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Format conversion not implemented. "
-                                  "Acquisition failed."));
+    throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Format conversion not implemented. "
+                                                                       "Acquisition failed."));
   };
 
   return frame;
@@ -2586,9 +2410,7 @@ int main()
 
   \sa enqueue()
 */
-dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I,
-                                               uint64_t &timestamp,
-                                               uint32_t &id)
+dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id)
 {
 
   open();
@@ -2612,42 +2434,35 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I,
   switch (frame->color_coding) {
   case DC1394_COLOR_CODING_MONO8:
   case DC1394_COLOR_CODING_RAW8:
-    vpImageConvert::GreyToRGBa((unsigned char *)frame->image,
-                               (unsigned char *)I.bitmap, size);
+    vpImageConvert::GreyToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_MONO16:
   case DC1394_COLOR_CODING_RAW16:
-    vpImageConvert::MONO16ToRGBa((unsigned char *)frame->image,
-                                 (unsigned char *)I.bitmap, size);
+    vpImageConvert::MONO16ToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV411:
-    vpImageConvert::YUV411ToRGBa((unsigned char *)frame->image,
-                                 (unsigned char *)I.bitmap, size);
+    vpImageConvert::YUV411ToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV422:
-    vpImageConvert::YUV422ToRGBa((unsigned char *)frame->image,
-                                 (unsigned char *)I.bitmap, size);
+    vpImageConvert::YUV422ToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV444:
-    vpImageConvert::YUV444ToRGBa((unsigned char *)frame->image,
-                                 (unsigned char *)I.bitmap, size);
+    vpImageConvert::YUV444ToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_RGB8:
-    vpImageConvert::RGBToRGBa((unsigned char *)frame->image,
-                              (unsigned char *)I.bitmap, size);
+    vpImageConvert::RGBToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   default:
     close();
     vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
-    throw(vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Format conversion not implemented. "
-                                  "Acquisition failed."));
+    throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Format conversion not implemented. "
+                                                                       "Acquisition failed."));
   };
 
   return frame;
@@ -2669,8 +2484,7 @@ void vp1394TwoGrabber::enqueue(dc1394video_frame_t *frame)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   if (frame)
@@ -2719,8 +2533,7 @@ void vp1394TwoGrabber::acquire(vpImage<unsigned char> &I)
 
   \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
 */
-void vp1394TwoGrabber::acquire(vpImage<unsigned char> &I, uint64_t &timestamp,
-                               uint32_t &id)
+void vp1394TwoGrabber::acquire(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id)
 {
   dc1394video_frame_t *frame;
 
@@ -2771,8 +2584,7 @@ void vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I)
 
   \sa setCamera(), setVideoMode(), setFramerate(), dequeue(), enqueue()
 */
-void vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I, uint64_t &timestamp,
-                               uint32_t &id)
+void vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id)
 {
   dc1394video_frame_t *frame;
 
@@ -2793,36 +2605,30 @@ void vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I, uint64_t &timestamp,
   switch (frame->color_coding) {
   case DC1394_COLOR_CODING_MONO8:
   case DC1394_COLOR_CODING_RAW8:
-    vpImageConvert::GreyToRGBa((unsigned char *)frame->image,
-                               (unsigned char *)I.bitmap, size);
+    vpImageConvert::GreyToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV411:
-    vpImageConvert::YUV411ToRGBa((unsigned char *)frame->image,
-                                 (unsigned char *)I.bitmap, size);
+    vpImageConvert::YUV411ToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV422:
-    vpImageConvert::YUV422ToRGBa((unsigned char *)frame->image,
-                                 (unsigned char *)I.bitmap, size);
+    vpImageConvert::YUV422ToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_YUV444:
-    vpImageConvert::YUV444ToRGBa((unsigned char *)frame->image,
-                                 (unsigned char *)I.bitmap, size);
+    vpImageConvert::YUV444ToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   case DC1394_COLOR_CODING_RGB8:
-    vpImageConvert::RGBToRGBa((unsigned char *)frame->image,
-                              (unsigned char *)I.bitmap, size);
+    vpImageConvert::RGBToRGBa((unsigned char *)frame->image, (unsigned char *)I.bitmap, size);
     break;
 
   default:
     close();
     vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
-    throw(vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                  "Format conversion not implemented. "
-                                  "Acquisition failed."));
+    throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Format conversion not implemented. "
+                                                                       "Acquisition failed."));
   };
 
   enqueue(frame);
@@ -2849,8 +2655,7 @@ void vp1394TwoGrabber::getWidth(unsigned int &w)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   w = this->width;
@@ -2878,8 +2683,7 @@ unsigned int vp1394TwoGrabber::getWidth()
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   return this->width;
@@ -2907,8 +2711,7 @@ void vp1394TwoGrabber::getHeight(unsigned int &h)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   h = this->height;
@@ -2935,8 +2738,7 @@ unsigned int vp1394TwoGrabber::getHeight()
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   return this->height;
@@ -2949,12 +2751,9 @@ unsigned int vp1394TwoGrabber::getHeight()
 */
 void vp1394TwoGrabber::printCameraInfo()
 {
-  std::cout << "----------------------------------------------------------"
-            << std::endl
-            << "-----            Information for camera " << camera_id
-            << "            -----" << std::endl
-            << "----------------------------------------------------------"
-            << std::endl;
+  std::cout << "----------------------------------------------------------" << std::endl
+            << "-----            Information for camera " << camera_id << "            -----" << std::endl
+            << "----------------------------------------------------------" << std::endl;
 
 #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   dc1394_camera_print_info(camera, stdout);
@@ -2971,9 +2770,7 @@ void vp1394TwoGrabber::printCameraInfo()
   {
     close();
     vpERROR_TRACE("unable to get feature set for camera %d\n", camera_id);
-    throw(
-        vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                "Cannot get camera features"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Cannot get camera features"));
 
   } else {
 #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
@@ -2982,8 +2779,7 @@ void vp1394TwoGrabber::printCameraInfo()
     dc1394_print_feature_set(&features);
 #endif
   }
-  std::cout << "----------------------------------------------------------"
-            << std::endl;
+  std::cout << "----------------------------------------------------------" << std::endl;
 }
 
 /*!
@@ -2998,18 +2794,15 @@ void vp1394TwoGrabber::printCameraInfo()
 
   \sa string2videoMode()
 */
-std::string
-vp1394TwoGrabber::videoMode2string(vp1394TwoVideoModeType videomode)
+std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoModeType videomode)
 {
   std::string _str = "";
   dc1394video_mode_t _videomode = (dc1394video_mode_t)videomode;
 
-  if ((_videomode >= DC1394_VIDEO_MODE_MIN) &&
-      (_videomode <= DC1394_VIDEO_MODE_MAX)) {
+  if ((_videomode >= DC1394_VIDEO_MODE_MIN) && (_videomode <= DC1394_VIDEO_MODE_MAX)) {
     _str = strVideoMode[_videomode - DC1394_VIDEO_MODE_MIN];
   } else {
-    vpCERROR << "The video mode " << (int)videomode
-             << " is not supported by the camera" << std::endl;
+    vpCERROR << "The video mode " << (int)videomode << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -3035,8 +2828,7 @@ std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerateType fps)
   if ((_fps >= DC1394_FRAMERATE_MIN) && (_fps <= DC1394_FRAMERATE_MAX)) {
     _str = strFramerate[_fps - DC1394_FRAMERATE_MIN];
   } else {
-    vpCERROR << "The framerate " << (int)fps
-             << " is not supported by the camera" << std::endl;
+    vpCERROR << "The framerate " << (int)fps << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -3054,19 +2846,16 @@ std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerateType fps)
 
   \sa string2colorCoding()
 */
-std::string
-vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCodingType colorcoding)
+std::string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCodingType colorcoding)
 {
   std::string _str = "";
   dc1394color_coding_t _coding = (dc1394color_coding_t)colorcoding;
 
-  if ((_coding >= DC1394_COLOR_CODING_MIN) &&
-      (_coding <= DC1394_COLOR_CODING_MAX)) {
+  if ((_coding >= DC1394_COLOR_CODING_MIN) && (_coding <= DC1394_COLOR_CODING_MAX)) {
     _str = strColorCoding[_coding - DC1394_COLOR_CODING_MIN];
 
   } else {
-    vpCERROR << "The color coding " << (int)colorcoding
-             << " is not supported by the camera" << std::endl;
+    vpCERROR << "The color coding " << (int)colorcoding << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -3089,8 +2878,7 @@ vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCodingType colorcoding)
   \sa videoMode2string()
 
 */
-vp1394TwoGrabber::vp1394TwoVideoModeType
-vp1394TwoGrabber::string2videoMode(std::string videomode)
+vp1394TwoGrabber::vp1394TwoVideoModeType vp1394TwoGrabber::string2videoMode(std::string videomode)
 {
   vp1394TwoVideoModeType _id;
 
@@ -3100,8 +2888,7 @@ vp1394TwoGrabber::string2videoMode(std::string videomode)
       return _id;
   };
 
-  throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                "The required videomode is not valid"));
+  throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "The required videomode is not valid"));
 
   return (vp1394TwoVideoModeType)0;
 }
@@ -3123,8 +2910,7 @@ vp1394TwoGrabber::string2videoMode(std::string videomode)
   \sa framerate2string()
 
 */
-vp1394TwoGrabber::vp1394TwoFramerateType
-vp1394TwoGrabber::string2framerate(std::string framerate)
+vp1394TwoGrabber::vp1394TwoFramerateType vp1394TwoGrabber::string2framerate(std::string framerate)
 {
   vp1394TwoFramerateType _id;
 
@@ -3134,8 +2920,7 @@ vp1394TwoGrabber::string2framerate(std::string framerate)
       return _id;
   };
 
-  throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                "The required framerate is not valid"));
+  throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "The required framerate is not valid"));
 
   return (vp1394TwoFramerateType)0;
 }
@@ -3157,8 +2942,7 @@ vp1394TwoGrabber::string2framerate(std::string framerate)
   \sa colorCoding2string()
 
 */
-vp1394TwoGrabber::vp1394TwoColorCodingType
-vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
+vp1394TwoGrabber::vp1394TwoColorCodingType vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
 {
   vp1394TwoColorCodingType _id;
 
@@ -3168,8 +2952,7 @@ vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
       return _id;
   };
 
-  throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                "The required color coding is not valid"));
+  throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "The required color coding is not valid"));
 
   return (vp1394TwoColorCodingType)0;
 }
@@ -3294,8 +3077,7 @@ void vp1394TwoGrabber::setPanControl(unsigned int panControlValue)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   uint64_t offset = 0x884;
   uint32_t value = 0x82000000 + (uint32_t)panControlValue;
@@ -3304,8 +3086,7 @@ void vp1394TwoGrabber::setPanControl(unsigned int panControlValue)
   if (err != DC1394_SUCCESS) {
     vpERROR_TRACE("Unable to set PAN register");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Unable to set PAN register"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to set PAN register"));
   }
 }
 
@@ -3325,19 +3106,16 @@ void vp1394TwoGrabber::setPanControl(unsigned int panControlValue)
 
   \sa setParameterValue()
 */
-unsigned int
-vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
+unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   uint32_t value;
-  dc1394feature_t feature =
-      DC1394_FEATURE_BRIGHTNESS; // = (dc1394feature_t)param;
+  dc1394feature_t feature = DC1394_FEATURE_BRIGHTNESS; // = (dc1394feature_t)param;
   switch (param) {
   case vpFEATURE_BRIGHTNESS:
     feature = DC1394_FEATURE_BRIGHTNESS;
@@ -3386,8 +3164,7 @@ vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
   if (err != DC1394_SUCCESS) {
     vpERROR_TRACE("Unable to get the information");
     close();
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "Unable to get the information"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to get the information"));
   }
   return (unsigned int)value;
 }
@@ -3413,18 +3190,15 @@ vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
   \sa getParameterValue()
 
 */
-void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param,
-                                         unsigned int val)
+void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param, unsigned int val)
 {
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
   uint32_t value = (uint32_t)val;
-  dc1394feature_t feature =
-      DC1394_FEATURE_BRIGHTNESS; // = (dc1394feature_t)param;
+  dc1394feature_t feature = DC1394_FEATURE_BRIGHTNESS; // = (dc1394feature_t)param;
   switch (param) {
   case vpFEATURE_BRIGHTNESS:
     feature = DC1394_FEATURE_BRIGHTNESS;
@@ -3477,9 +3251,8 @@ void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param,
   if (err != DC1394_SUCCESS) {
     vpERROR_TRACE("Unable to detect the manual mode information");
     close();
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::settingError,
-        "Unable to detect the manual mode information"));
+    throw(
+        vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to detect the manual mode information"));
   }
 
   for (unsigned int i = 0; i < modesAvailable.num; i++) {
@@ -3494,13 +3267,11 @@ void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param,
                                       //  even after several set
       /* we update the structure */
       updateDataCamToStruct();
-      err = dc1394_feature_get_mode(camera, feature,
-                                    &(initialShutterMode[camera_id]));
+      err = dc1394_feature_get_mode(camera, feature, &(initialShutterMode[camera_id]));
       if (err != DC1394_SUCCESS) {
         vpERROR_TRACE("Unable to get the initial mode");
         close();
-        throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                      "Unable to get the initial mode"));
+        throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to get the initial mode"));
       }
       isDataModified[camera_id] = true;
     }
@@ -3510,21 +3281,17 @@ void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param,
     if (err != DC1394_SUCCESS) {
       vpERROR_TRACE("Unable to set the muanual mode");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Unable to set the manual mode"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to set the manual mode"));
     }
     err = dc1394_feature_set_value(camera, feature, value);
     if (err != DC1394_SUCCESS) {
       vpERROR_TRACE("Unable to set the shutter information");
       close();
-      throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                    "Unable to set the shutter information"));
+      throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Unable to set the shutter information"));
     }
   } else {
-    vpERROR_TRACE(
-        "The camera does not have a manual mode.\nCannot change the value");
-    throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                  "The camera does not have a manual mode"));
+    vpERROR_TRACE("The camera does not have a manual mode.\nCannot change the value");
+    throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "The camera does not have a manual mode"));
   }
 }
 /*!
@@ -3539,8 +3306,7 @@ void vp1394TwoGrabber::getGuid(uint64_t &guid)
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   guid = camera->guid;
@@ -3558,8 +3324,7 @@ uint64_t vp1394TwoGrabber::getGuid()
   if (!num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError, "No camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
   return camera->guid;

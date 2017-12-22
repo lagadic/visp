@@ -41,10 +41,8 @@ int main(int argc, char **argv)
       objectname = parentname + "/" + objectname;
 
     std::cout << "Video name: " << opt_videoname << std::endl;
-    std::cout << "Tracker requested config files: " << objectname
-              << ".[init, cao]" << std::endl;
-    std::cout << "Tracker optional config files: " << objectname << ".[ppm]"
-              << std::endl;
+    std::cout << "Tracker requested config files: " << objectname << ".[init, cao]" << std::endl;
+    std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
     //! [Image]
     vpImage<unsigned char> I;
@@ -162,7 +160,6 @@ int main(int argc, char **argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example."
-            << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }

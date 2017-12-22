@@ -102,12 +102,10 @@ void vp::fillHoles(vpImage<unsigned char> &I
   }
 #else
   // Create flood fill mask
-  vpImage<unsigned char> flood_fill_mask(I.getHeight() + 2, I.getWidth() + 2,
-                                         0);
+  vpImage<unsigned char> flood_fill_mask(I.getHeight() + 2, I.getWidth() + 2, 0);
   // Copy I to mask + add border padding
   for (unsigned int i = 0; i < I.getHeight(); i++) {
-    memcpy(flood_fill_mask[i + 1] + 1, I[i],
-           sizeof(unsigned char) * I.getWidth());
+    memcpy(flood_fill_mask[i + 1] + 1, I[i], sizeof(unsigned char) * I.getWidth());
   }
 
   // Perform flood fill
@@ -116,8 +114,7 @@ void vp::fillHoles(vpImage<unsigned char> &I
   // Get current mask
   vpImage<unsigned char> mask(I.getHeight(), I.getWidth());
   for (unsigned int i = 0; i < mask.getHeight(); i++) {
-    memcpy(mask[i], flood_fill_mask[i + 1] + 1,
-           sizeof(unsigned char) * mask.getWidth());
+    memcpy(mask[i], flood_fill_mask[i + 1] + 1, sizeof(unsigned char) * mask.getWidth());
   }
 
   // Get image with holes filled
@@ -145,13 +142,10 @@ void vp::fillHoles(vpImage<unsigned char> &I
   \param h_kp1 : Image morphologically reconstructed.
   \param connexity : Type of connexity.
 */
-void vp::reconstruct(const vpImage<unsigned char> &marker,
-                     const vpImage<unsigned char> &mask,
-                     vpImage<unsigned char> &h_kp1 /*alias I */,
-                     const vpImageMorphology::vpConnexityType &connexity)
+void vp::reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
+                     vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
 {
-  if (marker.getHeight() != mask.getHeight() ||
-      marker.getWidth() != mask.getWidth()) {
+  if (marker.getHeight() != mask.getHeight() || marker.getWidth() != mask.getWidth()) {
     std::cerr << "marker.getHeight() != mask.getHeight() || "
                  "marker.getWidth() != mask.getWidth()"
               << std::endl;

@@ -130,10 +130,7 @@ public:
   */
   inline double getAngleDisappear() const { return angleDisappear; }
 
-  void getCameraParameters(vpCameraParameters &_cam) const
-  {
-    _cam = this->cam;
-  }
+  void getCameraParameters(vpCameraParameters &_cam) const { _cam = this->cam; }
 
   /*!
     Get the far clipping distance.
@@ -161,20 +158,14 @@ public:
 
      \return The minimum line length.
    */
-  inline double getMinLineLengthThreshold() const
-  {
-    return minLineLengthThreshold;
-  }
+  inline double getMinLineLengthThreshold() const { return minLineLengthThreshold; }
 
   /*!
      Get the minimum polygon area to track a face when LOD is enabled.
 
      \return The minimum polygon area.
    */
-  inline double getMinPolygonAreaThreshold() const
-  {
-    return minPolygonAreaThreshold;
-  }
+  inline double getMinPolygonAreaThreshold() const { return minPolygonAreaThreshold; }
 
   /*!
     Get the near clipping distance.
@@ -216,10 +207,7 @@ public:
 
     \param adisappear : New angleDisappear
   */
-  inline void setAngleDisappear(const double &adisappear)
-  {
-    angleDisappear = adisappear;
-  }
+  inline void setAngleDisappear(const double &adisappear) { angleDisappear = adisappear; }
 
   void setCameraParameters(const vpCameraParameters &_cam) { cam = _cam; }
 
@@ -228,20 +216,14 @@ public:
 
     \param fclip : New farClipping
   */
-  inline void setFarClippingDistance(const double &fclip)
-  {
-    farClipping = fclip;
-  }
+  inline void setFarClippingDistance(const double &fclip) { farClipping = fclip; }
 
   /*!
     Set the near clipping distance.
 
     \param nclip : New nearClipping
   */
-  inline void setNearClippingDistance(const double &nclip)
-  {
-    nearClipping = nclip;
-  }
+  inline void setNearClippingDistance(const double &nclip) { nearClipping = nclip; }
 
   void writeMainClass(xmlNodePtr node);
   //@}

@@ -119,15 +119,18 @@ d(I); #elif defined(VISP_HAVE_GDI) vpDisplayGDI d(I); #endif
 
   If you want to acquire color images, in the previous sample replace:
   \code
-  vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height,
-rs.getIntrinsics(RS2_STREAM_COLOR).width); \endcode by \code vpImage<vpRGBa>
-I(rs.getIntrinsics(RS2_STREAM_COLOR).height,
-rs.getIntrinsics(RS2_STREAM_COLOR).width); \endcode
+  vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+  \endcode
+  by
+  \code
+  vpImage<vpRGBa> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+  \endcode
 
   If you are interested in the point cloud and if ViSP is build with PCL
-support, you can start from the following example where we use PCL library to
-visualize the point cloud: \code #include <visp3/sensor/vpRealSense2.h>
-
+  support, you can start from the following example where we use PCL library to
+  visualize the point cloud:
+  \code
+#include <visp3/sensor/vpRealSense2.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
@@ -136,15 +139,13 @@ int main()
   vpRealSense2 rs;
   rs.open();
 
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new
-pcl::PointCloud<pcl::PointXYZRGB>);
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
   rs.acquire(NULL, NULL, NULL, pointcloud);
 
-  pcl::visualization::PCLVisualizer::Ptr viewer (new
-pcl::visualization::PCLVisualizer ("3D Viewer"));
-  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB>
-rgb(pointcloud); viewer->setBackgroundColor(0, 0, 0);
+  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+  viewer->setBackgroundColor(0, 0, 0);
   viewer->initCameraParameters();
   viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
 
@@ -153,11 +154,11 @@ rgb(pointcloud); viewer->setBackgroundColor(0, 0, 0);
 
     static bool update = false;
     if (!update) {
-      viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample
-cloud"); viewer->setPointCloudRenderingProperties
-(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud"); update =
-true; } else { viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb,
-"sample cloud");
+      viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+      viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+      update = true;
+    } else {
+      viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
     }
 
     viewer->spinOnce(30);
@@ -168,9 +169,11 @@ true; } else { viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb,
 
   If you want to change the default stream parameters, refer to the
 librealsense2 `rs2::config` documentation. The following code allows to
-capture the color stream in 1920x1080: \code #include
-<visp3/gui/vpDisplayGDI.h> #include <visp3/gui/vpDisplayX.h> #include
-<visp3/sensor/vpRealSense2.h>
+capture the color stream in 1920x1080:
+\code
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/sensor/vpRealSense2.h>
 
 int main() {
   vpRealSense2 rs;
@@ -180,10 +183,9 @@ int main() {
   config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
   rs.open(config);
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height,
-rs.getIntrinsics(RS2_STREAM_COLOR).width); vpImage<unsigned char>
-Ii(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
-rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+  vpImage<unsigned char> Ii(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                            rs.getIntrinsics(RS2_STREAM_INFRARED).width);
 
 #ifdef VISP_HAVE_X11
   vpDisplayX dc(Ic, 0, 0, "Color");
@@ -221,12 +223,9 @@ int main() {
   config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
   rs.open(config);
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height,
-rs.getIntrinsics(RS2_STREAM_COLOR).width); vpImage<uint16_t>
-Id_raw(rs.getIntrinsics(RS2_STREAM_DEPTH).height,
-rs.getIntrinsics(RS2_STREAM_DEPTH).width); vpImage<vpRGBa>
-Id(rs.getIntrinsics(RS2_STREAM_DEPTH).height,
-rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+  vpImage<uint16_t> Id_raw(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+  vpImage<vpRGBa> Id(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
 
 #ifdef VISP_HAVE_X11
   vpDisplayX dc(Ic, 0, 0, "Color");
@@ -238,8 +237,8 @@ rs.getIntrinsics(RS2_STREAM_DEPTH).width);
 
   rs2::align align_to(RS2_STREAM_COLOR);
   while (true) {
-    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap,
-NULL, NULL, &align_to); vpImageConvert::createDepthHistogram(Id_raw, Id);
+    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, &align_to);
+    vpImageConvert::createDepthHistogram(Id_raw, Id);
     vpDisplay::display(Ic);
     vpDisplay::display(Id);
     vpDisplay::flush(Ic);
@@ -252,8 +251,9 @@ NULL, NULL, &align_to); vpImageConvert::createDepthHistogram(Id_raw, Id);
   \endcode
 
   References to `rs2::pipeline_profile` and `rs2::pipeline` can be retrieved
-with (`rs.open() must be called before`): \code rs2::pipeline_profile& profile
-= rs.getPipelineProfile(); rs2::pipeline& pipeline = rs.getPipeline();
+  with (`rs.open() must be called before`):
+  \code
+rs2::pipeline_profile& profile = rs.getPipelineProfile(); rs2::pipeline& pipeline = rs.getPipeline();
   \endcode
 
   Information about the sensor can be printed with:
@@ -283,33 +283,24 @@ public:
 
   void acquire(vpImage<unsigned char> &grey);
   void acquire(vpImage<vpRGBa> &color);
-  void acquire(unsigned char *const data_image,
-               unsigned char *const data_depth,
-               std::vector<vpColVector> *const data_pointCloud,
-               unsigned char *const data_infrared,
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
                rs2::align *const align_to = NULL);
 
 #ifdef VISP_HAVE_PCL
-  void acquire(unsigned char *const data_image,
-               unsigned char *const data_depth,
-               std::vector<vpColVector> *const data_pointCloud,
-               pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL,
-               rs2::align *const align_to = NULL);
-  void acquire(unsigned char *const data_image,
-               unsigned char *const data_depth,
-               std::vector<vpColVector> *const data_pointCloud,
-               pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL,
-               rs2::align *const align_to = NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
+               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
+               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL);
 #endif
 
   void close();
 
   vpCameraParameters getCameraParameters(
       const rs2_stream &stream,
-      vpCameraParameters::vpCameraParametersProjType type =
-          vpCameraParameters::perspectiveProjWithDistortion) const;
+      vpCameraParameters::vpCameraParametersProjType type = vpCameraParameters::perspectiveProjWithDistortion) const;
 
   rs2_intrinsics getIntrinsics(const rs2_stream &stream) const;
 
@@ -328,21 +319,16 @@ public:
   //! Get a reference to `rs2::pipeline_profile`.
   rs2::pipeline_profile &getPipelineProfile() { return m_pipelineProfile; }
 
-  vpHomogeneousMatrix getTransformation(const rs2_stream &from,
-                                        const rs2_stream &to) const;
+  vpHomogeneousMatrix getTransformation(const rs2_stream &from, const rs2_stream &to) const;
 
   void open(const rs2::config &cfg = rs2::config());
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpRealSense2 &rs);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs);
 
   //! Set the value used when the pixel value (u, v) in the depth map is
   //! invalid for the point cloud. For instance, the Point Cloud Library (PCL)
   //! uses NAN values for points where the depth is invalid.
-  inline void setInvalidDepthValue(const float value)
-  {
-    m_invalidDepthValue = value;
-  }
+  inline void setInvalidDepthValue(const float value) { m_invalidDepthValue = value; }
 
   //! Set the maximum Z value (used to discard bad reconstructed depth for
   //! pointcloud).
@@ -363,13 +349,10 @@ protected:
   void getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color);
   void getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey);
   void getNativeFrameData(const rs2::frame &frame, unsigned char *const data);
-  void getPointcloud(const rs2::depth_frame &depth_frame,
-                     std::vector<vpColVector> &pointcloud);
+  void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &pointcloud);
 #ifdef VISP_HAVE_PCL
-  void getPointcloud(const rs2::depth_frame &depth_frame,
-                     pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
-  void getPointcloud(const rs2::depth_frame &depth_frame,
-                     const rs2::frame &color_frame,
+  void getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void getPointcloud(const rs2::depth_frame &depth_frame, const rs2::frame &color_frame,
                      pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
 };

@@ -41,8 +41,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I,
-                                                   double r, double t)
+double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, double r, double t)
 {
   double res = 0;
   int cr = (int)(r);
@@ -56,8 +55,7 @@ double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I,
     for (int it = -1; it <= 2; it++) {
       int tt = it + ct;
       if (tr >= 0 && tr < height && tt >= 0 && tt < width)
-        res +=
-            Bspline4((double)ir - er) * Bspline4((double)it - et) * I[tr][tt];
+        res += Bspline4((double)ir - er) * Bspline4((double)it - et) * I[tr][tt];
     }
   }
   return res;

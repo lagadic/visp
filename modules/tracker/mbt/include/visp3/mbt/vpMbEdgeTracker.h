@@ -130,12 +130,11 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.getCameraParameters(cam);   // Get the camera parameters used by the
-tracker (from the configuration file). tracker.loadModel("cube.cao");      //
-Load the 3d model in cao format. No 3rd party library is required
-  tracker.initClick(I, "cube.init");  // Initialise manually the pose by
-clicking on the image points associated to the 3d points contained in the
-cube.init file.
+  tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
+  tracker.loadModel("cube.cao");      // Load the 3d model in cao format. No 3rd party library is required
+  // Initialise manually the pose by clicking on the image points associated to the 3d points contained in the
+  // cube.init file.
+  tracker.initClick(I, "cube.init");
 
   while(true){
     // Acquire a new image
@@ -143,12 +142,12 @@ cube.init file.
     tracker.track(I);     // Track the object on this image
     tracker.getPose(cMo); // Get the pose
 
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at
-the computed pose. vpDisplay::flush(I);
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
+   vpDisplay::flush(I);
   }
 
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbEdgeTracker::loadConfigFile() vpXmlParser::cleanup();
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -170,11 +169,11 @@ not) them using a vector of booleans, as presented in the following code:
   tracker.setScales(scales); // Set active scales for multi-scale tracking
 
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
-  tracker.getCameraParameters(cam); // Get the camera parameters used by the
-tracker (from the configuration file).
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
   ...
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbEdgeTracker::loadConfigFile() vpXmlParser::cleanup(); \endcode
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
+\endcode
 
   The tracker can also be used without display, in that case the initial pose
   must be known (object always at the same initial pose for example) or
@@ -191,8 +190,7 @@ int main()
 {
   vpMbEdgeTracker tracker; // Create a model based tracker.
   vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then
-computed using the tracker.
+  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker.
 
   //acquire an image
   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
@@ -200,8 +198,8 @@ computed using the tracker.
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coin
-is required, if coin is not installed .cao file can be used.
+  // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao");
   tracker.initFromPose(I, cMo); // initialize the tracker with the given pose.
 
   while(true){
@@ -210,8 +208,8 @@ is required, if coin is not installed .cao file can be used.
     tracker.getPose(cMo); // get the pose
   }
 
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbEdgeTracker::loadConfigFile() vpXmlParser::cleanup();
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -246,21 +244,21 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.getCameraParameters(cam); // Get the camera parameters used by the
-tracker (from the configuration file). tracker.loadModel("cube.cao"); // load
-the 3d model, to read .wrl model coin is required, if coin is not installed
-.cao file can be used.
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+  // load the 3d model, to read .wrl model coin is required, if coin is not installed
+  // .cao file can be used.
+  tracker.loadModel("cube.cao");
 
   while(true){
     // acquire a new image
     // Get the pose using any method
     vpDisplay::display(I);
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the
-model at the computed pose. vpDisplay::flush(I);
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
+    vpDisplay::flush(I);
   }
 
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbEdgeTracker::loadConfigFile() vpXmlParser::cleanup();
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -350,21 +348,14 @@ public:
   /** @name Inherited functionalities from vpMbEdgeTracker */
   //@{
 
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1,
-               const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam, const vpColor &col,
-               const unsigned int thickness = 1,
-               const bool displayFullModel = false);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
-  void getLline(std::list<vpMbtDistanceLine *> &linesList,
-                const unsigned int level = 0) const;
-  void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList,
-                  const unsigned int level = 0) const;
-  void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList,
-                    const unsigned int level = 0) const;
+  void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
+  void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
+  void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
 
   /*!
     Get the moving edge parameters.
@@ -397,10 +388,7 @@ public:
 
      \sa setGoodMovingEdgesRatioThreshold()
    */
-  inline double getGoodMovingEdgesRatioThreshold() const
-  {
-    return percentageGdPt;
-  }
+  inline double getGoodMovingEdgesRatioThreshold() const { return percentageGdPt; }
 
   virtual inline vpColVector getError() const { return m_error_edge; }
 
@@ -408,12 +396,9 @@ public:
 
   void loadConfigFile(const std::string &configFile);
   void loadConfigFile(const char *configFile);
-  virtual void reInitModel(const vpImage<unsigned char> &I,
-                           const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_,
-                           const bool verbose = false);
-  void reInitModel(const vpImage<unsigned char> &I, const char *cad_name,
-                   const vpHomogeneousMatrix &cMo,
+  virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
+                           const vpHomogeneousMatrix &cMo_, const bool verbose = false);
+  void reInitModel(const vpImage<unsigned char> &I, const char *cad_name, const vpHomogeneousMatrix &cMo,
                    const bool verbose = false);
   void resetTracker();
 
@@ -428,21 +413,16 @@ public:
 
     for (unsigned int i = 0; i < scales.size(); i += 1) {
       if (scales[i]) {
-        for (std::list<vpMbtDistanceLine *>::const_iterator it =
-                 lines[i].begin();
-             it != lines[i].end(); ++it) {
+        for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
           (*it)->setCameraParameters(cam);
         }
 
-        for (std::list<vpMbtDistanceCylinder *>::const_iterator it =
-                 cylinders[i].begin();
-             it != cylinders[i].end(); ++it) {
+        for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
+             ++it) {
           (*it)->setCameraParameters(cam);
         }
 
-        for (std::list<vpMbtDistanceCircle *>::const_iterator it =
-                 circles[i].begin();
-             it != circles[i].end(); ++it) {
+        for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
           (*it)->setCameraParameters(cam);
         }
       }
@@ -482,9 +462,7 @@ public:
 
     for (unsigned int i = 0; i < scales.size(); i += 1) {
       if (scales[i]) {
-        for (std::list<vpMbtDistanceLine *>::const_iterator it =
-                 lines[i].begin();
-             it != lines[i].end(); ++it) {
+        for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
           (*it)->useScanLine = v;
         }
       }
@@ -504,20 +482,15 @@ public:
 
      \sa getGoodMovingEdgesRatioThreshold()
    */
-  void setGoodMovingEdgesRatioThreshold(const double threshold)
-  {
-    percentageGdPt = threshold;
-  }
+  void setGoodMovingEdgesRatioThreshold(const double threshold) { percentageGdPt = threshold; }
 
   void setMovingEdge(const vpMe &me);
 
-  virtual void setPose(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
 
   void setScales(const std::vector<bool> &_scales);
 
-  void setUseEdgeTracking(const std::string &name,
-                          const bool &useEdgeTracking);
+  void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
 
   void track(const vpImage<unsigned char> &I);
   //@}
@@ -526,55 +499,41 @@ protected:
   /** @name Protected Member Functions Inherited from vpMbEdgeTracker */
   //@{
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
-  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3,
-                 const double r, int idFace = -1,
+  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1,
                  const std::string &name = "");
-  void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r,
-                   int idFace = -1, const std::string &name = "");
-  void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1,
-               std::string name = "");
+  void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string &name = "");
+  void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
   void addPolygon(vpMbtPolygon &p);
 
   void cleanPyramid(std::vector<const vpImage<unsigned char> *> &_pyramid);
   void computeProjectionError(const vpImage<unsigned char> &_I);
 
   void computeVVS(const vpImage<unsigned char> &_I, const unsigned int lvl);
-  void computeVVSFirstPhase(const vpImage<unsigned char> &I,
-                            const unsigned int iter, double &count,
+  void computeVVSFirstPhase(const vpImage<unsigned char> &I, const unsigned int iter, double &count,
                             const unsigned int lvl = 0);
-  void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I,
-                                  const unsigned int lvl = 0);
-  void computeVVSFirstPhasePoseEstimation(const unsigned int iter,
-                                          bool &isoJoIdentity_);
+  void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, const unsigned int lvl = 0);
+  void computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
-  virtual void
-  computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);
+  virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);
   virtual void computeVVSWeights();
   using vpMbTracker::computeVVSWeights;
 
-  void displayFeaturesOnImage(const vpImage<unsigned char> &I,
-                              const unsigned int lvl);
+  void displayFeaturesOnImage(const vpImage<unsigned char> &I, const unsigned int lvl);
   void downScale(const unsigned int _scale);
   void init(const vpImage<unsigned char> &I);
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2,
-                          const vpPoint &p3, const double radius,
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "");
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2,
-                            const double radius, const int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
                             const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
-  unsigned int initMbtTracking(unsigned int &nberrors_lines,
-                               unsigned int &nberrors_cylinders,
+  unsigned int initMbtTracking(unsigned int &nberrors_lines, unsigned int &nberrors_cylinders,
                                unsigned int &nberrors_circles);
-  void initMovingEdge(const vpImage<unsigned char> &I,
-                      const vpHomogeneousMatrix &_cMo);
-  void initPyramid(const vpImage<unsigned char> &_I,
-                   std::vector<const vpImage<unsigned char> *> &_pyramid);
+  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
+  void initPyramid(const vpImage<unsigned char> &_I, std::vector<const vpImage<unsigned char> *> &_pyramid);
   void reInitLevel(const unsigned int _lvl);
-  void reinitMovingEdge(const vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &_cMo);
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
   void removeCircle(const std::string &name);
   void removeCylinder(const std::string &name);
   void removeLine(const std::string &name);
@@ -584,8 +543,7 @@ protected:
   void updateMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdgeWeights();
   void upScale(const unsigned int _scale);
-  void visibleFace(const vpImage<unsigned char> &_I,
-                   const vpHomogeneousMatrix &_cMo, bool &newvisibleline);
+  void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline);
   //@}
 };
 

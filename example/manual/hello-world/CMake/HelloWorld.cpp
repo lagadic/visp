@@ -48,9 +48,7 @@ int main()
     vpThetaUVector tu;
 
     // Construct a rotation matrix from the theta U angles
-    vpRotationMatrix R(
-        vpMath::rad(0.),
-        vpMath::rad(180) + 100 * std::numeric_limits<double>::epsilon(), 0.);
+    vpRotationMatrix R(vpMath::rad(0.), vpMath::rad(180) + 100 * std::numeric_limits<double>::epsilon(), 0.);
 
     // Extract the theta U angles from a rotation matrix
     tu.buildFrom(R);

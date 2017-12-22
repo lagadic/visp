@@ -113,7 +113,7 @@ int main()
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
 
 #ifdef VISP_HAVE_DISPLAY
-      graph.plot(0, iter, v); // plot velocities applied to the robot
+      graph.plot(0, iter, v);               // plot velocities applied to the robot
       graph.plot(1, iter, task.getError()); // plot error vector
       graph.plot(2, 0, iter, Z);            // plot the depth
 #endif
@@ -121,8 +121,7 @@ int main()
       iter++;
 
       if (task.getError().sumSquare() < 0.0001) {
-        std::cout << "Reached a small error. We stop the loop... "
-                  << std::endl;
+        std::cout << "Reached a small error. We stop the loop... " << std::endl;
         break;
       }
     }
@@ -131,9 +130,7 @@ int main()
     graph.saveData(1, "./error2.dat");
 
     const char *legend = "Click to quit...";
-    vpDisplay::displayText(graph.I, (int)graph.I.getHeight() - 60,
-                           (int)graph.I.getWidth() - 150, legend,
-                           vpColor::red);
+    vpDisplay::displayText(graph.I, (int)graph.I.getHeight() - 60, (int)graph.I.getWidth() - 150, legend, vpColor::red);
     vpDisplay::flush(graph.I);
     vpDisplay::getClick(graph.I);
 #endif

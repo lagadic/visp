@@ -173,8 +173,7 @@ int main(int argc, const char **argv)
     inliers_ground_truth[10] = true;
 
     vpHomogeneousMatrix bMo(0, 0, 1, 0, 0, 0);
-    vpHomogeneousMatrix aMb(0.1, 0.1, 0.1, vpMath::rad(10), 0,
-                            vpMath::rad(40));
+    vpHomogeneousMatrix aMb(0.1, 0.1, 0.1, vpMath::rad(10), 0, vpMath::rad(40));
     vpHomogeneousMatrix aMo = aMb * bMo;
     for (unsigned int i = 0; i < nbpt; i++) {
       P[i].project(aMo);
@@ -195,8 +194,7 @@ int main(int argc, const char **argv)
     std::cout << "Compare with built homography H = R + t/d n " << std::endl;
     vpPlane bp(0, 0, 1, 1);
     vpHomography aHb_built(aMb, bp);
-    std::cout << "aHb built from the displacement: \n"
-              << aHb_built / aHb_built[2][2] << std::endl;
+    std::cout << "aHb built from the displacement: \n" << aHb_built / aHb_built[2][2] << std::endl;
 
     aHb_built.computeDisplacement(aRb, aTb, n);
     std::cout << "Rotation aRb: " << std::endl;
@@ -212,8 +210,7 @@ int main(int argc, const char **argv)
     double residual;
     // Suppose px=1000. Set the threshold to 2 pixels => 2/1000
     // In the data we have 6 inliers. We request that at least 6 are retrieved
-    vpHomography::ransac(xb, yb, xa, ya, aHb, inliers, residual, 6,
-                         2. / 1000);
+    vpHomography::ransac(xb, yb, xa, ya, aHb, inliers, residual, 6, 2. / 1000);
 
     std::cout << "aHb estimated using ransac:\n" << aHb << std::endl;
     std::cout << "Inliers indexes (should be 0,1,2,3,8,10): ";

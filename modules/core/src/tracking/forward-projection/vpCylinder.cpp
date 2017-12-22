@@ -68,10 +68,7 @@ void vpCylinder::init()
   cylinder.setWorldCoordinates(oP);
   \endcode
 */
-void vpCylinder::setWorldCoordinates(const vpColVector &o_P)
-{
-  this->oP = o_P;
-}
+void vpCylinder::setWorldCoordinates(const vpColVector &o_P) { this->oP = o_P; }
 
 /*!
   Set the cylinder parameters \f$^{o}{\bf P} =
@@ -81,10 +78,8 @@ void vpCylinder::setWorldCoordinates(const vpColVector &o_P)
   \param A,B,C,X0,Y0,Z0,R : Cylinder parameters \f$^{o}{\bf P}\f$.
 
 */
-void vpCylinder::setWorldCoordinates(const double A, const double B,
-                                     const double C, const double X0,
-                                     const double Y0, const double Z0,
-                                     const double R)
+void vpCylinder::setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
+                                     const double Z0, const double R)
 {
   oP[0] = A;
   oP[1] = B;
@@ -137,9 +132,8 @@ vpCylinder::vpCylinder(const vpColVector &o_P)
   \sa setWorldCoordinates(const double,const double,const double,const
   double,const double,const double,const double)
 */
-vpCylinder::vpCylinder(const double A, const double B, const double C,
-                       const double X0, const double Y0, const double Z0,
-                       const double R)
+vpCylinder::vpCylinder(const double A, const double B, const double C, const double X0, const double Y0,
+                       const double Z0, const double R)
 {
   init();
   setWorldCoordinates(A, B, C, X0, Y0, Z0, R);
@@ -215,14 +209,12 @@ void vpCylinder::projection(const vpColVector &cP_, vpColVector &p_)
   Y0 = cP_[4];
   Z0 = cP_[5];
   R = cP_[6];
-  zero = A * X0 + B * Y0 +
-         C * Z0; // should be zero for a good reprensetation of the cylinder
+  zero = A * X0 + B * Y0 + C * Z0; // should be zero for a good reprensetation of the cylinder
 
   s = X0 * X0 + Y0 * Y0 + Z0 * Z0 - R * R - zero * zero;
   if (s < 0) {
     printf("The camera is inside the cylinder with s=%f !\n", s);
-    throw vpException(vpException::fatalError,
-                      "The camera is inside the cylinder!");
+    throw vpException(vpException::fatalError, "The camera is inside the cylinder!");
   }
   s = 1.0 / sqrt(s);
   a = X0 - A * zero; //(1-A*A)*X0 - A*B*Y0 - A*C*Z0;
@@ -264,10 +256,7 @@ void vpCylinder::projection(const vpColVector &cP_, vpColVector &p_)
 
   \sa changeFrame(const vpHomogeneousMatrix &, vpColVector &)
  */
-void vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo)
-{
-  changeFrame(cMo, cP);
-}
+void vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP); }
 
 /*!
   From the cylinder parameters \f$^{o}{\bf P}\f$ expressed in the world frame,
@@ -375,12 +364,9 @@ void vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
 */
 double vpCylinder::computeZ(const double x, const double y) const
 {
-  double A = x * x + y * y + 1 -
-             ((getA() * x + getB() * y + getC()) *
-              (getA() * x + getB() * y + getC()));
+  double A = x * x + y * y + 1 - ((getA() * x + getB() * y + getC()) * (getA() * x + getB() * y + getC()));
   double B = (x * getX() + y * getY() + getZ());
-  double C =
-      getX() * getX() + getY() * getY() + getZ() * getZ() - getR() * getR();
+  double C = getX() * getX() + getY() * getY() + getZ() * getZ() - getR() * getR();
 
   return (B - std::sqrt(B * B - A * C)) / A;
 }
@@ -395,26 +381,21 @@ vpCylinder *vpCylinder::duplicate() const
 /*!
   Display the projection of the cylinder in the image as two lines.
 */
-void vpCylinder::display(const vpImage<unsigned char> &I,
-                         const vpHomogeneousMatrix &cMo,
-                         const vpCameraParameters &cam, const vpColor &color,
-                         const unsigned int thickness)
+void vpCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                         const vpColor &color, const unsigned int thickness)
 {
 
   vpColVector _cP(7), _p(4);
   changeFrame(cMo, _cP);
   projection(_cP, _p);
-  vpFeatureDisplay::displayCylinder(_p[0], _p[1], _p[2], _p[3], cam, I, color,
-                                    thickness);
+  vpFeatureDisplay::displayCylinder(_p[0], _p[1], _p[2], _p[3], cam, I, color, thickness);
 }
 
 /*!
   Display the projection of the cylinder in the image as two lines.
 */
-void vpCylinder::display(const vpImage<unsigned char> &I,
-                         const vpCameraParameters &cam, const vpColor &color,
+void vpCylinder::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                          const unsigned int thickness)
 {
-  vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color,
-                                    thickness);
+  vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color, thickness);
 }

@@ -40,15 +40,13 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerZNCCForwardAdditional.h>
 
-vpTemplateTrackerZNCCForwardAdditional::
-    vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp)
+vpTemplateTrackerZNCCForwardAdditional::vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerZNCC(warp)
 {
   useCompositionnal = false;
 }
 
-void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
@@ -85,8 +83,7 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(
     j2 = X2[0];
     i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Tij = ptTemplate[point].val;
 
       if (!blur)
@@ -115,8 +112,7 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(
     j2 = X2[0];
     i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Tij = ptTemplate[point].val;
 
       if (!blur)
@@ -140,9 +136,8 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(
 
       for (unsigned int it = 0; it < nbParam; it++)
         for (unsigned int jt = 0; jt < nbParam; jt++)
-          Hdesire[it][jt] +=
-              prod * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
-                      dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
+          Hdesire[it][jt] += prod * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
+                                     dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
       /*Hdesire[0][0]+=prod*d_Ixx;
       Hdesire[1][0]+=prod*d_Ixy;
       Hdesire[0][1]+=prod*d_Ixy;
@@ -159,8 +154,7 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(
   // std::cout<<"Hdesire = "<<Hdesire<<std::endl;
 }
 
-void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
@@ -203,8 +197,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(
 
       j2 = X2[0];
       i2 = X2[1];
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Tij = ptTemplate[point].val;
 
         if (!blur)
@@ -219,8 +212,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(
     }
 
     if (!Nbpoint) {
-      throw(vpException(vpException::divideByZeroError,
-                        "Cannot track the template: no point"));
+      throw(vpException(vpException::divideByZeroError, "Cannot track the template: no point"));
     }
 
     moyTij = moyTij / Nbpoint;
@@ -238,8 +230,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(
 
       j2 = X2[0];
       i2 = X2[1];
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Tij = ptTemplate[point].val;
 
         if (!blur)
@@ -278,8 +269,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(
 
         double er = (Tij - IW);
         erreur += (er * er);
-        denom +=
-            (Tij - moyTij) * (Tij - moyTij) * (IW - moyIW) * (IW - moyIW);
+        denom += (Tij - moyTij) * (Tij - moyTij) * (IW - moyIW) * (IW - moyIW);
         delete[] tempt;
       }
     }

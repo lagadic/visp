@@ -79,14 +79,14 @@ public:
   //! Default constructor
   vpSubMatrix();
   //! Constructor
-  vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col,
-              const unsigned int &nrows, const unsigned int &ncols);
+  vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
+              const unsigned int &ncols);
   //! Destructor
   ~vpSubMatrix();
 
   //! Initialisation of vpMatrix
-  void init(vpMatrix &m, const unsigned int &row, const unsigned int &col,
-            const unsigned int &nrows, const unsigned int &ncols);
+  void init(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
+            const unsigned int &ncols);
 
   //! Check is parent vpRowVector has changed since initialization
   void checkParentStatus() const;

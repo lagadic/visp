@@ -52,8 +52,7 @@
 */
 void vpMomentDatabase::add(vpMoment &moment, const char *name)
 {
-  moments.insert(
-      std::pair<const char *, vpMoment *>((const char *)name, &moment));
+  moments.insert(std::pair<const char *, vpMoment *>((const char *)name, &moment));
 }
 
 /*!
@@ -64,8 +63,7 @@ void vpMomentDatabase::add(vpMoment &moment, const char *name)
 */
 const vpMoment &vpMomentDatabase::get(const char *type, bool &found) const
 {
-  std::map<const char *, vpMoment *,
-           vpMomentDatabase::cmp_str>::const_iterator it = moments.find(type);
+  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator it = moments.find(type);
 
   found = (it != moments.end());
   return *(it->second);
@@ -83,8 +81,7 @@ const vpMoment &vpMomentDatabase::get(const char *type, bool &found) const
 */
 void vpMomentDatabase::updateAll(vpMomentObject &object)
 {
-  std::map<const char *, vpMoment *,
-           vpMomentDatabase::cmp_str>::const_iterator itr;
+  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator itr;
   for (itr = moments.begin(); itr != moments.end(); ++itr) {
     (*itr).second->update(object);
   }
@@ -93,11 +90,9 @@ void vpMomentDatabase::updateAll(vpMomentObject &object)
 /*!
         Outputs all the moments values in the database to a stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpMomentDatabase &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &m)
 {
-  std::map<const char *, vpMoment *,
-           vpMomentDatabase::cmp_str>::const_iterator itr;
+  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator itr;
   os << "{";
 
   for (itr = m.moments.begin(); itr != m.moments.end(); ++itr) {

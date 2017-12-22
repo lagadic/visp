@@ -68,13 +68,12 @@ int main()
 int main(int argc, char **argv)
 {
   try {
-    std::cout
-        << "\nWARNING: this program does no sensing or avoiding of "
-           "obstacles, \n"
-           "the robot WILL collide with any objects in the way! Make sure "
-           "the \n"
-           "robot has approximately 3 meters of free space on all sides.\n"
-        << std::endl;
+    std::cout << "\nWARNING: this program does no sensing or avoiding of "
+                 "obstacles, \n"
+                 "the robot WILL collide with any objects in the way! Make sure "
+                 "the \n"
+                 "robot has approximately 3 meters of free space on all sides.\n"
+              << std::endl;
 
     vpRobotPioneer robot;
 
@@ -112,13 +111,9 @@ int main(int argc, char **argv)
       robot.setVelocity(vpRobot::REFERENCE_FRAME, v);
 
       v_mes = robot.getVelocity(vpRobot::REFERENCE_FRAME);
-      std::cout << "Trans. vel= " << v_mes[0]
-                << " m/s, Rot. vel=" << vpMath::deg(v_mes[1]) << " deg/s"
-                << std::endl;
+      std::cout << "Trans. vel= " << v_mes[0] << " m/s, Rot. vel=" << vpMath::deg(v_mes[1]) << " deg/s" << std::endl;
       v_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
-      std::cout << "Left wheel vel= " << v_mes[0]
-                << " m/s, Right wheel vel=" << v_mes[1] << " m/s"
-                << std::endl;
+      std::cout << "Left wheel vel= " << v_mes[0] << " m/s, Right wheel vel=" << v_mes[1] << " m/s" << std::endl;
       std::cout << "Battery=" << robot.getBatteryVoltage() << std::endl;
 
       vpTime::wait(t, 40);
@@ -134,8 +129,7 @@ int main(int argc, char **argv)
     ArLog::log(ArLog::Normal,
                "simpleMotionCommands: Pose=(%.2f,%.2f,%.2f), Trans. "
                "Vel=%.2f, Rot. Vel=%.2f, Battery=%.2fV",
-               robot.getX(), robot.getY(), robot.getTh(), robot.getVel(),
-               robot.getRotVel(), robot.getBatteryVoltage());
+               robot.getX(), robot.getY(), robot.getTh(), robot.getVel(), robot.getRotVel(), robot.getBatteryVoltage());
     robot.unlock();
 
     std::cout << "Ending robot thread..." << std::endl;

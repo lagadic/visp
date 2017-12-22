@@ -20,10 +20,8 @@ void vpDisplay::close(vpImage<unsigned char> &I) { vp_display_close(I); }
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplay::displayArrow(const vpImage<unsigned char> &I,
-                             const vpImagePoint &ip1, const vpImagePoint &ip2,
-                             const vpColor &color, unsigned int w,
-                             unsigned int h, unsigned int thickness)
+void vpDisplay::displayArrow(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
+                             const vpColor &color, unsigned int w, unsigned int h, unsigned int thickness)
 {
   vp_display_display_arrow(I, ip1, ip2, color, w, h, thickness);
 }
@@ -38,10 +36,8 @@ void vpDisplay::displayArrow(const vpImage<unsigned char> &I,
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplay::displayArrow(const vpImage<unsigned char> &I, int i1, int j1,
-                             int i2, int j2, const vpColor &color,
-                             unsigned int w, unsigned int h,
-                             unsigned int thickness)
+void vpDisplay::displayArrow(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color,
+                             unsigned int w, unsigned int h, unsigned int thickness)
 {
   vp_display_display_arrow(I, i1, j1, i2, j2, color, w, h, thickness);
 }
@@ -59,10 +55,8 @@ void vpDisplay::displayArrow(const vpImage<unsigned char> &I, int i1, int j1,
   \param color : Color used to display the camera in the image.
   \param thickness : Thickness of the graphics drawing.
 */
-void vpDisplay::displayCamera(const vpImage<unsigned char> &I,
-                              const vpHomogeneousMatrix &cMo,
-                              const vpCameraParameters &cam, double size,
-                              const vpColor &color, unsigned int thickness)
+void vpDisplay::displayCamera(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                              const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness)
 {
   vp_display_display_camera(I, cMo, cam, size, color, thickness);
 }
@@ -80,8 +74,7 @@ void vpDisplay::displayCamera(const vpImage<unsigned char> &I,
 
   \sa setFont(), displayText()
 */
-void vpDisplay::displayCharString(const vpImage<unsigned char> &I,
-                                  const vpImagePoint &ip, const char *string,
+void vpDisplay::displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string,
                                   const vpColor &color)
 {
   vp_display_display_char_string(I, ip, string, color);
@@ -100,8 +93,7 @@ void vpDisplay::displayCharString(const vpImage<unsigned char> &I,
 
   \sa setFont(), displayText()
 */
-void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i,
-                                  int j, const char *string,
+void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
                                   const vpColor &color)
 {
   vp_display_display_char_string(I, i, j, string, color);
@@ -117,10 +109,8 @@ void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i,
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
-void vpDisplay::displayCircle(const vpImage<unsigned char> &I,
-                              const vpImagePoint &center, unsigned int radius,
-                              const vpColor &color, bool fill,
-                              unsigned int thickness)
+void vpDisplay::displayCircle(const vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius,
+                              const vpColor &color, bool fill, unsigned int thickness)
 {
   vp_display_display_circle(I, center, radius, color, fill, thickness);
 }
@@ -135,8 +125,7 @@ void vpDisplay::displayCircle(const vpImage<unsigned char> &I,
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
-void vpDisplay::displayCircle(const vpImage<unsigned char> &I, int i, int j,
-                              unsigned int radius, const vpColor &color,
+void vpDisplay::displayCircle(const vpImage<unsigned char> &I, int i, int j, unsigned int radius, const vpColor &color,
                               bool fill, unsigned int thickness)
 {
   vp_display_display_circle(I, i, j, radius, color, fill, thickness);
@@ -150,8 +139,7 @@ void vpDisplay::displayCircle(const vpImage<unsigned char> &I, int i, int j,
   \param color : Cross color.
   \param thickness : Thickness of the lines used to display the cross.
 */
-void vpDisplay::displayCross(const vpImage<unsigned char> &I,
-                             const vpImagePoint &ip, unsigned int size,
+void vpDisplay::displayCross(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size,
                              const vpColor &color, unsigned int thickness)
 {
   vp_display_display_cross(I, ip, size, color, thickness);
@@ -165,8 +153,7 @@ void vpDisplay::displayCross(const vpImage<unsigned char> &I,
   \param color : Cross color.
   \param thickness : Thickness of the lines used to display the cross.
 */
-void vpDisplay::displayCross(const vpImage<unsigned char> &I, int i, int j,
-                             unsigned int size, const vpColor &color,
+void vpDisplay::displayCross(const vpImage<unsigned char> &I, int i, int j, unsigned int size, const vpColor &color,
                              unsigned int thickness)
 {
   vp_display_display_cross(I, i, j, size, color, thickness);
@@ -179,10 +166,8 @@ void vpDisplay::displayCross(const vpImage<unsigned char> &I, int i, int j,
   \param color : Line color.
   \param thickness : Dashed line thickness.
 */
-void vpDisplay::displayDotLine(const vpImage<unsigned char> &I,
-                               const vpImagePoint &ip1,
-                               const vpImagePoint &ip2, const vpColor &color,
-                               unsigned int thickness)
+void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
+                               const vpColor &color, unsigned int thickness)
 {
   vp_display_display_dot_line(I, ip1, ip2, color, thickness);
 }
@@ -195,8 +180,7 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I,
   \param color : Line color.
   \param thickness : Dashed line thickness.
 */
-void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1,
-                               int j1, int i2, int j2, const vpColor &color,
+void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color,
                                unsigned int thickness)
 {
   vp_display_display_dot_line(I, i1, j1, i2, j2, color, thickness);
@@ -210,10 +194,8 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1,
   last image points. \param color : Line color. \param thickness : Dashed line
   thickness.
 */
-void vpDisplay::displayDotLine(const vpImage<unsigned char> &I,
-                               const std::vector<vpImagePoint> &ips,
-                               const bool closeTheShape, const vpColor &color,
-                               unsigned int thickness)
+void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
+                               const bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;
@@ -261,24 +243,23 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I,
   with \f$0 \leq \theta \leq 2\pi\f$.
 
   The following example shows how to use for example this function to display
-  the result of a tracking. \code vpMeEllipse ellipse;
+  the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
     ...
     vpDisplay::display(I);
     ellipse.track(I);
 
     vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
-  ellipse.get_mu11(), ellipse.get_mu02(), true, vpColor::orange, 1);
+                              ellipse.get_mu11(), ellipse.get_mu02(), true, vpColor::orange, 1);
     vpDisplay::flush(I);
   \endcode
 */
-void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
-                               const vpImagePoint &center,
-                               const double &coef1, const double &coef2,
-                               const double &coef3, bool use_centered_moments,
+void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
+                               const double &coef2, const double &coef3, bool use_centered_moments,
                                const vpColor &color, unsigned int thickness)
 {
-  vpDisplay::displayEllipse(I, center, coef1, coef2, coef3, 0.,
-                            vpMath::rad(360), use_centered_moments, color,
+  vpDisplay::displayEllipse(I, center, coef1, coef2, coef3, 0., vpMath::rad(360), use_centered_moments, color,
                             thickness);
 }
 
@@ -321,7 +302,9 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
   with \f$\theta_1 \leq \theta \leq \theta_2\f$.
 
   The following example shows how to use for example this function to display
-  the result of a tracking. \code vpMeEllipse ellipse;
+  the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
     ...
     vpDisplay::display(I);
     ellipse.track(I);
@@ -329,19 +312,14 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
     vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
                               ellipse.get_mu11(), ellipse.get_mu02(),
                               ellipse.getSmallestAngle(),
-  ellipse.getHighestAngle(), true, vpColor::orange, 1); vpDisplay::flush(I);
+    ellipse.getHighestAngle(), true, vpColor::orange, 1); vpDisplay::flush(I);
   \endcode
 */
-void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
-                               const vpImagePoint &center,
-                               const double &coef1, const double &coef2,
-                               const double &coef3, const double &theta1,
-                               const double &theta2,
-                               bool use_centered_moments,
-                               const vpColor &color, unsigned int thickness)
+void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
+                               const double &coef2, const double &coef3, const double &theta1, const double &theta2,
+                               bool use_centered_moments, const vpColor &color, unsigned int thickness)
 {
-  vp_display_display_ellipse(I, center, coef1, coef2, coef3, theta1, theta2,
-                             use_centered_moments, color, thickness);
+  vp_display_display_ellipse(I, center, coef1, coef2, coef3, theta1, theta2, use_centered_moments, color, thickness);
 }
 
 /*!
@@ -359,10 +337,8 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
   \param offset : Offset in pixels applied to the frame origin location in the
   image.
 */
-void vpDisplay::displayFrame(const vpImage<unsigned char> &I,
-                             const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &cam, double size,
-                             const vpColor &color, unsigned int thickness,
+void vpDisplay::displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                             const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness,
                              const vpImagePoint &offset)
 {
   vp_display_display_frame(I, cMo, cam, size, color, thickness, offset);
@@ -375,8 +351,7 @@ void vpDisplay::displayFrame(const vpImage<unsigned char> &I,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplay::displayLine(const vpImage<unsigned char> &I,
-                            const vpImagePoint &ip1, const vpImagePoint &ip2,
+void vpDisplay::displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                             const vpColor &color, unsigned int thickness)
 {
   vp_display_display_line(I, ip1, ip2, color, thickness);
@@ -390,8 +365,7 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1,
-                            int i2, int j2, const vpColor &color,
+void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color,
                             unsigned int thickness)
 {
   vp_display_display_line(I, i1, j1, i2, j2, color, thickness);
@@ -404,10 +378,8 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1,
   \param closeTheShape : If true, display a line from the first and last image
   points. \param color : Line color. \param thickness : Line thickness.
 */
-void vpDisplay::displayLine(const vpImage<unsigned char> &I,
-                            const std::vector<vpImagePoint> &ips,
-                            const bool closeTheShape, const vpColor &color,
-                            unsigned int thickness)
+void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
+                            const bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;
@@ -426,8 +398,7 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I,
   \param color : Point color.
   \param thickness : Thickness of the point
 */
-void vpDisplay::displayPoint(const vpImage<unsigned char> &I,
-                             const vpImagePoint &ip, const vpColor &color,
+void vpDisplay::displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color,
                              unsigned int thickness)
 {
   vp_display_display_point(I, ip, color, thickness);
@@ -440,8 +411,8 @@ void vpDisplay::displayPoint(const vpImage<unsigned char> &I,
   \param color : Point color.
   \param thickness : Thickness of the point
 */
-void vpDisplay::displayPoint(const vpImage<unsigned char> &I, int i, int j,
-                             const vpColor &color, unsigned int thickness)
+void vpDisplay::displayPoint(const vpImage<unsigned char> &I, int i, int j, const vpColor &color,
+                             unsigned int thickness)
 {
   vp_display_display_point(I, i, j, color, thickness);
 }
@@ -453,8 +424,7 @@ void vpDisplay::displayPoint(const vpImage<unsigned char> &I, int i, int j,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplay::displayPolygon(const vpImage<unsigned char> &I,
-                               const std::vector<vpImagePoint> &vip,
+void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                                const vpColor &color, unsigned int thickness)
 {
   vp_display_display_polygon(I, vip, color, thickness);
@@ -474,14 +444,10 @@ void vpDisplay::displayPolygon(const vpImage<unsigned char> &I,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
-                                 const vpImagePoint &topLeft,
-                                 unsigned int width, unsigned int height,
-                                 const vpColor &color, bool fill,
-                                 unsigned int thickness)
+void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, unsigned int width,
+                                 unsigned int height, const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_display_display_rectangle(I, topLeft, width, height, color, fill,
-                               thickness);
+  vp_display_display_rectangle(I, topLeft, width, height, color, fill, thickness);
 }
 
 /*!
@@ -498,13 +464,10 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, int i,
-                                 int j, unsigned int width,
-                                 unsigned int height, const vpColor &color,
-                                 bool fill, unsigned int thickness)
+void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, int i, int j, unsigned int width, unsigned int height,
+                                 const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_display_display_rectangle(I, i, j, width, height, color, fill,
-                               thickness);
+  vp_display_display_rectangle(I, i, j, width, height, color, fill, thickness);
 }
 
 /*!
@@ -520,10 +483,8 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, int i,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
-                                 const vpRect &rectangle,
-                                 const vpColor &color, bool fill,
-                                 unsigned int thickness)
+void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpRect &rectangle, const vpColor &color,
+                                 bool fill, unsigned int thickness)
 {
   vp_display_display_rectangle(I, rectangle, color, fill, thickness);
 }
@@ -541,13 +502,10 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
   \param thickness : Thickness of the four lines used to display the
   rectangle.
 */
-void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
-                                 const vpImagePoint &center, float angle,
-                                 unsigned int width, unsigned int height,
-                                 const vpColor &color, unsigned int thickness)
+void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &center, float angle,
+                                 unsigned int width, unsigned int height, const vpColor &color, unsigned int thickness)
 {
-  vp_display_display_rectangle(I, center, angle, width, height, color,
-                               thickness);
+  vp_display_display_rectangle(I, center, angle, width, height, color, thickness);
 }
 
 /*!
@@ -564,14 +522,11 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
-                                 const vpImagePoint &topLeft,
-                                 const vpImagePoint &bottomRight,
-                                 const vpColor &color, bool fill,
+void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft,
+                                 const vpImagePoint &bottomRight, const vpColor &color, bool fill,
                                  unsigned int thickness)
 {
-  vp_display_display_rectangle(I, topLeft, bottomRight, color, fill,
-                               thickness);
+  vp_display_display_rectangle(I, topLeft, bottomRight, color, fill, thickness);
 }
 
 /*!
@@ -587,13 +542,10 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
   \param thickness : Thickness of the four lines used to display the
   rectangle.
 */
-void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
-                                 unsigned int i, unsigned int j, float angle,
-                                 unsigned int width, unsigned int height,
-                                 const vpColor &color, unsigned int thickness)
+void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, float angle,
+                                 unsigned int width, unsigned int height, const vpColor &color, unsigned int thickness)
 {
-  vp_display_display_rectangle(I, i, j, angle, width, height, color,
-                               thickness);
+  vp_display_display_rectangle(I, i, j, angle, width, height, color, thickness);
 }
 
 /*!
@@ -608,8 +560,7 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I,
 
   \sa setFont()
 */
-void vpDisplay::displayText(const vpImage<unsigned char> &I,
-                            const vpImagePoint &ip, const std::string &s,
+void vpDisplay::displayText(const vpImage<unsigned char> &I, const vpImagePoint &ip, const std::string &s,
                             const vpColor &color)
 {
   vp_display_display_text(I, ip, s, color);
@@ -627,8 +578,7 @@ void vpDisplay::displayText(const vpImage<unsigned char> &I,
 
   \sa setFont()
 */
-void vpDisplay::displayText(const vpImage<unsigned char> &I, int i, int j,
-                            const std::string &s, const vpColor &color)
+void vpDisplay::displayText(const vpImage<unsigned char> &I, int i, int j, const std::string &s, const vpColor &color)
 {
   vp_display_display_text(I, i, j, s, color);
 }
@@ -662,10 +612,7 @@ int main() {
 
   \sa flushROI()
 */
-void vpDisplay::flush(const vpImage<unsigned char> &I)
-{
-  vp_display_flush(I);
-}
+void vpDisplay::flush(const vpImage<unsigned char> &I) { vp_display_flush(I); }
 
 /*!
   Flushes the output buffer associated to image \e I display.
@@ -676,10 +623,7 @@ void vpDisplay::flush(const vpImage<unsigned char> &I)
 
   \sa flush()
 */
-void vpDisplay::flushROI(const vpImage<unsigned char> &I, const vpRect &roi)
-{
-  vp_display_flush_roi(I, roi);
-}
+void vpDisplay::flushROI(const vpImage<unsigned char> &I, const vpRect &roi) { vp_display_flush_roi(I, roi); }
 
 /*!
   Display image \e I.
@@ -692,19 +636,13 @@ void vpDisplay::flushROI(const vpImage<unsigned char> &I, const vpRect &roi)
 
   \sa init(), close()
 */
-void vpDisplay::display(const vpImage<unsigned char> &I)
-{
-  vp_display_display(I);
-}
+void vpDisplay::display(const vpImage<unsigned char> &I) { vp_display_display(I); }
 
 /*!
   Update the display with the content of the image that is in the region of
   interest. \param I : Image. \param roi : Region of interest.
  */
-void vpDisplay::displayROI(const vpImage<unsigned char> &I, const vpRect &roi)
-{
-  vp_display_display_roi(I, roi);
-}
+void vpDisplay::displayROI(const vpImage<unsigned char> &I, const vpRect &roi) { vp_display_display_roi(I, roi); }
 
 /*!
   Wait for a click from one of the mouse button.
@@ -723,10 +661,7 @@ void vpDisplay::displayROI(const vpImage<unsigned char> &I, const vpRect &roi)
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
 */
-bool vpDisplay::getClick(const vpImage<unsigned char> &I, bool blocking)
-{
-  return vp_display_get_click(I, blocking);
-}
+bool vpDisplay::getClick(const vpImage<unsigned char> &I, bool blocking) { return vp_display_get_click(I, blocking); }
 
 /*!
   Wait for a click from one of the mouse button and get the position
@@ -746,8 +681,7 @@ bool vpDisplay::getClick(const vpImage<unsigned char> &I, bool blocking)
   button is pressed, the location of the mouse pointer is updated in
   \e ip.
 */
-bool vpDisplay::getClick(const vpImage<unsigned char> &I, vpImagePoint &ip,
-                         bool blocking)
+bool vpDisplay::getClick(const vpImage<unsigned char> &I, vpImagePoint &ip, bool blocking)
 {
   return vp_display_get_click(I, ip, blocking);
 }
@@ -772,8 +706,7 @@ bool vpDisplay::getClick(const vpImage<unsigned char> &I, vpImagePoint &ip,
   button is pressed, the location of the mouse pointer is updated in
   \e ip.
 */
-bool vpDisplay::getClick(const vpImage<unsigned char> &I, vpImagePoint &ip,
-                         vpMouseButton::vpMouseButtonType &button,
+bool vpDisplay::getClick(const vpImage<unsigned char> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button,
                          bool blocking)
 {
   return vp_display_get_click(I, ip, button, blocking);
@@ -795,9 +728,7 @@ bool vpDisplay::getClick(const vpImage<unsigned char> &I, vpImagePoint &ip,
 
   \return true if a mouse button is pressed, false otherwise.
 */
-bool vpDisplay::getClick(const vpImage<unsigned char> &I,
-                         vpMouseButton::vpMouseButtonType &button,
-                         bool blocking)
+bool vpDisplay::getClick(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
   vpImagePoint ip;
   return vpDisplay::getClick(I, ip, button, blocking);
@@ -823,8 +754,7 @@ bool vpDisplay::getClick(const vpImage<unsigned char> &I,
   button is released, the location of the mouse pointer is updated in
   \e ip.
 */
-bool vpDisplay::getClickUp(const vpImage<unsigned char> &I, vpImagePoint &ip,
-                           vpMouseButton::vpMouseButtonType &button,
+bool vpDisplay::getClickUp(const vpImage<unsigned char> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button,
                            bool blocking)
 {
   return vp_display_get_click_up(I, ip, button, blocking);
@@ -846,9 +776,7 @@ bool vpDisplay::getClickUp(const vpImage<unsigned char> &I, vpImagePoint &ip,
 
   \return true if a mouse button is released, false otherwise.
 */
-bool vpDisplay::getClickUp(const vpImage<unsigned char> &I,
-                           vpMouseButton::vpMouseButtonType &button,
-                           bool blocking)
+bool vpDisplay::getClickUp(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
   vpImagePoint ip;
   return vpDisplay::getClickUp(I, ip, button, blocking);
@@ -920,9 +848,12 @@ int main()
 
   // Non blocking keyboard event loop
   int cpt_event = 0;
-  std::cout << "Enter a non blocking keyboard event detection loop..." <<
-std::endl; do { bool event = vpDisplay::getKeyboardEvent(I, false); if (event)
-{ std::cout << "A keyboard event was detected" << std::endl; cpt_event ++;
+  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+  do {
+    bool event = vpDisplay::getKeyboardEvent(I, false);
+    if (event) {
+      std::cout << "A keyboard event was detected" << std::endl;
+      cpt_event ++;
     }
 
     vpTime::wait(5); // wait 5 ms
@@ -934,8 +865,7 @@ std::endl; do { bool event = vpDisplay::getKeyboardEvent(I, false); if (event)
 }
 \endcode
 */
-bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I,
-                                 bool blocking)
+bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
 {
   return vp_display_get_keyboard_event(I, blocking);
 }
@@ -1009,9 +939,12 @@ int main()
   // Non blocking keyboard event loop
   int cpt_event = 0;
   std::string key;
-  std::cout << "Enter a non blocking keyboard event detection loop..." <<
-std::endl; do { bool event = vpDisplay::getKeyboardEvent(I, key, false); if
-(event) { std::cout << "Key detected: " << key << std::endl; cpt_event ++;
+  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+  do {
+    bool event = vpDisplay::getKeyboardEvent(I, key, false);
+    if (event) {
+      std::cout << "Key detected: " << key << std::endl;
+      cpt_event ++;
     }
 
     vpTime::wait(5); // wait 5 ms
@@ -1023,8 +956,7 @@ std::endl; do { bool event = vpDisplay::getKeyboardEvent(I, key, false); if
 }
 \endcode
 */
-bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I,
-                                 std::string &key, bool blocking)
+bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, std::string &key, bool blocking)
 {
   return vp_display_get_keyboard_event(I, key, blocking);
 }
@@ -1098,8 +1030,9 @@ int main()
   // Non blocking keyboard event loop
   int cpt_event = 0;
   char key[10];
-  std::cout << "Enter a non blocking keyboard event detection loop..." <<
-std::endl; do { bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
+  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+  do {
+    bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
     if (event) {
       std::cout << "Key detected: " << key << std::endl;
       cpt_event ++;
@@ -1114,8 +1047,7 @@ std::endl; do { bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
 }
 \endcode
 */
-bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, char *key,
-                                 bool blocking)
+bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, char *key, bool blocking)
 {
   return vp_display_get_keyboard_event(I, key, blocking);
 }
@@ -1129,8 +1061,7 @@ bool vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, char *key,
 
   \return true if a pointer motion event was received, false otherwise.
 */
-bool vpDisplay::getPointerMotionEvent(const vpImage<unsigned char> &I,
-                                      vpImagePoint &ip)
+bool vpDisplay::getPointerMotionEvent(const vpImage<unsigned char> &I, vpImagePoint &ip)
 {
   return vp_display_get_pointer_motion_event(I, ip);
 }
@@ -1144,8 +1075,7 @@ bool vpDisplay::getPointerMotionEvent(const vpImage<unsigned char> &I,
 
   \return true.
 */
-bool vpDisplay::getPointerPosition(const vpImage<unsigned char> &I,
-                                   vpImagePoint &ip)
+bool vpDisplay::getPointerPosition(const vpImage<unsigned char> &I, vpImagePoint &ip)
 {
   return vp_display_get_pointer_position(I, ip);
 }
@@ -1159,8 +1089,7 @@ bool vpDisplay::getPointerPosition(const vpImage<unsigned char> &I,
   \exception vpDisplayException::notInitializedError : If the video
   device is not initialized.
 */
-void vpDisplay::setBackground(const vpImage<unsigned char> &I,
-                              const vpColor &color)
+void vpDisplay::setBackground(const vpImage<unsigned char> &I, const vpColor &color)
 {
   vp_display_set_background(I, color);
 }
@@ -1178,8 +1107,7 @@ void vpDisplay::setBackground(const vpImage<unsigned char> &I,
 
   \sa displayText()
 */
-void vpDisplay::setFont(const vpImage<unsigned char> &I,
-                        const std::string &fontname)
+void vpDisplay::setFont(const vpImage<unsigned char> &I, const std::string &fontname)
 {
   vp_display_set_font(I, fontname);
 }
@@ -1191,8 +1119,7 @@ void vpDisplay::setFont(const vpImage<unsigned char> &I,
   \param I : Image associated to the display window.
   \param windowtitle : Window title.
 */
-void vpDisplay::setTitle(const vpImage<unsigned char> &I,
-                         const std::string &windowtitle)
+void vpDisplay::setTitle(const vpImage<unsigned char> &I, const std::string &windowtitle)
 {
   vp_display_set_title(I, windowtitle);
 }
@@ -1207,8 +1134,7 @@ void vpDisplay::setTitle(const vpImage<unsigned char> &I,
   \exception vpDisplayException::notInitializedError : If the video
   device is not initialized.
 */
-void vpDisplay::setWindowPosition(const vpImage<unsigned char> &I, int winx,
-                                  int winy)
+void vpDisplay::setWindowPosition(const vpImage<unsigned char> &I, int winx, int winy)
 {
   vp_display_set_window_position(I, winx, winy);
 }

@@ -81,8 +81,7 @@
 
 
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using GDI, display some\n\
@@ -141,8 +140,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, bool &click_allowed,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, bool &click_allowed,
                 const std::string &user, bool &display)
 {
   const char *optarg;
@@ -213,8 +211,7 @@ int main(int argc, const char **argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath, opt_click_allowed,
-                   username, opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_opath, opt_click_allowed, username, opt_display) == false) {
       exit(-1);
     }
 
@@ -247,8 +244,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -257,13 +253,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -347,8 +340,7 @@ int main(int argc, const char **argv)
       // Display in overlay a yellow string
       ip.set_i(85);
       ip.set_j(100);
-      vpDisplay::displayText(I, ip, "ViSP is a marvelous software",
-                             vpColor::yellow);
+      vpDisplay::displayText(I, ip, "ViSP is a marvelous software", vpColor::yellow);
       // Flush the display
       vpDisplay::flush(I);
 
@@ -359,8 +351,7 @@ int main(int argc, const char **argv)
       vpDisplay::getImage(I, Ioverlay);
 
       // Write the color image on the disk
-      filename =
-          vpIoTools::createFilePath(odirname, "Klimt_grey.overlay.ppm");
+      filename = vpIoTools::createFilePath(odirname, "Klimt_grey.overlay.ppm");
       vpImageIo::write(Ioverlay, filename);
 
       // If click is allowed, wait for a mouse click to close the display
@@ -423,8 +414,7 @@ int main(int argc, const char **argv)
       vpDisplay::getImage(Irgba, Ioverlay);
 
       // Write the color image on the disk
-      filename =
-          vpIoTools::createFilePath(odirname, "Klimt_color.overlay.ppm");
+      filename = vpIoTools::createFilePath(odirname, "Klimt_color.overlay.ppm");
       vpImageIo::write(Ioverlay, filename);
 
       // If click is allowed, wait for a blocking mouse click to exit.

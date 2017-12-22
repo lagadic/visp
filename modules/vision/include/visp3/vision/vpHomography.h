@@ -128,10 +128,9 @@ int main()
   // Compute the coordinates in pixels of the 4 object points in the
   // camera frame a
   vpPoint Pa[4];
-  std::vector<double> xa(4), ya(4); // Coordinates in pixels of the points in
-frame a for(int i=0 ; i < 4 ; i++) { Pa[i] = Po[i]; Pa[i].project(aMo); //
-Project the points from object frame to
-                        // camera frame a
+  std::vector<double> xa(4), ya(4); // Coordinates in pixels of the points in frame a
+  for(int i=0 ; i < 4 ; i++) {
+    Pa[i] = Po[i]; Pa[i].project(aMo); // Project the points from object frame to camera frame a
     vpMeterPixelConversion::convertPoint(cam,
                                          Pa[i].get_x(), Pa[i].get_y(),
                                          xa[i], ya[i]);
@@ -140,10 +139,9 @@ Project the points from object frame to
   // Compute the coordinates in pixels of the 4 object points in the
   // camera frame b
   vpPoint Pb[4];
-  std::vector<double> xb(4), yb(4); // Coordinates in pixels of the points in
-frame b for(int i=0 ; i < 4 ; i++) { Pb[i] = Po[i]; Pb[i].project(bMo); //
-Project the points from object frame to
-                        // camera frame a
+  std::vector<double> xb(4), yb(4); // Coordinates in pixels of the points in frame b
+  for(int i=0 ; i < 4 ; i++) {
+    Pb[i] = Po[i]; Pb[i].project(bMo); // Project the points from object frame to camera frame a
   }
 
   // Compute equation of the 3D plane containing the points in camera frame b
@@ -199,8 +197,7 @@ private:
   //! insert a translation vector
   void insert(const vpPlane &bP);
 
-  static void initRansac(unsigned int n, double *xb, double *yb, double *xa,
-                         double *ya, vpColVector &x);
+  static void initRansac(unsigned int n, double *xb, double *yb, double *xa, double *ya, vpColVector &x);
 
 public:
   vpHomography();
@@ -208,32 +205,26 @@ public:
   //! Construction from Translation and rotation and a plane
   vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
   //! Construction from Translation and rotation and a plane
-  vpHomography(const vpRotationMatrix &aRb, const vpTranslationVector &atb,
-               const vpPlane &bP);
+  vpHomography(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from Translation and rotation and a plane
-  vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb,
-               const vpPlane &bP);
+  vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from Translation and rotation and a plane
   vpHomography(const vpPoseVector &arb, const vpPlane &bP);
   virtual ~vpHomography(){};
 
   //! Construction from Translation and rotation and a plane
-  void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb,
-                 const vpPlane &bP);
+  void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from Translation and rotation and a plane
-  void buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb,
-                 const vpPlane &bP);
+  void buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from Translation and rotation  and a plane
   void buildFrom(const vpPoseVector &arb, const vpPlane &bP);
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
   vpMatrix convert() const;
 
-  void computeDisplacement(vpRotationMatrix &aRb, vpTranslationVector &atb,
-                           vpColVector &n);
+  void computeDisplacement(vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n);
 
-  void computeDisplacement(const vpColVector &nd, vpRotationMatrix &aRb,
-                           vpTranslationVector &atb, vpColVector &n);
+  void computeDisplacement(const vpColVector &nd, vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n);
 
   void eye();
 
@@ -266,103 +257,64 @@ public:
     3-by-3 matrix.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError,
-                      "Cannot resize an homography matrix"));
+    throw(vpException(vpException::fatalError, "Cannot resize an homography matrix"));
   };
 
   void save(std::ofstream &f) const;
 
-  static void DLT(const std::vector<double> &xb,
-                  const std::vector<double> &yb,
-                  const std::vector<double> &xa,
-                  const std::vector<double> &ya, vpHomography &aHb,
-                  bool normalization = true);
+  static void DLT(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                  const std::vector<double> &ya, vpHomography &aHb, bool normalization = true);
 
-  static void HLM(const std::vector<double> &xb,
-                  const std::vector<double> &yb,
-                  const std::vector<double> &xa,
-                  const std::vector<double> &ya, bool isplanar,
-                  vpHomography &aHb);
+  static void HLM(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                  const std::vector<double> &ya, bool isplanar, vpHomography &aHb);
 
-  static bool ransac(const std::vector<double> &xb,
-                     const std::vector<double> &yb,
-                     const std::vector<double> &xa,
-                     const std::vector<double> &ya, vpHomography &aHb,
-                     std::vector<bool> &inliers, double &residual,
-                     unsigned int nbInliersConsensus, double threshold,
-                     bool normalization = true);
+  static bool ransac(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                     const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inliers, double &residual,
+                     unsigned int nbInliersConsensus, double threshold, bool normalization = true);
 
-  static vpImagePoint project(const vpCameraParameters &cam,
-                              const vpHomography &bHa,
-                              const vpImagePoint &iPa);
+  static vpImagePoint project(const vpCameraParameters &cam, const vpHomography &bHa, const vpImagePoint &iPa);
   static vpPoint project(const vpHomography &bHa, const vpPoint &Pa);
 
-  static void robust(const std::vector<double> &xb,
-                     const std::vector<double> &yb,
-                     const std::vector<double> &xa,
-                     const std::vector<double> &ya, vpHomography &aHb,
-                     std::vector<bool> &inlier, double &residual,
-                     double weights_threshold = 0.4, unsigned int niter = 4,
-                     bool normalization = true);
+  static void robust(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                     const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inlier, double &residual,
+                     double weights_threshold = 0.4, unsigned int niter = 4, bool normalization = true);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //! build the homography from aMb and Rb
-  static void build(vpHomography &aHb, const vpHomogeneousMatrix &aMb,
-                    const vpPlane &bP);
+  static void build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
-  static void computeDisplacement(const vpHomography &aHb,
-                                  const vpColVector &nd,
-                                  vpRotationMatrix &aRb,
+  static void computeDisplacement(const vpHomography &aHb, const vpColVector &nd, vpRotationMatrix &aRb,
                                   vpTranslationVector &atb, vpColVector &n);
 
-  static void computeDisplacement(const vpHomography &aHb,
-                                  vpRotationMatrix &aRb,
-                                  vpTranslationVector &atb, vpColVector &n);
+  static void computeDisplacement(const vpHomography &aHb, vpRotationMatrix &aRb, vpTranslationVector &atb,
+                                  vpColVector &n);
 
-  static void computeDisplacement(const vpHomography &H, const double x,
-                                  const double y,
-                                  std::list<vpRotationMatrix> &vR,
-                                  std::list<vpTranslationVector> &vT,
+  static void computeDisplacement(const vpHomography &H, const double x, const double y,
+                                  std::list<vpRotationMatrix> &vR, std::list<vpTranslationVector> &vT,
                                   std::list<vpColVector> &vN);
-  static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P,
-                                    vpPoint *c2P, vpPlane &oN,
-                                    vpHomogeneousMatrix &c2Mc1,
-                                    vpHomogeneousMatrix &c1Mo, int userobust);
-  static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P,
-                                    vpPoint *c2P, vpPlane *oN,
-                                    vpHomogeneousMatrix &c2Mc1,
-                                    vpHomogeneousMatrix &c1Mo, int userobust);
-  static double computeResidual(vpColVector &x, vpColVector &M,
-                                vpColVector &d);
+  static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane &oN,
+                                    vpHomogeneousMatrix &c2Mc1, vpHomogeneousMatrix &c1Mo, int userobust);
+  static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane *oN,
+                                    vpHomogeneousMatrix &c2Mc1, vpHomogeneousMatrix &c1Mo, int userobust);
+  static double computeResidual(vpColVector &x, vpColVector &M, vpColVector &d);
   // VVS
-  static double computeRotation(unsigned int nbpoint, vpPoint *c1P,
-                                vpPoint *c2P, vpHomogeneousMatrix &c2Mc1,
+  static double computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpHomogeneousMatrix &c2Mc1,
                                 int userobust);
-  static void computeTransformation(vpColVector &x, unsigned int *ind,
-                                    vpColVector &M);
+  static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M);
   static bool degenerateConfiguration(vpColVector &x, unsigned int *ind);
-  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind,
-                                      double threshold_area);
-  static bool degenerateConfiguration(const std::vector<double> &xb,
-                                      const std::vector<double> &yb,
-                                      const std::vector<double> &xa,
-                                      const std::vector<double> &ya);
-  static void HartleyNormalization(unsigned int n, const double *x,
-                                   const double *y, double *xn, double *yn,
-                                   double &xg, double &yg, double &coef);
-  static void HartleyNormalization(const std::vector<double> &x,
-                                   const std::vector<double> &y,
-                                   std::vector<double> &xn,
-                                   std::vector<double> &yn, double &xg,
+  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind, double threshold_area);
+  static bool degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
+                                      const std::vector<double> &xa, const std::vector<double> &ya);
+  static void HartleyNormalization(unsigned int n, const double *x, const double *y, double *xn, double *yn, double &xg,
                                    double &yg, double &coef);
-  static void HartleyDenormalization(vpHomography &aHbn, vpHomography &aHb,
-                                     double xg1, double yg1, double coef1,
+  static void HartleyNormalization(const std::vector<double> &x, const std::vector<double> &y, std::vector<double> &xn,
+                                   std::vector<double> &yn, double &xg, double &yg, double &coef);
+  static void HartleyDenormalization(vpHomography &aHbn, vpHomography &aHb, double xg1, double yg1, double coef1,
                                      double xg2, double yg2, double coef2);
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS

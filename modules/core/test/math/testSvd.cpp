@@ -118,10 +118,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, unsigned int &nb_matrices,
-                unsigned int &nb_iterations, bool &use_plot_file,
-                std::string &plotfile, unsigned int &nbrows,
-                unsigned int &nbcols, bool &verbose)
+bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned int &nb_iterations,
+                bool &use_plot_file, std::string &plotfile, unsigned int &nbrows, unsigned int &nbcols, bool &verbose)
 {
   const char *optarg_;
   int c;
@@ -191,13 +189,11 @@ vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
   return A;
 }
 
-void create_bench_random_matrix(unsigned int nb_matrices,
-                                unsigned int nb_rows, unsigned int nb_cols,
-                                bool verbose, std::vector<vpMatrix> &bench)
+void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+                                std::vector<vpMatrix> &bench)
 {
   if (verbose)
-    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows
-              << " by " << nb_cols << " matrices" << std::endl;
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_cols << " matrices" << std::endl;
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
@@ -221,8 +217,7 @@ void create_bench_random_matrix(unsigned int nb_matrices,
   }
 }
 
-int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U,
-             std::vector<vpColVector> s, std::vector<vpMatrix> V)
+int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpColVector> s, std::vector<vpMatrix> V)
 {
   for (unsigned int i = 0; i < M.size(); i++) {
     vpMatrix S;
@@ -238,15 +233,13 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U,
 }
 
 #if defined(VISP_HAVE_EIGEN3)
-int test_svd_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
-                    double &time)
+int test_svd_eigen3(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
     std::cout << "Test SVD using Eigen3 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  SVD on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   std::vector<vpMatrix> U = bench;
   std::vector<vpMatrix> V(bench.size());
@@ -264,15 +257,13 @@ int test_svd_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
-int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench,
-                    double &time)
+int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
     std::cout << "Test SVD using Lapack 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  SVD on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   std::vector<vpMatrix> U = bench;
   std::vector<vpMatrix> V(bench.size());
@@ -289,15 +280,13 @@ int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench,
 #endif
 
 #if defined(VISP_HAVE_GSL)
-int test_svd_gsl(bool verbose, const std::vector<vpMatrix> &bench,
-                 double &time)
+int test_svd_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
     std::cout << "Test SVD using GSL 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  SVD on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   std::vector<vpMatrix> U = bench;
   std::vector<vpMatrix> V(bench.size());
@@ -315,15 +304,13 @@ int test_svd_gsl(bool verbose, const std::vector<vpMatrix> &bench,
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-int test_svd_opencv(bool verbose, const std::vector<vpMatrix> &bench,
-                    double &time)
+int test_svd_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
     std::cout << "Test SVD using OpenCV 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  SVD on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   std::vector<vpMatrix> U = bench;
   std::vector<vpMatrix> V(bench.size());
@@ -339,8 +326,7 @@ int test_svd_opencv(bool verbose, const std::vector<vpMatrix> &bench,
 }
 #endif
 
-void save_time(const std::string &method, bool verbose, bool use_plot_file,
-               std::ofstream &of, double time)
+void save_time(const std::string &method, bool verbose, bool use_plot_file, std::ofstream &of, double time)
 {
   if (use_plot_file)
     of << time << "\t";
@@ -352,8 +338,8 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file,
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) ||                \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
+    defined(VISP_HAVE_GSL)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -364,8 +350,8 @@ int main(int argc, const char *argv[])
     std::ofstream of;
 
     // Read the command line options
-    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file,
-                   plotfile, nb_rows, nb_cols, verbose) == false) {
+    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file, plotfile, nb_rows, nb_cols, verbose) ==
+        false) {
       exit(-1);
     }
 
@@ -396,8 +382,7 @@ int main(int argc, const char *argv[])
     int ret = EXIT_SUCCESS;
     for (unsigned int iter = 0; iter < nb_iterations; iter++) {
       std::vector<vpMatrix> bench_random_matrices;
-      create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose,
-                                 bench_random_matrices);
+      create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
 
       if (use_plot_file)
         of << iter << "\t";

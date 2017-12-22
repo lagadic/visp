@@ -89,8 +89,7 @@ static double XO[NBPTMAX], YO[NBPTMAX], ZO[NBPTMAX];
 #define MINIMUM 0.000001
 
 void eval_function(int npt, double *xc, double *f);
-void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac,
-         int iflag);
+void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag);
 
 void eval_function(int npt, double *xc, double *f)
 {
@@ -139,8 +138,7 @@ void eval_function(int npt, double *xc, double *f)
  * 1.01 - 06/07/95 - Modifications.
  * 2.00 - 24/10/95 - Tableau jac monodimensionnel.
  */
-void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac,
-         int iflag)
+void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag)
 {
   double u[X3_SIZE]; // rd[X3_SIZE][X3_SIZE],
   vpRotationMatrix rd;
@@ -162,8 +160,7 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac,
     /* a partir de l'axe de rotation, calcul de la matrice de rotation. */
     //   rot_mat(u, rd);
 
-    double tt =
-        sqrt(u[0] * u[0] + u[1] * u[1] + u[2] * u[2]); /* angle de rot */
+    double tt = sqrt(u[0] * u[0] + u[1] * u[1] + u[2] * u[2]); /* angle de rot */
     if (tt >= MINIMUM) {
       u1 = u[0] / tt;
       u2 = u[1] / tt; /* axe de rotation unitaire  */
@@ -187,20 +184,17 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac,
       /* derive des fonctions rx, ry et rz par rapport
        * a tt, u1, u2, u3.
        */
-      double drxt = (si * u1 * u3 + co * u2) * z +
-                    (si * u1 * u2 - co * u3) * y + (si * u1 * u1 - si) * x;
+      double drxt = (si * u1 * u3 + co * u2) * z + (si * u1 * u2 - co * u3) * y + (si * u1 * u1 - si) * x;
       double drxu1 = mco * u3 * z + mco * u2 * y + 2 * mco * u1 * x;
       double drxu2 = si * z + mco * u1 * y;
       double drxu3 = mco * u1 * z - si * y;
 
-      double dryt = (si * u2 * u3 - co * u1) * z + (si * u2 * u2 - si) * y +
-                    (co * u3 + si * u1 * u2) * x;
+      double dryt = (si * u2 * u3 - co * u1) * z + (si * u2 * u2 - si) * y + (co * u3 + si * u1 * u2) * x;
       double dryu1 = mco * u2 * x - si * z;
       double dryu2 = mco * u3 * z + 2 * mco * u2 * y + mco * u1 * x;
       double dryu3 = mco * u2 * z + si * x;
 
-      double drzt = (si * u3 * u3 - si) * z + (si * u2 * u3 + co * u1) * y +
-                    (si * u1 * u3 - co * u2) * x;
+      double drzt = (si * u3 * u3 - si) * z + (si * u2 * u3 + co * u1) * y + (si * u1 * u3 - co * u2) * x;
       double drzu1 = si * y + mco * u3 * x;
       double drzu2 = mco * u3 * y - si * x;
       double drzu3 = 2 * mco * u3 * z + mco * u2 * y + mco * u1 * x;
@@ -229,15 +223,10 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac,
       *MIJ(jac, 1, i, ldfjac) = 0.0;
       *MIJ(jac, 2, i, ldfjac) = -rx / (rz * rz);
       if (tt >= MINIMUM) {
-        *MIJ(jac, 3, i, ldfjac) = u1 * dxit + (1 - u1 * u1) * dxiu1 / tt -
-                                  u1 * u2 * dxiu2 / tt - u1 * u3 * dxiu3 / tt;
-        *MIJ(jac, 4, i, ldfjac) = u2 * dxit - u1 * u2 * dxiu1 / tt +
-                                  (1 - u2 * u2) * dxiu2 / tt -
-                                  u2 * u3 * dxiu3 / tt;
+        *MIJ(jac, 3, i, ldfjac) = u1 * dxit + (1 - u1 * u1) * dxiu1 / tt - u1 * u2 * dxiu2 / tt - u1 * u3 * dxiu3 / tt;
+        *MIJ(jac, 4, i, ldfjac) = u2 * dxit - u1 * u2 * dxiu1 / tt + (1 - u2 * u2) * dxiu2 / tt - u2 * u3 * dxiu3 / tt;
 
-        *MIJ(jac, 5, i, ldfjac) = u3 * dxit - u1 * u3 * dxiu1 / tt -
-                                  u2 * u3 * dxiu2 / tt +
-                                  (1 - u3 * u3) * dxiu3 / tt;
+        *MIJ(jac, 5, i, ldfjac) = u3 * dxit - u1 * u3 * dxiu1 / tt - u2 * u3 * dxiu2 / tt + (1 - u3 * u3) * dxiu3 / tt;
       } else {
         *MIJ(jac, 3, i, ldfjac) = 0.0;
         *MIJ(jac, 4, i, ldfjac) = 0.0;
@@ -248,14 +237,11 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac,
       *MIJ(jac, 2, npt + i, ldfjac) = -ry / (rz * rz);
       if (tt >= MINIMUM) {
         *MIJ(jac, 3, npt + i, ldfjac) =
-            u1 * dyit + (1 - u1 * u1) * dyiu1 / tt - u1 * u2 * dyiu2 / tt -
-            u1 * u3 * dyiu3 / tt;
-        *MIJ(jac, 4, npt + i, ldfjac) = u2 * dyit - u1 * u2 * dyiu1 / tt +
-                                        (1 - u2 * u2) * dyiu2 / tt -
-                                        u2 * u3 * dyiu3 / tt;
-        *MIJ(jac, 5, npt + i, ldfjac) = u3 * dyit - u1 * u3 * dyiu1 / tt -
-                                        u2 * u3 * dyiu2 / tt +
-                                        (1 - u3 * u3) * dyiu3 / tt;
+            u1 * dyit + (1 - u1 * u1) * dyiu1 / tt - u1 * u2 * dyiu2 / tt - u1 * u3 * dyiu3 / tt;
+        *MIJ(jac, 4, npt + i, ldfjac) =
+            u2 * dyit - u1 * u2 * dyiu1 / tt + (1 - u2 * u2) * dyiu2 / tt - u2 * u3 * dyiu3 / tt;
+        *MIJ(jac, 5, npt + i, ldfjac) =
+            u3 * dyit - u1 * u3 * dyiu1 / tt - u2 * u3 * dyiu2 / tt + (1 - u3 * u3) * dyiu3 / tt;
       } else {
         *MIJ(jac, 3, npt + i, ldfjac) = 0.0;
         *MIJ(jac, 4, npt + i, ldfjac) = 0.0;
@@ -288,10 +274,10 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
   //  double	u[3];	/* vecteur de rotation */
   //  double	rd[3][3]; /* matrice de rotation */
 
-  n = NBR_PAR;            /* nombres d'inconnues	*/
-  m = (int)(2 * npt);     /* nombres d'equations	*/
-  lwa = 2 * NBPTMAX + 50; /* taille du vecteur de travail	*/
-  ldfjac = 2 * NBPTMAX;   /* nombre d'elements max sur une ligne	*/
+  n = NBR_PAR;                                  /* nombres d'inconnues	*/
+  m = (int)(2 * npt);                           /* nombres d'equations	*/
+  lwa = 2 * NBPTMAX + 50;                       /* taille du vecteur de travail	*/
+  ldfjac = 2 * NBPTMAX;                         /* nombre d'elements max sur une ligne	*/
   tol = std::numeric_limits<double>::epsilon(); /* critere d'arret	*/
 
   //  c = cam ;
@@ -308,8 +294,7 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 
   vpPoint P;
   unsigned int i_ = 0;
-  for (std::list<vpPoint>::const_iterator it = listP.begin();
-       it != listP.end(); ++it) {
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
     P = *it;
     XI[i_] = P.get_x(); //*cam.px + cam.xc ;
     YI[i_] = P.get_y(); //;*cam.py + cam.yc ;
@@ -318,8 +303,7 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
     ZO[i_] = P.get_oZ();
     ++i_;
   }
-  tst_lmder = lmder1(&fcn, m, n, sol, f, &jac[0][0], ldfjac, tol, &info, ipvt,
-                     lwa, wa);
+  tst_lmder = lmder1(&fcn, m, n, sol, f, &jac[0][0], ldfjac, tol, &info, ipvt, lwa, wa);
   if (tst_lmder == -1) {
     std::cout << " in CCalculPose::PoseLowe(...) : ";
     std::cout << "pb de minimisation,  returns FATAL_ERROR";

@@ -59,8 +59,7 @@ vpThread::Return doSomeThing(vpThread::Args args)
   mutex.lock();
   unsigned int thread_id = *((unsigned int *)args);
 
-  std::cout << "Started job " << thread_counter << " with id " << thread_id
-            << std::endl;
+  std::cout << "Started job " << thread_counter << " with id " << thread_id << std::endl;
 
   for (unsigned long i = 0; i < (0xFFFF); i++) {
   };
@@ -81,8 +80,7 @@ int main(void)
 
   for (unsigned int i = 0; i < nthread; i++) {
     thread_id[i] = i;
-    thread[i].create((vpThread::Fn)&doSomeThing,
-                     (vpThread::Args)&thread_id[i]);
+    thread[i].create((vpThread::Fn)&doSomeThing, (vpThread::Args)&thread_id[i]);
   }
 
   delete[] thread;
@@ -94,13 +92,10 @@ int main(void)
 #else
 int main()
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..."
-            << std::endl;
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
 #else
-  std::cout << "Multi-threading seems not supported on this platform"
-            << std::endl;
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
 }
 #endif

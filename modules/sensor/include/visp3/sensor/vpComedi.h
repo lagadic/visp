@@ -86,8 +86,10 @@ $ adduser <username> iocard
   5. Reboot
 
   The following example shows how to run an synchronous data acquisition at
-500 Hz, calling getPhyData() each 2 ms: \code #include
-<visp3/sensor/vpComedi.h>
+500 Hz, calling getPhyData() each 2 ms:
+
+\code
+#include <visp3/sensor/vpComedi.h>
 
 int main()
 {
@@ -97,8 +99,8 @@ int main()
   comedi.open();
 
   for(unsigned int i=0; i < 500; i++) {
-    std::cout << "Physical data (in " << comedi.getPhyDataUnits() << "): " <<
-comedi.getPhyData().t() << std::endl; vpTime::wait(2);
+    std::cout << "Physical data (in " << comedi.getPhyDataUnits() << "): " << comedi.getPhyData().t() << std::endl;
+    vpTime::wait(2);
   }
   comedi.close();
 }
@@ -143,10 +145,7 @@ public:
     Number of channels to read from sensor. For a 6-dim force/torque sensor
     use 6.
     */
-  void setChannelNumbers(const unsigned int &nchannel)
-  {
-    m_nchannel = nchannel;
-  }
+  void setChannelNumbers(const unsigned int &nchannel) { m_nchannel = nchannel; }
 
   //! Set comedi device name. Default value is /dev/comedi0.
   void setDevice(const std::string &device) { m_device = device; }
@@ -158,10 +157,7 @@ public:
    */
   void setRange(const unsigned int &range) { m_range = range; }
   //! Set comedi analog input subdevice.
-  void setSubDevice(const unsigned int &subdevice)
-  {
-    m_subdevice = subdevice;
-  }
+  void setSubDevice(const unsigned int &subdevice) { m_subdevice = subdevice; }
   //@}
 
 protected:
@@ -170,12 +166,12 @@ protected:
 protected:
   //! @name Protected Member Functions Inherited from vpComedi
   //@{
-  std::string m_device;     /*!< Comedi device name (default: /dev/comedi0) */
-  comedi_t *m_handler;      /*!< Comedi handler */
-  unsigned int m_subdevice; /*!< Input subdevice */
-  unsigned int m_range;     /*!< Range of a channel */
-  unsigned int m_aref;      /*!< Analog reference */
-  unsigned int m_nchannel;  /*!< Number of channels */
+  std::string m_device;                     /*!< Comedi device name (default: /dev/comedi0) */
+  comedi_t *m_handler;                      /*!< Comedi handler */
+  unsigned int m_subdevice;                 /*!< Input subdevice */
+  unsigned int m_range;                     /*!< Range of a channel */
+  unsigned int m_aref;                      /*!< Analog reference */
+  unsigned int m_nchannel;                  /*!< Number of channels */
   std::vector<comedi_range *> m_range_info; /*!< Range information */
   std::vector<lsampl_t> m_maxdata;          /*!< Max data value */
   std::vector<unsigned int> m_chanlist;     /*!< Channel list */

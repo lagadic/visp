@@ -42,20 +42,15 @@
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
-  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL),
-    ptTemplatePyr(NULL), ptTemplateInit(false), templateSize(0),
-    templateSizePyr(NULL), ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL),
-    ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL),
-    ptTemplateSuppPyr(NULL), ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL),
-    zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(), Hdesire(),
-    HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(),
-    HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40),
-    costFunctionVerification(false), blur(true), useBrent(false),
-    nbIterBrent(3), taillef(7), fgG(NULL), fgdG(NULL), ratioPixelIn(0),
-    mod_i(1), mod_j(1), nbParam(0), lambdaDep(0.001), iterationMax(30),
-    iterationGlobale(0), diverge(false), nbIteration(0),
-    useCompositionnal(true), useInverse(false), Warp(_warp), p(0), dp(), X1(),
-    X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
+  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL), ptTemplateInit(false),
+    templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL),
+    ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
+    ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(),
+    Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(), HLMdesireInversePyr(), G(),
+    gain(1.), thresholdGradient(40), costFunctionVerification(false), blur(true), useBrent(false), nbIterBrent(3),
+    taillef(7), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0), lambdaDep(0.001),
+    iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(true), useInverse(false),
+    Warp(_warp), p(0), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
 {
   nbParam = Warp->getNbParam();
   p.resize(nbParam);
@@ -82,8 +77,7 @@ void vpTemplateTracker::setGaussianFilterSize(unsigned int new_taill)
   vpImageFilter::getGaussianDerivativeKernel(fgdG, taillef);
 }
 
-void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I,
-                                     vpTemplateTrackerZone &zone)
+void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone)
 {
   // 	std::cout<<"\tInitialise reference..."<<std::endl;
   zoneTracked = &zone;
@@ -343,9 +337,7 @@ int main()
 }
   \endcode
  */
-void vpTemplateTracker::display(const vpImage<unsigned char> &I,
-                                const vpColor &col,
-                                const unsigned int thickness)
+void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &col, const unsigned int thickness)
 {
   if (I.display) { // Only if a display is associated to the image
     vpTemplateTrackerZone zoneWarped;
@@ -387,8 +379,7 @@ int main()
 }
   \endcode
  */
-void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor &col,
-                                const unsigned int thickness)
+void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor &col, const unsigned int thickness)
 {
   if (I.display) { // Only if a display is associated to the image
     vpTemplateTrackerZone zoneWarped;
@@ -397,9 +388,8 @@ void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor &col,
   }
 }
 
-void vpTemplateTracker::computeOptimalBrentGain(
-    const vpImage<unsigned char> &I, vpColVector &tp, double tMI,
-    vpColVector &direction, double &alpha)
+void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I, vpColVector &tp, double tMI,
+                                                vpColVector &direction, double &alpha)
 {
   vpColVector **ptp;
   ptp = new vpColVector *[4];
@@ -620,8 +610,7 @@ void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
   pyrInitialised = true;
   // 	vpTRACE("fin init_pyramidal");
 }
-void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char> &I,
-                                        vpTemplateTrackerZone &zone)
+void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone)
 {
   // 	vpTRACE("initTrackingPyr");
   zoneTrackedPyr[0].copy(zone);
@@ -678,8 +667,7 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char> &I,
   the sixth corner with a right click.
 
  */
-void vpTemplateTracker::initClick(const vpImage<unsigned char> &I,
-                                  bool delaunay)
+void vpTemplateTracker::initClick(const vpImage<unsigned char> &I, bool delaunay)
 {
   zoneRef_.initClick(I, delaunay);
 
@@ -705,8 +693,7 @@ void vpTemplateTracker::initClick(const vpImage<unsigned char> &I,
   - If false, the vector of image points define the reference template as a
   list of triangles. The size of \e v_ip vector should be a multiple of 3.
  */
-void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I,
-                                       const std::vector<vpImagePoint> &v_ip,
+void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &v_ip,
                                        bool delaunay)
 {
   zoneRef_.initFromPoints(I, v_ip, delaunay);
@@ -728,8 +715,7 @@ void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I,
   \param I: Image containing the reference template.
   \param zone: The zone that describes the reference template.
  */
-void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I,
-                                     const vpTemplateTrackerZone &zone)
+void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I, const vpTemplateTrackerZone &zone)
 {
   zoneRef_ = zone;
 

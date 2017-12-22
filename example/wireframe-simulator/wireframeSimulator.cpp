@@ -198,13 +198,11 @@ Create a display for each different cameras.
 
     // The homogeneous matrix which gives the current position of the main
     // camera relative to the object
-    vpHomogeneousMatrix cMo(0, 0.05, 1.3, vpMath::rad(15), vpMath::rad(25),
-                            0);
+    vpHomogeneousMatrix cMo(0, 0.05, 1.3, vpMath::rad(15), vpMath::rad(25), 0);
 
     // The homogeneous matrix which gives the desired position of the main
     // camera relative to the object
-    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(
-        0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)));
+    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)));
 
     // Declaration of the simulator
     vpWireFrameSimulator sim;
@@ -220,8 +218,7 @@ Create a display for each different cameras.
     Here the object is a plate with 4 points and it is the same object which
     is used to display the object at the desired position.
   */
-    sim.initScene(vpWireFrameSimulator::PLATE,
-                  vpWireFrameSimulator::D_STANDARD);
+    sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
 
     /*
     The object at the current position will be displayed in blue
@@ -242,8 +239,7 @@ Create a display for each different cameras.
     frame. More information about the different frames are given in the html
     documentation.
   */
-    vpHomogeneousMatrix camMw(vpHomogeneousMatrix(0.0, 0, 4.5, vpMath::rad(0),
-                                                  vpMath::rad(-30), 0));
+    vpHomogeneousMatrix camMw(vpHomogeneousMatrix(0.0, 0, 4.5, vpMath::rad(0), vpMath::rad(-30), 0));
     sim.setExternalCameraPosition(camMw);
 
     /*
@@ -253,8 +249,7 @@ Create a display for each different cameras.
     sim.setInternalCameraParameters(camera);
     sim.setExternalCameraParameters(camera);
 
-    vpHomogeneousMatrix camoMw(vpHomogeneousMatrix(
-        -0.3, 0.2, 2.5, vpMath::rad(0), vpMath::rad(10), 0));
+    vpHomogeneousMatrix camoMw(vpHomogeneousMatrix(-0.3, 0.2, 2.5, vpMath::rad(0), vpMath::rad(10), 0));
 
     if (opt_display) {
       // Get the view of the internal camera
@@ -317,8 +312,7 @@ Create a display for each different cameras.
     std::cout << std::endl;
     if (opt_display) {
       if (opt_click) {
-        std::cout << "Click on the internal view window to continue"
-                  << std::endl;
+        std::cout << "Click on the internal view window to continue" << std::endl;
         vpDisplay::getClick(Iint);
       }
     }
@@ -328,8 +322,7 @@ Create a display for each different cameras.
                  "your mouse and move the pointer."
               << std::endl;
     std::cout << std::endl;
-    std::cout << "Click on the internal view window when you are finished"
-              << std::endl;
+    std::cout << "Click on the internal view window when you are finished" << std::endl;
 
     /*
     To move the main external camera you need a loop containing the

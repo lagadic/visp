@@ -88,9 +88,8 @@ void vpRobotCamera::init()
   qmin = NULL;
   qmax = NULL;
 
-  setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
-  setMaxRotationVelocity(
-      vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
+  setMaxTranslationVelocity(1.);           // vx, vy and vz max set to 1 m/s
+  setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
 }
 
 /*!
@@ -146,8 +145,7 @@ void vpRobotCamera::get_eJe(vpMatrix &eJe_) { eJe_ = this->eJe; }
   \sa setSamplingTime()
 
 */
-void vpRobotCamera::setVelocity(const vpRobot::vpControlFrameType frame,
-                                const vpColVector &v)
+void vpRobotCamera::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
   switch (frame) {
   case vpRobot::ARTICULAR_FRAME:
@@ -165,23 +163,20 @@ void vpRobotCamera::setVelocity(const vpRobot::vpControlFrameType frame,
 
     vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
 
-    this->cMw_ =
-        vpExponentialMap::direct(v_sat, delta_t_).inverse() * this->cMw_;
+    this->cMw_ = vpExponentialMap::direct(v_sat, delta_t_).inverse() * this->cMw_;
     break;
   }
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot set a velocity in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the reference frame:"
+                                                              "functionality not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot set a velocity in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
+                                                              "functionality not implemented");
 
     break;
   }
@@ -191,10 +186,7 @@ void vpRobotCamera::setVelocity(const vpRobot::vpControlFrameType frame,
   Get the robot position as the transformation from camera frame to world
   frame.
 */
-void vpRobotCamera::getPosition(vpHomogeneousMatrix &cMw) const
-{
-  cMw = this->cMw_;
-}
+void vpRobotCamera::getPosition(vpHomogeneousMatrix &cMw) const { cMw = this->cMw_; }
 
 /*
   Get the current position of the robot.
@@ -217,8 +209,7 @@ void vpRobotCamera::getPosition(vpHomogeneousMatrix &cMw) const
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector).
 */
-void vpRobotCamera::getPosition(const vpRobot::vpControlFrameType frame,
-                                vpColVector &q)
+void vpRobotCamera::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   q.resize(6);
 
@@ -244,9 +235,7 @@ void vpRobotCamera::getPosition(const vpRobot::vpControlFrameType frame,
     break;
   }
   case vpRobot::MIXT_FRAME:
-    std::cout
-        << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()"
-        << std::endl;
+    std::cout << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
   }
 }
 

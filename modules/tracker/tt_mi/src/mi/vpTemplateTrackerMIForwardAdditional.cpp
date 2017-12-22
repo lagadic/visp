@@ -44,18 +44,15 @@
 #include <omp.h>
 #endif
 
-vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(
-    vpTemplateTrackerWarp *_warp)
-  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), evolRMS(0),
-    x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(),
-    KQuasiNewton()
+vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp)
+  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0),
+    p_prec(), G_prec(), KQuasiNewton()
 {
   useCompositionnal = false;
   threshold_RMS = 1e-20;
 }
 
-void vpTemplateTrackerMIForwardAdditional::initHessienDesired(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   // std::cout<<"Initialise Hessian at Desired position..."<<std::endl;
 
@@ -91,8 +88,7 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(
     double j2 = X2[0];
     double i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
       Tij = ptTemplate[point].val;
       if (!blur)
@@ -115,11 +111,9 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(
         tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
 
       if (ApproxHessian == HESSIAN_NONSECOND)
-        vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(
-            PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+        vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
       else if (ApproxHessian == HESSIAN_0 || ApproxHessian == HESSIAN_NEW)
-        vpTemplateTrackerMIBSpline::PutTotPVBspline(
-            PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+        vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
 
       delete[] tptemp;
     }
@@ -145,8 +139,7 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(
   }
 }
 
-void vpTemplateTrackerMIForwardAdditional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   dW = 0;
 
@@ -196,8 +189,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(
       double j2 = X2[0];
       double i2 = X2[1];
 
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Nbpoint++;
         double Tij = ptTemplate[point].val;
         double IW;
@@ -228,13 +220,10 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(
           tptemp[it] = (dW[0][it] * dx + dW[1][it] * dy);
         //*tptemp++ =dW[0][it]*dIWx+dW[1][it]*dIWy;
         // std::cout<<cr<<"   "<<ct<<"  ; ";
-        if (ApproxHessian == HESSIAN_NONSECOND ||
-            hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
-          vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(
-              PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+        if (ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
+          vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
         else if (ApproxHessian == HESSIAN_0 || ApproxHessian == HESSIAN_NEW)
-          vpTemplateTrackerMIBSpline::PutTotPVBspline(
-              PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+          vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
 
         delete[] tptemp;
       }
@@ -245,8 +234,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(
       diverge = true;
       MI = 0;
       deletePosEvalRMS();
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     } else {
       computeProba(Nbpoint);
       computeMI(MI);
@@ -313,11 +301,9 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(
         //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
         // if(s_scal_y!=0)//DFP
         if (std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon())
-          KQuasiNewton =
-              KQuasiNewton +
-              0.001 * (s_quasi * s_quasi.t() / s_scal_y -
-                       KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
-                           (y_quasi.t() * KQuasiNewton * y_quasi));
+          KQuasiNewton = KQuasiNewton + 0.001 * (s_quasi * s_quasi.t() / s_scal_y -
+                                                 KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
+                                                     (y_quasi.t() * KQuasiNewton * y_quasi));
       }
       dp = -KQuasiNewton * G;
       p_prec = p;
@@ -344,16 +330,14 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(
     iteration++;
     iterationGlobale++;
 
-  } while ((std::fabs(MI - MIprec) >
-            std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
+  } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
            (iteration < iterationMax) && (evolRMS > threshold_RMS));
   // while( (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS)
   // );
   if (Nbpoint == 0) {
     // std::cout<<"plus de point dans template suivi"<<std::endl;
     deletePosEvalRMS();
-    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                              "No points in the template"));
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
   }
 
   nbIteration = iteration;
@@ -364,8 +348,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(
   deletePosEvalRMS();
 }
 
-void vpTemplateTrackerMIForwardAdditional::initPosEvalRMS(
-    const vpColVector &pw)
+void vpTemplateTrackerMIForwardAdditional::initPosEvalRMS(const vpColVector &pw)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos = new double[nb_corners];
@@ -387,8 +370,7 @@ void vpTemplateTrackerMIForwardAdditional::initPosEvalRMS(
   }
 }
 
-void vpTemplateTrackerMIForwardAdditional::computeEvalRMS(
-    const vpColVector &pw)
+void vpTemplateTrackerMIForwardAdditional::computeEvalRMS(const vpColVector &pw)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 

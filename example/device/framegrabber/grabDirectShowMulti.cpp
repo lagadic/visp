@@ -82,8 +82,7 @@ Print the program options.
 \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned int camera,
-           unsigned int &nframes, std::string &opath)
+void usage(const char *name, const char *badparam, unsigned int camera, unsigned int &nframes, std::string &opath)
 {
   if (badparam)
     fprintf(stderr, "\nERREUR: Bad parameter [%s]\n", badparam);
@@ -172,12 +171,9 @@ Set the program options.
 
 */
 
-void read_options(int argc, const char **argv, bool &multi,
-                  unsigned int &camera, unsigned int &nframes,
-                  bool &verbose_info, bool &verbose_settings,
-                  bool &mediatype_is_set, unsigned int &mediatypeID,
-                  bool &framerate_is_set, double &framerate, bool &display,
-                  bool &save, std::string &opath)
+void read_options(int argc, const char **argv, bool &multi, unsigned int &camera, unsigned int &nframes,
+                  bool &verbose_info, bool &verbose_settings, bool &mediatype_is_set, unsigned int &mediatypeID,
+                  bool &framerate_is_set, double &framerate, bool &display, bool &save, std::string &opath)
 {
   const char *optarg;
   int c;
@@ -266,8 +262,7 @@ int main(int argc, const char **argv)
 #elif defined VISP_HAVE_GTK
     vpDisplayGTK *d;
 #endif
-    read_options(argc, argv, multi, camera, nframes, verbose_info,
-                 verbose_settings, mediatype_is_set, mediatypeID,
+    read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, mediatype_is_set, mediatypeID,
                  framerate_is_set, framerate, display, save, opath);
 
     // Number of cameras connected on the bus
@@ -278,12 +273,9 @@ int main(int argc, const char **argv)
     if (multi) {
       // ckeck if two cameras are connected
       if (ncameras < 2) {
-        std::cout << "You have only " << ncameras
-                  << " camera connected on the bus." << std::endl;
-        std::cout << "It is not possible to active multi-camera acquisition."
-                  << std::endl;
-        std::cout << "Disable -m command line option, or connect an other "
-                  << std::endl;
+        std::cout << "You have only " << ncameras << " camera connected on the bus." << std::endl;
+        std::cout << "It is not possible to active multi-camera acquisition." << std::endl;
+        std::cout << "Disable -m command line option, or connect an other " << std::endl;
         std::cout << "cameras on the bus." << std::endl;
         g->close();
         delete g;
@@ -293,8 +285,7 @@ int main(int argc, const char **argv)
     if (camera >= ncameras) {
       std::cout << "You have only " << ncameras;
       std::cout << " camera connected on the bus." << std::endl;
-      std::cout << "It is not possible to select camera " << camera
-                << std::endl;
+      std::cout << "It is not possible to select camera " << camera << std::endl;
       std::cout << "Check your -c <camera> command line option." << std::endl;
       g->close();
       delete g;
@@ -353,13 +344,9 @@ int main(int argc, const char **argv)
     // Display information for each camera
     if (verbose_info || verbose_settings) {
 
-      std::cout
-          << "----------------------------------------------------------"
-          << std::endl;
+      std::cout << "----------------------------------------------------------" << std::endl;
       std::cout << "---- Device List : " << std::endl;
-      std::cout
-          << "----------------------------------------------------------"
-          << std::endl;
+      std::cout << "----------------------------------------------------------" << std::endl;
       g[0].displayDevices();
       for (unsigned i = 0; i < ncameras; i++) {
         unsigned int c;
@@ -371,30 +358,20 @@ int main(int argc, const char **argv)
         if (verbose_info) {
           unsigned int width, height;
           g[i].getFormat(width, height, framerate);
-          std::cout
-              << "----------------------------------------------------------"
-              << std::endl
-              << "---- MediaType and framerate currently used by device "
-              << std::endl
-              << "---- (or camera) " << c << std::endl
-              << "---- Current MediaType : " << g[i].getMediaType()
-              << std::endl
-              << "---- Current format : " << width << " x " << height
-              << " at " << framerate << " fps" << std::endl
-              << "----------------------------------------------------------"
-              << std::endl;
+          std::cout << "----------------------------------------------------------" << std::endl
+                    << "---- MediaType and framerate currently used by device " << std::endl
+                    << "---- (or camera) " << c << std::endl
+                    << "---- Current MediaType : " << g[i].getMediaType() << std::endl
+                    << "---- Current format : " << width << " x " << height << " at " << framerate << " fps"
+                    << std::endl
+                    << "----------------------------------------------------------" << std::endl;
         }
         if (verbose_settings) {
-          std::cout
-              << "----------------------------------------------------------"
-              << std::endl
-              << "---- MediaTypes supported by device (or camera) " << c
-              << std::endl
-              << "---- One of the MediaType below can be set using "
-              << std::endl
-              << "---- option -t <mediatype>." << std::endl
-              << "----------------------------------------------------------"
-              << std::endl;
+          std::cout << "----------------------------------------------------------" << std::endl
+                    << "---- MediaTypes supported by device (or camera) " << c << std::endl
+                    << "---- One of the MediaType below can be set using " << std::endl
+                    << "---- option -t <mediatype>." << std::endl
+                    << "----------------------------------------------------------" << std::endl;
           g[i].getStreamCapabilities();
         }
       }
@@ -416,9 +393,8 @@ int main(int argc, const char **argv)
       else
         c = camera;
 
-      std::cout << "Image size for camera " << c
-                << " : width: " << I[i].getWidth()
-                << " height: " << I[i].getHeight() << std::endl;
+      std::cout << "Image size for camera " << c << " : width: " << I[i].getWidth() << " height: " << I[i].getHeight()
+                << std::endl;
 
       if (display) {
         // Initialise the display
@@ -460,8 +436,7 @@ int main(int argc, const char **argv)
     }
 
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
-    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps"
-              << std::endl;
+    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
 
     // Release the framegrabber
     delete[] g;

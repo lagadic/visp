@@ -111,9 +111,7 @@ void vpFeatureMoment::print(unsigned int select) const
   Not implemented since visual representation of a moment doesn't often make
   sense.
 */
-void vpFeatureMoment::display(const vpCameraParameters &cam,
-                              const vpImage<unsigned char> &I,
-                              const vpColor &color,
+void vpFeatureMoment::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                               unsigned int thickness) const
 {
   // visual representation of a moment doesn't often make sense
@@ -127,8 +125,7 @@ void vpFeatureMoment::display(const vpCameraParameters &cam,
   Not implemented since visual representation of a moment doesn't often make
   sense.
 */
-void vpFeatureMoment::display(const vpCameraParameters &cam,
-                              const vpImage<vpRGBa> &I, const vpColor &color,
+void vpFeatureMoment::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                               unsigned int thickness) const
 {
   (void)cam;
@@ -163,8 +160,7 @@ void vpFeatureMoment::update(double A_, double B_, double C_)
     bool found;
     this->moment = &(moments.get(momentName(), found));
     if (!found)
-      throw vpException(vpException::notInitialized,
-                        "Moment not found for feature");
+      throw vpException(vpException::notInitialized, "Moment not found for feature");
   }
   nbParameters = 1;
   if (this->moment != NULL) {
@@ -223,8 +219,7 @@ vpMatrix vpFeatureMoment::interaction(unsigned int select)
 */
 vpBasicFeature *vpFeatureMoment::duplicate() const
 {
-  vpFeatureMoment *feat = new vpMomentGenericFeature(
-      moments, A, B, C, featureMomentsDataBase, moment);
+  vpFeatureMoment *feat = new vpMomentGenericFeature(moments, A, B, C, featureMomentsDataBase, moment);
   feat->interaction_matrices = interaction_matrices;
   feat->dim_s = dim_s;
   feat->nbParameters = nbParameters;
@@ -249,8 +244,7 @@ vpBasicFeature *vpFeatureMoment::duplicate() const
 void vpFeatureMoment::linkTo(vpFeatureMomentDatabase &featureMoments)
 {
   if (strlen(name()) >= 255) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the moment name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the moment name"));
   }
 
   std::strcpy(_name, name());
@@ -263,19 +257,16 @@ void vpFeatureMoment::compute_interaction() {}
 
 vpFeatureMoment::~vpFeatureMoment() {}
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpFeatureMoment &featM)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &featM)
 {
   /*
   A const_cast is forced here since interaction() defined in vpBasicFeature()
   is not const But introducing const in vpBasicFeature() can break a lot of
   client code
   */
-  vpMatrix Lcomplete(
-      (unsigned int)featM.getDimension(),
-      6); // 6 corresponds to 6velocities in standard interaction matrix
-  Lcomplete = const_cast<vpFeatureMoment &>(featM).interaction(
-      vpBasicFeature::FEATURE_ALL);
+  vpMatrix Lcomplete((unsigned int)featM.getDimension(),
+                     6); // 6 corresponds to 6velocities in standard interaction matrix
+  Lcomplete = const_cast<vpFeatureMoment &>(featM).interaction(vpBasicFeature::FEATURE_ALL);
   Lcomplete.matlabPrint(os);
   return os;
 }

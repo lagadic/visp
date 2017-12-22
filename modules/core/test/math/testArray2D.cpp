@@ -48,21 +48,17 @@
 
 #include <visp3/core/vpTranslationVector.h>
 
-template <typename Type>
-bool test(const std::string &s, const vpArray2D<Type> &A,
-          const std::vector<Type> &bench)
+template <typename Type> bool test(const std::string &s, const vpArray2D<Type> &A, const std::vector<Type> &bench)
 {
   static unsigned int cpt = 0;
   std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << A.getRows() << "," << A.getCols() << ") = \n"
-            << A << std::endl;
+  std::cout << s << "(" << A.getRows() << "," << A.getCols() << ") = \n" << A << std::endl;
   if (bench.size() != A.size()) {
     std::cout << "Test fails: bad size wrt bench" << std::endl;
     return false;
   }
   for (unsigned int i = 0; i < A.size(); i++) {
-    if (std::fabs(A.data[i] - bench[i]) >
-        std::fabs(A.data[i]) * std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(A.data[i] - bench[i]) > std::fabs(A.data[i]) * std::numeric_limits<double>::epsilon()) {
       std::cout << "Test fails: bad content" << std::endl;
       return false;
     }
@@ -98,8 +94,7 @@ int main()
     vpArray2D<double> B(A);
     if (test("B", B, bench) == false)
       return err;
-    std::cout << "Min/Max: " << B.getMinValue() << " " << B.getMaxValue()
-              << std::endl;
+    std::cout << "Min/Max: " << B.getMinValue() << " " << B.getMaxValue() << std::endl;
   }
   {
     // test constructor with initial value
@@ -144,8 +139,7 @@ int main()
     vpArray2D<float> B(A);
     if (test("B", B, bench) == false)
       return err;
-    std::cout << "Min/Max: " << B.getMinValue() << " " << B.getMaxValue()
-              << std::endl;
+    std::cout << "Min/Max: " << B.getMinValue() << " " << B.getMaxValue() << std::endl;
   }
   {
     // test constructor with initial value

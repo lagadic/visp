@@ -50,8 +50,7 @@
 */
 void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, char *name)
 {
-  featureMomentsDataBase.insert(std::pair<const char *, vpFeatureMoment *>(
-      (const char *)name, &featureMoment));
+  featureMomentsDataBase.insert(std::pair<const char *, vpFeatureMoment *>((const char *)name, &featureMoment));
 }
 
 /*!
@@ -64,8 +63,7 @@ void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, char *name)
 */
 vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
 {
-  std::map<const char *, vpFeatureMoment *,
-           vpFeatureMomentDatabase::cmp_str>::const_iterator it =
+  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::cmp_str>::const_iterator it =
       featureMomentsDataBase.find(type);
 
   found = (it != featureMomentsDataBase.end());
@@ -81,13 +79,11 @@ vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
 */
 void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
 {
-  std::map<const char *, vpFeatureMoment *,
-           vpFeatureMomentDatabase::cmp_str>::const_iterator itr;
+  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::cmp_str>::const_iterator itr;
 #ifdef VISP_HAVE_OPENMP
   std::vector<vpFeatureMoment *> values;
   values.reserve(featureMomentsDataBase.size());
-  for (itr = featureMomentsDataBase.begin();
-       itr != featureMomentsDataBase.end(); ++itr) {
+  for (itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); ++itr) {
     values.push_back((*itr).second);
   }
 #pragma omp parallel for shared(A, B, C)
@@ -96,8 +92,7 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
     values[i_]->update(A, B, C);
   }
 #else
-  for (itr = featureMomentsDataBase.begin();
-       itr != featureMomentsDataBase.end(); ++itr) {
+  for (itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); ++itr) {
     (*itr).second->update(A, B, C);
   }
 #endif

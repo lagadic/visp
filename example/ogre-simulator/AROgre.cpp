@@ -46,11 +46,10 @@
 #include <visp3/core/vpConfig.h>
 
 //#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) ||
-//defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+// defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
 //|| (defined(VISP_HAVE_X11) && ! defined(APPLE)))
-#if defined(VISP_HAVE_OGRE) &&                                               \
-    (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) ||                  \
-     defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) ||                    \
+#if defined(VISP_HAVE_OGRE) &&                                                                                         \
+    (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) ||       \
      (defined(VISP_HAVE_X11) && !(defined(__APPLE__) && defined(__MACH__))))
 
 //#if defined(VISP_HAVE_X11) && ! defined(APPLE)
@@ -90,8 +89,7 @@
 
 
 */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string ppath)
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
   fprintf(stdout, "\n\
 Test augmented reality using the vpAROgre class.\n\
@@ -145,8 +143,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, bool &click_allowed)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed)
 {
   const char *optarg;
   int c;
@@ -191,9 +188,8 @@ class vpAROgreExample : public vpAROgre
 {
 public:
   // The constructor doesn't change here
-  vpAROgreExample(const vpCameraParameters &mcam = vpCameraParameters(),
-                  unsigned int width = 640, unsigned int height = 480,
-                  const char *resourcePath = NULL)
+  vpAROgreExample(const vpCameraParameters &mcam = vpCameraParameters(), unsigned int width = 640,
+                  unsigned int height = 480, const char *resourcePath = NULL)
     : vpAROgre(mcam, width, height)
   {
     // Direction vectors
@@ -218,24 +214,21 @@ protected:
   void createScene()
   {
     // Lumieres
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(
-        (float)0.6, (float)0.6, (float)0.6)); // Default value of lightning
+    mSceneMgr->setAmbientLight(Ogre::ColourValue((float)0.6, (float)0.6, (float)0.6)); // Default value of lightning
     Ogre::Light *light = mSceneMgr->createLight();
     light->setDiffuseColour(1.0, 1.0, 1.0);  // scaled RGB values
     light->setSpecularColour(1.0, 1.0, 1.0); // scaled RGB values
     // Lumiere ponctuelle
     light->setPosition(-5, -5, 10);
     light->setType(Ogre::Light::LT_POINT);
-    light->setAttenuation((Ogre::Real)100, (Ogre::Real)1.0, (Ogre::Real)0.045,
-                          (Ogre::Real)0.0075);
+    light->setAttenuation((Ogre::Real)100, (Ogre::Real)1.0, (Ogre::Real)0.045, (Ogre::Real)0.0075);
     // Ombres
     light->setCastShadows(true);
 
     // Create the Entity
     robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
-    Ogre::SceneNode *RobotNode =
-        mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
+    Ogre::SceneNode *RobotNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
     RobotNode->attachObject(robot);
     RobotNode->scale((Ogre::Real)0.001, (Ogre::Real)0.001, (Ogre::Real)0.001);
     RobotNode->pitch(Ogre::Degree(90));
@@ -255,12 +248,10 @@ protected:
     Ogre::Plane plan;
     plan.d = 0;
     plan.normal = Ogre::Vector3::UNIT_Z;
-    Ogre::MeshManager::getSingleton().createPlane(
-        "sol", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plan,
-        (Ogre::Real)0.22, (Ogre::Real)0.16, 10, 10, true, 1, 1, 1);
+    Ogre::MeshManager::getSingleton().createPlane("sol", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plan,
+                                                  (Ogre::Real)0.22, (Ogre::Real)0.16, 10, 10, true, 1, 1, 1);
     Ogre::Entity *ent = mSceneMgr->createEntity("Entitesol", "sol");
-    Ogre::SceneNode *PlaneNode =
-        mSceneMgr->getRootSceneNode()->createChildSceneNode("Entitesol");
+    Ogre::SceneNode *PlaneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Entitesol");
     PlaneNode->attachObject(ent);
     ent->setMaterialName("Examples/GrassFloor");
   }
@@ -287,33 +278,25 @@ protected:
     bool event = false;
     // Check entries
     if (mKeyboard->isKeyDown(OIS::KC_Z) || mKeyboard->isKeyDown(OIS::KC_UP)) {
-      mSceneMgr->getSceneNode("Robot")->setPosition(
-          mSceneMgr->getSceneNode("Robot")->getPosition() +
-          (Ogre::Real)0.003 * vecDevant);
+      mSceneMgr->getSceneNode("Robot")->setPosition(mSceneMgr->getSceneNode("Robot")->getPosition() +
+                                                    (Ogre::Real)0.003 * vecDevant);
       event = true;
     }
-    if (mKeyboard->isKeyDown(OIS::KC_S) ||
-        mKeyboard->isKeyDown(OIS::KC_DOWN)) {
-      mSceneMgr->getSceneNode("Robot")->setPosition(
-          mSceneMgr->getSceneNode("Robot")->getPosition() -
-          (Ogre::Real)0.003 * vecDevant);
+    if (mKeyboard->isKeyDown(OIS::KC_S) || mKeyboard->isKeyDown(OIS::KC_DOWN)) {
+      mSceneMgr->getSceneNode("Robot")->setPosition(mSceneMgr->getSceneNode("Robot")->getPosition() -
+                                                    (Ogre::Real)0.003 * vecDevant);
       event = true;
     }
-    if (mKeyboard->isKeyDown(OIS::KC_Q) ||
-        mKeyboard->isKeyDown(OIS::KC_LEFT)) {
-      rotmy = Ogre::Matrix3((Ogre::Real)cos(-angle), (Ogre::Real)sin(-angle),
-                            0, (Ogre::Real)(-sin(-angle)),
+    if (mKeyboard->isKeyDown(OIS::KC_Q) || mKeyboard->isKeyDown(OIS::KC_LEFT)) {
+      rotmy = Ogre::Matrix3((Ogre::Real)cos(-angle), (Ogre::Real)sin(-angle), 0, (Ogre::Real)(-sin(-angle)),
                             (Ogre::Real)cos(-angle), 0, 0, 0, 1);
       vecDevant = vecDevant * rotmy;
-      mSceneMgr->getSceneNode("Robot")->yaw(
-          Ogre::Radian((Ogre::Real)(-angle)));
+      mSceneMgr->getSceneNode("Robot")->yaw(Ogre::Radian((Ogre::Real)(-angle)));
       event = true;
     }
-    if (mKeyboard->isKeyDown(OIS::KC_D) ||
-        mKeyboard->isKeyDown(OIS::KC_RIGHT)) {
-      rotmy = Ogre::Matrix3((Ogre::Real)cos(angle), (Ogre::Real)sin(angle), 0,
-                            (Ogre::Real)(-sin(angle)), (Ogre::Real)cos(angle),
-                            0, 0, 0, 1);
+    if (mKeyboard->isKeyDown(OIS::KC_D) || mKeyboard->isKeyDown(OIS::KC_RIGHT)) {
+      rotmy = Ogre::Matrix3((Ogre::Real)cos(angle), (Ogre::Real)sin(angle), 0, (Ogre::Real)(-sin(angle)),
+                            (Ogre::Real)cos(angle), 0, 0, 0, 1);
       vecDevant = vecDevant * rotmy;
       mSceneMgr->getSceneNode("Robot")->yaw(Ogre::Radian((Ogre::Real)angle));
       event = true;
@@ -341,10 +324,8 @@ protected:
   situated at (-7,6,0),(7,6,0),(7,-6,0),(-7,-6,0) (unit = cm) in your real
   world
 */
-void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
-                        vpPose *mPose, vpDot2 *md, vpImagePoint *mcog,
-                        vpHomogeneousMatrix *cMo, vpPoint *mP,
-                        const bool &opt_click_allowed)
+void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpPose *mPose, vpDot2 *md,
+                        vpImagePoint *mcog, vpHomogeneousMatrix *cMo, vpPoint *mP, const bool &opt_click_allowed)
 {
   // ---------------------------------------------------
   //    Code inspired from ViSP example of camera pose
@@ -563,8 +544,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed) ==
-        false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed) == false) {
       exit(-1);
     }
 
@@ -578,8 +558,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -588,16 +567,12 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
       usage(argv[0], NULL, ipath, opt_ppath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << "  Use -p <personal image path> option if you want to "
-          << std::endl
-          << "  use personal images." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << "  Use -p <personal image path> option if you want to " << std::endl
+                << "  use personal images." << std::endl
+                << std::endl;
 
       exit(-1);
     }
@@ -651,11 +626,9 @@ int main(int argc, const char **argv)
       vpCTRACE << "Load: " << filename << std::endl;
       grabber.open(Idisplay);
       grabber.acquire(Idisplay);
-      vpCameraParameters mcamTmp(592, 570, grabber.getWidth() / 2,
-                                 grabber.getHeight() / 2);
+      vpCameraParameters mcamTmp(592, 570, grabber.getWidth() / 2, grabber.getHeight() / 2);
       // Compute the initial pose of the camera
-      computeInitialPose(&mcamTmp, Idisplay, &mPose, md, mcog, &cMo, mP,
-                         opt_click_allowed);
+      computeInitialPose(&mcamTmp, Idisplay, &mPose, md, mcog, &cMo, mP, opt_click_allowed);
       // Close the framegrabber
       grabber.close();
 
@@ -670,14 +643,12 @@ int main(int argc, const char **argv)
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable."
-                << std::endl;
+                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       exit(-1);
     }
 
     // Create a vpRAOgre object with color background
-    vpAROgreExample ogre(mcam, (unsigned int)grabber.getWidth(),
-                         (unsigned int)grabber.getHeight());
+    vpAROgreExample ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
     // Initialize it
     ogre.init(IC);
 
@@ -733,8 +704,7 @@ int main(int argc, const char **argv)
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   } catch (Ogre::Exception &e) {
-    std::cout << "Catch an Ogre exception: " << e.getDescription()
-              << std::endl;
+    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
     return 1;
   } catch (...) {
     std::cout << "Catch an exception " << std::endl;

@@ -9,17 +9,12 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) &&                                \
-    (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
 
 #include <opencv2/highgui/highgui.hpp>
 
 // Shared vars
-typedef enum {
-  capture_waiting,
-  capture_started,
-  capture_stopped
-} t_CaptureState;
+typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
 cv::Mat s_frame;
 vpMutex s_mutex_capture;
@@ -144,8 +139,7 @@ int main(int argc, const char *argv[])
     if (std::string(argv[i]) == "--device")
       opt_device = atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "Usage: " << argv[0]
-                << " [--device <camera device>] [--help]" << std::endl;
+      std::cout << "Usage: " << argv[0] << " [--device <camera device>] [--help]" << std::endl;
       return 0;
     }
   }
@@ -155,8 +149,7 @@ int main(int argc, const char *argv[])
   cap.open(opt_device);
 
   // Start the threads
-  vpThread thread_capture((vpThread::Fn)captureFunction,
-                          (vpThread::Args)&cap);
+  vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&cap);
   vpThread thread_display((vpThread::Fn)displayFunction);
 
   // Wait until thread ends up
@@ -171,16 +164,11 @@ int main(int argc, const char *argv[])
 int main()
 {
 #ifndef VISP_HAVE_OPENCV
-  std::cout << "You should install OpenCV to make this example working..."
-            << std::endl;
-#elif !defined(_WIN32) &&                                                    \
-    (defined(__unix__) || defined(__unix) ||                                 \
-     (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..."
-            << std::endl;
+  std::cout << "You should install OpenCV to make this example working..." << std::endl;
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
 #else
-  std::cout << "Multi-threading seems not supported on this platform"
-            << std::endl;
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
 }
 

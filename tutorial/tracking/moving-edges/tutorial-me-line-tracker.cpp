@@ -12,8 +12,7 @@
 
 int main()
 {
-#if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||              \
-     defined(VISP_HAVE_V4L2))
+#if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2))
   try {
     vpImage<unsigned char> I;
 
@@ -60,8 +59,7 @@ int main()
     line.initTracking(I);
 
     while (1) {
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) ||                  \
-    defined(VISP_HAVE_CMU1394)
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
       g >> frame;

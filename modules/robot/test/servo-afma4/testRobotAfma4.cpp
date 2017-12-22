@@ -68,8 +68,7 @@ int main()
 #else
 int main()
 {
-  std::cout << "The real Afma4 robot controller is not available."
-            << std::endl;
+  std::cout << "The real Afma4 robot controller is not available." << std::endl;
   return 0;
 }
 

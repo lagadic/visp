@@ -52,9 +52,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if (defined(VISP_HAVE_COIN3D_AND_GUI) &&                                    \
-     (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) ||                    \
-      defined(VISP_HAVE_GDI)))
+#if (defined(VISP_HAVE_COIN3D_AND_GUI) && (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)))
 
 #include <visp3/ar/vpSimulator.h>
 #include <visp3/core/vpCameraParameters.h>
@@ -93,8 +91,7 @@ static void *mainLoop(void *_simu)
 
   ///////////////////////////////////
   // Set the initial camera location
-  vpHomogeneousMatrix cMo(0.3, 0.2, 3, vpMath::rad(0), vpMath::rad(0),
-                          vpMath::rad(40));
+  vpHomogeneousMatrix cMo(0.3, 0.2, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(40));
   vpHomogeneousMatrix wMo; // Set to identity
   vpHomogeneousMatrix wMc; // Camera position in the world frame
 
@@ -274,8 +271,7 @@ int main()
     if (!ipath.empty())
       filename = vpIoTools::createFilePath(ipath, "iv/4points.iv");
 
-    std::cout << "Load : " << filename << std::endl
-              << "This file should be in the working directory" << std::endl;
+    std::cout << "Load : " << filename << std::endl << "This file should be in the working directory" << std::endl;
 
     simu.load(filename.c_str());
 

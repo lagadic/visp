@@ -74,16 +74,18 @@ int main()
 {
   vpServo task; // Visual servoing task
 
-  //First we have to define the desired feature log(Z*) corresponding to the
-desired point. double xd = 0; //The x coordinate of the desired point. double
-yd = 0; //The y coordinate of the desired point. double Zd = 1; //The depth of
-the desired point. vpGenericFeature logZd(1); //The dimension of the feature
-is 1. logZd.set_s( log(Zd) );
+  //First we have to define the desired feature log(Z*) corresponding to the desired point.
+  double xd = 0; //The x coordinate of the desired point.
+  double yd = 0; //The y coordinate of the desired point.
+  double Zd = 1; //The depth of the desired point.
+  vpGenericFeature logZd(1); //The dimension of the feature is 1.
+  logZd.set_s( log(Zd) );
 
-  //Then we have to define the current feature log(Z) corresponding to the
-current point. double x = 1; //The x coordinate of the current point. double y
-= 1; //The y coordinate of the current point. double Z = 2; //The depth of the
-current point. vpGenericFeature logZ(1); //The dimension of the feature is 1.
+  //Then we have to define the current feature log(Z) corresponding to the current point.
+  double x = 1; //The x coordinate of the current point.
+  double y = 1; //The y coordinate of the current point.
+  double Z = 2; //The depth of the current point.
+  vpGenericFeature logZ(1); //The dimension of the feature is 1.
   logZ.set_s( log(Z) );
 
   // Set eye-in-hand control law.
@@ -130,15 +132,16 @@ int main()
 {
   vpServo task; // Visual servoing task
 
-  //First we have to define the desired feature log(Z*) corresponding to the
-desired point. double xd = 0; //The x coordinate of the desired point. double
-yd = 0; //The y coordinate of the desired point. double Zd = 1; //The depth of
-the desired point.
+  //First we have to define the desired feature log(Z*) corresponding to the desired point.
+  double xd = 0; //The x coordinate of the desired point.
+  double yd = 0; //The y coordinate of the desired point.
+  double Zd = 1; //The depth of the desired point.
 
-  //Then we have to define the current feature log(Z) corresponding to the
-current point. double x = 1; //The x coordinate of the current point. double y
-= 1; //The y coordinate of the current point. double Z = 2; //The depth of the
-current point. vpGenericFeature logZ(1); //The dimension of the feature is 1.
+  //Then we have to define the current feature log(Z) corresponding to the current point.
+  double x = 1; //The x coordinate of the current point.
+  double y = 1; //The y coordinate of the current point.
+  double Z = 2; //The depth of the current point.
+  vpGenericFeature logZ(1); //The dimension of the feature is 1.
   logZ.set_s( log(Z/Zd) );
 
   // Set eye-in-hand control law.
@@ -185,17 +188,14 @@ public:
   explicit vpGenericFeature(unsigned int dim);
   virtual ~vpGenericFeature();
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   vpGenericFeature *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
   vpColVector error(const unsigned int select = FEATURE_ALL);
 
@@ -218,11 +218,7 @@ public:
   void set_s(const double s0, const double s1, const double s2);
 
 private:
-  typedef enum {
-    errorNotInitalized,
-    errorInitialized,
-    errorHasToBeUpdated
-  } vpGenericFeatureErrorType;
+  typedef enum { errorNotInitalized, errorInitialized, errorHasToBeUpdated } vpGenericFeatureErrorType;
 
   vpMatrix L;
   vpColVector err;

@@ -157,10 +157,8 @@ public:
     \note Call the constructor with something like
     vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
   */
-  vpTraceOutput(const char *file, int line, const char *func,
-                bool error = false, const char *s = NULL)
-    : currentFile(file), currentFunc(func), currentLine(line), err(error),
-      header(s)
+  vpTraceOutput(const char *file, int line, const char *func, bool error = false, const char *s = NULL)
+    : currentFile(file), currentFunc(func), currentLine(line), err(error), header(s)
   {
   }
 
@@ -226,8 +224,7 @@ public:
       if (header != NULL)
         std::cerr << header;
       // then writes the recorded namefile, function and line
-      std::cerr << "!!\t" << currentFile << ": " << currentFunc << "(#"
-                << currentLine << ") : ";
+      std::cerr << "!!\t" << currentFile << ": " << currentFunc << "(#" << currentLine << ") : ";
       // and finally writes the message passed to () operator.
       vfprintf(stderr, format, args);
       fprintf(stderr, "\n");
@@ -238,8 +235,7 @@ public:
       if (header != NULL)
         std::cout << header;
       // then writes the recorded namefile, function and line
-      std::cout << currentFile << ": " << currentFunc << "(#" << currentLine
-                << ") : ";
+      std::cout << currentFile << ": " << currentFunc << "(#" << currentLine << ") : ";
       // and finally writes the message passed to () operator.
       vprintf(format, args);
       printf("\n");
@@ -276,8 +272,7 @@ int main()
 
   \sa vpOUT_FCT
 */
-#define vpIN_FCT                                                             \
-  (vpTraceOutput(__FILE__, __LINE__, __FUNCTION__, false, "begin "))
+#define vpIN_FCT (vpTraceOutput(__FILE__, __LINE__, __FUNCTION__, false, "begin "))
 
 /*!
   \ingroup group_core_debug
@@ -297,8 +292,7 @@ int main()
 
   \sa vpIN_FCT
 */
-#define vpOUT_FCT                                                            \
-  (vpTraceOutput(__FILE__, __LINE__, __FUNCTION__, false, "end "))
+#define vpOUT_FCT (vpTraceOutput(__FILE__, __LINE__, __FUNCTION__, false, "end "))
 
 #else // #ifdef VP_TRACE
 
@@ -341,9 +335,7 @@ int main()
 
   \sa vpTRACE(), vpCERROR(), vpCDEBUG()
 */
-#define vpCTRACE                                                             \
-  std::cout << "(L0) " << __FILE__ << ": " << __FUNCTION__ << "(#"           \
-            << __LINE__ << ") : "
+#define vpCTRACE std::cout << "(L0) " << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
   \ingroup group_core_debug
@@ -370,10 +362,9 @@ int main()
 
   \sa vpCTRACE(), vpCDEBUG()
 */
-#define vpCERROR                                                             \
-  std::cerr << "(L0) "                                                       \
-            << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#"            \
-            << __LINE__ << ") : "
+#define vpCERROR                                                                                                       \
+  std::cerr << "(L0) "                                                                                                 \
+            << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
   \ingroup group_core_debug
@@ -426,11 +417,11 @@ int main()
 
 #else // #ifdef VP_TRACE
 
-#define vpCTRACE                                                             \
-  if (false)                                                                 \
+#define vpCTRACE                                                                                                       \
+  if (false)                                                                                                           \
   std::cout // Warning C4127
-#define vpCERROR                                                             \
-  if (false)                                                                 \
+#define vpCERROR                                                                                                       \
+  if (false)                                                                                                           \
   std::cerr // Warning C4127
 
 inline void vpERROR_TRACE(const char * /* a */, ...) {}
@@ -517,12 +508,11 @@ int main()
 
   \sa vpCTRACE(), vpCERROR()
 */
-#define vpCDEBUG(level)                                                      \
-  if (VP_DEBUG_MODE < level)                                                 \
-    ;                                                                        \
-  else                                                                       \
-    std::cout << "(L" << level << ") " << __FILE__ << ": " << __FUNCTION__   \
-              << "(#" << __LINE__ << ") : "
+#define vpCDEBUG(level)                                                                                                \
+  if (VP_DEBUG_MODE < level)                                                                                           \
+    ;                                                                                                                  \
+  else                                                                                                                 \
+    std::cout << "(L" << level << ") " << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
   \ingroup group_core_debug
@@ -554,8 +544,8 @@ inline void vpDEBUG_TRACE(const char * /* a */, ...) {}
 inline void vpDERROR_TRACE(int /* level */, const char * /* a */, ...) {}
 inline void vpDEBUG_TRACE(int /* level */, const char * /* a */, ...) {}
 
-#define vpCDEBUG(level)                                                      \
-  if (false)                                                                 \
+#define vpCDEBUG(level)                                                                                                \
+  if (false)                                                                                                           \
   std::cout                           // Warning C4127
 #define vpDEBUG_ENABLE(level) (false) // Warning C4127
 

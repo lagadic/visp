@@ -54,15 +54,13 @@
   \cite Marchand16a.
 
  */
-class VISP_EXPORT vpTemplateTrackerZNCCForwardAdditional
-  : public vpTemplateTrackerZNCC
+class VISP_EXPORT vpTemplateTrackerZNCCForwardAdditional : public vpTemplateTrackerZNCC
 {
 protected:
   void initHessienDesired(const vpImage<unsigned char> &I);
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerZNCCForwardAdditional(
-      vpTemplateTrackerWarp *warp);
+  explicit vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp);
 };
 #endif

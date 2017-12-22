@@ -40,14 +40,12 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerSSDForwardCompositional.h>
 
-vpTemplateTrackerSSDForwardCompositional::
-    vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp)
+vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerSSD(warp), compoInitialised(false)
 {
 }
 
-void vpTemplateTrackerSSDForwardCompositional::initCompo(
-    const vpImage<unsigned char> & /*I*/)
+void vpTemplateTrackerSSDForwardCompositional::initCompo(const vpImage<unsigned char> & /*I*/)
 {
   // std::cout<<"Initialise precomputed value of Compositionnal
   // Direct"<<std::endl;
@@ -63,14 +61,9 @@ void vpTemplateTrackerSSDForwardCompositional::initCompo(
   compoInitialised = true;
 }
 
-void vpTemplateTrackerSSDForwardCompositional::initHessienDesired(
-    const vpImage<unsigned char> &I)
-{
-  initCompo(I);
-}
+void vpTemplateTrackerSSDForwardCompositional::initHessienDesired(const vpImage<unsigned char> &I) { initCompo(I); }
 
-void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (!compoInitialised)
     std::cout << "Compositionnal tracking no initialised\nUse "
@@ -108,8 +101,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(
 
       j2 = X2[0];
       i2 = X2[1];
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Tij = ptTemplate[point].val;
         if (!blur)
           IW = I.getValue(i2, j2);
@@ -144,8 +136,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(
     }
     if (Nbpoint == 0) {
       // std::cout<<"plus de point dans template suivi"<<std::endl;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
     vpMatrix::computeHLM(H, lambda, HLM);

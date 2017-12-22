@@ -115,8 +115,7 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
       if ((value < 0) || (value > 255)) {
         usage(argv[0], optarg, data);
         std::cerr << "ERROR: " << std::endl;
-        std::cerr << "  Bad value \"-d " << optarg << "\"" << std::endl
-                  << std::endl;
+        std::cerr << "  Bad value \"-d " << optarg << "\"" << std::endl << std::endl;
         return false;
       } else {
         data = (unsigned char)value;
@@ -184,8 +183,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  vpTRACE(
-      "Sorry, for the moment, vpParallelPort class works only on unix...");
+  vpTRACE("Sorry, for the moment, vpParallelPort class works only on unix...");
   return 0;
 }
 #endif

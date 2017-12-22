@@ -72,9 +72,8 @@
 template <class vpTransformation> class vpRansac
 {
 public:
-  static bool ransac(unsigned int npts, vpColVector &x, unsigned int s,
-                     double t, vpColVector &model, vpColVector &inliers,
-                     int consensus = 1000, double not_used = 0.0,
+  static bool ransac(unsigned int npts, vpColVector &x, unsigned int s, double t, vpColVector &model,
+                     vpColVector &inliers, int consensus = 1000, double not_used = 0.0,
                      const int maxNbumbersOfTrials = 10000);
 };
 
@@ -109,10 +108,8 @@ public:
 */
 
 template <class vpTransformation>
-bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
-                                        unsigned int s, double t,
-                                        vpColVector &M, vpColVector &inliers,
-                                        int consensus, double not_used,
+bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x, unsigned int s, double t, vpColVector &M,
+                                        vpColVector &inliers, int consensus, double not_used,
                                         const int maxNbumbersOfTrials)
 {
   /*   bool isplanar; */
@@ -123,10 +120,8 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
   double p = 0.99; // Desired probability of choosing at least one sample
   // free from outliers
 
-  int maxTrials =
-      maxNbumbersOfTrials; // Maximum number of trials before we give up.
-  int maxDataTrials =
-      1000; // Max number of attempts to select a non-degenerate
+  int maxTrials = maxNbumbersOfTrials; // Maximum number of trials before we give up.
+  int maxDataTrials = 1000;            // Max number of attempts to select a non-degenerate
   // data set.
 
   if (s < 4)
@@ -168,8 +163,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
       if (count > maxDataTrials) {
         delete[] ind;
         vpERROR_TRACE("Unable to select a nondegenerate data set");
-        throw(vpException(vpException::fatalError,
-                          "Unable to select a nondegenerate data set"));
+        throw(vpException(vpException::fatalError, "Unable to select a nondegenerate data set"));
         // return false; //Useless after a throw() function
       }
     }
@@ -207,10 +201,8 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
 
       double pNoOutliers = 1 - pow(fracinliers, static_cast<int>(s));
 
-      pNoOutliers =
-          vpMath::maximum(eps, pNoOutliers); // Avoid division by -Inf
-      pNoOutliers =
-          vpMath::minimum(1 - eps, pNoOutliers); // Avoid division by 0.
+      pNoOutliers = vpMath::maximum(eps, pNoOutliers);     // Avoid division by -Inf
+      pNoOutliers = vpMath::minimum(1 - eps, pNoOutliers); // Avoid division by 0.
       N = (log(1 - p) / log(pNoOutliers));
     }
 

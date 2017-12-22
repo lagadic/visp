@@ -81,15 +81,15 @@ performing a 180 degrees rotation. Therefore the first and second alpha should
 have opposite values.
 
   \code
-#include <algorithm>
-#include <iostream>
-#include <vector>
-#include <visp3/core/vpMomentAlpha.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentAlpha.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
 //generic function for printing
 void print (double i) { std::cout << i << "\t";}
@@ -97,24 +97,29 @@ void print (double i) { std::cout << i << "\t";}
 int main()
 {
   vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains the vertices of the
-contour polygon
+  // vector that contains the vertices of the contour polygon
+  std::vector<vpPoint> vec_p;
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane (vertex 2) vec_p.push_back(p); p.set_x(-3); p.set_y(0); //
-coordinates in meters in the image plane (vertex 3) vec_p.push_back(p);
-  p.set_x(-3); p.set_y(-1); // coordinates in meters in the image plane
-(vertex 4) vec_p.push_back(p);
+  // coordinates in meters in the image plane (vertex 1)
+  p.set_x(1); p.set_y(1);
+  vec_p.push_back(p);
+  // coordinates in meters in the image plane (vertex 2)
+  p.set_x(2); p.set_y(2);
+  vec_p.push_back(p);
+  // coordinates in meters in the image plane (vertex 3)
+  p.set_x(-3); p.set_y(0);
+  vec_p.push_back(p);
+  // coordinates in meters in the image plane (vertex 4)
+  p.set_x(-3); p.set_y(-1);
+  vec_p.push_back(p);
 
-  //////////////////////////////REFERENCE
-VALUES//////////////////////////////// vpMomentObject objRef(3); // Reference
-object. Must be of order 3
+  //////////////////////////////REFERENCE VALUES////////////////////////////////
+  vpMomentObject objRef(3); // Reference object. Must be of order 3
                             // because we will need the 3rd order
                             // centered moments
-  objRef.setType(vpMomentObject::DENSE_POLYGON); // object is the inner part
-of a polygon objRef.fromVector(vec_p); // Init the dense object with the
-polygon
+  // object is the inner part of a polygon
+  objRef.setType(vpMomentObject::DENSE_POLYGON);
+  objRef.fromVector(vec_p); // Init the dense object with the polygon
 
   vpMomentDatabase dbRef; //reference database
   vpMomentGravityCenter gRef; // declaration of gravity center
@@ -125,8 +130,7 @@ polygon
   mcRef.linkTo(dbRef); //add centered moments
   alphaRef.linkTo(dbRef); //add alpha depending on centered moments
 
-  dbRef.updateAll(objRef); // All of the moments must be updated, not just
-alpha
+  dbRef.updateAll(objRef); // All of the moments must be updated, not just alpha
 
   gRef.compute(); // compute the moment
   mcRef.compute(); //compute centered moments AFTER gravity center
@@ -142,34 +146,34 @@ alpha
 
 
   std::cout << "--- Reference object ---" << std::endl;
-  std::cout << "alphaRef=" << alphaRef << std::endl << "mu3="; // print
-reference alpha std::for_each (mu3ref.begin(), mu3ref.end(),print); std::cout
-<< std::endl;
+  std::cout << "alphaRef=" << alphaRef << std::endl << "mu3="; // print reference alpha
+  std::for_each (mu3ref.begin(), mu3ref.end(),print);
+  std::cout << std::endl;
 
   ////////////CURRENT VALUES (same object rotated 180deg - must be
   ////////////entered in reverse order)////////////////
   vec_p.clear();
 
-  p.set_x(-3); p.set_y(1); // coordinates in meters in the image plane (vertex
-4) vec_p.push_back(p); p.set_x(-3); p.set_y(0); // coordinates in meters in
-the image plane (vertex 3) vec_p.push_back(p); p.set_x(2); p.set_y(-2); //
-coordinates in meters in the image plane (vertex 2) vec_p.push_back(p);
-  p.set_x(1); p.set_y(-1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p);
-
+  p.set_x(-3); p.set_y(1); // coordinates in meters in the image plane (vertex 4)
+  vec_p.push_back(p);
+  p.set_x(-3); p.set_y(0); // coordinates in meters in the image plane (vertex 3)
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(-2); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
+  p.set_x(1); p.set_y(-1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
 
   vpMomentObject obj(3); // second object. Order 3 is also required
                          // because of the Alpha will compare
                          // third-order centered moments to given reference.
 
-  obj.setType(vpMomentObject::DENSE_POLYGON); // object is the inner part of a
-polygon obj.fromVector(vec_p); // Init the dense object with the polygon
+  obj.setType(vpMomentObject::DENSE_POLYGON); // object is the inner part of a polygon
+  obj.fromVector(vec_p); // Init the dense object with the polygon
 
   vpMomentDatabase db; // database
   vpMomentGravityCenter g; // declaration of gravity center
   vpMomentCentered mc; // mc containts centered moments
-  vpMomentAlpha alpha(mu3ref,alphaRef.get()); //declare alpha as relative to a
-reference
+  vpMomentAlpha alpha(mu3ref,alphaRef.get()); //declare alpha as relative to a reference
 
   g.linkTo(db); //add gravity center to database
   mc.linkTo(db); //add centered moments
@@ -186,7 +190,6 @@ reference
 
   return 0;
 }
-
   \endcode
 This program outputs:
 \code
@@ -241,8 +244,7 @@ public:
       return false;
   }
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMomentAlpha &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAlpha &v);
   void printDependencies(std::ostream &os) const;
 };
 

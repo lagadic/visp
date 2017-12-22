@@ -80,11 +80,10 @@ int main()
   vpSimulatorPioneer robot;
 
   robot.getPosition(wMc); // Position of the camera in the world frame
-  std::cout << "Default position of the camera in the world frame wMc:\n" <<
-wMc << std::endl;
+  std::cout << "Default position of the camera in the world frame wMc:\n" << wMc << std::endl;
 
-  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1
-second robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
+  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
+  robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
   robot.setMaxRotationVelocity(vpMath::rad(90)); // wz max set to 90 deg/s
 
   vpColVector v(2); // we control vx and wz dof
@@ -101,8 +100,7 @@ second robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
 tutorial-simu-robot-pioneer.
 
 */
-class VISP_EXPORT vpSimulatorPioneer : public vpPioneer,
-                                       public vpRobotSimulator
+class VISP_EXPORT vpSimulatorPioneer : public vpPioneer, public vpRobotSimulator
 {
 
 protected:
@@ -128,8 +126,7 @@ public:
 
   void getPosition(vpHomogeneousMatrix &wMc) const;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
   //@}
 
 private:
@@ -137,10 +134,8 @@ private:
 
   // Non implemented virtual pure functions
   void get_fJe(vpMatrix & /*_fJe */){};
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */,
-                       vpColVector & /* q */){};
-  void setPosition(const vpRobot::vpControlFrameType /* frame */,
-                   const vpColVector & /* q */){};
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */){};
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */){};
 };
 
 #endif

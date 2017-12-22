@@ -129,8 +129,7 @@ protected:
 public:
   vpKalmanFilter();
   explicit vpKalmanFilter(unsigned int n_signal);
-  vpKalmanFilter(unsigned int size_state, unsigned int size_measure,
-                 unsigned int n_signal);
+  vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int n_signal);
   /*! Destructor that does noting. */
   virtual ~vpKalmanFilter(){};
   /*!
@@ -139,8 +138,7 @@ public:
   void setNumberOfSignal(unsigned int n_signal) { this->nsignal = n_signal; }
 
   // int init() { return init_done ; }
-  void init(unsigned int size_state, unsigned int size_measure,
-            unsigned int n_signal);
+  void init(unsigned int size_state, unsigned int size_measure, unsigned int n_signal);
   void prediction();
   void filtering(const vpColVector &z);
   /*!

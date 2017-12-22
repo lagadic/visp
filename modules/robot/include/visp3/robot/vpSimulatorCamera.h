@@ -81,18 +81,15 @@ int main()
   vpSimulatorCamera robot;
 
   robot.getPosition(wMc); // Position of the camera in the world frame
-  std::cout << "Default position of the camera in the world frame wMc:\n" <<
-wMc << std::endl;
+  std::cout << "Default position of the camera in the world frame wMc:\n" << wMc << std::endl;
 
-  wMc[2][3] = 1.; // Camera frame is 1 meter along z axis in front of the
-world frame robot.setPosition(wMc); // Set the new position of the camera in
-the world frame std::cout << "New position of the camera in the world frame
-wMc:\n" << wMc << std::endl;
+  wMc[2][3] = 1.; // Camera frame is 1 meter along z axis in front of the world frame
+  robot.setPosition(wMc); // Set the new position of the camera in the world frame
+  std::cout << "New position of the camera in the world frame wMc:\n" << wMc << std::endl;
 
-  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1
-second robot.setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
-  robot.setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to
-90 deg/s
+  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
+  robot.setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
+  robot.setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
 
   vpColVector v(6);
   v = 0;
@@ -126,8 +123,7 @@ public:
   void getPosition(vpHomogeneousMatrix &wMc) const;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
   void setPosition(const vpHomogeneousMatrix &wMc);
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
   //@}
 
 private:
@@ -135,10 +131,8 @@ private:
 
   // Non implemented virtual pure functions
   void get_fJe(vpMatrix & /*_fJe */){};
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */,
-                       vpColVector & /* q */){};
-  void setPosition(const vpRobot::vpControlFrameType /* frame */,
-                   const vpColVector & /* q */){};
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */){};
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */){};
 };
 
 #endif

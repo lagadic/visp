@@ -69,8 +69,7 @@ bool vpWin32Window::registered = false;
 /*!
   The message callback
 */
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
-                         LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   // the first time this callback is executed, put the window in initialized
   // state
@@ -235,8 +234,7 @@ vpWin32Window::~vpWin32Window()
   \param h Initial window's height
 
 */
-void vpWin32Window::initWindow(const char *title, int posx, int posy,
-                               unsigned int w, unsigned int h)
+void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned int w, unsigned int h)
 {
   // the window's style
   DWORD style = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
@@ -272,17 +270,14 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy,
   // rect.top << " " << rect.right << " " << rect.bottom << std::endl;
 
   // creates the window
-  hWnd = CreateWindowEx(WS_EX_APPWINDOW, g_szClassName, title, style, posx,
-                        posy, rect.right - rect.left, rect.bottom - rect.top,
-                        NULL, NULL, hInst, NULL);
+  hWnd = CreateWindowEx(WS_EX_APPWINDOW, g_szClassName, title, style, posx, posy, rect.right - rect.left,
+                        rect.bottom - rect.top, NULL, NULL, hInst, NULL);
   if (hWnd == NULL) {
     DWORD err = GetLastError();
     std::cout << "err CreateWindowEx=" << err << std::endl;
-    throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
-                             "Can't create the window!");
+    throw vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create the window!");
   }
-  SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left,
-               rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);
+  SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);
 
   // needed if we want to access it from the callback method (message handler)
   window = this;

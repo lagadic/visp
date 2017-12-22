@@ -66,8 +66,10 @@ information see http://www.comedi.org.
 call to the function blocks until the whole acquisition has finished.
 
   The following example shows how to get single measures from an ATI F/T
-device each 10 ms (100 Hz). \code #include <visp3/core/vpTime.h> #include
-<visp3/sensor/vpForceTorqueAtiSensor.h>
+device each 10 ms (100 Hz).
+\code
+#include <visp3/core/vpTime.h>
+#include <visp3/sensor/vpForceTorqueAtiSensor.h>
 
 int main(int argc, char** argv)
 {
@@ -106,21 +108,17 @@ public:
 
   void open();
 
-  void setCalibrationFile(const std::string &calibfile,
-                          unsigned short index = 1);
+  void setCalibrationFile(const std::string &calibfile, unsigned short index = 1);
   void unbias();
 
-  friend VISP_EXPORT std::ostream &
-  operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati);
 
 protected:
-  std::string m_calibfile; //!< ATI calibration file FT*.cal
-  unsigned short m_index;  //!< Index of calibration in file (default: 1)
-  unsigned short
-      m_num_axes; //!< Number of axis or gages available from the sensor
-  unsigned short
-      m_num_channels;        //!< Number of channels available from the sensor
-  vpColVector m_sample_bias; //!< Sample value used for bias
+  std::string m_calibfile;       //!< ATI calibration file FT*.cal
+  unsigned short m_index;        //!< Index of calibration in file (default: 1)
+  unsigned short m_num_axes;     //!< Number of axis or gages available from the sensor
+  unsigned short m_num_channels; //!< Number of channels available from the sensor
+  vpColVector m_sample_bias;     //!< Sample value used for bias
 };
 
 #endif

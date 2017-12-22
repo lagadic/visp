@@ -67,8 +67,8 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string &ipath,
-           const std::string &opath, const std::string &user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user)
 {
   fprintf(stdout, "\n\
 Read and write PPM images on the disk. Also test exceptions.\n\
@@ -114,8 +114,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, const std::string &user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user)
 {
   const char *optarg_;
   int c;
@@ -207,8 +206,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option "
-                  << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
         exit(-1);
       }
     }
@@ -219,8 +217,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -229,13 +226,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -259,8 +253,7 @@ int main(int argc, const char **argv)
     // Try to load a non existing image (test for exceptions)
     try {
       // Load a non existing grey image
-      filename =
-          vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
+      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename);
     } catch (vpImageException &e) {
@@ -270,13 +263,11 @@ int main(int argc, const char **argv)
 
     // Try to write an image to a non existing directory
     try {
-      filename = vpIoTools::createFilePath(
-          opath, "directory-that-does-not-exist/Klimt.ppm");
+      filename = vpIoTools::createFilePath(opath, "directory-that-does-not-exist/Klimt.ppm");
       std::cout << "Write image: " << filename << std::endl;
       vpImageIo::write(I, filename);
     } catch (vpException &e) {
-      std::cout << "Catch an exception due to a non existing file: " << e
-                << std::endl;
+      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -295,24 +286,20 @@ int main(int argc, const char **argv)
     try {
       // Try to load a non existing image (test for exceptions)
       // Load a non existing color image
-      filename =
-          vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
+      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(Irgba, filename);
     } catch (vpException &e) {
-      std::cout << "Catch an exception due to a non existing file: " << e
-                << std::endl;
+      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
     }
 
     try {
       // Try to write a color image to a non existing directory
-      filename = vpIoTools::createFilePath(
-          opath, "directory-that-does-not-exist/Klimt.ppm");
+      filename = vpIoTools::createFilePath(opath, "directory-that-does-not-exist/Klimt.ppm");
       std::cout << "Write image: " << filename << std::endl;
       vpImageIo::write(Irgba, filename);
     } catch (vpException &e) {
-      std::cout << "Catch an exception due to a non existing file: " << e
-                << std::endl;
+      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
     }
     return 0;
   } catch (vpException &e) {

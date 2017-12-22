@@ -52,19 +52,14 @@ const int vpDisplayWin32::MAX_INIT_DELAY = 5000;
 void vpCreateWindow(threadParam *param)
 {
   // char* title = param->title;
-  (param->vpDisp)
-      ->window.initWindow(param->title.c_str(), param->x, param->y, param->w,
-                          param->h);
+  (param->vpDisp)->window.initWindow(param->title.c_str(), param->x, param->y, param->w, param->h);
   delete param;
 }
 
 /*!
   Constructor.
 */
-vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend)
-  : iStatus(false), window(rend)
-{
-}
+vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend) : iStatus(false), window(rend) {}
 
 /*!
   Destructor.
@@ -81,13 +76,11 @@ vpDisplayWin32::~vpDisplayWin32() { closeDisplay(); }
   \param title : Window title.
 
 */
-void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y,
-                          const std::string &title)
+void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
     vpERROR_TRACE("Image not initialized ");
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "Image not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
   setScale(m_scaleType, I.getWidth(), I.getHeight());
@@ -107,13 +100,11 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I, int x, int y,
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-void vpDisplayWin32::init(vpImage<vpRGBa> &I, int x, int y,
-                          const std::string &title)
+void vpDisplayWin32::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
     vpERROR_TRACE("Image not initialized ");
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "Image not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
   setScale(m_scaleType, I.getWidth(), I.getHeight());
@@ -133,8 +124,7 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I, int x, int y,
   \param title : Window title.
 
 */
-void vpDisplayWin32::init(unsigned int width, unsigned int height, int x,
-                          int y, const std::string &title)
+void vpDisplayWin32::init(unsigned int width, unsigned int height, int x, int y, const std::string &title)
 {
   if (!title.empty())
     m_title = title;
@@ -157,8 +147,7 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height, int x,
   param->title = this->m_title;
 
   // creates the window in a separate thread
-  hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow,
-                         param, 0, &threadId);
+  hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow, param, 0, &threadId);
 
   // the initialization worked
   iStatus = (hThread != (HANDLE)NULL);
@@ -176,8 +165,7 @@ void vpDisplayWin32::waitForInit()
   if (!window.isInitialized()) {
     // wait
     if (WAIT_OBJECT_0 != WaitForSingleObject(window.semaInit, MAX_INIT_DELAY))
-      throw(vpDisplayException(vpDisplayException::notInitializedError,
-                               "Window not initialized"));
+      throw(vpDisplayException(vpDisplayException::notInitializedError, "Window not initialized"));
     // problem : the window is not initialized
   }
 }
@@ -221,9 +209,7 @@ void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayWin32::displayImageROI(const vpImage<vpRGBa> &I,
-                                     const vpImagePoint &iP,
-                                     const unsigned int width,
+void vpDisplayWin32::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
                                      const unsigned int height)
 {
   // waits if the window is not initialized
@@ -274,9 +260,7 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayWin32::displayImageROI(const vpImage<unsigned char> &I,
-                                     const vpImagePoint &iP,
-                                     const unsigned int width,
+void vpDisplayWin32::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
                                      const unsigned int height)
 {
   // waits if the window is not initialized
@@ -385,9 +369,7 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip, bool blocking)
   button is pressed, the location of the mouse pointer is updated in
   \e ip.
 */
-bool vpDisplayWin32::getClick(vpImagePoint &ip,
-                              vpMouseButton::vpMouseButtonType &button,
-                              bool blocking)
+bool vpDisplayWin32::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
   // wait if the window is not initialized
   waitForInit();
@@ -435,9 +417,7 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip,
   \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
 
 */
-bool vpDisplayWin32::getClickUp(vpImagePoint &ip,
-                                vpMouseButton::vpMouseButtonType &button,
-                                bool blocking)
+bool vpDisplayWin32::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
   // wait if the window is not initialized
   waitForInit();
@@ -609,8 +589,7 @@ void vpDisplayWin32::setWindowPosition(int winx, int winy)
 
   // cahange the window position only
   SetWindowPos(window.hWnd, HWND_TOP, winx, winy, 0, 0,
-               SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER |
-                   SWP_NOSIZE);
+               SWP_ASYNCWINDOWPOS | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
 }
 
 /*!
@@ -630,10 +609,7 @@ void vpDisplayWin32::setTitle(const std::string &windowtitle)
   \param fontname : Name of the font.
  */
 
-void vpDisplayWin32::setFont(const std::string & /* fontname */)
-{
-  vpERROR_TRACE("Not yet implemented");
-}
+void vpDisplayWin32::setFont(const std::string & /* fontname */) { vpERROR_TRACE("Not yet implemented"); }
 
 /*!
   \brief flush the Win32 buffer
@@ -654,9 +630,7 @@ void vpDisplayWin32::flushDisplay()
   It's necessary to use this function to see the results of any drawing
 
 */
-void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP,
-                                     const unsigned int width,
-                                     const unsigned int height)
+void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
   // waits if the window is not initialized
   waitForInit();
@@ -684,17 +658,14 @@ void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP,
   \param color : Point color.
   \param thickness : Point thickness.
 */
-void vpDisplayWin32::displayPoint(const vpImagePoint &ip,
-                                  const vpColor &color,
-                                  unsigned int thickness)
+void vpDisplayWin32::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
   // wait if the window is not initialized
   waitForInit();
   if (thickness == 1) {
     window.renderer->setPixel(ip, color);
   } else {
-    window.renderer->drawRect(ip, thickness * m_scale, thickness * m_scale,
-                              color, true, 1);
+    window.renderer->drawRect(ip, thickness * m_scale, thickness * m_scale, color, true, 1);
   }
 }
 
@@ -704,9 +675,8 @@ void vpDisplayWin32::displayPoint(const vpImagePoint &ip,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplayWin32::displayLine(const vpImagePoint &ip1,
-                                 const vpImagePoint &ip2,
-                                 const vpColor &color, unsigned int thickness)
+void vpDisplayWin32::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                                 unsigned int thickness)
 {
   // wait if the window is not initialized
   waitForInit();
@@ -722,9 +692,7 @@ void vpDisplayWin32::displayLine(const vpImagePoint &ip1,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplayWin32::displayDotLine(const vpImagePoint &ip1,
-                                    const vpImagePoint &ip2,
-                                    const vpColor &color,
+void vpDisplayWin32::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                                     unsigned int thickness)
 {
   // wait if the window is not initialized
@@ -745,10 +713,8 @@ void vpDisplayWin32::displayDotLine(const vpImagePoint &ip1,
 
   \warning The thickness can not be set if the display uses the d3d library.
 */
-void vpDisplayWin32::displayRectangle(const vpImagePoint &topLeft,
-                                      unsigned int width, unsigned int height,
-                                      const vpColor &color, bool fill,
-                                      unsigned int thickness)
+void vpDisplayWin32::displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height,
+                                      const vpColor &color, bool fill, unsigned int thickness)
 {
   // wait if the window is not initialized
   waitForInit();
@@ -767,17 +733,13 @@ void vpDisplayWin32::displayRectangle(const vpImagePoint &topLeft,
 
   \warning The thickness can not be set if the display uses the d3d library.
 */
-void vpDisplayWin32::displayRectangle(const vpImagePoint &topLeft,
-                                      const vpImagePoint &bottomRight,
-                                      const vpColor &color, bool fill,
-                                      unsigned int thickness)
+void vpDisplayWin32::displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
+                                      const vpColor &color, bool fill, unsigned int thickness)
 {
   // wait if the window is not initialized
   waitForInit();
-  unsigned int width =
-      static_cast<unsigned int>(bottomRight.get_j() - topLeft.get_j());
-  unsigned int height =
-      static_cast<unsigned int>(bottomRight.get_i() - topLeft.get_i());
+  unsigned int width = static_cast<unsigned int>(bottomRight.get_j() - topLeft.get_j());
+  unsigned int height = static_cast<unsigned int>(bottomRight.get_i() - topLeft.get_i());
   window.renderer->drawRect(topLeft, width, height, color, fill, thickness);
 }
 
@@ -792,19 +754,15 @@ void vpDisplayWin32::displayRectangle(const vpImagePoint &topLeft,
 
   \warning The thickness can not be set if the display uses the d3d library.
 */
-void vpDisplayWin32::displayRectangle(const vpRect &rectangle,
-                                      const vpColor &color, bool fill,
-                                      unsigned int thickness)
+void vpDisplayWin32::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   // wait if the window is not initialized
   waitForInit();
   vpImagePoint topLeft;
   topLeft.set_i(rectangle.getTop());
   topLeft.set_j(rectangle.getLeft());
-  window.renderer->drawRect(topLeft,
-                            static_cast<unsigned int>(rectangle.getWidth()),
-                            static_cast<unsigned int>(rectangle.getHeight()),
-                            color, fill, thickness);
+  window.renderer->drawRect(topLeft, static_cast<unsigned int>(rectangle.getWidth()),
+                            static_cast<unsigned int>(rectangle.getHeight()), color, fill, thickness);
 }
 
 /*!
@@ -816,9 +774,8 @@ void vpDisplayWin32::displayRectangle(const vpRect &rectangle,
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
-void vpDisplayWin32::displayCircle(const vpImagePoint &center,
-                                   unsigned int radius, const vpColor &color,
-                                   bool fill, unsigned int thickness)
+void vpDisplayWin32::displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
+                                   unsigned int thickness)
 {
   // wait if the window is not initialized
   waitForInit();
@@ -831,8 +788,7 @@ void vpDisplayWin32::displayCircle(const vpImagePoint &center,
   \param text : The string to display
   \param color : The text's color
 */
-void vpDisplayWin32::displayCharString(const vpImagePoint &ip,
-                                       const char *text, const vpColor &color)
+void vpDisplayWin32::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
 {
   // wait if the window is not initialized
   waitForInit();
@@ -846,8 +802,7 @@ void vpDisplayWin32::displayCharString(const vpImagePoint &ip,
   \param color : Cross color.
   \param thickness : Thickness of the lines used to display the cross.
 */
-void vpDisplayWin32::displayCross(const vpImagePoint &ip, unsigned int size,
-                                  const vpColor &color,
+void vpDisplayWin32::displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color,
                                   unsigned int thickness)
 {
   // wait if the window is not initialized
@@ -862,10 +817,8 @@ void vpDisplayWin32::displayCross(const vpImagePoint &ip, unsigned int size,
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplayWin32::displayArrow(const vpImagePoint &ip1,
-                                  const vpImagePoint &ip2,
-                                  const vpColor &color, unsigned int w,
-                                  unsigned int h, unsigned int thickness)
+void vpDisplayWin32::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                                  unsigned int w, unsigned int h, unsigned int thickness)
 
 {
   // wait if the window is not initialized

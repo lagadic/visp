@@ -128,27 +128,27 @@
   void
   vpDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   {
-    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != NULL;  tmpNode
-  = tmpNode->next)  { if(tmpNode->type == XML_ELEMENT_NODE){
+    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != NULL; tmpNode = tmpNode->next) {
+      if(tmpNode->type == XML_ELEMENT_NODE) {
 
-        std::map<std::string, int>::iterator iter=
-  this->nodeMap.find((char*)tmpNode->name); if(iter == nodeMap.end()){
+        std::map<std::string, int>::iterator iter = this->nodeMap.find((char*)tmpNode->name);
+        if(iter == nodeMap.end()) {
           continue;
         }
 
         switch (iter->second){
         case range:
-                this->m_range = xmlReadIntChild(doc, tmpNode);
-                break;
+          this->m_range = xmlReadIntChild(doc, tmpNode);
+          break;
         case step:
-                this->m_step = xmlReadIntChild(doc, tmpNode);
-                break;
+          this->m_step = xmlReadIntChild(doc, tmpNode);
+          break;
         case size_filter:
-                this->m_size_filter = xmlReadIntChild(doc, tmpNode);
-                break;
+          this->m_size_filter = xmlReadIntChild(doc, tmpNode);
+          break;
         default:
-                std::cout << "problem in the readMainClass (" << iter->second
-  << " , " << iter->first << " )" << std::endl; break;
+          std::cout << "problem in the readMainClass (" << iter->second
+                    << " , " << iter->first << " )" << std::endl; break;
         }
       }
     }
@@ -210,19 +210,13 @@ protected:
   std::string xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node);
   unsigned int xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node);
 
-  void xmlWriteBoolChild(xmlNodePtr node, const char *label,
-                         const bool value);
-  void xmlWriteCharChild(xmlNodePtr node, const char *label,
-                         const char *value);
-  void xmlWriteDoubleChild(xmlNodePtr node, const char *label,
-                           const double value);
-  void xmlWriteFloatChild(xmlNodePtr node, const char *label,
-                          const float value);
+  void xmlWriteBoolChild(xmlNodePtr node, const char *label, const bool value);
+  void xmlWriteCharChild(xmlNodePtr node, const char *label, const char *value);
+  void xmlWriteDoubleChild(xmlNodePtr node, const char *label, const double value);
+  void xmlWriteFloatChild(xmlNodePtr node, const char *label, const float value);
   void xmlWriteIntChild(xmlNodePtr node, const char *label, const int value);
-  void xmlWriteStringChild(xmlNodePtr node, const char *label,
-                           const std::string &value);
-  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label,
-                                const unsigned int value);
+  void xmlWriteStringChild(xmlNodePtr node, const char *label, const std::string &value);
+  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, const unsigned int value);
   //@}
 
 protected:
@@ -244,8 +238,7 @@ public:
   virtual ~vpXmlParser();
 
   /* virtual */ void parse(const std::string &filename);
-  /* virtual */ void save(const std::string &filename,
-                          const bool append = false);
+  /* virtual */ void save(const std::string &filename, const bool append = false);
 
   /*!
     Set the map describing the data to parse. This map stores the name of each

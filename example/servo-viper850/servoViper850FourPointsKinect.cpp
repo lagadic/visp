@@ -56,8 +56,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if (defined(VISP_HAVE_VIPER850) &&                                          \
-     defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES))
+#if (defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES))
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -109,8 +108,7 @@
   Lagrange or Dementhon methods.
 
 */
-void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
-                  vpCameraParameters cam, vpHomogeneousMatrix &cMo,
+void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters cam, vpHomogeneousMatrix &cMo,
                   vpTranslationVector &cto, vpRxyzVector &cro, bool init)
 {
   vpHomogeneousMatrix cMo_dementhon; // computed pose with dementhon
@@ -124,7 +122,7 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
     cog = dot[i].getCog();
     vpPixelMeterConversion::convertPoint(cam, cog, x,
                                          y); // pixel to meter conversion
-    point[i].set_x(x); // projection perspective          p
+    point[i].set_x(x);                       // projection perspective          p
     point[i].set_y(y);
     pose.addPoint(point[i]);
   }
@@ -190,8 +188,7 @@ int main()
     vpRobotViper850 robot;
     // Load the end-effector to camera frame transformation obtained
     // using a camera intrinsic model with distortion
-    vpCameraParameters::vpCameraParametersProjType projModel =
-        vpCameraParameters::perspectiveProjWithDistortion;
+    vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
     robot.init(vpRobotViper850::TOOL_GENERIC_CAMERA, projModel);
 
     vpServo task;
@@ -226,25 +223,18 @@ int main()
     vpDisplay::flush(I);
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera space"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera space" << std::endl;
     std::cout << " Use of the Viper850 robot " << std::endl;
-    std::cout << " task : servo 4 points on a square with dimention " << L
-              << " meters" << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << " task : servo 4 points on a square with dimention " << L << " meters" << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     vpDot2 dot[4];
     vpImagePoint cog;
 
-    std::cout
-        << "Click on the 4 dots clockwise starting from upper/left dot..."
-        << std::endl;
+    std::cout << "Click on the 4 dots clockwise starting from upper/left dot..." << std::endl;
 
     for (i = 0; i < 4; i++) {
       dot[i].initTracking(I);
@@ -264,8 +254,7 @@ int main()
     // Sets the current position of the visual feature
     vpFeaturePoint p[4];
     for (i = 0; i < 4; i++)
-      vpFeatureBuilder::create(
-          p[i], cam, dot[i]); // retrieve x,y  of the vpFeaturePoint structure
+      vpFeatureBuilder::create(p[i], cam, dot[i]); // retrieve x,y  of the vpFeaturePoint structure
 
     // Set the position of the square target in a frame which origin is
     // centered in the middle of the square
@@ -370,8 +359,7 @@ int main()
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to joint translation velocities in m/s
       // v[3], v[4], v[5] correspond to joint rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
-           << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -381,8 +369,7 @@ int main()
       //   velocities in m/s
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
-      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3]
-           << " " << qvel[4] << " " << qvel[5] << " ";
+      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -392,8 +379,7 @@ int main()
       //   positions in m
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
-      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4]
-           << " " << q[5] << " ";
+      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the 4 feature points. For each feature
       // point, we have 2 errors (along x and y axis).  This error is

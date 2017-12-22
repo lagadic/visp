@@ -57,17 +57,12 @@ namespace
 class ArithmFunctor
 {
 public:
-  ArithmFunctor(const vpColVector &v1, const vpColVector &v2,
-                const unsigned int start, const unsigned int end)
-    : m_add(), m_mul(), m_v1(v1), m_v2(v2), m_indexStart(start),
-      m_indexEnd(end)
+  ArithmFunctor(const vpColVector &v1, const vpColVector &v2, const unsigned int start, const unsigned int end)
+    : m_add(), m_mul(), m_v1(v1), m_v2(v2), m_indexStart(start), m_indexEnd(end)
   {
   }
 
-  ArithmFunctor()
-    : m_add(), m_mul(), m_v1(), m_v2(), m_indexStart(0), m_indexEnd(0)
-  {
-  }
+  ArithmFunctor() : m_add(), m_mul(), m_v1(), m_v2(), m_indexStart(0), m_indexEnd(0) {}
 
   void operator()() { computeImpl(); }
 
@@ -90,8 +85,7 @@ private:
 
     // to simulate a long computation
     for (int iter = 0; iter < 100; iter++) {
-      for (unsigned int i = m_indexStart, cpt = 0; i < m_indexEnd;
-           i++, cpt++) {
+      for (unsigned int i = m_indexStart, cpt = 0; i < m_indexEnd; i++, cpt++) {
         m_add[cpt] = m_v1[i] + m_v2[i];
         m_mul[cpt] = m_v1[i] * m_v2[i];
       }
@@ -119,8 +113,7 @@ void insert(vpColVector &v1, const vpColVector &v2)
   }
 }
 
-bool check(const vpColVector &v1, const vpColVector &v2,
-           const vpColVector &res_add, const vpColVector &res_mul)
+bool check(const vpColVector &v1, const vpColVector &v2, const vpColVector &res_add, const vpColVector &res_mul)
 {
   double add = 0.0, mul = 0.0;
   for (unsigned int i = 0; i < v1.size(); i++) {
@@ -135,14 +128,12 @@ bool check(const vpColVector &v1, const vpColVector &v2,
   std::cout << "mul=" << mul << " ; mul_th=" << mul_th << std::endl;
 
   if (!vpMath::equal(add, add_th, std::numeric_limits<double>::epsilon())) {
-    std::cerr << "Problem: add=" << add << " ; add_th=" << add_th
-              << std::endl;
+    std::cerr << "Problem: add=" << add << " ; add_th=" << add_th << std::endl;
     return false;
   }
 
   if (!vpMath::equal(mul, mul_th, std::numeric_limits<double>::epsilon())) {
-    std::cerr << "Problem: mul=" << mul << " ; mul_th=" << mul_th
-              << std::endl;
+    std::cerr << "Problem: mul=" << mul << " ; mul_th=" << mul_th << std::endl;
     return false;
   }
 
@@ -181,8 +172,7 @@ int main()
       }
 
       std::cout << "Create thread: " << i << std::endl;
-      threads[i].create((vpThread::Fn)arithmThread,
-                        (vpThread::Args)&functors[i]);
+      threads[i].create((vpThread::Fn)arithmThread, (vpThread::Args)&functors[i]);
     }
     //! [functor-thread-example threadCreation]
 
@@ -213,13 +203,10 @@ int main()
 
 int main()
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..."
-            << std::endl;
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
 #else
-  std::cout << "Multi-threading seems not supported on this platform"
-            << std::endl;
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

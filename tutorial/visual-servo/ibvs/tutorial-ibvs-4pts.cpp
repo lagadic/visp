@@ -7,8 +7,7 @@ int main()
 {
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10),
-                            vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
     vpPoint point[4];
     point[0].setWorldCoordinates(-0.1, -0.1, 0);

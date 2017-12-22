@@ -106,8 +106,7 @@ void fprintf_vwstack(FILE *fp, char *argv)
       return;
   }
   if (argv == NULL || strcmp(argv, "window") == 0) {
-    fprintf(fp, "(window\t%.3f\t%.3f\t%.3f\t%.3f)\n", sp->vwd.umin,
-            sp->vwd.umax, sp->vwd.vmin, sp->vwd.vmax);
+    fprintf(fp, "(window\t%.3f\t%.3f\t%.3f\t%.3f)\n", sp->vwd.umin, sp->vwd.umax, sp->vwd.vmin, sp->vwd.vmax);
     if (argv != NULL)
       return;
   }
@@ -197,8 +196,7 @@ void add_vwstack(const char *path, ...)
   argv = va_arg(ap, char *);
   if (strcmp(argv, "cop") == 0) {
     /* initialise le centre de projection	*/
-    SET_COORD3(sp->cop, (float)va_arg(ap, double), (float)va_arg(ap, double),
-               (float)va_arg(ap, double));
+    SET_COORD3(sp->cop, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
   } else if (strcmp(argv, "depth") == 0) {
     /* initialise les distances des plans de decoupage	*/
     sp->depth.front = (float)va_arg(ap, double);
@@ -223,8 +221,7 @@ void add_vwstack(const char *path, ...)
     }
   } else if (strcmp(argv, "vrp") == 0) {
     /* initialise le vecteur de reference	*/
-    SET_COORD3(sp->vrp, (float)va_arg(ap, double), (float)va_arg(ap, double),
-               (float)va_arg(ap, double));
+    SET_COORD3(sp->vrp, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
   } else if (strcmp(argv, "vup") == 0) {
     /* initialise le vecteur haut du plan	*/
     float x = (float)va_arg(ap, double);

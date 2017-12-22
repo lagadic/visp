@@ -83,8 +83,7 @@
 #if defined(VISP_HAVE_PIONEER) && defined(VISP_HAVE_BICLOPS)
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) ||                  \
-    defined(VISP_HAVE_CMU1394)
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   try {
     vpImage<unsigned char> I; // Create a gray level image container
@@ -93,11 +92,10 @@ int main(int argc, char **argv)
     // surface
     // double coef = 0.9/14.85;  // At 0.9m, the blob has a surface of 14.85
     // (Logitec sphere)
-    double coef =
-        1.2 / 13.0;   // At 1m, the blob has a surface of 11.3 (AVT Pike 032C)
-    double L = 0.21;  // 3D horizontal segment length
-    double Z_d = 0.8; // Desired distance along Z between camera and segment
-    bool normalized = true; // segment normilized features are used
+    double coef = 1.2 / 13.0; // At 1m, the blob has a surface of 11.3 (AVT Pike 032C)
+    double L = 0.21;          // 3D horizontal segment length
+    double Z_d = 0.8;         // Desired distance along Z between camera and segment
+    bool normalized = true;   // segment normilized features are used
 
     // Warning: To have a non singular task of rank 3, Y_d should be different
     // from 0 so that the optical axis doesn't intersect the horizontal
@@ -105,8 +103,7 @@ int main(int argc, char **argv)
     double Y_d = -.11; // Desired distance along Y between camera and segment.
     vpColVector qm(2); // Measured head position
     qm = 0;
-    double qm_pan =
-        0; // Measured pan position (tilt is not handled in that example)
+    double qm_pan = 0; // Measured pan position (tilt is not handled in that example)
 
 #ifdef USE_REAL_ROBOT
     // Initialize the biclops head
@@ -217,10 +214,8 @@ int main(int argc, char **argv)
     for (int i = 0; i < 2; i++) {
       dot[i].setGraphics(true);
       dot[i].setComputeMoments(true);
-      dot[i].setEllipsoidShapePrecision(
-          0.); // to track a blob without any constraint on the shape
-      dot[i].setGrayLevelPrecision(
-          0.9); // to set the blob gray level bounds for binarisation
+      dot[i].setEllipsoidShapePrecision(0.);       // to track a blob without any constraint on the shape
+      dot[i].setGrayLevelPrecision(0.9);           // to set the blob gray level bounds for binarisation
       dot[i].setEllipsoidBadPointsPercentage(0.5); // to be accept 50% of bad
                                                    // inner and outside points
                                                    // with bad gray level
@@ -284,9 +279,7 @@ int main(int argc, char **argv)
     s_segment.setZ2(P[1].get_Z());
 
     task.addFeature(s_segment, s_segment_d,
-                    vpFeatureSegment::selectXc() |
-                        vpFeatureSegment::selectL() |
-                        vpFeatureSegment::selectAlpha());
+                    vpFeatureSegment::selectXc() | vpFeatureSegment::selectL() | vpFeatureSegment::selectAlpha());
 
 #ifdef USE_PLOTTER
     // Create a window (500 by 500) at position (700, 10) with two graphics
@@ -371,11 +364,10 @@ int main(int argc, char **argv)
         //      task.getInteractionMatrix() * task.get_cVe() * task.get_eJe()
         //      << std::endl; task.print() ;
         if (task.getTaskRank() != 3)
-          std::cout << "Warning: task is of rank " << task.getTaskRank()
-                    << std::endl;
+          std::cout << "Warning: task is of rank " << task.getTaskRank() << std::endl;
 
 #ifdef USE_PLOTTER
-        graph.plot(0, iter, v); // plot velocities applied to the robot
+        graph.plot(0, iter, v);               // plot velocities applied to the robot
         graph.plot(1, iter, task.getError()); // plot error vector
 #endif
 
@@ -388,11 +380,9 @@ int main(int argc, char **argv)
         v_biclops[0] = v[2];
         v_biclops[1] = 0;
 
-        std::cout << "Send velocity to the pionner: " << v_pioneer[0]
-                  << " m/s " << vpMath::deg(v_pioneer[1]) << " deg/s"
-                  << std::endl;
-        std::cout << "Send velocity to the biclops head: "
-                  << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
+        std::cout << "Send velocity to the pionner: " << v_pioneer[0] << " m/s " << vpMath::deg(v_pioneer[1])
+                  << " deg/s" << std::endl;
+        std::cout << "Send velocity to the biclops head: " << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
 
         pioneer.setVelocity(vpRobot::REFERENCE_FRAME, v_pioneer);
         biclops.setVelocity(vpRobot::ARTICULAR_FRAME, v_biclops);
@@ -400,8 +390,7 @@ int main(int argc, char **argv)
 
         // Draw a vertical line which corresponds to the desired x coordinate
         // of the dot cog
-        vpDisplay::displayLine(I, 0, cam.get_u0(), 479, cam.get_u0(),
-                               vpColor::red);
+        vpDisplay::displayLine(I, 0, cam.get_u0(), 479, cam.get_u0(), vpColor::red);
         vpDisplay::flush(I);
 
         // A click in the viewer to exit

@@ -57,10 +57,7 @@ unsigned int vpDirectShowGrabber::getWidth() { return grabber->getWidth(); }
         Constructor.
         Initializes COM.
 */
-vpDirectShowGrabber::vpDirectShowGrabber()
-{
-  grabber = new vpDirectShowGrabberImpl();
-}
+vpDirectShowGrabber::vpDirectShowGrabber() { grabber = new vpDirectShowGrabberImpl(); }
 
 /*!
         Destructor
@@ -92,10 +89,7 @@ void vpDirectShowGrabber::open(vpImage<vpRGBa> &I) { grabber->open(); }
 
         \exception otherError Can't grab the frame
 */
-void vpDirectShowGrabber::acquire(vpImage<unsigned char> &I)
-{
-  grabber->acquire(I);
-}
+void vpDirectShowGrabber::acquire(vpImage<unsigned char> &I) { grabber->acquire(I); }
 
 /*!
         Grabs a rgba image from the video stream.
@@ -116,10 +110,7 @@ void vpDirectShowGrabber::close() { grabber->close(); }
         Gets the number of capture devices
         \return the number of capture devices
 */
-unsigned int vpDirectShowGrabber::getDeviceNumber()
-{
-  return grabber->getDeviceNumber();
-}
+unsigned int vpDirectShowGrabber::getDeviceNumber() { return grabber->getDeviceNumber(); }
 
 /*!
         Set the device (or camera) from which images will be grabbed.
@@ -127,10 +118,7 @@ unsigned int vpDirectShowGrabber::getDeviceNumber()
 
         \return true if the device is set successfully, false otherwise.
 */
-bool vpDirectShowGrabber::setDevice(unsigned int id)
-{
-  return grabber->setDevice(id);
-}
+bool vpDirectShowGrabber::setDevice(unsigned int id) { return grabber->setDevice(id); }
 
 /*!
         Displays the list of devices on the standard output
@@ -143,8 +131,7 @@ void vpDirectShowGrabber::displayDevices() { grabber->displayDevices(); }
 
         \return true if successful
 */
-bool vpDirectShowGrabber::setImageSize(unsigned int width,
-                                       unsigned int height)
+bool vpDirectShowGrabber::setImageSize(unsigned int width, unsigned int height)
 {
   return grabber->setImageSize(width, height);
 }
@@ -154,10 +141,7 @@ bool vpDirectShowGrabber::setImageSize(unsigned int width,
 
         \return true if successful
 */
-bool vpDirectShowGrabber::setFramerate(double framerate)
-{
-  return grabber->setFramerate(framerate);
-}
+bool vpDirectShowGrabber::setFramerate(double framerate) { return grabber->setFramerate(framerate); }
 /*!
         Set capture format
         \param width : Image width in pixel
@@ -166,8 +150,7 @@ bool vpDirectShowGrabber::setFramerate(double framerate)
 
         \return true if successful
 */
-bool vpDirectShowGrabber::setFormat(unsigned int width, unsigned int height,
-                                    double framerate)
+bool vpDirectShowGrabber::setFormat(unsigned int width, unsigned int height, double framerate)
 {
   return grabber->setFormat(width, height, framerate);
 }
@@ -178,8 +161,7 @@ bool vpDirectShowGrabber::setFormat(unsigned int width, unsigned int height,
    pixel \param framerate : Pointer to a variable that receives the framerate
    in fps
 */
-void vpDirectShowGrabber::getFormat(unsigned int &width, unsigned int &height,
-                                    double &framerate)
+void vpDirectShowGrabber::getFormat(unsigned int &width, unsigned int &height, double &framerate)
 {
   grabber->getFormat(width, height, framerate);
 }
@@ -189,10 +171,7 @@ void vpDirectShowGrabber::getFormat(unsigned int &width, unsigned int &height,
 
         \return true if successful
 */
-bool vpDirectShowGrabber::getStreamCapabilities()
-{
-  return grabber->getStreamCapabilities();
-}
+bool vpDirectShowGrabber::getStreamCapabilities() { return grabber->getStreamCapabilities(); }
 
 /*!
         Set capture MediaType
@@ -201,10 +180,7 @@ bool vpDirectShowGrabber::getStreamCapabilities()
 
         \return true if successful
 */
-bool vpDirectShowGrabber::setMediaType(int mediaTypeID)
-{
-  return grabber->setMediaType(mediaTypeID);
-}
+bool vpDirectShowGrabber::setMediaType(int mediaTypeID) { return grabber->setMediaType(mediaTypeID); }
 
 /*
         Get current capture MediaType

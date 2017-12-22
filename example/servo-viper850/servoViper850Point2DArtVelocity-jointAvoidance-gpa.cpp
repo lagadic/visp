@@ -56,8 +56,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if (defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394) &&             \
-     defined(VISP_HAVE_DISPLAY))
+#if (defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_DISPLAY))
 
 #include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpDisplay.h>
@@ -199,8 +198,7 @@ int main()
 
     // sets the current position of the visual feature
     vpFeaturePoint p;
-    vpFeatureBuilder::create(
-        p, cam, dot); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p, cam, dot); // retrieve x,y and Z of the vpPoint structure
 
     p.set_Z(1);
     // sets the desired position of the visual feature
@@ -315,10 +313,8 @@ int main()
           data[i] *= 2;
         }
         unsigned int joint = 2;
-        data[6] =
-            2 * (tQmin[joint] - Qmiddle[joint]) / (Qmax[joint] - Qmin[joint]);
-        data[7] =
-            2 * (tQmax[joint] - Qmiddle[joint]) / (Qmax[joint] - Qmin[joint]);
+        data[6] = 2 * (tQmin[joint] - Qmiddle[joint]) / (Qmax[joint] - Qmin[joint]);
+        data[7] = 2 * (tQmax[joint] - Qmiddle[joint]) / (Qmax[joint] - Qmin[joint]);
         data[8] = -1;
         data[9] = 1;
         plot.plot(0, iter, data);   // plot q, Qmin, Qmax, tQmin, tQmax

@@ -38,8 +38,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) &&                                         \
-    ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 
@@ -51,20 +50,19 @@
   Basic constructor
 */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
-  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0),
-    robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
+  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
+    artCoord(), artVel(), velocity(),
 #if defined(_WIN32)
 #elif defined(VISP_HAVE_PTHREAD)
     thread(), attr(),
 #endif
-    mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(),
-    mutex_display(), displayBusy(false), robotStop(false), jointLimit(false),
-    jointLimitArt(false), singularityManagement(true), cameraParam(),
+    mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(), displayBusy(false),
+    robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true), cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
     display(),
 #endif
-    displayType(MODEL_3D), displayAllowed(true),
-    constantSamplingTimeMode(false), setVelocityCalled(false), verbose_(false)
+    displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false), setVelocityCalled(false),
+    verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
@@ -83,21 +81,20 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   \param do_display : When true, enables the display of the external view.
   */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
-  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0),
-    robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
+  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
+    artCoord(), artVel(), velocity(),
 #if defined(_WIN32)
 #elif defined(VISP_HAVE_PTHREAD)
     thread(), attr(),
 #endif
-    /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(),
-    mutex_velocity(), mutex_display(), displayBusy(false), robotStop(false),
-    jointLimit(false), jointLimitArt(false), singularityManagement(true),
+    /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
+    displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
     cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
     display(),
 #endif
-    displayType(MODEL_3D), displayAllowed(do_display),
-    constantSamplingTimeMode(false), setVelocityCalled(false), verbose_(false)
+    displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false), setVelocityCalled(false),
+    verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
@@ -132,8 +129,7 @@ vpRobotWireFrameSimulator::~vpRobotWireFrameSimulator() {}
   position. \param desired_object : Type of scene used to display the object
   at the desired pose (in the internal view).
 */
-void vpRobotWireFrameSimulator::initScene(
-    const vpSceneObject &obj, const vpSceneDesiredObject &desired_object)
+void vpRobotWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desired_object)
 {
   if (displayCamera) {
     free_Bound_scene(&(this->camera));
@@ -156,8 +152,7 @@ void vpRobotWireFrameSimulator::initScene(
   \param obj : Path to the scene file you want to use.
   \param desired_object : Path to the scene file you want to use.
 */
-void vpRobotWireFrameSimulator::initScene(const char *obj,
-                                          const char *desired_object)
+void vpRobotWireFrameSimulator::initScene(const char *obj, const char *desired_object)
 {
   if (displayCamera) {
     free_Bound_scene(&(this->camera));
@@ -236,17 +231,13 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I_)
   double v;
   // if(px_int != 1 && py_int != 1)
   // we assume px_int and py_int > 0
-  if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) *
-                                    std::numeric_limits<double>::epsilon()) &&
-      (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) *
-                                   std::numeric_limits<double>::epsilon())) {
+  if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
+      (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I_.getWidth() / (2 * px_int);
     v = (double)I_.getHeight() / (2 * py_int);
   } else {
-    u = (double)I_.getWidth() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float o44c[4][4], o44cd[4][4], x, y, z;
@@ -313,17 +304,13 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I_)
   double v;
   // if(px_int != 1 && py_int != 1)
   // we assume px_int and py_int > 0
-  if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) *
-                                    std::numeric_limits<double>::epsilon()) &&
-      (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) *
-                                   std::numeric_limits<double>::epsilon())) {
+  if ((std::fabs(px_int - 1.) > vpMath::maximum(px_int, 1.) * std::numeric_limits<double>::epsilon()) &&
+      (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I.getWidth() / (2 * px_int);
     v = (double)I.getHeight() / (2 * py_int);
   } else {
-    u = (double)I_.getWidth() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float o44c[4][4], o44cd[4][4], x, y, z;

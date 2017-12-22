@@ -46,8 +46,7 @@ int main(int argc, char **argv)
               << "xml,"
 #endif
               << "cao or wrl]" << std::endl;
-    std::cout << "Tracker optional config files: " << objectname << ".[ppm]"
-              << std::endl;
+    std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
     //! [Image]
     vpImage<unsigned char> I;
@@ -134,8 +133,7 @@ int main(int argc, char **argv)
 #endif
 
       //! [Set camera parameters]
-      cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776,
-                                        243.69727);
+      cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776, 243.69727);
       tracker->setCameraParameters(cam);
       //! [Set camera parameters]
 
@@ -148,8 +146,7 @@ int main(int argc, char **argv)
       tracker->setFarClippingDistance(100.0);
       //! [Set clipping distance]
       //! [Set clipping fov]
-      tracker->setClipping(tracker->getClipping() |
-                           vpMbtPolygon::FOV_CLIPPING);
+      tracker->setClipping(tracker->getClipping() | vpMbtPolygon::FOV_CLIPPING);
       //! [Set clipping fov]
       //! [Set parameters]
     }
@@ -214,14 +211,12 @@ int main(int argc, char **argv)
   }
 #ifdef VISP_HAVE_OGRE
   catch (Ogre::Exception &e) {
-    std::cout << "Catch an Ogre exception: " << e.getDescription()
-              << std::endl;
+    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
   }
 #endif
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example."
-            << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }

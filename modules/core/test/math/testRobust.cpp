@@ -167,8 +167,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, ofilename);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << ofilename << std::endl;
-        std::cerr << "  Check your -o " << ofilename << " option "
-                  << std::endl;
+        std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
         exit(-1);
       }
     }

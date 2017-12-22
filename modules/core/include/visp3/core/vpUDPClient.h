@@ -38,8 +38,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -121,14 +120,13 @@ receive):
 
   \code
 #include <cstdlib>
-#include <cstring>
 #include <iostream>
+#include <cstring>
 #include <visp3/core/vpUDPClient.h>
 
 struct DataType {
   double double_val;
   int int_val;
-
   DataType() : double_val(0.0), int_val(0) {}
   DataType(const double dbl, const int i) : double_val(dbl), int_val(i) {}
 };
@@ -138,25 +136,22 @@ int main() {
     std::string servername = "127.0.0.1";
     unsigned int port = 50037;
     vpUDPClient client(servername, port);
-
     DataType data_type(1234.56789, 123450);
     char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
-    memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
-    memcpy(data+sizeof(data_type.double_val), &data_type.int_val,
-sizeof(data_type.int_val)); std::string msg(data,
-sizeof(data_type.double_val)+sizeof(data_type.int_val)); if (client.send(msg)
-!= (int) sizeof(data_type.double_val)+sizeof(data_type.int_val)) std::cerr <<
-"Error client.send()!" << std::endl;
 
+    memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
+    memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
+
+    std::string msg(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
+    if (client.send(msg) != (int) sizeof(data_type.double_val)+sizeof(data_type.int_val))
+      std::cerr << "Error client.send()!" << std::endl;
     if (client.receive(msg)) {
       data_type.double_val = *reinterpret_cast<const double *>(msg.c_str());
-      data_type.int_val = *reinterpret_cast<const int
-*>(msg.c_str()+sizeof(data_type.double_val));
-
-      std::cout << "Receive from the server double_val: " <<
-data_type.double_val << " ; int_val: " << data_type.int_val << std::endl;
+      data_type.int_val
+        = *reinterpret_cast<const int *>(msg.c_str()+sizeof(data_type.double_val));
+      std::cout << "Receive from the server double_val: " << data_type.double_val
+                << " ; int_val: " << data_type.int_val << std::endl;
     }
-
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
@@ -180,8 +175,7 @@ private:
   char m_buf[VP_MAX_UDP_PAYLOAD];
   struct sockaddr_in m_serverAddress;
   int m_serverLength;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   int m_socketFileDescriptor;
 #else
   SOCKET m_socketFileDescriptor;

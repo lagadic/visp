@@ -64,17 +64,10 @@ public:
   } vpHessienApproximationType;
 
   /*! Hessian computation. */
-  typedef enum {
-    USE_HESSIEN_NORMAL,
-    USE_HESSIEN_DESIRE,
-    USE_HESSIEN_BEST_COND
-  } vpHessienType;
+  typedef enum { USE_HESSIEN_NORMAL, USE_HESSIEN_DESIRE, USE_HESSIEN_BEST_COND } vpHessienType;
 
   /*! Hessian computation. */
-  typedef enum {
-    BSPLINE_THIRD_ORDER = 3,
-    BSPLINE_FOURTH_ORDER = 4
-  } vpBsplineType;
+  typedef enum { BSPLINE_THIRD_ORDER = 3, BSPLINE_FOURTH_ORDER = 4 } vpBsplineType;
 
 protected:
   vpHessienType hessianComputation;
@@ -120,12 +113,8 @@ protected:
   void computeProba(int &nbpoint);
   double getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
   double getCost(const vpImage<unsigned char> &I) { return getCost(I, p); }
-  double getNormalizedCost(const vpImage<unsigned char> &I,
-                           const vpColVector &tp);
-  double getNormalizedCost(const vpImage<unsigned char> &I)
-  {
-    return getNormalizedCost(I, p);
-  }
+  double getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp);
+  double getNormalizedCost(const vpImage<unsigned char> &I) { return getNormalizedCost(I, p); }
   virtual void initHessienDesired(const vpImage<unsigned char> &I) = 0;
   virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
   void zeroProbabilities();
@@ -154,36 +143,23 @@ public:
   // constructeur
   //! Default constructor.
   vpTemplateTrackerMI()
-    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL),
-      ApproxHessian(HESSIAN_0), lambda(0), temp(NULL), Prt(NULL), dPrt(NULL),
-      Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL),
-      PrtD(NULL), dPrtD(NULL), influBspline(0), bspline(0), Nc(0), Ncb(0),
-      d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
-      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(),
-      computeCovariance(false)
+    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0), temp(NULL),
+      Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
+      influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
+      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
   {
   }
   explicit vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
   ~vpTemplateTrackerMI();
   vpMatrix getCovarianceMatrix() const { return covarianceMatrix; }
   double getMI() const { return MI_postEstimation; }
-  double getMI(const vpImage<unsigned char> &I, int &nc, const int &bspline,
-               vpColVector &tp);
+  double getMI(const vpImage<unsigned char> &I, int &nc, const int &bspline, vpColVector &tp);
   double getMI256(const vpImage<unsigned char> &I, const vpColVector &tp);
   double getNMI() const { return NMI_postEstimation; }
   // initialisation du Hessien en position desiree
-  void setApprocHessian(vpHessienApproximationType approx)
-  {
-    ApproxHessian = approx;
-  }
-  void setCovarianceComputation(const bool &flag)
-  {
-    computeCovariance = flag;
-  }
-  void setHessianComputation(vpHessienType type)
-  {
-    hessianComputation = type;
-  }
+  void setApprocHessian(vpHessienApproximationType approx) { ApproxHessian = approx; }
+  void setCovarianceComputation(const bool &flag) { computeCovariance = flag; }
+  void setHessianComputation(vpHessienType type) { hessianComputation = type; }
   void setBspline(const vpBsplineType &newbs);
   void setLambda(double _l) { lambda = _l; }
   void setNc(int newNc);

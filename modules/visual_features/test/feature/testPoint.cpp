@@ -64,8 +64,7 @@ int main()
     vpTRACE("set point coordinates in the world  frame ");
     point.setWorldCoordinates(0, 0, 0);
 
-    std::cout << "------------------------------------------------------"
-              << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
     vpTRACE("test the projection ");
     point.track(cMo);
 
@@ -77,8 +76,7 @@ int main()
     vpTRACE("2D coordinates ");
     std::cout << point.get_x() << "  " << point.get_y() << std::endl;
 
-    std::cout << "------------------------------------------------------"
-              << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
     vpTRACE("test the interaction matrix ");
 
     vpFeaturePoint p;
@@ -105,8 +103,7 @@ int main()
     L = p.interaction(vpFeaturePoint::selectAll());
     std::cout << L << std::endl;
 
-    std::cout << "------------------------------------------------------"
-              << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
     vpTRACE("test the error ");
 
     try {
@@ -141,8 +138,7 @@ int main()
     } catch (vpException &me) {
       std::cout << me << std::endl;
     }
-    std::cout << "------------------------------------------------------"
-              << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
     vpTRACE("test the  dimension");
     unsigned int dim;
     dim = p.getDimension();
@@ -158,8 +154,7 @@ int main()
     std::cout << "Dimension = " << dim << std::endl;
 
     vpTRACE("\t X & Y");
-    dim =
-        p.getDimension(vpFeaturePoint::selectX() | vpFeaturePoint::selectY());
+    dim = p.getDimension(vpFeaturePoint::selectX() | vpFeaturePoint::selectY());
     std::cout << "Dimension = " << dim << std::endl;
 
     vpTRACE("\t selectAll");

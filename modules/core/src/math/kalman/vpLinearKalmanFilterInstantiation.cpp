@@ -125,12 +125,11 @@ int main()
 
   // Set the constant velocity state model used for the filtering
   vpLinearKalmanFilterInstantiation::vpStateModel model;
-  model =
-vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
+  model = vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
   kalman.setStateModel(model);
 
-  // We are now able to retrieve the size of the state vector and measure
-vector int state_size = kalman.getStateSize();
+  // We are now able to retrieve the size of the state vector and measure vector
+  int state_size = kalman.getStateSize();
 
   // Filter the x and y velocities of a target (2 signals are to consider)
   int nsignal = 2;
@@ -139,9 +138,8 @@ vector int state_size = kalman.getStateSize();
   // - Firstly, the state variance
   int size = state_size*nsignal;
   vpColVector sigma_state(size);
-  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal
-(x) sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal
-(y)
+  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
+  sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal (y)
   // - Secondly, the measures variance
   vpColVector sigma_measure(nsignal); // 2 velocity measures available
   sigma_measure[0] = 0.03; // Variance on the x velocity measure
@@ -173,28 +171,22 @@ vector int state_size = kalman.getStateSize();
 }
   \endcode
  */
-void vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal,
-                                                   vpColVector &sigma_state,
-                                                   vpColVector &sigma_measure,
-                                                   double rho, double delta_t)
+void vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal, vpColVector &sigma_state,
+                                                   vpColVector &sigma_measure, double rho, double delta_t)
 {
   switch (model) {
   case stateConstVelWithColoredNoise_MeasureVel:
-    initStateConstVelWithColoredNoise_MeasureVel(n_signal, sigma_state,
-                                                 sigma_measure, rho);
+    initStateConstVelWithColoredNoise_MeasureVel(n_signal, sigma_state, sigma_measure, rho);
     break;
   case stateConstVel_MeasurePos:
-    initStateConstVel_MeasurePos(n_signal, sigma_state, sigma_measure,
-                                 delta_t);
+    initStateConstVel_MeasurePos(n_signal, sigma_state, sigma_measure, delta_t);
     break;
   case stateConstAccWithColoredNoise_MeasureVel:
-    initStateConstAccWithColoredNoise_MeasureVel(n_signal, sigma_state,
-                                                 sigma_measure, rho, delta_t);
+    initStateConstAccWithColoredNoise_MeasureVel(n_signal, sigma_state, sigma_measure, rho, delta_t);
     break;
   case unknown:
     vpERROR_TRACE("Kalman state model is not set");
-    throw(vpException(vpException::notInitialized,
-                      "Kalman state model is not set"));
+    throw(vpException(vpException::notInitialized, "Kalman state model is not set"));
   }
 }
 
@@ -293,9 +285,8 @@ void vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal,
   \param delta_t : Sampling time \f$\Delta t\f$ expressed is second.
 
 */
-void vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(
-    unsigned int n_signal, vpColVector &sigma_state,
-    vpColVector &sigma_measure, double delta_t)
+void vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned int n_signal, vpColVector &sigma_state,
+                                                                     vpColVector &sigma_measure, double delta_t)
 {
   // init_done = true ;
   setStateModel(stateConstVel_MeasurePos);
@@ -470,9 +461,8 @@ int main()
   // Initialize the filter parameters:
   // - Firstly, the state variance
   vpColVector sigma_state(4); // 4 = 2 for the state size x 2 signal
-  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal
-(x) sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal
-(y)
+  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
+  sigma_state[3] = 0.002; // Variance on the acceleration for the 2nd signal (y)
   // - Secondly, the measures variance
   vpColVector sigma_measure(nsignal); // 2 velocity measures available
   sigma_measure[0] = 0.03; // Variance on the x velocity measure
@@ -481,8 +471,7 @@ int main()
   double rho = 0.9;
 
   // Initialize the filter
-  kalman.initStateConstVelWithColoredNoise_MeasureVel(nsignal, sigma_state,
-sigma_measure, rho);
+  kalman.initStateConstVelWithColoredNoise_MeasureVel(nsignal, sigma_state, sigma_measure, rho);
 
   // Does the filtering
   vpColVector vm(2); // Measured velocities
@@ -502,11 +491,10 @@ sigma_measure, rho);
 }
   \endcode
 */
-void vpLinearKalmanFilterInstantiation::
-    initStateConstVelWithColoredNoise_MeasureVel(unsigned int n_signal,
-                                                 vpColVector &sigma_state,
-                                                 vpColVector &sigma_measure,
-                                                 double rho)
+void vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(unsigned int n_signal,
+                                                                                     vpColVector &sigma_state,
+                                                                                     vpColVector &sigma_measure,
+                                                                                     double rho)
 {
   if ((rho < 0) || (rho >= 1)) {
     vpERROR_TRACE("Bad rho value %g; should be in [0:1[", rho);
@@ -688,11 +676,10 @@ int main()
   // Initialize the filter parameters:
   // - Firstly, the state variance
   vpColVector sigma_state(6); // 6 = 3 for the state size x 2 signal
-  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal
-(x) sigma_state[2] = 0.001; // Variance on the acceleration for the 1st signal
-(x) sigma_state[4] = 0.002; // Variance on the acceleration for the 2nd signal
-(y) sigma_state[5] = 0.002; // Variance on the acceleration for the 2nd signal
-(y)
+  sigma_state[1] = 0.001; // Variance on the acceleration for the 1st signal (x)
+  sigma_state[2] = 0.001; // Variance on the acceleration for the 1st signal (x)
+  sigma_state[4] = 0.002; // Variance on the acceleration for the 2nd signal (y)
+  sigma_state[5] = 0.002; // Variance on the acceleration for the 2nd signal (y)
   // - Secondly, the measures variance
   vpColVector sigma_measure(nsignal); // 2 velocity measures available
   sigma_measure[0] = 0.03; // Variance on the x velocity measure
@@ -703,8 +690,7 @@ int main()
   double dt = 0.020; // 20 ms
 
   // Initialize the filter
-  kalman.initStateConstAccWithColoredNoise_MeasureVel(nsignal, sigma_state,
-sigma_measure, rho, dt);
+  kalman.initStateConstAccWithColoredNoise_MeasureVel(nsignal, sigma_state, sigma_measure, rho, dt);
 
   // Does the filtering
   vpColVector vm(2); // Measured velocities
@@ -725,11 +711,10 @@ sigma_measure, rho, dt);
   \endcode
 
 */
-void vpLinearKalmanFilterInstantiation::
-    initStateConstAccWithColoredNoise_MeasureVel(unsigned int n_signal,
-                                                 vpColVector &sigma_state,
-                                                 vpColVector &sigma_measure,
-                                                 double rho, double delta_t)
+void vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(unsigned int n_signal,
+                                                                                     vpColVector &sigma_state,
+                                                                                     vpColVector &sigma_measure,
+                                                                                     double rho, double delta_t)
 {
   if ((rho < 0) || (rho >= 1)) {
     vpERROR_TRACE("Bad rho value %g; should be in [0:1[", rho);
@@ -805,8 +790,7 @@ void vpLinearKalmanFilterInstantiation::
 void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
 {
   if (nsignal < 1) {
-    vpERROR_TRACE(
-        "Bad signal number. You need to initialize the Kalman filter");
+    vpERROR_TRACE("Bad signal number. You need to initialize the Kalman filter");
     throw(vpException(vpException::notInitialized, "Bad signal number"));
   }
 
@@ -825,8 +809,7 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
       break;
     case unknown:
       vpERROR_TRACE("Kalman state model is not set");
-      throw(vpException(vpException::notInitialized,
-                        "Kalman state model is not set"));
+      throw(vpException(vpException::notInitialized, "Kalman state model is not set"));
       break;
     }
     iter++;

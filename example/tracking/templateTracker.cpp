@@ -117,15 +117,13 @@ typedef enum {
 
 #endif
 
-void usage(const char *name, const char *badparam, const WarpType &warp_type,
-           TrackerType &tracker_type, const long &last_frame);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display, bool &pyramidal,
-                WarpType &warp_type, TrackerType &tracker_type,
-                long &last_frame);
+void usage(const char *name, const char *badparam, const WarpType &warp_type, TrackerType &tracker_type,
+           const long &last_frame);
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, bool &pyramidal,
+                WarpType &warp_type, TrackerType &tracker_type, long &last_frame);
 
-void usage(const char *name, const char *badparam, const WarpType &warp_type,
-           TrackerType &tracker_type, const long &last_frame)
+void usage(const char *name, const char *badparam, const WarpType &warp_type, TrackerType &tracker_type,
+           const long &last_frame)
 {
   fprintf(stdout, "\n\
 Example of template tracking.\n\
@@ -168,8 +166,7 @@ OPTIONS:                                                            Default\n\
      %d : Homography in SL3\n\
      %d : SRT (scale, rotation, translation)\n\
      %d : RT (rotation, translation)\n\
-     %d : Translation\n\n", (int)warp_type, (int)WARP_AFFINE,
-          (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
+     %d : Translation\n\n", (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
           (int)WARP_TRANSLATION, (int)WARP_RT);
 #else
   fprintf(stdout, "\n\
@@ -180,8 +177,7 @@ OPTIONS:                                                            Default\n\
      %d : Homography\n\
      %d : Homography in SL3\n\
      %d : SRT (scale, rotation, translation)\n\
-     %d : Translation\n\n", (int)warp_type, (int)WARP_AFFINE,
-          (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
+     %d : Translation\n\n", (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
           (int)WARP_TRANSLATION);
 #endif
 
@@ -199,14 +195,10 @@ OPTIONS:                                                            Default\n\
      %d : MI ESM\n\
      %d : MI forward additional\n\
      %d : MI forward compositional\n\
-     %d : MI inverse compositional\n\n", (int)tracker_type, (int)TRACKER_SSD_ESM,
-          (int)TRACKER_SSD_FORWARD_ADDITIONAL,
-          (int)TRACKER_SSD_FORWARD_COMPOSITIONAL,
-          (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
-          (int)TRACKER_ZNCC_FORWARD_ADDITIONEL,
-          (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL, (int)TRACKER_MI_ESM,
-          (int)TRACKER_MI_FORWARD_ADDITIONAL,
-          (int)TRACKER_MI_FORWARD_COMPOSITIONAL,
+     %d : MI inverse compositional\n\n", (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
+          (int)TRACKER_SSD_FORWARD_COMPOSITIONAL, (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
+          (int)TRACKER_ZNCC_FORWARD_ADDITIONEL, (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL, (int)TRACKER_MI_ESM,
+          (int)TRACKER_MI_FORWARD_ADDITIONAL, (int)TRACKER_MI_FORWARD_COMPOSITIONAL,
           (int)TRACKER_MI_INVERSE_COMPOSITIONAL);
 #else
   fprintf(stdout, "\n\
@@ -218,12 +210,9 @@ OPTIONS:                                                            Default\n\
      %d : SSD forward compositional\n\
      %d : SSD inverse compositional\n\
      %d : ZNCC forward additional\n\
-     %d : ZNCC inverse compositional\n\n", (int)tracker_type, (int)TRACKER_SSD_ESM,
-          (int)TRACKER_SSD_FORWARD_ADDITIONAL,
-          (int)TRACKER_SSD_FORWARD_COMPOSITIONAL,
-          (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
-          (int)TRACKER_ZNCC_FORWARD_ADDITIONEL,
-          (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL);
+     %d : ZNCC inverse compositional\n\n", (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
+          (int)TRACKER_SSD_FORWARD_COMPOSITIONAL, (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
+          (int)TRACKER_ZNCC_FORWARD_ADDITIONEL, (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL);
 
 #endif
   fprintf(stdout, "\n\
@@ -237,10 +226,8 @@ OPTIONS:                                                            Default\n\
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display, bool &pyramidal,
-                WarpType &warp_type, TrackerType &tracker_type,
-                long &last_frame)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, bool &pyramidal,
+                WarpType &warp_type, TrackerType &tracker_type, long &last_frame)
 {
   const char *optarg_;
   int c;
@@ -283,16 +270,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   if (warp_type >= WARP_LAST) {
     usage(argv[0], NULL, warp_type, tracker_type, last_frame);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument -w <warp type> with \"warp type\"="
-              << (int)warp_type << std::endl
-              << std::endl;
+    std::cerr << "  Bad argument -w <warp type> with \"warp type\"=" << (int)warp_type << std::endl << std::endl;
     return false;
   }
   if (tracker_type >= TRACKER_LAST) {
     usage(argv[0], NULL, warp_type, tracker_type, last_frame);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"="
-              << (int)tracker_type << std::endl
+    std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << (int)tracker_type << std::endl
               << std::endl;
     return false;
   }
@@ -329,9 +313,8 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display,
-                    opt_pyramidal, opt_warp_type, opt_tracker_type,
-                    opt_last_frame)) {
+    if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_pyramidal, opt_warp_type,
+                    opt_tracker_type, opt_last_frame)) {
       return (-1);
     }
 
@@ -339,13 +322,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, opt_warp_type, opt_tracker_type, opt_last_frame);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
 
       return (-1);
     }
@@ -489,8 +469,7 @@ int main(int argc, const char **argv)
     while (!reader.end()) {
       // Acquire a new image
       reader.acquire(I);
-      std::cout << "Process image number " << reader.getFrameIndex()
-                << std::endl;
+      std::cout << "Process image number " << reader.getFrameIndex() << std::endl;
       // Display the image
       vpDisplay::display(I);
       // Track the template
@@ -505,8 +484,7 @@ int main(int argc, const char **argv)
         tracker->resetTracker();
 
         if (opt_display && opt_click_allowed) {
-          vpDisplay::displayText(I, 10, 10, "Re-init simulation",
-                                 vpColor::red);
+          vpDisplay::displayText(I, 10, 10, "Re-init simulation", vpColor::red);
           vpDisplay::flush(I);
           tracker->initClick(I, delaunay);
         } else {

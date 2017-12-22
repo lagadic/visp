@@ -73,30 +73,22 @@ public:
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I) = 0;
 
-  virtual unsigned int buildReference(const vpImage<unsigned char> &I,
-                                      const vpImagePoint &iP,
-                                      const unsigned int height,
-                                      const unsigned int width) = 0;
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                                      const unsigned int height, const unsigned int width) = 0;
 
-  virtual unsigned int buildReference(const vpImage<unsigned char> &I,
-                                      const vpRect &rectangle) = 0;
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I) = 0;
 
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
-                                  const vpImagePoint &iP,
-                                  const unsigned int height,
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
                                   const unsigned int width) = 0;
 
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
-                                  const vpRect &rectangle) = 0;
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
-  virtual void display(const vpImage<unsigned char> &Iref,
-                       const vpImage<unsigned char> &Icurrent,
+  virtual void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent,
                        unsigned int size = 3) = 0;
 
-  virtual void display(const vpImage<unsigned char> &Icurrent,
-                       unsigned int size = 3,
+  virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3,
                        const vpColor &color = vpColor::green) = 0;
 
   /*!
@@ -112,10 +104,7 @@ public:
 
     \return The pointer to the complete list of reference points.
   */
-  inline const vpImagePoint *getAllPointsInReferenceImage()
-  {
-    return &referenceImagePointsList[0];
-  };
+  inline const vpImagePoint *getAllPointsInReferenceImage() { return &referenceImagePointsList[0]; };
 
   /*!
     Get the nth reference point. This point is copied in the vpImagePoint
@@ -125,17 +114,14 @@ public:
    between 0 and the number of reference points - 1. \param referencePoint :
    The coordinates of the desired reference point are copied there.
   */
-  inline void getReferencePoint(const unsigned int index,
-                                vpImagePoint &referencePoint)
+  inline void getReferencePoint(const unsigned int index, vpImagePoint &referencePoint)
   {
     if (index >= referenceImagePointsList.size()) {
       vpTRACE("Index of the reference point out of range");
-      throw(vpException(vpException::fatalError,
-                        "Index of the reference point out of range"));
+      throw(vpException(vpException::fatalError, "Index of the reference point out of range"));
     }
 
-    referencePoint.set_ij(referenceImagePointsList[index].get_i(),
-                          referenceImagePointsList[index].get_j());
+    referencePoint.set_ij(referenceImagePointsList[index].get_i(), referenceImagePointsList[index].get_j());
   }
 
   /*!
@@ -149,20 +135,15 @@ public:
    reference point are copied here. \param currentPoint : The coordinates of
    the desired current point are copied here.
   */
-  inline void getMatchedPoints(const unsigned int index,
-                               vpImagePoint &referencePoint,
-                               vpImagePoint &currentPoint)
+  inline void getMatchedPoints(const unsigned int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint)
   {
     if (index >= matchedReferencePoints.size()) {
       vpTRACE("Index of the matched points out of range");
-      throw(vpException(vpException::fatalError,
-                        "Index of the matched points out of range"));
+      throw(vpException(vpException::fatalError, "Index of the matched points out of range"));
     }
-    referencePoint.set_ij(
-        referenceImagePointsList[matchedReferencePoints[index]].get_i(),
-        referenceImagePointsList[matchedReferencePoints[index]].get_j());
-    currentPoint.set_ij(currentImagePointsList[index].get_i(),
-                        currentImagePointsList[index].get_j());
+    referencePoint.set_ij(referenceImagePointsList[matchedReferencePoints[index]].get_i(),
+                          referenceImagePointsList[matchedReferencePoints[index]].get_j());
+    currentPoint.set_ij(currentImagePointsList[index].get_i(), currentImagePointsList[index].get_j());
   };
 
   /*!
@@ -179,24 +160,21 @@ public:
 
    vpImagePoint referencePoint1;
    vpImagePoint currentPoint;
-   surf.getMatchedPoints(1, referencePoint1, currentPoint);  //Get the first
-   matched points
+   surf.getMatchedPoints(1, referencePoint1, currentPoint);  //Get the first matched points
 
    vpImagePoint referencePoint2;
-   const vpImagePoint* referencePointsList =
-   surf.getAllPointsInReferenceImage(); int index =
-   surf.getIndexInAllReferencePointList(1);  //Get the first matched reference
-   point index in the complete reference point list referencePoint2 =
-   referencePointsList[index]; //Get the first matched reference point
+   const vpImagePoint* referencePointsList = surf.getAllPointsInReferenceImage();
+   // Get the first matched reference point index in the complete reference point list
+   int index = surf.getIndexInAllReferencePointList(1);
+   // Get the first matched reference point
+   referencePoint2 = referencePointsList[index];
    \endcode
   */
-  inline unsigned int
-  getIndexInAllReferencePointList(const unsigned int indexInMatchedPointList)
+  inline unsigned int getIndexInAllReferencePointList(const unsigned int indexInMatchedPointList)
   {
     if (indexInMatchedPointList >= matchedReferencePoints.size()) {
       vpTRACE("Index of the matched reference point out of range");
-      throw(vpException(vpException::fatalError,
-                        "Index of the matched reference point out of range"));
+      throw(vpException(vpException::fatalError, "Index of the matched reference point out of range"));
     }
     return matchedReferencePoints[indexInMatchedPointList];
   }
@@ -206,20 +184,14 @@ public:
 
    \return the number of reference points.
   */
-  inline unsigned int getReferencePointNumber() const
-  {
-    return (unsigned int)referenceImagePointsList.size();
-  };
+  inline unsigned int getReferencePointNumber() const { return (unsigned int)referenceImagePointsList.size(); };
 
   /*!
    Get the number of matched points.
 
    \return the number of matched points.
   */
-  inline unsigned int getMatchedPointNumber() const
-  {
-    return (unsigned int)matchedReferencePoints.size();
-  };
+  inline unsigned int getMatchedPointNumber() const { return (unsigned int)matchedReferencePoints.size(); };
 
   /*!
     Return the vector of reference image point.
@@ -228,10 +200,7 @@ public:
 
     \return Vector of reference image point.
   */
-  const std::vector<vpImagePoint> &getReferenceImagePointsList() const
-  {
-    return referenceImagePointsList;
-  }
+  const std::vector<vpImagePoint> &getReferenceImagePointsList() const { return referenceImagePointsList; }
 
   /*!
     Return the vector of current image point.
@@ -240,10 +209,7 @@ public:
 
     \return Vector of the current image point.
   */
-  const std::vector<vpImagePoint> &getCurrentImagePointsList() const
-  {
-    return currentImagePointsList;
-  }
+  const std::vector<vpImagePoint> &getCurrentImagePointsList() const { return currentImagePointsList; }
 
   /*!
     Return the index of the matched associated to the current image point i.
@@ -254,10 +220,7 @@ public:
 
     \return The vector of matching index.
   */
-  const std::vector<unsigned int> &getMatchedReferencePoints() const
-  {
-    return matchedReferencePoints;
-  }
+  const std::vector<unsigned int> &getMatchedReferencePoints() const { return matchedReferencePoints; }
 
 private:
   virtual void init() = 0;

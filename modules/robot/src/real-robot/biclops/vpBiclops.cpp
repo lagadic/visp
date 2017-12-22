@@ -49,20 +49,14 @@
 /* ------------------------------------------------------------------------ */
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
-const unsigned int vpBiclops::ndof =
-    2; /*<! Only pan and tilt are considered. */
-const float vpBiclops::h =
-    0.048f; /*<! Vertical offset from last joint to camera frame. */
-const float vpBiclops::panJointLimit =
-    (float)(M_PI); /*!< Pan range (in rad): from -panJointLimit to +
-                      panJointLimit */
-const float vpBiclops::tiltJointLimit =
-    (float)(M_PI / 4.5); /*!< Tilt range (in rad): from -tiltJointLimit to +
-                            tiltJointLimit */
+const unsigned int vpBiclops::ndof = 2;                      /*<! Only pan and tilt are considered. */
+const float vpBiclops::h = 0.048f;                           /*<! Vertical offset from last joint to camera frame. */
+const float vpBiclops::panJointLimit = (float)(M_PI);        /*!< Pan range (in rad): from -panJointLimit to +
+                                                                panJointLimit */
+const float vpBiclops::tiltJointLimit = (float)(M_PI / 4.5); /*!< Tilt range (in rad): from -tiltJointLimit to +
+                                                                tiltJointLimit */
 
-const float vpBiclops::speedLimit =
-    (float)(M_PI /
-            3.0); /*!< Maximum speed (in rad/s) to perform a displacement */
+const float vpBiclops::speedLimit = (float)(M_PI / 3.0); /*!< Maximum speed (in rad/s) to perform a displacement */
 
 /*!
   Compute the direct geometric model of the camera: fMc
@@ -78,8 +72,7 @@ const float vpBiclops::speedLimit =
 
   \sa get_fMc(const vpColVector &, vpHomogeneousMatrix &)
 */
-void vpBiclops::computeMGD(const vpColVector &q,
-                           vpHomogeneousMatrix &fMc) const
+void vpBiclops::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   vpHomogeneousMatrix fMe = get_fMe(q);
   fMc = fMe * cMe_.inverse();
@@ -167,8 +160,7 @@ vpHomogeneousMatrix vpBiclops::get_fMe(const vpColVector &q) const
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for biclops articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
   }
 
   double q1 = q[0]; // pan
@@ -298,8 +290,7 @@ void vpBiclops::init()
 /* --- DISPLAY ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpBiclops & /*constant*/)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops & /*constant*/)
 {
   os << "Geometric parameters: " << std::endl
      << "h: "
@@ -318,10 +309,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os,
   expess a velocity skew from end effector frame in camera frame.
 
 */
-void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
-{
-  cVe.buildFrom(cMe_);
-}
+void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.buildFrom(cMe_); }
 
 /*!
 
@@ -375,8 +363,7 @@ void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for biclops articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
   }
 
   double s2 = sin(q[1]);
@@ -408,8 +395,7 @@ void vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for biclops articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
   }
 
   fJe.resize(6, 2);

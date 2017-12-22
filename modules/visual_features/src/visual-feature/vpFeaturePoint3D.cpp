@@ -209,8 +209,8 @@ double vpFeaturePoint3D::get_Z() const { return s[2]; }
   subset visual feature:
 
   \code
-  vpMatrix L_XY = s.interaction( vpFeaturePoint3D::selectX() |
-  vpFeaturePoint3D::selectY() ); \endcode
+  vpMatrix L_XY = s.interaction( vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY() );
+  \endcode
 
   L_XY is here now a 2 by 6 matrix. The first line corresponds to
   the \f$ X \f$ visual feature while the second one to the \f$
@@ -351,11 +351,11 @@ vpMatrix vpFeaturePoint3D::interaction(const unsigned int select)
 
   // Compute the error vector e = (s-s*) for the Y, Z feature coordinates
   vpColVector e = s.error(s_star, vpFeaturePoint3D::selectY() |
-  vpFeaturePoint3D::selectZ()); \endcode
+  vpFeaturePoint3D::selectZ());
+  \endcode
 
 */
-vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star,
-                                    const unsigned int select)
+vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, const unsigned int select)
 {
   vpColVector e(0);
 
@@ -415,16 +415,14 @@ void vpFeaturePoint3D::buildFrom(const vpPoint &p)
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   for (unsigned int i = 0; i < nbParameters; i++)
@@ -447,8 +445,7 @@ void vpFeaturePoint3D::buildFrom(const vpPoint &p)
   on the camera which is not possible.
 
 */
-void vpFeaturePoint3D::buildFrom(const double X, const double Y,
-                                 const double Z)
+void vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
 {
 
   s[0] = X;
@@ -459,16 +456,14 @@ void vpFeaturePoint3D::buildFrom(const double X, const double Y,
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   for (unsigned int i = 0; i < nbParameters; i++)
@@ -532,10 +527,8 @@ vpFeaturePoint3D *vpFeaturePoint3D::duplicate() const
 
   Not implemented.
 */
-void vpFeaturePoint3D::display(const vpCameraParameters & /*cam*/,
-                               const vpImage<unsigned char> & /* I */,
-                               const vpColor & /* color */,
-                               unsigned int /* thickness */) const
+void vpFeaturePoint3D::display(const vpCameraParameters & /*cam*/, const vpImage<unsigned char> & /* I */,
+                               const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 
@@ -551,10 +544,8 @@ void vpFeaturePoint3D::display(const vpCameraParameters & /*cam*/,
 
   Not implemented.
  */
-void vpFeaturePoint3D::display(const vpCameraParameters & /*cam*/,
-                               const vpImage<vpRGBa> & /* I */,
-                               const vpColor & /* color */,
-                               unsigned int /* thickness */) const
+void vpFeaturePoint3D::display(const vpCameraParameters & /*cam*/, const vpImage<vpRGBa> & /* I */,
+                               const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 
@@ -584,7 +575,8 @@ void vpFeaturePoint3D::display(const vpCameraParameters & /*cam*/,
   ...
   // Add the (X,Y) subset coordinates features from a 3D point to the task
   task.addFeature(p, vpFeaturePoint3D::selectX() |
-  vpFeaturePoint3D::selectY()); \endcode
+  vpFeaturePoint3D::selectY());
+  \endcode
 
   \sa selectY(), selectZ()
 
@@ -610,7 +602,8 @@ unsigned int vpFeaturePoint3D::selectX() { return FEATURE_LINE[0]; }
   ...
   // Add the (X,Y) subset coordinates features from a 3D point to the task
   task.addFeature(p, vpFeaturePoint3D::selectX() |
-  vpFeaturePoint3D::selectY()); \endcode
+  vpFeaturePoint3D::selectY());
+  \endcode
 
   \sa selectX(), selectZ()
 

@@ -43,14 +43,12 @@
 /*
   Compute the distance d = |Pw1-Pw2|
 */
-inline double distance(const vpImagePoint &iP1, const double w1,
-                       const vpImagePoint &iP2, const double w2)
+inline double distance(const vpImagePoint &iP1, const double w1, const vpImagePoint &iP2, const double w2)
 {
   double distancei = iP1.get_i() - iP2.get_i();
   double distancej = iP1.get_j() - iP2.get_j();
   double distancew = w1 - w2;
-  return sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) +
-              vpMath::sqr(distancew));
+  return sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) + vpMath::sqr(distancew));
 }
 
 /*!
@@ -64,10 +62,7 @@ vpNurbs::vpNurbs() : weights() { p = 3; }
 /*!
   Copy constructor.
 */
-vpNurbs::vpNurbs(const vpNurbs &nurbs)
-  : vpBSpline(nurbs), weights(nurbs.weights)
-{
-}
+vpNurbs::vpNurbs(const vpNurbs &nurbs) : vpBSpline(nurbs), weights(nurbs.weights) {}
 
 /*!
   Basic destructor
@@ -87,11 +82,8 @@ vpNurbs::~vpNurbs() {}
 
   return the coordinates of a point corresponding to the knot \f$ u \f$.
 */
-vpImagePoint
-vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p,
-                           std::vector<double> &l_knots,
-                           std::vector<vpImagePoint> &l_controlPoints,
-                           std::vector<double> &l_weights)
+vpImagePoint vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
+                                        std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
   vpBasisFunction *N = NULL;
   N = computeBasisFuns(l_u, l_i, l_p, l_knots);
@@ -101,10 +93,8 @@ vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p,
   double jc = 0;
   double wc = 0;
   for (unsigned int j = 0; j <= l_p; j++) {
-    ic = ic + N[j].value * (l_controlPoints[l_i - l_p + j]).get_i() *
-                  l_weights[l_i - l_p + j];
-    jc = jc + N[j].value * (l_controlPoints[l_i - l_p + j]).get_j() *
-                  l_weights[l_i - l_p + j];
+    ic = ic + N[j].value * (l_controlPoints[l_i - l_p + j]).get_i() * l_weights[l_i - l_p + j];
+    jc = jc + N[j].value * (l_controlPoints[l_i - l_p + j]).get_j() * l_weights[l_i - l_p + j];
     wc = wc + N[j].value * l_weights[l_i - l_p + j];
   }
 
@@ -136,10 +126,8 @@ vpImagePoint vpNurbs::computeCurvePoint(double u)
   double jc = 0;
   double wc = 0;
   for (unsigned int j = 0; j <= p; j++) {
-    ic = ic + N[j].value * (controlPoints[N[0].i + j]).get_i() *
-                  weights[N[0].i + j]; // N[0].i = findSpan(u)-p
-    jc = jc + N[j].value * (controlPoints[N[0].i + j]).get_j() *
-                  weights[N[0].i + j];
+    ic = ic + N[j].value * (controlPoints[N[0].i + j]).get_i() * weights[N[0].i + j]; // N[0].i = findSpan(u)-p
+    jc = jc + N[j].value * (controlPoints[N[0].i + j]).get_j() * weights[N[0].i + j];
     wc = wc + N[j].value * weights[N[0].i + j];
   }
 
@@ -179,10 +167,8 @@ vpImagePoint vpNurbs::computeCurvePoint(double u)
   coresponds to the coordinates (i,j) of the point and the third column
   corresponds to the associated weight.
 */
-vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i,
-                                   unsigned int l_p, unsigned int l_der,
-                                   std::vector<double> &l_knots,
-                                   std::vector<vpImagePoint> &l_controlPoints,
+vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
+                                   std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                    std::vector<double> &l_weights)
 {
   vpMatrix derivate(l_der + 1, 3);
@@ -195,14 +181,9 @@ vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i,
     derivate[k][2] = 0.0;
 
     for (unsigned int j = 0; j <= l_p; j++) {
-      derivate[k][0] =
-          derivate[k][0] +
-          N[k][j].value * (l_controlPoints[l_i - l_p + j]).get_i();
-      derivate[k][1] =
-          derivate[k][1] +
-          N[k][j].value * (l_controlPoints[l_i - l_p + j]).get_j();
-      derivate[k][2] =
-          derivate[k][2] + N[k][j].value * (l_weights[l_i - l_p + j]);
+      derivate[k][0] = derivate[k][0] + N[k][j].value * (l_controlPoints[l_i - l_p + j]).get_i();
+      derivate[k][1] = derivate[k][1] + N[k][j].value * (l_controlPoints[l_i - l_p + j]).get_j();
+      derivate[k][2] = derivate[k][2] + N[k][j].value * (l_weights[l_i - l_p + j]);
     }
   }
 
@@ -247,14 +228,9 @@ vpMatrix vpNurbs::computeCurveDers(double u, unsigned int der)
     derivate[k][1] = 0.0;
     derivate[k][2] = 0.0;
     for (unsigned int j = 0; j <= p; j++) {
-      derivate[k][0] =
-          derivate[k][0] +
-          N[k][j].value * (controlPoints[N[0][0].i - p + j]).get_i();
-      derivate[k][1] =
-          derivate[k][1] +
-          N[k][j].value * (controlPoints[N[0][0].i - p + j]).get_j();
-      derivate[k][2] =
-          derivate[k][2] + N[k][j].value * (weights[N[0][0].i - p + j]);
+      derivate[k][0] = derivate[k][0] + N[k][j].value * (controlPoints[N[0][0].i - p + j]).get_i();
+      derivate[k][1] = derivate[k][1] + N[k][j].value * (controlPoints[N[0][0].i - p + j]).get_j();
+      derivate[k][2] = derivate[k][2] + N[k][j].value * (weights[N[0][0].i - p + j]);
     }
   }
 
@@ -281,10 +257,9 @@ vpMatrix vpNurbs::computeCurveDers(double u, unsigned int der)
   \f$ for \f$ k = 0, ... , l_{der} \f$. The kth derivative is in the kth cell
   of the array.
 */
-vpImagePoint *vpNurbs::computeCurveDersPoint(
-    double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
-    std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
-    std::vector<double> &l_weights)
+vpImagePoint *vpNurbs::computeCurveDersPoint(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
+                                             std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
+                                             std::vector<double> &l_weights)
 {
   std::vector<vpImagePoint> A;
   vpImagePoint pt;
@@ -295,8 +270,7 @@ vpImagePoint *vpNurbs::computeCurveDersPoint(
     A.push_back(pt);
   }
 
-  vpMatrix Awders =
-      computeCurveDers(l_u, l_i, l_p, l_der, l_knots, A, l_weights);
+  vpMatrix Awders = computeCurveDers(l_u, l_i, l_p, l_der, l_knots, A, l_weights);
 
   vpImagePoint *CK = new vpImagePoint[l_der + 1];
 
@@ -348,10 +322,8 @@ vpImagePoint *vpNurbs::computeCurveDersPoint(double u, unsigned int der)
   \param l_controlPoints : the list of control points.
   \param l_weights : the list of weights.
 */
-void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s,
-                           unsigned int l_r, unsigned int l_p,
-                           std::vector<double> &l_knots,
-                           std::vector<vpImagePoint> &l_controlPoints,
+void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsigned int l_r, unsigned int l_p,
+                           std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                            std::vector<double> &l_weights)
 {
   vpMatrix Rw(l_p + 1, 3);
@@ -361,10 +333,8 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s,
   double w = 0;
 
   for (unsigned int j = 0; j <= l_p - l_s; j++) {
-    Rw[j][0] =
-        (l_controlPoints[l_k - l_p + j]).get_i() * l_weights[l_k - l_p + j];
-    Rw[j][1] =
-        (l_controlPoints[l_k - l_p + j]).get_j() * l_weights[l_k - l_p + j];
+    Rw[j][0] = (l_controlPoints[l_k - l_p + j]).get_i() * l_weights[l_k - l_p + j];
+    Rw[j][1] = (l_controlPoints[l_k - l_p + j]).get_j() * l_weights[l_k - l_p + j];
     Rw[j][2] = l_weights[l_k - l_p + j];
   }
 
@@ -379,8 +349,7 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s,
     L = l_k - l_p + j;
 
     for (unsigned int i = 0; i <= l_p - j - l_s; i++) {
-      alpha =
-          (l_u - l_knots[L + i]) / (l_knots[i + l_k + 1] - l_knots[L + i]);
+      alpha = (l_u - l_knots[L + i]) / (l_knots[i + l_k + 1] - l_knots[L + i]);
       Rw[i][0] = alpha * Rw[i + 1][0] + (1.0 - alpha) * Rw[i][0];
       Rw[i][1] = alpha * Rw[i + 1][1] + (1.0 - alpha) * Rw[i][1];
       Rw[i][2] = alpha * Rw[i + 1][2] + (1.0 - alpha) * Rw[i][2];
@@ -390,8 +359,7 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s,
     l_controlPoints[L] = pt;
     l_weights[L] = Rw[0][2];
 
-    pt.set_ij(Rw[l_p - j - l_s][0] / Rw[l_p - j - l_s][2],
-              Rw[l_p - j - l_s][1] / Rw[l_p - j - l_s][2]);
+    pt.set_ij(Rw[l_p - j - l_s][0] / Rw[l_p - j - l_s][2], Rw[l_p - j - l_s][1] / Rw[l_p - j - l_s][2]);
     l_controlPoints[l_k + l_r - j - l_s] = pt;
     l_weights[l_k + l_r - j - l_s] = Rw[l_p - j - l_s][2];
   }
@@ -436,11 +404,8 @@ void vpNurbs::curveKnotIns(double u, unsigned int s, unsigned int r)
   \param l_controlPoints : the list of control points.
   \param l_weights : the list of weights.
 */
-void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r,
-                                  unsigned int l_p,
-                                  std::vector<double> &l_knots,
-                                  std::vector<vpImagePoint> &l_controlPoints,
-                                  std::vector<double> &l_weights)
+void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r, unsigned int l_p, std::vector<double> &l_knots,
+                                  std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
   unsigned int a = findSpan(l_x[0], l_p, l_knots);
   unsigned int b = findSpan(l_x[l_r], l_p, l_knots);
@@ -450,8 +415,7 @@ void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r,
   unsigned int m = (unsigned int)l_knots.size();
 
   for (unsigned int j = 0; j < n; j++) {
-    l_controlPoints[j].set_ij(l_controlPoints[j].get_i() * l_weights[j],
-                              l_controlPoints[j].get_j() * l_weights[j]);
+    l_controlPoints[j].set_ij(l_controlPoints[j].get_i() * l_weights[j], l_controlPoints[j].get_j() * l_weights[j]);
   }
 
   std::vector<double> l_knots_tmp(l_knots);
@@ -502,14 +466,11 @@ void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r,
           l_weights[ind - 1] = l_weights[ind];
         } else {
           alpha = alpha / (l_knots[k + l] - l_knots_tmp[i - l_p + l]);
-          l_controlPoints[ind - 1].set_i(
-              alpha * l_controlPoints[ind - 1].get_i() +
-              (1.0 - alpha) * l_controlPoints[ind].get_i());
-          l_controlPoints[ind - 1].set_j(
-              alpha * l_controlPoints[ind - 1].get_j() +
-              (1.0 - alpha) * l_controlPoints[ind].get_j());
-          l_weights[ind - 1] =
-              alpha * l_weights[ind - 1] + (1.0 - alpha) * l_weights[ind];
+          l_controlPoints[ind - 1].set_i(alpha * l_controlPoints[ind - 1].get_i() +
+                                         (1.0 - alpha) * l_controlPoints[ind].get_i());
+          l_controlPoints[ind - 1].set_j(alpha * l_controlPoints[ind - 1].get_j() +
+                                         (1.0 - alpha) * l_controlPoints[ind].get_j());
+          l_weights[ind - 1] = alpha * l_weights[ind - 1] + (1.0 - alpha) * l_weights[ind];
         }
       }
       l_knots[k] = l_x[j];
@@ -518,8 +479,7 @@ void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r,
   }
 
   for (unsigned int j = 0; j < n; j++) {
-    l_controlPoints[j].set_ij(l_controlPoints[j].get_i() / l_weights[j],
-                              l_controlPoints[j].get_j() / l_weights[j]);
+    l_controlPoints[j].set_ij(l_controlPoints[j].get_i() / l_weights[j], l_controlPoints[j].get_j() / l_weights[j]);
   }
 }
 
@@ -563,19 +523,15 @@ void vpNurbs::refineKnotVectCurve(double *x, unsigned int r)
   |P|_{max} \f$ is the maximum distance of any point on the original curve
   from the origin and \f$ d \f$ is the desired bound on deviation.
 */
-unsigned int
-vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num,
-                         double l_TOL, unsigned int l_s, unsigned int l_p,
-                         std::vector<double> &l_knots,
-                         std::vector<vpImagePoint> &l_controlPoints,
-                         std::vector<double> &l_weights)
+unsigned int vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num, double l_TOL, unsigned int l_s,
+                                      unsigned int l_p, std::vector<double> &l_knots,
+                                      std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
   unsigned int n = (unsigned int)l_controlPoints.size();
   unsigned int m = n + l_p + 1;
 
   for (unsigned int j = 0; j < n; j++) {
-    l_controlPoints[j].set_ij(l_controlPoints[j].get_i() * l_weights[j],
-                              l_controlPoints[j].get_j() * l_weights[j]);
+    l_controlPoints[j].set_ij(l_controlPoints[j].get_i() * l_weights[j], l_controlPoints[j].get_j() * l_weights[j]);
   }
 
   unsigned int ord = l_p + 1;
@@ -605,22 +561,12 @@ vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num,
     while (j - i > t) {
       alfi = (l_u - l_knots[i]) / (l_knots[i + ord + t] - l_knots[i]);
       alfj = (l_u - l_knots[j - t]) / (l_knots[j + ord] - l_knots[j - t]);
-      pt.set_i((l_controlPoints[i].get_i() -
-                (1.0 - alfi) * tempP[ii - 1].get_i()) /
-               alfi);
-      tempP[ii].set_i((l_controlPoints[i].get_i() -
-                       (1.0 - alfi) * tempP[ii - 1].get_i()) /
-                      alfi);
-      tempP[ii].set_j((l_controlPoints[i].get_j() -
-                       (1.0 - alfi) * tempP[ii - 1].get_j()) /
-                      alfi);
+      pt.set_i((l_controlPoints[i].get_i() - (1.0 - alfi) * tempP[ii - 1].get_i()) / alfi);
+      tempP[ii].set_i((l_controlPoints[i].get_i() - (1.0 - alfi) * tempP[ii - 1].get_i()) / alfi);
+      tempP[ii].set_j((l_controlPoints[i].get_j() - (1.0 - alfi) * tempP[ii - 1].get_j()) / alfi);
       tempW[ii] = ((l_weights[i] - (1.0 - alfi) * tempW[ii - 1]) / alfi);
-      tempP[jj].set_i(
-          (l_controlPoints[j].get_i() - alfj * tempP[jj + 1].get_i()) /
-          (1.0 - alfj));
-      tempP[jj].set_j(
-          (l_controlPoints[j].get_j() - alfj * tempP[jj + 1].get_j()) /
-          (1.0 - alfj));
+      tempP[jj].set_i((l_controlPoints[j].get_i() - alfj * tempP[jj + 1].get_i()) / (1.0 - alfj));
+      tempP[jj].set_j((l_controlPoints[j].get_j() - alfj * tempP[jj + 1].get_j()) / (1.0 - alfj));
       tempW[jj] = ((l_weights[j] - alfj * tempW[jj + 1]) / (1.0 - alfj));
       i++;
       j--;
@@ -632,22 +578,17 @@ vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num,
       double distancei = tempP[ii - 1].get_i() - tempP[jj + 1].get_i();
       double distancej = tempP[ii - 1].get_j() - tempP[jj + 1].get_j();
       double distancew = tempW[ii - 1] - tempW[jj + 1];
-      double distance = sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) +
-                             vpMath::sqr(distancew));
+      double distance = sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) + vpMath::sqr(distancew));
       if (distance <= l_TOL)
         remflag = 1;
     } else {
       alfi = (l_u - l_knots[i]) / (l_knots[i + ord + t] - l_knots[i]);
       double distancei =
-          l_controlPoints[i].get_i() - (alfi * tempP[ii + t + 1].get_i() +
-                                        (1.0 - alfi) * tempP[ii - 1].get_i());
+          l_controlPoints[i].get_i() - (alfi * tempP[ii + t + 1].get_i() + (1.0 - alfi) * tempP[ii - 1].get_i());
       double distancej =
-          l_controlPoints[i].get_j() - (alfi * tempP[ii + t + 1].get_j() +
-                                        (1.0 - alfi) * tempP[ii - 1].get_j());
-      double distancew = l_weights[i] - (alfi * tempW[ii + t + 1] +
-                                         (1.0 - alfi) * tempW[ii - 1]);
-      double distance = sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) +
-                             vpMath::sqr(distancew));
+          l_controlPoints[i].get_j() - (alfi * tempP[ii + t + 1].get_j() + (1.0 - alfi) * tempP[ii - 1].get_j());
+      double distancew = l_weights[i] - (alfi * tempW[ii + t + 1] + (1.0 - alfi) * tempW[ii - 1]);
+      double distance = sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) + vpMath::sqr(distancew));
       if (distance <= l_TOL)
         remflag = 1;
     }
@@ -697,8 +638,7 @@ vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num,
   }
 
   for (unsigned int k = 0; k < l_controlPoints.size(); k++)
-    l_controlPoints[k].set_ij(l_controlPoints[k].get_i() / l_weights[k],
-                              l_controlPoints[k].get_j() / l_weights[k]);
+    l_controlPoints[k].set_ij(l_controlPoints[k].get_i() / l_weights[k], l_controlPoints[k].get_j() / l_weights[k]);
 
   delete[] tempP;
   delete[] tempW;
@@ -725,8 +665,7 @@ vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num,
   |P|_{max} \f$ is the maximum distance of any point on the original curve
   from the origin and \f$ d \f$ is the desired bound on deviation.
 */
-unsigned int vpNurbs::removeCurveKnot(double u, unsigned int r,
-                                      unsigned int num, double TOL)
+unsigned int vpNurbs::removeCurveKnot(double u, unsigned int r, unsigned int num, double TOL)
 {
   return removeCurveKnot(u, r, num, TOL, 0, p, knots, controlPoints, weights);
 }
@@ -743,16 +682,13 @@ unsigned int vpNurbs::removeCurveKnot(double u, unsigned int r,
   need to be > 0. \param l_knots : The knot vector \param l_controlPoints :
   the list of control points. \param l_weights : the list of weights.
 */
-void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints,
-                                unsigned int l_p,
-                                std::vector<double> &l_knots,
-                                std::vector<vpImagePoint> &l_controlPoints,
+void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, unsigned int l_p,
+                                std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                 std::vector<double> &l_weights)
 {
   if (l_p == 0) {
     // vpERROR_TRACE("Bad degree of the NURBS basis functions");
-    throw(vpException(vpException::badValue,
-                      "Bad degree of the NURBS basis functions"));
+    throw(vpException(vpException::badValue, "Bad degree of the NURBS basis functions"));
   }
 
   l_knots.clear();
@@ -769,9 +705,7 @@ void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints,
   std::vector<double> ubar;
   ubar.push_back(0.0);
   for (unsigned int k = 1; k < n; k++) {
-    ubar.push_back(
-        ubar[k - 1] +
-        distance(l_crossingPoints[k], 1, l_crossingPoints[k - 1], 1) / d);
+    ubar.push_back(ubar[k - 1] + distance(l_crossingPoints[k], 1, l_crossingPoints[k - 1], 1) / d);
   }
   ubar.push_back(1.0);
 
@@ -866,12 +800,10 @@ void vpNurbs::globalCurveInterp(vpList<vpMeSite> &l_crossingPoints)
   \param l_crossingPoints : The list of data points which have to be
   interpolated.
 */
-void vpNurbs::globalCurveInterp(
-    const std::list<vpImagePoint> &l_crossingPoints)
+void vpNurbs::globalCurveInterp(const std::list<vpImagePoint> &l_crossingPoints)
 {
   std::vector<vpImagePoint> v_crossingPoints;
-  for (std::list<vpImagePoint>::const_iterator it = l_crossingPoints.begin();
-       it != l_crossingPoints.end(); ++it) {
+  for (std::list<vpImagePoint>::const_iterator it = l_crossingPoints.begin(); it != l_crossingPoints.end(); ++it) {
     v_crossingPoints.push_back(*it);
   }
   globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
@@ -913,10 +845,7 @@ void vpNurbs::globalCurveInterp(const std::list<vpMeSite> &l_crossingPoints)
   The result of the method is composed by a knot vector, a set of control
   points and a set of associated weights.
 */
-void vpNurbs::globalCurveInterp()
-{
-  globalCurveInterp(crossingPoints, p, knots, controlPoints, weights);
-}
+void vpNurbs::globalCurveInterp() { globalCurveInterp(crossingPoints, p, knots, controlPoints, weights); }
 
 /*!
   Method which enables to compute a NURBS curve approximating a set of data
@@ -934,10 +863,8 @@ void vpNurbs::globalCurveInterp()
   l_controlPoints : the list of control points. \param l_weights : the list of
   weights.
 */
-void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints,
-                                unsigned int l_p, unsigned int l_n,
-                                std::vector<double> &l_knots,
-                                std::vector<vpImagePoint> &l_controlPoints,
+void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, unsigned int l_p, unsigned int l_n,
+                                std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                 std::vector<double> &l_weights)
 {
   l_knots.clear();
@@ -953,9 +880,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints,
   std::vector<double> ubar;
   ubar.push_back(0.0);
   for (unsigned int k = 1; k < m; k++)
-    ubar.push_back(
-        ubar[k - 1] +
-        distance(l_crossingPoints[k], 1, l_crossingPoints[k - 1], 1) / d);
+    ubar.push_back(ubar[k - 1] + distance(l_crossingPoints[k], 1, l_crossingPoints[k - 1], 1) / d);
   ubar.push_back(1.0);
 
   // Compute the knot vector
@@ -967,8 +892,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints,
   for (unsigned int j = 1; j <= l_n - l_p; j++) {
     double i = floor(j * d);
     double alpha = j * d - i;
-    l_knots.push_back((1.0 - alpha) * ubar[(unsigned int)i - 1] +
-                      alpha * ubar[(unsigned int)i]);
+    l_knots.push_back((1.0 - alpha) * ubar[(unsigned int)i - 1] + alpha * ubar[(unsigned int)i]);
   }
 
   for (unsigned int k = 0; k <= l_p; k++)
@@ -981,28 +905,22 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints,
     unsigned int span = findSpan(ubar[k], l_p, l_knots);
     if (span == l_p && span == l_n) {
       N = computeBasisFuns(ubar[k], span, l_p, l_knots);
-      vpImagePoint pt(l_crossingPoints[k].get_i() -
-                          N[0].value * l_crossingPoints[0].get_i() -
+      vpImagePoint pt(l_crossingPoints[k].get_i() - N[0].value * l_crossingPoints[0].get_i() -
                           N[l_p].value * l_crossingPoints[m].get_i(),
-                      l_crossingPoints[k].get_j() -
-                          N[0].value * l_crossingPoints[0].get_j() -
+                      l_crossingPoints[k].get_j() - N[0].value * l_crossingPoints[0].get_j() -
                           N[l_p].value * l_crossingPoints[m].get_j());
       Rk.push_back(pt);
       delete[] N;
     } else if (span == l_p) {
       N = computeBasisFuns(ubar[k], span, l_p, l_knots);
-      vpImagePoint pt(l_crossingPoints[k].get_i() -
-                          N[0].value * l_crossingPoints[0].get_i(),
-                      l_crossingPoints[k].get_j() -
-                          N[0].value * l_crossingPoints[0].get_j());
+      vpImagePoint pt(l_crossingPoints[k].get_i() - N[0].value * l_crossingPoints[0].get_i(),
+                      l_crossingPoints[k].get_j() - N[0].value * l_crossingPoints[0].get_j());
       Rk.push_back(pt);
       delete[] N;
     } else if (span == l_n) {
       N = computeBasisFuns(ubar[k], span, l_p, l_knots);
-      vpImagePoint pt(l_crossingPoints[k].get_i() -
-                          N[l_p].value * l_crossingPoints[m].get_i(),
-                      l_crossingPoints[k].get_j() -
-                          N[l_p].value * l_crossingPoints[m].get_j());
+      vpImagePoint pt(l_crossingPoints[k].get_i() - N[l_p].value * l_crossingPoints[m].get_i(),
+                      l_crossingPoints[k].get_j() - N[l_p].value * l_crossingPoints[m].get_j());
       Rk.push_back(pt);
       delete[] N;
     } else {
@@ -1076,8 +994,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints,
   \param n : The desired number of control points. This parameter \e n
   must be under or equal to the number of data points.
 */
-void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints,
-                                unsigned int n)
+void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints, unsigned int n)
 {
   std::vector<vpImagePoint> v_crossingPoints;
   l_crossingPoints.front();
@@ -1103,12 +1020,10 @@ void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints,
   interpolated. \param n : The desired number of control points. The parameter
   \e n must be under or equal to the number of data points.
 */
-void vpNurbs::globalCurveApprox(
-    const std::list<vpImagePoint> &l_crossingPoints, unsigned int n)
+void vpNurbs::globalCurveApprox(const std::list<vpImagePoint> &l_crossingPoints, unsigned int n)
 {
   std::vector<vpImagePoint> v_crossingPoints;
-  for (std::list<vpImagePoint>::const_iterator it = l_crossingPoints.begin();
-       it != l_crossingPoints.end(); ++it) {
+  for (std::list<vpImagePoint>::const_iterator it = l_crossingPoints.begin(); it != l_crossingPoints.end(); ++it) {
     v_crossingPoints.push_back(*it);
   }
   globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
@@ -1130,12 +1045,10 @@ void vpNurbs::globalCurveApprox(
   \param n : The desired number of control points. This parameter \e n
   must be under or equal to the number of data points.
 */
-void vpNurbs::globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints,
-                                unsigned int n)
+void vpNurbs::globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints, unsigned int n)
 {
   std::vector<vpImagePoint> v_crossingPoints;
-  for (std::list<vpMeSite>::const_iterator it = l_crossingPoints.begin();
-       it != l_crossingPoints.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = l_crossingPoints.begin(); it != l_crossingPoints.end(); ++it) {
     vpImagePoint pt(it->ifloat, it->jfloat);
     v_crossingPoints.push_back(pt);
   }

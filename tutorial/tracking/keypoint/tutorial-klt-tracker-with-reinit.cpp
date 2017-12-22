@@ -66,9 +66,8 @@ int main()
           // detected
           bool is_redundant = false;
           for (size_t j = 0; j < new_features.size(); j++) {
-            distance =
-                sqrt(vpMath::sqr(new_features[j].x - prev_features[i].x) +
-                     vpMath::sqr(new_features[j].y - prev_features[i].y));
+            distance = sqrt(vpMath::sqr(new_features[j].x - prev_features[i].x) +
+                            vpMath::sqr(new_features[j].y - prev_features[i].y));
             if (distance < minDistance_) {
               is_redundant = true;
               break;
@@ -88,8 +87,7 @@ int main()
         long id;
         int j = 0;
 
-        CvPoint2D32f *prev_features =
-            (CvPoint2D32f *)cvAlloc(prev_nfeatures * sizeof(CvPoint2D32f));
+        CvPoint2D32f *prev_features = (CvPoint2D32f *)cvAlloc(prev_nfeatures * sizeof(CvPoint2D32f));
 
         for (int i = 0; i < prev_nfeatures; i++) {
           tracker.getFeature(i, id, x, y);
@@ -100,21 +98,18 @@ int main()
 
         // Start a new feature detection
         tracker.initTracking(cvI);
-        std::cout << "Detection of " << tracker.getNbFeatures()
-                  << " new features" << std::endl;
+        std::cout << "Detection of " << tracker.getNbFeatures() << " new features" << std::endl;
 
         // Add previous features if they are not to close to detected one
         double distance, minDistance_ = tracker.getMinDistance();
-        for (int i = tracker.getNbFeatures();
-             j < prev_nfeatures && i < tracker.getMaxFeatures(); j++) {
+        for (int i = tracker.getNbFeatures(); j < prev_nfeatures && i < tracker.getMaxFeatures(); j++) {
           // Test if a previous feature is not redundant with new the one that
           // are newly detected
           bool is_redundant = false;
           for (int k = 0; k < tracker.getNbFeatures(); k++) {
             tracker.getFeature(k, id, x, y);
             // printf("curr feature %d: id %d coord: %g %g\n", k, id, x, y);
-            distance = sqrt(vpMath::sqr(x - prev_features[j].x) +
-                            vpMath::sqr(y - prev_features[j].y));
+            distance = sqrt(vpMath::sqr(x - prev_features[j].x) + vpMath::sqr(y - prev_features[j].y));
             if (distance < minDistance_) {
               is_redundant = true;
               break;
@@ -135,8 +130,7 @@ int main()
       tracker.track(cvI);
       //! [Re-init tracker]
 
-      std::cout << "tracking of " << tracker.getNbFeatures() << " features"
-                << std::endl;
+      std::cout << "tracking of " << tracker.getNbFeatures() << " features" << std::endl;
 
       tracker.display(I, vpColor::red);
       vpDisplay::flush(I);

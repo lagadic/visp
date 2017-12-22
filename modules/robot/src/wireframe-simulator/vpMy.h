@@ -76,18 +76,18 @@
 //#define	MIN(A,B)	(((A) < (B)) ? (A) : (B))
 //#define	MIN3(A,B,C)	(MIN(MIN(A,B),C))
 
-#define MIN_MAX(M, MIN, MAX)                                                 \
-  if ((M) < (MIN))                                                           \
-    (MIN) = (M);                                                             \
-  else if ((M) > (MAX))                                                      \
+#define MIN_MAX(M, MIN, MAX)                                                                                           \
+  if ((M) < (MIN))                                                                                                     \
+    (MIN) = (M);                                                                                                       \
+  else if ((M) > (MAX))                                                                                                \
   (MAX) = (M)
 
 #define TWO_POWER(P) (((P) > 0) ? 1 << (P) : 1)
-#define SWAP(A, B, T)                                                        \
-  {                                                                          \
-    (T) = (A);                                                               \
-    (A) = (B);                                                               \
-    (B) = (T);                                                               \
+#define SWAP(A, B, T)                                                                                                  \
+  {                                                                                                                    \
+    (T) = (A);                                                                                                         \
+    (A) = (B);                                                                                                         \
+    (B) = (T);                                                                                                         \
   }
 
 typedef unsigned char Byte;

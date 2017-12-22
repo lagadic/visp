@@ -91,12 +91,10 @@ void vpViewer::actualRedraw(void)
     if (simu->image_background != NULL) {
       glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       if (simu->typeImage == vpSimulator::grayImage)
-        glDrawPixels((GLsizei)simu->getInternalWidth(),
-                     (GLsizei)simu->getInternalHeight(), (GLenum)GL_LUMINANCE,
+        glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(), (GLenum)GL_LUMINANCE,
                      GL_UNSIGNED_BYTE, simu->image_background);
       else
-        glDrawPixels((GLsizei)simu->getInternalWidth(),
-                     (GLsizei)simu->getInternalHeight(), (GLenum)GL_RGB,
+        glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(), (GLenum)GL_RGB,
                      GL_UNSIGNED_BYTE, simu->image_background);
 
       glEnable(GL_DEPTH_TEST);
@@ -114,8 +112,7 @@ void vpViewer::actualRedraw(void)
     glSwapBuffers();
     if (viewerType == vpViewer::internalView) {
       simu->get = 0;
-      glReadPixels(0, 0, (GLsizei)simu->getInternalWidth(),
-                   (GLsizei)simu->getInternalHeight(), (GLenum)GL_RGB,
+      glReadPixels(0, 0, (GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(), (GLenum)GL_RGB,
                    GL_UNSIGNED_BYTE, simu->bufferView);
       simu->get = 1;
     }
@@ -149,8 +146,7 @@ vpViewer::resize(int x, int y, bool /*fixed*/)
   GetWindowRect(parent, &rcWindow);
   ptDiff.x = (rcWindow.right - rcWindow.left) - rcClient.right;
   ptDiff.y = (rcWindow.bottom - rcWindow.top) - rcClient.bottom;
-  MoveWindow(parent, rcWindow.left, rcWindow.top, x + ptDiff.x, y + ptDiff.y,
-             TRUE);
+  MoveWindow(parent, rcWindow.left, rcWindow.top, x + ptDiff.x, y + ptDiff.y, TRUE);
   if (fixed) {
     DWORD dwStyle = GetWindowLong(parent, GWL_STYLE);
     dwStyle &= ~(WS_SIZEBOX);
@@ -174,21 +170,16 @@ vpViewer::resize(int x, int y, bool /*fixed*/)
 
 SbBool vpViewer::processSoEvent(const SoEvent *const event)
 {
-  if (this->isViewing() &&
-      event->getTypeId() == SoKeyboardEvent::getClassTypeId()) {
+  if (this->isViewing() && event->getTypeId() == SoKeyboardEvent::getClassTypeId()) {
     SoKeyboardEvent *kbevent = (SoKeyboardEvent *)event;
     switch (kbevent->getKey()) {
     case SoKeyboardEvent::H:
       if (kbevent->getState() == SoButtonEvent::DOWN) {
         std::cout << "H : this help " << std::endl;
-        std::cout << "M : get and save the external camera location (matrix)"
-                  << std::endl;
-        std::cout << "V : get and save the external camera location (vector)"
-                  << std::endl;
+        std::cout << "M : get and save the external camera location (matrix)" << std::endl;
+        std::cout << "V : get and save the external camera location (vector)" << std::endl;
         std::cout << "M : load camera location (vector)" << std::endl;
-        std::cout
-            << "P : get external camera location and set the internal one"
-            << std::endl;
+        std::cout << "P : get external camera location and set the internal one" << std::endl;
       }
       return TRUE;
 

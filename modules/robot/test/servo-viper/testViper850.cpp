@@ -75,8 +75,7 @@ int main()
     std::cout << "-- Settings associated to the Marlin F033C camera with "
                  "distortion ------"
               << std::endl;
-    viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
-                  vpCameraParameters::perspectiveProjWithDistortion);
+    viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
@@ -110,8 +109,8 @@ int main()
     std::cout << "fMe:" << std::endl
               << "\tt: " << t.t() << std::endl
               << "\trzyz (rad): " << r.t() << std::endl
-              << "\trzyz (deg): " << vpMath::deg(r[0]) << " "
-              << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << std::endl;
+              << "\trzyz (deg): " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2])
+              << std::endl;
 
     return 0;
   } catch (vpException &e) {

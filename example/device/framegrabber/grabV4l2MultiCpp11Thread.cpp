@@ -7,7 +7,7 @@
          with C++11 threads.
 */
 
-#if defined(VISP_HAVE_CPP11_COMPATIBILITY) && defined(VISP_HAVE_V4L2) &&     \
+#if defined(VISP_HAVE_CPP11_COMPATIBILITY) && defined(VISP_HAVE_V4L2) &&                                               \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
 #include <condition_variable>
@@ -55,8 +55,7 @@ OPTIONS:                                               \n\
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
-bool getOptions(int argc, char **argv, unsigned int &deviceCount,
-                bool &saveVideo)
+bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVideo)
 {
   const char *optarg;
   const char **argv1 = (const char **)argv;
@@ -103,8 +102,7 @@ public:
   };
 
   FrameQueue()
-    : m_cancelled(false), m_cond(), m_queueColor(),
-      m_maxQueueSize(std::numeric_limits<size_t>::max()), m_mutex()
+    : m_cancelled(false), m_cond(), m_queueColor(), m_maxQueueSize(std::numeric_limits<size_t>::max()), m_mutex()
   {
   }
 
@@ -153,10 +151,7 @@ public:
     return image;
   }
 
-  void setMaxQueueSize(const size_t max_queue_size)
-  {
-    m_maxQueueSize = max_queue_size;
-  }
+  void setMaxQueueSize(const size_t max_queue_size) { m_maxQueueSize = max_queue_size; }
 
 private:
   bool m_cancelled;
@@ -170,8 +165,7 @@ class StorageWorker
 {
 
 public:
-  StorageWorker(FrameQueue &queue, const std::string &filename,
-                const unsigned int width, const unsigned int height)
+  StorageWorker(FrameQueue &queue, const std::string &filename, const unsigned int width, const unsigned int height)
     : m_queue(queue), m_filename(filename), m_width(width), m_height(height)
   {
   }
@@ -220,11 +214,7 @@ public:
   struct cancelled {
   };
 
-  ShareImage()
-    : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL),
-      m_totalSize(0)
-  {
-  }
+  ShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL), m_totalSize(0) {}
 
   virtual ~ShareImage()
   {
@@ -270,8 +260,7 @@ public:
   }
 
   // Set the image to display
-  void setImage(const unsigned char *const imageData,
-                const unsigned int totalSize)
+  void setImage(const unsigned char *const imageData, const unsigned int totalSize)
   {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -307,14 +296,12 @@ void capture(vpV4l2Grabber *const pGrabber, ShareImage &share_image)
     pGrabber->acquire(local_img);
 
     // Update share_image
-    share_image.setImage((unsigned char *)local_img.bitmap,
-                         local_img.getSize() * 4);
+    share_image.setImage((unsigned char *)local_img.bitmap, local_img.getSize() * 4);
   }
 }
 
-void display(const unsigned int width, const unsigned int height,
-             const int win_x, const int win_y, const unsigned int deviceId,
-             ShareImage &share_image, FrameQueue &queue, const bool save)
+void display(const unsigned int width, const unsigned int height, const int win_x, const int win_y,
+             const unsigned int deviceId, ShareImage &share_image, FrameQueue &queue, const bool save)
 {
   vpImage<vpRGBa> local_img(height, width);
 
@@ -332,21 +319,18 @@ void display(const unsigned int width, const unsigned int height,
   try {
     vpMouseButton::vpMouseButtonType button;
 
-    vpImage<unsigned char> I_red(height, width), I_green(height, width),
-        I_blue(height, width), I_alpha(height, width);
+    vpImage<unsigned char> I_red(height, width), I_green(height, width), I_blue(height, width), I_alpha(height, width);
     ;
-    vpImage<unsigned char> I_red_gaussian(height, width),
-        I_green_gaussian(height, width), I_blue_gaussian(height, width);
-    vpImage<double> I_red_gaussian_double, I_green_gaussian_double,
-        I_blue_gaussian_double;
+    vpImage<unsigned char> I_red_gaussian(height, width), I_green_gaussian(height, width),
+        I_blue_gaussian(height, width);
+    vpImage<double> I_red_gaussian_double, I_green_gaussian_double, I_blue_gaussian_double;
 
     bool exit = false, gaussian_blur = false;
     while (!exit) {
       double t = vpTime::measureTimeMs();
 
       // Get image
-      share_image.getImage((unsigned char *)local_img.bitmap,
-                           local_img.getSize() * 4);
+      share_image.getImage((unsigned char *)local_img.bitmap, local_img.getSize() * 4);
 
       // Apply gaussian blur to simulate a computation on the image
       if (gaussian_blur) {
@@ -356,19 +340,15 @@ void display(const unsigned int width, const unsigned int height,
         vpImageConvert::convert(I_green, I_green_gaussian_double);
         vpImageConvert::convert(I_blue, I_blue_gaussian_double);
 
-        vpImageFilter::gaussianBlur(I_red_gaussian_double,
-                                    I_red_gaussian_double, 21);
-        vpImageFilter::gaussianBlur(I_green_gaussian_double,
-                                    I_green_gaussian_double, 21);
-        vpImageFilter::gaussianBlur(I_blue_gaussian_double,
-                                    I_blue_gaussian_double, 21);
+        vpImageFilter::gaussianBlur(I_red_gaussian_double, I_red_gaussian_double, 21);
+        vpImageFilter::gaussianBlur(I_green_gaussian_double, I_green_gaussian_double, 21);
+        vpImageFilter::gaussianBlur(I_blue_gaussian_double, I_blue_gaussian_double, 21);
 
         vpImageConvert::convert(I_red_gaussian_double, I_red_gaussian);
         vpImageConvert::convert(I_green_gaussian_double, I_green_gaussian);
         vpImageConvert::convert(I_blue_gaussian_double, I_blue_gaussian);
 
-        vpImageConvert::merge(&I_red_gaussian, &I_green_gaussian,
-                              &I_blue_gaussian, NULL, local_img);
+        vpImageConvert::merge(&I_red_gaussian, &I_green_gaussian, &I_blue_gaussian, NULL, local_img);
       }
 
       t = vpTime::measureTimeMs() - t;
@@ -378,9 +358,7 @@ void display(const unsigned int width, const unsigned int height,
       vpDisplay::display(local_img);
 
       vpDisplay::displayText(local_img, 20, 20, ss.str(), vpColor::red);
-      vpDisplay::displayText(
-          local_img, 40, 20,
-          "Left click to quit, right click for Gaussian blur.", vpColor::red);
+      vpDisplay::displayText(local_img, 40, 20, "Left click to quit, right click for Gaussian blur.", vpColor::red);
 
       vpDisplay::flush(local_img);
 
@@ -451,16 +429,13 @@ int main(int argc, char *argv[])
   std::string parent_directory = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   for (size_t deviceId = 0; deviceId < grabbers.size(); deviceId++) {
     // Start the capture thread for the current camera stream
-    capture_threads.emplace_back(capture, grabbers[deviceId],
-                                 std::ref(share_images[deviceId]));
+    capture_threads.emplace_back(capture, grabbers[deviceId], std::ref(share_images[deviceId]));
     int win_x = deviceId * offsetX, win_y = deviceId * offsetY;
 
     // Start the display thread for the current camera stream
-    display_threads.emplace_back(display, grabbers[deviceId]->getWidth(),
-                                 grabbers[deviceId]->getHeight(), win_x,
-                                 win_y, deviceId,
-                                 std::ref(share_images[deviceId]),
-                                 std::ref(save_queues[deviceId]), saveVideo);
+    display_threads.emplace_back(display, grabbers[deviceId]->getWidth(), grabbers[deviceId]->getHeight(), win_x, win_y,
+                                 deviceId, std::ref(share_images[deviceId]), std::ref(save_queues[deviceId]),
+                                 saveVideo);
 
     if (saveVideo) {
       std::stringstream ss;
@@ -470,9 +445,8 @@ int main(int argc, char *argv[])
       ss << "/%06d.png";
       std::string filename = ss.str();
 
-      storages.emplace_back(
-          std::ref(save_queues[deviceId]), std::cref(filename),
-          grabbers[deviceId]->getWidth(), grabbers[deviceId]->getHeight());
+      storages.emplace_back(std::ref(save_queues[deviceId]), std::cref(filename), grabbers[deviceId]->getWidth(),
+                            grabbers[deviceId]->getHeight());
     }
   }
 
@@ -499,8 +473,7 @@ int main(int argc, char *argv[])
   }
 
   if (saveVideo) {
-    std::cout << "\nWaiting for finishing thread to write images..."
-              << std::endl;
+    std::cout << "\nWaiting for finishing thread to write images..." << std::endl;
   }
 
   // We're done reading, cancel all the queues

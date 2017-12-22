@@ -49,8 +49,7 @@
 /*                                rotation			      */
 /**********************************************************************/
 
-static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl,
-                              unsigned int nc1, unsigned int nc3,
+static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1, unsigned int nc3,
                               vpColVector &x1, vpColVector &x2)
 {
 
@@ -130,8 +129,7 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl,
 
 //#define EPS 1.e-5
 
-static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1,
-                     vpColVector &x2)
+static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin (CLagrange.cc)Lagrange(...) " << std::endl;
@@ -259,8 +257,7 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1,
    3: if plane z=cst
    0: any other plane
 */
-void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo,
-                              const int coplanar_plane_type)
+void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type)
 {
 
 #if (DEBUG_LEVEL1)
@@ -279,8 +276,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo,
     i = 0;
 
     if (coplanar_plane_type == 1) { // plane ax=d
-      for (std::list<vpPoint>::const_iterator it = listP.begin();
-           it != listP.end(); ++it) {
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
         P = *it;
         a[k][0] = -P.get_oY();
         a[k][1] = 0.0;
@@ -308,8 +304,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo,
       }
 
     } else if (coplanar_plane_type == 2) { // plane by=d
-      for (std::list<vpPoint>::const_iterator it = listP.begin();
-           it != listP.end(); ++it) {
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
         P = *it;
         a[k][0] = -P.get_oX();
         a[k][1] = 0.0;
@@ -338,8 +333,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo,
 
     } else { // plane cz=d or any other
 
-      for (std::list<vpPoint>::const_iterator it = listP.begin();
-           it != listP.end(); ++it) {
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
         P = *it;
         a[k][0] = -P.get_oX();
         a[k][1] = 0.0;
@@ -380,8 +374,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo,
 
 #if (DEBUG_LEVEL2)
     {
-      std::cout << "ax1+bx2 (devrait etre 0) " << (a * X1 + b * X2).t()
-                << std::endl;
+      std::cout << "ax1+bx2 (devrait etre 0) " << (a * X1 + b * X2).t() << std::endl;
       std::cout << "norme X1 " << X1.sumSquare() << std::endl;
       ;
     }
@@ -403,8 +396,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo,
 
     // s = 0.0;
     // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
-    s = X2[0] * X2[0] + X2[1] * X2[1] +
-        X2[2] * X2[2]; // To avoid a Coverity copy/past error
+    s = X2[0] * X2[0] + X2[1] * X2[1] + X2[2] * X2[2]; // To avoid a Coverity copy/past error
 
     if (s < 1e-10) {
       //      std::cout << "Points that produce an error: " << std::endl;
@@ -416,9 +408,8 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo,
       //                  << (*it).get_oX() << " " << (*it).get_oY() << " " <<
       //                  (*it).get_oZ() << std::endl;
       //      }
-      throw(vpException(vpException::divideByZeroError,
-                        "Division by zero in Lagrange pose computation "
-                        "(planar plane case)"));
+      throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation "
+                                                        "(planar plane case)"));
     }
 
     s = 1.0 / sqrt(s);
@@ -496,8 +487,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     vpPoint P;
     i = 0;
-    for (std::list<vpPoint>::const_iterator it = listP.begin();
-         it != listP.end(); ++it) {
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
       P = *it;
       a[k][0] = -P.get_oX();
       a[k][1] = 0.0;
@@ -553,8 +543,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
 #if (DEBUG_LEVEL2)
     {
-      std::cout << "ax1+bx2 (devrait etre 0) " << (a * X1 + b * X2).t()
-                << std::endl;
+      std::cout << "ax1+bx2 (devrait etre 0) " << (a * X1 + b * X2).t() << std::endl;
       std::cout << "norme X1 " << X1.sumSquare() << std::endl;
       ;
     }
@@ -574,8 +563,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     // s = 0.0;
     // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
-    s = X2[0] * X2[0] + X2[1] * X2[1] +
-        X2[2] * X2[2]; // To avoid a Coverity copy/past error
+    s = X2[0] * X2[0] + X2[1] * X2[1] + X2[2] * X2[2]; // To avoid a Coverity copy/past error
 
     if (s < 1e-10) {
       //      std::cout << "Points that produce an error: " << std::endl;
@@ -588,9 +576,8 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       //                  (*it).get_oZ() << std::endl;
       //      }
       // vpERROR_TRACE(" division par zero " ) ;
-      throw(vpException(vpException::divideByZeroError,
-                        "Division by zero in Lagrange pose computation (non "
-                        "planar plane case)"));
+      throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation (non "
+                                                        "planar plane case)"));
     }
 
     s = 1.0 / sqrt(s);

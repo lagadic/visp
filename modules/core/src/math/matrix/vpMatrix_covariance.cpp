@@ -56,19 +56,15 @@
 
   \param b : Vector b from Ax = b.
 */
-vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A,
-                                           const vpColVector &x,
-                                           const vpColVector &b)
+vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b)
 {
   //  double denom = ((double)(A.getRows()) - (double)(A.getCols())); // To
   //  consider OLS Estimate for sigma
-  double denom =
-      ((double)(A.getRows())); // To consider MLE Estimate for sigma
+  double denom = ((double)(A.getRows())); // To consider MLE Estimate for sigma
 
   if (denom <= std::numeric_limits<double>::epsilon())
-    throw vpMatrixException(
-        vpMatrixException::divideByZeroError,
-        "Impossible to compute covariance matrix: not enough data");
+    throw vpMatrixException(vpMatrixException::divideByZeroError,
+                            "Impossible to compute covariance matrix: not enough data");
 
   //  double sigma2 = ( ((b.t())*b) - ( (b.t())*A*x ) ); // Should be
   //  equivalent to line bellow.
@@ -76,9 +72,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A,
 
   sigma2 /= denom;
 
-  return (A.t() * A).pseudoInverse(A.getCols() *
-                                   std::numeric_limits<double>::epsilon()) *
-         sigma2;
+  return (A.t() * A).pseudoInverse(A.getCols() * std::numeric_limits<double>::epsilon()) * sigma2;
 }
 
 /*!
@@ -94,9 +88,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A,
 
   \param W : Diagonal weigths matrix from WAx = Wb.
 */
-vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A,
-                                           const vpColVector &x,
-                                           const vpColVector &b,
+vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b,
                                            const vpMatrix &W)
 {
   double denom = 0.0;
@@ -107,19 +99,15 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A,
   }
 
   if (denom <= std::numeric_limits<double>::epsilon())
-    throw vpMatrixException(
-        vpMatrixException::divideByZeroError,
-        "Impossible to compute covariance matrix: not enough data");
+    throw vpMatrixException(vpMatrixException::divideByZeroError,
+                            "Impossible to compute covariance matrix: not enough data");
 
   //  double sigma2 = ( ((W*b).t())*W*b - ( ((W*b).t())*W*A*x ) ); // Should
   //  be equivalent to line bellow.
   double sigma2 = (W * b - (W * A * x)).t() * (W * b - (W * A * x));
   sigma2 /= denom;
 
-  return (A.t() * (W2)*A)
-             .pseudoInverse(A.getCols() *
-                            std::numeric_limits<double>::epsilon()) *
-         sigma2;
+  return (A.t() * (W2)*A).pseudoInverse(A.getCols() * std::numeric_limits<double>::epsilon()) * sigma2;
 }
 
 /*!
@@ -133,8 +121,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A,
 
   \param Ls : interaction matrix used in v = Ls.pseudoInverse() * DeltaS
 */
-vpMatrix vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
-                                              const vpColVector &deltaS,
+vpMatrix vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS,
                                               const vpMatrix &Ls)
 {
   vpMatrix Js;
@@ -159,10 +146,8 @@ vpMatrix vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
 
   \param W : Weight matrix used in v = (W * Ls).pseudoInverse() * W * DeltaS.
 */
-vpMatrix vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
-                                              const vpColVector &deltaS,
-                                              const vpMatrix &Ls,
-                                              const vpMatrix &W)
+vpMatrix vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS,
+                                              const vpMatrix &Ls, const vpMatrix &W)
 {
   vpMatrix Js;
   vpColVector deltaP;
@@ -171,10 +156,8 @@ vpMatrix vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
   return vpMatrix::computeCovarianceMatrix(Js, deltaP, deltaS, W);
 }
 
-void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
-                                          const vpColVector &deltaS,
-                                          const vpMatrix &Ls, vpMatrix &Js,
-                                          vpColVector &deltaP)
+void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,
+                                          vpMatrix &Js, vpColVector &deltaP)
 {
   // building Lp
   vpMatrix LpInv(6, 6);
@@ -221,8 +204,7 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
     //        Lthetau += (theta2u_skew -
     //        (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
     LthetauInvAnalytic +=
-        -(vpMath::sqr(vpMath::sinc(theta / 2.0)) * theta2u_skew -
-          (1.0 - vpMath::sinc(theta)) * u_skew * u_skew);
+        -(vpMath::sqr(vpMath::sinc(theta / 2.0)) * theta2u_skew - (1.0 - vpMath::sinc(theta)) * u_skew * u_skew);
   }
 
   //    vpMatrix LthetauInv = Lthetau.inverseByLU();
@@ -241,7 +223,5 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
   Js = Ls * LpInv;
 
   // building deltaP
-  deltaP = (Js).pseudoInverse(Js.getRows() *
-                              std::numeric_limits<double>::epsilon()) *
-           deltaS;
+  deltaP = (Js).pseudoInverse(Js.getRows() * std::numeric_limits<double>::epsilon()) * deltaS;
 }

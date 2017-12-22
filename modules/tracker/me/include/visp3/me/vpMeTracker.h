@@ -97,13 +97,9 @@ public:
 
   virtual void display(const vpImage<unsigned char> &I, vpColor col) = 0;
   virtual void display(const vpImage<unsigned char> &I);
-  void display(const vpImage<unsigned char> &I, vpColVector &w,
-               unsigned int &index_w);
+  void display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w);
 
-  void setDisplay(vpMeSite::vpMeSiteDisplayType select)
-  {
-    selectDisplay = select;
-  }
+  void setDisplay(vpMeSite::vpMeSiteDisplayType select) { selectDisplay = select; }
 
   vpMeTracker &operator=(vpMeTracker &f);
 

@@ -102,17 +102,14 @@ public:
 
   void buildFrom(vpImage<unsigned char> &I);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   vpFeatureLuminance *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
   void error(const vpBasicFeature &s_star, vpColVector &e);
   //! Compute the error between a visual features and zero
   vpColVector error(const unsigned int select = FEATURE_ALL);

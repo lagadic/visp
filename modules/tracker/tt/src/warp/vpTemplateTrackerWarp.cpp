@@ -39,16 +39,14 @@
  *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 
-void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in,
-                                         const vpColVector &p,
+void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in, const vpColVector &p,
                                          vpTemplateTrackerTriangle &out)
 {
   if (p.size() < 2) {
     vpCTRACE << "Bad template tracker warp parameters dimension. Should "
                 "never occur. "
              << std::endl;
-    throw(vpException(vpException::dimensionError,
-                      "Bad template tracker warp parameters dimension"));
+    throw(vpException(vpException::dimensionError, "Bad template tracker warp parameters dimension"));
   }
   vpColVector S1(2), S2(2), S3(2);
   vpColVector rS1(2), rS2(2), rS3(2);
@@ -61,9 +59,7 @@ void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in,
   warpX(S3, rS3, p);
   out.init(rS1, rS2, rS3);
 }
-void vpTemplateTrackerWarp::warpZone(const vpTemplateTrackerZone &in,
-                                     const vpColVector &p,
-                                     vpTemplateTrackerZone &out)
+void vpTemplateTrackerWarp::warpZone(const vpTemplateTrackerZone &in, const vpColVector &p, vpTemplateTrackerZone &out)
 {
   vpTemplateTrackerTriangle TR, TT;
   out.clear();
@@ -74,8 +70,7 @@ void vpTemplateTrackerWarp::warpZone(const vpTemplateTrackerZone &in,
   }
 }
 
-double vpTemplateTrackerWarp::getDistanceBetweenZoneAndWarpedZone(
-    const vpTemplateTrackerZone &Z, const vpColVector &p)
+double vpTemplateTrackerWarp::getDistanceBetweenZoneAndWarpedZone(const vpTemplateTrackerZone &Z, const vpColVector &p)
 {
   unsigned int nb_corners = Z.getNbTriangle() * 3;
   computeCoeff(p);
@@ -90,16 +85,14 @@ double vpTemplateTrackerWarp::getDistanceBetweenZoneAndWarpedZone(
 
       computeDenom(X1, p);
       warpX(X1, X2, p);
-      res += sqrt((X2[0] - X1[0]) * (X2[0] - X1[0]) +
-                  (X2[1] - X1[1]) * (X2[1] - X1[1]));
+      res += sqrt((X2[0] - X1[0]) * (X2[0] - X1[0]) + (X2[1] - X1[1]) * (X2[1] - X1[1]));
     }
   }
 
   return res / nb_corners;
 }
 
-void vpTemplateTrackerWarp::warp(const double *ut0, const double *vt0,
-                                 int nb_pt, const vpColVector &p, double *u,
+void vpTemplateTrackerWarp::warp(const double *ut0, const double *vt0, int nb_pt, const vpColVector &p, double *u,
                                  double *v)
 {
   computeCoeff(p);
@@ -116,9 +109,8 @@ void vpTemplateTrackerWarp::warp(const double *ut0, const double *vt0,
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0,
-                                     const double *u, const double *v,
-                                     int nb_pt, vpColVector &p)
+void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0, const double *u, const double *v, int nb_pt,
+                                     vpColVector &p)
 {
   vpMatrix dW_(2, nbParam);
   vpMatrix dX(2, 1);
@@ -152,8 +144,7 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0,
       dX = X2 - fX1;
       G += dW_.t() * dX;
 
-      erreur += ((u[i] - fX1[0]) * (u[i] - fX1[0]) +
-                 (v[i] - fX1[1]) * (v[i] - fX1[1]));
+      erreur += ((u[i] - fX1[0]) * (u[i] - fX1[0]) + (v[i] - fX1[1]) * (v[i] - fX1[1]));
     }
 
     vpMatrix::computeHLM(H, lambda, HLM);
@@ -164,8 +155,7 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0, const double *vt0,
       throw(e);
     }
     cpt++;
-  } while ((cpt < 150) &&
-           (sqrt((erreur_prec - erreur) * (erreur_prec - erreur)) > 1e-20));
+  } while ((cpt < 150) && (sqrt((erreur_prec - erreur) * (erreur_prec - erreur)) > 1e-20));
   // std::cout<<"erreur apres transformation="<<erreur<<std::endl;
 }
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

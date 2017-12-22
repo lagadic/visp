@@ -119,9 +119,8 @@ model
   // parameters of the camera named "myCamera" for the image sizes 640x480,
   // for the projection model projModel. The size of the image is optional
   // if camera parameters are given only for one image size.
-  if (p.parse(cam, "myXmlFile.xml", "myCamera", projModel,640,480) !=
-vpXmlParserCamera::SEQUENCE_OK) { std::cout << "Cannot found myCamera" <<
-std::endl;
+  if (p.parse(cam, "myXmlFile.xml", "myCamera", projModel,640,480) != vpXmlParserCamera::SEQUENCE_OK) {
+   std::cout << "Cannot found myCamera" << std::endl;
   }
 
   // cout the parameters
@@ -175,9 +174,8 @@ int main()
   // Create a XML parser
   vpXmlParserCamera p;
   // Save the camera parameters in an XML file.
-  if (p.save(cam, "myNewXmlFile.xml", "myNewCamera", 320, 240) !=
-vpXmlParserCamera::SEQUENCE_OK) { std::cout << "Cannot save camera parameters"
-<< std::endl;
+  if (p.save(cam, "myNewXmlFile.xml", "myNewCamera", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
+    std::cout << "Cannot save camera parameters" << std::endl;
   }
 
   // Clean up memory allocated by the xml library
@@ -247,82 +245,56 @@ public:
 
   vpXmlParserCamera &operator=(const vpXmlParserCamera &twinparser);
 
-  int parse(vpCameraParameters &cam, const std::string &filename,
-            const std::string &camera_name,
-            const vpCameraParameters::vpCameraParametersProjType &projModel,
-            const unsigned int image_width = 0,
+  int parse(vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
+            const vpCameraParameters::vpCameraParametersProjType &projModel, const unsigned int image_width = 0,
             const unsigned int image_height = 0);
 
-  int save(const vpCameraParameters &cam, const std::string &filename,
-           const std::string &camera_name, const unsigned int image_width = 0,
-           const unsigned int image_height = 0,
+  int save(const vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
+           const unsigned int image_width = 0, const unsigned int image_height = 0,
            const std::string &additionalInfo = "");
 
   void setCameraName(const std::string &name) { this->camera_name = name; }
   void setHeight(const unsigned int height) { this->image_height = height; }
-  void setSubsampling_width(const unsigned int subsampling)
-  {
-    this->subsampling_width = subsampling;
-  }
-  void setSubsampling_height(const unsigned int subsampling)
-  {
-    this->subsampling_height = subsampling;
-  }
+  void setSubsampling_width(const unsigned int subsampling) { this->subsampling_width = subsampling; }
+  void setSubsampling_height(const unsigned int subsampling) { this->subsampling_height = subsampling; }
   void setWidth(const unsigned int width) { this->image_width = width; }
 
 private:
   int read(xmlDocPtr doc, xmlNodePtr node, const std::string &camera_name,
-           const vpCameraParameters::vpCameraParametersProjType &projModel,
-           const unsigned int image_width = 0,
-           const unsigned int image_height = 0,
-           const unsigned int subsampling_width = 0,
+           const vpCameraParameters::vpCameraParametersProjType &projModel, const unsigned int image_width = 0,
+           const unsigned int image_height = 0, const unsigned int subsampling_width = 0,
            const unsigned int subsampling_height = 0);
 
   int count(xmlDocPtr doc, xmlNodePtr node, const std::string &camera_name,
-            const vpCameraParameters::vpCameraParametersProjType &projModel,
-            const unsigned int image_width = 0,
-            const unsigned int image_height = 0,
-            const unsigned int subsampling_width = 0,
+            const vpCameraParameters::vpCameraParametersProjType &projModel, const unsigned int image_width = 0,
+            const unsigned int image_height = 0, const unsigned int subsampling_width = 0,
             const unsigned int subsampling_height = 0);
 
-  int read_camera(
-      xmlDocPtr doc, xmlNodePtr node, const std::string &camera_name,
-      const vpCameraParameters::vpCameraParametersProjType &projModel,
-      const unsigned int image_width = 0, const unsigned int image_height = 0,
-      const unsigned int subsampling_width = 0,
-      const unsigned int subsampling_height = 0);
+  int read_camera(xmlDocPtr doc, xmlNodePtr node, const std::string &camera_name,
+                  const vpCameraParameters::vpCameraParametersProjType &projModel, const unsigned int image_width = 0,
+                  const unsigned int image_height = 0, const unsigned int subsampling_width = 0,
+                  const unsigned int subsampling_height = 0);
 
-  xmlNodePtr find_camera(xmlDocPtr doc, xmlNodePtr node,
-                         const std::string &camera_name,
-                         const unsigned int image_width = 0,
-                         const unsigned int image_height = 0,
-                         const unsigned int subsampling_width = 0,
-                         const unsigned int subsampling_height = 0);
+  xmlNodePtr find_camera(xmlDocPtr doc, xmlNodePtr node, const std::string &camera_name,
+                         const unsigned int image_width = 0, const unsigned int image_height = 0,
+                         const unsigned int subsampling_width = 0, const unsigned int subsampling_height = 0);
 
   xmlNodePtr find_additional_info(xmlNodePtr node);
 
-  vpXmlCodeSequenceType read_camera_model(xmlDocPtr doc, xmlNodePtr node,
-                                          vpCameraParameters &camera);
+  vpXmlCodeSequenceType read_camera_model(xmlDocPtr doc, xmlNodePtr node, vpCameraParameters &camera);
 
-  int read_camera_header(xmlDocPtr doc, xmlNodePtr node,
-                         const std::string &camera_name,
-                         const unsigned int image_width = 0,
-                         const unsigned int image_height = 0,
-                         const unsigned int subsampling_width = 0,
-                         const unsigned int subsampling_height = 0);
+  int read_camera_header(xmlDocPtr doc, xmlNodePtr node, const std::string &camera_name,
+                         const unsigned int image_width = 0, const unsigned int image_height = 0,
+                         const unsigned int subsampling_width = 0, const unsigned int subsampling_height = 0);
 
   static vpXmlCodeSequenceType str2xmlcode(char *str, vpXmlCodeType &res);
-  void myXmlReadIntChild(xmlDocPtr doc, xmlNodePtr node, int &res,
-                         vpXmlCodeSequenceType &code_error);
+  void myXmlReadIntChild(xmlDocPtr doc, xmlNodePtr node, int &res, vpXmlCodeSequenceType &code_error);
 
-  void myXmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node, double &res,
-                            vpXmlCodeSequenceType &code_error);
+  void myXmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node, double &res, vpXmlCodeSequenceType &code_error);
 
   void myXmlReadCharChild(xmlDocPtr doc, xmlNodePtr node, char **res);
-  int write(xmlNodePtr node, const std::string &camera_name,
-            const unsigned int image_width = 0,
-            const unsigned int image_height = 0,
-            const unsigned int subsampling_width = 0,
+  int write(xmlNodePtr node, const std::string &camera_name, const unsigned int image_width = 0,
+            const unsigned int image_height = 0, const unsigned int subsampling_width = 0,
             const unsigned int subsampling_height = 0);
   int write_camera(xmlNodePtr node_camera);
 

@@ -71,10 +71,8 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:n:h"
 
-void usage(const char *name, const char *badparam, std::string ipath,
-           int niter);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display, int &niter);
+void usage(const char *name, const char *badparam, std::string ipath, int niter);
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter);
 
 /*!
 
@@ -86,8 +84,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   \param niter : Number of iterations.
 
 */
-void usage(const char *name, const char *badparam, std::string ipath,
-           int niter)
+void usage(const char *name, const char *badparam, std::string ipath, int niter)
 {
   fprintf(stdout, "\n\
 Tracking of Surf key-points.\n\
@@ -135,8 +132,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display, int &niter)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, int &niter)
 {
   const char *optarg_;
   int c;
@@ -198,8 +194,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display,
-                   opt_niter) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_niter) == false) {
       return (-1);
     }
 
@@ -213,8 +208,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -223,13 +217,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_niter);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -292,8 +283,7 @@ int main(int argc, const char **argv)
     vpDisplayOpenCV d;
 #endif
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
-    defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV)
     if (opt_display) {
       d.init(I, 20, 10, "Photometric visual servoing : s");
       vpDisplay::display(I);
@@ -311,8 +301,7 @@ int main(int argc, const char **argv)
 
     // camera desired position
     vpHomogeneousMatrix cMo;
-    cMo.buildFrom(0, 0, 1.2, vpMath::rad(15), vpMath::rad(-5),
-                  vpMath::rad(20));
+    cMo.buildFrom(0, 0, 1.2, vpMath::rad(15), vpMath::rad(-5), vpMath::rad(20));
     vpHomogeneousMatrix wMo; // Set to identity
     vpHomogeneousMatrix wMc; // Camera position in the world frame
 
@@ -347,8 +336,7 @@ int main(int argc, const char **argv)
 #endif
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
     if (opt_display) {
-      d1.init(Idiff, 40 + (int)I.getWidth(), 10,
-              "photometric visual servoing : s-s* ");
+      d1.init(Idiff, 40 + (int)I.getWidth(), 10, "photometric visual servoing : s-s* ");
       vpDisplay::display(Idiff);
       vpDisplay::flush(Idiff);
     }
@@ -425,8 +413,7 @@ int main(int argc, const char **argv)
 
     double normeError = 0;
     do {
-      std::cout << "--------------------------------------------" << iter++
-                << std::endl;
+      std::cout << "--------------------------------------------" << iter++ << std::endl;
 
       //  Acquire the new image
       sim.setCameraPosition(cMo);

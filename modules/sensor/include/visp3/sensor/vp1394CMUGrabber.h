@@ -108,11 +108,11 @@ int main()
   vp1394CMUGrabber g;
 
   if( g.getNumberOfConnectedCameras() > 1 )
-    std::cout << "There are " << g.getNumberOfConnectedCameras() << "
-connected cameras." << std::endl; if( g.getNumberOfConnectedCameras() == 1 )
-    std::cout << "There is " << g.getNumberOfConnectedCameras() << " connected
-camera." << std::endl; else std::cout << "There is no connected camera." <<
-std::endl;
+    std::cout << "There are " << g.getNumberOfConnectedCameras() << " connected cameras." << std::endl;
+    if( g.getNumberOfConnectedCameras() == 1 )
+      std::cout << "There is " << g.getNumberOfConnectedCameras() << " connected camera." << std::endl;
+    else
+      std::cout << "There is no connected camera." << std::endl;
 
   // Setting camera parameters manually
   g.selectCamera(0);
@@ -126,8 +126,7 @@ std::endl;
   // Display camera description
   g.displayCameraDescription(0);
   g.displayCameraModel();
-  std::cout << "Height: " << g.getHeight() << " Width: " << g.getWidth() <<
-std::endl;
+  std::cout << "Height: " << g.getHeight() << " Width: " << g.getWidth() << std::endl;
 
   vpDisplayOpenCV d(I);
   vpDisplay::display(I);
@@ -155,15 +154,7 @@ public:
   /*!
     Enumeration of color codings.
   */
-  typedef enum {
-    YUV444,
-    YUV422,
-    YUV411,
-    RGB8,
-    MONO8,
-    MONO16,
-    UNKNOWN
-  } vpColorCodingType;
+  typedef enum { YUV444, YUV422, YUV411, RGB8, MONO8, MONO16, UNKNOWN } vpColorCodingType;
 
 private:
   //! Current camera handle

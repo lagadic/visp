@@ -54,7 +54,7 @@
 #include <float.h>
 #endif
 
-#if !(defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)) || \
+#if !(defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)) ||                                           \
     !(defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF))
 #if defined _MSC_VER || defined __BORLANDC__
 typedef __int64 int64;
@@ -98,9 +98,7 @@ bool vpMath::isNaN(const double value)
   // Taken from OpenCV source code CvIsNan()
   Cv64suf ieee754;
   ieee754.f = value;
-  return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) +
-              ((unsigned)ieee754.u != 0) >
-          0x7ff00000) != 0;
+  return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) + ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
 #endif
 #endif
 }
@@ -121,8 +119,7 @@ bool vpMath::isInf(const double value)
   // Taken from OpenCV source code CvIsInf()
   Cv64suf ieee754;
   ieee754.f = value;
-  return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 &&
-         (unsigned)ieee754.u == 0;
+  return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (unsigned)ieee754.u == 0;
 #endif
 }
 
@@ -252,8 +249,7 @@ double vpMath::getMedian(const std::vector<double> &v)
 
   \return The standard deviation value.
 */
-double vpMath::getStdev(const std::vector<double> &v,
-                        const bool useBesselCorrection)
+double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrection)
 {
   if (v.empty()) {
     throw vpException(vpException::notInitialized, "Empty vector !");
@@ -262,10 +258,8 @@ double vpMath::getStdev(const std::vector<double> &v,
   double mean = getMean(v);
 
   std::vector<double> diff(v.size());
-  std::transform(v.begin(), v.end(), diff.begin(),
-                 std::bind2nd(std::minus<double>(), mean));
-  double sq_sum =
-      std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+  std::transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), mean));
+  double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double divisor = (double)v.size();
   if (useBesselCorrection && v.size() > 1) {
     divisor = divisor - 1;

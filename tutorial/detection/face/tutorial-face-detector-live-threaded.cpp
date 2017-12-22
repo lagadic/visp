@@ -10,17 +10,12 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) &&                                \
-    (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
 
 #include <opencv2/highgui/highgui.hpp>
 
 // Shared vars
-typedef enum {
-  capture_waiting,
-  capture_started,
-  capture_stopped
-} t_CaptureState;
+typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
 bool s_face_available = false;
 #if defined(VISP_HAVE_V4L2)
@@ -186,8 +181,7 @@ vpThread::Return detectionFunction(vpThread::Args args)
       if (face_found_) {
         vpMutex::vpScopedLock lock(s_mutex_face);
         s_face_available = true;
-        s_face_bbox =
-            face_detector_.getBBox(0); // Get largest face bounding box
+        s_face_bbox = face_detector_.getBBox(0); // Get largest face bounding box
       }
     } else {
       vpTime::wait(2); // Sleep 2ms
@@ -247,11 +241,9 @@ int main(int argc, const char *argv[])
 #endif
 
   // Start the threads
-  vpThread thread_capture((vpThread::Fn)captureFunction,
-                          (vpThread::Args)&cap);
+  vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&cap);
   vpThread thread_display((vpThread::Fn)displayFunction);
-  vpThread thread_detection((vpThread::Fn)detectionFunction,
-                            (vpThread::Args)&opt_face_cascade_name);
+  vpThread thread_detection((vpThread::Fn)detectionFunction, (vpThread::Args)&opt_face_cascade_name);
 
   // Wait until thread ends up
   thread_capture.join();
@@ -266,16 +258,11 @@ int main(int argc, const char *argv[])
 int main()
 {
 #ifndef VISP_HAVE_OPENCV
-  std::cout << "You should install OpenCV to make this example working..."
-            << std::endl;
-#elif !defined(_WIN32) &&                                                    \
-    (defined(__unix__) || defined(__unix) ||                                 \
-     (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..."
-            << std::endl;
+  std::cout << "You should install OpenCV to make this example working..." << std::endl;
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
 #else
-  std::cout << "Multi-threading seems not supported on this platform"
-            << std::endl;
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
 }
 

@@ -51,8 +51,8 @@
 
 */
 vpMbtKltXmlParser::vpMbtKltXmlParser()
-  : maskBorder(0), maxFeatures(0), winSize(0), qualityValue(0.), minDist(0.),
-    harrisParam(0.), blockSize(0), pyramidLevels(0)
+  : maskBorder(0), maxFeatures(0), winSize(0), qualityValue(0.), minDist(0.), harrisParam(0.), blockSize(0),
+    pyramidLevels(0)
 {
   init();
 }
@@ -116,11 +116,9 @@ void vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool klt_node = false;
   bool lod_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case camera: {
@@ -149,48 +147,32 @@ void vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!camera_node) {
-    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)"
-              << std::endl;
-    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)"
-              << std::endl;
-    std::cout << "camera : px : " << this->cam.get_px() << " (default)"
-              << std::endl;
-    std::cout << "camera : py : " << this->cam.get_py() << " (default)"
-              << std::endl;
+    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)" << std::endl;
+    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)" << std::endl;
+    std::cout << "camera : px : " << this->cam.get_px() << " (default)" << std::endl;
+    std::cout << "camera : py : " << this->cam.get_py() << " (default)" << std::endl;
   }
 
   if (!face_node) {
-    std::cout << "face : Angle Appear : " << angleAppear << " (default)"
-              << std::endl;
-    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)"
-              << std::endl;
+    std::cout << "face : Angle Appear : " << angleAppear << " (default)" << std::endl;
+    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)" << std::endl;
   }
 
   if (!klt_node) {
-    std::cout << "klt : Mask Border : " << maskBorder << " (default)"
-              << std::endl;
-    std::cout << "klt : Max Features : " << maxFeatures << " (default)"
-              << std::endl;
-    std::cout << "klt : Windows Size : " << winSize << " (default)"
-              << std::endl;
-    std::cout << "klt : Quality : " << qualityValue << " (default)"
-              << std::endl;
-    std::cout << "klt : Min Distance : " << minDist << " (default)"
-              << std::endl;
-    std::cout << "klt : Harris Parameter : " << harrisParam << " (default)"
-              << std::endl;
-    std::cout << "klt : Block Size : " << blockSize << " (default)"
-              << std::endl;
-    std::cout << "klt : Pyramid Levels : " << pyramidLevels << " (default)"
-              << std::endl;
+    std::cout << "klt : Mask Border : " << maskBorder << " (default)" << std::endl;
+    std::cout << "klt : Max Features : " << maxFeatures << " (default)" << std::endl;
+    std::cout << "klt : Windows Size : " << winSize << " (default)" << std::endl;
+    std::cout << "klt : Quality : " << qualityValue << " (default)" << std::endl;
+    std::cout << "klt : Min Distance : " << minDist << " (default)" << std::endl;
+    std::cout << "klt : Harris Parameter : " << harrisParam << " (default)" << std::endl;
+    std::cout << "klt : Block Size : " << blockSize << " (default)" << std::endl;
+    std::cout << "klt : Pyramid Levels : " << pyramidLevels << " (default)" << std::endl;
   }
 
   if (!lod_node) {
     std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
-    std::cout << "lod : min line length threshold : "
-              << minLineLengthThreshold << " (default)" << std::endl;
-    std::cout << "lod : min polygon area threshold : "
-              << minPolygonAreaThreshold << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 
@@ -213,11 +195,9 @@ void vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
   bool size_block_node = false;
   bool pyramid_lvl_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case mask_border: {
@@ -262,50 +242,42 @@ void vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!mask_border_node)
-    std::cout << "klt : Mask Border : " << maskBorder << " (default)"
-              << std::endl;
+    std::cout << "klt : Mask Border : " << maskBorder << " (default)" << std::endl;
   else
     std::cout << "klt : Mask Border : " << maskBorder << std::endl;
 
   if (!max_features_node)
-    std::cout << "klt : Max Features : " << maxFeatures << " (default)"
-              << std::endl;
+    std::cout << "klt : Max Features : " << maxFeatures << " (default)" << std::endl;
   else
     std::cout << "klt : Max Features : " << maxFeatures << std::endl;
 
   if (!window_size_node)
-    std::cout << "klt : Windows Size : " << winSize << " (default)"
-              << std::endl;
+    std::cout << "klt : Windows Size : " << winSize << " (default)" << std::endl;
   else
     std::cout << "klt : Windows Size : " << winSize << std::endl;
 
   if (!quality_node)
-    std::cout << "klt : Quality : " << qualityValue << " (default)"
-              << std::endl;
+    std::cout << "klt : Quality : " << qualityValue << " (default)" << std::endl;
   else
     std::cout << "klt : Quality : " << qualityValue << std::endl;
 
   if (!min_distance_node)
-    std::cout << "klt : Min Distance : " << minDist << " (default)"
-              << std::endl;
+    std::cout << "klt : Min Distance : " << minDist << " (default)" << std::endl;
   else
     std::cout << "klt : Min Distance : " << minDist << std::endl;
 
   if (!harris_node)
-    std::cout << "klt : Harris Parameter : " << harrisParam << " (default)"
-              << std::endl;
+    std::cout << "klt : Harris Parameter : " << harrisParam << " (default)" << std::endl;
   else
     std::cout << "klt : Harris Parameter : " << harrisParam << std::endl;
 
   if (!size_block_node)
-    std::cout << "klt : Block Size : " << blockSize << " (default)"
-              << std::endl;
+    std::cout << "klt : Block Size : " << blockSize << " (default)" << std::endl;
   else
     std::cout << "klt : Block Size : " << blockSize << std::endl;
 
   if (!pyramid_lvl_node)
-    std::cout << "klt : Pyramid Levels : " << pyramidLevels << " (default)"
-              << std::endl;
+    std::cout << "klt : Pyramid Levels : " << pyramidLevels << " (default)" << std::endl;
   else
     std::cout << "klt : Pyramid Levels : " << pyramidLevels << std::endl;
 }

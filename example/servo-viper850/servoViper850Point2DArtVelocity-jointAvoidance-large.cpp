@@ -57,8 +57,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if (defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394_2) &&           \
-     defined(VISP_HAVE_DISPLAY))
+#if (defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_DISPLAY))
 
 #include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpDisplay.h>
@@ -182,8 +181,7 @@ int main()
 
     // sets the current position of the visual feature
     vpFeaturePoint p;
-    vpFeatureBuilder::create(
-        p, cam, dot); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p, cam, dot); // retrieve x,y and Z of the vpPoint structure
 
     p.set_Z(1);
     // sets the desired position of the visual feature
@@ -253,8 +251,7 @@ int main()
       prim_task = task.computeControlLaw();
 
       // Compute the secondary task for the joint limit avoidance
-      sec_task = task.secondaryTaskJointLimitAvoidance(q, prim_task, jointMin,
-                                                       jointMax, rho, rho1);
+      sec_task = task.secondaryTaskJointLimitAvoidance(q, prim_task, jointMin, jointMax, rho, rho1);
 
       vpColVector v;
       v = prim_task + sec_task;
@@ -279,24 +276,16 @@ int main()
         data[7] = 1.0;
 
         unsigned int joint = 2;
-        double tQmin_l0 =
-            jointMin[joint] + rho * (jointMax[joint] - jointMin[joint]);
-        double tQmax_l0 =
-            jointMax[joint] - rho * (jointMax[joint] - jointMin[joint]);
+        double tQmin_l0 = jointMin[joint] + rho * (jointMax[joint] - jointMin[joint]);
+        double tQmax_l0 = jointMax[joint] - rho * (jointMax[joint] - jointMin[joint]);
 
-        double tQmin_l1 =
-            tQmin_l0 - rho * rho1 * (jointMax[joint] - jointMin[joint]);
-        double tQmax_l1 =
-            tQmax_l0 + rho * rho1 * (jointMax[joint] - jointMin[joint]);
+        double tQmin_l1 = tQmin_l0 - rho * rho1 * (jointMax[joint] - jointMin[joint]);
+        double tQmax_l1 = tQmax_l0 + rho * rho1 * (jointMax[joint] - jointMin[joint]);
 
-        data[8] = 2 * (tQmin_l0 - Qmiddle[joint]) /
-                  (jointMax[joint] - jointMin[joint]);
-        data[9] = 2 * (tQmax_l0 - Qmiddle[joint]) /
-                  (jointMax[joint] - jointMin[joint]);
-        data[10] = 2 * (tQmin_l1 - Qmiddle[joint]) /
-                   (jointMax[joint] - jointMin[joint]);
-        data[11] = 2 * (tQmax_l1 - Qmiddle[joint]) /
-                   (jointMax[joint] - jointMin[joint]);
+        data[8] = 2 * (tQmin_l0 - Qmiddle[joint]) / (jointMax[joint] - jointMin[joint]);
+        data[9] = 2 * (tQmax_l0 - Qmiddle[joint]) / (jointMax[joint] - jointMin[joint]);
+        data[10] = 2 * (tQmin_l1 - Qmiddle[joint]) / (jointMax[joint] - jointMin[joint]);
+        data[11] = 2 * (tQmax_l1 - Qmiddle[joint]) / (jointMax[joint] - jointMin[joint]);
         plot.plot(0, iter, data);     // plot q(t), Low Limits, Upper Limits,
                                       // ql0min, ql1min, ql0max and ql1max
         plot.plot(1, iter, sec_task); // plot secondary task velocities

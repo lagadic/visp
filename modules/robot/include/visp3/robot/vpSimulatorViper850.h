@@ -45,8 +45,7 @@
 */
 
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
-#if defined(VISP_HAVE_MODULE_GUI) &&                                         \
-    ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 
 #include <string>
 
@@ -200,8 +199,7 @@ int main()
 
 */
 
-class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator,
-                                        public vpViper850
+class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator, public vpViper850
 {
 public:
   static const double defaultPositioningVelocity;
@@ -223,40 +221,31 @@ public:
   explicit vpSimulatorViper850(bool display);
   virtual ~vpSimulatorViper850();
 
-  void getCameraParameters(vpCameraParameters &cam,
-                           const unsigned int &image_width,
-                           const unsigned int &image_height);
-  void getCameraParameters(vpCameraParameters &cam,
-                           const vpImage<unsigned char> &I);
+  void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width, const unsigned int &image_height);
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I);
   void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
 
-  void getDisplacement(const vpRobot::vpControlFrameType frame,
-                       vpColVector &displacement);
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &displacement);
 
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q,
-                   double &timestamp);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
   double getPositioningVelocity(void) { return positioningVelocity; }
 
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q,
-                   double &timestamp);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
-  vpColVector getVelocity(const vpRobot::vpControlFrameType frame,
-                          double &timestamp);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame, double &timestamp);
 
   void get_cMe(vpHomogeneousMatrix &cMe);
   void get_cVe(vpVelocityTwistMatrix &cVe);
   void get_eJe(vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
 
-  void init(vpViper850::vpToolType tool,
-            vpCameraParameters::vpCameraParametersProjType projModel =
-                vpCameraParameters::perspectiveProjWithoutDistortion);
+  void
+  init(vpViper850::vpToolType tool,
+       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   bool initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo);
   void initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo);
 
@@ -266,20 +255,15 @@ public:
   static bool savePosFile(const std::string &filename, const vpColVector &q);
 
   void setCameraParameters(const vpCameraParameters &cam);
-  void setJointLimit(const vpColVector &limitMin,
-                     const vpColVector &limitMax);
-  void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &q);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1,
-                   const double pos2, const double pos3, const double pos4,
-                   const double pos5, const double pos6);
+  void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2, const double pos3,
+                   const double pos4, const double pos5, const double pos6);
   void setPosition(const char *filename);
   void setPositioningVelocity(const double vel) { positioningVelocity = vel; }
-  vpRobot::vpRobotStateType
-  setRobotState(const vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);
 
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
 
   void stopMotion();
 

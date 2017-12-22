@@ -110,8 +110,7 @@ public:
   static const std::string CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
   static const std::string CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
-  static const std::string
-      CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
   static const std::string CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
@@ -144,26 +143,19 @@ public:
   //@{
   void init(void);
   void init(const std::string &camera_extrinsic_parameters);
-  void init(vpViper850::vpToolType tool,
-            vpCameraParameters::vpCameraParametersProjType projModel =
-                vpCameraParameters::perspectiveProjWithoutDistortion);
+  void
+  init(vpViper850::vpToolType tool,
+       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper850::vpToolType tool, const std::string &filename);
   void init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
   //! Get the current camera model projection type
-  vpCameraParameters::vpCameraParametersProjType
-  getCameraParametersProjType() const
-  {
-    return projModel;
-  };
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; };
 
-  void getCameraParameters(vpCameraParameters &cam,
-                           const unsigned int &image_width,
+  void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                            const unsigned int &image_height) const;
-  void getCameraParameters(vpCameraParameters &cam,
-                           const vpImage<unsigned char> &I) const;
-  void getCameraParameters(vpCameraParameters &cam,
-                           const vpImage<vpRGBa> &I) const;
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I) const;
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I) const;
 
   //! Get the current tool type
   vpToolType getToolType() const { return tool_current; };

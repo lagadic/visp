@@ -116,14 +116,12 @@ int main()
     vpDisplay::flush(I);
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-to-hand task control" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a point " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     int nbPoint = 7;
@@ -257,19 +255,16 @@ int main()
     std::list<vpImagePoint> Lcog;
     vpImagePoint ip;
     while (error > convergence_threshold) {
-      std::cout << "---------------------------------------------" << iter++
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter++ << std::endl;
 
       g.acquire(I);
       vpDisplay::display(I);
       ip.set_i(265);
       ip.set_j(150);
-      vpDisplay::displayText(I, ip, "Eye-To-Hand Visual Servoing",
-                             vpColor::green);
+      vpDisplay::displayText(I, ip, "Eye-To-Hand Visual Servoing", vpColor::green);
       ip.set_i(280);
       ip.set_j(150);
-      vpDisplay::displayText(I, ip, "IRISA-INRIA Rennes, Lagadic project",
-                             vpColor::green);
+      vpDisplay::displayText(I, ip, "IRISA-INRIA Rennes, Lagadic project", vpColor::green);
       try {
         for (i = 0; i < nbPoint; i++) {
           dot[i].track(I);
@@ -323,23 +318,20 @@ int main()
         if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
           gain = lambda_av;
         else {
-          gain =
-              alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
+          gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
         }
       } else
         gain = lambda_av;
       if (SAVE == 1)
         gain = gain / 5;
 
-      vpTRACE("%f %f %f %f  %f", alpha, beta, lambda_av,
-              (task.getError()).sumSquare(), gain);
+      vpTRACE("%f %f %f %f  %f", alpha, beta, lambda_av, (task.getError()).sumSquare(), gain);
       task.setLambda(gain);
 
       v = task.computeControlLaw();
 
       // display points trajectory
-      for (std::list<vpImagePoint>::const_iterator it_cog = Lcog.begin();
-           it_cog != Lcog.end(); ++it_cog) {
+      for (std::list<vpImagePoint>::const_iterator it_cog = Lcog.begin(); it_cog != Lcog.end(); ++it_cog) {
         vpDisplay::displayPoint(I, *it_cog, vpColor::red);
       }
       vpServoDisplay::display(task, cam, I);

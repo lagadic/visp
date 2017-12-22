@@ -87,17 +87,19 @@ tutorial-grabber. An other example that shows how to use format 7 and the
 auto-shutter is provided in vp1394TwoGrabber() constructor:
 
   - If more than one camera is connected, it is also possible to select a
-specific camera by its GUID: \code #include <visp3/core/vpConfig.h> #include
-<visp3/core/vpImage.h> #include <visp3/io/vpImageIo.h> #include
-<visp3/sensor/vp1394TwoGrabber.h>
+specific camera by its GUID:
+\code
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
 #if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I; // Create a gray level image container
   bool reset = false; // Disable bus reset during construction
-  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third
-party lib
+  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
 
   unsigned int ncameras; // Number of cameras on the bus
   ncameras = g.getNumCameras();
@@ -125,17 +127,20 @@ party lib
   \endcode
 
   - Here an example of multi camera capture.  An other example is available in
-setCamera(): \code #include <visp3/core/vpConfig.h> #include
-<visp3/core/vpImage.h> #include <visp3/io/vpImageIo.h> #include
-<visp3/sensor/vp1394TwoGrabber.h>
+setCamera():
+\code
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
 #if defined(VISP_HAVE_DC1394)
   bool reset = false; // Disable bus reset during construction
-  vp1394TwoGrabber g(reset);    // Creation of a grabber instance based on
-libdc1394-2.x third party lib. unsigned int ncameras; // Number of cameras on
-the bus ncameras = g.getNumCameras();
+  vp1394TwoGrabber g(reset);    // Creation of a grabber instance based on libdc1394-2.x third party lib.
+  unsigned int ncameras; // Number of cameras on the bus
+  ncameras = g.getNumCameras();
 
   // Create an image container for each camera
   vpImage<unsigned char> *I = new vpImage<unsigned char> [ncameras];
@@ -365,11 +370,9 @@ public:
 
   dc1394video_frame_t *dequeue();
   dc1394video_frame_t *dequeue(vpImage<unsigned char> &I);
-  dc1394video_frame_t *dequeue(vpImage<unsigned char> &I, uint64_t &timestamp,
-                               uint32_t &id);
+  dc1394video_frame_t *dequeue(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
   dc1394video_frame_t *dequeue(vpImage<vpRGBa> &I);
-  dc1394video_frame_t *dequeue(vpImage<vpRGBa> &I, uint64_t &timestamp,
-                               uint32_t &id);
+  dc1394video_frame_t *dequeue(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
   void enqueue(dc1394video_frame_t *frame);
 
   static std::string framerate2string(vp1394TwoFramerateType fps);
@@ -380,12 +383,9 @@ public:
   uint64_t getCamera();
   void getCamera(uint64_t &camera);
   void getColorCoding(vp1394TwoColorCodingType &coding);
-  uint32_t
-  getColorCodingSupported(vp1394TwoVideoModeType videomode,
-                          std::list<vp1394TwoColorCodingType> &codings);
+  uint32_t getColorCodingSupported(vp1394TwoVideoModeType videomode, std::list<vp1394TwoColorCodingType> &codings);
   void getFramerate(vp1394TwoFramerateType &fps);
-  uint32_t getFramerateSupported(vp1394TwoVideoModeType videomode,
-                                 std::list<vp1394TwoFramerateType> &fps);
+  uint32_t getFramerateSupported(vp1394TwoVideoModeType videomode, std::list<vp1394TwoFramerateType> &fps);
   uint64_t getGuid();
   void getGuid(uint64_t &guid);
   void getHeight(unsigned int &height);
@@ -395,16 +395,13 @@ public:
   unsigned int getParameterValue(vp1394TwoParametersType param);
   unsigned int getRingBufferSize() const;
   void getVideoMode(vp1394TwoVideoModeType &videomode);
-  uint32_t
-  getVideoModeSupported(std::list<vp1394TwoVideoModeType> &videomodes);
+  uint32_t getVideoModeSupported(std::list<vp1394TwoVideoModeType> &videomodes);
   void getWidth(unsigned int &width);
   unsigned int getWidth();
 
   bool isColor();
-  bool isColorCodingSupported(vp1394TwoVideoModeType videomode,
-                              vp1394TwoColorCodingType coding);
-  bool isFramerateSupported(vp1394TwoVideoModeType videomode,
-                            vp1394TwoFramerateType fps);
+  bool isColorCodingSupported(vp1394TwoVideoModeType videomode, vp1394TwoColorCodingType coding);
+  bool isFramerateSupported(vp1394TwoVideoModeType videomode, vp1394TwoFramerateType fps);
   bool isVideoModeSupported(vp1394TwoVideoModeType videomode);
   bool isVideoModeFormat7(vp1394TwoVideoModeType videomode);
 
@@ -424,8 +421,7 @@ public:
   void setAutoShutter(unsigned int minvalue, unsigned int maxvalue);
   void setCamera(uint64_t camera);
   void setColorCoding(vp1394TwoColorCodingType coding);
-  void setFormat7ROI(unsigned int left = 0, unsigned int top = 0,
-                     unsigned int width = 0, unsigned int height = 0);
+  void setFormat7ROI(unsigned int left = 0, unsigned int top = 0, unsigned int width = 0, unsigned int height = 0);
   void setFramerate(vp1394TwoFramerateType fps);
   void setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed);
   void setPanControl(unsigned int panControlValue);

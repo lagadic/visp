@@ -73,10 +73,7 @@
   setDelta() and setAlpha() to modify these values.
 
 */
-vpHinkley::vpHinkley()
-  : dmin2(0.1), alpha(0.2), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
-{
-}
+vpHinkley::vpHinkley() : dmin2(0.1), alpha(0.2), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0) {}
 
 /*!
 
@@ -95,8 +92,7 @@ vpHinkley::vpHinkley()
 */
 
 vpHinkley::vpHinkley(double alpha_val, double delta_val)
-  : dmin2(delta_val / 2.), alpha(alpha_val), nsignal(0), mean(0), Sk(0),
-    Mk(0), Tk(0), Nk(0)
+  : dmin2(delta_val / 2.), alpha(alpha_val), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
 {
 }
 
@@ -190,8 +186,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
 
   computeMk();
 
-  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
-              << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk;
+  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2 << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk;
 
   // teste si les variables cumulees excedent le seuil
   if ((Mk - Sk) > alpha)
@@ -251,8 +246,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
 
   computeNk();
 
-  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
-              << " signal: " << signal << " Tk: " << Tk << " Nk: " << Nk;
+  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2 << " signal: " << signal << " Tk: " << Tk << " Nk: " << Nk;
 
   // teste si les variables cumulees excedent le seuil
   if ((Tk - Nk) > alpha)
@@ -313,8 +307,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
   computeMk();
   computeNk();
 
-  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
-              << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk
+  vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2 << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk
               << " Tk: " << Tk << " Nk: " << Nk << std::endl;
 
   // teste si les variables cumulees excedent le seuil
@@ -373,10 +366,8 @@ void vpHinkley::computeMean(double signal)
   // derives de la moyenne, elle n'est remise a jour avec la valeur
   // courante du signal que si un debut de saut potentiel n'est pas detecte.
   // if ( ((Mk-Sk) == 0) && ((Tk-Nk) == 0) )
-  if ((std::fabs(Mk - Sk) <= std::fabs(vpMath::maximum(Mk, Sk)) *
-                                 std::numeric_limits<double>::epsilon()) &&
-      (std::fabs(Tk - Nk) <= std::fabs(vpMath::maximum(Tk, Nk)) *
-                                 std::numeric_limits<double>::epsilon()))
+  if ((std::fabs(Mk - Sk) <= std::fabs(vpMath::maximum(Mk, Sk)) * std::numeric_limits<double>::epsilon()) &&
+      (std::fabs(Tk - Nk) <= std::fabs(vpMath::maximum(Tk, Nk)) * std::numeric_limits<double>::epsilon()))
     // Fin modif FS le 03/09/2003
 
     // Mise a jour de la moyenne.

@@ -42,11 +42,8 @@
 // findWarp special a SL3 car methode additionnelle ne marche pas (la derivee
 // n est calculable qu en p=0)
 // => resout le probleme de maniere compositionnelle
-void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,
-                                                  const double *vt0,
-                                                  const double *u,
-                                                  const double *v, int nb_pt,
-                                                  vpColVector &p)
+void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const double *vt0, const double *u,
+                                                  const double *v, int nb_pt, vpColVector &p)
 {
   // std::cout<<"findWarp OVERLOADE"<<std::endl;
   vpColVector dp(nbParam);
@@ -98,8 +95,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,
       dX = X2 - fX1;
       G_ += dW_.t() * dX;
 
-      erreur += ((u[i] - fX1[0]) * (u[i] - fX1[0]) +
-                 (v[i] - fX1[1]) * (v[i] - fX1[1]));
+      erreur += ((u[i] - fX1[0]) * (u[i] - fX1[0]) + (v[i] - fX1[1]) * (v[i] - fX1[1]));
     }
 
     vpMatrix::computeHLM(H, lambda, HLM);
@@ -115,8 +111,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,
     //  std::cout<<"erreur ="<<erreur<<std::endl;
   }
   // while((cpt<1500));
-  while ((cpt < 150) &&
-         (sqrt((erreur_prec - erreur) * (erreur_prec - erreur)) > 1e-20));
+  while ((cpt < 150) && (sqrt((erreur_prec - erreur) * (erreur_prec - erreur)) > 1e-20));
 
   // std::cout<<"erreur apres transformation="<<erreur<<std::endl;
   for (int i = 0; i < nb_pt; i++)
@@ -124,8 +119,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,
   delete[] dW_ddp0;
 }
 
-vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3()
-  : G(), dGx(), A()
+vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3() : G(), dGx(), A()
 {
   nbParam = 8;
   G.resize(3, 3);
@@ -152,8 +146,7 @@ vpTemplateTrackerWarpHomographySL3::~vpTemplateTrackerWarpHomographySL3() {}
 
 // get the parameter corresponding to the lower level of a gaussian pyramid
 // a refaire de facon analytique
-void vpTemplateTrackerWarpHomographySL3::getParamPyramidDown(
-    const vpColVector &p, vpColVector &pdown)
+void vpTemplateTrackerWarpHomographySL3::getParamPyramidDown(const vpColVector &p, vpColVector &pdown)
 {
   double *u, *v;
   u = new double[4];
@@ -187,8 +180,7 @@ void vpTemplateTrackerWarpHomographySL3::getParamPyramidDown(
   delete[] v2;
 }
 
-void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(
-    const vpColVector &p, vpColVector &pup)
+void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(const vpColVector &p, vpColVector &pup)
 {
   double *u, *v;
   u = new double[4];
@@ -235,8 +227,7 @@ void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(
   delete[] v2;
 }
 
-void vpTemplateTrackerWarpHomographySL3::computeDenom(
-    vpColVector &vX, const vpColVector & /*ParamM*/)
+void vpTemplateTrackerWarpHomographySL3::computeDenom(vpColVector &vX, const vpColVector & /*ParamM*/)
 {
   denom = vX[0] * G[2][0] + vX[1] * G[2][1] + G[2][2];
 }
@@ -259,16 +250,14 @@ void vpTemplateTrackerWarpHomographySL3::computeCoeff(const vpColVector &p)
   G = pA.expm();
 }
 
-void vpTemplateTrackerWarpHomographySL3::warpX(const vpColVector &vX,
-                                               vpColVector &vXres,
+void vpTemplateTrackerWarpHomographySL3::warpX(const vpColVector &vX, vpColVector &vXres,
                                                const vpColVector & /*ParamM*/)
 {
   double i = vX[1], j = vX[0];
   vXres[0] = (j * G[0][0] + i * G[0][1] + G[0][2]) / denom;
   vXres[1] = (j * G[1][0] + i * G[1][1] + G[1][2]) / denom;
 }
-void vpTemplateTrackerWarpHomographySL3::warpX(const int &i, const int &j,
-                                               double &i2, double &j2,
+void vpTemplateTrackerWarpHomographySL3::warpX(const int &i, const int &j, double &i2, double &j2,
                                                const vpColVector & /*ParamM*/)
 {
   j2 = (j * G[0][0] + i * G[0][1] + G[0][2]) / denom;
@@ -284,10 +273,8 @@ vpHomography vpTemplateTrackerWarpHomographySL3::getHomography() const
   return H;
 }
 
-void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1,
-                                               const vpColVector &X2,
-                                               const vpColVector & /*ParamM*/,
-                                               vpMatrix &dW_)
+void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1, const vpColVector &X2,
+                                               const vpColVector & /*ParamM*/, vpMatrix &dW_)
 {
   vpMatrix dhdx(2, 3);
   dhdx = 0;
@@ -311,9 +298,7 @@ void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1,
 
 /*calcul de di*dw(x,p0)/dp
  */
-void vpTemplateTrackerWarpHomographySL3::getdW0(const int &i, const int &j,
-                                                const double &dy,
-                                                const double &dx,
+void vpTemplateTrackerWarpHomographySL3::getdW0(const int &i, const int &j, const double &dy, const double &dx,
                                                 double *dIdW)
 {
   vpMatrix dhdx(1, 3);
@@ -345,8 +330,7 @@ void vpTemplateTrackerWarpHomographySL3::getdW0(const int &i, const int &j,
 /*calcul de dw(x,p0)/dp
  */
 
-void vpTemplateTrackerWarpHomographySL3::getdWdp0(const int &i, const int &j,
-                                                  double *dIdW)
+void vpTemplateTrackerWarpHomographySL3::getdWdp0(const int &i, const int &j, double *dIdW)
 {
   vpMatrix dhdx(2, 3);
   dhdx = 0;
@@ -375,9 +359,7 @@ void vpTemplateTrackerWarpHomographySL3::getdWdp0(const int &i, const int &j,
     dIdW[par + nbParam] = dIdW_temp[1][par];
   }
 }
-void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &i,
-                                                  const double &j,
-                                                  double *dIdW)
+void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &i, const double &j, double *dIdW)
 {
   vpMatrix dhdx(2, 3);
   dhdx = 0;
@@ -409,26 +391,20 @@ void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &i,
 /*compute dw=dw/dx*dw/dp
  */
 
-void vpTemplateTrackerWarpHomographySL3::dWarpCompo(
-    const vpColVector & /*X1*/, const vpColVector &X2,
-    const vpColVector & /*ParamM*/, const double *dwdp0, vpMatrix &dW_)
+void vpTemplateTrackerWarpHomographySL3::dWarpCompo(const vpColVector & /*X1*/, const vpColVector &X2,
+                                                    const vpColVector & /*ParamM*/, const double *dwdp0, vpMatrix &dW_)
 {
   for (unsigned int i = 0; i < nbParam; i++) {
-    dW_[0][i] = denom * ((G[0][0] - X2[0] * G[2][0]) * dwdp0[i] +
-                         (G[0][1] - X2[0] * G[2][1]) * dwdp0[i + nbParam]);
-    dW_[1][i] = denom * ((G[1][0] - X2[1] * G[2][0]) * dwdp0[i] +
-                         (G[1][1] - X2[1] * G[2][1]) * dwdp0[i + nbParam]);
+    dW_[0][i] = denom * ((G[0][0] - X2[0] * G[2][0]) * dwdp0[i] + (G[0][1] - X2[0] * G[2][1]) * dwdp0[i + nbParam]);
+    dW_[1][i] = denom * ((G[1][0] - X2[1] * G[2][0]) * dwdp0[i] + (G[1][1] - X2[1] * G[2][1]) * dwdp0[i + nbParam]);
   }
 }
 
-void vpTemplateTrackerWarpHomographySL3::getParamInverse(
-    const vpColVector &ParamM, vpColVector &ParamMinv) const
+void vpTemplateTrackerWarpHomographySL3::getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const
 {
   ParamMinv = -ParamM;
 }
-void vpTemplateTrackerWarpHomographySL3::pRondp(const vpColVector &p1,
-                                                const vpColVector &p2,
-                                                vpColVector &pres) const
+void vpTemplateTrackerWarpHomographySL3::pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &pres) const
 {
   // vrai que si commutatif ...
   pres = p1 + p2;

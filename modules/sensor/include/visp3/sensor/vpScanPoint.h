@@ -78,8 +78,7 @@ public:
   /*! Default constructor. */
   inline vpScanPoint() : rDist(0), hAngle(0), vAngle(0) {}
   /*! Copy constructor. */
-  inline vpScanPoint(const vpScanPoint &scanpoint)
-    : rDist(0), hAngle(0), vAngle(0)
+  inline vpScanPoint(const vpScanPoint &scanpoint) : rDist(0), hAngle(0), vAngle(0)
   {
     this->rDist = scanpoint.rDist;
     this->hAngle = scanpoint.hAngle;
@@ -91,8 +90,7 @@ public:
     \param h_angle : Horizontal angle in radian.
     \param v_angle : Vertical angle in radian.
   */
-  inline vpScanPoint(double r_dist, double h_angle, double v_angle)
-    : rDist(r_dist), hAngle(h_angle), vAngle(v_angle)
+  inline vpScanPoint(double r_dist, double h_angle, double v_angle) : rDist(r_dist), hAngle(h_angle), vAngle(v_angle)
   {
     this->rDist = r_dist;
     this->hAngle = h_angle;
@@ -131,10 +129,7 @@ public:
     positive in front of the laser while y on the left side.
 
   */
-  inline double getX() const
-  {
-    return (rDist * cos(this->hAngle) * cos(this->vAngle));
-  }
+  inline double getX() const { return (rDist * cos(this->hAngle) * cos(this->vAngle)); }
   /*!
     Returns the cartesian y coordinate.
 
@@ -149,21 +144,16 @@ public:
     The z axis is vertical and oriented in direction of the sky.
 
   */
-  inline double getZ() const
-  {
-    return (rDist * cos(this->hAngle) * sin(this->vAngle));
-  }
+  inline double getZ() const { return (rDist * cos(this->hAngle) * sin(this->vAngle)); }
 
-  friend inline std::ostream &operator<<(std::ostream &s,
-                                         const vpScanPoint &p);
+  friend inline std::ostream &operator<<(std::ostream &s, const vpScanPoint &p);
 
   /*!
 
     Returns true if sp1 and sp2 are equal; otherwire returns false.
 
   */
-  friend inline bool operator==(const vpScanPoint &sp1,
-                                const vpScanPoint &sp2)
+  friend inline bool operator==(const vpScanPoint &sp1, const vpScanPoint &sp2)
   {
     // return ( ( sp1.getRadialDist() == sp2.getRadialDist() )
     //	      && ( sp1.getHAngle() == sp2.getHAngle() )
@@ -175,15 +165,9 @@ public:
     double ha2 = sp2.getHAngle();
     double va2 = sp2.getVAngle();
 
-    return (
-        (std::fabs(rd1 - rd2) <=
-         std::fabs(vpMath::maximum(rd1, rd2)) *
-             std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(ha1 - ha2) <=
-         std::fabs(vpMath::maximum(ha1, ha2)) *
-             std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(va1 - va2) <= std::fabs(vpMath::maximum(va1, va2)) *
-                                     std::numeric_limits<double>::epsilon()));
+    return ((std::fabs(rd1 - rd2) <= std::fabs(vpMath::maximum(rd1, rd2)) * std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(ha1 - ha2) <= std::fabs(vpMath::maximum(ha1, ha2)) * std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(va1 - va2) <= std::fabs(vpMath::maximum(va1, va2)) * std::numeric_limits<double>::epsilon()));
   }
 
   /*!
@@ -191,8 +175,7 @@ public:
     Returns true if sp1 and sp2 are different; otherwire returns false.
 
   */
-  friend inline bool operator!=(const vpScanPoint &sp1,
-                                const vpScanPoint &sp2)
+  friend inline bool operator!=(const vpScanPoint &sp1, const vpScanPoint &sp2)
   {
     // return ( ( sp1.getRadialDist() != sp2.getRadialDist() )
     //     || ( sp1.getHAngle() != sp2.getHAngle() )
@@ -203,14 +186,9 @@ public:
     double rd2 = sp2.getRadialDist();
     double ha2 = sp2.getHAngle();
     double va2 = sp2.getVAngle();
-    return (
-        (std::fabs(rd1 - rd2) > std::fabs(vpMath::maximum(rd1, rd2)) *
-                                    std::numeric_limits<double>::epsilon()) ||
-        (std::fabs(ha1 - ha2) <=
-         std::fabs(vpMath::maximum(ha1, ha2)) *
-             std::numeric_limits<double>::epsilon()) ||
-        (std::fabs(va1 - va2) <= std::fabs(vpMath::maximum(va1, va2)) *
-                                     std::numeric_limits<double>::epsilon()));
+    return ((std::fabs(rd1 - rd2) > std::fabs(vpMath::maximum(rd1, rd2)) * std::numeric_limits<double>::epsilon()) ||
+            (std::fabs(ha1 - ha2) <= std::fabs(vpMath::maximum(ha1, ha2)) * std::numeric_limits<double>::epsilon()) ||
+            (std::fabs(va1 - va2) <= std::fabs(vpMath::maximum(va1, va2)) * std::numeric_limits<double>::epsilon()));
   }
 
 private:
@@ -240,14 +218,14 @@ private:
 
 int main()
 {
-vpScanPoint p;
-double radialDistance = 3; // 3 meters
-double horizontalAngle = 1.12; // 1.12 radian
-double verticalAngle = 0; // 0 radian for a horizontal layer
+  vpScanPoint p;
+  double radialDistance = 3; // 3 meters
+  double horizontalAngle = 1.12; // 1.12 radian
+  double verticalAngle = 0; // 0 radian for a horizontal layer
 
-p.setPolar(radialDistance, horizontalAngle, verticalAngle);
+  p.setPolar(radialDistance, horizontalAngle, verticalAngle);
 
-std::cout << p << std::endl;
+  std::cout << p << std::endl;
 }
   \endcode
   will produce the prints
@@ -261,8 +239,8 @@ inline std::ostream &operator<<(std::ostream &s, const vpScanPoint &p)
   std::ios_base::fmtflags original_flags = s.flags();
 
   s.precision(10);
-  s << p.getRadialDist() << " " << p.getHAngle() << " " << p.getVAngle()
-    << " " << p.getX() << " " << p.getY() << " " << p.getZ();
+  s << p.getRadialDist() << " " << p.getHAngle() << " " << p.getVAngle() << " " << p.getX() << " " << p.getY() << " "
+    << p.getZ();
 
   s.setf(original_flags); // restore s to standard state
 

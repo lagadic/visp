@@ -102,8 +102,7 @@ void vpParallelPort::open()
     printf("Can't open /dev/parport0\n");
     printf("Check if you have write access to /dev/parport0\n");
     perror("Open parallel port");
-    throw(vpParallelPortException(vpParallelPortException::opening,
-                                  "Can't open /dev/parport0"));
+    throw(vpParallelPortException(vpParallelPortException::opening, "Can't open /dev/parport0"));
   }
 
   int i;
@@ -163,8 +162,7 @@ void vpParallelPort::close()
 
   if (err != 0) {
     printf("Can't close the parallel port\n");
-    throw(vpParallelPortException(vpParallelPortException::closing,
-                                  "Can't close the parallel port"));
+    throw(vpParallelPortException(vpParallelPortException::closing, "Can't close the parallel port"));
   }
 }
 

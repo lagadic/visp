@@ -18,8 +18,7 @@ int main()
 
   //! [Simulation]
   vpHomogeneousMatrix bMo(0.1, 0, 1, 0, vpMath::rad(15), 0);
-  vpHomogeneousMatrix aMb(0.2, -0.1, 0.1, vpMath::rad(-3), vpMath::rad(20),
-                          vpMath::rad(5));
+  vpHomogeneousMatrix aMb(0.2, -0.1, 0.1, vpMath::rad(-3), vpMath::rad(20), vpMath::rad(5));
   vpHomogeneousMatrix aMo = aMb * bMo;
   //! [Simulation]
 
@@ -39,12 +38,10 @@ int main()
   //! [Compute homography]
   vpHomography aHb;
   vpHomography::DLT(xb, yb, xa, ya, aHb, true);
-  std::cout << "Estimated homography using DLT:\n"
-            << aHb / aHb[2][2] << std::endl;
+  std::cout << "Estimated homography using DLT:\n" << aHb / aHb[2][2] << std::endl;
 
   vpHomography::HLM(xb, yb, xa, ya, true, aHb);
-  std::cout << "Estimated homography using HLM:\n"
-            << aHb / aHb[2][2] << std::endl;
+  std::cout << "Estimated homography using HLM:\n" << aHb / aHb[2][2] << std::endl;
   //! [Compute homography]
 
   //! [Get transformation]
@@ -72,15 +69,13 @@ int main()
   vpMeterPixelConversion::convertPoint(cam, xb[3], yb[3], iPb);
   vpMeterPixelConversion::convertPoint(cam, xa[3], ya[3], iPa);
 
-  std::cout << "Ground truth: Point 3 in pixels in frame b: " << iPb
-            << std::endl;
-  std::cout << "Ground truth: Point 3 in pixels in frame a: " << iPa
-            << std::endl;
+  std::cout << "Ground truth: Point 3 in pixels in frame b: " << iPb << std::endl;
+  std::cout << "Ground truth: Point 3 in pixels in frame a: " << iPa << std::endl;
   //! [Get pixel coordinates]
 
   //! [Project]
   // Project the position in pixel of point 3 from the homography
-  std::cout << "Estimation from homography: Point 3 in pixels in frame a: "
-            << vpHomography::project(cam, aHb, iPb) << std::endl;
+  std::cout << "Estimation from homography: Point 3 in pixels in frame a: " << vpHomography::project(cam, aHb, iPb)
+            << std::endl;
   //! [Project]
 }

@@ -79,16 +79,13 @@ void computeDelta(double &delta, int i1, int j1, int i2, int j2)
   normalizeAngle(delta);
 }
 
-static void project(double a, double b, double c, double i, double j,
-                    double &ip, double &jp)
+static void project(double a, double b, double c, double i, double j, double &ip, double &jp)
 {
   if (fabs(a) > fabs(b)) {
-    jp = (vpMath::sqr(a) * j - a * b * i - c * b) /
-         (vpMath::sqr(a) + vpMath::sqr(b));
+    jp = (vpMath::sqr(a) * j - a * b * i - c * b) / (vpMath::sqr(a) + vpMath::sqr(b));
     ip = (-c - b * jp) / a;
   } else {
-    ip = (vpMath::sqr(b) * i - a * b * j - c * a) /
-         (vpMath::sqr(a) + vpMath::sqr(b));
+    ip = (vpMath::sqr(b) * i - a * b * j - c * a) / (vpMath::sqr(a) + vpMath::sqr(b));
     jp = (-c - a * ip) / b;
   }
 }
@@ -99,8 +96,8 @@ static void project(double a, double b, double c, double i, double j,
 
 */
 vpMeLine::vpMeLine()
-  : rho(0.), theta(0.), delta(0.), delta_1(0.), angle(0.), angle_1(90),
-    sign(1), _useIntensityForRho(true), a(0.), b(0.), c(0.)
+  : rho(0.), theta(0.), delta(0.), delta_1(0.), angle(0.), angle_1(90), sign(1), _useIntensityForRho(true), a(0.),
+    b(0.), c(0.)
 {
 }
 /*!
@@ -109,9 +106,8 @@ vpMeLine::vpMeLine()
 
 */
 vpMeLine::vpMeLine(const vpMeLine &meline)
-  : vpMeTracker(meline), rho(0.), theta(0.), delta(0.), delta_1(0.),
-    angle(0.), angle_1(90), sign(1), _useIntensityForRho(true), a(0.), b(0.),
-    c(0.)
+  : vpMeTracker(meline), rho(0.), theta(0.), delta(0.), delta_1(0.), angle(0.), angle_1(90), sign(1),
+    _useIntensityForRho(true), a(0.), b(0.), c(0.)
 
 {
   rho = meline.rho;
@@ -152,19 +148,16 @@ void vpMeLine::sample(const vpImage<unsigned char> &I)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
-    throw(vpTrackingException(vpTrackingException::initializationError,
-                              "Moving edges not initialized"));
+    throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
   double n_sample;
 
-  if (std::fabs(me->getSampleStep()) <=
-      std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
     vpERROR_TRACE("function called with sample step = 0");
-    throw(vpTrackingException(vpTrackingException::fatalError,
-                              "sample step = 0"));
+    throw(vpTrackingException(vpTrackingException::fatalError, "sample step = 0"));
   }
 
   // i, j portions of the line_p
@@ -173,9 +166,7 @@ void vpMeLine::sample(const vpImage<unsigned char> &I)
 
   double length_p = sqrt((vpMath::sqr(diffsi) + vpMath::sqr(diffsj)));
   if (std::fabs(length_p) <= std::numeric_limits<double>::epsilon())
-    throw(vpTrackingException(
-        vpTrackingException::fatalError,
-        "points too close of each other to define a line"));
+    throw(vpTrackingException(vpTrackingException::fatalError, "points too close of each other to define a line"));
   // number of samples along line_p
   n_sample = length_p / (double)me->getSampleStep();
 
@@ -295,8 +286,7 @@ void vpMeLine::leastSquare()
   if (list.size() <= 2 || numberOfSignal() <= 2) {
     // vpERROR_TRACE("Not enough point") ;
     vpCDEBUG(1) << "Not enough point";
-    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                              "not enough point"));
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "not enough point"));
   }
 
   if ((fabs(b) >= 0.9)) // Construction du systeme Ax=B
@@ -305,8 +295,7 @@ void vpMeLine::leastSquare()
   {
     nos_1 = numberOfSignal();
     unsigned int k = 0;
-    for (std::list<vpMeSite>::const_iterator it = list.begin();
-         it != list.end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
       p_me = *it;
       if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
         A[k][0] = p_me.ifloat;
@@ -336,8 +325,7 @@ void vpMeLine::leastSquare()
     }
 
     k = 0;
-    for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-         ++it) {
+    for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
       p_me = *it;
       if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
         if (w[k] < 0.2) {
@@ -366,8 +354,7 @@ void vpMeLine::leastSquare()
   {
     nos_1 = numberOfSignal();
     unsigned int k = 0;
-    for (std::list<vpMeSite>::const_iterator it = list.begin();
-         it != list.end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
       p_me = *it;
       if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
         A[k][0] = p_me.jfloat;
@@ -397,8 +384,7 @@ void vpMeLine::leastSquare()
     }
 
     k = 0;
-    for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-         ++it) {
+    for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
       p_me = *it;
       if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
         if (w[k] < 0.2) {
@@ -434,8 +420,7 @@ void vpMeLine::leastSquare()
   \param ip1 : Coordinates of the first point.
   \param ip2 : Coordinates of the second point.
 */
-void vpMeLine::initTracking(const vpImage<unsigned char> &I,
-                            const vpImagePoint &ip1, const vpImagePoint &ip2)
+void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
 
@@ -512,8 +497,7 @@ void vpMeLine::setExtremities()
   double jmax = -1;
 
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::const_iterator it = list.begin();
-       it != list.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite s = *it; // current reference pixel
     if (s.ifloat < imin) {
       imin = s.ifloat;
@@ -532,8 +516,7 @@ void vpMeLine::setExtremities()
   PExt[1].jfloat = jmax;
 
   if (fabs(imin - imax) < 25) {
-    for (std::list<vpMeSite>::const_iterator it = list.begin();
-         it != list.end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
       vpMeSite s = *it; // current reference pixel
       if (s.jfloat < jmin) {
         imin = s.ifloat;
@@ -569,8 +552,7 @@ void vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
-    throw(vpTrackingException(vpTrackingException::initializationError,
-                              "Moving edges not initialized"));
+    throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
   int rows = (int)I.getHeight();
@@ -578,12 +560,10 @@ void vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double n_sample;
 
   // if (me->getSampleStep()==0)
-  if (std::fabs(me->getSampleStep()) <=
-      std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
 
     vpERROR_TRACE("function called with sample step = 0");
-    throw(vpTrackingException(vpTrackingException::fatalError,
-                              "sample step = 0"));
+    throw(vpTrackingException(vpTrackingException::fatalError, "sample step = 0"));
   }
 
   // i, j portions of the line_p
@@ -688,8 +668,7 @@ void vpMeLine::reSample(const vpImage<unsigned char> &I)
 
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
-    throw(vpTrackingException(vpTrackingException::initializationError,
-                              "Moving edges not initialized"));
+    throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
   project(a, b, c, PExt[0].ifloat, PExt[0].jfloat, i1, j1);
@@ -737,8 +716,7 @@ void vpMeLine::updateDelta()
   angle_ = vpMath::round(angle_ * 180 / M_PI);
 
   // if(fabs(angle_) == 180 )
-  if (std::fabs(std::fabs(angle_) - 180) <=
-      std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(std::fabs(angle_) - 180) <= std::numeric_limits<double>::epsilon()) {
     angle_ = 0;
   }
 
@@ -749,8 +727,7 @@ void vpMeLine::updateDelta()
 
   angle_1 = angle_;
 
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();
-       ++it) {
+  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     p_me = *it;
     p_me.alpha = delta;
     p_me.mask_sign = sign;
@@ -825,8 +802,7 @@ void vpMeLine::track(const vpImage<unsigned char> &I)
   vpCDEBUG(1) << "end vpMeLine::track()" << std::endl;
 }
 
-void vpMeLine::update_indices(double theta, int i, int j, int incr, int &i1,
-                              int &i2, int &j1, int &j2)
+void vpMeLine::update_indices(double theta, int i, int j, int incr, int &i1, int &i2, int &j1, int &j2)
 {
   i1 = (int)(i + cos(theta) * incr);
   j1 = (int)(j + sin(theta) * incr);
@@ -888,8 +864,7 @@ void vpMeLine::computeRhoTheta(const vpImage<unsigned char> &I)
     int height_ = (int)I.getHeight();
     update_indices(theta, i, j, incr, i1, i2, j1, j2);
 
-    if (i1 < 0 || i1 >= height_ || i2 < 0 || i2 >= height_ || j1 < 0 ||
-        j1 >= width_ || j2 < 0 || j2 >= width_) {
+    if (i1 < 0 || i1 >= height_ || i2 < 0 || i2 >= height_ || j1 < 0 || j1 >= width_ || j2 < 0 || j2 >= width_) {
       double rho_lim1 = fabs((double)i / cos(theta));
       double rho_lim2 = fabs((double)j / sin(theta));
 
@@ -901,8 +876,7 @@ void vpMeLine::computeRhoTheta(const vpImage<unsigned char> &I)
       incr = (int)std::floor((std::min)(rho_lim, co_rho_lim));
       if (incr < INCR_MIN) {
         vpERROR_TRACE("increment is too small");
-        throw(vpTrackingException(vpTrackingException::fatalError,
-                                  "increment is too small"));
+        throw(vpTrackingException(vpTrackingException::fatalError, "increment is too small"));
       }
       update_indices(theta, i, j, incr, i1, i2, j1, j2);
     }
@@ -919,10 +893,9 @@ void vpMeLine::computeRhoTheta(const vpImage<unsigned char> &I)
         incr--;
         end = false;
         if (incr == 1) {
-          throw(vpException(vpException::fatalError,
-                            "In vpMeLine cannot determine rho sign, since "
-                            "there is no gray level difference between both "
-                            "sides of the line"));
+          throw(vpException(vpException::fatalError, "In vpMeLine cannot determine rho sign, since "
+                                                     "there is no gray level difference between both "
+                                                     "sides of the line"));
         }
       }
       update_indices(theta, i, j, incr, i1, i2, j1, j2);
@@ -1013,8 +986,7 @@ void vpMeLine::getExtremities(vpImagePoint &ip1, vpImagePoint &ip2)
   \return Returns a boolean value which depends on the computation
   success. True means that the computation ends successfully.
 */
-bool vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
-                            vpImagePoint &ip)
+bool vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, vpImagePoint &ip)
 {
   double a1 = line1.a;
   double b1 = line1.b;
@@ -1032,9 +1004,7 @@ bool vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
 
       // if (denom == 0)
       if (std::fabs(denom) <= std::numeric_limits<double>::epsilon()) {
-        std::cout
-            << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!"
-            << std::endl;
+        std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
         return (false);
       }
 
@@ -1050,9 +1020,7 @@ bool vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
 
       // if (denom == 0)
       if (std::fabs(denom) <= std::numeric_limits<double>::epsilon()) {
-        std::cout
-            << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!"
-            << std::endl;
+        std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
         return (false);
       }
 
@@ -1091,10 +1059,8 @@ bool vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
 
   \param thickness : Thickness of the line.
 */
-void vpMeLine::display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
-                       const vpMeSite &PExt2, const double &A,
-                       const double &B, const double &C, const vpColor &color,
-                       unsigned int thickness)
+void vpMeLine::display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+                       const double &B, const double &C, const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip1, ip2;
 
@@ -1156,10 +1122,8 @@ void vpMeLine::display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
 
   \param thickness : Thickness of the line.
 */
-void vpMeLine::display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1,
-                       const vpMeSite &PExt2, const double &A,
-                       const double &B, const double &C, const vpColor &color,
-                       unsigned int thickness)
+void vpMeLine::display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+                       const double &B, const double &C, const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip1, ip2;
 
@@ -1223,16 +1187,13 @@ void vpMeLine::display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1,
 
   \param thickness : Thickness of the line.
 */
-void vpMeLine::display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
-                       const vpMeSite &PExt2,
-                       const std::list<vpMeSite> &site_list, const double &A,
-                       const double &B, const double &C, const vpColor &color,
-                       unsigned int thickness)
+void vpMeLine::display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+                       const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                       const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip;
 
-  for (std::list<vpMeSite>::const_iterator it = site_list.begin();
-       it != site_list.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = site_list.begin(); it != site_list.end(); ++it) {
     vpMeSite pix = *it;
     ip.set_i(pix.ifloat);
     ip.set_j(pix.jfloat);
@@ -1307,16 +1268,13 @@ void vpMeLine::display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
 
   \param thickness : Thickness of the line.
 */
-void vpMeLine::display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1,
-                       const vpMeSite &PExt2,
-                       const std::list<vpMeSite> &site_list, const double &A,
-                       const double &B, const double &C, const vpColor &color,
-                       unsigned int thickness)
+void vpMeLine::display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+                       const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                       const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip;
 
-  for (std::list<vpMeSite>::const_iterator it = site_list.begin();
-       it != site_list.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = site_list.begin(); it != site_list.end(); ++it) {
     vpMeSite pix = *it;
     ip.set_i(pix.ifloat);
     ip.set_j(pix.jfloat);

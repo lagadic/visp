@@ -41,8 +41,7 @@
 #include <visp3/tt/vpTemplateTrackerSSDESM.h>
 
 vpTemplateTrackerSSDESM::vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp)
-  : vpTemplateTrackerSSD(warp), compoInitialised(false), HDir(), HInv(),
-    HLMDir(), HLMInv(), GDir(), GInv()
+  : vpTemplateTrackerSSD(warp), compoInitialised(false), HDir(), HInv(), HLMDir(), HLMInv(), GDir(), GInv()
 {
   useCompositionnal = false;
   useInverse = false;
@@ -60,14 +59,9 @@ vpTemplateTrackerSSDESM::vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp)
   GDir.resize(nbParam);
 }
 
-void vpTemplateTrackerSSDESM::initHessienDesired(
-    const vpImage<unsigned char> &I)
-{
-  initCompInverse(I);
-}
+void vpTemplateTrackerSSDESM::initHessienDesired(const vpImage<unsigned char> &I) { initCompInverse(I); }
 
-void vpTemplateTrackerSSDESM::initCompInverse(
-    const vpImage<unsigned char> & /*I*/)
+void vpTemplateTrackerSSDESM::initCompInverse(const vpImage<unsigned char> & /*I*/)
 {
   // std::cout<<"Initialise precomputed value of ESM with templateSize: "<<
   // templateSize<<std::endl;
@@ -94,8 +88,7 @@ void vpTemplateTrackerSSDESM::initCompInverse(
     X1[1] = i;
     Warp->computeDenom(X1, p);
     ptTemplate[point].dW = new double[nbParam];
-    Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx,
-                 ptTemplate[point].dW);
+    Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx, ptTemplate[point].dW);
 
     for (unsigned int it = 0; it < nbParam; it++)
       for (unsigned int jt = 0; jt < nbParam; jt++)
@@ -138,8 +131,7 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 
       j2 = X2[0];
       i2 = X2[1];
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         // INVERSE
         Tij = ptTemplate[point].val;
         if (!blur)
@@ -179,8 +171,7 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
     }
     if (Nbpoint == 0) {
       // std::cout<<"plus de point dans template suivi"<<std::endl;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
     vpMatrix::computeHLM(HDir, lambdaDep, HLMDir);

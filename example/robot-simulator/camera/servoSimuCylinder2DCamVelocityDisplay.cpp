@@ -50,8 +50,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
-     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,8 +75,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -126,8 +124,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -215,16 +212,14 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(-0.2, 0.1, 2, vpMath::rad(5), vpMath::rad(5),
-                            vpMath::rad(20));
+    vpHomogeneousMatrix cMo(-0.2, 0.1, 2, vpMath::rad(5), vpMath::rad(5), vpMath::rad(20));
 
     vpHomogeneousMatrix wMc, wMo;
     robot.getPosition(wMc);
     wMo = wMc * cMo; // Compute the position of the object in the world frame
 
     // sets the final camera location (for simulation purpose)
-    vpHomogeneousMatrix cMod(0, 0, 1, vpMath::rad(-60), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix cMod(0, 0, 1, vpMath::rad(-60), vpMath::rad(0), vpMath::rad(0));
 
     // sets the cylinder coordinates in the world frame
     vpCylinder cylinder(0, 1, 0, // direction
@@ -275,8 +270,7 @@ int main(int argc, const char **argv)
     task.print();
 
     if (opt_display && opt_click_allowed) {
-      std::cout << "\n\nClick in the camera view window to start..."
-                << std::endl;
+      std::cout << "\n\nClick in the camera view window to start..." << std::endl;
       vpDisplay::getClick(I);
     }
 
@@ -289,8 +283,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     do {
-      std::cout << "---------------------------------------------" << iter++
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter++ << std::endl;
       vpColVector v;
 
       // get the robot position
@@ -319,8 +312,7 @@ int main(int argc, const char **argv)
       // send the camera velocity to the controller
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
       ;
 
       //   vpDisplay::getClick(I) ;
@@ -342,10 +334,6 @@ int main(int argc, const char **argv)
 }
 
 #else
-int main()
-{
-  vpERROR_TRACE(
-      "You do not have X11, GTK, GDI or OpenCV display functionalities...");
-}
+int main() { vpERROR_TRACE("You do not have X11, GTK, GDI or OpenCV display functionalities..."); }
 
 #endif

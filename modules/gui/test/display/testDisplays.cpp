@@ -43,8 +43,7 @@
 #include <stdlib.h>
 #include <string>
 
-#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) ||                     \
-     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) ||                    \
+#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) ||          \
      defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpImage.h>
@@ -70,8 +69,7 @@
 #define GETOPTARGS "hldc"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bool &display);
 void draw(vpImage<vpRGBa> &I);
 
 /*!
@@ -122,8 +120,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -256,8 +253,7 @@ int main(int argc, const char **argv)
     bool opt_display = true;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_list, opt_click_allowed, opt_display) ==
-        false) {
+    if (getOptions(argc, argv, opt_list, opt_click_allowed, opt_display) == false) {
       exit(-1);
     }
 
@@ -399,9 +395,6 @@ int main(int argc, const char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "You do not have display functionalities..." << std::endl;
-}
+int main() { std::cout << "You do not have display functionalities..." << std::endl; }
 
 #endif

@@ -131,8 +131,7 @@ int main()
 
     // Load the end-effector to camera frame transformation obtained
     // using a camera intrinsic model with distortion
-    robot.init(vpViper850::defaultTool,
-               vpCameraParameters::perspectiveProjWithDistortion);
+    robot.init(vpViper850::defaultTool, vpCameraParameters::perspectiveProjWithDistortion);
 
     // Get the intrinsic camera parameters associated to the image
     robot.getCameraParameters(cam, I);
@@ -175,8 +174,7 @@ int main()
     std::cout << "Pose cMo: " << std::endl << cMo;
     cMo.extract(R);
     r.buildFrom(R);
-    std::cout << "  rotation: " << vpMath::deg(r[0]) << " "
-              << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
+    std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
               << std::endl
               << std::endl;
 
@@ -197,8 +195,7 @@ int main()
     std::cout << "Pose rMc: " << std::endl << rMc;
     rMc.extract(R);
     r.buildFrom(R);
-    std::cout << "  rotation: " << vpMath::deg(r[0]) << " "
-              << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
+    std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
               << std::endl
               << std::endl;
 
@@ -209,8 +206,7 @@ int main()
     std::cout << "Pose rMc from MGD: " << std::endl << rMc;
     rMc.extract(R);
     r.buildFrom(R);
-    std::cout << "  rotation: " << vpMath::deg(r[0]) << " "
-              << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
+    std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
               << std::endl
               << std::endl;
 
@@ -219,8 +215,7 @@ int main()
     std::cout << "Pose rMo = rMc * cMo: " << std::endl << rMo;
     rMo.extract(R);
     r.buildFrom(R);
-    std::cout << "  rotation: " << vpMath::deg(r[0]) << " "
-              << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
+    std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
               << std::endl
               << std::endl;
 
@@ -232,8 +227,7 @@ int main()
 #else
 int main()
 {
-  std::cout << "Sorry, test not valid. You should have an Viper850 robot..."
-            << std::endl;
+  std::cout << "Sorry, test not valid. You should have an Viper850 robot..." << std::endl;
   return 0;
 }
 

@@ -251,8 +251,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  vpERROR_TRACE(
-      "You do not have an afma4 robot connected to your computer...");
+  vpERROR_TRACE("You do not have an afma4 robot connected to your computer...");
   return 0;
 }
 

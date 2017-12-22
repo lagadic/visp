@@ -62,8 +62,7 @@ vpDisplayGDI::vpDisplayGDI() : vpDisplayWin32(new vpGDIRenderer()) {}
   index). \param title  Window's title.
 
 */
-vpDisplayGDI::vpDisplayGDI(int winx, int winy, const std::string &title)
-  : vpDisplayWin32(new vpGDIRenderer())
+vpDisplayGDI::vpDisplayGDI(int winx, int winy, const std::string &title) : vpDisplayWin32(new vpGDIRenderer())
 {
   m_windowXPosition = winx;
   m_windowYPosition = winy;
@@ -95,8 +94,7 @@ vpDisplayGDI::vpDisplayGDI(int winx, int winy, const std::string &title)
   and the columns.
 
 */
-vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  : vpDisplayWin32(new vpGDIRenderer())
+vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDisplayWin32(new vpGDIRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -125,8 +123,7 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, vpScaleType scaleType)
   and the columns.
 
 */
-vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, int winx, int winy,
-                           const std::string &title, vpScaleType scaleType)
+vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, int winx, int winy, const std::string &title, vpScaleType scaleType)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
@@ -154,8 +151,7 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, int winx, int winy,
   and the columns.
 
 */
-vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : vpDisplayWin32(new vpGDIRenderer())
+vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, vpScaleType scaleType) : vpDisplayWin32(new vpGDIRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -184,8 +180,8 @@ vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, vpScaleType scaleType)
   and the columns.
 
 */
-vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, int winx, int winy,
-                           const std::string &title, vpScaleType scaleType)
+vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, int winx, int winy, const std::string &title,
+                           vpScaleType scaleType)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());

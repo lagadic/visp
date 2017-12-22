@@ -140,8 +140,7 @@ protected:
 
 public:
   //! initialize the camera view
-  virtual void initInternalViewer(const unsigned int nlig,
-                                  const unsigned int ncol);
+  virtual void initInternalViewer(const unsigned int nlig, const unsigned int ncol);
   //! initialize the external view
   void initExternalViewer(const unsigned int nlig, const unsigned int ncol);
 
@@ -207,8 +206,7 @@ protected:
   void initSceneGraph();
 
   //! Add a new object in the scene graph ad a given location
-  void addObject(SoSeparator *object, const vpHomogeneousMatrix &fMo,
-                 SoSeparator *root);
+  void addObject(SoSeparator *object, const vpHomogeneousMatrix &fMo, SoSeparator *root);
 
 public:
   //! Add a new object in the scene graph ad a given location
@@ -274,8 +272,7 @@ public:
 protected:
   SbTime *realtime;
   SoOffscreenRenderer *offScreenRenderer;
-  void offScreenRendering(vpSimulatorViewType view = vpSimulator::EXTERNAL,
-                          int *width = NULL, int *height = NULL);
+  void offScreenRendering(vpSimulatorViewType view = vpSimulator::EXTERNAL, int *width = NULL, int *height = NULL);
 
 public:
   //! image of the internal view
@@ -293,10 +290,7 @@ public:
   void getSizeInternalView(int &width, int &height);
 
   //! get the intrinsic parameters of the camera
-  void getCameraParameters(vpCameraParameters &cam)
-  {
-    cam = internalCameraParameters;
-  }
+  void getCameraParameters(vpCameraParameters &cam) { cam = internalCameraParameters; }
 };
 
 #endif

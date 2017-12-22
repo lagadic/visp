@@ -94,9 +94,7 @@
   in \ref tutorial-tracking-me shows how to use this class.
 
   \include tutorial-me-line-tracker.cpp
-*/
 
-/*
   The code below shows how to use this class.
 \code
 #include <visp3/core/vpConfig.h>
@@ -153,8 +151,7 @@ int main()
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
 private:
-  static void update_indices(double theta, int incr, int i, int j, int &i1,
-                             int &i2, int &j1, int &j2);
+  static void update_indices(double theta, int incr, int i, int j, int &i1, int &i2, int &j1, int &j2);
 
 protected:
   vpMeSite PExt[2];
@@ -196,8 +193,7 @@ public:
   void suppressPoints();
 
   void initTracking(const vpImage<unsigned char> &I);
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1,
-                    const vpImagePoint &ip2);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2);
 
   void computeRhoTheta(const vpImage<unsigned char> &I);
   double getRho() const;
@@ -229,8 +225,7 @@ public:
   */
   inline double getC() const { return c; }
 
-  static bool intersection(const vpMeLine &line1, const vpMeLine &line2,
-                           vpImagePoint &ip);
+  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, vpImagePoint &ip);
 
   /*!
     This method allows to turn off the computation of the sign of the rho
@@ -241,34 +236,23 @@ public:
 
     \param useIntensityForRho : new value of the flag.
   */
-  inline void computeRhoSignFromIntensity(const bool useIntensityForRho)
-  {
-    _useIntensityForRho = useIntensityForRho;
-  }
+  inline void computeRhoSignFromIntensity(const bool useIntensityForRho) { _useIntensityForRho = useIntensityForRho; }
 
   // Static Functions
 public:
-  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
-                      const vpMeSite &PExt2, const double &A, const double &B,
-                      const double &C, const vpColor &color = vpColor::green,
+  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+                      const double &B, const double &C, const vpColor &color = vpColor::green,
                       unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1,
-                      const vpMeSite &PExt2, const double &A, const double &B,
-                      const double &C, const vpColor &color = vpColor::green,
+  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+                      const double &B, const double &C, const vpColor &color = vpColor::green,
                       unsigned int thickness = 1);
 
-  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
-                      const vpMeSite &PExt2,
-                      const std::list<vpMeSite> &site_list, const double &A,
-                      const double &B, const double &C,
-                      const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1,
-                      const vpMeSite &PExt2,
-                      const std::list<vpMeSite> &site_list, const double &A,
-                      const double &B, const double &C,
-                      const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
+  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+                      const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+                      const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 
 #endif

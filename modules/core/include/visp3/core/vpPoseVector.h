@@ -95,8 +95,7 @@ public:
   // constructor
   vpPoseVector();
   // constructor from 3 angles (in radian)
-  vpPoseVector(const double tx, const double ty, const double tz,
-               const double tux, const double tuy, const double tuz);
+  vpPoseVector(const double tx, const double ty, const double tz, const double tux, const double tuy, const double tuz);
   // constructor convert an homogeneous matrix in a pose
   explicit vpPoseVector(const vpHomogeneousMatrix &M);
   // constructor  convert a translation and a "thetau" vector into a pose
@@ -108,17 +107,14 @@ public:
   */
   virtual ~vpPoseVector(){};
 
-  vpPoseVector buildFrom(const double tx, const double ty, const double tz,
-                         const double tux, const double tuy,
+  vpPoseVector buildFrom(const double tx, const double ty, const double tz, const double tux, const double tuy,
                          const double tuz);
   // convert an homogeneous matrix in a pose
   vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
   //  convert a translation and a "thetau" vector into a pose
-  vpPoseVector buildFrom(const vpTranslationVector &tv,
-                         const vpThetaUVector &tu);
+  vpPoseVector buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu);
   //  convert a translation and a rotation matrix into a pose
-  vpPoseVector buildFrom(const vpTranslationVector &tv,
-                         const vpRotationMatrix &R);
+  vpPoseVector buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R);
 
   void extract(vpRotationMatrix &R) const;
   void extract(vpThetaUVector &tu) const;
@@ -175,35 +171,28 @@ public:
     tuz = r[5];
     \endcode
   */
-  inline const double &operator[](unsigned int i) const
-  {
-    return *(data + i);
-  }
+  inline const double &operator[](unsigned int i) const { return *(data + i); }
 
   // Print  a vector [T thetaU] thetaU in degree
   void print() const;
-  int print(std::ostream &s, unsigned int length,
-            char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 
   /*!
     This function is not applicable to a pose vector that is always a
     6-by-1 column vector.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(
-        vpException(vpException::fatalError, "Cannot resize a pose vector"));
+    throw(vpException(vpException::fatalError, "Cannot resize a pose vector"));
   };
 
   // Save an homogeneous matrix in a file
   void save(std::ofstream &f) const;
-  void set(const double tx, const double ty, const double tz,
-           const double tux, const double tuy, const double tuz);
+  void set(const double tx, const double ty, const double tz, const double tux, const double tuy, const double tuz);
   vpRowVector t() const;
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

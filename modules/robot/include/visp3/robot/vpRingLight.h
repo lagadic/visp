@@ -72,8 +72,8 @@
 int main()
 {
 #if defined(VISP_HAVE_PARPORT) && defined(VISP_HAVE_DC1394)
-  vp1394TwoGrabber g; // Firewire framegrabber based on libdc1394-2.x third
-party lib vpImage<unsigned char> I;
+  vp1394TwoGrabber g; // Firewire framegrabber based on libdc1394-2.x third party lib
+  vpImage<unsigned char> I;
 
   vpRingLight light; // Open the device to access to the ring light.
 

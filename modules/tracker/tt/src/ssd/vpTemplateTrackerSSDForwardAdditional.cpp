@@ -43,16 +43,13 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/tt/vpTemplateTrackerSSDForwardAdditional.h>
 
-vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(
-    vpTemplateTrackerWarp *warp)
-  : vpTemplateTrackerSSD(warp), minimizationMethod(USE_NEWTON), p_prec(),
-    G_prec(), KQuasiNewton()
+vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerSSD(warp), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
 {
   useCompositionnal = false;
 }
 
-void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
@@ -85,8 +82,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(
 
       j2 = X2[0];
       i2 = X2[1];
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Tij = ptTemplate[point].val;
 
         if (!blur)
@@ -117,8 +113,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(
     }
     if (Nbpoint == 0) {
       // std::cout<<"plus de point dans template suivi"<<std::endl;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
     vpMatrix::computeHLM(H, lambda, HLM);
@@ -160,13 +155,10 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(
         // if(s_scal_y!=0)//BFGS
         //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
         // if(s_scal_y!=0.0)//DFP
-        if (std::fabs(s_scal_y) >
-            std::numeric_limits<double>::epsilon()) // DFP
-          KQuasiNewton =
-              KQuasiNewton +
-              0.001 * (s_quasi * s_quasi.t() / s_scal_y -
-                       KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
-                           (y_quasi.t() * KQuasiNewton * y_quasi));
+        if (std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon()) // DFP
+          KQuasiNewton = KQuasiNewton + 0.001 * (s_quasi * s_quasi.t() / s_scal_y -
+                                                 KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
+                                                     (y_quasi.t() * KQuasiNewton * y_quasi));
       }
       dp = -KQuasiNewton * G;
       p_prec = p;

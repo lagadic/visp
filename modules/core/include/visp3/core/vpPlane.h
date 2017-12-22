@@ -71,12 +71,9 @@ public:
   vpPlane();
   vpPlane(const vpPlane &P);
   vpPlane(const double A, const double B, const double C, const double D);
-  vpPlane(const vpPoint &P, const vpColVector &n,
-          vpPlaneFrame frame = camera_frame);
-  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R,
-          vpPlaneFrame frame = camera_frame);
-  void init(const vpPoint &P, const vpPoint &Q, const vpPoint &R,
-            vpPlaneFrame frame = camera_frame);
+  vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame = camera_frame);
+  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
+  void init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
   void init(const vpColVector &P, const vpColVector &n);
   void init(const vpPlane &P);
 
@@ -90,8 +87,7 @@ public:
   /*! Set plane parameter D. */
   inline void setD(const double d) { this->D = d; }
   /*! Set plane parameters A, B, C, D. */
-  inline void setABCD(const double a, const double b, const double c,
-                      const double d)
+  inline void setABCD(const double a, const double b, const double c, const double d)
   {
     this->A = a;
     this->B = b;
@@ -156,8 +152,7 @@ public:
   // Operation with  Plane
   void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const;
 
-  double rayIntersection(const vpPoint &M0, const vpPoint &M1,
-                         vpColVector &H) const;
+  double rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVector &H) const;
 
   double getIntersection(const vpColVector &M1, vpColVector &H) const;
   void changeFrame(const vpHomogeneousMatrix &cMo);

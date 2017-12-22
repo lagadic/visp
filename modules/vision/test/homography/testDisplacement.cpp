@@ -53,20 +53,17 @@
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/vision/vpHomography.h>
 
-bool test(const std::string &s, const vpHomography &H,
-          const std::vector<double> &bench)
+bool test(const std::string &s, const vpHomography &H, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
   std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << H.getRows() << "," << H.getCols() << ") = \n[" << H
-            << "]" << std::endl;
+  std::cout << s << "(" << H.getRows() << "," << H.getCols() << ") = \n[" << H << "]" << std::endl;
   if (bench.size() != H.size()) {
     std::cout << "Test fails: bad size wrt bench" << std::endl;
     return false;
   }
   for (unsigned int i = 0; i < H.size(); i++) {
-    if (std::fabs(H.data[i] - bench[i]) >
-        std::fabs(H.data[i]) * std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(H.data[i] - bench[i]) > std::fabs(H.data[i]) * std::numeric_limits<double>::epsilon()) {
       std::cout << "Test fails: bad content" << std::endl;
       return false;
     }
@@ -118,8 +115,7 @@ int main()
       std::cout << "T" << std::endl << T.t() << std::endl;
       std::cout << "n" << std::endl << n.t() << std::endl;
     }
-    std::cout << "------------------------------------------------------"
-              << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
 
     {
       vpThetaUVector tu(vpMath::rad(90), vpMath::rad(120), vpMath::rad(45));
@@ -155,8 +151,7 @@ int main()
       std::cout << "n" << std::endl << n.t() << std::endl;
     }
 
-    std::cout << "------------------------------------------------------"
-              << std::endl;
+    std::cout << "------------------------------------------------------" << std::endl;
     {
       vpThetaUVector tu(vpMath::rad(-190), vpMath::rad(12), vpMath::rad(-45));
 

@@ -88,8 +88,8 @@ int main()
 {
 #if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I; // Create a gray level image container
-  vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third
-party lib g.acquire(I); // Acquire an image
+  vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third party lib
+  g.acquire(I); // Acquire an image
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX d(I, 0, 0, "Camera view");
@@ -129,77 +129,76 @@ public:
 
   static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot
               search. */
-  double m00;  /*!< Considering the general distribution moments for \f$ N \f$
-     points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-     u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
-     with \f$i = j = 0 \f$.
- 
-     \sa setComputeMoments()
-         */
-  double m01;  /*!< Considering the general distribution moments for \f$ N \f$
-     points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-     u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
-     obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
- 
-     \sa setComputeMoments()
-         */
-  double m10;  /*!< Considering the general distribution moments for \f$ N \f$
-     points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-     u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
-     obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
- 
-     \sa setComputeMoments()
-         */
-  double m11;  /*!< Considering the general distribution moments for \f$ N \f$
-     points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-     u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
-     obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
- 
-     \warning This moment is not computed for the moment.
- 
-     \sa setComputeMoments()
-         */
-  double m20;  /*!< Considering the general distribution moments for \f$ N \f$
-     points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-     u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
-     obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
- 
-     \warning This moment is not computed for the moment.
- 
-     \sa setComputeMoments()
-         */
-  double m02;  /*!< Considering the general distribution moments for \f$ N \f$
-     points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-     u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
-     obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
- 
-     \warning This moment is not computed for the moment.
- 
-     \sa setComputeMoments()
-         */
-  double mu11; /*!< \f$ \mu_{11} \f$ is a second order central moments defined
-     by: \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
+  double m00;                                   /*!< Considering the general distribution moments for \f$ N \f$
+                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                                      u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
+                                      with \f$i = j = 0 \f$.
 
-     \sa setComputeMoments()
-         */
-  double mu20; /*!< \f$ \mu_{20} \f$ is a second order central moments defined
-     by: \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
+                                      \sa setComputeMoments()
+                                          */
+  double m01;                                   /*!< Considering the general distribution moments for \f$ N \f$
+                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                                      u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
+                                      obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
 
-     \sa setComputeMoments()
-         */
-  double mu02; /*!< \f$ \mu_{02} \f$ is a second order central moments defined
-     by: \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
+                                      \sa setComputeMoments()
+                                          */
+  double m10;                                   /*!< Considering the general distribution moments for \f$ N \f$
+                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                                      u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
+                                      obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
 
-     \sa setComputeMoments()
-         */
+                                      \sa setComputeMoments()
+                                          */
+  double m11;                                   /*!< Considering the general distribution moments for \f$ N \f$
+                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                                      u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
+                                      obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
+
+                                      \warning This moment is not computed for the moment.
+
+                                      \sa setComputeMoments()
+                                          */
+  double m20;                                   /*!< Considering the general distribution moments for \f$ N \f$
+                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                                      u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
+                                      obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
+
+                                      \warning This moment is not computed for the moment.
+
+                                      \sa setComputeMoments()
+                                          */
+  double m02;                                   /*!< Considering the general distribution moments for \f$ N \f$
+                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                                      u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
+                                      obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
+
+                                      \warning This moment is not computed for the moment.
+
+                                      \sa setComputeMoments()
+                                          */
+  double mu11;                                  /*!< \f$ \mu_{11} \f$ is a second order central moments defined
+                                      by: \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
+
+                                      \sa setComputeMoments()
+                                          */
+  double mu20;                                  /*!< \f$ \mu_{20} \f$ is a second order central moments defined
+                                      by: \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
+
+                                      \sa setComputeMoments()
+                                          */
+  double mu02;                                  /*!< \f$ \mu_{02} \f$ is a second order central moments defined
+                                      by: \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
+
+                                      \sa setComputeMoments()
+                                          */
 
   vpDot();
   explicit vpDot(const vpImagePoint &ip);
   vpDot(const vpDot &d);
   virtual ~vpDot();
 
-  void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red,
-               unsigned int thickness = 1) const;
+  void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1) const;
 
   /*!
 
@@ -212,8 +211,7 @@ public:
   {
     vpRect bbox;
 
-    bbox.setRect(this->u_min, this->v_min, this->u_max - this->u_min + 1,
-                 this->v_max - this->v_min + 1);
+    bbox.setRect(this->u_min, this->v_min, this->u_max - this->u_min + 1, this->v_max - this->v_min + 1);
 
     return (bbox);
   };
@@ -230,10 +228,7 @@ public:
       \warning Doesn't return the image points inside the dot anymore. To get
      those points see getConnexities().
   */
-  inline std::list<vpImagePoint> getEdges() const
-  {
-    return this->ip_edges_list;
-  };
+  inline std::list<vpImagePoint> getEdges() const { return this->ip_edges_list; };
 
   /*!
 
@@ -243,10 +238,7 @@ public:
     This list is updated after a call to track().
 
   */
-  inline std::list<vpImagePoint> getConnexities() const
-  {
-    return this->ip_connexities_list;
-  };
+  inline std::list<vpImagePoint> getConnexities() const { return this->ip_connexities_list; };
 
   inline double getGamma() const { return this->gamma; };
   /*!
@@ -275,10 +267,7 @@ public:
     \sa getHeight()
 
   */
-  inline unsigned int getWidth() const
-  {
-    return (this->u_max - this->u_min + 1);
-  };
+  inline unsigned int getWidth() const { return (this->u_max - this->u_min + 1); };
 
   /*!
 
@@ -287,15 +276,12 @@ public:
     \sa getHeight()
 
   */
-  inline unsigned int getHeight() const
-  {
-    return (this->v_max - this->v_min + 1);
-  };
+  inline unsigned int getHeight() const { return (this->v_max - this->v_min + 1); };
 
   void initTracking(const vpImage<unsigned char> &I);
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip);
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip,
-                    unsigned int gray_level_min, unsigned int gray_level_max);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int gray_level_min,
+                    unsigned int gray_level_max);
 
   vpDot &operator=(const vpDot &d);
   bool operator==(const vpDot &d) const;
@@ -330,14 +316,8 @@ public:
   */
   void setConnexity(vpConnexityType type) { this->connexityType = type; };
   void setMaxDotSize(double percentage);
-  void setGrayLevelMin(const unsigned int &level_min)
-  {
-    this->gray_level_min = level_min;
-  };
-  void setGrayLevelMax(const unsigned int &level_max)
-  {
-    this->gray_level_max = level_max;
-  };
+  void setGrayLevelMin(const unsigned int &level_min) { this->gray_level_min = level_min; };
+  void setGrayLevelMax(const unsigned int &level_max) { this->gray_level_max = level_max; };
   void setGrayLevelPrecision(const double &grayLevelPrecision);
 
   /*!
@@ -406,25 +386,19 @@ private:
 
   void init();
   void setGrayLevelOut();
-  bool connexe(const vpImage<unsigned char> &I, unsigned int u,
-               unsigned int v, double &mean_value, double &u_cog,
+  bool connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value, double &u_cog,
                double &v_cog, double &n);
-  bool connexe(const vpImage<unsigned char> &I, unsigned int u,
-               unsigned int v, double &mean_value, double &u_cog,
+  bool connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned int v, double &mean_value, double &u_cog,
                double &v_cog, double &n, std::vector<bool> &checkTab);
   void COG(const vpImage<unsigned char> &I, double &u, double &v);
 
   // Static Functions
 public:
-  static void display(const vpImage<unsigned char> &I,
-                      const vpImagePoint &cog,
-                      const std::list<vpImagePoint> &edges_list,
-                      vpColor color = vpColor::red,
+  static void display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
+                      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red,
                       unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &cog,
-                      const std::list<vpImagePoint> &edges_list,
-                      vpColor color = vpColor::red,
-                      unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
+                      vpColor color = vpColor::red, unsigned int thickness = 1);
 };
 
 #endif

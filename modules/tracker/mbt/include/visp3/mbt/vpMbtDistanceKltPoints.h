@@ -42,8 +42,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) &&                                         \
-    (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #include <map>
 
@@ -112,8 +111,7 @@ public:
 
 private:
   double compute_1_over_Z(const double x, const double y);
-  void computeP_mu_t(const double x_in, const double y_in, double &x_out,
-                     double &y_out, const vpMatrix &cHc0);
+  void computeP_mu_t(const double x_in, const double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
   bool isTrackedFeature(const int id);
 
   // private:
@@ -140,18 +138,13 @@ public:
   virtual ~vpMbtDistanceKltPoints();
 
   unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker);
-  void computeHomography(const vpHomogeneousMatrix &_cTc0,
-                         vpHomography &cHc0);
+  void computeHomography(const vpHomogeneousMatrix &_cTc0, vpHomography &cHc0);
   void computeInteractionMatrixAndResidu(vpColVector &_R, vpMatrix &_J);
 
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1,
-               const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam, const vpColor &col,
-               const unsigned int thickness = 1,
-               const bool displayFullModel = false);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   void displayPrimitive(const vpImage<unsigned char> &_I);
   void displayPrimitive(const vpImage<vpRGBa> &_I);
@@ -201,35 +194,26 @@ public:
   */
   inline bool isTracked() const { return isTrackedKltPoints; }
 
-  void removeOutliers(const vpColVector &weight,
-                      const double &threshold_outlier);
+  void removeOutliers(const vpColVector &weight, const double &threshold_outlier);
 
   /*!
     Set the camera parameters
 
     \param _cam : the new camera parameters
   */
-  virtual inline void setCameraParameters(const vpCameraParameters &_cam)
-  {
-    cam = _cam;
-  }
+  virtual inline void setCameraParameters(const vpCameraParameters &_cam) { cam = _cam; }
 
   /*!
     Set if the klt points have to considered during tracking phase.
 
     \param track : True if they have to be tracked, False otherwise.
   */
-  inline void setTracked(const bool &track)
-  {
-    this->isTrackedKltPoints = track;
-  }
+  inline void setTracked(const bool &track) { this->isTrackedKltPoints = track; }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  void updateMask(cv::Mat &mask, unsigned char _nb = 255,
-                  unsigned int _shiftBorder = 0);
+  void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 #else
-  void updateMask(IplImage *mask, unsigned char _nb = 255,
-                  unsigned int _shiftBorder = 0);
+  void updateMask(IplImage *mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 #endif
 };
 

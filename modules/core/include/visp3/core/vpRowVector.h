@@ -110,9 +110,7 @@ public:
     rowNum = colNum = dsize = 0;
   }
 
-  std::ostream &cppPrint(std::ostream &os,
-                         const std::string &matrixName = "A",
-                         bool octet = false) const;
+  std::ostream &cppPrint(std::ostream &os, const std::string &matrixName = "A", bool octet = false) const;
   std::ostream &csvPrint(std::ostream &os) const;
 
   /*!
@@ -167,10 +165,7 @@ public:
   //! Operator that allows to set a value of an element \f$v_i\f$: v[i] = x
   inline double &operator[](unsigned int n) { return *(data + n); }
   //! Operator that allows to get the value of an element \f$v_i\f$: x = v[i]
-  inline const double &operator[](unsigned int n) const
-  {
-    return *(data + n);
-  }
+  inline const double &operator[](unsigned int n) const { return *(data + n); }
 
   //! Copy operator.   Allow operation such as A = v
   vpRowVector &operator=(const vpRowVector &v);
@@ -196,8 +191,7 @@ public:
 
   vpRowVector &operator<<(const vpRowVector &v);
 
-  int print(std::ostream &s, unsigned int length,
-            char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
   /*!
     Convert a column vector containing angles in radians into degrees.
     \sa deg2rad()
@@ -208,8 +202,7 @@ public:
 
     (*this) *= r2d;
   }
-  void reshape(vpMatrix &M, const unsigned int &nrows,
-               const unsigned int &ncols);
+  void reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols);
   vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
 
   /*! Modify the size of the row vector.
@@ -232,8 +225,7 @@ public:
     \exception vpException::fatalError When \e nrows is not equal to 1.
 
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
   {
     if (nrows != 1)
       throw(vpException(vpException::fatalError,
@@ -255,10 +247,8 @@ public:
   static double mean(const vpRowVector &v);
   static double median(const vpRowVector &v);
   static vpRowVector stack(const vpRowVector &A, const vpRowVector &B);
-  static void stack(const vpRowVector &A, const vpRowVector &B,
-                    vpRowVector &C);
-  static double stdev(const vpRowVector &v,
-                      const bool useBesselCorrection = false);
+  static void stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C);
+  static double stdev(const vpRowVector &v, const bool useBesselCorrection = false);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -278,17 +268,12 @@ public:
      \deprecated You should rather use stack(const vpRowVector &A, const
      vpRowVector &B)
    */
-  vp_deprecated static vpRowVector stackMatrices(const vpRowVector &A,
-                                                 const vpRowVector &B)
-  {
-    return stack(A, B);
-  }
+  vp_deprecated static vpRowVector stackMatrices(const vpRowVector &A, const vpRowVector &B) { return stack(A, B); }
   /*!
      \deprecated You should rather use stack(const vpRowVector &A, const
      vpRowVector &B, vpRowVector &C)
    */
-  vp_deprecated static void
-  stackMatrices(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
+  vp_deprecated static void stackMatrices(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
   {
     stack(A, B, C);
   }

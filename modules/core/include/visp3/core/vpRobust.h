@@ -91,13 +91,11 @@ public:
   virtual ~vpRobust(){};
 
   //! Compute the weights according a residue vector and a PsiFunction
-  void MEstimator(const vpRobustEstimatorType method,
-                  const vpColVector &residues, vpColVector &weights);
+  void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights);
 
   //! Compute the weights according a residue vector and a PsiFunction
-  void MEstimator(const vpRobustEstimatorType method,
-                  const vpColVector &residues,
-                  const vpColVector &all_residues, vpColVector &weights);
+  void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, const vpColVector &all_residues,
+                  vpColVector &weights);
 
   vpRobust &operator=(const vpRobust &other);
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
@@ -114,10 +112,7 @@ public:
     Set maximal noise threshold.
     \param noise_threshold : Maximal noise threshold.
   */
-  inline void setThreshold(const double noise_threshold)
-  {
-    NoiseThreshold = noise_threshold;
-  }
+  inline void setThreshold(const double noise_threshold) { NoiseThreshold = noise_threshold; }
 
   //! Simult Mestimator
   vpColVector simultMEstimator(vpColVector &residues);
@@ -131,9 +126,7 @@ public:
 
 private:
   //! Compute normalized median
-  double computeNormalizedMedian(vpColVector &all_normres,
-                                 const vpColVector &residues,
-                                 const vpColVector &all_residues,
+  double computeNormalizedMedian(vpColVector &all_normres, const vpColVector &residues, const vpColVector &all_residues,
                                  const vpColVector &weights);
 
   //! Calculate various scale estimates

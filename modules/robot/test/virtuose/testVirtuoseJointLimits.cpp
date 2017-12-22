@@ -54,10 +54,8 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
   (void)VC;
   vpVirtuose *p_virtuose = (vpVirtuose *)ptr;
 
-  float maxQ[6] = {0.7811045051f, -0.07668215036f, 2.481732368f,
-                   2.819076777f,  1.044736624f,    2.687076807f};
-  float minQ[6] = {-0.8011951447f, -1.648244739f, 0.7439950705f,
-                   -3.022218227f,  -1.260564089f, -2.054088593f};
+  float maxQ[6] = {0.7811045051f, -0.07668215036f, 2.481732368f, 2.819076777f, 1.044736624f, 2.687076807f};
+  float minQ[6] = {-0.8011951447f, -1.648244739f, 0.7439950705f, -3.022218227f, -1.260564089f, -2.054088593f};
   unsigned int numJoint = 6;
 
   vpColVector feedbackRegion(numJoint, 0);
@@ -75,22 +73,12 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
   for (unsigned int iter = 0; iter < numJoint; iter++) {
     if (currentQ[iter] >= (maxQ[iter] - feedbackRegion[iter])) {
       forceFeedback[iter] =
-          -saturationForce[iter] *
-          pow((currentQ[iter] - maxQ[iter] + feedbackRegion[iter]) /
-                  feedbackRegion[iter],
-              2);
-      std::cout
-          << "WARNING! Getting close to the maximum joint limit. Joint #"
-          << iter + 1 << std::endl;
+          -saturationForce[iter] * pow((currentQ[iter] - maxQ[iter] + feedbackRegion[iter]) / feedbackRegion[iter], 2);
+      std::cout << "WARNING! Getting close to the maximum joint limit. Joint #" << iter + 1 << std::endl;
     } else if (currentQ[iter] <= (minQ[iter] + feedbackRegion[iter])) {
       forceFeedback[iter] =
-          saturationForce[iter] *
-          pow((minQ[iter] + feedbackRegion[iter] - currentQ[iter]) /
-                  feedbackRegion[iter],
-              2);
-      std::cout
-          << "WARNING! Getting close to the minimum joint limit. Joint #"
-          << iter + 1 << std::endl;
+          saturationForce[iter] * pow((minQ[iter] + feedbackRegion[iter] - currentQ[iter]) / feedbackRegion[iter], 2);
+      std::cout << "WARNING! Getting close to the minimum joint limit. Joint #" << iter + 1 << std::endl;
     } else {
       forceFeedback[iter] = 0;
       std::cout << "Safe zone" << std::endl;
@@ -176,9 +164,5 @@ int main()
 }
 
 #else
-int main()
-{
-  std::cout << "You should install Virtuose API to use this binary..."
-            << std::endl;
-}
+int main() { std::cout << "You should install Virtuose API to use this binary..." << std::endl; }
 #endif

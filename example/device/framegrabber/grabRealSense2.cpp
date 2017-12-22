@@ -46,8 +46,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) &&                                         \
-    defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                \
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                         \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #ifdef VISP_HAVE_PCL
@@ -58,31 +57,22 @@
 namespace
 {
 // Global variables
-pcl::PointCloud<pcl::PointXYZ>::Ptr
-    pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-    pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
+pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 bool cancelled = false, update_pointcloud = false;
 
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(const bool color_mode, std::mutex &mutex)
-    : m_colorMode(color_mode), m_mutex(mutex)
-  {
-  }
+  explicit ViewerWorker(const bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
 
   void run()
   {
     std::string date = vpTime::getDateTime();
-    pcl::visualization::PCLVisualizer::Ptr viewer(
-        new pcl::visualization::PCLVisualizer("3D Viewer " + date));
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(
-        pointcloud_color);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(
-        new pcl::PointCloud<pcl::PointXYZ>());
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(
-        new pcl::PointCloud<pcl::PointXYZRGB>());
+    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer " + date));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 
     viewer->setBackgroundColor(0, 0, 0);
     viewer->initCameraParameters();
@@ -116,26 +106,19 @@ public:
 
         if (init) {
           if (m_colorMode) {
-            viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color,
-                                                    rgb, "RGB sample cloud");
-            viewer->setPointCloudRenderingProperties(
-                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
-                "RGB sample cloud");
+            viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
+            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
+                                                     "RGB sample cloud");
           } else {
-            viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud,
-                                                 "sample cloud");
-            viewer->setPointCloudRenderingProperties(
-                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
-                "sample cloud");
+            viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
+            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           }
           init = false;
         } else {
           if (m_colorMode) {
-            viewer->updatePointCloud<pcl::PointXYZRGB>(
-                local_pointcloud_color, rgb, "RGB sample cloud");
+            viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
           } else {
-            viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud,
-                                                    "sample cloud");
+            viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           }
         }
       }
@@ -163,38 +146,22 @@ int main()
     config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
     rs.open(config);
 
-    std::cout << rs.getCameraParameters(
-                     RS2_STREAM_COLOR,
-                     vpCameraParameters::perspectiveProjWithoutDistortion)
+    std::cout << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
               << std::endl;
-    std::cout << rs.getCameraParameters(
-                     RS2_STREAM_COLOR,
-                     vpCameraParameters::perspectiveProjWithDistortion)
+    std::cout << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion)
               << std::endl;
-    std::cout << "Extrinsics cMd: \n"
-              << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH)
-              << std::endl;
-    std::cout << "Extrinsics dMc: \n"
-              << rs.getTransformation(RS2_STREAM_DEPTH, RS2_STREAM_COLOR)
-              << std::endl;
-    std::cout << "Extrinsics cMi: \n"
-              << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_INFRARED)
-              << std::endl;
-    std::cout << "Extrinsics dMi: \n"
-              << rs.getTransformation(RS2_STREAM_DEPTH, RS2_STREAM_INFRARED)
-              << std::endl;
+    std::cout << "Extrinsics cMd: \n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH) << std::endl;
+    std::cout << "Extrinsics dMc: \n" << rs.getTransformation(RS2_STREAM_DEPTH, RS2_STREAM_COLOR) << std::endl;
+    std::cout << "Extrinsics cMi: \n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_INFRARED) << std::endl;
+    std::cout << "Extrinsics dMi: \n" << rs.getTransformation(RS2_STREAM_DEPTH, RS2_STREAM_INFRARED) << std::endl;
 
-    vpImage<vpRGBa> color(
-        (unsigned int)rs.getIntrinsics(RS2_STREAM_COLOR).height,
-        (unsigned int)rs.getIntrinsics(RS2_STREAM_COLOR).width);
-    vpImage<unsigned char> infrared(
-        (unsigned int)rs.getIntrinsics(RS2_STREAM_INFRARED).height,
-        (unsigned int)rs.getIntrinsics(RS2_STREAM_INFRARED).width);
-    vpImage<vpRGBa> depth_display(
-        (unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).height,
-        (unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).width);
-    vpImage<uint16_t> depth(depth_display.getHeight(),
-                            depth_display.getWidth());
+    vpImage<vpRGBa> color((unsigned int)rs.getIntrinsics(RS2_STREAM_COLOR).height,
+                          (unsigned int)rs.getIntrinsics(RS2_STREAM_COLOR).width);
+    vpImage<unsigned char> infrared((unsigned int)rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                                    (unsigned int)rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+    vpImage<vpRGBa> depth_display((unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).height,
+                                  (unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+    vpImage<uint16_t> depth(depth_display.getHeight(), depth_display.getWidth());
 
 #ifdef VISP_HAVE_PCL
     std::mutex mutex;
@@ -205,8 +172,7 @@ int main()
 #if defined(VISP_HAVE_X11)
     vpDisplayX dc(color, 10, 10, "Color image");
     vpDisplayX di(infrared, (int)color.getWidth() + 80, 10, "Infrared image");
-    vpDisplayX dd(depth_display, 10, (int)color.getHeight() + 80,
-                  "Depth image");
+    vpDisplayX dd(depth_display, 10, (int)color.getHeight() + 80, "Depth image");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI dc(color, 10, 10, "Color image");
     vpDisplayGDI di(infrared, color.getWidth() + 80, 10, "Infrared image");
@@ -219,14 +185,12 @@ int main()
 #ifdef VISP_HAVE_PCL
       {
         std::lock_guard<std::mutex> lock(mutex);
-        rs.acquire((unsigned char *)color.bitmap,
-                   (unsigned char *)depth.bitmap, NULL, pointcloud_color,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
                    (unsigned char *)infrared.bitmap);
         update_pointcloud = true;
       }
 #else
-      rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap,
-                 NULL, (unsigned char *)infrared.bitmap);
+      rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, NULL, (unsigned char *)infrared.bitmap);
 #endif
 
       vpImageConvert::createDepthHistogram(depth, depth_display);
@@ -236,8 +200,7 @@ int main()
       vpDisplay::display(depth_display);
 
       vpDisplay::displayText(color, 15, 15, "Click to quit", vpColor::red);
-      if (vpDisplay::getClick(color, false) ||
-          vpDisplay::getClick(infrared, false) ||
+      if (vpDisplay::getClick(color, false) || vpDisplay::getClick(infrared, false) ||
           vpDisplay::getClick(depth_display, false)) {
         break;
       }
@@ -274,8 +237,7 @@ int main()
   std::cout << "Install librealsense2." << std::endl;
 #endif
 #if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
-  std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON)."
-            << std::endl;
+  std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON)." << std::endl;
 #endif
   return 0;
 }

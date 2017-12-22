@@ -52,8 +52,7 @@
   \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
 vpPolygon::vpPolygon()
-  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(),
-    m_PnPolyConstants(), m_PnPolyMultiples()
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
   std::vector<vpImagePoint> corners;
   corners.push_back(vpImagePoint(0, 0));
@@ -71,8 +70,7 @@ vpPolygon::vpPolygon()
   \param corners : The Points defining the corners.
 */
 vpPolygon::vpPolygon(const std::vector<vpImagePoint> &corners)
-  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(),
-    m_PnPolyConstants(), m_PnPolyMultiples()
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
   if (corners.size() < 3) {
     _goodPoly = false;
@@ -89,8 +87,7 @@ vpPolygon::vpPolygon(const std::vector<vpImagePoint> &corners)
   \param corners : The Points defining the corners.
 */
 vpPolygon::vpPolygon(const std::list<vpImagePoint> &corners)
-  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(),
-    m_PnPolyConstants(), m_PnPolyMultiples()
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
   if (corners.size() < 3) {
     _goodPoly = false;
@@ -104,10 +101,8 @@ vpPolygon::vpPolygon(const std::list<vpImagePoint> &corners)
   \param poly : The polygon used for the initialisation.
 */
 vpPolygon::vpPolygon(const vpPolygon &poly)
-  : _corners(poly._corners), _center(poly._center), _area(poly._area),
-    _goodPoly(poly._goodPoly), _bbox(poly._bbox),
-    m_PnPolyConstants(poly.m_PnPolyConstants),
-    m_PnPolyMultiples(poly.m_PnPolyMultiples)
+  : _corners(poly._corners), _center(poly._center), _area(poly._area), _goodPoly(poly._goodPoly), _bbox(poly._bbox),
+    m_PnPolyConstants(poly.m_PnPolyConstants), m_PnPolyMultiples(poly.m_PnPolyMultiples)
 {
 }
 
@@ -141,10 +136,7 @@ vpPolygon &vpPolygon::operator=(const vpPolygon &poly)
 
   \param corners : The corners of the polyon.
 */
-void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners)
-{
-  init(corners);
-}
+void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners) { init(corners); }
 
 /*!
   Initialises the polygon thanks to the collection of 2D points (in pixel).
@@ -154,10 +146,7 @@ void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners)
 
   \param corners : The corners of the polyon.
 */
-void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners)
-{
-  init(corners);
-}
+void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners) { init(corners); }
 
 /*!
   Initialises the triangle thanks to the collection of 2D points (in meter).
@@ -171,13 +160,11 @@ void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners)
   \param cam : The camera parameters used to convert the coordinates from
   meter to pixel.
 */
-void vpPolygon::buildFrom(const std::vector<vpPoint> &corners,
-                          const vpCameraParameters &cam)
+void vpPolygon::buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam)
 {
   std::vector<vpImagePoint> ipCorners(corners.size());
   for (unsigned int i = 0; i < corners.size(); ++i) {
-    vpMeterPixelConversion::convertPoint(cam, corners[i].get_x(),
-                                         corners[i].get_y(), ipCorners[i]);
+    vpMeterPixelConversion::convertPoint(cam, corners[i].get_x(), corners[i].get_y(), ipCorners[i]);
   }
   buildFrom(ipCorners);
 }
@@ -191,8 +178,8 @@ void vpPolygon::buildFrom(const std::vector<vpPoint> &corners,
   a polygon corner. \param color : Color used to display the cross over the
   polygon corner. \param thickness : Thickness used to display the cross.
 */
-void vpPolygon::initClick(const vpImage<unsigned char> &I, unsigned int size,
-                          const vpColor &color, unsigned int thickness)
+void vpPolygon::initClick(const vpImage<unsigned char> &I, unsigned int size, const vpColor &color,
+                          unsigned int thickness)
 {
   vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
   vpImagePoint ip;
@@ -221,8 +208,7 @@ void vpPolygon::initClick(const vpImage<unsigned char> &I, unsigned int size,
   cross over the polygon corner. \param thickness : Thickness used to display
   the cross.
 */
-void vpPolygon::initClick(const vpImage<vpRGBa> &I, unsigned int size,
-                          const vpColor &color, unsigned int thickness)
+void vpPolygon::initClick(const vpImage<vpRGBa> &I, unsigned int size, const vpColor &color, unsigned int thickness)
 {
   vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
   vpImagePoint ip;
@@ -292,9 +278,7 @@ void vpPolygon::init(const std::list<vpImagePoint> &corners)
   \param ip3 : The first image point of the second segment.
   \param ip4 : The second image point of the second segment.
 */
-bool vpPolygon::testIntersectionSegments(const vpImagePoint &ip1,
-                                         const vpImagePoint &ip2,
-                                         const vpImagePoint &ip3,
+bool vpPolygon::testIntersectionSegments(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImagePoint &ip3,
                                          const vpImagePoint &ip4) const
 {
   double di1 = ip2.get_i() - ip1.get_i();
@@ -306,20 +290,15 @@ bool vpPolygon::testIntersectionSegments(const vpImagePoint &ip1,
   double denominator = di1 * dj2 - dj1 * di2;
 
   if (fabs(denominator) < std::numeric_limits<double>::epsilon()) {
-    throw vpException(vpException::divideByZeroError,
-                      "Denominator is null, lines are parallels");
+    throw vpException(vpException::divideByZeroError, "Denominator is null, lines are parallels");
   }
 
-  double alpha = -((ip1.get_i() - ip3.get_i()) * dj2 +
-                   di2 * (ip3.get_j() - ip1.get_j())) /
-                 denominator;
+  double alpha = -((ip1.get_i() - ip3.get_i()) * dj2 + di2 * (ip3.get_j() - ip1.get_j())) / denominator;
   if (alpha < 0 || alpha >= 1) {
     return false;
   }
 
-  double beta = -(di1 * (ip3.get_j() - ip1.get_j()) +
-                  dj1 * (ip1.get_i() - ip3.get_i())) /
-                denominator;
+  double beta = -(di1 * (ip3.get_j() - ip1.get_j()) + dj1 * (ip1.get_i() - ip3.get_i())) / denominator;
   if (beta < 0 || beta >= 1) {
     return false;
   }
@@ -335,8 +314,7 @@ bool vpPolygon::testIntersectionSegments(const vpImagePoint &ip1,
 
   \return Returns true if the point is inside the polygon, false otherwise.
 */
-bool vpPolygon::isInside(const vpImagePoint &ip,
-                         const PointInPolygonMethod &method) const
+bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &method) const
 {
   if (_corners.size() < 3) {
     return false;
@@ -348,12 +326,11 @@ bool vpPolygon::isInside(const vpImagePoint &ip,
     vpImagePoint infPoint(100000, 100000); // take a point at 'inifinity'
     vpUniRand generator;
     infPoint.set_i(infPoint.get_i() + 1000 * generator());
-    infPoint.set_j(infPoint.get_j() +
-                   1000 * generator()); // we add random since it appears that
-                                        // sometimes infPoint may cause a
-                                        // degenerated case (so realucnch and
-                                        // hope that result will be
-                                        // different).
+    infPoint.set_j(infPoint.get_j() + 1000 * generator()); // we add random since it appears that
+                                                           // sometimes infPoint may cause a
+                                                           // degenerated case (so realucnch and
+                                                           // hope that result will be
+                                                           // different).
 
     bool oddNbIntersections = false;
     for (unsigned int i = 0; i < _corners.size(); ++i) {
@@ -385,13 +362,9 @@ bool vpPolygon::isInside(const vpImagePoint &ip,
   default: {
     bool oddNodes = false;
     for (size_t i = 0, j = _corners.size() - 1; i < _corners.size(); i++) {
-      if ((_corners[i].get_v() < ip.get_v() &&
-           _corners[j].get_v() >= ip.get_v()) ||
-          (_corners[j].get_v() < ip.get_v() &&
-           _corners[i].get_v() >= ip.get_v())) {
-        oddNodes ^=
-            (ip.get_v() * m_PnPolyMultiples[i] + m_PnPolyConstants[i] <
-             ip.get_u());
+      if ((_corners[i].get_v() < ip.get_v() && _corners[j].get_v() >= ip.get_v()) ||
+          (_corners[j].get_v() < ip.get_v() && _corners[i].get_v() >= ip.get_v())) {
+        oddNodes ^= (ip.get_v() * m_PnPolyMultiples[i] + m_PnPolyConstants[i] < ip.get_u());
       }
 
       j = i;
@@ -414,18 +387,14 @@ void vpPolygon::precalcValuesPnPoly()
   m_PnPolyMultiples.resize(_corners.size());
 
   for (size_t i = 0, j = _corners.size() - 1; i < _corners.size(); i++) {
-    if (vpMath::equal(_corners[j].get_v(), _corners[i].get_v(),
-                      std::numeric_limits<double>::epsilon())) {
+    if (vpMath::equal(_corners[j].get_v(), _corners[i].get_v(), std::numeric_limits<double>::epsilon())) {
       m_PnPolyConstants[i] = _corners[i].get_u();
       m_PnPolyMultiples[i] = 0.0;
     } else {
       m_PnPolyConstants[i] = _corners[i].get_u() -
-                             (_corners[i].get_v() * _corners[j].get_u()) /
-                                 (_corners[j].get_v() - _corners[i].get_v()) +
-                             (_corners[i].get_v() * _corners[i].get_u()) /
-                                 (_corners[j].get_v() - _corners[i].get_v());
-      m_PnPolyMultiples[i] = (_corners[j].get_u() - _corners[i].get_u()) /
-                             (_corners[j].get_v() - _corners[i].get_v());
+                             (_corners[i].get_v() * _corners[j].get_u()) / (_corners[j].get_v() - _corners[i].get_v()) +
+                             (_corners[i].get_v() * _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v());
+      m_PnPolyMultiples[i] = (_corners[j].get_u() - _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v());
     }
 
     j = i;
@@ -452,8 +421,7 @@ void vpPolygon::updateArea()
 
   for (unsigned int i = 0; i < _corners.size(); ++i) {
     unsigned int i_p_1 = (i + 1) % _corners.size();
-    _area += _corners[i].get_j() * _corners[i_p_1].get_i() -
-             _corners[i_p_1].get_j() * _corners[i].get_i();
+    _area += _corners[i].get_j() * _corners[i_p_1].get_i() - _corners[i_p_1].get_j() * _corners[i].get_i();
   }
 
   _area /= 2;
@@ -494,12 +462,10 @@ void vpPolygon::updateCenter()
   for (unsigned int i = 0; i < _corners.size(); ++i) {
     unsigned int i_p_1 = (i + 1) % _corners.size();
     i_tmp += (_corners[i].get_i() + _corners[i_p_1].get_i()) *
-             (_corners[i_p_1].get_i() * _corners[i].get_j() -
-              _corners[i_p_1].get_j() * _corners[i].get_i());
+             (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
 
     j_tmp += (_corners[i].get_j() + _corners[i_p_1].get_j()) *
-             (_corners[i_p_1].get_i() * _corners[i].get_j() -
-              _corners[i_p_1].get_j() * _corners[i].get_i());
+             (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
   }
 #endif
 
@@ -554,13 +520,11 @@ void vpPolygon::updateBoundingBox()
   \param color : The color of the polygon's lines.
   \param thickness : The thickness of the polygon's lines.
 */
-void vpPolygon::display(const vpImage<unsigned char> &I, const vpColor &color,
-                        unsigned int thickness) const
+void vpPolygon::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness) const
 {
   const unsigned int N = (unsigned int)_corners.size();
   for (unsigned int i = 0; i < N; ++i) {
-    vpDisplay::displayLine(I, _corners[i], _corners[(i + 1) % N], color,
-                           thickness);
+    vpDisplay::displayLine(I, _corners[i], _corners[(i + 1) % N], color, thickness);
   }
 }
 
@@ -575,8 +539,7 @@ void vpPolygon::display(const vpImage<unsigned char> &I, const vpColor &color,
   \return True if the point defined by (i,j) is inside the polygon, False
   otherwise.
 */
-bool vpPolygon::isInside(const std::vector<vpImagePoint> &roi,
-                         const double &i, const double &j,
+bool vpPolygon::isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
                          const PointInPolygonMethod &method)
 {
   vpPolygon poly(roi);
@@ -586,7 +549,4 @@ bool vpPolygon::isInside(const std::vector<vpImagePoint> &roi,
 /*!
   Return number of corners belonging to the polygon.
  */
-unsigned int vpPolygon::getSize() const
-{
-  return ((unsigned int)_corners.size());
-}
+unsigned int vpPolygon::getSize() const { return ((unsigned int)_corners.size()); }

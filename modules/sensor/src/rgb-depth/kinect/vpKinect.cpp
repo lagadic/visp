@@ -51,9 +51,8 @@
   Default constructor.
 */
 vpKinect::vpKinect(freenect_context *ctx, int index)
-  : Freenect::FreenectDevice(ctx, index), m_rgb_mutex(), m_depth_mutex(),
-    RGBcam(), IRcam(), rgbMir(), irMrgb(), DMres(DMAP_LOW_RES), hd(240),
-    wd(320), dmap(), IRGB(), m_new_rgb_frame(false), m_new_depth_map(false),
+  : Freenect::FreenectDevice(ctx, index), m_rgb_mutex(), m_depth_mutex(), RGBcam(), IRcam(), rgbMir(), irMrgb(),
+    DMres(DMAP_LOW_RES), hd(240), wd(320), dmap(), IRGB(), m_new_rgb_frame(false), m_new_depth_map(false),
     m_new_depth_image(false), height(480), width(640)
 {
   dmap.resize(height, width);
@@ -79,17 +78,15 @@ void vpKinect::start(vpKinect::vpDMResolution res)
   //! Calibration parameters are the parameters found for our Kinect device.
   //! Note that they can differ from one device to another.
   if (DMres == DMAP_LOW_RES) {
-    std::cout << "vpKinect::start LOW depth map resolution 240x320"
-              << std::endl;
+    std::cout << "vpKinect::start LOW depth map resolution 240x320" << std::endl;
     //		IRcam.setparameters(IRcam.get_px()/2, IRcam.get_py()/2,
-    //IRcam.get_u0()/2, IRcam.get_v0()/2);
+    // IRcam.get_u0()/2, IRcam.get_v0()/2);
     // IRcam.initPersProjWithoutDistortion(303.06,297.89,160.75,117.9);
     IRcam.initPersProjWithDistortion(303.06, 297.89, 160.75, 117.9, -0.27, 0);
     hd = 240;
     wd = 320;
   } else {
-    std::cout << "vpKinect::start MEDIUM depth map resolution 480x640"
-              << std::endl;
+    std::cout << "vpKinect::start MEDIUM depth map resolution 480x640" << std::endl;
 
     // IRcam.initPersProjWithoutDistortion(606.12,595.78,321.5,235.8);
     IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, 0);
@@ -100,20 +97,16 @@ void vpKinect::start(vpKinect::vpDMResolution res)
 
 #if defined(VISP_HAVE_VIPER850_DATA) && defined(VISP_HAVE_XML2)
   vpXmlParserCamera cameraParser;
-  std::string cameraXmlFile =
-      std::string(VISP_VIPER850_DATA_PATH) +
-      std::string("/include/const_camera_Viper850.xml");
-  cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera",
-                     vpCameraParameters::perspectiveProjWithDistortion, width,
+  std::string cameraXmlFile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_camera_Viper850.xml");
+  cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera", vpCameraParameters::perspectiveProjWithDistortion, width,
                      height);
 #else
   //  RGBcam.initPersProjWithoutDistortion(525.53, 524.94, 309.9, 282.8);//old
   //  RGBcam.initPersProjWithDistortion(536.76, 537.25, 313.45,
   //  273.27,0.04,-0.04);//old
   //  RGBcam.initPersProjWithoutDistortion(512.0559503505,511.9352058050,310.6693938678,267.0673901049);//new
-  RGBcam.initPersProjWithDistortion(522.5431816996, 522.7191431808,
-                                    311.4001982614, 267.4283562142,
-                                    0.0477365207, -0.0462326418); // new
+  RGBcam.initPersProjWithDistortion(522.5431816996, 522.7191431808, 311.4001982614, 267.4283562142, 0.0477365207,
+                                    -0.0462326418); // new
 #endif
 
   this->startVideo();
@@ -163,11 +156,9 @@ void vpKinect::DepthCallback(void *depth, uint32_t /* timestamp */)
   for (unsigned i = 0; i < height; i++) {
     for (unsigned j = 0; j < width; j++) {
       dmap[i][j] =
-          0.1236f *
-          tan(depth_[width * i + j] / 2842.5f +
-              1.1863f); // formula from
-                        // http://openkinect.org/wiki/Imaging_Information
-      if (depth_[width * i + j] > 1023) { // Depth cannot be computed
+          0.1236f * tan(depth_[width * i + j] / 2842.5f + 1.1863f); // formula from
+                                                                    // http://openkinect.org/wiki/Imaging_Information
+      if (depth_[width * i + j] > 1023) {                           // Depth cannot be computed
         dmap[i][j] = -1;
       }
     }
@@ -251,13 +242,10 @@ bool vpKinect::getRGB(vpImage<vpRGBa> &I_RGB)
   Warp the RGB frame to the depth camera frame. The size of the resulting
   IrgbWarped frame is the same as the size of the depth map Idepth
 */
-void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb,
-                            const vpImage<float> &Idepth,
-                            vpImage<vpRGBa> &IrgbWarped)
+void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &Idepth, vpImage<vpRGBa> &IrgbWarped)
 {
   if ((Idepth.getHeight() != hd) || (Idepth.getWidth() != wd)) {
-    vpERROR_TRACE(1,
-                  "Idepth image size does not match vpKinect DM resolution");
+    vpERROR_TRACE(1, "Idepth image size does not match vpKinect DM resolution");
   } else {
     if ((IrgbWarped.getHeight() != hd) || (IrgbWarped.getWidth() != wd))
       IrgbWarped.resize(hd, wd);

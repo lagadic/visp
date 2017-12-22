@@ -214,12 +214,9 @@ public:
 public:
   vpV4l2Grabber();
   explicit vpV4l2Grabber(bool verbose);
-  vpV4l2Grabber(unsigned input,
-                unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
-  vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input,
-                unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
-  vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input,
-                unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
+  vpV4l2Grabber(unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
+  vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
+  vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   virtual ~vpV4l2Grabber();
 
 public:
@@ -228,12 +225,10 @@ public:
 
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<unsigned char> &I, const vpRect &roi);
-  void acquire(vpImage<unsigned char> &I, struct timeval &timestamp,
-               const vpRect &roi = vpRect());
+  void acquire(vpImage<unsigned char> &I, struct timeval &timestamp, const vpRect &roi = vpRect());
   void acquire(vpImage<vpRGBa> &I);
   void acquire(vpImage<vpRGBa> &I, const vpRect &roi);
-  void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp,
-               const vpRect &roi = vpRect());
+  void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const vpRect &roi = vpRect());
   bool getField();
   vpV4l2FramerateType getFramerate();
   /*!
@@ -243,10 +238,7 @@ public:
   \return Camera pixel format coding.
 
   */
-  inline vpV4l2PixelFormatType getPixelFormat()
-  {
-    return (this->m_pixelformat);
-  }
+  inline vpV4l2PixelFormatType getPixelFormat() { return (this->m_pixelformat); }
 
   vpV4l2Grabber &operator>>(vpImage<unsigned char> &I);
   vpV4l2Grabber &operator>>(vpImage<vpRGBa> &I);
@@ -292,10 +284,7 @@ public:
     \param devname : Device name (like /dev/video0).
 
   */
-  inline void setDevice(const std::string &devname)
-  {
-    sprintf(device, "%s", devname.c_str());
-  }
+  inline void setDevice(const std::string &devname) { sprintf(device, "%s", devname.c_str()); }
   /*!
 
   Set the pixel format for capture.`If the specified pixel format is
@@ -322,10 +311,7 @@ private:
     - vpV4l2Grabber::V4L2_FRAME_FORMAT: capture alternate fields (or frames),
     - vpV4l2Grabber::V4L2_IMAGE_FORMAT: capture interlaced images.
   */
-  inline void setFrameFormat(vpV4l2FrameFormatType frameformat)
-  {
-    this->m_frameformat = frameformat;
-  }
+  inline void setFrameFormat(vpV4l2FrameFormatType frameformat) { this->m_frameformat = frameformat; }
   void open();
   void getCapabilities();
   void startStreaming();

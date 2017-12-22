@@ -81,10 +81,8 @@ vpRowVector &vpRowVector::operator=(const vpRowVector &v)
 vpRowVector &vpRowVector::operator=(const vpMatrix &M)
 {
   if (M.getRows() != 1) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot initialize a (1x%d) row vector from a (%dx%d) matrix",
-        M.getCols(), M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot initialize a (1x%d) row vector from a (%dx%d) matrix",
+                      M.getCols(), M.getRows(), M.getCols()));
   }
 
   if (M.getCols() != colNum)
@@ -144,10 +142,8 @@ double vpRowVector::operator*(const vpColVector &x) const
 {
   unsigned int nelements = x.getRows();
   if (getCols() != nelements) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot multiply (1x%d) row vector by (%dx1) column vector", colNum,
-        x.getRows()));
+    throw(vpException(vpException::dimensionError, "Cannot multiply (1x%d) row vector by (%dx1) column vector", colNum,
+                      x.getRows()));
   }
 
   double scalar = 0.0;
@@ -177,9 +173,8 @@ vpRowVector vpRowVector::operator*(const vpMatrix &M) const
   vpRowVector c(M.getCols());
 
   if (colNum != M.getRows()) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot multiply (1x%d) row vector by (%dx%d) matrix",
-                      colNum, M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot multiply (1x%d) row vector by (%dx%d) matrix", colNum,
+                      M.getRows(), M.getCols()));
   }
 
   c = 0.0;
@@ -335,10 +330,8 @@ vpRowVector vpRowVector::operator-() const
 vpRowVector vpRowVector::operator-(const vpRowVector &m) const
 {
   if (getCols() != m.getCols()) {
-    throw(
-        vpException(vpException::dimensionError,
-                    "Cannot substract (1x%d) row vector to (1x%d) row vector",
-                    getCols(), m.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot substract (1x%d) row vector to (1x%d) row vector", getCols(),
+                      m.getCols()));
   }
 
   vpRowVector v(colNum);
@@ -355,9 +348,8 @@ vpRowVector vpRowVector::operator-(const vpRowVector &m) const
 vpRowVector vpRowVector::operator+(const vpRowVector &v) const
 {
   if (getCols() != v.getCols()) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot add (1x%d) row vector to (1x%d) row vector",
-                      getCols(), v.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot add (1x%d) row vector to (1x%d) row vector", getCols(),
+                      v.getCols()));
   }
 
   vpRowVector r(colNum);
@@ -375,9 +367,8 @@ vpRowVector vpRowVector::operator+(const vpRowVector &v) const
 vpRowVector &vpRowVector::operator+=(vpRowVector v)
 {
   if (getCols() != v.getCols()) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot add (1x%d) row vector to (1x%d) row vector",
-                      getCols(), v.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot add (1x%d) row vector to (1x%d) row vector", getCols(),
+                      v.getCols()));
   }
 
   for (unsigned int i = 0; i < colNum; i++)
@@ -393,10 +384,8 @@ vpRowVector &vpRowVector::operator+=(vpRowVector v)
 vpRowVector &vpRowVector::operator-=(vpRowVector v)
 {
   if (getCols() != v.getCols()) {
-    throw(
-        vpException(vpException::dimensionError,
-                    "Cannot substract (1x%d) row vector to (1x%d) row vector",
-                    getCols(), v.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot substract (1x%d) row vector to (1x%d) row vector", getCols(),
+                      v.getCols()));
   }
 
   for (unsigned int i = 0; i < colNum; i++)
@@ -456,8 +445,7 @@ void vpRowVector::transpose(vpColVector &v) const { v = t(); }
    Constructor that creates a row vector corresponding to row \e i
    of matrix \e M.
  */
-vpRowVector::vpRowVector(const vpMatrix &M, unsigned int i)
-  : vpArray2D<double>(1, M.getCols())
+vpRowVector::vpRowVector(const vpMatrix &M, unsigned int i) : vpArray2D<double>(1, M.getCols())
 {
   for (unsigned int j = 0; j < M.getCols(); j++)
     (*this)[j] = M[i][j];
@@ -468,14 +456,11 @@ vpRowVector::vpRowVector(const vpMatrix &M, unsigned int i)
    \exception vpException::dimensionError If the matrix is not a 1-by-n
    matrix.
  */
-vpRowVector::vpRowVector(const vpMatrix &M)
-  : vpArray2D<double>(1, M.getCols())
+vpRowVector::vpRowVector(const vpMatrix &M) : vpArray2D<double>(1, M.getCols())
 {
   if (M.getRows() != 1) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot construct a (1x%d) row vector from a (%dx%d) matrix",
-        M.getCols(), M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot construct a (1x%d) row vector from a (%dx%d) matrix",
+                      M.getCols(), M.getRows(), M.getCols()));
   }
 
   for (unsigned int j = 0; j < M.getCols(); j++)
@@ -485,8 +470,7 @@ vpRowVector::vpRowVector(const vpMatrix &M)
 /*!
    Constructor that creates a row vector from a std vector of double.
  */
-vpRowVector::vpRowVector(const std::vector<double> &v)
-  : vpArray2D<double>(1, (unsigned int)v.size())
+vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, (unsigned int)v.size())
 {
   for (unsigned int j = 0; j < v.size(); j++)
     (*this)[j] = v[j];
@@ -494,8 +478,7 @@ vpRowVector::vpRowVector(const std::vector<double> &v)
 /*!
    Constructor that creates a row vector from a std vector of float.
  */
-vpRowVector::vpRowVector(const std::vector<float> &v)
-  : vpArray2D<double>(1, (unsigned int)v.size())
+vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, (unsigned int)v.size())
 {
   for (unsigned int j = 0; j < v.size(); j++)
     (*this)[j] = (double)(v[j]);
@@ -514,9 +497,7 @@ vpRowVector::vpRowVector(const std::vector<float> &v)
 
   \sa init()
 */
-vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c,
-                         unsigned int ncols)
-  : vpArray2D<double>(1, ncols)
+vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols) : vpArray2D<double>(1, ncols)
 {
   init(v, c, ncols);
 }
@@ -567,8 +548,7 @@ vpRowVector &vpRowVector::normalize()
 
   \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpRowVector::reshape(const unsigned int &nrows,
-                              const unsigned int &ncols)
+vpMatrix vpRowVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
 {
   vpMatrix M(nrows, ncols);
   reshape(M, nrows, ncols);
@@ -618,13 +598,11 @@ remat:
 9  10  11  12
   \endcode
 */
-void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows,
-                          const unsigned int &ncols)
+void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols)
 {
   if (dsize != nrows * ncols) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot reshape (1x%d) row vector in (%dx%d) matrix",
-                      colNum, M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot reshape (1x%d) row vector in (%dx%d) matrix", colNum,
+                      M.getRows(), M.getCols()));
   }
   try {
     if ((M.getRows() != nrows) || (M.getCols() != ncols))
@@ -720,10 +698,7 @@ void vpRowVector::stack(const double &d)
   \sa stack(const vpRowVector &, const vpRowVector &, vpRowVector &)
 
 */
-void vpRowVector::stack(const vpRowVector &v)
-{
-  *this = vpRowVector::stack(*this, v);
-}
+void vpRowVector::stack(const vpRowVector &v) { *this = vpRowVector::stack(*this, v); }
 
 /*!
   Stack row vectors.
@@ -772,8 +747,7 @@ vpRowVector vpRowVector::stack(const vpRowVector &A, const vpRowVector &B)
   \sa stack(const vpRowVector &)
   \sa stack(const vpRowVector &, const vpRowVector &)
 */
-void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B,
-                        vpRowVector &C)
+void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
 {
   unsigned int nrA = A.getCols();
   unsigned int nrB = B.getCols();
@@ -809,8 +783,7 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B,
 double vpRowVector::mean(const vpRowVector &v)
 {
   if (v.data == NULL || v.size() == 0) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot compute mean value of an empty row vector"));
+    throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
   double mean = 0;
@@ -827,8 +800,7 @@ double vpRowVector::mean(const vpRowVector &v)
 double vpRowVector::median(const vpRowVector &v)
 {
   if (v.data == NULL || v.size() == 0) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot compute mean value of an empty row vector"));
+    throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
   std::vector<double> vectorOfDoubles(v.data, v.data + v.colNum);
@@ -839,12 +811,10 @@ double vpRowVector::median(const vpRowVector &v)
 /*!
   Compute the standard deviation value of all the elements of the vector.
 */
-double vpRowVector::stdev(const vpRowVector &v,
-                          const bool useBesselCorrection)
+double vpRowVector::stdev(const vpRowVector &v, const bool useBesselCorrection)
 {
   if (v.data == NULL || v.size() == 0) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot compute mean value of an empty row vector"));
+    throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
   double mean_value = mean(v);
@@ -880,8 +850,7 @@ double vpRowVector::stdev(const vpRowVector &v,
 
   \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
 */
-int vpRowVector::print(std::ostream &s, unsigned int length,
-                       char const *intro) const
+int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) const
 {
   typedef std::string::size_type size_type;
 
@@ -1059,16 +1028,13 @@ v: 0 1 2 3
 w: 1 2
   \endcode
  */
-void vpRowVector::init(const vpRowVector &v, unsigned int c,
-                       unsigned int ncols)
+void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
 {
   unsigned int cncols = c + ncols;
 
   if (cncols > v.getCols())
-    throw(vpException(
-        vpException::dimensionError,
-        "Bad column dimension (%d > %d) used to initialize vpRowVector",
-        cncols, v.getCols()));
+    throw(vpException(vpException::dimensionError, "Bad column dimension (%d > %d) used to initialize vpRowVector",
+                      cncols, v.getCols()));
   resize(ncols);
   if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
     return;                  // Noting to do
@@ -1106,23 +1072,17 @@ r[2] = 2;
 
   \endcode
 */
-std::ostream &vpRowVector::cppPrint(std::ostream &os,
-                                    const std::string &matrixName,
-                                    bool octet) const
+std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixName, bool octet) const
 {
-  os << "vpRowVector " << matrixName << " (" << this->getCols() << "); "
-     << std::endl;
+  os << "vpRowVector " << matrixName << " (" << this->getCols() << "); " << std::endl;
 
   for (unsigned int j = 0; j < this->getCols(); ++j) {
     if (!octet) {
-      os << matrixName << "[" << j << "] = " << (*this)[j] << "; "
-         << std::endl;
+      os << matrixName << "[" << j << "] = " << (*this)[j] << "; " << std::endl;
     } else {
       for (unsigned int k = 0; k < sizeof(double); ++k) {
-        os << "((unsigned char*)&(" << matrixName << "[" << j << "]) )[" << k
-           << "] = 0x" << std::hex
-           << (unsigned int)((unsigned char *)&((*this)[j]))[k] << "; "
-           << std::endl;
+        os << "((unsigned char*)&(" << matrixName << "[" << j << "]) )[" << k << "] = 0x" << std::hex
+           << (unsigned int)((unsigned char *)&((*this)[j]))[k] << "; " << std::endl;
       }
     }
   }

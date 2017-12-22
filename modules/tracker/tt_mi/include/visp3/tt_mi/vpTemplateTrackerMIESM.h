@@ -96,17 +96,13 @@ protected:
 public:
   //! Default constructor.
   vpTemplateTrackerMIESM()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON),
-      CompoInitialised(false), HDirect(), HInverse(), HdesireDirect(),
-      HdesireInverse(), GDirect(), GInverse()
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), CompoInitialised(false), HDirect(), HInverse(),
+      HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
   {
   }
   explicit vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
 
-  void setMinimizationMethod(vpMinimizationTypeMIESM method)
-  {
-    minimizationMethod = method;
-  }
+  void setMinimizationMethod(vpMinimizationTypeMIESM method) { minimizationMethod = method; }
 };
 
 #endif

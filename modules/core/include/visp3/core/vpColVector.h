@@ -124,9 +124,7 @@ public:
     rowNum = colNum = dsize = 0;
   }
 
-  std::ostream &cppPrint(std::ostream &os,
-                         const std::string &matrixName = "A",
-                         bool octet = false) const;
+  std::ostream &cppPrint(std::ostream &os, const std::string &matrixName = "A", bool octet = false) const;
   std::ostream &csvPrint(std::ostream &os) const;
 
   /*!
@@ -185,10 +183,7 @@ public:
   //! Operator that allows to set a value of an element \f$v_i\f$: v[i] = x
   inline double &operator[](unsigned int n) { return *(data + n); }
   //! Operator that allows to get the value of an element \f$v_i\f$: x = v[i]
-  inline const double &operator[](unsigned int n) const
-  {
-    return *(data + n);
-  }
+  inline const double &operator[](unsigned int n) const { return *(data + n); }
   //! Copy operator.   Allow operation such as A = v
   vpColVector &operator=(const vpColVector &v);
   vpColVector &operator=(const vpPoseVector &p);
@@ -221,8 +216,7 @@ public:
   vpColVector &operator<<(const vpColVector &v);
   vpColVector &operator<<(double *);
 
-  int print(std::ostream &s, unsigned int length,
-            char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 
   /*!
     Convert a column vector containing angles in radians into degrees.
@@ -235,8 +229,7 @@ public:
     (*this) *= r2d;
   }
 
-  void reshape(vpMatrix &M, const unsigned int &nrows,
-               const unsigned int &ncols);
+  void reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols);
   vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
 
   /*! Modify the size of the column vector.
@@ -245,10 +238,7 @@ public:
     \param flagNullify : If true, set the data to zero.
     \exception vpException::fatalError When \e ncols is not equal to 1.
    */
-  void resize(const unsigned int i, const bool flagNullify = true)
-  {
-    vpArray2D<double>::resize(i, 1, flagNullify);
-  }
+  void resize(const unsigned int i, const bool flagNullify = true) { vpArray2D<double>::resize(i, 1, flagNullify); }
   /*!
     Resize the column vector to a \e nrows-dimension vector.
     This function can only be used with \e ncols = 1.
@@ -259,8 +249,7 @@ public:
     \exception vpException::fatalError When \e ncols is not equal to 1.
 
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
   {
     if (ncols != 1)
       throw(vpException(vpException::fatalError,
@@ -288,10 +277,7 @@ public:
      equal to 3.
 
    */
-  inline static vpColVector cross(const vpColVector &a, const vpColVector &b)
-  {
-    return crossProd(a, b);
-  }
+  inline static vpColVector cross(const vpColVector &a, const vpColVector &b) { return crossProd(a, b); }
   static vpColVector crossProd(const vpColVector &a, const vpColVector &b);
 
   static double dotProd(const vpColVector &a, const vpColVector &b);
@@ -304,11 +290,9 @@ public:
   static vpColVector sort(const vpColVector &v);
 
   static vpColVector stack(const vpColVector &A, const vpColVector &B);
-  static void stack(const vpColVector &A, const vpColVector &B,
-                    vpColVector &C);
+  static void stack(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
-  static double stdev(const vpColVector &v,
-                      const bool useBesselCorrection = false);
+  static double stdev(const vpColVector &v, const bool useBesselCorrection = false);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -323,8 +307,7 @@ public:
   /*!
      \deprecated You should rather use extract().
    */
-  vp_deprecated vpColVector rows(unsigned int first_row,
-                                 unsigned int last_row) const
+  vp_deprecated vpColVector rows(unsigned int first_row, unsigned int last_row) const
   {
     return vpColVector(*this, first_row - 1, last_row - first_row + 1);
   }
@@ -340,23 +323,17 @@ public:
      \deprecated You should rather use stack(const vpColVector &A, const
      vpColVector &B)
    */
-  vp_deprecated static vpColVector stackMatrices(const vpColVector &A,
-                                                 const vpColVector &B)
-  {
-    return stack(A, B);
-  }
+  vp_deprecated static vpColVector stackMatrices(const vpColVector &A, const vpColVector &B) { return stack(A, B); }
   /*!
      \deprecated You should rather use stack(const vpColVector &A, const
      vpColVector &B, vpColVector &C)
    */
-  vp_deprecated static void
-  stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
+  vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
   {
     stack(A, B, C);
   }
 
-  vp_deprecated void insert(const vpColVector &v, const unsigned int r,
-                            const unsigned int c = 0);
+  vp_deprecated void insert(const vpColVector &v, const unsigned int r, const unsigned int c = 0);
 //@}
 #endif
 };

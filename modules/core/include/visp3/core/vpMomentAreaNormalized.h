@@ -81,25 +81,25 @@ continous cases.
 
   This example shows a computation in the discrete case.
   \code
-#include <visp3/core/vpMomentAreaNormalized.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentAreaNormalized.h>
 
 int main()
 {
   vpPoint p;
   std::vector<vpPoint> vec_p; // vector that contains object points
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane of point
-1 vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane of point 2 vec_p.push_back(p);
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane of point 1
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane of point 2
+  vec_p.push_back(p);
 
-  //////////////////////////////REFERENCE
-VALUES//////////////////////////////// vpMomentObject obj(2); // Object where
-all the moment defined with
+  //////////////////////////////REFERENCE VALUES////////////////////////////////
+  vpMomentObject obj(2); // Object where all the moment defined with
                          // i+j <= 2 will be computed below. Order is
                          // 2 because in discrete mode, the surface
                          // computation is a=mu02+mu02
@@ -158,8 +158,7 @@ public:
   Moment name.
   */
   const char *name() const { return "vpMomentAreaNormalized"; }
-  friend VISP_EXPORT std::ostream &
-  operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
   void printDependencies(std::ostream &os) const;
 };
 

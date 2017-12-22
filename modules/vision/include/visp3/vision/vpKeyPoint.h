@@ -74,8 +74,7 @@
 
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
 #include <opencv2/xfeatures2d.hpp>
-#elif defined(VISP_HAVE_OPENCV_NONFREE) &&                                   \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020400) &&                                \
+#elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) &&                                   \
     (VISP_HAVE_OPENCV_VERSION < 0x030000)
 #include <opencv2/nonfree/nonfree.hpp>
 #endif
@@ -141,9 +140,8 @@ int main()
   vpImage<unsigned char> Irefrence;
   vpImage<unsigned char> Icurrent;
 
-  vpKeyPoint::vpFilterMatchingType filterType =
-vpKeyPoint::ratioDistanceThreshold; vpKeyPoint keypoint("ORB", "ORB",
-"BruteForce-Hamming", filterType);
+  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint keypoint("ORB", "ORB", "BruteForce-Hamming", filterType);
 
   // First grab the reference image Irefrence
   // Add your code to load the reference image in Ireference
@@ -153,8 +151,8 @@ vpKeyPoint::ratioDistanceThreshold; vpKeyPoint keypoint("ORB", "ORB",
 
   // Then grab another image which represents the current image Icurrent
 
-  // Match points between the reference points and the ORB points computed in
-the current image. keypoint.matchPoint(Icurrent);
+  // Match points between the reference points and the ORB points computed in the current image.
+  keypoint.matchPoint(Icurrent);
 
   // Display the matched points
   keypoint.display(Irefrence, Icurrent);
@@ -180,16 +178,15 @@ int main()
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
 
-  vpKeyPoint::vpFilterMatchingType filterType =
-vpKeyPoint::ratioDistanceThreshold; vpKeyPoint keypoint("ORB", "ORB",
-"BruteForce-Hamming", filterType);
+  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint keypoint("ORB", "ORB", "BruteForce-Hamming", filterType);
 
   //First grab the reference image Irefrence
   //Add your code to load the reference image in Ireference
 
-  //Select a part of the image by clincking on two points which define a
-rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
-  {
+  //Select a part of the image by clincking on two points which define a rectangle
+  vpImagePoint corners[2];
+  for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Ireference, corners[i]);
   }
 
@@ -202,17 +199,16 @@ rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
 
   //Then grab another image which represents the current image Icurrent
 
-  //Select a part of the image by clincking on two points which define a
-rectangle for (int i=0 ; i < 2 ; i++)
-  {
+  //Select a part of the image by clincking on two points which define a rectangle
+  for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Icurrent, corners[i]);
   }
 
-  //Match points between the reference points and the ORB points computed in
-the current image. int nbrMatched; height = (unsigned int)(corners[1].get_i()
-- corners[0].get_i()); width = (unsigned int)(corners[1].get_j() -
-corners[0].get_j()); nbrMatched = keypoint.matchPoint(Icurrent, corners[0],
-height, width);
+  //Match points between the reference points and the ORB points computed in the current image.
+  int nbrMatched;
+  height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  nbrMatched = keypoint.matchPoint(Icurrent, corners[0], height, width);
 
   //Display the matched points
   keypoint.display(Ireference, Icurrent);
@@ -232,23 +228,23 @@ public:
   enum vpFilterMatchingType {
     constantFactorDistanceThreshold, /*!< Keep all the points below a constant
                                         factor threshold. */
-    stdDistanceThreshold, /*!< Keep all the points below a minimal distance +
-                             the standard deviation. */
-    ratioDistanceThreshold, /*!< Keep all the points enough discriminated (the
-                               ratio distance between the two best matches is
-                               below the threshold). */
-    stdAndRatioDistanceThreshold, /*!< Keep all the points which fall with the
-                                     two conditions above. */
-    noFilterMatching              /*!< No filtering. */
+    stdDistanceThreshold,            /*!< Keep all the points below a minimal distance +
+                                        the standard deviation. */
+    ratioDistanceThreshold,          /*!< Keep all the points enough discriminated (the
+                                        ratio distance between the two best matches is
+                                        below the threshold). */
+    stdAndRatioDistanceThreshold,    /*!< Keep all the points which fall with the
+                                        two conditions above. */
+    noFilterMatching                 /*!< No filtering. */
   };
 
   /*! Predefined detection method identifier. */
   enum vpDetectionMethodType {
     detectionThreshold, /*!< The object is present if the average of the
                            descriptor distances is below the threshold. */
-    detectionScore /*!< Same condition than the previous but with a formula
-                      taking into account the number of matches, the object is
-                      present if the score is above the threshold. */
+    detectionScore      /*!< Same condition than the previous but with a formula
+                           taking into account the number of matches, the object is
+                           present if the score is above the threshold. */
   };
 
   /*! Predefined constant for training image format. */
@@ -268,8 +264,7 @@ public:
     DETECTOR_BRISK,
     DETECTOR_GFTT,
     DETECTOR_SimpleBlob,
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) ||                                 \
-    (defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
     DETECTOR_STAR,
 #endif
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
@@ -281,8 +276,7 @@ public:
     DETECTOR_AKAZE,
     DETECTOR_AGAST,
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) &&                                \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
     DETECTOR_MSD,
 #endif
 #endif
@@ -294,8 +288,7 @@ public:
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
     DESCRIPTOR_ORB,
     DESCRIPTOR_BRISK,
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) ||                                 \
-    (defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
     DESCRIPTOR_FREAK,
     DESCRIPTOR_BRIEF,
 #endif
@@ -311,8 +304,7 @@ public:
     DESCRIPTOR_LATCH,
 #endif
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) &&                                \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
     DESCRIPTOR_VGG,
     DESCRIPTOR_BoostDesc,
 #endif
@@ -320,145 +312,99 @@ public:
     DESCRIPTOR_TYPE_SIZE
   };
 
-  vpKeyPoint(const vpFeatureDetectorType &detectorType,
-             const vpFeatureDescriptorType &descriptorType,
-             const std::string &matcherName,
-             const vpFilterMatchingType &filterType = ratioDistanceThreshold);
-  vpKeyPoint(const std::string &detectorName = "ORB",
-             const std::string &extractorName = "ORB",
+  vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatureDescriptorType &descriptorType,
+             const std::string &matcherName, const vpFilterMatchingType &filterType = ratioDistanceThreshold);
+  vpKeyPoint(const std::string &detectorName = "ORB", const std::string &extractorName = "ORB",
              const std::string &matcherName = "BruteForce-Hamming",
              const vpFilterMatchingType &filterType = ratioDistanceThreshold);
-  vpKeyPoint(const std::vector<std::string> &detectorNames,
-             const std::vector<std::string> &extractorNames,
+  vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
              const std::string &matcherName = "BruteForce",
              const vpFilterMatchingType &filterType = ratioDistanceThreshold);
 
   unsigned int buildReference(const vpImage<unsigned char> &I);
-  unsigned int buildReference(const vpImage<unsigned char> &I,
-                              const vpImagePoint &iP,
-                              const unsigned int height,
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
                               const unsigned int width);
-  unsigned int buildReference(const vpImage<unsigned char> &I,
-                              const vpRect &rectangle);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
-  void buildReference(const vpImage<unsigned char> &I,
-                      std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f,
-                      const bool append = false, const int class_id = -1);
-  void buildReference(const vpImage<unsigned char> &I,
-                      const std::vector<cv::KeyPoint> &trainKeyPoint,
-                      const cv::Mat &trainDescriptors,
-                      const std::vector<cv::Point3f> &points3f,
+  void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
+                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
+  void buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
+                      const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
                       const bool append = false, const int class_id = -1);
 
-  static void compute3D(const cv::KeyPoint &candidate,
-                        const std::vector<vpPoint> &roi,
-                        const vpCameraParameters &cam,
+  static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi, const vpCameraParameters &cam,
                         const vpHomogeneousMatrix &cMo, cv::Point3f &point);
 
-  static void compute3D(const vpImagePoint &candidate,
-                        const std::vector<vpPoint> &roi,
-                        const vpCameraParameters &cam,
+  static void compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi, const vpCameraParameters &cam,
                         const vpHomogeneousMatrix &cMo, vpPoint &point);
 
-  static void compute3DForPointsInPolygons(
-      const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<cv::KeyPoint> &candidates,
-      const std::vector<vpPolygon> &polygons,
-      const std::vector<std::vector<vpPoint> > &roisPt,
-      std::vector<cv::Point3f> &points, cv::Mat *descriptors = NULL);
+  static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                           std::vector<cv::KeyPoint> &candidates,
+                                           const std::vector<vpPolygon> &polygons,
+                                           const std::vector<std::vector<vpPoint> > &roisPt,
+                                           std::vector<cv::Point3f> &points, cv::Mat *descriptors = NULL);
 
-  static void compute3DForPointsInPolygons(
-      const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<vpImagePoint> &candidates,
-      const std::vector<vpPolygon> &polygons,
-      const std::vector<std::vector<vpPoint> > &roisPt,
-      std::vector<vpPoint> &points, cv::Mat *descriptors = NULL);
+  static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                           std::vector<vpImagePoint> &candidates,
+                                           const std::vector<vpPolygon> &polygons,
+                                           const std::vector<std::vector<vpPoint> > &roisPt,
+                                           std::vector<vpPoint> &points, cv::Mat *descriptors = NULL);
 
-  static void compute3DForPointsOnCylinders(
-      const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<cv::KeyPoint> &candidates,
-      const std::vector<vpCylinder> &cylinders,
-      const std::vector<std::vector<std::vector<vpImagePoint> > >
-          &vectorOfCylinderRois,
-      std::vector<cv::Point3f> &points, cv::Mat *descriptors = NULL);
+  static void
+  compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                std::vector<cv::KeyPoint> &candidates, const std::vector<vpCylinder> &cylinders,
+                                const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+                                std::vector<cv::Point3f> &points, cv::Mat *descriptors = NULL);
 
-  static void compute3DForPointsOnCylinders(
-      const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<vpImagePoint> &candidates,
-      const std::vector<vpCylinder> &cylinders,
-      const std::vector<std::vector<std::vector<vpImagePoint> > >
-          &vectorOfCylinderRois,
-      std::vector<vpPoint> &points, cv::Mat *descriptors = NULL);
+  static void
+  compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                std::vector<vpImagePoint> &candidates, const std::vector<vpCylinder> &cylinders,
+                                const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+                                std::vector<vpPoint> &points, cv::Mat *descriptors = NULL);
 
-  bool computePose(const std::vector<cv::Point2f> &imagePoints,
-                   const std::vector<cv::Point3f> &objectPoints,
-                   const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                   std::vector<int> &inlierIndex, double &elapsedTime,
+  bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
+                   const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
+                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL);
+
+  bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
+                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL);
+
+  bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
+                   std::vector<unsigned int> &inlierIndex, double &elapsedTime,
                    bool (*func)(vpHomogeneousMatrix *) = NULL);
 
-  bool computePose(const std::vector<vpPoint> &objectVpPoints,
-                   vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
-                   double &elapsedTime,
-                   bool (*func)(vpHomogeneousMatrix *) = NULL);
-
-  bool computePose(const std::vector<vpPoint> &objectVpPoints,
-                   vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
-                   std::vector<unsigned int> &inlierIndex,
-                   double &elapsedTime,
-                   bool (*func)(vpHomogeneousMatrix *) = NULL);
-
-  void createImageMatching(vpImage<unsigned char> &IRef,
-                           vpImage<unsigned char> &ICurrent,
+  void createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsigned char> &ICurrent,
                            vpImage<unsigned char> &IMatching);
-  void createImageMatching(vpImage<unsigned char> &ICurrent,
-                           vpImage<unsigned char> &IMatching);
+  void createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
-  void detect(const vpImage<unsigned char> &I,
-              std::vector<cv::KeyPoint> &keyPoints,
+  void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints,
               const vpRect &rectangle = vpRect());
-  void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints,
+  void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &mask = cv::Mat());
+  void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+              const vpRect &rectangle = vpRect());
+  void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const cv::Mat &mask = cv::Mat());
-  void detect(const vpImage<unsigned char> &I,
-              std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
-              const vpRect &rectangle = vpRect());
-  void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints,
-              double &elapsedTime, const cv::Mat &mask = cv::Mat());
 
-  void detectExtractAffine(
-      const vpImage<unsigned char> &I,
-      std::vector<std::vector<cv::KeyPoint> > &listOfKeypoints,
-      std::vector<cv::Mat> &listOfDescriptors,
-      std::vector<vpImage<unsigned char> > *listOfAffineI = NULL);
+  void detectExtractAffine(const vpImage<unsigned char> &I, std::vector<std::vector<cv::KeyPoint> > &listOfKeypoints,
+                           std::vector<cv::Mat> &listOfDescriptors,
+                           std::vector<vpImage<unsigned char> > *listOfAffineI = NULL);
 
-  void display(const vpImage<unsigned char> &IRef,
-               const vpImage<unsigned char> &ICurrent, unsigned int size = 3);
-  void display(const vpImage<unsigned char> &ICurrent, unsigned int size = 3,
-               const vpColor &color = vpColor::green);
+  void display(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent, unsigned int size = 3);
+  void display(const vpImage<unsigned char> &ICurrent, unsigned int size = 3, const vpColor &color = vpColor::green);
 
-  void displayMatching(const vpImage<unsigned char> &IRef,
-                       vpImage<unsigned char> &IMatching,
-                       unsigned int crossSize, unsigned int lineThickness = 1,
-                       const vpColor &color = vpColor::green);
-  void displayMatching(const vpImage<unsigned char> &ICurrent,
-                       vpImage<unsigned char> &IMatching,
-                       const std::vector<vpImagePoint> &ransacInliers =
-                           std::vector<vpImagePoint>(),
-                       unsigned int crossSize = 3,
-                       unsigned int lineThickness = 1);
+  void displayMatching(const vpImage<unsigned char> &IRef, vpImage<unsigned char> &IMatching, unsigned int crossSize,
+                       unsigned int lineThickness = 1, const vpColor &color = vpColor::green);
+  void displayMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching,
+                       const std::vector<vpImagePoint> &ransacInliers = std::vector<vpImagePoint>(),
+                       unsigned int crossSize = 3, unsigned int lineThickness = 1);
 
-  void extract(const vpImage<unsigned char> &I,
-               std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+  void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                std::vector<cv::Point3f> *trainPoints = NULL);
-  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints,
-               cv::Mat &descriptors,
+  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                std::vector<cv::Point3f> *trainPoints = NULL);
-  void extract(const vpImage<unsigned char> &I,
-               std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-               double &elapsedTime,
-               std::vector<cv::Point3f> *trainPoints = NULL);
-  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints,
-               cv::Mat &descriptors, double &elapsedTime,
+  void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+               double &elapsedTime, std::vector<cv::Point3f> *trainPoints = NULL);
+  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime,
                std::vector<cv::Point3f> *trainPoints = NULL);
 
   /*!
@@ -507,19 +453,17 @@ public:
     \return The detector or NULL if the type passed in parameter does not
     exist.
   */
-  inline cv::Ptr<cv::FeatureDetector>
-  getDetector(const vpFeatureDetectorType &type) const
+  inline cv::Ptr<cv::FeatureDetector> getDetector(const vpFeatureDetectorType &type) const
   {
-    std::map<vpFeatureDetectorType, std::string>::const_iterator it_name =
-        m_mapOfDetectorNames.find(type);
+    std::map<vpFeatureDetectorType, std::string>::const_iterator it_name = m_mapOfDetectorNames.find(type);
     if (it_name == m_mapOfDetectorNames.end()) {
       std::cerr << "Internal problem with the feature type and the "
                    "corresponding name!"
                 << std::endl;
     }
 
-    std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator
-        findDetector = m_detectors.find(it_name->second);
+    std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator findDetector =
+        m_detectors.find(it_name->second);
     if (findDetector != m_detectors.end()) {
       return findDetector->second;
     }
@@ -535,11 +479,9 @@ public:
     \return The detector or NULL if the name passed in parameter does not
     exist.
   */
-  inline cv::Ptr<cv::FeatureDetector>
-  getDetector(const std::string &name) const
+  inline cv::Ptr<cv::FeatureDetector> getDetector(const std::string &name) const
   {
-    std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator
-        findDetector = m_detectors.find(name);
+    std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator findDetector = m_detectors.find(name);
     if (findDetector != m_detectors.end()) {
       return findDetector->second;
     }
@@ -551,10 +493,7 @@ public:
   /*!
     Get the feature detector name associated to the type.
   */
-  inline std::map<vpFeatureDetectorType, std::string> getDetectorNames() const
-  {
-    return m_mapOfDetectorNames;
-  }
+  inline std::map<vpFeatureDetectorType, std::string> getDetectorNames() const { return m_mapOfDetectorNames; }
 
   /*!
     Get the elapsed time to compute the keypoint extraction.
@@ -570,19 +509,17 @@ public:
     \return The descriptor extractor or NULL if the name passed in parameter
     does not exist.
   */
-  inline cv::Ptr<cv::DescriptorExtractor>
-  getExtractor(const vpFeatureDescriptorType &type) const
+  inline cv::Ptr<cv::DescriptorExtractor> getExtractor(const vpFeatureDescriptorType &type) const
   {
-    std::map<vpFeatureDescriptorType, std::string>::const_iterator it_name =
-        m_mapOfDescriptorNames.find(type);
+    std::map<vpFeatureDescriptorType, std::string>::const_iterator it_name = m_mapOfDescriptorNames.find(type);
     if (it_name == m_mapOfDescriptorNames.end()) {
       std::cerr << "Internal problem with the feature type and the "
                    "corresponding name!"
                 << std::endl;
     }
 
-    std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator
-        findExtractor = m_extractors.find(it_name->second);
+    std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator findExtractor =
+        m_extractors.find(it_name->second);
     if (findExtractor != m_extractors.end()) {
       return findExtractor->second;
     }
@@ -598,11 +535,9 @@ public:
     \return The descriptor extractor or NULL if the name passed in parameter
     does not exist.
   */
-  inline cv::Ptr<cv::DescriptorExtractor>
-  getExtractor(const std::string &name) const
+  inline cv::Ptr<cv::DescriptorExtractor> getExtractor(const std::string &name) const
   {
-    std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator
-        findExtractor = m_extractors.find(name);
+    std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator findExtractor = m_extractors.find(name);
     if (findExtractor != m_extractors.end()) {
       return findExtractor->second;
     }
@@ -614,11 +549,7 @@ public:
   /*!
     Get the feature descriptor extractor name associated to the type.
   */
-  inline std::map<vpFeatureDescriptorType, std::string>
-  getExtractorNames() const
-  {
-    return m_mapOfDescriptorNames;
-  }
+  inline std::map<vpFeatureDescriptorType, std::string> getExtractorNames() const { return m_mapOfDescriptorNames; }
 
   /*!
     Get the image format to use when saving training images.
@@ -639,10 +570,7 @@ public:
 
     \return The matcher pointer.
   */
-  inline cv::Ptr<cv::DescriptorMatcher> getMatcher() const
-  {
-    return m_matcher;
-  }
+  inline cv::Ptr<cv::DescriptorMatcher> getMatcher() const { return m_matcher; }
 
   /*!
     Get the list of matches (correspondences between the indexes of the
@@ -650,10 +578,7 @@ public:
 
     \return The list of matches.
   */
-  inline std::vector<cv::DMatch> getMatches() const
-  {
-    return m_filteredMatches;
-  }
+  inline std::vector<cv::DMatch> getMatches() const { return m_filteredMatches; }
 
   /*!
     Get the list of pairs with the correspondence between the matched query
@@ -662,16 +587,13 @@ public:
     \return The list of pairs with the correspondence between the matched
     query and train keypoints.
   */
-  inline std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> >
-  getMatchQueryToTrainKeyPoints() const
+  inline std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > getMatchQueryToTrainKeyPoints() const
   {
-    std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> >
-        matchQueryToTrainKeyPoints(m_filteredMatches.size());
+    std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > matchQueryToTrainKeyPoints(m_filteredMatches.size());
     for (size_t i = 0; i < m_filteredMatches.size(); i++) {
       matchQueryToTrainKeyPoints.push_back(
-          std::pair<cv::KeyPoint, cv::KeyPoint>(
-              m_queryFilteredKeyPoints[(size_t)m_filteredMatches[i].queryIdx],
-              m_trainKeyPoints[(size_t)m_filteredMatches[i].trainIdx]));
+          std::pair<cv::KeyPoint, cv::KeyPoint>(m_queryFilteredKeyPoints[(size_t)m_filteredMatches[i].queryIdx],
+                                                m_trainKeyPoints[(size_t)m_filteredMatches[i].trainIdx]));
     }
     return matchQueryToTrainKeyPoints;
   }
@@ -681,10 +603,7 @@ public:
 
     \return The number of train images.
   */
-  inline unsigned int getNbImages() const
-  {
-    return static_cast<unsigned int>(m_mapOfImages.size());
-  }
+  inline unsigned int getNbImages() const { return static_cast<unsigned int>(m_mapOfImages.size()); }
 
   void getObjectPoints(std::vector<cv::Point3f> &objectPoints) const;
   void getObjectPoints(std::vector<vpPoint> &objectPoints) const;
@@ -712,20 +631,14 @@ public:
 
     \return The list of Ransac inliers.
   */
-  inline std::vector<vpImagePoint> getRansacInliers() const
-  {
-    return m_ransacInliers;
-  }
+  inline std::vector<vpImagePoint> getRansacInliers() const { return m_ransacInliers; }
 
   /*!
     Get the list of Ransac outliers.
 
     \return The list of Ransac outliers.
   */
-  inline std::vector<vpImagePoint> getRansacOutliers() const
-  {
-    return m_ransacOutliers;
-  }
+  inline std::vector<vpImagePoint> getRansacOutliers() const { return m_ransacOutliers; }
 
   /*!
      Get the train descriptors matrix.
@@ -743,61 +656,42 @@ public:
 
   void initMatcher(const std::string &matcherName);
 
-  void insertImageMatching(const vpImage<unsigned char> &IRef,
-                           const vpImage<unsigned char> &ICurrent,
+  void insertImageMatching(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent,
                            vpImage<unsigned char> &IMatching);
-  void insertImageMatching(const vpImage<unsigned char> &ICurrent,
-                           vpImage<unsigned char> &IMatching);
+  void insertImageMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
 #ifdef VISP_HAVE_XML2
   void loadConfigFile(const std::string &configFile);
 #endif
 
-  void loadLearningData(const std::string &filename,
-                        const bool binaryMode = false,
-                        const bool append = false);
+  void loadLearningData(const std::string &filename, const bool binaryMode = false, const bool append = false);
 
-  void match(const cv::Mat &trainDescriptors, const cv::Mat &queryDescriptors,
-             std::vector<cv::DMatch> &matches, double &elapsedTime);
+  void match(const cv::Mat &trainDescriptors, const cv::Mat &queryDescriptors, std::vector<cv::DMatch> &matches,
+             double &elapsedTime);
 
   unsigned int matchPoint(const vpImage<unsigned char> &I);
-  unsigned int matchPoint(const vpImage<unsigned char> &I,
-                          const vpImagePoint &iP, const unsigned int height,
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
                           const unsigned int width);
-  unsigned int matchPoint(const vpImage<unsigned char> &I,
-                          const vpRect &rectangle);
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
-  bool matchPoint(const vpImage<unsigned char> &I,
-                  const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  bool (*func)(vpHomogeneousMatrix *) = NULL,
-                  const vpRect &rectangle = vpRect());
-  bool matchPoint(const vpImage<unsigned char> &I,
-                  const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime,
-                  bool (*func)(vpHomogeneousMatrix *) = NULL,
+  bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                  bool (*func)(vpHomogeneousMatrix *) = NULL, const vpRect &rectangle = vpRect());
+  bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                  double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL,
                   const vpRect &rectangle = vpRect());
 
-  bool matchPointAndDetect(const vpImage<unsigned char> &I,
-                           vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                           const bool isPlanarObject = true,
-                           std::vector<vpImagePoint> *imPts1 = NULL,
-                           std::vector<vpImagePoint> *imPts2 = NULL,
-                           double *meanDescriptorDistance = NULL,
-                           double *detectionScore = NULL,
-                           const vpRect &rectangle = vpRect());
+  bool matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
+                           const bool isPlanarObject = true, std::vector<vpImagePoint> *imPts1 = NULL,
+                           std::vector<vpImagePoint> *imPts2 = NULL, double *meanDescriptorDistance = NULL,
+                           double *detectionScore = NULL, const vpRect &rectangle = vpRect());
 
-  bool matchPointAndDetect(const vpImage<unsigned char> &I,
-                           const vpCameraParameters &cam,
-                           vpHomogeneousMatrix &cMo, double &error,
-                           double &elapsedTime, vpRect &boundingBox,
-                           vpImagePoint &centerOfGravity,
-                           bool (*func)(vpHomogeneousMatrix *) = NULL,
-                           const vpRect &rectangle = vpRect());
+  bool matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                           double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
+                           bool (*func)(vpHomogeneousMatrix *) = NULL, const vpRect &rectangle = vpRect());
 
   void reset();
 
-  void saveLearningData(const std::string &filename,
-                        const bool binaryMode = false,
+  void saveLearningData(const std::string &filename, const bool binaryMode = false,
                         const bool saveTrainingImages = true);
 
   /*!
@@ -825,10 +719,7 @@ public:
 
      \param method : Detection method (detectionThreshold or detectionScore).
    */
-  inline void setDetectionMethod(const vpDetectionMethodType &method)
-  {
-    m_detectionMethod = method;
-  }
+  inline void setDetectionMethod(const vpDetectionMethodType &method) { m_detectionMethod = method; }
 
   /*!
      Set and initialize a detector.
@@ -856,8 +747,7 @@ public:
     initDetector(detectorName);
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
     Template function to set to a \p parameterName a value for a specific
     detector named by his \p detectorName.
@@ -867,8 +757,7 @@ public:
     \param value : Value to set
   */
   template <typename T1, typename T2, typename T3>
-  inline void setDetectorParameter(const T1 detectorName,
-                                   const T2 parameterName, const T3 value)
+  inline void setDetectorParameter(const T1 detectorName, const T2 parameterName, const T3 value)
   {
     if (m_detectors.find(detectorName) != m_detectors.end()) {
       m_detectors[detectorName]->set(parameterName, value);
@@ -917,8 +806,7 @@ public:
     initExtractor(extractorName);
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
     Template function to set to a \p parameterName a value for a specific
     extractor named by his \p extractorName.
@@ -928,8 +816,7 @@ public:
     \param value : Value to set
   */
   template <typename T1, typename T2, typename T3>
-  inline void setExtractorParameter(const T1 extractorName,
-                                    const T2 parameterName, const T3 value)
+  inline void setExtractorParameter(const T1 extractorName, const T2 parameterName, const T3 value)
   {
     if (m_extractors.find(extractorName) != m_extractors.end()) {
       m_extractors[extractorName]->set(parameterName, value);
@@ -956,10 +843,7 @@ public:
 
     \param imageFormat : The image format.
   */
-  inline void setImageFormat(const vpImageFormatType &imageFormat)
-  {
-    m_imageFormat = imageFormat;
-  }
+  inline void setImageFormat(const vpImageFormatType &imageFormat) { m_imageFormat = imageFormat; }
 
   /*!
      Set and initialize a matcher denominated by his name \p matcherName.
@@ -1003,12 +887,10 @@ public:
 
     // Use k-nearest neighbors (knn) to retrieve the two best matches for a
     // keypoint  So this is useful only for ratioDistanceThreshold method
-    if (filterType == ratioDistanceThreshold ||
-        filterType == stdAndRatioDistanceThreshold) {
+    if (filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
       m_useKnn = true;
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
       if (m_matcher != NULL && m_matcherName == "BruteForce") {
         // if a matcher is already initialized, disable the crossCheck
         // because it will not work with knnMatch
@@ -1018,8 +900,7 @@ public:
     } else {
       m_useKnn = false;
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
       if (m_matcher != NULL && m_matcherName == "BruteForce") {
         // if a matcher is already initialized, set the crossCheck mode if
         // necessary
@@ -1040,8 +921,7 @@ public:
     if (factor > 0.0) {
       m_matchingFactorThreshold = factor;
     } else {
-      throw vpException(vpException::badValue,
-                        "The factor must be positive.");
+      throw vpException(vpException::badValue, "The factor must be positive.");
     }
   }
 
@@ -1052,13 +932,10 @@ public:
   */
   inline void setMatchingRatioThreshold(const double ratio)
   {
-    if (ratio > 0.0 &&
-        (ratio < 1.0 ||
-         std::fabs(ratio - 1.0) < std::numeric_limits<double>::epsilon())) {
+    if (ratio > 0.0 && (ratio < 1.0 || std::fabs(ratio - 1.0) < std::numeric_limits<double>::epsilon())) {
       m_matchingRatioThreshold = ratio;
     } else {
-      throw vpException(vpException::badValue,
-                        "The ratio must be in the interval ]0 ; 1].");
+      throw vpException(vpException::badValue, "The ratio must be in the interval ]0 ; 1].");
     }
   }
 
@@ -1071,12 +948,10 @@ public:
   inline void setRansacConsensusPercentage(const double percentage)
   {
     if (percentage > 0.0 &&
-        (percentage < 100.0 || std::fabs(percentage - 100.0) <
-                                   std::numeric_limits<double>::epsilon())) {
+        (percentage < 100.0 || std::fabs(percentage - 100.0) < std::numeric_limits<double>::epsilon())) {
       m_ransacConsensusPercentage = percentage;
     } else {
-      throw vpException(vpException::badValue,
-                        "The percentage must be in the interval ]0 ; 100].");
+      throw vpException(vpException::badValue, "The percentage must be in the interval ]0 ; 100].");
     }
   }
 
@@ -1091,9 +966,7 @@ public:
     if (nbIter > 0) {
       m_nbRansacIterations = nbIter;
     } else {
-      throw vpException(
-          vpException::badValue,
-          "The number of iterations must be greater than zero.");
+      throw vpException(vpException::badValue, "The number of iterations must be greater than zero.");
     }
   }
 
@@ -1125,9 +998,7 @@ public:
     if (minCount > 0) {
       m_nbRansacMinInlierCount = minCount;
     } else {
-      throw vpException(
-          vpException::badValue,
-          "The minimum number of inliers must be greater than zero.");
+      throw vpException(vpException::badValue, "The minimum number of inliers must be greater than zero.");
     }
   }
 
@@ -1142,9 +1013,7 @@ public:
     if (threshold > 0.0) {
       m_ransacThreshold = threshold;
     } else {
-      throw vpException(
-          vpException::badValue,
-          "The Ransac threshold must be positive as we deal with distance.");
+      throw vpException(vpException::badValue, "The Ransac threshold must be positive as we deal with distance.");
     }
   }
 
@@ -1155,13 +1024,9 @@ public:
     \param useAffine : True to use multiple affine transformations, false
     otherwise
   */
-  inline void setUseAffineDetection(const bool useAffine)
-  {
-    m_useAffineDetection = useAffine;
-  }
+  inline void setUseAffineDetection(const bool useAffine) { m_useAffineDetection = useAffine; }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
     Set if cross check method must be used to eliminate some false matches
     with a brute-force matching method.
@@ -1174,12 +1039,10 @@ public:
     // ratioDistanceThreshold method)
     if (m_matcher != NULL && !m_useKnn && m_matcherName == "BruteForce") {
       m_matcher->set("crossCheck", useCrossCheck);
-    } else if (m_matcher != NULL && m_useKnn &&
-               m_matcherName == "BruteForce") {
+    } else if (m_matcher != NULL && m_useKnn && m_matcherName == "BruteForce") {
       std::cout << "Warning, you try to set the crossCheck parameter with a "
                    "BruteForce matcher but knn is enabled";
-      std::cout << " (the filtering method uses a ratio constraint)"
-                << std::endl;
+      std::cout << " (the filtering method uses a ratio constraint)" << std::endl;
     }
   }
 #endif
@@ -1202,10 +1065,7 @@ public:
     \param usePercentage : True to a percentage ratio of inliers, otherwise
     use a specified number of inliers
   */
-  inline void setUseRansacConsensusPercentage(const bool usePercentage)
-  {
-    m_useConsensusPercentage = usePercentage;
-  }
+  inline void setUseRansacConsensusPercentage(const bool usePercentage) { m_useConsensusPercentage = usePercentage; }
 
   /*!
     Set the flag to choose between the OpenCV or ViSP Ransac pose estimation
@@ -1214,10 +1074,7 @@ public:
     \param ransacVVS : True to use ViSP function, otherwise use OpenCV
     function
   */
-  inline void setUseRansacVVS(const bool ransacVVS)
-  {
-    m_useRansacVVS = ransacVVS;
-  }
+  inline void setUseRansacVVS(const bool ransacVVS) { m_useRansacVVS = ransacVVS; }
 
   /*!
     Set the flag to filter matches where multiple query keypoints are matched
@@ -1225,10 +1082,7 @@ public:
 
     \param singleMatchFilter : True to use the single match filter.
    */
-  inline void setUseSingleMatchFilter(const bool singleMatchFilter)
-  {
-    m_useSingleMatchFilter = singleMatchFilter;
-  }
+  inline void setUseSingleMatchFilter(const bool singleMatchFilter) { m_useSingleMatchFilter = singleMatchFilter; }
 
 private:
   //! If true, compute covariance matrix if the user select the pose
@@ -1295,8 +1149,7 @@ private:
   //! Elapsed time to do the matching.
   double m_matchingTime;
   //! List of pairs between the keypoint and the 3D point after the Ransac.
-  std::vector<std::pair<cv::KeyPoint, cv::Point3f> >
-      m_matchRansacKeyPointsToPoints;
+  std::vector<std::pair<cv::KeyPoint, cv::Point3f> > m_matchRansacKeyPointsToPoints;
   //! Maximum number of iterations for the Ransac method.
   int m_nbRansacIterations;
   //! Minimum number of inliers for the Ransac method.
@@ -1341,8 +1194,7 @@ private:
   //! If true, use multiple affine transformations to cober the 6 affine
   //! parameters
   bool m_useAffineDetection;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
-     VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   //! If true, some false matches will be eliminate by keeping only pairs
   //! (i,j) such that for i-th query descriptor the j-th descriptor in the
   //! matcher’s collection is the nearest and vice versa.
@@ -1364,13 +1216,10 @@ private:
   //! matched to a single query keypoint
   bool m_useSingleMatchFilter;
 
-  void affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask,
-                  cv::Mat &Ai);
+  void affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask, cv::Mat &Ai);
 
-  double computePoseEstimationError(
-      const std::vector<std::pair<cv::KeyPoint, cv::Point3f> >
-          &matchKeyPoints,
-      const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo_est);
+  double computePoseEstimationError(const std::vector<std::pair<cv::KeyPoint, cv::Point3f> > &matchKeyPoints,
+                                    const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo_est);
 
   void filterMatches();
 
@@ -1414,18 +1263,15 @@ private:
   {
   public:
     // maxLevel - The 0-based index of the last pyramid layer
-    PyramidAdaptedFeatureDetector(
-        const cv::Ptr<cv::FeatureDetector> &detector, int maxLevel = 2);
+    PyramidAdaptedFeatureDetector(const cv::Ptr<cv::FeatureDetector> &detector, int maxLevel = 2);
 
     // TODO implement read/write
     virtual bool empty() const;
 
   protected:
-    virtual void detect(cv::InputArray image,
-                        CV_OUT std::vector<cv::KeyPoint> &keypoints,
+    virtual void detect(cv::InputArray image, CV_OUT std::vector<cv::KeyPoint> &keypoints,
                         cv::InputArray mask = cv::noArray());
-    virtual void detectImpl(const cv::Mat &image,
-                            std::vector<cv::KeyPoint> &keypoints,
+    virtual void detectImpl(const cv::Mat &image, std::vector<cv::KeyPoint> &keypoints,
                             const cv::Mat &mask = cv::Mat()) const;
 
     cv::Ptr<cv::FeatureDetector> detector;
@@ -1446,18 +1292,15 @@ private:
     /*
      * Remove keypoints within borderPixels of an image edge.
      */
-    static void runByImageBorder(std::vector<cv::KeyPoint> &keypoints,
-                                 cv::Size imageSize, int borderSize);
+    static void runByImageBorder(std::vector<cv::KeyPoint> &keypoints, cv::Size imageSize, int borderSize);
     /*
      * Remove keypoints of sizes out of range.
      */
-    static void runByKeypointSize(std::vector<cv::KeyPoint> &keypoints,
-                                  float minSize, float maxSize = FLT_MAX);
+    static void runByKeypointSize(std::vector<cv::KeyPoint> &keypoints, float minSize, float maxSize = FLT_MAX);
     /*
      * Remove keypoints from some image by mask for pixels of this image.
      */
-    static void runByPixelsMask(std::vector<cv::KeyPoint> &keypoints,
-                                const cv::Mat &mask);
+    static void runByPixelsMask(std::vector<cv::KeyPoint> &keypoints, const cv::Mat &mask);
     /*
      * Remove duplicated keypoints.
      */

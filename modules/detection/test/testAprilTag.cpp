@@ -111,8 +111,7 @@ void usage(const char *name, const char *badparam, std::string ipath)
   \param display : Display activation.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -158,10 +157,7 @@ struct TagGroundTruth {
   std::string message;
   std::vector<vpImagePoint> corners;
 
-  TagGroundTruth(const std::string &msg, const std::vector<vpImagePoint> &c)
-    : message(msg), corners(c)
-  {
-  }
+  TagGroundTruth(const std::string &msg, const std::vector<vpImagePoint> &c) : message(msg), corners(c) {}
 
   bool operator==(const TagGroundTruth &b) const
   {
@@ -212,8 +208,7 @@ int main(int argc, const char *argv[])
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed,
-                   opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display) == false) {
       exit(EXIT_FAILURE);
     }
 
@@ -227,8 +222,7 @@ int main(int argc, const char *argv[])
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -245,8 +239,7 @@ int main(int argc, const char *argv[])
     }
 
     if (!vpIoTools::checkFilename(filename)) {
-      std::cerr << "Filename: " << filename << " does not exist."
-                << std::endl;
+      std::cerr << "Filename: " << filename << " does not exist." << std::endl;
       return EXIT_SUCCESS;
     }
     vpImageIo::read(I, filename);
@@ -261,46 +254,37 @@ int main(int argc, const char *argv[])
     opt_display = false;
 #endif
 
-    vpDetectorAprilTag::vpAprilTagFamily tagFamily =
-        vpDetectorAprilTag::TAG_36h11;
-    vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod =
-        vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+    vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
+    vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
     double tagSize = 0.053;
     float quad_decimate = 1.0;
     int nThreads = 1;
     bool display_tag = true;
 
     vpDetectorBase *detector = new vpDetectorAprilTag(tagFamily);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagQuadDecimate(
-        quad_decimate);
-    dynamic_cast<vpDetectorAprilTag *>(detector)
-        ->setAprilTagPoseEstimationMethod(poseEstimationMethod);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagNbThreads(
-        nThreads);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagQuadDecimate(quad_decimate);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagPoseEstimationMethod(poseEstimationMethod);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagNbThreads(nThreads);
     dynamic_cast<vpDetectorAprilTag *>(detector)->setDisplayTag(display_tag);
 
     vpCameraParameters cam;
-    cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954,
-                                      243.4373779);
+    cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
 
     if (opt_display) {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
-    defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
       d.init(I, 0, 0, "AprilTag detection");
 #endif
       vpDisplay::display(I);
     }
 
     std::vector<vpHomogeneousMatrix> cMo_vec;
-    dynamic_cast<vpDetectorAprilTag *>(detector)->detect(I, tagSize, cam,
-                                                         cMo_vec);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->detect(I, tagSize, cam, cMo_vec);
 
     // Ground truth
     std::map<std::string, TagGroundTruth> mapOfTagsGroundTruth;
     bool use_detection_ground_truth = false;
     {
-      std::string filename_ground_truth = vpIoTools::createFilePath(
-          ipath, "AprilTag/ground_truth_detection.txt");
+      std::string filename_ground_truth = vpIoTools::createFilePath(ipath, "AprilTag/ground_truth_detection.txt");
       std::ifstream file_ground_truth(filename_ground_truth.c_str());
       if (file_ground_truth.is_open() && opt_ppath.empty()) {
         use_detection_ground_truth = true;
@@ -308,15 +292,13 @@ int main(int argc, const char *argv[])
         std::string message = "";
         double v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = 0.0;
         double u1 = 0.0, u2 = 0.0, u3 = 0.0, u4 = 0.0;
-        while (file_ground_truth >> message >> v1 >> u1 >> v2 >> u2 >> v3 >>
-               u3 >> v4 >> u4) {
+        while (file_ground_truth >> message >> v1 >> u1 >> v2 >> u2 >> v3 >> u3 >> v4 >> u4) {
           std::vector<vpImagePoint> tagCorners(4);
           tagCorners[0].set_ij(v1, u1);
           tagCorners[1].set_ij(v2, u2);
           tagCorners[2].set_ij(v3, u3);
           tagCorners[3].set_ij(v4, u4);
-          mapOfTagsGroundTruth.insert(
-              std::make_pair(message, TagGroundTruth(message, tagCorners)));
+          mapOfTagsGroundTruth.insert(std::make_pair(message, TagGroundTruth(message, tagCorners)));
         }
       }
     }
@@ -324,8 +306,7 @@ int main(int argc, const char *argv[])
     std::map<std::string, vpPoseVector> mapOfPosesGroundTruth;
     bool use_pose_ground_truth = false;
     {
-      std::string filename_ground_truth =
-          vpIoTools::createFilePath(ipath, "AprilTag/ground_truth_pose.txt");
+      std::string filename_ground_truth = vpIoTools::createFilePath(ipath, "AprilTag/ground_truth_pose.txt");
       std::ifstream file_ground_truth(filename_ground_truth.c_str());
       if (file_ground_truth.is_open() && opt_ppath.empty()) {
         use_pose_ground_truth = true;
@@ -333,10 +314,8 @@ int main(int argc, const char *argv[])
         std::string message = "";
         double tx = 0.0, ty = 0.0, tz = 0.0;
         double tux = 0.0, tuy = 0.0, tuz = 0.0;
-        while (file_ground_truth >> message >> tx >> ty >> tz >> tux >> tuy >>
-               tuz) {
-          mapOfPosesGroundTruth.insert(std::make_pair(
-              message, vpPoseVector(tx, ty, tz, tux, tuy, tuz)));
+        while (file_ground_truth >> message >> tx >> ty >> tz >> tux >> tuy >> tuz) {
+          mapOfPosesGroundTruth.insert(std::make_pair(message, vpPoseVector(tx, ty, tz, tux, tuy, tuz)));
         }
       }
     }
@@ -347,17 +326,13 @@ int main(int argc, const char *argv[])
       if (use_detection_ground_truth) {
         std::string message = detector->getMessage(i);
         std::replace(message.begin(), message.end(), ' ', '_');
-        std::map<std::string, TagGroundTruth>::iterator it =
-            mapOfTagsGroundTruth.find(message);
+        std::map<std::string, TagGroundTruth>::iterator it = mapOfTagsGroundTruth.find(message);
         TagGroundTruth current(message, p);
         if (it == mapOfTagsGroundTruth.end()) {
-          std::cerr << "Problem with tag decoding (tag_family or id): "
-                    << message << std::endl;
+          std::cerr << "Problem with tag decoding (tag_family or id): " << message << std::endl;
           return EXIT_FAILURE;
         } else if (it->second != current) {
-          std::cerr << "Problem, current detection:\n"
-                    << current << "\nGround truth:\n"
-                    << it->second << std::endl;
+          std::cerr << "Problem, current detection:\n" << current << "\nGround truth:\n" << it->second << std::endl;
           return EXIT_FAILURE;
         }
       }
@@ -365,15 +340,13 @@ int main(int argc, const char *argv[])
       if (opt_display) {
         vpRect bbox = detector->getBBox(i);
         vpDisplay::displayRectangle(I, bbox, vpColor::green);
-        vpDisplay::displayText(I, (int)(bbox.getTop() - 10),
-                               (int)bbox.getLeft(), detector->getMessage(i),
+        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(), detector->getMessage(i),
                                vpColor::red);
       }
     }
 
     if (opt_display) {
-      vpDisplay::displayText(I, 20, 20, "Click to display tag poses",
-                             vpColor::red);
+      vpDisplay::displayText(I, 20, 20, "Click to display tag poses", vpColor::red);
       vpDisplay::flush(I);
       if (opt_click_allowed)
         vpDisplay::getClick(I);
@@ -383,25 +356,21 @@ int main(int argc, const char *argv[])
 
     for (size_t i = 0; i < cMo_vec.size(); i++) {
       if (opt_display)
-        vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2,
-                                vpColor::none, 3);
+        vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
 
       if (use_pose_ground_truth) {
         vpPoseVector pose_vec(cMo_vec[i]);
 
         std::string message = detector->getMessage(i);
         std::replace(message.begin(), message.end(), ' ', '_');
-        std::map<std::string, vpPoseVector>::iterator it =
-            mapOfPosesGroundTruth.find(message);
+        std::map<std::string, vpPoseVector>::iterator it = mapOfPosesGroundTruth.find(message);
         if (it == mapOfPosesGroundTruth.end()) {
-          std::cerr << "Problem with tag decoding (tag_family or id): "
-                    << message << std::endl;
+          std::cerr << "Problem with tag decoding (tag_family or id): " << message << std::endl;
           return EXIT_FAILURE;
         } else {
           for (unsigned int cpt = 0; cpt < 6; cpt++) {
             if (!vpMath::equal(it->second[cpt], pose_vec[cpt], 0.005)) {
-              std::cerr << "Problem, current pose: " << pose_vec.t()
-                        << "\nGround truth pose: " << it->second.t()
+              std::cerr << "Problem, current pose: " << pose_vec.t() << "\nGround truth pose: " << it->second.t()
                         << std::endl;
               return EXIT_FAILURE;
             }

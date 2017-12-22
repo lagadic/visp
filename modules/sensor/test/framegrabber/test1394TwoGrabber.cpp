@@ -84,8 +84,7 @@ int main()
     for (unsigned int i = 0; i < ncameras; i++) {
       g.setCamera(i);
       g.getGuid(guid);
-      std::cout << "Detected camera with GUID 0x" << std::hex << guid
-                << std::endl;
+      std::cout << "Detected camera with GUID 0x" << std::hex << guid << std::endl;
     }
     // If more than one camera connected, use the last one
     if (ncameras > 1) {

@@ -53,19 +53,12 @@ vpHistogramPeak::vpHistogramPeak() : level(0), value(0) {}
 /*!
   Defaut constructor for a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val)
-  : level(lvl), value(val)
-{
-}
+vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val) : level(lvl), value(val) {}
 
 /*!
   Copy constructor of a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak(const vpHistogramPeak &p)
-  : level(0), value(0)
-{
-  *this = p;
-}
+vpHistogramPeak::vpHistogramPeak(const vpHistogramPeak &p) : level(0), value(0) { *this = p; }
 
 /*!
 
@@ -92,17 +85,13 @@ vpHistogramPeak &vpHistogramPeak::operator=(const vpHistogramPeak &p)
   \param p : Gray level histogram peak to compar.
 
 */
-bool vpHistogramPeak::operator==(const vpHistogramPeak &p) const
-{
-  return ((level == p.level) && (value == p.value));
-}
+bool vpHistogramPeak::operator==(const vpHistogramPeak &p) const { return ((level == p.level) && (value == p.value)); }
 
 /*!
   \relates vpHistogramPeak
   \brief std::cout a peak
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &s,
-                                     const vpHistogramPeak &p)
+VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramPeak &p)
 {
 
   s << (int)p.getLevel() << " " << p.getValue();

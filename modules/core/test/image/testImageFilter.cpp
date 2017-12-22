@@ -101,8 +101,7 @@ void usage(const char *name, const char *badparam, std::string ipath)
   \param ppath : Personal image path.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath)
 {
   const char *optarg_;
   int c;
@@ -143,14 +142,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
 }
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-bool check_results(const cv::Mat &mat, const vpImage<double> &I,
-                   const unsigned int half_size_y,
+bool check_results(const cv::Mat &mat, const vpImage<double> &I, const unsigned int half_size_y,
                    const unsigned int half_size_x)
 {
   for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
     for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x; j++) {
-      if (!vpMath::equal(mat.at<double>((int)i, (int)j), I[i][j],
-                         std::numeric_limits<double>::epsilon())) {
+      if (!vpMath::equal(mat.at<double>((int)i, (int)j), I[i][j], std::numeric_limits<double>::epsilon())) {
         return false;
       }
     }
@@ -193,8 +190,7 @@ int main(int argc, const char *argv[])
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -276,16 +272,13 @@ int main(int argc, const char *argv[])
 
     std::cout << "\nTest correlation on small image:" << std::endl;
     std::cout << "(I_correlation_1 == matImg_correlation_1)? "
-              << check_results(matImg_correlation_1, I_correlation_1,
-                               kernel_1.getRows() / 2, kernel_1.getCols() / 2)
+              << check_results(matImg_correlation_1, I_correlation_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
               << std::endl;
     std::cout << "(I_correlation_2 == matImg_correlation_2)? "
-              << check_results(matImg_correlation_2, I_correlation_2,
-                               kernel_2.getRows() / 2, kernel_2.getCols() / 2)
+              << check_results(matImg_correlation_2, I_correlation_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
               << std::endl;
     std::cout << "(I_correlation_3 == matImg_correlation_3)? "
-              << check_results(matImg_correlation_3, I_correlation_3,
-                               kernel_3.getRows() / 2, kernel_3.getCols() / 2)
+              << check_results(matImg_correlation_3, I_correlation_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
               << std::endl;
 #endif
 
@@ -308,35 +301,26 @@ int main(int argc, const char *argv[])
     cv::Mat matImg_convolution_1, matImg_convolution_2, matImg_convolution_3;
 
     cv::Point anchor1(mat_kernel_1_flip.cols - mat_kernel_1_flip.cols / 2 - 1,
-                      mat_kernel_1_flip.rows - mat_kernel_1_flip.rows / 2 -
-                          1);
-    cv::filter2D(matImg, matImg_convolution_1, CV_64F, mat_kernel_1_flip,
-                 anchor1);
+                      mat_kernel_1_flip.rows - mat_kernel_1_flip.rows / 2 - 1);
+    cv::filter2D(matImg, matImg_convolution_1, CV_64F, mat_kernel_1_flip, anchor1);
 
     cv::Point anchor2(mat_kernel_2_flip.cols - mat_kernel_2_flip.cols / 2 - 1,
-                      mat_kernel_2_flip.rows - mat_kernel_2_flip.rows / 2 -
-                          1);
-    cv::filter2D(matImg, matImg_convolution_2, CV_64F, mat_kernel_2_flip,
-                 anchor2);
+                      mat_kernel_2_flip.rows - mat_kernel_2_flip.rows / 2 - 1);
+    cv::filter2D(matImg, matImg_convolution_2, CV_64F, mat_kernel_2_flip, anchor2);
 
     cv::Point anchor3(mat_kernel_3_flip.cols - mat_kernel_3_flip.cols / 2 - 1,
-                      mat_kernel_3_flip.rows - mat_kernel_3_flip.rows / 2 -
-                          1);
-    cv::filter2D(matImg, matImg_convolution_3, CV_64F, mat_kernel_3_flip,
-                 anchor3);
+                      mat_kernel_3_flip.rows - mat_kernel_3_flip.rows / 2 - 1);
+    cv::filter2D(matImg, matImg_convolution_3, CV_64F, mat_kernel_3_flip, anchor3);
 
     std::cout << "\nTest convolution on small image:" << std::endl;
     std::cout << "(I_convolution_1 == matImg_convolution_1)? "
-              << check_results(matImg_convolution_1, I_convolution_1,
-                               kernel_1.getRows() / 2, kernel_1.getCols() / 2)
+              << check_results(matImg_convolution_1, I_convolution_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
               << std::endl;
     std::cout << "(I_convolution_2 == matImg_convolution_2)? "
-              << check_results(matImg_convolution_2, I_convolution_2,
-                               kernel_2.getRows() / 2, kernel_2.getCols() / 2)
+              << check_results(matImg_convolution_2, I_convolution_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
               << std::endl;
     std::cout << "(I_convolution_3 == matImg_convolution_3)? "
-              << check_results(matImg_convolution_3, I_convolution_3,
-                               kernel_3.getRows() / 2, kernel_3.getCols() / 2)
+              << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
               << std::endl;
 #endif
 
@@ -356,8 +340,7 @@ int main(int argc, const char *argv[])
     vpImageFilter::filter(I, I_correlation_2, kernel_2);
     vpImageFilter::filter(I, I_correlation_3, kernel_3);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "\nTime to do 3 correlation filtering: " << t
-              << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
+    std::cout << "\nTime to do 3 correlation filtering: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     vpImageConvert::convert(I, matImg);
@@ -367,37 +350,27 @@ int main(int argc, const char *argv[])
     cv::filter2D(matImg, matImg_correlation_2, CV_64F, mat_kernel_2);
     cv::filter2D(matImg, matImg_correlation_3, CV_64F, mat_kernel_3);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do 3 cv::filter2D: " << t
-              << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
+    std::cout << "Time to do 3 cv::filter2D: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
     std::cout << "\nTest correlation on Klimt image:" << std::endl;
-    bool test = check_results(matImg_correlation_1, I_correlation_1,
-                              kernel_1.getRows() / 2, kernel_1.getCols() / 2);
-    std::cout << "(I_correlation_1 == matImg_correlation_1)? " << test
-              << std::endl;
+    bool test = check_results(matImg_correlation_1, I_correlation_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2);
+    std::cout << "(I_correlation_1 == matImg_correlation_1)? " << test << std::endl;
     if (!test) {
-      std::cerr << "Failed test1 correlation with vpImageFilter::filter()!"
-                << std::endl;
+      std::cerr << "Failed test1 correlation with vpImageFilter::filter()!" << std::endl;
       return EXIT_FAILURE;
     }
 
-    test = check_results(matImg_correlation_2, I_correlation_2,
-                         kernel_2.getRows() / 2, kernel_2.getCols() / 2);
-    std::cout << "(I_correlation_2 == matImg_correlation_2)? " << test
-              << std::endl;
+    test = check_results(matImg_correlation_2, I_correlation_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2);
+    std::cout << "(I_correlation_2 == matImg_correlation_2)? " << test << std::endl;
     if (!test) {
-      std::cerr << "Failed test2 correlation with vpImageFilter::filter()!"
-                << std::endl;
+      std::cerr << "Failed test2 correlation with vpImageFilter::filter()!" << std::endl;
       return EXIT_FAILURE;
     }
 
-    test = check_results(matImg_correlation_3, I_correlation_3,
-                         kernel_3.getRows() / 2, kernel_3.getCols() / 2);
-    std::cout << "(I_correlation_3 == matImg_correlation_3)? " << test
-              << std::endl;
+    test = check_results(matImg_correlation_3, I_correlation_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2);
+    std::cout << "(I_correlation_3 == matImg_correlation_3)? " << test << std::endl;
     if (!test) {
-      std::cerr << "Failed test3 correlation with vpImageFilter::filter()!"
-                << std::endl;
+      std::cerr << "Failed test3 correlation with vpImageFilter::filter()!" << std::endl;
       return EXIT_FAILURE;
     }
 #endif
@@ -408,50 +381,36 @@ int main(int argc, const char *argv[])
     vpImageFilter::filter(I, I_convolution_2, kernel_2, true);
     vpImageFilter::filter(I, I_convolution_3, kernel_3, true);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "\nTime to do 3 convolution filtering: " << t
-              << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
+    std::cout << "\nTime to do 3 convolution filtering: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 
     t = vpTime::measureTimeMs();
-    cv::filter2D(matImg, matImg_convolution_1, CV_64F, mat_kernel_1_flip,
-                 anchor1);
-    cv::filter2D(matImg, matImg_convolution_2, CV_64F, mat_kernel_2_flip,
-                 anchor2);
-    cv::filter2D(matImg, matImg_convolution_3, CV_64F, mat_kernel_3_flip,
-                 anchor3);
+    cv::filter2D(matImg, matImg_convolution_1, CV_64F, mat_kernel_1_flip, anchor1);
+    cv::filter2D(matImg, matImg_convolution_2, CV_64F, mat_kernel_2_flip, anchor2);
+    cv::filter2D(matImg, matImg_convolution_3, CV_64F, mat_kernel_3_flip, anchor3);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do 3 cv::filter2D: " << t
-              << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
+    std::cout << "Time to do 3 cv::filter2D: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
     std::cout << "\nTest convolution on Klimt image:" << std::endl;
-    test = check_results(matImg_convolution_1, I_convolution_1,
-                         kernel_1.getRows() / 2, kernel_1.getCols() / 2);
-    std::cout << "(I_convolution_1 == matImg_convolution_1)? " << test
-              << std::endl;
+    test = check_results(matImg_convolution_1, I_convolution_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2);
+    std::cout << "(I_convolution_1 == matImg_convolution_1)? " << test << std::endl;
     if (!test) {
-      std::cerr << "Failed test1 convolution with vpImageFilter::filter()!"
-                << std::endl;
+      std::cerr << "Failed test1 convolution with vpImageFilter::filter()!" << std::endl;
       return EXIT_FAILURE;
     }
 
-    test = check_results(matImg_convolution_2, I_convolution_2,
-                         kernel_2.getRows() / 2, kernel_2.getCols() / 2);
-    std::cout << "(I_convolution_2 == matImg_convolution_2)? " << test
-              << std::endl;
+    test = check_results(matImg_convolution_2, I_convolution_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2);
+    std::cout << "(I_convolution_2 == matImg_convolution_2)? " << test << std::endl;
     if (!test) {
-      std::cerr << "Failed test2 convolution with vpImageFilter::filter()!"
-                << std::endl;
+      std::cerr << "Failed test2 convolution with vpImageFilter::filter()!" << std::endl;
       return EXIT_FAILURE;
     }
 
-    test = check_results(matImg_convolution_3, I_convolution_3,
-                         kernel_3.getRows() / 2, kernel_3.getCols() / 2);
-    std::cout << "(I_convolution_3 == matImg_convolution_3)? " << test
-              << std::endl;
+    test = check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2);
+    std::cout << "(I_convolution_3 == matImg_convolution_3)? " << test << std::endl;
     if (!test) {
-      std::cerr << "Failed test3 convolution with vpImageFilter::filter()!"
-                << std::endl;
+      std::cerr << "Failed test3 convolution with vpImageFilter::filter()!" << std::endl;
       return EXIT_FAILURE;
     }
 #endif
@@ -499,9 +458,7 @@ int main(int argc, const char *argv[])
 
     std::cout << "\nTest Sobel on Klimt image:" << std::endl;
     std::cout << "(I_sobel_x == matImg_sobel_x)? "
-              << check_results(matImg_sobel_x, I_sobel_x,
-                               kernel_sobel_x.getRows() / 2,
-                               kernel_sobel_x.getCols() / 2)
+              << check_results(matImg_sobel_x, I_sobel_x, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
               << std::endl;
 #endif
 
@@ -517,14 +474,10 @@ int main(int argc, const char *argv[])
     cv::Sobel(matImg, matImg_sobel_y, CV_64F, 0, 1, 5);
 
     std::cout << "(Iu == matImg_sobel_x)? "
-              << check_results(matImg_sobel_x, Iu,
-                               kernel_sobel_x.getRows() / 2,
-                               kernel_sobel_x.getCols() / 2)
+              << check_results(matImg_sobel_x, Iu, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
               << std::endl;
     std::cout << "(Iv == matImg_sobel_y)? "
-              << check_results(matImg_sobel_y, Iv,
-                               kernel_sobel_x.getRows() / 2,
-                               kernel_sobel_x.getCols() / 2)
+              << check_results(matImg_sobel_y, Iv, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
               << std::endl;
 #endif
 
@@ -549,8 +502,7 @@ int main(int argc, const char *argv[])
     std::cout << "\nTime to do sepFilter: " << t << " ms" << std::endl;
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-    test = check_results(matImg_sobel_x, Iu, I_sep_filtered.getRows() / 2,
-                         kernel_sobel_x.getCols() / 2);
+    test = check_results(matImg_sobel_x, Iu, I_sep_filtered.getRows() / 2, kernel_sobel_x.getCols() / 2);
     std::cout << "(I_sep_filtered == matImg_sobel_x)? " << test << std::endl;
 
     if (!test) {

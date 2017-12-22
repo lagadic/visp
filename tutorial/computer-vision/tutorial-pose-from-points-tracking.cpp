@@ -11,16 +11,13 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/vision/vpPose.h>
 
-void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
-                 const vpCameraParameters &cam, bool init,
+void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot, const vpCameraParameters &cam, bool init,
                  vpHomogeneousMatrix &cMo);
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
-    defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init);
 #endif
 
-void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
-                 const vpCameraParameters &cam, bool init,
+void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot, const vpCameraParameters &cam, bool init,
                  vpHomogeneousMatrix &cMo)
 {
   vpPose pose;
@@ -47,8 +44,7 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
   pose.computePose(vpPose::VIRTUAL_VS, cMo);
 }
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
-    defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 {
   if (init) {
@@ -69,10 +65,8 @@ void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 
 int main()
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV)) &&                                           \
-    (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||              \
-     (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
+    (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   try {
     vpImage<unsigned char> I;
 

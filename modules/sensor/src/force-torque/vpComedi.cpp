@@ -49,9 +49,8 @@
   Default constructor.
  */
 vpComedi::vpComedi()
-  : m_device("/dev/comedi0"), m_handler(NULL), m_subdevice(0), m_range(0),
-    m_aref(AREF_DIFF), m_nchannel(6), m_range_info(6), m_maxdata(6),
-    m_chanlist(6)
+  : m_device("/dev/comedi0"), m_handler(NULL), m_subdevice(0), m_range(0), m_aref(AREF_DIFF), m_nchannel(6),
+    m_range_info(6), m_maxdata(6), m_chanlist(6)
 {
 }
 
@@ -70,8 +69,7 @@ void vpComedi::open()
     m_handler = comedi_open(m_device.c_str());
 
     if (!m_handler) {
-      throw vpException(vpException::fatalError, "Could not open device %s",
-                        m_device.c_str());
+      throw vpException(vpException::fatalError, "Could not open device %s", m_device.c_str());
     }
 
     // Print NaN for clipped inputs
@@ -83,10 +81,8 @@ void vpComedi::open()
     m_chanlist.resize(m_nchannel);
     for (unsigned int channel = 0; channel < m_nchannel; channel++) {
       m_chanlist[channel] = CR_PACK(channel, m_range, m_aref);
-      m_range_info[channel] =
-          comedi_get_range(m_handler, m_subdevice, channel, m_range);
-      m_maxdata[channel] =
-          comedi_get_maxdata(m_handler, m_subdevice, channel);
+      m_range_info[channel] = comedi_get_range(m_handler, m_subdevice, channel, m_range);
+      m_maxdata[channel] = comedi_get_maxdata(m_handler, m_subdevice, channel);
     }
   }
 }
@@ -121,15 +117,12 @@ std::vector<lsampl_t> vpComedi::getRawData() const
     // When switching the multiplexor from one channel to the next, the A/D
     // input needs time to settle to the new input voltage. The greater the
     // voltage difference, the more time it takes. Here we wait for 1us
-    int ret =
-        comedi_data_read_delayed(m_handler, m_subdevice, channel, m_range,
-                                 m_aref, &raw_data[channel], 1000);
+    int ret = comedi_data_read_delayed(m_handler, m_subdevice, channel, m_range, m_aref, &raw_data[channel], 1000);
     if (ret < 0) {
       throw vpException(vpException::fatalError,
                         "Cannot get %d data from device=%s subdevice=%d "
                         "channel=%d range=%d analog reference=%d",
-                        m_nchannel, m_device.c_str(), m_subdevice, channel,
-                        m_aref);
+                        m_nchannel, m_device.c_str(), m_subdevice, channel, m_aref);
     }
   }
 
@@ -151,12 +144,9 @@ vpColVector vpComedi::getPhyData() const
 
   // Convert data to physical data
   for (unsigned int channel = 0; channel < m_nchannel; channel++) {
-    phy_data[channel] = comedi_to_phys(
-        raw_data[channel], m_range_info[channel], m_maxdata[channel]);
+    phy_data[channel] = comedi_to_phys(raw_data[channel], m_range_info[channel], m_maxdata[channel]);
     if (vpMath::isNaN(phy_data[channel])) {
-      throw vpException(
-          vpException::fatalError,
-          "Comedi DAQ get NaN value. Check the connection with your device");
+      throw vpException(vpException::fatalError, "Comedi DAQ get NaN value. Check the connection with your device");
     }
   }
 

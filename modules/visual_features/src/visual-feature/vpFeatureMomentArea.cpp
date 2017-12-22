@@ -78,26 +78,21 @@ void vpFeatureMomentArea::compute_interaction()
     // Get Xg and Yg
     bool found_xgyg;
     const vpMomentGravityCenter &momentGravity =
-        static_cast<const vpMomentGravityCenter &>(
-            moments.get("vpMomentGravityCenter", found_xgyg));
+        static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_xgyg));
     if (!found_xgyg)
-      throw vpException(vpException::notInitialized,
-                        "vpMomentGravityCenter not found");
+      throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
     bool found_m00;
-    const vpMomentArea &areamoment = static_cast<const vpMomentArea &>(
-        moments.get("vpMomentArea", found_m00));
+    const vpMomentArea &areamoment = static_cast<const vpMomentArea &>(moments.get("vpMomentArea", found_m00));
     if (!found_m00)
-      throw vpException(vpException::notInitialized,
-                        "vpMomentArea not found");
+      throw vpException(vpException::notInitialized, "vpMomentArea not found");
 
     double Xg = momentGravity.getXg();
     double Yg = momentGravity.getYg();
 
     double a = areamoment.get()[0]; // Area scalar
 
-    assert(std::fabs(a - mobj.get(0, 0)) <
-           a * std::numeric_limits<double>::epsilon());
+    assert(std::fabs(a - mobj.get(0, 0)) < a * std::numeric_limits<double>::epsilon());
 
     interaction_matrices[0][0][0] = -a * A;
     interaction_matrices[0][0][1] = -a * B;

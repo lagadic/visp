@@ -8,8 +8,7 @@ int main()
   try {
     ArArgumentBuilder args;
     args.add("-rp");
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     args.add("/dev/ttyUSB0");
 #else
     args.add("COM3");

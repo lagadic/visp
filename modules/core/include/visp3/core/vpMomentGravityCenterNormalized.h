@@ -62,8 +62,7 @@ class vpMomentObject;
   access to \f$a_n\f$ and on vpMomentGravityCenter to get access to
   \f$(x_g,y_g)\f$ .
 */
-class VISP_EXPORT vpMomentGravityCenterNormalized
-  : public vpMomentGravityCenter
+class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter
 {
 public:
   vpMomentGravityCenterNormalized();
@@ -72,8 +71,7 @@ public:
   //! Moment name.
   const char *name() const { return "vpMomentGravityCenterNormalized"; }
   void printDependencies(std::ostream &os) const;
-  friend VISP_EXPORT std::ostream &
-  operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
 };
 
 #endif

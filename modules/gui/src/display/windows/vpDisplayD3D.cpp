@@ -60,8 +60,7 @@ vpDisplayD3D::vpDisplayD3D() : vpDisplayWin32(new vpD3DRenderer()) {}
   index). \param title  Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(int winx, int winy, const std::string &title)
-  : vpDisplayWin32(new vpD3DRenderer())
+vpDisplayD3D::vpDisplayD3D(int winx, int winy, const std::string &title) : vpDisplayWin32(new vpD3DRenderer())
 {
   m_windowXPosition = winx;
   m_windowYPosition = winy;
@@ -95,8 +94,7 @@ and the columns.
 and the columns.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  : vpDisplayWin32(new vpD3DRenderer())
+vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDisplayWin32(new vpD3DRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -125,8 +123,7 @@ and the columns.
 and the columns.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I, int winx, int winy,
-                           const std::string &title, vpScaleType scaleType)
+vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I, int winx, int winy, const std::string &title, vpScaleType scaleType)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
@@ -154,8 +151,7 @@ and the columns.
 and the columns.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : vpDisplayWin32(new vpD3DRenderer())
+vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I, vpScaleType scaleType) : vpDisplayWin32(new vpD3DRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -184,8 +180,8 @@ and the columns.
 and the columns.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I, int winx, int winy,
-                           const std::string &title, vpScaleType scaleType)
+vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I, int winx, int winy, const std::string &title,
+                           vpScaleType scaleType)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());

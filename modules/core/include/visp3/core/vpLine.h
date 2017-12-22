@@ -156,10 +156,8 @@ public:
   */
   double getRho() const { return p[0]; }
 
-  void setWorldCoordinates(const double &A1, const double &B1,
-                           const double &C1, const double &D1,
-                           const double &A2, const double &B2,
-                           const double &C2, const double &D2);
+  void setWorldCoordinates(const double &A1, const double &B1, const double &C1, const double &D1, const double &A2,
+                           const double &B2, const double &C2, const double &D2);
 
   void setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2);
 
@@ -170,13 +168,10 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                const unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
 
   vpLine *duplicate() const;
 };

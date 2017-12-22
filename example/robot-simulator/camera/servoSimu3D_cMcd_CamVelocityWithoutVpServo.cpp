@@ -208,16 +208,12 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task :  3D visual servoing " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // Sets the initial camera location
@@ -243,10 +239,8 @@ int main(int argc, const char **argv)
     // From the camera desired pose build the corresponding homogeneous matrix
     vpHomogeneousMatrix cdMo(cd_r_o);
 
-    vpHomogeneousMatrix
-        cMcd; // Transformation between current and desired camera frame
-    vpRotationMatrix
-        cRcd; // Rotation between current and desired camera frame
+    vpHomogeneousMatrix cMcd; // Transformation between current and desired camera frame
+    vpRotationMatrix cRcd;    // Rotation between current and desired camera frame
 
     // Set the constant gain of the servo
     double lambda = 1;
@@ -254,8 +248,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // Start the visual servoing loop. We stop the servo after 200 iterations
     while (iter++ < 200) {
-      std::cout << "------------------------------------" << iter
-                << std::endl;
+      std::cout << "------------------------------------" << iter << std::endl;
 
       // get the robot position
       robot.getPosition(wMc);
@@ -294,12 +287,10 @@ int main(int argc, const char **argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, velocity);
 
       // Retrieve the error (s-s*)
-      std::cout << "|| s - s* || = " << ctcd.t() << " " << tu_cRcd.t()
-                << std::endl;
+      std::cout << "|| s - s* || = " << ctcd.t() << " " << tu_cRcd.t() << std::endl;
 
       // Save log
-      flog << velocity.t() << " " << ctcd.t() << " " << tu_cRcd.t()
-           << std::endl;
+      flog << velocity.t() << " " << ctcd.t() << " " << tu_cRcd.t() << std::endl;
     }
 
     // Close the log file

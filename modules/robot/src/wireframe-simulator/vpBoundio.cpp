@@ -157,8 +157,7 @@ void fscanf_Face_list(Face_list *lp)
  */
 void fscanf_Point3f_list(Point3f_list *lp)
 {
-  static const char *err_tbl[] = {"float expected (coordinate ",
-                                  " of point)"};
+  static const char *err_tbl[] = {"float expected (coordinate ", " of point)"};
   Point3f *pp;   /* point courant	*/
   Point3f *pend; /* borne de "pp"	*/
 

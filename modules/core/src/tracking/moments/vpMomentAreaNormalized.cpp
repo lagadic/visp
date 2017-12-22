@@ -51,15 +51,13 @@ void vpMomentAreaNormalized::compute()
 
   /* getMoments() returns a reference to a vpMomentDatabase. (a protected
     member inherited from vpMoment)
-    .get() 		is a member function of vpMomentDatabase that returns a
-    specific moment which is linked to it*/
+    .get() 		is a member function of vpMomentDatabase that returns
+    a specific moment which is linked to it*/
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(
-          getMoments().get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
 
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
   double a;
   /* getObject() returns a reference to the vpMomentObject from which
@@ -78,8 +76,7 @@ void vpMomentAreaNormalized::compute()
   converges. \param desired_depth : desired depth \e Z* when the visual
   servoing converges.
 */
-vpMomentAreaNormalized::vpMomentAreaNormalized(double desired_surface,
-                                               double desired_depth)
+vpMomentAreaNormalized::vpMomentAreaNormalized(double desired_surface, double desired_depth)
   : vpMoment(), desiredSurface(desired_surface), desiredDepth(desired_depth)
 {
   values.resize(1);
@@ -88,8 +85,7 @@ vpMomentAreaNormalized::vpMomentAreaNormalized(double desired_surface,
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpMomentAreaNormalized &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &m)
 {
   os << (__FILE__) << std::endl;
   os << "An = " << m.values[0] << std::endl;
@@ -112,11 +108,9 @@ void vpMomentAreaNormalized::printDependencies(std::ostream &os) const
 
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(
-          getMoments().get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
   double a;
   if (getObject().getType() == vpMomentObject::DISCRETE)

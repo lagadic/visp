@@ -110,16 +110,12 @@ int main()
     vpServo task;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a point " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     int i;
@@ -201,8 +197,7 @@ int main()
 
     // First loop to reach the convergence position
     while (erreur > 0.00001) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
 
       try {
         g.acquire(I);
@@ -227,8 +222,7 @@ int main()
           if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
             gain = lambda_av;
           else {
-            gain = alpha * exp(-beta * (task.getError()).sumSquare()) +
-                   lambda_av;
+            gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
           }
         }
         task.setLambda(gain);
@@ -266,8 +260,7 @@ int main()
     unsigned int tempo = 1200;
 
     for (;;) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
 
       try {
         g.acquire(I);

@@ -102,8 +102,7 @@ public:
   float setBlackLevel(float blacklevel_value = 0);
   void setCameraIndex(unsigned int index);
   void setCameraSerial(const std::string &serial);
-  float setExposure(bool exposure_on, bool exposure_auto,
-                    float exposure_value = 0);
+  float setExposure(bool exposure_on, bool exposure_auto, float exposure_value = 0);
   float setGain(bool gain_auto, float gain_value = 0);
   float setFrameRate(float frame_rate);
   float setGamma(bool gamma_on, float gamma_value = 1);
@@ -120,8 +119,8 @@ protected:
 private:
   Pylon::CBaslerGigEInstantCamera m_camera; //!< Pointer to each camera
   unsigned int m_index;                     //!< Active camera index
-  unsigned int m_numCameras; //!< Number of connected GigE cameras
-  bool m_connected;          //!< true if camera connected
+  unsigned int m_numCameras;                //!< Number of connected GigE cameras
+  bool m_connected;                         //!< true if camera connected
 };
 
 #endif // #ifdef VISP_HAVE_PYLON

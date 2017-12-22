@@ -56,11 +56,11 @@ class vpMomentDatabase;
   interaction matrix associated with vpMomentBasic.
 
   The interaction matrix for the basic moment feature is defined in
-  \cite Tahri05z, equation (13). This vpFeatureMoment, as well as it's corresponding
-  moment primitive is double-indexed. The interaction matrix \f$ L_{m_{ij}}
-  \f$ is obtained by calling vpFeatureMomentBasic::interaction (i,j) and is
-  associated to \f$ m_{ij} \f$ obtained by vpMomentBasic::get (i,j).
-    vpFeatureMomentBasic computes interaction matrices all interaction
+  \cite Tahri05z, equation (13). This vpFeatureMoment, as well as it's
+  corresponding moment primitive is double-indexed. The interaction matrix \f$
+  L_{m_{ij}} \f$ is obtained by calling vpFeatureMomentBasic::interaction
+  (i,j) and is associated to \f$ m_{ij} \f$ obtained by vpMomentBasic::get
+  (i,j). vpFeatureMomentBasic computes interaction matrices all interaction
   matrices up to vpMomentObject::getOrder()-1. \attention The maximum order
   reached by vpFeatureMomentBasic is NOT the maximum order of the
   vpMomentObject, it is one unit smaller. For example if you define your
@@ -81,8 +81,7 @@ protected:
   unsigned int order;
 
 public:
-  vpFeatureMomentBasic(vpMomentDatabase &moments, double A, double B,
-                       double C,
+  vpFeatureMomentBasic(vpMomentDatabase &moments, double A, double B, double C,
                        vpFeatureMomentDatabase *featureMoments = NULL);
   void compute_interaction();
 
@@ -90,13 +89,11 @@ public:
   /* Add function due to pure virtual definition in vpBasicFeature.h */
   vpMatrix interaction(const unsigned int /* select = FEATURE_ALL */)
   {
-    throw vpException(vpException::functionNotImplementedError,
-                      "Not implemented!");
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }
 #endif
 
-  vpMatrix interaction(unsigned int select_one,
-                       unsigned int select_two) const;
+  vpMatrix interaction(unsigned int select_one, unsigned int select_two) const;
   /*!
     Associated moment name.
     */

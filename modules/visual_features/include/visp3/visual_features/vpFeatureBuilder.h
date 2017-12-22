@@ -94,40 +94,31 @@ class VISP_EXPORT vpFeatureBuilder
 public:
 // create vpFeaturePoint feature
 #ifdef VISP_HAVE_MODULE_BLOB
-  static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-                     const vpDot &d);
-  static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-                     const vpDot2 &d);
+  static void create(vpFeaturePoint &s, const vpCameraParameters &cam, const vpDot &d);
+  static void create(vpFeaturePoint &s, const vpCameraParameters &cam, const vpDot2 &d);
 #endif
-  static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-                     const vpImagePoint &t);
+  static void create(vpFeaturePoint &s, const vpCameraParameters &cam, const vpImagePoint &t);
   static void create(vpFeaturePoint &s, const vpPoint &p);
-  static void create(vpFeaturePoint &s, const vpCameraParameters &goodCam,
-                     const vpCameraParameters &wrongCam, const vpPoint &p);
+  static void create(vpFeaturePoint &s, const vpCameraParameters &goodCam, const vpCameraParameters &wrongCam,
+                     const vpPoint &p);
 
 #ifdef VISP_HAVE_MODULE_BLOB
-  static void create(vpFeatureSegment &s, const vpCameraParameters &cam,
-                     const vpDot &d1, const vpDot &d2);
-  static void create(vpFeatureSegment &s, const vpCameraParameters &cam,
-                     const vpDot2 &d1, const vpDot2 &d2);
+  static void create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2);
+  static void create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot2 &d1, const vpDot2 &d2);
 #endif
-  static void create(vpFeatureSegment &s, const vpCameraParameters &cam,
-                     const vpImagePoint &ip1, const vpImagePoint &ip2);
+  static void create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpImagePoint &ip1,
+                     const vpImagePoint &ip2);
   static void create(vpFeatureSegment &s, vpPoint &P1, vpPoint &P2);
 
 // create vpFeaturePointPolar feature
 #ifdef VISP_HAVE_MODULE_BLOB
-  static void create(vpFeaturePointPolar &s, const vpCameraParameters &cam,
-                     const vpDot &dot);
-  static void create(vpFeaturePointPolar &s, const vpCameraParameters &cam,
-                     const vpDot2 &dot);
+  static void create(vpFeaturePointPolar &s, const vpCameraParameters &cam, const vpDot &dot);
+  static void create(vpFeaturePointPolar &s, const vpCameraParameters &cam, const vpDot2 &dot);
 #endif
-  static void create(vpFeaturePointPolar &s, const vpCameraParameters &cam,
-                     const vpImagePoint &iP);
+  static void create(vpFeaturePointPolar &s, const vpCameraParameters &cam, const vpImagePoint &iP);
   static void create(vpFeaturePointPolar &s, const vpPoint &p);
-  static void create(vpFeaturePointPolar &s,
-                     const vpCameraParameters &goodCam,
-                     const vpCameraParameters &wrongCam, const vpPoint &p);
+  static void create(vpFeaturePointPolar &s, const vpCameraParameters &goodCam, const vpCameraParameters &wrongCam,
+                     const vpPoint &p);
 
   // create vpFeaturePoint3D feature
   static void create(vpFeaturePoint3D &s, const vpPoint &p);
@@ -137,23 +128,19 @@ public:
   static void create(vpFeatureLine &s, const vpCylinder &c, const int line);
 
 #ifdef VISP_HAVE_MODULE_ME
-  static void create(vpFeatureLine &s, const vpCameraParameters &cam,
-                     const vpMeLine &mel);
+  static void create(vpFeatureLine &s, const vpCameraParameters &cam, const vpMeLine &mel);
 #endif
 
   //! create vpFeatureEllipse feature
   static void create(vpFeatureEllipse &s, const vpCircle &c);
   static void create(vpFeatureEllipse &s, const vpSphere &sphere);
 #ifdef VISP_HAVE_MODULE_BLOB
-  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam,
-                     const vpDot &d);
-  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam,
-                     const vpDot2 &d);
+  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot &d);
+  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot2 &d);
 #endif
 
 #ifdef VISP_HAVE_MODULE_ME
-  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam,
-                     const vpMeEllipse &d);
+  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &d);
 #endif
 
   /*!
@@ -165,14 +152,12 @@ public:
     create vpFeatureVanishingPoint feature from 2 FeatureLine, ie lines in
     the image plane (error if the 2 lines are parallel)
   */
-  static void create(vpFeatureVanishingPoint &s, const vpFeatureLine &l1,
-                     const vpFeatureLine &l2);
+  static void create(vpFeatureVanishingPoint &s, const vpFeatureLine &l1, const vpFeatureLine &l2);
   /*!
     create vpFeatureVanishingPoint feature from 2 Lines, (error if the 2
     lines are parallel in the image plane)
   */
-  static void create(vpFeatureVanishingPoint &s, const vpLine &l1,
-                     const vpLine &l2);
+  static void create(vpFeatureVanishingPoint &s, const vpLine &l1, const vpLine &l2);
 };
 
 #endif

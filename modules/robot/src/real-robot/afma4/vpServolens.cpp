@@ -46,8 +46,7 @@
 
 */
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -79,10 +78,7 @@ vpServolens::vpServolens() : remfd(0), isinit(false) {}
 
   \sa open()
 */
-vpServolens::vpServolens(const char *port) : remfd(0), isinit(false)
-{
-  this->open(port);
-}
+vpServolens::vpServolens(const char *port) : remfd(0), isinit(false) { this->open(port); }
 
 /*!
   Destructor.
@@ -116,16 +112,14 @@ void vpServolens::open(const char *port)
 
     if ((this->remfd = ::open(port, O_RDWR | O_NONBLOCK)) < 0) {
       vpERROR_TRACE("Cannot open Servolens serial port.");
-      throw vpRobotException(vpRobotException::communicationError,
-                             "Cannot open Servolens serial port.");
+      throw vpRobotException(vpRobotException::communicationError, "Cannot open Servolens serial port.");
     }
 
     // Lecture des parametres courants de la liaison serie.
     if (tcgetattr(this->remfd, &info) < 0) {
       ::close(this->remfd);
       vpERROR_TRACE("Error using TCGETS in ioctl.");
-      throw vpRobotException(vpRobotException::communicationError,
-                             "Error using TCGETS in ioctl");
+      throw vpRobotException(vpRobotException::communicationError, "Error using TCGETS in ioctl");
     }
 
     //
@@ -155,8 +149,7 @@ void vpServolens::open(const char *port)
     if (tcsetattr(this->remfd, TCSANOW, &info) < 0) {
       ::close(this->remfd);
       vpERROR_TRACE("Error using TCGETS in ioctl.");
-      throw vpRobotException(vpRobotException::communicationError,
-                             "Error using TCGETS in ioctl");
+      throw vpRobotException(vpRobotException::communicationError, "Error using TCGETS in ioctl");
     }
 
     // Supprime tous les caracteres recus mais non encore lus par read()
@@ -172,9 +165,8 @@ void vpServolens::open(const char *port)
     if (this->getPosition(vpServolens::ZOOM, izoom) == false) {
       vpERROR_TRACE("Cannot dial with the servolens. Check if the serial "
                     "link is connected.");
-      throw vpRobotException(vpRobotException::communicationError,
-                             "Cannot dial with the servolens. Check if the "
-                             "serial link is connected.");
+      throw vpRobotException(vpRobotException::communicationError, "Cannot dial with the servolens. Check if the "
+                                                                   "serial link is connected.");
     }
   }
 }
@@ -202,8 +194,7 @@ void vpServolens::reset() const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -239,8 +230,7 @@ void vpServolens::init() const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
 
   char commande[10];
@@ -271,8 +261,7 @@ void vpServolens::enablePrompt(bool active) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -297,8 +286,7 @@ void vpServolens::setController(vpControllerType controller) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -336,8 +324,7 @@ void vpServolens::setAutoIris(bool enable) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -363,8 +350,7 @@ void vpServolens::setPosition(vpServoType servo, unsigned int position) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -449,14 +435,13 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   char commande[10];
   char posit[10], *pt_posit;
   char c;
-  short fin_lect_posit; /* indique si on a lu la position du servo-moteur */
-  short posit_car;      /* donne la position du caractere lu */
+  short fin_lect_posit;         /* indique si on a lu la position du servo-moteur */
+  short posit_car;              /* donne la position du caractere lu */
   short lecture_posit_en_cours; /* indique si on lit la position courante */
 
   /* attente du prompt pour envoyer une commande */
@@ -564,32 +549,28 @@ pixel size (7.4 um) and from the servolens zoom position.
   servolens.
 
 \code
-  #include <visp3/vs/vpServolens.h>
+#include <visp3/vs/vpServolens.h>
 
-  int main()
-  {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||
-(defined(__APPLE__) && defined(__MACH__))) // UNIX vpServolens
-servolens("/dev/ttyS0");
+int main()
+{
+  // UNIX vpServolens servolens("/dev/ttyS0");
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 
-    vpImage<unsigned char> I(240, 320);
-    vpCameraParameters cam = servolens.getCameraParameters(I);
-    std::cout << "Camera parameters: " << cam << std::endl;
+  vpImage<unsigned char> I(240, 320);
+  vpCameraParameters cam = servolens.getCameraParameters(I);
+  std::cout << "Camera parameters: " << cam << std::endl;
 #endif
   }
-
-  \exception vpRobotException::communicationError : If cannot dial
-  with Servolens.
 \endcode
 
+  \exception vpRobotException::communicationError : If cannot dial with Servolens.
+
  */
-vpCameraParameters
-vpServolens::getCameraParameters(vpImage<unsigned char> &I) const
+vpCameraParameters vpServolens::getCameraParameters(vpImage<unsigned char> &I) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   vpCameraParameters cam;
   double pix_size = 7.4e-6; // Specific to the Dragonfly2 camera
@@ -613,11 +594,9 @@ vpServolens::getCameraParameters(vpImage<unsigned char> &I) const
   // correspondent aux parametres de calibration de la camera (donnees
   // constructeur) pour des tailles d'images CCIR (768x576), donc avec scale
   // = 1.
-  double focale = zoom * 1.0e-5; // Transformation en metres
-  px = focale /
-       (double)(subsample_factor * pix_size); // Taille des pixels en metres.
-  py = focale /
-       (double)(subsample_factor * pix_size); // Taille des pixels en metres.
+  double focale = zoom * 1.0e-5;                       // Transformation en metres
+  px = focale / (double)(subsample_factor * pix_size); // Taille des pixels en metres.
+  py = focale / (double)(subsample_factor * pix_size); // Taille des pixels en metres.
   u0 = I.getWidth() / 2.;
   v0 = I.getHeight() / 2.;
   cam.initPersProjWithoutDistortion(px, py, u0, v0);
@@ -637,23 +616,20 @@ char vpServolens::wait() const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
 
   ssize_t r;
   r = ::write(this->remfd, "\r\n", strlen("\r\n"));
   if (r != (ssize_t)(strlen("\r\n"))) {
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot write on Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot write on Servolens.");
   }
   char c;
   do {
     r = ::read(this->remfd, &c, 1);
     c &= 0x7f;
     if (r != 1) {
-      throw vpRobotException(vpRobotException::communicationError,
-                             "Cannot read on Servolens.");
+      throw vpRobotException(vpRobotException::communicationError, "Cannot read on Servolens.");
     }
   } while (c != '>');
   return c;
@@ -673,8 +649,7 @@ void vpServolens::wait(vpServoType servo) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
 
   char c;
@@ -698,8 +673,7 @@ void vpServolens::wait(vpServoType servo) const
   do {
     /* lecture des caracteres */
     if (::read(this->remfd, &c, 1) != 1) {
-      throw vpRobotException(vpRobotException::communicationError,
-                             "Cannot read on Servolens.");
+      throw vpRobotException(vpRobotException::communicationError, "Cannot read on Servolens.");
     }
     c &= 0x7f;
 
@@ -707,8 +681,7 @@ void vpServolens::wait(vpServoType servo) const
     if (c == fin_mvt[0]) {
       /* lecture du caractere suivant */
       if (::read(this->remfd, &c, 1) != 1) {
-        throw vpRobotException(vpRobotException::communicationError,
-                               "Cannot read on Servolens.");
+        throw vpRobotException(vpRobotException::communicationError, "Cannot read on Servolens.");
       }
 
       c &= 0x7f;
@@ -736,18 +709,16 @@ bool vpServolens::read(char *c, long timeout_s) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
 
-  fd_set readfds; /* list of fds for select to listen to */
+  fd_set readfds;                          /* list of fds for select to listen to */
   struct timeval timeout = {timeout_s, 0}; // seconde, micro-sec
 
   FD_ZERO(&readfds);
   FD_SET(static_cast<unsigned int>(this->remfd), &readfds);
 
-  if (select(FD_SETSIZE, &readfds, (fd_set *)NULL, (fd_set *)NULL, &timeout) >
-      0) {
+  if (select(FD_SETSIZE, &readfds, (fd_set *)NULL, (fd_set *)NULL, &timeout) > 0) {
     ssize_t n = ::read(this->remfd, c, 1); /* read one character at a time */
     if (n != 1)
       return false;
@@ -771,16 +742,14 @@ void vpServolens::write(const char *s) const
 {
   if (!isinit) {
     vpERROR_TRACE("Cannot dial with Servolens.");
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot dial with Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
   ssize_t r = 0;
   r = ::write(this->remfd, "\r", strlen("\r"));
   r += ::write(this->remfd, s, strlen(s));
   r += ::write(this->remfd, "\r", strlen("\r"));
   if (r != (ssize_t)(2 * strlen("\r") + strlen(s))) {
-    throw vpRobotException(vpRobotException::communicationError,
-                           "Cannot write on Servolens.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot write on Servolens.");
   }
 
   /*

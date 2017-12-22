@@ -43,8 +43,7 @@
 // to define colors in static.
 //     See also vpColor.h where things need to be improved.
 //#if !defined(visp_EXPORTS)
-#if !defined(VISP_USE_MSVC) ||                                               \
-    (defined(VISP_USE_MSVC) && !defined(VISP_BUILD_SHARED_LIBS))
+#if !defined(VISP_USE_MSVC) || (defined(VISP_USE_MSVC) && !defined(VISP_BUILD_SHARED_LIBS))
 /*!< Predefined black color with R=G=B=0 and identifier vpColor::id_black. */
 vpColor const vpColor::black = vpColor(0, 0, 0, id_black);
 /*!< Predefined white color with R=G=B=255 and identifier vpColor::id_white.
@@ -103,29 +102,27 @@ vpColor const vpColor::none = vpColor(0, 0, 0, id_unknown);
 const unsigned int vpColor::nbColors = 18;
 
 /*!< Array of available colors. */
-vpColor const vpColor::allColors[vpColor::nbColors] = {
-    vpColor::blue,       // 12
-    vpColor::green,      // 9
-    vpColor::red,        // 6
-    vpColor::cyan,       // 15
-    vpColor::purple,     // 4
-    vpColor::yellow,     // 14
-    vpColor::orange,     // 16
-    vpColor::lightBlue,  // 11
-    vpColor::lightGreen, // 8
-    vpColor::lightRed,   // 5
-    vpColor::darkBlue,   // 13
-    vpColor::darkGreen,  // 10
-    vpColor::darkRed,    // 7
-    vpColor::lightGray,  // 2
-    vpColor::gray,       // 3
-    vpColor::darkGray,   // 4
-    vpColor::black,      // 0
-    vpColor::white};     // 17
+vpColor const vpColor::allColors[vpColor::nbColors] = {vpColor::blue,       // 12
+                                                       vpColor::green,      // 9
+                                                       vpColor::red,        // 6
+                                                       vpColor::cyan,       // 15
+                                                       vpColor::purple,     // 4
+                                                       vpColor::yellow,     // 14
+                                                       vpColor::orange,     // 16
+                                                       vpColor::lightBlue,  // 11
+                                                       vpColor::lightGreen, // 8
+                                                       vpColor::lightRed,   // 5
+                                                       vpColor::darkBlue,   // 13
+                                                       vpColor::darkGreen,  // 10
+                                                       vpColor::darkRed,    // 7
+                                                       vpColor::lightGray,  // 2
+                                                       vpColor::gray,       // 3
+                                                       vpColor::darkGray,   // 4
+                                                       vpColor::black,      // 0
+                                                       vpColor::white};     // 17
 #endif
 
-vpColor colors[6] = {vpColor::blue, vpColor::green,  vpColor::red,
-                     vpColor::cyan, vpColor::orange, vpColor::purple};
+vpColor colors[6] = {vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple};
 
 /*!
   Compare two colors.

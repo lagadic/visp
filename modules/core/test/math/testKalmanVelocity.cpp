@@ -101,8 +101,7 @@ int main()
     double dummy = 0; // non used parameter
     switch (measure_t) {
     case Velocity:
-      model = vpLinearKalmanFilterInstantiation::
-          stateConstVelWithColoredNoise_MeasureVel;
+      model = vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
       kalman.setStateModel(model);
       kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
       break;
@@ -116,8 +115,7 @@ int main()
     for (unsigned int iter = 0; iter <= niter; iter++) {
       std::cout << "-------- iter " << iter << " ------------" << std::endl;
       for (unsigned int signal = 0; signal < nsignal; signal++) {
-        measure[signal] =
-            3 + 2 * signal + 0.3 * sin(vpMath::rad(360. / niter * iter));
+        measure[signal] = 3 + 2 * signal + 0.3 * sin(vpMath::rad(360. / niter * iter));
       }
       std::cout << "measure : " << measure.t() << std::endl;
 

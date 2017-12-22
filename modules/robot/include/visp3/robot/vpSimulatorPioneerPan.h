@@ -81,11 +81,10 @@ int main()
   vpSimulatorPioneerPan robot;
 
   robot.getPosition(wMc); // Position of the camera in the world frame
-  std::cout << "Default position of the camera in the world frame wMc:\n" <<
-wMc << std::endl;
+  std::cout << "Default position of the camera in the world frame wMc:\n" << wMc << std::endl;
 
-  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1
-second robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
+  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
+  robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
   robot.setMaxRotationVelocity(vpMath::rad(90)); // wz max set to 90 deg/s
 
   vpColVector v(3); // we control vx, wz and q_pan
@@ -102,15 +101,13 @@ second robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
 tutorial-simu-robot-pioneer.
 
 */
-class VISP_EXPORT vpSimulatorPioneerPan : public vpPioneerPan,
-                                          public vpRobotSimulator
+class VISP_EXPORT vpSimulatorPioneerPan : public vpPioneerPan, public vpRobotSimulator
 {
 
 protected:
   //! robot / camera location in the world frame
   vpHomogeneousMatrix wMc_; // world to camera
-  vpHomogeneousMatrix
-      wMm_; // world to mobile robot frame located between the two weels
+  vpHomogeneousMatrix wMm_; // world to mobile robot frame located between the two weels
   // mMp_ mobile robot to pan frame is a protected member of vpPioneerPan
   // pMe_ pan head to end effector frame is a protected member of vpPioneerPan
   // cMe_ is a protected member of vpUnicycle
@@ -131,8 +128,7 @@ public:
 
   void getPosition(vpHomogeneousMatrix &wMc) const;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
   //@}
 
 private:
@@ -140,10 +136,8 @@ private:
 
   // Non implemented virtual pure functions
   void get_fJe(vpMatrix & /*_fJe */){};
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */,
-                       vpColVector & /* q */){};
-  void setPosition(const vpRobot::vpControlFrameType /* frame */,
-                   const vpColVector & /* q */){};
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */){};
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */){};
 };
 
 #endif

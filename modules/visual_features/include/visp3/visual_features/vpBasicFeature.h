@@ -109,19 +109,14 @@ public:
   /*! Return the dimension of the feature vector \f$\bf s\f$. */
   unsigned int dimension_s() { return dim_s; }
 
-  virtual void display(const vpCameraParameters &cam,
-                       const vpImage<unsigned char> &I,
-                       const vpColor &color = vpColor::green,
-                       unsigned int thickness = 1) const = 0;
-  virtual void display(const vpCameraParameters &cam,
-                       const vpImage<vpRGBa> &I,
-                       const vpColor &color = vpColor::green,
+  virtual void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                       const vpColor &color = vpColor::green, unsigned int thickness = 1) const = 0;
+  virtual void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                        unsigned int thickness = 1) const = 0;
 
   virtual void init() = 0;
 
-  virtual vpColVector error(const vpBasicFeature &s_star,
-                            const unsigned int select = FEATURE_ALL);
+  virtual vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
   // Get the feature vector.
   vpColVector get_s(unsigned int select = FEATURE_ALL) const;
@@ -132,10 +127,7 @@ public:
   //! Compute the interaction matrix from a subset of the possible features.
   virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
   //! Return element \e i in the state vector  (usage : x = s[i] )
-  virtual inline double operator[](const unsigned int i) const
-  {
-    return s[i];
-  }
+  virtual inline double operator[](const unsigned int i) const { return s[i]; }
   vpBasicFeature &operator=(const vpBasicFeature &f);
   //! Print the name of the feature.
   virtual void print(const unsigned int select = FEATURE_ALL) const = 0;

@@ -56,8 +56,7 @@ void fprintf_matrix(FILE *fp, Matrix m)
 
   fprintf(fp, "(matrix\n");
   for (i = 0; i < 4; i++)
-    fprintf(fp, "\t%.4f\t%.4f\t%.4f\t%.4f\n", m[i][0], m[i][1], m[i][2],
-            m[i][3]);
+    fprintf(fp, "\t%.4f\t%.4f\t%.4f\t%.4f\n", m[i][0], m[i][1], m[i][2], m[i][3]);
   fprintf(fp, ")\n");
 }
 
@@ -96,8 +95,7 @@ void premult_matrix(Matrix a, Matrix b)
 
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      m[i][j] = b[i][0] * a[0][j] + b[i][1] * a[1][j] + b[i][2] * a[2][j] +
-                b[i][3] * a[3][j];
+      m[i][j] = b[i][0] * a[0][j] + b[i][1] * a[1][j] + b[i][2] * a[2][j] + b[i][3] * a[3][j];
   // bcopy ((char *) m, (char *) a, sizeof (Matrix));
   memmove((char *)a, (char *)m, sizeof(Matrix));
 }
@@ -198,8 +196,7 @@ void postmult_matrix(Matrix a, Matrix b)
 
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++)
-      m[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j] +
-                a[i][3] * b[3][j];
+      m[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j] + a[i][3] * b[3][j];
   // bcopy ((char *) m, (char *) a, sizeof (Matrix));
   memmove((char *)a, (char *)m, sizeof(Matrix));
 }
@@ -486,8 +483,7 @@ void rotate_vector(Vector *vp, float a, Vector *axis)
   f = (float)sin((double)a);
   MUL_COORD3(cross, f, f, f); /* (n^v) * sin(a)	*/
 
-  SET_COORD3(*vp, u.x + v.x + cross.x, u.y + v.y + cross.y,
-             u.z + v.z + cross.z);
+  SET_COORD3(*vp, u.x + v.x + cross.x, u.y + v.y + cross.y, u.z + v.z + cross.z);
 }
 
 /*
@@ -571,15 +567,12 @@ void Matrix_to_Rotate(Matrix m, Vector *vp)
     sx = m[1][2] / cy;
     cx = m[2][2] / cy;
 
-    SET_COORD3(*vp, cosin_to_angle(cx, sx), cosin_to_angle(cy, sy),
-               cosin_to_angle(cz, sz));
+    SET_COORD3(*vp, cosin_to_angle(cx, sx), cosin_to_angle(cy, sy), cosin_to_angle(cz, sz));
   } else { /* RZ = 0 =>  Ry = +/- 90 degres	*/
     sx = m[1][1];
     cx = -m[2][1];
 
-    SET_COORD3(*vp, cosin_to_angle(cx, sx),
-               (sy > (float)0.0) ? (float)M_PI_2 : (float)(-M_PI_2),
-               (float)0.0);
+    SET_COORD3(*vp, cosin_to_angle(cx, sx), (sy > (float)0.0) ? (float)M_PI_2 : (float)(-M_PI_2), (float)0.0);
   }
   vp->x *= (float)180.0 / (float)M_PI; /* passage en degres	*/
   vp->y *= (float)180.0 / (float)M_PI;
@@ -625,11 +618,9 @@ void Position_to_Matrix(AritPosition *pp, Matrix m)
 void Rotate_to_Matrix(Vector *vp, Matrix m)
 {
   float rx = vp->x * (float)M_PI / (float)180.0, /* passage en radians	*/
-      ry = vp->y * (float)M_PI / (float)180.0,
-        rz = vp->z * (float)M_PI / (float)180.0;
-  float cx = (float)cos((double)rx), sx = (float)sin((double)rx),
-        cy = (float)cos((double)ry), sy = (float)sin((double)ry),
-        cz = (float)cos((double)rz), sz = (float)sin((double)rz);
+      ry = vp->y * (float)M_PI / (float)180.0, rz = vp->z * (float)M_PI / (float)180.0;
+  float cx = (float)cos((double)rx), sx = (float)sin((double)rx), cy = (float)cos((double)ry),
+        sy = (float)sin((double)ry), cz = (float)cos((double)rz), sz = (float)sin((double)rz);
 
   m[0][0] = cy * cz;
   m[1][0] = (sx * sy * cz) - (cx * sz);

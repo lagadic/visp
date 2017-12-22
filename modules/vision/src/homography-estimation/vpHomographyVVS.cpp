@@ -89,8 +89,7 @@ static void updatePoseRotation(vpColVector &dx, vpHomogeneousMatrix &mati)
   mati = Delta.inverse() * mati;
 }
 
-double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P,
-                                     vpPoint *c2P, vpHomogeneousMatrix &c2Mc1,
+double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpHomogeneousMatrix &c2Mc1,
                                      int userobust)
 {
   vpColVector e(2);
@@ -113,10 +112,8 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P,
   unsigned int n = 0;
   for (unsigned int i = 0; i < nbpoint; i++) {
     //    if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
-    if ((std::fabs(c2P[i].get_x() + 1) >
-         std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) &&
-        (std::fabs(c1P[i].get_x() + 1) >
-         std::fabs(vpMath::maximum(c1P[i].get_x(), 1.)))) {
+    if ((std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) &&
+        (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.)))) {
       n++;
     }
   }
@@ -146,10 +143,8 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P,
     int k = 0;
     for (unsigned int i = 0; i < nbpoint; i++) {
       // if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
-      if ((std::fabs(c2P[i].get_x() + 1) >
-           std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) &&
-          (std::fabs(c1P[i].get_x() + 1) >
-           std::fabs(vpMath::maximum(c1P[i].get_x(), 1.)))) {
+      if ((std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) &&
+          (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.)))) {
         p2[0] = c2P[i].get_x();
         p2[1] = c2P[i].get_y();
         p2[2] = 1.0;
@@ -270,15 +265,11 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P,
   return (W * e).sumSquare();
 }
 
-static void getPlaneInfo(vpPlane &oN, vpHomogeneousMatrix &cMo,
-                         vpColVector &cN, double &cd)
+static void getPlaneInfo(vpPlane &oN, vpHomogeneousMatrix &cMo, vpColVector &cN, double &cd)
 {
-  double A1 =
-      cMo[0][0] * oN.getA() + cMo[0][1] * oN.getB() + cMo[0][2] * oN.getC();
-  double B1 =
-      cMo[1][0] * oN.getA() + cMo[1][1] * oN.getB() + cMo[1][2] * oN.getC();
-  double C1 =
-      cMo[2][0] * oN.getA() + cMo[2][1] * oN.getB() + cMo[2][2] * oN.getC();
+  double A1 = cMo[0][0] * oN.getA() + cMo[0][1] * oN.getB() + cMo[0][2] * oN.getC();
+  double B1 = cMo[1][0] * oN.getA() + cMo[1][1] * oN.getB() + cMo[1][2] * oN.getC();
+  double C1 = cMo[2][0] * oN.getA() + cMo[2][1] * oN.getB() + cMo[2][2] * oN.getC();
   double D1 = oN.getD() - (cMo[0][3] * A1 + cMo[1][3] * B1 + cMo[2][3] * C1);
 
   cN.resize(3);
@@ -288,11 +279,8 @@ static void getPlaneInfo(vpPlane &oN, vpHomogeneousMatrix &cMo,
   cd = -D1;
 }
 
-double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P,
-                                         vpPoint *c2P, vpPlane &oN,
-                                         vpHomogeneousMatrix &c2Mc1,
-                                         vpHomogeneousMatrix &c1Mo,
-                                         int userobust)
+double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane &oN,
+                                         vpHomogeneousMatrix &c2Mc1, vpHomogeneousMatrix &c1Mo, int userobust)
 {
   vpColVector e(2);
   double r_1 = -1;
@@ -501,11 +489,8 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P,
   return (W * e).sumSquare();
 }
 
-double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P,
-                                         vpPoint *c2P, vpPlane *oN,
-                                         vpHomogeneousMatrix &c2Mc1,
-                                         vpHomogeneousMatrix &c1Mo,
-                                         int userobust)
+double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane *oN,
+                                         vpHomogeneousMatrix &c2Mc1, vpHomogeneousMatrix &c1Mo, int userobust)
 {
 
   vpColVector e(2);

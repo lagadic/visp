@@ -60,10 +60,7 @@ class VISP_EXPORT vpDirectShowDevice
 
 public:
   vpDirectShowDevice() : inUse(false) {}
-  explicit vpDirectShowDevice(const CComPtr<IMoniker> &moniker) : inUse(false)
-  {
-    init(moniker);
-  }
+  explicit vpDirectShowDevice(const CComPtr<IMoniker> &moniker) : inUse(false) { init(moniker); }
 
   bool init(const CComPtr<IMoniker> &moniker);
 
@@ -77,8 +74,7 @@ public:
 
   bool operator==(vpDirectShowDevice &dev);
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              vpDirectShowDevice &dev);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDirectShowDevice &dev);
 };
 #endif
 #endif

@@ -93,25 +93,19 @@ void vpProjectionDisplay::init(const int select)
 
 void vpProjectionDisplay::close() {}
 
-void vpProjectionDisplay::display(vpImage<unsigned char> &I,
-                                  const vpHomogeneousMatrix &cextMo,
-                                  const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam,
-                                  const vpColor &color,
-                                  const bool &displayTraj,
-                                  const unsigned int thickness)
+void vpProjectionDisplay::display(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo,
+                                  const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &color,
+                                  const bool &displayTraj, const unsigned int thickness)
 {
 
-  for (std::list<vpForwardProjection *>::const_iterator it = listFp.begin();
-       it != listFp.end(); ++it) {
+  for (std::list<vpForwardProjection *>::const_iterator it = listFp.begin(); it != listFp.end(); ++it) {
     vpForwardProjection *fp = *it;
     fp->display(I, cextMo, cam, color, thickness);
   }
 
   if (displayTraj) // display past camera positions
     for (unsigned int i = 0; i < traj.getRows(); ++i)
-      vpDisplay::displayCircle(I, (int)traj[i][0], (int)traj[i][1], 2,
-                               vpColor::green, true);
+      vpDisplay::displayCircle(I, (int)traj[i][0], (int)traj[i][1], 2, vpColor::green, true);
 
   displayCamera(I, cextMo, cMo, cam, thickness);
 
@@ -119,15 +113,12 @@ void vpProjectionDisplay::display(vpImage<unsigned char> &I,
   {
     const unsigned int n = traj.getRows();
     traj.resize(n + 1, 2, false);
-    vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], traj[n][1],
-                                         traj[n][0]);
+    vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], traj[n][1], traj[n][0]);
   }
 }
 
-void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
-                                        const vpHomogeneousMatrix &cextMo,
-                                        const vpHomogeneousMatrix &cMo,
-                                        const vpCameraParameters &cam,
+void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo,
+                                        const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                         const unsigned int thickness)
 {
   vpHomogeneousMatrix c1Mc;
@@ -148,16 +139,13 @@ void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
   vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
 
   vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ipx);
-  vpDisplay::displayArrow(I, ipo, ipx, vpColor::green, 4 + thickness,
-                          2 + thickness, thickness);
+  vpDisplay::displayArrow(I, ipo, ipx, vpColor::green, 4 + thickness, 2 + thickness, thickness);
 
   vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ipx);
-  vpDisplay::displayArrow(I, ipo, ipx, vpColor::blue, 4 + thickness,
-                          2 + thickness, thickness);
+  vpDisplay::displayArrow(I, ipo, ipx, vpColor::blue, 4 + thickness, 2 + thickness, thickness);
 
   vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ipx);
-  vpDisplay::displayArrow(I, ipo, ipx, vpColor::red, 4 + thickness,
-                          2 + thickness, thickness);
+  vpDisplay::displayArrow(I, ipo, ipx, vpColor::red, 4 + thickness, 2 + thickness, thickness);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

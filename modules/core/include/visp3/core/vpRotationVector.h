@@ -80,9 +80,12 @@ vpRxyzVector.
 int main()
 {
   vpRxyzVector r;         // By default initialized to zero
-  r[0] = vpMath::rad(45); // Rotation around x set to 45 degres converted in
-radians r[1] = M_PI;            // Rotation around y set to PI radians r[2] =
-0;               // Rotation around z set to 0 radians
+  // Rotation around x set to 45 degres converted in radians
+  r[0] = vpMath::rad(45);
+  // Rotation around y set to PI radians
+  r[1] = M_PI;
+  // Rotation around z set to 0 radians
+  r[2] = 0;
 
   std::cout << "Rxyz rotation vector: " << r << std::endl;
 
@@ -126,10 +129,7 @@ public:
     Operator that allows to get the value of an element of the rotation
     vector: value = r[i]
   */
-  inline const double &operator[](unsigned int i) const
-  {
-    return *(data + i);
-  }
+  inline const double &operator[](unsigned int i) const { return *(data + i); }
 
   /*!
     Affectation of two vectors.

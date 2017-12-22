@@ -60,8 +60,7 @@
 
   \return moment value
 */
-double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q,
-                                        const std::vector<vpPoint> &points)
+double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint> &points)
 {
   unsigned int i, k, l;
   double den, mom;
@@ -69,8 +68,7 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q,
   double y_l;
   double y_q_l;
 
-  den =
-      static_cast<double>((p + q + 2) * (p + q + 1) * vpMath::comb(p + q, p));
+  den = static_cast<double>((p + q + 2) * (p + q + 1) * vpMath::comb(p + q, p));
 
   mom = 0.0;
   for (i = 1; i <= points.size() - 1; i++) {
@@ -82,17 +80,15 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q,
       for (l = 0; l <= q; l++) {
         y_q_l = pow(points[i - 1].get_y(), (int)(q - l));
 
-        s += static_cast<double>(vpMath::comb(k + l, l) *
-                                 vpMath::comb(p + q - k - l, q - l) * x_k *
-                                 x_p_k * y_l * y_q_l);
+        s += static_cast<double>(vpMath::comb(k + l, l) * vpMath::comb(p + q - k - l, q - l) * x_k * x_p_k * y_l *
+                                 y_q_l);
 
         y_l *= points[i].get_y();
       }
       x_k *= points[i].get_x();
     }
 
-    s *= ((points[i - 1].get_x()) * (points[i].get_y()) -
-          (points[i].get_x()) * (points[i - 1].get_y()));
+    s *= ((points[i - 1].get_x()) * (points[i].get_y()) - (points[i].get_x()) * (points[i - 1].get_y()));
     mom += s;
   }
   mom /= den;
@@ -103,13 +99,16 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q,
   Caching to avoid redundant multiplications.
 
   \param cache : Lookup table that contains the order by order values. For
-  example, if the order is 3, cache will contain: \code 1   x     x^2 y   x*y
-  x^2*y y^2 x*y^2 x^2*y^2 \endcode
+  example, if the order is 3, cache will contain:
+\code
+  1   x     x^2
+  y   x*y   x^2*y
+  y^2 x*y^2 x^2*y^2
+\endcode
 
   \param x, y : Coordinates of a point.
 */
-void vpMomentObject::cacheValues(std::vector<double> &cache, double x,
-                                 double y)
+void vpMomentObject::cacheValues(std::vector<double> &cache, double x, double y)
 {
   cache[0] = 1;
 
@@ -130,15 +129,13 @@ void vpMomentObject::cacheValues(std::vector<double> &cache, double x,
  * Manikandan.B
  * Need to cache intensity along with the coordinates for photometric moments
  */
-void vpMomentObject::cacheValues(std::vector<double> &cache, double x,
-                                 double y, double IntensityNormalized)
+void vpMomentObject::cacheValues(std::vector<double> &cache, double x, double y, double IntensityNormalized)
 {
 
   cache[0] = IntensityNormalized;
 
   double invIntensityNormalized = 0.;
-  if (std::fabs(IntensityNormalized) >=
-      std::numeric_limits<double>::epsilon())
+  if (std::fabs(IntensityNormalized) >= std::numeric_limits<double>::epsilon())
     invIntensityNormalized = 1.0 / IntensityNormalized;
 
   for (unsigned int i = 1; i < order; i++)
@@ -149,8 +146,7 @@ void vpMomentObject::cacheValues(std::vector<double> &cache, double x,
 
   for (unsigned int j = 1; j < order; j++) {
     for (unsigned int i = 1; i < order - j; i++) {
-      cache[j * order + i] =
-          cache[j * order] * cache[i] * invIntensityNormalized;
+      cache[j * order + i] = cache[j * order] * cache[i] * invIntensityNormalized;
     }
   }
 }
@@ -178,25 +174,26 @@ int main()
 {
   // Define the contour of an object by a 5 clockwise vertices on a plane
   vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains the vertices of the
-contour polygon
+  std::vector<vpPoint> vec_p; // vector that contains the vertices of the contour polygon
 
-  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane
-(vertex 1) vec_p.push_back(p); p.set_x(+0.3); p.set_y(0.1); // coordinates in
-meters in the image plane (vertex 2) vec_p.push_back(p); p.set_x(+0.2);
-p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
+  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (vertex 1)
   vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane
-(vertex 4) vec_p.push_back(p); p.set_x(-0.2); p.set_y(0.1); // close the
-contour (vertex 5 = vertex 1) vec_p.push_back(p);
+  p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
+  p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
+  vec_p.push_back(p);
+  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (vertex 4)
+  vec_p.push_back(p);
+  p.set_x(-0.2); p.set_y(0.1); // close the contour (vertex 5 = vertex 1)
+  vec_p.push_back(p);
 
-  vpMomentObject obj(4); // Create an image moment object with 4 as maximum
-order obj.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by
-a countour polygon obj.fromVector(vec_p); // Init the dense object with the
-polygon
+  vpMomentObject obj(4); // Create an image moment object with 4 as maximum order
+  obj.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a countour polygon
+  obj.fromVector(vec_p); // Init the dense object with the polygon
 
   return 0;
 }
+
   \endcode
 
   This other example shows how to consider an object as a discrete set of four
@@ -212,30 +209,29 @@ int main()
   vpPoint p;
   std::vector<vpPoint> vec_p; // vector that contains the 4 points
 
-  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane
-(point 1) vec_p.push_back(p); p.set_x(+0.3); p.set_y(0.1); // coordinates in
-meters in the image plane (point 2) vec_p.push_back(p); p.set_x(+0.2);
-p.set_y(-0.1); // coordinates in meters in the image plane (point 3)
+  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (point 1)
   vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane
-(point 4) vec_p.push_back(p);
+  p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (point 2)
+  vec_p.push_back(p);
+  p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (point 3)
+  vec_p.push_back(p);
+  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (point 4)
+  vec_p.push_back(p);
 
-  vpMomentObject obj(4); // Create an image moment object with 4 as maximum
-order obj.setType(vpMomentObject::DISCRETE); // The object is constituted by
-discrete points obj.fromVector(vec_p); // Init the dense object with the
-points
+  vpMomentObject obj(4); // Create an image moment object with 4 as maximum order
+  obj.setType(vpMomentObject::DISCRETE); // The object is constituted by discrete points
+  obj.fromVector(vec_p); // Init the dense object with the points
 
   return 0;
 }
+
   \endcode
 */
 void vpMomentObject::fromVector(std::vector<vpPoint> &points)
 {
   if (type == vpMomentObject::DENSE_POLYGON) {
-    if (std::fabs(points.rbegin()->get_x() - points.begin()->get_x()) >
-            std::numeric_limits<double>::epsilon() ||
-        std::fabs(points.rbegin()->get_y() - points.begin()->get_y()) >
-            std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(points.rbegin()->get_x() - points.begin()->get_x()) > std::numeric_limits<double>::epsilon() ||
+        std::fabs(points.rbegin()->get_y() - points.begin()->get_y()) > std::numeric_limits<double>::epsilon()) {
       points.resize(points.size() + 1);
       points[points.size() - 1] = points[0];
     }
@@ -290,8 +286,7 @@ image
   \endcode
 */
 
-void vpMomentObject::fromImage(const vpImage<unsigned char> &image,
-                               unsigned char threshold,
+void vpMomentObject::fromImage(const vpImage<unsigned char> &image, unsigned char threshold,
                                const vpCameraParameters &cam)
 {
 #ifdef VISP_HAVE_OPENMP
@@ -358,8 +353,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image,
 
   // Normalisation equivalent to sampling interval/pixel size delX x delY
   double norm_factor = 1. / (cam.get_px() * cam.get_py());
-  for (std::vector<double>::iterator it = values.begin(); it != values.end();
-       ++it) {
+  for (std::vector<double>::iterator it = values.begin(); it != values.end(); ++it) {
     *it = (*it) * norm_factor;
   }
 }
@@ -376,10 +370,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image,
  * calculation are normalized w.r.t  pixel size available from camera
  * parameters
  */
-void vpMomentObject::fromImage(const vpImage<unsigned char> &image,
-                               const vpCameraParameters &cam,
-                               vpCameraImgBckGrndType bg_type,
-                               bool normalize_with_pix_size)
+void vpMomentObject::fromImage(const vpImage<unsigned char> &image, const vpCameraParameters &cam,
+                               vpCameraImgBckGrndType bg_type, bool normalize_with_pix_size)
 {
   std::vector<double> cache(order * order, 0.);
   values.assign(order * order, 0);
@@ -398,8 +390,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image,
   double iscale = 1.0;
   if (flg_normalize_intensity) { // This makes the image a probability density
                                  // function
-    double Imax =
-        255.; // To check the effect of gray level change. ISR Coimbra
+    double Imax = 255.;          // To check the effect of gray level change. ISR Coimbra
     iscale = 1.0 / Imax;
   }
 
@@ -437,9 +428,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image,
         vpPixelMeterConversion::convertPoint(cam, i, j, x, y);
 
         // Cache values for fast moment calculation
-        cacheValues(
-            cache, x, y,
-            intensity); // Modify 'cache' which has x^p*y^q to x^p*y^q*I(x,y)
+        cacheValues(cache, x, y,
+                    intensity); // Modify 'cache' which has x^p*y^q to x^p*y^q*I(x,y)
 
         // Copy to moments array 'values'
         for (unsigned int k = 0; k < order; k++) {
@@ -456,8 +446,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image,
   if (normalize_with_pix_size) {
     // Normalisation equivalent to sampling interval/pixel size delX x delY
     double norm_factor = 1. / (cam.get_px() * cam.get_py());
-    for (std::vector<double>::iterator it = values.begin();
-         it != values.end(); ++it) {
+    for (std::vector<double>::iterator it = values.begin(); it != values.end(); ++it) {
       *it = (*it) * norm_factor;
     }
   }
@@ -471,8 +460,7 @@ void vpMomentObject::init(unsigned int orderinp)
 {
   order = orderinp + 1;
   type = vpMomentObject::DENSE_FULL_OBJECT;
-  flg_normalize_intensity =
-      true; // By default, the intensity values are normalized
+  flg_normalize_intensity = true; // By default, the intensity values are normalized
   values.resize((order + 1) * (order + 1));
   values.assign((order + 1) * (order + 1), 0);
 }
@@ -505,8 +493,7 @@ void vpMomentObject::init(const vpMomentObject &objin)
   Mani : outsourced the constructor work to void init (unsigned int orderinp);
 */
 vpMomentObject::vpMomentObject(unsigned int max_order)
-  : flg_normalize_intensity(true), order(max_order + 1),
-    type(vpMomentObject::DENSE_FULL_OBJECT), values()
+  : flg_normalize_intensity(true), order(max_order + 1), type(vpMomentObject::DENSE_FULL_OBJECT), values()
 {
   init(max_order);
 }
@@ -515,8 +502,7 @@ vpMomentObject::vpMomentObject(unsigned int max_order)
   Copy constructor
  */
 vpMomentObject::vpMomentObject(const vpMomentObject &srcobj)
-  : flg_normalize_intensity(true), order(1),
-    type(vpMomentObject::DENSE_FULL_OBJECT), values()
+  : flg_normalize_intensity(true), order(1), type(vpMomentObject::DENSE_FULL_OBJECT), values()
 {
   init(srcobj);
 }
@@ -534,7 +520,9 @@ m00 m10 m20 m01 m11 m21 m02 m12 m12 m30 m03
   \endcode
 
   To access for example to the basic moment m12, you should use this kind of
-code: \code vpMomentObject obj(3);
+code:
+\code
+vpMomentObject obj(3);
 // ... initialise the object using fromVector() or fromImage()
 std::vector mij = obj.get();
 double m12;
@@ -566,14 +554,12 @@ double vpMomentObject::get(unsigned int i, unsigned int j) const
   \param j : Second moment index, with \f$i+j \leq order\f$.
   \param value_ij : Moment value.
 */
-void vpMomentObject::set(unsigned int i, unsigned int j,
-                         const double &value_ij)
+void vpMomentObject::set(unsigned int i, unsigned int j, const double &value_ij)
 {
   assert(i + j <= getOrder());
   if (i + j >= order)
-    throw vpException(vpException::badValue,
-                      "The requested value cannot be set, you should specify "
-                      "a higher order for the moment object.");
+    throw vpException(vpException::badValue, "The requested value cannot be set, you should specify "
+                                             "a higher order for the moment object.");
   values[j * order + i] = value_ij;
 }
 
@@ -593,8 +579,7 @@ void vpMomentObject::set(unsigned int i, unsigned int j,
   \endcode
 
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpMomentObject &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &m)
 {
   for (unsigned int i = 0; i < m.values.size(); i++) {
 
@@ -617,17 +602,14 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os,
   The moment values are same as provided by the operator << which outputs x
   for uncalculated moments.
  */
-void vpMomentObject::printWithIndices(const vpMomentObject &momobj,
-                                      std::ostream &os)
+void vpMomentObject::printWithIndices(const vpMomentObject &momobj, std::ostream &os)
 {
   std::vector<double> moment = momobj.get();
-  os << std::endl
-     << "Order of vpMomentObject: " << momobj.getOrder() << std::endl;
+  os << std::endl << "Order of vpMomentObject: " << momobj.getOrder() << std::endl;
   // Print out values. This is same as printing using operator <<
   for (unsigned int k = 0; k <= momobj.getOrder(); k++) {
     for (unsigned int l = 0; l < (momobj.getOrder() + 1) - k; l++) {
-      os << "m[" << l << "," << k
-         << "] = " << moment[k * (momobj.getOrder() + 1) + l] << "\t";
+      os << "m[" << l << "," << k << "] = " << moment[k * (momobj.getOrder() + 1) + l] << "\t";
     }
     os << std::endl;
   }
@@ -639,13 +621,14 @@ void vpMomentObject::printWithIndices(const vpMomentObject &momobj,
 \code
  vpMomentObject obj(8);
  obj.setType(vpMomentObject::DENSE_FULL_OBJECT);
- obj.fromImageWeighted(I, cam, vpMomentObject::BLACK); // cam should have the
-camera parameters vpMatrix Mpq = vpMomentObject::convertTovpMatrix(obj);
+ obj.fromImageWeighted(I, cam, vpMomentObject::BLACK); // cam should have the camera parameters
+ vpMatrix Mpq = vpMomentObject::convertTovpMatrix(obj);
 \endcode
  Instead of accessing the moment m21 as obj.get(2,1), you can now do
 Mpq[2][1]. This is useful when you want to use the functions available in
 vpMatrix. One use case i see now is to copy the contents of the matrix to a
-file or std::cout. For instance, like \code
+file or std::cout. For instance, like
+\code
  // Print to console
  Mpq.maplePrint(std::cout);
  // Or write to a file
@@ -677,8 +660,9 @@ vpMatrix vpMomentObject::convertTovpMatrix(const vpMomentObject &momobj)
   Nothing to destruct. This will allow for a polymorphic usage
   For instance,
   \code
-  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER); where
-  vpWeightedMomentObject is child class of vpMomentObject \endcode
+  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER);
+  \endcode
+  where vpWeightedMomentObject is child class of vpMomentObject
  */
 vpMomentObject::~vpMomentObject()
 {

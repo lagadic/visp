@@ -137,22 +137,10 @@ public:
   bool getDepthMap(vpImage<float> &map, vpImage<unsigned char> &Imap);
   bool getRGB(vpImage<vpRGBa> &IRGB);
 
-  inline void getIRCamParameters(vpCameraParameters &cam) const
-  {
-    cam = IRcam;
-  }
-  inline void getRGBCamParameters(vpCameraParameters &cam) const
-  {
-    cam = RGBcam;
-  }
-  inline void setIRCamParameters(const vpCameraParameters &cam)
-  {
-    IRcam = cam;
-  }
-  inline void setRGBCamParameters(const vpCameraParameters &cam)
-  {
-    RGBcam = cam;
-  }
+  inline void getIRCamParameters(vpCameraParameters &cam) const { cam = IRcam; }
+  inline void getRGBCamParameters(vpCameraParameters &cam) const { cam = RGBcam; }
+  inline void setIRCamParameters(const vpCameraParameters &cam) { IRcam = cam; }
+  inline void setRGBCamParameters(const vpCameraParameters &cam) { RGBcam = cam; }
 
   void warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &Idepth,
                     vpImage<vpRGBa> &IrgbWarped); // warp the RGB image into
@@ -171,10 +159,10 @@ private:
   vpMutex m_depth_mutex;
 
   vpCameraParameters RGBcam, IRcam; // intrinsic parameters of the two cameras
-  vpHomogeneousMatrix rgbMir; // Transformation from IRcam coordinate frame to
-                              // RGBcam coordinate frame.
-  vpHomogeneousMatrix irMrgb; // Transformation from RGBcam coordinate frame
-                              // to IRcam coordinate frame .
+  vpHomogeneousMatrix rgbMir;       // Transformation from IRcam coordinate frame to
+                                    // RGBcam coordinate frame.
+  vpHomogeneousMatrix irMrgb;       // Transformation from RGBcam coordinate frame
+                                    // to IRcam coordinate frame .
   vpDMResolution DMres;
   unsigned int hd; // height of the depth map
   unsigned int wd; // width of the depth map

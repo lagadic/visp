@@ -110,8 +110,7 @@ bool vpDirectShowDevice::operator==(vpDirectShowDevice &dev)
   return name == dev.name && desc == dev.desc && devPath == dev.devPath;
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     vpDirectShowDevice &dev)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDirectShowDevice &dev)
 {
   return os << dev.name << std::endl << dev.desc << std::endl << dev.devPath;
 }

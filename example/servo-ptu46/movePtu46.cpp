@@ -52,8 +52,7 @@
 */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <unistd.h>
 #endif
 
@@ -127,8 +126,7 @@ int main()
 #else
 int main()
 {
-  vpERROR_TRACE(
-      "You do not have a ptu-46 robot connected to your computer...");
+  vpERROR_TRACE("You do not have a ptu-46 robot connected to your computer...");
   return 0;
 }
 

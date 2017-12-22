@@ -64,13 +64,10 @@
 // List of allowed command line options
 #define GETOPTARGS "b:de:f:i:hn:s:z:"
 
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string basename, std::string ext, int first,
+void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, int first,
            unsigned int nimages, int step, unsigned int nzero);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &basename, std::string &ext, int &first,
-                unsigned int &nimages, int &step, unsigned int &nzero,
-                bool &display);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, int &first,
+                unsigned int &nimages, int &step, unsigned int &nzero, bool &display);
 
 /*
 
@@ -87,8 +84,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   \param nzero : Number of zero for the image number coding.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string basename, std::string ext, int first,
+void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, int first,
            unsigned int nimages, int step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
@@ -140,8 +136,7 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h \n\
-     Print the help.\n\n", ipath.c_str(), basename.c_str(), ext.c_str(), first,
-          nimages, step, nzero);
+     Print the help.\n\n", ipath.c_str(), basename.c_str(), ext.c_str(), first, nimages, step, nzero);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -164,10 +159,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &basename, std::string &ext, int &first,
-                unsigned int &nimages, int &step, unsigned int &nzero,
-                bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, int &first,
+                unsigned int &nimages, int &step, unsigned int &nzero, bool &display)
 {
   const char *optarg_;
   int c;
@@ -204,8 +197,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, basename, ext, first, nimages, step,
-            nzero);
+      usage(argv[0], optarg_, ipath, basename, ext, first, nimages, step, nzero);
       return false;
       break;
     }
@@ -255,8 +247,8 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_first,
-                   opt_nimages, opt_step, opt_nzero, opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_first, opt_nimages, opt_step, opt_nzero,
+                   opt_display) == false) {
       exit(-1);
     }
 
@@ -270,24 +262,19 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first,
-            opt_nimages, opt_step, opt_nzero);
+      usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first, opt_nimages, opt_step, opt_nzero);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -317,8 +304,7 @@ int main(int argc, const char **argv)
     // Open the framegrabber by loading the first image of the sequence
     g.open(I);
 
-    std::cout << "Image size: width : " << I.getWidth()
-              << " height: " << I.getHeight() << std::endl;
+    std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
 // We open a window using either X11 or GDI.
 // Its size is automatically defined by the image (I) size
@@ -367,9 +353,6 @@ int main(int argc, const char **argv)
 }
 
 #else
-int main()
-{
-  vpERROR_TRACE("You do not have X11 or GTK display functionalities...");
-}
+int main() { vpERROR_TRACE("You do not have X11 or GTK display functionalities..."); }
 
 #endif

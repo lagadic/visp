@@ -72,8 +72,8 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string &ipath,
-           const std::string &opath, const std::string &user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user)
 {
   fprintf(stdout, "\n\
 Read an image from the disk, undistort it \n\
@@ -120,8 +120,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
  */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, const std::string &user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user)
 {
   const char *optarg_;
   int c;
@@ -181,8 +180,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
 // Set the default output path
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
     opt_opath = "C:\\temp";
@@ -214,8 +212,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option "
-                  << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
         exit(-1);
       }
     }
@@ -226,8 +223,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -236,13 +232,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -280,16 +273,13 @@ int main(int argc, const char **argv)
 
     double endtime = vpTime::measureTimeMs();
 
-    std::cout << "Time for 100 undistortion (ms): " << endtime - begintime
-              << std::endl;
+    std::cout << "Time for 100 undistortion (ms): " << endtime - begintime << std::endl;
 
 // Write the undistorted image on the disk
 #if defined BW
-    filename = vpIoTools::path(
-        vpIoTools::createFilePath(opath, "Klimt_undistorted.pgm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "Klimt_undistorted.pgm"));
 #elif defined COLOR
-    filename = vpIoTools::path(
-        vpIoTools::createFilePath(opath, "Klimt_undistorted.ppm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "Klimt_undistorted.ppm"));
 #endif
     std::cout << "Write undistorted image: " << filename << std::endl;
     vpImageIo::write(U, filename);

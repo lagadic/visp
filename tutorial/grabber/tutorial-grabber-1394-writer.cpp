@@ -13,17 +13,15 @@ int main(int argc, char **)
       save = true;
     }
 
-    vpImage<unsigned char> I; // Create a gray level image container
-    bool reset = true; // Enable bus reset during construction (default)
-    vp1394TwoGrabber g(
-        reset); // Create a grabber based on libdc1394-2.x third party lib
+    vpImage<unsigned char> I;  // Create a gray level image container
+    bool reset = true;         // Enable bus reset during construction (default)
+    vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
 
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
     g.open(I);
 
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);

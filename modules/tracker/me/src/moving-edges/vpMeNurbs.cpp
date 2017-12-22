@@ -66,10 +66,8 @@
 #endif
 
 double computeDelta(double deltai, double deltaj);
-void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-               vpMe *me, double &angle, double &convlt);
-vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub,
-                             const vpImagePoint &iP);
+void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me, double &angle, double &convlt);
+vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePoint &iP);
 bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list);
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list);
@@ -95,16 +93,15 @@ double computeDelta(double deltai, double deltaj)
 // its edge to enable the computation of a convolution whith a mask.
 static bool outOfImage(const vpImagePoint &iP, int half, int rows, int cols)
 {
-  return ((iP.get_i() < half + 1) || (iP.get_i() > (rows - half - 3)) ||
-          (iP.get_j() < half + 1) || (iP.get_j() > (cols - half - 3)));
+  return ((iP.get_i() < half + 1) || (iP.get_i() > (rows - half - 3)) || (iP.get_j() < half + 1) ||
+          (iP.get_j() > (cols - half - 3)));
 }
 
 // if iP is a edge point, it computes the angle corresponding to the
 // highest convolution result. the angle is between 0 an 179.
 // The result gives the angle in RADIAN + pi/2 (to deal with the moving edeg
 // alpha angle)  and the corresponding convolution result.
-void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-               vpMe *me, double &angle, double &convlt)
+void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me, double &angle, double &convlt)
 {
   int Iheight = (int)I.getHeight();
   int Iwidth = (int)I.getWidth();
@@ -157,19 +154,16 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
 //- the distantce between the point and iP is less than 4 pixels.
 // The function returns the nearest point of iP which respect the hypotheses
 // If no point is found the returned point is (-1,-1)
-vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub,
-                             const vpImagePoint &iP)
+vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePoint &iP)
 {
   double dist = 1e6;
   double dist_1 = 1e6;
   vpImagePoint index(-1, -1);
   for (unsigned int i = 0; i <= Isub.getHeight(); i++) {
     for (unsigned int j = 0; j <= Isub.getWidth(); j++) {
-      if (i == 0 || i == Isub.getHeight() - 1 || j == 0 ||
-          j == Isub.getWidth() - 1) {
+      if (i == 0 || i == Isub.getHeight() - 1 || j == 0 || j == Isub.getWidth() - 1) {
         if (Isub(i, j) > 0) {
-          dist =
-              vpImagePoint::sqrDistance(vpImagePoint(iP), vpImagePoint(i, j));
+          dist = vpImagePoint::sqrDistance(vpImagePoint(iP), vpImagePoint(i, j));
           if (dist <= 16 && dist < dist_1) {
             dist_1 = dist;
             index.set_ij(i, j);
@@ -203,8 +197,7 @@ vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
 // pixels  from the center of the sub image (ie the point (15,15).
 bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list)
 {
-  for (std::list<vpImagePoint>::const_iterator it = ip_edges_list->begin();
-       it != ip_edges_list->end(); ++it) {
+  for (std::list<vpImagePoint>::const_iterator it = ip_edges_list->begin(); it != ip_edges_list->end(); ++it) {
     vpImagePoint iP = *it;
     double dist = vpImagePoint::sqrDistance(iP, vpImagePoint(15, 15));
     if (dist <= 16) {
@@ -220,8 +213,8 @@ bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list)
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
 vpMeNurbs::vpMeNurbs()
-  : nurbs(), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0),
-    enableCannyDetection(false), cannyTh1(100.), cannyTh2(200.)
+  : nurbs(), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0), enableCannyDetection(false), cannyTh1(100.),
+    cannyTh2(200.)
 {
 }
 
@@ -229,9 +222,8 @@ vpMeNurbs::vpMeNurbs()
   Copy constructor.
 */
 vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
-  : vpMeTracker(menurbs), nurbs(menurbs.nurbs), dist(0.), nbControlPoints(20),
-    beginPtFound(0), endPtFound(0), enableCannyDetection(false),
-    cannyTh1(100.), cannyTh2(200.)
+  : vpMeTracker(menurbs), nurbs(menurbs.nurbs), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0),
+    enableCannyDetection(false), cannyTh1(100.), cannyTh2(200.)
 {
   dist = menurbs.dist;
   nbControlPoints = menurbs.nbControlPoints;
@@ -272,8 +264,7 @@ void vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
   if (ptList.size() > 3)
     initTracking(I, ptList);
   else
-    throw(vpException(vpException::notInitialized,
-                      "Not enough points to initialize the Nurbs"));
+    throw(vpException(vpException::notInitialized, "Not enough points to initialize the Nurbs"));
 }
 
 /*!
@@ -283,8 +274,7 @@ void vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
   \param I : Image in which the edge appears.
   \param ptList  : List of point to initialize the Nurbs.
 */
-void vpMeNurbs::initTracking(const vpImage<unsigned char> &I,
-                             const std::list<vpImagePoint> &ptList)
+void vpMeNurbs::initTracking(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ptList)
 {
   nurbs.globalCurveInterp(ptList);
 
@@ -321,8 +311,7 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I)
 
     // If point is in the image, add to the sample list
     if (!outOfImage(pt[0], 0, rows, cols) &&
-        vpImagePoint::sqrDistance(pt[0], pt_1) >=
-            vpMath::sqr(me->getSampleStep())) {
+        vpImagePoint::sqrDistance(pt[0], pt_1) >= vpMath::sqr(me->getSampleStep())) {
       vpMeSite pix; //= list.value();
       pix.init(pt[0].get_i(), pt[0].get_j(), delta);
       pix.setDisplay(selectDisplay);
@@ -418,13 +407,11 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   double threshold = 3 * me->getSampleStep();
   double sample_step = me->getSampleStep();
   vpImagePoint pt;
-  if (d >
-      threshold /*|| (list.firstValue()).mask_sign != (list.lastValue()).mask_sign*/) {
+  if (d > threshold /*|| (list.firstValue()).mask_sign != (list.lastValue()).mask_sign*/) {
     vpMeSite P;
 
     // Init vpMeSite
-    P.init(begin[0].get_i(), begin[0].get_j(), (list.front()).alpha, 0,
-           (list.front()).mask_sign);
+    P.init(begin[0].get_i(), begin[0].get_j(), (list.front()).alpha, 0, (list.front()).mask_sign);
     P.setDisplay(selectDisplay);
 
     // Set the range
@@ -468,8 +455,7 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     if (!beginPtAdded)
       beginPtFound++;
 
-    P.init(end[0].get_i(), end[0].get_j(), (list.back()).alpha, 0,
-           (list.back()).mask_sign);
+    P.init(end[0].get_i(), end[0].get_j(), (list.back()).alpha, 0, (list.back()).mask_sign);
     P.setDisplay(selectDisplay);
 
     bool endPtAdded = false;
@@ -565,8 +551,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     IplImage *Ip = NULL;
     vpImageConvert::convert(Isub, Ip);
 
-    IplImage *dst = cvCreateImage(
-        cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1);
+    IplImage *dst = cvCreateImage(cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1);
     cvCanny(Ip, dst, cannyTh1, cannyTh2, 3);
 
     vpImageConvert::convert(dst, Isub);
@@ -587,17 +572,13 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       if (std::fabs(fi) <= std::numeric_limits<double>::epsilon())
         dir = 4;
       // else if (firstBorder.get_i() == Isub.getHeight()-1) dir = 0;
-      else if (std::fabs(fi - h) <=
-               std::fabs(vpMath::maximum(fi, h)) *
-                   std::numeric_limits<double>::epsilon())
+      else if (std::fabs(fi - h) <= std::fabs(vpMath::maximum(fi, h)) * std::numeric_limits<double>::epsilon())
         dir = 0;
       // else if (firstBorder.get_j() == 0) dir = 2;
       else if (std::fabs(fj) <= std::numeric_limits<double>::epsilon())
         dir = 2;
       // else if (firstBorder.get_j() == Isub.getWidth()-1) dir = 6;
-      else if (std::fabs(fj - w) <=
-               std::fabs(vpMath::maximum(fj, w)) *
-                   std::numeric_limits<double>::epsilon())
+      else if (std::fabs(fj - w) <= std::fabs(vpMath::maximum(fj, w)) * std::numeric_limits<double>::epsilon())
         dir = 6;
       computeFreemanChainElement(Isub, firstBorder, dir);
       unsigned int firstDir = dir;
@@ -612,8 +593,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         ip_edges_list.push_back(border);
 
         computeFreemanChainElement(Isub, border, dir);
-      } while ((border != firstBorder || dir != firstDir) &&
-               isInImage(Isub, border));
+      } while ((border != firstBorder || dir != firstDir) && isInImage(Isub, border));
     }
 
     if (findCenterPoint(&ip_edges_list)) {
@@ -632,9 +612,8 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       double delta = 0;
       int nbr = 0;
       std::list<vpMeSite> addedPt;
-      for (std::list<vpImagePoint>::const_iterator itEdges =
-               ip_edges_list.begin();
-           itEdges != ip_edges_list.end(); ++itEdges) {
+      for (std::list<vpImagePoint>::const_iterator itEdges = ip_edges_list.begin(); itEdges != ip_edges_list.end();
+           ++itEdges) {
         vpMeSite s = *itList;
         vpImagePoint iPtemp = *itEdges + topLeft;
         vpMeSite pix;
@@ -642,8 +621,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         dist = vpMeSite::sqrDistance(s, pix);
         if (dist >= vpMath::sqr(me->getSampleStep()) /*25*/) {
           bool exist = false;
-          for (std::list<vpMeSite>::const_iterator itAdd = addedPt.begin();
-               itAdd != addedPt.end(); ++itAdd) {
+          for (std::list<vpMeSite>::const_iterator itAdd = addedPt.begin(); itAdd != addedPt.end(); ++itAdd) {
             dist = vpMeSite::sqrDistance(pix, *itAdd);
             if (dist < vpMath::sqr(me->getSampleStep()) /*25*/)
               exist = true;
@@ -709,8 +687,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     IplImage *Ip = NULL;
     vpImageConvert::convert(Isub, Ip);
 
-    IplImage *dst = cvCreateImage(
-        cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1);
+    IplImage *dst = cvCreateImage(cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1);
     cvCanny(Ip, dst, cannyTh1, cannyTh2, 3);
 
     vpImageConvert::convert(dst, Isub);
@@ -731,17 +708,13 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       if (std::fabs(fi) <= std::numeric_limits<double>::epsilon())
         dir = 4;
       // else if (firstBorder.get_i() == Isub.getHeight()-1) dir = 0;
-      else if (std::fabs(fi - h) <=
-               std::fabs(vpMath::maximum(fi, h)) *
-                   std::numeric_limits<double>::epsilon())
+      else if (std::fabs(fi - h) <= std::fabs(vpMath::maximum(fi, h)) * std::numeric_limits<double>::epsilon())
         dir = 0;
       // else if (firstBorder.get_j() == 0) dir = 2;
       else if (std::fabs(fj) <= std::numeric_limits<double>::epsilon())
         dir = 2;
       // else if (firstBorder.get_j() == Isub.getWidth()-1) dir = 6;
-      else if (std::fabs(fj - w) <=
-               std::fabs(vpMath::maximum(fj, w)) *
-                   std::numeric_limits<double>::epsilon())
+      else if (std::fabs(fj - w) <= std::fabs(vpMath::maximum(fj, w)) * std::numeric_limits<double>::epsilon())
         dir = 6;
 
       computeFreemanChainElement(Isub, firstBorder, dir);
@@ -757,8 +730,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         ip_edges_list.push_back(border);
 
         computeFreemanChainElement(Isub, border, dir);
-      } while ((border != firstBorder || dir != firstDir) &&
-               isInImage(Isub, border));
+      } while ((border != firstBorder || dir != firstDir) && isInImage(Isub, border));
     }
 
     if (findCenterPoint(&ip_edges_list)) {
@@ -781,9 +753,8 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       double delta;
       int nbr = 0;
       std::list<vpMeSite> addedPt;
-      for (std::list<vpImagePoint>::const_iterator itEdges =
-               ip_edges_list.begin();
-           itEdges != ip_edges_list.end(); ++itEdges) {
+      for (std::list<vpImagePoint>::const_iterator itEdges = ip_edges_list.begin(); itEdges != ip_edges_list.end();
+           ++itEdges) {
         s = *itList;
         vpImagePoint iPtemp = *itEdges + topLeft;
         vpMeSite pix;
@@ -791,8 +762,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         dist = vpMeSite::sqrDistance(s, pix);
         if (dist >= vpMath::sqr(me->getSampleStep())) {
           bool exist = false;
-          for (std::list<vpMeSite>::const_iterator itAdd = addedPt.begin();
-               itAdd != addedPt.end(); ++itAdd) {
+          for (std::list<vpMeSite>::const_iterator itAdd = addedPt.begin(); itAdd != addedPt.end(); ++itAdd) {
             dist = vpMeSite::sqrDistance(pix, *itAdd);
             if (dist < vpMath::sqr(me->getSampleStep()))
               exist = true;
@@ -890,10 +860,8 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
       double dmin2_1 = 1e6;
       while (u < 1) {
         u += 0.01;
-        double dmin1 =
-            vpImagePoint::sqrDistance(nurbs.computeCurvePoint(u), iP0);
-        double dmin2 =
-            vpImagePoint::sqrDistance(nurbs.computeCurvePoint(u), iPend);
+        double dmin1 = vpImagePoint::sqrDistance(nurbs.computeCurvePoint(u), iP0);
+        double dmin2 = vpImagePoint::sqrDistance(nurbs.computeCurvePoint(u), iPend);
 
         if (dmin1 < dmin1_1) {
           dmin1_1 = dmin1;
@@ -908,24 +876,18 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
       u = ubegin;
 
       // if(( u != 1.0 || uend != 1.0)
-      if ((std::fabs(u - 1.0) > std::fabs(vpMath::maximum(u, 1.0)) *
-                                    std::numeric_limits<double>::epsilon()) ||
-          (std::fabs(uend - 1.0) >
-           std::fabs(vpMath::maximum(uend, 1.0)) *
-               std::numeric_limits<double>::epsilon())) {
+      if ((std::fabs(u - 1.0) > std::fabs(vpMath::maximum(u, 1.0)) * std::numeric_limits<double>::epsilon()) ||
+          (std::fabs(uend - 1.0) > std::fabs(vpMath::maximum(uend, 1.0)) * std::numeric_limits<double>::epsilon())) {
         iP = nurbs.computeCurveDersPoint(u, 1);
 
-        while (vpImagePoint::sqrDistance(iP[0], iPend) >
-                   vpMath::sqr(me->getSampleStep()) &&
-               u < uend) {
+        while (vpImagePoint::sqrDistance(iP[0], iPend) > vpMath::sqr(me->getSampleStep()) && u < uend) {
           u += 0.01;
           /*if (iP!=NULL)*/ {
             delete[] iP;
             iP = NULL;
           }
           iP = nurbs.computeCurveDersPoint(u, 1);
-          if (vpImagePoint::sqrDistance(iP[0], iP_1) >
-                  vpMath::sqr(me->getSampleStep()) &&
+          if (vpImagePoint::sqrDistance(iP[0], iP_1) > vpMath::sqr(me->getSampleStep()) &&
               !outOfImage(iP[0], 0, rows, cols)) {
             double delta = computeDelta(iP[1].get_i(), iP[1].get_j());
             vpMeSite pix; //= list.value();
@@ -1018,8 +980,7 @@ void vpMeNurbs::track(const vpImage<unsigned char> &I)
   suppressPoints();
 
   if (list.size() == 1)
-    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                              "Not enough valid me to track"));
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "Not enough valid me to track"));
 
   // Recalcule les parametres
   //  nurbs.globalCurveInterp(list);
@@ -1063,10 +1024,7 @@ void vpMeNurbs::track(const vpImage<unsigned char> &I)
   \param col : Color of the displayed line.
 
  */
-void vpMeNurbs::display(const vpImage<unsigned char> &I, vpColor col)
-{
-  vpMeNurbs::display(I, nurbs, col);
-}
+void vpMeNurbs::display(const vpImage<unsigned char> &I, vpColor col) { vpMeNurbs::display(I, nurbs, col); }
 
 /*!
   Considering a pixel iP compute the next element of the Freeman chain
@@ -1084,9 +1042,7 @@ void vpMeNurbs::display(const vpImage<unsigned char> &I, vpColor col)
   \return false if an element cannot be found. Occurs for example with an area
   constituted by a single pixel. Return true if success.
 */
-bool vpMeNurbs::computeFreemanChainElement(const vpImage<unsigned char> &I,
-                                           vpImagePoint &iP,
-                                           unsigned int &element)
+bool vpMeNurbs::computeFreemanChainElement(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int &element)
 {
   vpImagePoint diP;
   vpImagePoint iPtemp;
@@ -1168,14 +1124,12 @@ bool vpMeNurbs::computeFreemanChainElement(const vpImage<unsigned char> &I,
 
   \return false : Otherwise
 */
-bool vpMeNurbs::hasGoodLevel(const vpImage<unsigned char> &I,
-                             const vpImagePoint &iP) const
+bool vpMeNurbs::hasGoodLevel(const vpImage<unsigned char> &I, const vpImagePoint &iP) const
 {
   if (!isInImage(I, iP))
     return false;
 
-  if (I((unsigned int)vpMath::round(iP.get_i()),
-        (unsigned int)vpMath::round(iP.get_j())) > 0) {
+  if (I((unsigned int)vpMath::round(iP.get_i()), (unsigned int)vpMath::round(iP.get_j())) > 0) {
     return true;
   } else {
     return false;
@@ -1192,11 +1146,9 @@ bool vpMeNurbs::hasGoodLevel(const vpImage<unsigned char> &I,
   \return true if the image point \e iP is in the image and false
   otherwise.
 */
-bool vpMeNurbs::isInImage(const vpImage<unsigned char> &I,
-                          const vpImagePoint &iP) const
+bool vpMeNurbs::isInImage(const vpImage<unsigned char> &I, const vpImagePoint &iP) const
 {
-  return (iP.get_i() >= 0 && iP.get_j() >= 0 && iP.get_i() < I.getHeight() &&
-          iP.get_j() < I.getWidth());
+  return (iP.get_i() >= 0 && iP.get_j() >= 0 && iP.get_i() < I.getHeight() && iP.get_j() < I.getWidth());
 }
 
 /*!
@@ -1216,8 +1168,7 @@ bool vpMeNurbs::isInImage(const vpImage<unsigned char> &I,
   computeFreemanChainElement). \param diP : the output parameter which
   contains the displacement cooresponding to the value of \e element.
 */
-void vpMeNurbs::computeFreemanParameters(unsigned int element,
-                                         vpImagePoint &diP)
+void vpMeNurbs::computeFreemanParameters(unsigned int element, vpImagePoint &diP)
 {
   /*
            5  6  7
@@ -1272,13 +1223,11 @@ void vpMeNurbs::computeFreemanParameters(unsigned int element,
   \return true if the point iP is at least 20 pixels far from the image
   edeges.
 */
-bool vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> &I,
-                                 const vpImagePoint &iP)
+bool vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> &I, const vpImagePoint &iP)
 {
   unsigned int height = I.getHeight();
   unsigned int width = I.getWidth();
-  return (iP.get_i() < height - 20 && iP.get_j() < width - 20 &&
-          iP.get_i() > 20 && iP.get_j() > 20);
+  return (iP.get_i() < height - 20 && iP.get_j() < width - 20 && iP.get_i() > 20 && iP.get_j() > 20);
 }
 
 /*!
@@ -1291,8 +1240,7 @@ bool vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> &I,
 
   \param color : Color used to display the nurbs.
 */
-void vpMeNurbs::display(const vpImage<unsigned char> &I, vpNurbs &n,
-                        vpColor color)
+void vpMeNurbs::display(const vpImage<unsigned char> &I, vpNurbs &n, vpColor color)
 {
   double u = 0.0;
   vpImagePoint pt;

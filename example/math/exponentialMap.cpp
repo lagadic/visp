@@ -93,8 +93,7 @@ int main()
       M.extract(R);
       vpRxyzVector drxyz(R); // rotational displacement
 
-      std::cout << "Displacement if velocity is applied during 1 s : \n"
-                << dt << " " << drxyz << std::endl;
+      std::cout << "Displacement if velocity is applied during 1 s : \n" << dt << " " << drxyz << std::endl;
     }
 
     // Compute the displacement from the velocity applied during 2 seconds
@@ -110,15 +109,13 @@ int main()
       M.extract(R);
       vpRxyzVector drxyz(R); // rotational displacement
 
-      std::cout << "Displacement if velocity is applied during 2 s : \n"
-                << dt << " " << drxyz << std::endl;
+      std::cout << "Displacement if velocity is applied during 2 s : \n" << dt << " " << drxyz << std::endl;
     }
 
     // Compute the velocity from the displacement observed during 2 seconds
     v = vpExponentialMap::inverse(M, 2.f);
 
-    std::cout << "Velocity from displacement observed during 2 s: \n"
-              << v << std::endl;
+    std::cout << "Velocity from displacement observed during 2 s: \n" << v << std::endl;
     return 0;
   } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

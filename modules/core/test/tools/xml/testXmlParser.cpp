@@ -115,8 +115,7 @@ protected:
   default values.
 
 */
-vpExampleDataParser::vpExampleDataParser()
-  : m_range(0.), m_step(0), m_size_filter(0), m_name("")
+vpExampleDataParser::vpExampleDataParser() : m_range(0.), m_step(0), m_size_filter(0), m_name("")
 {
   nodeMap["config"] = config;
   nodeMap["range"] = range;
@@ -141,11 +140,9 @@ vpExampleDataParser::~vpExampleDataParser() {}
 */
 void vpExampleDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case range:
@@ -161,8 +158,7 @@ void vpExampleDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
           this->m_name = xmlReadStringChild(doc, dataNode);
         } break;
         default:
-          vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second,
-                  (iter_data->first).c_str());
+          vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second, (iter_data->first).c_str());
           break;
         }
       }
@@ -196,10 +192,8 @@ void vpExampleDataParser::writeMainClass(xmlNodePtr node)
 // List of allowed command line options
 #define GETOPTARGS "cdo:h"
 
-void usage(const char *name, const char *badparam, const std::string &opath,
-           const std::string &user);
-bool getOptions(int argc, const char **argv, std::string &opath,
-                const std::string &user);
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user);
 
 /*!
 
@@ -211,8 +205,7 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string &opath,
-           const std::string &user)
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Write and read data in a xml file.\n\
@@ -246,8 +239,7 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &opath,
-                const std::string &user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
   const char *optarg_;
   int c;
@@ -298,17 +290,14 @@ int main(int argc, const char **argv)
     std::string filename;
     std::string username;
 
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  testXmlParser.cpp" << std::endl << std::endl;
     std::cout << "  writing and readind data using a xml parser" << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
 // Set the default output path
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
     opt_opath = "C:\\temp";

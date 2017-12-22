@@ -92,10 +92,7 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpIoException(const int id, const std::string &msg) : vpException(id, msg)
-  {
-    ;
-  }
+  vpIoException(const int id, const std::string &msg) : vpException(id, msg) { ; }
   explicit vpIoException(const int id) : vpException(id) { ; }
 };
 

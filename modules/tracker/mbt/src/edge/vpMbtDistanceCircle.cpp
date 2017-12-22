@@ -59,10 +59,9 @@
   Basic constructor
 */
 vpMbtDistanceCircle::vpMbtDistanceCircle()
-  : name(), index(0), cam(), me(NULL), wmean(1), featureEllipse(),
-    isTrackedCircle(true), meEllipse(NULL), circle(NULL), radius(0.),
-    p1(NULL), p2(NULL), p3(NULL), L(), error(), nbFeature(0), Reinit(false),
-    hiddenface(NULL), index_polygon(-1), isvisible(false)
+  : name(), index(0), cam(), me(NULL), wmean(1), featureEllipse(), isTrackedCircle(true), meEllipse(NULL), circle(NULL),
+    radius(0.), p1(NULL), p2(NULL), p3(NULL), L(), error(), nbFeature(0), Reinit(false), hiddenface(NULL),
+    index_polygon(-1), isvisible(false)
 {
 }
 
@@ -89,10 +88,7 @@ vpMbtDistanceCircle::~vpMbtDistanceCircle()
   \param cMo : The pose of the camera used to project the circle into the
   image.
 */
-void vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo)
-{
-  circle->project(cMo);
-}
+void vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo) { circle->project(cMo); }
 
 /*!
   Build a vpMbtDistanceCircle thanks to its center, 3 points (including the
@@ -104,8 +100,7 @@ void vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo)
   center of the circle we have 3 points defining the plane that contains the
   circle. \param r : Radius of the circle.
 */
-void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2,
-                                    const vpPoint &_p3, const double r)
+void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r)
 {
   circle = new vpCircle;
   p1 = new vpPoint;
@@ -123,8 +118,7 @@ void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2,
   vpPlane plane(*p1, *p2, *p3, vpPlane::object_frame);
 
   // Build our circle
-  circle->setWorldCoordinates(plane.getA(), plane.getB(), plane.getC(),
-                              _p1.get_oX(), _p1.get_oY(), _p1.get_oZ(), r);
+  circle->setWorldCoordinates(plane.getA(), plane.getB(), plane.getC(), _p1.get_oX(), _p1.get_oY(), _p1.get_oZ(), r);
 }
 
 /*!
@@ -149,8 +143,7 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param cMo : The pose of the camera used to initialize the moving edges.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I,
-                                         const vpHomogeneousMatrix &cMo)
+bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     // Perspective projection
@@ -168,14 +161,12 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I,
     meEllipse->setMe(me);
 
     // meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
-    meEllipse->setInitRange(
-        me->getRange()); // TODO: check because set to zero for lines
+    meEllipse->setInitRange(me->getRange()); // TODO: check because set to zero for lines
 
     try {
       vpImagePoint ic;
       double mu20_p, mu11_p, mu02_p;
-      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p,
-                                             mu02_p);
+      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
       meEllipse->initTracking(I, ic, mu20_p, mu11_p, mu02_p);
     } catch (...) {
       // vpTRACE("the circle can't be initialized");
@@ -191,8 +182,7 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I,
-                                          const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
 {
   if (isvisible) {
     try {
@@ -216,8 +206,7 @@ void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I,
-                                           const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     // Perspective projection
@@ -233,8 +222,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I,
 
       vpImagePoint ic;
       double mu20_p, mu11_p, mu02_p;
-      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p,
-                                             mu02_p);
+      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
       meEllipse->updateParameters(I, ic, mu20_p, mu11_p, mu02_p);
     } catch (...) {
       Reinit = true;
@@ -252,8 +240,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I,
-                                           const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (meEllipse != NULL)
     delete meEllipse;
@@ -277,11 +264,8 @@ void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I,
   \param displayFullModel : When true, display the circle even if non visible.
   If false, display the circle only if visible.
 */
-void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I,
-                                  const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &camera,
-                                  const vpColor &col,
-                                  const unsigned int thickness,
+void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
   if ((isvisible && isTrackedCircle) || displayFullModel) {
@@ -296,10 +280,8 @@ void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I,
 
     vpImagePoint center;
     double mu20_p, mu11_p, mu02_p;
-    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p,
-                                           mu11_p, mu02_p);
-    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col,
-                              thickness);
+    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
+    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
   }
 }
 
@@ -314,11 +296,8 @@ void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I,
   \param displayFullModel : When true, display the circle even if non visible.
   If false, display the circle only if visible.
 */
-void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I,
-                                  const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &camera,
-                                  const vpColor &col,
-                                  const unsigned int thickness,
+void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
   if ((isvisible && isTrackedCircle) || displayFullModel) {
@@ -333,10 +312,8 @@ void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I,
 
     vpImagePoint center;
     double mu20_p, mu11_p, mu02_p;
-    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p,
-                                           mu11_p, mu02_p);
-    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col,
-                              thickness);
+    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
+    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
   }
 }
 
@@ -380,8 +357,7 @@ void vpMbtDistanceCircle::initInteractionMatrixError()
   Compute the interaction matrix and the error vector corresponding to the
   point to ellipse algebraic distance.
 */
-void vpMbtDistanceCircle::computeInteractionMatrixError(
-    const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     // Perspective projection
@@ -408,9 +384,8 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(
 
     unsigned int j = 0;
 
-    for (std::list<vpMeSite>::const_iterator it =
-             meEllipse->getMeList().begin();
-         it != meEllipse->getMeList().end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
+         ++it) {
       vpPixelMeterConversion::convertPoint(cam, it->j, it->i, x, y);
       H[0] = 2 * (mu11 * (y - yg) + mu02 * (xg - x));
       H[1] = 2 * (mu20 * (yg - y) + mu11 * (x - xg));
@@ -419,14 +394,11 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(
       H[4] = vpMath::sqr(x - xg) - mu20;
 
       for (unsigned int k = 0; k < 6; k++)
-        L[j][k] = H[0] * H1[0][k] + H[1] * H1[1][k] + H[2] * H1[2][k] +
-                  H[3] * H1[3][k] + H[4] * H1[4][k];
+        L[j][k] = H[0] * H1[0][k] + H[1] * H1[1][k] + H[2] * H1[2][k] + H[3] * H1[3][k] + H[4] * H1[4][k];
 
-      error[j] = mu02 * vpMath::sqr(x) + mu20 * vpMath::sqr(y) -
-                 2 * mu11 * x * y + 2 * (mu11 * yg - mu02 * xg) * x +
-                 2 * (mu11 * xg - mu20 * yg) * y + mu02 * vpMath::sqr(xg) +
-                 mu20 * vpMath::sqr(yg) - 2 * mu11 * xg * yg +
-                 vpMath::sqr(mu11) - mu20 * mu02;
+      error[j] = mu02 * vpMath::sqr(x) + mu20 * vpMath::sqr(y) - 2 * mu11 * x * y + 2 * (mu11 * yg - mu02 * xg) * x +
+                 2 * (mu11 * xg - mu20 * yg) * y + mu02 * vpMath::sqr(xg) + mu20 * vpMath::sqr(yg) -
+                 2 * mu11 * xg * yg + vpMath::sqr(mu11) - mu20 * mu02;
 
       j++;
     }

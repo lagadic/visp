@@ -10,8 +10,7 @@
 
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_OPENCV) &&                                             \
-    (defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   try {
     bool opt_init_by_click = false;
     int opt_device = 0;
@@ -22,9 +21,7 @@ int main(int argc, const char *argv[])
       else if (std::string(argv[i]) == "--device")
         opt_device = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "Usage: " << argv[0]
-                  << " [--init-by-click] [--device <camera device>] [--help]"
-                  << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--init-by-click] [--device <camera device>] [--help]" << std::endl;
         return 0;
       }
     }
@@ -79,18 +76,11 @@ int main(int argc, const char *argv[])
       std::vector<cv::Point2f> guess;
       vpImagePoint ip;
       do {
-        vpDisplay::displayText(
-            I, 10, 10,
-            "Left click to select a point, right to start tracking",
-            vpColor::red);
+        vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
-            guess.push_back(
-                cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
-            vpDisplay::displayText(
-                I, 10, 10,
-                "Left click to select a point, right to start tracking",
-                vpColor::red);
+            guess.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+            vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }
         }

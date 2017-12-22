@@ -50,8 +50,7 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpImageConvert.h>
 
-#if defined __SSE2__ || defined _M_X64 ||                                    \
-    (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
 
@@ -77,13 +76,11 @@ int vpImageConvert::vpCbb[256];
   \param src : source image
   \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src,
-                             vpImage<vpRGBa> &dest)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
 
-  GreyToRGBa(src.bitmap, (unsigned char *)dest.bitmap,
-             src.getHeight() * src.getWidth());
+  GreyToRGBa(src.bitmap, (unsigned char *)dest.bitmap, src.getHeight() * src.getWidth());
 }
 
 /*!
@@ -91,21 +88,18 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src,
   \param src : source image
   \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<vpRGBa> &src,
-                             vpImage<unsigned char> &dest)
+void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
 
-  RGBaToGrey((unsigned char *)src.bitmap, dest.bitmap,
-             src.getHeight() * src.getWidth());
+  RGBaToGrey((unsigned char *)src.bitmap, dest.bitmap, src.getHeight() * src.getWidth());
 }
 
 /*!
   Convert a vpImage\<float\> to a vpImage\<unsigend char\> by renormalizing
   between 0 and 255. \param src : source image \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<float> &src,
-                             vpImage<unsigned char> &dest)
+void vpImageConvert::convert(const vpImage<float> &src, vpImage<unsigned char> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
   unsigned int max_xy = src.getWidth() * src.getHeight();
@@ -129,8 +123,7 @@ Convert a vpImage\<unsigned char\> to a vpImage\<float\> by basic casting.
 \param src : source image
 \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src,
-                             vpImage<float> &dest)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<float> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
   for (unsigned int i = 0; i < src.getHeight() * src.getWidth(); i++)
@@ -141,8 +134,7 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src,
 Convert a vpImage\<double\> to a vpImage\<unsigned char\> by renormalizing
 between 0 and 255. \param src : source image \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<double> &src,
-                             vpImage<unsigned char> &dest)
+void vpImageConvert::convert(const vpImage<double> &src, vpImage<unsigned char> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
   unsigned int max_xy = src.getWidth() * src.getHeight();
@@ -166,8 +158,7 @@ Convert a vpImage\<uint16_t> to a vpImage\<unsigned char\>.
 \param src : source image
 \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<uint16_t> &src,
-                             vpImage<unsigned char> &dest)
+void vpImageConvert::convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
 
@@ -180,8 +171,7 @@ Convert a vpImage\<unsigned char> to a vpImage\<uint16_t\>.
 \param src : source image
 \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src,
-                             vpImage<uint16_t> &dest)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
 
@@ -194,8 +184,7 @@ Convert a vpImage\<unsigned char\> to a vpImage\<double\> by basic casting.
 \param src : source image
 \param dest : destination image
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src,
-                             vpImage<double> &dest)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth());
   for (unsigned int i = 0; i < src.getHeight() * src.getWidth(); i++)
@@ -209,8 +198,7 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src,
   \param src_depth : input 16-bits depth image.
   \param dest_rgba : output color depth image.
 */
-void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth,
-                                          vpImage<vpRGBa> &dest_rgba)
+void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba)
 {
   dest_rgba.resize(src_depth.getHeight(), src_depth.getWidth());
   static uint32_t histogram[0x10000];
@@ -225,8 +213,7 @@ void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth,
   for (unsigned int i = 0; i < src_depth.getSize(); ++i) {
     uint16_t d = src_depth.bitmap[i];
     if (d) {
-      int f = (int)(histogram[d] * 255 /
-                    histogram[0xFFFF]); // 0-255 based on histogram location
+      int f = (int)(histogram[d] * 255 / histogram[0xFFFF]); // 0-255 based on histogram location
       dest_rgba.bitmap[i].R = 255 - f;
       dest_rgba.bitmap[i].G = 0;
       dest_rgba.bitmap[i].B = f;
@@ -246,8 +233,7 @@ void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth,
   src_depth : input 16-bits depth image. \param dest_depth : output grayscale
   depth image.
 */
-void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth,
-                                          vpImage<unsigned char> &dest_depth)
+void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigned char> &dest_depth)
 {
   dest_depth.resize(src_depth.getHeight(), src_depth.getWidth());
   static uint32_t histogram2[0x10000];
@@ -262,8 +248,7 @@ void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth,
   for (unsigned int i = 0; i < src_depth.getSize(); ++i) {
     uint16_t d = src_depth.bitmap[i];
     if (d) {
-      int f = (int)(histogram2[d] * 255 /
-                    histogram2[0xFFFF]); // 0-255 based on histogram location
+      int f = (int)(histogram2[d] * 255 / histogram2[0xFFFF]); // 0-255 based on histogram location
       dest_depth.bitmap[i] = f;
     } else {
       dest_depth.bitmap[i] = 0;
@@ -319,8 +304,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const IplImage *src, vpImage<vpRGBa> &dest,
-                             bool flip)
+void vpImageConvert::convert(const IplImage *src, vpImage<vpRGBa> &dest, bool flip)
 {
   int nChannel = src->nChannels;
   int depth = src->depth;
@@ -338,9 +322,7 @@ void vpImageConvert::convert(const IplImage *src, vpImage<vpRGBa> &dest,
 
     for (int i = 0; i < height; i++) {
       unsigned char *line = input;
-      unsigned char *output = beginOutput +
-                              lineStep * (4 * width * (height - 1 - i)) +
-                              (1 - lineStep) * 4 * width * i;
+      unsigned char *output = beginOutput + lineStep * (4 * width * (height - 1 - i)) + (1 - lineStep) * 4 * width * i;
       for (int j = 0; j < width; j++) {
         *(output++) = *(line + 2);
         *(output++) = *(line + 1);
@@ -360,9 +342,7 @@ void vpImageConvert::convert(const IplImage *src, vpImage<vpRGBa> &dest,
 
     for (int i = 0; i < height; i++) {
       unsigned char *line = input;
-      unsigned char *output = beginOutput +
-                              lineStep * (4 * width * (height - 1 - i)) +
-                              (1 - lineStep) * 4 * width * i;
+      unsigned char *output = beginOutput + lineStep * (4 * width * (height - 1 - i)) + (1 - lineStep) * 4 * width * i;
       for (int j = 0; j < width; j++) {
         *output++ = *(line);
         *output++ = *(line);
@@ -420,8 +400,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const IplImage *src,
-                             vpImage<unsigned char> &dest, bool flip)
+void vpImageConvert::convert(const IplImage *src, vpImage<unsigned char> &dest, bool flip)
 {
   int nChannel = src->nChannels;
   int depth = src->depth;
@@ -438,22 +417,20 @@ void vpImageConvert::convert(const IplImage *src,
       }
       if (nChannel == 3 && depth == 8) {
         dest.resize((unsigned int)height, (unsigned int)width);
-        BGRToGrey((unsigned char *)src->imageData, dest.bitmap,
-                  (unsigned int)width, (unsigned int)height, false);
+        BGRToGrey((unsigned char *)src->imageData, dest.bitmap, (unsigned int)width, (unsigned int)height, false);
       }
     } else {
       if (nChannel == 1 && depth == 8) {
         dest.resize((unsigned int)height, (unsigned int)width);
         for (int i = 0; i < height; i++) {
-          memcpy(dest.bitmap + i * width, src->imageData + i * widthStep,
-                 (size_t)width);
+          memcpy(dest.bitmap + i * width, src->imageData + i * widthStep, (size_t)width);
         }
       }
       if (nChannel == 3 && depth == 8) {
         dest.resize((unsigned int)height, (unsigned int)width);
         for (int i = 0; i < height; i++) {
-          BGRToGrey((unsigned char *)src->imageData + i * widthStep,
-                    dest.bitmap + i * width, (unsigned int)width, 1, false);
+          BGRToGrey((unsigned char *)src->imageData + i * widthStep, dest.bitmap + i * width, (unsigned int)width, 1,
+                    false);
         }
       }
     }
@@ -462,15 +439,13 @@ void vpImageConvert::convert(const IplImage *src,
       dest.resize((unsigned int)height, (unsigned int)width);
       unsigned char *beginOutput = (unsigned char *)dest.bitmap;
       for (int i = 0; i < height; i++) {
-        memcpy(beginOutput + lineStep * (4 * width * (height - 1 - i)),
-               src->imageData + i * widthStep, (size_t)width);
+        memcpy(beginOutput + lineStep * (4 * width * (height - 1 - i)), src->imageData + i * widthStep, (size_t)width);
       }
     }
     if (nChannel == 3 && depth == 8) {
       dest.resize((unsigned int)height, (unsigned int)width);
       // for (int i = 0  ; i < height ; i++){
-      BGRToGrey((unsigned char *)src->imageData /*+ i*widthStep*/,
-                dest.bitmap /*+ i*width*/, (unsigned int)width,
+      BGRToGrey((unsigned char *)src->imageData /*+ i*widthStep*/, dest.bitmap /*+ i*width*/, (unsigned int)width,
                 (unsigned int)height /*1*/, true);
       //}
     }
@@ -529,8 +504,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, IplImage *&dest)
   int depth = 8;
   int channels = 3;
   if (dest != NULL) {
-    if (dest->nChannels != channels || dest->depth != depth ||
-        dest->height != height || dest->width != width) {
+    if (dest->nChannels != channels || dest->depth != depth || dest->height != height || dest->width != width) {
       if (dest->nChannels != 0)
         cvReleaseImage(&dest);
       dest = cvCreateImage(size, depth, channels);
@@ -605,8 +579,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src,
-                             IplImage *&dest)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, IplImage *&dest)
 {
   unsigned int height = src.getHeight();
   unsigned int width = src.getWidth();
@@ -614,8 +587,8 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src,
   int depth = 8;
   int channels = 1;
   if (dest != NULL) {
-    if (dest->nChannels != channels || dest->depth != depth ||
-        dest->height != (int)height || dest->width != (int)width) {
+    if (dest->nChannels != channels || dest->depth != depth || dest->height != (int)height ||
+        dest->width != (int)width) {
       if (dest->nChannels != 0)
         cvReleaseImage(&dest);
       dest = cvCreateImage(size, depth, channels);
@@ -681,8 +654,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest,
-                             const bool flip)
+void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip)
 {
   if (src.type() == CV_8UC4) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
@@ -774,8 +746,7 @@ int main()
 
   \endcode
 */
-void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest,
-                             const bool flip)
+void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip)
 {
   if (src.type() == CV_8UC1) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
@@ -784,34 +755,29 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest,
     } else {
       if (flip) {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(),
-                 src.data + (dest.getRows() - i - 1) * src.step1(),
-                 (size_t)src.step);
+          memcpy(dest.bitmap + i * dest.getCols(), src.data + (dest.getRows() - i - 1) * src.step1(), (size_t)src.step);
         }
       } else {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1(),
-                 (size_t)src.step);
+          memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1(), (size_t)src.step);
         }
       }
     }
   } else if (src.type() == CV_8UC3) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
     if (src.isContinuous() /*&& !flip*/) {
-      BGRToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap,
-                (unsigned int)src.cols, (unsigned int)src.rows, flip);
+      BGRToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows,
+                flip);
     } else {
       if (flip) {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
           BGRToGrey((unsigned char *)src.data + i * src.step1(),
-                    (unsigned char *)dest.bitmap +
-                        (dest.getRows() - i - 1) * dest.getCols(),
+                    (unsigned char *)dest.bitmap + (dest.getRows() - i - 1) * dest.getCols(),
                     (unsigned int)dest.getCols(), 1, false);
         }
       } else {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          BGRToGrey((unsigned char *)src.data + i * src.step1(),
-                    (unsigned char *)dest.bitmap + i * dest.getCols(),
+          BGRToGrey((unsigned char *)src.data + i * src.step1(), (unsigned char *)dest.bitmap + i * dest.getCols(),
                     (unsigned int)dest.getCols(), 1, false);
         }
       }
@@ -860,8 +826,7 @@ int main()
 */
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 {
-  cv::Mat vpToMat((int)src.getRows(), (int)src.getCols(), CV_8UC4,
-                  (void *)src.bitmap);
+  cv::Mat vpToMat((int)src.getRows(), (int)src.getCols(), CV_8UC4, (void *)src.bitmap);
 
   dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC3);
   cv::Mat alpha((int)src.getRows(), (int)src.getCols(), CV_8UC1);
@@ -912,16 +877,13 @@ int main()
 
   \endcode
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest,
-                             const bool copyData)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData)
 {
   if (copyData) {
-    cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_8UC1,
-                   (void *)src.bitmap);
+    cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
     dest = tmpMap.clone();
   } else {
-    dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC1,
-                   (void *)src.bitmap);
+    dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
   }
 }
 
@@ -955,18 +917,16 @@ int main()
   // Read an image on a disk
   vpImageIo::read(I, "image.pgm");
 
-  yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf<
-yarp::sig::PixelMono >();
-  // Convert the vpImage\<unsigned char\> to a
-yarp::sig::ImageOf\<yarp::sig::PixelMono\> vpImageConvert::convert(I, Iyarp);
+  yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelMono >();
+  // Convert the vpImage\<unsigned char\> to a yarp::sig::ImageOf\<yarp::sig::PixelMono\>
+  vpImageConvert::convert(I, Iyarp);
 
   // ...
 #endif
 }
   \endcode
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src,
-                             yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
+void vpImageConvert::convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
                              const bool copyData)
 {
   if (copyData) {
@@ -1002,13 +962,12 @@ only update the image pointer.
 int main()
 {
 #if defined(VISP_HAVE_YARP)
-  yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf<
-yarp::sig::PixelMono >();
+  yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelMono >();
   // Read an image on a disk
   yarp::sig::file::read(*Iyarp, "image.pgm");
 
-  // Convert the yarp::sig::ImageOf<yarp::sig::PixelMono> to a
-vpImage<unsigned char> vpImage<unsigned char> I;
+  // Convert the yarp::sig::ImageOf<yarp::sig::PixelMono> to a vpImage<unsigned char>
+  vpImage<unsigned char> I;
   vpImageConvert::convert(Iyarp, I);
 
   // ...
@@ -1016,14 +975,12 @@ vpImage<unsigned char> vpImage<unsigned char> I;
 }
   \endcode
 */
-void vpImageConvert::convert(
-    const yarp::sig::ImageOf<yarp::sig::PixelMono> *src,
-    vpImage<unsigned char> &dest, const bool copyData)
+void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src, vpImage<unsigned char> &dest,
+                             const bool copyData)
 {
   dest.resize(src->height(), src->width());
   if (copyData)
-    memcpy(dest.bitmap, src->getRawImage(),
-           src->height() * src->width() * sizeof(yarp::sig::PixelMono));
+    memcpy(dest.bitmap, src->getRawImage(), src->height() * src->width() * sizeof(yarp::sig::PixelMono));
   else
     dest.bitmap = src->getRawImage();
 }
@@ -1054,8 +1011,7 @@ int main()
   // Read an image on a disk
   vpImageIo::read(I,"image.jpg");
 
-  yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf<
-yarp::sig::PixelRgba >();
+  yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgba >();
   // Convert the vpImage<vpRGBa> to a yarp::sig::ImageOf<yarp::sig::PixelRgba>
   vpImageConvert::convert(I,Iyarp);
 
@@ -1064,14 +1020,12 @@ yarp::sig::PixelRgba >();
 }
   \endcode
 */
-void vpImageConvert::convert(const vpImage<vpRGBa> &src,
-                             yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
+void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
                              const bool copyData)
 {
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
-    memcpy(dest->getRawImage(), src.bitmap,
-           src.getHeight() * src.getWidth() * sizeof(vpRGBa));
+    memcpy(dest->getRawImage(), src.bitmap, src.getHeight() * src.getWidth() * sizeof(vpRGBa));
   } else
     dest->setExternal(src.bitmap, (int)src.getCols(), (int)src.getRows());
 }
@@ -1102,8 +1056,7 @@ only update the image pointer.
 int main()
 {
 #if defined(VISP_HAVE_YARP)
-  yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf<
-yarp::sig::PixelRgba >();
+  yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgba >();
   // Read an image on a disk
   yarp::sig::file::read(*Iyarp,"image.pgm");
 
@@ -1116,14 +1069,12 @@ yarp::sig::PixelRgba >();
 }
   \endcode
 */
-void vpImageConvert::convert(
-    const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src,
-    vpImage<vpRGBa> &dest, const bool copyData)
+void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest,
+                             const bool copyData)
 {
   dest.resize(src->height(), src->width());
   if (copyData)
-    memcpy(dest.bitmap, src->getRawImage(),
-           src->height() * src->width() * sizeof(yarp::sig::PixelRgba));
+    memcpy(dest.bitmap, src->getRawImage(), src->height() * src->width() * sizeof(yarp::sig::PixelRgba));
   else
     dest.bitmap = static_cast<vpRGBa *>(src->getRawImage());
 }
@@ -1152,8 +1103,7 @@ int main()
   // Read an image on a disk
   vpImageIo::read(I,"image.jpg");
 
-  yarp::sig::ImageOf< yarp::sig::PixelRgb > *Iyarp = new yarp::sig::ImageOf<
-yarp::sig::PixelRgb >();
+  yarp::sig::ImageOf< yarp::sig::PixelRgb > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgb >();
   // Convert the vpImage<vpRGBa> to a yarp::sig::ImageOf<yarp::sig::PixelRgb>
   vpImageConvert::convert(I,Iyarp);
 
@@ -1162,8 +1112,7 @@ yarp::sig::PixelRgb >();
 }
   \endcode
 */
-void vpImageConvert::convert(const vpImage<vpRGBa> &src,
-                             yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest)
+void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest)
 {
   dest->resize(src.getWidth(), src.getHeight());
   for (unsigned int i = 0; i < src.getRows(); i++) {
@@ -1201,8 +1150,7 @@ YARP image class documentation.
 int main()
 {
 #if defined(VISP_HAVE_YARP)
-  yarp::sig::ImageOf< yarp::sig::PixelRgb > *Iyarp = new yarp::sig::ImageOf<
-yarp::sig::PixelRgb >();
+  yarp::sig::ImageOf< yarp::sig::PixelRgb > *Iyarp = new yarp::sig::ImageOf<yarp::sig::PixelRgb >();
   // Read an image on a disk
   yarp::sig::file::read(*Iyarp,"image.pgm");
 
@@ -1215,8 +1163,7 @@ yarp::sig::PixelRgb >();
 }
   \endcode
 */
-void vpImageConvert::convert(
-    const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest)
+void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest)
 {
   dest.resize(src->height(), src->width());
   for (int i = 0; i < src->height(); i++) {
@@ -1231,12 +1178,12 @@ void vpImageConvert::convert(
 
 #endif
 
-#define vpSAT(c)                                                             \
-  if (c & (~255)) {                                                          \
-    if (c < 0)                                                               \
-      c = 0;                                                                 \
-    else                                                                     \
-      c = 255;                                                               \
+#define vpSAT(c)                                                                                                       \
+  if (c & (~255)) {                                                                                                    \
+    if (c < 0)                                                                                                         \
+      c = 0;                                                                                                           \
+    else                                                                                                               \
+      c = 255;                                                                                                         \
   }
 /*!
   Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...) to RGB32.
@@ -1246,8 +1193,7 @@ void vpImageConvert::convert(
 
   \sa YUV422ToRGBa()
 */
-void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba,
-                                unsigned int width, unsigned int height)
+void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
   unsigned char *s;
   unsigned char *d;
@@ -1302,8 +1248,7 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba,
 
   \sa YUV422ToRGB()
 */
-void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb,
-                               unsigned int width, unsigned int height)
+void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned int width, unsigned int height)
 {
   unsigned char *s;
   unsigned char *d;
@@ -1355,8 +1300,7 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb,
 
   \sa YUV422ToGrey()
 */
-void vpImageConvert::YUYVToGrey(unsigned char *yuyv, unsigned char *grey,
-                                unsigned int size)
+void vpImageConvert::YUYVToGrey(unsigned char *yuyv, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
 
@@ -1373,8 +1317,7 @@ void vpImageConvert::YUYVToGrey(unsigned char *yuyv, unsigned char *grey,
   component of the converted image is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                                  unsigned int size)
+void vpImageConvert::YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size)
 {
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGBa()" << std::endl;
@@ -1535,8 +1478,7 @@ void vpImageConvert::YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba,
 
   \sa YUYVToRGBa()
 */
-void vpImageConvert::YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                                  unsigned int size)
+void vpImageConvert::YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size)
 {
 
 #if 1
@@ -1630,8 +1572,7 @@ Convert YUV411 into Grey
 yuv411 : u y1 y2 v y3 y4
 
 */
-void vpImageConvert::YUV411ToGrey(unsigned char *yuv, unsigned char *grey,
-                                  unsigned int size)
+void vpImageConvert::YUV411ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
   while (j < size * 3 / 2) {
@@ -1654,8 +1595,7 @@ void vpImageConvert::YUV411ToGrey(unsigned char *yuv, unsigned char *grey,
   \sa YUYVToRGB()
 
 */
-void vpImageConvert::YUV422ToRGB(unsigned char *yuv, unsigned char *rgb,
-                                 unsigned int size)
+void vpImageConvert::YUV422ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
 #if 1
   //  std::cout << "call optimized convertYUV422ToRGB()" << std::endl;
@@ -1746,8 +1686,7 @@ void vpImageConvert::YUV422ToRGB(unsigned char *yuv, unsigned char *rgb,
   \sa YUYVToGrey()
 
 */
-void vpImageConvert::YUV422ToGrey(unsigned char *yuv, unsigned char *grey,
-                                  unsigned int size)
+void vpImageConvert::YUV422ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
 
@@ -1764,8 +1703,7 @@ Convert YUV411 into RGB
 yuv411 : u y1 y2 v y3 y4
 
 */
-void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb,
-                                 unsigned int size)
+void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGB()" << std::endl;
@@ -1919,8 +1857,7 @@ void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb,
   The alpha component of the converted image is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                                  unsigned int width, unsigned int height)
+void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYUV420ToRGBa()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
@@ -2052,8 +1989,7 @@ void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba,
   Convert YUV420 [Y(NxM), U(N/2xM/2), V(N/2xM/2)] image into RGB image.
 
 */
-void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb,
-                                 unsigned int width, unsigned int height)
+void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYUV420ToRGB()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
@@ -2182,8 +2118,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb,
   Convert YUV420 [Y(NxM), U(N/2xM/2), V(N/2xM/2)] image into grey image.
 
 */
-void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey,
-                                  unsigned int size)
+void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     *grey++ = *yuv++;
@@ -2196,8 +2131,7 @@ void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey,
   The alpha component of the converted image is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                                  unsigned int size)
+void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     int U = (int)((*yuv++ - 128) * 0.354);
@@ -2240,8 +2174,7 @@ void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba,
   Convert YUV444 (u y v) image into RGB image.
 
 */
-void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb,
-                                 unsigned int size)
+void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     int U = (int)((*yuv++ - 128) * 0.354);
@@ -2284,8 +2217,7 @@ void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb,
   Convert YUV444 (u y v) image into grey image.
 
 */
-void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey,
-                                  unsigned int size)
+void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   yuv++;
   for (unsigned int i = 0; i < size; i++) {
@@ -2301,8 +2233,7 @@ void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey,
   The alpha component of the converted image is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                                unsigned int width, unsigned int height)
+void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYV12ToRGBa()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
@@ -2434,8 +2365,7 @@ void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba,
   Convert YV12 [Y(NxM), V(N/2xM/2), U(N/2xM/2)] image into RGB image.
 
 */
-void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb,
-                               unsigned int height, unsigned int width)
+void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int height, unsigned int width)
 {
   //  std::cout << "call optimized ConvertYV12ToRGB()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
@@ -2566,8 +2496,7 @@ void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb,
   The alpha component of the converted image is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                                unsigned int width, unsigned int height)
+void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYVU9ToRGBa()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
@@ -3000,8 +2929,7 @@ void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba,
   Convert YV12 [Y(NxM),  V(N/4xM/4), U(N/4xM/4)] image into RGB image.
 
 */
-void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb,
-                               unsigned int height, unsigned int width)
+void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int height, unsigned int width)
 {
   //  std::cout << "call optimized ConvertYVU9ToRGB()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
@@ -3421,8 +3349,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb,
   Alpha component is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba,
-                               unsigned int size)
+void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int size)
 {
   unsigned char *pt_input = rgb;
   unsigned char *pt_end = rgb + 3 * size;
@@ -3443,8 +3370,7 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba,
   The alpha component of the converted image is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::RGBaToRGB(unsigned char *rgba, unsigned char *rgb,
-                               unsigned int size)
+void vpImageConvert::RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned int size)
 {
   unsigned char *pt_input = rgba;
   unsigned char *pt_end = rgba + 4 * size;
@@ -3463,8 +3389,7 @@ void vpImageConvert::RGBaToRGB(unsigned char *rgba, unsigned char *rgb,
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
 
 */
-void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
-                               unsigned int size)
+void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int size)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3
@@ -3477,50 +3402,32 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
 
     if (size >= 16) {
       // Mask to select R component
-      const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, 15, -1, 12, -1, 9,
-                                           -1, 6, -1, 3, -1, 0, -1);
-      const __m128i mask_R2 = _mm_set_epi8(5, -1, 2, -1, -1, -1, -1, -1, -1,
-                                           -1, -1, -1, -1, -1, -1, -1);
-      const __m128i mask_R3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1,
-                                           -1, 14, -1, 11, -1, 8, -1);
-      const __m128i mask_R4 = _mm_set_epi8(13, -1, 10, -1, 7, -1, 4, -1, 1,
-                                           -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, 15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1);
+      const __m128i mask_R2 = _mm_set_epi8(5, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_R3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 14, -1, 11, -1, 8, -1);
+      const __m128i mask_R4 = _mm_set_epi8(13, -1, 10, -1, 7, -1, 4, -1, 1, -1, -1, -1, -1, -1, -1, -1);
 
       // Mask to select G component
-      const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 13, -1, 10,
-                                           -1, 7, -1, 4, -1, 1, -1);
-      const __m128i mask_G2 = _mm_set_epi8(6, -1, 3, -1, 0, -1, -1, -1, -1,
-                                           -1, -1, -1, -1, -1, -1, -1);
-      const __m128i mask_G3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1,
-                                           -1, 15, -1, 12, -1, 9, -1);
-      const __m128i mask_G4 = _mm_set_epi8(14, -1, 11, -1, 8, -1, 5, -1, 2,
-                                           -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 13, -1, 10, -1, 7, -1, 4, -1, 1, -1);
+      const __m128i mask_G2 = _mm_set_epi8(6, -1, 3, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_G3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15, -1, 12, -1, 9, -1);
+      const __m128i mask_G4 = _mm_set_epi8(14, -1, 11, -1, 8, -1, 5, -1, 2, -1, -1, -1, -1, -1, -1, -1);
 
       // Mask to select B component
-      const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 14, -1, 11,
-                                           -1, 8, -1, 5, -1, 2, -1);
-      const __m128i mask_B2 = _mm_set_epi8(7, -1, 4, -1, 1, -1, -1, -1, -1,
-                                           -1, -1, -1, -1, -1, -1, -1);
-      const __m128i mask_B3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1,
-                                           -1, -1, -1, 13, -1, 10, -1);
-      const __m128i mask_B4 = _mm_set_epi8(15, -1, 12, -1, 9, -1, 6, -1, 3,
-                                           -1, 0, -1, -1, -1, -1, -1);
+      const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 14, -1, 11, -1, 8, -1, 5, -1, 2, -1);
+      const __m128i mask_B2 = _mm_set_epi8(7, -1, 4, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_B3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 13, -1, 10, -1);
+      const __m128i mask_B4 = _mm_set_epi8(15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1, -1, -1, -1, -1);
 
       // Mask to select the gray component
-      const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1,
-                                             15, 13, 11, 9, 7, 5, 3, 1);
-      const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1,
-                                             -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 15, 13, 11, 9, 7, 5, 3, 1);
+      const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1, -1, -1, -1, -1, -1, -1, -1);
 
       // Coefficients RGB to Gray
-      const __m128i coeff_R = _mm_set_epi16(13933, 13933, 13933, 13933, 13933,
-                                            13933, 13933, 13933);
-      const __m128i coeff_G =
-          _mm_set_epi16((short int)46871, (short int)46871, (short int)46871,
-                        (short int)46871, (short int)46871, (short int)46871,
-                        (short int)46871, (short int)46871);
-      const __m128i coeff_B =
-          _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
+      const __m128i coeff_R = _mm_set_epi16(13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933);
+      const __m128i coeff_G = _mm_set_epi16((short int)46871, (short int)46871, (short int)46871, (short int)46871,
+                                            (short int)46871, (short int)46871, (short int)46871, (short int)46871);
+      const __m128i coeff_B = _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
 
       for (; i <= size - 16; i += 16) {
         // Process 16 color pixels
@@ -3528,40 +3435,24 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
         const __m128i data2 = _mm_loadu_si128((const __m128i *)(rgb + 16));
         const __m128i data3 = _mm_loadu_si128((const __m128i *)(rgb + 32));
 
-        const __m128i red_0_7 =
-            _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1),
-                         _mm_shuffle_epi8(data2, mask_R2));
-        const __m128i green_0_7 =
-            _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1),
-                         _mm_shuffle_epi8(data2, mask_G2));
-        const __m128i blue_0_7 =
-            _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1),
-                         _mm_shuffle_epi8(data2, mask_B2));
+        const __m128i red_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1), _mm_shuffle_epi8(data2, mask_R2));
+        const __m128i green_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1), _mm_shuffle_epi8(data2, mask_G2));
+        const __m128i blue_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1), _mm_shuffle_epi8(data2, mask_B2));
 
-        const __m128i grays_0_7 = _mm_adds_epu16(
-            _mm_mulhi_epu16(red_0_7, coeff_R),
-            _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G),
-                           _mm_mulhi_epu16(blue_0_7, coeff_B)));
+        const __m128i grays_0_7 =
+            _mm_adds_epu16(_mm_mulhi_epu16(red_0_7, coeff_R),
+                           _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G), _mm_mulhi_epu16(blue_0_7, coeff_B)));
 
-        const __m128i red_8_15 =
-            _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3),
-                         _mm_shuffle_epi8(data3, mask_R4));
-        const __m128i green_8_15 =
-            _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3),
-                         _mm_shuffle_epi8(data3, mask_G4));
-        const __m128i blue_8_15 =
-            _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3),
-                         _mm_shuffle_epi8(data3, mask_B4));
+        const __m128i red_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3), _mm_shuffle_epi8(data3, mask_R4));
+        const __m128i green_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3), _mm_shuffle_epi8(data3, mask_G4));
+        const __m128i blue_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3), _mm_shuffle_epi8(data3, mask_B4));
 
-        const __m128i grays_8_15 = _mm_adds_epu16(
-            _mm_mulhi_epu16(red_8_15, coeff_R),
-            _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G),
-                           _mm_mulhi_epu16(blue_8_15, coeff_B)));
+        const __m128i grays_8_15 =
+            _mm_adds_epu16(_mm_mulhi_epu16(red_8_15, coeff_R),
+                           _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G), _mm_mulhi_epu16(blue_8_15, coeff_B)));
 
-        _mm_storeu_si128(
-            (__m128i *)grey,
-            _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
-                         _mm_shuffle_epi8(grays_8_15, mask_low2)));
+        _mm_storeu_si128((__m128i *)grey,
+                         _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)));
 
         rgb += 48;
         grey += 16;
@@ -3569,8 +3460,7 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
     }
 
     for (; i < size; i++) {
-      *grey = (unsigned char)(0.2126 * (*rgb) + 0.7152 * (*(rgb + 1)) +
-                              0.0722 * (*(rgb + 2)));
+      *grey = (unsigned char)(0.2126 * (*rgb) + 0.7152 * (*(rgb + 1)) + 0.0722 * (*(rgb + 2)));
 
       rgb += 3;
       ++grey;
@@ -3582,9 +3472,7 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
     unsigned char *pt_output = grey;
 
     while (pt_input != pt_end) {
-      *pt_output =
-          (unsigned char)(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) +
-                          0.0722 * (*(pt_input + 2)));
+      *pt_output = (unsigned char)(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) + 0.0722 * (*(pt_input + 2)));
       pt_input += 3;
       pt_output++;
     }
@@ -3597,8 +3485,7 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
 
 */
-void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey,
-                                unsigned int size)
+void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int size)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3
@@ -3611,82 +3498,54 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey,
 
     if (size >= 16) {
       // Mask to select R component
-      const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 12,
-                                           -1, 8, -1, 4, -1, 0, -1);
-      const __m128i mask_R2 = _mm_set_epi8(12, -1, 8, -1, 4, -1, 0, -1, -1,
-                                           -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 12, -1, 8, -1, 4, -1, 0, -1);
+      const __m128i mask_R2 = _mm_set_epi8(12, -1, 8, -1, 4, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 
       // Mask to select G component
-      const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 13,
-                                           -1, 9, -1, 5, -1, 1, -1);
-      const __m128i mask_G2 = _mm_set_epi8(13, -1, 9, -1, 5, -1, 1, -1, -1,
-                                           -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 13, -1, 9, -1, 5, -1, 1, -1);
+      const __m128i mask_G2 = _mm_set_epi8(13, -1, 9, -1, 5, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 
       // Mask to select B component
-      const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 14,
-                                           -1, 10, -1, 6, -1, 2, -1);
-      const __m128i mask_B2 = _mm_set_epi8(14, -1, 10, -1, 6, -1, 2, -1, -1,
-                                           -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 14, -1, 10, -1, 6, -1, 2, -1);
+      const __m128i mask_B2 = _mm_set_epi8(14, -1, 10, -1, 6, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 
       // Mask to select the gray component
-      const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1,
-                                             15, 13, 11, 9, 7, 5, 3, 1);
-      const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1,
-                                             -1, -1, -1, -1, -1, -1, -1);
+      const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 15, 13, 11, 9, 7, 5, 3, 1);
+      const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1, -1, -1, -1, -1, -1, -1, -1);
 
       // Coefficients RGB to Gray
-      const __m128i coeff_R = _mm_set_epi16(13933, 13933, 13933, 13933, 13933,
-                                            13933, 13933, 13933);
-      const __m128i coeff_G =
-          _mm_set_epi16((short int)46871, (short int)46871, (short int)46871,
-                        (short int)46871, (short int)46871, (short int)46871,
-                        (short int)46871, (short int)46871);
-      const __m128i coeff_B =
-          _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
+      const __m128i coeff_R = _mm_set_epi16(13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933);
+      const __m128i coeff_G = _mm_set_epi16((short int)46871, (short int)46871, (short int)46871, (short int)46871,
+                                            (short int)46871, (short int)46871, (short int)46871, (short int)46871);
+      const __m128i coeff_B = _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
 
       for (; i <= size - 16; i += 16) {
         // Process 2*4 color pixels
         const __m128i data1 = _mm_loadu_si128((const __m128i *)rgba);
         const __m128i data2 = _mm_loadu_si128((const __m128i *)(rgba + 16));
 
-        const __m128i red_0_7 =
-            _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1),
-                         _mm_shuffle_epi8(data2, mask_R2));
-        const __m128i green_0_7 =
-            _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1),
-                         _mm_shuffle_epi8(data2, mask_G2));
-        const __m128i blue_0_7 =
-            _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1),
-                         _mm_shuffle_epi8(data2, mask_B2));
+        const __m128i red_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1), _mm_shuffle_epi8(data2, mask_R2));
+        const __m128i green_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1), _mm_shuffle_epi8(data2, mask_G2));
+        const __m128i blue_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1), _mm_shuffle_epi8(data2, mask_B2));
 
-        const __m128i grays_0_7 = _mm_adds_epu16(
-            _mm_mulhi_epu16(red_0_7, coeff_R),
-            _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G),
-                           _mm_mulhi_epu16(blue_0_7, coeff_B)));
+        const __m128i grays_0_7 =
+            _mm_adds_epu16(_mm_mulhi_epu16(red_0_7, coeff_R),
+                           _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G), _mm_mulhi_epu16(blue_0_7, coeff_B)));
 
         // Process next 2*4 color pixels
         const __m128i data3 = _mm_loadu_si128((const __m128i *)(rgba + 32));
         const __m128i data4 = _mm_loadu_si128((const __m128i *)(rgba + 48));
 
-        const __m128i red_8_15 =
-            _mm_or_si128(_mm_shuffle_epi8(data3, mask_R1),
-                         _mm_shuffle_epi8(data4, mask_R2));
-        const __m128i green_8_15 =
-            _mm_or_si128(_mm_shuffle_epi8(data3, mask_G1),
-                         _mm_shuffle_epi8(data4, mask_G2));
-        const __m128i blue_8_15 =
-            _mm_or_si128(_mm_shuffle_epi8(data3, mask_B1),
-                         _mm_shuffle_epi8(data4, mask_B2));
+        const __m128i red_8_15 = _mm_or_si128(_mm_shuffle_epi8(data3, mask_R1), _mm_shuffle_epi8(data4, mask_R2));
+        const __m128i green_8_15 = _mm_or_si128(_mm_shuffle_epi8(data3, mask_G1), _mm_shuffle_epi8(data4, mask_G2));
+        const __m128i blue_8_15 = _mm_or_si128(_mm_shuffle_epi8(data3, mask_B1), _mm_shuffle_epi8(data4, mask_B2));
 
-        const __m128i grays_8_15 = _mm_adds_epu16(
-            _mm_mulhi_epu16(red_8_15, coeff_R),
-            _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G),
-                           _mm_mulhi_epu16(blue_8_15, coeff_B)));
+        const __m128i grays_8_15 =
+            _mm_adds_epu16(_mm_mulhi_epu16(red_8_15, coeff_R),
+                           _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G), _mm_mulhi_epu16(blue_8_15, coeff_B)));
 
-        _mm_storeu_si128(
-            (__m128i *)grey,
-            _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
-                         _mm_shuffle_epi8(grays_8_15, mask_low2)));
+        _mm_storeu_si128((__m128i *)grey,
+                         _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)));
 
         rgba += 64;
         grey += 16;
@@ -3694,8 +3553,7 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey,
     }
 
     for (; i < size; i++) {
-      *grey = (unsigned char)(0.2126 * (*rgba) + 0.7152 * (*(rgba + 1)) +
-                              0.0722 * (*(rgba + 2)));
+      *grey = (unsigned char)(0.2126 * (*rgba) + 0.7152 * (*(rgba + 1)) + 0.0722 * (*(rgba + 2)));
 
       rgba += 4;
       ++grey;
@@ -3707,9 +3565,7 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey,
     unsigned char *pt_output = grey;
 
     while (pt_input != pt_end) {
-      *pt_output =
-          (unsigned char)(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) +
-                          0.0722 * (*(pt_input + 2)));
+      *pt_output = (unsigned char)(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) + 0.0722 * (*(pt_input + 2)));
       pt_input += 4;
       pt_output++;
     }
@@ -3721,8 +3577,7 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey,
   The alpha component is set to vpRGBa::alpha_default.
 
 */
-void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba,
-                                unsigned int size)
+void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int size)
 {
   unsigned char *pt_input = grey;
   unsigned char *pt_end = grey + size;
@@ -3744,8 +3599,7 @@ void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba,
   Convert from grey image to linear RGB image.
 
 */
-void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb,
-                               unsigned int size)
+void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned int size)
 {
   unsigned char *pt_input = grey;
   unsigned char *pt_end = grey + size;
@@ -3769,8 +3623,7 @@ void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb,
   Flips the image verticaly if needed.
   Assumes that rgba is already resized.
 */
-void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba,
-                               unsigned int width, unsigned int height,
+void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned int width, unsigned int height,
                                bool flip)
 {
   // if we have to flip the image, we start from the end last scanline so the
@@ -3800,8 +3653,7 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba,
   Flips the image verticaly if needed.
   Assumes that grey is already resized.
 */
-void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
-                               unsigned int width, unsigned int height,
+void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
@@ -3812,40 +3664,26 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
   if (checkSSSE3) {
 #if VISP_HAVE_SSSE3
     // Mask to select B component
-    const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, 15, -1, 12, -1, 9,
-                                         -1, 6, -1, 3, -1, 0, -1);
-    const __m128i mask_B2 = _mm_set_epi8(5, -1, 2, -1, -1, -1, -1, -1, -1, -1,
-                                         -1, -1, -1, -1, -1, -1);
-    const __m128i mask_B3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1,
-                                         -1, 14, -1, 11, -1, 8, -1);
-    const __m128i mask_B4 = _mm_set_epi8(13, -1, 10, -1, 7, -1, 4, -1, 1, -1,
-                                         -1, -1, -1, -1, -1, -1);
+    const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, 15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1);
+    const __m128i mask_B2 = _mm_set_epi8(5, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+    const __m128i mask_B3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 14, -1, 11, -1, 8, -1);
+    const __m128i mask_B4 = _mm_set_epi8(13, -1, 10, -1, 7, -1, 4, -1, 1, -1, -1, -1, -1, -1, -1, -1);
 
     // Mask to select G component
-    const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 13, -1, 10,
-                                         -1, 7, -1, 4, -1, 1, -1);
-    const __m128i mask_G2 = _mm_set_epi8(6, -1, 3, -1, 0, -1, -1, -1, -1, -1,
-                                         -1, -1, -1, -1, -1, -1);
-    const __m128i mask_G3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1,
-                                         -1, 15, -1, 12, -1, 9, -1);
-    const __m128i mask_G4 = _mm_set_epi8(14, -1, 11, -1, 8, -1, 5, -1, 2, -1,
-                                         -1, -1, -1, -1, -1, -1);
+    const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 13, -1, 10, -1, 7, -1, 4, -1, 1, -1);
+    const __m128i mask_G2 = _mm_set_epi8(6, -1, 3, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+    const __m128i mask_G3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15, -1, 12, -1, 9, -1);
+    const __m128i mask_G4 = _mm_set_epi8(14, -1, 11, -1, 8, -1, 5, -1, 2, -1, -1, -1, -1, -1, -1, -1);
 
     // Mask to select R component
-    const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 14, -1, 11,
-                                         -1, 8, -1, 5, -1, 2, -1);
-    const __m128i mask_R2 = _mm_set_epi8(7, -1, 4, -1, 1, -1, -1, -1, -1, -1,
-                                         -1, -1, -1, -1, -1, -1);
-    const __m128i mask_R3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1,
-                                         -1, -1, -1, 13, -1, 10, -1);
-    const __m128i mask_R4 = _mm_set_epi8(15, -1, 12, -1, 9, -1, 6, -1, 3, -1,
-                                         0, -1, -1, -1, -1, -1);
+    const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 14, -1, 11, -1, 8, -1, 5, -1, 2, -1);
+    const __m128i mask_R2 = _mm_set_epi8(7, -1, 4, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+    const __m128i mask_R3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 13, -1, 10, -1);
+    const __m128i mask_R4 = _mm_set_epi8(15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1, -1, -1, -1, -1);
 
     // Mask to select the gray component
-    const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 15,
-                                           13, 11, 9, 7, 5, 3, 1);
-    const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1, -1,
-                                           -1, -1, -1, -1, -1, -1);
+    const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 15, 13, 11, 9, 7, 5, 3, 1);
+    const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1, -1, -1, -1, -1, -1, -1, -1);
 
     // Coefficients RGB to Gray
     //  const __m128i coeff_R = _mm_set_epi8(
@@ -3868,14 +3706,10 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
     //  const __m128i coeff_B = _mm_set_epi16(
     //        2365*2, 2365*2, 2365*2, 2365*2, 2365*2, 2365*2, 2365*2, 2365*2
     //        );
-    const __m128i coeff_R =
-        _mm_set_epi16(13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933);
-    const __m128i coeff_G =
-        _mm_set_epi16((short int)46871, (short int)46871, (short int)46871,
-                      (short int)46871, (short int)46871, (short int)46871,
-                      (short int)46871, (short int)46871);
-    const __m128i coeff_B =
-        _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
+    const __m128i coeff_R = _mm_set_epi16(13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933);
+    const __m128i coeff_G = _mm_set_epi16((short int)46871, (short int)46871, (short int)46871, (short int)46871,
+                                          (short int)46871, (short int)46871, (short int)46871, (short int)46871);
+    const __m128i coeff_B = _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
 
     if (flip) {
       int i = ((int)height) - 1;
@@ -3892,45 +3726,27 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
           for (; j <= width - 16; j += 16) {
             // Process 16 color pixels
             const __m128i data1 = _mm_loadu_si128((const __m128i *)bgr);
-            const __m128i data2 =
-                _mm_loadu_si128((const __m128i *)(bgr + 16));
-            const __m128i data3 =
-                _mm_loadu_si128((const __m128i *)(bgr + 32));
+            const __m128i data2 = _mm_loadu_si128((const __m128i *)(bgr + 16));
+            const __m128i data3 = _mm_loadu_si128((const __m128i *)(bgr + 32));
 
-            const __m128i red_0_7 =
-                _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1),
-                             _mm_shuffle_epi8(data2, mask_R2));
-            const __m128i green_0_7 =
-                _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1),
-                             _mm_shuffle_epi8(data2, mask_G2));
-            const __m128i blue_0_7 =
-                _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1),
-                             _mm_shuffle_epi8(data2, mask_B2));
+            const __m128i red_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1), _mm_shuffle_epi8(data2, mask_R2));
+            const __m128i green_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1), _mm_shuffle_epi8(data2, mask_G2));
+            const __m128i blue_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1), _mm_shuffle_epi8(data2, mask_B2));
 
-            const __m128i grays_0_7 = _mm_adds_epu16(
-                _mm_mulhi_epu16(red_0_7, coeff_R),
-                _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G),
-                               _mm_mulhi_epu16(blue_0_7, coeff_B)));
+            const __m128i grays_0_7 =
+                _mm_adds_epu16(_mm_mulhi_epu16(red_0_7, coeff_R),
+                               _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G), _mm_mulhi_epu16(blue_0_7, coeff_B)));
 
-            const __m128i red_8_15 =
-                _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3),
-                             _mm_shuffle_epi8(data3, mask_R4));
-            const __m128i green_8_15 =
-                _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3),
-                             _mm_shuffle_epi8(data3, mask_G4));
-            const __m128i blue_8_15 =
-                _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3),
-                             _mm_shuffle_epi8(data3, mask_B4));
+            const __m128i red_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3), _mm_shuffle_epi8(data3, mask_R4));
+            const __m128i green_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3), _mm_shuffle_epi8(data3, mask_G4));
+            const __m128i blue_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3), _mm_shuffle_epi8(data3, mask_B4));
 
-            const __m128i grays_8_15 = _mm_adds_epu16(
-                _mm_mulhi_epu16(red_8_15, coeff_R),
-                _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G),
-                               _mm_mulhi_epu16(blue_8_15, coeff_B)));
+            const __m128i grays_8_15 =
+                _mm_adds_epu16(_mm_mulhi_epu16(red_8_15, coeff_R), _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G),
+                                                                                  _mm_mulhi_epu16(blue_8_15, coeff_B)));
 
-            _mm_storeu_si128(
-                (__m128i *)grey,
-                _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
-                             _mm_shuffle_epi8(grays_8_15, mask_low2)));
+            _mm_storeu_si128((__m128i *)grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
+                                                           _mm_shuffle_epi8(grays_8_15, mask_low2)));
 
             bgr += 48;
             grey += 16;
@@ -3970,40 +3786,24 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
           const __m128i data2 = _mm_loadu_si128((const __m128i *)(bgr + 16));
           const __m128i data3 = _mm_loadu_si128((const __m128i *)(bgr + 32));
 
-          const __m128i red_0_7 =
-              _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1),
-                           _mm_shuffle_epi8(data2, mask_R2));
-          const __m128i green_0_7 =
-              _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1),
-                           _mm_shuffle_epi8(data2, mask_G2));
-          const __m128i blue_0_7 =
-              _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1),
-                           _mm_shuffle_epi8(data2, mask_B2));
+          const __m128i red_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1), _mm_shuffle_epi8(data2, mask_R2));
+          const __m128i green_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1), _mm_shuffle_epi8(data2, mask_G2));
+          const __m128i blue_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1), _mm_shuffle_epi8(data2, mask_B2));
 
-          const __m128i grays_0_7 = _mm_adds_epu16(
-              _mm_mulhi_epu16(red_0_7, coeff_R),
-              _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G),
-                             _mm_mulhi_epu16(blue_0_7, coeff_B)));
+          const __m128i grays_0_7 =
+              _mm_adds_epu16(_mm_mulhi_epu16(red_0_7, coeff_R),
+                             _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G), _mm_mulhi_epu16(blue_0_7, coeff_B)));
 
-          const __m128i red_8_15 =
-              _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3),
-                           _mm_shuffle_epi8(data3, mask_R4));
-          const __m128i green_8_15 =
-              _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3),
-                           _mm_shuffle_epi8(data3, mask_G4));
-          const __m128i blue_8_15 =
-              _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3),
-                           _mm_shuffle_epi8(data3, mask_B4));
+          const __m128i red_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3), _mm_shuffle_epi8(data3, mask_R4));
+          const __m128i green_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3), _mm_shuffle_epi8(data3, mask_G4));
+          const __m128i blue_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3), _mm_shuffle_epi8(data3, mask_B4));
 
-          const __m128i grays_8_15 = _mm_adds_epu16(
-              _mm_mulhi_epu16(red_8_15, coeff_R),
-              _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G),
-                             _mm_mulhi_epu16(blue_8_15, coeff_B)));
+          const __m128i grays_8_15 =
+              _mm_adds_epu16(_mm_mulhi_epu16(red_8_15, coeff_R),
+                             _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G), _mm_mulhi_epu16(blue_8_15, coeff_B)));
 
-          _mm_storeu_si128(
-              (__m128i *)grey,
-              _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
-                           _mm_shuffle_epi8(grays_8_15, mask_low2)));
+          _mm_storeu_si128((__m128i *)grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
+                                                         _mm_shuffle_epi8(grays_8_15, mask_low2)));
 
           bgr += 48;
           grey += 16;
@@ -4011,8 +3811,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
       }
 
       for (; i < size; i++) {
-        *grey = (unsigned char)(0.2126 * (*(bgr + 2)) +
-                                0.7152 * (*(bgr + 1)) + 0.0722 * (*bgr));
+        *grey = (unsigned char)(0.2126 * (*(bgr + 2)) + 0.7152 * (*(bgr + 1)) + 0.0722 * (*bgr));
 
         bgr += 3;
         ++grey;
@@ -4030,9 +3829,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
     for (unsigned int i = 0; i < height; i++) {
       unsigned char *line = src;
       for (unsigned int j = 0; j < width; j++) {
-        *grey++ =
-            (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) +
-                            0.0722 * *(line + 0));
+        *grey++ = (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
         line += 3;
       }
 
@@ -4049,8 +3846,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey,
   Flips the image verticaly if needed.
   Assumes that rgba is already resized.
 */
-void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba,
-                               unsigned int width, unsigned int height,
+void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int width, unsigned int height,
                                bool flip)
 {
   // if we have to flip the image, we start from the end last scanline so the
@@ -4081,8 +3877,7 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba,
   Flips the image verticaly if needed.
   Assumes that grey is already resized.
 */
-void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
-                               unsigned int width, unsigned int height,
+void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip)
 {
   if (flip) {
@@ -4102,50 +3897,32 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
 
       if (width >= 16) {
         // Mask to select R component
-        const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, 15, -1, 12, -1,
-                                             9, -1, 6, -1, 3, -1, 0, -1);
-        const __m128i mask_R2 = _mm_set_epi8(5, -1, 2, -1, -1, -1, -1, -1, -1,
-                                             -1, -1, -1, -1, -1, -1, -1);
-        const __m128i mask_R3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1,
-                                             -1, -1, 14, -1, 11, -1, 8, -1);
-        const __m128i mask_R4 = _mm_set_epi8(13, -1, 10, -1, 7, -1, 4, -1, 1,
-                                             -1, -1, -1, -1, -1, -1, -1);
+        const __m128i mask_R1 = _mm_set_epi8(-1, -1, -1, -1, 15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1);
+        const __m128i mask_R2 = _mm_set_epi8(5, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+        const __m128i mask_R3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 14, -1, 11, -1, 8, -1);
+        const __m128i mask_R4 = _mm_set_epi8(13, -1, 10, -1, 7, -1, 4, -1, 1, -1, -1, -1, -1, -1, -1, -1);
 
         // Mask to select G component
-        const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 13, -1,
-                                             10, -1, 7, -1, 4, -1, 1, -1);
-        const __m128i mask_G2 = _mm_set_epi8(6, -1, 3, -1, 0, -1, -1, -1, -1,
-                                             -1, -1, -1, -1, -1, -1, -1);
-        const __m128i mask_G3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1,
-                                             -1, -1, 15, -1, 12, -1, 9, -1);
-        const __m128i mask_G4 = _mm_set_epi8(14, -1, 11, -1, 8, -1, 5, -1, 2,
-                                             -1, -1, -1, -1, -1, -1, -1);
+        const __m128i mask_G1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 13, -1, 10, -1, 7, -1, 4, -1, 1, -1);
+        const __m128i mask_G2 = _mm_set_epi8(6, -1, 3, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+        const __m128i mask_G3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15, -1, 12, -1, 9, -1);
+        const __m128i mask_G4 = _mm_set_epi8(14, -1, 11, -1, 8, -1, 5, -1, 2, -1, -1, -1, -1, -1, -1, -1);
 
         // Mask to select B component
-        const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 14, -1,
-                                             11, -1, 8, -1, 5, -1, 2, -1);
-        const __m128i mask_B2 = _mm_set_epi8(7, -1, 4, -1, 1, -1, -1, -1, -1,
-                                             -1, -1, -1, -1, -1, -1, -1);
-        const __m128i mask_B3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1,
-                                             -1, -1, -1, -1, 13, -1, 10, -1);
-        const __m128i mask_B4 = _mm_set_epi8(15, -1, 12, -1, 9, -1, 6, -1, 3,
-                                             -1, 0, -1, -1, -1, -1, -1);
+        const __m128i mask_B1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, 14, -1, 11, -1, 8, -1, 5, -1, 2, -1);
+        const __m128i mask_B2 = _mm_set_epi8(7, -1, 4, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+        const __m128i mask_B3 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 13, -1, 10, -1);
+        const __m128i mask_B4 = _mm_set_epi8(15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1, -1, -1, -1, -1);
 
         // Mask to select the gray component
-        const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1,
-                                               15, 13, 11, 9, 7, 5, 3, 1);
-        const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1,
-                                               -1, -1, -1, -1, -1, -1, -1);
+        const __m128i mask_low1 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 15, 13, 11, 9, 7, 5, 3, 1);
+        const __m128i mask_low2 = _mm_set_epi8(15, 13, 11, 9, 7, 5, 3, 1, -1, -1, -1, -1, -1, -1, -1, -1);
 
         // Coefficients RGB to Gray
-        const __m128i coeff_R = _mm_set_epi16(13933, 13933, 13933, 13933,
-                                              13933, 13933, 13933, 13933);
-        const __m128i coeff_G = _mm_set_epi16(
-            (short int)46871, (short int)46871, (short int)46871,
-            (short int)46871, (short int)46871, (short int)46871,
-            (short int)46871, (short int)46871);
-        const __m128i coeff_B =
-            _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
+        const __m128i coeff_R = _mm_set_epi16(13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933);
+        const __m128i coeff_G = _mm_set_epi16((short int)46871, (short int)46871, (short int)46871, (short int)46871,
+                                              (short int)46871, (short int)46871, (short int)46871, (short int)46871);
+        const __m128i coeff_B = _mm_set_epi16(4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732);
 
         for (; i >= 0; i--) {
           unsigned int j = 0;
@@ -4153,45 +3930,27 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
           for (; j <= width - 16; j += 16) {
             // Process 16 color pixels
             const __m128i data1 = _mm_loadu_si128((const __m128i *)rgb);
-            const __m128i data2 =
-                _mm_loadu_si128((const __m128i *)(rgb + 16));
-            const __m128i data3 =
-                _mm_loadu_si128((const __m128i *)(rgb + 32));
+            const __m128i data2 = _mm_loadu_si128((const __m128i *)(rgb + 16));
+            const __m128i data3 = _mm_loadu_si128((const __m128i *)(rgb + 32));
 
-            const __m128i red_0_7 =
-                _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1),
-                             _mm_shuffle_epi8(data2, mask_R2));
-            const __m128i green_0_7 =
-                _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1),
-                             _mm_shuffle_epi8(data2, mask_G2));
-            const __m128i blue_0_7 =
-                _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1),
-                             _mm_shuffle_epi8(data2, mask_B2));
+            const __m128i red_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_R1), _mm_shuffle_epi8(data2, mask_R2));
+            const __m128i green_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_G1), _mm_shuffle_epi8(data2, mask_G2));
+            const __m128i blue_0_7 = _mm_or_si128(_mm_shuffle_epi8(data1, mask_B1), _mm_shuffle_epi8(data2, mask_B2));
 
-            const __m128i grays_0_7 = _mm_adds_epu16(
-                _mm_mulhi_epu16(red_0_7, coeff_R),
-                _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G),
-                               _mm_mulhi_epu16(blue_0_7, coeff_B)));
+            const __m128i grays_0_7 =
+                _mm_adds_epu16(_mm_mulhi_epu16(red_0_7, coeff_R),
+                               _mm_adds_epu16(_mm_mulhi_epu16(green_0_7, coeff_G), _mm_mulhi_epu16(blue_0_7, coeff_B)));
 
-            const __m128i red_8_15 =
-                _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3),
-                             _mm_shuffle_epi8(data3, mask_R4));
-            const __m128i green_8_15 =
-                _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3),
-                             _mm_shuffle_epi8(data3, mask_G4));
-            const __m128i blue_8_15 =
-                _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3),
-                             _mm_shuffle_epi8(data3, mask_B4));
+            const __m128i red_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_R3), _mm_shuffle_epi8(data3, mask_R4));
+            const __m128i green_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_G3), _mm_shuffle_epi8(data3, mask_G4));
+            const __m128i blue_8_15 = _mm_or_si128(_mm_shuffle_epi8(data2, mask_B3), _mm_shuffle_epi8(data3, mask_B4));
 
-            const __m128i grays_8_15 = _mm_adds_epu16(
-                _mm_mulhi_epu16(red_8_15, coeff_R),
-                _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G),
-                               _mm_mulhi_epu16(blue_8_15, coeff_B)));
+            const __m128i grays_8_15 =
+                _mm_adds_epu16(_mm_mulhi_epu16(red_8_15, coeff_R), _mm_adds_epu16(_mm_mulhi_epu16(green_8_15, coeff_G),
+                                                                                  _mm_mulhi_epu16(blue_8_15, coeff_B)));
 
-            _mm_storeu_si128(
-                (__m128i *)grey,
-                _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
-                             _mm_shuffle_epi8(grays_8_15, mask_low2)));
+            _mm_storeu_si128((__m128i *)grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1),
+                                                           _mm_shuffle_epi8(grays_8_15, mask_low2)));
 
             rgb += 48;
             grey += 16;
@@ -4227,8 +3986,7 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey,
       int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
 
       // starting source address = last line if we need to flip the image
-      unsigned char *src =
-          (flip) ? rgb + (width * height * 3) + lineStep : rgb;
+      unsigned char *src = (flip) ? rgb + (width * height * 3) + lineStep : rgb;
 
       unsigned int j = 0;
       unsigned int i = 0;
@@ -4293,8 +4051,7 @@ void vpImageConvert::computeYCbCrLUT()
 
 
 */
-void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
-                                unsigned int size)
+void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -4315,25 +4072,14 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
     }
 
     val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
-    val_g =
-        *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgb++ =
-        (val_r < 0)
-            ? 0u
-            : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
-    *pt_rgb++ =
-        (val_g < 0)
-            ? 0u
-            : ((val_g > 255) ? 255u
-                             : (unsigned char)val_g); // Green component.
-    *pt_rgb++ = (val_b < 0) ? 0u
-                            : ((val_b > 255)
-                                   ? 255u
-                                   : (unsigned char)val_b); // Blue component.
+    *pt_rgb++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgb++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgb++ = (val_b < 0) ? 0u : ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
 
     pt_ycbcr += 2;
   }
@@ -4362,8 +4108,7 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
 
 
 */
-void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
-                                 unsigned int size)
+void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba, unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -4384,26 +4129,14 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
     }
 
     val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
-    val_g =
-        *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgba++ =
-        (val_r < 0)
-            ? 0u
-            : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
-    *pt_rgba++ =
-        (val_g < 0)
-            ? 0u
-            : ((val_g > 255) ? 255u
-                             : (unsigned char)val_g); // Green component.
-    *pt_rgba++ =
-        (val_b < 0)
-            ? 0u
-            : ((val_b > 255) ? 255u
-                             : (unsigned char)val_b); // Blue component.
+    *pt_rgba++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgba++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgba++ = (val_b < 0) ? 0u : ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
     *pt_rgba++ = vpRGBa::alpha_default;
 
     pt_ycbcr += 2;
@@ -4426,8 +4159,7 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
   - In grey format, each pixel is coded using 8 bytes.
 
 */
-void vpImageConvert::YCbCrToGrey(unsigned char *yuv, unsigned char *grey,
-                                 unsigned int size)
+void vpImageConvert::YCbCrToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
 
@@ -4456,8 +4188,7 @@ void vpImageConvert::YCbCrToGrey(unsigned char *yuv, unsigned char *grey,
     Byte 2: Blue
 
 */
-void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
-                                unsigned int size)
+void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb, unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -4478,25 +4209,14 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
     }
 
     val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
-    val_g =
-        *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgb++ =
-        (val_r < 0)
-            ? 0u
-            : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
-    *pt_rgb++ =
-        (val_g < 0)
-            ? 0u
-            : ((val_g > 255) ? 255u
-                             : (unsigned char)val_g); // Green component.
-    *pt_rgb++ = (val_b < 0) ? 0u
-                            : ((val_b > 255)
-                                   ? 255u
-                                   : (unsigned char)val_b); // Blue component.
+    *pt_rgb++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgb++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgb++ = (val_b < 0) ? 0u : ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
 
     pt_ycbcr += 2;
   }
@@ -4523,8 +4243,7 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
 
 
 */
-void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
-                                 unsigned int size)
+void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -4545,26 +4264,14 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
     }
 
     val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
-    val_g =
-        *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
+    val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgba++ =
-        (val_r < 0)
-            ? 0u
-            : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
-    *pt_rgba++ =
-        (val_g < 0)
-            ? 0u
-            : ((val_g > 255) ? 255u
-                             : (unsigned char)val_g); // Green component.
-    *pt_rgba++ =
-        (val_b < 0)
-            ? 0u
-            : ((val_b > 255) ? 255u
-                             : (unsigned char)val_b); // Blue component.
+    *pt_rgba++ = (val_r < 0) ? 0u : ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgba++ = (val_g < 0) ? 0u : ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgba++ = (val_b < 0) ? 0u : ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
     *pt_rgba++ = vpRGBa::alpha_default;
 
     pt_ycbcr += 2;
@@ -4606,11 +4313,8 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::split(const vpImage<vpRGBa> &src,
-                           vpImage<unsigned char> *pR,
-                           vpImage<unsigned char> *pG,
-                           vpImage<unsigned char> *pB,
-                           vpImage<unsigned char> *pa)
+void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
+                           vpImage<unsigned char> *pB, vpImage<unsigned char> *pa)
 {
   size_t n = src.getNumberOfPixel();
   unsigned int height = src.getHeight();
@@ -4634,8 +4338,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
   size_t i; /* ordre    */
   for (unsigned int j = 0; j < 4; j++) {
     if (tabChannel[j] != NULL) {
-      if (tabChannel[j]->getHeight() != height ||
-          tabChannel[j]->getWidth() != width) {
+      if (tabChannel[j]->getHeight() != height || tabChannel[j]->getWidth() != width) {
         tabChannel[j]->resize(height, width);
       }
       dst = (unsigned char *)tabChannel[j]->bitmap;
@@ -4679,11 +4382,8 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
   \param a : Alpha channel.
   \param RGBa : Destination RGBa image.
 */
-void vpImageConvert::merge(const vpImage<unsigned char> *R,
-                           const vpImage<unsigned char> *G,
-                           const vpImage<unsigned char> *B,
-                           const vpImage<unsigned char> *a,
-                           vpImage<vpRGBa> &RGBa)
+void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsigned char> *G,
+                           const vpImage<unsigned char> *B, const vpImage<unsigned char> *a, vpImage<vpRGBa> &RGBa)
 {
   // Check if the input channels have all the same dimensions
   std::map<unsigned int, unsigned int> mapOfWidths, mapOfHeights;
@@ -4746,8 +4446,7 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R,
   \param size : The image size or the number of pixels.
 
 */
-void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
-                                  unsigned int size)
+void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey, unsigned int size)
 {
   int i = (((int)size) << 1) - 1;
   int j = (int)size - 1;
@@ -4770,16 +4469,14 @@ void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
   \param size : The image size or the number of pixels.
 
 */
-void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba,
-                                  unsigned int size)
+void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, unsigned int size)
 {
   int i = (((int)size) << 1) - 1;
   int j = (int)(size * 4 - 1);
 
   while (i >= 0) {
     int y = grey16[i--];
-    unsigned char v =
-        static_cast<unsigned char>((y + (grey16[i--] << 8)) >> 8);
+    unsigned char v = static_cast<unsigned char>((y + (grey16[i--] << 8)) >> 8);
     rgba[j--] = vpRGBa::alpha_default;
     rgba[j--] = v;
     rgba[j--] = v;
@@ -4787,15 +4484,13 @@ void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba,
   }
 }
 
-void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_,
-                             const double *value_, unsigned char *rgb,
+void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, const double *value_, unsigned char *rgb,
                              const unsigned int size, const unsigned int step)
 {
   for (unsigned int i = 0; i < size; i++) {
     double hue = hue_[i], saturation = saturation_[i], value = value_[i];
 
-    if (vpMath::equal(saturation, 0.0,
-                      std::numeric_limits<double>::epsilon())) {
+    if (vpMath::equal(saturation, 0.0, std::numeric_limits<double>::epsilon())) {
       hue = value;
       saturation = value;
     } else {
@@ -4859,8 +4554,7 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_,
   }
 }
 
-void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue,
-                             double *saturation, double *value,
+void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
                              const unsigned int size, const unsigned int step)
 {
   for (unsigned int i = 0; i < size; i++) {
@@ -4898,8 +4592,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue,
 
       if (vpMath::equal(red, max, std::numeric_limits<double>::epsilon())) {
         h = (green - blue) / delta;
-      } else if (vpMath::equal(green, max,
-                               std::numeric_limits<double>::epsilon())) {
+      } else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
         h = 2 + (blue - red) / delta;
       } else {
         h = 4 + (red - green) / delta;
@@ -4931,8 +4624,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue,
   from HSV color space. \param size : The total image size or the number of
   pixels.
 */
-void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation,
-                               const double *value, unsigned char *rgba,
+void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                                const unsigned int size)
 {
   vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, 4);
@@ -4950,14 +4642,11 @@ void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation,
   from HSV color space. \param size : The total image size or the number of
   pixels.
 */
-void vpImageConvert::HSVToRGBa(const unsigned char *hue,
-                               const unsigned char *saturation,
-                               const unsigned char *value,
+void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                                unsigned char *rgba, const unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
-    double h = hue[i] / 255.0, s = saturation[i] / 255.0,
-           v = value[i] / 255.0;
+    double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
 
     vpImageConvert::HSVToRGBa(&h, &s, &v, (rgba + i * 4), 1);
   }
@@ -4974,8 +4663,7 @@ void vpImageConvert::HSVToRGBa(const unsigned char *hue,
   values converted from RGB color space (range between [0 - 1]). \param size :
   The total image size or the number of pixels.
 */
-void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue,
-                               double *saturation, double *value,
+void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
                                const unsigned int size)
 {
   vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4);
@@ -4992,8 +4680,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue,
   value values converted from RGB color space (range between [0 - 255]).
   \param size : The total image size or the number of pixels.
 */
-void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue,
-                               unsigned char *saturation,
+void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
                                unsigned char *value, const unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
@@ -5015,8 +4702,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue,
   \param rgb : RGB array values converted from RGB color space.
   \param size : The total image size or the number of pixels.
 */
-void vpImageConvert::HSVToRGB(const double *hue, const double *saturation,
-                              const double *value, unsigned char *rgb,
+void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
                               const unsigned int size)
 {
   vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, 3);
@@ -5031,14 +4717,11 @@ void vpImageConvert::HSVToRGB(const double *hue, const double *saturation,
   \param rgb : RGB array values converted from HSV color space.
   \param size : The total image size or the number of pixels.
 */
-void vpImageConvert::HSVToRGB(const unsigned char *hue,
-                              const unsigned char *saturation,
-                              const unsigned char *value, unsigned char *rgb,
-                              const unsigned int size)
+void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                              unsigned char *rgb, const unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
-    double h = hue[i] / 255.0, s = saturation[i] / 255.0,
-           v = value[i] / 255.0;
+    double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
 
     vpImageConvert::HSVToRGB(&h, &s, &v, (rgb + i * 3), 1);
   }
@@ -5054,8 +4737,7 @@ void vpImageConvert::HSVToRGB(const unsigned char *hue,
   values converted from RGB color space (range between [0 - 1]). \param size :
   The total image size or the number of pixels.
 */
-void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue,
-                              double *saturation, double *value,
+void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
                               const unsigned int size)
 {
   vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, 3);
@@ -5071,9 +4753,8 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue,
   value values converted from RGB color space (range between [0 - 255]).
   \param size : The total image size or the number of pixels.
 */
-void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue,
-                              unsigned char *saturation, unsigned char *value,
-                              const unsigned int size)
+void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation,
+                              unsigned char *value, const unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h, s, v;

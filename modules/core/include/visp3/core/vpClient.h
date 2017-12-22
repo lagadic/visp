@@ -77,13 +77,17 @@ int main(int argc, char **argv)
 
   while(1)
   {
-    if(client.send(&val) != sizeof(int)) //Sending the new value to the first
-client std::cout << "Error while sending" << std::endl; else std::cout <<
-"Sending : " << val << std::endl;
+    // Sending the new value to the first client
+    if(client.send(&val) != sizeof(int))
+      std::cout << "Error while sending" << std::endl;
+    else
+      std::cout << Sending : " << val << std::endl;
 
-    if(client.receive(&val) != sizeof(int)) //Receiving a value from the first
-client std::cout << "Error while receiving" << std::endl; else std::cout <<
-"Received : " << val << std::endl;
+    // Receiving a value from the first client
+    if(client.receive(&val) != sizeof(int))
+      std::cout << "Error while receiving" << std::endl;
+    else
+      std::cout << "Received : " << val << std::endl;
   }
 
   return 0;
@@ -113,7 +117,11 @@ int main(int argc, char **argv)
   vpImage<unsigned char> I; // Create a gray level image container
 
   // Create a grabber based on v4l2 third party lib (for usb cameras under
-Linux) vpV4l2Grabber g; g.setScale(1); g.setInput(0); g.open(I);
+  // Linux)
+  vpV4l2Grabber g;
+  g.setScale(1);
+  g.setInput(0);
+  g.open(I);
 
   // Create an image viewer
 #if defined(VISP_HAVE_X11)
@@ -172,8 +180,7 @@ public:
   vpClient();
   virtual ~vpClient();
 
-  bool connectToHostname(const std::string &hostname,
-                         const unsigned int &port_serv);
+  bool connectToHostname(const std::string &hostname, const unsigned int &port_serv);
   bool connectToIP(const std::string &ip, const unsigned int &port_serv);
 
   void deconnect(const unsigned int &index = 0);
@@ -191,10 +198,7 @@ public:
 
     \return Number of servers.
   */
-  unsigned int getNumberOfServers()
-  {
-    return (unsigned int)receptor_list.size();
-  }
+  unsigned int getNumberOfServers() { return (unsigned int)receptor_list.size(); }
 
   void print();
 

@@ -88,10 +88,7 @@ public:
     displacement from the velocity applied to the robot during this time.
 
   */
-  virtual inline void setSamplingTime(const double &delta_t)
-  {
-    this->delta_t_ = delta_t;
-  }
+  virtual inline void setSamplingTime(const double &delta_t) { this->delta_t_ = delta_t; }
   //@}
 };
 

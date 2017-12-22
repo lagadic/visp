@@ -59,8 +59,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 vpMbScanLine::vpMbScanLine()
-  : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(),
-    visibility_samples(), depthTreshold(1e-06)
+  : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(), visibility_samples(), depthTreshold(1e-06)
 #if defined(DEBUG_DISP)
     ,
     dispMaskDebug(NULL), dispLineDebug(NULL), linedebugImg()
@@ -94,9 +93,8 @@ vpMbScanLine::~vpMbScanLine()
   \param ID : Id of the given line (has to be know when using queries).
   \param scanlines : Resulting intersections.
 */
-void vpMbScanLine::drawLineY(
-    const vpColVector &a, const vpColVector &b, const vpMbScanLineEdge &edge,
-    const int ID, std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
+void vpMbScanLine::drawLineY(const vpColVector &a, const vpColVector &b, const vpMbScanLineEdge &edge, const int ID,
+                             std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
 {
   double x0 = a[0] / a[2];
   double y0 = a[1] / a[2];
@@ -111,12 +109,10 @@ void vpMbScanLine::drawLineY(
   }
 
   // if (y0 >= h - 1 || y1 < 0 || y1 == y0)
-  if (y0 >= h - 1 || y1 < 0 ||
-      std::fabs(y1 - y0) <= std::numeric_limits<double>::epsilon())
+  if (y0 >= h - 1 || y1 < 0 || std::fabs(y1 - y0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _y0 =
-      (std::max)((unsigned int)0, (unsigned int)(std::ceil(y0)));
+  const unsigned int _y0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(y0)));
   const double _y1 = (std::min)((double)h, (double)y1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
@@ -146,9 +142,8 @@ void vpMbScanLine::drawLineY(
   \param ID : Id of the given line (has to be know when using queries).
   \param scanlines : Resulting intersections.
 */
-void vpMbScanLine::drawLineX(
-    const vpColVector &a, const vpColVector &b, const vpMbScanLineEdge &edge,
-    const int ID, std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
+void vpMbScanLine::drawLineX(const vpColVector &a, const vpColVector &b, const vpMbScanLineEdge &edge, const int ID,
+                             std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
 {
   double x0 = a[0] / a[2];
   double y0 = a[1] / a[2];
@@ -163,12 +158,10 @@ void vpMbScanLine::drawLineX(
   }
 
   // if (x0 >= w - 1 || x1 < 0 || x1 == x0)
-  if (x0 >= w - 1 || x1 < 0 ||
-      std::fabs(x1 - x0) <= std::numeric_limits<double>::epsilon())
+  if (x0 >= w - 1 || x1 < 0 || std::fabs(x1 - x0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _x0 =
-      (std::max)((unsigned int)0, (unsigned int)(std::ceil(x0)));
+  const unsigned int _x0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(x0)));
   const double _x1 = (std::min)((double)w, (double)x1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
@@ -195,9 +188,8 @@ void vpMbScanLine::drawLineX(
   \param ID : ID of the polygon (has to be know when using queries).
   \param scanlines : Resulting intersections.
 */
-void vpMbScanLine::drawPolygonY(
-    const std::vector<std::pair<vpPoint, unsigned int> > &polygon,
-    const int ID, std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
+void vpMbScanLine::drawPolygonY(const std::vector<std::pair<vpPoint, unsigned int> > &polygon, const int ID,
+                                std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
 {
   if (polygon.size() < 2)
     return;
@@ -207,9 +199,7 @@ void vpMbScanLine::drawPolygonY(
     createVectorFromPoint(polygon.front().first, p1, K);
     createVectorFromPoint(polygon.back().first, p2, K);
 
-    drawLineY(p1, p2,
-              makeMbScanLineEdge(polygon.front().first, polygon.back().first),
-              ID, scanlines);
+    drawLineY(p1, p2, makeMbScanLineEdge(polygon.front().first, polygon.back().first), ID, scanlines);
     return;
   }
 
@@ -221,10 +211,8 @@ void vpMbScanLine::drawPolygonY(
     createVectorFromPoint(polygon[i].first, p1, K);
     createVectorFromPoint(polygon[(i + 1) % polygon.size()].first, p2, K);
 
-    drawLineY(p1, p2,
-              makeMbScanLineEdge(polygon[i].first,
-                                 polygon[(i + 1) % polygon.size()].first),
-              ID, local_scanlines);
+    drawLineY(p1, p2, makeMbScanLineEdge(polygon[i].first, polygon[(i + 1) % polygon.size()].first), ID,
+              local_scanlines);
   }
 
   createScanLinesFromLocals(scanlines, local_scanlines, h);
@@ -237,9 +225,8 @@ void vpMbScanLine::drawPolygonY(
   \param ID : ID of the polygon (has to be know when using queries).
   \param scanlines : Resulting intersections.
 */
-void vpMbScanLine::drawPolygonX(
-    const std::vector<std::pair<vpPoint, unsigned int> > &polygon,
-    const int ID, std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
+void vpMbScanLine::drawPolygonX(const std::vector<std::pair<vpPoint, unsigned int> > &polygon, const int ID,
+                                std::vector<std::vector<vpMbScanLineSegment> > &scanlines)
 {
   if (polygon.size() < 2)
     return;
@@ -249,9 +236,7 @@ void vpMbScanLine::drawPolygonX(
     createVectorFromPoint(polygon.front().first, p1, K);
     createVectorFromPoint(polygon.back().first, p2, K);
 
-    drawLineX(p1, p2,
-              makeMbScanLineEdge(polygon.front().first, polygon.back().first),
-              ID, scanlines);
+    drawLineX(p1, p2, makeMbScanLineEdge(polygon.front().first, polygon.back().first), ID, scanlines);
     return;
   }
 
@@ -263,10 +248,8 @@ void vpMbScanLine::drawPolygonX(
     createVectorFromPoint(polygon[i].first, p1, K);
     createVectorFromPoint(polygon[(i + 1) % polygon.size()].first, p2, K);
 
-    drawLineX(p1, p2,
-              makeMbScanLineEdge(polygon[i].first,
-                                 polygon[(i + 1) % polygon.size()].first),
-              ID, local_scanlines);
+    drawLineX(p1, p2, makeMbScanLineEdge(polygon[i].first, polygon[(i + 1) % polygon.size()].first), ID,
+              local_scanlines);
   }
 
   createScanLinesFromLocals(scanlines, local_scanlines, w);
@@ -281,10 +264,9 @@ void vpMbScanLine::drawPolygonX(
   \param localScanlines : Local scanline vector (X or Y-axis).
   \param size : Corresponding size (typically the width or the height).
 */
-void vpMbScanLine::createScanLinesFromLocals(
-    std::vector<std::vector<vpMbScanLineSegment> > &scanlines,
-    std::vector<std::vector<vpMbScanLineSegment> > &localScanlines,
-    const unsigned int &size)
+void vpMbScanLine::createScanLinesFromLocals(std::vector<std::vector<vpMbScanLineSegment> > &scanlines,
+                                             std::vector<std::vector<vpMbScanLineSegment> > &localScanlines,
+                                             const unsigned int &size)
 {
   for (unsigned int j = 0; j < size; ++j) {
     std::vector<vpMbScanLineSegment> &scanline = localScanlines[j];
@@ -322,11 +304,9 @@ void vpMbScanLine::createScanLinesFromLocals(
   queries). \param cam : Camera parameters. \param width : Width of the image
   (render window). \param height : Height of the image (render window).
 */
-void vpMbScanLine::drawScene(
-    const std::vector<std::vector<std::pair<vpPoint, unsigned int> > *>
-        &polygons,
-    std::vector<int> listPolyIndices, const vpCameraParameters &cam,
-    unsigned int width, unsigned int height)
+void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigned int> > *> &polygons,
+                             std::vector<int> listPolyIndices, const vpCameraParameters &cam, unsigned int width,
+                             unsigned int height)
 {
   this->w = width;
   this->h = height;
@@ -381,9 +361,7 @@ void vpMbScanLine::drawScene(
 
       for (size_t j = 0; j < stack.size(); ++j) {
         const vpMbScanLineSegment &s0 = stack[j].second;
-        stack[j].first = mix(s0.Z1, s0.Z2,
-                             getAlpha(s.type == POINT ? s.p : (s.p + 0.5),
-                                      s0.P1, s0.Z1, s0.P2, s0.Z2));
+        stack[j].first = mix(s0.Z1, s0.Z2, getAlpha(s.type == POINT ? s.p : (s.p + 0.5), s0.P1, s0.Z1, s0.P2, s0.Z2));
       }
       sort(stack.begin(), stack.end(), vpMbScanLineSegmentComparator());
 
@@ -408,8 +386,7 @@ void vpMbScanLine::drawScene(
 
         // This part will only be used for MbKltTracking
         if (last_ID != -1) {
-          const unsigned int x0 = (std::max)(
-              (unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          const unsigned int x0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
           const double x1 = (std::min)((double)w, (double)s.p);
           for (unsigned int x = x0 + maskBorder; x < x1 - maskBorder; ++x) {
             primitive_ids[(unsigned int)y][(unsigned int)x] = last_visible.ID;
@@ -459,9 +436,7 @@ void vpMbScanLine::drawScene(
 
       for (size_t j = 0; j < stack.size(); ++j) {
         const vpMbScanLineSegment &s0 = stack[j].second;
-        stack[j].first = mix(s0.Z1, s0.Z2,
-                             getAlpha(s.type == POINT ? s.p : (s.p + 0.5),
-                                      s0.P1, s0.Z1, s0.P2, s0.Z2));
+        stack[j].first = mix(s0.Z1, s0.Z2, getAlpha(s.type == POINT ? s.p : (s.p + 0.5), s0.P1, s0.Z1, s0.P2, s0.Z2));
       }
       sort(stack.begin(), stack.end(), vpMbScanLineSegmentComparator());
 
@@ -486,8 +461,7 @@ void vpMbScanLine::drawScene(
 
         // This part will only be used for MbKltTracking
         if (maskBorder != 0 && last_ID != -1) {
-          const unsigned int y0 = (std::max)(
-              (unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          const unsigned int y0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
           const double y1 = (std::min)((double)h, (double)s.p);
           for (unsigned int y = y0 + maskBorder; y < y1 - maskBorder; ++y) {
             // primitive_ids[(unsigned int)y][(unsigned int)x] =
@@ -552,10 +526,8 @@ void vpMbScanLine::drawScene(
   line. \param displayResults : True if the results have to be displayed.
   False otherwise.
 */
-void vpMbScanLine::queryLineVisibility(
-    const vpPoint &a, const vpPoint &b,
-    std::vector<std::pair<vpPoint, vpPoint> > &lines,
-    const bool &displayResults)
+void vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
+                                       std::vector<std::pair<vpPoint, vpPoint> > &lines, const bool &displayResults)
 {
   vpColVector _a, _b;
   createVectorFromPoint(a, _a, K);
@@ -593,8 +565,7 @@ void vpMbScanLine::queryLineVisibility(
   double *v1(&x1), *w1(&z1);
   unsigned int size(w);
 
-  if (std::fabs(y0 - y1) >
-      std::fabs(x0 - x1)) // Test if the biggest difference is on the Y-axis
+  if (std::fabs(y0 - y1) > std::fabs(x0 - x1)) // Test if the biggest difference is on the Y-axis
   {
     v0 = &y0;
     v1 = &y1;
@@ -620,8 +591,7 @@ void vpMbScanLine::queryLineVisibility(
   }
 
   // if (*v0 >= size - 1 || *v1 < 0 || *v1 == *v0)
-  if (*v0 >= size - 1 || *v1 < 0 ||
-      std::fabs(*v1 - *v0) <= std::numeric_limits<double>::epsilon())
+  if (*v0 >= size - 1 || *v1 < 0 || std::fabs(*v1 - *v0) <= std::numeric_limits<double>::epsilon())
     return;
 
   const int _v0 = (std::max)(0, int(std::ceil(*v0)));
@@ -632,11 +602,9 @@ void vpMbScanLine::queryLineVisibility(
   vpPoint line_start;
   vpPoint line_end;
   bool b_line_started = false;
-  for (std::set<int>::const_iterator it = visible_samples.begin();
-       it != visible_samples.end(); ++it) {
+  for (std::set<int>::const_iterator it = visible_samples.begin(); it != visible_samples.end(); ++it) {
     const int v = *it;
-    const double alpha =
-        getAlpha(v, (*v0) * (*w0), (*w0), (*v1) * (*w1), (*w1));
+    const double alpha = getAlpha(v, (*v0) * (*w0), (*w0), (*v1) * (*w1), (*w1));
     // const vpPoint p = mix(a, b, alpha);
     const vpPoint p = mix(a_, b_, alpha);
     if (last + 1 != v) {
@@ -672,10 +640,8 @@ void vpMbScanLine::queryLineVisibility(
     for (unsigned int i = 0; i < lines.size(); i++) {
       lines[i].first.project();
       lines[i].second.project();
-      vpMeterPixelConversion::convertPoint(K, lines[i].first.get_x(),
-                                           lines[i].first.get_y(), j1, i1);
-      vpMeterPixelConversion::convertPoint(K, lines[i].second.get_x(),
-                                           lines[i].second.get_y(), j2, i2);
+      vpMeterPixelConversion::convertPoint(K, lines[i].first.get_x(), lines[i].first.get_y(), j1, i1);
+      vpMeterPixelConversion::convertPoint(K, lines[i].second.get_x(), lines[i].second.get_y(), j2, i2);
 
       vpDisplay::displayLine(linedebugImg, i1, j1, i2, j2, vpColor::red, 3);
     }
@@ -692,8 +658,7 @@ void vpMbScanLine::queryLineVisibility(
 
   \return Resulting vpMbScanLineEdge.
 */
-vpMbScanLine::vpMbScanLineEdge
-vpMbScanLine::makeMbScanLineEdge(const vpPoint &a, const vpPoint &b)
+vpMbScanLine::vpMbScanLineEdge vpMbScanLine::makeMbScanLineEdge(const vpPoint &a, const vpPoint &b)
 {
   vpColVector _a(3);
   vpColVector _b(3);
@@ -727,8 +692,7 @@ vpMbScanLine::makeMbScanLineEdge(const vpPoint &a, const vpPoint &b)
   \param v : Resulting vector.
   \param K : Camera parameters.
 */
-void vpMbScanLine::createVectorFromPoint(const vpPoint &p, vpColVector &v,
-                                         const vpCameraParameters &K)
+void vpMbScanLine::createVectorFromPoint(const vpPoint &p, vpColVector &v, const vpCameraParameters &K)
 {
   v = vpColVector(3);
 
@@ -746,8 +710,7 @@ void vpMbScanLine::createVectorFromPoint(const vpPoint &p, vpColVector &v,
   \param X1 : Second extremity.
   \param Z1 : Second extremity.
 */
-double vpMbScanLine::getAlpha(double x, double X0, double Z0, double X1,
-                              double Z1)
+double vpMbScanLine::getAlpha(double x, double X0, double Z0, double X1, double Z1)
 {
   const double N = X0 - x * Z0;
   const double D = x * (Z1 - Z0) - (X1 - X0);
@@ -769,10 +732,7 @@ double vpMbScanLine::getAlpha(double x, double X0, double Z0, double X1,
 
   \return Interpolated value.
 */
-double vpMbScanLine::mix(double a, double b, double alpha)
-{
-  return a + (b - a) * alpha;
-}
+double vpMbScanLine::mix(double a, double b, double alpha) { return a + (b - a) * alpha; }
 
 /*!
   Interpolate two vpPoints.
@@ -803,8 +763,7 @@ vpPoint vpMbScanLine::mix(const vpPoint &a, const vpPoint &b, double alpha)
 */
 double vpMbScanLine::norm(const vpPoint &a, const vpPoint &b)
 {
-  return sqrt(vpMath::sqr(a.get_X() - b.get_X()) +
-              vpMath::sqr(a.get_Y() - b.get_Y()) +
+  return sqrt(vpMath::sqr(a.get_X() - b.get_X()) + vpMath::sqr(a.get_Y() - b.get_Y()) +
               vpMath::sqr(a.get_Z() - b.get_Z()));
 }
 

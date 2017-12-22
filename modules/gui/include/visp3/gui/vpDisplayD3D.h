@@ -110,12 +110,10 @@ public:
   vpDisplayD3D();
   vpDisplayD3D(int winx, int winy, const std::string &title = "");
   vpDisplayD3D(vpImage<unsigned char> &I, vpScaleType type);
-  vpDisplayD3D(vpImage<unsigned char> &I, int winx = -1, int winy = -1,
-               const std::string &title = "",
+  vpDisplayD3D(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "",
                vpScaleType type = SCALE_DEFAULT);
   vpDisplayD3D(vpImage<vpRGBa> &I, vpScaleType type);
-  vpDisplayD3D(vpImage<vpRGBa> &I, int winx = -1, int winy = -1,
-               const std::string &title = "",
+  vpDisplayD3D(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "",
                vpScaleType type = SCALE_DEFAULT);
 
   virtual ~vpDisplayD3D();

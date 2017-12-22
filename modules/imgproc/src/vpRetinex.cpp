@@ -95,9 +95,7 @@
 
 #define MAX_RETINEX_SCALES 8
 
-std::vector<double> retinexScalesDistribution(const int scaleDiv,
-                                              const int level,
-                                              const int scale)
+std::vector<double> retinexScalesDistribution(const int scaleDiv, const int level, const int scale)
 {
   std::vector<double> scales(MAX_RETINEX_SCALES);
 
@@ -120,16 +118,14 @@ std::vector<double> retinexScalesDistribution(const int scaleDiv,
     case vp::RETINEX_LOW:
       size_step = std::log(scale - 2.0) / (double)scaleDiv;
       for (i = 0; i < scaleDiv; i++) {
-        scales[(size_t)i] =
-            2.0 + std::pow(10.0, (i * size_step) / std::log(10.0));
+        scales[(size_t)i] = 2.0 + std::pow(10.0, (i * size_step) / std::log(10.0));
       }
       break;
 
     case vp::RETINEX_HIGH:
       size_step = std::log(scale - 2.0) / (double)scaleDiv;
       for (i = 0; i < scaleDiv; i++) {
-        scales[(size_t)i] =
-            scale - std::pow(10.0, (i * size_step) / std::log(10.0));
+        scales[(size_t)i] = scale - std::pow(10.0, (i * size_step) / std::log(10.0));
       }
       break;
 
@@ -143,13 +139,12 @@ std::vector<double> retinexScalesDistribution(const int scaleDiv,
 
 // See: http://imagej.net/Retinex and
 // https://docs.gimp.org/en/plug-in-retinex.html
-void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv,
-           const int level, const double dynamic, const int _kernelSize)
+void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv, const int level, const double dynamic,
+           const int _kernelSize)
 {
   // Calculate the scales of filtering according to the number of filter and
   // their distribution.
-  std::vector<double> retinexScales =
-      retinexScalesDistribution(scaleDiv, level, _scale);
+  std::vector<double> retinexScales = retinexScalesDistribution(scaleDiv, level, _scale);
 
   // Filtering according to the various scales.
   // Summarize the results of the various filters according to a specific
@@ -169,8 +164,7 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv,
 
   for (int channel = 0; channel < 3; channel++) {
     doubleRGB[(size_t)channel] = vpImage<double>(I.getHeight(), I.getWidth());
-    doubleResRGB[(size_t)channel] =
-        vpImage<double>(I.getHeight(), I.getWidth());
+    doubleResRGB[(size_t)channel] = vpImage<double>(I.getHeight(), I.getWidth());
 
     for (unsigned int cpt = 0; cpt < size; cpt++) {
       // Shift the pixel values by 1 to avoid problem with log(0)
@@ -195,16 +189,14 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv,
     for (int sc = 0; sc < scaleDiv; sc++) {
       vpImage<double> blurImage;
       double sigma = retinexScales[(size_t)sc];
-      vpImageFilter::gaussianBlur(doubleRGB[(size_t)channel], blurImage,
-                                  (unsigned int)kernelSize, sigma);
+      vpImageFilter::gaussianBlur(doubleRGB[(size_t)channel], blurImage, (unsigned int)kernelSize, sigma);
 
       for (unsigned int cpt = 0; cpt < size; cpt++) {
         // Summarize the filtered values.
         // In fact one calculates a ratio between the original values and the
         // filtered values.
         doubleResRGB[(size_t)channel].bitmap[cpt] +=
-            weight * (std::log(doubleRGB[(size_t)channel].bitmap[cpt]) -
-                      std::log(blurImage.bitmap[cpt]));
+            weight * (std::log(doubleRGB[(size_t)channel].bitmap[cpt]) - std::log(blurImage.bitmap[cpt]));
       }
     }
   }
@@ -213,31 +205,21 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv,
   const double gain = 1.0, alpha = 128.0, offset = 0.0;
 
   for (unsigned int cpt = 0; cpt < size; cpt++) {
-    double logl = std::log(
-        (double)(I.bitmap[cpt].R + I.bitmap[cpt].G + I.bitmap[cpt].B + 3.0));
+    double logl = std::log((double)(I.bitmap[cpt].R + I.bitmap[cpt].G + I.bitmap[cpt].B + 3.0));
 
-    dest[cpt * 3] = gain *
-                        (std::log(alpha * doubleRGB[0].bitmap[cpt]) - logl) *
-                        doubleResRGB[0].bitmap[cpt] +
-                    offset;
+    dest[cpt * 3] = gain * (std::log(alpha * doubleRGB[0].bitmap[cpt]) - logl) * doubleResRGB[0].bitmap[cpt] + offset;
     dest[cpt * 3 + 1] =
-        gain * (std::log(alpha * doubleRGB[1].bitmap[cpt]) - logl) *
-            doubleResRGB[1].bitmap[cpt] +
-        offset;
+        gain * (std::log(alpha * doubleRGB[1].bitmap[cpt]) - logl) * doubleResRGB[1].bitmap[cpt] + offset;
     dest[cpt * 3 + 2] =
-        gain * (std::log(alpha * doubleRGB[2].bitmap[cpt]) - logl) *
-            doubleResRGB[2].bitmap[cpt] +
-        offset;
+        gain * (std::log(alpha * doubleRGB[2].bitmap[cpt]) - logl) * doubleResRGB[2].bitmap[cpt] + offset;
   }
 
   double sum = std::accumulate(dest.begin(), dest.end(), 0.0);
   double mean = sum / dest.size();
 
   std::vector<double> diff(dest.size());
-  std::transform(dest.begin(), dest.end(), diff.begin(),
-                 std::bind2nd(std::minus<double>(), mean));
-  double sq_sum =
-      std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+  std::transform(dest.begin(), dest.end(), diff.begin(), std::bind2nd(std::minus<double>(), mean));
+  double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double stdev = std::sqrt(sq_sum / dest.size());
 
   double mini = mean - dynamic * stdev;
@@ -249,12 +231,9 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv,
   }
 
   for (unsigned int cpt = 0; cpt < size; cpt++) {
-    I.bitmap[cpt].R = vpMath::saturate<unsigned char>(
-        (255.0 * (dest[cpt * 3 + 0] - mini) / range));
-    I.bitmap[cpt].G = vpMath::saturate<unsigned char>(
-        (255.0 * (dest[cpt * 3 + 1] - mini) / range));
-    I.bitmap[cpt].B = vpMath::saturate<unsigned char>(
-        (255.0 * (dest[cpt * 3 + 2] - mini) / range));
+    I.bitmap[cpt].R = vpMath::saturate<unsigned char>((255.0 * (dest[cpt * 3 + 0] - mini) / range));
+    I.bitmap[cpt].G = vpMath::saturate<unsigned char>((255.0 * (dest[cpt * 3 + 1] - mini) / range));
+    I.bitmap[cpt].B = vpMath::saturate<unsigned char>((255.0 * (dest[cpt * 3 + 2] - mini) / range));
   }
 }
 
@@ -276,8 +255,8 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv,
   saturated images. \param kernelSize : Kernel size for the gaussian blur
   operation. If -1, the kernel size is calculated from the image size.
 */
-void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv,
-                 const int level, const double dynamic, const int kernelSize)
+void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv, const int level, const double dynamic,
+                 const int kernelSize)
 {
   // Assert scale
   if (scale < 16 || scale > 250) {
@@ -287,8 +266,7 @@ void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv,
 
   // Assert scaleDiv
   if (scaleDiv < 1 || scaleDiv > 8) {
-    std::cerr << "Scale division must be between the interval [1 - 8]"
-              << std::endl;
+    std::cerr << "Scale division must be between the interval [1 - 8]" << std::endl;
     return;
   }
 
@@ -319,8 +297,7 @@ void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv,
   saturated images. \param kernelSize : Kernel size for the gaussian blur
   operation. If -1, the kernel size is calculated from the image size.
 */
-void vp::retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2,
-                 const int scale, const int scaleDiv, const int level,
+void vp::retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int scale, const int scaleDiv, const int level,
                  const double dynamic, const int kernelSize)
 {
   I2 = I1;

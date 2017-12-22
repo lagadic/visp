@@ -117,13 +117,10 @@ public:
   void track(const vpImage<unsigned char> &Im);
 
   void initTracking(const vpImage<unsigned char> &I);
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n,
-                    vpImagePoint *iP);
-  void initTracking(const vpImage<unsigned char> &I,
-                    const std::vector<vpImagePoint> &iP);
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic,
-                    double a_p, double b_p, double e_p, double low_alpha,
-                    double high_alpha);
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP);
+  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double a_p, double b_p, double e_p,
+                    double low_alpha, double high_alpha);
   void display(const vpImage<unsigned char> &I, vpColor col);
   void display(const vpImage<unsigned char> &I)
   {
@@ -136,8 +133,7 @@ public:
     @name Deprecated functions
   */
   //@{
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n,
-                    unsigned *i, unsigned *j);
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j);
 //@}
 #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
@@ -340,24 +336,18 @@ private:
   */
   //@{
   void computeAngle(int ip1, int jp1, int ip2, int jp2);
-  void computeAngle(int ip1, int jp1, double &alpha1, int ip2, int jp2,
-                    double &alpha2);
+  void computeAngle(int ip1, int jp1, double &alpha1, int ip2, int jp2, double &alpha2);
 //@}
 #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
   // Static Function
 public:
-  static void display(const vpImage<unsigned char> &I,
-                      const vpImagePoint &center, const double &A,
-                      const double &B, const double &E,
-                      const double &smallalpha, const double &highalpha,
-                      const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center,
-                      const double &A, const double &B, const double &E,
-                      const double &smallalpha, const double &highalpha,
-                      const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
+  static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+                      const double &E, const double &smallalpha, const double &highalpha,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+                      const double &E, const double &smallalpha, const double &highalpha,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 
 #endif

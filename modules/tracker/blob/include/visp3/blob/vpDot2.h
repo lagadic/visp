@@ -131,14 +131,10 @@ public:
   vpDot2(const vpDot2 &twinDot);
   virtual ~vpDot2();
 
-  static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n,
-                             const std::string &dotFile,
-                             vpImage<unsigned char> &I,
-                             vpColor col = vpColor::blue,
-                             bool trackDot = true);
+  static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I,
+                             vpColor col = vpColor::blue, bool trackDot = true);
 
-  void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red,
-               unsigned int thickness = 1) const;
+  void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1) const;
 
   double getArea() const;
   /*!
@@ -152,8 +148,7 @@ public:
   {
     vpRect bbox;
 
-    bbox.setRect(this->bbox_u_min, this->bbox_v_min,
-                 this->bbox_u_max - this->bbox_u_min + 1,
+    bbox.setRect(this->bbox_u_min, this->bbox_v_min, this->bbox_u_max - this->bbox_u_min + 1,
                  this->bbox_v_max - this->bbox_v_min + 1);
 
     return (bbox);
@@ -175,10 +170,7 @@ public:
     border. This list is update after a call to track().
 
   */
-  void getEdges(std::list<vpImagePoint> &edges_list) const
-  {
-    edges_list = this->ip_edges_list;
-  };
+  void getEdges(std::list<vpImagePoint> &edges_list) const { edges_list = this->ip_edges_list; };
   /*!
 
     Return the list of all the image points on the dot
@@ -195,10 +187,7 @@ public:
 
     \sa setEllipsoidBadPointsPercentage()
     */
-  double getEllipsoidBadPointsPercentage() const
-  {
-    return allowedBadPointsPercentage_;
-  }
+  double getEllipsoidBadPointsPercentage() const { return allowedBadPointsPercentage_; }
 
   double getEllipsoidShapePrecision() const;
   void getFreemanChain(std::list<unsigned int> &freeman_chain) const;
@@ -232,22 +221,18 @@ public:
   double getWidth() const;
 
   void initTracking(const vpImage<unsigned char> &I, unsigned int size = 0);
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip,
-                    unsigned int size = 0);
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip,
-                    unsigned int gray_lvl_min, unsigned int gray_lvl_max,
-                    unsigned int size = 0);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size = 0);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int gray_lvl_min,
+                    unsigned int gray_lvl_max, unsigned int size = 0);
 
   vpDot2 &operator=(const vpDot2 &twinDot);
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDot2 &d);
 
   void print(std::ostream &os) { os << *this << std::endl; }
-  void searchDotsInArea(const vpImage<unsigned char> &I, int area_u,
-                        int area_v, unsigned int area_w, unsigned int area_h,
-                        std::list<vpDot2> &niceDots);
+  void searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int area_v, unsigned int area_w,
+                        unsigned int area_h, std::list<vpDot2> &niceDots);
 
-  void searchDotsInArea(const vpImage<unsigned char> &I,
-                        std::list<vpDot2> &niceDots);
+  void searchDotsInArea(const vpImage<unsigned char> &I, std::list<vpDot2> &niceDots);
 
   void setArea(const double &area);
   /*!
@@ -352,18 +337,15 @@ public:
   };
   void setGrayLevelPrecision(const double &grayLevelPrecision);
   void setHeight(const double &height);
-  void setMaxSizeSearchDistancePrecision(
-      const double &maxSizeSearchDistancePrecision);
+  void setMaxSizeSearchDistancePrecision(const double &maxSizeSearchDistancePrecision);
   void setSizePrecision(const double &sizePrecision);
   void setWidth(const double &width);
 
   void track(const vpImage<unsigned char> &I);
   void track(const vpImage<unsigned char> &I, vpImagePoint &cog);
 
-  static void trackAndDisplay(vpDot2 dot[], const unsigned int &n,
-                              vpImage<unsigned char> &I,
-                              std::vector<vpImagePoint> &cogs,
-                              vpImagePoint *cogStar = NULL);
+  static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
+                              std::vector<vpImagePoint> &cogs, vpImagePoint *cogStar = NULL);
 
 public:
   double m00;  /*!< Considering the general distribution moments for \f$ N \f$
@@ -432,26 +414,19 @@ public:
          */
 
 private:
-  virtual bool isValid(const vpImage<unsigned char> &I,
-                       const vpDot2 &wantedDot);
+  virtual bool isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot);
 
-  virtual bool hasGoodLevel(const vpImage<unsigned char> &I,
-                            const unsigned int &u,
-                            const unsigned int &v) const;
-  virtual bool hasReverseLevel(const vpImage<unsigned char> &I,
-                               const unsigned int &u,
-                               const unsigned int &v) const;
+  virtual bool hasGoodLevel(const vpImage<unsigned char> &I, const unsigned int &u, const unsigned int &v) const;
+  virtual bool hasReverseLevel(const vpImage<unsigned char> &I, const unsigned int &u, const unsigned int &v) const;
 
   virtual vpDot2 *getInstance();
 
   void init();
 
-  bool computeParameters(const vpImage<unsigned char> &I,
-                         const double &u = -1.0, const double &v = -1.0);
+  bool computeParameters(const vpImage<unsigned char> &I, const double &u = -1.0, const double &v = -1.0);
 
-  bool findFirstBorder(const vpImage<unsigned char> &I, const unsigned int &u,
-                       const unsigned int &v, unsigned int &border_u,
-                       unsigned int &border_v);
+  bool findFirstBorder(const vpImage<unsigned char> &I, const unsigned int &u, const unsigned int &v,
+                       unsigned int &border_u, unsigned int &border_v);
   void computeMeanGrayLevel(const vpImage<unsigned char> &I);
 
   /*!
@@ -473,26 +448,19 @@ private:
   */
   unsigned int getFirstBorder_v() const { return this->firstBorder_v; }
 
-  bool computeFreemanChainElement(const vpImage<unsigned char> &I,
-                                  const unsigned int &u,
-                                  const unsigned int &v,
+  bool computeFreemanChainElement(const vpImage<unsigned char> &I, const unsigned int &u, const unsigned int &v,
                                   unsigned int &element);
-  void computeFreemanParameters(const int &u_p, const int &v_p,
-                                unsigned int &element, int &du, int &dv,
-                                float &dS, float &dMu, float &dMv,
-                                float &dMuv, float &dMu2, float &dMv2);
-  void updateFreemanPosition(unsigned int &u, unsigned int &v,
-                             const unsigned int &dir);
+  void computeFreemanParameters(const int &u_p, const int &v_p, unsigned int &element, int &du, int &dv, float &dS,
+                                float &dMu, float &dMv, float &dMuv, float &dMu2, float &dMv2);
+  void updateFreemanPosition(unsigned int &u, unsigned int &v, const unsigned int &dir);
 
   bool isInImage(const vpImage<unsigned char> &I) const;
-  bool isInImage(const vpImage<unsigned char> &I,
-                 const vpImagePoint &ip) const;
+  bool isInImage(const vpImage<unsigned char> &I, const vpImagePoint &ip) const;
 
   bool isInArea(const unsigned int &u, const unsigned int &v) const;
 
   void getGridSize(unsigned int &gridWidth, unsigned int &gridHeight);
-  void setArea(const vpImage<unsigned char> &I, int u, int v, unsigned int w,
-               unsigned int h);
+  void setArea(const vpImage<unsigned char> &I, int u, int v, unsigned int w, unsigned int h);
   void setArea(const vpImage<unsigned char> &I);
   void setArea(const vpRect &a);
 
@@ -539,15 +507,11 @@ private:
 
   // Static funtions
 public:
-  static void display(const vpImage<unsigned char> &I,
-                      const vpImagePoint &cog,
-                      const std::list<vpImagePoint> &edges_list,
-                      vpColor color = vpColor::red,
+  static void display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
+                      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red,
                       unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &cog,
-                      const std::list<vpImagePoint> &edges_list,
-                      vpColor color = vpColor::red,
-                      unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std::list<vpImagePoint> &edges_list,
+                      vpColor color = vpColor::red, unsigned int thickness = 1);
 };
 
 #endif

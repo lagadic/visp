@@ -184,8 +184,7 @@ public:
   inline void set_controlPoints(const std::list<vpImagePoint> &list)
   {
     controlPoints.clear();
-    for (std::list<vpImagePoint>::const_iterator it = list.begin();
-         it != list.end(); ++it) {
+    for (std::list<vpImagePoint>::const_iterator it = list.begin(); it != list.end(); ++it) {
       controlPoints.push_back(*it);
     }
   }
@@ -198,8 +197,7 @@ public:
   inline void set_knots(const std::list<double> &list)
   {
     knots.clear();
-    for (std::list<double>::const_iterator it = list.begin();
-         it != list.end(); ++it) {
+    for (std::list<double>::const_iterator it = list.begin(); it != list.end(); ++it) {
       knots.push_back(*it);
     }
   }
@@ -213,37 +211,28 @@ public:
   inline void set_crossingPoints(const std::list<vpImagePoint> &list)
   {
     crossingPoints.clear();
-    for (std::list<vpImagePoint>::const_iterator it = list.begin();
-         it != list.end(); ++it) {
+    for (std::list<vpImagePoint>::const_iterator it = list.begin(); it != list.end(); ++it) {
       crossingPoints.push_back(*it);
     }
   }
 
-  static unsigned int findSpan(double l_u, unsigned int l_p,
-                               std::vector<double> &l_knots);
+  static unsigned int findSpan(double l_u, unsigned int l_p, std::vector<double> &l_knots);
   unsigned int findSpan(double u);
 
-  static vpBasisFunction *computeBasisFuns(double l_u, unsigned int l_i,
-                                           unsigned int l_p,
+  static vpBasisFunction *computeBasisFuns(double l_u, unsigned int l_i, unsigned int l_p,
                                            std::vector<double> &l_knots);
   vpBasisFunction *computeBasisFuns(double u);
 
-  static vpBasisFunction **computeDersBasisFuns(double l_u, unsigned int l_i,
-                                                unsigned int l_p,
-                                                unsigned int l_der,
+  static vpBasisFunction **computeDersBasisFuns(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
                                                 std::vector<double> &l_knots);
   vpBasisFunction **computeDersBasisFuns(double u, unsigned int der);
 
-  static vpImagePoint
-  computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p,
-                    std::vector<double> &l_knots,
-                    std::vector<vpImagePoint> &l_controlPoints);
+  static vpImagePoint computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
+                                        std::vector<vpImagePoint> &l_controlPoints);
   vpImagePoint computeCurvePoint(double u);
 
-  static vpImagePoint *
-  computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p,
-                   unsigned int l_der, std::vector<double> &l_knots,
-                   std::vector<vpImagePoint> &l_controlPoints);
+  static vpImagePoint *computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
+                                        std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
   vpImagePoint *computeCurveDers(double u, unsigned int der);
 };
 

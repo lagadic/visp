@@ -83,8 +83,8 @@ int main()
 
   // Get the polygon bounding box
   vpRect bbox = polygon.getBoundingBox();
-  std::cout << "Bounding box: " << bbox.getTopLeft() << " to " <<
-bbox.getBottomRight() << std::endl;
+  std::cout << "Bounding box: " << bbox.getTopLeft() << " to "
+            << bbox.getBottomRight() << std::endl;
 
   // Get the polygon surface and center
   std::cout << "Area: " << polygon.getArea() << std::endl;
@@ -92,8 +92,9 @@ bbox.getBottomRight() << std::endl;
 
   // Check if a point is inside the polygon
   vpImagePoint ip(550, 200);
-  std::cout << "The point " << ip << " is " << (polygon.isInside(ip) ?
-"inside":"outside") << " the polygon" << std::endl;
+  std::cout << "The point " << ip << " is "
+            << (polygon.isInside(ip) ? "inside":"outside")
+            << " the polygon" << std::endl;
 
   return 0;
 }
@@ -118,8 +119,8 @@ protected:
 public:
   enum PointInPolygonMethod {
     PnPolySegmentIntersection, /*!< Legacy Point In Polygon test. */
-    PnPolyRayCasting /*!< Point In Polygon test using ray casting method
-                        (faster). */
+    PnPolyRayCasting           /*!< Point In Polygon test using ray casting method
+                                  (faster). */
   };
 
   vpPolygon();
@@ -132,22 +133,17 @@ public:
 
   void buildFrom(const std::vector<vpImagePoint> &corners);
   void buildFrom(const std::list<vpImagePoint> &corners);
-  void buildFrom(const std::vector<vpPoint> &corners,
-                 const vpCameraParameters &cam);
+  void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam);
 
   unsigned int getSize() const;
-  void initClick(const vpImage<unsigned char> &I, unsigned int size = 5,
-                 const vpColor &color = vpColor::red,
+  void initClick(const vpImage<unsigned char> &I, unsigned int size = 5, const vpColor &color = vpColor::red,
                  unsigned int thickness = 1);
-  void initClick(const vpImage<vpRGBa> &I, unsigned int size = 5,
-                 const vpColor &color = vpColor::red,
+  void initClick(const vpImage<vpRGBa> &I, unsigned int size = 5, const vpColor &color = vpColor::red,
                  unsigned int thickness = 1);
 
-  bool isInside(const vpImagePoint &iP,
-                const PointInPolygonMethod &method = PnPolyRayCasting) const;
+  bool isInside(const vpImagePoint &iP, const PointInPolygonMethod &method = PnPolyRayCasting) const;
 
-  void display(const vpImage<unsigned char> &I, const vpColor &color,
-               unsigned int thickness = 1) const;
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1) const;
 
   /*!
     Get the corners of the polygon.
@@ -188,9 +184,7 @@ protected:
   void updateBoundingBox();
 
 private:
-  bool testIntersectionSegments(const vpImagePoint &ip1,
-                                const vpImagePoint &ip2,
-                                const vpImagePoint &ip3,
+  bool testIntersectionSegments(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImagePoint &ip3,
                                 const vpImagePoint &ip4) const;
   void precalcValuesPnPoly();
 
@@ -202,8 +196,7 @@ private:
   //###################
 
 public:
-  static bool isInside(const std::vector<vpImagePoint> &roi, const double &i,
-                       const double &j,
+  static bool isInside(const std::vector<vpImagePoint> &roi, const double &i, const double &j,
                        const PointInPolygonMethod &method = PnPolyRayCasting);
 };
 

@@ -77,23 +77,20 @@
 
 namespace
 {
-bool fromTo(const vpImagePoint &from, const vpImagePoint &to,
-            vpDirection &direction)
+bool fromTo(const vpImagePoint &from, const vpImagePoint &to, vpDirection &direction)
 {
   if (from == to) {
     return false;
   }
 
-  if (std::fabs(from.get_i() - to.get_i()) <
-      std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(from.get_i() - to.get_i()) < std::numeric_limits<double>::epsilon()) {
     if (from.get_j() < to.get_j()) {
       direction.m_direction = EAST;
     } else {
       direction.m_direction = WEST;
     }
   } else if (from.get_i() < to.get_i()) {
-    if (std::fabs(from.get_j() - to.get_j()) <
-        std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(from.get_j() - to.get_j()) < std::numeric_limits<double>::epsilon()) {
       direction.m_direction = SOUTH;
     } else if (from.get_j() < to.get_j()) {
       direction.m_direction = SOUTH_EAST;
@@ -101,8 +98,7 @@ bool fromTo(const vpImagePoint &from, const vpImagePoint &to,
       direction.m_direction = SOUTH_WEST;
     }
   } else {
-    if (std::fabs(from.get_j() - to.get_j()) <
-        std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(from.get_j() - to.get_j()) < std::numeric_limits<double>::epsilon()) {
       direction.m_direction = NORTH;
     } else if (from.get_j() < to.get_j()) {
       direction.m_direction = NORTH_EAST;
@@ -114,12 +110,10 @@ bool fromTo(const vpImagePoint &from, const vpImagePoint &to,
   return true;
 }
 
-bool crossesEastBorder(const vpImage<int> &I, bool checked[8],
-                       const vpImagePoint &point)
+bool crossesEastBorder(const vpImage<int> &I, bool checked[8], const vpImagePoint &point)
 {
   vpDirection direction;
-  if (!fromTo(point, vpImagePoint(point.get_i(), point.get_j() + 1),
-              direction)) {
+  if (!fromTo(point, vpImagePoint(point.get_i(), point.get_j() + 1), direction)) {
     return false;
   }
 
@@ -132,16 +126,12 @@ bool crossesEastBorder(const vpImage<int> &I, bool checked[8],
   unsigned int i = (unsigned int)point.get_i();
   unsigned int j = (unsigned int)point.get_j();
 
-  return I[i][j] != 0 &&
-         ((unsigned int)point.get_j() == I.getWidth() - 1 || b);
+  return I[i][j] != 0 && ((unsigned int)point.get_j() == I.getWidth() - 1 || b);
 }
 
-void addContourPoint(vpImage<int> &I, vp::vpContour *border,
-                     const vpImagePoint &point, bool checked[8],
-                     const int nbd)
+void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint &point, bool checked[8], const int nbd)
 {
-  border->m_points.push_back(vpImagePoint(
-      point.get_i() - 1, point.get_j() - 1)); // remove 1-pixel padding
+  border->m_points.push_back(vpImagePoint(point.get_i() - 1, point.get_j() - 1)); // remove 1-pixel padding
 
   unsigned int i = (unsigned int)point.get_i();
   unsigned int j = (unsigned int)point.get_j();
@@ -154,8 +144,7 @@ void addContourPoint(vpImage<int> &I, vp::vpContour *border,
   } // Otherwise leave it alone
 }
 
-void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2,
-                  vp::vpContour *border, const int nbd)
+void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, vp::vpContour *border, const int nbd)
 {
   vpDirection dir;
   if (!fromTo(ij, i2j2, dir)) {
@@ -233,8 +222,7 @@ bool isHoleBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j)
   return (I[i][j] >= 1 && (j == I.getWidth() - 1 || I[i][j + 1] == 0));
 }
 
-void getContoursList(const vp::vpContour &root, const int level,
-                     vp::vpContour &contour_list)
+void getContoursList(const vp::vpContour &root, const int level, vp::vpContour &contour_list)
 {
   if (level > 0) {
     vp::vpContour *contour_node = new vp::vpContour;
@@ -244,9 +232,7 @@ void getContoursList(const vp::vpContour &root, const int level,
     contour_list.m_children.push_back(contour_node);
   }
 
-  for (std::vector<vp::vpContour *>::const_iterator it =
-           root.m_children.begin();
-       it != root.m_children.end(); ++it) {
+  for (std::vector<vp::vpContour *>::const_iterator it = root.m_children.begin(); it != root.m_children.end(); ++it) {
     getContoursList(**it, level + 1, contour_list);
   }
 }
@@ -261,19 +247,15 @@ void getContoursList(const vp::vpContour &root, const int level,
   \param contours : Detected contours.
   \param grayValue : Drawing grayscale color.
 */
-void vp::drawContours(vpImage<unsigned char> &I,
-                      const std::vector<std::vector<vpImagePoint> > &contours,
+void vp::drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours,
                       unsigned char grayValue)
 {
   if (I.getSize() == 0) {
     return;
   }
 
-  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 =
-           contours.begin();
-       it1 != contours.end(); ++it1) {
-    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin();
-         it2 != it1->end(); ++it2) {
+  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours.end(); ++it1) {
+    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
       unsigned int i = (unsigned int)it2->get_i();
       unsigned int j = (unsigned int)it2->get_j();
       I[i][j] = grayValue;
@@ -290,19 +272,14 @@ void vp::drawContours(vpImage<unsigned char> &I,
   \param contours : Detected contours.
   \param color : Drawing color.
 */
-void vp::drawContours(vpImage<vpRGBa> &I,
-                      const std::vector<std::vector<vpImagePoint> > &contours,
-                      const vpColor &color)
+void vp::drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours, const vpColor &color)
 {
   if (I.getSize() == 0) {
     return;
   }
 
-  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 =
-           contours.begin();
-       it1 != contours.end(); ++it1) {
-    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin();
-         it2 != it1->end(); ++it2) {
+  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours.end(); ++it1) {
+    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
       unsigned int i = (unsigned int)it2->get_i();
       unsigned int j = (unsigned int)it2->get_j();
       I[i][j] = vpRGBa(color.R, color.G, color.B);
@@ -320,10 +297,8 @@ void vp::drawContours(vpImage<vpRGBa> &I,
   contours. \param contourPts : List of contours, each contour contains a list
   of contour points. \param retrievalMode : Contour retrieval mode.
 */
-void vp::findContours(const vpImage<unsigned char> &I_original,
-                      vpContour &contours,
-                      std::vector<std::vector<vpImagePoint> > &contourPts,
-                      const vpContourRetrievalType &retrievalMode)
+void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
+                      std::vector<std::vector<vpImagePoint> > &contourPts, const vpContourRetrievalType &retrievalMode)
 {
   if (I_original.getSize() == 0) {
     return;
@@ -425,13 +400,11 @@ void vp::findContours(const vpImage<unsigned char> &I_original,
 
         //(3) (1) ; single pixel contour
         if (border->m_points.empty()) {
-          border->m_points.push_back(vpImagePoint(
-              ij.get_i() - 1, ij.get_j() - 1)); // remove 1-pixel padding
+          border->m_points.push_back(vpImagePoint(ij.get_i() - 1, ij.get_j() - 1)); // remove 1-pixel padding
           I[i][j] = -nbd;
         }
 
-        if (retrievalMode == CONTOUR_RETR_LIST ||
-            retrievalMode == CONTOUR_RETR_TREE) {
+        if (retrievalMode == CONTOUR_RETR_LIST || retrievalMode == CONTOUR_RETR_TREE) {
           // Add contour points
           contourPts.push_back(border->m_points);
         }
@@ -446,13 +419,11 @@ void vp::findContours(const vpImage<unsigned char> &I_original,
     }
   }
 
-  if (retrievalMode == CONTOUR_RETR_EXTERNAL ||
-      retrievalMode == CONTOUR_RETR_LIST) {
+  if (retrievalMode == CONTOUR_RETR_EXTERNAL || retrievalMode == CONTOUR_RETR_LIST) {
     // Delete contours content
     contours.m_parent = NULL;
 
-    for (std::vector<vpContour *>::iterator it = contours.m_children.begin();
-         it != contours.m_children.end(); ++it) {
+    for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours.m_children.end(); ++it) {
       (*it)->m_parent = NULL;
       if (*it != NULL) {
         delete *it;
@@ -465,9 +436,7 @@ void vp::findContours(const vpImage<unsigned char> &I_original,
 
   if (retrievalMode == CONTOUR_RETR_EXTERNAL) {
     // Add only external contours
-    for (std::vector<vpContour *>::const_iterator it =
-             root->m_children.begin();
-         it != root->m_children.end(); ++it) {
+    for (std::vector<vpContour *>::const_iterator it = root->m_children.begin(); it != root->m_children.end(); ++it) {
       // Save children
       std::vector<vpContour *> children_copy = (*it)->m_children;
       // Erase children
@@ -486,8 +455,7 @@ void vp::findContours(const vpImage<unsigned char> &I_original,
     getContoursList(*root, 0, contours);
 
     // Set parent to root
-    for (std::vector<vpContour *>::iterator it = contours.m_children.begin();
-         it != contours.m_children.end(); ++it) {
+    for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours.m_children.end(); ++it) {
       (*it)->m_parent = &contours;
     }
   } else {

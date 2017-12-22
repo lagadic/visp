@@ -62,12 +62,11 @@
 class VISP_EXPORT vpTemplateTrackerZone
 {
 protected:
-  std::vector<vpTemplateTrackerTriangle>
-      Zone;  //!< Vector of triangles that defines the zone.
-  int min_x; //!< Bounding box parameter
-  int min_y; //!< Bounding box parameter
-  int max_x; //!< Bounding box parameter
-  int max_y; //!< Bounding box parameter
+  std::vector<vpTemplateTrackerTriangle> Zone; //!< Vector of triangles that defines the zone.
+  int min_x;                                   //!< Bounding box parameter
+  int min_y;                                   //!< Bounding box parameter
+  int max_x;                                   //!< Bounding box parameter
+  int max_y;                                   //!< Bounding box parameter
 
 public:
   vpTemplateTrackerZone();
@@ -80,15 +79,11 @@ public:
   void copy(const vpTemplateTrackerZone &z);
 
   // display the area on an image
-  void display(const vpImage<unsigned char> &I,
-               const vpColor &col = vpColor::green,
-               const unsigned int thickness = 3);
-  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green,
-               const unsigned int thickness = 3);
+  void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
+  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
 
   // colorie le tieme triangle
-  void fillTriangle(vpImage<unsigned char> &I, unsigned int id,
-                    unsigned char gray_level);
+  void fillTriangle(vpImage<unsigned char> &I, unsigned int id, unsigned char gray_level);
 
   double getArea() const;
   vpImagePoint getCenter() const;
@@ -113,9 +108,7 @@ public:
   // create an area with a pointer of integer that describes a series of
   // triangles:
   // *pt= t0.S1.x,t0.S1.y,t0.S2.x,t0.S2.y,t0.S3.x,t0.S3.y, t1.S1.x ...
-  void initFromPoints(const vpImage<unsigned char> &I,
-                      const std::vector<vpImagePoint> &ip,
-                      bool delaunay = false);
+  void initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ip, bool delaunay = false);
 
   // check if a point is in the area
   bool inZone(const int &i, const int &j) const;
@@ -123,8 +116,7 @@ public:
   // check if a point is in the area and return the corresponding triangle
   // id_triangle where the point is.
   bool inZone(const int &i, const int &j, unsigned int &id_triangle) const;
-  bool inZone(const double &i, const double &j,
-              unsigned int &id_triangle) const;
+  bool inZone(const double &i, const double &j, unsigned int &id_triangle) const;
 
   vpTemplateTrackerZone &operator=(const vpTemplateTrackerZone &z);
 };

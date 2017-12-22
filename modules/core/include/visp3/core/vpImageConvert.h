@@ -102,87 +102,60 @@ class VISP_EXPORT vpImageConvert
 {
 
 public:
-  static void createDepthHistogram(const vpImage<uint16_t> &src_depth,
-                                   vpImage<vpRGBa> &dest_rgba);
-  static void createDepthHistogram(const vpImage<uint16_t> &src_depth,
-                                   vpImage<unsigned char> &dest_depth);
-  static void convert(const vpImage<unsigned char> &src,
-                      vpImage<vpRGBa> &dest);
-  static void convert(const vpImage<vpRGBa> &src,
-                      vpImage<unsigned char> &dest);
+  static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba);
+  static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigned char> &dest_depth);
+  static void convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> &dest);
+  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest);
 
-  static void convert(const vpImage<float> &src,
-                      vpImage<unsigned char> &dest);
-  static void convert(const vpImage<unsigned char> &src,
-                      vpImage<float> &dest);
+  static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
 
-  static void convert(const vpImage<double> &src,
-                      vpImage<unsigned char> &dest);
-  static void convert(const vpImage<unsigned char> &src,
-                      vpImage<double> &dest);
+  static void convert(const vpImage<double> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<unsigned char> &src, vpImage<double> &dest);
 
-  static void convert(const vpImage<uint16_t> &src,
-                      vpImage<unsigned char> &dest);
-  static void convert(const vpImage<unsigned char> &src,
-                      vpImage<uint16_t> &dest);
+  static void convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest);
 
   /*!
     Make a copy of an image.
     \param src : source image.
     \param dest : destination image.
   */
-  template <typename Type>
-  static void convert(const vpImage<Type> &src, vpImage<Type> &dest)
-  {
-    dest = src;
-  }
+  template <typename Type> static void convert(const vpImage<Type> &src, vpImage<Type> &dest) { dest = src; }
 
 #ifdef VISP_HAVE_OPENCV
   // Deprecated: will be removed with OpenCV transcient from C to C++ api
-  static void convert(const IplImage *src, vpImage<vpRGBa> &dest,
-                      bool flip = false);
-  static void convert(const IplImage *src, vpImage<unsigned char> &dest,
-                      bool flip = false);
+  static void convert(const IplImage *src, vpImage<vpRGBa> &dest, bool flip = false);
+  static void convert(const IplImage *src, vpImage<unsigned char> &dest, bool flip = false);
   static void convert(const vpImage<vpRGBa> &src, IplImage *&dest);
   static void convert(const vpImage<unsigned char> &src, IplImage *&dest);
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest,
-                      const bool flip = false);
-  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest,
-                      const bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip = false);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
-  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest,
-                      const bool copyData = true);
+  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData = true);
 #endif
 #endif
 
 #ifdef VISP_HAVE_YARP
-  static void convert(const vpImage<unsigned char> &src,
-                      yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
+  static void convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
                       const bool copyData = true);
-  static void convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src,
-                      vpImage<unsigned char> &dest,
+  static void convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src, vpImage<unsigned char> &dest,
                       const bool copyData = true);
 
-  static void convert(const vpImage<vpRGBa> &src,
-                      yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
+  static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
                       const bool copyData = true);
-  static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src,
-                      vpImage<vpRGBa> &dest, const bool copyData = true);
+  static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest,
+                      const bool copyData = true);
 
-  static void convert(const vpImage<vpRGBa> &src,
-                      yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest);
-  static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src,
-                      vpImage<vpRGBa> &dest);
+  static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest);
+  static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest);
 #endif
 
-  static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR,
-                    vpImage<unsigned char> *pG, vpImage<unsigned char> *pB,
-                    vpImage<unsigned char> *pa = NULL);
+  static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
+                    vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = NULL);
 
-  static void merge(const vpImage<unsigned char> *R,
-                    const vpImage<unsigned char> *G,
-                    const vpImage<unsigned char> *B,
+  static void merge(const vpImage<unsigned char> *R, const vpImage<unsigned char> *G, const vpImage<unsigned char> *B,
                     const vpImage<unsigned char> *a, vpImage<vpRGBa> &RGBa);
 
   /*!
@@ -201,9 +174,8 @@ public:
     \f]
 
   */
-  static inline void YUVToRGB(unsigned char y, unsigned char u,
-                              unsigned char v, unsigned char &r,
-                              unsigned char &g, unsigned char &b)
+  static inline void YUVToRGB(unsigned char y, unsigned char u, unsigned char v, unsigned char &r, unsigned char &g,
+                              unsigned char &b)
   {
     double dr, dg, db;
     dr = floor(0.9999695 * y - 0.0009508 * (u - 128) + 1.1359061 * (v - 128));
@@ -221,128 +193,80 @@ public:
     g = (unsigned char)dg;
     b = (unsigned char)db;
   }
-  static void YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba,
-                         unsigned int width, unsigned int height);
-  static void YUYVToRGB(unsigned char *yuyv, unsigned char *rgb,
-                        unsigned int width, unsigned int height);
-  static void YUYVToGrey(unsigned char *yuyv, unsigned char *grey,
-                         unsigned int size);
-  static void YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                           unsigned int size);
-  static void YUV411ToRGB(unsigned char *yuv, unsigned char *rgb,
-                          unsigned int size);
-  static void YUV411ToGrey(unsigned char *yuv, unsigned char *grey,
-                           unsigned int size);
-  static void YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                           unsigned int size);
-  static void YUV422ToRGB(unsigned char *yuv, unsigned char *rgb,
-                          unsigned int size);
-  static void YUV422ToGrey(unsigned char *yuv, unsigned char *grey,
-                           unsigned int size);
-  static void YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                           unsigned int width, unsigned int height);
-  static void YUV420ToRGB(unsigned char *yuv, unsigned char *rgb,
-                          unsigned int width, unsigned int height);
-  static void YUV420ToGrey(unsigned char *yuv, unsigned char *grey,
-                           unsigned int size);
+  static void YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsigned int width, unsigned int height);
+  static void YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned int width, unsigned int height);
+  static void YUYVToGrey(unsigned char *yuyv, unsigned char *grey, unsigned int size);
+  static void YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size);
+  static void YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size);
+  static void YUV411ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size);
+  static void YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size);
+  static void YUV422ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size);
+  static void YUV422ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size);
+  static void YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height);
+  static void YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int width, unsigned int height);
+  static void YUV420ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size);
 
-  static void YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                           unsigned int size);
-  static void YUV444ToRGB(unsigned char *yuv, unsigned char *rgb,
-                          unsigned int size);
-  static void YUV444ToGrey(unsigned char *yuv, unsigned char *grey,
-                           unsigned int size);
+  static void YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size);
+  static void YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size);
+  static void YUV444ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size);
 
-  static void YV12ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                         unsigned int width, unsigned int height);
-  static void YV12ToRGB(unsigned char *yuv, unsigned char *rgb,
-                        unsigned int width, unsigned int height);
-  static void YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba,
-                         unsigned int width, unsigned int height);
-  static void YVU9ToRGB(unsigned char *yuv, unsigned char *rgb,
-                        unsigned int width, unsigned int height);
-  static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba,
-                        unsigned int size);
-  static void RGBaToRGB(unsigned char *rgba, unsigned char *rgb,
-                        unsigned int size);
+  static void YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height);
+  static void YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int width, unsigned int height);
+  static void YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height);
+  static void YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int width, unsigned int height);
+  static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int size);
+  static void RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned int size);
 
-  static void RGBToGrey(unsigned char *rgb, unsigned char *grey,
-                        unsigned int size);
-  static void RGBaToGrey(unsigned char *rgba, unsigned char *grey,
-                         unsigned int size);
+  static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int size);
+  static void RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int size);
 
-  static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba,
-                        unsigned int width, unsigned int height,
+  static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int width, unsigned int height,
                         bool flip = false);
-  static void RGBToGrey(unsigned char *rgb, unsigned char *grey,
-                        unsigned int width, unsigned int height,
+  static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
                         bool flip = false);
 
-  static void GreyToRGBa(unsigned char *grey, unsigned char *rgba,
-                         unsigned int size);
-  static void GreyToRGB(unsigned char *grey, unsigned char *rgb,
-                        unsigned int size);
+  static void GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int size);
+  static void GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned int size);
 
-  static void BGRToRGBa(unsigned char *bgr, unsigned char *rgba,
-                        unsigned int width, unsigned int height,
+  static void BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned int width, unsigned int height,
                         bool flip = false);
 
-  static void BGRToGrey(unsigned char *bgr, unsigned char *grey,
-                        unsigned int width, unsigned int height,
+  static void BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                         bool flip = false);
 
-  static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
-                         unsigned int size);
-  static void YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgb,
-                          unsigned int size);
-  static void YCrCbToRGB(unsigned char *ycbcr, unsigned char *rgb,
-                         unsigned int size);
-  static void YCrCbToRGBa(unsigned char *ycbcr, unsigned char *rgb,
-                          unsigned int size);
-  static void YCbCrToGrey(unsigned char *ycbcr, unsigned char *grey,
-                          unsigned int size);
-  static void MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
-                           unsigned int size);
-  static void MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba,
-                           unsigned int size);
+  static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
+  static void YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
+  static void YCrCbToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
+  static void YCrCbToRGBa(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
+  static void YCbCrToGrey(unsigned char *ycbcr, unsigned char *grey, unsigned int size);
+  static void MONO16ToGrey(unsigned char *grey16, unsigned char *grey, unsigned int size);
+  static void MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, unsigned int size);
 
-  static void HSVToRGBa(const double *hue, const double *saturation,
-                        const double *value, unsigned char *rgba,
+  static void HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                         const unsigned int size);
-  static void HSVToRGBa(const unsigned char *hue,
-                        const unsigned char *saturation,
-                        const unsigned char *value, unsigned char *rgba,
+  static void HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                        unsigned char *rgba, const unsigned int size);
+  static void RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
                         const unsigned int size);
-  static void RGBaToHSV(const unsigned char *rgba, double *hue,
-                        double *saturation, double *value,
-                        const unsigned int size);
-  static void RGBaToHSV(const unsigned char *rgba, unsigned char *hue,
-                        unsigned char *saturation, unsigned char *value,
+  static void RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation, unsigned char *value,
                         const unsigned int size);
 
-  static void HSVToRGB(const double *hue, const double *saturation,
-                       const double *value, unsigned char *rgb,
+  static void HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
                        const unsigned int size);
-  static void HSVToRGB(const unsigned char *hue,
-                       const unsigned char *saturation,
-                       const unsigned char *value, unsigned char *rgb,
+  static void HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                       unsigned char *rgb, const unsigned int size);
+  static void RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
                        const unsigned int size);
-  static void RGBToHSV(const unsigned char *rgb, double *hue,
-                       double *saturation, double *value,
-                       const unsigned int size);
-  static void RGBToHSV(const unsigned char *rgb, unsigned char *hue,
-                       unsigned char *saturation, unsigned char *value,
+  static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
                        const unsigned int size);
 
 private:
   static void computeYCbCrLUT();
 
-  static void HSV2RGB(const double *hue, const double *saturation,
-                      const double *value, unsigned char *rgba,
+  static void HSV2RGB(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                       const unsigned int size, const unsigned int step);
-  static void RGB2HSV(const unsigned char *rgb, double *hue,
-                      double *saturation, double *value,
-                      const unsigned int size, const unsigned int step);
+  static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, const unsigned int size,
+                      const unsigned int step);
 
 private:
   static bool YCbCrLUTcomputed;

@@ -44,110 +44,106 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#define ADD_COORD2(r, a, b)                                                  \
-  {                                                                          \
-    (r).x = (a).x + (b).x;                                                   \
-    (r).y = (a).y + (b).y;                                                   \
+#define ADD_COORD2(r, a, b)                                                                                            \
+  {                                                                                                                    \
+    (r).x = (a).x + (b).x;                                                                                             \
+    (r).y = (a).y + (b).y;                                                                                             \
   }
 
-#define ADD_COORD3(r, a, b)                                                  \
-  {                                                                          \
-    (r).x = (a).x + (b).x;                                                   \
-    (r).y = (a).y + (b).y;                                                   \
-    (r).z = (a).z + (b).z;                                                   \
+#define ADD_COORD3(r, a, b)                                                                                            \
+  {                                                                                                                    \
+    (r).x = (a).x + (b).x;                                                                                             \
+    (r).y = (a).y + (b).y;                                                                                             \
+    (r).z = (a).z + (b).z;                                                                                             \
   }
 
-#define INC_COORD2(r, a)                                                     \
-  {                                                                          \
-    (r).x += (a).x;                                                          \
-    (r).y += (a).y;                                                          \
+#define INC_COORD2(r, a)                                                                                               \
+  {                                                                                                                    \
+    (r).x += (a).x;                                                                                                    \
+    (r).y += (a).y;                                                                                                    \
   }
 
-#define INC_COORD3(r, a)                                                     \
-  {                                                                          \
-    (r).x += (a).x;                                                          \
-    (r).y += (a).y;                                                          \
-    (r).z += (a).z;                                                          \
+#define INC_COORD3(r, a)                                                                                               \
+  {                                                                                                                    \
+    (r).x += (a).x;                                                                                                    \
+    (r).y += (a).y;                                                                                                    \
+    (r).z += (a).z;                                                                                                    \
   }
 
-#define CROSS_PRODUCT(r, a, b)                                               \
-  {                                                                          \
-    (r).x = (a).y * (b).z - (a).z * (b).y;                                   \
-    (r).y = (a).z * (b).x - (a).x * (b).z;                                   \
-    (r).z = (a).x * (b).y - (a).y * (b).x;                                   \
+#define CROSS_PRODUCT(r, a, b)                                                                                         \
+  {                                                                                                                    \
+    (r).x = (a).y * (b).z - (a).z * (b).y;                                                                             \
+    (r).y = (a).z * (b).x - (a).x * (b).z;                                                                             \
+    (r).z = (a).x * (b).y - (a).y * (b).x;                                                                             \
   }
 
-#define DIF_COORD2(r, a, b)                                                  \
-  {                                                                          \
-    (r).x = (a).x - (b).x;                                                   \
-    (r).y = (a).y - (b).y;                                                   \
+#define DIF_COORD2(r, a, b)                                                                                            \
+  {                                                                                                                    \
+    (r).x = (a).x - (b).x;                                                                                             \
+    (r).y = (a).y - (b).y;                                                                                             \
   }
 
-#define DIF_COORD3(r, a, b)                                                  \
-  {                                                                          \
-    (r).x = (a).x - (b).x;                                                   \
-    (r).y = (a).y - (b).y;                                                   \
-    (r).z = (a).z - (b).z;                                                   \
+#define DIF_COORD3(r, a, b)                                                                                            \
+  {                                                                                                                    \
+    (r).x = (a).x - (b).x;                                                                                             \
+    (r).y = (a).y - (b).y;                                                                                             \
+    (r).z = (a).z - (b).z;                                                                                             \
   }
 
-#define DOT_PRODUCT(a, b)                                                    \
-  (((a).x * (b).x) + ((a).y * (b).y) + ((a).z * (b).z))
+#define DOT_PRODUCT(a, b) (((a).x * (b).x) + ((a).y * (b).y) + ((a).z * (b).z))
 
 #define LENGTH3(a) (sqrt((double)DOT_PRODUCT((a), (a))))
 
-#define MID_COORD3(r, a, b)                                                  \
-  {                                                                          \
-    (r).x = ((a).x + (b).x) / 2.0;                                           \
-    (r).y = ((a).y + (b).y) / 2.0;                                           \
-    (r).z = ((a).z + (b).z) / 2.0;                                           \
+#define MID_COORD3(r, a, b)                                                                                            \
+  {                                                                                                                    \
+    (r).x = ((a).x + (b).x) / 2.0;                                                                                     \
+    (r).y = ((a).y + (b).y) / 2.0;                                                                                     \
+    (r).z = ((a).z + (b).z) / 2.0;                                                                                     \
   }
 
-#define MUL_COORD3(r, a, b, c)                                               \
-  {                                                                          \
-    (r).x *= (a);                                                            \
-    (r).y *= (b);                                                            \
-    (r).z *= (c);                                                            \
+#define MUL_COORD3(r, a, b, c)                                                                                         \
+  {                                                                                                                    \
+    (r).x *= (a);                                                                                                      \
+    (r).y *= (b);                                                                                                      \
+    (r).z *= (c);                                                                                                      \
   }
 
-#define PAR_COORD3(r, t, a, b)                                               \
-  {                                                                          \
-    (r).x = ((b).x - (a).x) * (t) + (a).x;                                   \
-    (r).y = ((b).y - (a).y) * (t) + (a).y;                                   \
-    (r).z = ((b).z - (a).z) * (t) + (a).z;                                   \
+#define PAR_COORD3(r, t, a, b)                                                                                         \
+  {                                                                                                                    \
+    (r).x = ((b).x - (a).x) * (t) + (a).x;                                                                             \
+    (r).y = ((b).y - (a).y) * (t) + (a).y;                                                                             \
+    (r).z = ((b).z - (a).z) * (t) + (a).z;                                                                             \
   }
 
-#define SET_COORD2(r, a, b)                                                  \
-  {                                                                          \
-    (r).x = (a);                                                             \
-    (r).y = (b);                                                             \
+#define SET_COORD2(r, a, b)                                                                                            \
+  {                                                                                                                    \
+    (r).x = (a);                                                                                                       \
+    (r).y = (b);                                                                                                       \
   }
 
-#define SET_COORD3(r, a, b, c)                                               \
-  {                                                                          \
-    (r).x = (a);                                                             \
-    (r).y = (b);                                                             \
-    (r).z = (c);                                                             \
+#define SET_COORD3(r, a, b, c)                                                                                         \
+  {                                                                                                                    \
+    (r).x = (a);                                                                                                       \
+    (r).y = (b);                                                                                                       \
+    (r).z = (c);                                                                                                       \
   }
 
-#define SUB_COORD2(r, a)                                                     \
-  {                                                                          \
-    (r).x -= (a).x;                                                          \
-    (r).y -= (a).y;                                                          \
+#define SUB_COORD2(r, a)                                                                                               \
+  {                                                                                                                    \
+    (r).x -= (a).x;                                                                                                    \
+    (r).y -= (a).y;                                                                                                    \
   }
 
-#define SUB_COORD3(r, a)                                                     \
-  {                                                                          \
-    (r).x -= (a).x;                                                          \
-    (r).y -= (a).y;                                                          \
-    (r).z -= (a).z;                                                          \
+#define SUB_COORD3(r, a)                                                                                               \
+  {                                                                                                                    \
+    (r).x -= (a).x;                                                                                                    \
+    (r).y -= (a).y;                                                                                                    \
+    (r).z -= (a).z;                                                                                                    \
   }
 
-#define COORD3_COL(x, y, z, m, i)                                            \
-  (((x) * (m)[0][i]) + ((y) * (m)[1][i]) + ((z) * (m)[2][i]) + (m)[3][i])
+#define COORD3_COL(x, y, z, m, i) (((x) * (m)[0][i]) + ((y) * (m)[1][i]) + ((z) * (m)[2][i]) + (m)[3][i])
 
-#define COORD4_COL(x, y, z, w, m, i)                                         \
-  (((x) * (m)[0][i]) + ((y) * (m)[1][i]) + ((z) * (m)[2][i]) +               \
-   ((w) * (m)[3][i]))
+#define COORD4_COL(x, y, z, w, m, i) (((x) * (m)[0][i]) + ((y) * (m)[1][i]) + ((z) * (m)[2][i]) + ((w) * (m)[3][i]))
 
 #define M_POLY1(x, a, b) ((a) * (x) + (b))
 #define M_POLY2(x, a, b, c) (M_POLY1((x), (a), (b)) * (x) + (c))
@@ -173,12 +169,9 @@ typedef struct {
   float x, y, z;
 } Vector;
 
-#define IDENTITY_MATRIX                                                      \
-  {                                                                          \
-    {1.0, 0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0},        \
-    {                                                                        \
-      0.0, 0.0, 0.0, 1.0                                                     \
-    }                                                                        \
+#define IDENTITY_MATRIX                                                                                                \
+  {                                                                                                                    \
+    {1.0, 0.0, 0.0, 0.0}, {0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0}, { 0.0, 0.0, 0.0, 1.0 }                           \
   }
 
 /*
@@ -198,22 +191,22 @@ typedef struct {
   Vector translate; /* vecteur translation	*/
 } AritPosition;
 
-#define IDENTITY_ROTATE                                                      \
-  {                                                                          \
-    0.0, 0.0, 0.0                                                            \
+#define IDENTITY_ROTATE                                                                                                \
+  {                                                                                                                    \
+    0.0, 0.0, 0.0                                                                                                      \
   }
-#define IDENTITY_SCALE                                                       \
-  {                                                                          \
-    1.0, 1.0, 1.0                                                            \
+#define IDENTITY_SCALE                                                                                                 \
+  {                                                                                                                    \
+    1.0, 1.0, 1.0                                                                                                      \
   }
-#define IDENTITY_TRANSLATE                                                   \
-  {                                                                          \
-    0.0, 0.0, 0.0                                                            \
+#define IDENTITY_TRANSLATE                                                                                             \
+  {                                                                                                                    \
+    0.0, 0.0, 0.0                                                                                                      \
   }
 
-#define IDENTITY_POSITION                                                    \
-  {                                                                          \
-    IDENTITY_ROTATE, IDENTITY_SCALE, IDENTITY_TRANSLATE                      \
+#define IDENTITY_POSITION                                                                                              \
+  {                                                                                                                    \
+    IDENTITY_ROTATE, IDENTITY_SCALE, IDENTITY_TRANSLATE                                                                \
   }
 
 void fprintf_matrix(FILE *fp, Matrix m);

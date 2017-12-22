@@ -39,8 +39,7 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpImageMorphology.h>
 
-#if defined __SSE2__ || defined _M_X64 ||                                    \
-    (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
 #endif
@@ -68,8 +67,7 @@
 
   \sa dilatation(vpImage<unsigned char> &, const vpConnexityType &)
 */
-void vpImageMorphology::erosion(vpImage<unsigned char> &I,
-                                const vpConnexityType &connexity)
+void vpImageMorphology::erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity)
 {
   if (I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
@@ -93,8 +91,7 @@ void vpImageMorphology::erosion(vpImage<unsigned char> &I,
   }
 
   if (connexity == CONNEXITY_4) {
-    unsigned int offset[5] = {1, J.getWidth(), J.getWidth() + 1,
-                              J.getWidth() + 2, J.getWidth() * 2 + 1};
+    unsigned int offset[5] = {1, J.getWidth(), J.getWidth() + 1, J.getWidth() + 2, J.getWidth() * 2 + 1};
 #if VISP_HAVE_SSE2
     bool checkSSE2 = vpCPUFeatures::checkSSE2();
 #endif
@@ -107,20 +104,11 @@ void vpImageMorphology::erosion(vpImage<unsigned char> &I,
 #if VISP_HAVE_SSE2
       if (checkSSE2 && I.getWidth() >= 16) {
         for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m =
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
+          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
 
           _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
         }
@@ -159,32 +147,15 @@ void vpImageMorphology::erosion(vpImage<unsigned char> &I,
 #if VISP_HAVE_SSE2
       if (checkSSE2 && I.getWidth() >= 16) {
         for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m =
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[5])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[6])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[7])));
-          m = _mm_min_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[8])));
+          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[5])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[6])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[7])));
+          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[8])));
 
           _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
         }
@@ -226,8 +197,7 @@ void vpImageMorphology::erosion(vpImage<unsigned char> &I,
 
   \sa erosion(vpImage<unsigned char> &, const vpConnexityType &)
 */
-void vpImageMorphology::dilatation(vpImage<unsigned char> &I,
-                                   const vpConnexityType &connexity)
+void vpImageMorphology::dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity)
 {
   if (I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
@@ -251,8 +221,7 @@ void vpImageMorphology::dilatation(vpImage<unsigned char> &I,
   }
 
   if (connexity == CONNEXITY_4) {
-    unsigned int offset[5] = {1, J.getWidth(), J.getWidth() + 1,
-                              J.getWidth() + 2, J.getWidth() * 2 + 1};
+    unsigned int offset[5] = {1, J.getWidth(), J.getWidth() + 1, J.getWidth() + 2, J.getWidth() * 2 + 1};
 #if VISP_HAVE_SSE2
     bool checkSSE2 = vpCPUFeatures::checkSSE2();
 #endif
@@ -265,20 +234,11 @@ void vpImageMorphology::dilatation(vpImage<unsigned char> &I,
 #if VISP_HAVE_SSE2
       if (checkSSE2 && I.getWidth() >= 16) {
         for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m =
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
+          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
 
           _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
         }
@@ -317,32 +277,15 @@ void vpImageMorphology::dilatation(vpImage<unsigned char> &I,
 #if VISP_HAVE_SSE2
       if (checkSSE2 && I.getWidth() >= 16) {
         for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m =
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[5])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[6])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[7])));
-          m = _mm_max_epu8(
-              m,
-              _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[8])));
+          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[5])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[6])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[7])));
+          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[8])));
 
           _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
         }

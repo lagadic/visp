@@ -44,8 +44,7 @@
 
 */
 #include <visp3/core/vpConfig.h>
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <unistd.h>
 #elif defined(_WIN32)
 //#include <mmsystem.h>
@@ -78,8 +77,7 @@ int main()
     double t2 = vpTime::measureTimeMs();
 
 // Sleep 10ms
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     usleep(10 * 1000);
 #elif defined(_WIN32)
     Sleep(10);
@@ -88,8 +86,7 @@ int main()
     double t3 = vpTime::measureTimeMs();
 
 // Sleep 2ms
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     usleep(2 * 1000);
 #elif defined(_WIN32)
     Sleep(2);
@@ -128,7 +125,6 @@ int main()
     return 1;
   }
 #else
-  std::cout << "vpTime is not implemented on Universal Windows Platform"
-            << std::endl;
+  std::cout << "vpTime is not implemented on Universal Windows Platform" << std::endl;
 #endif
 }

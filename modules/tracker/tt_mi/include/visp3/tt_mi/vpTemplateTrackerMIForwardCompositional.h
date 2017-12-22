@@ -55,8 +55,7 @@
   The algorithm implemented in this class is described in \cite Dame12a and
   \cite Marchand16a.
 */
-class VISP_EXPORT vpTemplateTrackerMIForwardCompositional
-  : public vpTemplateTrackerMI
+class VISP_EXPORT vpTemplateTrackerMIForwardCompositional : public vpTemplateTrackerMI
 {
 protected:
   bool CompoInitialised;
@@ -67,8 +66,7 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerMIForwardCompositional(
-      vpTemplateTrackerWarp *_warp);
+  explicit vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp);
 };
 
 #endif

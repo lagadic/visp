@@ -132,8 +132,7 @@ int main()
     // save the drawing
     vpImage<vpRGBa> Ic;
     vpDisplay::getImage(I, Ic);
-    std::cout << "ViSP creates \"./geometricFeatures.ppm\" B&W image "
-              << std::endl;
+    std::cout << "ViSP creates \"./geometricFeatures.ppm\" B&W image " << std::endl;
     vpImageIo::write(Ic, "./geometricFeatures.ppm");
     return 0;
   } catch (vpException &e) {

@@ -50,8 +50,7 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpSickLDMRS.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 
 int main()
 {
@@ -70,9 +69,7 @@ int main()
         continue;
 
       iter++;
-      std::cout << "iter: " << iter
-                << " time: " << vpTime::measureTimeMs() - t1 << " ms"
-                << std::endl;
+      std::cout << "iter: " << iter << " time: " << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
     }
     return 0;
   } catch (vpException &e) {
@@ -86,8 +83,7 @@ int main()
 int main()
 {
   std::cout << "This example is only working on UNIX platforms \n"
-            << "since the Sick LD-MRS driver was not ported to Windows."
-            << std::endl;
+            << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
 
   return 0;
 }

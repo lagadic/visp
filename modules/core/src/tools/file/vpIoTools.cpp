@@ -54,8 +54,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <dirent.h>
 #include <unistd.h>
 #elif defined(_WIN32)
@@ -67,7 +66,7 @@
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
-#include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IOS macro
+#include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IOS macro
 #endif
 
 #ifndef PATH_MAX
@@ -84,8 +83,7 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
                        // wordexp() is not available
 namespace
 {
-void replaceAll(std::string &str, const std::string &search,
-                const std::string &replace)
+void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
   size_t start_pos = 0;
   while ((start_pos = str.find(search, start_pos)) != std::string::npos) {
@@ -153,16 +151,13 @@ std::string vpIoTools::getFullName() { return baseDir + baseName; }
 void vpIoTools::getUserName(std::string &username)
 {
 // With MinGW, UNIX and _WIN32 are defined
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Get the user name.
   char *_username = NULL;
   _username = ::getenv("LOGNAME");
   if (_username == NULL) {
-    vpERROR_TRACE(
-        "Cannot get the username. Check your LOGNAME environment variable");
-    throw(vpIoException(vpIoException::cantGetUserName,
-                        "Cannot get the username"));
+    vpERROR_TRACE("Cannot get the username. Check your LOGNAME environment variable");
+    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
   }
   username = _username;
 #elif defined(_WIN32)
@@ -173,15 +168,13 @@ void vpIoTools::getUserName(std::string &username)
   // Get the user name.
   if (!GetUserName(infoBuf, &bufCharCount)) {
     delete[] infoBuf;
-    throw(vpIoException(vpIoException::cantGetUserName,
-                        "Cannot get the username"));
+    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
   }
   username = infoBuf;
   delete[] infoBuf;
 #else
-  throw(vpIoException(vpIoException::cantGetUserName,
-                      "Cannot get the username: not implemented on Universal "
-                      "Windows Platform"));
+  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal "
+                                                      "Windows Platform"));
 #endif
 #endif
 }
@@ -205,16 +198,13 @@ void vpIoTools::getUserName(std::string &username)
 std::string vpIoTools::getUserName()
 {
   std::string username;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Get the user name.
   char *_username = NULL;
   _username = ::getenv("LOGNAME");
   if (_username == NULL) {
-    vpERROR_TRACE(
-        "Cannot get the username. Check your LOGNAME environment variable");
-    throw(vpIoException(vpIoException::cantGetUserName,
-                        "Cannot get the username"));
+    vpERROR_TRACE("Cannot get the username. Check your LOGNAME environment variable");
+    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
   }
   username = _username;
 #elif defined(_WIN32)
@@ -226,15 +216,13 @@ std::string vpIoTools::getUserName()
   if (!GetUserName(infoBuf, &bufCharCount)) {
     delete[] infoBuf;
     vpERROR_TRACE("Cannot get the username");
-    throw(vpIoException(vpIoException::cantGetUserName,
-                        "Cannot get the username"));
+    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
   }
   username = infoBuf;
   delete[] infoBuf;
 #else
-  throw(vpIoException(vpIoException::cantGetUserName,
-                      "Cannot get the username: not implemented on Universal "
-                      "Windows Platform"));
+  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal "
+                                                      "Windows Platform"));
 #endif
 #endif
   return username;
@@ -274,17 +262,15 @@ int main()
 std::string vpIoTools::getenv(const char *env)
 {
 #if defined(_WIN32) && defined(WINRT)
-  throw(vpIoException(vpIoException::cantGetenv,
-                      "Cannot get the environment variable value: not "
-                      "implemented on Universal Windows Platform"));
+  throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value: not "
+                                                 "implemented on Universal Windows Platform"));
 #else
   std::string value;
   // Get the environment variable value.
   char *_value = NULL;
   _value = ::getenv(env);
   if (_value == NULL) {
-    throw(vpIoException(vpIoException::cantGetenv,
-                        "Cannot get the environment variable value"));
+    throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value"));
   }
   value = _value;
 
@@ -324,10 +310,7 @@ int main()
 
   \sa getenv(const char *)
 */
-std::string vpIoTools::getenv(const std::string &env)
-{
-  return (vpIoTools::getenv(env.c_str()));
-}
+std::string vpIoTools::getenv(const std::string &env) { return (vpIoTools::getenv(env.c_str())); }
 
 /*!
   Extract major, minor and patch from a version given as "x.x.x".
@@ -338,8 +321,7 @@ std::string vpIoTools::getenv(const std::string &env)
   \param minor : Extracted minor.
   \param patch : Extracted patch.
 */
-void vpIoTools::getVersion(const std::string &version, unsigned int &major,
-                           unsigned int &minor, unsigned int &patch)
+void vpIoTools::getVersion(const std::string &version, unsigned int &major, unsigned int &minor, unsigned int &patch)
 {
   if (version.size() == 0) {
     major = 0;
@@ -352,8 +334,7 @@ void vpIoTools::getVersion(const std::string &version, unsigned int &major,
 
     if (major_pos != std::string::npos) {
       size_t minor_pos = version.find('.', major_pos + 1);
-      std::string minor_str =
-          version.substr(major_pos + 1, (minor_pos - (major_pos + 1)));
+      std::string minor_str = version.substr(major_pos + 1, (minor_pos - (major_pos + 1)));
       minor = (unsigned)atoi(minor_str.c_str());
 
       if (minor_pos != std::string::npos) {
@@ -385,8 +366,7 @@ void vpIoTools::getVersion(const std::string &version, unsigned int &major,
 */
 bool vpIoTools::checkDirectory(const char *dirname)
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
 #elif defined(_WIN32) && defined(__MINGW32__)
   struct stat stbuf;
@@ -400,15 +380,13 @@ bool vpIoTools::checkDirectory(const char *dirname)
 
   std::string _dirname = path(dirname);
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (stat(_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32) && defined(__MINGW32__)
   // Remove trailing separator character if any
   // AppVeyor: Windows 6.3.9600 AMD64 ; C:/MinGW/bin/g++.exe  (ver 5.3.0) ;
   // GNU Make 3.82.90 Built for i686-pc-mingw32
-  if (!_dirname.empty() &&
-      _dirname.at(_dirname.size() - 1) == vpIoTools::separator)
+  if (!_dirname.empty() && _dirname.at(_dirname.size() - 1) == vpIoTools::separator)
     _dirname = _dirname.substr(0, _dirname.size() - 1);
   if (stat(_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32)
@@ -417,15 +395,13 @@ bool vpIoTools::checkDirectory(const char *dirname)
   {
     return false;
   }
-#if defined(_WIN32) || (defined(__unix__) || defined(__unix) ||              \
-                        (defined(__APPLE__) && defined(__MACH__)))
+#if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   if ((stbuf.st_mode & S_IFDIR) == 0)
 #endif
   {
     return false;
   }
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if ((stbuf.st_mode & S_IWUSR) == 0)
 #elif defined(_WIN32)
   if ((stbuf.st_mode & S_IWRITE) == 0)
@@ -449,10 +425,7 @@ bool vpIoTools::checkDirectory(const char *dirname)
 
   \sa checkDirectory(const char *)
 */
-bool vpIoTools::checkDirectory(const std::string &dirname)
-{
-  return vpIoTools::checkDirectory(dirname.c_str());
-}
+bool vpIoTools::checkDirectory(const std::string &dirname) { return vpIoTools::checkDirectory(dirname.c_str()); }
 
 // See:
 // https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
@@ -478,8 +451,7 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
       /* Temporarily truncate */
       *p = '\0';
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
       if (mkdir(_path, (mode_t)mode) != 0)
 #elif defined(_WIN32)
       (void)mode; // var not used
@@ -493,8 +465,7 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
     }
   }
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   if (mkdir(_path, (mode_t)mode) != 0)
 #elif defined(_WIN32)
   if (_mkdir(_path) != 0)
@@ -523,16 +494,12 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
 */
 void vpIoTools::makeDirectory(const char *dirname)
 {
-#if ((!defined(__unix__) && !defined(__unix) &&                              \
-      (!defined(__APPLE__) || !defined(__MACH__)))) &&                       \
-    !defined(_WIN32)
-  std::cerr << "Unsupported platform for vpIoTools::makeDirectory()!"
-            << std::endl;
+#if ((!defined(__unix__) && !defined(__unix) && (!defined(__APPLE__) || !defined(__MACH__)))) && !defined(_WIN32)
+  std::cerr << "Unsupported platform for vpIoTools::makeDirectory()!" << std::endl;
   return;
 #endif
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
 #elif defined(_WIN32) && defined(__MINGW32__)
   struct stat stbuf;
@@ -542,14 +509,12 @@ void vpIoTools::makeDirectory(const char *dirname)
 
   if (dirname == NULL || dirname[0] == '\0') {
     vpERROR_TRACE("invalid directory name\n");
-    throw(vpIoException(vpIoException::invalidDirectoryName,
-                        "invalid directory name"));
+    throw(vpIoException(vpIoException::invalidDirectoryName, "invalid directory name"));
   }
 
   std::string _dirname = path(dirname);
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (stat(_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32) && defined(__MINGW32__)
   if (stat(_dirname.c_str(), &stbuf) != 0)
@@ -559,8 +524,7 @@ void vpIoTools::makeDirectory(const char *dirname)
   {
     if (vpIoTools::mkdir_p(_dirname.c_str(), 0755) != 0) {
       vpERROR_TRACE("unable to create directory '%s'\n", dirname);
-      throw(vpIoException(vpIoException::cantCreateDirectory,
-                          "unable to create directory"));
+      throw(vpIoException(vpIoException::cantCreateDirectory, "unable to create directory"));
     }
 
     vpDEBUG_TRACE(2, "has created directory '%s'\n", dirname);
@@ -568,8 +532,7 @@ void vpIoTools::makeDirectory(const char *dirname)
 
   if (checkDirectory(dirname) == false) {
     vpERROR_TRACE("unable to create directory '%s'\n", dirname);
-    throw(vpIoException(vpIoException::cantCreateDirectory,
-                        "unable to create directory"));
+    throw(vpIoException(vpIoException::cantCreateDirectory, "unable to create directory"));
   }
 }
 
@@ -591,8 +554,7 @@ void vpIoTools::makeDirectory(const std::string &dirname)
     vpIoTools::makeDirectory(dirname.c_str());
   } catch (...) {
     vpERROR_TRACE("unable to create directory '%s'\n", dirname.c_str());
-    throw(vpIoException(vpIoException::cantCreateDirectory,
-                        "unable to create directory"));
+    throw(vpIoException(vpIoException::cantCreateDirectory, "unable to create directory"));
   }
 }
 
@@ -610,8 +572,7 @@ void vpIoTools::makeDirectory(const std::string &dirname)
 */
 bool vpIoTools::checkFilename(const char *filename)
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
 #elif defined(_WIN32)
   struct _stat stbuf;
@@ -622,8 +583,7 @@ bool vpIoTools::checkFilename(const char *filename)
   }
 
   std::string _filename = path(filename);
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (stat(_filename.c_str(), &stbuf) != 0)
 #elif defined(_WIN32)
   if (_stat(_filename.c_str(), &stbuf) != 0)
@@ -634,8 +594,7 @@ bool vpIoTools::checkFilename(const char *filename)
   if ((stbuf.st_mode & S_IFREG) == 0) {
     return false;
   }
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if ((stbuf.st_mode & S_IRUSR) == 0)
 #elif defined(_WIN32)
   if ((stbuf.st_mode & S_IREAD) == 0)
@@ -658,10 +617,7 @@ bool vpIoTools::checkFilename(const char *filename)
 
   \sa checkFilename(const char *)
 */
-bool vpIoTools::checkFilename(const std::string &filename)
-{
-  return vpIoTools::checkFilename(filename.c_str());
-}
+bool vpIoTools::checkFilename(const std::string &filename) { return vpIoTools::checkFilename(filename.c_str()); }
 
 /*!
 
@@ -680,8 +636,7 @@ bool vpIoTools::copy(const char *src, const char *dst)
   // Check if we have to consider a file or a directory
   if (vpIoTools::checkFilename(src)) {
 // std::cout << "copy file: " << src << " in " << dst << std::endl;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
@@ -693,9 +648,7 @@ bool vpIoTools::copy(const char *src, const char *dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(
-        vpException::fatalError,
-        "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -710,16 +663,13 @@ bool vpIoTools::copy(const char *src, const char *dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(
-        vpException::fatalError,
-        "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-        src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
+                        src, dst));
 #endif
 #endif
   } else if (vpIoTools::checkDirectory(src)) {
 // std::cout << "copy directory: " << src << " in " << dst << std::endl;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
@@ -731,9 +681,7 @@ bool vpIoTools::copy(const char *src, const char *dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(
-        vpException::fatalError,
-        "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -748,10 +696,8 @@ bool vpIoTools::copy(const char *src, const char *dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(
-        vpException::fatalError,
-        "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-        src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
+                        src, dst));
 #endif
 #endif
   } else {
@@ -797,8 +743,7 @@ bool vpIoTools::remove(const char *file_or_dir)
       return true;
   } else if (vpIoTools::checkDirectory(file_or_dir)) {
 // std::cout << "remove directory: " << file_or_dir << std::endl;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
@@ -809,9 +754,7 @@ bool vpIoTools::remove(const char *file_or_dir)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError,
-                        "Cannot remove %s: not implemented on iOS Platform",
-                        file_or_dir));
+    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform", file_or_dir));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -824,10 +767,8 @@ bool vpIoTools::remove(const char *file_or_dir)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(
-        vpException::fatalError,
-        "Cannot remove %s: not implemented on Universal Windows Platform",
-        file_or_dir));
+    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on Universal Windows Platform",
+                        file_or_dir));
 #endif
 #endif
   } else {
@@ -846,10 +787,7 @@ bool vpIoTools::remove(const char *file_or_dir)
   \sa remove(const char *)
 
 */
-bool vpIoTools::remove(const std::string &file_or_dir)
-{
-  return vpIoTools::remove(file_or_dir.c_str());
-}
+bool vpIoTools::remove(const std::string &file_or_dir) { return vpIoTools::remove(file_or_dir.c_str()); }
 
 /*!
 
@@ -881,8 +819,7 @@ bool vpIoTools::rename(const char *oldfilename, const char *newfilename)
 
   \sa rename(const char *, const char *)
 */
-bool vpIoTools::rename(const std::string &oldfilename,
-                       const std::string &newfilename)
+bool vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename)
 {
   return vpIoTools::rename(oldfilename.c_str(), newfilename.c_str());
 }
@@ -907,8 +844,7 @@ std::string vpIoTools::path(const char *pathname)
   for (unsigned int i = 0; i < path.length(); i++)
     if (path[i] == '/')
       path[i] = '\\';
-#elif defined(__unix__) || defined(__unix) ||                                \
-    (defined(__APPLE__) && defined(__MACH__))
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
   for (unsigned int i = 0; i < path.length(); i++)
     if (path[i] == '\\')
       path[i] = '/';
@@ -940,10 +876,7 @@ std::string vpIoTools::path(const char *pathname)
 
   \sa path(const char *)
 */
-std::string vpIoTools::path(const std::string &pathname)
-{
-  return path(pathname.c_str());
-}
+std::string vpIoTools::path(const std::string &pathname) { return path(pathname.c_str()); }
 
 /*!
  Reads the configuration file and parses it.
@@ -1154,9 +1087,7 @@ bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
 
   \return true if the parameter could be read.
 */
-bool vpIoTools::readConfigVar(const std::string &var,
-                              vpArray2D<double> &value,
-                              const unsigned int &nCols,
+bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, const unsigned int &nCols,
                               const unsigned int &nRows)
 {
   bool found = false;
@@ -1199,8 +1130,7 @@ bool vpIoTools::readConfigVar(const std::string &var,
   \param cond : Condition managing the file name
   \param strFalse : String to add if \e cond is false (default "")
 */
-void vpIoTools::addNameElement(const std::string &strTrue, const bool &cond,
-                               const std::string &strFalse)
+void vpIoTools::addNameElement(const std::string &strTrue, const bool &cond, const std::string &strFalse)
 {
   if (cond)
     baseName += "_" + strTrue;
@@ -1282,8 +1212,7 @@ std::string vpIoTools::getViSPImagesDataPath()
   std::string data_path;
   std::string file_to_test("mbt/cube.cao");
   std::string filename;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Test if visp-images-data package is u-installed (Ubuntu and Debian)
   data_path = "/usr/share/visp-images-data/ViSP-images";
   filename = data_path + "/" + file_to_test;
@@ -1325,11 +1254,9 @@ std::string vpIoTools::getViSPImagesDataPath()
    file or an empty string if the file has no extension. or if the pathname is
    empty.
  */
-std::string vpIoTools::getFileExtension(const std::string &pathname,
-                                        const bool checkFile)
+std::string vpIoTools::getFileExtension(const std::string &pathname, const bool checkFile)
 {
-  if (checkFile && (vpIoTools::checkDirectory(pathname) ||
-                    !vpIoTools::checkFilename(pathname))) {
+  if (checkFile && (vpIoTools::checkDirectory(pathname) || !vpIoTools::checkFilename(pathname))) {
     return "";
   }
 
@@ -1383,8 +1310,7 @@ std::string vpIoTools::getFileExtension(const std::string &pathname,
   size_t dotIndex = pathname.rfind(extsep);
   if (dotIndex != std::string::npos) {
     // The extsep character exists
-    if ((sepIndex != (int)std::string::npos && (int)dotIndex > sepIndex) ||
-        sepIndex == (int)std::string::npos) {
+    if ((sepIndex != (int)std::string::npos && (int)dotIndex > sepIndex) || sepIndex == (int)std::string::npos) {
       if (sepIndex == (int)std::string::npos) {
         sepIndex = -1;
       }
@@ -1467,8 +1393,7 @@ std::string vpIoTools::getParent(const std::string &pathname)
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::string real_path_str = pathname;
   char *real_path = realpath(pathname.c_str(), NULL);
 
@@ -1507,8 +1432,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
   into "\\" characters. Under Unix systems all the "\\"
   characters are converted into "/" characters.
  */
-std::string vpIoTools::createFilePath(const std::string &parent,
-                                      const std::string &child)
+std::string vpIoTools::createFilePath(const std::string &parent, const std::string &child)
 {
   if (child.size() == 0 && parent.size() == 0) {
     return "";
@@ -1530,8 +1454,7 @@ std::string vpIoTools::createFilePath(const std::string &parent,
   std::string stringSeparator;
   ss >> stringSeparator;
 
-  std::string lastConvertedParentChar =
-      convertedParent.substr(convertedParent.size() - 1);
+  std::string lastConvertedParentChar = convertedParent.substr(convertedParent.size() - 1);
   std::string firstConvertedChildChar = convertedChild.substr(0, 1);
 
   if (lastConvertedParentChar == stringSeparator) {
@@ -1557,15 +1480,14 @@ bool vpIoTools::isAbsolutePathname(const std::string &pathname)
   //# Trivial in Posix, harder on the Mac or MS-DOS.
   //# For DOS it is absolute if it starts with a slash or backslash (current
   //# volume), or if a pathname after the volume letter and colon / UNC
-  //resource # starts with a slash or backslash.
+  // resource # starts with a slash or backslash.
   //
   // def isabs(s):
   //    """Test whether a path is absolute"""
   //    s = splitdrive(s)[1]
   //    return s != '' and s[:1] in '/\\'
   std::string path = splitDrive(pathname).second;
-  return path.size() > 0 &&
-         (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
+  return path.size() > 0 && (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
 }
 
 /*!
@@ -1575,8 +1497,7 @@ bool vpIoTools::isAbsolutePathname(const std::string &pathname)
    \note It uses path() to normalize the path and getAbsolutePathname() to get
    the absolute pathname.
  */
-bool vpIoTools::isSamePathname(const std::string &pathname1,
-                               const std::string &pathname2)
+bool vpIoTools::isSamePathname(const std::string &pathname1, const std::string &pathname2)
 {
   // Normalize path
   std::string path1_normalize = vpIoTools::path(pathname1);
@@ -1596,8 +1517,7 @@ bool vpIoTools::isSamePathname(const std::string &pathname1,
    element is the drive specification and the second element the path
    specification
  */
-std::pair<std::string, std::string>
-vpIoTools::splitDrive(const std::string &pathname)
+std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string &pathname)
 {
 //# Split a path in a drive specification (a drive letter followed by a
 //# colon) and the path specification.
@@ -1648,10 +1568,9 @@ vpIoTools::splitDrive(const std::string &pathname)
 
 // On Unix, the drive is always empty.
 // On the Mac, the drive is always empty (don't use the volume name -- it
-// doesn't have the same  syntactic and semantic oddities as DOS drive letters,
-// such as there being a separate current directory per drive).
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__)))
+// doesn't have the same  syntactic and semantic oddities as DOS drive
+// letters, such as there being a separate current directory per drive).
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   return std::pair<std::string, std::string>("", pathname);
 #else
   const std::string sep = "\\";
@@ -1660,11 +1579,9 @@ vpIoTools::splitDrive(const std::string &pathname)
 
   if (pathname.size() > 1) {
     std::string normPathname = pathname;
-    std::replace(normPathname.begin(), normPathname.end(), *altsep.c_str(),
-                 *sep.c_str());
+    std::replace(normPathname.begin(), normPathname.end(), *altsep.c_str(), *sep.c_str());
 
-    if (normPathname.substr(0, 2) == sepsep &&
-        normPathname.substr(2, 1) != sep) {
+    if (normPathname.substr(0, 2) == sepsep && normPathname.substr(2, 1) != sep) {
       // is a UNC path:
       // vvvvvvvvvvvvvvvvvvvv drive letter or UNC path
       // \\machine\mountpoint\directory\etc\...
@@ -1685,13 +1602,11 @@ vpIoTools::splitDrive(const std::string &pathname)
         index2 = pathname.size();
       }
 
-      return std::pair<std::string, std::string>(pathname.substr(0, index2),
-                                                 pathname.substr(index2));
+      return std::pair<std::string, std::string>(pathname.substr(0, index2), pathname.substr(index2));
     }
 
     if (normPathname[1] == ':') {
-      return std::pair<std::string, std::string>(pathname.substr(0, 2),
-                                                 pathname.substr(2));
+      return std::pair<std::string, std::string>(pathname.substr(0, 2), pathname.substr(2));
     }
   }
 
@@ -1747,8 +1662,7 @@ other
 example
  \endcode
  */
-std::vector<std::string> vpIoTools::splitChain(const std::string &chain,
-                                               const std::string &sep)
+std::vector<std::string> vpIoTools::splitChain(const std::string &chain, const std::string &sep)
 {
   size_t startIndex = 0;
 
@@ -1781,21 +1695,17 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
 {
 
   if (!checkDirectory(pathname)) {
-    throw(vpIoException(vpException::fatalError,
-                        "Directory %s doesn't exist'", pathname.c_str()));
+    throw(vpIoException(vpException::fatalError, "Directory %s doesn't exist'", pathname.c_str()));
   }
   std::string dirName = path(pathname);
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
   std::vector<std::string> files;
   struct dirent **list = NULL;
   int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
   if (filesCount == -1) {
-    throw(vpIoException(vpException::fatalError,
-                        "Cannot read files of directory %s",
-                        dirName.c_str()));
+    throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
   for (int i = 0; i < filesCount; i++) {
     std::string fileName = list[i]->d_name;
@@ -1821,9 +1731,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
     return files;
   }
   if (hFind == INVALID_HANDLE_VALUE) {
-    throw(vpIoException(vpException::fatalError,
-                        "Cannot read files of directory %s",
-                        dirName.c_str()));
+    throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
   do {
     std::string fileName = FindFileData.cFileName;

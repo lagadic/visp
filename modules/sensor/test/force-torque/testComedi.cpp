@@ -59,14 +59,10 @@ int main()
 
 #ifdef VISP_HAVE_DISPLAY
   vpPlot scope(1, 700, 700, 100, 200,
-               std::string("ATI physical sensor data (") +
-                   comedi.getPhyDataUnits() + std::string(")"));
+               std::string("ATI physical sensor data (") + comedi.getPhyDataUnits() + std::string(")"));
   scope.initGraph(0, comedi.getNChannel());
   for (unsigned int i = 0; i < comedi.getNChannel(); i++)
-    scope.setLegend(
-        0, i,
-        "G" + dynamic_cast<std::ostringstream &>((std::ostringstream() << i))
-                  .str());
+    scope.setLegend(0, i, "G" + dynamic_cast<std::ostringstream &>((std::ostringstream() << i)).str());
 #endif
 
   std::string file("recorded-physical-data-sync.txt");
@@ -74,12 +70,10 @@ int main()
 
   double start_time = vpTime::measureTimeMs();
 #ifdef VISP_HAVE_DISPLAY
-  while (
-      !vpDisplay::getClick(scope.I, false)) // Stop recording by a user click
+  while (!vpDisplay::getClick(scope.I, false)) // Stop recording by a user click
 #else
   std::cout << "Data recording during 20 seconds in progress..." << std::endl;
-  while (vpTime::measureTimeMs() - start_time <
-         20000) // Stop recording after 20 seconds
+  while (vpTime::measureTimeMs() - start_time < 20000) // Stop recording after 20 seconds
 #endif
   {
     double loop_time = vpTime::measureTimeMs();
@@ -97,7 +91,6 @@ int main()
   f.close();
 
 #else
-  std::cout << "You should install comedi to enable this test..."
-            << std::endl;
+  std::cout << "You should install comedi to enable this test..." << std::endl;
 #endif
 }

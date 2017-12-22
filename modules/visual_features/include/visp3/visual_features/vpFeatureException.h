@@ -93,11 +93,7 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFeatureException(const int id, const std::string &msg)
-    : vpException(id, msg)
-  {
-    ;
-  }
+  vpFeatureException(const int id, const std::string &msg) : vpException(id, msg) { ; }
   explicit vpFeatureException(const int id) : vpException(id) { ; }
 };
 

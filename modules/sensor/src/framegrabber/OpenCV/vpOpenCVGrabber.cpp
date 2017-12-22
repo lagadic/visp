@@ -84,9 +84,8 @@ void vpOpenCVGrabber::open()
 
   else {
     close();
-    throw(vpFrameGrabberException(
-        vpFrameGrabberException::initializationError,
-        "Initialization not done : camera already used or no camera found"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                  "Initialization not done : camera already used or no camera found"));
   }
 }
 
@@ -124,9 +123,7 @@ void vpOpenCVGrabber::acquire(vpImage<unsigned char> &I)
 
   if (init == false) {
     close();
-    throw(
-        vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                "Initialization not done"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Initialization not done"));
   }
 
   cvGrabFrame(capture);
@@ -148,9 +145,7 @@ void vpOpenCVGrabber::acquire(vpImage<vpRGBa> &I)
 
   if (init == false) {
     close();
-    throw(
-        vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                "Initialization not done"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Initialization not done"));
   }
 
   cvGrabFrame(capture);
@@ -172,9 +167,7 @@ IplImage *vpOpenCVGrabber::acquire()
 
   if (init == false) {
     close();
-    throw(
-        vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                "Initialization not done"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Initialization not done"));
   }
 
   cvGrabFrame(capture);
@@ -198,10 +191,7 @@ void vpOpenCVGrabber::close()
         \param framerate : The value of the framerate is returned here.
 
 */
-void vpOpenCVGrabber::getFramerate(double &framerate)
-{
-  framerate = cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-}
+void vpOpenCVGrabber::getFramerate(double &framerate) { framerate = cvGetCaptureProperty(capture, CV_CAP_PROP_FPS); }
 
 /*!
         Sets the capture frame rate
@@ -229,9 +219,8 @@ void vpOpenCVGrabber::setWidth(const unsigned int w)
   if (cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, w)) {
     close();
     vpERROR_TRACE("Impossible to set the size of the grabber");
-    throw(
-        vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                "Impossible to set the size of the grabber"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                  "Impossible to set the size of the grabber"));
   }
 
   this->width = w;
@@ -252,9 +241,8 @@ void vpOpenCVGrabber::setHeight(const unsigned int h)
   if (cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, h)) {
     close();
     vpERROR_TRACE("Impossible to set the size of the grabber");
-    throw(
-        vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                "Impossible to set the size of the grabber"));
+    throw(vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                  "Impossible to set the size of the grabber"));
   }
 
   this->height = h;
@@ -278,8 +266,7 @@ void vpOpenCVGrabber::setDeviceType(int type)
 {
   DeviceType = type;
 
-  if (DeviceType != 0 && DeviceType != 100 && DeviceType != 200 &&
-      DeviceType != 300) {
+  if (DeviceType != 0 && DeviceType != 100 && DeviceType != 200 && DeviceType != 300) {
     vpTRACE("The expected type of device may be unknown.");
   }
 }

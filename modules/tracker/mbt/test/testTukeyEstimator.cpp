@@ -85,17 +85,14 @@ int main(int /*argc*/, const char ** /*argv*/)
     }
     t = vpTime::measureTimeMs() - t;
 
-    std::cout << "t_robust=" << t_robust << " ms ; t (double)=" << t
-              << " ; ratio=" << (t_robust / t) << std::endl;
+    std::cout << "t_robust=" << t_robust << " ms ; t (double)=" << t << " ; ratio=" << (t_robust / t) << std::endl;
 
     for (size_t i = 0; i < weights.size(); i++) {
-      if (!vpMath::equal(weights[i], weights_col[(unsigned int)i],
-                         noise_threshold)) {
+      if (!vpMath::equal(weights[i], weights_col[(unsigned int)i], noise_threshold)) {
         std::cerr << "Difference between vpRobust::TUKEY and "
                      "vpMbtTukeyEstimator (double)!"
                   << std::endl;
-        std::cerr << "weights_col[" << i
-                  << "]=" << weights_col[(unsigned int)i] << std::endl;
+        std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[i] << std::endl;
         return EXIT_FAILURE;
       }
@@ -128,17 +125,14 @@ int main(int /*argc*/, const char ** /*argv*/)
     }
     t = vpTime::measureTimeMs() - t;
 
-    std::cout << "t_robust=" << t_robust << " ms ; t (float)=" << t
-              << " ; ratio=" << (t_robust / t) << std::endl;
+    std::cout << "t_robust=" << t_robust << " ms ; t (float)=" << t << " ; ratio=" << (t_robust / t) << std::endl;
 
     for (size_t i = 0; i < weights.size(); i++) {
-      if (!vpMath::equal(weights[i], weights_col[(unsigned int)i],
-                         noise_threshold)) {
+      if (!vpMath::equal(weights[i], weights_col[(unsigned int)i], noise_threshold)) {
         std::cerr << "Difference between vpRobust::TUKEY and "
                      "vpMbtTukeyEstimator (float)!"
                   << std::endl;
-        std::cerr << "weights_col[" << i
-                  << "]=" << weights_col[(unsigned int)i] << std::endl;
+        std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
         std::cerr << "weights[" << i << "]=" << weights[i] << std::endl;
         return EXIT_FAILURE;
       }
@@ -167,26 +161,20 @@ int main(int /*argc*/, const char ** /*argv*/)
     }
     t = vpTime::measureTimeMs() - t;
 
-    std::cout << "t_robust=" << t_robust << " ms ; t (vpColVector)=" << t
-              << " ; ratio=" << (t_robust / t) << std::endl;
+    std::cout << "t_robust=" << t_robust << " ms ; t (vpColVector)=" << t << " ; ratio=" << (t_robust / t) << std::endl;
 
     for (size_t i = 0; i < weights.size(); i++) {
-      if (!vpMath::equal(weights[(unsigned int)i],
-                         weights_col[(unsigned int)i], noise_threshold)) {
+      if (!vpMath::equal(weights[(unsigned int)i], weights_col[(unsigned int)i], noise_threshold)) {
         std::cerr << "Difference between vpRobust::TUKEY and "
                      "vpMbtTukeyEstimator (float)!"
                   << std::endl;
-        std::cerr << "weights_col[" << i
-                  << "]=" << weights_col[(unsigned int)i] << std::endl;
-        std::cerr << "weights[" << i << "]=" << weights[(unsigned int)i]
-                  << std::endl;
+        std::cerr << "weights_col[" << i << "]=" << weights_col[(unsigned int)i] << std::endl;
+        std::cerr << "weights[" << i << "]=" << weights[(unsigned int)i] << std::endl;
         return EXIT_FAILURE;
       }
     }
   }
 
-  std::cout
-      << "vpMbtTukeyEstimator returns the same values than vpRobust::TUKEY."
-      << std::endl;
+  std::cout << "vpMbtTukeyEstimator returns the same values than vpRobust::TUKEY." << std::endl;
   return EXIT_SUCCESS;
 }

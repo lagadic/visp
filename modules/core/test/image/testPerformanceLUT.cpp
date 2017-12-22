@@ -64,8 +64,8 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string &ipath,
-           const std::string &opath, const std::string &user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user)
 {
   fprintf(stdout, "\n\
 Test performance between methods to iterate over pixel image.\n\
@@ -114,8 +114,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, const std::string &user,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user,
                 unsigned int &nbThreads)
 {
   const char *optarg_;
@@ -167,8 +166,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   \param alpha : Gain.
   \param beta: Offset.
 */
-void iterate_method1(vpImage<vpRGBa> &I, const double alpha,
-                     const double beta)
+void iterate_method1(vpImage<vpRGBa> &I, const double alpha, const double beta)
 {
   unsigned int size = I.getWidth() * I.getHeight();
   unsigned char *ptrStart = (unsigned char *)I.bitmap;
@@ -176,8 +174,7 @@ void iterate_method1(vpImage<vpRGBa> &I, const double alpha,
   unsigned char *ptrCurrent = ptrStart;
 
   while (ptrCurrent != ptrEnd) {
-    *ptrCurrent =
-        vpMath::saturate<unsigned char>((*ptrCurrent) * alpha + beta);
+    *ptrCurrent = vpMath::saturate<unsigned char>((*ptrCurrent) * alpha + beta);
     ++ptrCurrent;
   }
 }
@@ -190,8 +187,7 @@ void iterate_method1(vpImage<vpRGBa> &I, const double alpha,
   \param alpha : Gain.
   \param beta: Offset.
 */
-void iterate_method1(vpImage<unsigned char> &I, const double alpha,
-                     const double beta)
+void iterate_method1(vpImage<unsigned char> &I, const double alpha, const double beta)
 {
   unsigned int size = I.getWidth() * I.getHeight();
   unsigned char *ptrStart = (unsigned char *)I.bitmap;
@@ -199,8 +195,7 @@ void iterate_method1(vpImage<unsigned char> &I, const double alpha,
   unsigned char *ptrCurrent = ptrStart;
 
   while (ptrCurrent != ptrEnd) {
-    *ptrCurrent =
-        vpMath::saturate<unsigned char>((*ptrCurrent) * alpha + beta);
+    *ptrCurrent = vpMath::saturate<unsigned char>((*ptrCurrent) * alpha + beta);
     ++ptrCurrent;
   }
 }
@@ -213,8 +208,7 @@ void iterate_method1(vpImage<unsigned char> &I, const double alpha,
   \param alpha : Gain.
   \param beta: Offset.
 */
-void iterate_method2(vpImage<vpRGBa> &I, const double alpha,
-                     const double beta)
+void iterate_method2(vpImage<vpRGBa> &I, const double alpha, const double beta)
 {
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
@@ -257,8 +251,7 @@ int main(int argc, const char **argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath, username, nbThreads) ==
-        false) {
+    if (getOptions(argc, argv, opt_ipath, opt_opath, username, nbThreads) == false) {
       exit(-1);
     }
 
@@ -280,8 +273,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option "
-                  << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
         exit(-1);
       }
     }
@@ -292,8 +284,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -302,13 +293,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -326,8 +314,7 @@ int main(int argc, const char **argv)
     vpImageIo::read(I_iterate2, filename);
     vpImageIo::read(I_lut, filename);
 
-    std::cout << "I=" << I_iterate1.getWidth() << "x"
-              << I_iterate1.getHeight() << std::endl;
+    std::cout << "I=" << I_iterate1.getWidth() << "x" << I_iterate1.getHeight() << std::endl;
 
     double alpha = 1.5, beta = -30.0;
     unsigned int nbIterations = 10;
@@ -338,12 +325,10 @@ int main(int argc, const char **argv)
       iterate_method1(I_iterate1, alpha, beta);
     }
     t_iterate1 = vpTime::measureTimeMs() - t_iterate1;
-    std::cout << "t_iterate1=" << t_iterate1 << " ms ; t_iterate1/"
-              << nbIterations << "=" << (t_iterate1 / nbIterations) << " ms"
-              << std::endl;
+    std::cout << "t_iterate1=" << t_iterate1 << " ms ; t_iterate1/" << nbIterations << "="
+              << (t_iterate1 / nbIterations) << " ms" << std::endl;
 
-    filename =
-        vpIoTools::createFilePath(opath, "Klimt_performance_iterate1.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_performance_iterate1.ppm");
     vpImageIo::write(I_iterate1, filename);
 
     // Iterate method 2
@@ -352,12 +337,10 @@ int main(int argc, const char **argv)
       iterate_method2(I_iterate2, alpha, beta);
     }
     t_iterate2 = vpTime::measureTimeMs() - t_iterate2;
-    std::cout << "t_iterate2=" << t_iterate2 << " ms ; t_iterate2/"
-              << nbIterations << "=" << (t_iterate2 / nbIterations) << " ms"
-              << std::endl;
+    std::cout << "t_iterate2=" << t_iterate2 << " ms ; t_iterate2/" << nbIterations << "="
+              << (t_iterate2 / nbIterations) << " ms" << std::endl;
 
-    filename =
-        vpIoTools::createFilePath(opath, "Klimt_performance_iterate2.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_performance_iterate2.ppm");
     vpImageIo::write(I_iterate2, filename);
 
     // LUT method
@@ -375,8 +358,8 @@ int main(int argc, const char **argv)
       I_lut.performLut(lut, nbThreads);
     }
     t_lut = vpTime::measureTimeMs() - t_lut;
-    std::cout << "t_lut=" << t_lut << " ms ; t_lut/" << nbIterations << "="
-              << (t_lut / nbIterations) << " ms" << std::endl;
+    std::cout << "t_lut=" << t_lut << " ms ; t_lut/" << nbIterations << "=" << (t_lut / nbIterations) << " ms"
+              << std::endl;
 
     filename = vpIoTools::createFilePath(opath, "Klimt_performance_lut.ppm");
     vpImageIo::write(I_lut, filename);
@@ -385,8 +368,7 @@ int main(int argc, const char **argv)
     bool same = true;
     for (unsigned int i = 0; i < I_iterate1.getHeight() && same; i++) {
       for (unsigned int j = 0; j < I_iterate1.getWidth() && same; j++) {
-        if (I_iterate1[i][j] != I_iterate2[i][j] ||
-            I_iterate1[i][j] != I_lut[i][j]) {
+        if (I_iterate1[i][j] != I_iterate2[i][j] || I_iterate1[i][j] != I_lut[i][j]) {
           same = false;
         }
       }
@@ -406,8 +388,7 @@ int main(int argc, const char **argv)
     vpImageIo::read(I_iterate_grayscale1, filename);
     vpImageIo::read(I_lut_grayscale, filename);
 
-    std::cout << "I_grayscale=" << I_lut_grayscale.getWidth() << "x"
-              << I_lut_grayscale.getHeight() << std::endl;
+    std::cout << "I_grayscale=" << I_lut_grayscale.getWidth() << "x" << I_lut_grayscale.getHeight() << std::endl;
 
     // Iterate method 1 on grayscale
     double t_iterate_grayscale1 = vpTime::measureTimeMs();
@@ -415,12 +396,10 @@ int main(int argc, const char **argv)
       iterate_method1(I_iterate_grayscale1, alpha, beta);
     }
     t_iterate_grayscale1 = vpTime::measureTimeMs() - t_iterate_grayscale1;
-    std::cout << "t_iterate_grayscale1=" << t_iterate_grayscale1
-              << " ms ; t_iterate1/" << nbIterations << "="
+    std::cout << "t_iterate_grayscale1=" << t_iterate_grayscale1 << " ms ; t_iterate1/" << nbIterations << "="
               << (t_iterate_grayscale1 / nbIterations) << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(
-        opath, "Klimt_performance_iterate1_grayscale.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_performance_iterate1_grayscale.pgm");
     vpImageIo::write(I_iterate_grayscale1, filename);
 
     // LUT method on grayscale
@@ -435,12 +414,10 @@ int main(int argc, const char **argv)
       I_lut_grayscale.performLut(lut, nbThreads);
     }
     t_lut_grayscale = vpTime::measureTimeMs() - t_lut_grayscale;
-    std::cout << "t_lut_grayscale=" << t_lut_grayscale
-              << " ms ; t_lut_grayscale/" << nbIterations << "="
+    std::cout << "t_lut_grayscale=" << t_lut_grayscale << " ms ; t_lut_grayscale/" << nbIterations << "="
               << (t_lut_grayscale / nbIterations) << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(
-        opath, "Klimt_performance_lut_grayscale.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_performance_lut_grayscale.pgm");
     vpImageIo::write(I_lut_grayscale, filename);
 
     // Check grayscale image
@@ -493,8 +470,8 @@ int main(int argc, const char **argv)
     }
     t_lut_singlethread = vpTime::measureTimeMs() - t_lut_singlethread;
 
-    std::cout << "\nt_lut_singlethread/t_lut_multithread (color)="
-              << t_lut_singlethread / t_lut_multithread << "X" << std::endl;
+    std::cout << "\nt_lut_singlethread/t_lut_multithread (color)=" << t_lut_singlethread / t_lut_multithread << "X"
+              << std::endl;
 
     // Computation time on grayscale image
     vpImageIo::read(I_lut_grayscale, filename);
@@ -525,8 +502,8 @@ int main(int argc, const char **argv)
     }
     t_lut_singlethread = vpTime::measureTimeMs() - t_lut_singlethread;
 
-    std::cout << "\nt_lut_singlethread/t_lut_multithread (grayscale)="
-              << t_lut_singlethread / t_lut_multithread << "X" << std::endl;
+    std::cout << "\nt_lut_singlethread/t_lut_multithread (grayscale)=" << t_lut_singlethread / t_lut_multithread << "X"
+              << std::endl;
 
     // Check performLut with multithreading and image size not divisible by 8
     vpImage<unsigned char> I_test_grayscale(49, 7);

@@ -39,16 +39,14 @@
  *****************************************************************************/
 #include <visp3/tt_mi/vpTemplateTrackerMIForwardCompositional.h>
 
-vpTemplateTrackerMIForwardCompositional::
-    vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp)
+vpTemplateTrackerMIForwardCompositional::vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), CompoInitialised(false)
 {
 }
 
 void vpTemplateTrackerMIForwardCompositional::initCompo()
 {
-  std::cout << "Initialise precomputed value of Compositionnal Direct"
-            << std::endl;
+  std::cout << "Initialise precomputed value of Compositionnal Direct" << std::endl;
   ptTemplateSupp = new vpTemplateTrackerPointSuppMIInv[templateSize];
   for (unsigned int point = 0; point < templateSize; point++) {
     int i = ptTemplate[point].y;
@@ -67,16 +65,13 @@ void vpTemplateTrackerMIForwardCompositional::initCompo()
     ptTemplateSupp[point].Bt = new double[4];
     ptTemplateSupp[point].dBt = new double[4];
     for (char it = -1; it <= 2; it++) {
-      ptTemplateSupp[point].Bt[it + 1] =
-          vpTemplateTrackerBSpline::Bspline4(-it + et);
-      ptTemplateSupp[point].dBt[it + 1] =
-          vpTemplateTrackerMIBSpline::dBspline4(-it + et);
+      ptTemplateSupp[point].Bt[it + 1] = vpTemplateTrackerBSpline::Bspline4(-it + et);
+      ptTemplateSupp[point].dBt[it + 1] = vpTemplateTrackerMIBSpline::dBspline4(-it + et);
     }
   }
   CompoInitialised = true;
 }
-void vpTemplateTrackerMIForwardCompositional::initHessienDesired(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   initCompo();
 
@@ -115,8 +110,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(
     double j2 = X2[0];
     double i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
       // Tij=ptTemplate[point].val;
       if (!blur)
@@ -141,8 +135,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(
       // calcul de l'erreur
       // erreur+=(Tij-IW)*(Tij-IW);
 
-      vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc,
-                                                  tptemp, nbParam, bspline);
+      vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
 
       delete[] tptemp;
     }
@@ -160,8 +153,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(
   // std::cout<<"\tEnd initialisation..."<<std::endl;
 }
 
-void vpTemplateTrackerMIForwardCompositional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (!CompoInitialised)
     std::cout << "Compositionnal tracking no initialised\nUse "
@@ -214,8 +206,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(
       X2[1] = i2;
 
       Warp->computeDenom(X1, p);
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Nbpoint++;
         // Tij=ptTemplate[point].val;
         if (!blur)
@@ -240,13 +231,10 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(
         // calcul de l'erreur
         // erreur+=(Tij-IW)*(Tij-IW);
 
-        if (ApproxHessian == HESSIAN_NONSECOND ||
-            hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
-          vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(
-              PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+        if (ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
+          vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
         else if (ApproxHessian == HESSIAN_0 || ApproxHessian == HESSIAN_NEW)
-          vpTemplateTrackerMIBSpline::PutTotPVBspline(
-              PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+          vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
 
         delete[] tptemp;
       }
@@ -255,8 +243,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(
       // std::cout<<"plus de point dans template suivi"<<std::endl;
       diverge = true;
       MI = 0;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     } else {
       computeProba(Nbpoint);
       computeMI(MI);
@@ -301,8 +288,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(
 
     iteration++;
 
-  } while ((std::fabs(MI - MIprec) >
-            std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
+  } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
            (iteration < iterationMax));
   // while( (MI!=MIprec) && (iteration< iterationMax) );
   nbIteration = iteration;

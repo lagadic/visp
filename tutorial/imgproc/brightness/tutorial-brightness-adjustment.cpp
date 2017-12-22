@@ -17,9 +17,8 @@
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV)) &&                                           \
+#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                                                               \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
     (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
   //!
@@ -48,8 +47,7 @@ int main(int argc, const char **argv)
       kernelSize = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--dynamic" && i + 1 < argc) {
       dynamic = atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" ||
-               std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--input <input image>]"
                    " [--alpha <alpha for vp::adjust()>] [--beta <beta for "
@@ -88,9 +86,7 @@ int main(int argc, const char **argv)
   vpImageIo::write(I_color_res, ss.str());
 
   vpDisplay::display(I_color_res);
-  vpDisplay::displayText(
-      I_color_res, 20, 20,
-      "Brightness and contrast adjustment. Click to continue.", vpColor::red);
+  vpDisplay::displayText(I_color_res, 20, 20, "Brightness and contrast adjustment. Click to continue.", vpColor::red);
   vpDisplay::flush(I_color_res);
   vpDisplay::getClick(I_color_res);
 
@@ -98,16 +94,13 @@ int main(int argc, const char **argv)
   vpImage<vpRGBa> I_color_gamma_correction;
   vp::gammaCorrection(I_color, I_color_gamma_correction, gamma);
   //! [Gamma correction]
-  I_color_res.insert(I_color_gamma_correction,
-                     vpImagePoint(0, I_color.getWidth()));
+  I_color_res.insert(I_color_gamma_correction, vpImagePoint(0, I_color.getWidth()));
   ss.str("");
   ss << "Sample_low_brightness_gamma=" << gamma << ".png";
   vpImageIo::write(I_color_res, ss.str());
 
   vpDisplay::display(I_color_res);
-  vpDisplay::displayText(I_color_res, 20, 20,
-                         "Gamma correction. Click to continue.",
-                         vpColor::red);
+  vpDisplay::displayText(I_color_res, 20, 20, "Gamma correction. Click to continue.", vpColor::red);
   vpDisplay::flush(I_color_res);
   vpDisplay::getClick(I_color_res);
 
@@ -115,35 +108,29 @@ int main(int argc, const char **argv)
   vpImage<vpRGBa> I_color_equalize_histogram;
   vp::equalizeHistogram(I_color, I_color_equalize_histogram);
   //! [Histogram equalization]
-  I_color_res.insert(I_color_equalize_histogram,
-                     vpImagePoint(0, I_color.getWidth()));
+  I_color_res.insert(I_color_equalize_histogram, vpImagePoint(0, I_color.getWidth()));
   ss.str("");
   ss << "Sample_low_brightness_eqHist.png";
   vpImageIo::write(I_color_res, ss.str());
 
   vpDisplay::display(I_color_res);
-  vpDisplay::displayText(I_color_res, 20, 20,
-                         "Histogram equalization. Click to continue.",
-                         vpColor::red);
+  vpDisplay::displayText(I_color_res, 20, 20, "Histogram equalization. Click to continue.", vpColor::red);
   vpDisplay::flush(I_color_res);
   vpDisplay::getClick(I_color_res);
 
   //! [Retinex]
   vpImage<vpRGBa> I_color_retinex;
-  vp::retinex(I_color, I_color_retinex, scale, scaleDiv, level, dynamic,
-              kernelSize);
+  vp::retinex(I_color, I_color_retinex, scale, scaleDiv, level, dynamic, kernelSize);
   //! [Retinex]
   I_color_res.insert(I_color_retinex, vpImagePoint(0, I_color.getWidth()));
 
   ss.str("");
-  ss << "Sample_low_brightness_scale=" << scale << "_scaleDiv=" << scaleDiv
-     << "_level=" << level << "_dynamic=" << dynamic
-     << "_kernelSize=" << kernelSize << ".png";
+  ss << "Sample_low_brightness_scale=" << scale << "_scaleDiv=" << scaleDiv << "_level=" << level
+     << "_dynamic=" << dynamic << "_kernelSize=" << kernelSize << ".png";
   vpImageIo::write(I_color_res, ss.str());
 
   vpDisplay::display(I_color_res);
-  vpDisplay::displayText(I_color_res, 20, 20, "Retinex. Click to quit.",
-                         vpColor::red);
+  vpDisplay::displayText(I_color_res, 20, 20, "Retinex. Click to quit.", vpColor::red);
   vpDisplay::flush(I_color_res);
   vpDisplay::getClick(I_color_res);
 

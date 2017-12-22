@@ -56,8 +56,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
   Print the program options.
@@ -107,8 +106,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -173,27 +171,20 @@ int main(int argc, const char **argv)
     d.init(I, 0, 0, "Grayscale image");
 
     vpDisplay::display(I);
-    vpDisplay::displayText(
-        I, 20, 20,
-        "Left click to draw a polygon, right click when it is finished.",
-        vpColor::red);
+    vpDisplay::displayText(I, 20, 20, "Left click to draw a polygon, right click when it is finished.", vpColor::red);
     vpDisplay::flush(I);
 
     vpPolygon polygon;
     polygon.initClick(I);
 
     vpDisplay::display(I);
-    vpDisplay::displayText(
-        I, 20, 20, "Shape is not closed. Click to display dashed lines.",
-        vpColor::red);
+    vpDisplay::displayText(I, 20, 20, "Shape is not closed. Click to display dashed lines.", vpColor::red);
     vpDisplay::displayLine(I, polygon.getCorners(), false, vpColor::red, 2);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
     vpDisplay::display(I);
-    vpDisplay::displayText(I, 20, 20,
-                           "Shape is closed. Click to draw on color image.",
-                           vpColor::red);
+    vpDisplay::displayText(I, 20, 20, "Shape is closed. Click to draw on color image.", vpColor::red);
     vpDisplay::displayDotLine(I, polygon.getCorners(), true, vpColor::red, 2);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
@@ -201,8 +192,7 @@ int main(int argc, const char **argv)
     d2.init(I_color, I.getWidth(), 0, "Color image");
     // Create colormap
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
-      double hue = i / (double)I_color.getHeight(), saturation = 1.0,
-             value = 1.0;
+      double hue = i / (double)I_color.getHeight(), saturation = 1.0, value = 1.0;
       unsigned char rgb[3];
       vpImageConvert::HSVToRGB(&hue, &saturation, &value, rgb, 1);
 
@@ -214,29 +204,21 @@ int main(int argc, const char **argv)
     }
 
     vpDisplay::display(I_color);
-    vpDisplay::displayText(
-        I_color, 20, 20,
-        "Left click to draw a polygon, right click when it is finished.",
-        vpColor::black);
+    vpDisplay::displayText(I_color, 20, 20, "Left click to draw a polygon, right click when it is finished.",
+                           vpColor::black);
     vpDisplay::flush(I_color);
 
     polygon.initClick(I_color);
 
     vpDisplay::display(I_color);
-    vpDisplay::displayText(I_color, 20, 20,
-                           "Shape is closed. Click to display dashed lines.",
-                           vpColor::black);
-    vpDisplay::displayLine(I_color, polygon.getCorners(), true, vpColor::red,
-                           2);
+    vpDisplay::displayText(I_color, 20, 20, "Shape is closed. Click to display dashed lines.", vpColor::black);
+    vpDisplay::displayLine(I_color, polygon.getCorners(), true, vpColor::red, 2);
     vpDisplay::flush(I_color);
     vpDisplay::getClick(I_color);
 
     vpDisplay::display(I_color);
-    vpDisplay::displayText(I_color, 20, 20,
-                           "Shape is not closed. Click to quit.",
-                           vpColor::black);
-    vpDisplay::displayDotLine(I_color, polygon.getCorners(), false,
-                              vpColor::red, 2);
+    vpDisplay::displayText(I_color, 20, 20, "Shape is not closed. Click to quit.", vpColor::black);
+    vpDisplay::displayDotLine(I_color, polygon.getCorners(), false, vpColor::red, 2);
     vpDisplay::flush(I_color);
     vpDisplay::getClick(I_color);
   }

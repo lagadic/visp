@@ -28,18 +28,16 @@ int main(int argc, char **argv)
         opt_tracker1 = atoi(argv[i + 1]);
         opt_tracker2 = atoi(argv[i + 2]);
       } else if (std::string(argv[i]) == "--help") {
-        std::cout
-            << "\nUsage: " << argv[0]
-            << " [--name <video name left> <video name right>]"
-               " [--tracker <1=egde|2=klt|3=hybrid> <1=egde|2=klt|3=hybrid>]"
-               " [--help]\n"
-            << std::endl;
+        std::cout << "\nUsage: " << argv[0]
+                  << " [--name <video name left> <video name right>]"
+                     " [--tracker <1=egde|2=klt|3=hybrid> <1=egde|2=klt|3=hybrid>]"
+                     " [--help]\n"
+                  << std::endl;
         return EXIT_SUCCESS;
       }
     }
 
-    if ((opt_tracker1 < 1 || opt_tracker1 > 3) &&
-        (opt_tracker2 < 1 || opt_tracker2 > 3)) {
+    if ((opt_tracker1 < 1 || opt_tracker1 > 3) && (opt_tracker2 < 1 || opt_tracker2 > 3)) {
       std::cerr << "Wrong tracker type. Correct values are: "
                    "1=egde|2=keypoint|3=hybrid."
                 << std::endl;
@@ -54,13 +52,10 @@ int main(int argc, char **argv)
       objectname_left = parentname + "/" + objectname_left;
     }
 
-    std::cout << "Video name: " << opt_videoname_left << " ; "
-              << opt_videoname_right << std::endl;
-    std::cout << "Tracker requested config files: " << objectname_left
-              << ".[init, cao]"
+    std::cout << "Video name: " << opt_videoname_left << " ; " << opt_videoname_right << std::endl;
+    std::cout << "Tracker requested config files: " << objectname_left << ".[init, cao]"
               << " and " << objectname_right << ".[init, cao]" << std::endl;
-    std::cout << "Tracker optional config files: " << opt_videoname_left
-              << ".ppm"
+    std::cout << "Tracker optional config files: " << opt_videoname_left << ".ppm"
               << " and " << opt_videoname_right << ".ppm" << std::endl;
 
     //! [Images]
@@ -86,8 +81,7 @@ int main(int argc, char **argv)
     display_left.setDownScalingFactor(vpDisplay::SCALE_AUTO);
     display_right.setDownScalingFactor(vpDisplay::SCALE_AUTO);
     display_left.init(I_left, 100, 100, "Model-based tracker (Left)");
-    display_right.init(I_right, 110 + (int)I_left.getWidth(), 100,
-                       "Model-based tracker (Right)");
+    display_right.init(I_right, 110 + (int)I_left.getWidth(), 100, "Model-based tracker (Right)");
 
     //! [Constructor]
     std::vector<int> trackerTypes(2);
@@ -106,8 +100,7 @@ int main(int argc, char **argv)
     //! [Constructor]
 
     //! [Load config file]
-    tracker.loadConfigFile(objectname_left + ".xml",
-                           objectname_right + ".xml");
+    tracker.loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");
     //! [Load config file]
 
     //! [Load cao]
@@ -122,8 +115,7 @@ int main(int argc, char **argv)
     std::ifstream file_cRightMcLeft("cRightMcLeft.txt");
     cRightMcLeft.load(file_cRightMcLeft);
 
-    std::map<std::string, vpHomogeneousMatrix>
-        mapOfCameraTransformationMatrix;
+    std::map<std::string, vpHomogeneousMatrix> mapOfCameraTransformationMatrix;
     mapOfCameraTransformationMatrix["Camera1"] = vpHomogeneousMatrix();
     mapOfCameraTransformationMatrix["Camera2"] = cRightMcLeft;
 
@@ -131,18 +123,16 @@ int main(int argc, char **argv)
 //! [Set camera transformation matrix]
 
 #ifndef VISP_HAVE_XML2
-    std::cout
-        << "\n**********************************************************\n"
-        << "Warning: we are not able to load the tracker settings from\n"
-        << "the xml config files since ViSP is not build with libxml2\n"
-        << "3rd party. As a consequence, the tracking may fail!"
-        << "\n**********************************************************\n"
-        << std::endl;
+    std::cout << "\n**********************************************************\n"
+              << "Warning: we are not able to load the tracker settings from\n"
+              << "the xml config files since ViSP is not build with libxml2\n"
+              << "3rd party. As a consequence, the tracking may fail!"
+              << "\n**********************************************************\n"
+              << std::endl;
 #endif
 
     //! [Init]
-    tracker.initClick(I_left, I_right, objectname_left + ".init",
-                      objectname_right + ".init", true);
+    tracker.initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);
     //! [Init]
 
     while (!g_left.end() && !g_right.end()) {
@@ -164,16 +154,12 @@ int main(int argc, char **argv)
       //! [Display]
       vpCameraParameters cam_left, cam_right;
       tracker.getCameraParameters(cam_left, cam_right);
-      tracker.display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right,
-                      vpColor::red, 2);
+      tracker.display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right, vpColor::red, 2);
       //! [Display]
 
-      vpDisplay::displayFrame(I_left, cLeftMo, cam_left, 0.025, vpColor::none,
-                              3);
-      vpDisplay::displayFrame(I_right, cRightMo, cam_right, 0.025,
-                              vpColor::none, 3);
-      vpDisplay::displayText(I_left, 10, 10, "A click to exit...",
-                             vpColor::red);
+      vpDisplay::displayFrame(I_left, cLeftMo, cam_left, 0.025, vpColor::none, 3);
+      vpDisplay::displayFrame(I_right, cRightMo, cam_right, 0.025, vpColor::none, 3);
+      vpDisplay::displayText(I_left, 10, 10, "A click to exit...", vpColor::red);
 
       vpDisplay::flush(I_left);
       vpDisplay::flush(I_right);
@@ -189,7 +175,6 @@ int main(int argc, char **argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example."
-            << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }

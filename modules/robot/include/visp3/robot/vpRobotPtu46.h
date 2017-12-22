@@ -108,24 +108,20 @@ public:
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &q);
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
   double getPositioningVelocity(void);
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &q_dot);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot);
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
 
   void init(void);
 
   bool readPositionFile(const std::string &filename, vpColVector &q);
 
-  void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &q);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double &q1,
-                   const double &q2);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
   void setPosition(const char *filename);
   void setPositioningVelocity(const double velocity);
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &q_dot);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot);
 
   void stopMotion();
 };

@@ -162,38 +162,32 @@ void set_Bound_face_display(Bound *bp, Byte b)
     p1 = pp + *(vp + 1);
     p2 = pp + *(vp + fp->vertex.nbr - 1);
     if (b & IS_ABOVE) {
-      fp->is_visible = ((p1->z - p0->z) * (p2->x - p0->x) >=
-                        (p1->x - p0->x) * (p2->z - p0->z));
+      fp->is_visible = ((p1->z - p0->z) * (p2->x - p0->x) >= (p1->x - p0->x) * (p2->z - p0->z));
     }
     if (!fp->is_visible)
       continue;
     if (b & IS_BELOW) {
-      fp->is_visible = ((p1->z - p0->z) * (p2->x - p0->x) <=
-                        (p1->x - p0->x) * (p2->z - p0->z));
+      fp->is_visible = ((p1->z - p0->z) * (p2->x - p0->x) <= (p1->x - p0->x) * (p2->z - p0->z));
     }
     if (!fp->is_visible)
       continue;
     if (b & IS_RIGHT) {
-      fp->is_visible = ((p1->y - p0->y) * (p2->z - p0->z) >=
-                        (p1->z - p0->z) * (p2->y - p0->y));
+      fp->is_visible = ((p1->y - p0->y) * (p2->z - p0->z) >= (p1->z - p0->z) * (p2->y - p0->y));
     }
     if (!fp->is_visible)
       continue;
     if (b & IS_LEFT) {
-      fp->is_visible = ((p1->y - p0->y) * (p2->z - p0->z) <=
-                        (p1->z - p0->z) * (p2->y - p0->y));
+      fp->is_visible = ((p1->y - p0->y) * (p2->z - p0->z) <= (p1->z - p0->z) * (p2->y - p0->y));
     }
     if (!fp->is_visible)
       continue;
     if (b & IS_BACK) {
-      fp->is_visible = ((p1->x - p0->x) * (p2->y - p0->y) >=
-                        (p1->y - p0->y) * (p2->x - p0->x));
+      fp->is_visible = ((p1->x - p0->x) * (p2->y - p0->y) >= (p1->y - p0->y) * (p2->x - p0->x));
     }
     if (!fp->is_visible)
       continue;
     if (b & IS_FRONT) {
-      fp->is_visible = ((p1->x - p0->x) * (p2->y - p0->y) <=
-                        (p1->y - p0->y) * (p2->x - p0->x));
+      fp->is_visible = ((p1->x - p0->x) * (p2->y - p0->y) <= (p1->y - p0->y) * (p2->x - p0->x));
     }
   }
 }

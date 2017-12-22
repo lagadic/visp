@@ -76,11 +76,7 @@ public:
   \brief Lists the possible error than can be emmited while calling
   vpFrameGrabber member
  */
-  enum errorFrameGrabberCodeEnum {
-    settingError,
-    initializationError,
-    otherError
-  };
+  enum errorFrameGrabberCodeEnum { settingError, initializationError, otherError };
 
 public:
   vpFrameGrabberException(const int id, const char *format, ...)
@@ -91,11 +87,7 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFrameGrabberException(const int id, const std::string &msg)
-    : vpException(id, msg)
-  {
-    ;
-  }
+  vpFrameGrabberException(const int id, const std::string &msg) : vpException(id, msg) { ; }
   explicit vpFrameGrabberException(const int id) : vpException(id) { ; }
 };
 

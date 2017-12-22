@@ -57,11 +57,9 @@ void vpMomentArea::compute()
      * linked to it
      */
     const vpMomentCentered &momentCentered =
-        static_cast<const vpMomentCentered &>(
-            getMoments().get("vpMomentCentered", found_moment_centered));
+        static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
     if (!found_moment_centered)
-      throw vpException(vpException::notInitialized,
-                        "vpMomentCentered not found");
+      throw vpException(vpException::notInitialized, "vpMomentCentered not found");
     values[0] = momentCentered.get(2, 0) + momentCentered.get(0, 2);
   } else {
     values[0] = getObject().get(0, 0);
@@ -94,11 +92,9 @@ void vpMomentArea::printDependencies(std::ostream &os) const
 
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(
-          getMoments().get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
   if (getObject().getType() == vpMomentObject::DISCRETE) {
     os << "mu20 = " << momentCentered.get(2, 0) << "\t";

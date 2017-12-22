@@ -64,11 +64,9 @@ int main()
                                              // transformation. The object
                                              // frame is attached to the
                                              // calibrartion grid
-    std::vector<vpHomogeneousMatrix> wMe(
-        N); // world to hand (end-effector) transformation
+    std::vector<vpHomogeneousMatrix> wMe(N); // world to hand (end-effector) transformation
     // Output: Result of the calibration
-    vpHomogeneousMatrix
-        eMc; // hand (end-effector) to eye (camera) transformation
+    vpHomogeneousMatrix eMc; // hand (end-effector) to eye (camera) transformation
 
     // Initialize an eMc transformation used to produce the simulated input
     // transformations cMo and wMe
@@ -81,8 +79,7 @@ int main()
     eMc.buildFrom(etc, erc);
     std::cout << "Simulated hand to eye transformation: eMc " << std::endl;
     std::cout << eMc << std::endl;
-    std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " "
-              << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
+    std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
               << std::endl;
 
     vpColVector v_c(6); // camera velocity used to produce 6 simulated poses
@@ -136,13 +133,10 @@ int main()
     // transformations
     vpCalibration::calibrationTsai(cMo, wMe, eMc);
 
-    std::cout << std::endl
-              << "Output: hand to eye calibration result: eMc estimated "
-              << std::endl;
+    std::cout << std::endl << "Output: hand to eye calibration result: eMc estimated " << std::endl;
     std::cout << eMc << std::endl;
     eMc.extract(erc);
-    std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " "
-              << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
+    std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
               << std::endl;
     return 0;
   } catch (vpException &e) {

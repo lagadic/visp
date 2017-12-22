@@ -49,10 +49,7 @@ vpMomentBasic::vpMomentBasic() : vpMoment() {}
 
   Same behaviour as vpMomentObject.
 */
-const std::vector<double> &vpMomentBasic::get() const
-{
-  return getObject().get();
-}
+const std::vector<double> &vpMomentBasic::get() const { return getObject().get(); }
 
 /*!
   Gets the desired moment using indexes.
@@ -62,10 +59,7 @@ const std::vector<double> &vpMomentBasic::get() const
 
   Same behaviour as vpMomentObject.
 */
-double vpMomentBasic::get(unsigned int i, unsigned int j) const
-{
-  return getObject().get(i, j);
-}
+double vpMomentBasic::get(unsigned int i, unsigned int j) const { return getObject().get(i, j); }
 
 /*!
   Dummy function. Everything is already done in object.

@@ -62,8 +62,7 @@ vpScale::vpScale() : bandwidth(0.02), dimension(1)
 }
 
 //! Constructor
-vpScale::vpScale(double kernel_bandwidth, unsigned int dim)
-  : bandwidth(kernel_bandwidth), dimension(dim)
+vpScale::vpScale(double kernel_bandwidth, unsigned int dim) : bandwidth(kernel_bandwidth), dimension(dim)
 
 {
 #if (DEBUG_LEVEL2)
@@ -99,8 +98,7 @@ double vpScale::MeanShift(vpColVector &error)
     increment = 0;
     density[i] = KernelDensity(error, i);
     density_gradient[i] = KernelDensityGradient(error, i);
-    mean_shift[i] = vpMath::sqr(bandwidth) * density_gradient[i] /
-                    ((dimension + 2) * density[i]);
+    mean_shift[i] = vpMath::sqr(bandwidth) * density_gradient[i] / ((dimension + 2) * density[i]);
 
     double tmp_shift = mean_shift[i];
 
@@ -148,8 +146,7 @@ double vpScale::KernelDensity(vpColVector &error, unsigned int position)
   j = position;
   // Then treat smaller errors
   // while(Ke !=0 && j>=dimension)
-  while (std::fabs(Ke) > std::numeric_limits<double>::epsilon() &&
-         j >= dimension) {
+  while (std::fabs(Ke) > std::numeric_limits<double>::epsilon() && j >= dimension) {
     // Create vector of errors corresponding to each dimension of a feature
     for (unsigned int i = 0; i < dimension; i++) {
       X[i] = (error[position] - error[j]) / bandwidth;
@@ -167,8 +164,7 @@ double vpScale::KernelDensity(vpColVector &error, unsigned int position)
   return density;
 }
 
-double vpScale::KernelDensityGradient(vpColVector &error,
-                                      unsigned int position)
+double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
 {
 
   unsigned int n = error.getRows() / dimension;
@@ -183,8 +179,7 @@ double vpScale::KernelDensityGradient(vpColVector &error,
   // the local density gradient
   // First treat larger errors than current
   // while(inside_kernel !=0 && j<=n)
-  while (std::fabs(inside_kernel) > std::numeric_limits<double>::epsilon() &&
-         j <= n) {
+  while (std::fabs(inside_kernel) > std::numeric_limits<double>::epsilon() && j <= n) {
     delta = error[position] - error[j];
     if (vpMath::sqr(delta / bandwidth) < 1) {
       inside_kernel = 1;
@@ -199,8 +194,7 @@ double vpScale::KernelDensityGradient(vpColVector &error,
   j = position;
   // Then treat smaller errors than current
   // while(inside_kernel !=0 && j>=dimension)
-  while (std::fabs(inside_kernel) > std::numeric_limits<double>::epsilon() &&
-         j >= dimension) {
+  while (std::fabs(inside_kernel) > std::numeric_limits<double>::epsilon() && j >= dimension) {
     delta = error[position] - error[j];
     if (vpMath::sqr(delta / bandwidth) < 1) {
       inside_kernel = 1;
@@ -234,8 +228,7 @@ double vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
     c = 4 * M_PI / 3;
     break;
   default:
-    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension"
-              << std::endl;
+    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << std::endl;
     exit(1);
   }
 
@@ -246,8 +239,7 @@ double vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
 }
 
 // Epanechnikov_kernel for an d dimensional Euclidian space R^d
-double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX,
-                                                   unsigned int n)
+double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
 {
 
   double c; // Volume of an n dimensional unit sphere
@@ -263,13 +255,11 @@ double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX,
     c = 4 * M_PI / 3;
     break;
   default:
-    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension"
-              << std::endl;
+    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << std::endl;
     exit(1);
   }
 
   // return sumX*(dimension+2)/(n*pow(bandwidth,
   // (double)dimension)*c*vpMath::sqr(bandwidth));
-  return sumX * (dimension + 2) /
-         (n * bandwidth * c * vpMath::sqr(bandwidth));
+  return sumX * (dimension + 2) / (n * bandwidth * c * vpMath::sqr(bandwidth));
 }

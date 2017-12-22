@@ -78,9 +78,7 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &t)
 
   \param L2 : The second vpFeatureLine.
 */
-void vpFeatureBuilder::create(vpFeatureVanishingPoint &s,
-                              const vpFeatureLine &L1,
-                              const vpFeatureLine &L2)
+void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, const vpFeatureLine &L2)
 {
   double rho_l;
   double rho_r;
@@ -103,15 +101,13 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s,
   double x, y;
 
   double min = 0.0001;
-  if (fabs(theta_r - theta_l) < min ||
-      fabs(fabs(theta_r - theta_l) - M_PI) < min ||
+  if (fabs(theta_r - theta_l) < min || fabs(fabs(theta_r - theta_l) - M_PI) < min ||
       fabs(fabs(theta_r - theta_l) - 2 * M_PI) < min) {
     vpCERROR << "There is no vanishing point : the lines are parallel in the "
                 "image plane"
              << std::endl;
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "There is no vanishing point : the lines are "
-                             "parallel in the image plane"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "There is no vanishing point : the lines are "
+                                                                         "parallel in the image plane"));
   }
 
   y = (rho_r * c_l - rho_l * c_r) / (-s_l * c_r + s_r * c_l);
@@ -134,8 +130,7 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s,
 
   \param L2 : The second vpLine.
 */
-void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1,
-                              const vpLine &L2)
+void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2)
 {
   vpFeatureLine l1, l2;
   vpFeatureBuilder::create(l1, L1);

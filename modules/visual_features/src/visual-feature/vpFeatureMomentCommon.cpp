@@ -48,13 +48,10 @@
   the following type Ax+By+C=1/Z \param C : third plane coefficient for a
   plane equation of the following type Ax+By+C=1/Z
 */
-vpFeatureMomentCommon::vpFeatureMomentCommon(vpMomentDatabase &moments,
-                                             double A, double B, double C)
-  : featureGravity(moments, A, B, C),
-    featureGravityNormalized(moments, A, B, C), featureAn(moments, A, B, C),
-    featureCInvariant(moments, A, B, C), featureAlpha(moments, A, B, C),
-    featureCentered(moments, A, B, C), featureMomentBasic(moments, A, B, C),
-    feature_moment_area(moments, A, B, C)
+vpFeatureMomentCommon::vpFeatureMomentCommon(vpMomentDatabase &moments, double A, double B, double C)
+  : featureGravity(moments, A, B, C), featureGravityNormalized(moments, A, B, C), featureAn(moments, A, B, C),
+    featureCInvariant(moments, A, B, C), featureAlpha(moments, A, B, C), featureCentered(moments, A, B, C),
+    featureMomentBasic(moments, A, B, C), feature_moment_area(moments, A, B, C)
 
 {
   featureGravity.linkTo(*this);

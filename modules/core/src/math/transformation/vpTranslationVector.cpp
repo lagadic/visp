@@ -54,9 +54,7 @@
   in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const double tx, const double ty,
-                                         const double tz)
-  : vpArray2D<double>(3, 1)
+vpTranslationVector::vpTranslationVector(const double tx, const double ty, const double tz) : vpArray2D<double>(3, 1)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;
@@ -70,11 +68,7 @@ vpTranslationVector::vpTranslationVector(const double tx, const double ty,
   \param M : Homogeneous matrix where translations are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M)
-  : vpArray2D<double>(3, 1)
-{
-  M.extract(*this);
-}
+vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 1) { M.extract(*this); }
 
 /*!
   Construct a translation vector \f$ \bf t \f$ from the translation contained
@@ -83,8 +77,7 @@ vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M)
   \param p : Pose vector where translations are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const vpPoseVector &p)
-  : vpArray2D<double>(3, 1)
+vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<double>(3, 1)
 {
   (*this)[0] = p[0];
   (*this)[1] = p[1];
@@ -101,10 +94,7 @@ vpTranslationVector::vpTranslationVector(const vpPoseVector &p)
   vpTranslationVector t2(t1);    // t2 is now a copy of t1
   \endcode
 */
-vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv)
-  : vpArray2D<double>(tv)
-{
-}
+vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv) : vpArray2D<double>(tv) {}
 
 /*!
   Construct a translation vector \f$ \bf t \f$ from a 3-dimension column
@@ -120,8 +110,7 @@ vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv)
   \endcode
 
 */
-vpTranslationVector::vpTranslationVector(const vpColVector &v)
-  : vpArray2D<double>(v)
+vpTranslationVector::vpTranslationVector(const vpColVector &v) : vpArray2D<double>(v)
 {
   if (v.size() != 3) {
     throw(vpException(vpException::dimensionError,
@@ -142,8 +131,7 @@ vpTranslationVector::vpTranslationVector(const vpColVector &v)
   \return The build translation vector.
 
 */
-vpTranslationVector
-vpTranslationVector::buildFrom(const vpHomogeneousMatrix &M)
+vpTranslationVector vpTranslationVector::buildFrom(const vpHomogeneousMatrix &M)
 {
   M.extract(*this);
   return *this;
@@ -178,10 +166,8 @@ vpTranslationVector vpTranslationVector::buildFrom(const vpPoseVector &p)
 vpTranslationVector vpTranslationVector::buildFrom(const vpColVector &v)
 {
   if (v.size() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot build a translation vector from a %d-dimension column vector",
-        v.size()));
+    throw(vpException(vpException::dimensionError,
+                      "Cannot build a translation vector from a %d-dimension column vector", v.size()));
   }
 
   (*this)[0] = v[0];
@@ -198,9 +184,7 @@ vpTranslationVector vpTranslationVector::buildFrom(const vpColVector &v)
   \return The build translation vector.
   \sa set()
 */
-vpTranslationVector vpTranslationVector::buildFrom(const double tx,
-                                                   const double ty,
-                                                   const double tz)
+vpTranslationVector vpTranslationVector::buildFrom(const double tx, const double ty, const double tz)
 {
   set(tx, ty, tz);
   return *this;
@@ -212,8 +196,7 @@ vpTranslationVector vpTranslationVector::buildFrom(const double tx,
   \param tx,ty,tz : Translation respectively along x, y and z axis in meter.
 
 */
-void vpTranslationVector::set(const double tx, const double ty,
-                              const double tz)
+void vpTranslationVector::set(const double tx, const double ty, const double tz)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;
@@ -226,7 +209,10 @@ void vpTranslationVector::set(const double tx, const double ty,
   \param tv : Translation  vector to add.
 
   \return The sum of the current translation vector (*this) and the one to
-  add. \code vpTranslationVector t1(1,2,3); vpTranslationVector t2(4,5,6);
+  add.
+\code
+  vpTranslationVector t1(1,2,3);
+  vpTranslationVector t2(4,5,6);
   vpTranslationVector t3;
 
   t3 = t2 + t1;
@@ -235,8 +221,7 @@ void vpTranslationVector::set(const double tx, const double ty,
   \endcode
 
 */
-vpTranslationVector vpTranslationVector::
-operator+(const vpTranslationVector &tv) const
+vpTranslationVector vpTranslationVector::operator+(const vpTranslationVector &tv) const
 {
   vpTranslationVector s;
 
@@ -251,8 +236,14 @@ operator+(const vpTranslationVector &tv) const
   \param v : 3-dimension column vector to add.
 
   \return The sum of the current translation vector (*this) and the column
-  vector to add. \code vpTranslationVector t1(1,2,3); vpColVector v(3); v[0] =
-  4; v[1] = 5; v[2] = 6; vpTranslationVector t2;
+  vector to add.
+\code
+  vpTranslationVector t1(1,2,3);
+  vpColVector v(3);
+  v[0] = 4;
+  v[1] = 5;
+  v[2] = 6;
+  vpTranslationVector t2;
 
   t2 = t1 + v;
   // t1 and v leave unchanged
@@ -263,10 +254,8 @@ operator+(const vpTranslationVector &tv) const
 vpTranslationVector vpTranslationVector::operator+(const vpColVector &v) const
 {
   if (v.size() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot add translation vector to a %d-dimension column vector",
-        v.size()));
+    throw(vpException(vpException::dimensionError, "Cannot add translation vector to a %d-dimension column vector",
+                      v.size()));
   }
   vpTranslationVector s;
 
@@ -282,8 +271,11 @@ vpTranslationVector vpTranslationVector::operator+(const vpColVector &v) const
   \param tv : Translation  vector to substract.
 
   \return The substraction of the current translation vector (*this) and the
-  one to substract. \code vpTranslationVector t1(1,2,3); vpTranslationVector
-  t2(4,5,6); vpTranslationVector t3;
+  one to substract.
+  \code
+  vpTranslationVector t1(1,2,3);
+  vpTranslationVector t2(4,5,6);
+  vpTranslationVector t3;
 
   t3 = t2 - t1;
   // t1 and t2 leave unchanged
@@ -291,8 +283,7 @@ vpTranslationVector vpTranslationVector::operator+(const vpColVector &v) const
   \endcode
 
 */
-vpTranslationVector vpTranslationVector::
-operator-(const vpTranslationVector &tv) const
+vpTranslationVector vpTranslationVector::operator-(const vpTranslationVector &tv) const
 {
   vpTranslationVector sub;
 
@@ -477,8 +468,7 @@ vpTranslationVector &vpTranslationVector::operator=(const vpColVector &tv)
   // t2 is now equal to t1 : 1, 2, 3
   \endcode
 */
-vpTranslationVector &vpTranslationVector::
-operator=(const vpTranslationVector &tv)
+vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &tv)
 {
   unsigned int k = tv.rowNum;
   if (rowNum != k) {
@@ -605,8 +595,7 @@ vpMatrix vpTranslationVector::skew() const
   \return The cross product of two translation vectors \f$a \times
   b\f$.
 */
-vpTranslationVector vpTranslationVector::cross(const vpTranslationVector &a,
-                                               const vpTranslationVector &b)
+vpTranslationVector vpTranslationVector::cross(const vpTranslationVector &a, const vpTranslationVector &b)
 {
   vpMatrix skew_a = vpTranslationVector::skew(a);
   return (vpTranslationVector)(skew_a * b);

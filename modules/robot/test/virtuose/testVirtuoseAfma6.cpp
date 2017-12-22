@@ -81,8 +81,7 @@ int main()
 
     // Set the extrinsic camera parameters obtained with a perpective
     // projection model including a distortion parameter
-    robot.init(vpAfma6::TOOL_CCMOP,
-               vpCameraParameters::perspectiveProjWithDistortion);
+    robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
     // Initialize the controller to position control
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
     // Moves the robot in the joint space
@@ -110,20 +109,17 @@ int main()
 
       for (int i = 0; i < 3; i++) {
         if (robot_cart_position[i] >= max[i]) {
-          force_feedback_robot[i] =
-              (max[i] - robot_cart_position[i]) * force_increase_rate;
+          force_feedback_robot[i] = (max[i] - robot_cart_position[i]) * force_increase_rate;
           if (force_feedback_robot[i] <= -force_limit)
             force_feedback_robot[i] = -force_limit;
         } else if (robot_cart_position[i] <= min[i]) {
-          force_feedback_robot[i] =
-              (min[i] - robot_cart_position[i]) * force_increase_rate;
+          force_feedback_robot[i] = (min[i] - robot_cart_position[i]) * force_increase_rate;
           if (force_feedback_robot[i] >= force_limit)
             force_feedback_robot[i] = force_limit;
         } else
           force_feedback_robot[i] = 0;
       }
-      vpColVector force_feedback_virt =
-          rMv.getRotationMatrix().inverse() * force_feedback_robot;
+      vpColVector force_feedback_virt = rMv.getRotationMatrix().inverse() * force_feedback_robot;
 
       // Printing force feedback
       std::cout << "Force feedback: " << force_feedback_virt.t() << std::endl;
@@ -147,7 +143,6 @@ int main()
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 #else
-  std::cout << "You should install Virtuose SDK to use this binary..."
-            << std::endl;
+  std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
 #endif
 }

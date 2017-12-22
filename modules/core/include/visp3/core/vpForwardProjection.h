@@ -114,8 +114,7 @@ public:
     With this method, the vpTracker::cP public attribute is not updated.
 
   */
-  virtual void changeFrame(const vpHomogeneousMatrix &cMo,
-                           vpColVector &cP) = 0;
+  virtual void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) = 0;
   /*!
 
     Computes the features parameters in the camera frame (\e cP) thanks
@@ -173,10 +172,8 @@ public:
     \param color : The desired color to display the line in the image.
     \param thickness : Thickness of the feature representation.
   */
-  virtual void display(const vpImage<unsigned char> &I,
-                       const vpCameraParameters &cam,
-                       const vpColor &color = vpColor::green,
-                       const unsigned int thickness = 1) = 0;
+  virtual void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+                       const vpColor &color = vpColor::green, const unsigned int thickness = 1) = 0;
 
   /*!
 
@@ -197,11 +194,8 @@ public:
     \param color : The desired color to display the line in the image.
     \param thickness : Thickness of the feature representation.
    */
-  virtual void display(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam,
-                       const vpColor &color = vpColor::green,
-                       const unsigned int thickness = 1) = 0;
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &color = vpColor::green, const unsigned int thickness = 1) = 0;
 
   virtual void print() const;
 
@@ -214,10 +208,7 @@ public:
   /*!
     Used for memory issue especially in the vpServo class.
   */
-  typedef enum {
-    user,
-    vpDisplayForwardProjection
-  } vpForwardProjectionDeallocatorType;
+  typedef enum { user, vpDisplayForwardProjection } vpForwardProjectionDeallocatorType;
 
 private:
   vpForwardProjectionDeallocatorType deallocate;

@@ -86,9 +86,5 @@ int main()
 }
 
 #else
-int main()
-{
-  std::cout << "You should install Virtuose API to use this binary..."
-            << std::endl;
-}
+int main() { std::cout << "You should install Virtuose API to use this binary..." << std::endl; }
 #endif

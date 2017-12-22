@@ -56,10 +56,8 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if ((defined(_WIN32) && !defined(WINRT_8_0)) ||                             \
-     defined(VISP_HAVE_PTHREAD)) &&                                          \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) ||                  \
-     defined(VISP_HAVE_GDI))
+#if ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD)) &&                                        \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
 
 // We need to use threading capabilities. Thus on Unix-like
 // platforms, the libpthread third-party library need to be
@@ -88,8 +86,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -138,8 +135,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -214,21 +210,16 @@ int main(int argc, const char **argv)
       vpServo task;
 
       std::cout << std::endl;
-      std::cout << "----------------------------------------------"
-                << std::endl;
+      std::cout << "----------------------------------------------" << std::endl;
       std::cout << " Test program for vpServo " << std::endl;
-      std::cout
-          << " Eye-in-hand task control, articular velocity are computed"
-          << std::endl;
+      std::cout << " Eye-in-hand task control, articular velocity are computed" << std::endl;
       std::cout << " Simulation " << std::endl;
       std::cout << " task : servo 4 points " << std::endl;
-      std::cout << "----------------------------------------------"
-                << std::endl;
+      std::cout << "----------------------------------------------" << std::endl;
       std::cout << std::endl;
 
       // sets the initial camera location
-      vpHomogeneousMatrix cMo(-0.05, -0.05, 0.7, vpMath::rad(10),
-                              vpMath::rad(10), vpMath::rad(-30));
+      vpHomogeneousMatrix cMo(-0.05, -0.05, 0.7, vpMath::rad(10), vpMath::rad(10), vpMath::rad(-30));
 
       // sets the point coordinates in the object frame
       vpPoint point[4];
@@ -245,15 +236,13 @@ int main(int argc, const char **argv)
       // sets the desired position of the point
       vpFeaturePoint p[4];
       for (unsigned int i = 0; i < 4; i++)
-        vpFeatureBuilder::create(
-            p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
+        vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
       // sets the desired position of the feature point s*
       vpFeaturePoint pd[4];
 
       // Desired pose
-      vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(
-          0.0, 0.0, 0.8, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)));
+      vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0, 0.0, 0.8, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)));
 
       // Projection of the points
       for (unsigned int i = 0; i < 4; i++)
@@ -279,13 +268,11 @@ int main(int argc, const char **argv)
       vpSimulatorViper850 robot(opt_display);
 
       // Initialise the robot and especially the camera
-      robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA,
-                 vpCameraParameters::perspectiveProjWithoutDistortion);
+      robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
       robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
       // Initialise the object for the display part
-      robot.initScene(vpWireFrameSimulator::PLATE,
-                      vpWireFrameSimulator::D_STANDARD);
+      robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
 
       // Initialise the position of the object relative to the pose of the
       // robot's camera
@@ -311,8 +298,7 @@ int main(int argc, const char **argv)
       unsigned int iter = 0;
       // loop
       while (iter++ < 500) {
-        std::cout << "---------------------------------------------" << iter
-                  << std::endl;
+        std::cout << "---------------------------------------------" << iter << std::endl;
         vpColVector v;
 
         // Get the Time at the beginning of the loop
@@ -322,8 +308,7 @@ int main(int argc, const char **argv)
         cMo = robot.get_cMo();
 
         if (iter == 1) {
-          std::cout
-              << "Initial robot position with respect to the object frame:\n";
+          std::cout << "Initial robot position with respect to the object frame:\n";
           cMo.print();
         }
 
@@ -343,8 +328,7 @@ int main(int argc, const char **argv)
 
         if (opt_display && opt_click_allowed && iter == 1) {
           // suppressed for automate test
-          std::cout << "Click in the internal view window to continue..."
-                    << std::endl;
+          std::cout << "Click in the internal view window to continue..." << std::endl;
           vpDisplay::getClick(Iint);
         }
 
@@ -354,8 +338,7 @@ int main(int argc, const char **argv)
         // send the camera velocity to the controller
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-        std::cout << "|| s - s* || " << (task.getError()).sumSquare()
-                  << std::endl;
+        std::cout << "|| s - s* || " << (task.getError()).sumSquare() << std::endl;
 
         // The main loop has a duration of 10 ms at minimum
         vpTime::wait(t, 10);
@@ -370,8 +353,7 @@ int main(int argc, const char **argv)
 
       if (opt_display && opt_click_allowed) {
         // suppressed for automate test
-        std::cout << "Click in the internal view window to end..."
-                  << std::endl;
+        std::cout << "Click in the internal view window to end..." << std::endl;
         vpDisplay::getClick(Iint);
       }
       return 0;

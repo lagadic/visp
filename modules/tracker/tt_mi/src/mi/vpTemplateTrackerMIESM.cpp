@@ -45,9 +45,8 @@
 #endif
 
 vpTemplateTrackerMIESM::vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp)
-  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON),
-    CompoInitialised(false), HDirect(), HInverse(), HdesireDirect(),
-    HdesireInverse(), GDirect(), GInverse()
+  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), CompoInitialised(false), HDirect(), HInverse(),
+    HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
 {
   useCompositionnal = false;
   useInverse = false;
@@ -57,8 +56,7 @@ vpTemplateTrackerMIESM::vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp)
               << std::endl;
 }
 
-void vpTemplateTrackerMIESM::initHessienDesired(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
 {
   initCompInverse();
   std::cout << "Initialise Hessian at Desired position..." << std::endl;
@@ -96,8 +94,7 @@ void vpTemplateTrackerMIESM::initHessienDesired(
     j2 = X2[0];
     i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
       //      if(blur)
       //        IW=BI.getValue(i2,j2);
@@ -136,8 +133,8 @@ void vpTemplateTrackerMIESM::initHessienDesired(
 
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
-  if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 &&
-      ApproxHessian != HESSIAN_NEW && ApproxHessian != HESSIAN_YOUCEF) {
+  if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
+      ApproxHessian != HESSIAN_YOUCEF) {
     vpImageFilter::getGradX(dIx, d2Ix, fgdG, taillef);
     vpImageFilter::getGradY(dIx, d2Ixy, fgdG, taillef);
     vpImageFilter::getGradY(dIy, d2Iy, fgdG, taillef);
@@ -160,8 +157,7 @@ void vpTemplateTrackerMIESM::initHessienDesired(
     j2 = X2[0];
     i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight()) &&
-        (j2 < I.getWidth())) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight()) && (j2 < I.getWidth())) {
       Nbpoint++;
       // Tij=ptTemplate[point].val;
       // if(!blur)
@@ -261,10 +257,8 @@ void vpTemplateTrackerMIESM::initCompInverse()
     ptTemplateSupp[point].Bt = new double[4];
     ptTemplateSupp[point].dBt = new double[4];
     for (char it = -1; it <= 2; it++) {
-      ptTemplateSupp[point].Bt[it + 1] =
-          vpTemplateTrackerBSpline::Bspline4(-it + et);
-      ptTemplateSupp[point].dBt[it + 1] =
-          vpTemplateTrackerMIBSpline::dBspline4(-it + et);
+      ptTemplateSupp[point].Bt[it + 1] = vpTemplateTrackerBSpline::Bspline4(-it + et);
+      ptTemplateSupp[point].dBt[it + 1] = vpTemplateTrackerMIBSpline::dBspline4(-it + et);
     }
   }
   CompoInitialised = true;
@@ -333,8 +327,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       j2 = X2[0];
       i2 = X2[1];
 
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Nbpoint++;
         // Tij=ptTemplate[point].val;
         // if(!blur)
@@ -363,8 +356,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       // std::cout<<"plus de point dans template suivi"<<std::endl;
       diverge = true;
       MI = 0;
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     } else {
       computeProba(Nbpoint);
       computeMI(MI);
@@ -402,8 +394,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
         X2[1] = i2;
 
         // Warp->computeDenom(X1,p);
-        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-            (j2 < I.getWidth() - 1)) {
+        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
           Nbpoint++;
           // Tij=ptTemplate[point].val;
           // Tij=Iterateurvecteur->val;
@@ -435,7 +426,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
           //                        vpTemplateTrackerMIBSpline::PutTotPVBspline4NoSecond(PrtTout,
           //                        cr, er, ct, et, Nc, tptemp, nbParam);
           //					vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout,cr,
-          //er, ct, et, Nc, tptemp, nbParam,bspline,ApproxHessian,
+          // er, ct, et, Nc, tptemp, nbParam,bspline,ApproxHessian,
           //                               hessianComputation==vpHessienType::USE_HESSIEN_DESIRE);
 
           delete[] tptemp;

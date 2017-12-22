@@ -51,21 +51,17 @@
 
 DWORD vpProcessErrors(const std::string &api_name);
 void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h);
-void vpPrepareImageWithPen(CRITICAL_SECTION *CriticalSection, HWND hWnd,
-                           HBITMAP bmp, COLORREF color,
-                           unsigned int thickness, int style, HDC &hDCScreen,
-                           HDC &hDCMem, HPEN &hPen);
+void vpPrepareImageWithPen(CRITICAL_SECTION *CriticalSection, HWND hWnd, HBITMAP bmp, COLORREF color,
+                           unsigned int thickness, int style, HDC &hDCScreen, HDC &hDCMem, HPEN &hPen);
 void vpEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
 void vpLeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection);
-BOOL vpReleaseSemaphore(HANDLE hSemaphore, LONG IReleaseCount,
-                        LPLONG lpPreviousCount);
+BOOL vpReleaseSemaphore(HANDLE hSemaphore, LONG IReleaseCount, LPLONG lpPreviousCount);
 BOOL vpLineTo(HDC hdc, int nXEnd, int nYEnd);
 BOOL vpMoveToEx(HDC hdc, int X, int Y, LPPOINT lpPoint);
-BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight,
-              HDC hdcSrc, int nXSrc, int nYSrc, DWORD dwRop);
+BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC hdcSrc, int nXSrc, int nYSrc,
+              DWORD dwRop);
 BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase);
 COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor);
-HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes,
-                       UINT cBitsPerPel, const VOID *lpvBits);
+HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, const VOID *lpvBits);
 #endif
 #endif

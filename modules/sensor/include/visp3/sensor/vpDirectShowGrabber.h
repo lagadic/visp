@@ -99,8 +99,7 @@ public:
   bool setFormat(unsigned int width, unsigned int height, double framerate);
 
   // get capture format
-  void getFormat(unsigned int &width, unsigned int &height,
-                 double &framerate);
+  void getFormat(unsigned int &width, unsigned int &height, double &framerate);
 
   // Get the available capture formats
   bool getStreamCapabilities();

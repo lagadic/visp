@@ -112,17 +112,13 @@ void sonarPrinter(void)
   range = sonar.currentReadingPolar(start_angle, end_angle, &angle);
   printf(" front quadrant: %5.0f  ", range);
   // if (range != sonar.getMaxRange())
-  if (std::fabs(range - sonar.getMaxRange()) >
-      std::numeric_limits<double>::epsilon())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   // if (isInitialized && range != sonar.getMaxRange())
-  if (isInitialized && std::fabs(range - sonar.getMaxRange()) >
-                           std::numeric_limits<double>::epsilon()) {
-    double x =
-        range * cos(vpMath::rad(
-                    angle)); // position of the obstacle in the sensor frame
+  if (isInitialized && std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon()) {
+    double x = range * cos(vpMath::rad(angle)); // position of the obstacle in the sensor frame
     double y = range * sin(vpMath::rad(angle));
 
     // Conversion in pixels so that the robot frame is in the middle of the
@@ -132,8 +128,7 @@ void sonarPrinter(void)
 
     vpDisplay::display(I);
     vpDisplay::displayLine(I, half_size, half_size, 0, 0, vpColor::red, 5);
-    vpDisplay::displayLine(I, half_size, half_size, 0, 2 * half_size - 1,
-                           vpColor::red, 5);
+    vpDisplay::displayLine(I, half_size, half_size, 0, 2 * half_size - 1, vpColor::red, 5);
     vpDisplay::displayLine(I, half_size, half_size, i, j, vpColor::green, 3);
     vpDisplay::displayCross(I, i, j, 7, vpColor::blue);
   }
@@ -142,24 +137,21 @@ void sonarPrinter(void)
   range = sonar.currentReadingPolar(-135, -45, &angle);
   printf(" right quadrant: %5.0f ", range);
   // if (range != sonar.getMaxRange())
-  if (std::fabs(range - sonar.getMaxRange()) >
-      std::numeric_limits<double>::epsilon())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 
   range = sonar.currentReadingPolar(45, 135, &angle);
   printf(" left quadrant: %5.0f ", range);
   // if (range != sonar.getMaxRange())
-  if (std::fabs(range - sonar.getMaxRange()) >
-      std::numeric_limits<double>::epsilon())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 
   range = sonar.currentReadingPolar(-135, 135, &angle);
   printf(" back quadrant: %5.0f ", range);
   // if (range != sonar.getMaxRange())
-  if (std::fabs(range - sonar.getMaxRange()) >
-      std::numeric_limits<double>::epsilon())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 
@@ -172,12 +164,9 @@ void sonarPrinter(void)
     if (reading != NULL) {
       angle = reading->getSensorTh();
       range = reading->getRange();
-      double sx =
-          reading->getSensorX(); // position of the sensor in the robot frame
+      double sx = reading->getSensorX(); // position of the sensor in the robot frame
       double sy = reading->getSensorY();
-      double ox =
-          range * cos(vpMath::rad(
-                      angle)); // position of the obstacle in the sensor frame
+      double ox = range * cos(vpMath::rad(angle)); // position of the obstacle in the sensor frame
       double oy = range * sin(vpMath::rad(angle));
       double x = sx + ox; // position of the obstacle in the robot frame
       double y = sy + oy;
@@ -196,8 +185,7 @@ void sonarPrinter(void)
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
       // if (isInitialized && range != sonar.getMaxRange())
-      if (isInitialized && std::fabs(range - sonar.getMaxRange()) >
-                               std::numeric_limits<double>::epsilon()) {
+      if (isInitialized && std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon()) {
         vpDisplay::displayLine(I, si, sj, i, j, vpColor::blue, 2);
         vpDisplay::displayCross(I, si, sj, 7, vpColor::blue);
         char legend[15];
@@ -277,13 +265,9 @@ int main(int argc, char **argv)
       double t = vpTime::measureTimeMs();
 
       v_mes = robot->getVelocity(vpRobot::REFERENCE_FRAME);
-      std::cout << "Trans. vel= " << v_mes[0]
-                << " m/s, Rot. vel=" << vpMath::deg(v_mes[1]) << " deg/s"
-                << std::endl;
+      std::cout << "Trans. vel= " << v_mes[0] << " m/s, Rot. vel=" << vpMath::deg(v_mes[1]) << " deg/s" << std::endl;
       v_mes = robot->getVelocity(vpRobot::ARTICULAR_FRAME);
-      std::cout << "Left wheel vel= " << v_mes[0]
-                << " m/s, Right wheel vel=" << v_mes[1] << " m/s"
-                << std::endl;
+      std::cout << "Left wheel vel= " << v_mes[0] << " m/s, Right wheel vel=" << v_mes[1] << " m/s" << std::endl;
       std::cout << "Battery=" << robot->getBatteryVoltage() << std::endl;
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
@@ -294,8 +278,7 @@ int main(int argc, char **argv)
           {
             // Set the default output path
             std::string opath;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
             opath = "/tmp";
 #elif defined(_WIN32)
             opath = "C:\\temp";
@@ -339,8 +322,8 @@ int main(int argc, char **argv)
     ArLog::log(ArLog::Normal,
                "simpleMotionCommands: Pose=(%.2f,%.2f,%.2f), Trans. "
                "Vel=%.2f, Rot. Vel=%.2f, Battery=%.2fV",
-               robot->getX(), robot->getY(), robot->getTh(), robot->getVel(),
-               robot->getRotVel(), robot->getBatteryVoltage());
+               robot->getX(), robot->getY(), robot->getTh(), robot->getVel(), robot->getRotVel(),
+               robot->getBatteryVoltage());
     robot->unlock();
 
     std::cout << "Ending robot thread..." << std::endl;

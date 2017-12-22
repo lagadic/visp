@@ -107,9 +107,8 @@ int main()
   std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
 #endif
 
-  vpImageIo::read(I, filename); // Convert the color image in a gray level
-image vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image
-file format
+  vpImageIo::read(I, filename); // Convert the color image in a gray level image
+  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
 }
   \endcode
 
@@ -144,8 +143,7 @@ public:
   static void read(vpImage<unsigned char> &I, const std::string &filename);
   static void read(vpImage<vpRGBa> &I, const std::string &filename);
 
-  static void write(const vpImage<unsigned char> &I,
-                    const std::string &filename);
+  static void write(const vpImage<unsigned char> &I, const std::string &filename);
   static void write(const vpImage<vpRGBa> &I, const std::string &filename);
 
   static void readPFM(vpImage<float> &I, const std::string &filename);
@@ -157,8 +155,7 @@ public:
   static void readPPM(vpImage<vpRGBa> &I, const std::string &filename);
 
 #if (defined(VISP_HAVE_JPEG) || defined(VISP_HAVE_OPENCV))
-  static void readJPEG(vpImage<unsigned char> &I,
-                       const std::string &filename);
+  static void readJPEG(vpImage<unsigned char> &I, const std::string &filename);
   static void readJPEG(vpImage<vpRGBa> &I, const std::string &filename);
 #endif
 
@@ -169,25 +166,20 @@ public:
 
   static void writePFM(const vpImage<float> &I, const std::string &filename);
 
-  static void writePGM(const vpImage<unsigned char> &I,
-                       const std::string &filename);
+  static void writePGM(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePGM(const vpImage<short> &I, const std::string &filename);
   static void writePGM(const vpImage<vpRGBa> &I, const std::string &filename);
 
-  static void writePPM(const vpImage<unsigned char> &I,
-                       const std::string &filename);
+  static void writePPM(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePPM(const vpImage<vpRGBa> &I, const std::string &filename);
 
 #if (defined(VISP_HAVE_JPEG) || defined(VISP_HAVE_OPENCV))
-  static void writeJPEG(const vpImage<unsigned char> &I,
-                        const std::string &filename);
-  static void writeJPEG(const vpImage<vpRGBa> &I,
-                        const std::string &filename);
+  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename);
+  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename);
 #endif
 
 #if (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV))
-  static void writePNG(const vpImage<unsigned char> &I,
-                       const std::string &filename);
+  static void writePNG(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePNG(const vpImage<vpRGBa> &I, const std::string &filename);
 #endif
 };

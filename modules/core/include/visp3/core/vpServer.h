@@ -76,14 +76,18 @@ int main(int argc,const char** argv)
 
     if(serv.getNumberOfClients() > 0)
     {
-      if(serv.receive(&val) != sizeof(int)) //Receiving a value from the first
-client std::cout << "Error while receiving" << std::endl; else std::cout <<
-"Received : " << val << std::endl;
+      // Receiving a value from the first client
+      if(serv.receive(&val) != sizeof(int))
+        std::cout << "Error while receiving" << std::endl;
+      else
+        std::cout << "Received : " << val << std::endl;
 
       val = val+1;
-      if(serv.send(&val) != sizeof(int)) //Sending the new value to the first
-client std::cout << "Error while sending" << std::endl; else std::cout <<
-"Sending : " << val << std::endl;
+      // Sending the new value to the first client
+      if(serv.send(&val) != sizeof(int))
+        std::cout << "Error while sending" << std::endl;
+      else
+        std::cout << "Sending : " << val << std::endl;
     }
   }
 
@@ -199,10 +203,7 @@ public:
 
     \return Number of clients connected.
   */
-  unsigned int getNumberOfClients()
-  {
-    return (unsigned int)receptor_list.size();
-  }
+  unsigned int getNumberOfClients() { return (unsigned int)receptor_list.size(); }
 
   void print();
 

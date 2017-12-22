@@ -25,8 +25,7 @@
 int main(int argc, char **argv)
 {
   if (argc != 2) {
-    std::cerr << "Usage: ./generate_joint_velocity_motion <robot-hostname>"
-              << std::endl;
+    std::cerr << "Usage: ./generate_joint_velocity_motion <robot-hostname>" << std::endl;
     return -1;
   }
   try {
@@ -34,34 +33,25 @@ int main(int argc, char **argv)
 
     // Set additional parameters always before the control loop, NEVER in the
     // control loop! Set collision behavior.
-    robot.setCollisionBehavior({{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
-                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
-                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
-                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
+    robot.setCollisionBehavior(
+        {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}}, {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+        {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}}, {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+        {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
+        {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
 
     double time_max = 4.0;
     double omega_max = 0.2;
     double time = 0.0;
-    robot.control([=, &time](
-                      const franka::RobotState &,
-                      franka::Duration time_step) -> franka::JointVelocities {
+    robot.control([=, &time](const franka::RobotState &, franka::Duration time_step) -> franka::JointVelocities {
       time += time_step.toSec();
 
-      double cycle = std::floor(
-          std::pow(-1.0, (time - std::fmod(time, time_max)) / time_max));
-      double omega = cycle * omega_max / 2.0 *
-                     (1.0 - std::cos(2.0 * M_PI / time_max * time));
+      double cycle = std::floor(std::pow(-1.0, (time - std::fmod(time, time_max)) / time_max));
+      double omega = cycle * omega_max / 2.0 * (1.0 - std::cos(2.0 * M_PI / time_max * time));
 
-      franka::JointVelocities velocities = {
-          {0.0, 0.0, 0.0, omega, omega, omega, omega}};
+      franka::JointVelocities velocities = {{0.0, 0.0, 0.0, omega, omega, omega, omega}};
 
       if (time >= 2 * time_max) {
-        std::cout << std::endl
-                  << "Finished motion, shutting down example" << std::endl;
+        std::cout << std::endl << "Finished motion, shutting down example" << std::endl;
         return franka::MotionFinished(velocities);
       }
       return velocities;
@@ -75,9 +65,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "This example needs libfranka to control Panda robot."
-            << std::endl;
-}
+int main() { std::cout << "This example needs libfranka to control Panda robot." << std::endl; }
 #endif

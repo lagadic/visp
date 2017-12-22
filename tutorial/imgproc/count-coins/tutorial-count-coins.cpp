@@ -18,9 +18,7 @@
 int main(int argc, char *argv[])
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
   std::string input_filename = "coins1.pgm";
@@ -34,8 +32,7 @@ int main(int argc, char *argv[])
       method = (vp::vpAutoThresholdMethod)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--white_foreground") {
       white_foreground = true;
-    } else if (std::string(argv[i]) == "--help" ||
-               std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--input <input image>]"
                    " [--method <0: Huang, 1: Intermodes, 2: IsoData, 3: "
@@ -64,8 +61,7 @@ int main(int argc, char *argv[])
   vpImage<unsigned char> I_bin, I_fill;
   //! [Binarisation]
   I_bin = I;
-  vp::autoThreshold(I_bin, method, white_foreground ? 0 : 255,
-                    white_foreground ? 255 : 0);
+  vp::autoThreshold(I_bin, method, white_foreground ? 0 : 255, white_foreground ? 255 : 0);
   //! [Binarisation]
   d2.init(I_bin, I.getWidth(), 0, "Binarisation");
 
@@ -95,13 +91,11 @@ int main(int argc, char *argv[])
 
   vp::vpContour vp_contours;
   std::vector<std::vector<vpImagePoint> > contours;
-  vp::findContours(I_contours, vp_contours, contours,
-                   vp::CONTOUR_RETR_EXTERNAL);
+  vp::findContours(I_contours, vp_contours, contours, vp::CONTOUR_RETR_EXTERNAL);
   //! [Find contours]
 
   //! [Draw contours]
-  vpImage<vpRGBa> I_draw_contours(I_contours.getHeight(),
-                                  I_contours.getWidth(), vpRGBa());
+  vpImage<vpRGBa> I_draw_contours(I_contours.getHeight(), I_contours.getWidth(), vpRGBa());
   vp::drawContours(I_draw_contours, contours, vpColor::red);
   //! [Draw contours]
   d5.init(I_draw_contours, 0, 2 * I.getHeight() + 80, "Contours");
@@ -137,14 +131,12 @@ int main(int argc, char *argv[])
 
       int centroid_x = (int)std::fabs(obj.get(1, 0) / obj.get(0, 0));
       int centroid_y = (int)std::fabs(obj.get(0, 1) / obj.get(0, 0));
-      vpDisplay::displayText(I_draw_contours, centroid_y, centroid_x - 20,
-                             ss.str(), vpColor::red);
+      vpDisplay::displayText(I_draw_contours, centroid_y, centroid_x - 20, ss.str(), vpColor::red);
     }
   }
   //! [Count coins]
 
-  vpDisplay::displayText(I_draw_contours, 20, 20, "Click to quit.",
-                         vpColor::red);
+  vpDisplay::displayText(I_draw_contours, 20, 20, "Click to quit.", vpColor::red);
 
   vpDisplay::flush(I);
   vpDisplay::flush(I_bin);

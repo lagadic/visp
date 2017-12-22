@@ -54,10 +54,8 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:o:h"
 
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, std::string user);
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
 
 /*
   Print the program options.
@@ -68,8 +66,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   \param opath : Output image path.
   \param user : Username.
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Test imgproc functions.\n\
@@ -112,8 +109,7 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, std::string user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user)
 {
   const char *optarg_;
   int c;
@@ -205,8 +201,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option "
-                  << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
         return EXIT_FAILURE;
       }
     }
@@ -217,8 +212,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -227,13 +221,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -250,8 +241,7 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> I_color;
     std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(I_color, filename);
-    std::cout << "Image: " << I_color.getWidth() << "x" << I_color.getHeight()
-              << std::endl;
+    std::cout << "Image: " << I_color.getWidth() << "x" << I_color.getHeight() << std::endl;
 
     // Adjust
     double alpha = 1.5, beta = -10.0;
@@ -270,12 +260,10 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::equalizeHistogram(I_color, I_color_equalize_histogram);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do color histogram equalization: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do color histogram equalization: " << t << " ms" << std::endl;
 
     // Save equalizeHistogram
-    filename =
-        vpIoTools::createFilePath(opath, "Klimt_equalize_histogram.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_equalize_histogram.ppm");
     vpImageIo::write(I_color_equalize_histogram, filename);
 
     // Gamma correction
@@ -284,8 +272,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::gammaCorrection(I_color, I_color_gamma_correction, gamma);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do color gamma correction: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do color gamma correction: " << t << " ms" << std::endl;
 
     // Save gammaCorrection
     filename = vpIoTools::createFilePath(opath, "Klimt_gamma_correction.ppm");
@@ -307,8 +294,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::stretchContrast(I_color, I_color_stretch_contrast);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do color contrast stretching: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do color contrast stretching: " << t << " ms" << std::endl;
 
     // Save stretchContrast
     filename = vpIoTools::createFilePath(opath, "Klimt_stretch_contrast.ppm");
@@ -319,12 +305,10 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::stretchContrastHSV(I_color, I_color_stretch_contrast_HSV);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do color HSV contrast stretching: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do color HSV contrast stretching: " << t << " ms" << std::endl;
 
     // Save stretchContrastHSV
-    filename =
-        vpIoTools::createFilePath(opath, "Klimt_stretch_contrast_HSV.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_stretch_contrast_HSV.ppm");
     vpImageIo::write(I_color_stretch_contrast_HSV, filename);
 
     // Unsharp Mask
@@ -358,8 +342,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I;
     std::cout << "\nRead image: " << filename << std::endl;
     vpImageIo::read(I, filename);
-    std::cout << "Image: " << I.getWidth() << "x" << I.getHeight()
-              << std::endl;
+    std::cout << "Image: " << I.getWidth() << "x" << I.getHeight() << std::endl;
 
     // Adjust
     vpImage<unsigned char> I_adjust;
@@ -378,12 +361,10 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::equalizeHistogram(I, I_equalize_histogram);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do grayscale histogram equalization: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do grayscale histogram equalization: " << t << " ms" << std::endl;
 
     // Save equalizeHistogram
-    filename =
-        vpIoTools::createFilePath(opath, "image0000_equalize_histogram.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_equalize_histogram.pgm");
     vpImageIo::write(I_equalize_histogram, filename);
 
     // Gamma correction
@@ -392,12 +373,10 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::gammaCorrection(I, I_gamma_correction, gamma);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do grayscale gamma correction: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do grayscale gamma correction: " << t << " ms" << std::endl;
 
     // Save gammaCorrection
-    filename =
-        vpIoTools::createFilePath(opath, "image0000_gamma_correction.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_gamma_correction.pgm");
     vpImageIo::write(I_gamma_correction, filename);
 
     // Stretch contrast
@@ -405,12 +384,10 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::stretchContrast(I, I_stretch_contrast);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do grayscale contrast stretching: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do grayscale contrast stretching: " << t << " ms" << std::endl;
 
     // Save stretchContrast
-    filename =
-        vpIoTools::createFilePath(opath, "image0000_stretch_contrast.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_stretch_contrast.pgm");
     vpImageIo::write(I_stretch_contrast, filename);
 
     // Unsharp Mask
@@ -418,8 +395,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs();
     vp::unsharpMask(I, I_unsharp_mask);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to do grayscale unsharp mask: " << t << " ms"
-              << std::endl;
+    std::cout << "Time to do grayscale unsharp mask: " << t << " ms" << std::endl;
 
     // Save unsharpMask
     filename = vpIoTools::createFilePath(opath, "image0000_unsharp_mask.pgm");

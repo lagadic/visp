@@ -146,8 +146,7 @@ void set_parallel(View_parameters *vp, Matrix wc)
    * Pas de translation dans la matrice R_TRL pour la transformation
    * du vecteur DOP.
    */
-  SET_COORD3(dop, vp->vrp.x - vp->cop.x, vp->vrp.y - vp->cop.y,
-             vp->vrp.z - vp->cop.z);
+  SET_COORD3(dop, vp->vrp.x - vp->cop.x, vp->vrp.y - vp->cop.y, vp->vrp.z - vp->cop.z);
   norm_vector(&dop);
   SET_COORD3(cop, dop.x, dop.y, dop.z);
   point_matrix(&doprim, &cop, m);
@@ -162,12 +161,10 @@ void set_parallel(View_parameters *vp, Matrix wc)
    * je prefere, afin de rester coherent avec la projection perspective,
    *	-1 < x < 1, -1 < y < 1, 0 < z < 1 (w = 1)
    */
-  SET_COORD3(v, (float)(-(vp->vwd.umax + vp->vwd.umin) / 2.0),
-             (float)(-(vp->vwd.vmax + vp->vwd.vmin) / 2.0),
+  SET_COORD3(v, (float)(-(vp->vwd.umax + vp->vwd.umin) / 2.0), (float)(-(vp->vwd.vmax + vp->vwd.vmin) / 2.0),
              (float)(-vp->depth.front));
   posttrans_matrix(wc, &v);
-  SET_COORD3(v, (float)(2.0 / (vp->vwd.umax - vp->vwd.umin)),
-             (float)(2.0 / (vp->vwd.vmax - vp->vwd.vmin)),
+  SET_COORD3(v, (float)(2.0 / (vp->vwd.umax - vp->vwd.umin)), (float)(2.0 / (vp->vwd.vmax - vp->vwd.vmin)),
              (float)(1.0 / (vp->depth.back - vp->depth.front)));
   postscale_matrix(wc, &v);
 }
@@ -219,11 +216,8 @@ void set_perspective(View_parameters *vp, Matrix wc)
   /*
    * 6 : Mise a l'echelle de la pyramide.
    */
-  SET_COORD3(v,
-             (float)((2.0 * vrprim.z) / ((vp->vwd.umax - vp->vwd.umin) *
-                                         (vrprim.z + vp->depth.back))),
-             (float)((2.0 * vrprim.z) / ((vp->vwd.vmax - vp->vwd.vmin) *
-                                         (vrprim.z + vp->depth.back))),
+  SET_COORD3(v, (float)((2.0 * vrprim.z) / ((vp->vwd.umax - vp->vwd.umin) * (vrprim.z + vp->depth.back))),
+             (float)((2.0 * vrprim.z) / ((vp->vwd.vmax - vp->vwd.vmin) * (vrprim.z + vp->depth.back))),
              (float)(1.0 / (vrprim.z + vp->depth.back)));
   postscale_matrix(wc, &v);
   /*

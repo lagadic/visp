@@ -48,8 +48,7 @@
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
-     defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpTime.h>
@@ -118,8 +117,7 @@ int main()
     // A click to stop acquisition
     std::cout << "Click in one image to stop acquisition" << std::endl;
 
-    while (!vpDisplay::getClick(Idmap, false) &&
-           !vpDisplay::getClick(Irgb, false)) {
+    while (!vpDisplay::getClick(Idmap, false) && !vpDisplay::getClick(Irgb, false)) {
       kinect.getDepthMap(dmap);
       kinect.getDepthMap(dmap, Idmap);
       kinect.getRGB(Irgb);
@@ -157,10 +155,6 @@ int main()
 #endif
 
 #else
-int main()
-{
-  std::cout << "You should install libfreenect to run this example"
-            << std::endl;
-}
+int main() { std::cout << "You should install libfreenect to run this example" << std::endl; }
 
 #endif

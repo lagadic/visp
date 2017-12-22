@@ -84,10 +84,9 @@
 
 */
 vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0),
-    event(), pixmap(), x_color(NULL), screen_depth(8), xcolor(), values(),
-    ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0),
-    GShift(0), BShift(0)
+  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
+    BShift(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
 
@@ -117,12 +116,10 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType)
   and the columns.
 
 */
-vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, int x, int y,
-                       const std::string &title, vpScaleType scaleType)
-  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0),
-    event(), pixmap(), x_color(NULL), screen_depth(8), xcolor(), values(),
-    ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0),
-    GShift(0), BShift(0)
+vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, int x, int y, const std::string &title, vpScaleType scaleType)
+  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
+    BShift(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I, x, y, title);
@@ -148,10 +145,9 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, int x, int y,
   and the columns.
 */
 vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0),
-    event(), pixmap(), x_color(NULL), screen_depth(8), xcolor(), values(),
-    ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0),
-    GShift(0), BShift(0)
+  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
+    BShift(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -178,12 +174,10 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, vpScaleType scaleType)
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
 */
-vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, int x, int y,
-                       const std::string &title, vpScaleType scaleType)
-  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0),
-    event(), pixmap(), x_color(NULL), screen_depth(8), xcolor(), values(),
-    ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0),
-    GShift(0), BShift(0)
+vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
+  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
+    BShift(0)
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I, x, y, title);
@@ -212,10 +206,9 @@ int main()
   \endcode
 */
 vpDisplayX::vpDisplayX(int x, int y, const std::string &title)
-  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0),
-    event(), pixmap(), x_color(NULL), screen_depth(8), xcolor(), values(),
-    ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0),
-    GShift(0), BShift(0)
+  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
+    BShift(0)
 {
   m_windowXPosition = x;
   m_windowYPosition = y;
@@ -243,10 +236,9 @@ int main()
   \endcode
 */
 vpDisplayX::vpDisplayX()
-  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0),
-    event(), pixmap(), x_color(NULL), screen_depth(8), xcolor(), values(),
-    ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0),
-    GShift(0), BShift(0)
+  : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
+    BShift(0)
 {
 }
 
@@ -263,8 +255,7 @@ vpDisplayX::~vpDisplayX() { closeDisplay(); }
   \param title : Window title.
 
 */
-void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y,
-                      const std::string &title)
+void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
   setScale(m_scaleType, I.getWidth(), I.getHeight());
 
@@ -296,31 +287,25 @@ void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y,
   m_height = I.getHeight() / m_scale;
   display = XOpenDisplay(NULL);
   if (display == NULL) {
-    vpERROR_TRACE("Can't connect display on server %s.\n",
-                  XDisplayName(NULL));
-    throw(vpDisplayException(vpDisplayException::connexionError,
-                             "Can't connect display on server."));
+    vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
+    throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server."));
   }
 
   screen = DefaultScreen(display);
   lut = DefaultColormap(display, screen);
   screen_depth = (unsigned int)DefaultDepth(display, screen);
 
-  if ((window = XCreateSimpleWindow(
-           display, RootWindow(display, screen), m_windowXPosition,
-           m_windowYPosition, m_width, m_height, 1,
-           BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
+  if ((window = XCreateSimpleWindow(display, RootWindow(display, screen), m_windowXPosition, m_windowYPosition, m_width,
+                                    m_height, 1, BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
     vpERROR_TRACE("Can't create window.");
-    throw(vpDisplayException(vpDisplayException::cannotOpenWindowError,
-                             "Can't create window."));
+    throw(vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create window."));
   }
 
   //
   // Create color table for 8 and 16 bits screen
   //
   if (screen_depth == 8) {
-    lut = XCreateColormap(display, window, DefaultVisual(display, screen),
-                          AllocAll);
+    lut = XCreateColormap(display, window, DefaultVisual(display, screen), AllocAll);
     xcolor.flags = DoRed | DoGreen | DoBlue;
 
     for (unsigned int i = 0; i < 256; i++) {
@@ -341,8 +326,7 @@ void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y,
       xcolor.red = xcolor.green = xcolor.blue = 256 * i;
       if (XAllocColor(display, lut, &xcolor) == 0) {
         vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
-        throw(vpDisplayException(vpDisplayException::colorAllocError,
-                                 "Can't allocate 256 colors."));
+        throw(vpDisplayException(vpDisplayException::colorAllocError, "Can't allocate 256 colors."));
       }
       colortable[i] = xcolor.pixel;
     }
@@ -648,28 +632,23 @@ void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y,
   }
   }
 
-  XSetStandardProperties(display, window, this->m_title.c_str(),
-                         this->m_title.c_str(), None, 0, 0, &hints);
+  XSetStandardProperties(display, window, this->m_title.c_str(), this->m_title.c_str(), None, 0, 0, &hints);
   XMapWindow(display, window);
   // Selection des evenements.
   XSelectInput(display, window,
-               ExposureMask | ButtonPressMask | ButtonReleaseMask |
-                   KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                   PointerMotionMask);
+               ExposureMask | ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask |
+                   StructureNotifyMask | PointerMotionMask);
 
   // graphic context creation
   values.plane_mask = AllPlanes;
   values.fill_style = FillSolid;
   values.foreground = WhitePixel(display, screen);
   values.background = BlackPixel(display, screen);
-  context = XCreateGC(display, window,
-                      GCPlaneMask | GCFillStyle | GCForeground | GCBackground,
-                      &values);
+  context = XCreateGC(display, window, GCPlaneMask | GCFillStyle | GCForeground | GCBackground, &values);
 
   if (context == NULL) {
     vpERROR_TRACE("Can't create graphics context.");
-    throw(vpDisplayException(vpDisplayException::XWindowsError,
-                             "Can't create graphics context"));
+    throw(vpDisplayException(vpDisplayException::XWindowsError, "Can't create graphics context"));
   }
 
   // Pixmap creation.
@@ -681,12 +660,10 @@ void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y,
   //  while ( event.xany.type != Expose );
 
   {
-    Ximage = XCreateImage(display, DefaultVisual(display, screen),
-                          screen_depth, ZPixmap, 0, NULL, m_width, m_height,
+    Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, NULL, m_width, m_height,
                           XBitmapPad(display), 0);
 
-    Ximage->data =
-        (char *)malloc(m_height * (unsigned int)Ximage->bytes_per_line);
+    Ximage->data = (char *)malloc(m_height * (unsigned int)Ximage->bytes_per_line);
     ximage_data_init = true;
   }
   m_displayHasBeenInitialized = true;
@@ -707,8 +684,7 @@ void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y,
   \param title : Window title.
 
 */
-void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y,
-                      const std::string &title)
+void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 {
   setScale(m_scaleType, I.getWidth(), I.getHeight());
 
@@ -740,10 +716,8 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y,
   m_height = I.getHeight() / m_scale;
 
   if ((display = XOpenDisplay(NULL)) == NULL) {
-    vpERROR_TRACE("Can't connect display on server %s.\n",
-                  XDisplayName(NULL));
-    throw(vpDisplayException(vpDisplayException::connexionError,
-                             "Can't connect display on server."));
+    vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
+    throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server."));
   }
 
   screen = DefaultScreen(display);
@@ -752,21 +726,17 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y,
 
   vpDEBUG_TRACE(1, "Screen depth: %d\n", screen_depth);
 
-  if ((window = XCreateSimpleWindow(
-           display, RootWindow(display, screen), m_windowXPosition,
-           m_windowYPosition, m_width, m_height, 1,
-           BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
+  if ((window = XCreateSimpleWindow(display, RootWindow(display, screen), m_windowXPosition, m_windowYPosition, m_width,
+                                    m_height, 1, BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
     vpERROR_TRACE("Can't create window.");
-    throw(vpDisplayException(vpDisplayException::cannotOpenWindowError,
-                             "Can't create window."));
+    throw(vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create window."));
   }
 
   //
   // Create color table for 8 and 16 bits screen
   //
   if (screen_depth == 8) {
-    lut = XCreateColormap(display, window, DefaultVisual(display, screen),
-                          AllocAll);
+    lut = XCreateColormap(display, window, DefaultVisual(display, screen), AllocAll);
     xcolor.flags = DoRed | DoGreen | DoBlue;
 
     for (unsigned int i = 0; i < 256; i++) {
@@ -787,8 +757,7 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y,
       xcolor.red = xcolor.green = xcolor.blue = 256 * i;
       if (XAllocColor(display, lut, &xcolor) == 0) {
         vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
-        throw(vpDisplayException(vpDisplayException::colorAllocError,
-                                 "Can't allocate 256 colors."));
+        throw(vpDisplayException(vpDisplayException::colorAllocError, "Can't allocate 256 colors."));
       }
       colortable[i] = xcolor.pixel;
     }
@@ -1095,28 +1064,23 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y,
   }
   }
 
-  XSetStandardProperties(display, window, this->m_title.c_str(),
-                         this->m_title.c_str(), None, 0, 0, &hints);
+  XSetStandardProperties(display, window, this->m_title.c_str(), this->m_title.c_str(), None, 0, 0, &hints);
   XMapWindow(display, window);
   // Selection des evenements.
   XSelectInput(display, window,
-               ExposureMask | ButtonPressMask | ButtonReleaseMask |
-                   KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                   PointerMotionMask);
+               ExposureMask | ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask |
+                   StructureNotifyMask | PointerMotionMask);
 
   // Creation du contexte graphique
   values.plane_mask = AllPlanes;
   values.fill_style = FillSolid;
   values.foreground = WhitePixel(display, screen);
   values.background = BlackPixel(display, screen);
-  context = XCreateGC(display, window,
-                      GCPlaneMask | GCFillStyle | GCForeground | GCBackground,
-                      &values);
+  context = XCreateGC(display, window, GCPlaneMask | GCFillStyle | GCForeground | GCBackground, &values);
 
   if (context == NULL) {
     vpERROR_TRACE("Can't create graphics context.");
-    throw(vpDisplayException(vpDisplayException::XWindowsError,
-                             "Can't create graphics context"));
+    throw(vpDisplayException(vpDisplayException::XWindowsError, "Can't create graphics context"));
   }
 
   // Pixmap creation.
@@ -1128,12 +1092,10 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y,
   //  while ( event.xany.type != Expose );
 
   {
-    Ximage = XCreateImage(display, DefaultVisual(display, screen),
-                          screen_depth, ZPixmap, 0, NULL, m_width, m_height,
+    Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, NULL, m_width, m_height,
                           XBitmapPad(display), 0);
 
-    Ximage->data =
-        (char *)malloc(m_height * (unsigned int)Ximage->bytes_per_line);
+    Ximage->data = (char *)malloc(m_height * (unsigned int)Ximage->bytes_per_line);
     ximage_data_init = true;
   }
   m_displayHasBeenInitialized = true;
@@ -1152,8 +1114,7 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y,
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-void vpDisplayX::init(unsigned int w, unsigned int h, int x, int y,
-                      const std::string &title)
+void vpDisplayX::init(unsigned int w, unsigned int h, int x, int y, const std::string &title)
 {
   setScale(m_scaleType, w, h);
 
@@ -1184,10 +1145,8 @@ void vpDisplayX::init(unsigned int w, unsigned int h, int x, int y,
   m_title = title;
 
   if ((display = XOpenDisplay(NULL)) == NULL) {
-    vpERROR_TRACE("Can't connect display on server %s.\n",
-                  XDisplayName(NULL));
-    throw(vpDisplayException(vpDisplayException::connexionError,
-                             "Can't connect display on server."));
+    vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
+    throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server."));
   }
 
   screen = DefaultScreen(display);
@@ -1196,21 +1155,17 @@ void vpDisplayX::init(unsigned int w, unsigned int h, int x, int y,
 
   vpTRACE("Screen depth: %d\n", screen_depth);
 
-  if ((window = XCreateSimpleWindow(
-           display, RootWindow(display, screen), m_windowXPosition,
-           m_windowYPosition, m_width, m_height, 1,
-           BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
+  if ((window = XCreateSimpleWindow(display, RootWindow(display, screen), m_windowXPosition, m_windowYPosition, m_width,
+                                    m_height, 1, BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
     vpERROR_TRACE("Can't create window.");
-    throw(vpDisplayException(vpDisplayException::cannotOpenWindowError,
-                             "Can't create window."));
+    throw(vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create window."));
   }
 
   //
   // Create color table for 8 and 16 bits screen
   //
   if (screen_depth == 8) {
-    lut = XCreateColormap(display, window, DefaultVisual(display, screen),
-                          AllocAll);
+    lut = XCreateColormap(display, window, DefaultVisual(display, screen), AllocAll);
     xcolor.flags = DoRed | DoGreen | DoBlue;
 
     for (unsigned int i = 0; i < 256; i++) {
@@ -1231,8 +1186,7 @@ void vpDisplayX::init(unsigned int w, unsigned int h, int x, int y,
       xcolor.red = xcolor.green = xcolor.blue = 256 * i;
       if (XAllocColor(display, lut, &xcolor) == 0) {
         vpERROR_TRACE("Can't allocate 256 colors. Only %d allocated.", i);
-        throw(vpDisplayException(vpDisplayException::colorAllocError,
-                                 "Can't allocate 256 colors."));
+        throw(vpDisplayException(vpDisplayException::colorAllocError, "Can't allocate 256 colors."));
       }
       colortable[i] = xcolor.pixel;
     }
@@ -1561,28 +1515,23 @@ void vpDisplayX::init(unsigned int w, unsigned int h, int x, int y,
   }
   }
 
-  XSetStandardProperties(display, window, this->m_title.c_str(),
-                         this->m_title.c_str(), None, 0, 0, &hints);
+  XSetStandardProperties(display, window, this->m_title.c_str(), this->m_title.c_str(), None, 0, 0, &hints);
   XMapWindow(display, window);
   // Selection des evenements.
   XSelectInput(display, window,
-               ExposureMask | ButtonPressMask | ButtonReleaseMask |
-                   KeyPressMask | KeyReleaseMask | StructureNotifyMask |
-                   PointerMotionMask);
+               ExposureMask | ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask |
+                   StructureNotifyMask | PointerMotionMask);
 
   /* Creation du contexte graphique */
   values.plane_mask = AllPlanes;
   values.fill_style = FillSolid;
   values.foreground = WhitePixel(display, screen);
   values.background = BlackPixel(display, screen);
-  context = XCreateGC(display, window,
-                      GCPlaneMask | GCFillStyle | GCForeground | GCBackground,
-                      &values);
+  context = XCreateGC(display, window, GCPlaneMask | GCFillStyle | GCForeground | GCBackground, &values);
 
   if (context == NULL) {
     vpERROR_TRACE("Can't create graphics context.");
-    throw(vpDisplayException(vpDisplayException::XWindowsError,
-                             "Can't create graphics context"));
+    throw(vpDisplayException(vpDisplayException::XWindowsError, "Can't create graphics context"));
   }
 
   // Pixmap creation.
@@ -1594,12 +1543,10 @@ void vpDisplayX::init(unsigned int w, unsigned int h, int x, int y,
   //  while ( event.xany.type != Expose );
 
   {
-    Ximage = XCreateImage(display, DefaultVisual(display, screen),
-                          screen_depth, ZPixmap, 0, NULL, m_width, m_height,
+    Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, NULL, m_width, m_height,
                           XBitmapPad(display), 0);
 
-    Ximage->data =
-        (char *)malloc(m_height * (unsigned int)Ximage->bytes_per_line);
+    Ximage->data = (char *)malloc(m_height * (unsigned int)Ximage->bytes_per_line);
     ximage_data_init = true;
   }
   m_displayHasBeenInitialized = true;
@@ -1629,17 +1576,14 @@ void vpDisplayX::setFont(const std::string &font)
     if (!font.empty()) {
       try {
         Font stringfont;
-        stringfont = XLoadFont(
-            display, font.c_str()); //"-adobe-times-bold-r-normal--18*");
+        stringfont = XLoadFont(display, font.c_str()); //"-adobe-times-bold-r-normal--18*");
         XSetFont(display, context, stringfont);
       } catch (...) {
-        throw(vpDisplayException(vpDisplayException::notInitializedError,
-                                 "Bad font"));
+        throw(vpDisplayException(vpDisplayException::notInitializedError, "Bad font"));
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -1654,8 +1598,7 @@ void vpDisplayX::setTitle(const std::string &title)
     if (!title.empty())
       XStoreName(display, window, m_title.c_str());
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -1673,8 +1616,7 @@ void vpDisplayX::setWindowPosition(int winx, int winy)
   if (m_displayHasBeenInitialized) {
     XMoveWindow(display, window, winx, winy);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -1728,8 +1670,7 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
       }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width,
-                m_height);
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width, m_height);
       XSetWindowBackgroundPixmap(display, window, pixmap);
       break;
     }
@@ -1737,8 +1678,7 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
       unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
       if (m_scale == 1) {
         for (unsigned int i = 0; i < m_height; i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < m_width; j++) {
             *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
@@ -1746,19 +1686,16 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
         }
       } else {
         for (unsigned int i = 0; i < m_height; i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < m_width; j++) {
-            *(dst_16 + j) =
-                (unsigned short)colortable[I[i * m_scale][j * m_scale]];
+            *(dst_16 + j) = (unsigned short)colortable[I[i * m_scale][j * m_scale]];
           }
         }
       }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width,
-                m_height);
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width, m_height);
       XSetWindowBackgroundPixmap(display, window, pixmap);
       break;
     }
@@ -1818,15 +1755,13 @@ void vpDisplayX::displayImage(const vpImage<unsigned char> &I)
       }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width,
-                m_height);
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width, m_height);
       XSetWindowBackgroundPixmap(display, window, pixmap);
       break;
     }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 /*!
@@ -1851,39 +1786,34 @@ void vpDisplayX::displayImage(const vpImage<vpRGBa> &I)
 
       if (m_scale == 1) {
         for (unsigned int i = 0; i < m_height; i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < m_width; j++) {
             r = bitmap->R;
             g = bitmap->G;
             b = bitmap->B;
-            *(dst_16 + j) = (((r << 8) >> RShift) & RMask) |
-                            (((g << 8) >> GShift) & GMask) |
-                            (((b << 8) >> BShift) & BMask);
+            *(dst_16 + j) =
+                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
             bitmap++;
           }
         }
       } else {
         for (unsigned int i = 0; i < m_height; i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = 0; j < m_width; j++) {
             vpRGBa val = I[i * m_scale][j * m_scale];
             r = val.R;
             g = val.G;
             b = val.B;
-            *(dst_16 + j) = (((r << 8) >> RShift) & RMask) |
-                            (((g << 8) >> GShift) & GMask) |
-                            (((b << 8) >> BShift) & BMask);
+            *(dst_16 + j) =
+                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
             bitmap++;
           }
         }
       }
 
-      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width,
-                m_height);
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width, m_height);
       XSetWindowBackgroundPixmap(display, window, pixmap);
 
       break;
@@ -1944,19 +1874,16 @@ void vpDisplayX::displayImage(const vpImage<vpRGBa> &I)
       }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width,
-                m_height);
+      XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width, m_height);
       XSetWindowBackgroundPixmap(display, window, pixmap);
       break;
     }
     default:
       throw(vpDisplayException(vpDisplayException::depthNotSupportedError,
-                               "Unsupported depth (%d bpp) for color display",
-                               screen_depth));
+                               "Unsupported depth (%d bpp) for color display", screen_depth));
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -1985,12 +1912,10 @@ void vpDisplayX::displayImage(const unsigned char *bitmap)
     }
 
     // Affichage de l'image dans la Pixmap.
-    XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width,
-              m_height);
+    XPutImage(display, pixmap, context, Ximage, 0, 0, 0, 0, m_width, m_height);
     XSetWindowBackgroundPixmap(display, window, pixmap);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2009,8 +1934,7 @@ void vpDisplayX::displayImage(const unsigned char *bitmap)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
-                                 const vpImagePoint &iP, const unsigned int w,
+void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int w,
                                  const unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
@@ -2043,17 +1967,15 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
           i++;
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(),
-                  (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h);
+        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+                  w, h);
       } else {
         // Correction de l'image de facon a liberer les niveaux de gris
         // ROUGE, VERT, BLEU, JAUNE
         int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
         int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
-        int i_max =
-            (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
-        int j_max =
-            (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2070,8 +1992,7 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
               dst_8[j] = nivGris;
           }
         }
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min,
-                  i_min, j_max_ - j_min_, i_max_ - i_min_);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_ - j_min_, i_max_ - i_min_);
       }
 
       // Affichage de l'image dans la Pixmap.
@@ -2081,26 +2002,21 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
     case 16: {
       unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
       if (m_scale == 1) {
-        for (unsigned int i = (unsigned int)iP.get_i();
-             i < (unsigned int)(iP.get_i() + h); i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+        for (unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i() + h); i++) {
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
-          for (unsigned int j = (unsigned int)iP.get_j();
-               j < (unsigned int)(iP.get_j() + w); j++) {
+          for (unsigned int j = (unsigned int)iP.get_j(); j < (unsigned int)(iP.get_j() + w); j++) {
             *(dst_16 + j) = (unsigned short)colortable[I[i][j]];
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(),
-                  (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h);
+        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+                  w, h);
       } else {
         int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
         int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
-        int i_max =
-            (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
-        int j_max =
-            (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2108,17 +2024,14 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
         unsigned int j_max_ = (unsigned int)j_max;
 
         for (unsigned int i = i_min_; i < i_max_; i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = j_min_; j < j_max_; j++) {
-            *(dst_16 + j) =
-                (unsigned short)colortable[I[i * m_scale][j * m_scale]];
+            *(dst_16 + j) = (unsigned short)colortable[I[i * m_scale][j * m_scale]];
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min,
-                  i_min, j_max_ - j_min_, i_max_ - i_min_);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_ - j_min_, i_max_ - i_min_);
       }
 
       XSetWindowBackgroundPixmap(display, window, pixmap);
@@ -2129,11 +2042,8 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
     default: {
       if (m_scale == 1) {
         unsigned int iwidth = I.getWidth();
-        unsigned char *src_8 =
-            I.bitmap + (int)(iP.get_i() * iwidth + iP.get_j());
-        unsigned char *dst_32 =
-            (unsigned char *)Ximage->data +
-            (int)(iP.get_i() * 4 * m_width + iP.get_j() * 4);
+        unsigned char *src_8 = I.bitmap + (int)(iP.get_i() * iwidth + iP.get_j());
+        unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(iP.get_i() * 4 * m_width + iP.get_j() * 4);
 
         if (XImageByteOrder(display) == 1) {
           // big endian
@@ -2171,15 +2081,13 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(),
-                  (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h);
+        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+                  w, h);
       } else {
         int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
         int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
-        int i_max =
-            (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
-        int j_max =
-            (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2189,8 +2097,7 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
         if (XImageByteOrder(display) == 1) {
           // big endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data +
-                                    (int)(i * 4 * m_width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * m_width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               unsigned char val = I[i * m_scale][j * m_scale];
               *(dst_32++) = vpRGBa::alpha_default;
@@ -2202,8 +2109,7 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
         } else {
           // little endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data +
-                                    (int)(i * 4 * m_width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * m_width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               unsigned char val = I[i * m_scale][j * m_scale];
               *(dst_32++) = val;
@@ -2214,8 +2120,7 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min,
-                  i_min, j_max_ - j_min_, i_max_ - i_min_);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_ - j_min_, i_max_ - i_min_);
       }
 
       XSetWindowBackgroundPixmap(display, window, pixmap);
@@ -2223,8 +2128,7 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
     }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2243,8 +2147,7 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I,
 
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
-                                 const vpImagePoint &iP, const unsigned int w,
+void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int w,
                                  const unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
@@ -2252,32 +2155,26 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
     case 16: {
       if (m_scale == 1) {
         unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
-        for (unsigned int i = (unsigned int)iP.get_i();
-             i < (unsigned int)(iP.get_i() + h); i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+        for (unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i() + h); i++) {
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
-          for (unsigned int j = (unsigned int)iP.get_j();
-               j < (unsigned int)(iP.get_j() + w); j++) {
+          for (unsigned int j = (unsigned int)iP.get_j(); j < (unsigned int)(iP.get_j() + w); j++) {
             vpRGBa val = I[i][j];
             unsigned int r = val.R;
             unsigned int g = val.G;
             unsigned int b = val.B;
-            *(dst_16 + j) = (((r << 8) >> RShift) & RMask) |
-                            (((g << 8) >> GShift) & GMask) |
-                            (((b << 8) >> BShift) & BMask);
+            *(dst_16 + j) =
+                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
           }
         }
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(),
-                  (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h);
+        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+                  w, h);
       } else {
         unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
         int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
         int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
-        int i_max =
-            (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
-        int j_max =
-            (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2285,21 +2182,18 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
         unsigned int j_max_ = (unsigned int)j_max;
 
         for (unsigned int i = i_min_; i < i_max_; i++) {
-          unsigned char *dst_8 =
-              (unsigned char *)Ximage->data + i * bytes_per_line;
+          unsigned char *dst_8 = (unsigned char *)Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *)dst_8;
           for (unsigned int j = j_min_; j < j_max_; j++) {
             vpRGBa val = I[i * m_scale][j * m_scale];
             unsigned int r = val.R;
             unsigned int g = val.G;
             unsigned int b = val.B;
-            *(dst_16 + j) = (((r << 8) >> RShift) & RMask) |
-                            (((g << 8) >> GShift) & GMask) |
-                            (((b << 8) >> BShift) & BMask);
+            *(dst_16 + j) =
+                (((r << 8) >> RShift) & RMask) | (((g << 8) >> GShift) & GMask) | (((b << 8) >> BShift) & BMask);
           }
         }
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min,
-                  i_min, j_max_ - j_min_, i_max_ - i_min_);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_ - j_min_, i_max_ - i_min_);
       }
 
       XSetWindowBackgroundPixmap(display, window, pixmap);
@@ -2358,15 +2252,13 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(),
-                  (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h);
+        XPutImage(display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(),
+                  w, h);
       } else {
         int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
         int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
-        int i_max =
-            (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
-        int j_max =
-            (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h) / m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w) / m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2376,8 +2268,7 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
         if (XImageByteOrder(display) == 1) {
           // big endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data +
-                                    (int)(i * 4 * m_width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * m_width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               vpRGBa val = I[i * m_scale][j * m_scale];
               *(dst_32++) = val.A;
@@ -2389,8 +2280,7 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
         } else {
           // little endian
           for (unsigned int i = i_min_; i < i_max_; i++) {
-            unsigned char *dst_32 = (unsigned char *)Ximage->data +
-                                    (int)(i * 4 * m_width + j_min_ * 4);
+            unsigned char *dst_32 = (unsigned char *)Ximage->data + (int)(i * 4 * m_width + j_min_ * 4);
             for (unsigned int j = j_min_; j < j_max_; j++) {
               vpRGBa val = I[i * m_scale][j * m_scale];
               *(dst_32++) = val.B;
@@ -2400,8 +2290,7 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
             }
           }
         }
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min,
-                  i_min, j_max_ - j_min_, i_max_ - i_min_);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_ - j_min_, i_max_ - i_min_);
       }
 
       XSetWindowBackgroundPixmap(display, window, pixmap);
@@ -2409,12 +2298,10 @@ void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I,
     }
     default:
       throw(vpDisplayException(vpDisplayException::depthNotSupportedError,
-                               "Unsupported depth (%d bpp) for color display",
-                               screen_depth));
+                               "Unsupported depth (%d bpp) for color display", screen_depth));
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2460,8 +2347,7 @@ void vpDisplayX::flushDisplay()
     XClearWindow(display, window);
     XFlush(display);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2472,16 +2358,13 @@ void vpDisplayX::flushDisplay()
   \param iP : Top left corner of the region of interest
   \param w,h  : Width and height of the region of interest
 */
-void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int w,
-                                 const unsigned int h)
+void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int w, const unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
-    XClearArea(display, window, (int)(iP.get_u() / m_scale),
-               (int)(iP.get_v() / m_scale), w / m_scale, h / m_scale, 0);
+    XClearArea(display, window, (int)(iP.get_u() / m_scale), (int)(iP.get_v() / m_scale), w / m_scale, h / m_scale, 0);
     XFlush(display);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2510,8 +2393,7 @@ void vpDisplayX::clearDisplay(const vpColor &color)
     // Pixmap creation.
     pixmap = XCreatePixmap(display, window, m_width, m_height, screen_depth);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2522,10 +2404,8 @@ void vpDisplayX::clearDisplay(const vpColor &color)
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpDisplayX::displayArrow(const vpImagePoint &ip1,
-                              const vpImagePoint &ip2, const vpColor &color,
-                              unsigned int w, unsigned int h,
-                              unsigned int thickness)
+void vpDisplayX::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
+                              unsigned int h, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     double a = ip2.get_i() - ip1.get_i();
@@ -2560,8 +2440,7 @@ void vpDisplayX::displayArrow(const vpImagePoint &ip1,
       displayLine(ip1, ip2, color, thickness);
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2576,8 +2455,7 @@ void vpDisplayX::displayArrow(const vpImagePoint &ip1,
 
   \sa setFont()
 */
-void vpDisplayX::displayCharString(const vpImagePoint &ip, const char *text,
-                                   const vpColor &color)
+void vpDisplayX::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
     if (color.id < vpColor::id_unknown)
@@ -2590,11 +2468,10 @@ void vpDisplayX::displayCharString(const vpImagePoint &ip, const char *text,
       XAllocColor(display, lut, &xcolor);
       XSetForeground(display, context, xcolor.pixel);
     }
-    XDrawString(display, pixmap, context, (int)(ip.get_u() / m_scale),
-                (int)(ip.get_v() / m_scale), text, (int)strlen(text));
+    XDrawString(display, pixmap, context, (int)(ip.get_u() / m_scale), (int)(ip.get_v() / m_scale), text,
+                (int)strlen(text));
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2607,9 +2484,8 @@ void vpDisplayX::displayCharString(const vpImagePoint &ip, const char *text,
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
-void vpDisplayX::displayCircle(const vpImagePoint &center,
-                               unsigned int radius, const vpColor &color,
-                               bool fill, unsigned int thickness)
+void vpDisplayX::displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
+                               unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -2625,25 +2501,19 @@ void vpDisplayX::displayCircle(const vpImagePoint &center,
       XSetForeground(display, context, xcolor.pixel);
     }
 
-    XSetLineAttributes(display, context, thickness, LineSolid, CapButt,
-                       JoinBevel);
+    XSetLineAttributes(display, context, thickness, LineSolid, CapButt, JoinBevel);
 
     if (fill == false) {
-      XDrawArc(display, pixmap, context,
-               vpMath::round((center.get_u() - radius) / m_scale),
-               vpMath::round((center.get_v() - radius) / m_scale),
-               radius * 2 / m_scale, radius * 2 / m_scale, 0,
+      XDrawArc(display, pixmap, context, vpMath::round((center.get_u() - radius) / m_scale),
+               vpMath::round((center.get_v() - radius) / m_scale), radius * 2 / m_scale, radius * 2 / m_scale, 0,
                23040); /* 23040 = 360*64 */
     } else {
-      XFillArc(display, pixmap, context,
-               vpMath::round((center.get_u() - radius) / m_scale),
-               vpMath::round((center.get_v() - radius) / m_scale),
-               radius * 2 / m_scale, radius * 2 / m_scale, 0,
+      XFillArc(display, pixmap, context, vpMath::round((center.get_u() - radius) / m_scale),
+               vpMath::round((center.get_v() - radius) / m_scale), radius * 2 / m_scale, radius * 2 / m_scale, 0,
                23040); /* 23040 = 360*64 */
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2654,8 +2524,8 @@ void vpDisplayX::displayCircle(const vpImagePoint &center,
   \param color : Cross color.
   \param thickness : Thickness of the lines used to display the cross.
 */
-void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size,
-                              const vpColor &color, unsigned int thickness)
+void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size, const vpColor &color,
+                              unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     double i = ip.get_i();
@@ -2675,8 +2545,7 @@ void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size,
 
     displayLine(ip1, ip2, color, thickness);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 /*!
@@ -2685,8 +2554,7 @@ void vpDisplayX::displayCross(const vpImagePoint &ip, unsigned int cross_size,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplayX::displayDotLine(const vpImagePoint &ip1,
-                                const vpImagePoint &ip2, const vpColor &color,
+void vpDisplayX::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                                 unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
@@ -2704,16 +2572,12 @@ void vpDisplayX::displayDotLine(const vpImagePoint &ip1,
       XSetForeground(display, context, xcolor.pixel);
     }
 
-    XSetLineAttributes(display, context, thickness, LineOnOffDash, CapButt,
-                       JoinBevel);
+    XSetLineAttributes(display, context, thickness, LineOnOffDash, CapButt, JoinBevel);
 
-    XDrawLine(display, pixmap, context, vpMath::round(ip1.get_u() / m_scale),
-              vpMath::round(ip1.get_v() / m_scale),
-              vpMath::round(ip2.get_u() / m_scale),
-              vpMath::round(ip2.get_v() / m_scale));
+    XDrawLine(display, pixmap, context, vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale),
+              vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale));
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2723,8 +2587,8 @@ void vpDisplayX::displayDotLine(const vpImagePoint &ip1,
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplayX::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                             const vpColor &color, unsigned int thickness)
+void vpDisplayX::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                             unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -2741,16 +2605,12 @@ void vpDisplayX::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
       XSetForeground(display, context, xcolor.pixel);
     }
 
-    XSetLineAttributes(display, context, thickness, LineSolid, CapButt,
-                       JoinBevel);
+    XSetLineAttributes(display, context, thickness, LineSolid, CapButt, JoinBevel);
 
-    XDrawLine(display, pixmap, context, vpMath::round(ip1.get_u() / m_scale),
-              vpMath::round(ip1.get_v() / m_scale),
-              vpMath::round(ip2.get_u() / m_scale),
-              vpMath::round(ip2.get_v() / m_scale));
+    XDrawLine(display, pixmap, context, vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale),
+              vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale));
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2760,8 +2620,7 @@ void vpDisplayX::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
   \param color : Point color.
   \param thickness : Point thickness.
 */
-void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color,
-                              unsigned int thickness)
+void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (color.id < vpColor::id_unknown)
@@ -2776,18 +2635,14 @@ void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color,
     }
 
     if (thickness == 1) {
-      XDrawPoint(display, pixmap, context,
-                 vpMath::round(ip.get_u() / m_scale),
-                 vpMath::round(ip.get_v() / m_scale));
+      XDrawPoint(display, pixmap, context, vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale));
     } else {
-      XFillRectangle(
-          display, pixmap, context, vpMath::round(ip.get_u() / m_scale),
-          vpMath::round(ip.get_v() / m_scale), thickness, thickness);
+      XFillRectangle(display, pixmap, context, vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale),
+                     thickness, thickness);
     }
 
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2804,8 +2659,7 @@ void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, unsigned int w,
-                                  unsigned int h, const vpColor &color,
+void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color,
                                   bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
@@ -2821,20 +2675,16 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, unsigned int w,
       XAllocColor(display, lut, &xcolor);
       XSetForeground(display, context, xcolor.pixel);
     }
-    XSetLineAttributes(display, context, thickness, LineSolid, CapButt,
-                       JoinBevel);
+    XSetLineAttributes(display, context, thickness, LineSolid, CapButt, JoinBevel);
     if (fill == false) {
-      XDrawRectangle(
-          display, pixmap, context, vpMath::round(topLeft.get_u() / m_scale),
-          vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
+      XDrawRectangle(display, pixmap, context, vpMath::round(topLeft.get_u() / m_scale),
+                     vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
     } else {
-      XFillRectangle(
-          display, pixmap, context, vpMath::round(topLeft.get_u() / m_scale),
-          vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
+      XFillRectangle(display, pixmap, context, vpMath::round(topLeft.get_u() / m_scale),
+                     vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2850,10 +2700,8 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, unsigned int w,
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplayX::displayRectangle(const vpImagePoint &topLeft,
-                                  const vpImagePoint &bottomRight,
-                                  const vpColor &color, bool fill,
-                                  unsigned int thickness)
+void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
+                                  bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -2869,38 +2717,26 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft,
       XSetForeground(display, context, xcolor.pixel);
     }
 
-    XSetLineAttributes(display, context, thickness, LineSolid, CapButt,
-                       JoinBevel);
+    XSetLineAttributes(display, context, thickness, LineSolid, CapButt, JoinBevel);
 
     vpImagePoint topLeft_ = topLeft / m_scale;
     vpImagePoint bottomRight_ = bottomRight / m_scale;
-    unsigned int w = (unsigned int)vpMath::round(
-        std::fabs(bottomRight_.get_u() - topLeft_.get_u()));
-    unsigned int h = (unsigned int)vpMath::round(
-        std::fabs(bottomRight_.get_v() - topLeft_.get_v()));
+    unsigned int w = (unsigned int)vpMath::round(std::fabs(bottomRight_.get_u() - topLeft_.get_u()));
+    unsigned int h = (unsigned int)vpMath::round(std::fabs(bottomRight_.get_v() - topLeft_.get_v()));
     if (fill == false) {
 
       XDrawRectangle(display, pixmap, context,
-                     vpMath::round(topLeft_.get_u() < bottomRight_.get_u()
-                                       ? topLeft_.get_u()
-                                       : bottomRight_.get_u()),
-                     vpMath::round(topLeft_.get_v() < bottomRight_.get_v()
-                                       ? topLeft_.get_v()
-                                       : bottomRight_.get_v()),
+                     vpMath::round(topLeft_.get_u() < bottomRight_.get_u() ? topLeft_.get_u() : bottomRight_.get_u()),
+                     vpMath::round(topLeft_.get_v() < bottomRight_.get_v() ? topLeft_.get_v() : bottomRight_.get_v()),
                      w > 0 ? w : 1, h > 0 ? h : 1);
     } else {
       XFillRectangle(display, pixmap, context,
-                     vpMath::round(topLeft_.get_u() < bottomRight_.get_u()
-                                       ? topLeft_.get_u()
-                                       : bottomRight_.get_u()),
-                     vpMath::round(topLeft_.get_v() < bottomRight_.get_v()
-                                       ? topLeft_.get_v()
-                                       : bottomRight_.get_v()),
+                     vpMath::round(topLeft_.get_u() < bottomRight_.get_u() ? topLeft_.get_u() : bottomRight_.get_u()),
+                     vpMath::round(topLeft_.get_v() < bottomRight_.get_v() ? topLeft_.get_v() : bottomRight_.get_v()),
                      w, h);
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2916,9 +2752,7 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft,
   false.
 
 */
-void vpDisplayX::displayRectangle(const vpRect &rectangle,
-                                  const vpColor &color, bool fill,
-                                  unsigned int thickness)
+void vpDisplayX::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -2934,28 +2768,22 @@ void vpDisplayX::displayRectangle(const vpRect &rectangle,
       XSetForeground(display, context, xcolor.pixel);
     }
 
-    XSetLineAttributes(display, context, thickness, LineSolid, CapButt,
-                       JoinBevel);
+    XSetLineAttributes(display, context, thickness, LineSolid, CapButt, JoinBevel);
 
     if (fill == false) {
-      XDrawRectangle(
-          display, pixmap, context,
-          vpMath::round(rectangle.getLeft() / m_scale),
-          vpMath::round(rectangle.getTop() / m_scale),
-          (unsigned int)vpMath::round(rectangle.getWidth() / m_scale - 1),
-          (unsigned int)vpMath::round(rectangle.getHeight() / m_scale - 1));
+      XDrawRectangle(display, pixmap, context, vpMath::round(rectangle.getLeft() / m_scale),
+                     vpMath::round(rectangle.getTop() / m_scale),
+                     (unsigned int)vpMath::round(rectangle.getWidth() / m_scale - 1),
+                     (unsigned int)vpMath::round(rectangle.getHeight() / m_scale - 1));
     } else {
-      XFillRectangle(
-          display, pixmap, context,
-          vpMath::round(rectangle.getLeft() / m_scale),
-          vpMath::round(rectangle.getTop() / m_scale),
-          (unsigned int)vpMath::round(rectangle.getWidth() / m_scale),
-          (unsigned int)vpMath::round(rectangle.getHeight() / m_scale));
+      XFillRectangle(display, pixmap, context, vpMath::round(rectangle.getLeft() / m_scale),
+                     vpMath::round(rectangle.getTop() / m_scale),
+                     (unsigned int)vpMath::round(rectangle.getWidth() / m_scale),
+                     (unsigned int)vpMath::round(rectangle.getHeight() / m_scale));
     }
 
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -2997,13 +2825,11 @@ bool vpDisplayX::getClick(bool blocking)
 
     if (ret) {
       /* Recuperation de la coordonnee du pixel clique. */
-      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x,
-                        &root_y, &win_x, &win_y, &modifier)) {
+      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
@@ -3045,15 +2871,13 @@ bool vpDisplayX::getClick(vpImagePoint &ip, bool blocking)
 
     if (ret) {
       // Get mouse position
-      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x,
-                        &root_y, &win_x, &win_y, &modifier)) {
+      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
         ip.set_u((double)event.xbutton.x * m_scale);
         ip.set_v((double)event.xbutton.y * m_scale);
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
@@ -3077,9 +2901,7 @@ bool vpDisplayX::getClick(vpImagePoint &ip, bool blocking)
   button is pressed, the location of the mouse pointer is updated in
   \e ip.
 */
-bool vpDisplayX::getClick(vpImagePoint &ip,
-                          vpMouseButton::vpMouseButtonType &button,
-                          bool blocking)
+bool vpDisplayX::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
 
   bool ret = false;
@@ -3101,8 +2923,7 @@ bool vpDisplayX::getClick(vpImagePoint &ip,
 
     if (ret) {
       // Get mouse position
-      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x,
-                        &root_y, &win_x, &win_y, &modifier)) {
+      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
         ip.set_u((double)event.xbutton.x * m_scale);
         ip.set_v((double)event.xbutton.y * m_scale);
         switch (event.xbutton.button) {
@@ -3119,8 +2940,7 @@ bool vpDisplayX::getClick(vpImagePoint &ip,
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
@@ -3148,9 +2968,7 @@ bool vpDisplayX::getClick(vpImagePoint &ip,
   \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
 
 */
-bool vpDisplayX::getClickUp(vpImagePoint &ip,
-                            vpMouseButton::vpMouseButtonType &button,
-                            bool blocking)
+bool vpDisplayX::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
 
   bool ret = false;
@@ -3171,8 +2989,7 @@ bool vpDisplayX::getClickUp(vpImagePoint &ip,
 
     if (ret) {
       /* Recuperation de la coordonnee du pixel clique. */
-      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x,
-                        &root_y, &win_x, &win_y, &modifier)) {
+      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
         ip.set_u((double)event.xbutton.x * m_scale);
         ip.set_v((double)event.xbutton.y * m_scale);
         switch (event.xbutton.button) {
@@ -3189,8 +3006,7 @@ bool vpDisplayX::getClickUp(vpImagePoint &ip,
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
@@ -3207,11 +3023,9 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
   if (m_displayHasBeenInitialized) {
     XImage *xi;
 
-    XCopyArea(display, window, pixmap, context, 0, 0, m_width, m_height, 0,
-              0);
+    XCopyArea(display, window, pixmap, context, 0, 0, m_width, m_height, 0, 0);
 
-    xi = XGetImage(display, pixmap, 0, 0, m_width, m_height, AllPlanes,
-                   ZPixmap);
+    xi = XGetImage(display, pixmap, 0, 0, m_width, m_height, AllPlanes, ZPixmap);
 
     I.resize(m_height, m_width);
 
@@ -3261,8 +3075,7 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
     }
     XDestroyImage(xi);
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
 }
 
@@ -3276,8 +3089,7 @@ unsigned int vpDisplayX::getScreenDepth()
   unsigned int depth;
 
   if ((display_ = XOpenDisplay(NULL)) == NULL) {
-    throw(vpDisplayException(vpDisplayException::connexionError,
-                             "Can't connect display on server %s.",
+    throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.",
                              XDisplayName(NULL)));
   }
   screen_ = DefaultScreen(display_);
@@ -3298,8 +3110,7 @@ void vpDisplayX::getScreenSize(unsigned int &w, unsigned int &h)
   int screen_;
 
   if ((display_ = XOpenDisplay(NULL)) == NULL) {
-    throw(vpDisplayException(vpDisplayException::connexionError,
-                             "Can't connect display on server %s.",
+    throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.",
                              XDisplayName(NULL)));
   }
   screen_ = DefaultScreen(display_);
@@ -3364,8 +3175,7 @@ bool vpDisplayX::getKeyboardEvent(bool blocking)
     }
   } else {
     vpERROR_TRACE("X not initialized ");
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
@@ -3404,21 +3214,18 @@ bool vpDisplayX::getKeyboardEvent(std::string &key, bool blocking)
     // Event testing
     if (blocking) {
       XMaskEvent(display, KeyPressMask, &event);
-      /* count = */ XLookupString((XKeyEvent *)&event, &buffer, 1, &keysym,
-                                  &compose_status);
+      /* count = */ XLookupString((XKeyEvent *)&event, &buffer, 1, &keysym, &compose_status);
       key = buffer;
       ret = true;
     } else {
       ret = XCheckMaskEvent(display, KeyPressMask, &event);
       if (ret) {
-        /* count = */ XLookupString((XKeyEvent *)&event, &buffer, 1, &keysym,
-                                    &compose_status);
+        /* count = */ XLookupString((XKeyEvent *)&event, &buffer, 1, &keysym, &compose_status);
         key = buffer;
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
@@ -3448,15 +3255,13 @@ bool vpDisplayX::getPointerMotionEvent(vpImagePoint &ip)
 
     if (ret) {
       // Get mouse position
-      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x,
-                        &root_y, &win_x, &win_y, &modifier)) {
+      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
         ip.set_u((double)event.xbutton.x * m_scale);
         ip.set_v((double)event.xbutton.y * m_scale);
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }
@@ -3485,15 +3290,13 @@ bool vpDisplayX::getPointerPosition(vpImagePoint &ip)
 
     if (ret) {
       // Get mouse position
-      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x,
-                        &root_y, &win_x, &win_y, &modifier)) {
+      if (XQueryPointer(display, window, &rootwin, &childwin, &root_x, &root_y, &win_x, &win_y, &modifier)) {
         ip.set_u((double)win_x * m_scale);
         ip.set_v((double)win_y * m_scale);
       }
     }
   } else {
-    throw(vpDisplayException(vpDisplayException::notInitializedError,
-                             "X not initialized"));
+    throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
   return ret;
 }

@@ -57,8 +57,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -104,8 +103,7 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -196,12 +194,11 @@ int main(int argc, const char **argv)
     // Here, we want to test feature detection on a pyramid of images even for
     // features that  are scale invariant to detect potential problem in ViSP.
     std::cout << "INFORMATION: " << std::endl;
-    std::cout
-        << "Here, we want to test feature detection on a pyramid of images "
-           "even for features "
-           "that are scale invariant to detect potential problem in ViSP."
-        << std::endl
-        << std::endl;
+    std::cout << "Here, we want to test feature detection on a pyramid of images "
+                 "even for features "
+                 "that are scale invariant to detect potential problem in ViSP."
+              << std::endl
+              << std::endl;
     vpKeyPoint keyPoints;
 
     // Will test the different types of keypoints detection to see if there is
@@ -216,8 +213,7 @@ int main(int argc, const char **argv)
     detectorNames.push_back("PyramidSimpleBlob");
     detectorNames.push_back("SimpleBlob");
 // In contrib modules
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) ||                                 \
-    defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
     detectorNames.push_back("PyramidSTAR");
     detectorNames.push_back("STAR");
 #endif
@@ -245,26 +241,22 @@ int main(int argc, const char **argv)
     detectorNames.push_back("SURF");
 #endif
 
-    for (std::vector<std::string>::const_iterator itd = detectorNames.begin();
-         itd != detectorNames.end(); ++itd) {
+    for (std::vector<std::string>::const_iterator itd = detectorNames.begin(); itd != detectorNames.end(); ++itd) {
       keyPoints.setDetector(*itd);
 
       std::vector<cv::KeyPoint> kpts;
 
       keyPoints.detect(I, kpts);
-      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *itd
-                << " method." << std::endl;
+      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *itd << " method." << std::endl;
       if (kpts.empty()) {
-        std::cerr << "No keypoints detected with " << *itd
-                  << " and image: " << filename << "." << std::endl;
+        std::cerr << "No keypoints detected with " << *itd << " and image: " << filename << "." << std::endl;
         return EXIT_FAILURE;
       }
 
       if (opt_display) {
         vpDisplay::display(I);
 
-        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin();
-             it != kpts.end(); ++it) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
           vpImagePoint imPt;
           imPt.set_uv(it->pt.x, it->pt.y);
 
@@ -281,8 +273,7 @@ int main(int argc, const char **argv)
 
     std::cout << "\n\n";
 
-    std::map<vpKeyPoint::vpFeatureDetectorType, std::string>
-        mapOfDetectorNames = keyPoints.getDetectorNames();
+    std::map<vpKeyPoint::vpFeatureDetectorType, std::string> mapOfDetectorNames = keyPoints.getDetectorNames();
     for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
       keyPoints.setDetector((vpKeyPoint::vpFeatureDetectorType)i);
 
@@ -290,11 +281,9 @@ int main(int argc, const char **argv)
 
       keyPoints.detect(I, kpts);
       std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-                << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i]
-                << " method." << std::endl;
+                << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i] << " method." << std::endl;
       if (kpts.empty()) {
-        std::cerr << "No keypoints detected with "
-                  << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i]
+        std::cerr << "No keypoints detected with " << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i]
                   << " method  and image: " << filename << "." << std::endl;
         return EXIT_FAILURE;
       }
@@ -302,8 +291,7 @@ int main(int argc, const char **argv)
       if (opt_display) {
         vpDisplay::display(I);
 
-        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin();
-             it != kpts.end(); ++it) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
           vpImagePoint imPt;
           imPt.set_uv(it->pt.x, it->pt.y);
 

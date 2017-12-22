@@ -52,8 +52,7 @@
   The algorithm implemented in this class is described in \cite Baker04a and
   \cite Marchand16a.
  */
-class VISP_EXPORT vpTemplateTrackerSSDForwardCompositional
-  : public vpTemplateTrackerSSD
+class VISP_EXPORT vpTemplateTrackerSSDForwardCompositional : public vpTemplateTrackerSSD
 {
 protected:
   bool compoInitialised;
@@ -64,7 +63,6 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  explicit vpTemplateTrackerSSDForwardCompositional(
-      vpTemplateTrackerWarp *warp);
+  explicit vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp);
 };
 #endif

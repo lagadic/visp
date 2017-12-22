@@ -61,8 +61,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h> // Debug trace
 #include <visp3/core/vpTime.h>
-#if (defined(VISP_HAVE_BICLOPS) &&                                           \
-     (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_DIRECTSHOW)))
+#if (defined(VISP_HAVE_BICLOPS) && (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_DIRECTSHOW)))
 
 #ifdef VISP_HAVE_PTHREAD
 #include <pthread.h>
@@ -118,8 +117,7 @@ void signalCtrC(int /* signumber */)
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string &conf,
-           std::string &debugdir, std::string &user)
+void usage(const char *name, const char *badparam, std::string &conf, std::string &debugdir, std::string &user)
 {
   fprintf(stdout, "\n\
   Example of eye-in-hand control law. We control here a real robot, the biclops\n\
@@ -158,8 +156,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &conf,
-                std::string &debugdir, std::string &user)
+bool getOptions(int argc, const char **argv, std::string &conf, std::string &debugdir, std::string &user)
 {
   const char *optarg_;
   int c;
@@ -198,16 +195,12 @@ bool getOptions(int argc, const char **argv, std::string &conf,
 int main(int argc, const char **argv)
 {
   std::cout << std::endl;
-  std::cout << "-------------------------------------------------------"
-            << std::endl;
+  std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << " Test program for vpServo " << std::endl;
-  std::cout
-      << " Eye-in-hand task control, velocity computed in the camera frame"
-      << std::endl;
+  std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
   std::cout << " Simulation " << std::endl;
   std::cout << " task : servo a point " << std::endl;
-  std::cout << "-------------------------------------------------------"
-            << std::endl;
+  std::cout << "-------------------------------------------------------" << std::endl;
   std::cout << std::endl;
 
   try {
@@ -225,8 +218,7 @@ int main(int argc, const char **argv)
     std::string opt_debugdir;
 
 // Set the default output path
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_debugdir = "/tmp";
 #elif defined(_WIN32)
     opt_debugdir = "C:/temp";
@@ -256,8 +248,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, opt_conf, debugdir, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
-        std::cerr << "  Check your -d " << debugdir << " option "
-                  << std::endl;
+        std::cerr << "  Check your -d " << debugdir << " option " << std::endl;
         exit(-1);
       }
     }
@@ -317,8 +308,7 @@ int main(int argc, const char **argv)
     vpDot dot;
 
     try {
-      std::cout << "Click on a dot to initialize the tracking..."
-                << std::endl;
+      std::cout << "Click on a dot to initialize the tracking..." << std::endl;
       dot.setGraphics(true);
       dot.initTracking(I);
       dot.track(I);
@@ -332,8 +322,7 @@ int main(int argc, const char **argv)
 
     // sets the current position of the visual feature
     vpFeaturePoint p;
-    vpFeatureBuilder::create(
-        p, cam, dot); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(p, cam, dot); // retrieve x,y and Z of the vpPoint structure
 
     p.set_Z(1);
     // sets the desired position of the visual feature
@@ -382,8 +371,7 @@ int main(int argc, const char **argv)
     for (;;)
 #endif
     {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
 
       g.acquire(I);
       vpDisplay::display(I);
@@ -410,14 +398,12 @@ int main(int argc, const char **argv)
       std::cout << "v: " << v.t();
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
 
       {
         vpColVector s_minus_sStar(2);
         s_minus_sStar = task.s - task.sStar;
-        fprintf(fd, "%f %f %f %f %f\n", v[0], v[1], s_minus_sStar[0],
-                s_minus_sStar[1], (task.getError()).sumSquare());
+        fprintf(fd, "%f %f %f %f %f\n", v[0], v[1], s_minus_sStar[0], s_minus_sStar[1], (task.getError()).sumSquare());
       }
     }
 

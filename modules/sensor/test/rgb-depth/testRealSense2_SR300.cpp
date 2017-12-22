@@ -42,8 +42,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) &&                                         \
-    defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                \
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                         \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
@@ -67,31 +66,22 @@ namespace
 {
 #ifdef VISP_HAVE_PCL
 // Global variables
-pcl::PointCloud<pcl::PointXYZ>::Ptr
-    pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-    pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
+pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 bool cancelled = false, update_pointcloud = false;
 
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(const bool color_mode, std::mutex &mutex)
-    : m_colorMode(color_mode), m_mutex(mutex)
-  {
-  }
+  explicit ViewerWorker(const bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
 
   void run()
   {
     std::string date = vpTime::getDateTime();
-    pcl::visualization::PCLVisualizer::Ptr viewer(
-        new pcl::visualization::PCLVisualizer("3D Viewer " + date));
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(
-        pointcloud_color);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(
-        new pcl::PointCloud<pcl::PointXYZ>());
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(
-        new pcl::PointCloud<pcl::PointXYZRGB>());
+    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer " + date));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 
     viewer->setBackgroundColor(0, 0, 0);
     viewer->initCameraParameters();
@@ -125,26 +115,19 @@ public:
 
         if (init) {
           if (m_colorMode) {
-            viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color,
-                                                    rgb, "RGB sample cloud");
-            viewer->setPointCloudRenderingProperties(
-                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
-                "RGB sample cloud");
+            viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
+            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
+                                                     "RGB sample cloud");
           } else {
-            viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud,
-                                                 "sample cloud");
-            viewer->setPointCloudRenderingProperties(
-                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
-                "sample cloud");
+            viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
+            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           }
           init = false;
         } else {
           if (m_colorMode) {
-            viewer->updatePointCloud<pcl::PointXYZRGB>(
-                local_pointcloud_color, rgb, "RGB sample cloud");
+            viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
           } else {
-            viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud,
-                                                    "sample cloud");
+            viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           }
         }
       }
@@ -160,8 +143,7 @@ private:
   std::mutex &m_mutex;
 };
 
-void getPointcloud(const rs2::depth_frame &depth_frame,
-                   std::vector<vpColVector> &pointcloud)
+void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &pointcloud)
 {
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
@@ -268,24 +250,16 @@ int main(int argc, char *argv[])
   rs.open(config);
 
   rs2::pipeline_profile &profile = rs.getPipelineProfile();
-  auto color_profile =
-      profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
-  vpImage<vpRGBa> color((unsigned int)color_profile.height(),
-                        (unsigned int)color_profile.width());
+  auto color_profile = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
+  vpImage<vpRGBa> color((unsigned int)color_profile.height(), (unsigned int)color_profile.width());
 
-  auto depth_profile =
-      profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
-  vpImage<vpRGBa> depth_color((unsigned int)depth_profile.height(),
-                              (unsigned int)depth_profile.width());
-  vpImage<uint16_t> depth_raw((unsigned int)depth_profile.height(),
-                              (unsigned int)depth_profile.width());
+  auto depth_profile = profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
+  vpImage<vpRGBa> depth_color((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
+  vpImage<uint16_t> depth_raw((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
 
-  auto infrared_profile =
-      profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
-  vpImage<unsigned char> infrared((unsigned int)infrared_profile.height(),
-                                  (unsigned int)infrared_profile.width());
-  vpImage<uint16_t> infrared_raw((unsigned int)infrared_profile.height(),
-                                 (unsigned int)infrared_profile.width());
+  auto infrared_profile = profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
+  vpImage<unsigned char> infrared((unsigned int)infrared_profile.height(), (unsigned int)infrared_profile.width());
+  vpImage<uint16_t> infrared_raw((unsigned int)infrared_profile.height(), (unsigned int)infrared_profile.width());
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d1, d2, d3;
@@ -306,44 +280,26 @@ int main(int argc, char *argv[])
   rs2::pipeline &pipe = rs.getPipeline();
 
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_COLOR,
-                   vpCameraParameters::perspectiveProjWithoutDistortion)
+            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
             << std::endl;
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_COLOR,
-                   vpCameraParameters::perspectiveProjWithDistortion)
-            << std::endl;
+            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_DEPTH,
-                   vpCameraParameters::perspectiveProjWithoutDistortion)
+            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion)
             << std::endl;
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_DEPTH,
-                   vpCameraParameters::perspectiveProjWithDistortion)
-            << std::endl;
+            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_INFRARED,
-                   vpCameraParameters::perspectiveProjWithoutDistortion)
+            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithoutDistortion)
             << std::endl;
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_INFRARED,
-                   vpCameraParameters::perspectiveProjWithDistortion)
+            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithDistortion)
             << std::endl;
 
-  std::cout << "depth_M_color:\n"
-            << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH)
-            << std::endl;
-  std::cout << "color_M_infrared:\n"
-            << rs.getTransformation(RS2_STREAM_INFRARED, RS2_STREAM_COLOR)
-            << std::endl;
+  std::cout << "depth_M_color:\n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH) << std::endl;
+  std::cout << "color_M_infrared:\n" << rs.getTransformation(RS2_STREAM_INFRARED, RS2_STREAM_COLOR) << std::endl;
 
   std::vector<double> time_vector;
   double t_begin = vpTime::measureTimeMs();
@@ -411,8 +367,7 @@ int main(int argc, char *argv[])
   viewer_colvector_thread.join();
 #endif
   std::cout << "Acquisition1 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector)
-            << " ms" << std::endl;
+            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   config.disable_all_streams();
   config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 60);
@@ -420,22 +375,15 @@ int main(int argc, char *argv[])
   config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 60);
   rs.open(config);
 
-  color_profile =
-      profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
-  color.init((unsigned int)color_profile.height(),
-             (unsigned int)color_profile.width());
+  color_profile = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
+  color.init((unsigned int)color_profile.height(), (unsigned int)color_profile.width());
 
-  depth_profile =
-      profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
-  depth_color.init((unsigned int)depth_profile.height(),
-                   (unsigned int)depth_profile.width());
-  depth_raw.init((unsigned int)depth_profile.height(),
-                 (unsigned int)depth_profile.width());
+  depth_profile = profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
+  depth_color.init((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
+  depth_raw.init((unsigned int)depth_profile.height(), (unsigned int)depth_profile.width());
 
-  infrared_profile =
-      profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
-  infrared.init((unsigned int)infrared_profile.height(),
-                (unsigned int)infrared_profile.width());
+  infrared_profile = profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
+  infrared.init((unsigned int)infrared_profile.height(), (unsigned int)infrared_profile.width());
 
   d1.init(color, 0, 0, "Color");
   d2.init(depth_color, color.getWidth(), 0, "Depth");
@@ -449,44 +397,26 @@ int main(int argc, char *argv[])
 
   std::cout << "\n" << std::endl;
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_COLOR,
-                   vpCameraParameters::perspectiveProjWithoutDistortion)
+            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
             << std::endl;
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_COLOR,
-                   vpCameraParameters::perspectiveProjWithDistortion)
-            << std::endl;
+            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_DEPTH,
-                   vpCameraParameters::perspectiveProjWithoutDistortion)
+            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion)
             << std::endl;
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_DEPTH,
-                   vpCameraParameters::perspectiveProjWithDistortion)
-            << std::endl;
+            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_INFRARED,
-                   vpCameraParameters::perspectiveProjWithoutDistortion)
+            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithoutDistortion)
             << std::endl;
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(
-                   RS2_STREAM_INFRARED,
-                   vpCameraParameters::perspectiveProjWithDistortion)
+            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithDistortion)
             << std::endl;
 
-  std::cout << "depth_M_color:\n"
-            << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH)
-            << std::endl;
-  std::cout << "color_M_infrared:\n"
-            << rs.getTransformation(RS2_STREAM_INFRARED, RS2_STREAM_COLOR)
-            << std::endl;
+  std::cout << "depth_M_color:\n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH) << std::endl;
+  std::cout << "color_M_infrared:\n" << rs.getTransformation(RS2_STREAM_INFRARED, RS2_STREAM_COLOR) << std::endl;
 
   time_vector.clear();
   t_begin = vpTime::measureTimeMs();
@@ -498,20 +428,17 @@ int main(int argc, char *argv[])
       std::lock_guard<std::mutex> lock(mutex);
 
       if (pcl_color) {
-        rs.acquire((unsigned char *)color.bitmap,
-                   (unsigned char *)depth_raw.bitmap, NULL, pointcloud_color,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL, pointcloud_color,
                    (unsigned char *)infrared.bitmap);
       } else {
-        rs.acquire((unsigned char *)color.bitmap,
-                   (unsigned char *)depth_raw.bitmap, NULL, pointcloud,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL, pointcloud,
                    (unsigned char *)infrared.bitmap);
       }
 
       update_pointcloud = true;
     }
 #else
-    rs.acquire((unsigned char *)color.bitmap,
-               (unsigned char *)depth_raw.bitmap, NULL,
+    rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL,
                (unsigned char *)infrared.bitmap);
 #endif
 
@@ -545,8 +472,7 @@ int main(int argc, char *argv[])
   d2.close(depth_color);
   d3.close(infrared);
   std::cout << "Acquisition2 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector)
-            << " ms" << std::endl;
+            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
   rs.close();
@@ -556,19 +482,15 @@ int main(int argc, char *argv[])
   config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 60);
   rs.open(config);
 
-  color_profile =
-      profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
+  color_profile = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
   cv::Mat mat_color(color_profile.height(), color_profile.width(), CV_8UC3);
 
-  depth_profile =
-      profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
+  depth_profile = profile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
   cv::Mat mat_depth(depth_profile.height(), depth_profile.width(), CV_8UC3);
   rs2::colorizer color_map;
 
-  infrared_profile =
-      profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
-  cv::Mat mat_infrared(infrared_profile.height(), infrared_profile.width(),
-                       CV_8U);
+  infrared_profile = profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>();
+  cv::Mat mat_infrared(infrared_profile.height(), infrared_profile.width(), CV_8U);
 
   time_vector.clear();
   t_begin = vpTime::measureTimeMs();
@@ -590,8 +512,7 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "Acquisition3 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector)
-            << " ms" << std::endl;
+            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 #endif
 
   return EXIT_SUCCESS;

@@ -72,8 +72,7 @@ int main()
 
     vpPylonFactory &factory = vpPylonFactory::instance();
     // Creation of a framegrabber
-    vpPylonGrabber *g =
-        factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
+    vpPylonGrabber *g = factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
     std::string guid;
 
     // Get the number of cameras connected on the bus
@@ -106,8 +105,7 @@ int main()
     for (int i = 0; i < 10; i++)
       g->acquire(I);
     g->close();
-    std::cout << "Current image size: " << g->getWidth() << "x"
-              << g->getHeight() << std::endl;
+    std::cout << "Current image size: " << g->getWidth() << "x" << g->getHeight() << std::endl;
 
     std::string filename = outputpath + "/imagetest1.pgm";
     std::cout << "Write image: " << filename << std::endl;

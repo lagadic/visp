@@ -101,25 +101,21 @@ public:
   //@{
   inline void setStateModel(vpStateModel model);
 
-  void initFilter(unsigned int nsignal, vpColVector &sigma_state,
-                  vpColVector &sigma_measure, double rho, double dt);
+  void initFilter(unsigned int nsignal, vpColVector &sigma_state, vpColVector &sigma_measure, double rho, double dt);
   //@}
 
   /*! @name Linear filter initializer with constant velocity models */
   //@{
-  void initStateConstVel_MeasurePos(unsigned int nsignal,
-                                    vpColVector &sigma_state,
-                                    vpColVector &sigma_measure, double dt);
-  void initStateConstVelWithColoredNoise_MeasureVel(
-      unsigned int nsignal, vpColVector &sigma_state,
-      vpColVector &sigma_measure, double rho);
+  void initStateConstVel_MeasurePos(unsigned int nsignal, vpColVector &sigma_state, vpColVector &sigma_measure,
+                                    double dt);
+  void initStateConstVelWithColoredNoise_MeasureVel(unsigned int nsignal, vpColVector &sigma_state,
+                                                    vpColVector &sigma_measure, double rho);
   //@}
 
   /*! @name Linear filter initializer with constant acceleration models */
   //@{
-  void initStateConstAccWithColoredNoise_MeasureVel(
-      unsigned int nsignal, vpColVector &sigma_state,
-      vpColVector &sigma_measure, double rho, double dt);
+  void initStateConstAccWithColoredNoise_MeasureVel(unsigned int nsignal, vpColVector &sigma_state,
+                                                    vpColVector &sigma_measure, double rho, double dt);
   //@}
 
 protected:
@@ -141,9 +137,10 @@ int main()
   vpLinearKalmanFilterInstantiation kalman;
 
   kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
-  std::cout << "State vector size: " << kalman.getStateSize() << std::endl; //
-Value is 2 std::cout << "Measure vector size: " << kalman.getMeasureSize() <<
-std::endl; // Value is 1
+  // Value is 2
+  std::cout << "State vector size: " << kalman.getStateSize() << std::endl;
+  // Value is 1
+  std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl;
 }
   \endcode
 */

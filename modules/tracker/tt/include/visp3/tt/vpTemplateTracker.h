@@ -78,7 +78,7 @@ protected:
   unsigned int templateSelectSize;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpTemplateTrackerPointSuppMIInv *ptTemplateSupp; // pour inverse et compo
+  vpTemplateTrackerPointSuppMIInv *ptTemplateSupp;     // pour inverse et compo
   vpTemplateTrackerPointSuppMIInv **ptTemplateSuppPyr; // pour inverse et
                                                        // compo
 #endif
@@ -173,31 +173,23 @@ protected:
 public:
   //! Default constructor.
   vpTemplateTracker()
-    : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL),
-      ptTemplatePyr(NULL), ptTemplateInit(false), templateSize(0),
-      templateSizePyr(NULL), ptTemplateSelect(NULL),
-      ptTemplateSelectPyr(NULL), ptTemplateSelectInit(false),
-      templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
-      ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL),
-      zoneTrackedPyr(NULL), pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(NULL),
-      HLM(), HLMdesire(), HLMdesirePyr(NULL), HLMdesireInverse(),
-      HLMdesireInversePyr(NULL), G(), gain(0), thresholdGradient(0),
-      costFunctionVerification(false), blur(false), useBrent(false),
-      nbIterBrent(0), taillef(0), fgG(NULL), fgdG(NULL), ratioPixelIn(0),
-      mod_i(0), mod_j(0), nbParam(), lambdaDep(0), iterationMax(0),
-      iterationGlobale(0), diverge(false), nbIteration(0),
-      useCompositionnal(false), useInverse(false), Warp(NULL), p(), dp(),
-      X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
+    : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL), ptTemplateInit(false),
+      templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL),
+      ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
+      ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(),
+      Hdesire(), HdesirePyr(NULL), HLM(), HLMdesire(), HLMdesirePyr(NULL), HLMdesireInverse(),
+      HLMdesireInversePyr(NULL), G(), gain(0), thresholdGradient(0), costFunctionVerification(false), blur(false),
+      useBrent(false), nbIterBrent(0), taillef(0), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(0), mod_j(0),
+      nbParam(), lambdaDep(0), iterationMax(0), iterationGlobale(0), diverge(false), nbIteration(0),
+      useCompositionnal(false), useInverse(false), Warp(NULL), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
+      zoneRef_()
   {
   }
   explicit vpTemplateTracker(vpTemplateTrackerWarp *_warp);
   virtual ~vpTemplateTracker();
 
-  void display(const vpImage<unsigned char> &I,
-               const vpColor &col = vpColor::green,
-               const unsigned int thickness = 3);
-  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green,
-               const unsigned int thickness = 3);
+  void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
+  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
 
   bool getDiverge() const { return diverge; }
   vpColVector getdp() { return dp; }
@@ -220,11 +212,8 @@ public:
   vpTemplateTrackerZone getZoneRef() const { return zoneRef_; }
 
   void initClick(const vpImage<unsigned char> &I, bool delaunay = false);
-  void initFromPoints(const vpImage<unsigned char> &I,
-                      const std::vector<vpImagePoint> &v_ip,
-                      bool delaunay = false);
-  void initFromZone(const vpImage<unsigned char> &I,
-                    const vpTemplateTrackerZone &zone);
+  void initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &v_ip, bool delaunay = false);
+  void initFromZone(const vpImage<unsigned char> &I, const vpTemplateTrackerZone &zone);
 
   void resetTracker();
 
@@ -269,8 +258,7 @@ public:
     nbLvlPyr = nlevels;
     l0Pyr = level_to_stop;
     if (l0Pyr >= nlevels) {
-      std::cout << "Warning: level_to_stop: " << level_to_stop
-                << " higher than level_to_start: " << nlevels - 1
+      std::cout << "Warning: level_to_stop: " << level_to_stop << " higher than level_to_start: " << nlevels - 1
                 << " (nlevels-1)" << std::endl;
       std::cout << "Level to stop put to: " << nlevels - 1 << std::endl;
       l0Pyr = nlevels - 1;
@@ -289,10 +277,7 @@ public:
     mod_i = sample_i;
     mod_j = sample_j;
   }
-  void setThresholdGradient(double threshold)
-  {
-    thresholdGradient = threshold;
-  }
+  void setThresholdGradient(double threshold) { thresholdGradient = threshold; }
   /*! By default Brent usage is disabled. */
   void setUseBrent(bool b) { useBrent = b; }
 
@@ -300,22 +285,15 @@ public:
   void trackRobust(const vpImage<unsigned char> &I);
 
 protected:
-  void computeOptimalBrentGain(const vpImage<unsigned char> &I,
-                               vpColVector &tp, double tMI,
-                               vpColVector &direction, double &alpha);
-  virtual double getCost(const vpImage<unsigned char> &I,
-                         const vpColVector &tp) = 0;
-  void getGaussianBluredImage(const vpImage<unsigned char> &I)
-  {
-    vpImageFilter::filter(I, BI, fgG, taillef);
-  }
+  void computeOptimalBrentGain(const vpImage<unsigned char> &I, vpColVector &tp, double tMI, vpColVector &direction,
+                               double &alpha);
+  virtual double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) = 0;
+  void getGaussianBluredImage(const vpImage<unsigned char> &I) { vpImageFilter::filter(I, BI, fgG, taillef); }
   virtual void initHessienDesired(const vpImage<unsigned char> &I) = 0;
   virtual void initHessienDesiredPyr(const vpImage<unsigned char> &I);
   virtual void initPyramidal(unsigned int nbLvl, unsigned int l0);
-  void initTracking(const vpImage<unsigned char> &I,
-                    vpTemplateTrackerZone &zone);
-  virtual void initTrackingPyr(const vpImage<unsigned char> &I,
-                               vpTemplateTrackerZone &zone);
+  void initTracking(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone);
+  virtual void initTrackingPyr(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone);
   virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
   virtual void trackPyr(const vpImage<unsigned char> &I);
 };

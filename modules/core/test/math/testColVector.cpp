@@ -51,20 +51,17 @@
 
 namespace
 {
-bool test(const std::string &s, const vpColVector &v,
-          const std::vector<double> &bench)
+bool test(const std::string &s, const vpColVector &v, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
   std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = ["
-            << v.t() << "]^T" << std::endl;
+  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v.t() << "]^T" << std::endl;
   if (bench.size() != v.size()) {
     std::cout << "Test fails: bad size wrt bench" << std::endl;
     return false;
   }
   for (unsigned int i = 0; i < v.size(); i++) {
-    if (std::fabs(v[i] - bench[i]) >
-        std::fabs(v[i]) * std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(v[i] - bench[i]) > std::fabs(v[i]) * std::numeric_limits<double>::epsilon()) {
       std::cout << "Test fails: bad content" << std::endl;
       return false;
     }
@@ -371,14 +368,11 @@ int main()
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
-    std::cout << "\nregular_sum=" << regular_sum << " ; sse_sum=" << sse_sum
-              << std::endl;
-    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms"
-              << std::endl;
+    std::cout << "\nregular_sum=" << regular_sum << " ; sse_sum=" << sse_sum << std::endl;
+    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms" << std::endl;
     std::cout << "Speed-up: " << (t_regular / t_sse) << "X" << std::endl;
 
-    if (!vpMath::equal(regular_sum, sse_sum,
-                       std::numeric_limits<double>::epsilon())) {
+    if (!vpMath::equal(regular_sum, sse_sum, std::numeric_limits<double>::epsilon())) {
       std::cerr << "Problem when computing v.sum()!" << std::endl;
       return EXIT_FAILURE;
     }
@@ -397,14 +391,11 @@ int main()
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
-    std::cout << "\nregular_sumSquare=" << regular_sumSquare
-              << " ; sse_sumSquare=" << sse_sumSquare << std::endl;
-    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms"
-              << std::endl;
+    std::cout << "\nregular_sumSquare=" << regular_sumSquare << " ; sse_sumSquare=" << sse_sumSquare << std::endl;
+    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms" << std::endl;
     std::cout << "Speed-up: " << (t_regular / t_sse) << "X" << std::endl;
 
-    if (!vpMath::equal(regular_sumSquare, sse_sumSquare,
-                       std::numeric_limits<double>::epsilon())) {
+    if (!vpMath::equal(regular_sumSquare, sse_sumSquare, std::numeric_limits<double>::epsilon())) {
       std::cerr << "Problem when computing v.sumSquare()!" << std::endl;
       return EXIT_FAILURE;
     }
@@ -423,16 +414,12 @@ int main()
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
-    std::cout << "\nregular_stdev=" << regular_stdev
-              << " ; sse_stdev=" << sse_stdev << std::endl;
-    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms"
-              << std::endl;
+    std::cout << "\nregular_stdev=" << regular_stdev << " ; sse_stdev=" << sse_stdev << std::endl;
+    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms" << std::endl;
     std::cout << "Speed-up: " << (t_regular / t_sse) << "X" << std::endl;
 
-    if (!vpMath::equal(regular_stdev, sse_stdev,
-                       std::numeric_limits<double>::epsilon())) {
-      std::cerr << "Problem when computing vpColVector::stdev()!"
-                << std::endl;
+    if (!vpMath::equal(regular_stdev, sse_stdev, std::numeric_limits<double>::epsilon())) {
+      std::cerr << "Problem when computing vpColVector::stdev()!" << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -461,8 +448,7 @@ int main()
 
     for (unsigned int i = 0; i < nb; i++) {
       for (unsigned int j = 0; j < size; j++) {
-        if (!vpMath::equal(v_big[i * size + j], vec[(size_t)i][j],
-                           std::numeric_limits<double>::epsilon())) {
+        if (!vpMath::equal(v_big[i * size + j], vec[(size_t)i][j], std::numeric_limits<double>::epsilon())) {
           std::cerr << "Problem in vpColVector insert()!" << std::endl;
           return EXIT_FAILURE;
         }

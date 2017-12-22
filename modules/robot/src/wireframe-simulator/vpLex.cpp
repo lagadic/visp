@@ -782,8 +782,7 @@ void lexerr(const char *path, ...)
 
   count();
   // write (STDERR, myline, mysptr - myline);
-  fprintf(stderr, "\n%*c\n\"%s\", line %d:\n", mycolumno, '^', source,
-          mylineno);
+  fprintf(stderr, "\n%*c\n\"%s\", line %d:\n", mycolumno, '^', source, mylineno);
 
   /* Affiche les messages d'erreur de la pile.	*/
 

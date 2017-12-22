@@ -60,13 +60,10 @@
   By default the class uses colored images.
 */
 vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
-  : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(),
-    normal_Cam_optim(), distance(1.), visible_result(1.), visible(false),
-    X0_2_optim(NULL), euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL),
-    listTriangle(), colorI(col), Ig(), Ic(), rect(), cleanPrevImage(false),
-    setBackgroundTexture(false), bgColor(vpColor::white), focal(),
-    needClipping(false)
+  : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
+    visible_result(1.), visible(false), X0_2_optim(NULL), euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(),
+    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(col), Ig(), Ic(),
+    rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
 {
   for (int i = 0; i < 4; i++)
     X[i].resize(3);
@@ -100,13 +97,11 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   Copy constructor
 */
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
-  : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(),
-    normal_Cam_optim(), distance(1.), visible_result(1.), visible(false),
-    X0_2_optim(NULL), euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL),
-    listTriangle(), colorI(GRAY_SCALED), Ig(), Ic(), rect(),
-    cleanPrevImage(false), setBackgroundTexture(false),
-    bgColor(vpColor::white), focal(), needClipping(false)
+  : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
+    visible_result(1.), visible(false), X0_2_optim(NULL), euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(),
+    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(GRAY_SCALED), Ig(),
+    Ic(), rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(),
+    needClipping(false)
 {
   pt.resize(4);
   for (unsigned int i = 0; i < 4; i++) {
@@ -191,17 +186,14 @@ vpImageSimulator &vpImageSimulator::operator=(const vpImageSimulator &sim)
   projected image is not added as an overlay! \param I : The image used to
   store the result. \param cam : The parameters of the virtual camera.
 */
-void vpImageSimulator::getImage(vpImage<unsigned char> &I,
-                                const vpCameraParameters &cam)
+void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam)
 {
   if (setBackgroundTexture)
     // The Ig has been set to a previously defined background texture
     I = Ig;
   else {
     if (cleanPrevImage) {
-      unsigned char col =
-          (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G +
-                          0.0722 * bgColor.B);
+      unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
       for (unsigned int i = 0; i < I.getHeight(); i++) {
         for (unsigned int j = 0; j < I.getWidth(); j++) {
           I[i][j] = col;
@@ -227,8 +219,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
     int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
-      for (unsigned int j = (unsigned int)left; j < (unsigned int)right;
-           j++) {
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
         double x = 0, y = 0;
         ip.set_ij(i, j);
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -242,9 +233,8 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
         } else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
-            unsigned char pixelgrey = (unsigned char)(0.2126 * Ipixelplan.R +
-                                                      0.7152 * Ipixelplan.G +
-                                                      0.0722 * Ipixelplan.B);
+            unsigned char pixelgrey =
+                (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
             *(bitmap + i * width + j) = pixelgrey;
             nb_point_dessine++;
           }
@@ -263,14 +253,10 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
   \param Isrc : The image which is projected into \f$ I \f$.
   \param cam : The parameters of the virtual camera.
 */
-void vpImageSimulator::getImage(vpImage<unsigned char> &I,
-                                vpImage<unsigned char> &Isrc,
-                                const vpCameraParameters &cam)
+void vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc, const vpCameraParameters &cam)
 {
   if (cleanPrevImage) {
-    unsigned char col =
-        (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G +
-                        0.0722 * bgColor.B);
+    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         I[i][j] = col;
@@ -294,8 +280,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
     int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
-      for (unsigned int j = (unsigned int)left; j < (unsigned int)right;
-           j++) {
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
         double x = 0, y = 0;
         ip.set_ij(i, j);
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -325,20 +310,14 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
   \param zBuffer : A matrix containing the z coordinates of the pixels of the
   image \f$ I \f$
 */
-void vpImageSimulator::getImage(vpImage<unsigned char> &I,
-                                const vpCameraParameters &cam,
-                                vpMatrix &zBuffer)
+void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam, vpMatrix &zBuffer)
 {
-  if (I.getWidth() != (unsigned int)zBuffer.getCols() ||
-      I.getHeight() != (unsigned int)zBuffer.getRows())
-    throw(vpMatrixException(
-        vpMatrixException::incorrectMatrixSizeError,
-        " zBuffer must have the same size as the image I ! "));
+  if (I.getWidth() != (unsigned int)zBuffer.getCols() || I.getHeight() != (unsigned int)zBuffer.getRows())
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            " zBuffer must have the same size as the image I ! "));
 
   if (cleanPrevImage) {
-    unsigned char col =
-        (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G +
-                        0.0722 * bgColor.B);
+    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         I[i][j] = col;
@@ -362,8 +341,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
     int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
-      for (unsigned int j = (unsigned int)left; j < (unsigned int)right;
-           j++) {
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
         double x = 0, y = 0;
         ip.set_ij(i, j);
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -382,9 +360,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
               unsigned char pixelgrey =
-                  (unsigned char)(0.2126 * Ipixelplan.R +
-                                  0.7152 * Ipixelplan.G +
-                                  0.0722 * Ipixelplan.B);
+                  (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
               *(bitmap + i * width + j) = pixelgrey;
               nb_point_dessine++;
               zBuffer[i][j] = Xinter_optim[2];
@@ -403,8 +379,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
   \param I : The image used to store the result.
   \param cam : The parameters of the virtual camera.
 */
-void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
-                                const vpCameraParameters &cam)
+void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam)
 {
   if (cleanPrevImage) {
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -431,8 +406,7 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
     int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
-      for (unsigned int j = (unsigned int)left; j < (unsigned int)right;
-           j++) {
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
         double x = 0, y = 0;
         ip.set_ij(i, j);
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -468,8 +442,7 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
   \param Isrc : The image which is projected into \f$ I \f$.
   \param cam : The parameters of the virtual camera.
 */
-void vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc,
-                                const vpCameraParameters &cam)
+void vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCameraParameters &cam)
 {
   if (cleanPrevImage) {
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -496,8 +469,7 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc,
     int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
-      for (unsigned int j = (unsigned int)left; j < (unsigned int)right;
-           j++) {
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
         double x = 0, y = 0;
         ip.set_ij(i, j);
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -527,15 +499,11 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc,
   \param zBuffer : A matrix containing the z coordinates of the pixels of the
   image \f$ I \f$
 */
-void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
-                                const vpCameraParameters &cam,
-                                vpMatrix &zBuffer)
+void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam, vpMatrix &zBuffer)
 {
-  if (I.getWidth() != (unsigned int)zBuffer.getCols() ||
-      I.getHeight() != (unsigned int)zBuffer.getRows())
-    throw(vpMatrixException(
-        vpMatrixException::incorrectMatrixSizeError,
-        " zBuffer must have the same size as the image I ! "));
+  if (I.getWidth() != (unsigned int)zBuffer.getCols() || I.getHeight() != (unsigned int)zBuffer.getRows())
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            " zBuffer must have the same size as the image I ! "));
 
   if (cleanPrevImage) {
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -561,8 +529,7 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
     int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
-      for (unsigned int j = (unsigned int)left; j < (unsigned int)right;
-           j++) {
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
         double x = 0, y = 0;
         ip.set_ij(i, j);
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -699,8 +666,7 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
   \param list : List of vpImageSimulator to project
   \param cam : The parameters of the virtual camera
 */
-void vpImageSimulator::getImage(vpImage<unsigned char> &I,
-                                std::list<vpImageSimulator> &list,
+void vpImageSimulator::getImage(vpImage<unsigned char> &I, std::list<vpImageSimulator> &list,
                                 const vpCameraParameters &cam)
 {
 
@@ -722,8 +688,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
 
   unsigned int unvisible = 0;
   unsigned int indexSimu = 0;
-  for (std::list<vpImageSimulator>::iterator it = list.begin();
-       it != list.end(); ++it, ++indexSimu) {
+  for (std::list<vpImageSimulator>::iterator it = list.begin(); it != list.end(); ++it, ++indexSimu) {
     vpImageSimulator *sim = &(*it);
     if (sim->visible)
       simList[indexSimu] = sim;
@@ -739,11 +704,9 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
 
   for (unsigned int i = 0; i < nbsimList; i++) {
     if (!simList[i]->needClipping)
-      simList[i]->getRoi(width, height, cam, simList[i]->pt,
-                         simList[i]->rect);
+      simList[i]->getRoi(width, height, cam, simList[i]->pt, simList[i]->rect);
     else
-      simList[i]->getRoi(width, height, cam, simList[i]->ptClipped,
-                         simList[i]->rect);
+      simList[i]->getRoi(width, height, cam, simList[i]->ptClipped, simList[i]->rect);
 
     if (topFinal > simList[i]->rect.getTop())
       topFinal = simList[i]->rect.getTop();
@@ -760,10 +723,8 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
   unsigned char *bitmap = I.bitmap;
   vpImagePoint ip;
 
-  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal;
-       i++) {
-    for (unsigned int j = (unsigned int)leftFinal;
-         j < (unsigned int)rightFinal; j++) {
+  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal; i++) {
+    for (unsigned int j = (unsigned int)leftFinal; j < (unsigned int)rightFinal; j++) {
       zmin = -1;
       double x = 0, y = 0;
       ip.set_ij(i, j);
@@ -787,8 +748,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
           vpRGBa Ipixelplan(255, 255, 255);
           simList[indice]->getPixel(ip, Ipixelplan);
           unsigned char pixelgrey =
-              (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G +
-                              0.0722 * Ipixelplan.B);
+              (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
           *(bitmap + i * width + j) = pixelgrey;
         }
       }
@@ -904,9 +864,7 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I,
   \param list : List of vpImageSimulator to project
   \param cam : The parameters of the virtual camera
 */
-void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
-                                std::list<vpImageSimulator> &list,
-                                const vpCameraParameters &cam)
+void vpImageSimulator::getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> &list, const vpCameraParameters &cam)
 {
 
   unsigned int width = I.getWidth();
@@ -927,8 +885,7 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
 
   unsigned int unvisible = 0;
   unsigned int indexSimu = 0;
-  for (std::list<vpImageSimulator>::iterator it = list.begin();
-       it != list.end(); ++it, ++indexSimu) {
+  for (std::list<vpImageSimulator>::iterator it = list.begin(); it != list.end(); ++it, ++indexSimu) {
     vpImageSimulator *sim = &(*it);
     if (sim->visible)
       simList[indexSimu] = sim;
@@ -945,11 +902,9 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
 
   for (unsigned int i = 0; i < nbsimList; i++) {
     if (!simList[i]->needClipping)
-      simList[i]->getRoi(width, height, cam, simList[i]->pt,
-                         simList[i]->rect);
+      simList[i]->getRoi(width, height, cam, simList[i]->pt, simList[i]->rect);
     else
-      simList[i]->getRoi(width, height, cam, simList[i]->ptClipped,
-                         simList[i]->rect);
+      simList[i]->getRoi(width, height, cam, simList[i]->ptClipped, simList[i]->rect);
 
     if (topFinal > simList[i]->rect.getTop())
       topFinal = simList[i]->rect.getTop();
@@ -966,10 +921,8 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I,
   vpRGBa *bitmap = I.bitmap;
   vpImagePoint ip;
 
-  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal;
-       i++) {
-    for (unsigned int j = (unsigned int)leftFinal;
-         j < (unsigned int)rightFinal; j++) {
+  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal; i++) {
+    for (unsigned int j = (unsigned int)leftFinal; j < (unsigned int)rightFinal; j++) {
       zmin = -1;
       double x = 0, y = 0;
       ip.set_ij(i, j);
@@ -1040,9 +993,7 @@ void vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
   facenormal = vpColVector::crossProd(e1, e2);
 
-  double angle = pt[0].get_X() * facenormal[0] +
-                 pt[0].get_Y() * facenormal[1] +
-                 pt[0].get_Z() * facenormal[2];
+  double angle = pt[0].get_X() * facenormal[0] + pt[0].get_Y() * facenormal[1] + pt[0].get_Z() * facenormal[2];
 
   if (angle > 0) {
     visible = true;
@@ -1077,8 +1028,7 @@ void vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
     std::vector<vpPoint> *ptPtr = &pt;
     if (needClipping) {
-      vpPolygon3D::getClippedPolygon(pt, ptClipped, cMt,
-                                     vpPolygon3D::NEAR_CLIPPING);
+      vpPolygon3D::getClippedPolygon(pt, ptClipped, cMt, vpPolygon3D::NEAR_CLIPPING);
       ptPtr = &ptClipped;
     }
 
@@ -1195,13 +1145,10 @@ void vpImageSimulator::init(const char *file_image, vpColVector *X_)
   \param X_ : Vector of the 3D coordinates in the object frame (oX, oY, oZ)
   corresponding to the image corners.
 */
-void vpImageSimulator::init(const vpImage<unsigned char> &I,
-                            const std::vector<vpPoint> &X_)
+void vpImageSimulator::init(const vpImage<unsigned char> &I, const std::vector<vpPoint> &X_)
 {
   if (X_.size() != 4) {
-    throw vpException(
-        vpException::dimensionError,
-        "the vector must contains 4 points to initialise the simulator");
+    throw vpException(vpException::dimensionError, "the vector must contains 4 points to initialise the simulator");
   }
   vpColVector Xvec[4];
   for (unsigned int i = 0; i < 4; ++i) {
@@ -1230,13 +1177,10 @@ void vpImageSimulator::init(const vpImage<unsigned char> &I,
   \param X_ : Vector of the 3D coordinates in the object frame (oX, oY, oZ)
   corresponding to the image corners.
 */
-void vpImageSimulator::init(const vpImage<vpRGBa> &I,
-                            const std::vector<vpPoint> &X_)
+void vpImageSimulator::init(const vpImage<vpRGBa> &I, const std::vector<vpPoint> &X_)
 {
   if (X_.size() != 4) {
-    throw vpException(
-        vpException::dimensionError,
-        "the vector must contains 4 points to initialise the simulator");
+    throw vpException(vpException::dimensionError, "the vector must contains 4 points to initialise the simulator");
   }
   vpColVector Xvec[4];
   for (unsigned int i = 0; i < 4; ++i) {
@@ -1268,13 +1212,10 @@ void vpImageSimulator::init(const vpImage<vpRGBa> &I,
   \param X_ : Vector of the 3D coordinates in the object frame (oX, oY, oZ)
   corresponding to the image corners.
 */
-void vpImageSimulator::init(const char *file_image,
-                            const std::vector<vpPoint> &X_)
+void vpImageSimulator::init(const char *file_image, const std::vector<vpPoint> &X_)
 {
   if (X_.size() != 4) {
-    throw vpException(
-        vpException::dimensionError,
-        "the vector must contains 4 points to initialise the simulator");
+    throw vpException(vpException::dimensionError, "the vector must contains 4 points to initialise the simulator");
   }
   vpColVector Xvec[4];
   for (unsigned int i = 0; i < 4; ++i) {
@@ -1290,8 +1231,7 @@ void vpImageSimulator::init(const char *file_image,
 }
 #endif
 
-bool vpImageSimulator::getPixel(const vpImagePoint &iP,
-                                unsigned char &Ipixelplan)
+bool vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelplan)
 {
   //  std::cout << "In get Pixel" << std::endl;
   // test si pixel dans zone projetee
@@ -1306,15 +1246,14 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP,
 
   //  if(!T1.inTriangle(iP) && !T2.inTriangle(iP)){
   ////      std::cout << "The pixel is inside the projected area" <<
-  ///std::endl;
+  /// std::endl;
   //    return false;}
 
   // methoed algebrique
   double z;
 
   // calcul de la profondeur de l'intersection
-  z = distance / (normal_Cam_optim[0] * iP.get_u() +
-                  normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
+  z = distance / (normal_Cam_optim[0] * iP.get_u() + normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
   // calcul coordonnees 3D intersection
   Xinter_optim[0] = iP.get_u() * z;
   Xinter_optim[1] = iP.get_v() * z;
@@ -1348,9 +1287,7 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP,
     return false;
 }
 
-bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc,
-                                const vpImagePoint &iP,
-                                unsigned char &Ipixelplan)
+bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint &iP, unsigned char &Ipixelplan)
 {
   // test si pixel dans zone projetee
   bool inside = false;
@@ -1369,8 +1306,7 @@ bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc,
   double z;
 
   // calcul de la profondeur de l'intersection
-  z = distance / (normal_Cam_optim[0] * iP.get_u() +
-                  normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
+  z = distance / (normal_Cam_optim[0] * iP.get_u() + normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
   // calcul coordonnees 3D intersection
   Xinter_optim[0] = iP.get_u() * z;
   Xinter_optim[1] = iP.get_v() * z;
@@ -1422,8 +1358,7 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
   double z;
 
   // calcul de la profondeur de l'intersection
-  z = distance / (normal_Cam_optim[0] * iP.get_u() +
-                  normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
+  z = distance / (normal_Cam_optim[0] * iP.get_u() + normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
   // calcul coordonnees 3D intersection
   Xinter_optim[0] = iP.get_u() * z;
   Xinter_optim[1] = iP.get_v() * z;
@@ -1457,8 +1392,7 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
     return false;
 }
 
-bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP,
-                                vpRGBa &Ipixelplan)
+bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP, vpRGBa &Ipixelplan)
 {
   // test si pixel dans zone projetee
   //  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
@@ -1476,8 +1410,7 @@ bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP,
   double z;
 
   // calcul de la profondeur de l'intersection
-  z = distance / (normal_Cam_optim[0] * iP.get_u() +
-                  normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
+  z = distance / (normal_Cam_optim[0] * iP.get_u() + normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
   // calcul coordonnees 3D intersection
   Xinter_optim[0] = iP.get_u() * z;
   Xinter_optim[1] = iP.get_v() * z;
@@ -1511,8 +1444,7 @@ bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP,
     return false;
 }
 
-bool vpImageSimulator::getPixelDepth(const vpImagePoint &iP,
-                                     double &Zpixelplan)
+bool vpImageSimulator::getPixelDepth(const vpImagePoint &iP, double &Zpixelplan)
 {
   // test si pixel dans zone projetee
   bool inside = false;
@@ -1526,14 +1458,11 @@ bool vpImageSimulator::getPixelDepth(const vpImagePoint &iP,
   //  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
   //    return false;
 
-  Zpixelplan =
-      distance / (normal_Cam_optim[0] * iP.get_u() +
-                  normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
+  Zpixelplan = distance / (normal_Cam_optim[0] * iP.get_u() + normal_Cam_optim[1] * iP.get_v() + normal_Cam_optim[2]);
   return true;
 }
 
-bool vpImageSimulator::getPixelVisibility(const vpImagePoint &iP,
-                                          double &Visipixelplan)
+bool vpImageSimulator::getPixelVisibility(const vpImagePoint &iP, double &Visipixelplan)
 {
   // test si pixel dans zone projetee
   bool inside = false;
@@ -1551,9 +1480,7 @@ bool vpImageSimulator::getPixelVisibility(const vpImagePoint &iP,
   return true;
 }
 
-void vpImageSimulator::project(const vpColVector &_vin,
-                               const vpHomogeneousMatrix &_cMt,
-                               vpColVector &_vout)
+void vpImageSimulator::project(const vpColVector &_vin, const vpHomogeneousMatrix &_cMt, vpColVector &_vout)
 {
   vpColVector XH(4);
   getHomogCoord(_vin, XH);
@@ -1567,18 +1494,14 @@ void vpImageSimulator::getHomogCoord(const vpColVector &_v, vpColVector &_vH)
   _vH[3] = 1.;
 }
 
-void vpImageSimulator::getCoordFromHomog(const vpColVector &_vH,
-                                         vpColVector &_v)
+void vpImageSimulator::getCoordFromHomog(const vpColVector &_vH, vpColVector &_v)
 {
   for (unsigned int i = 0; i < 3; i++)
     _v[i] = _vH[i] / _vH[3];
 }
 
-void vpImageSimulator::getRoi(const unsigned int &Iwidth,
-                              const unsigned int &Iheight,
-                              const vpCameraParameters &cam,
-                              const std::vector<vpPoint> &point,
-                              vpRect &rectangle)
+void vpImageSimulator::getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, const vpCameraParameters &cam,
+                              const std::vector<vpPoint> &point, vpRect &rectangle)
 {
   double top = Iheight + 1;
   double bottom = -1;
@@ -1587,8 +1510,7 @@ void vpImageSimulator::getRoi(const unsigned int &Iwidth,
 
   for (unsigned int i = 0; i < point.size(); i++) {
     double u = 0, v = 0;
-    vpMeterPixelConversion::convertPoint(cam, point[i].get_x(),
-                                         point[i].get_y(), u, v);
+    vpMeterPixelConversion::convertPoint(cam, point[i].get_x(), point[i].get_y(), u, v);
     if (v < top)
       top = v;
     if (v > bottom)
@@ -1629,8 +1551,7 @@ std::vector<vpColVector> vpImageSimulator::get3DcornersTextureRectangle()
   return X_;
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpImageSimulator & /*ip*/)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImageSimulator & /*ip*/)
 {
   os << "";
   return os;

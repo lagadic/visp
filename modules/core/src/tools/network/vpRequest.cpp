@@ -62,10 +62,7 @@ void vpRequest::addParameter(char *params)
 
   \param params : std::string representing the message to add.
 */
-void vpRequest::addParameter(std::string &params)
-{
-  listOfParams.push_back(params);
-}
+void vpRequest::addParameter(std::string &params) { listOfParams.push_back(params); }
 
 /*!
   Add messages as parameters of the request.

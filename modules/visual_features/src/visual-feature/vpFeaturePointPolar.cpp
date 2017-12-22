@@ -142,8 +142,7 @@ void vpFeaturePointPolar::set_Z(const double Z_)
 
   \sa set_rho(), set_theta(), set_Z()
 */
-void vpFeaturePointPolar::set_rhoThetaZ(const double rho, const double theta,
-                                        const double Z_)
+void vpFeaturePointPolar::set_rhoThetaZ(const double rho, const double theta, const double Z_)
 {
   set_rho(rho);
   set_theta(theta);
@@ -289,24 +288,21 @@ vpMatrix vpFeaturePointPolar::interaction(const unsigned int select)
     vpERROR_TRACE("rho polar coordinate of the point is null");
     std::cout << "rho = " << rho << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "rho polar coordinate of the point is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "rho polar coordinate of the point is null"));
   }
 
   if (Z_ < 0) {
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z_) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z_ << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   if (vpFeaturePointPolar::selectRho() & select) {
@@ -386,8 +382,7 @@ vpMatrix vpFeaturePointPolar::interaction(const unsigned int select)
   vpColVector e = s.error(s_star, vpFeaturePointPolar::selectRho());
   \endcode
 */
-vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star,
-                                       const unsigned int select)
+vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, const unsigned int select)
 {
   vpColVector e(0);
 
@@ -472,8 +467,7 @@ void vpFeaturePointPolar::print(const unsigned int select) const
   (\f$Z\f$ coordinate) is null. That means that the 3D point is
   on the camera which is not possible.
 */
-void vpFeaturePointPolar::buildFrom(const double rho, const double theta,
-                                    const double Z_)
+void vpFeaturePointPolar::buildFrom(const double rho, const double theta, const double Z_)
 {
 
   s[0] = rho;
@@ -485,16 +479,14 @@ void vpFeaturePointPolar::buildFrom(const double rho, const double theta,
     vpERROR_TRACE("Point is behind the camera ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point is behind the camera "));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
   }
 
   if (fabs(Z) < 1e-6) {
     vpERROR_TRACE("Point Z coordinates is null ");
     std::cout << "Z = " << Z << std::endl;
 
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-                             "Point Z coordinates is null"));
+    throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
   }
 
   for (unsigned int i = 0; i < nbParameters; i++)
@@ -511,9 +503,7 @@ void vpFeaturePointPolar::buildFrom(const double rho, const double theta,
   \param thickness : Thickness of the feature representation.
 
 */
-void vpFeaturePointPolar::display(const vpCameraParameters &cam,
-                                  const vpImage<unsigned char> &I,
-                                  const vpColor &color,
+void vpFeaturePointPolar::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                                   unsigned int thickness) const
 {
   try {
@@ -542,9 +532,7 @@ void vpFeaturePointPolar::display(const vpCameraParameters &cam,
   \param thickness : Thickness of the feature representation.
 
  */
-void vpFeaturePointPolar::display(const vpCameraParameters &cam,
-                                  const vpImage<vpRGBa> &I,
-                                  const vpColor &color,
+void vpFeaturePointPolar::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                   unsigned int thickness) const
 {
   try {
@@ -599,7 +587,8 @@ vpFeaturePointPolar *vpFeaturePointPolar::duplicate() const
   vpServo task;
   ...
   // Add only the rho subset coordinate feature from an image point to the
-  task task.addFeature(p, vpFeaturePointPolar::selectRho()); \endcode
+  task task.addFeature(p, vpFeaturePointPolar::selectRho());
+  \endcode
 
   \sa selectTheta()
 */

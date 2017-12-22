@@ -100,12 +100,9 @@ void set_scene(const char *str, Bound_scene *sc, float factor)
   if (std::fabs(factor) > std::numeric_limits<double>::epsilon()) {
     for (int i = 0; i < sc->bound.nbr; i++) {
       for (int j = 0; j < sc->bound.ptr[i].point.nbr; j++) {
-        sc->bound.ptr[i].point.ptr[j].x =
-            sc->bound.ptr[i].point.ptr[j].x * factor;
-        sc->bound.ptr[i].point.ptr[j].y =
-            sc->bound.ptr[i].point.ptr[j].y * factor;
-        sc->bound.ptr[i].point.ptr[j].z =
-            sc->bound.ptr[i].point.ptr[j].z * factor;
+        sc->bound.ptr[i].point.ptr[j].x = sc->bound.ptr[i].point.ptr[j].x * factor;
+        sc->bound.ptr[i].point.ptr[j].y = sc->bound.ptr[i].point.ptr[j].y * factor;
+        sc->bound.ptr[i].point.ptr[j].z = sc->bound.ptr[i].point.ptr[j].z * factor;
       }
     }
   }
@@ -127,10 +124,7 @@ void set_scene_wrl(const char *str, Bound_scene *sc, float factor)
   SoVRMLGroup *sceneGraphVRML2;
 
   if (!ok) {
-    throw(vpException(
-        vpException::fatalError,
-        "Can't open file \"%s\". Please check the Marker_Less.ini file",
-        str));
+    throw(vpException(vpException::fatalError, "Can't open file \"%s\". Please check the Marker_Less.ini file", str));
   }
 
   if (!in.isFileVRML2()) {
@@ -148,8 +142,7 @@ void set_scene_wrl(const char *str, Bound_scene *sc, float factor)
     sceneGraphVRML2 = SoDB::readAllVRML(&in);
     if (sceneGraphVRML2 == NULL) {
       /*return -1;*/
-      throw(
-          vpException(vpException::notInitialized, "Cannot read VRML file"));
+      throw(vpException(vpException::notInitialized, "Cannot read VRML file"));
     }
     sceneGraphVRML2->ref();
   }
@@ -170,8 +163,7 @@ void set_scene_wrl(const char *str, Bound_scene *sc, float factor)
       std::list<indexFaceSet *> ifs_list;
       SoChildList *child2list = child->getChildren();
       for (int j = 0; j < child2list->getLength(); j++) {
-        if (((SoNode *)child2list->get(j))->getTypeId() ==
-            SoVRMLIndexedFaceSet::getClassTypeId()) {
+        if (((SoNode *)child2list->get(j))->getTypeId() == SoVRMLIndexedFaceSet::getClassTypeId()) {
           indexFaceSet *ifs = new indexFaceSet;
           SoVRMLIndexedFaceSet *face_set;
           face_set = (SoVRMLIndexedFaceSet *)child2list->get(j);
@@ -199,12 +191,9 @@ void set_scene_wrl(const char *str, Bound_scene *sc, float factor)
   if (std::fabs(factor) > std::numeric_limits<double>::epsilon()) {
     for (int i = 0; i < sc->bound.nbr; i++) {
       for (int j = 0; j < sc->bound.ptr[i].point.nbr; j++) {
-        sc->bound.ptr[i].point.ptr[j].x =
-            sc->bound.ptr[i].point.ptr[j].x * factor;
-        sc->bound.ptr[i].point.ptr[j].y =
-            sc->bound.ptr[i].point.ptr[j].y * factor;
-        sc->bound.ptr[i].point.ptr[j].z =
-            sc->bound.ptr[i].point.ptr[j].z * factor;
+        sc->bound.ptr[i].point.ptr[j].x = sc->bound.ptr[i].point.ptr[j].x * factor;
+        sc->bound.ptr[i].point.ptr[j].y = sc->bound.ptr[i].point.ptr[j].y * factor;
+        sc->bound.ptr[i].point.ptr[j].z = sc->bound.ptr[i].point.ptr[j].z * factor;
       }
     }
   }
@@ -240,8 +229,7 @@ void extractFaces(SoVRMLIndexedFaceSet *face_set, indexFaceSet *ifs)
 void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
 {
   int nbPt = 0;
-  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin();
-       it != ifs_list.end(); ++it) {
+  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {
     nbPt += (*it)->nbPt;
   }
   bptr->point.nbr = (Index)nbPt;
@@ -249,8 +237,7 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
 
   ifs_list.front();
   unsigned int iter = 0;
-  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin();
-       it != ifs_list.end(); ++it) {
+  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {
     indexFaceSet *ifs = *it;
     for (unsigned int j = 0; j < (unsigned int)ifs->nbPt; j++) {
       bptr->point.ptr[iter].x = (float)ifs->pt[j].get_oX();
@@ -264,8 +251,7 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
   ifs_list.front();
   std::list<int> indSize;
   int indice = 0;
-  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin();
-       it != ifs_list.end(); ++it) {
+  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {
     indexFaceSet *ifs = *it;
     for (unsigned int j = 0; j < (unsigned int)ifs->nbIndex; j++) {
       if (ifs->index[j] == -1) {
@@ -283,21 +269,18 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
   std::list<int>::const_iterator iter_indSize = indSize.begin();
   for (unsigned int i = 0; i < indSize.size(); i++) {
     bptr->face.ptr[i].vertex.nbr = (Index)*iter_indSize;
-    bptr->face.ptr[i].vertex.ptr =
-        (Index *)malloc((unsigned int)*iter_indSize * sizeof(Index));
+    bptr->face.ptr[i].vertex.ptr = (Index *)malloc((unsigned int)*iter_indSize * sizeof(Index));
     ++iter_indSize;
   }
 
   int offset = 0;
   indice = 0;
-  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin();
-       it != ifs_list.end(); ++it) {
+  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {
     indexFaceSet *ifs = *it;
     iter = 0;
     for (unsigned int j = 0; j < (unsigned int)ifs->nbIndex; j++) {
       if (ifs->index[j] != -1) {
-        bptr->face.ptr[indice].vertex.ptr[iter] =
-            (Index)(ifs->index[j] + offset);
+        bptr->face.ptr[indice].vertex.ptr[iter] = (Index)(ifs->index[j] + offset);
         iter++;
       } else {
         iter = 0;
@@ -310,17 +293,13 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
 
 void destroyIfs(std::list<indexFaceSet *> &ifs_list)
 {
-  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin();
-       it != ifs_list.end(); ++it) {
+  for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {
     delete *it;
   }
   ifs_list.clear();
 }
 #else
-void set_scene_wrl(const char * /*str*/, Bound_scene * /*sc*/,
-                   float /*factor*/)
-{
-}
+void set_scene_wrl(const char * /*str*/, Bound_scene * /*sc*/, float /*factor*/) {}
 #endif
 
 /*

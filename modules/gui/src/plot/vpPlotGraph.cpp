@@ -59,21 +59,16 @@
 #if defined(VISP_HAVE_DISPLAY)
 
 int laFonctionSansNom(const double delta);
-void getGrid3DPoint(const double pente, vpImagePoint &iPunit,
-                    vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
+void getGrid3DPoint(const double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
 
 vpPlotGraph::vpPlotGraph()
-  : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10), xmin(0),
-    ymin(-10), xdelt(1), ydelt(1), gridx(true), gridy(true), gridColor(),
-    curveNbr(1), curveList(NULL), scaleInitialized(false), firstPoint(true),
-    nbDivisionx(10), nbDivisiony(10), topLeft(), width(0), height(0),
-    graphZone(), dTopLeft(), dWidth(0), dHeight(0), dGraphZone(),
-    dTopLeft3D(), dGraphZone3D(), cam(), cMo(), cMf(), w_xval(0), w_xsize(0),
-    w_yval(0), w_ysize(0), w_zval(0), w_zsize(0), ptXorg(0), ptYorg(0),
-    ptZorg(0), zoomx_3D(1.), zoomy_3D(1.), zoomz_3D(1.), nbDivisionz(10),
-    zorg(1.), zoomz(1.), zmax(10), zmin(-10), zdelt(1), old_iPr(), old_iPz(),
-    blockedr(false), blockedz(false), blocked(false), epsi(5), epsj(6),
-    dispUnit(false), dispTitle(false), dispLegend(false), gridThickness(1)
+  : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10), xmin(0), ymin(-10), xdelt(1), ydelt(1), gridx(true),
+    gridy(true), gridColor(), curveNbr(1), curveList(NULL), scaleInitialized(false), firstPoint(true), nbDivisionx(10),
+    nbDivisiony(10), topLeft(), width(0), height(0), graphZone(), dTopLeft(), dWidth(0), dHeight(0), dGraphZone(),
+    dTopLeft3D(), dGraphZone3D(), cam(), cMo(), cMf(), w_xval(0), w_xsize(0), w_yval(0), w_ysize(0), w_zval(0),
+    w_zsize(0), ptXorg(0), ptYorg(0), ptZorg(0), zoomx_3D(1.), zoomy_3D(1.), zoomz_3D(1.), nbDivisionz(10), zorg(1.),
+    zoomz(1.), zmax(10), zmin(-10), zdelt(1), old_iPr(), old_iPz(), blockedr(false), blockedz(false), blocked(false),
+    epsi(5), epsj(6), dispUnit(false), dispTitle(false), dispLegend(false), gridThickness(1)
 {
   gridColor.setColor(200, 200, 200);
 
@@ -96,8 +91,7 @@ void vpPlotGraph::initGraph(unsigned int nbCurve)
   curveList = new vpPlotCurve[nbCurve];
   curveNbr = nbCurve;
 
-  vpColor colors[6] = {vpColor::blue, vpColor::green,  vpColor::red,
-                       vpColor::cyan, vpColor::orange, vpColor::purple};
+  vpColor colors[6] = {vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple};
 
   for (unsigned int i = 0; i < curveNbr; i++) {
     (curveList + i)->color = colors[i % 6];
@@ -108,8 +102,7 @@ void vpPlotGraph::initGraph(unsigned int nbCurve)
   }
 }
 
-void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w,
-                           unsigned int h, unsigned int margei,
+void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w, unsigned int h, unsigned int margei,
                            unsigned int margej)
 {
   this->topLeft = top_left;
@@ -119,16 +112,14 @@ void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w,
   graphZone.setWidth(width);
   graphZone.setHeight(height);
 
-  this->dTopLeft =
-      vpImagePoint(topLeft.get_i() + margei, topLeft.get_j() + margej);
+  this->dTopLeft = vpImagePoint(topLeft.get_i() + margei, topLeft.get_j() + margej);
   this->dWidth = width - margej - 10;
   this->dHeight = height - 2 * margei;
   dGraphZone.setTopLeft(dTopLeft);
   dGraphZone.setWidth(dWidth + 1);
   dGraphZone.setHeight(dHeight + 1);
 
-  this->dTopLeft3D =
-      vpImagePoint(topLeft.get_i() + margei, topLeft.get_j() + 10);
+  this->dTopLeft3D = vpImagePoint(topLeft.get_i() + margei, topLeft.get_j() + 10);
   dGraphZone3D.setTopLeft(dTopLeft3D);
   dGraphZone3D.setWidth(dWidth + 1);
   dGraphZone3D.setHeight(dHeight + 1);
@@ -159,8 +150,7 @@ void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w,
     w_zval = w_zsize / 2.0;
   }
 
-  cam.initPersProjWithoutDistortion(1000, 1000, this->dWidth / 2.0,
-                                    this->dHeight / 2.0);
+  cam.initPersProjWithoutDistortion(1000, 1000, this->dWidth / 2.0, this->dHeight / 2.0);
 
   findPose();
 
@@ -218,8 +208,7 @@ void vpPlotGraph::computeGraphParameters()
   yorg = dTopLeft.get_i() + (ymax * zoomy);
 }
 
-void vpPlotGraph::setCurveColor(const unsigned int curveNum,
-                                const vpColor &color)
+void vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor &color)
 {
   (curveList + curveNum)->color = color;
 }
@@ -248,15 +237,13 @@ void vpPlotGraph::setUnitZ(const std::string &unit_z)
   dispUnit = true;
 }
 
-void vpPlotGraph::setLegend(const unsigned int curveNum,
-                            const std::string &newlegend)
+void vpPlotGraph::setLegend(const unsigned int curveNum, const std::string &newlegend)
 {
   (curveList + curveNum)->legend = newlegend;
   dispLegend = true;
 }
 
-void vpPlotGraph::setCurveThickness(const unsigned int curveNum,
-                                    const unsigned int thickness)
+void vpPlotGraph::setCurveThickness(const unsigned int curveNum, const unsigned int thickness)
 {
   (curveList + curveNum)->thickness = thickness;
 }
@@ -301,13 +288,10 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
   for (t = xmin; t <= xmax; t = t + xdelt) {
     double x = xorg + (zoomx * t);
     if (gridy)
-      vpDisplay::displayDotLine(I, vpImagePoint(dTopLeft.get_i(), x),
-                                vpImagePoint(dTopLeft.get_i() + dHeight, x),
+      vpDisplay::displayDotLine(I, vpImagePoint(dTopLeft.get_i(), x), vpImagePoint(dTopLeft.get_i() + dHeight, x),
                                 gridColor, gridThickness);
     else
-      vpDisplay::displayDotLine(I, vpImagePoint(yorg, x),
-                                vpImagePoint(yorg - 3, x), vpColor::black,
-                                gridThickness);
+      vpDisplay::displayDotLine(I, vpImagePoint(yorg, x), vpImagePoint(yorg - 3, x), vpColor::black, gridThickness);
 
     if (t + xdelt <= xmax + 1e-10) {
       double ttemp;
@@ -317,28 +301,20 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
         ttemp = t;
       sprintf(valeur, "%.2f", ttemp);
 #if defined VISP_HAVE_X11
-      vpDisplay::displayText(I, vpImagePoint(yorg + 3 * epsi, x), valeur,
-                             vpColor::black);
-#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) ||                 \
-    defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-      vpDisplay::displayText(I, vpImagePoint(yorg + epsi, x), valeur,
-                             vpColor::black);
+      vpDisplay::displayText(I, vpImagePoint(yorg + 3 * epsi, x), valeur, vpColor::black);
+#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+      vpDisplay::displayText(I, vpImagePoint(yorg + epsi, x), valeur, vpColor::black);
 #endif
     }
   }
   if (power != 0) {
     sprintf(valeur, "x10e%d", -power);
 #if defined VISP_HAVE_X11
-    vpDisplay::displayText(
-        I,
-        vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 6 * epsj),
-        valeur, vpColor::black);
-#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) ||                 \
-    defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayText(
-        I,
-        vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 10 * epsj),
-        valeur, vpColor::black);
+    vpDisplay::displayText(I, vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 6 * epsj), valeur,
+                           vpColor::black);
+#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+    vpDisplay::displayText(I, vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 10 * epsj), valeur,
+                           vpColor::black);
 #endif
   }
 
@@ -346,13 +322,10 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
   for (t = ymin; t <= ymax; t = t + ydelt) {
     double y = yorg - (zoomy * t);
     if (gridx)
-      vpDisplay::displayDotLine(I, vpImagePoint(y, dTopLeft.get_j()),
-                                vpImagePoint(y, dTopLeft.get_j() + dWidth),
+      vpDisplay::displayDotLine(I, vpImagePoint(y, dTopLeft.get_j()), vpImagePoint(y, dTopLeft.get_j() + dWidth),
                                 gridColor, gridThickness);
     else
-      vpDisplay::displayDotLine(I, vpImagePoint(y, xorg),
-                                vpImagePoint(y, xorg + 3), vpColor::black,
-                                gridThickness);
+      vpDisplay::displayDotLine(I, vpImagePoint(y, xorg), vpImagePoint(y, xorg + 3), vpColor::black, gridThickness);
 
     double ttemp;
     if (power != 0)
@@ -362,40 +335,28 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
 
     sprintf(valeur, "%.2f", ttemp);
 #if defined VISP_HAVE_X11
-    vpDisplay::displayText(I, vpImagePoint(y + epsi, topLeft.get_j() + epsj),
-                           valeur, vpColor::black);
-#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) ||                 \
-    defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayText(I, vpImagePoint(y - epsi, topLeft.get_j() + epsj),
-                           valeur, vpColor::black);
+    vpDisplay::displayText(I, vpImagePoint(y + epsi, topLeft.get_j() + epsj), valeur, vpColor::black);
+#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+    vpDisplay::displayText(I, vpImagePoint(y - epsi, topLeft.get_j() + epsj), valeur, vpColor::black);
 #endif
   }
   if (power != 0) {
     sprintf(valeur, "x10e%d", -power);
 #if defined VISP_HAVE_X11
-    vpDisplay::displayText(I,
-                           vpImagePoint(dTopLeft.get_i() - 3 * epsi,
-                                        dTopLeft.get_j() - 6 * epsj),
-                           valeur, vpColor::black);
-#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) ||                 \
-    defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayText(I,
-                           vpImagePoint(dTopLeft.get_i() - 3 * epsi,
-                                        dTopLeft.get_j() - 6 * epsj),
-                           valeur, vpColor::black);
+    vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() - 6 * epsj), valeur,
+                           vpColor::black);
+#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+    vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() - 6 * epsj), valeur,
+                           vpColor::black);
 #endif
   }
 
   // Ligne horizontal
-  vpDisplay::displayArrow(I, vpImagePoint(yorg, dTopLeft.get_j()),
-                          vpImagePoint(yorg, dTopLeft.get_j() + dWidth),
-                          vpColor::black, 4 * gridThickness,
-                          2 * gridThickness, gridThickness);
+  vpDisplay::displayArrow(I, vpImagePoint(yorg, dTopLeft.get_j()), vpImagePoint(yorg, dTopLeft.get_j() + dWidth),
+                          vpColor::black, 4 * gridThickness, 2 * gridThickness, gridThickness);
   // Ligne verticale
-  vpDisplay::displayArrow(I, vpImagePoint(dTopLeft.get_i() + dHeight, xorg),
-                          vpImagePoint(dTopLeft.get_i(), xorg),
-                          vpColor::black, 4 * gridThickness,
-                          2 * gridThickness, gridThickness);
+  vpDisplay::displayArrow(I, vpImagePoint(dTopLeft.get_i() + dHeight, xorg), vpImagePoint(dTopLeft.get_i(), xorg),
+                          vpColor::black, 4 * gridThickness, 2 * gridThickness, gridThickness);
 
   if (dispUnit)
     displayUnit(I);
@@ -408,35 +369,22 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
 }
 
 void vpPlotGraph::displayUnit(vpImage<unsigned char> &
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
-    defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) ||                  \
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) ||        \
     defined(VISP_HAVE_GTK)
                                   I
 #endif
 )
 {
-  unsigned int offsetx =
-      vpMath::minimum<unsigned int>((unsigned int)unitx.size(), dWidth);
+  unsigned int offsetx = vpMath::minimum<unsigned int>((unsigned int)unitx.size(), dWidth);
 
 #if defined VISP_HAVE_X11
-  vpDisplay::displayText(
-      I,
-      vpImagePoint(yorg - 2 * epsi,
-                   dTopLeft.get_j() + dWidth - offsetx * epsj),
-      unitx.c_str(), vpColor::black);
-  vpDisplay::displayText(
-      I, vpImagePoint(dTopLeft.get_i(), dTopLeft.get_j() + epsj),
-      unity.c_str(), vpColor::black);
-#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) ||                 \
-    defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-  vpDisplay::displayText(
-      I,
-      vpImagePoint(yorg - 5 * epsi,
-                   dTopLeft.get_j() + dWidth - offsetx * epsj),
-      unitx.c_str(), vpColor::black);
-  vpDisplay::displayText(
-      I, vpImagePoint(dTopLeft.get_i(), dTopLeft.get_j() + epsj),
-      unity.c_str(), vpColor::black);
+  vpDisplay::displayText(I, vpImagePoint(yorg - 2 * epsi, dTopLeft.get_j() + dWidth - offsetx * epsj), unitx.c_str(),
+                         vpColor::black);
+  vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i(), dTopLeft.get_j() + epsj), unity.c_str(), vpColor::black);
+#elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+  vpDisplay::displayText(I, vpImagePoint(yorg - 5 * epsi, dTopLeft.get_j() + dWidth - offsetx * epsj), unitx.c_str(),
+                         vpColor::black);
+  vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i(), dTopLeft.get_j() + epsj), unity.c_str(), vpColor::black);
 #endif
 }
 
@@ -444,11 +392,8 @@ void vpPlotGraph::displayTitle(vpImage<unsigned char> &I)
 {
   double size = (double)title.size();
   size = size / 2.0;
-  vpDisplay::displayText(
-      I,
-      vpImagePoint(dTopLeft.get_i() - 3 * epsi,
-                   dTopLeft.get_j() + dWidth / 2.0 - 4 * size),
-      title.c_str(), vpColor::black);
+  vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() + dWidth / 2.0 - 4 * size),
+                         title.c_str(), vpColor::black);
 }
 
 void vpPlotGraph::displayLegend(vpImage<unsigned char> &I)
@@ -462,11 +407,8 @@ void vpPlotGraph::displayLegend(vpImage<unsigned char> &I)
     offsetj = dWidth;
 
   for (unsigned int i = 0; i < curveNbr; i++) {
-    vpDisplay::displayText(I,
-                           vpImagePoint(dTopLeft.get_i() + i * 5 * epsi,
-                                        dTopLeft.get_j() + dWidth - offsetj),
-                           (curveList + i)->legend.c_str(),
-                           (curveList + i)->color);
+    vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() + i * 5 * epsi, dTopLeft.get_j() + dWidth - offsetj),
+                           (curveList + i)->legend.c_str(), (curveList + i)->color);
   }
 }
 
@@ -498,10 +440,8 @@ void vpPlotGraph::rescaley(unsigned int side, double extremity)
   ydelt = (ymax - ymin) / (double)nbDivisiony;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min,
-                            const double x_max, const int nbDivx,
-                            const double y_min, const double y_max,
-                            const int nbDivy, const bool gx, const bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const double x_max, const int nbDivx,
+                            const double y_min, const double y_max, const int nbDivy, const bool gx, const bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -518,12 +458,9 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min,
   scaleInitialized = true;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min,
-                            const double x_max, const int nbDivx,
-                            const double y_min, const double y_max,
-                            const int nbDivy, const double z_min,
-                            const double z_max, const int nbDivz,
-                            const bool gx, const bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const double x_max, const int nbDivx,
+                            const double y_min, const double y_max, const int nbDivy, const double z_min,
+                            const double z_max, const int nbDivz, const bool gx, const bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -543,8 +480,7 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min,
   scaleInitialized = true;
 }
 
-void vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb,
-                       const double x, const double y)
+void vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y)
 {
   if (!scaleInitialized) {
     if (x < 0) {
@@ -621,10 +557,7 @@ void vpPlotGraph::replot(vpImage<unsigned char> &I)
   vpDisplay::flushROI(I, graphZone);
 }
 
-void vpPlotGraph::clearGraphZone(vpImage<unsigned char> &I)
-{
-  vpDisplay::displayROI(I, graphZone);
-}
+void vpPlotGraph::clearGraphZone(vpImage<unsigned char> &I) { vpDisplay::displayROI(I, graphZone); }
 
 bool vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
 {
@@ -632,25 +565,16 @@ bool vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
     double x = (iP.get_j() - xorg) / zoomx;
     double y = (yorg - iP.get_i()) / zoomy;
 
-    vpDisplay::displayROI(
-        I,
-        vpRect(vpImagePoint(topLeft.get_i() + height - 20, topLeft.get_j()),
-               width - 1, 19));
+    vpDisplay::displayROI(I, vpRect(vpImagePoint(topLeft.get_i() + height - 20, topLeft.get_j()), width - 1, 19));
     char valeur[200];
     sprintf(valeur, " x: %f", x);
-    vpDisplay::displayText(I,
-                           vpImagePoint(topLeft.get_i() + height - 2,
-                                        topLeft.get_j() + 5 * epsj),
-                           valeur, vpColor::black);
+    vpDisplay::displayText(I, vpImagePoint(topLeft.get_i() + height - 2, topLeft.get_j() + 5 * epsj), valeur,
+                           vpColor::black);
     sprintf(valeur, " y: %f", y);
-    vpDisplay::displayText(I,
-                           vpImagePoint(topLeft.get_i() + height - 2,
-                                        topLeft.get_j() + width / 2.0),
-                           valeur, vpColor::black);
+    vpDisplay::displayText(I, vpImagePoint(topLeft.get_i() + height - 2, topLeft.get_j() + width / 2.0), valeur,
+                           vpColor::black);
     //     vpDisplay::flush(I);
-    vpDisplay::flushROI(I, vpRect(vpImagePoint(topLeft.get_i() + height - 20,
-                                               topLeft.get_j()),
-                                  width - 1, 19));
+    vpDisplay::flushROI(I, vpRect(vpImagePoint(topLeft.get_i() + height - 20, topLeft.get_j()), width - 1, 19));
     return true;
   }
   return false;
@@ -794,8 +718,7 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
 
     if (!iP1In && !iP2In) {
       if (fabs(a) < 1) {
-        if (vpMath::sign(iP1.get_j() - iP[0].get_j()) ==
-            vpMath::sign(iP2.get_j() - iP[0].get_j()))
+        if (vpMath::sign(iP1.get_j() - iP[0].get_j()) == vpMath::sign(iP2.get_j() - iP[0].get_j()))
           return false;
         int sign = vpMath::sign(iP1.get_j() - iP2.get_j());
         if (sign == vpMath::sign(iP[0].get_j() - iP[1].get_j())) {
@@ -806,8 +729,7 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
           iP2 = iP[0];
         }
       } else {
-        if (vpMath::sign(iP1.get_i() - iP[0].get_i()) ==
-            vpMath::sign(iP2.get_i() - iP[0].get_i()))
+        if (vpMath::sign(iP1.get_i() - iP[0].get_i()) == vpMath::sign(iP2.get_i() - iP[0].get_i()))
           return false;
         int sign = vpMath::sign(iP1.get_i() - iP2.get_i());
         if (sign == vpMath::sign(iP[0].get_i() - iP[1].get_i())) {
@@ -915,8 +837,7 @@ void vpPlotGraph::computeGraphParameters3D()
   ptZorg = w_zval - zoomz_3D * zmax;
 }
 
-void getGrid3DPoint(const double pente, vpImagePoint &iPunit,
-                    vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3)
+void getGrid3DPoint(const double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3)
 {
   if (pente <= 1) {
     ip1 = iPunit - vpImagePoint(3, 0);
@@ -949,8 +870,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
   for (unsigned int i = 0; i < 6; i++) {
     pt[i].track(cMo);
     double u = 0.0, v = 0.0;
-    vpMeterPixelConversion::convertPoint(cam, pt[i].get_x(), pt[i].get_y(), u,
-                                         v);
+    vpMeterPixelConversion::convertPoint(cam, pt[i].get_x(), pt[i].get_y(), u, v);
     iP[i].set_uv(u, v);
     iP[i] = iP[i] + dTopLeft3D;
   }
@@ -970,10 +890,8 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
   ptunit.setWorldCoordinates(-w_xval, ptYorg, ptZorg);
   // if (iP[0].get_j()-iP[1].get_j() != 0)
   if (std::fabs(iP[0].get_j() - iP[1].get_j()) >
-      vpMath::maximum(std::fabs(iP[0].get_j()), std::fabs(iP[1].get_j())) *
-          std::numeric_limits<double>::epsilon())
-    pente = fabs((iP[0].get_i() - iP[1].get_i()) /
-                 (iP[0].get_j() - iP[1].get_j()));
+      vpMath::maximum(std::fabs(iP[0].get_j()), std::fabs(iP[1].get_j())) * std::numeric_limits<double>::epsilon())
+    pente = fabs((iP[0].get_i() - iP[1].get_i()) / (iP[0].get_j() - iP[1].get_j()));
   else
     pente = 2;
 
@@ -983,8 +901,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
     ptunit.set_oX(x);
     ptunit.track(cMo);
     double u = 0.0, v = 0.0;
-    vpMeterPixelConversion::convertPoint(cam, ptunit.get_x(), ptunit.get_y(),
-                                         u, v);
+    vpMeterPixelConversion::convertPoint(cam, ptunit.get_x(), ptunit.get_y(), u, v);
     iPunit.set_uv(u, v);
     iPunit = iPunit + dTopLeft3D;
 
@@ -1015,10 +932,8 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
   ptunit.setWorldCoordinates(ptXorg, -w_yval, ptZorg);
   // if (iP[2].get_j()-iP[3].get_j() != 0)
   if (std::fabs(iP[2].get_j() - iP[3].get_j()) >
-      vpMath::maximum(std::fabs(iP[2].get_j()), std::fabs(iP[3].get_j())) *
-          std::numeric_limits<double>::epsilon())
-    pente = fabs((iP[2].get_i() - iP[3].get_i()) /
-                 (iP[2].get_j() - iP[3].get_j()));
+      vpMath::maximum(std::fabs(iP[2].get_j()), std::fabs(iP[3].get_j())) * std::numeric_limits<double>::epsilon())
+    pente = fabs((iP[2].get_i() - iP[3].get_i()) / (iP[2].get_j() - iP[3].get_j()));
   else
     pente = 2;
   count = 0;
@@ -1027,8 +942,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
     ptunit.set_oY(y);
     ptunit.track(cMo);
     double u = 0.0, v = 0.0;
-    vpMeterPixelConversion::convertPoint(cam, ptunit.get_x(), ptunit.get_y(),
-                                         u, v);
+    vpMeterPixelConversion::convertPoint(cam, ptunit.get_x(), ptunit.get_y(), u, v);
     iPunit.set_uv(u, v);
     iPunit = iPunit + dTopLeft3D;
 
@@ -1059,10 +973,8 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
   ptunit.setWorldCoordinates(ptXorg, ptYorg, -w_zval);
   // if (iP[4].get_j()-iP[5].get_j() != 0)
   if (std::fabs(iP[4].get_j() - iP[5].get_j()) >
-      vpMath::maximum(std::fabs(iP[4].get_j()), std::fabs(iP[5].get_j())) *
-          std::numeric_limits<double>::epsilon())
-    pente = fabs((iP[4].get_i() - iP[5].get_i()) /
-                 (iP[4].get_j() - iP[5].get_j()));
+      vpMath::maximum(std::fabs(iP[4].get_j()), std::fabs(iP[5].get_j())) * std::numeric_limits<double>::epsilon())
+    pente = fabs((iP[4].get_i() - iP[5].get_i()) / (iP[4].get_j() - iP[5].get_j()));
   else
     pente = 2;
   count = 0;
@@ -1071,8 +983,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
     ptunit.set_oZ(z);
     ptunit.track(cMo);
     double u = 0.0, v = 0.0;
-    vpMeterPixelConversion::convertPoint(cam, ptunit.get_x(), ptunit.get_y(),
-                                         u, v);
+    vpMeterPixelConversion::convertPoint(cam, ptunit.get_x(), ptunit.get_y(), u, v);
     iPunit.set_uv(u, v);
     iPunit = iPunit + dTopLeft3D;
 
@@ -1131,9 +1042,8 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
     displayLegend(I);
 }
 
-vpMouseButton::vpMouseButtonType
-vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb,
-                  const double x, const double y, const double z)
+vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb,
+                                                   const double x, const double y, const double z)
 {
   if (!scaleInitialized) {
     if (x < 0) {
@@ -1210,21 +1120,17 @@ vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb,
   }
 
   vpPoint pointPlot;
-  pointPlot.setWorldCoordinates(ptXorg + (zoomx_3D * x),
-                                ptYorg - (zoomy_3D * y),
-                                ptZorg + (zoomz_3D * z));
+  pointPlot.setWorldCoordinates(ptXorg + (zoomx_3D * x), ptYorg - (zoomy_3D * y), ptZorg + (zoomz_3D * z));
   pointPlot.track(cMo);
   double u = 0.0, v = 0.0;
-  vpMeterPixelConversion::convertPoint(cam, pointPlot.get_x(),
-                                       pointPlot.get_y(), u, v);
+  vpMeterPixelConversion::convertPoint(cam, pointPlot.get_x(), pointPlot.get_y(), u, v);
   vpImagePoint iP;
   iP.set_uv(u, v);
   iP = iP + dTopLeft3D;
 
   if ((curveList + curveNb)->nbPoint) {
     if (check3Dline((curveList + curveNb)->lastPoint, iP))
-      vpDisplay::displayLine(I, (curveList + curveNb)->lastPoint, iP,
-                             (curveList + curveNb)->color,
+      vpDisplay::displayLine(I, (curveList + curveNb)->lastPoint, iP, (curveList + curveNb)->color,
                              (curveList + curveNb)->thickness);
   }
 #if (defined VISP_HAVE_X11 || defined VISP_HAVE_GDI)
@@ -1268,12 +1174,9 @@ void vpPlotGraph::replot3D(vpImage<unsigned char> &I)
   displayGrid3D(I);
 
   for (unsigned int i = 0; i < curveNbr; i++) {
-    std::list<double>::const_iterator it_ptListx =
-        (curveList + i)->pointListx.begin();
-    std::list<double>::const_iterator it_ptListy =
-        (curveList + i)->pointListy.begin();
-    std::list<double>::const_iterator it_ptListz =
-        (curveList + i)->pointListz.begin();
+    std::list<double>::const_iterator it_ptListx = (curveList + i)->pointListx.begin();
+    std::list<double>::const_iterator it_ptListy = (curveList + i)->pointListy.begin();
+    std::list<double>::const_iterator it_ptListz = (curveList + i)->pointListz.begin();
 
     unsigned int k = 0;
     vpImagePoint iP;
@@ -1282,21 +1185,17 @@ void vpPlotGraph::replot3D(vpImage<unsigned char> &I)
       double x = *it_ptListx;
       double y = *it_ptListy;
       double z = *it_ptListz;
-      pointPlot.setWorldCoordinates(ptXorg + (zoomx_3D * x),
-                                    ptYorg - (zoomy_3D * y),
-                                    ptZorg + (zoomz_3D * z));
+      pointPlot.setWorldCoordinates(ptXorg + (zoomx_3D * x), ptYorg - (zoomy_3D * y), ptZorg + (zoomz_3D * z));
       pointPlot.track(cMo);
       double u = 0.0, v = 0.0;
-      vpMeterPixelConversion::convertPoint(cam, pointPlot.get_x(),
-                                           pointPlot.get_y(), u, v);
+      vpMeterPixelConversion::convertPoint(cam, pointPlot.get_x(), pointPlot.get_y(), u, v);
       iP.set_uv(u, v);
       iP = iP + dTopLeft3D;
 
       // vpDisplay::displayCross(I,iP,3,vpColor::cyan);
       if (k > 0) {
         if (check3Dline((curveList + i)->lastPoint, iP))
-          vpDisplay::displayLine(I, (curveList + i)->lastPoint, iP,
-                                 (curveList + i)->color);
+          vpDisplay::displayLine(I, (curveList + i)->lastPoint, iP, (curveList + i)->color);
         // vpDisplay::displayCross(I,iP,3,vpColor::orange);
       }
 
@@ -1329,8 +1228,7 @@ void vpPlotGraph::rescalez(unsigned int side, double extremity)
   \param I : Image used to display the graph.
   \param button : Mouse button used during navigation.
  */
-bool vpPlotGraph::move(const vpImage<unsigned char> &I,
-                       vpMouseButton::vpMouseButtonType &button)
+bool vpPlotGraph::move(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button)
 {
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I, changed, button);
@@ -1344,9 +1242,8 @@ bool vpPlotGraph::move(const vpImage<unsigned char> &I,
   return changed;
 }
 
-vpHomogeneousMatrix
-vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed,
-                        vpMouseButton::vpMouseButtonType &b)
+vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed,
+                                            vpMouseButton::vpMouseButtonType &b)
 {
   vpImagePoint iP;
   vpImagePoint trash;

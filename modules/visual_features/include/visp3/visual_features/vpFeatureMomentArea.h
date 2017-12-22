@@ -71,8 +71,7 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentArea(vpMomentDatabase &data_base, double A_, double B_,
-                      double C_,
+  vpFeatureMomentArea(vpMomentDatabase &data_base, double A_, double B_, double C_,
                       vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
   {

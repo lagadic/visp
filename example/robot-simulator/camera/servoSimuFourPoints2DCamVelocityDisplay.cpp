@@ -55,8 +55,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
-     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -81,8 +80,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -131,8 +129,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -218,29 +215,24 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "----------------------------------------------"
-              << std::endl;
+    std::cout << "----------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout << " Eye-in-hand task control, articular velocity are computed"
-              << std::endl;
+    std::cout << " Eye-in-hand task control, articular velocity are computed" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo 4 points " << std::endl;
-    std::cout << "----------------------------------------------"
-              << std::endl;
+    std::cout << "----------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(-0.1, -0.1, 1, vpMath::rad(40), vpMath::rad(10),
-                            vpMath::rad(60));
+    vpHomogeneousMatrix cMo(-0.1, -0.1, 1, vpMath::rad(40), vpMath::rad(10), vpMath::rad(60));
 
     // Compute the position of the object in the world frame
     vpHomogeneousMatrix wMc, wMo;
     robot.getPosition(wMc);
     wMo = wMc * cMo;
 
-    vpHomogeneousMatrix cextMo(
-        0, 0, 2, 0, 0,
-        0); // vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+    vpHomogeneousMatrix cextMo(0, 0, 2, 0, 0,
+                               0); // vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
     // sets the point coordinates in the object frame
     vpPoint point[4];
@@ -260,8 +252,7 @@ int main(int argc, const char **argv)
     // sets the desired position of the point
     vpFeaturePoint p[4];
     for (i = 0; i < 4; i++)
-      vpFeatureBuilder::create(
-          p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
+      vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the feature point s*
     vpFeaturePoint pd[4];
@@ -300,8 +291,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     while (iter++ < 200) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // Set the Jacobian (expressed in the end-effector frame)
@@ -342,8 +332,7 @@ int main(int argc, const char **argv)
       // send the camera velocity to the controller
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     // Display task information
@@ -355,8 +344,7 @@ int main(int argc, const char **argv)
 
     if (opt_display && opt_click_allowed) {
       // suppressed for automate test
-      std::cout << "\n\nClick in the internal view window to end..."
-                << std::endl;
+      std::cout << "\n\nClick in the internal view window to end..." << std::endl;
       vpDisplay::getClick(Iint);
     }
     return 0;
@@ -368,11 +356,6 @@ int main(int argc, const char **argv)
 #else
 #include <iostream>
 
-int main()
-{
-  std::cout
-      << "You do not have X11, GTK, GDI or OpenCV display functionalities..."
-      << std::endl;
-}
+int main() { std::cout << "You do not have X11, GTK, GDI or OpenCV display functionalities..." << std::endl; }
 
 #endif

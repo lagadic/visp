@@ -40,8 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 
 #include <arpa/inet.h>
 #include <iostream>
@@ -94,8 +93,7 @@ int main()
 
     // Prints all the measured points
     for (int layer=0; layer<4; layer++) {
-      std::vector<vpScanPoint> pointsInLayer =
-laserscan[layer].getScanPoints(); vpScanPoint p;
+      std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints(); vpScanPoint p;
 
       for (unsigned int i=0; i < pointsInLayer.size(); i++) {
         std::cout << pointsInLayer[i] << std::endl;
@@ -120,8 +118,8 @@ public:
   vpSickLDMRS();
   /*! Copy constructor. */
   vpSickLDMRS(const vpSickLDMRS &sick)
-    : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(),
-      time_offset(0), isFirstMeasure(true), maxlen_body(104000)
+    : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true),
+      maxlen_body(104000)
   {
     *this = sick;
   };

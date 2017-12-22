@@ -75,11 +75,7 @@ vpPlane::vpPlane() : A(0), B(0), C(0), D(0) {}
   \param a, b, c, d : Parameters of the plane.
 
 */
-vpPlane::vpPlane(const double a, const double b, const double c,
-                 const double d)
-  : A(a), B(b), C(c), D(d)
-{
-}
+vpPlane::vpPlane(const double a, const double b, const double c, const double d) : A(a), B(b), C(c), D(d) {}
 
 /*!
   Copy constructor.
@@ -111,8 +107,7 @@ vpPlane::vpPlane(const vpPlane &P) : A(0), B(0), C(0), D(0)
   coordinates expressed in the camera or object frame.
 
 */
-vpPlane::vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame)
-  : A(0), B(0), C(0), D(0)
+vpPlane::vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame) : A(0), B(0), C(0), D(0)
 {
   // Equation of the plane is given by:
   A = n[0];
@@ -170,8 +165,7 @@ void vpPlane::init(const vpColVector &P, const vpColVector &n)
   coordinates expressed in the camera or object frame.
 
 */
-void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R,
-                   vpPlaneFrame frame)
+void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame)
 {
   vpColVector a(3);
   vpColVector b(3);
@@ -228,9 +222,7 @@ void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R,
 
   \sa init(const vpPoint &, const vpPoint &, const vpPoint &)
 */
-vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R,
-                 vpPlaneFrame frame)
-  : A(0), B(0), C(0), D(0)
+vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame) : A(0), B(0), C(0), D(0)
 {
   init(P, Q, R, frame);
 }
@@ -294,8 +286,7 @@ void vpPlane::projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const
   Pproj.set_W(1);
 }
 
-double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1,
-                                vpColVector &H) const
+double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVector &H) const
 {
 
   double k, scal;
@@ -312,9 +303,7 @@ double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1,
     scal = getA() * R[0] + getB() * R[1] + getC() * R[2];
     // if (scal != 0)
     if (std::fabs(scal) > std::numeric_limits<double>::epsilon())
-      k = -(getA() * M0.get_X() + getB() * M0.get_Y() + getC() * M0.get_Z() +
-            getD()) /
-          scal;
+      k = -(getA() * M0.get_X() + getB() * M0.get_Y() + getC() * M0.get_Z() + getD()) / scal;
     else
       k = 0;
 
@@ -380,6 +369,5 @@ void vpPlane::changeFrame(const vpHomogeneousMatrix &cMo)
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpPlane &p)
 {
-  return (os << "(" << p.getA() << "," << p.getB() << "," << p.getC() << ","
-             << p.getD() << ") ");
+  return (os << "(" << p.getA() << "," << p.getB() << "," << p.getC() << "," << p.getD() << ") ");
 };

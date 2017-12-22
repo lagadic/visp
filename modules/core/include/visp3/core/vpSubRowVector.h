@@ -75,14 +75,12 @@ protected:
 
 public:
   vpSubRowVector();
-  vpSubRowVector(vpRowVector &v, const unsigned int &offset,
-                 const unsigned int &ncols);
+  vpSubRowVector(vpRowVector &v, const unsigned int &offset, const unsigned int &ncols);
   virtual ~vpSubRowVector();
 
   void checkParentStatus() const;
 
-  void init(vpRowVector &v, const unsigned int &offset,
-            const unsigned int &ncols);
+  void init(vpRowVector &v, const unsigned int &offset, const unsigned int &ncols);
 
   vpSubRowVector &operator=(const vpSubRowVector &B);
   vpSubRowVector &operator=(const vpRowVector &B);

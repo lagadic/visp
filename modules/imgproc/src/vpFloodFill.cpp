@@ -82,9 +82,8 @@
   \param newValue : New value to flood fill.
   \param connexity : Type of connexity.
 */
-void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint,
-                   const unsigned char oldValue, const unsigned char newValue,
-                   const vpImageMorphology::vpConnexityType &connexity)
+void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
+                   const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
 {
   // Code from Lode Vandevenne tutorial.
   // Naive modification for 8-connexity implementation
@@ -158,8 +157,7 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint,
             spanBelow = true;
           }
         }
-      } else if (spanBelow && y < I.getHeight() - 1 &&
-                 I[y + 1][x1] != oldValue) {
+      } else if (spanBelow && y < I.getHeight() - 1 && I[y + 1][x1] != oldValue) {
         spanBelow = false;
       }
 

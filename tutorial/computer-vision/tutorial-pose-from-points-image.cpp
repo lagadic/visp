@@ -7,8 +7,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/vision/vpPose.h>
 
-void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
-                 const vpCameraParameters &cam, bool init,
+void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot, const vpCameraParameters &cam, bool init,
                  vpHomogeneousMatrix &cMo)
 {
   vpPose pose;

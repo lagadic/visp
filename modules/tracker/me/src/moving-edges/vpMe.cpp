@@ -89,8 +89,7 @@ static point point_intersection(droite D1, droite D2)
   return (I);
 }
 
-static void recale(point &P, double Xmin, double Ymin, double Xmax,
-                   double Ymax)
+static void recale(point &P, double Xmin, double Ymin, double Xmax, double Ymax)
 {
   if (vpMath::equal(P.x, Xmin))
     P.x = Xmin; // a peu pres => exactement !
@@ -116,8 +115,7 @@ static void permute(point &A, point &B)
 }
 
 // vrai si partie visible
-static bool clipping(point A, point B, double Xmin, double Ymin, double Xmax,
-                     double Ymax, point &Ac,
+static bool clipping(point A, point B, double Xmin, double Ymin, double Xmax, double Ymax, point &Ac,
                      point &Bc) // resultat: A,B clippes
 {
   droite AB, D[4];
@@ -210,8 +208,7 @@ else  { Ac=P[1];  Bc=P[0]; }  //  leur abscisse x)
 // calcule la surface relative des 2 portions definies
 // par le segment PQ sur le carre Xmin,Ymin,Xmax,Ymax
 // Rem : P,Q tries sur x, et donc seulement 6 cas
-static double S_relative(point P, point Q, double Xmin, double Ymin,
-                         double Xmax, double Ymax)
+static double S_relative(point P, point Q, double Xmin, double Ymin, double Xmax, double Ymax)
 {
 
   if (Q.x < P.x)   // tri le couple de points
@@ -222,71 +219,55 @@ static double S_relative(point P, point Q, double Xmin, double Ymin,
 
   // if(P.x==Xmin && Q.x==Xmax)
   if ((std::fabs(P.x - Xmin) <=
-       vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) *
-           std::numeric_limits<double>::epsilon()) &&
+       vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(Q.x - Xmax) <=
-       vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) *
-           std::numeric_limits<double>::epsilon()))
+       vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon()))
     return (fabs(Ymax + Ymin - P.y - Q.y));
 
   // if( (P.y==Ymin && Q.y==Ymax) ||
   //  (Q.y==Ymin && P.y==Ymax))
   if (((std::fabs(P.y - Ymin) <=
-        vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) *
-            std::numeric_limits<double>::epsilon()) &&
+        vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon()) &&
        (std::fabs(Q.y - Ymax) <=
-        vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) *
-            std::numeric_limits<double>::epsilon())) ||
+        vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())) ||
       ((std::fabs(Q.y - Ymin) <=
-        vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) *
-            std::numeric_limits<double>::epsilon()) &&
+        vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon()) &&
        (std::fabs(P.y - Ymax) <=
-        vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) *
-            std::numeric_limits<double>::epsilon())))
+        vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())))
     return (fabs(Xmax + Xmin - P.x - Q.x));
 
   // if( P.x==Xmin && Q.y==Ymax )
   if (std::fabs(P.x - Xmin) <=
-          vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) *
-              std::numeric_limits<double>::epsilon() &&
+          vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon() &&
       std::fabs(Q.y - Ymax) <=
-          vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) *
-              std::numeric_limits<double>::epsilon())
+          vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())
     return (1 - (Ymax - P.y) * (Q.x - Xmin));
   // if( P.x==Xmin && Q.y==Ymin )
   if (std::fabs(P.x - Xmin) <=
-          vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) *
-              std::numeric_limits<double>::epsilon() &&
+          vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon() &&
       std::fabs(Q.y - Ymin) <=
-          vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) *
-              std::numeric_limits<double>::epsilon())
+          vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon())
     return (1 - (P.y - Ymin) * (Q.x - Xmin));
   // if( P.y==Ymin && Q.x==Xmax )
   if (std::fabs(P.y - Ymin) <=
-          vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) *
-              std::numeric_limits<double>::epsilon() &&
+          vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon() &&
       std::fabs(Q.x - Xmax) <=
-          vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) *
-              std::numeric_limits<double>::epsilon())
+          vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon())
     return (1 - (Xmax - P.x) * (Q.y - Ymin));
   // if( P.y==Ymax && Q.x==Xmax )
   if (std::fabs(P.y - Ymax) <=
-          vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) *
-              std::numeric_limits<double>::epsilon() &&
+          vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon() &&
       std::fabs(Q.x - Xmax) <=
-          vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) *
-              std::numeric_limits<double>::epsilon())
+          vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon())
     return (1 - (Xmax - P.x) * (Ymax - Q.y));
 
-  printf("utils_ecm: ERREUR dans S_relative (%f,%f) (%f,%f) %f %f %f %f\n",
-         P.x, P.y, Q.x, Q.y, Xmin, Ymin, Xmax, Ymax);
+  printf("utils_ecm: ERREUR dans S_relative (%f,%f) (%f,%f) %f %f %f %f\n", P.x, P.y, Q.x, Q.y, Xmin, Ymin, Xmax, Ymax);
   exit(-1); // DEBUG Stoppe net l'execution
 }
 
-static void
-calcul_masques(vpColVector &angle, // definitions des angles theta
-               unsigned int n,     // taille masques (PAIRE ou IMPAIRE Ok)
-               vpMatrix *M)        // resultat M[theta](n,n)
+static void calcul_masques(vpColVector &angle, // definitions des angles theta
+                           unsigned int n,     // taille masques (PAIRE ou IMPAIRE Ok)
+                           vpMatrix *M)        // resultat M[theta](n,n)
 {
   // Le coef |a| = |1/2n| n'est pas incorpore dans M(i,j) (=> que des int)
 
@@ -301,18 +282,16 @@ calcul_masques(vpColVector &angle, // definitions des angles theta
   unsigned int nb_theta = angle.getRows();
 
   for (i_theta = 0; i_theta < nb_theta; i_theta++) {
-    double theta =
-        M_PI / 180 * angle[i_theta]; // indice i -> theta(i) en radians
-                                     //  angle[] dans [0,180[
-    double cos_theta = cos(theta);   // vecteur directeur de l'ECM
-    double sin_theta = sin(theta);   //  associe au masque
+    double theta = M_PI / 180 * angle[i_theta]; // indice i -> theta(i) en radians
+                                                //  angle[] dans [0,180[
+    double cos_theta = cos(theta);              // vecteur directeur de l'ECM
+    double sin_theta = sin(theta);              //  associe au masque
 
     // PRE-CALCULE 2 POINTS DE D(theta) BIEN EN DEHORS DU MASQUE
     // =========================================================
     // if( angle[i_theta]==90 )                     // => tan(theta) infinie !
-    if (std::fabs(angle[i_theta] - 90) <=
-        vpMath::maximum(std::fabs(angle[i_theta]), 90.) *
-            std::numeric_limits<double>::epsilon()) // => tan(theta) infinie !
+    if (std::fabs(angle[i_theta] - 90) <= vpMath::maximum(std::fabs(angle[i_theta]), 90.) *
+                                              std::numeric_limits<double>::epsilon()) // => tan(theta) infinie !
     {
       P1.x = 0;
       P1.y = -(int)n;
@@ -384,27 +363,19 @@ void vpMe::print()
   std::cout << std::endl;
   std::cout << "Moving edges settings " << std::endl;
   std::cout << std::endl;
-  std::cout << " Size of the convolution masks...." << mask_size << "x"
-            << mask_size << " pixels" << std::endl;
-  std::cout << " Number of masks.................." << n_mask << "        "
-            << std::endl;
-  std::cout << " Query range +/- J................" << range << " pixels  "
-            << std::endl;
+  std::cout << " Size of the convolution masks...." << mask_size << "x" << mask_size << " pixels" << std::endl;
+  std::cout << " Number of masks.................." << n_mask << "        " << std::endl;
+  std::cout << " Query range +/- J................" << range << " pixels  " << std::endl;
   std::cout << " Likelihood test ratio............" << threshold << std::endl;
-  std::cout << " Contrast tolerance +/-..........." << mu1 * 100 << "% and "
-            << mu2 * 100 << "%     " << std::endl;
-  std::cout << " Sample step......................" << sample_step
-            << " pixels" << std::endl;
-  std::cout << " Strip............................" << strip << " pixels  "
-            << std::endl;
-  std::cout << " Min_Samplestep..................." << min_samplestep
-            << " pixels  " << std::endl;
+  std::cout << " Contrast tolerance +/-..........." << mu1 * 100 << "% and " << mu2 * 100 << "%     " << std::endl;
+  std::cout << " Sample step......................" << sample_step << " pixels" << std::endl;
+  std::cout << " Strip............................" << strip << " pixels  " << std::endl;
+  std::cout << " Min_Samplestep..................." << min_samplestep << " pixels  " << std::endl;
 }
 
 vpMe::vpMe()
-  : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1),
-    mask_sign(0), range(4), sample_step(10), ntotal_sample(0),
-    points_to_track(500), mask_size(5), n_mask(180), strip(2), mask(NULL)
+  : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0), range(4), sample_step(10),
+    ntotal_sample(0), points_to_track(500), mask_size(5), n_mask(180), strip(2), mask(NULL)
 {
   // ntotal_sample = 0; // not sure that it is used
   // points_to_track = 500; // not sure that it is used
@@ -414,9 +385,8 @@ vpMe::vpMe()
 }
 
 vpMe::vpMe(const vpMe &me)
-  : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1),
-    mask_sign(0), range(4), sample_step(10), ntotal_sample(0),
-    points_to_track(500), mask_size(5), n_mask(180), strip(2), mask(NULL)
+  : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0), range(4), sample_step(10),
+    ntotal_sample(0), points_to_track(500), mask_size(5), n_mask(180), strip(2), mask(NULL)
 {
   *this = me;
 }

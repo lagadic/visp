@@ -44,17 +44,12 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorFace.h>
 
-bool vpSortLargestFace(cv::Rect rect1, cv::Rect rect2)
-{
-  return (rect1.area() > rect2.area());
-}
+bool vpSortLargestFace(cv::Rect rect1, cv::Rect rect2) { return (rect1.area() > rect2.area()); }
 
 /*!
   Default constructor.
  */
-vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray()
-{
-}
+vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray() {}
 
 /*!
   Set the name of the OpenCV cascade classifier file used for face detection.
@@ -65,8 +60,7 @@ vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray()
 void vpDetectorFace::setCascadeClassifierFile(const std::string &filename)
 {
   if (!m_face_cascade.load(filename)) {
-    throw vpException(vpException::ioError, "Cannot read haar file: %s",
-                      filename.c_str());
+    throw vpException(vpException::ioError, "Cannot read haar file: %s", filename.c_str());
   }
 }
 
@@ -115,11 +109,9 @@ bool vpDetectorFace::detect(const cv::Mat &frame_gray)
 
   m_faces.clear();
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  m_face_cascade.detectMultiScale(frame_gray, m_faces, 1.1, 2, 0,
-                                  cv::Size(30, 30));
+  m_face_cascade.detectMultiScale(frame_gray, m_faces, 1.1, 2, 0, cv::Size(30, 30));
 #else
-  m_face_cascade.detectMultiScale(frame_gray, m_faces, 1.1, 2,
-                                  0 | CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
+  m_face_cascade.detectMultiScale(frame_gray, m_faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
 #endif
 
   m_nb_objects = m_faces.size();

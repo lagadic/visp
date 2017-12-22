@@ -124,8 +124,7 @@ private:
 public:
   vpDiskGrabber();
   explicit vpDiskGrabber(const std::string &genericName);
-  explicit vpDiskGrabber(const std::string &dir, const std::string &basename,
-                         long number, int step, unsigned int noz,
+  explicit vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
                          const std::string &ext);
   virtual ~vpDiskGrabber();
 

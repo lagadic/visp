@@ -61,32 +61,25 @@ void vpFeatureMomentAlpha::compute_interaction()
   bool found_FeatureMoment_centered;
 
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(
-          moments.get("vpMomentCentered", found_moment_centered)));
-  vpFeatureMomentCentered &featureMomentCentered =
-      (static_cast<vpFeatureMomentCentered &>(featureMomentsDataBase->get(
-          "vpFeatureMomentCentered", found_FeatureMoment_centered)));
+      (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
+  vpFeatureMomentCentered &featureMomentCentered = (static_cast<vpFeatureMomentCentered &>(
+      featureMomentsDataBase->get("vpFeatureMomentCentered", found_FeatureMoment_centered)));
 
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
   if (!found_FeatureMoment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpFeatureMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
 
   double multiplier =
-      -1. / (momentCentered.get(2, 0) * momentCentered.get(2, 0) -
-             2 * momentCentered.get(0, 2) * momentCentered.get(2, 0) +
-             4 * momentCentered.get(1, 1) * momentCentered.get(1, 1) +
-             momentCentered.get(0, 2) * momentCentered.get(0, 2));
+      -1. /
+      (momentCentered.get(2, 0) * momentCentered.get(2, 0) - 2 * momentCentered.get(0, 2) * momentCentered.get(2, 0) +
+       4 * momentCentered.get(1, 1) * momentCentered.get(1, 1) + momentCentered.get(0, 2) * momentCentered.get(0, 2));
 
   interaction_matrices[0].resize(1, 6);
   interaction_matrices[0] =
-      multiplier *
-      (momentCentered.get(1, 1) * featureMomentCentered.interaction(2, 0) +
-       (momentCentered.get(0, 2) - momentCentered.get(2, 0)) *
-           featureMomentCentered.interaction(1, 1) -
-       momentCentered.get(1, 1) * featureMomentCentered.interaction(0, 2));
+      multiplier * (momentCentered.get(1, 1) * featureMomentCentered.interaction(2, 0) +
+                    (momentCentered.get(0, 2) - momentCentered.get(2, 0)) * featureMomentCentered.interaction(1, 1) -
+                    momentCentered.get(1, 1) * featureMomentCentered.interaction(0, 2));
 }
 
 #else
@@ -104,19 +97,15 @@ void vpFeatureMomentAlpha::compute_interaction()
   bool found_moment_gravity;
 
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(
-          moments.get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(
-          moments.get("vpMomentGravityCenter", found_moment_gravity));
+      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
   const vpMomentObject &momentObject = moment->getObject();
 
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
   if (!found_moment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
   double mu11 = momentCentered.get(1, 1);
   double mu20 = momentCentered.get(2, 0);
@@ -148,12 +137,10 @@ void vpFeatureMomentAlpha::compute_interaction()
   Avx = mu11 * DA * A / d + (DA * mu02 + (0.5) * d - (0.5) * DA_2) * B / d;
   Avy = (DA * mu02 - (0.5) * d - (.5) * DA_2) * A / d - B * mu11 * DA / d;
 
-  Awx = (beta * (mu12 * (mu20 - mu02) + mu11 * (mu03 - mu21)) +
-         gamma * Xg * (mu02 * (mu20 - mu02) - 2 * mu11_2) +
+  Awx = (beta * (mu12 * (mu20 - mu02) + mu11 * (mu03 - mu21)) + gamma * Xg * (mu02 * (mu20 - mu02) - 2 * mu11_2) +
          gamma * Yg * mu11 * (mu20 + mu02)) /
         d;
-  Awy = (beta * (mu21 * (mu02 - mu20) + mu11 * (mu30 - mu12)) +
-         gamma * Xg * mu11 * (mu20 + mu02) +
+  Awy = (beta * (mu21 * (mu02 - mu20) + mu11 * (mu30 - mu12)) + gamma * Xg * mu11 * (mu20 + mu02) +
          gamma * Yg * (mu20 * (mu02 - mu20) - 2 * mu11_2)) /
         d;
 
@@ -177,8 +164,7 @@ void vpFeatureMomentAlpha::compute_interaction()
   interaction_matrices[0][0][WZ] = -1.;
 }
 
-vpColVector vpFeatureMomentAlpha::error(const vpBasicFeature &s_star,
-                                        const unsigned int /* select */)
+vpColVector vpFeatureMomentAlpha::error(const vpBasicFeature &s_star, const unsigned int /* select */)
 {
   vpColVector e(0);
   double err = s[0] - s_star[0];

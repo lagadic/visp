@@ -54,8 +54,11 @@ vpMoment::vpMoment() : object(NULL), moments(NULL), values() {}
   Links the moment to a database of moment primitives.
   If the moment depends on other moments, these moments must be linked to the
 same database. \attention Two moments of the same class cannot be stored in
-the same database \code #include <visp3/core/vpMomentCentered.h> #include
-<visp3/core/vpMomentDatabase.h> #include <visp3/core/vpMomentGravityCenter.h>
+the same database
+\code
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
 
@@ -64,9 +67,8 @@ int main()
   vpPoint p;
   std::vector<vpPoint> vec_p;
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane (vertex 2)
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
 
   vpMomentObject obj(2);
   obj.setType(vpMomentObject::DISCRETE); // Discrete mode.
@@ -96,8 +98,7 @@ image plane (vertex 2)
 void vpMoment::linkTo(vpMomentDatabase &data_base)
 {
   if (strlen(name()) >= 255) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the moment name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the moment name"));
   }
 
   std::strcpy(_name, name());
@@ -111,10 +112,7 @@ void vpMoment::linkTo(vpMomentDatabase &data_base)
   values. \param moment_object : object descriptor of the current camera
   vision.
 */
-void vpMoment::update(vpMomentObject &moment_object)
-{
-  this->object = &moment_object;
-}
+void vpMoment::update(vpMomentObject &moment_object) { this->object = &moment_object; }
 
 /*!
   Prints the moment contents to a stream
@@ -123,8 +121,7 @@ void vpMoment::update(vpMomentObject &moment_object)
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m)
 {
-  for (std::vector<double>::const_iterator i = m.values.begin();
-       i != m.values.end(); ++i)
+  for (std::vector<double>::const_iterator i = m.values.begin(); i != m.values.end(); ++i)
     os << *i << ",";
 
   return os;

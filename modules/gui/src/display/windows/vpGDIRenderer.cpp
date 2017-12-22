@@ -47,16 +47,13 @@
 /*!
   Constructor.
 */
-vpGDIRenderer::vpGDIRenderer()
-  : m_bmp(NULL), m_bmp_width(0), m_bmp_height(0), timelost(0)
+vpGDIRenderer::vpGDIRenderer() : m_bmp(NULL), m_bmp_width(0), m_bmp_height(0), timelost(0)
 {
   // if the screen depth is not 32bpp, throw an exception
   int bpp = GetDeviceCaps(GetDC(NULL), BITSPIXEL);
   if (bpp != 32)
-    throw vpDisplayException(
-        vpDisplayException::depthNotSupportedError,
-        "vpGDIRenderer supports only 32bits depth: screen is %dbits depth!",
-        bpp);
+    throw vpDisplayException(vpDisplayException::depthNotSupportedError,
+                             "vpGDIRenderer supports only 32bits depth: screen is %dbits depth!", bpp);
 
   InitializeCriticalSection(&m_criticalSection);
 
@@ -123,8 +120,7 @@ vpGDIRenderer::~vpGDIRenderer()
   \param width The window's width.
   \param height The window's height.
 */
-bool vpGDIRenderer::init(HWND hWindow, unsigned int width,
-                         unsigned int height)
+bool vpGDIRenderer::init(HWND hWindow, unsigned int width, unsigned int height)
 {
   timelost = 0.;
   m_hWnd = hWindow;
@@ -133,10 +129,8 @@ bool vpGDIRenderer::init(HWND hWindow, unsigned int width,
   m_rheight = height;
 
   // creates the font
-  m_hFont =
-      CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET,
-                 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-                 DEFAULT_PITCH | FF_DONTCARE, NULL);
+  m_hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                       CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, NULL);
   return true;
 }
 
@@ -156,9 +150,7 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa> &I)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I,
-                              const vpImagePoint &iP,
-                              const unsigned int width,
+void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
                               const unsigned int height)
 {
   // converts the image into a HBITMAP
@@ -181,9 +173,7 @@ void vpGDIRenderer::setImg(const vpImage<unsigned char> &I)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I,
-                              const vpImagePoint &iP,
-                              const unsigned int width,
+void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
                               const unsigned int height)
 {
   // converts the image into a HBITMAP
@@ -207,8 +197,7 @@ bool vpGDIRenderer::render()
   SelectObject(hDCMem, m_bmp);
 
   // blits it on the window's DC
-  BitBlt(hDCScreen, 0, 0, static_cast<int>(m_rwidth),
-         static_cast<int>(m_rheight), hDCMem, 0, 0, SRCCOPY);
+  BitBlt(hDCScreen, 0, 0, static_cast<int>(m_rwidth), static_cast<int>(m_rheight), hDCMem, 0, 0, SRCCOPY);
 
   LeaveCriticalSection(&m_criticalSection);
   // DeleteDC(hDCMem);
@@ -230,8 +219,7 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
   unsigned char *imBuffer = new unsigned char[m_rwidth * m_rheight * 4];
 
   if (m_rscale == 1) {
-    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4;
-         i += 4, k++) {
+    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4; i += 4, k++) {
       imBuffer[i + 0] = I.bitmap[k].B;
       imBuffer[i + 1] = I.bitmap[k].G;
       imBuffer[i + 2] = I.bitmap[k].R;
@@ -265,17 +253,13 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I,
-                               const vpImagePoint &iP,
-                               const unsigned int width,
+void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
                                const unsigned int height)
 {
   int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
   int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max =
-      (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max =
-      (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+  int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -334,8 +318,7 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
   unsigned char *imBuffer = new unsigned char[m_rwidth * m_rheight * 4];
 
   if (m_rscale == 1) {
-    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4;
-         i += 4, k++) {
+    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4; i += 4, k++) {
       imBuffer[i + 0] = I.bitmap[k];
       imBuffer[i + 1] = I.bitmap[k];
       imBuffer[i + 2] = I.bitmap[k];
@@ -369,17 +352,13 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I,
-                               const vpImagePoint &iP,
-                               const unsigned int width,
+void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
                                const unsigned int height)
 {
   int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
   int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max =
-      (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max =
-      (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+  int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -432,8 +411,7 @@ void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I,
 
   \return the operation succefulness
 */
-bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer,
-                                 unsigned int w, unsigned int h)
+bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigned int w, unsigned int h)
 {
   // the bitmap may only be accessed by one thread at the same time
   // that's why we enter critical section
@@ -449,8 +427,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer,
       DeleteObject(hBmp);
     }
     // create a new BITMAP from this buffer
-    if ((hBmp = CreateBitmap(static_cast<int>(w), static_cast<int>(h), 1, 32,
-                             (void *)imBuffer)) == NULL)
+    if ((hBmp = CreateBitmap(static_cast<int>(w), static_cast<int>(h), 1, 32, (void *)imBuffer)) == NULL)
       return false;
 
     m_bmp_width = w;
@@ -471,8 +448,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer,
 
   \return the operation succefulness
 */
-bool vpGDIRenderer::updateBitmapROI(unsigned char *imBuffer, int i_min,
-                                    int j_min, int w, int h)
+bool vpGDIRenderer::updateBitmapROI(unsigned char *imBuffer, int i_min, int j_min, int w, int h)
 {
   HBITMAP htmp = CreateBitmap(w, h, 1, 32, (void *)imBuffer);
 
@@ -513,12 +489,10 @@ void vpGDIRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
   SelectObject(hDCMem, m_bmp);
 
   if (color.id < vpColor::id_unknown)
-    SetPixel(hDCMem, vpMath::round(iP.get_u() / m_rscale),
-             vpMath::round(iP.get_v() / m_rscale), m_colors[color.id]);
+    SetPixel(hDCMem, vpMath::round(iP.get_u() / m_rscale), vpMath::round(iP.get_v() / m_rscale), m_colors[color.id]);
   else {
     COLORREF gdicolor = RGB(color.R, color.G, color.B);
-    SetPixel(hDCMem, vpMath::round(iP.get_u() / m_rscale),
-             vpMath::round(iP.get_v() / m_rscale), gdicolor);
+    SetPixel(hDCMem, vpMath::round(iP.get_u() / m_rscale), vpMath::round(iP.get_v() / m_rscale), gdicolor);
   }
   // display the result (flush)
   // BitBlt(hDCScreen, x, y, 1, 1, hDCMem, x, y, SRCCOPY);
@@ -536,9 +510,8 @@ void vpGDIRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
   \param thickness : Thickness of the line.
   \param style style of the line
 */
-void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                             const vpColor &color, unsigned int thickness,
-                             int style)
+void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                             unsigned int thickness, int style)
 {
   HDC hDCScreen = NULL, hDCMem = NULL;
   HPEN hPen = NULL;
@@ -556,8 +529,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
 
     // create the pen
     if (color.id < vpColor::id_unknown)
-      hPen =
-          CreatePen(style, static_cast<int>(thickness), m_colors[color.id]);
+      hPen = CreatePen(style, static_cast<int>(thickness), m_colors[color.id]);
     else {
       COLORREF gdicolor = RGB(color.R, color.G, color.B);
       hPen = CreatePen(style, static_cast<int>(thickness), gdicolor);
@@ -621,29 +593,23 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
   // line manually drawing multiple small lines
   if (thickness != 1 && style != PS_SOLID) {
     double size = 10. * m_rscale;
-    double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) +
-                         vpMath::sqr(ip2.get_j() - ip1.get_j()));
+    double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
     double deltaj = size / length * (ip2.get_j() - ip1.get_j());
     double deltai = size / length * (ip2.get_i() - ip1.get_i());
     double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
     double orig = ip1.get_i() - slope * ip1.get_j();
-    for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j();
-         j += (unsigned int)(2 * deltaj)) {
+    for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
       double i = slope * j + orig;
       // move to the starting point
-      MoveToEx(hDCMem, vpMath::round(j / m_rscale),
-               vpMath::round(i / m_rscale), NULL);
+      MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
       // Draw the line
-      LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale),
-             vpMath::round((i + deltai) / m_rscale));
+      LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
     }
   } else {
     // move to the starting point
-    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale),
-             vpMath::round(ip1.get_v() / m_rscale), NULL);
+    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
     // Draw the line
-    LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale),
-           vpMath::round(ip2.get_v() / m_rscale));
+    LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
   }
 
   LeaveCriticalSection(&m_criticalSection);
@@ -662,8 +628,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
   \param fill  When set to true fill the rectangle.
   \param thickness : Line thickness
 */
-void vpGDIRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width,
-                             unsigned int height, const vpColor &color,
+void vpGDIRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
                              bool fill, unsigned int thickness)
 {
   if (thickness == 0)
@@ -677,8 +642,7 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width,
   COLORREF gdicolor = RGB(0, 0, 0);
 
   if (color.id < vpColor::id_unknown)
-    hPen =
-        CreatePen(PS_SOLID, static_cast<int>(thickness), m_colors[color.id]);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), m_colors[color.id]);
   else {
     gdicolor = RGB(color.R, color.G, color.B);
     hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
@@ -707,10 +671,8 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width,
   SelectObject(hDCMem, hPen);
 
   // draw the rectangle
-  Rectangle(hDCMem, vpMath::round(topLeft.get_u() / m_rscale),
-            vpMath::round(topLeft.get_v() / m_rscale),
-            vpMath::round((topLeft.get_u() + width) / m_rscale),
-            vpMath::round((topLeft.get_v() + height) / m_rscale));
+  Rectangle(hDCMem, vpMath::round(topLeft.get_u() / m_rscale), vpMath::round(topLeft.get_v() / m_rscale),
+            vpMath::round((topLeft.get_u() + width) / m_rscale), vpMath::round((topLeft.get_v() + height) / m_rscale));
 
   // display the result (flush)
   //  BitBlt(hDCScreen, j, i, width, height, hDCMem, j, i, SRCCOPY);
@@ -743,9 +705,8 @@ void vpGDIRenderer::clear(const vpColor &color)
   \param fill  When set to true fill the circle.
   \param thickness : Line thickness
 */
-void vpGDIRenderer::drawCircle(const vpImagePoint &center,
-                               unsigned int radius, const vpColor &color,
-                               bool fill, unsigned int thickness)
+void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
+                               unsigned int thickness)
 {
 
   // get the window's DC
@@ -755,8 +716,7 @@ void vpGDIRenderer::drawCircle(const vpImagePoint &center,
   // create the pen
   HPEN hPen;
   if (color.id < vpColor::id_unknown)
-    hPen =
-        CreatePen(PS_SOLID, static_cast<int>(thickness), m_colors[color.id]);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), m_colors[color.id]);
   else {
     COLORREF gdicolor = RGB(color.R, color.G, color.B);
     hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
@@ -814,8 +774,7 @@ void vpGDIRenderer::drawCircle(const vpImagePoint &center,
   \param text The string to display
   \param color The text's color
 */
-void vpGDIRenderer::drawText(const vpImagePoint &ip, const char *text,
-                             const vpColor &color)
+void vpGDIRenderer::drawText(const vpImagePoint &ip, const char *text, const vpColor &color)
 {
   // get the window's DC
   HDC hDCScreen = GetDC(m_hWnd);
@@ -846,8 +805,7 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char *text,
   GetTextExtentPoint32(hDCMem, text, length, &size);
 
   // displays the string
-  TextOut(hDCMem, vpMath::round(ip.get_u() / m_rscale),
-          vpMath::round(ip.get_v() / m_rscale), text, length);
+  TextOut(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale), text, length);
 
   // display the result (flush)
   // BitBlt(hDCScreen, j, i, size.cx, size.cy, hDCMem, j, i, SRCCOPY);
@@ -865,8 +823,7 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char *text,
   \param color The cross' color
   \param thickness width of the cross
 */
-void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
-                              const vpColor &color, unsigned int thickness)
+void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness)
 {
   /* unsigned */ int half_size = static_cast<int>(size / 2 / m_rscale);
 
@@ -881,8 +838,7 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
     // create the pen
     HPEN hPen;
     if (color.id < vpColor::id_unknown)
-      hPen = CreatePen(PS_SOLID, static_cast<int>(thickness),
-                       m_colors[color.id]);
+      hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), m_colors[color.id]);
     else {
       COLORREF gdicolor = RGB(color.R, color.G, color.B);
       hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
@@ -896,18 +852,14 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
     SelectObject(hDCMem, hPen);
 
     // move to the starting point
-    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale) - half_size,
-             vpMath::round(ip.get_v() / m_rscale), NULL);
+    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale) - half_size, vpMath::round(ip.get_v() / m_rscale), NULL);
     // Draw the first line (horizontal)
-    LineTo(hDCMem, vpMath::round(ip.get_u() / m_rscale) + half_size,
-           vpMath::round(ip.get_v() / m_rscale));
+    LineTo(hDCMem, vpMath::round(ip.get_u() / m_rscale) + half_size, vpMath::round(ip.get_v() / m_rscale));
 
     // move to the starting point
-    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale),
-             vpMath::round(ip.get_v() / m_rscale) - half_size, NULL);
+    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale) - half_size, NULL);
     // Draw the second line (vertical)
-    LineTo(hDCMem, vpMath::round(ip.get_u() / m_rscale),
-           vpMath::round(ip.get_v() / m_rscale) + half_size);
+    LineTo(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale) + half_size);
 
     // display the result (flush)
     //  BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size,
@@ -930,10 +882,8 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
-                              const vpImagePoint &ip2, const vpColor &color,
-                              unsigned int w, unsigned int h,
-                              unsigned int thickness)
+void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
+                              unsigned int h, unsigned int thickness)
 {
   double a = ip2.get_i() / m_rscale - ip1.get_i() / m_rscale;
   double b = ip2.get_j() / m_rscale - ip1.get_j() / m_rscale;
@@ -952,8 +902,7 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
   // create the pen
   HPEN hPen;
   if (color.id < vpColor::id_unknown)
-    hPen =
-        CreatePen(PS_SOLID, static_cast<int>(thickness), m_colors[color.id]);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), m_colors[color.id]);
   else {
     COLORREF gdicolor = RGB(color.R, color.G, color.B);
     hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
@@ -985,10 +934,8 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
       ip4.set_j(ip3.get_j() + a * h);
 
       if (lg > 2 * vpImagePoint::distance(ip2 / m_rscale, ip4)) {
-        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale),
-                 vpMath::round(ip2.get_v() / m_rscale), NULL);
-        LineTo(hDCMem, vpMath::round(ip4.get_u()),
-               vpMath::round(ip4.get_v()));
+        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale), NULL);
+        LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
       }
       // t+=0.1 ;
     }
@@ -1000,18 +947,14 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
       ip4.set_j(ip3.get_j() - a * h);
 
       if (lg > 2 * vpImagePoint::distance(ip2 / m_rscale, ip4)) {
-        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale),
-                 vpMath::round(ip2.get_v() / m_rscale), NULL);
-        LineTo(hDCMem, vpMath::round(ip4.get_u()),
-               vpMath::round(ip4.get_v()));
+        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale), NULL);
+        LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
       }
 
       // t-=0.1 ;
     }
-    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale),
-             vpMath::round(ip1.get_v() / m_rscale), NULL);
-    LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale),
-           vpMath::round(ip2.get_v() / m_rscale));
+    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
+    LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
   }
 
   // display the result (flush)

@@ -284,8 +284,7 @@ public:
   */
   static double distance(const vpImagePoint &iP1, const vpImagePoint &iP2)
   {
-    return (sqrt(vpMath::sqr(iP1.get_i() - iP2.get_i()) +
-                 vpMath::sqr(iP1.get_j() - iP2.get_j())));
+    return (sqrt(vpMath::sqr(iP1.get_i() - iP2.get_i()) + vpMath::sqr(iP1.get_j() - iP2.get_j())));
   }
 
   static vpRect getBBox(const std::vector<vpImagePoint> &ipVec);
@@ -301,40 +300,25 @@ public:
   */
   static double sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP2)
   {
-    return (vpMath::sqr(iP1.get_i() - iP2.get_i()) +
-            vpMath::sqr(iP1.get_j() - iP2.get_j()));
+    return (vpMath::sqr(iP1.get_i() - iP2.get_i()) + vpMath::sqr(iP1.get_j() - iP2.get_j()));
   }
 
   bool inRectangle(const vpRect &rect) const;
 
-  friend VISP_EXPORT bool operator==(const vpImagePoint &ip1,
-                                     const vpImagePoint &ip2);
-  friend VISP_EXPORT bool operator!=(const vpImagePoint &ip1,
-                                     const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1,
-                                             const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
-                                            const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
-                                            const int offset);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
-                                            const unsigned int offset);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
-                                            const double offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
-                                            const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
-                                            const int offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
-                                            const unsigned int offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
-                                            const double offset);
-  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1,
-                                            const double scale);
-  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1,
-                                            const double scale);
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpImagePoint &ip);
+  friend VISP_EXPORT bool operator==(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const int offset);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const unsigned int offset);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const double offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const int offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const unsigned int offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const double offset);
+  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, const double scale);
+  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, const double scale);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImagePoint &ip);
 
 private:
   double i, j;

@@ -54,21 +54,18 @@
   Basic constructor.
 */
 vpMbtPolygon::vpMbtPolygon()
-  : index(-1), isvisible(false), isappearing(false), useLod(false),
-    minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0), name(""),
-    hasOrientation(true)
+  : index(-1), isvisible(false), isappearing(false), useLod(false), minLineLengthThresh(50.0),
+    minPolygonAreaThresh(2500.0), name(""), hasOrientation(true)
 {
 }
 
 vpMbtPolygon::vpMbtPolygon(const vpMbtPolygon &mbtp)
-  : vpPolygon3D(mbtp), index(mbtp.index), isvisible(mbtp.isvisible),
-    isappearing(mbtp.isappearing), useLod(mbtp.useLod),
-    minLineLengthThresh(mbtp.minLineLengthThresh),
-    minPolygonAreaThresh(mbtp.minPolygonAreaThresh), name(mbtp.name),
+  : vpPolygon3D(mbtp), index(mbtp.index), isvisible(mbtp.isvisible), isappearing(mbtp.isappearing), useLod(mbtp.useLod),
+    minLineLengthThresh(mbtp.minLineLengthThresh), minPolygonAreaThresh(mbtp.minPolygonAreaThresh), name(mbtp.name),
     hasOrientation(mbtp.hasOrientation)
 {
   //*this = mbtp; // Should not be called by copy contructor to avoid multiple
-  //assignements.
+  // assignements.
 }
 
 vpMbtPolygon &vpMbtPolygon::operator=(const vpMbtPolygon &mbtp)
@@ -106,10 +103,8 @@ vpMbtPolygon::~vpMbtPolygon() {}
 
   \return Return true if the polygon is visible.
 */
-bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo,
-                             const double alpha, const bool &modulo,
-                             const vpCameraParameters &cam,
-                             const vpImage<unsigned char> &I)
+bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo,
+                             const vpCameraParameters &cam, const vpImage<unsigned char> &I)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
 
@@ -131,8 +126,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo,
         double y1 = roiImagePoints[0].get_v();
         double x2 = roiImagePoints[1].get_u();
         double y2 = roiImagePoints[1].get_v();
-        double length =
-            std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+        double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         //          std::cout << "Index=" << index << " ; Line length=" <<
         //          length << " ; clippingFlag=" << clippingFlag << std::endl;
         //        vpTRACE("index=%d lenght=%f minLineLengthThresh=%f", index,
@@ -169,12 +163,9 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo,
     currentVertex = p[i].cP;
     nextVertex = p[(i + 1) % nbpt].cP;
 
-    faceNormal[0] += (currentVertex[1] - nextVertex[1]) *
-                     (currentVertex[2] + nextVertex[2]);
-    faceNormal[1] += (currentVertex[2] - nextVertex[2]) *
-                     (currentVertex[0] + nextVertex[0]);
-    faceNormal[2] += (currentVertex[0] - nextVertex[0]) *
-                     (currentVertex[1] + nextVertex[1]);
+    faceNormal[0] += (currentVertex[1] - nextVertex[1]) * (currentVertex[2] + nextVertex[2]);
+    faceNormal[1] += (currentVertex[2] - nextVertex[2]) * (currentVertex[0] + nextVertex[0]);
+    faceNormal[2] += (currentVertex[0] - nextVertex[0]) * (currentVertex[1] + nextVertex[1]);
   }
   faceNormal.normalize();
 
@@ -258,28 +249,28 @@ set by setMinPolygonAreaThresh().
 
 int main()
 {
-vpImage<unsigned char> I;
+  pImage<unsigned char> I;
 
-// Acquire an image
-vpImageIo::read(I, "my-image.pgm");
+  // Acquire an image
+  vpImageIo::read(I, "my-image.pgm");
 
-std::string object = "my-object";
-vpMbEdgeTracker tracker;
-tracker.loadConfigFile( object+".xml" );
-tracker.loadModel( object+".cao" );
+  std::string object = "my-object";
+  vpMbEdgeTracker tracker;
+  tracker.loadConfigFile( object+".xml" );
+  tracker.loadModel( object+".cao" );
 
-tracker.setLod(true);
-tracker.setMinLineLengthThresh(20.);
-tracker.setMinPolygonAreaThresh(20.*20.);
+  tracker.setLod(true);
+  tracker.setMinLineLengthThresh(20.);
+  tracker.setMinPolygonAreaThresh(20.*20.);
 
-tracker.initClick(I, object+".init" );
+  tracker.initClick(I, object+".init" );
 
-while (true) {
-  // tracking loop
-}
-vpXmlParser::cleanup();
+  while (true) {
+    // tracking loop
+  }
+  vpXmlParser::cleanup();
 
-return 0;
+  return 0;
 }
   \endcode
 

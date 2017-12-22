@@ -73,22 +73,25 @@ vpFeatureMomentCentered should be stored in a vpFeatureMomentDatabase.
   All moment features in a database can access each other freely at any time.
 They can also verify if a moment feature is present in the database or not.
   This code illustrates the use of both databases to handle dependencies
-between moment primitives and moment features: \code #include
-<visp3/core/vpPoint.h>
+between moment primitives and moment features:
 
+\code
+#include <visp3/core/vpPoint.h>
+
+#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpMomentBasic.h>
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentObject.h>
+#include <visp3/core/vpMomentDatabase.h>
 
-#include <iostream>
-#include <vector>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
 #include <visp3/visual_features/vpFeatureMomentCInvariant.h>
+#include <visp3/visual_features/vpFeatureMomentBasic.h>
 #include <visp3/visual_features/vpFeatureMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <iostream>
+#include <vector>
 
 int main()
 {
@@ -97,13 +100,13 @@ int main()
   vpPoint p;
   std::vector<vpPoint> vec_p; // vector that contains the vertices
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane (vertex 2) vec_p.push_back(p);
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
 
-  //////////////////////////////REFERENCE
-VALUES//////////////////////////////// vpMomentObject obj(6); // Init object
-of order 6 because we are
+  //////////////////////////////REFERENCE VALUES////////////////////////////////
+  vpMomentObject obj(6); // Init object of order 6 because we are
                          // computing C-invariants
   obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
   obj.fromVector(vec_p);
@@ -144,8 +147,9 @@ of order 6 because we are
   fmc.update(0.,0.,1.);
   fci.update(0.,0.,1.);
 
-  std::cout << fci.interaction(vpFeatureMomentCInvariant::selectC1()) <<
-std::endl; }catch(vpException &e){ std::cout << e.getMessage() << std::endl;
+  std::cout << fci.interaction(vpFeatureMomentCInvariant::selectC1()) << std::endl;
+  }catch(vpException &e){
+      std::cout << e.getMessage() << std::endl;
   }
 
   return 0;
@@ -156,14 +160,8 @@ class VISP_EXPORT vpFeatureMomentDatabase
 {
 private:
   struct cmp_str {
-    bool operator()(const char *a, const char *b) const
-    {
-      return std::strcmp(a, b) < 0;
-    }
-    char *operator=(const char *)
-    {
-      return NULL;
-    } // Only to avoid a warning under Visual with /Wall flag
+    bool operator()(const char *a, const char *b) const { return std::strcmp(a, b) < 0; }
+    char *operator=(const char *) { return NULL; } // Only to avoid a warning under Visual with /Wall flag
   };
   std::map<const char *, vpFeatureMoment *, cmp_str> featureMomentsDataBase;
   void add(vpFeatureMoment &featureMoment, char *name);

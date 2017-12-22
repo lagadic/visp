@@ -146,11 +146,10 @@ public:
   vpList(const vpList &l); // cloning
   virtual ~vpList();       // destr.
 
-  inline void next(void); // current element's successor ( cur = cur->next )
-  inline void
-  previous(void); // current element's predecessor ( cur = cur->pred )
-  inline void front(void); // go to the front of the List (cur = first)
-  inline void end(void);   // go back to the end of the List ( cur = last )
+  inline void next(void);          // current element's successor ( cur = cur->next )
+  inline void previous(void);      // current element's predecessor ( cur = cur->pred )
+  inline void front(void);         // go to the front of the List (cur = first)
+  inline void end(void);           // go back to the end of the List ( cur = last )
   inline bool outside(void) const; // test whether we are outside the List
 
   bool empty(void) const; // tests whether the List is empty
@@ -166,18 +165,13 @@ public:
 
   inline void addRight(const type &el); // inserts an element on the right
   inline void addLeft(const type &el);  // inserts an element on the left
-  inline void
-  modify(const type &el);         // modifies thevalue field of the curr. el.
-  inline void addRight(type &el); // inserts an element on the right
-  inline void addLeft(type &el);  // inserts an element on the left
-  inline void
-  swapLeft(); // Switch the current element with the element on the left
-  inline void
-  swapRight(); // Switch the current element with the element on the right
-  inline unsigned int
-  nbElement(void); // returns the number of items currently in the list
-  inline unsigned int
-  nbElements(void); // returns the number of items currently in the list
+  inline void modify(const type &el);   // modifies thevalue field of the curr. el.
+  inline void addRight(type &el);       // inserts an element on the right
+  inline void addLeft(type &el);        // inserts an element on the left
+  inline void swapLeft();               // Switch the current element with the element on the left
+  inline void swapRight();              // Switch the current element with the element on the right
+  inline unsigned int nbElement(void);  // returns the number of items currently in the list
+  inline unsigned int nbElements(void); // returns the number of items currently in the list
 
   vpList<type> &operator=(const vpList<type> &l);
   inline void operator+=(vpList<type> &l);
@@ -222,11 +216,7 @@ template <class type> void vpList<type>::init()
   \endverbatim
   \sa init()
  */
-template <class type>
-vpList<type>::vpList() : nb(0), first(NULL), last(NULL), cur(NULL)
-{
-  init();
-}
+template <class type> vpList<type>::vpList() : nb(0), first(NULL), last(NULL), cur(NULL) { init(); }
 
 /*!
   \brief vpList destructor
@@ -243,18 +233,12 @@ template <class type> vpList<type>::~vpList()
 /*!
   \brief return the number of element in the list
  */
-template <class type> unsigned int vpList<type>::nbElement(void)
-{
-  return (nb);
-}
+template <class type> unsigned int vpList<type>::nbElement(void) { return (nb); }
 
 /*!
   \brief return the number of element in the list
  */
-template <class type> unsigned int vpList<type>::nbElements(void)
-{
-  return (nb);
-}
+template <class type> unsigned int vpList<type>::nbElements(void) { return (nb); }
 
 /*!
   \brief position the current element on the next one
@@ -292,10 +276,7 @@ template <class type> type &vpList<type>::value(void) { return (cur->val); }
          ^
   \endverbatim
  */
-template <class type> const type &vpList<type>::value(void) const
-{
-  return (cur->val);
-}
+template <class type> const type &vpList<type>::value(void) const { return (cur->val); }
 
 /*!
   \brief return the value of the previous element
@@ -305,10 +286,7 @@ template <class type> const type &vpList<type>::value(void) const
          ^
   \endverbatim
 */
-template <class type> type &vpList<type>::previousValue(void)
-{
-  return (cur->prev->val);
-}
+template <class type> type &vpList<type>::previousValue(void) { return (cur->prev->val); }
 
 /*!
   \brief return the value of the next element
@@ -317,10 +295,7 @@ template <class type> type &vpList<type>::previousValue(void)
          ^
   \endverbatim
 */
-template <class type> type &vpList<type>::nextValue(void)
-{
-  return (cur->next->val);
-}
+template <class type> type &vpList<type>::nextValue(void) { return (cur->next->val); }
 
 /*!
   \brief return the first element of the list
@@ -328,20 +303,14 @@ template <class type> type &vpList<type>::nextValue(void)
    [*, a, b, c, d, *]  --> firstValue() return a
   \endverbatim
  */
-template <class type> type &vpList<type>::firstValue(void)
-{
-  return (first->next->val);
-}
+template <class type> type &vpList<type>::firstValue(void) { return (first->next->val); }
 
 /*!\brief return the last element of the list
    \verbatim
    [*, a, b, c, d, *]  --> lastValue() return d
   \endverbatim
  */
-template <class type> type &vpList<type>::lastValue(void)
-{
-  return (last->prev->val);
-}
+template <class type> type &vpList<type>::lastValue(void) { return (last->prev->val); }
 
 /*!
   \brief Position the current element on the first element of the list
@@ -371,10 +340,7 @@ template <class type> void vpList<type>::end(void) { cur = last->prev; }
   [*, *]              --> empty return true
   \endverbatim
  */
-template <class type> bool vpList<type>::empty(void) const
-{
-  return ((first->next == last) && (first == last->prev));
-}
+template <class type> bool vpList<type>::empty(void) const { return ((first->next == last) && (first == last->prev)); }
 
 /*!
   \brief Test if the current element is outside the list
@@ -387,11 +353,7 @@ template <class type> bool vpList<type>::empty(void) const
    ^      or      ^
   \endverbatim
  */
-template <class type> bool vpList<type>::outside(void) const
-{
-
-  return ((cur == first) || (cur == last));
-}
+template <class type> bool vpList<type>::outside(void) const { return ((cur == first) || (cur == last)); }
 
 /*!
   \brief Test if the next element is outside the list
@@ -547,10 +509,7 @@ template <class type> void vpList<type>::addLeft(type &v)
          ^                                    ^
   \endverbatim
  */
-template <class type> void vpList<type>::modify(const type &v)
-{
-  cur->val = v;
-}
+template <class type> void vpList<type>::modify(const type &v) { cur->val = v; }
 
 /*!
   \brief Switch the current element with the element on the left
@@ -578,8 +537,7 @@ template <class type> void vpList<type>::swapLeft()
     prevTmp->prev = cur;
     prevTmp->next = nextTmp;
   } else {
-    std::cout << "vpList: previous element is outside (swapLeft) "
-              << std::endl;
+    std::cout << "vpList: previous element is outside (swapLeft) " << std::endl;
   }
 }
 
@@ -661,8 +619,7 @@ template <class type> void vpList<type>::suppress(void)
   \param l : the list to copy
  */
 
-template <class type>
-vpList<type> &vpList<type>::operator=(const vpList<type> &l)
+template <class type> vpList<type> &vpList<type>::operator=(const vpList<type> &l)
 {
   type x;
   vpListElement<type> *e;
@@ -722,9 +679,7 @@ template <class type> void vpList<type>::operator+=(const type &l)
 
   \param l : the list to copy
 */
-template <class type>
-vpList<type>::vpList(const vpList<type> &l)
-  : nb(0), first(NULL), last(NULL), cur(NULL)
+template <class type> vpList<type>::vpList(const vpList<type> &l) : nb(0), first(NULL), last(NULL), cur(NULL)
 {
   init();
   *this = l;

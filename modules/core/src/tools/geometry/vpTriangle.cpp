@@ -47,8 +47,8 @@
   \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
 vpTriangle::vpTriangle()
-  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0),
-    ptempo0(0), ptempo1(0), area(0), apex1(), apex2(), apex3()
+  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0), ptempo0(0), ptempo1(0), area(0), apex1(),
+    apex2(), apex3()
 {
   init(vpImagePoint(0, 0), vpImagePoint(1, 0), vpImagePoint(0, 1));
 }
@@ -61,10 +61,9 @@ vpTriangle::vpTriangle()
   \param iP2 : The first apex of the triangle.
   \param iP3 : The first apex of the triangle.
 */
-vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2,
-                       const vpImagePoint &iP3)
-  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0),
-    ptempo0(0), ptempo1(0), area(0), apex1(), apex2(), apex3()
+vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
+  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0), ptempo0(0), ptempo1(0), area(0), apex1(),
+    apex2(), apex3()
 {
   init(iP1, iP2, iP3);
 }
@@ -75,8 +74,8 @@ vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2,
   \param tri : The triangle used for the initialisation.
 */
 vpTriangle::vpTriangle(const vpTriangle &tri)
-  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0),
-    ptempo0(0), ptempo1(0), area(0), apex1(), apex2(), apex3()
+  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0), ptempo0(0), ptempo1(0), area(0), apex1(),
+    apex2(), apex3()
 {
   *this = tri;
 }
@@ -114,14 +113,12 @@ vpTriangle &vpTriangle::operator=(const vpTriangle &tri)
   \param iP2 : The first apex of the triangle.
   \param iP3 : The first apex of the triangle.
 */
-void vpTriangle::buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2,
-                           const vpImagePoint &iP3)
+void vpTriangle::buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
 {
   init(iP1, iP2, iP3);
 }
 
-void vpTriangle::init(const vpImagePoint &iP1, const vpImagePoint &iP2,
-                      const vpImagePoint &iP3)
+void vpTriangle::init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
 {
   ptempo0 = ptempo1 = 0.;
   apex1 = iP1;
@@ -176,6 +173,5 @@ bool vpTriangle::inTriangle(const vpImagePoint &iP, double threshold)
   double p_ds_uv0 = ptempo0 * uvinv00 + ptempo1 * uvinv10;
   double p_ds_uv1 = ptempo0 * uvinv01 + ptempo1 * uvinv11;
 
-  return (p_ds_uv0 + p_ds_uv1 < 1. + threshold && p_ds_uv0 > -threshold &&
-          p_ds_uv1 > -threshold);
+  return (p_ds_uv0 + p_ds_uv1 < 1. + threshold && p_ds_uv0 > -threshold && p_ds_uv1 > -threshold);
 }

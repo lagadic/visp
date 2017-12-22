@@ -62,10 +62,10 @@ public:
     Robot control states.
   */
   typedef enum {
-    STATE_STOP,             /*!< Stops robot motion especially in velocity and
-                    acceleration control. */
-    STATE_VELOCITY_CONTROL, //!< Initialize the velocity controller.
-    STATE_POSITION_CONTROL, //!< Initialize the position controller.
+    STATE_STOP,                /*!< Stops robot motion especially in velocity and
+                       acceleration control. */
+    STATE_VELOCITY_CONTROL,    //!< Initialize the velocity controller.
+    STATE_POSITION_CONTROL,    //!< Initialize the position controller.
     STATE_ACCELERATION_CONTROL //!< Initialize the acceleration controller.
   } vpRobotStateType;
 
@@ -127,14 +127,12 @@ public:
 
   //! Get a displacement (frame as to ve specified) between two successive
   //! position control.
-  virtual void getDisplacement(const vpRobot::vpControlFrameType frame,
-                               vpColVector &q) = 0;
+  virtual void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q) = 0;
 
   double getMaxTranslationVelocity(void) const;
   double getMaxRotationVelocity(void) const;
   //! Get the robot position (frame has to be specified).
-  virtual void getPosition(const vpRobot::vpControlFrameType frame,
-                           vpColVector &q) = 0;
+  virtual void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) = 0;
 
   // Return the robot position (frame has to be specified).
   vpColVector getPosition(const vpRobot::vpControlFrameType frame);
@@ -147,24 +145,19 @@ public:
   void setMaxRotationVelocity(const double maxVr);
   void setMaxTranslationVelocity(const double maxVt);
   //! Set a displacement (frame has to be specified) in position control.
-  virtual void setPosition(const vpRobot::vpControlFrameType frame,
-                           const vpColVector &q) = 0;
-  virtual vpRobotStateType
-  setRobotState(const vpRobot::vpRobotStateType newState);
+  virtual void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) = 0;
+  virtual vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);
 
   //! Set the velocity (frame has to be specified) that will be applied to the
   //! velocity controller.
-  virtual void setVelocity(const vpRobot::vpControlFrameType frame,
-                           const vpColVector &vel) = 0;
+  virtual void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) = 0;
   inline void setVerbose(bool verbose) { verbose_ = verbose; };
 
   //@}
 
   /** @name Static Public Member Functions inherited from vpRobot */
   //@{
-  static vpColVector saturateVelocities(const vpColVector &v_in,
-                                        const vpColVector &v_max,
-                                        bool verbose = false);
+  static vpColVector saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose = false);
   //@}
 
 protected:

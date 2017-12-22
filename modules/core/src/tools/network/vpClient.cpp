@@ -56,8 +56,7 @@ vpClient::~vpClient() { stop(); }
 
   \return True if the connection has been etablished, false otherwise.
 */
-bool vpClient::connectToHostname(const std::string &hostname,
-                                 const unsigned int &port_serv)
+bool vpClient::connectToHostname(const std::string &hostname, const unsigned int &port_serv)
 {
   // get server host information from hostname
   struct hostent *server = gethostbyname(hostname.c_str());
@@ -76,8 +75,7 @@ bool vpClient::connectToHostname(const std::string &hostname,
 
   serv.socketFileDescriptorReceptor = socket(AF_INET, SOCK_STREAM, 0);
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (serv.socketFileDescriptorReceptor < 0) {
 #else
   if (serv.socketFileDescriptorReceptor == INVALID_SOCKET) {
@@ -88,8 +86,7 @@ bool vpClient::connectToHostname(const std::string &hostname,
 
   memset((char *)&serv.receptorAddress, '\0', sizeof(serv.receptorAddress));
   serv.receptorAddress.sin_family = AF_INET;
-  memmove((char *)&serv.receptorAddress.sin_addr.s_addr,
-          (char *)server->h_addr, (unsigned)server->h_length);
+  memmove((char *)&serv.receptorAddress.sin_addr.s_addr, (char *)server->h_addr, (unsigned)server->h_length);
   serv.receptorAddress.sin_port = htons((unsigned short)port_serv);
   serv.receptorIP = inet_ntoa(*(in_addr *)server->h_addr);
 
@@ -106,15 +103,13 @@ bool vpClient::connectToHostname(const std::string &hostname,
 
   \return True if the connection has been etablished, false otherwise.
 */
-bool vpClient::connectToIP(const std::string &ip,
-                           const unsigned int &port_serv)
+bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
 {
   vpNetwork::vpReceptor serv;
 
   serv.socketFileDescriptorReceptor = socket(AF_INET, SOCK_STREAM, 0);
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (serv.socketFileDescriptorReceptor < 0) {
 #else
   if (serv.socketFileDescriptorReceptor == INVALID_SOCKET) {
@@ -139,8 +134,7 @@ bool vpClient::connectToIP(const std::string &ip,
 void vpClient::deconnect(const unsigned int &index)
 {
   if (index < receptor_list.size()) {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     shutdown(receptor_list[index].socketFileDescriptorReceptor, SHUT_RDWR);
 #else // _WIN32
     shutdown(receptor_list[index].socketFileDescriptorReceptor, SD_BOTH);
@@ -155,8 +149,7 @@ void vpClient::deconnect(const unsigned int &index)
 void vpClient::stop()
 {
   for (unsigned int i = 0; i < receptor_list.size(); i++) {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     shutdown(receptor_list[i].socketFileDescriptorReceptor, SHUT_RDWR);
 #else // _WIN32
     shutdown(receptor_list[i].socketFileDescriptorReceptor, SD_BOTH);
@@ -184,8 +177,7 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
     std::cout << "Attempt number " << ind << "..." << std::endl;
 
     connectionResult =
-        connect(serv.socketFileDescriptorReceptor,
-                (sockaddr *)&serv.receptorAddress, serv.receptorAddressSize);
+        connect(serv.socketFileDescriptorReceptor, (sockaddr *)&serv.receptorAddress, serv.receptorAddressSize);
     if (connectionResult >= 0)
       break;
 
@@ -208,8 +200,7 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   // connections based version, however.
   if (serv.socketFileDescriptorReceptor > 0) {
     int set_option = 1;
-    if (0 == setsockopt(serv.socketFileDescriptorReceptor, SOL_SOCKET,
-                        SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
+    if (0 == setsockopt(serv.socketFileDescriptorReceptor, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
     } else {
       std::cout << "Failed to set socket signal option" << std::endl;
     }

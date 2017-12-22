@@ -22,8 +22,7 @@ int main()
   //! [Set ViSP camera parameters]
 
   //! [Set OpenCV camera parameters]
-  cv::Mat K = (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0,
-               cam.get_py(), cam.get_v0(), 0, 0, 1);
+  cv::Mat K = (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
   cv::Mat D = (cv::Mat_<double>(4, 1) << cam.get_kud(), 0, 0, 0);
   //! [Set OpenCV camera parameters]
 

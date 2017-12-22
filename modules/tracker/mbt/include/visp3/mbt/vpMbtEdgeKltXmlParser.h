@@ -63,8 +63,7 @@
   Data parser for the model based tracker.
 
  */
-class VISP_EXPORT vpMbtEdgeKltXmlParser : public vpMbtXmlParser,
-                                          public vpMbtKltXmlParser
+class VISP_EXPORT vpMbtEdgeKltXmlParser : public vpMbtXmlParser, public vpMbtKltXmlParser
 {
 protected:
   typedef enum { camera, face, klt, ecm, lod } dataToParseMbtEdgeKlt;

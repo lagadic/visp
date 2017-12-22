@@ -62,8 +62,8 @@
   \param user : Username.
   \param nbiter : Number of benchmark iterations.
  */
-void usage(const char *name, const char *badparam, const std::string &ipath,
-           const std::string &opath, const std::string &user, int nbiter)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user, int nbiter)
 {
   fprintf(stdout, "\n\
 Test images addition / substraction.\n\
@@ -110,8 +110,8 @@ OPTIONS:                                               Default\n\
   \param nbiter : Number of benchmark iterations.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, const std::string &user, int &nbiter)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user,
+                int &nbiter)
 {
   const char *optarg_;
   int c;
@@ -154,18 +154,14 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   return true;
 }
 
-void regularImageAdd(const vpImage<unsigned char> &I1,
-                     const vpImage<unsigned char> &I2,
-                     vpImage<unsigned char> &Ires, const bool saturate)
+void regularImageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Ires,
+                     const bool saturate)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "The two images do not have the same size"));
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Ires.getHeight()) ||
-      (I1.getWidth() != Ires.getWidth())) {
+  if ((I1.getHeight() != Ires.getHeight()) || (I1.getWidth() != Ires.getWidth())) {
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
@@ -173,26 +169,19 @@ void regularImageAdd(const vpImage<unsigned char> &I1,
   unsigned char *ptr_I2 = I2.bitmap;
   unsigned char *ptr_Ires = Ires.bitmap;
 
-  for (unsigned int cpt = 0; cpt < Ires.getSize();
-       cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>(
-                               (short int)*ptr_I1 + (short int)*ptr_I2)
-                         : *ptr_I1 + *ptr_I2;
+  for (unsigned int cpt = 0; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 + (short int)*ptr_I2) : *ptr_I1 + *ptr_I2;
   }
 }
 
-void regularImageSubtract(const vpImage<unsigned char> &I1,
-                          const vpImage<unsigned char> &I2,
+void regularImageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                           vpImage<unsigned char> &Ires, const bool saturate)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "The two images do not have the same size"));
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Ires.getHeight()) ||
-      (I1.getWidth() != Ires.getWidth())) {
+  if ((I1.getHeight() != Ires.getHeight()) || (I1.getWidth() != Ires.getWidth())) {
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
@@ -200,11 +189,8 @@ void regularImageSubtract(const vpImage<unsigned char> &I1,
   unsigned char *ptr_I2 = I2.bitmap;
   unsigned char *ptr_Ires = Ires.bitmap;
 
-  for (unsigned int cpt = 0; cpt < Ires.getSize();
-       cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>(
-                               (short int)*ptr_I1 - (short int)*ptr_I2)
-                         : *ptr_I1 - *ptr_I2;
+  for (unsigned int cpt = 0; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 - (short int)*ptr_I2) : *ptr_I1 - *ptr_I2;
   }
 }
 
@@ -239,8 +225,7 @@ int main(int argc, const char **argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath, username,
-                   nbIterations) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_opath, username, nbIterations) == false) {
       exit(EXIT_FAILURE);
     }
 
@@ -262,8 +247,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option "
-                  << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
         exit(EXIT_FAILURE);
       }
     }
@@ -274,8 +258,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -284,13 +267,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -309,8 +289,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> Iadd;
     vpImageTools::imageAdd(I, Inull, Iadd);
     if (Iadd != I) {
-      throw vpException(vpException::fatalError,
-                        "Problem with vpImageTools::imageAdd (Iadd != I)!");
+      throw vpException(vpException::fatalError, "Problem with vpImageTools::imageAdd (Iadd != I)!");
     } else {
       std::cout << "(Iadd == I)? " << (Iadd == I) << std::endl;
     }
@@ -319,9 +298,7 @@ int main(int argc, const char **argv)
     Iadd = 0;
     vpImageTools::imageAdd(I, Iadd, Iadd);
     if (Iadd != I) {
-      throw vpException(
-          vpException::fatalError,
-          "Problem with in-place vpImageTools::imageAdd (Iadd != I)!");
+      throw vpException(vpException::fatalError, "Problem with in-place vpImageTools::imageAdd (Iadd != I)!");
     } else {
       std::cout << "In-place (Iadd == I)? " << (Iadd == I) << std::endl;
     }
@@ -331,9 +308,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> Isub;
     vpImageTools::imageSubtract(I, Inull, Isub);
     if (Isub != I) {
-      throw vpException(
-          vpException::fatalError,
-          "Problem with vpImageTools::imageSubtract (Iadd != I)!");
+      throw vpException(vpException::fatalError, "Problem with vpImageTools::imageSubtract (Iadd != I)!");
     } else {
       std::cout << "(Isub == I)? " << (Isub == I) << std::endl;
     }
@@ -342,9 +317,7 @@ int main(int argc, const char **argv)
     Isub = 0;
     vpImageTools::imageSubtract(I, Isub, Isub);
     if (Isub != I) {
-      throw vpException(
-          vpException::fatalError,
-          "Problem with in-place vpImageTools::imageSubtract (Isub != I)!");
+      throw vpException(vpException::fatalError, "Problem with in-place vpImageTools::imageSubtract (Isub != I)!");
     } else {
       std::cout << "In-place (Isub == I)? " << (Isub == I) << std::endl;
     }
@@ -360,24 +333,20 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> Iadd_regular;
     regularImageAdd(I, I2, Iadd_regular, false);
     if (Iadd != Iadd_regular) {
-      throw vpException(vpException::fatalError,
-                        "Problem with vpImageTools::imageAdd(I, I2, Iadd, "
-                        "false) (Iadd != Iadd_regular)!");
+      throw vpException(vpException::fatalError, "Problem with vpImageTools::imageAdd(I, I2, Iadd, "
+                                                 "false) (Iadd != Iadd_regular)!");
     } else {
-      std::cout << "\nNo saturation (Iadd == Iadd_regular)? "
-                << (Iadd == Iadd_regular) << std::endl;
+      std::cout << "\nNo saturation (Iadd == Iadd_regular)? " << (Iadd == Iadd_regular) << std::endl;
     }
 
     // Saturation
     vpImageTools::imageAdd(I, I2, Iadd, true);
     regularImageAdd(I, I2, Iadd_regular, true);
     if (Iadd != Iadd_regular) {
-      throw vpException(vpException::fatalError,
-                        "Problem with vpImageTools::imageAdd(I, I2, Iadd, "
-                        "true) (Iadd != Iadd_regular)!");
+      throw vpException(vpException::fatalError, "Problem with vpImageTools::imageAdd(I, I2, Iadd, "
+                                                 "true) (Iadd != Iadd_regular)!");
     } else {
-      std::cout << "Saturation (Iadd == Iadd_regular)? "
-                << (Iadd == Iadd_regular) << std::endl;
+      std::cout << "Saturation (Iadd == Iadd_regular)? " << (Iadd == Iadd_regular) << std::endl;
     }
 
     // Test subtract image saturation
@@ -386,24 +355,20 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> Isub_regular;
     regularImageSubtract(I, I2, Isub_regular, false);
     if (Isub != Isub_regular) {
-      throw vpException(vpException::fatalError,
-                        "Problem with vpImageTools::imageSubtract(I, I2, "
-                        "Isub, false) (Isub != Isub_regular)!");
+      throw vpException(vpException::fatalError, "Problem with vpImageTools::imageSubtract(I, I2, "
+                                                 "Isub, false) (Isub != Isub_regular)!");
     } else {
-      std::cout << "\nNo saturation (Isub == Isub_regular)? "
-                << (Isub == Isub_regular) << std::endl;
+      std::cout << "\nNo saturation (Isub == Isub_regular)? " << (Isub == Isub_regular) << std::endl;
     }
 
     // Saturation
     vpImageTools::imageSubtract(I, I2, Isub, true);
     regularImageSubtract(I, I2, Isub_regular, true);
     if (Isub != Isub_regular) {
-      throw vpException(vpException::fatalError,
-                        "Problem with vpImageTools::imageSubtract(I, I2, "
-                        "Isub, true) (Isub != Isub_regular)!");
+      throw vpException(vpException::fatalError, "Problem with vpImageTools::imageSubtract(I, I2, "
+                                                 "Isub, true) (Isub != Isub_regular)!");
     } else {
-      std::cout << "Saturation (Isub == Isub_regular)? "
-                << (Isub == Isub_regular) << std::endl;
+      std::cout << "Saturation (Isub == Isub_regular)? " << (Isub == Isub_regular) << std::endl;
     }
 
     // Benchmark
@@ -414,8 +379,7 @@ int main(int argc, const char **argv)
       vpImageTools::imageAdd(I, Iadd, Iadd, false);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
-    std::cout << "\nAdd no saturation ; t_sse (" << nbIterations
-              << " iterations)=" << t_sse << " ms" << std::endl;
+    std::cout << "\nAdd no saturation ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
 
     Iadd_regular = 0;
     double t = vpTime::measureTimeMs();
@@ -423,11 +387,9 @@ int main(int argc, const char **argv)
       regularImageAdd(I, Iadd_regular, Iadd_regular, false);
     }
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Add regular no saturation ; t (" << nbIterations
-              << " iterations)=" << t << " ms"
+    std::cout << "Add regular no saturation ; t (" << nbIterations << " iterations)=" << t << " ms"
               << " ; Speed-up: " << (t / t_sse) << "X" << std::endl;
-    std::cout << "(Iadd == Iadd_regular)? " << (Iadd == Iadd_regular)
-              << std::endl;
+    std::cout << "(Iadd == Iadd_regular)? " << (Iadd == Iadd_regular) << std::endl;
 
     // Write add no saturation
     filename = vpIoTools::createFilePath(opath, "Klimt_add_no_sat_sse.pgm");
@@ -445,8 +407,7 @@ int main(int argc, const char **argv)
       vpImageTools::imageAdd(I, Iadd, Iadd, true);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
-    std::cout << "\nAdd saturation ; t_sse (" << nbIterations
-              << " iterations)=" << t_sse << " ms" << std::endl;
+    std::cout << "\nAdd saturation ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
 
     Iadd_regular = 0;
     t = vpTime::measureTimeMs();
@@ -454,11 +415,9 @@ int main(int argc, const char **argv)
       regularImageAdd(I, Iadd_regular, Iadd_regular, true);
     }
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Add saturation ; t (" << nbIterations
-              << " iterations)=" << t << " ms"
+    std::cout << "Add saturation ; t (" << nbIterations << " iterations)=" << t << " ms"
               << " ; Speed-up: " << (t / t_sse) << "X" << std::endl;
-    std::cout << "(Iadd == Iadd_regular)? " << (Iadd == Iadd_regular)
-              << std::endl;
+    std::cout << "(Iadd == Iadd_regular)? " << (Iadd == Iadd_regular) << std::endl;
 
     // Write add no saturation
     filename = vpIoTools::createFilePath(opath, "Klimt_add_sat_sse.pgm");
@@ -476,8 +435,7 @@ int main(int argc, const char **argv)
       vpImageTools::imageSubtract(I, Isub, Isub, false);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
-    std::cout << "\nSubtract no saturation ; t_sse (" << nbIterations
-              << " iterations)=" << t_sse << " ms" << std::endl;
+    std::cout << "\nSubtract no saturation ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
 
     Isub_regular = I2;
     t = vpTime::measureTimeMs();
@@ -485,15 +443,12 @@ int main(int argc, const char **argv)
       regularImageSubtract(I, Isub_regular, Isub_regular, false);
     }
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Subtract regular no saturation ; t (" << nbIterations
-              << " iterations)=" << t << " ms"
+    std::cout << "Subtract regular no saturation ; t (" << nbIterations << " iterations)=" << t << " ms"
               << " ; Speed-up: " << (t / t_sse) << "X" << std::endl;
-    std::cout << "(Isub == Isub_regular)? " << (Isub == Isub_regular)
-              << std::endl;
+    std::cout << "(Isub == Isub_regular)? " << (Isub == Isub_regular) << std::endl;
 
     // Write subtract no saturation
-    filename =
-        vpIoTools::createFilePath(opath, "Klimt_subtract_no_sat_sse.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_subtract_no_sat_sse.pgm");
     std::cout << "\nWrite: " << filename << std::endl;
     vpImageIo::write(Isub, filename);
 
@@ -508,8 +463,7 @@ int main(int argc, const char **argv)
       vpImageTools::imageSubtract(I, Isub, Isub, true);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
-    std::cout << "\nSubtract saturation ; t_sse (" << nbIterations
-              << " iterations)=" << t_sse << " ms" << std::endl;
+    std::cout << "\nSubtract saturation ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
 
     Isub_regular = I2;
     t = vpTime::measureTimeMs();
@@ -517,11 +471,9 @@ int main(int argc, const char **argv)
       regularImageSubtract(I, Isub_regular, Isub_regular, true);
     }
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Subtract saturation ; t (" << nbIterations
-              << " iterations)=" << t << " ms"
+    std::cout << "Subtract saturation ; t (" << nbIterations << " iterations)=" << t << " ms"
               << " ; Speed-up: " << (t / t_sse) << "X" << std::endl;
-    std::cout << "(Isub == Isub_regular)? " << (Isub == Isub_regular)
-              << std::endl;
+    std::cout << "(Isub == Isub_regular)? " << (Isub == Isub_regular) << std::endl;
 
     // Write subtract no saturation
     filename = vpIoTools::createFilePath(opath, "Klimt_subtract_sat_sse.pgm");
@@ -537,25 +489,19 @@ int main(int argc, const char **argv)
       vpRect r_crop(0, 0, 411, 507);
       vpImage<unsigned char> I_crop;
       vpImageTools::crop(I, r_crop, I_crop);
-      std::cout << "\nI_crop=" << I_crop.getWidth() << "x"
-                << I_crop.getHeight() << std::endl;
+      std::cout << "\nI_crop=" << I_crop.getWidth() << "x" << I_crop.getHeight() << std::endl;
 
-      vpImage<unsigned char> I_invert(I_crop.getHeight(), I_crop.getWidth(),
-                                      255);
+      vpImage<unsigned char> I_invert(I_crop.getHeight(), I_crop.getWidth(), 255);
       vpImageTools::imageSubtract(I_invert, I_crop, I_invert);
 
-      vpImage<unsigned char> I_invert_regular(I_crop.getHeight(),
-                                              I_crop.getWidth(), 255);
+      vpImage<unsigned char> I_invert_regular(I_crop.getHeight(), I_crop.getWidth(), 255);
       regularImageSubtract(I_invert_regular, I_crop, I_invert_regular, false);
-      std::cout << "(I_invert == I_invert_regular)? "
-                << (I_invert == I_invert_regular) << std::endl;
+      std::cout << "(I_invert == I_invert_regular)? " << (I_invert == I_invert_regular) << std::endl;
 
-      vpImage<unsigned char> I_white(I_crop.getHeight(), I_crop.getWidth(),
-                                     255);
+      vpImage<unsigned char> I_white(I_crop.getHeight(), I_crop.getWidth(), 255);
       vpImage<unsigned char> I_invert2 = I_invert;
       vpImageTools::imageAdd(I_invert2, I_crop, I_invert2);
-      std::cout << "(I_invert2 == I_white)? " << (I_invert2 == I_white)
-                << std::endl;
+      std::cout << "(I_invert2 == I_white)? " << (I_invert2 == I_white) << std::endl;
 
       filename = vpIoTools::createFilePath(opath, "Klimt_invert_crop.pgm");
       std::cout << "Write: " << filename << std::endl;

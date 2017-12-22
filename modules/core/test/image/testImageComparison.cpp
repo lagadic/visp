@@ -168,8 +168,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -178,13 +177,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -199,16 +195,12 @@ int main(int argc, const char **argv)
     vpImageIo::read(I_Klimt1, filename);
     vpImageIo::read(I_Klimt2, filename);
 
-    std::cout << "\nI_Klimt1=" << I_Klimt1.getWidth() << "x"
-              << I_Klimt1.getHeight() << std::endl;
-    std::cout << "I_Klimt2=" << I_Klimt2.getWidth() << "x"
-              << I_Klimt2.getHeight() << std::endl;
+    std::cout << "\nI_Klimt1=" << I_Klimt1.getWidth() << "x" << I_Klimt1.getHeight() << std::endl;
+    std::cout << "I_Klimt2=" << I_Klimt2.getWidth() << "x" << I_Klimt2.getHeight() << std::endl;
 
     std::cout << "\nThe two grayscale images are equal." << std::endl;
-    std::cout << "(I_Klimt1 == I_Klimt2)=" << (I_Klimt1 == I_Klimt2)
-              << std::endl;
-    std::cout << "(I_Klimt1 != I_Klimt2)=" << (I_Klimt1 != I_Klimt2)
-              << std::endl;
+    std::cout << "(I_Klimt1 == I_Klimt2)=" << (I_Klimt1 == I_Klimt2) << std::endl;
+    std::cout << "(I_Klimt1 != I_Klimt2)=" << (I_Klimt1 != I_Klimt2) << std::endl;
 
     // The two images should be equal
     if (!(I_Klimt1 == I_Klimt2) || (I_Klimt1 != I_Klimt2)) {
@@ -228,10 +220,8 @@ int main(int argc, const char **argv)
     }
 
     std::cout << "\nThe two grayscale images are different." << std::endl;
-    std::cout << "(I_Klimt1 == I_Klimt2)=" << (I_Klimt1 == I_Klimt2)
-              << std::endl;
-    std::cout << "(I_Klimt1 != I_Klimt2)=" << (I_Klimt1 != I_Klimt2)
-              << std::endl;
+    std::cout << "(I_Klimt1 == I_Klimt2)=" << (I_Klimt1 == I_Klimt2) << std::endl;
+    std::cout << "(I_Klimt1 != I_Klimt2)=" << (I_Klimt1 != I_Klimt2) << std::endl;
 
     // The two images should be different
     if ((I_Klimt1 == I_Klimt2) || !(I_Klimt1 != I_Klimt2)) {
@@ -250,58 +240,40 @@ int main(int argc, const char **argv)
     vpImageIo::read(I_color_Klimt1, filename);
     I_color_Klimt2 = I_color_Klimt1;
 
-    std::cout << "\nI_color_Klimt1=" << I_color_Klimt1.getWidth() << "x"
-              << I_color_Klimt1.getHeight() << std::endl;
-    std::cout << "I_color_Klimt2=" << I_color_Klimt2.getWidth() << "x"
-              << I_color_Klimt2.getHeight() << std::endl;
+    std::cout << "\nI_color_Klimt1=" << I_color_Klimt1.getWidth() << "x" << I_color_Klimt1.getHeight() << std::endl;
+    std::cout << "I_color_Klimt2=" << I_color_Klimt2.getWidth() << "x" << I_color_Klimt2.getHeight() << std::endl;
 
     std::cout << "\nThe two color images are equal." << std::endl;
-    std::cout << "(I_color_Klimt1 == I_color_Klimt2)="
-              << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
-    std::cout << "(I_color_Klimt1 != I_color_Klimt2)="
-              << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
+    std::cout << "(I_color_Klimt1 == I_color_Klimt2)=" << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
+    std::cout << "(I_color_Klimt1 != I_color_Klimt2)=" << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
 
     // The two images should be equal
-    if (!(I_color_Klimt1 == I_color_Klimt2) ||
-        (I_color_Klimt1 != I_color_Klimt2)) {
+    if (!(I_color_Klimt1 == I_color_Klimt2) || (I_color_Klimt1 != I_color_Klimt2)) {
       std::stringstream ss;
       ss << "\nProblem when comparing two color images!\n";
-      ss << "(I_color_Klimt1 == I_color_Klimt2)="
-         << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
-      ss << "(I_color_Klimt1 != I_color_Klimt2)="
-         << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
+      ss << "(I_color_Klimt1 == I_color_Klimt2)=" << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
+      ss << "(I_color_Klimt1 != I_color_Klimt2)=" << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
 
       throw vpException(vpException::fatalError, ss.str());
     }
 
     // Modify I_color_Klimt2
-    if (I_color_Klimt2[I_color_Klimt2.getHeight() / 2]
-                      [I_color_Klimt2.getWidth() / 2]
-                          .R < 255) {
-      I_color_Klimt2[I_color_Klimt2.getHeight() / 2]
-                    [I_color_Klimt2.getWidth() / 2]
-                        .R++;
+    if (I_color_Klimt2[I_color_Klimt2.getHeight() / 2][I_color_Klimt2.getWidth() / 2].R < 255) {
+      I_color_Klimt2[I_color_Klimt2.getHeight() / 2][I_color_Klimt2.getWidth() / 2].R++;
     } else {
-      I_color_Klimt2[I_color_Klimt2.getHeight() / 2]
-                    [I_color_Klimt2.getWidth() / 2]
-                        .R--;
+      I_color_Klimt2[I_color_Klimt2.getHeight() / 2][I_color_Klimt2.getWidth() / 2].R--;
     }
 
     std::cout << "\nThe two color images are different." << std::endl;
-    std::cout << "(I_color_Klimt1 == I_color_Klimt2)="
-              << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
-    std::cout << "(I_color_Klimt1 != I_color_Klimt2)="
-              << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
+    std::cout << "(I_color_Klimt1 == I_color_Klimt2)=" << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
+    std::cout << "(I_color_Klimt1 != I_color_Klimt2)=" << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
 
     // The two images should be different
-    if ((I_color_Klimt1 == I_color_Klimt2) ||
-        !(I_color_Klimt1 != I_color_Klimt2)) {
+    if ((I_color_Klimt1 == I_color_Klimt2) || !(I_color_Klimt1 != I_color_Klimt2)) {
       std::stringstream ss;
       ss << "\nProblem when comparing two color images!\n";
-      ss << "(I_color_Klimt1 == I_color_Klimt2)="
-         << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
-      ss << "(I_color_Klimt1 != I_color_Klimt2)="
-         << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
+      ss << "(I_color_Klimt1 == I_color_Klimt2)=" << (I_color_Klimt1 == I_color_Klimt2) << std::endl;
+      ss << "(I_color_Klimt1 != I_color_Klimt2)=" << (I_color_Klimt1 != I_color_Klimt2) << std::endl;
 
       throw vpException(vpException::fatalError, ss.str());
     }
@@ -311,7 +283,6 @@ int main(int argc, const char **argv)
     return EXIT_FAILURE;
   }
 
-  std::cout << "\nThe comparison of two images of the same type is OK!"
-            << std::endl;
+  std::cout << "\nThe comparison of two images of the same type is OK!" << std::endl;
   return EXIT_SUCCESS;
 }

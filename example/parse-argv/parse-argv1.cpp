@@ -57,10 +57,8 @@
 // List of allowed command line options
 #define GETOPTARGS "d:f:i:h"
 
-void usage(const char *name, const char *badparam, int i_val, float f_val,
-           double d_val);
-bool getOptions(int argc, const char **argv, int &i_val, float &f_val,
-                double &d_val);
+void usage(const char *name, const char *badparam, int i_val, float f_val, double d_val);
+bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d_val);
 
 /*!
 
@@ -73,8 +71,7 @@ bool getOptions(int argc, const char **argv, int &i_val, float &f_val,
   \param d_val : A double.
 
 */
-void usage(const char *name, const char *badparam, int i_val, float f_val,
-           double d_val)
+void usage(const char *name, const char *badparam, int i_val, float f_val, double d_val)
 {
   fprintf(stdout, "\n\
 Parsing command line arguments example.\n\
@@ -115,8 +112,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, int &i_val, float &f_val,
-                double &d_val)
+bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d_val)
 {
   const char *optarg_;
   int c;
@@ -174,8 +170,7 @@ int main(int argc, const char **argv)
     cout << "  Integer value: " << i_val << endl;
     cout << "  Float   value: " << f_val << endl;
     cout << "  Double  value: " << d_val << endl << endl;
-    cout << "Call  " << argv[0]
-         << " -h to see how to change these parameters." << endl;
+    cout << "Call  " << argv[0] << " -h to see how to change these parameters." << endl;
 
     return 0;
   } catch (vpException &e) {

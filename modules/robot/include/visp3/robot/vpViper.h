@@ -119,12 +119,9 @@ public:
   /** @name Inherited functionalities from vpViper */
   //@{
   vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
-  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix &fMw,
-                                         vpColVector &q,
+  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix &fMw, vpColVector &q,
                                          const bool &verbose = false) const;
-  unsigned int getInverseKinematics(const vpHomogeneousMatrix &fMc,
-                                    vpColVector &q,
-                                    const bool &verbose = false) const;
+  unsigned int getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q, const bool &verbose = false) const;
   vpHomogeneousMatrix get_fMc(const vpColVector &q) const;
   void get_fMw(const vpColVector &q, vpHomogeneousMatrix &fMw) const;
   void get_wMe(vpHomogeneousMatrix &wMe) const;
@@ -140,20 +137,17 @@ public:
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
 
   virtual void set_eMc(const vpHomogeneousMatrix &eMc_);
-  virtual void set_eMc(const vpTranslationVector &etc_,
-                       const vpRxyzVector &erc_);
+  virtual void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
   double getCoupl56() const;
   //@}
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpViper &viper);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpViper &viper);
 
 private:
-  bool convertJointPositionInLimits(unsigned int joint, const double &q,
-                                    double &q_mod,
+  bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod,
                                     const bool &verbose = false) const;
 
 public:

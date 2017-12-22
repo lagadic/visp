@@ -63,9 +63,9 @@
   name and then create a file in this directory.
 
   \code
-#include <fstream>
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <visp3/core/vpIoTools.h>
 
 int main()
@@ -87,9 +87,8 @@ int main()
   // Create a empty filename with name "username/file.txt"
   std::ofstream f;
   std::string filename = username + "/file.txt";
-  filename = vpIoTools::path(filename); // Under Windows converts the filename
-string into "username\\file.txt"
-
+  // Under Windows converts the filename string into "username\\file.txt"
+  filename = vpIoTools::path(filename);
   std::cout << "Create: " << filename << std::endl;
   f.open(filename.c_str());
   f.close();
@@ -107,9 +106,13 @@ string into "username\\file.txt"
 }
   \endcode
 
-  The example below shows how to read a configuration file and how to create a
-name for experiment files. We assume the following file
-"/home/user/demo/config.txt" : \code expNumber 2 save 0 lambda 0.4 use2D 0
+  The example below shows how to read a configuration file and how to create a name
+  for experiment files. We assume the following file "/home/user/demo/config.txt" :
+  \code
+expNumber 2
+save 0
+lambda 0.4
+use2D 0
 use3D 1
   \endcode
 
@@ -123,29 +126,27 @@ int main()
   // reading configuration file
   vpIoTools::loadConfigFile("/home/user/demo/config.txt");
   std::string nExp;vpIoTools::readConfigVar("expNumber", nExp); // nExp <- "2"
-  double lambda;vpIoTools::readConfigVar("lambda", lambda);     // lambda <-
-0.4 bool use2D;vpIoTools::readConfigVar("use2D", use2D);          // use2D <-
-false bool use3D;vpIoTools::readConfigVar("use3D", use3D);          // use3D
-<- true bool doSave;vpIoTools::readConfigVar("save", doSave);         //
-doSave <- false
+  double lambda;vpIoTools::readConfigVar("lambda", lambda);     // lambda <- 0.4
+  bool use2D;vpIoTools::readConfigVar("use2D", use2D);          // use2D <- false
+  bool use3D;vpIoTools::readConfigVar("use3D", use3D);          // use3D <- true
+  bool doSave;vpIoTools::readConfigVar("save", doSave);         //  doSave <- false
 
   // creating name for experiment files
   vpIoTools::setBaseDir("/home/user/data");
-  vpIoTools::setBaseName("exp" + nExp);         // full name <-
-"/home/user/data/exp2" vpIoTools::addNameElement("2D", use2D);       // full
-name <- "/home/user/data/exp2" since use2D==false
-  vpIoTools::addNameElement("3D", use3D);       // full name <-
-"/home/user/data/exp2_3D" vpIoTools::addNameElement("lambda", lambda);  //
-full name <- "/home/user/data/exp2_3D_lambda0.4"
+  // full name <- "/home/user/data/exp2"
+  vpIoTools::setBaseName("exp" + nExp);
+  // full name <- "/home/user/data/exp2" since use2D==false
+  vpIoTools::addNameElement("2D", use2D);
+  // full name <- "/home/user/data/exp2_3D"
+  vpIoTools::addNameElement("3D", use3D);
+  // full name <- "/home/user/data/exp2_3D_lambda0.4"
+  vpIoTools::addNameElement("lambda", lambda);
 
-  // saving file
-  vpIoTools::saveConfigFile(doSave); // would copy
-"/home/user/demo/config.txt" to "/home/user/data/exp2_3D_lambda0.4_config.txt"
-if doSave was true
-
+  // Saving file.Would copy "/home/user/demo/config.txt" to
+  // "/home/user/data/exp2_3D_lambda0.4_config.txt" if doSave was true
+  vpIoTools::saveConfigFile(doSave);
   // create sub directory
-  vpIoTools::createBaseNamePath();  // creates
-"/home/user/data/exp2_3D_lambda0.4/"
+  vpIoTools::createBaseNamePath();  // creates "/home/user/data/exp2_3D_lambda0.4/"
 }
   \endcode
 
@@ -161,8 +162,7 @@ public:
   static std::string getenv(const char *env);
   static std::string getenv(const std::string &env);
   static std::string getViSPImagesDataPath();
-  static void getVersion(const std::string &version, unsigned int &major,
-                         unsigned int &minor, unsigned int &patch);
+  static void getVersion(const std::string &version, unsigned int &major, unsigned int &minor, unsigned int &patch);
   static bool checkDirectory(const char *dirname);
   static bool checkDirectory(const std::string &dirname);
   static bool checkFilename(const char *filename);
@@ -174,8 +174,7 @@ public:
   static bool remove(const char *filename);
   static bool remove(const std::string &filename);
   static bool rename(const char *oldfilename, const char *newfilename);
-  static bool rename(const std::string &oldfilename,
-                     const std::string &newfilename);
+  static bool rename(const std::string &oldfilename, const std::string &newfilename);
 
   static std::string path(const char *pathname);
   static std::string path(const std::string &pathname);
@@ -192,20 +191,15 @@ public:
 #endif
 
   static std::string getAbsolutePathname(const std::string &pathname);
-  static std::string getFileExtension(const std::string &pathname,
-                                      const bool checkFile = false);
+  static std::string getFileExtension(const std::string &pathname, const bool checkFile = false);
   static std::string getName(const std::string &pathname);
   static std::string getNameWE(const std::string &pathname);
   static std::string getParent(const std::string &pathname);
-  static std::string createFilePath(const std::string &parent,
-                                    const std::string &child);
+  static std::string createFilePath(const std::string &parent, const std::string &child);
   static bool isAbsolutePathname(const std::string &pathname);
-  static bool isSamePathname(const std::string &pathname1,
-                             const std::string &pathname2);
-  static std::pair<std::string, std::string>
-  splitDrive(const std::string &pathname);
-  static std::vector<std::string> splitChain(const std::string &chain,
-                                             const std::string &sep);
+  static bool isSamePathname(const std::string &pathname1, const std::string &pathname2);
+  static std::pair<std::string, std::string> splitDrive(const std::string &pathname);
+  static std::vector<std::string> splitChain(const std::string &chain, const std::string &sep);
   static std::vector<std::string> getDirFiles(const std::string &dirname);
 
   /*!
@@ -221,16 +215,13 @@ public:
   static bool readConfigVar(const std::string &var, bool &value);
   static bool readConfigVar(const std::string &var, std::string &value);
   static bool readConfigVar(const std::string &var, vpColor &value);
-  static bool readConfigVar(const std::string &var, vpArray2D<double> &value,
-                            const unsigned int &nCols = 0,
+  static bool readConfigVar(const std::string &var, vpArray2D<double> &value, const unsigned int &nCols = 0,
                             const unsigned int &nRows = 0);
 
   // construct experiment filename & path
   static void setBaseName(const std::string &s);
   static void setBaseDir(const std::string &dir);
-  static void addNameElement(const std::string &strTrue,
-                             const bool &cond = true,
-                             const std::string &strFalse = "");
+  static void addNameElement(const std::string &strTrue, const bool &cond = true, const std::string &strFalse = "");
   static void addNameElement(const std::string &strTrue, const double &val);
   static std::string getBaseName();
   static std::string getFullName();

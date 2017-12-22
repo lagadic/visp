@@ -223,8 +223,7 @@ vpMatrix vpFeatureEllipse::interaction(const unsigned int select)
 
 //! compute the error between two visual features from a subset
 //! a the possible features
-vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star,
-                                    const unsigned int select)
+vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, const unsigned int select)
 {
   vpColVector e(0);
 
@@ -286,8 +285,7 @@ void vpFeatureEllipse::print(const unsigned int select) const
   std::cout << "A = " << A << " B = " << B << " C = " << C << std::endl;
 }
 
-void vpFeatureEllipse::buildFrom(const double x, const double y,
-                                 const double mu20, const double mu11,
+void vpFeatureEllipse::buildFrom(const double x, const double y, const double mu20, const double mu11,
                                  const double mu02)
 {
 
@@ -301,10 +299,8 @@ void vpFeatureEllipse::buildFrom(const double x, const double y,
     flags[i] = true;
 }
 
-void vpFeatureEllipse::buildFrom(const double x, const double y,
-                                 const double mu20, const double mu11,
-                                 const double mu02, const double a,
-                                 const double b, const double c)
+void vpFeatureEllipse::buildFrom(const double x, const double y, const double mu20, const double mu11,
+                                 const double mu02, const double a, const double b, const double c)
 {
 
   s[0] = x;
@@ -350,8 +346,7 @@ void vpFeatureEllipse::setABC(const double a, const double b, const double c)
     flags[i] = true;
 }
 
-void vpFeatureEllipse::setMu(const double mu20, const double mu11,
-                             const double mu02)
+void vpFeatureEllipse::setMu(const double mu20, const double mu11, const double mu02)
 {
 
   s[2] = mu20;
@@ -370,9 +365,7 @@ void vpFeatureEllipse::setMu(const double mu20, const double mu11,
   \param color : Color used to display the feature.
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureEllipse::display(const vpCameraParameters &cam,
-                               const vpImage<unsigned char> &I,
-                               const vpColor &color,
+void vpFeatureEllipse::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                                unsigned int thickness) const
 {
   try {
@@ -383,8 +376,7 @@ void vpFeatureEllipse::display(const vpCameraParameters &cam,
     double mu11 = s[3];
     double mu02 = s[4];
 
-    vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02, cam, I, color,
-                                     thickness);
+    vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02, cam, I, color, thickness);
 
   } catch (...) {
     vpERROR_TRACE("Error caught");
@@ -401,8 +393,7 @@ void vpFeatureEllipse::display(const vpCameraParameters &cam,
   \param color : Color used to display the feature.
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureEllipse::display(const vpCameraParameters &cam,
-                               const vpImage<vpRGBa> &I, const vpColor &color,
+void vpFeatureEllipse::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                unsigned int thickness) const
 {
   try {
@@ -413,8 +404,7 @@ void vpFeatureEllipse::display(const vpCameraParameters &cam,
     double mu11 = s[3];
     double mu02 = s[4];
 
-    vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02, cam, I, color,
-                                     thickness);
+    vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02, cam, I, color, thickness);
 
   } catch (...) {
     vpERROR_TRACE("Error caught");

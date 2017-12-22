@@ -110,8 +110,7 @@ vpPoint::vpPoint(const std::vector<double> &P)
   point in the object frame. \param oX, oY, oZ: Coordinates of a 3D point in
   the object frame.
 */
-void vpPoint::setWorldCoordinates(const double oX, const double oY,
-                                  const double oZ)
+void vpPoint::setWorldCoordinates(const double oX, const double oY, const double oZ)
 {
   oP[0] = oX;
   oP[1] = oY;
@@ -142,9 +141,7 @@ void vpPoint::setWorldCoordinates(const vpColVector &P)
     oP[3] = P[3];
     oP /= oP[3];
   } else {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot initialize vpPoint from vector with size %d",
-                      P.size()));
+    throw(vpException(vpException::dimensionError, "Cannot initialize vpPoint from vector with size %d", P.size()));
   }
 }
 
@@ -171,9 +168,7 @@ void vpPoint::setWorldCoordinates(const std::vector<double> &P)
     oP[3] = P[3];
     oP /= oP[3];
   } else {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot initialize vpPoint from vector with size %d",
-                      P.size()));
+    throw(vpException(vpException::dimensionError, "Cannot initialize vpPoint from vector with size %d", P.size()));
   }
 }
 
@@ -240,14 +235,10 @@ void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 
   _cP.resize(4);
 
-  _cP[0] = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] +
-           cMo[0][3] * oP[3];
-  _cP[1] = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] +
-           cMo[1][3] * oP[3];
-  _cP[2] = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] +
-           cMo[2][3] * oP[3];
-  _cP[3] = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] +
-           cMo[3][3] * oP[3];
+  _cP[0] = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3] * oP[3];
+  _cP[1] = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] + cMo[1][3] * oP[3];
+  _cP[2] = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] + cMo[2][3] * oP[3];
+  _cP[3] = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] + cMo[3][3] * oP[3];
 
   double d = 1 / _cP[3];
   _cP[0] *= d;
@@ -267,14 +258,10 @@ void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 */
 void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo)
 {
-  double X = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] +
-             cMo[0][3] * oP[3];
-  double Y = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] +
-             cMo[1][3] * oP[3];
-  double Z = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] +
-             cMo[2][3] * oP[3];
-  double W = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] +
-             cMo[3][3] * oP[3];
+  double X = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3] * oP[3];
+  double Y = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] + cMo[1][3] * oP[3];
+  double Z = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] + cMo[2][3] * oP[3];
+  double W = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] + cMo[3][3] * oP[3];
 
   double d = 1 / W;
   cP[0] = X * d;
@@ -368,10 +355,8 @@ vpPoint *vpPoint::duplicate() const
 /*!
   Display the point in the image.
 */
-void vpPoint::display(const vpImage<unsigned char> &I,
-                      const vpHomogeneousMatrix &cMo,
-                      const vpCameraParameters &cam, const vpColor &color,
-                      const unsigned int thickness)
+void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                      const vpColor &color, const unsigned int thickness)
 {
 
   vpColVector _cP, _p;
@@ -387,10 +372,8 @@ void vpPoint::display(const vpImage<unsigned char> &I,
 /*!
   Display the point in the image.
 */
-void vpPoint::display(const vpImage<vpRGBa> &I,
-                      const vpHomogeneousMatrix &cMo,
-                      const vpCameraParameters &cam, const vpColor &color,
-                      const unsigned int thickness)
+void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                      const vpColor &color, const unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);
@@ -402,11 +385,7 @@ void vpPoint::display(const vpImage<vpRGBa> &I,
   vpFeatureDisplay::displayPoint(_p[0], _p[1], cam, I, color, thickness);
 }
 
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpPoint & /* vpp */)
-{
-  return (os << "vpPoint");
-}
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
 
 vpPoint &vpPoint::operator=(const vpPoint &vpp)
 {
@@ -421,8 +400,7 @@ vpPoint &vpPoint::operator=(const vpPoint &vpp)
 /*!
   Display the point in the image.
 */
-void vpPoint::display(const vpImage<unsigned char> &I,
-                      const vpCameraParameters &cam, const vpColor &color,
+void vpPoint::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                       const unsigned int thickness)
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness);

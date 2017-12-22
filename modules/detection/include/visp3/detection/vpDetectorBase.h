@@ -68,8 +68,8 @@ protected:
                                                      //!< defines the polygon
                                                      //!< that contains the
                                                      //!< object.
-  std::vector<std::string> m_message; //!< Message attached to each object.
-  size_t m_nb_objects;                //!< Number of detected objects.
+  std::vector<std::string> m_message;                //!< Message attached to each object.
+  size_t m_nb_objects;                               //!< Number of detected objects.
 
 public:
   /*!

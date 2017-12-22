@@ -94,10 +94,7 @@ public:
     va_end(args);
   }
 
-  vpDisplayException(const int id, const std::string &msg)
-    : vpException(id, msg)
-  {
-  }
+  vpDisplayException(const int id, const std::string &msg) : vpException(id, msg) {}
 
   explicit vpDisplayException(const int id) : vpException(id) {}
 };

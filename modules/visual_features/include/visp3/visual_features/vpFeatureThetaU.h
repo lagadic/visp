@@ -166,8 +166,7 @@ int main()
 
   // Control loop
   for ( ; ; ) {
-    // ... cMcd need here to be initialized from for example a pose
-estimation.
+    // ... cMcd need here to be initialized from for example a pose estimation.
 
     // Update the current ThetaU visual feature
     s.buildFrom(cMcd);
@@ -186,8 +185,8 @@ estimation.
   \code
   // Add the (ThetaU_x, ThetaU_y) subset features from the 3D ThetaU
   // rotation to the task
-  task.addFeature(s, vpFeatureThetaU::selectTUx() |
-vpFeatureThetaU::selectTUy()); \endcode
+  task.addFeature(s, vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy());
+  \endcode
 
   If you want to build your own control law, this other example shows
   how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D
@@ -252,12 +251,9 @@ public:
   // Basic constructor.
   vpFeatureThetaU();
   explicit vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r);
-  vpFeatureThetaU(vpThetaUVector &tu,
-                  vpFeatureThetaURotationRepresentationType r);
-  vpFeatureThetaU(vpRotationMatrix &R,
-                  vpFeatureThetaURotationRepresentationType r);
-  vpFeatureThetaU(vpHomogeneousMatrix &M,
-                  vpFeatureThetaURotationRepresentationType r);
+  vpFeatureThetaU(vpThetaUVector &tu, vpFeatureThetaURotationRepresentationType r);
+  vpFeatureThetaU(vpRotationMatrix &R, vpFeatureThetaURotationRepresentationType r);
+  vpFeatureThetaU(vpHomogeneousMatrix &M, vpFeatureThetaURotationRepresentationType r);
   //! Destructor. Does nothing.
   virtual ~vpFeatureThetaU() {}
 
@@ -267,11 +263,9 @@ public:
   // build from an homogeneous  matrix
   void buildFrom(const vpHomogeneousMatrix &M);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   //! Feature duplication.
@@ -279,11 +273,9 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
-  vpFeatureThetaURotationRepresentationType
-  getFeatureThetaURotationType() const;
+  vpFeatureThetaURotationRepresentationType getFeatureThetaURotationType() const;
 
   double get_TUx() const;
   double get_TUy() const;
@@ -300,8 +292,7 @@ public:
   void set_TUy(const double tu_y);
   void set_TUz(const double tu_z);
 
-  void setFeatureThetaURotationType(
-      const vpFeatureThetaURotationRepresentationType r);
+  void setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r);
 
 public:
   /*

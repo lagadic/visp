@@ -42,16 +42,14 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTrackerZNCCInverseCompositional.h>
 
-vpTemplateTrackerZNCCInverseCompositional::
-    vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp)
-  : vpTemplateTrackerZNCC(warp), compoInitialised(false), evolRMS(0), x_pos(),
-    y_pos(), threshold_RMS(1e-8), moydIrefdp()
+vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerZNCC(warp), compoInitialised(false), evolRMS(0), x_pos(), y_pos(), threshold_RMS(1e-8),
+    moydIrefdp()
 {
   useInverse = true;
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(const vpImage<unsigned char> &I)
 {
   // std::cout<<"Initialise precomputed value of Compositionnal
   // Inverse"<<std::endl;
@@ -77,8 +75,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(
   compoInitialised = true;
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   initCompInverse(I);
 
@@ -122,8 +119,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(
     j2 = X2[0];
     i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Iref = ptTemplate[point].val;
 
       if (!blur)
@@ -148,9 +144,8 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(
 
       for (unsigned int it = 0; it < nbParam; it++)
         for (unsigned int jt = 0; jt < nbParam; jt++) {
-          moyd2Iref[it][jt] +=
-              (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
-               dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
+          moyd2Iref[it][jt] += (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
+                                dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
         }
 
       delete[] tempt;
@@ -183,8 +178,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(
     j2 = X2[0];
     i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Iref = ptTemplate[point].val;
 
       if (!blur)
@@ -209,12 +203,10 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(
 
       for (unsigned int it = 0; it < nbParam; it++)
         for (unsigned int jt = 0; jt < nbParam; jt++) {
-          sIcd2Iref[it][jt] +=
-              prodIc * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
-                        dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy) -
-                        moyd2Iref[it][jt]);
-          sdIrefdIref[it][jt] += (ptTemplate[point].dW[it] - moydIrefdp[it]) *
-                                 (ptTemplate[point].dW[jt] - moydIrefdp[jt]);
+          sIcd2Iref[it][jt] += prodIc * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
+                                         dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy) - moyd2Iref[it][jt]);
+          sdIrefdIref[it][jt] +=
+              (ptTemplate[point].dW[it] - moydIrefdp[it]) * (ptTemplate[point].dW[jt] - moydIrefdp[jt]);
         }
 
       delete[] tempt;
@@ -240,8 +232,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(
   vpColVector dNCC(nbParam);
   dNCC = (sIcdIref / denom - NCC * dcovarIref / covarIref);
   vpMatrix d2covarIref(nbParam, nbParam);
-  d2covarIref =
-      -(sIcd2Iref - sdIrefdIref + dcovarIref * dcovarIref.t()) / covarIref;
+  d2covarIref = -(sIcd2Iref - sdIrefdIref + dcovarIref * dcovarIref.t()) / covarIref;
 #ifdef APPROX_NCC
   Hdesire = sIcd2Iref / denom;
 #else
@@ -252,8 +243,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(
   // std::cout<<"Hdesire = "<<Hdesire<<std::endl;
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
@@ -284,8 +274,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(
 
       j2 = X2[0];
       i2 = X2[1];
-      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-          (j2 < I.getWidth() - 1)) {
+      if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Iref = ptTemplate[point].val;
 
         if (!blur)
@@ -319,8 +308,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(
 
         j2 = X2[0];
         i2 = X2[1];
-        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-            (j2 < I.getWidth() - 1)) {
+        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
           Iref = ptTemplate[point].val;
 
           if (!blur)
@@ -330,11 +318,9 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(
 
           double prod = (Ic - moyIc);
           for (unsigned int it = 0; it < nbParam; it++)
-            sIcdIref[it] +=
-                prod * (ptTemplate[point].dW[it] - moydIrefdp[it]);
+            sIcdIref[it] += prod * (ptTemplate[point].dW[it] - moydIrefdp[it]);
           for (unsigned int it = 0; it < nbParam; it++)
-            sIrefdIref[it] += (Iref - moyIref) *
-                              (ptTemplate[point].dW[it] - moydIrefdp[it]);
+            sIrefdIref[it] += (Iref - moyIref) * (ptTemplate[point].dW[it] - moydIrefdp[it]);
 
           // double er=(Iref-Ic);
           // erreur+=(er*er);
@@ -373,8 +359,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(
       diverge = true;
 
     iteration++;
-  } while (
-      (!diverge && (evolRMS > threshold_RMS) && (iteration < iterationMax)));
+  } while ((!diverge && (evolRMS > threshold_RMS) && (iteration < iterationMax)));
 
   // std::cout<<"erreur "<<erreur<<std::endl;
   nbIteration = iteration;
@@ -382,8 +367,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(
   deletePosEvalRMS();
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(
-    const vpColVector &p_)
+void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(const vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos.resize(nb_corners);
@@ -405,8 +389,7 @@ void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(
   }
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::computeEvalRMS(
-    const vpColVector &p_)
+void vpTemplateTrackerZNCCInverseCompositional::computeEvalRMS(const vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 

@@ -52,8 +52,7 @@ vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(NULL) {}
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset,
-                         const unsigned int &col_offset,
+vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset,
                          const unsigned int &nrows, const unsigned int &ncols)
   : pRowNum(0), pColNum(0), parent(NULL)
 {
@@ -68,18 +67,15 @@ vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset,
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset,
-                       const unsigned int &col_offset,
+void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset,
                        const unsigned int &nrows, const unsigned int &ncols)
 {
 
   if (!m.data) {
-    throw(vpMatrixException(vpMatrixException::subMatrixError,
-                            "SubMatrix parent matrix is not allocated"));
+    throw(vpMatrixException(vpMatrixException::subMatrixError, "SubMatrix parent matrix is not allocated"));
   }
 
-  if (row_offset + nrows <= m.getRows() &&
-      col_offset + ncols <= m.getCols()) {
+  if (row_offset + nrows <= m.getRows() && col_offset + ncols <= m.getCols()) {
     data = m.data;
     parent = &m;
     rowNum = nrows;
@@ -96,8 +92,8 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset,
 
     dsize = pRowNum * pColNum;
   } else {
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-                            "Submatrix cannot be contain in parent matrix"));
+    throw(
+        vpMatrixException(vpMatrixException::incorrectMatrixSizeError, "Submatrix cannot be contain in parent matrix"));
   }
 }
 
@@ -108,14 +104,12 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset,
 void vpSubMatrix::checkParentStatus() const
 {
   if (!data) {
-    throw(
-        vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-                          "vpSubMatrix parent vpMatrix has been destroyed"));
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "vpSubMatrix parent vpMatrix has been destroyed"));
   }
   if (pRowNum != parent->getRows() || pColNum != parent->getCols()) {
-    throw(vpMatrixException(
-        vpMatrixException::incorrectMatrixSizeError,
-        "vpSubMatrix size of parent vpMatrix has been changed"));
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "vpSubMatrix size of parent vpMatrix has been changed"));
   }
 }
 
@@ -127,9 +121,8 @@ vpSubMatrix &vpSubMatrix::operator=(const vpMatrix &B)
 {
 
   if ((colNum != B.getCols()) || (rowNum != B.getRows())) {
-    throw(vpMatrixException(
-        vpMatrixException::incorrectMatrixSizeError,
-        "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
   }
 
   for (unsigned int i = 0; i < rowNum; i++) {
@@ -148,9 +141,8 @@ vpSubMatrix &vpSubMatrix::operator=(const vpSubMatrix &B)
 {
 
   if ((colNum != B.getCols()) || (rowNum != B.getRows())) {
-    throw(vpMatrixException(
-        vpMatrixException::incorrectMatrixSizeError,
-        "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
   }
 
   pRowNum = B.pRowNum;

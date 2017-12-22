@@ -72,10 +72,8 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
   // Estimated Inertia1 = m*l*l/12
   // Estimated Inertia2 = m*l*l/2 (rotation w.r.t. e-e z axis)
   double virtualStiffnessAng = 20;
-  double virtualDamperAng =
-      0.182; // greater than sqrt 4*Inertia1*virtualStiffnessAng
-  double virtualDamperAng2 =
-      0.0456; // greater than sqrt 4*Inertia2*virtualStiffnessAng
+  double virtualDamperAng = 0.182;   // greater than sqrt 4*Inertia1*virtualStiffnessAng
+  double virtualDamperAng2 = 0.0456; // greater than sqrt 4*Inertia2*virtualStiffnessAng
 
   vpColVector xd(3, 0);
   vpColVector yd(3, 0);
@@ -172,8 +170,7 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
   vpColVector rotzYZ(3, 0);
   rotzYZ = zeed.skew(zeed) * zYZ.normalize();
   vpColVector forceStiff1 = virtualStiffnessAng * rotzYZ;
-  vpColVector forceDamp1 =
-      virtualDamperAng * (omegad * rotzYZ.normalize()) * rotzYZ.normalize();
+  vpColVector forceDamp1 = virtualDamperAng * (omegad * rotzYZ.normalize()) * rotzYZ.normalize();
 
   for (unsigned int i = 0; i < 3; i++)
     torque1[i] = forceStiff1[i] - forceDamp1[i];
@@ -184,8 +181,7 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
   vpColVector rotzXZ(3, 0);
   rotzXZ = zeed.skew(zeed) * zXZ.normalize();
   vpColVector forceStiff2 = virtualStiffnessAng * rotzXZ;
-  vpColVector forceDamp2 =
-      virtualDamperAng * (omegad * rotzXZ.normalize()) * rotzXZ.normalize();
+  vpColVector forceDamp2 = virtualDamperAng * (omegad * rotzXZ.normalize()) * rotzXZ.normalize();
 
   for (unsigned int i = 0; i < 3; i++)
     torque2[i] = forceStiff2[i] - forceDamp2[i];

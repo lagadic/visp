@@ -105,35 +105,29 @@ public:
 
   void setImg(const vpImage<vpRGBa> &im);
   void setImg(const vpImage<unsigned char> &im);
-  void setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
-                 const unsigned int width, const unsigned int height);
-  void setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP,
-                 const unsigned int width, const unsigned int height);
+  void setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, const unsigned int width,
+                 const unsigned int height);
+  void setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, const unsigned int width,
+                 const unsigned int height);
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 
-  void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                const vpColor &color, unsigned int thickness,
+  void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
                 int style = PS_SOLID);
 
-  void drawRect(const vpImagePoint &topLeft, unsigned int width,
-                unsigned int height, const vpColor &color, bool fill = false,
-                unsigned int thickness = 1);
+  void drawRect(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
+                bool fill = false, unsigned int thickness = 1);
 
   void clear(const vpColor &color);
 
-  void drawCircle(const vpImagePoint &center, unsigned int radius,
-                  const vpColor &color, bool fill = false,
+  void drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
                   unsigned int thickness = 1);
 
-  void drawText(const vpImagePoint &ip, const char *text,
-                const vpColor &color);
+  void drawText(const vpImagePoint &ip, const char *text, const vpColor &color);
 
-  void drawCross(const vpImagePoint &ip, unsigned int size,
-                 const vpColor &color, unsigned int thickness = 1);
+  void drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
 
-  void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                 const vpColor &color, unsigned int w, unsigned int h,
+  void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
                  unsigned int thickness = 1);
 
   void getImage(vpImage<vpRGBa> &I);
@@ -145,20 +139,15 @@ private:
     Sub function for circle drawing.
     Circle drawing is based on Bresenham 's circle algorithm.
   */
-  void subDrawCircle(int i, int j, int x, int y, vpColor col,
-                     unsigned char *buf, unsigned int pitch,
-                     unsigned int maxX, unsigned int maxY);
+  void subDrawCircle(int i, int j, int x, int y, vpColor col, unsigned char *buf, unsigned int pitch, unsigned int maxX,
+                     unsigned int maxY);
 
-  void convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer,
-               unsigned int pitch);
-  void convert(const vpImage<unsigned char> &I, unsigned char *imBuffer,
-               unsigned int pitch);
-  void convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer,
-                  unsigned int pitch, int i_min, int j_min, int i_max,
-                  int j_max);
-  void convertROI(const vpImage<unsigned char> &I, unsigned char *imBuffer,
-                  unsigned int pitch, int i_min, int j_min, int i_max,
-                  int j_max);
+  void convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pitch);
+  void convert(const vpImage<unsigned char> &I, unsigned char *imBuffer, unsigned int pitch);
+  void convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pitch, int i_min, int j_min,
+                  int i_max, int j_max);
+  void convertROI(const vpImage<unsigned char> &I, unsigned char *imBuffer, unsigned int pitch, int i_min, int j_min,
+                  int i_max, int j_max);
 
   /*!
     Safe useful inline function to set a pixel in a texture buffer.
@@ -172,9 +161,8 @@ private:
     locked rectangle).
 
   */
-  inline void setBufferPixel(unsigned char *buf, unsigned int pitch, int x,
-                             int y, const vpColor &color, unsigned int maxX,
-                             unsigned int maxY)
+  inline void setBufferPixel(unsigned char *buf, unsigned int pitch, int x, int y, const vpColor &color,
+                             unsigned int maxX, unsigned int maxY)
   {
     unsigned long c;
     if (color.id < vpColor::id_unknown)
@@ -195,8 +183,7 @@ private:
     \param color The color of the pixel.
 
   */
-  inline void setBufferPixel(unsigned char *buf, unsigned int pitch, int x,
-                             int y, const vpColor &color)
+  inline void setBufferPixel(unsigned char *buf, unsigned int pitch, int x, int y, const vpColor &color)
   {
     unsigned long c;
     if (color.id < vpColor::id_unknown)

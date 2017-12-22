@@ -225,12 +225,10 @@ int main(int argc, const char **argv)
       std::cout << "Point " << i << std::endl;
       vpPoint p;
       std::cout << "(";
-      std::cout << aP[i].get_x() / aP[i].get_w() << ", "
-                << aP[i].get_y() / aP[i].get_w();
+      std::cout << aP[i].get_x() / aP[i].get_w() << ", " << aP[i].get_y() / aP[i].get_w();
       std::cout << ") =  (";
       p = aHb * bP[i];
-      std::cout << p.get_x() / p.get_w() << ",  " << p.get_y() / p.get_w()
-                << ")" << std::endl;
+      std::cout << p.get_x() / p.get_w() << ",  " << p.get_y() / p.get_w() << ")" << std::endl;
     }
     return 0;
   } catch (vpException &e) {

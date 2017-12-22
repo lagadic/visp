@@ -88,8 +88,7 @@ namespace
 {
 int fastRound(const float value) { return (int)(value + 0.5f); }
 
-void clipHistogram(const std::vector<int> &hist,
-                   std::vector<int> &clippedHist, const int limit)
+void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit)
 {
   clippedHist = hist;
   int clippedEntries = 0, clippedEntriesBefore = 0;
@@ -121,8 +120,7 @@ void clipHistogram(const std::vector<int> &hist,
   } while (clippedEntries != clippedEntriesBefore);
 }
 
-void createHistogram(const int blockRadius, const int bins,
-                     const int blockXCenter, const int blockYCenter,
+void createHistogram(const int blockRadius, const int bins, const int blockXCenter, const int blockYCenter,
                      const vpImage<unsigned char> &I, std::vector<int> &hist)
 {
   std::fill(hist.begin(), hist.end(), 0);
@@ -139,8 +137,7 @@ void createHistogram(const int blockRadius, const int bins,
   }
 }
 
-std::vector<float> createTransfer(const std::vector<int> &hist,
-                                  const int limit, std::vector<int> &cdfs)
+std::vector<float> createTransfer(const std::vector<int> &hist, const int limit, std::vector<int> &cdfs)
 {
   clipHistogram(hist, cdfs, limit);
   int hMin = (int)hist.size() - 1;
@@ -191,8 +188,7 @@ float transferValue(const int v, std::vector<int> &clippedHist)
   return (cdf - cdfMin) / (float)(cdfMax - cdfMin);
 }
 
-float transferValue(const int v, const std::vector<int> &hist,
-                    std::vector<int> &clippedHist, const int limit)
+float transferValue(const int v, const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit)
 {
   clipHistogram(hist, clippedHist, limit);
 
@@ -225,9 +221,8 @@ float transferValue(const int v, const std::vector<int> &hist,
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
-               const int blockRadius, const int bins, const float slope,
-               const bool fast)
+void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const int blockRadius, const int bins,
+               const float slope, const bool fast)
 {
   if (blockRadius < 0) {
     std::cerr << "Error: blockRadius < 0!" << std::endl;
@@ -239,8 +234,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
     return;
   }
 
-  if ((unsigned int)(2 * blockRadius + 1) > I1.getWidth() ||
-      (unsigned int)(2 * blockRadius + 1) > I1.getHeight()) {
+  if ((unsigned int)(2 * blockRadius + 1) > I1.getWidth() || (unsigned int)(2 * blockRadius + 1) > I1.getHeight()) {
     std::cerr << "Error: (unsigned int) (2*blockRadius+1) > I1.getWidth() || "
                  "(unsigned int) (2*blockRadius+1) > I1.getHeight()!"
               << std::endl;
@@ -461,8 +455,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
         int w = std::min((int)I1.getWidth(), xMax) - xMin;
         int n = h * w;
         int limit = (int)(slope * n / bins + 0.5f);
-        I2[y][x] =
-            fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
+        I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
       }
     }
   }
@@ -493,8 +486,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2,
-               const int blockRadius, const int bins, const float slope,
+void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int blockRadius, const int bins, const float slope,
                const bool fast)
 {
   // Split

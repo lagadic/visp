@@ -84,10 +84,9 @@ typedef enum {
   \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned fps,
-           unsigned input, unsigned scale, long niter, char *device,
-           vpV4l2Grabber::vpV4l2PixelFormatType pixelformat,
-           const vpImage_type &image_type, const std::string &opath)
+void usage(const char *name, const char *badparam, unsigned fps, unsigned input, unsigned scale, long niter,
+           char *device, vpV4l2Grabber::vpV4l2PixelFormatType pixelformat, const vpImage_type &image_type,
+           const std::string &opath)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the Video For Linux Two framegrabber. \n\
@@ -145,8 +144,7 @@ OPTIONS:                                                  Default\n\
      by the extension of the file (ex .png, .pgm, ...) \n\
                     \n\
   -h \n\
-     Print the help.\n\n", device, fps, input, pixelformat,
-          vpV4l2Grabber::V4L2_MAX_FORMAT - 1, image_type, scale, niter,
+     Print the help.\n\n", device, fps, input, pixelformat, vpV4l2Grabber::V4L2_MAX_FORMAT - 1, image_type, scale, niter,
           opath.c_str());
 
   if (badparam)
@@ -174,10 +172,8 @@ OPTIONS:                                                  Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
-                unsigned &scale, bool &display, bool &verbose, long &niter,
-                char *device,
-                vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat,
+bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, unsigned &scale, bool &display,
+                bool &verbose, long &niter, char *device, vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat,
                 vpImage_type &image_type, bool &save, std::string &opath)
 {
   const char *optarg_;
@@ -217,14 +213,12 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
       verbose = true;
       break;
     case 'h':
-      usage(argv[0], NULL, fps, input, scale, niter, device, pixelformat,
-            image_type, opath);
+      usage(argv[0], NULL, fps, input, scale, niter, device, pixelformat, image_type, opath);
       return false;
       break;
 
     default:
-      usage(argv[0], optarg_, fps, input, scale, niter, device, pixelformat,
-            image_type, opath);
+      usage(argv[0], optarg_, fps, input, scale, niter, device, pixelformat, image_type, opath);
       return false;
       break;
     }
@@ -232,8 +226,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, fps, input, scale, niter, device, pixelformat,
-          image_type, opath);
+    usage(argv[0], NULL, fps, input, scale, niter, device, pixelformat, image_type, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -257,8 +250,7 @@ int main(int argc, const char **argv)
     unsigned int opt_fps = 25;
     unsigned int opt_input = 0;
     unsigned int opt_scale = 1;
-    vpV4l2Grabber::vpV4l2PixelFormatType opt_pixelformat =
-        vpV4l2Grabber::V4L2_YUYV_FORMAT;
+    vpV4l2Grabber::vpV4l2PixelFormatType opt_pixelformat = vpV4l2Grabber::V4L2_YUYV_FORMAT;
     long opt_iter = 100;
     bool opt_verbose = false;
     bool opt_display = true;
@@ -271,9 +263,8 @@ int main(int argc, const char **argv)
     vpImage_type opt_image_type = color_image;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_fps, opt_input, opt_scale, opt_display,
-                   opt_verbose, opt_iter, opt_device, opt_pixelformat,
-                   opt_image_type, opt_save, opt_opath) == false) {
+    if (getOptions(argc, argv, opt_fps, opt_input, opt_scale, opt_display, opt_verbose, opt_iter, opt_device,
+                   opt_pixelformat, opt_image_type, opt_save, opt_opath) == false) {
       exit(-1);
     }
 
@@ -302,15 +293,13 @@ int main(int argc, const char **argv)
       g.open(Ig);
       // Acquire an image
       g.acquire(Ig);
-      std::cout << "Grey image size: width : " << Ig.getWidth()
-                << " height: " << Ig.getHeight() << std::endl;
+      std::cout << "Grey image size: width : " << Ig.getWidth() << " height: " << Ig.getHeight() << std::endl;
     } else {
       // Open the framegrabber with the specified settings on color images
       g.open(Ic);
       // Acquire an image
       g.acquire(Ic);
-      std::cout << "Color image size: width : " << Ic.getWidth()
-                << " height: " << Ic.getHeight() << std::endl;
+      std::cout << "Color image size: width : " << Ic.getWidth() << " height: " << Ic.getHeight() << std::endl;
     }
 
 // We open a window using either X11 or GTK.
@@ -374,8 +363,7 @@ int main(int argc, const char **argv)
       }
 
       // Print the iteration duration
-      std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)"
-                << std::endl;
+      std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;
     }
 
     g.close();
@@ -389,8 +377,5 @@ int main(int argc, const char **argv)
 int main() { vpTRACE("X11 or GTK display are not available"); }
 #endif
 #else
-int main()
-{
-  vpTRACE("Video 4 Linux 2 frame grabber drivers are not available");
-}
+int main() { vpTRACE("Video 4 Linux 2 frame grabber drivers are not available"); }
 #endif

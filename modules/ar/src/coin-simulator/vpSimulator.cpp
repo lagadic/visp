@@ -56,21 +56,21 @@
 #endif
 
 /* Objets OIV. */
-#include <Inventor/nodes/SoCone.h> /* Objet cone.                            */
-#include <Inventor/nodes/SoCoordinate3.h> /* Liste de points.                */
-#include <Inventor/nodes/SoCylinder.h> /* Objet cylindre.                    */
+#include <Inventor/nodes/SoCone.h>           /* Objet cone.                            */
+#include <Inventor/nodes/SoCoordinate3.h>    /* Liste de points.                */
+#include <Inventor/nodes/SoCylinder.h>       /* Objet cylindre.                    */
 #include <Inventor/nodes/SoIndexedFaceSet.h> /* Liste de face.               */
-#include <Inventor/nodes/SoPointLight.h> /* Objet lumiere ponctuelle.        */
-#include <Inventor/nodes/SoRotationXYZ.h> /* Transfo rotation simple.       */
-#include <Inventor/nodes/SoScale.h> /* Trasnfo mise a l'echelle.             */
-#include <Inventor/nodes/SoTranslation.h> /* Trasnfo translation.            */
+#include <Inventor/nodes/SoPointLight.h>     /* Objet lumiere ponctuelle.        */
+#include <Inventor/nodes/SoRotationXYZ.h>    /* Transfo rotation simple.       */
+#include <Inventor/nodes/SoScale.h>          /* Trasnfo mise a l'echelle.             */
+#include <Inventor/nodes/SoTranslation.h>    /* Trasnfo translation.            */
 
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/nodes/SoDirectionalLight.h> /* Objet lumiere directionnelle*/
-#include <Inventor/nodes/SoDrawStyle.h> /* Style de rendu.                  */
-#include <Inventor/nodes/SoEnvironment.h> /* Eclairage ambiant.              */
-#include <Inventor/nodes/SoGroup.h> /* Groupement de noeuds (sans separation)*/
-#include <Inventor/nodes/SoMaterial.h> /* Matiere (couleur) des objets.     */
+#include <Inventor/nodes/SoDrawStyle.h>        /* Style de rendu.                  */
+#include <Inventor/nodes/SoEnvironment.h>      /* Eclairage ambiant.              */
+#include <Inventor/nodes/SoGroup.h>            /* Groupement de noeuds (sans separation)*/
+#include <Inventor/nodes/SoMaterial.h>         /* Matiere (couleur) des objets.     */
 
 // Positions of all of the vertices:
 //
@@ -132,8 +132,7 @@ SoSeparator *makePyramide()
  * est <radius>, et celui de la fleche <radius> * 5.
  * La fleche est oriente selon l'axe Y.
  */
-static SoSeparator *createArrow(float longueur, float proportionFleche,
-                                float radius)
+static SoSeparator *createArrow(float longueur, float proportionFleche, float radius)
 {
   SoSeparator *fleche = new SoSeparator;
   fleche->ref();
@@ -173,8 +172,7 @@ static SoSeparator *createArrow(float longueur, float proportionFleche,
 #define RAYON_FLECHE 0.002f
 #define PROPORTION_FLECHE 0.1f
 
-SoSeparator *createFrame(float longueurFleche = LONGUEUR_FLECHE,
-                         float proportionFleche = PROPORTION_FLECHE,
+SoSeparator *createFrame(float longueurFleche = LONGUEUR_FLECHE, float proportionFleche = PROPORTION_FLECHE,
                          float radiusFleche = RAYON_FLECHE)
 {
   vpDEBUG_TRACE(15, "# Entree.");
@@ -206,8 +204,7 @@ SoSeparator *createFrame(float longueurFleche = LONGUEUR_FLECHE,
   bleu->diffuseColor.setValue(0.0, 0.0, 1.0);
   bleu->emissiveColor.setValue(0.0, 0.0, 0.5);
 
-  SoSeparator *fleche =
-      createArrow(longueurFleche, proportionFleche, radiusFleche);
+  SoSeparator *fleche = createArrow(longueurFleche, proportionFleche, radiusFleche);
 
   frame->addChild(rouge);
   frame->addChild(rotationY_X);
@@ -335,16 +332,12 @@ vpSimulator::vpSimulator()
 #elif defined(VISP_HAVE_SOXT)
     mainWindow(),
 #endif
-    mainWindowInitialized(false), typeImage(vpSimulator::grayImage),
-    image_background(NULL), internalView(NULL), externalView(NULL),
-    mainThread(NULL), internal_width(0), internal_height(0),
-    external_width(0), external_height(0), scene(NULL), internalRoot(NULL),
-    externalRoot(NULL), internalCamera(NULL), externalCamera(NULL),
-    internalCameraPosition(NULL), extrenalCameraPosition(NULL),
-    internalCameraObject(NULL), zoomFactor(0.),
-    cameraPositionInitialized(false), cMf(), internalCameraParameters(),
-    externalCameraParameters(), realtime(NULL), offScreenRenderer(NULL),
-    bufferView(NULL), get(0)
+    mainWindowInitialized(false), typeImage(vpSimulator::grayImage), image_background(NULL), internalView(NULL),
+    externalView(NULL), mainThread(NULL), internal_width(0), internal_height(0), external_width(0), external_height(0),
+    scene(NULL), internalRoot(NULL), externalRoot(NULL), internalCamera(NULL), externalCamera(NULL),
+    internalCameraPosition(NULL), extrenalCameraPosition(NULL), internalCameraObject(NULL), zoomFactor(0.),
+    cameraPositionInitialized(false), cMf(), internalCameraParameters(), externalCameraParameters(), realtime(NULL),
+    offScreenRenderer(NULL), bufferView(NULL), get(0)
 {
   vpSimulator::init();
 }
@@ -454,8 +447,7 @@ void vpSimulator::changeZoomFactor(const float zoomFactor, const int index)
   //  this->setZoomFactor(zoomFactor);
 }
 
-void vpSimulator::initInternalViewer(const unsigned int width,
-                                     const unsigned int height)
+void vpSimulator::initInternalViewer(const unsigned int width, const unsigned int height)
 {
   internal_width = width;
   internal_height = height;
@@ -489,8 +481,7 @@ void vpSimulator::initInternalViewer(const unsigned int width,
   bufferView = new unsigned char[3 * width * height];
 }
 
-void vpSimulator::initExternalViewer(const unsigned int width,
-                                     const unsigned int height)
+void vpSimulator::initExternalViewer(const unsigned int width, const unsigned int height)
 {
 
   external_width = width;
@@ -527,8 +518,7 @@ void vpSimulator::setInternalCameraParameters(vpCameraParameters &_cam)
 
   internalCamera->ref();
   internalCamera->heightAngle = 2 * atan(v);
-  internalCamera->aspectRatio =
-      (internal_width / internal_height) * (px / py);
+  internalCamera->aspectRatio = (internal_width / internal_height) * (px / py);
   internalCamera->nearDistance = 0.001f;
 
   internalCamera->farDistance = 1000;
@@ -547,8 +537,7 @@ void vpSimulator::setExternalCameraParameters(vpCameraParameters &_cam)
 
   externalCamera->ref();
   externalCamera->heightAngle = 2 * atan(v);
-  externalCamera->aspectRatio =
-      (external_width / external_height) * (px / py);
+  externalCamera->aspectRatio = (external_width / external_height) * (px / py);
   externalCamera->nearDistance = 0.001f;
   externalCamera->farDistance = 1000;
   externalCamera->unrefNoDelete();
@@ -618,8 +607,7 @@ void vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   rotCam.setValue(matrix);
   internalCameraPosition->ref();
   internalCameraPosition->rotation.setValue(rotCam);
-  internalCameraPosition->translation.setValue(matrix[3][0], matrix[3][1],
-                                               matrix[3][2]);
+  internalCameraPosition->translation.setValue(matrix[3][0], matrix[3][1], matrix[3][2]);
   internalCameraPosition->unref();
 }
 
@@ -726,8 +714,7 @@ void vpSimulator::addFrame(const vpHomogeneousMatrix &fMo, float zoom)
   SoSeparator *frame = new SoSeparator;
   frame->ref();
   frame->addChild(taille);
-  frame->addChild(createFrame(LONGUEUR_FLECHE * zoom,
-                              PROPORTION_FLECHE * zoom, RAYON_FLECHE * zoom));
+  frame->addChild(createFrame(LONGUEUR_FLECHE * zoom, PROPORTION_FLECHE * zoom, RAYON_FLECHE * zoom));
   this->addObject(frame, fMo, externalRoot);
   // frame->unref();
 }
@@ -739,8 +726,7 @@ void vpSimulator::addFrame(const vpHomogeneousMatrix &fMo, float zoom)
 */
 void vpSimulator::addAbsoluteFrame(float zoom)
 {
-  scene->addChild(createFrame(LONGUEUR_FLECHE * zoom,
-                              PROPORTION_FLECHE * zoom, RAYON_FLECHE * zoom));
+  scene->addChild(createFrame(LONGUEUR_FLECHE * zoom, PROPORTION_FLECHE * zoom, RAYON_FLECHE * zoom));
 }
 
 /*!
@@ -748,8 +734,7 @@ void vpSimulator::addAbsoluteFrame(float zoom)
   \param iv_filename : name of.iv file to load
   \param fMo       : position of the object wrt the reference frame
 */
-void vpSimulator::load(const char *iv_filename,
-                       const vpHomogeneousMatrix &fMo)
+void vpSimulator::load(const char *iv_filename, const vpHomogeneousMatrix &fMo)
 {
 
   SoInput in;
@@ -777,8 +762,7 @@ void vpSimulator::load(const char *iv_filename,
   \param newObject : pointer toward the new object
   \param fMo       : position of the object wrt the reference frame
 */
-void vpSimulator::addObject(SoSeparator *newObject,
-                            const vpHomogeneousMatrix &fMo)
+void vpSimulator::addObject(SoSeparator *newObject, const vpHomogeneousMatrix &fMo)
 {
   try {
     this->addObject(newObject, fMo, scene);
@@ -795,8 +779,7 @@ void vpSimulator::addObject(SoSeparator *newObject,
   \param root : pointer toward the subscene graph
 */
 
-void vpSimulator::addObject(SoSeparator *object,
-                            const vpHomogeneousMatrix &fMo, SoSeparator *root)
+void vpSimulator::addObject(SoSeparator *object, const vpHomogeneousMatrix &fMo, SoSeparator *root)
 {
 
   bool identity = true;
@@ -828,8 +811,7 @@ void vpSimulator::addObject(SoSeparator *object,
     SoSeparator *newNode = new SoSeparator;
 
     displacement->rotation.setValue(rotation);
-    displacement->translation.setValue(matrix[3][0], matrix[3][1],
-                                       matrix[3][2]);
+    displacement->translation.setValue(matrix[3][0], matrix[3][1], matrix[3][2]);
 
     root->addChild(newNode);
     newNode->addChild(displacement);
@@ -884,8 +866,7 @@ void vpSimulator::closeMainApplication()
  *   - width : largeur de l'image dans le buffer.
  *   - height : hauteur de l'image dans le buffer.
  */
-void vpSimulator::offScreenRendering(vpSimulatorViewType view, int *width,
-                                     int *height)
+void vpSimulator::offScreenRendering(vpSimulatorViewType view, int *width, int *height)
 {
 
   SbVec2s size(320, 200);
@@ -967,8 +948,7 @@ void vpSimulator::write(const char *fileName)
   for (unsigned int i = 0; i < internal_height; i++)
     for (unsigned int j = 0; j < internal_width; j++) {
       unsigned char r, g, b;
-      unsigned int index =
-          3 * ((internal_height - i - 1) * internal_width + j);
+      unsigned int index = 3 * ((internal_height - i - 1) * internal_width + j);
       r = *(bufferView + index);
       g = *(bufferView + index + 1);
       b = *(bufferView + index + 2);
@@ -999,8 +979,7 @@ void vpSimulator::getInternalImage(vpImage<vpRGBa> &I)
   // while (get==0) {;}
   get = 2;
   I.resize(internal_height, internal_width);
-  vpImageConvert::RGBToRGBa(bufferView, (unsigned char *)I.bitmap,
-                            internal_width, internal_height, true);
+  vpImageConvert::RGBToRGBa(bufferView, (unsigned char *)I.bitmap, internal_width, internal_height, true);
   get = 1;
 }
 
@@ -1013,8 +992,7 @@ void vpSimulator::getInternalImage(vpImage<unsigned char> &I)
   // while (get==0) {;}
   get = 2;
   I.resize(internal_height, internal_width);
-  vpImageConvert::RGBToGrey(bufferView, I.bitmap, internal_width,
-                            internal_height, true);
+  vpImageConvert::RGBToGrey(bufferView, I.bitmap, internal_width, internal_height, true);
   get = 1;
 }
 

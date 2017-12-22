@@ -8,9 +8,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 
-#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 //! [Include]
 #include <visp3/imgproc/vpImgproc.h>
 //! [Include]
@@ -22,16 +20,13 @@ void displayContourInfo(const vp::vpContour &contour, const int level)
 {
   std::cout << "\nContour:" << std::endl;
   std::cout << "\tlevel: " << level << std::endl;
-  std::cout << "\tcontour type: "
-            << (contour.m_contourType == vp::CONTOUR_OUTER ? "outer contour"
-                                                           : "hole contour")
+  std::cout << "\tcontour type: " << (contour.m_contourType == vp::CONTOUR_OUTER ? "outer contour" : "hole contour")
             << std::endl;
   std::cout << "\tcontour size: " << contour.m_points.size() << std::endl;
   std::cout << "\tnb children: " << contour.m_children.size() << std::endl;
 
-  for (std::vector<vp::vpContour *>::const_iterator it =
-           contour.m_children.begin();
-       it != contour.m_children.end(); ++it) {
+  for (std::vector<vp::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+       ++it) {
     displayContourInfo(**it, level + 1);
   }
 }
@@ -42,14 +37,10 @@ void drawContoursTree(vpImage<vpRGBa> &I, const vp::vpContour &contour)
 {
   std::vector<std::vector<vpImagePoint> > contours;
   contours.push_back(contour.m_points);
-  vp::drawContours(I, contours,
-                   contour.m_contourType == vp::CONTOUR_OUTER
-                       ? vpColor::red
-                       : vpColor::green);
+  vp::drawContours(I, contours, contour.m_contourType == vp::CONTOUR_OUTER ? vpColor::red : vpColor::green);
 
-  for (std::vector<vp::vpContour *>::const_iterator it =
-           contour.m_children.begin();
-       it != contour.m_children.end(); ++it) {
+  for (std::vector<vp::vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+       ++it) {
     drawContoursTree(I, **it);
   }
 }
@@ -60,9 +51,7 @@ void drawContoursTree(vpImage<vpRGBa> &I, const vp::vpContour &contour)
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
   //!
   std::string input_filename = "grid36-03.pgm";
@@ -76,8 +65,7 @@ int main(int argc, const char **argv)
       white_foreground = true;
     } else if (std::string(argv[i]) == "--method" && i + 1 < argc) {
       extraction_method = (vp::vpContourRetrievalType)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" ||
-               std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--input <input image>] [--method <0: "
                    "CONTOUR_RETR_TREE, 1: CONTOUR_RETR_LIST, 2: "
@@ -107,8 +95,7 @@ int main(int argc, const char **argv)
   d2.init(I_draw_contours, I_bin.getWidth(), 10, "Contours");
 
   //! [Otsu]
-  vp::autoThreshold(I, vp::AUTO_THRESHOLD_OTSU, white_foreground ? 0 : 1,
-                    white_foreground ? 1 : 0);
+  vp::autoThreshold(I, vp::AUTO_THRESHOLD_OTSU, white_foreground ? 0 : 1, white_foreground ? 1 : 0);
   //! [Otsu]
   for (unsigned int i = 0; i < I_bin.getSize(); i++) {
     I_bin.bitmap[i] = 255 * I.bitmap[i];
@@ -126,9 +113,7 @@ int main(int argc, const char **argv)
 
   vpDisplay::display(I_bin);
   vpDisplay::display(I_draw_contours);
-  vpDisplay::displayText(I_draw_contours, 20, 20,
-                         "Click to draw outer / hole contours.",
-                         vpColor::red);
+  vpDisplay::displayText(I_draw_contours, 20, 20, "Click to draw outer / hole contours.", vpColor::red);
   vpDisplay::flush(I_bin);
   vpDisplay::flush(I_draw_contours);
   vpDisplay::getClick(I_draw_contours);
@@ -141,14 +126,9 @@ int main(int argc, const char **argv)
 
   vpDisplay::display(I_bin);
   vpDisplay::display(I_draw_contours);
-  vpDisplay::displayText(I_draw_contours, 20, 20, "Click to quit.",
-                         vpColor::red);
-  vpDisplay::displayText(I_draw_contours, 20,
-                         I_draw_contours.getWidth() - 200, "Outer contour",
-                         vpColor::red);
-  vpDisplay::displayText(I_draw_contours, 20,
-                         I_draw_contours.getWidth() - 100, "Hole contour",
-                         vpColor::green);
+  vpDisplay::displayText(I_draw_contours, 20, 20, "Click to quit.", vpColor::red);
+  vpDisplay::displayText(I_draw_contours, 20, I_draw_contours.getWidth() - 200, "Outer contour", vpColor::red);
+  vpDisplay::displayText(I_draw_contours, 20, I_draw_contours.getWidth() - 100, "Hole contour", vpColor::green);
   vpDisplay::flush(I_bin);
   vpDisplay::flush(I_draw_contours);
   vpDisplay::getClick(I_draw_contours);

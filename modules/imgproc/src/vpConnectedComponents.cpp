@@ -46,10 +46,8 @@
 
 namespace
 {
-void getNeighbors(const vpImage<unsigned char> &I,
-                  std::queue<vpImagePoint> &listOfNeighbors,
-                  const unsigned int i, const unsigned int j,
-                  const vpImageMorphology::vpConnexityType &connexity)
+void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, const unsigned int i,
+                  const unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
 {
   unsigned char currValue = I[i][j];
 
@@ -87,10 +85,8 @@ void getNeighbors(const vpImage<unsigned char> &I,
   }
 }
 
-void visitNeighbors(vpImage<unsigned char> &I_copy,
-                    std::queue<vpImagePoint> &listOfNeighbors,
-                    vpImage<int> &labels, const int current_label,
-                    const vpImageMorphology::vpConnexityType &connexity)
+void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
+                    const int current_label, const vpImageMorphology::vpConnexityType &connexity)
 {
   // Visit the neighbors
   while (!listOfNeighbors.empty()) {
@@ -120,9 +116,8 @@ void visitNeighbors(vpImage<unsigned char> &I_copy,
   label. \param nbComponents : Number of connected components. \param
   connexity : Type of connexity.
 */
-void vp::connectedComponents(
-    const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,
-    const vpImageMorphology::vpConnexityType &connexity)
+void vp::connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,
+                             const vpImageMorphology::vpConnexityType &connexity)
 {
   if (I.getSize() == 0) {
     return;
@@ -161,8 +156,7 @@ void vp::connectedComponents(
         I_copy[i][j] = 0;
         labels_copy[i][j] = current_label;
 
-        visitNeighbors(I_copy, listOfNeighbors, labels_copy, current_label,
-                       connexity);
+        visitNeighbors(I_copy, listOfNeighbors, labels_copy, current_label, connexity);
 
         // Increment label
         current_label++;
@@ -171,8 +165,7 @@ void vp::connectedComponents(
   }
 
   for (unsigned int i = 0; i < labels.getHeight(); i++) {
-    memcpy(labels[i], labels_copy[i + 1] + 1,
-           sizeof(int) * labels.getWidth());
+    memcpy(labels[i], labels_copy[i + 1] + 1, sizeof(int) * labels.getWidth());
   }
 
   nbComponents = current_label - 1;

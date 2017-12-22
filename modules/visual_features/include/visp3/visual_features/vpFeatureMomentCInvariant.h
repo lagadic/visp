@@ -105,8 +105,7 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentCInvariant(vpMomentDatabase &moments, double A, double B,
-                            double C,
+  vpFeatureMomentCInvariant(vpMomentDatabase &moments, double A, double B, double C,
                             vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(moments, A, B, C, featureMoments, 16)
   {
@@ -246,8 +245,7 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentCInvariant(vpMomentDatabase &data_base, double A_, double B_,
-                            double C_,
+  vpFeatureMomentCInvariant(vpMomentDatabase &data_base, double A_, double B_, double C_,
                             vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 16), LI(16)
   {
@@ -325,8 +323,7 @@ public:
    */
   void printLsofInvariants(std::ostream &os) const;
 
-  friend VISP_EXPORT std::ostream &
-  operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCInvariant &featcinv);
 };
 #endif
 #endif

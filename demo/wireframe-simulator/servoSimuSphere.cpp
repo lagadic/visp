@@ -74,8 +74,7 @@
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &display);
 void computeVisualFeatures(const vpSphere &sphere, vpGenericFeature &s);
-void computeInteractionMatrix(const vpGenericFeature &s,
-                              const vpSphere &sphere, vpMatrix &L);
+void computeInteractionMatrix(const vpGenericFeature &s, const vpSphere &sphere, vpMatrix &L);
 
 /*!
 
@@ -173,18 +172,15 @@ void computeVisualFeatures(const vpSphere &sphere, vpGenericFeature &s)
   double m11 = sphere.get_mu11();
   double h2;
   // if (gx != 0 || gy != 0)
-  if (std::fabs(gx) > std::numeric_limits<double>::epsilon() ||
-      std::fabs(gy) > std::numeric_limits<double>::epsilon())
+  if (std::fabs(gx) > std::numeric_limits<double>::epsilon() || std::fabs(gy) > std::numeric_limits<double>::epsilon())
     h2 = (vpMath::sqr(gx) + vpMath::sqr(gy)) /
-         (4 * m20 * vpMath::sqr(gy) + 4 * m02 * vpMath::sqr(gx) -
-          8 * m11 * gx * gy);
+         (4 * m20 * vpMath::sqr(gy) + 4 * m02 * vpMath::sqr(gx) - 8 * m11 * gx * gy);
   else
     h2 = 1 / (4 * m20);
 
   double sx = gx * h2 / (sqrt(h2 + 1));
   double sy = gy * h2 / (sqrt(h2 + 1));
-  double sz =
-      sqrt(h2 + 1); //(h2-(vpMath::sqr(sx)+vpMath::sqr(sy)-1))/(2*sqrt(h2));
+  double sz = sqrt(h2 + 1); //(h2-(vpMath::sqr(sx)+vpMath::sqr(sy)-1))/(2*sqrt(h2));
 
   s.set_s(sx, sy, sz);
 }
@@ -196,8 +192,7 @@ void computeVisualFeatures(const vpSphere &sphere, vpGenericFeature &s)
   with I3 the 3x3 identity matrix
   with [s]x the skew matrix related to s
 */
-void computeInteractionMatrix(const vpGenericFeature &s,
-                              const vpSphere &sphere, vpMatrix &L)
+void computeInteractionMatrix(const vpGenericFeature &s, const vpSphere &sphere, vpMatrix &L)
 {
   L = 0;
   L[0][0] = -1 / sphere.getR();
@@ -271,8 +266,7 @@ int main(int argc, const char **argv)
     // Set initial position of the object in the camera frame
     vpHomogeneousMatrix cMo(0, 0.1, 2.0, vpMath::rad(35), vpMath::rad(25), 0);
     // Set desired position of the object in the camera frame
-    vpHomogeneousMatrix cdMo(0.0, 0.0, 0.8, vpMath::rad(0), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix cdMo(0.0, 0.0, 0.8, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     // Set initial position of the object in the world frame
     vpHomogeneousMatrix wMo(0.0, 0.0, 0, 0, 0, 0);
     // Position of the camera in the world frame
@@ -319,17 +313,15 @@ int main(int argc, const char **argv)
     vpWireFrameSimulator sim;
 
     // Set the scene
-    sim.initScene(vpWireFrameSimulator::SPHERE,
-                  vpWireFrameSimulator::D_STANDARD);
+    sim.initScene(vpWireFrameSimulator::SPHERE, vpWireFrameSimulator::D_STANDARD);
 
     // Initialize simulator frames
-    sim.set_fMo(wMo); // Position of the object in the world reference frame
+    sim.set_fMo(wMo);                   // Position of the object in the world reference frame
     sim.setCameraPositionRelObj(cMo);   // initial position of the camera
     sim.setDesiredCameraPosition(cdMo); // desired position of the camera
 
     // Set the External camera position
-    vpHomogeneousMatrix camMf(0.0, 0, 3.5, vpMath::rad(0), vpMath::rad(30),
-                              0);
+    vpHomogeneousMatrix camMf(0.0, 0, 3.5, vpMath::rad(0), vpMath::rad(30), 0);
     sim.setExternalCameraPosition(camMf);
 
     // Computes the position of a camera which is fixed in the object frame
@@ -356,24 +348,20 @@ int main(int argc, const char **argv)
 
       // Display the object frame the world reference frame and the camera
       // frame
-      vpDisplay::displayFrame(Iext1, camMf * sim.get_fMo() * cMo.inverse(),
-                              camera, 0.2, vpColor::none);
-      vpDisplay::displayFrame(Iext1, camMf * sim.get_fMo(), camera, 0.2,
-                              vpColor::none);
+      vpDisplay::displayFrame(Iext1, camMf * sim.get_fMo() * cMo.inverse(), camera, 0.2, vpColor::none);
+      vpDisplay::displayFrame(Iext1, camMf * sim.get_fMo(), camera, 0.2, vpColor::none);
       vpDisplay::displayFrame(Iext1, camMf, camera, 0.2, vpColor::none);
 
       // Display the world reference frame and the object frame
       vpDisplay::displayFrame(Iext2, camoMf, camera, 0.2, vpColor::none);
-      vpDisplay::displayFrame(Iext2, camoMf * sim.get_fMo(), camera, 0.05,
-                              vpColor::none);
+      vpDisplay::displayFrame(Iext2, camoMf * sim.get_fMo(), camera, 0.05, vpColor::none);
 
       vpDisplay::flush(Iint);
       vpDisplay::flush(Iext1);
       vpDisplay::flush(Iext2);
 
       std::cout << "Click on a display" << std::endl;
-      while (!vpDisplay::getClick(Iint, false) &&
-             !vpDisplay::getClick(Iext1, false) &&
+      while (!vpDisplay::getClick(Iint, false) && !vpDisplay::getClick(Iext1, false) &&
              !vpDisplay::getClick(Iext2, false)) {
       };
     }
@@ -425,20 +413,14 @@ int main(int argc, const char **argv)
 
         // Display the camera frame, the object frame the world reference
         // frame
-        vpDisplay::displayFrame(Iext1,
-                                sim.getExternalCameraPosition() *
-                                    sim.get_fMo() * cMo.inverse(),
-                                camera, 0.2, vpColor::none);
-        vpDisplay::displayFrame(
-            Iext1, sim.getExternalCameraPosition() * sim.get_fMo(), camera,
-            0.2, vpColor::none);
-        vpDisplay::displayFrame(Iext1, sim.getExternalCameraPosition(),
-                                camera, 0.2, vpColor::none);
+        vpDisplay::displayFrame(Iext1, sim.getExternalCameraPosition() * sim.get_fMo() * cMo.inverse(), camera, 0.2,
+                                vpColor::none);
+        vpDisplay::displayFrame(Iext1, sim.getExternalCameraPosition() * sim.get_fMo(), camera, 0.2, vpColor::none);
+        vpDisplay::displayFrame(Iext1, sim.getExternalCameraPosition(), camera, 0.2, vpColor::none);
 
         // Display the world reference frame and the object frame
         vpDisplay::displayFrame(Iext2, camoMf, camera, 0.2, vpColor::none);
-        vpDisplay::displayFrame(Iext2, camoMf * sim.get_fMo(), camera, 0.05,
-                                vpColor::none);
+        vpDisplay::displayFrame(Iext2, camoMf * sim.get_fMo(), camera, 0.05, vpColor::none);
 
         vpDisplay::flush(Iint);
         vpDisplay::flush(Iext1);
@@ -447,8 +429,7 @@ int main(int argc, const char **argv)
 
       vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     task.print();

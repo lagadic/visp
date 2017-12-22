@@ -38,10 +38,8 @@ int main(int argc, char **argv)
     }
 
     std::cout << "Video name: " << opt_videoname << std::endl;
-    std::cout << "Tracker requested config files: " << objectname
-              << ".[init, cao]" << std::endl;
-    std::cout << "Tracker optional config files: " << objectname << ".[ppm]"
-              << std::endl;
+    std::cout << "Tracker requested config files: " << objectname << ".[init, cao]" << std::endl;
+    std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
     //! [Image]
     vpImage<unsigned char> I;
@@ -107,8 +105,7 @@ int main(int argc, char **argv)
       klt_settings.setHarrisFreeParameter(0.01);
       klt_settings.setBlockSize(3);
       klt_settings.setPyramidLevels(3);
-      dynamic_cast<vpMbKltMultiTracker *>(tracker)->setKltOpencv(
-          klt_settings);
+      dynamic_cast<vpMbKltMultiTracker *>(tracker)->setKltOpencv(klt_settings);
       dynamic_cast<vpMbKltMultiTracker *>(tracker)->setKltMaskBorder(5);
     }
 #endif
@@ -161,7 +158,6 @@ int main(int argc, char **argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example."
-            << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }

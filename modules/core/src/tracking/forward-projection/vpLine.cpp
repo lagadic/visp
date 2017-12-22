@@ -82,10 +82,8 @@ vpLine::vpLine() { init(); }
   \param A2, B2, C2, D2 : The parameters used to define the second plane.
 
 */
-void vpLine::setWorldCoordinates(const double &A1, const double &B1,
-                                 const double &C1, const double &D1,
-                                 const double &A2, const double &B2,
-                                 const double &C2, const double &D2)
+void vpLine::setWorldCoordinates(const double &A1, const double &B1, const double &C1, const double &D1,
+                                 const double &A2, const double &B2, const double &C2, const double &D2)
 {
   oP[0] = A1;
   oP[1] = B1;
@@ -119,8 +117,7 @@ void vpLine::setWorldCoordinates(const double &A1, const double &B1,
 void vpLine::setWorldCoordinates(const vpColVector &oP_)
 {
   if (oP_.getRows() != 8)
-    throw vpException(vpException::dimensionError,
-                      "Size of oP is not equal to 8 as it should be");
+    throw vpException(vpException::dimensionError, "Size of oP is not equal to 8 as it should be");
 
   this->oP = oP_;
 }
@@ -146,16 +143,13 @@ void vpLine::setWorldCoordinates(const vpColVector &oP_)
   \left[\begin{array}{c} A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
 
 */
-void vpLine::setWorldCoordinates(const vpColVector &oP1,
-                                 const vpColVector &oP2)
+void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
 {
   if (oP1.getRows() != 4)
-    throw vpException(vpException::dimensionError,
-                      "Size of oP1 is not equal to 4 as it should be");
+    throw vpException(vpException::dimensionError, "Size of oP1 is not equal to 4 as it should be");
 
   if (oP2.getRows() != 4)
-    throw vpException(vpException::dimensionError,
-                      "Size of oP2 is not equal to 4 as it should be");
+    throw vpException(vpException::dimensionError, "Size of oP2 is not equal to 4 as it should be");
 
   for (unsigned int i = 0; i < 4; i++) {
     oP[i] = oP1[i];
@@ -221,8 +215,7 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_)
   // projection
 
   if (cP.getRows() != 8)
-    throw vpException(vpException::dimensionError,
-                      "Size of cP is not equal to 8 as it should be");
+    throw vpException(vpException::dimensionError, "Size of cP is not equal to 8 as it should be");
 
   double A1, A2, B1, B2, C1, C2, D1, D2;
 
@@ -244,9 +237,7 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_)
   if (s <= 1e-8) // seuil pas terrible
   {
     printf("Degenerate case: the image of the straight line is a point!\n");
-    throw vpException(
-        vpException::fatalError,
-        "Degenerate case: the image of the straight line is a point!");
+    throw vpException(vpException::fatalError, "Degenerate case: the image of the straight line is a point!");
   }
   s = 1.0 / sqrt(s);
 
@@ -296,10 +287,7 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_)
   line.changeFrame(cMo);
   \endcode
 */
-void vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
-{
-  changeFrame(cMo, cP);
-}
+void vpLine::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP); }
 
 /*!
 
@@ -328,8 +316,7 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
 
   //Set the coordinates of the line in the object frame in meter.
   line.setWorldCoordinates( 1, 0, 0, -0.5, 0, 0, 1, 0.5)
-  //The line is define by the intersection between the plane X = 0.5m and Z =
-  0.5m
+  //The line is define by the intersection between the plane X = 0.5m and Z = 0.5m
 
   //Create the homogeneous matrix
   vpHomogeneousMatrix cMo;
@@ -480,8 +467,7 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
 
   \param thickness : Thickness of the feature representation.
 */
-void vpLine::display(const vpImage<unsigned char> &I,
-                     const vpCameraParameters &cam, const vpColor &color,
+void vpLine::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                      const unsigned int thickness)
 {
   vpFeatureDisplay::displayLine(p[0], p[1], cam, I, color, thickness);
@@ -508,10 +494,8 @@ void vpLine::display(const vpImage<unsigned char> &I,
   \param thickness : Thickness of the feature representation.
 */
 // non destructive wrt. cP and p
-void vpLine::display(const vpImage<unsigned char> &I,
-                     const vpHomogeneousMatrix &cMo,
-                     const vpCameraParameters &cam, const vpColor &color,
-                     const unsigned int thickness)
+void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                     const vpColor &color, const unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);

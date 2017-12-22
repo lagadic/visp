@@ -113,13 +113,12 @@ int main()
   cMo.buildFrom(0, 0, 1.2, 0, 0, 0);
   // ... cMo need here to be computed from a pose estimation
 
-  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera
-frame cP = cMo * oP
+  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera frame cP = cMo * oP
 
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.buildFrom(point); // Initialize the feature from the 3D point coordinates
-in the camera frame: s=(X,Y,Z) s.print();
+  s.buildFrom(point); // Initialize the feature from the 3D point coordinates in the camera frame: s=(X,Y,Z)
+  s.print();
 
   // Creation of the desired feature s*.
   vpFeaturePoint3D s_star;
@@ -141,8 +140,7 @@ in the camera frame: s=(X,Y,Z) s.print();
   // Control loop
   for ( ; ; ) {
     // ... cMo need here to be estimated from for example a pose estimation.
-    point.changeFrame(cMo); // Compute the 3D point coordinates in the camera
-frame cP = cMo * oP
+    point.changeFrame(cMo); // Compute the 3D point coordinates in the camera frame cP = cMo * oP
 
     // Update the current 3D point visual feature
     s.buildFrom(point);
@@ -160,8 +158,8 @@ frame cP = cMo * oP
 
   \code
   // Add the (X,Y) subset feature from the 3D point visual feature to the task
-  task.addFeature(s, s_star, vpFeaturePoint3D::selectX() |
-vpFeaturePoint3D::selectY()); \endcode
+  task.addFeature(s, s_star, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
+  \endcode
 
   If you want to build your own control law, this other example shows
   how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D
@@ -183,13 +181,12 @@ int main()
   cMo.buildFrom(0, 0, 1.2, 0, 0, 0);
   // ... cMo need here to be computed from a pose estimation
 
-  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera
-frame cP = cMo * oP
+  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera frame cP = cMo * oP
 
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.buildFrom(point); // Initialize the feature from the 3D point coordinates
-in the camera frame s.print();
+  s.buildFrom(point); // Initialize the feature from the 3D point coordinates in the camera frame
+  s.print();
 
   // Creation of the desired feature s*.
   vpFeaturePoint3D s_star;
@@ -227,11 +224,9 @@ public:
   // set the point XY and Z-coordinates
   void buildFrom(const double X, const double Y, const double Z);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   // feature duplication
@@ -239,8 +234,7 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
   // get the point X-coordinates
   double get_X() const;

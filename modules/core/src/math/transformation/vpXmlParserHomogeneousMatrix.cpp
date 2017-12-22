@@ -74,16 +74,12 @@
 /*!
   Default constructor
 */
-vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix()
-  : vpXmlParser(), m_M(), m_name()
-{
-}
+vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix() : vpXmlParser(), m_M(), m_name() {}
 /*!
   Copy constructor
   \param twinParser : parser object to copy
 */
-vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix(
-    vpXmlParserHomogeneousMatrix &twinParser)
+vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix(vpXmlParserHomogeneousMatrix &twinParser)
   : vpXmlParser(twinParser), m_M(), m_name()
 {
   *this = twinParser;
@@ -94,8 +90,7 @@ vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix(
   \param twinParser : parser object to copy
   \return a copy of the input.
 */
-vpXmlParserHomogeneousMatrix &vpXmlParserHomogeneousMatrix::
-operator=(const vpXmlParserHomogeneousMatrix &twinParser)
+vpXmlParserHomogeneousMatrix &vpXmlParserHomogeneousMatrix::operator=(const vpXmlParserHomogeneousMatrix &twinParser)
 {
   this->m_M = twinParser.m_M;
   this->m_name = twinParser.m_name;
@@ -111,9 +106,7 @@ operator=(const vpXmlParserHomogeneousMatrix &twinParser)
 
   \return error code.
 */
-int vpXmlParserHomogeneousMatrix::parse(vpHomogeneousMatrix &M,
-                                        const std::string &filename,
-                                        const std::string &name)
+int vpXmlParserHomogeneousMatrix::parse(vpHomogeneousMatrix &M, const std::string &filename, const std::string &name)
 {
   xmlDocPtr doc;
   xmlNodePtr node;
@@ -149,26 +142,22 @@ int vpXmlParserHomogeneousMatrix::parse(vpHomogeneousMatrix &M,
 
   \return error code.
 */
-int vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M,
-                                       const std::string &filename,
+int vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M, const std::string &filename,
                                        const std::string &name)
 {
   xmlDocPtr doc;
   xmlNodePtr node;
 
-  doc = xmlReadFile(filename.c_str(), NULL,
-                    XML_PARSE_NOWARNING + XML_PARSE_NOERROR +
-                        XML_PARSE_NOBLANKS);
+  doc = xmlReadFile(filename.c_str(), NULL, XML_PARSE_NOWARNING + XML_PARSE_NOERROR + XML_PARSE_NOBLANKS);
   if (doc == NULL) {
     doc = xmlNewDoc((xmlChar *)"1.0");
     node = xmlNewNode(NULL, (xmlChar *)LABEL_XML_ROOT);
     xmlDocSetRootElement(doc, node);
-    xmlNodePtr node_tmp = xmlNewComment(
-        (xmlChar *)"This file stores homogeneous matrix used\n"
-                   "   in the vpHomogeneousMatrix Class of ViSP available\n"
-                   "   at https://visp.inria.fr/download/ .\n"
-                   "   It can be read with the parse method of\n"
-                   "   the vpXmlParserHomogeneousMatrix class.");
+    xmlNodePtr node_tmp = xmlNewComment((xmlChar *)"This file stores homogeneous matrix used\n"
+                                                   "   in the vpHomogeneousMatrix Class of ViSP available\n"
+                                                   "   at https://visp.inria.fr/download/ .\n"
+                                                   "   It can be read with the parse method of\n"
+                                                   "   the vpXmlParserHomogeneousMatrix class.");
     xmlAddChild(node, node_tmp);
   }
 
@@ -185,8 +174,7 @@ int vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M,
   if (M_isFound > 0) {
     // vpCERROR
     std::cout << "There is already an homogeneous matrix " << std::endl
-              << "available in the file with the input name: " << name << "."
-              << std::endl
+              << "available in the file with the input name: " << name << "." << std::endl
               << "Please delete it manually from the xml file." << std::endl;
     xmlFreeDoc(doc);
     return SEQUENCE_ERROR;
@@ -210,8 +198,7 @@ int vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M,
   \param name : name of the Homogeneous Matrix
   \return error code.
  */
-int vpXmlParserHomogeneousMatrix::read(xmlDocPtr doc, xmlNodePtr node,
-                                       const std::string &name)
+int vpXmlParserHomogeneousMatrix::read(xmlDocPtr doc, xmlNodePtr node, const std::string &name)
 {
   //    char * val_char;
   vpXmlCodeType prop;
@@ -236,8 +223,7 @@ int vpXmlParserHomogeneousMatrix::read(xmlDocPtr doc, xmlNodePtr node,
 
   if (nbM == 0) {
     back = SEQUENCE_ERROR;
-    vpCERROR << "No Homogeneous matrix is available" << std::endl
-             << "with name: " << name << std::endl;
+    vpCERROR << "No Homogeneous matrix is available" << std::endl << "with name: " << name << std::endl;
   } else if (nbM > 1) {
     back = SEQUENCE_ERROR;
     vpCERROR << nbM << " There are more Homogeneous matrix" << std::endl
@@ -258,8 +244,7 @@ int vpXmlParserHomogeneousMatrix::read(xmlDocPtr doc, xmlNodePtr node,
   \return 1 if there is an homogeneous matrix corresponding with the input
   name, 0 otherwise.
  */
-int vpXmlParserHomogeneousMatrix::count(xmlDocPtr doc, xmlNodePtr node,
-                                        const std::string &name)
+int vpXmlParserHomogeneousMatrix::count(xmlDocPtr doc, xmlNodePtr node, const std::string &name)
 {
   //    char * val_char;
   vpXmlCodeType prop;
@@ -290,8 +275,7 @@ int vpXmlParserHomogeneousMatrix::count(xmlDocPtr doc, xmlNodePtr node,
   \return error code.
 
  */
-int vpXmlParserHomogeneousMatrix::read_matrix(xmlDocPtr doc, xmlNodePtr node,
-                                              const std::string &name)
+int vpXmlParserHomogeneousMatrix::read_matrix(xmlDocPtr doc, xmlNodePtr node, const std::string &name)
 {
   vpXmlCodeType prop;
   /* read value in the XML file. */
@@ -319,8 +303,7 @@ int vpXmlParserHomogeneousMatrix::read_matrix(xmlDocPtr doc, xmlNodePtr node,
 
     case CODE_XML_VALUE: // VALUE
       if (name == M_name_tmp) {
-        std::cout << "Found Homogeneous Matrix with name: \"" << M_name_tmp
-                  << "\"" << std::endl;
+        std::cout << "Found Homogeneous Matrix with name: \"" << M_name_tmp << "\"" << std::endl;
         back = read_values(doc, node, M_tmp);
       }
       break;
@@ -363,8 +346,7 @@ int vpXmlParserHomogeneousMatrix::read_matrix(xmlDocPtr doc, xmlNodePtr node,
 
  */
 vpXmlParserHomogeneousMatrix::vpXmlCodeSequenceType
-vpXmlParserHomogeneousMatrix::read_values(xmlDocPtr doc, xmlNodePtr node,
-                                          vpHomogeneousMatrix &M)
+vpXmlParserHomogeneousMatrix::read_values(xmlDocPtr doc, xmlNodePtr node, vpHomogeneousMatrix &M)
 {
   // counter of the number of read parameters
   int nb = 0;
@@ -459,8 +441,7 @@ vpXmlParserHomogeneousMatrix::read_values(xmlDocPtr doc, xmlNodePtr node,
 
   \return error code.
  */
-int vpXmlParserHomogeneousMatrix::write(xmlNodePtr node,
-                                        const std::string &name)
+int vpXmlParserHomogeneousMatrix::write(xmlNodePtr node, const std::string &name)
 {
   int back = SEQUENCE_OK;
 
@@ -485,8 +466,7 @@ int vpXmlParserHomogeneousMatrix::write(xmlNodePtr node,
     if (!name.empty()) {
       node_tmp = xmlNewComment((xmlChar *)"Name of the homogeneous matrix");
       xmlAddChild(node_matrix, node_tmp);
-      xmlNewTextChild(node_matrix, NULL, (xmlChar *)LABEL_XML_M_NAME,
-                      (xmlChar *)name.c_str());
+      xmlNewTextChild(node_matrix, NULL, (xmlChar *)LABEL_XML_M_NAME, (xmlChar *)name.c_str());
     }
 
     //<values>
@@ -496,44 +476,36 @@ int vpXmlParserHomogeneousMatrix::write(xmlNodePtr node,
     {
       char str[11];
 
-      node_tmp = xmlNewComment(
-          (xmlChar *)"Translation vector with values in meters");
+      node_tmp = xmlNewComment((xmlChar *)"Translation vector with values in meters");
       xmlAddChild(node_values, node_tmp);
 
       //<tx>
       sprintf(str, "%f", m_M[0][3]);
-      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TX,
-                      (xmlChar *)str);
+      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TX, (xmlChar *)str);
 
       //<ty>
       sprintf(str, "%f", m_M[1][3]);
-      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TY,
-                      (xmlChar *)str);
+      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TY, (xmlChar *)str);
 
       //<tz>
       sprintf(str, "%f", m_M[2][3]);
-      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TZ,
-                      (xmlChar *)str);
+      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TZ, (xmlChar *)str);
 
-      node_tmp = xmlNewComment(
-          (xmlChar *)"Rotational vector expressed in angle axis "
-                     "representation with values in radians");
+      node_tmp = xmlNewComment((xmlChar *)"Rotational vector expressed in angle axis "
+                                          "representation with values in radians");
       xmlAddChild(node_values, node_tmp);
 
       //<tux>
       sprintf(str, "%f", tu[0]);
-      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TUX,
-                      (xmlChar *)str);
+      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TUX, (xmlChar *)str);
 
       //<tuy>
       sprintf(str, "%f", tu[1]);
-      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TUY,
-                      (xmlChar *)str);
+      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TUY, (xmlChar *)str);
 
       //<tuz>
       sprintf(str, "%f", tu[2]);
-      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TUZ,
-                      (xmlChar *)str);
+      xmlNewTextChild(node_values, NULL, (xmlChar *)LABEL_XML_TUZ, (xmlChar *)str);
     }
   }
   return back;
@@ -547,8 +519,8 @@ int vpXmlParserHomogeneousMatrix::write(xmlNodePtr node,
   \return error code.
 */
 
-vpXmlParserHomogeneousMatrix::vpXmlCodeSequenceType
-vpXmlParserHomogeneousMatrix::str2xmlcode(char *str, vpXmlCodeType &res)
+vpXmlParserHomogeneousMatrix::vpXmlCodeSequenceType vpXmlParserHomogeneousMatrix::str2xmlcode(char *str,
+                                                                                              vpXmlCodeType &res)
 {
   vpXmlCodeType val_int = CODE_XML_BAD;
   vpXmlCodeSequenceType back = vpXmlParserHomogeneousMatrix::SEQUENCE_OK;

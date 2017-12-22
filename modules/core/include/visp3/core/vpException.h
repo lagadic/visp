@@ -94,8 +94,8 @@ public:
     divideByZeroError,
     dimensionError,
     fatalError,
-    badValue, /*!< Used to indicate that a value is not in the allowed range.
-               */
+    badValue,      /*!< Used to indicate that a value is not in the allowed range.
+                    */
     notInitialized /*!< Used to indicate that a parameter is not initialized.
                     */
   };
@@ -124,8 +124,7 @@ public:
   //@}
 
   //! Print the error structure.
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpException &art);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &art);
 
   const char *what() const throw();
 };

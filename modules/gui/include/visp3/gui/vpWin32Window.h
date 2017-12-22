@@ -121,8 +121,7 @@ public:
   bool isInitialized() { return initialized; }
 
   //! Initialize the window
-  void initWindow(const char *title, int posx, int posy, unsigned int w,
-                  unsigned int h);
+  void initWindow(const char *title, int posx, int posy, unsigned int w, unsigned int h);
 
   void setScale(unsigned int scale) { renderer->setScale(scale); };
 
@@ -132,8 +131,7 @@ public:
   friend class vpDisplayGDI;
 
   //! The message loop
-  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
-                                  LPARAM lParam);
+  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 #endif

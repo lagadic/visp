@@ -77,16 +77,14 @@
   \param thickness : Thickness of the feature representation.
 
 */
-void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam,
-                             const vpImage<unsigned char> &I,
-                             vpColor currentColor, vpColor desiredColor,
-                             unsigned int thickness)
+void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                             vpColor currentColor, vpColor desiredColor, unsigned int thickness)
 {
   std::list<vpBasicFeature *>::const_iterator it_s;
   std::list<vpBasicFeature *>::const_iterator it_s_star;
 
-  for (it_s = s.featureList.begin(), it_s_star = s.desiredFeatureList.begin();
-       it_s != s.featureList.end(); ++it_s, ++it_s_star) {
+  for (it_s = s.featureList.begin(), it_s_star = s.desiredFeatureList.begin(); it_s != s.featureList.end();
+       ++it_s, ++it_s_star) {
     if (desiredColor != vpColor::none) {
       // desired list
       (*it_s_star)->display(cam, I, desiredColor, thickness);
@@ -119,15 +117,14 @@ void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam,
   \param thickness : Thickness of the feature representation.
 
  */
-void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam,
-                             const vpImage<vpRGBa> &I, vpColor currentColor,
-                             vpColor desiredColor, unsigned int thickness)
+void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+                             vpColor currentColor, vpColor desiredColor, unsigned int thickness)
 {
   std::list<vpBasicFeature *>::const_iterator it_s;
   std::list<vpBasicFeature *>::const_iterator it_s_star;
 
-  for (it_s = s.featureList.begin(), it_s_star = s.desiredFeatureList.begin();
-       it_s != s.featureList.end(); ++it_s, ++it_s_star) {
+  for (it_s = s.featureList.begin(), it_s_star = s.desiredFeatureList.begin(); it_s != s.featureList.end();
+       ++it_s, ++it_s_star) {
     if (desiredColor != vpColor::none) {
       // desired list
       (*it_s_star)->display(cam, I, desiredColor, thickness);

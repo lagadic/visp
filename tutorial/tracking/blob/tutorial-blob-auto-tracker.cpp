@@ -43,11 +43,9 @@ int main()
 #endif
       std::cout << " gray level min: " << blob.getGrayLevelMin() << std::endl;
       std::cout << " gray level max: " << blob.getGrayLevelMax() << std::endl;
-      std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision()
-                << std::endl;
+      std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision() << std::endl;
       std::cout << " sizePrecision: " << blob.getSizePrecision() << std::endl;
-      std::cout << " ellipsoidShapePrecision: "
-                << blob.getEllipsoidShapePrecision() << std::endl;
+      std::cout << " ellipsoidShapePrecision: " << blob.getEllipsoidShapePrecision() << std::endl;
     }
     //! [Learn]
     //! [Setting]
@@ -78,16 +76,14 @@ int main()
       blob_list.push_back(blob);
     }
     //! [Add learned dot]
-    std::cout << "Number of auto detected blob: " << blob_list.size()
-              << std::endl;
+    std::cout << "Number of auto detected blob: " << blob_list.size() << std::endl;
     std::cout << "A click to exit..." << std::endl;
 
     while (1) {
       vpDisplay::display(I);
 
       //! [Display]
-      for (std::list<vpDot2>::iterator it = blob_list.begin();
-           it != blob_list.end(); ++it) {
+      for (std::list<vpDot2>::iterator it = blob_list.begin(); it != blob_list.end(); ++it) {
         (*it).setGraphics(true);
         (*it).setGraphicsThickness(3);
         (*it).track(I);

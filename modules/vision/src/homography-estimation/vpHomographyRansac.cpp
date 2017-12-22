@@ -74,8 +74,7 @@ bool isColinear(vpColVector &p1, vpColVector &p2, vpColVector &p3)
   return ((vpColVector::cross(p2 - p1, p3 - p1).sumSquare()) < vpEps);
 }
 
-bool vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind,
-                                           double threshold_area)
+bool vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind, double threshold_area)
 {
 
   unsigned int i, j, k;
@@ -101,36 +100,30 @@ bool vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind,
 
   i = 0, j = 1, k = 2;
 
-  double area012 =
-      (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] -
-       pa[k][0] * pa[j][1] + -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
+  double area012 = (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] - pa[k][0] * pa[j][1] +
+                    -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
 
   i = 0;
   j = 1, k = 3;
-  double area013 =
-      (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] -
-       pa[k][0] * pa[j][1] + -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
+  double area013 = (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] - pa[k][0] * pa[j][1] +
+                    -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
 
   i = 0;
   j = 2, k = 3;
-  double area023 =
-      (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] -
-       pa[k][0] * pa[j][1] + -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
+  double area023 = (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] - pa[k][0] * pa[j][1] +
+                    -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
 
   i = 1;
   j = 2, k = 3;
-  double area123 =
-      (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] -
-       pa[k][0] * pa[j][1] + -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
+  double area123 = (-pa[j][0] * pa[i][1] + pa[k][0] * pa[i][1] + pa[i][0] * pa[j][1] - pa[k][0] * pa[j][1] +
+                    -pa[i][0] * pa[k][1] + pa[1][j] * pa[k][1]);
 
   double sum_area = area012 + area013 + area023 + area123;
 
-  return (
-      (sum_area < threshold_area) ||
-      (iscolinear(pa[0], pa[1], pa[2]) || iscolinear(pa[0], pa[1], pa[3]) ||
-       iscolinear(pa[0], pa[2], pa[3]) || iscolinear(pa[1], pa[2], pa[3]) ||
-       iscolinear(pb[0], pb[1], pb[2]) || iscolinear(pb[0], pb[1], pb[3]) ||
-       iscolinear(pb[0], pb[2], pb[3]) || iscolinear(pb[1], pb[2], pb[3])));
+  return ((sum_area < threshold_area) ||
+          (iscolinear(pa[0], pa[1], pa[2]) || iscolinear(pa[0], pa[1], pa[3]) || iscolinear(pa[0], pa[2], pa[3]) ||
+           iscolinear(pa[1], pa[2], pa[3]) || iscolinear(pb[0], pb[1], pb[2]) || iscolinear(pb[0], pb[1], pb[3]) ||
+           iscolinear(pb[0], pb[2], pb[3]) || iscolinear(pb[1], pb[2], pb[3])));
 }
 /*
 \brief
@@ -165,21 +158,16 @@ bool vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind)
     pa[i][1] = x[n2 + ind2 + 1];
     pa[i][2] = 1;
   }
-  return (
-      iscolinear(pa[0], pa[1], pa[2]) || iscolinear(pa[0], pa[1], pa[3]) ||
-      iscolinear(pa[0], pa[2], pa[3]) || iscolinear(pa[1], pa[2], pa[3]) ||
-      iscolinear(pb[0], pb[1], pb[2]) || iscolinear(pb[0], pb[1], pb[3]) ||
-      iscolinear(pb[0], pb[2], pb[3]) || iscolinear(pb[1], pb[2], pb[3]));
+  return (iscolinear(pa[0], pa[1], pa[2]) || iscolinear(pa[0], pa[1], pa[3]) || iscolinear(pa[0], pa[2], pa[3]) ||
+          iscolinear(pa[1], pa[2], pa[3]) || iscolinear(pb[0], pb[1], pb[2]) || iscolinear(pb[0], pb[1], pb[3]) ||
+          iscolinear(pb[0], pb[2], pb[3]) || iscolinear(pb[1], pb[2], pb[3]));
 }
-bool vpHomography::degenerateConfiguration(const std::vector<double> &xb,
-                                           const std::vector<double> &yb,
-                                           const std::vector<double> &xa,
-                                           const std::vector<double> &ya)
+bool vpHomography::degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
+                                           const std::vector<double> &xa, const std::vector<double> &ya)
 {
   unsigned int n = (unsigned int)xb.size();
   if (n < 4)
-    throw(vpException(vpException::fatalError,
-                      "There must be at least 4 matched points"));
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
   std::vector<vpColVector> pa(n), pb(n);
   for (unsigned i = 0; i < n; i++) {
@@ -208,8 +196,7 @@ bool vpHomography::degenerateConfiguration(const std::vector<double> &xb,
   return false;
 }
 // Fit model to this random selection of data points.
-void vpHomography::computeTransformation(vpColVector &x, unsigned int *ind,
-                                         vpColVector &M)
+void vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 {
   unsigned int n = x.getRows() / 4;
   std::vector<double> xa(4), xb(4);
@@ -239,8 +226,7 @@ void vpHomography::computeTransformation(vpColVector &x, unsigned int *ind,
 }
 
 // Evaluate distances between points and model.
-double vpHomography::computeResidual(vpColVector &x, vpColVector &M,
-                                     vpColVector &d)
+double vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 {
   unsigned int n = x.getRows() / 4;
   unsigned int n2 = n * 2;
@@ -287,8 +273,7 @@ double vpHomography::computeResidual(vpColVector &x, vpColVector &M,
 }
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void vpHomography::initRansac(unsigned int n, double *xb, double *yb,
-                              double *xa, double *ya, vpColVector &x)
+void vpHomography::initRansac(unsigned int n, double *xb, double *yb, double *xa, double *ya, vpColVector &x)
 {
   x.resize(4 * n);
   unsigned int n2 = n * 2;
@@ -330,23 +315,17 @@ void vpHomography::initRansac(unsigned int n, double *xb, double *yb,
   \return true if the homography could be computed, false otherwise.
 
 */
-bool vpHomography::ransac(const std::vector<double> &xb,
-                          const std::vector<double> &yb,
-                          const std::vector<double> &xa,
-                          const std::vector<double> &ya, vpHomography &aHb,
-                          std::vector<bool> &inliers, double &residual,
-                          unsigned int nbInliersConsensus, double threshold,
-                          bool normalization)
+bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                          const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inliers,
+                          double &residual, unsigned int nbInliersConsensus, double threshold, bool normalization)
 {
   unsigned int n = (unsigned int)xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for robust homography estimation"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for robust homography estimation"));
 
   // 4 point are required
   if (n < 4)
-    throw(vpException(vpException::fatalError,
-                      "There must be at least 4 matched points"));
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
   vpUniRand random((const long)time(NULL));
 
@@ -400,10 +379,8 @@ bool vpHomography::ransac(const std::vector<double> &xb,
       }
 
       try {
-        if (!vpHomography::degenerateConfiguration(xb_rand, yb_rand, xa_rand,
-                                                   ya_rand)) {
-          vpHomography::DLT(xb_rand, yb_rand, xa_rand, ya_rand, aHb,
-                            normalization);
+        if (!vpHomography::degenerateConfiguration(xb_rand, yb_rand, xa_rand, ya_rand)) {
+          vpHomography::DLT(xb_rand, yb_rand, xa_rand, ya_rand, aHb, normalization);
           degenerate = false;
         }
       } catch (...) {
@@ -414,8 +391,7 @@ bool vpHomography::ransac(const std::vector<double> &xb,
 
       if (nbDegenerateIter > maxDegenerateIter) {
         vpERROR_TRACE("Unable to select a nondegenerate data set");
-        throw(vpException(vpException::fatalError,
-                          "Unable to select a nondegenerate data set"));
+        throw(vpException(vpException::fatalError, "Unable to select a nondegenerate data set"));
       }
     }
 
@@ -495,8 +471,7 @@ bool vpHomography::ransac(const std::vector<double> &xb,
         yb_best[i] = yb[best_consensus[i]];
       }
 
-      vpHomography::DLT(xb_best, yb_best, xa_best, ya_best, aHb,
-                        normalization);
+      vpHomography::DLT(xb_best, yb_best, xa_best, ya_best, aHb, normalization);
       aHb /= aHb[2][2];
 
       residual = 0;

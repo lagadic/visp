@@ -143,11 +143,9 @@ int main(int argc, const char **argv)
     }
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " simulation of a 2 1/2 D visual servoing " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // In this example we will simulate a visual servoing task.
@@ -161,8 +159,7 @@ int main(int argc, const char **argv)
     // sets the initial camera location
     // we give the camera location as a size 6 vector (3 translations in meter
     // and 3 rotation (theta U representation)
-    vpPoseVector c_r_o(0.1, 0.2, 2, vpMath::rad(20), vpMath::rad(10),
-                       vpMath::rad(50));
+    vpPoseVector c_r_o(0.1, 0.2, 2, vpMath::rad(20), vpMath::rad(10), vpMath::rad(50));
 
     // this pose vector is then transformed in a 4x4 homogeneous matrix
     vpHomogeneousMatrix cMo(c_r_o);
@@ -181,8 +178,7 @@ int main(int argc, const char **argv)
     // let us defined the defined camera location.
     // It is defined by cdMo
     // sets the desired camera location
-    vpPoseVector cd_r_o(0, 0, 1, vpMath::rad(0), vpMath::rad(0),
-                        vpMath::rad(0));
+    vpPoseVector cd_r_o(0, 0, 1, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     vpHomogeneousMatrix cdMo(cd_r_o);
 
     //----------------------------------------------------------------------
@@ -308,8 +304,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     while (iter++ < 200) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // get the robot position
@@ -341,8 +336,7 @@ int main(int argc, const char **argv)
       // send the camera velocity to the controller ") ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     // Display task information

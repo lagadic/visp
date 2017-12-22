@@ -67,8 +67,7 @@ int main()
     P.push_back(vpPoint(-L, L, 0));
     P.push_back(vpPoint(-0, L / 2., L));
 
-    vpHomogeneousMatrix cMo_ref(0, 0.2, 1, vpMath::rad(3), vpMath::rad(-2),
-                                vpMath::rad(10));
+    vpHomogeneousMatrix cMo_ref(0, 0.2, 1, vpMath::rad(3), vpMath::rad(-2), vpMath::rad(10));
 
     std::vector<vpPoint> p(P.size());
     for (unsigned int i = 0; i < P.size(); i++) {
@@ -85,8 +84,7 @@ int main()
 
     vpHomogeneousMatrix cMo;
 
-    vpPose::findMatch(p, P, nbInlierToReachConsensus, threshold, ninliers,
-                      inliers, cMo);
+    vpPose::findMatch(p, P, nbInlierToReachConsensus, threshold, ninliers, inliers, cMo);
 
     std::cout << "Inliers: " << std::endl;
     for (unsigned int i = 0; i < inliers.size(); i++) {
@@ -100,12 +98,8 @@ int main()
     vpPoseVector pose_est = vpPoseVector(cMo);
 
     std::cout << std::endl;
-    std::cout << "reference cMo :\n"
-              << pose_ref.t() << std::endl
-              << std::endl;
-    std::cout << "estimated cMo :\n"
-              << pose_est.t() << std::endl
-              << std::endl;
+    std::cout << "reference cMo :\n" << pose_ref.t() << std::endl << std::endl;
+    std::cout << "estimated cMo :\n" << pose_est.t() << std::endl << std::endl;
 
     int test_fail = 0;
     for (unsigned int i = 0; i < 6; i++) {
@@ -113,8 +107,7 @@ int main()
         test_fail = 1;
     }
 
-    std::cout << "Matching is " << (test_fail ? "badly" : "well")
-              << " performed" << std::endl;
+    std::cout << "Matching is " << (test_fail ? "badly" : "well") << " performed" << std::endl;
 
     return test_fail;
   } catch (vpException &e) {

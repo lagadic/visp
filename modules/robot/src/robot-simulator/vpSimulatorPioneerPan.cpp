@@ -57,11 +57,7 @@
   setSamplingTime().
 
 */
-vpSimulatorPioneerPan::vpSimulatorPioneerPan()
-  : wMc_(), wMm_(), xm_(0), ym_(0), theta_(0), q_pan_()
-{
-  init();
-}
+vpSimulatorPioneerPan::vpSimulatorPioneerPan() : wMc_(), wMm_(), xm_(0), ym_(0), theta_(0), q_pan_() { init(); }
 
 /*!
   Robot initialisation.
@@ -103,10 +99,7 @@ vpSimulatorPioneerPan::~vpSimulatorPioneerPan() {}
   \param _eJe : A 6 by 3 matrix representing the robot jacobian \f$ {^e}{\bf
   J}_e\f$ expressed in the end-effector frame.
 */
-void vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
-{
-  _eJe = vpUnicycle::get_eJe();
-}
+void vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe) { _eJe = vpUnicycle::get_eJe(); }
 
 /*!
   Send to the controller a velocity.
@@ -126,8 +119,7 @@ void vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
   \sa setSamplingTime()
 
 */
-void vpSimulatorPioneerPan::setVelocity(
-    const vpRobot::vpControlFrameType frame, const vpColVector &v)
+void vpSimulatorPioneerPan::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
   switch (frame) {
   case vpRobot::ARTICULAR_FRAME: {
@@ -140,8 +132,7 @@ void vpSimulatorPioneerPan::setVelocity(
     // v is a 3 dimension vector that contains vx, wz, qpan
     if (v.size() != 3) {
       vpERROR_TRACE("Bad dimension of the control vector");
-      throw vpRobotException(vpRobotException::dimensionError,
-                             "Bad dimension of the control vector");
+      throw vpRobotException(vpRobotException::dimensionError, "Bad dimension of the control vector");
     }
 
     vpColVector v_max(3);
@@ -173,17 +164,14 @@ void vpSimulatorPioneerPan::setVelocity(
     break;
   }
   case vpRobot::CAMERA_FRAME:
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the camera frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the camera frame:"
+                                                              "functionality not implemented");
   case vpRobot::REFERENCE_FRAME:
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the reference frame:"
+                                                              "functionality not implemented");
   case vpRobot::MIXT_FRAME:
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
+                                                              "functionality not implemented");
   }
 }
 
@@ -191,10 +179,7 @@ void vpSimulatorPioneerPan::setVelocity(
   Get the robot position in the world frame.
 
 */
-void vpSimulatorPioneerPan::getPosition(vpHomogeneousMatrix &wMc) const
-{
-  wMc = this->wMc_;
-}
+void vpSimulatorPioneerPan::getPosition(vpHomogeneousMatrix &wMc) const { wMc = this->wMc_; }
 
 /*
   Get the current position of the robot.
@@ -215,8 +200,7 @@ void vpSimulatorPioneerPan::getPosition(vpHomogeneousMatrix &wMc) const
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector).
 */
-void vpSimulatorPioneerPan::getPosition(
-    const vpRobot::vpControlFrameType frame, vpColVector &q)
+void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   q.resize(6);
 
@@ -246,8 +230,6 @@ void vpSimulatorPioneerPan::getPosition(
     break;
   }
   case vpRobot::MIXT_FRAME:
-    std::cout
-        << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()"
-        << std::endl;
+    std::cout << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
   }
 }

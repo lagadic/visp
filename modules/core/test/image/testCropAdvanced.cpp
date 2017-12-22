@@ -64,8 +64,8 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string &ipath,
-           const std::string &opath, const std::string &user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
+           const std::string &user)
 {
   fprintf(stdout, "\n\
 Read an image from the disk (Klimt.pgm and klimp.ppm), crop a rectangular area\n\
@@ -109,8 +109,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &opath, const std::string &user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user)
 {
   const char *optarg_;
   int c;
@@ -201,8 +200,7 @@ int main(int argc, const char **argv)
         usage(argv[0], NULL, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option "
-                  << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
         exit(-1);
       }
     }
@@ -213,8 +211,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -223,13 +220,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -237,44 +231,35 @@ int main(int argc, const char **argv)
       vpImage<unsigned char> I;
 
       // Read the input grey image from the disk
-      std::string filename =
-          vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
+      std::string filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename);
-      std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-                << std::endl;
+      std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
       std::vector<vpImage<unsigned char> > reference;
 
       vpImage<unsigned char> crop;
       vpImageTools::crop(I, 100, 100, 640, 640, crop);
       reference.push_back(crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_ref_crop-1x1.pgm");
-      std::cout << "   Cropped image reference saved in: " << filename
-                << std::endl;
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_ref_crop-1x1.pgm");
+      std::cout << "   Cropped image reference saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
 
       vpImageTools::crop(I, 100, 100, 640, 640, crop, 2, 1);
       reference.push_back(crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_ref_crop-2x1.pgm");
-      std::cout << "   Cropped image reference saved in: " << filename
-                << std::endl;
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_ref_crop-2x1.pgm");
+      std::cout << "   Cropped image reference saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
 
       vpImageTools::crop(I, 100, 100, 640, 640, crop, 2, 2);
       reference.push_back(crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_ref_crop-2x2.pgm");
-      std::cout << "   Cropped image reference saved in: " << filename
-                << std::endl;
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_ref_crop-2x2.pgm");
+      std::cout << "   Cropped image reference saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
 
       vpRect roi(100, 100, 640, 640);
       vpImageTools::crop(I, roi, crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_roi_crop-1x1.pgm");
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_roi_crop-1x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
@@ -283,8 +268,7 @@ int main(int argc, const char **argv)
       }
 
       vpImageTools::crop(I, roi, crop, 2, 1);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_roi_crop-2x1.pgm");
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_roi_crop-2x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
@@ -293,8 +277,7 @@ int main(int argc, const char **argv)
       }
 
       vpImageTools::crop(I, roi, crop, 2, 2);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_roi_crop-2x2.pgm");
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_roi_crop-2x2.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {
@@ -303,8 +286,7 @@ int main(int argc, const char **argv)
       }
 
       vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_bitmap_crop-1x1.pgm");
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_bitmap_crop-1x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
@@ -312,10 +294,8 @@ int main(int argc, const char **argv)
         return -1;
       }
 
-      vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2,
-                         1);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_bitmap_crop-2x1.pgm");
+      vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 1);
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_bitmap_crop-2x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
@@ -323,10 +303,8 @@ int main(int argc, const char **argv)
         return -1;
       }
 
-      vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2,
-                         2);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_uchar_bitmap_crop-2x2.pgm");
+      vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 2);
+      filename = vpIoTools::createFilePath(opath, "Klimt_uchar_bitmap_crop-2x2.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {
@@ -339,12 +317,10 @@ int main(int argc, const char **argv)
       vpImage<vpRGBa> I;
 
       // Read the input color image from the disk
-      std::string filename =
-          vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+      std::string filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename);
-      std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-                << std::endl;
+      std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
       vpImage<vpRGBa> crop;
 
@@ -352,32 +328,25 @@ int main(int argc, const char **argv)
 
       vpImageTools::crop(I, 100, 100, 640, 640, crop);
       reference.push_back(crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_ref_crop-1x1.pgm");
-      std::cout << "   Cropped image reference saved in: " << filename
-                << std::endl;
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_ref_crop-1x1.pgm");
+      std::cout << "   Cropped image reference saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
 
       vpImageTools::crop(I, 100, 100, 640, 640, crop, 2, 1);
       reference.push_back(crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_ref_crop-2x1.pgm");
-      std::cout << "   Cropped image reference saved in: " << filename
-                << std::endl;
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_ref_crop-2x1.pgm");
+      std::cout << "   Cropped image reference saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
 
       vpImageTools::crop(I, 100, 100, 640, 640, crop, 2, 2);
       reference.push_back(crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_ref_crop-2x2.pgm");
-      std::cout << "   Cropped image reference saved in: " << filename
-                << std::endl;
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_ref_crop-2x2.pgm");
+      std::cout << "   Cropped image reference saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
 
       vpRect roi(100, 100, 640, 640);
       vpImageTools::crop(I, roi, crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_roi_crop-1x1.pgm");
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_roi_crop-1x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
@@ -386,8 +355,7 @@ int main(int argc, const char **argv)
       }
 
       vpImageTools::crop(I, roi, crop, 2, 1);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_roi_crop-2x1.pgm");
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_roi_crop-2x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
@@ -396,8 +364,7 @@ int main(int argc, const char **argv)
       }
 
       vpImageTools::crop(I, roi, crop, 2, 2);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_roi_crop-2x2.pgm");
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_roi_crop-2x2.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {
@@ -405,10 +372,8 @@ int main(int argc, const char **argv)
         return -1;
       }
 
-      vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(),
-                         I.getHeight(), roi, crop);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_bitmap_crop-1x1.pgm");
+      vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(), I.getHeight(), roi, crop);
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_bitmap_crop-1x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
@@ -416,10 +381,8 @@ int main(int argc, const char **argv)
         return -1;
       }
 
-      vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(),
-                         I.getHeight(), roi, crop, 2, 1);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_bitmap_crop-2x1.pgm");
+      vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 1);
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_bitmap_crop-2x1.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
@@ -427,10 +390,8 @@ int main(int argc, const char **argv)
         return -1;
       }
 
-      vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(),
-                         I.getHeight(), roi, crop, 2, 2);
-      filename =
-          vpIoTools::createFilePath(opath, "Klimt_rgba_bitmap_crop-2x2.pgm");
+      vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 2);
+      filename = vpIoTools::createFilePath(opath, "Klimt_rgba_bitmap_crop-2x2.pgm");
       std::cout << "   Cropped image saved in: " << filename << std::endl;
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {

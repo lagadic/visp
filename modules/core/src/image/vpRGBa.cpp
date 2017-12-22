@@ -133,10 +133,7 @@ bool vpRGBa::operator==(const vpRGBa &v)
 
   \return true if the images are different, false if they are the same.
 */
-bool vpRGBa::operator!=(const vpRGBa &v)
-{
-  return (R != v.R || G != v.G || B != v.B || A != v.A);
-}
+bool vpRGBa::operator!=(const vpRGBa &v) { return (R != v.R || G != v.G || B != v.B || A != v.A); }
 
 /*!
   Substraction operator : "this" - v.
@@ -255,8 +252,9 @@ vpRGBa operator*(const double &x, const vpRGBa &rgb) { return rgb * x; }
   returns a reference to the stream. The
   coordinates are separated by a comma.
 
-  The following code prints the intensity of the pixel in the middle of the
-image: \code #include <visp3/core/vpImage.h>
+  The following code prints the intensity of the pixel in the middle of the image:
+\code
+#include <visp3/core/vpImage.h>
 
 int main()
 {
@@ -270,7 +268,6 @@ int main()
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba)
 {
-  os << "(" << (int)rgba.R << "," << (int)rgba.G << "," << (int)rgba.B << ","
-     << (int)rgba.A << ")";
+  os << "(" << (int)rgba.R << "," << (int)rgba.G << "," << (int)rgba.B << "," << (int)rgba.A << ")";
   return os;
 }

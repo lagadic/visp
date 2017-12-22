@@ -54,10 +54,8 @@
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
-#if ((defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                    \
-      defined(VISP_HAVE_GDI)) &&                                             \
-     defined(VISP_HAVE_OPENCV_NONFREE) &&                                    \
-     (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if ((defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) &&                                   \
+     defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
 
 #include <visp3/vision/vpKeyPointSurf.h>
 
@@ -75,8 +73,7 @@
 #define GETOPTARGS "cdi:h"
 
 void usage(const char *name, const char *badparam, std::string ipath);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
 
 /*!
 
@@ -131,8 +128,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -191,8 +187,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) ==
-        false) {
+    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
       exit(-1);
     }
 
@@ -206,8 +201,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -216,13 +210,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -260,8 +251,7 @@ int main(int argc, const char **argv)
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable."
-                << std::endl;
+                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       exit(-1);
     }
 
@@ -304,8 +294,7 @@ int main(int argc, const char **argv)
     if (opt_display) {
       // Display the rectangle which defines the part of the image where the
       // reference points are computed.
-      vpDisplay::displayRectangle(Iref, corners[0], corners[1],
-                                  vpColor::green);
+      vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
       vpDisplay::flush(Iref);
     }
 
@@ -328,8 +317,7 @@ int main(int argc, const char **argv)
     if (opt_display) {
       try {
         // Display size is automatically defined by the image (I) size
-        display[1].init(Icur, (int)(100 + Iref.getWidth()), 100,
-                        "Display current image");
+        display[1].init(Icur, (int)(100 + Iref.getWidth()), 100, "Display current image");
         vpDisplay::display(Icur);
         vpDisplay::flush(Icur);
       } catch (...) {
@@ -339,9 +327,7 @@ int main(int argc, const char **argv)
     }
 
     for (iter = 1; iter < 30; iter++) {
-      std::cout
-          << "----------------------------------------------------------"
-          << std::endl;
+      std::cout << "----------------------------------------------------------" << std::endl;
       // set the new image name
       s.str("");
       s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
@@ -360,8 +346,7 @@ int main(int argc, const char **argv)
       if (opt_display) {
         // Display the matched features
         surf.display(Iref, Icur, 7);
-        vpDisplay::displayRectangle(Iref, corners[0], corners[1],
-                                    vpColor::red);
+        vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::red);
         vpDisplay::flush(Iref);
         vpDisplay::flush(Icur);
       }
@@ -376,8 +361,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-#if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                   \
-       defined(VISP_HAVE_GDI)))
+#if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
   vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
 #else
   vpERROR_TRACE("You do not have 1.1.0 <= OpenCV < 3.0.0 that contains "

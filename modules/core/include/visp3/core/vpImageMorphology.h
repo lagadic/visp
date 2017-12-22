@@ -80,17 +80,13 @@ public:
 
 public:
   template <class Type>
-  static void erosion(vpImage<Type> &I, Type value, Type value_out,
-                      vpConnexityType connexity = CONNEXITY_4);
+  static void erosion(vpImage<Type> &I, Type value, Type value_out, vpConnexityType connexity = CONNEXITY_4);
 
   template <class Type>
-  static void dilatation(vpImage<Type> &I, Type value, Type value_out,
-                         vpConnexityType connexity = CONNEXITY_4);
+  static void dilatation(vpImage<Type> &I, Type value, Type value_out, vpConnexityType connexity = CONNEXITY_4);
 
-  static void erosion(vpImage<unsigned char> &I,
-                      const vpConnexityType &connexity = CONNEXITY_4);
-  static void dilatation(vpImage<unsigned char> &I,
-                         const vpConnexityType &connexity = CONNEXITY_4);
+  static void erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4);
+  static void dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4);
 };
 
 /*!
@@ -111,8 +107,7 @@ public:
   \sa dilatation()
 */
 template <class Type>
-void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out,
-                                vpConnexityType connexity)
+void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out, vpConnexityType connexity)
 {
   if (I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
@@ -152,11 +147,9 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out,
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         if (J[i + 1][j + 1] == value) {
           // Consider 8 neighbors
-          if ((J[i][j] == value_out) || (J[i][j + 1] == value_out) ||
-              (J[i][j + 2] == value_out) || (J[i + 1][j] == value_out) ||
-              (J[i + 1][j + 2] == value_out) || (J[i + 2][j] == value_out) ||
-              (J[i + 2][j + 1] == value_out) ||
-              (J[i + 2][j + 2] == value_out))
+          if ((J[i][j] == value_out) || (J[i][j + 1] == value_out) || (J[i][j + 2] == value_out) ||
+              (J[i + 1][j] == value_out) || (J[i + 1][j + 2] == value_out) || (J[i + 2][j] == value_out) ||
+              (J[i + 2][j + 1] == value_out) || (J[i + 2][j + 2] == value_out))
             I[i][j] = value_out;
         }
       }
@@ -182,8 +175,7 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out,
   \sa erosion()
 */
 template <class Type>
-void vpImageMorphology::dilatation(vpImage<Type> &I, Type value,
-                                   Type value_out, vpConnexityType connexity)
+void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out, vpConnexityType connexity)
 {
   if (I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
@@ -223,10 +215,9 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value,
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         if (J[i + 1][j + 1] == value_out) {
           // Consider 8 neighbors
-          if ((J[i][j] == value) || (J[i][j + 1] == value) ||
-              (J[i][j + 2] == value) || (J[i + 1][j] == value) ||
-              (J[i + 1][j + 2] == value) || (J[i + 2][j] == value) ||
-              (J[i + 2][j + 1] == value) || (J[i + 2][j + 2] == value)) {
+          if ((J[i][j] == value) || (J[i][j + 1] == value) || (J[i][j + 2] == value) || (J[i + 1][j] == value) ||
+              (J[i + 1][j + 2] == value) || (J[i + 2][j] == value) || (J[i + 2][j + 1] == value) ||
+              (J[i + 2][j + 2] == value)) {
             I[i][j] = value;
           }
         }

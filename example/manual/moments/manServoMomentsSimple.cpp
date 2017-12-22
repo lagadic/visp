@@ -53,7 +53,7 @@
 #include <visp3/core/vpPlane.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureMomentCommon.h> //init the feature database using the information about moment dependencies
-#include <visp3/vs/vpServo.h> //visual servoing task
+#include <visp3/vs/vpServo.h>                            //visual servoing task
 // this function converts the plane defined by the cMo to 1/Z=Ax+By+C plane
 // form
 
@@ -87,10 +87,8 @@ int main()
     std::vector<vpPoint> vec_p,
         vec_p_d; // vectors that contain the vertices of the contour polygon
 
-    vpHomogeneousMatrix cMo(0.1, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(0));
-    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(
-        0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), -vpMath::rad(0)));
+    vpHomogeneousMatrix cMo(0.1, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), -vpMath::rad(0)));
     vpHomogeneousMatrix wMo; // Set to identity
     vpHomogeneousMatrix wMc; // Camera position in the world frame
 
@@ -105,29 +103,24 @@ int main()
       vec_p_d.push_back(p);
     }
 
-    vpMomentObject cur(
-        6); // Create a source moment object with 6 as maximum order
+    vpMomentObject cur(6);                      // Create a source moment object with 6 as maximum order
     cur.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a
                                                 // countour polygon
-    cur.fromVector(vec_p); // Init the dense object with the source polygon
+    cur.fromVector(vec_p);                      // Init the dense object with the source polygon
 
-    vpMomentObject dst(
-        6); // Create a destination moment object with 6 as maximum order
+    vpMomentObject dst(6);                      // Create a destination moment object with 6 as maximum order
     dst.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a
                                                 // countour polygon
-    dst.fromVector(
-        vec_p_d); // Init the dense object with the destination polygon
+    dst.fromVector(vec_p_d);                    // Init the dense object with the destination polygon
 
     // init classic moment primitives (for source)
-    vpMomentCommon mdb_cur(
-        vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst),
-        vpMomentCommon::getAlpha(dst)); // Init classic features
+    vpMomentCommon mdb_cur(vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst),
+                           vpMomentCommon::getAlpha(dst)); // Init classic features
     vpFeatureMomentCommon fmdb_cur(mdb_cur);
 
     ////init classic moment primitives (for destination)
-    vpMomentCommon mdb_dst(
-        vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst),
-        vpMomentCommon::getAlpha(dst)); // Init classic features
+    vpMomentCommon mdb_dst(vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst),
+                           vpMomentCommon::getAlpha(dst)); // Init classic features
     vpFeatureMomentCommon fmdb_dst(mdb_dst);
 
     // update+compute moment primitives from object (for destination)
@@ -141,15 +134,12 @@ int main()
     task.setInteractionMatrixType(vpServo::CURRENT);
     task.setLambda(1);
 
-    task.addFeature(fmdb_cur.getFeatureGravityNormalized(),
-                    fmdb_dst.getFeatureGravityNormalized());
+    task.addFeature(fmdb_cur.getFeatureGravityNormalized(), fmdb_dst.getFeatureGravityNormalized());
     task.addFeature(fmdb_cur.getFeatureAn(), fmdb_dst.getFeatureAn());
     // the object is NOT symmetric
     // select C4 and C6
-    task.addFeature(fmdb_cur.getFeatureCInvariant(),
-                    fmdb_dst.getFeatureCInvariant(),
-                    vpFeatureMomentCInvariant::selectC4() |
-                        vpFeatureMomentCInvariant::selectC6());
+    task.addFeature(fmdb_cur.getFeatureCInvariant(), fmdb_dst.getFeatureCInvariant(),
+                    vpFeatureMomentCInvariant::selectC4() | vpFeatureMomentCInvariant::selectC6());
     task.addFeature(fmdb_cur.getFeatureAlpha(), fmdb_dst.getFeatureAlpha());
 
     vpBasicFeature *al = new vpFeatureMomentAlpha(mdb_dst, 0, 0, 1.);

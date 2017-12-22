@@ -43,20 +43,17 @@
   Default constructor.
  */
 vpTemplateTrackerTriangle::vpTemplateTrackerTriangle()
-  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0),
-    not_good(false), uvinv00(0.), uvinv01(0.), uvinv10(0.), uvinv11(0.),
-    marge_triangle(0.00001), area(0)
+  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
+    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
 }
 
 /*!
   Copy constructor.
  */
-vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(
-    const vpTemplateTrackerTriangle &T)
-  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0),
-    not_good(false), uvinv00(0.), uvinv01(0.), uvinv10(0.), uvinv11(0.),
-    marge_triangle(0.00001), area(0)
+vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpTemplateTrackerTriangle &T)
+  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
+    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   *this = T;
 }
@@ -64,8 +61,7 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(
 /*!
   Copy operator.
  */
-vpTemplateTrackerTriangle &vpTemplateTrackerTriangle::
-operator=(const vpTemplateTrackerTriangle &T)
+vpTemplateTrackerTriangle &vpTemplateTrackerTriangle::operator=(const vpTemplateTrackerTriangle &T)
 {
   minx_temp = T.minx_temp;
   miny_temp = T.miny_temp;
@@ -106,12 +102,10 @@ operator=(const vpTemplateTrackerTriangle &T)
   The coordinates of the points are defined as a 2 dimension vector with
   coordinates (x,y).
   */
-vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpColVector &c1,
-                                                     const vpColVector &c2,
+vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpColVector &c1, const vpColVector &c2,
                                                      const vpColVector &c3)
-  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0),
-    not_good(false), uvinv00(0.), uvinv01(0.), uvinv10(0.), uvinv11(0.),
-    marge_triangle(0.00001), area(0)
+  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
+    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   init(c1[0], c1[1], c2[0], c2[1], c3[0], c3[1]);
 }
@@ -121,8 +115,7 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpColVector &c1,
 vpTemplateTrackerTriangle vpTemplateTrackerTriangle::getPyramidDown() const
 {
   vpTemplateTrackerTriangle Ttemp;
-  Ttemp.init(C1.x / 2., C1.y / 2., C2.x / 2., C2.y / 2., C3.x / 2.,
-             C3.y / 2.);
+  Ttemp.init(C1.x / 2., C1.y / 2., C2.x / 2., C2.y / 2., C3.x / 2., C3.y / 2.);
   return Ttemp;
 }
 
@@ -131,11 +124,9 @@ vpTemplateTrackerTriangle vpTemplateTrackerTriangle::getPyramidDown() const
   - x coordinate is along the columns
   - y coordinate is along the rows.
   */
-vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(int x1, int y1, int x2,
-                                                     int y2, int x3, int y3)
-  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0),
-    not_good(false), uvinv00(0.), uvinv01(0.), uvinv10(0.), uvinv11(0.),
-    marge_triangle(0.00001), area(0)
+vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
+  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
+    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   init(x1, y1, x2, y2, x3, y3);
 }
@@ -146,15 +137,12 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(int x1, int y1, int x2,
   \param c2 : Second corner.
   \param c3 : Third corner.
  */
-vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpImagePoint &c1,
-                                                     const vpImagePoint &c2,
+vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpImagePoint &c1, const vpImagePoint &c2,
                                                      const vpImagePoint &c3)
-  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0),
-    not_good(false), uvinv00(0.), uvinv01(0.), uvinv10(0.), uvinv11(0.),
-    marge_triangle(0.00001), area(0)
+  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
+    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
-  init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(),
-       c3.get_v());
+  init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(), c3.get_v());
 }
 
 /*!
@@ -162,12 +150,9 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpImagePoint &c1,
   - x coordinate is along the columns
   - y coordinate is along the rows.
   */
-vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(double x1, double y1,
-                                                     double x2, double y2,
-                                                     double x3, double y3)
-  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0),
-    not_good(false), uvinv00(0.), uvinv01(0.), uvinv10(0.), uvinv11(0.),
-    marge_triangle(0.00001), area(0)
+vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
+  : minx_temp(0), miny_temp(0), C1(), C2(), C3(), l_t(0), h_t(0), not_good(false), uvinv00(0.), uvinv01(0.),
+    uvinv10(0.), uvinv11(0.), marge_triangle(0.00001), area(0)
 {
   init(x1, y1, x2, y2, x3, y3);
 }
@@ -180,9 +165,7 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(double x1, double y1,
   The coordinates of the points are defined as a 2 dimension vector with
   coordinates (x,y).
   */
-void vpTemplateTrackerTriangle::init(const vpColVector &c1,
-                                     const vpColVector &c2,
-                                     const vpColVector &c3)
+void vpTemplateTrackerTriangle::init(const vpColVector &c1, const vpColVector &c2, const vpColVector &c3)
 {
   init(c1[0], c1[1], c2[0], c2[1], c3[0], c3[1]);
 }
@@ -192,12 +175,9 @@ void vpTemplateTrackerTriangle::init(const vpColVector &c1,
   \param c2 : Second corner.
   \param c3 : Third corner.
  */
-void vpTemplateTrackerTriangle::init(const vpImagePoint &c1,
-                                     const vpImagePoint &c2,
-                                     const vpImagePoint &c3)
+void vpTemplateTrackerTriangle::init(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3)
 {
-  init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(),
-       c3.get_v());
+  init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(), c3.get_v());
 }
 
 /*!
@@ -206,11 +186,9 @@ void vpTemplateTrackerTriangle::init(const vpImagePoint &c1,
   - x coordinate is along the columns
   - y coordinate is along the rows.
   */
-void vpTemplateTrackerTriangle::init(int x1, int y1, int x2, int y2, int x3,
-                                     int y3)
+void vpTemplateTrackerTriangle::init(int x1, int y1, int x2, int y2, int x3, int y3)
 {
-  init((double)x1, (double)y1, (double)x2, (double)y2, (double)x3,
-       (double)y3);
+  init((double)x1, (double)y1, (double)x2, (double)y2, (double)x3, (double)y3);
 }
 
 /*!
@@ -219,8 +197,7 @@ void vpTemplateTrackerTriangle::init(int x1, int y1, int x2, int y2, int x3,
   - x coordinate is along the columns
   - y coordinate is along the rows.
   */
-void vpTemplateTrackerTriangle::init(double x1, double y1, double x2,
-                                     double y2, double x3, double y3)
+void vpTemplateTrackerTriangle::init(double x1, double y1, double x2, double y2, double x3, double y3)
 {
   C1.x = x1;
   C1.y = y1;
@@ -300,8 +277,7 @@ bool vpTemplateTrackerTriangle::inTriangle(const int &i, const int &j) const
   double ptempo1 = i - C1.y;
   double p_ds_uv0 = ptempo0 * uvinv00 + ptempo1 * uvinv10;
   double p_ds_uv1 = ptempo0 * uvinv01 + ptempo1 * uvinv11;
-  return (p_ds_uv0 + p_ds_uv1 < 1. + marge_triangle &&
-          p_ds_uv0 > -marge_triangle && p_ds_uv1 > -marge_triangle);
+  return (p_ds_uv0 + p_ds_uv1 < 1. + marge_triangle && p_ds_uv0 > -marge_triangle && p_ds_uv1 > -marge_triangle);
 }
 
 /*!
@@ -309,8 +285,7 @@ bool vpTemplateTrackerTriangle::inTriangle(const int &i, const int &j) const
   \param i : Coordinate along the rows.
   \param j : Coordinate along the columns.
  */
-bool vpTemplateTrackerTriangle::inTriangle(const double &i,
-                                           const double &j) const
+bool vpTemplateTrackerTriangle::inTriangle(const double &i, const double &j) const
 {
   if (not_good)
     return false;
@@ -323,26 +298,21 @@ bool vpTemplateTrackerTriangle::inTriangle(const double &i,
   double ptempo1 = i - C1.y;
   double p_ds_uv0 = ptempo0 * uvinv00 + ptempo1 * uvinv10;
   double p_ds_uv1 = ptempo0 * uvinv01 + ptempo1 * uvinv11;
-  return (p_ds_uv0 + p_ds_uv1 < 1. + marge_triangle &&
-          p_ds_uv0 > -marge_triangle && p_ds_uv1 > -marge_triangle);
+  return (p_ds_uv0 + p_ds_uv1 < 1. + marge_triangle && p_ds_uv0 > -marge_triangle && p_ds_uv1 > -marge_triangle);
 }
 
 /*!
   Indicates if an image point is in the triangle.
   \param ip : Image point to consider.
  */
-bool vpTemplateTrackerTriangle::inTriangle(const vpImagePoint &ip) const
-{
-  return inTriangle(ip.get_i(), ip.get_j());
-}
+bool vpTemplateTrackerTriangle::inTriangle(const vpImagePoint &ip) const { return inTriangle(ip.get_i(), ip.get_j()); }
 /*!
   Returns the coordinates of the triangle corners as an image point.
   \param c1 : First corner.
   \param c2 : Second corner.
   \param c3 : Third corner.
  */
-void vpTemplateTrackerTriangle::getCorners(vpImagePoint &c1, vpImagePoint &c2,
-                                           vpImagePoint &c3) const
+void vpTemplateTrackerTriangle::getCorners(vpImagePoint &c1, vpImagePoint &c2, vpImagePoint &c3) const
 {
   c1.set_uv(C1.x, C1.y);
   c2.set_uv(C2.x, C2.y);
@@ -367,8 +337,7 @@ void vpTemplateTrackerTriangle::getCorners(std::vector<vpImagePoint> &c) const
   (x,y). \param c1 : First corner. \param c2 : Second corner. \param c3 :
   Third corner.
  */
-void vpTemplateTrackerTriangle::getCorners(vpColVector &c1, vpColVector &c2,
-                                           vpColVector &c3) const
+void vpTemplateTrackerTriangle::getCorners(vpColVector &c1, vpColVector &c2, vpColVector &c3) const
 {
   c1 = getCorner1();
   c2 = getCorner2();
@@ -449,15 +418,9 @@ double vpTemplateTrackerTriangle::getMiny() const { return miny_temp - 1; }
   \return The maximal x coordinate (along the columns of the image) of the
   points that are in the triangle. \sa getMinx()
  */
-double vpTemplateTrackerTriangle::getMaxx() const
-{
-  return minx_temp + l_t + 1;
-}
+double vpTemplateTrackerTriangle::getMaxx() const { return minx_temp + l_t + 1; }
 /*!
   \return The maximal y coordinate (along the rows of the image) of the points
   that are in the triangle. \sa getMaxx()
  */
-double vpTemplateTrackerTriangle::getMaxy() const
-{
-  return miny_temp + h_t + 1;
-}
+double vpTemplateTrackerTriangle::getMaxy() const { return miny_temp + h_t + 1; }

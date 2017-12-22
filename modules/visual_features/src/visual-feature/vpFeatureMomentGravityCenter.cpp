@@ -60,26 +60,22 @@ void vpFeatureMomentGravityCenter::compute_interaction()
 {
   bool found_featuremoment_basic;
 
-  vpFeatureMomentBasic &featureMomentBasic =
-      (static_cast<vpFeatureMomentBasic &>(featureMomentsDataBase->get(
-          "vpFeatureMomentBasic", found_featuremoment_basic)));
+  vpFeatureMomentBasic &featureMomentBasic = (static_cast<vpFeatureMomentBasic &>(
+      featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
   const vpMomentObject &momentObject = moment->getObject();
 
   if (!found_featuremoment_basic)
-    throw vpException(vpException::notInitialized,
-                      "vpFeatureMomentBasic not found");
+    throw vpException(vpException::notInitialized, "vpFeatureMomentBasic not found");
 
   interaction_matrices[0].resize(1, 6);
   interaction_matrices[1].resize(1, 6);
 
   interaction_matrices[0] =
       featureMomentBasic.interaction(1, 0) / momentObject.get(0, 0) -
-      momentObject.get(1, 0) * pow(momentObject.get(0, 0), -0.2e1) *
-          featureMomentBasic.interaction(0, 0);
+      momentObject.get(1, 0) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
   interaction_matrices[1] =
       featureMomentBasic.interaction(0, 1) / momentObject.get(0, 0) -
-      momentObject.get(0, 1) * pow(momentObject.get(0, 0), -0.2e1) *
-          featureMomentBasic.interaction(0, 0);
+      momentObject.get(0, 1) * pow(momentObject.get(0, 0), -0.2e1) * featureMomentBasic.interaction(0, 0);
 }
 
 #else
@@ -108,20 +104,16 @@ void vpFeatureMomentGravityCenter::compute_interaction()
   bool found_moment_gravity;
 
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(
-          moments.get("vpMomentCentered", found_moment_centered)));
+      (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(
-          moments.get("vpMomentGravityCenter", found_moment_gravity));
+      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
 
   const vpMomentObject &momentObject = moment->getObject();
 
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
   if (!found_moment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
   interaction_matrices[0].resize(1, 6);
   interaction_matrices[1].resize(1, 6);

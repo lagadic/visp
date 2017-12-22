@@ -25,9 +25,7 @@
 int main(int argc, char **argv)
 {
   if (argc != 4) {
-    std::cerr
-        << "Usage: ./grasp_object <gripper-hostname> <homing> <object-width>"
-        << std::endl;
+    std::cerr << "Usage: ./grasp_object <gripper-hostname> <homing> <object-width>" << std::endl;
     return -1;
   }
 
@@ -51,9 +49,7 @@ int main(int argc, char **argv)
     // Check for the maximum grasping width.
     franka::GripperState gripper_state = gripper.readOnce();
     if (gripper_state.max_width < grasping_width) {
-      std::cout
-          << "Object is too large for the current fingers on the gripper."
-          << std::endl;
+      std::cout << "Object is too large for the current fingers on the gripper." << std::endl;
       return -1;
     }
 
@@ -64,8 +60,7 @@ int main(int argc, char **argv)
     }
 
     // Wait 3s and check afterwards, if the object is still grasped.
-    std::this_thread::sleep_for(
-        std::chrono::duration<double, std::milli>(3000));
+    std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(3000));
 
     gripper_state = gripper.readOnce();
     if (!gripper_state.is_grasped) {
@@ -84,9 +79,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "This example needs libfranka to control Panda robot."
-            << std::endl;
-}
+int main() { std::cout << "This example needs libfranka to control Panda robot." << std::endl; }
 #endif

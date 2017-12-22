@@ -60,8 +60,7 @@ public:
      arguments. \param fn : A pointer to a function. \param args : Arguments
      passed to the call to \e fn (if any).
    */
-  vpThread(vpThread::Fn fn, vpThread::Args args = NULL)
-    : m_handle(), m_isCreated(false), m_isJoinable(false)
+  vpThread(vpThread::Fn fn, vpThread::Args args = NULL) : m_handle(), m_isCreated(false), m_isJoinable(false)
   {
     create(fn, args);
   }
@@ -74,23 +73,20 @@ public:
   void create(vpThread::Fn fn, vpThread::Args args = NULL)
   {
     if (m_isCreated)
-      throw vpException(vpException::fatalError,
-                        "The thread is already created");
+      throw vpException(vpException::fatalError, "The thread is already created");
 #if defined(VISP_HAVE_PTHREAD)
     int err = pthread_create(&m_handle, NULL, fn, args);
     if (err != 0) {
-      throw vpException(vpException::cannotUseConstructorError,
-                        "Can't create thread : %s", strerror(err));
+      throw vpException(vpException::cannotUseConstructorError, "Can't create thread : %s", strerror(err));
     }
 #elif defined(_WIN32)
     DWORD dwThreadIdArray;
-    m_handle =
-        CreateThread(NULL,              // default security attributes
-                     0,                 // use default stack size
-                     fn,                // thread function name
-                     args,              // argument to thread function
-                     0,                 // use default creation flags
-                     &dwThreadIdArray); // returns the thread identifier
+    m_handle = CreateThread(NULL,              // default security attributes
+                            0,                 // use default stack size
+                            fn,                // thread function name
+                            args,              // argument to thread function
+                            0,                 // use default creation flags
+                            &dwThreadIdArray); // returns the thread identifier
 #endif
 
     m_isJoinable = true;

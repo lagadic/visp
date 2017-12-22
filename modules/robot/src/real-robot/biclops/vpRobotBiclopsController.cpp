@@ -38,8 +38,7 @@
 
 #include <signal.h>
 #include <string.h>
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <unistd.h>
 #endif
 #include <visp3/core/vpConfig.h>
@@ -65,9 +64,8 @@
    Default constructor.
 */
 vpRobotBiclopsController::vpRobotBiclopsController()
-  : biclops(), axisMask(0), panAxis(NULL), tiltAxis(NULL), vergeAxis(NULL),
-    panProfile(), tiltProfile(), vergeProfile(), shm(),
-    stopControllerThread_(false)
+  : biclops(), axisMask(0), panAxis(NULL), tiltAxis(NULL), vergeAxis(NULL), panProfile(), tiltProfile(), vergeProfile(),
+    shm(), stopControllerThread_(false)
 {
   axisMask = Biclops::PanMask + Biclops::TiltMask
       /*+ Biclops::VergeMask*/; // add this if you want verge.
@@ -132,12 +130,10 @@ void vpRobotBiclopsController::init(const std::string &configfile)
     std::cout << "Cannot initialize biclops head. " << std::endl;
     std::cout << "Check if the serial cable is connected." << std::endl;
     std::cout << "Check if the robot is powered on." << std::endl;
-    std::cout << "Check if you try to open the good serial port."
-              << std::endl;
+    std::cout << "Check if you try to open the good serial port." << std::endl;
     std::cout << "Try to power off/on and restart..." << std::endl;
 
-    throw vpRobotException(vpRobotException::notInitializedError,
-                           "Cannot initialize biclops head.");
+    throw vpRobotException(vpRobotException::notInitializedError, "Cannot initialize biclops head.");
   }
 
   vpDEBUG_TRACE(12, "Biclops initialized");
@@ -165,8 +161,7 @@ void vpRobotBiclopsController::init(const std::string &configfile)
     vpDEBUG_TRACE(12, "Homing sequence succeed.");
   else {
     vpERROR_TRACE("Homing sequence failed. Program is stopped");
-    throw vpRobotException(vpRobotException::constructionError,
-                           "Cannot open connection with biclops");
+    throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with biclops");
   }
 
   // Get the currently defined (default) motion profiles.
@@ -192,13 +187,11 @@ void vpRobotBiclopsController::init(const std::string &configfile)
 
 */
 
-void vpRobotBiclopsController::setPosition(const vpColVector &q,
-                                           const double percentVelocity)
+void vpRobotBiclopsController::setPosition(const vpColVector &q, const double percentVelocity)
 {
   if (q.getRows() != vpBiclops::ndof) {
     vpERROR_TRACE("Bad dimension for positioning vector.");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Bad dimension for positioning vector.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Bad dimension for positioning vector.");
   }
 
   panAxis->SetProfileMode(PMDTrapezoidalProfile);
@@ -219,12 +212,10 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q,
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
   panProfile.pos = PMDUtils::RadsToRevs(q[0]);
-  panProfile.vel =
-      PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
   tiltProfile.pos = PMDUtils::RadsToRevs(q[1]);
-  tiltProfile.vel =
-      PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  tiltProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
   // Inform the controller of the new desired position.
   panAxis->SetProfile(panProfile);
@@ -238,11 +229,9 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q,
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
   panProfile.pos = PMDUtils::RadsToRevs(q[0]);
-  panProfile.vel =
-      PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
-  vpDEBUG_TRACE(12, "Speed percent: %lf",
-                vpBiclops::speedLimit * percentVelocity / 100.);
+  vpDEBUG_TRACE(12, "Speed percent: %lf", vpBiclops::speedLimit * percentVelocity / 100.);
 
   panAxis->ProfileToCounts(panProfile, desired_profile);
   vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << std::endl;
@@ -254,8 +243,7 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q,
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
   tiltProfile.pos = PMDUtils::RadsToRevs(q[1]);
-  tiltProfile.vel =
-      PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  tiltProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
   tiltAxis->ProfileToCounts(tiltProfile, desired_profile);
   vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << std::endl;
@@ -282,8 +270,7 @@ void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
 {
   if (q_dot.getRows() != vpBiclops::ndof) {
     vpERROR_TRACE("Bad dimension for velocity vector.");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Bad dimension for velocity vector.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Bad dimension for velocity vector.");
   }
 
 #ifdef VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API

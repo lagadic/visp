@@ -162,8 +162,7 @@ int main()
 
   // Control loop
   for ( ; ; ) {
-    // ... cdMc need here to be initialized from for example a pose
-estimation.
+    // ... cdMc need here to be initialized from for example a pose estimation.
 
     // Update the current 3D translation visual feature
     s.buildFrom(cdMc);
@@ -181,8 +180,8 @@ estimation.
 
   \code
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(s, vpFeatureTranslation::selectTx() |
-vpFeatureTranslation::selectTy()); \endcode
+  task.addFeature(s, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
 
   If you want to build your own control law, this other example shows
   how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D
@@ -239,8 +238,7 @@ int main()
 
   // Creation of the desired visual feature s*
   vpFeatureTranslation s_star(vpFeatureTranslation::cMo);
-  s_star.buildFrom(cdMo); // Initialization of the desired feature
-s*=(tx*,ty*,tz*)
+  s_star.buildFrom(cdMo); // Initialization of the desired feature s*=(tx*,ty*,tz*)
 
   vpHomogeneousMatrix cMo;
   // ... cMo need here to be computed.
@@ -303,8 +301,7 @@ public:
   explicit vpFeatureTranslation(vpFeatureTranslationRepresentationType r);
   // constructor : build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize
-  vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1,
-                       vpFeatureTranslationRepresentationType r);
+  vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r);
   //! Destructor. Does nothing.
   virtual ~vpFeatureTranslation() {}
 
@@ -312,11 +309,9 @@ public:
   // cdMc is the displacement that the camera has to realize
   void buildFrom(const vpHomogeneousMatrix &f2Mf1);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   //! Feature duplication
@@ -324,8 +319,7 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
   vpFeatureTranslationRepresentationType getFeatureTranslationType() const;
 
@@ -345,8 +339,7 @@ public:
   void set_Ty(const double t_y);
   void set_Tz(const double t_z);
 
-  void
-  setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
+  void setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
 
   // feature selection
   static unsigned int selectTx();

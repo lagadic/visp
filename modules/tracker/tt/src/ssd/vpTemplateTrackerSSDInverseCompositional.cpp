@@ -40,19 +40,16 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
 
-vpTemplateTrackerSSDInverseCompositional::
-    vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp)
-  : vpTemplateTrackerSSD(warp), compoInitialised(false), HInv(),
-    HCompInverse(), useTemplateSelect(false), evolRMS(0), x_pos(), y_pos(),
-    threshold_RMS(1e-8)
+vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerSSD(warp), compoInitialised(false), HInv(), HCompInverse(), useTemplateSelect(false), evolRMS(0),
+    x_pos(), y_pos(), threshold_RMS(1e-8)
 {
   useInverse = true;
   HInv.resize(nbParam, nbParam);
   HCompInverse.resize(nbParam, nbParam);
 }
 
-void vpTemplateTrackerSSDInverseCompositional::initCompInverse(
-    const vpImage<unsigned char> & /*I*/)
+void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<unsigned char> & /*I*/)
 {
 
   H = 0;
@@ -67,8 +64,7 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(
       Warp->computeDenom(X1, p);
       ptTemplate[point].dW = new double[nbParam];
 
-      Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx,
-                   ptTemplate[point].dW);
+      Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx, ptTemplate[point].dW);
 
       for (unsigned int it = 0; it < nbParam; it++)
         for (unsigned int jt = 0; jt < nbParam; jt++)
@@ -102,14 +98,12 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(
   compoInitialised = true;
 }
 
-void vpTemplateTrackerSSDInverseCompositional::initHessienDesired(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerSSDInverseCompositional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   initCompInverse(I);
 }
 
-void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
@@ -143,8 +137,7 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(
         j2 = X2[0];
         i2 = X2[1];
 
-        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-            (j2 < I.getWidth() - 1)) {
+        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
           Tij = pt->val;
           if (!blur)
             IW = I.getValue(i2, j2);
@@ -163,8 +156,7 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(
     if (Nbpoint == 0) {
       // std::cout<<"plus de point dans template suivi"<<std::endl;
       deletePosEvalRMS();
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
     dp = gain * dp;
     // std::cout<<erreur/Nbpoint<<","<<GetCost(I,p)<<std::endl;
@@ -181,15 +173,13 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(
     // std::cout << "iteration: " << iteration << " max: " << iterationMax <<
     // std::endl;  std::cout << "evolRMS: " <<  evolRMS << " threshold: " <<
     // threshold_RMS << std::endl;
-  } while (/*( erreur_prec-erreur<50) &&*/ (iteration < iterationMax) &&
-           (evolRMS > threshold_RMS));
+  } while (/*( erreur_prec-erreur<50) &&*/ (iteration < iterationMax) && (evolRMS > threshold_RMS));
 
   nbIteration = iteration;
   deletePosEvalRMS();
 }
 
-void vpTemplateTrackerSSDInverseCompositional::initPosEvalRMS(
-    const vpColVector &p_)
+void vpTemplateTrackerSSDInverseCompositional::initPosEvalRMS(const vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos.resize(nb_corners);
@@ -211,8 +201,7 @@ void vpTemplateTrackerSSDInverseCompositional::initPosEvalRMS(
   }
 }
 
-void vpTemplateTrackerSSDInverseCompositional::computeEvalRMS(
-    const vpColVector &p_)
+void vpTemplateTrackerSSDInverseCompositional::computeEvalRMS(const vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 

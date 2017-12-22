@@ -55,17 +55,11 @@
   The algorithm implemented in this class is described in \cite Dame12a and
   \cite Marchand16a.
 */
-class VISP_EXPORT vpTemplateTrackerMIInverseCompositional
-  : public vpTemplateTrackerMI
+class VISP_EXPORT vpTemplateTrackerMIInverseCompositional : public vpTemplateTrackerMI
 {
 public:
   /*! Minimization method. */
-  typedef enum {
-    USE_NEWTON,
-    USE_LMA,
-    USE_GRADIENT,
-    USE_QUASINEWTON
-  } vpMinimizationTypeMIInverseCompositional;
+  typedef enum { USE_NEWTON, USE_LMA, USE_GRADIENT, USE_QUASINEWTON } vpMinimizationTypeMIInverseCompositional;
 
 private:
   vpMinimizationTypeMIInverseCompositional minimizationMethod;
@@ -117,22 +111,16 @@ protected:
 public:
   //! Default constructor.
   vpTemplateTrackerMIInverseCompositional()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA),
-      CompoInitialised(false), useTemplateSelect(false), evolRMS(0),
-      x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(),
-      KQuasiNewton() //, useAYOptim(false)
+    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false), evolRMS(0),
+      x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton() //, useAYOptim(false)
   {
   }
-  explicit vpTemplateTrackerMIInverseCompositional(
-      vpTemplateTrackerWarp *_warp);
+  explicit vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
 
   /*! Use only the strong gradient pixels to compute the Jabobian. By default
    * this feature is disabled. */
   void setUseTemplateSelect(bool b) { useTemplateSelect = b; }
   void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
-  void setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method)
-  {
-    minimizationMethod = method;
-  }
+  void setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method) { minimizationMethod = method; }
 };
 #endif

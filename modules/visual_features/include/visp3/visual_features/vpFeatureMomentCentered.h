@@ -81,15 +81,12 @@ protected:
   /*!
      Core computation of interaction matrix for moment m_pq
   */
-  vpMatrix compute_Lmu_pq(const unsigned int &p, const unsigned int &q,
-                          const double &xg, const double &yg,
-                          const vpMatrix &L_xg, const vpMatrix &L_yg,
-                          const vpMomentBasic &m,
+  vpMatrix compute_Lmu_pq(const unsigned int &p, const unsigned int &q, const double &xg, const double &yg,
+                          const vpMatrix &L_xg, const vpMatrix &L_yg, const vpMomentBasic &m,
                           const vpFeatureMomentBasic &feature_moment_m) const;
 
 public:
-  vpFeatureMomentCentered(vpMomentDatabase &moments, double A, double B,
-                          double C,
+  vpFeatureMomentCentered(vpMomentDatabase &moments, double A, double B, double C,
                           vpFeatureMomentDatabase *featureMoments = NULL);
   void compute_interaction();
 
@@ -97,8 +94,7 @@ public:
   /* Add function due to pure virtual definition in vpBasicFeature.h */
   vpMatrix interaction(const unsigned int /* select = FEATURE_ALL */)
   {
-    throw vpException(vpException::functionNotImplementedError,
-                      "Not implemented!");
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }
 #endif
   /*!
@@ -107,8 +103,7 @@ public:
   \param select_two : second index (j)
   \return Interaction matrix corresponding to the moment
   */
-  vpMatrix interaction(unsigned int select_one,
-                       unsigned int select_two) const;
+  vpMatrix interaction(unsigned int select_one, unsigned int select_two) const;
 
   /*!
     associated moment name
@@ -119,8 +114,7 @@ public:
     */
   const char *name() const { return "vpFeatureMomentCentered"; }
 
-  friend VISP_EXPORT std::ostream &
-  operator<<(std::ostream &os, const vpFeatureMomentCentered &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &v);
 };
 
 #endif

@@ -117,11 +117,9 @@ void vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool ecm_node = false;
   bool lod_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case camera: {
@@ -153,46 +151,31 @@ void vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!camera_node) {
-    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)"
-              << std::endl;
-    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)"
-              << std::endl;
-    std::cout << "camera : px : " << this->cam.get_px() << " (default)"
-              << std::endl;
-    std::cout << "camera : py : " << this->cam.get_py() << " (default)"
-              << std::endl;
+    std::cout << "camera : u0 : " << this->cam.get_u0() << " (default)" << std::endl;
+    std::cout << "camera : v0 : " << this->cam.get_v0() << " (default)" << std::endl;
+    std::cout << "camera : px : " << this->cam.get_px() << " (default)" << std::endl;
+    std::cout << "camera : py : " << this->cam.get_py() << " (default)" << std::endl;
   }
 
   if (!face_node) {
-    std::cout << "face : Angle Appear : " << angleAppear << " (default)"
-              << std::endl;
-    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)"
-              << std::endl;
+    std::cout << "face : Angle Appear : " << angleAppear << " (default)" << std::endl;
+    std::cout << "face : Angle Disappear : " << angleDisappear << " (default)" << std::endl;
   }
 
   if (!ecm_node) {
-    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize()
-              << " (default)" << std::endl;
-    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber()
-              << " (default)" << std::endl;
-    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : threshold : " << this->m_ecm.getThreshold()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu1 : " << this->m_ecm.getMu1()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu2 : " << this->m_ecm.getMu2()
-              << " (default)" << std::endl;
-    std::cout << "ecm : sample : sample_step : "
-              << this->m_ecm.getSampleStep() << " (default)" << std::endl;
+    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize() << " (default)" << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber() << " (default)" << std::endl;
+    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : threshold : " << this->m_ecm.getThreshold() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu1 : " << this->m_ecm.getMu1() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu2 : " << this->m_ecm.getMu2() << " (default)" << std::endl;
+    std::cout << "ecm : sample : sample_step : " << this->m_ecm.getSampleStep() << " (default)" << std::endl;
   }
 
   if (!lod_node) {
     std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
-    std::cout << "lod : min line length threshold : "
-              << minLineLengthThreshold << " (default)" << std::endl;
-    std::cout << "lod : min polygon area threshold : "
-              << minPolygonAreaThreshold << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 
@@ -211,11 +194,9 @@ void vpMbtXmlParser::read_ecm(xmlDocPtr doc, xmlNodePtr node)
   bool contrast_node = false;
   bool sample_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case mask: {
@@ -244,29 +225,22 @@ void vpMbtXmlParser::read_ecm(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!mask_node) {
-    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize()
-              << " (default)" << std::endl;
-    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber()
-              << " (default)" << std::endl;
+    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize() << " (default)" << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber() << " (default)" << std::endl;
   }
 
   if (!range_node) {
-    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange()
-              << " (default)" << std::endl;
+    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange() << " (default)" << std::endl;
   }
 
   if (!contrast_node) {
-    std::cout << "ecm : contrast : threshold " << this->m_ecm.getThreshold()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu1 " << this->m_ecm.getMu1()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu2 " << this->m_ecm.getMu2()
-              << " (default)" << std::endl;
+    std::cout << "ecm : contrast : threshold " << this->m_ecm.getThreshold() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu1 " << this->m_ecm.getMu1() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu2 " << this->m_ecm.getMu2() << " (default)" << std::endl;
   }
 
   if (!sample_node) {
-    std::cout << "ecm : sample : sample_step : "
-              << this->m_ecm.getSampleStep() << " (default)" << std::endl;
+    std::cout << "ecm : sample : sample_step : " << this->m_ecm.getSampleStep() << " (default)" << std::endl;
   }
 }
 
@@ -285,11 +259,9 @@ void vpMbtXmlParser::read_sample(xmlDocPtr doc, xmlNodePtr node)
   // current data values.
   double d_stp = this->m_ecm.getSampleStep();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case step: {
@@ -309,11 +281,9 @@ void vpMbtXmlParser::read_sample(xmlDocPtr doc, xmlNodePtr node)
   //  this->m_ecm.setNbTotalSample(d_nb_sample);
 
   if (!step_node)
-    std::cout << "ecm : sample : sample_step : "
-              << this->m_ecm.getSampleStep() << " (default)" << std::endl;
+    std::cout << "ecm : sample : sample_step : " << this->m_ecm.getSampleStep() << " (default)" << std::endl;
   else
-    std::cout << "ecm : sample : sample_step : "
-              << this->m_ecm.getSampleStep() << std::endl;
+    std::cout << "ecm : sample : sample_step : " << this->m_ecm.getSampleStep() << std::endl;
 }
 
 /*!
@@ -333,11 +303,9 @@ void vpMbtXmlParser::read_sample_deprecated(xmlDocPtr doc, xmlNodePtr node)
   double d_stp = this->m_ecm.getSampleStep();
   //  int d_nb_sample = this->m_ecm.getNbTotalSample();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case step: {
@@ -361,11 +329,9 @@ void vpMbtXmlParser::read_sample_deprecated(xmlDocPtr doc, xmlNodePtr node)
   //  this->m_ecm.setNbTotalSample(d_nb_sample);
 
   if (!step_node)
-    std::cout << "[DEPRECATED] sample : sample_step : "
-              << this->m_ecm.getSampleStep() << " (default)" << std::endl;
+    std::cout << "[DEPRECATED] sample : sample_step : " << this->m_ecm.getSampleStep() << " (default)" << std::endl;
   else
-    std::cout << "[DEPRECATED] sample : sample_step : "
-              << this->m_ecm.getSampleStep() << std::endl;
+    std::cout << "[DEPRECATED] sample : sample_step : " << this->m_ecm.getSampleStep() << std::endl;
 
   //  if(!nb_sample_node)
   //    std::cout <<"sample : n_total_sample : "<<
@@ -375,8 +341,7 @@ void vpMbtXmlParser::read_sample_deprecated(xmlDocPtr doc, xmlNodePtr node)
   //    this->m_ecm.getNbTotalSample()<<std::endl;
 
   std::cout << "  WARNING : This node (sample) is deprecated." << std::endl;
-  std::cout << "  It should be moved in the ecm node (ecm : sample)."
-            << std::endl;
+  std::cout << "  It should be moved in the ecm node (ecm : sample)." << std::endl;
 }
 
 /*!
@@ -396,11 +361,9 @@ void vpMbtXmlParser::read_mask(xmlDocPtr doc, xmlNodePtr node)
   unsigned int d_size = this->m_ecm.getMaskSize();
   unsigned int d_nb_mask = this->m_ecm.getMaskNumber();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case size: {
@@ -429,18 +392,14 @@ void vpMbtXmlParser::read_mask(xmlDocPtr doc, xmlNodePtr node)
   this->m_ecm.setMaskNumber(d_nb_mask);
 
   if (!size_node)
-    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize()
-              << " (default)" << std::endl;
+    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize() << " (default)" << std::endl;
   else
-    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize()
-              << std::endl;
+    std::cout << "ecm : mask : size : " << this->m_ecm.getMaskSize() << std::endl;
 
   if (!nb_mask_node)
-    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber()
-              << " (default)" << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber() << " (default)" << std::endl;
   else
-    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber()
-              << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << this->m_ecm.getMaskNumber() << std::endl;
 }
 
 /*!
@@ -458,11 +417,9 @@ void vpMbtXmlParser::read_range(xmlDocPtr doc, xmlNodePtr node)
   // current data values.
   unsigned int m_range_tracking = this->m_ecm.getRange();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case tracking: {
@@ -481,11 +438,9 @@ void vpMbtXmlParser::read_range(xmlDocPtr doc, xmlNodePtr node)
   this->m_ecm.setRange(m_range_tracking);
 
   if (!tracking_node)
-    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange()
-              << " (default)" << std::endl;
+    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange() << " (default)" << std::endl;
   else
-    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange()
-              << std::endl;
+    std::cout << "ecm : range : tracking : " << this->m_ecm.getRange() << std::endl;
 }
 
 /*!
@@ -507,11 +462,9 @@ void vpMbtXmlParser::read_contrast(xmlDocPtr doc, xmlNodePtr node)
   double d_mu1 = this->m_ecm.getMu1();
   double d_mu2 = this->m_ecm.getMu2();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::iterator iter_data =
-          this->nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case edge_threshold: {
@@ -540,21 +493,17 @@ void vpMbtXmlParser::read_contrast(xmlDocPtr doc, xmlNodePtr node)
   this->m_ecm.setThreshold(d_edge_threshold);
 
   if (!edge_threshold_node)
-    std::cout << "ecm : contrast : threshold " << this->m_ecm.getThreshold()
-              << " (default)" << std::endl;
+    std::cout << "ecm : contrast : threshold " << this->m_ecm.getThreshold() << " (default)" << std::endl;
   else
-    std::cout << "ecm : contrast : threshold " << this->m_ecm.getThreshold()
-              << std::endl;
+    std::cout << "ecm : contrast : threshold " << this->m_ecm.getThreshold() << std::endl;
 
   if (!mu1_node)
-    std::cout << "ecm : contrast : mu1 " << this->m_ecm.getMu1()
-              << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu1 " << this->m_ecm.getMu1() << " (default)" << std::endl;
   else
     std::cout << "ecm : contrast : mu1 " << this->m_ecm.getMu1() << std::endl;
 
   if (!mu2_node)
-    std::cout << "ecm : contrast : mu2 " << this->m_ecm.getMu2()
-              << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu2 " << this->m_ecm.getMu2() << " (default)" << std::endl;
   else
     std::cout << "ecm : contrast : mu2 " << this->m_ecm.getMu2() << std::endl;
 }

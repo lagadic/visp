@@ -51,10 +51,7 @@
 /*!
    Default constructor.
  */
-vpTemplateTrackerZone::vpTemplateTrackerZone()
-  : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1)
-{
-}
+vpTemplateTrackerZone::vpTemplateTrackerZone() : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1) {}
 
 /*!
    Copy constructor.
@@ -81,8 +78,7 @@ void vpTemplateTrackerZone::clear()
 /*!
    Copy operator.
  */
-vpTemplateTrackerZone &vpTemplateTrackerZone::
-operator=(const vpTemplateTrackerZone &z)
+vpTemplateTrackerZone &vpTemplateTrackerZone::operator=(const vpTemplateTrackerZone &z)
 {
   clear();
 
@@ -112,8 +108,7 @@ operator=(const vpTemplateTrackerZone &z)
   corner with a right click.
 
  */
-void vpTemplateTrackerZone::initClick(const vpImage<unsigned char> &I,
-                                      bool delaunay)
+void vpTemplateTrackerZone::initClick(const vpImage<unsigned char> &I, bool delaunay)
 {
   Zone.clear();
 
@@ -136,15 +131,12 @@ void vpTemplateTrackerZone::initClick(const vpImage<unsigned char> &I,
         } else {
           if (vip.size() % 3 == 2)
             // draw line between point 2-1
-            vpDisplay::displayLine(I, p, vip[vip.size() - 2], vpColor::blue,
-                                   3);
+            vpDisplay::displayLine(I, p, vip[vip.size() - 2], vpColor::blue, 3);
           else if (vip.size() % 3 == 0) {
             // draw line between point 3-2
-            vpDisplay::displayLine(I, p, vip[vip.size() - 2], vpColor::blue,
-                                   3);
+            vpDisplay::displayLine(I, p, vip[vip.size() - 2], vpColor::blue, 3);
             // draw line between point 3-1
-            vpDisplay::displayLine(I, p, vip[vip.size() - 3], vpColor::blue,
-                                   3);
+            vpDisplay::displayLine(I, p, vip[vip.size() - 3], vpColor::blue, 3);
           }
         }
       }
@@ -173,9 +165,8 @@ void vpTemplateTrackerZone::initClick(const vpImage<unsigned char> &I,
   - If false, the vector of image points describe triangles. Its size is then
   a multiple of 3.
  */
-void vpTemplateTrackerZone::initFromPoints(
-    const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
-    bool delaunay)
+void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
+                                           bool delaunay)
 {
   if (delaunay) {
     if (vip.size() == 3) {
@@ -192,8 +183,7 @@ void vpTemplateTrackerZone::initFromPoints(
     } else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
       // Init Delaunay
-      cv::Subdiv2D subdiv(
-          cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
+      cv::Subdiv2D subdiv(cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
       for (size_t i = 0; i < vip.size(); i++) {
         cv::Point2f fp((float)vip[i].get_u(), (float)vip[i].get_v());
         // std::cout << "Click point: " << vip[i] << std::endl;
@@ -216,8 +206,7 @@ void vpTemplateTrackerZone::initFromPoints(
         p[1].set_uv(t[2], t[3]);
         p[2].set_uv(t[4], t[5]);
 
-        if (p[0].inRectangle(rect) && p[1].inRectangle(rect) &&
-            p[2].inRectangle(rect)) {
+        if (p[0].inRectangle(rect) && p[1].inRectangle(rect) && p[2].inRectangle(rect)) {
           vip_delaunay.push_back(p[0]);
           vip_delaunay.push_back(p[1]);
           vip_delaunay.push_back(p[2]);
@@ -226,8 +215,7 @@ void vpTemplateTrackerZone::initFromPoints(
 
       initFromPoints(I, vip_delaunay, false);
 #else
-      throw vpException(vpException::functionNotImplementedError,
-                        "Delaunay triangulation is not available!");
+      throw vpException(vpException::functionNotImplementedError, "Delaunay triangulation is not available!");
 #endif
     }
   } else {
@@ -282,8 +270,7 @@ void vpTemplateTrackerZone::add(const vpTemplateTrackerTriangle &t)
 bool vpTemplateTrackerZone::inZone(const int &i, const int &j) const
 {
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end();
-       ++Iterateurvecteur) {
+  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end(); ++Iterateurvecteur) {
     if (Iterateurvecteur->inTriangle(i, j))
       return true;
   }
@@ -299,8 +286,7 @@ bool vpTemplateTrackerZone::inZone(const int &i, const int &j) const
 bool vpTemplateTrackerZone::inZone(const double &i, const double &j) const
 {
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end();
-       ++Iterateurvecteur) {
+  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end(); ++Iterateurvecteur) {
     if (Iterateurvecteur->inTriangle(i, j))
       return true;
   }
@@ -314,13 +300,11 @@ bool vpTemplateTrackerZone::inZone(const double &i, const double &j) const
   the pixel (i,j). \return true if the pixel with coordinates (i,j) is in the
   zone defined by a set of triangles, false otherwise.
  */
-bool vpTemplateTrackerZone::inZone(const int &i, const int &j,
-                                   unsigned int &id_triangle) const
+bool vpTemplateTrackerZone::inZone(const int &i, const int &j, unsigned int &id_triangle) const
 {
   unsigned int id = 0;
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end();
-       ++Iterateurvecteur) {
+  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end(); ++Iterateurvecteur) {
     if (Iterateurvecteur->inTriangle(i, j)) {
       id_triangle = id;
       return true;
@@ -337,13 +321,11 @@ bool vpTemplateTrackerZone::inZone(const int &i, const int &j,
   the pixel (i,j). \return true if the pixel with coordinates (i,j) is in the
   zone defined by a set of triangles, false otherwise.
  */
-bool vpTemplateTrackerZone::inZone(const double &i, const double &j,
-                                   unsigned int &id_triangle) const
+bool vpTemplateTrackerZone::inZone(const double &i, const double &j, unsigned int &id_triangle) const
 {
   unsigned int id = 0;
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end();
-       ++Iterateurvecteur) {
+  for (Iterateurvecteur = Zone.begin(); Iterateurvecteur != Zone.end(); ++Iterateurvecteur) {
     if (Iterateurvecteur->inTriangle(i, j)) {
       id_triangle = id;
       return true;
@@ -369,12 +351,10 @@ bool vpTemplateTrackerZone::inZone(const double &i, const double &j,
     }
   \endcode
  */
-void vpTemplateTrackerZone::getTriangle(unsigned int i,
-                                        vpTemplateTrackerTriangle &T) const
+void vpTemplateTrackerZone::getTriangle(unsigned int i, vpTemplateTrackerTriangle &T) const
 {
   if (i > getNbTriangle() - 1)
-    throw(vpException(vpException::badValue,
-                      "Cannot get triangle with index %u", i));
+    throw(vpException(vpException::badValue, "Cannot get triangle with index %u", i));
 
   T = Zone[i];
 }
@@ -392,12 +372,10 @@ void vpTemplateTrackerZone::getTriangle(unsigned int i,
     }
   \endcode
  */
-vpTemplateTrackerTriangle
-vpTemplateTrackerZone::getTriangle(unsigned int i) const
+vpTemplateTrackerTriangle vpTemplateTrackerZone::getTriangle(unsigned int i) const
 {
   if (i > getNbTriangle() - 1)
-    throw(vpException(vpException::badValue,
-                      "Cannot get triangle with index %u", i));
+    throw(vpException(vpException::badValue, "Cannot get triangle with index %u", i));
 
   return Zone[i];
 }
@@ -418,8 +396,7 @@ vpImagePoint vpTemplateTrackerZone::getCenter() const
         cpt++;
       }
   if (!cpt) {
-    throw(vpException(vpException::divideByZeroError,
-                      "Cannot compute the zone center: size = 0"));
+    throw(vpException(vpException::divideByZeroError, "Cannot compute the zone center: size = 0"));
   }
   xc = xc / cpt;
   yc = yc / cpt;
@@ -466,9 +443,7 @@ vpRect vpTemplateTrackerZone::getBoundingBox() const
   triangles that define the zone. \param I : Image. \param col : Color used to
   display the triangles. \param thickness : Thickness of the triangle lines.
  */
-void vpTemplateTrackerZone::display(const vpImage<unsigned char> &I,
-                                    const vpColor &col,
-                                    const unsigned int thickness)
+void vpTemplateTrackerZone::display(const vpImage<unsigned char> &I, const vpColor &col, const unsigned int thickness)
 {
   std::vector<vpImagePoint> ip;
   for (unsigned int i = 0; i < Zone.size(); i++) {
@@ -485,9 +460,7 @@ void vpTemplateTrackerZone::display(const vpImage<unsigned char> &I,
   triangles that define the zone. \param I : Image. \param col : Color used to
   display the triangles. \param thickness : Thickness of the triangle lines.
  */
-void vpTemplateTrackerZone::display(const vpImage<vpRGBa> &I,
-                                    const vpColor &col,
-                                    const unsigned int thickness)
+void vpTemplateTrackerZone::display(const vpImage<vpRGBa> &I, const vpColor &col, const unsigned int thickness)
 {
   std::vector<vpImagePoint> ip;
   for (unsigned int i = 0; i < Zone.size(); i++) {
@@ -511,9 +484,7 @@ vpTemplateTrackerZone::~vpTemplateTrackerZone() { clear(); }
    of triangles used to define the zone and available using getNbTriangle().
    \param gray_level: Color used to fill the triangle with.
  */
-void vpTemplateTrackerZone::fillTriangle(vpImage<unsigned char> &I,
-                                         unsigned int id,
-                                         unsigned char gray_level)
+void vpTemplateTrackerZone::fillTriangle(vpImage<unsigned char> &I, unsigned int id, unsigned char gray_level)
 {
   assert(id < getNbTriangle());
   vpTemplateTrackerTriangle triangle;
@@ -586,8 +557,7 @@ vpImagePoint vpTemplateTrackerZone::getCenter(int borne_x, int borne_y) const
       }
 
   if (!cpt_pt) {
-    throw(vpException(vpException::divideByZeroError,
-                      "Cannot compute the zone center: size = 0"));
+    throw(vpException(vpException::divideByZeroError, "Cannot compute the zone center: size = 0"));
   }
 
   x_center = x_center / cpt_pt;

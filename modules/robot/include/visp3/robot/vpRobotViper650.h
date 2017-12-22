@@ -310,8 +310,10 @@ frame. To this end this frame is to specify with respect of the end effector
 frame in \f$^e {\bf M}_c\f$ transformation. This could be done by initializing
 the robot thanks to init(vpViper650::vpToolType, const vpHomogeneousMatrix &)
 or init(vpViper650::vpToolType, const std::string &) or using set_eMc(). The
-following example illustrates this usecase: \code #include
-<visp3/core/vpHomogeneousMatrix.h> #include <visp3/robot/vpRobotViper650.h>
+following example illustrates this usecase:
+\code
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/robot/vpRobotViper650.h>
 
 int main()
 {
@@ -404,34 +406,26 @@ public: /* Methode publiques */
   */
   vpControlModeType getControlMode() const { return controlMode; }
 
-  void getDisplacement(vpRobot::vpControlFrameType frame,
-                       vpColVector &displacement);
+  void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
   void getForceTorque(vpColVector &H) const;
   vpColVector getForceTorque() const;
 
   double getMaxRotationVelocityJoint6() const;
 
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpColVector &position);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpColVector &position, double &timestamp);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
 
   double getPositioningVelocity(void) const;
   bool getPowerState() const;
 
   double getTime() const;
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &velocity);
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &velocity, double &timestamp);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity, double &timestamp);
 
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
-  vpColVector getVelocity(const vpRobot::vpControlFrameType frame,
-                          double &timestamp);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame, double &timestamp);
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
@@ -439,9 +433,9 @@ public: /* Methode publiques */
   void get_fJe(vpMatrix &fJe);
 
   void init(void);
-  void init(vpViper650::vpToolType tool,
-            vpCameraParameters::vpCameraParametersProjType projModel =
-                vpCameraParameters::perspectiveProjWithoutDistortion);
+  void
+  init(vpViper650::vpToolType tool,
+       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper650::vpToolType tool, const std::string &filename);
   void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
@@ -462,19 +456,16 @@ public: /* Methode publiques */
   void setMaxRotationVelocityJoint6(double w6_max);
 
   // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &position);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1,
-                   const double pos2, const double pos3, const double pos4,
-                   const double pos5, const double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2, const double pos3,
+                   const double pos4, const double pos5, const double pos6);
   void setPosition(const std::string &filename);
   void setPositioningVelocity(const double velocity);
 
   // State
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   // Velocity control
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
 
   void stopMotion();
 

@@ -72,8 +72,7 @@ public:
     \param ParamM : Parameters of the warping function.
     \param dW : Resulting derivative matrix.
   */
-  void dWarp(const vpColVector &X1, const vpColVector &X2,
-             const vpColVector &ParamM, vpMatrix &dW);
+  void dWarp(const vpColVector &X1, const vpColVector &X2, const vpColVector &ParamM, vpMatrix &dW);
 
   /*!
     Compute the compositionnal derivative of the warping function according to
@@ -86,8 +85,7 @@ public:
     initial warping function parameters (p=0). \param dW : Resulting
     compositionnal derivative matrix.
   */
-  void dWarpCompo(const vpColVector &X1, const vpColVector &X2,
-                  const vpColVector &ParamM, const double *dwdp0,
+  void dWarpCompo(const vpColVector &X1, const vpColVector &X2, const vpColVector &ParamM, const double *dwdp0,
                   vpMatrix &dW);
 
   /*!
@@ -101,8 +99,7 @@ public:
     point (i,j). \param dIdW : Resulting derivative matrix (Image according to
     the warping function).
   */
-  void getdW0(const int &i, const int &j, const double &dy, const double &dx,
-              double *dIdW);
+  void getdW0(const int &i, const int &j, const double &dy, const double &dx, double *dIdW);
 
   /*!
     Compute the derivative of the warping function according to the initial
@@ -121,8 +118,7 @@ public:
     \param ParamM : Parameters of the warping function.
     \param ParamMinv : Inverse parameters.
   */
-  void getParamInverse(const vpColVector &ParamM,
-                       vpColVector &ParamMinv) const;
+  void getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const;
 
   /*!
     Get the parameters of the warping function one level down.
@@ -155,8 +151,7 @@ public:
     \param p2 : Second displacement.
     \param pres : Displacement resulting from the composition of p1 and p2.
   */
-  void pRondp(const vpColVector &p1, const vpColVector &p2,
-              vpColVector &pres) const;
+  void pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &pres) const;
 
   /*!
     Warp a point.
@@ -165,8 +160,7 @@ public:
     \param vXres : Coordinates of the warped point.
     \param ParamM : Parameters of the warping function.
   */
-  void warpX(const vpColVector &vX, vpColVector &vXres,
-             const vpColVector &ParamM);
+  void warpX(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM);
 
   /*!
     Warp a point.
@@ -177,8 +171,7 @@ public:
     \param j2 : j coordinate (along the columns) of the warped point.
     \param ParamM : Parameters of the warping function.
   */
-  void warpX(const int &i, const int &j, double &i2, double &j2,
-             const vpColVector &ParamM);
+  void warpX(const int &i, const int &j, double &i2, double &j2, const vpColVector &ParamM);
 
   /*!
     Inverse Warp a point.
@@ -187,7 +180,6 @@ public:
     \param vXres : Coordinates of the warped point.
     \param ParamM : Parameters of the warping function.
   */
-  void warpXInv(const vpColVector &vX, vpColVector &vXres,
-                const vpColVector &ParamM);
+  void warpXInv(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM);
 };
 #endif

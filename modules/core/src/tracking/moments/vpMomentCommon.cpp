@@ -51,13 +51,10 @@
   flg_sxsyfromnormalized : flag to enable calculation of sx,sy from normalized
   moments.
 */
-vpMomentCommon::vpMomentCommon(double dstSurface,
-                               const std::vector<double> &ref,
-                               double refAlpha, double dstZ,
+vpMomentCommon::vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ,
                                bool flg_sxsyfromnormalized)
-  : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(),
-    momentGravityNormalized(), momentSurfaceNormalized(dstSurface, dstZ),
-    momentCInvariant(), momentAlpha(ref, refAlpha), momentArea()
+  : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
+    momentSurfaceNormalized(dstSurface, dstZ), momentCInvariant(), momentAlpha(ref, refAlpha), momentArea()
 {
   momentCInvariant = new vpMomentCInvariant(flg_sxsyfromnormalized);
 
@@ -90,36 +87,36 @@ int main()
 {
   // Define two discrete points
   vpPoint p;
-  std::vector<vpPoint> vec_p; // std::vector that contains the vertices of the
-contour polygon
+  std::vector<vpPoint> vec_p; // std::vector that contains the vertices of the contour polygon
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane (vertex 2) vec_p.push_back(p); p.set_x(-3); p.set_y(0); //
-coordinates in meters in the image plane (vertex 3) vec_p.push_back(p);
-  p.set_x(-3); p.set_y(1); // coordinates in meters in the image plane (vertex
-4) vec_p.push_back(p);
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
+  p.set_x(-3);
+  p.set_y(0); // coordinates in meters in the image plane (vertex 3)
+  vec_p.push_back(p);
+  p.set_x(-3);
+  p.set_y(1); // coordinates in meters in the image plane (vertex 4)
+  vec_p.push_back(p);
 
   vpMomentObject obj(5); // Object initialized up to order 5 to handle
                          // all computations required by vpMomentCInvariant
-  obj.setType(vpMomentObject::DENSE_POLYGON); // object is the inner part of a
-polygon obj.fromstd::vector(vec_p); // Init the discrete object with two
-points
+  obj.setType(vpMomentObject::DENSE_POLYGON); // object is the inner part of a polygon
+  obj.fromstd::vector(vec_p); // Init the discrete object with two points
 
   //initialisation with default values
-  vpMomentCommon
-db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),vpMomentCommon::getAlpha(obj),1.);
+  vpMomentCommon db(vpMomentCommon::getSurface(obj),vpMomentCommon::getMu3(obj),vpMomentCommon::getAlpha(obj),1.);
   bool success;
 
   db.updateAll(obj); // Update AND compute all moments
 
   //get C-invariant
-  vpMomentCInvariant& C =
-static_cast<vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
-  if(success){
-      std::cout << C.get(0) << std:: std::endl;
-  }else
-      std::cout << "vpMomentCInvariant not found." << std::endl;
+  vpMomentCInvariant& C = static_cast<vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
+  if(success) {
+    std::cout << C.get(0) << std:: std::endl;
+  } else
+    std::cout << "vpMomentCInvariant not found." << std::endl;
 
   return 0;
 }

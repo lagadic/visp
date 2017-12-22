@@ -53,11 +53,7 @@
   Constructor.
 
 */
-vpSimulatorPioneer::vpSimulatorPioneer()
-  : wMc_(), wMe_(), xm_(0), ym_(0), theta_(0)
-{
-  init();
-}
+vpSimulatorPioneer::vpSimulatorPioneer() : wMc_(), wMe_(), xm_(0), ym_(0), theta_(0) { init(); }
 
 /*!
   Robot initialisation.
@@ -95,10 +91,7 @@ vpSimulatorPioneer::~vpSimulatorPioneer() {}
   \param _eJe : A 6 by 2 matrix representing the robot jacobian \f$ {^e}{\bf
   J}_e\f$ expressed in the end-effector frame.
 */
-void vpSimulatorPioneer::get_eJe(vpMatrix &_eJe)
-{
-  _eJe = vpUnicycle::get_eJe();
-}
+void vpSimulatorPioneer::get_eJe(vpMatrix &_eJe) { _eJe = vpUnicycle::get_eJe(); }
 
 /*!
   Send to the controller a velocity.
@@ -117,8 +110,7 @@ void vpSimulatorPioneer::get_eJe(vpMatrix &_eJe)
   \sa setSamplingTime()
 
 */
-void vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
-                                     const vpColVector &v)
+void vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
   switch (frame) {
   case vpRobot::ARTICULAR_FRAME: {
@@ -130,8 +122,7 @@ void vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
     // v is a 2 dimension vector that contains v,w
     if (v.size() != 2) {
       vpERROR_TRACE("Bad dimension of the control vector");
-      throw vpRobotException(vpRobotException::dimensionError,
-                             "Bad dimension of the control vector");
+      throw vpRobotException(vpRobotException::dimensionError, "Bad dimension of the control vector");
     }
 
     vpColVector v_max(2);
@@ -155,22 +146,19 @@ void vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::CAMERA_FRAME:
     vpERROR_TRACE("Cannot set a velocity in the camera frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the camera frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the camera frame:"
+                                                              "functionality not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot set a velocity in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the articular frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the articular frame:"
+                                                              "functionality not implemented");
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot set a velocity in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot set a velocity in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
+                                                              "functionality not implemented");
 
     break;
   }
@@ -180,10 +168,7 @@ void vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
   Get the robot position in the world frame.
 
 */
-void vpSimulatorPioneer::getPosition(vpHomogeneousMatrix &wMc) const
-{
-  wMc = this->wMc_;
-}
+void vpSimulatorPioneer::getPosition(vpHomogeneousMatrix &wMc) const { wMc = this->wMc_; }
 
 /*
   Get the current position of the robot.
@@ -204,8 +189,7 @@ void vpSimulatorPioneer::getPosition(vpHomogeneousMatrix &wMc) const
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector).
 */
-void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame,
-                                     vpColVector &q)
+void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   q.resize(6);
 
@@ -235,8 +219,6 @@ void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame,
     break;
   }
   case vpRobot::MIXT_FRAME:
-    std::cout
-        << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()"
-        << std::endl;
+    std::cout << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
   }
 }

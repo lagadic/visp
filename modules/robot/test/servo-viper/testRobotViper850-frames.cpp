@@ -47,8 +47,7 @@
 
 #ifdef VISP_HAVE_VIPER850
 
-bool pose_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix &M2,
-                double epsilon = 1e-6)
+bool pose_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix &M2, double epsilon = 1e-6)
 {
   vpTranslationVector t1, t2;
   M1.extract(t1);
@@ -66,8 +65,7 @@ bool pose_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix &M2,
   return true;
 }
 
-bool joint_equal(const vpColVector &q1, const vpColVector &q2,
-                 double epsilon = 1e-6)
+bool joint_equal(const vpColVector &q1, const vpColVector &q2, double epsilon = 1e-6)
 {
   for (unsigned int i = 0; i < q1.size(); i++) {
     if (std::fabs(q1[i] - q2[i]) > epsilon) {
@@ -103,8 +101,7 @@ int main()
 #else
     // In this case, we set tool frame to the PTGrey Flea2 camera frame
     vpTranslationVector etc(-0.04437278107, -0.001192883711, 0.07808296844);
-    vpRxyzVector erxyzc(vpMath::rad(0.7226737722), vpMath::rad(2.103893926),
-                        vpMath::rad(-90.46213439));
+    vpRxyzVector erxyzc(vpMath::rad(0.7226737722), vpMath::rad(2.103893926), vpMath::rad(-90.46213439));
     eMt.buildFrom(etc, vpRotationMatrix(erxyzc));
 #endif
     std::cout << "eMt:\n" << eMt << std::endl;
@@ -139,7 +136,7 @@ int main()
     std::cout << "eMc:\n" << cMe.inverse() << std::endl;
 
     //********* Check if retrieved eMt transformation is the one that was set
-    //during init
+    // during init
     if (1) {
       vpHomogeneousMatrix eMt_ = fMe.inverse() * fMt;
       std::cout << "eMt_:\n" << eMt_ << std::endl;
@@ -154,7 +151,7 @@ int main()
       std::cout << "  They are the same, we can continue" << std::endl;
 
       //********* Check if retrieved eMc transformation is the one that was
-      //set
+      // set
 
       std::cout << "eMc:\n" << cMe.inverse() << std::endl;
       // Compare pose
@@ -195,8 +192,7 @@ int main()
       vpColVector q1;
       robot.getInverseKinematics(fMt, q1);
 
-      std::cout << "Move robot in joint (the robot should not move)"
-                << std::endl;
+      std::cout << "Move robot in joint (the robot should not move)" << std::endl;
       robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
       robot.setPosition(vpRobotViper850::ARTICULAR_FRAME, q1);
 
@@ -223,8 +219,7 @@ int main()
         f_pose_t[i + 3] = f_rxyz_t[i];
       }
 
-      std::cout << "Move robot in reference frame (the robot should not move)"
-                << std::endl;
+      std::cout << "Move robot in reference frame (the robot should not move)" << std::endl;
       robot.setPosition(vpRobot::REFERENCE_FRAME, f_pose_t);
       vpColVector q3;
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q3);
@@ -372,16 +367,14 @@ int main()
     std::cout << "The end" << std::endl;
     std::cout << "Test succeed" << std::endl;
   } catch (vpException &e) {
-    std::cout << "Test failed with exception: " << e.getMessage()
-              << std::endl;
+    std::cout << "Test failed with exception: " << e.getMessage() << std::endl;
   }
 }
 
 #else
 int main()
 {
-  std::cout << "The real Viper850 robot controller is not available."
-            << std::endl;
+  std::cout << "The real Viper850 robot controller is not available." << std::endl;
   return 0;
 }
 

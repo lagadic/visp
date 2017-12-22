@@ -55,8 +55,7 @@
   The algorithm implemented in this class is described in \cite Irani98a and
   \cite Marchand16a.
  */
-class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional
-  : public vpTemplateTrackerZNCC
+class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional : public vpTemplateTrackerZNCC
 {
 protected:
   bool compoInitialised;
@@ -76,8 +75,7 @@ protected:
   void initPosEvalRMS(const vpColVector &p);
 
 public:
-  explicit vpTemplateTrackerZNCCInverseCompositional(
-      vpTemplateTrackerWarp *warp);
+  explicit vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
 
   void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
 };

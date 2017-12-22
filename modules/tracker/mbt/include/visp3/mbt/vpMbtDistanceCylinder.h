@@ -142,17 +142,12 @@ public:
 
   void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r);
 
-  void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo,
-                                     const vpImage<unsigned char> &I);
+  void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I);
 
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1,
-               const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam, const vpColor &col,
-               const unsigned int thickness = 1,
-               const bool displayFullModel = false);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
   void displayMovingEdges(const vpImage<unsigned char> &I);
 
   /*!
@@ -160,10 +155,7 @@ public:
 
    \param camera : The vpCameraParameters used to store the camera parameters.
   */
-  inline void getCameraParameters(vpCameraParameters &camera)
-  {
-    camera = this->cam;
-  }
+  inline void getCameraParameters(vpCameraParameters &camera) { camera = this->cam; }
 
   /*!
     Get the index of the cylinder.
@@ -199,8 +191,7 @@ public:
 
   void initInteractionMatrixError();
 
-  bool initMovingEdge(const vpImage<unsigned char> &I,
-                      const vpHomogeneousMatrix &cMo);
+  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   /*!
    Return if the cylinder is used for tracking.
@@ -216,27 +207,20 @@ public:
   */
   inline bool isVisible() const { return isvisible; }
 
-  void reinitMovingEdge(const vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &cMo);
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   /*!
    Set the camera paramters.
    \param camera : The camera parameters.
   */
-  inline void setCameraParameters(const vpCameraParameters &camera)
-  {
-    this->cam = camera;
-  }
+  inline void setCameraParameters(const vpCameraParameters &camera) { this->cam = camera; }
 
   /*!
     Set if the cylinder has to considered during tracking phase.
 
     \param track : True if the cylinder has to be tracked, False otherwise.
   */
-  inline void setTracked(const bool &track)
-  {
-    this->isTrackedCylinder = track;
-  }
+  inline void setTracked(const bool &track) { this->isTrackedCylinder = track; }
 
   /*!
     Set the index of the cylinder.
@@ -273,10 +257,7 @@ public:
 
     \param cyl_name : The name of the cylinder
   */
-  inline void setName(const char *cyl_name)
-  {
-    this->name = std::string(cyl_name);
-  }
+  inline void setName(const char *cyl_name) { this->name = std::string(cyl_name); }
 
   /*!
     Set a boolean parameter to indicates if the cylinder is visible in the
@@ -286,11 +267,9 @@ public:
   */
   inline void setVisible(bool _isvisible) { isvisible = _isvisible; }
 
-  void trackMovingEdge(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo);
+  void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
-  void updateMovingEdge(const vpImage<unsigned char> &I,
-                        const vpHomogeneousMatrix &cMo);
+  void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
 private:
   void project(const vpHomogeneousMatrix &cMo);

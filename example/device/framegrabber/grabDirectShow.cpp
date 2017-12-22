@@ -72,8 +72,7 @@
   \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned &nframes,
-           std::string &opath)
+void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath)
 {
   fprintf(stdout, "\n\
 Acquire images using DirectShow (under Windows only) and display\n\
@@ -119,8 +118,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes,
-                bool &save, std::string &opath)
+bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes, bool &save, std::string &opath)
 {
   const char *optarg;
   int c;
@@ -201,8 +199,7 @@ int main(int argc, const char **argv)
 
     // test if a camera is connected
     if (grabber->getDeviceNumber() == 0) {
-      vpCTRACE << "there is no camera detected on your computer."
-               << std::endl;
+      vpCTRACE << "there is no camera detected on your computer." << std::endl;
       grabber->close();
       exit(0);
     }
@@ -212,8 +209,7 @@ int main(int argc, const char **argv)
     // Acquire an image
     grabber->acquire(I);
 
-    std::cout << "Image size: width : " << I.getWidth()
-              << " height: " << I.getHeight() << std::endl;
+    std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
 // Creates a display
 #if defined VISP_HAVE_GTK
@@ -255,8 +251,7 @@ int main(int argc, const char **argv)
       ttotal += tloop;
     }
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
-    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps"
-              << std::endl;
+    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
 
     // Release the framegrabber
     delete grabber;

@@ -209,8 +209,8 @@ m02: 0.0525
 Common moments computed using basic moments:
 Surface: 0.259375
 Alpha: 0.133296
-Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125
--0.000421875 \endcode
+Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125 -0.000421875
+\endcode
 
   Note that in the continuous case, the moment object \f$m_{00}\f$ corresponds
 to the surface \f$a\f$ of the object. In the discrete case, it is the number
@@ -250,16 +250,15 @@ public:
   Virtual destructor to allow polymorphic usage.
   For instance,
   \code
-  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER); where
-  vpWeightedMomentObject is child class of vpMomentObject \endcode
+  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER);
+  \endcode
+  where vpWeightedMomentObject is child class of vpMomentObject
   */
   virtual ~vpMomentObject();
 
   void fromImage(const vpImage<unsigned char> &image, unsigned char threshold,
                  const vpCameraParameters &cam); // Binary version
-  void fromImage(const vpImage<unsigned char> &image,
-                 const vpCameraParameters &cam,
-                 vpCameraImgBckGrndType bg_type,
+  void fromImage(const vpImage<unsigned char> &image, const vpCameraParameters &cam, vpCameraImgBckGrndType bg_type,
                  bool normalize_with_pix_size = true); // Photometric version
 
   void fromVector(std::vector<vpPoint> &points);
@@ -281,15 +280,13 @@ public:
   void init(unsigned int orderinp);
   void init(const vpMomentObject &objin);
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMomentObject &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &v);
   /*!
     Outputs raw moments in indexed form like m[1,1] = value of moment m11
     \param momobj : A vpMomentObject
     \param os : Output stream.
    */
-  static void printWithIndices(const vpMomentObject &momobj,
-                               std::ostream &os);
+  static void printWithIndices(const vpMomentObject &momobj, std::ostream &os);
   /*!
     Specifies the type of the input data.
     \param input_type : An input type.
@@ -310,10 +307,8 @@ protected:
   void cacheValues(std::vector<double> &cache, double x, double y);
 
 private:
-  void cacheValues(std::vector<double> &cache, double x, double y,
-                   double IntensityNormalized);
-  double calc_mom_polygon(unsigned int p, unsigned int q,
-                          const std::vector<vpPoint> &points);
+  void cacheValues(std::vector<double> &cache, double x, double y, double IntensityNormalized);
+  double calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint> &points);
 };
 
 #endif

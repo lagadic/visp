@@ -115,15 +115,11 @@ public:
   }
 
   void insert(vpForwardProjection &fp);
-  void display(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color, const bool &displayTraj = false,
+  void display(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo, const vpHomogeneousMatrix &cMo,
+               const vpCameraParameters &cam, const vpColor &color, const bool &displayTraj = false,
                const unsigned int thickness = 1);
-  void displayCamera(vpImage<unsigned char> &I,
-                     const vpHomogeneousMatrix &cextMo,
-                     const vpHomogeneousMatrix &cMo,
-                     const vpCameraParameters &cam,
-                     const unsigned int thickness = 1);
+  void displayCamera(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo, const vpHomogeneousMatrix &cMo,
+                     const vpCameraParameters &cam, const unsigned int thickness = 1);
 
 private:
   std::list<vpForwardProjection *> listFp;

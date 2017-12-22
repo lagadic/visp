@@ -64,8 +64,7 @@ public:
   const char *name() const { return "vpMomentArea"; }
   void printDependencies(std::ostream &os) const;
   //@}
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMomentArea &m);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m);
 };
 
 #endif

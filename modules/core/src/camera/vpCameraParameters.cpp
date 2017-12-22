@@ -60,9 +60,8 @@ const double vpCameraParameters::DEFAULT_U0_PARAMETER = 192.0;
 const double vpCameraParameters::DEFAULT_V0_PARAMETER = 144.0;
 const double vpCameraParameters::DEFAULT_KUD_PARAMETER = 0.0;
 const double vpCameraParameters::DEFAULT_KDU_PARAMETER = 0.0;
-const vpCameraParameters::vpCameraParametersProjType
-    vpCameraParameters::DEFAULT_PROJ_TYPE =
-        vpCameraParameters::perspectiveProjWithoutDistortion;
+const vpCameraParameters::vpCameraParametersProjType vpCameraParameters::DEFAULT_PROJ_TYPE =
+    vpCameraParameters::perspectiveProjWithoutDistortion;
 
 /*!
   Default constructor.
@@ -71,11 +70,9 @@ const vpCameraParameters::vpCameraParametersProjType
   \sa init()
 */
 vpCameraParameters::vpCameraParameters()
-  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
-    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0),
-    height(0), isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
-    inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
+  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
+    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
   init();
@@ -85,11 +82,9 @@ vpCameraParameters::vpCameraParameters()
   Copy constructor
  */
 vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
-  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
-    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0),
-    height(0), isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
-    inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
+  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
+    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
   init(c);
@@ -102,15 +97,11 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
   \param cam_u0,cam_v0 : principal points
 
  */
-vpCameraParameters::vpCameraParameters(const double cam_px,
-                                       const double cam_py,
-                                       const double cam_u0,
+vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py, const double cam_u0,
                                        const double cam_v0)
-  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
-    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0),
-    height(0), isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
-    inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
+  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
+    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
   initPersProjWithoutDistortion(cam_px, cam_py, cam_u0, cam_v0);
@@ -125,18 +116,14 @@ vpCameraParameters::vpCameraParameters(const double cam_px,
   \param cam_kdu : distorted to undistorted radial distortion
 
  */
-vpCameraParameters::vpCameraParameters(
-    const double cam_px, const double cam_py, const double cam_u0,
-    const double cam_v0, const double cam_kud, const double cam_kdu)
-  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
-    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0),
-    height(0), isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
-    inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
+vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py, const double cam_u0,
+                                       const double cam_v0, const double cam_kud, const double cam_kdu)
+  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
+    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
-  initPersProjWithDistortion(cam_px, cam_py, cam_u0, cam_v0, cam_kud,
-                             cam_kdu);
+  initPersProjWithDistortion(cam_px, cam_py, cam_u0, cam_v0, cam_kud, cam_kdu);
 }
 
 /*!
@@ -146,13 +133,11 @@ void vpCameraParameters::init()
 {
   if (fabs(this->px) < 1e-6) {
     vpERROR_TRACE("Camera parameter px = 0");
-    throw(vpException(vpException::divideByZeroError,
-                      "Camera parameter px = 0"));
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(this->py) < 1e-6) {
     vpERROR_TRACE("Camera parameter px = 0");
-    throw(vpException(vpException::divideByZeroError,
-                      "Camera parameter px = 0"));
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / this->px;
   this->inv_py = 1. / this->py;
@@ -180,10 +165,9 @@ int main()
   cam.initPersProjWithoutDistortion(px, py, u0, v0);
   cam.computeFov(I.getWidth(), I.getHeight());
   std::cout << cam << std::endl;
-  std::cout << "Field of view (horizontal: " <<
-vpMath::deg(cam.getHorizontalFovAngle())
-            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle()) <<
-" degrees)" << std::endl;
+  std::cout << "Field of view (horizontal: " << vpMath::deg(cam.getHorizontalFovAngle())
+            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle())
+            << " degrees)" << std::endl;
 }
    \endcode
    It produces the following output:
@@ -196,9 +180,7 @@ Field of view (horizontal: 56.145 and vertical: 43.6028 degrees)
    \endcode
 
  */
-void vpCameraParameters::initPersProjWithoutDistortion(const double cam_px,
-                                                       const double cam_py,
-                                                       const double cam_u0,
+void vpCameraParameters::initPersProjWithoutDistortion(const double cam_px, const double cam_py, const double cam_u0,
                                                        const double cam_v0)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
@@ -212,13 +194,11 @@ void vpCameraParameters::initPersProjWithoutDistortion(const double cam_px,
 
   if (fabs(px) < 1e-6) {
     vpERROR_TRACE("Camera parameter px = 0");
-    throw(vpException(vpException::divideByZeroError,
-                      "Camera parameter px = 0"));
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
     vpERROR_TRACE("Camera parameter px = 0");
-    throw(vpException(vpException::divideByZeroError,
-                      "Camera parameter px = 0"));
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / px;
   this->inv_py = 1. / py;
@@ -227,10 +207,10 @@ void vpCameraParameters::initPersProjWithoutDistortion(const double cam_px,
 /*!
   Initialization with specific parameters using perpective projection with
   distortion model.
-  \param cam_px,cam_py : the ratio between the focal length and the size of a
-pixel. \param cam_u0,cam_v0 : principal points coordinates in pixels. \param
-cam_kud : undistorted to distorted radial distortion. \param cam_kdu :
-distorted to undistorted radial distortion.
+  \param cam_px,cam_py : the ratio between the focal length and the size of a pixel.
+  \param cam_u0,cam_v0 : principal points coordinates in pixels.
+  \param cam_kud : undistorted to distorted radial distortion.
+  \param cam_kdu : distorted to undistorted radial distortion.
 
    The following sample code shows how to use this function:
    \code
@@ -250,10 +230,9 @@ int main()
   cam.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
   cam.computeFov(I.getWidth(), I.getHeight());
   std::cout << cam << std::endl;
-  std::cout << "Field of view (horizontal: " <<
-vpMath::deg(cam.getHorizontalFovAngle())
-            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle()) <<
-" degrees)" << std::endl;
+  std::cout << "Field of view (horizontal: " << vpMath::deg(cam.getHorizontalFovAngle())
+            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle())
+            << " degrees)" << std::endl;
 }
    \endcode
    It produces the following output:
@@ -267,9 +246,8 @@ Camera parameters for perspective projection with distortion:
 Field of view (horizontal: 56.14497387 and vertical: 43.60281897 degrees)
 \endcode
 */
-void vpCameraParameters::initPersProjWithDistortion(
-    const double cam_px, const double cam_py, const double cam_u0,
-    const double cam_v0, const double cam_kud, const double cam_kdu)
+void vpCameraParameters::initPersProjWithDistortion(const double cam_px, const double cam_py, const double cam_u0,
+                                                    const double cam_v0, const double cam_kud, const double cam_kdu)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithDistortion;
 
@@ -282,13 +260,11 @@ void vpCameraParameters::initPersProjWithDistortion(
 
   if (fabs(px) < 1e-6) {
     vpERROR_TRACE("Camera parameter px = 0");
-    throw(vpException(vpException::divideByZeroError,
-                      "Camera parameter px = 0"));
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
     vpERROR_TRACE("Camera parameter px = 0");
-    throw(vpException(vpException::divideByZeroError,
-                      "Camera parameter px = 0"));
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / px;
   this->inv_py = 1. / py;
@@ -323,12 +299,10 @@ void vpCameraParameters::init(const vpCameraParameters &c) { *this = c; }
 void vpCameraParameters::initFromCalibrationMatrix(const vpMatrix &_K)
 {
   if (_K.getRows() != 3 || _K.getCols() != 3) {
-    throw vpException(vpException::dimensionError,
-                      "bad size for calibration matrix");
+    throw vpException(vpException::dimensionError, "bad size for calibration matrix");
   }
   if (std::fabs(_K[2][2] - 1.0) > std::numeric_limits<double>::epsilon()) {
-    throw vpException(vpException::badValue,
-                      "bad value: K[2][2] must be equal to 1");
+    throw vpException(vpException::badValue, "bad value: K[2][2] must be equal to 1");
   }
   initPersProjWithoutDistortion(_K[0][0], _K[1][1], _K[0][2], _K[1][2]);
 }
@@ -353,10 +327,8 @@ int main()
   cam.initFromFov(I.getWidth(), I.getHeight(), hfov, vfov);
 
   std::cout << cam << std::endl;
-  std::cout << "Field of view (horizontal: " <<
-vpMath::deg(cam.getHorizontalFovAngle())
-            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle()) <<
-" degrees)" << std::endl;
+  std::cout << "Field of view (horizontal: " << vpMath::deg(cam.getHorizontalFovAngle())
+            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle()) << " degrees)" << std::endl;
 }
    \endcode
    It produces the following output:
@@ -368,9 +340,8 @@ Camera parameters for perspective projection without distortion:
 Field of view (horizontal: 56 and vertical: 43 degrees)
    \endcode
  */
-void vpCameraParameters::initFromFov(const unsigned int &w,
-                                     const unsigned int &h,
-                                     const double &hfov, const double &vfov)
+void vpCameraParameters::initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov,
+                                     const double &vfov)
 {
   projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
   u0 = (double)w / 2.;
@@ -387,8 +358,7 @@ void vpCameraParameters::initFromFov(const unsigned int &w,
 /*!
   copy operator
  */
-vpCameraParameters &vpCameraParameters::
-operator=(const vpCameraParameters &cam)
+vpCameraParameters &vpCameraParameters::operator=(const vpCameraParameters &cam)
 {
   projModel = cam.projModel;
   px = cam.px;
@@ -417,8 +387,7 @@ operator=(const vpCameraParameters &cam)
   \param w : Width of the image
   \param h : Height of the image.
 */
-void vpCameraParameters::computeFov(const unsigned int &w,
-                                    const unsigned int &h)
+void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
 {
   if ((!isFov || w != width || h != height) && w != 0 && h != 0) {
     fovNormals = std::vector<vpColVector>(4);
@@ -523,17 +492,13 @@ void vpCameraParameters::printParameters()
   switch (projModel) {
   case vpCameraParameters::perspectiveProjWithoutDistortion:
     std::cout.precision(10);
-    std::cout
-        << "Camera parameters for perspective projection without distortion:"
-        << std::endl;
+    std::cout << "Camera parameters for perspective projection without distortion:" << std::endl;
     std::cout << "  px = " << px << "\t py = " << py << std::endl;
     std::cout << "  u0 = " << u0 << "\t v0 = " << v0 << std::endl;
     break;
   case vpCameraParameters::perspectiveProjWithDistortion:
     std::cout.precision(10);
-    std::cout
-        << "Camera parameters for perspective projection with distortion:"
-        << std::endl;
+    std::cout << "Camera parameters for perspective projection with distortion:" << std::endl;
     std::cout << "  px = " << px << "\t py = " << py << std::endl;
     std::cout << "  u0 = " << u0 << "\t v0 = " << v0 << std::endl;
     std::cout << "  kud = " << kud << std::endl;
@@ -550,27 +515,20 @@ void vpCameraParameters::printParameters()
   \param os : Output stream.
   \param cam : Camera parameters.
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpCameraParameters &cam)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters &cam)
 {
   switch (cam.get_projModel()) {
   case vpCameraParameters::perspectiveProjWithoutDistortion:
-    os << "Camera parameters for perspective projection without distortion:"
-       << std::endl;
-    os << "  px = " << cam.get_px() << "\t py = " << cam.get_py()
-       << std::endl;
-    os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0()
-       << std::endl;
+    os << "Camera parameters for perspective projection without distortion:" << std::endl;
+    os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
+    os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
     break;
   case vpCameraParameters::perspectiveProjWithDistortion:
     std::ios_base::fmtflags original_flags = os.flags();
     os.precision(10);
-    os << "Camera parameters for perspective projection with distortion:"
-       << std::endl;
-    os << "  px = " << cam.get_px() << "\t py = " << cam.get_py()
-       << std::endl;
-    os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0()
-       << std::endl;
+    os << "Camera parameters for perspective projection with distortion:" << std::endl;
+    os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
+    os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
     os << "  kud = " << cam.get_kud() << std::endl;
     os << "  kdu = " << cam.get_kdu() << std::endl;
 

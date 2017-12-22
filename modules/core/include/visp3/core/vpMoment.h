@@ -158,7 +158,6 @@ public:
   virtual void printDependencies(std::ostream &os) const;
   void update(vpMomentObject &object);
   //@}
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMoment &m);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMoment &m);
 };
 #endif

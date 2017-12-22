@@ -92,10 +92,8 @@ class VISP_EXPORT vpExponentialMap
 {
 public:
   static vpHomogeneousMatrix direct(const vpColVector &v);
-  static vpHomogeneousMatrix direct(const vpColVector &v,
-                                    const double &delta_t);
+  static vpHomogeneousMatrix direct(const vpColVector &v, const double &delta_t);
   static vpColVector inverse(const vpHomogeneousMatrix &M);
-  static vpColVector inverse(const vpHomogeneousMatrix &M,
-                             const double &delta_t);
+  static vpColVector inverse(const vpHomogeneousMatrix &M, const double &delta_t);
 };
 #endif

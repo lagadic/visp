@@ -47,13 +47,10 @@ DWORD vpProcessErrors(const std::string &api_name)
   LPVOID lpMsgBuf;
   DWORD err = GetLastError();
 
-  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                    FORMAT_MESSAGE_IGNORE_INSERTS,
-                NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                (LPTSTR)&lpMsgBuf, 0, NULL);
-  std::cout << "call to " << api_name
-            << " failed with the following error code: " << err << "("
-            << (LPTSTR)lpMsgBuf << ")" << std::endl;
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, err,
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
+  std::cout << "call to " << api_name << " failed with the following error code: " << err << "(" << (LPTSTR)lpMsgBuf
+            << ")" << std::endl;
   return err;
 }
 
@@ -73,11 +70,10 @@ BOOL vpMoveToEx(HDC hdc, int X, int Y, LPPOINT lpPoint)
   return ret;
 }
 
-BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight,
-              HDC hdcSrc, int nXSrc, int nYSrc, DWORD dwRop)
+BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC hdcSrc, int nXSrc, int nYSrc,
+              DWORD dwRop)
 {
-  BOOL ret = BitBlt(hdcDest, nXDest, nYDest, nWidth, nHeight, hdcSrc, nXSrc,
-                    nYSrc, dwRop);
+  BOOL ret = BitBlt(hdcDest, nXDest, nYDest, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, dwRop);
   if (ret == 0)
     vpProcessErrors("BitBlt");
   return ret;
@@ -108,8 +104,7 @@ void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h)
   }
 }
 
-BOOL vpReleaseSemaphore(HANDLE hSemaphore, LONG IReleaseCount,
-                        LPLONG lpPreviousCount)
+BOOL vpReleaseSemaphore(HANDLE hSemaphore, LONG IReleaseCount, LPLONG lpPreviousCount)
 {
   BOOL ret = ReleaseSemaphore(hSemaphore, IReleaseCount, lpPreviousCount);
 #ifndef __MINGW32__
@@ -120,14 +115,8 @@ BOOL vpReleaseSemaphore(HANDLE hSemaphore, LONG IReleaseCount,
   return ret;
 }
 
-void vpEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection)
-{
-  EnterCriticalSection(lpCriticalSection);
-}
-void vpLeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection)
-{
-  LeaveCriticalSection(lpCriticalSection);
-}
+void vpEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection) { EnterCriticalSection(lpCriticalSection); }
+void vpLeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection) { LeaveCriticalSection(lpCriticalSection); }
 
 COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor)
 {
@@ -137,8 +126,7 @@ COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor)
   return ret;
 }
 
-HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes,
-                       UINT cBitsPerPel, const VOID *lpvBits)
+HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, const VOID *lpvBits)
 {
   HBITMAP ret = CreateBitmap(nWidth, nHeight, cPlanes, cBitsPerPel, lpvBits);
   if (ret == NULL)

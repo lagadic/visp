@@ -63,32 +63,31 @@ following methods: vpFeatureMomentGravityCenter::selectXg for \f$ L_{x_{g}}
 following code demonstrates a selection of \f$ L_{y_{g}} \f$:
 
   \code
-#include <iostream>
-#include <vector>
-#include <visp3/core/vpMomentBasic.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
+#include <visp3/core/vpMomentBasic.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
+#include <visp3/visual_features/vpFeatureMomentBasic.h>
+#include <iostream>
+#include <vector>
 
 int main()
 {
   vpPoint p;
   std::vector<vpPoint> vec_p; // vector that contains the vertices
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex
-1) vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
-image plane (vertex 2) vec_p.push_back(p);
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane (vertex 1)
+  vec_p.push_back(p);
+  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
 
-  //////////////////////////////REFERENCE
-VALUES//////////////////////////////// vpMomentObject obj(2); // Init object
-of order 2 because we need
-                         // vpFeatureMomentBasic of order 1 (for
-vpFeatureMomentGravityCenter) which
+  //////////////////////////////REFERENCE VALUES////////////////////////////////
+  vpMomentObject obj(2); // Init object of order 2 because we need
+                         // vpFeatureMomentBasic of order 1 (for vpFeatureMomentGravityCenter) which
                          // implies third-order moment primitives
   obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
   obj.fromVector(vec_p);
@@ -110,10 +109,12 @@ vpFeatureMomentGravityCenter) which
   vpFeatureMomentBasic fmb(mdb,0.,0.,1.,&fmdb); fmb.linkTo(fmdb);
   vpFeatureMomentGravityCenter fgc(mdb,0.,0.,1.,&fmdb); fgc.linkTo(fmdb);
 
-  //update and compute the vpMomentBasic before computing
-vpMomentGravityCenter bm.update(obj); bm.compute();
-  //update and compute the vpMomentGravityCenter before computing
-vpFeatureMomentBasic gc.update(obj); gc.compute();
+  //update and compute the vpMomentBasic before computing vpMomentGravityCenter
+  bm.update(obj);
+  bm.compute();
+  //update and compute the vpMomentGravityCenter before computing vpFeatureMomentBasic
+  gc.update(obj);
+  gc.compute();
 
   fmb.update(0.,0.,1.); //update the vpFeatureMoment with a plane
                      //configuration and compute interaction matrix
@@ -125,7 +126,6 @@ vpFeatureMomentBasic gc.update(obj); gc.compute();
 
   return 0;
 }
-
   \endcode
 
   This code produces the following output:
@@ -138,8 +138,10 @@ vpFeatureMomentGravityCenter::selectXg or
 vpFeatureMomentGravityCenter::selectYg as follows:
 
   \code
-  task.addFeature(db_src.getFeatureGravityNormalized(),db_dst.getFeatureGravityNormalized(),vpFeatureMomentGravityCenter::selectXg()
-| vpFeatureMomentGravityCenter::selectYg()); \endcode This feature depends on:
+  task.addFeature(db_src.getFeatureGravityNormalized(), db_dst.getFeatureGravityNormalized(),
+                 vpFeatureMomentGravityCenter::selectXg() | vpFeatureMomentGravityCenter::selectYg());
+  \endcode
+  This feature depends on:
       - vpFeatureMomentBasic
 
   Minimum vpMomentObject order needed to compute this feature: 2.
@@ -158,8 +160,7 @@ public:
   A \times x+B \times y + C = \frac{1}{Z} \f$ plane. \param featureMoments :
   Feature database.
   */
-  vpFeatureMomentGravityCenter(vpMomentDatabase &database, double A_,
-                               double B_, double C_,
+  vpFeatureMomentGravityCenter(vpMomentDatabase &database, double A_, double B_, double C_,
                                vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(database, A_, B_, C_, featureMoments, 2)
   {
@@ -207,9 +208,10 @@ class vpMomentDatabase;
   vpFeatureMomentGravityCenter::selectYg as follows:
 
   \code
-  task.addFeature(db_src.getFeatureGravityNormalized(),db_dst.getFeatureGravityNormalized(),vpFeatureMomentGravityCenter::selectXg()
-  | vpFeatureMomentGravityCenter::selectYg()); \endcode This feature depends
-  on:
+  task.addFeature(db_src.getFeatureGravityNormalized(), db_dst.getFeatureGravityNormalized(),
+                  vpFeatureMomentGravityCenter::selectXg() | vpFeatureMomentGravityCenter::selectYg());
+  \endcode
+  This feature depends on:
   - vpMomentCentered
   - vpMomentGravityCenter
 
@@ -229,8 +231,7 @@ public:
   A \times x+B \times y + C = \frac{1}{Z} \f$ plane. \param featureMoments :
   Feature database.
   */
-  vpFeatureMomentGravityCenter(vpMomentDatabase &data_base, double A_,
-                               double B_, double C_,
+  vpFeatureMomentGravityCenter(vpMomentDatabase &data_base, double A_, double B_, double C_,
                                vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 2)
   {

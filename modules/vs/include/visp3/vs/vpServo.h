@@ -103,9 +103,8 @@ int main()
   s_tu.buildFrom(cdMc);
 
   // Build the desired visual feature s* = (0,0)
-  vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default
-initialization to zero vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc);//
-Default initialization to zero
+  vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default initialization to zero
+  vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc); // Default initialization to zero
 
   vpColVector v; // Camera velocity
   double error;  // Task error
@@ -138,8 +137,7 @@ Default initialization to zero
 
     v = task.computeControlLaw(); // Compute camera velocity skew
     error =  ( task.getError() ).sumSquare(); // error = s^2 - s_star^2
-  } while (error > 0.0001); // Stop the task when current and desired visual
-features are close
+  } while (error > 0.0001); // Stop the task when current and desired visual features are close
 
   // A call to kill() is requested here to destroy properly the current
   // and desired feature lists.
@@ -203,8 +201,8 @@ public:
   } vpServoIteractionMatrixType;
 
   typedef enum {
-    TRANSPOSE, /*!< In the control law (see vpServo::vpServoType), uses the
-                  transpose instead of the pseudo inverse. */
+    TRANSPOSE,     /*!< In the control law (see vpServo::vpServoType), uses the
+                      transpose instead of the pseudo inverse. */
     PSEUDO_INVERSE /*!< In the control law (see vpServo::vpServoType), uses
                       the pseudo inverse. */
   } vpServoInversionType;
@@ -217,7 +215,7 @@ public:
     FEATURE_DESIRED,    /*!< Print the desired features \f${\bf s}^*\f$. */
     GAIN,               /*!< Print the gain \f$\lambda\f$. */
     INTERACTION_MATRIX, /*!< Print the interaction matrix. */
-    MINIMUM /*!< Same as vpServo::vpServoPrintType::ERROR_VECTOR. */
+    MINIMUM             /*!< Same as vpServo::vpServoPrintType::ERROR_VECTOR. */
   } vpServoPrintType;
 
   // private:
@@ -252,11 +250,9 @@ public:
   virtual ~vpServo();
 
   // create a new ste of  two visual features
-  void addFeature(vpBasicFeature &s, vpBasicFeature &s_star,
-                  const unsigned int select = vpBasicFeature::FEATURE_ALL);
+  void addFeature(vpBasicFeature &s, vpBasicFeature &s_star, const unsigned int select = vpBasicFeature::FEATURE_ALL);
   // create a new ste of  two visual features
-  void addFeature(vpBasicFeature &s,
-                  const unsigned int select = vpBasicFeature::FEATURE_ALL);
+  void addFeature(vpBasicFeature &s, const unsigned int select = vpBasicFeature::FEATURE_ALL);
 
   // compute the desired control law
   vpColVector computeControlLaw();
@@ -279,11 +275,12 @@ error vector is updated after a call of computeError() or computeControlLaw().
 \code
   vpServo task;
   ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity
-corresponding to the visual servoing vpColVector e = task.getError();
-// Get the error vector \endcode
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpColVector e = task.getError(); // Get the error vector
+\endcode
    */
   inline vpColVector getError() const { return error; }
+
   /*
      Return the interaction matrix \f$L\f$ used to compute the task jacobian
  \f$J_1\f$. The interaction matrix is updated after a call to
@@ -351,21 +348,17 @@ corresponding to the visual servoing vpColVector e = task.getError();
   // destruction (memory deallocation if required)
   void kill();
 
-  void print(const vpServo::vpServoPrintType display_level = ALL,
-             std::ostream &os = std::cout);
+  void print(const vpServo::vpServoPrintType display_level = ALL, std::ostream &os = std::cout);
 
   // Add a secondary task.
-  vpColVector secondaryTask(const vpColVector &de2dt,
-                            const bool &useLargeProjectionOperator = false);
+  vpColVector secondaryTask(const vpColVector &de2dt, const bool &useLargeProjectionOperator = false);
   // Add a secondary task.
   vpColVector secondaryTask(const vpColVector &e2, const vpColVector &de2dt,
                             const bool &useLargeProjectionOperator = false);
   // Add a secondary task to avoid the joint limit.
-  vpColVector secondaryTaskJointLimitAvoidance(
-      const vpColVector &q, const vpColVector &dq,
-      const vpColVector &jointMin, const vpColVector &jointMax,
-      const double &rho = 0.1, const double &rho1 = 0.3,
-      const double &lambda_tune = 0.7) const;
+  vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector &jointMin,
+                                               const vpColVector &jointMax, const double &rho = 0.1,
+                                               const double &rho1 = 0.3, const double &lambda_tune = 0.7) const;
 
   void setCameraDoF(const vpColVector &dof);
 
@@ -397,10 +390,8 @@ corresponding to the visual servoing vpColVector e = task.getError();
     details. \param interactionMatrixInversion : How is the inverse computed.
     See vpServo::vpServoInversionType for more details.
     */
-  void setInteractionMatrixType(
-      const vpServoIteractionMatrixType &interactionMatrixType,
-      const vpServoInversionType &interactionMatrixInversion =
-          PSEUDO_INVERSE);
+  void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
+                                const vpServoInversionType &interactionMatrixInversion = PSEUDO_INVERSE);
 
   /*!
     Set the gain \f$\lambda\f$ used in the control law (see
@@ -429,8 +420,7 @@ corresponding to the visual servoing vpColVector e = task.getError();
 
     For more details on these parameters see vpAdaptiveGain class.
    */
-  void setLambda(const double gain_at_zero, const double gain_at_infinity,
-                 const double slope_at_zero)
+  void setLambda(const double gain_at_zero, const double gain_at_infinity, const double slope_at_zero)
   {
     lambda.initStandard(gain_at_zero, gain_at_infinity, slope_at_zero);
   }
@@ -654,8 +644,8 @@ protected:
   vpMatrix I_WpW;
   /*!
     New Large projection operator (see equation(24) in the paper
-  \cite Marey:2010). This projection operator allows performing secondary task even
-  when the main task is full rank. \f[
+  \cite Marey:2010). This projection operator allows performing secondary task
+  even when the main task is full rank. \f[
    {\bf P} =\bar{\lambda }\left ( \left \| {\bf e} \right \| \right ){\bf P}_{
   \left \| {\bf e } \right \| } \left ( 1 - \bar{\lambda }\left ( \left \|
   {\bf e } \right \| \right ) \right ) \left (  {\bf I-W^+W}\right ) \f]

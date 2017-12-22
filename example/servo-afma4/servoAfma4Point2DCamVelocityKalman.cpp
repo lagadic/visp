@@ -140,8 +140,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, KalmanType &kalman,
-                bool &doAdaptativeGain,
+bool getOptions(int argc, const char **argv, KalmanType &kalman, bool &doAdaptativeGain,
                 vpAdaptiveGain &lambda) // gain lambda
 {
   const char *optarg;
@@ -189,8 +188,7 @@ int main(int argc, const char **argv)
     int opt_cam_frequency = 60; // 60 Hz
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_kalman, doAdaptativeGain, lambda) ==
-        false) {
+    if (getOptions(argc, argv, opt_kalman, doAdaptativeGain, lambda) == false) {
       return (-1);
     }
 
@@ -258,35 +256,28 @@ int main(int argc, const char **argv)
     vpDisplay::flush(I);
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "Test program for target motion compensation using a Kalman "
                  "filter "
               << std::endl;
-    std::cout
-        << "Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << "Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << "Task : servo a point \n" << std::endl;
 
     // Kalman filtering
     switch (opt_kalman) {
     case K_NONE:
-      std::cout
-          << "Servo with no target motion compensation (see -K option)\n";
+      std::cout << "Servo with no target motion compensation (see -K option)\n";
       break;
     case K_VELOCITY:
-      std::cout
-          << "Servo with target motion compensation using a Kalman filter\n"
-          << "with constant velocity modelization (see -K option)\n";
+      std::cout << "Servo with target motion compensation using a Kalman filter\n"
+                << "with constant velocity modelization (see -K option)\n";
       break;
     case K_ACCELERATION:
-      std::cout
-          << "Servo with target motion compensation using a Kalman filter\n"
-          << "with constant acceleration modelization (see -K option)\n";
+      std::cout << "Servo with target motion compensation using a Kalman filter\n"
+                << "with constant acceleration modelization (see -K option)\n";
       break;
     }
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     vpDot2 dot;
@@ -348,21 +339,19 @@ int main(int argc, const char **argv)
     switch (opt_kalman) {
     case K_VELOCITY: {
       // Set the constant velocity state model used for the filtering
-      kalman.setStateModel(vpLinearKalmanFilterInstantiation::
-                               stateConstVelWithColoredNoise_MeasureVel);
+      kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
       state_size = kalman.getStateSize();
       sigma_state.resize(state_size * nsignal);
       sigma_state = 0.00001; // Same state variance for all signals
       sigma_measure = 0.05;  // Same measure variance for all the signals
-      double dummy = 0; // non used parameter dt for the velocity state model
+      double dummy = 0;      // non used parameter dt for the velocity state model
       kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
 
       break;
     }
     case K_ACCELERATION: {
       // Set the constant acceleration state model used for the filtering
-      kalman.setStateModel(vpLinearKalmanFilterInstantiation::
-                               stateConstAccWithColoredNoise_MeasureVel);
+      kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstAccWithColoredNoise_MeasureVel);
       state_size = kalman.getStateSize();
       sigma_state.resize(state_size * nsignal);
       sigma_state = 0.00001; // Same variance for all the signals
@@ -498,8 +487,7 @@ int main(int argc, const char **argv)
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
-           << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is
@@ -507,8 +495,7 @@ int main(int argc, const char **argv)
       flog << task.error[0] << " " << task.error[1] << " ";
 
       // Save feature error (s-s*) in pixels in the image.
-      flog << cog.get_u() - cam.get_u0() << " " << cog.get_v() - cam.get_v0()
-           << " ";
+      flog << cog.get_u() - cam.get_u0() << " " << cog.get_v() - cam.get_v0() << " ";
 
       // Save de/dt
       flog << dedt_mes[0] << " " << dedt_mes[1] << " ";

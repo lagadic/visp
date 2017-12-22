@@ -150,17 +150,14 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " task :  2 1/2 D visual servoing " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // sets the initial camera location
-    vpPoseVector c_r_o(0.1, 0.2, 2, vpMath::rad(20), vpMath::rad(10),
-                       vpMath::rad(50));
+    vpPoseVector c_r_o(0.1, 0.2, 2, vpMath::rad(20), vpMath::rad(10), vpMath::rad(50));
 
     vpHomogeneousMatrix cMo(c_r_o);
     // Compute the position of the object in the world frame
@@ -169,8 +166,7 @@ int main(int argc, const char **argv)
     wMo = wMc * cMo;
 
     // sets the desired camera location
-    vpPoseVector cd_r_o(0, 0, 1, vpMath::rad(0), vpMath::rad(0),
-                        vpMath::rad(0));
+    vpPoseVector cd_r_o(0, 0, 1, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     vpHomogeneousMatrix cdMo(cd_r_o);
 
     // sets the point coordinates in the world frame
@@ -194,13 +190,11 @@ int main(int argc, const char **argv)
     // 2nd feature (Z)
     // not necessary to project twice (reuse p)
     vpFeaturePoint3D Z;
-    vpFeatureBuilder::create(
-        Z, point); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(Z, point); // retrieve x,y and Z of the vpPoint structure
 
     // want to see it one meter away (here again use pd)
     vpFeaturePoint3D Zd;
-    vpFeatureBuilder::create(
-        Zd, pointd); // retrieve x,y and Z of the vpPoint structure
+    vpFeatureBuilder::create(Zd, pointd); // retrieve x,y and Z of the vpPoint structure
 
     //------------------------------------------------------------------
     // 3rd feature ThetaU
@@ -233,8 +227,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     while (iter++ < 200) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // get the robot position
@@ -255,8 +248,7 @@ int main(int argc, const char **argv)
       // send the camera velocity to the controller ") ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
     // Display task information

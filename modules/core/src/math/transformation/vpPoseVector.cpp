@@ -80,8 +80,7 @@ vpPoseVector::vpPoseVector() : vpArray2D<double>(6, 1) {}
   u_z]^\top\f$ respectively around the x, y and z axis (in radians).
 
 */
-vpPoseVector::vpPoseVector(const double tx, const double ty, const double tz,
-                           const double tux, const double tuy,
+vpPoseVector::vpPoseVector(const double tx, const double ty, const double tz, const double tux, const double tuy,
                            const double tuz)
   : vpArray2D<double>(6, 1)
 {
@@ -104,9 +103,7 @@ vpPoseVector::vpPoseVector(const double tx, const double ty, const double tz,
   \param tu : \f$\theta \bf u\f$ rotation  vector.
 
 */
-vpPoseVector::vpPoseVector(const vpTranslationVector &tv,
-                           const vpThetaUVector &tu)
-  : vpArray2D<double>(6, 1)
+vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu) : vpArray2D<double>(6, 1)
 {
   buildFrom(tv, tu);
 }
@@ -123,9 +120,7 @@ vpPoseVector::vpPoseVector(const vpTranslationVector &tv,
   u\f$ vector is extracted to initialise the pose vector.
 
 */
-vpPoseVector::vpPoseVector(const vpTranslationVector &tv,
-                           const vpRotationMatrix &R)
-  : vpArray2D<double>(6, 1)
+vpPoseVector::vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R) : vpArray2D<double>(6, 1)
 {
   buildFrom(tv, R);
 }
@@ -140,11 +135,7 @@ vpPoseVector::vpPoseVector(const vpTranslationVector &tv,
   initialize the pose vector.
 
 */
-vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M)
-  : vpArray2D<double>(6, 1)
-{
-  buildFrom(M);
-}
+vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(6, 1) { buildFrom(M); }
 
 /*!
 
@@ -161,8 +152,8 @@ vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M)
   u_z]^\top\f$ respectively around the x, y and z axis (in radians).
 
 */
-void vpPoseVector::set(const double tx, const double ty, const double tz,
-                       const double tux, const double tuy, const double tuz)
+void vpPoseVector::set(const double tx, const double ty, const double tz, const double tux, const double tuy,
+                       const double tuz)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;
@@ -189,8 +180,7 @@ void vpPoseVector::set(const double tx, const double ty, const double tz,
 
   \sa set()
 */
-vpPoseVector vpPoseVector::buildFrom(const double tx, const double ty,
-                                     const double tz, const double tux,
+vpPoseVector vpPoseVector::buildFrom(const double tx, const double ty, const double tz, const double tux,
                                      const double tuy, const double tuz)
 {
   (*this)[0] = tx;
@@ -235,8 +225,7 @@ vpPoseVector vpPoseVector::buildFrom(const vpHomogeneousMatrix &M)
 
   \return The build pose vector.
 */
-vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv,
-                                     const vpThetaUVector &tu)
+vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu)
 {
   for (unsigned int i = 0; i < 3; i++) {
     (*this)[i] = tv[i];
@@ -258,8 +247,7 @@ vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv,
 
   \return The build pose vector.
 */
-vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv,
-                                     const vpRotationMatrix &R)
+vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpRotationMatrix &R)
 {
   vpThetaUVector tu;
   tu.buildFrom(R);
@@ -298,10 +286,7 @@ void vpPoseVector::extract(vpQuaternionVector &q) const
 /*!
   Extract the rotation as a rotation matrix.
 */
-void vpPoseVector::extract(vpRotationMatrix &R) const
-{
-  R.buildFrom((*this)[3], (*this)[4], (*this)[5]);
-}
+void vpPoseVector::extract(vpRotationMatrix &R) const { R.buildFrom((*this)[3], (*this)[4], (*this)[5]); }
 /*!
   Return the translation vector that corresponds to the translation part of
   the pose vector.
@@ -379,8 +364,7 @@ void vpPoseVector::save(std::ofstream &f) const
   if (!f.fail()) {
     f << *this;
   } else {
-    throw(vpException(vpException::ioError,
-                      "Cannot save the pose vector: ofstream not openned"));
+    throw(vpException(vpException::ioError, "Cannot save the pose vector: ofstream not openned"));
   }
 }
 
@@ -401,8 +385,7 @@ void vpPoseVector::load(std::ifstream &f)
       f >> (*this)[i];
     }
   } else {
-    throw(vpException(vpException::ioError,
-                      "Cannot read pose vector: ifstream not openned"));
+    throw(vpException(vpException::ioError, "Cannot read pose vector: ifstream not openned"));
   }
 }
 
@@ -436,8 +419,7 @@ vpRowVector vpPoseVector::t() const
 
   \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
 */
-int vpPoseVector::print(std::ostream &s, unsigned int length,
-                        char const *intro) const
+int vpPoseVector::print(std::ostream &s, unsigned int length, char const *intro) const
 {
   typedef std::string::size_type size_type;
 

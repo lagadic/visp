@@ -124,8 +124,7 @@ struct vpDirection {
   {
     vpDirection direction;
     int directionSize = LAST_DIRECTION;
-    direction.m_direction =
-        vpDirectionType(((int)m_direction + 1) % directionSize);
+    direction.m_direction = vpDirectionType(((int)m_direction + 1) % directionSize);
 
     return direction;
   }
@@ -145,8 +144,7 @@ struct vpDirection {
     int yy = (int)(point.get_i() + m_diry[(int)m_direction]);
     int xx = (int)(point.get_j() + m_dirx[(int)m_direction]);
 
-    if (xx < 0 || xx >= (int)I.getWidth() || yy < 0 ||
-        yy >= (int)I.getHeight()) {
+    if (xx < 0 || xx >= (int)I.getWidth() || yy < 0 || yy >= (int)I.getHeight()) {
       return vpImagePoint(-1, -1);
     }
 
@@ -164,9 +162,9 @@ typedef enum {
 } vpContourType;
 
 typedef enum {
-  CONTOUR_RETR_TREE, /*!< Retrieve all the contours with the hierarchy stored
-                        in a tree. */
-  CONTOUR_RETR_LIST, /*!< Retrieve all the contours without any hierarchy. */
+  CONTOUR_RETR_TREE,    /*!< Retrieve all the contours with the hierarchy stored
+                           in a tree. */
+  CONTOUR_RETR_LIST,    /*!< Retrieve all the contours without any hierarchy. */
   CONTOUR_RETR_EXTERNAL /*!< Retrieve only external contours. */
 } vpContourRetrievalType;
 
@@ -176,26 +174,17 @@ struct vpContour {
   vpContour *m_parent;
   std::vector<vpImagePoint> m_points;
 
-  vpContour()
-    : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(NULL),
-      m_points()
-  {
-  }
+  vpContour() : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(NULL), m_points() {}
 
-  vpContour(const vpContourType &type)
-    : m_children(), m_contourType(type), m_parent(NULL), m_points()
-  {
-  }
+  vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(NULL), m_points() {}
 
   vpContour(const vpContour &contour)
-    : m_children(), m_contourType(contour.m_contourType), m_parent(NULL),
-      m_points(contour.m_points)
+    : m_children(), m_contourType(contour.m_contourType), m_parent(NULL), m_points(contour.m_points)
   {
 
     // Copy the underlying contours
-    for (std::vector<vpContour *>::const_iterator it =
-             contour.m_children.begin();
-         it != contour.m_children.end(); ++it) {
+    for (std::vector<vpContour *>::const_iterator it = contour.m_children.begin(); it != contour.m_children.end();
+         ++it) {
       vpContour *copy = new vpContour(**it);
       copy->m_parent = this;
       m_children.push_back(copy);
@@ -204,8 +193,7 @@ struct vpContour {
 
   ~vpContour()
   {
-    for (std::vector<vpContour *>::iterator it = m_children.begin();
-         it != m_children.end(); ++it) {
+    for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
       (*it)->m_parent = NULL;
       if (*it != NULL) {
         delete *it;
@@ -220,8 +208,7 @@ struct vpContour {
 
     if (m_parent == NULL) {
       // We are a root or an unintialized contour so delete everything
-      for (std::vector<vpContour *>::iterator it = m_children.begin();
-           it != m_children.end(); ++it) {
+      for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
         (*it)->m_parent = NULL;
         if (*it != NULL) {
           delete *it;
@@ -235,9 +222,7 @@ struct vpContour {
     }
 
     m_children.clear();
-    for (std::vector<vpContour *>::const_iterator it =
-             other.m_children.begin();
-         it != other.m_children.end(); ++it) {
+    for (std::vector<vpContour *>::const_iterator it = other.m_children.begin(); it != other.m_children.end(); ++it) {
       vpContour *copy = new vpContour(**it);
       copy->m_parent = this;
       m_children.push_back(copy);
@@ -256,19 +241,14 @@ struct vpContour {
   }
 };
 
-VISP_EXPORT void
-drawContours(vpImage<unsigned char> &I,
-             const std::vector<std::vector<vpImagePoint> > &contours,
-             unsigned char grayValue = 255);
-VISP_EXPORT void
-drawContours(vpImage<vpRGBa> &I,
-             const std::vector<std::vector<vpImagePoint> > &contours,
-             const vpColor &color);
+VISP_EXPORT void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours,
+                              unsigned char grayValue = 255);
+VISP_EXPORT void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours,
+                              const vpColor &color);
 
-VISP_EXPORT void findContours(
-    const vpImage<unsigned char> &I_original, vpContour &contours,
-    std::vector<std::vector<vpImagePoint> > &contourPts,
-    const vpContourRetrievalType &retrievalMode = vp::CONTOUR_RETR_TREE);
+VISP_EXPORT void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
+                              std::vector<std::vector<vpImagePoint> > &contourPts,
+                              const vpContourRetrievalType &retrievalMode = vp::CONTOUR_RETR_TREE);
 }
 
 #endif

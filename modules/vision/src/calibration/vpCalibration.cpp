@@ -72,8 +72,8 @@ int vpCalibration::init()
   Default constructor.
  */
 vpCalibration::vpCalibration()
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), npt(0),
-    LoX(), LoY(), LoZ(), Lip(), residual(1000.), residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), npt(0), LoX(), LoY(), LoZ(), Lip(), residual(1000.),
+    residual_dist(1000.)
 {
   init();
 }
@@ -81,8 +81,8 @@ vpCalibration::vpCalibration()
   Copy constructor.
  */
 vpCalibration::vpCalibration(const vpCalibration &c)
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), npt(0),
-    LoX(), LoY(), LoZ(), Lip(), residual(1000.), residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), npt(0), LoX(), LoY(), LoZ(), Lip(), residual(1000.),
+    residual_dist(1000.)
 {
   (*this) = c;
 }
@@ -159,8 +159,7 @@ int vpCalibration::addPoint(double X, double Y, double Z, vpImagePoint &ip)
   \param camera : camera intrinsic parameters used for computation.
   \param cMo_est : computed pose
  */
-void vpCalibration::computePose(const vpCameraParameters &camera,
-                                vpHomogeneousMatrix &cMo_est)
+void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousMatrix &cMo_est)
 {
   // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y)
   // )
@@ -219,8 +218,7 @@ void vpCalibration::computePose(const vpCameraParameters &camera,
   \param camera : camera intrinsic parameters to be tested.
   \return the standard deviation by point of the error in pixel .
 */
-double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est,
-                                          const vpCameraParameters &camera)
+double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera)
 {
   double residual_ = 0;
 
@@ -240,12 +238,9 @@ double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est,
     double oY = *it_LoY;
     double oZ = *it_LoZ;
 
-    double cX = oX * cMo_est[0][0] + oY * cMo_est[0][1] + oZ * cMo_est[0][2] +
-                cMo_est[0][3];
-    double cY = oX * cMo_est[1][0] + oY * cMo_est[1][1] + oZ * cMo_est[1][2] +
-                cMo_est[1][3];
-    double cZ = oX * cMo_est[2][0] + oY * cMo_est[2][1] + oZ * cMo_est[2][2] +
-                cMo_est[2][3];
+    double cX = oX * cMo_est[0][0] + oY * cMo_est[0][1] + oZ * cMo_est[0][2] + cMo_est[0][3];
+    double cY = oX * cMo_est[1][0] + oY * cMo_est[1][1] + oZ * cMo_est[1][2] + cMo_est[1][3];
+    double cZ = oX * cMo_est[2][0] + oY * cMo_est[2][1] + oZ * cMo_est[2][2] + cMo_est[2][3];
 
     double x = cX / cZ;
     double y = cY / cZ;
@@ -274,9 +269,7 @@ double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est,
   \param camera : camera intrinsic parameters to be tested.
   \return the standard deviation by point of the error in pixel .
 */
-double
-vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est,
-                                        const vpCameraParameters &camera)
+double vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera)
 {
   double residual_ = 0;
 
@@ -301,12 +294,9 @@ vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est,
     double oY = *it_LoY;
     double oZ = *it_LoZ;
 
-    double cX = oX * cMo_est[0][0] + oY * cMo_est[0][1] + oZ * cMo_est[0][2] +
-                cMo_est[0][3];
-    double cY = oX * cMo_est[1][0] + oY * cMo_est[1][1] + oZ * cMo_est[1][2] +
-                cMo_est[1][3];
-    double cZ = oX * cMo_est[2][0] + oY * cMo_est[2][1] + oZ * cMo_est[2][2] +
-                cMo_est[2][3];
+    double cX = oX * cMo_est[0][0] + oY * cMo_est[0][1] + oZ * cMo_est[0][2] + cMo_est[0][3];
+    double cY = oX * cMo_est[1][0] + oY * cMo_est[1][1] + oZ * cMo_est[1][2] + cMo_est[1][3];
+    double cZ = oX * cMo_est[2][0] + oY * cMo_est[2][1] + oZ * cMo_est[2][2] + cMo_est[2][3];
 
     double x = cX / cZ;
     double y = cY / cZ;
@@ -322,8 +312,7 @@ vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est,
 
     residual_ += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
 
-    double r2du =
-        (vpMath::sqr((u - u0) * inv_px) + vpMath::sqr((v - v0) * inv_py));
+    double r2du = (vpMath::sqr((u - u0) * inv_px) + vpMath::sqr((v - v0) * inv_py));
 
     xp = u0 + x * px - kdu * (u - u0) * r2du;
     yp = v0 + y * py - kdu * (v - v0) * r2du;
@@ -347,8 +336,7 @@ vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est,
   distortion. \param deviation_dist : the standard deviation computed for the
   model with distortion.
 */
-void vpCalibration::computeStdDeviation(double &deviation,
-                                        double &deviation_dist)
+void vpCalibration::computeStdDeviation(double &deviation, double &deviation_dist)
 {
   deviation = computeStdDeviation(cMo, cam);
   deviation_dist = computeStdDeviation_dist(cMo_dist, cam_dist);
@@ -365,10 +353,8 @@ void vpCalibration::computeStdDeviation(double &deviation,
 
   \return 0 if the calibration computation succeed.
 */
-int vpCalibration::computeCalibration(vpCalibrationMethodType method,
-                                      vpHomogeneousMatrix &cMo_est,
-                                      vpCameraParameters &cam_est,
-                                      bool verbose)
+int vpCalibration::computeCalibration(vpCalibrationMethodType method, vpHomogeneousMatrix &cMo_est,
+                                      vpCameraParameters &cam_est, bool verbose)
 {
   try {
     computePose(cam_est, cMo_est);
@@ -456,10 +442,8 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method,
 
   \return 0 if the computation was managed succeed.
 */
-int vpCalibration::computeCalibrationMulti(
-    vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
-    vpCameraParameters &cam_est, double &globalReprojectionError,
-    bool verbose)
+int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
+                                           vpCameraParameters &cam_est, double &globalReprojectionError, bool verbose)
 {
   try {
     unsigned int nbPose = (unsigned int)table_cal.size();
@@ -470,8 +454,7 @@ int vpCalibration::computeCalibrationMulti(
     switch (method) {
     case CALIB_LAGRANGE: {
       if (nbPose > 1) {
-        std::cout << "this calibration method is not available in"
-                  << std::endl
+        std::cout << "this calibration method is not available in" << std::endl
                   << "vpCalibration::computeCalibrationMulti()" << std::endl;
         return -1;
       } else {
@@ -485,8 +468,7 @@ int vpCalibration::computeCalibrationMulti(
     case CALIB_LAGRANGE_VIRTUAL_VS:
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST: {
       if (nbPose > 1) {
-        std::cout << "this calibration method is not available in"
-                  << std::endl
+        std::cout << "this calibration method is not available in" << std::endl
                   << "vpCalibration::computeCalibrationMulti()" << std::endl
                   << "with several images." << std::endl;
         return -1;
@@ -523,8 +505,7 @@ int vpCalibration::computeCalibrationMulti(
       if (verbose)
         std::cout << "Compute camera parameters with distortion" << std::endl;
 
-      calibVVSWithDistortionMulti(table_cal, cam_est, globalReprojectionError,
-                                  verbose);
+      calibVVSWithDistortionMulti(table_cal, cam_est, globalReprojectionError, verbose);
     } break;
     }
     // Print camera parameters
@@ -559,9 +540,8 @@ int vpCalibration::computeCalibrationMulti(
   0 if the computation managed, -1 if less than three poses are provides as
   input.
 */
-int vpCalibration::computeCalibrationTsai(
-    const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
-    vpHomogeneousMatrix &eMc_dist)
+int vpCalibration::computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
+                                          vpHomogeneousMatrix &eMc_dist)
 {
   try {
     unsigned int nbPose = (unsigned int)table_cal.size();
@@ -580,8 +560,7 @@ int vpCalibration::computeCalibrationTsai(
 
       return 0;
     } else {
-      vpERROR_TRACE(
-          "Three images are needed to compute Tsai calibration !\n");
+      vpERROR_TRACE("Three images are needed to compute Tsai calibration !\n");
       return -1;
     }
   } catch (...) {
@@ -646,20 +625,17 @@ int vpCalibration::readData(const char *filename)
   if (!f.fail()) {
     unsigned int n;
     f >> n;
-    std::cout << "There are " << n << " point on the calibration grid "
-              << std::endl;
+    std::cout << "There are " << n << " point on the calibration grid " << std::endl;
 
     clearPoint();
 
     if (n > 100000)
-      throw(vpException(vpException::badValue,
-                        "Bad number of point in the calibration grid"));
+      throw(vpException(vpException::badValue, "Bad number of point in the calibration grid"));
 
     for (unsigned int i = 0; i < n; i++) {
       double x, y, z, u, v;
       f >> x >> y >> z >> u >> v;
-      std::cout << x << " " << y << " " << z << " " << u << " " << v
-                << std::endl;
+      std::cout << x << " " << y << " " << z << " " << u << " " << v << std::endl;
       ip.set_u(u);
       ip.set_v(v);
       addPoint(x, y, z, ip);
@@ -687,8 +663,7 @@ int vpCalibration::readData(const char *filename)
 
   \return 0 if success, -1 if an error occurs.
 */
-int vpCalibration::readGrid(const char *filename, unsigned int &n,
-                            std::list<double> &oX, std::list<double> &oY,
+int vpCalibration::readGrid(const char *filename, unsigned int &n, std::list<double> &oX, std::list<double> &oY,
                             std::list<double> &oZ, bool verbose)
 {
   try {
@@ -698,8 +673,7 @@ int vpCalibration::readGrid(const char *filename, unsigned int &n,
 
       f >> n;
       if (verbose)
-        std::cout << "There are " << n << " points on the calibration grid "
-                  << std::endl;
+        std::cout << "There are " << n << " points on the calibration grid " << std::endl;
       int no_pt;
       double x, y, z;
 
@@ -709,8 +683,7 @@ int vpCalibration::readGrid(const char *filename, unsigned int &n,
       oZ.clear();
 
       if (n > 100000)
-        throw(vpException(vpException::badValue,
-                          "Bad number of point in the calibration grid"));
+        throw(vpException(vpException::badValue, "Bad number of point in the calibration grid"));
 
       for (unsigned int i = 0; i < n; i++) {
         f >> no_pt >> x >> y >> z;
@@ -743,12 +716,10 @@ int vpCalibration::readGrid(const char *filename, unsigned int &n,
   coordinates of the data points resulting from image processing.
 
 */
-int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color,
-                               unsigned int thickness, int subsampling_factor)
+int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color, unsigned int thickness, int subsampling_factor)
 {
 
-  for (std::list<vpImagePoint>::const_iterator it = Lip.begin();
-       it != Lip.end(); ++it) {
+  for (std::list<vpImagePoint>::const_iterator it = Lip.begin(); it != Lip.end(); ++it) {
     vpImagePoint ip = *it;
     if (subsampling_factor > 1.) {
       ip.set_u(ip.get_u() / subsampling_factor);
@@ -769,8 +740,7 @@ int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color,
   Admissible values are multiple of 2. Divide by this parameter the
   values of the camera parameters.
 */
-int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
-                               unsigned int thickness, int subsampling_factor)
+int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, unsigned int thickness, int subsampling_factor)
 {
   double u0_dist = cam_dist.get_u0() / subsampling_factor;
   double v0_dist = cam_dist.get_v0() / subsampling_factor;
@@ -807,12 +777,9 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
     //     (int)vpMath::round(xp),
     // 			    5,col) ;
 
-    double cX = oX * cMo_dist[0][0] + oY * cMo_dist[0][1] +
-                oZ * cMo_dist[0][2] + cMo_dist[0][3];
-    double cY = oX * cMo_dist[1][0] + oY * cMo_dist[1][1] +
-                oZ * cMo_dist[1][2] + cMo_dist[1][3];
-    double cZ = oX * cMo_dist[2][0] + oY * cMo_dist[2][1] +
-                oZ * cMo_dist[2][2] + cMo_dist[2][3];
+    double cX = oX * cMo_dist[0][0] + oY * cMo_dist[0][1] + oZ * cMo_dist[0][2] + cMo_dist[0][3];
+    double cY = oX * cMo_dist[1][0] + oY * cMo_dist[1][1] + oZ * cMo_dist[1][2] + cMo_dist[1][3];
+    double cZ = oX * cMo_dist[2][0] + oY * cMo_dist[2][1] + oZ * cMo_dist[2][2] + cMo_dist[2][3];
 
     double x = cX / cZ;
     double y = cY / cZ;

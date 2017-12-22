@@ -46,11 +46,11 @@
 #include <visp3/vision/vpLevenbergMarquartd.h>
 
 #define SIGN(x) ((x) < 0 ? -1 : 1)
-#define SWAP(a, b, c)                                                        \
-  {                                                                          \
-    (c) = (a);                                                               \
-    (a) = (b);                                                               \
-    (b) = (c);                                                               \
+#define SWAP(a, b, c)                                                                                                  \
+  {                                                                                                                    \
+    (c) = (a);                                                                                                         \
+    (a) = (b);                                                                                                         \
+    (b) = (c);                                                                                                         \
   }
 #define MIJ(m, i, j, s) ((m) + ((long)(i) * (long)(s)) + (long)(j))
 #define TRUE 1
@@ -223,9 +223,8 @@ double enorm(const double *x, int n)
  * En cas de succes, la valeur 0.0 est retournee.
  *
  */
-int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
-          double *delta, double *par, double *x, double *sdiag, double *wa1,
-          double *wa2)
+int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, double *delta, double *par, double *x,
+          double *sdiag, double *wa1, double *wa2)
 {
   const double tol1 = 0.1; /* tolerance a 0.1	*/
 
@@ -247,8 +246,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
     wa1[i] = qtb[i];
     double *pt = MIJ(r, i, i, ldr);
     // if (*MIJ(r, i, i, ldr) == 0.0 && nsing == n)
-    if (std::fabs(*pt) <= std::numeric_limits<double>::epsilon() &&
-        nsing == n)
+    if (std::fabs(*pt) <= std::numeric_limits<double>::epsilon() && nsing == n)
       nsing = i - 1;
 
     if (nsing < n)
@@ -392,8 +390,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       // temp)
       //	  && (temp < 0.0)) || (iter == 10))
       if ((std::fabs(fp) <= tol1 * (*delta)) ||
-          ((std::fabs(parl) <= std::numeric_limits<double>::epsilon()) &&
-           (fp <= temp) && (temp < 0.0)) ||
+          ((std::fabs(parl) <= std::numeric_limits<double>::epsilon()) && (fp <= temp) && (temp < 0.0)) ||
           (iter == 10)) {
         // terminaison.
 
@@ -478,13 +475,11 @@ double pythag(double a, double b)
     return (pyth);
   }
 
-  r = ((std::min)(std::fabs(a), std::fabs(b)) / p) *
-      ((std::min)(std::fabs(a), std::fabs(b)) / p);
+  r = ((std::min)(std::fabs(a), std::fabs(b)) / p) * ((std::min)(std::fabs(a), std::fabs(b)) / p);
   t = 4.0 + r;
 
   // while (t != 4.0)
-  while (std::fabs(t - 4.0) < std::fabs(vpMath::maximum(t, 4.0)) *
-                                  std::numeric_limits<double>::epsilon()) {
+  while (std::fabs(t - 4.0) < std::fabs(vpMath::maximum(t, 4.0)) * std::numeric_limits<double>::epsilon()) {
     double s = r / t;
     double u = 1.0 + 2.0 * s;
     p *= u;
@@ -541,8 +536,8 @@ double pythag(double a, double b)
  *		pas requise, acnorm coincide avec rdiag.
  *
  */
-int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
-          int /* lipvt */, double *rdiag, double *acnorm, double *wa)
+int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, int /* lipvt */, double *rdiag, double *acnorm,
+          double *wa)
 {
   const double tolerance = 0.05;
 
@@ -627,13 +622,11 @@ int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
             *MIJ(a, k, j, lda) -= temp * *MIJ(a, i, j, lda);
 
           // if (pivot && rdiag[k] != 0.0)
-          if (pivot && (std::fabs(rdiag[k]) >
-                        std::numeric_limits<double>::epsilon())) {
+          if (pivot && (std::fabs(rdiag[k]) > std::numeric_limits<double>::epsilon())) {
             temp = *MIJ(a, k, i, lda) / rdiag[k];
             rdiag[k] *= sqrt(vpMath::maximum(0.0, (1.0 - temp * temp)));
 
-            if (tolerance * (rdiag[k] / wa[k]) * (rdiag[k] / wa[k]) <=
-                epsmch) {
+            if (tolerance * (rdiag[k] / wa[k]) * (rdiag[k] / wa[k]) <= epsmch) {
               rdiag[k] = enorm(MIJ(a, k, ip1, lda), (n - 1 - (int)i));
               wa[k] = rdiag[k];
             }
@@ -705,8 +698,7 @@ int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
  *contenant les elements diagonaux de la matrice triangulaire superieure "s".
  *
  */
-int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
-           double *x, double *sdiag, double *wa)
+int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, double *x, double *sdiag, double *wa)
 {
   int i, j, k, kp1, l; /* compteur de boucle	*/
   int nsing;
@@ -817,8 +809,7 @@ int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 
   for (i = 0; i < n; i++) {
     // if (sdiag[i] == 0.0 && nsing == n)
-    if ((std::fabs(sdiag[i]) <= std::numeric_limits<double>::epsilon()) &&
-        nsing == n)
+    if ((std::fabs(sdiag[i]) <= std::numeric_limits<double>::epsilon()) && nsing == n)
       nsing = i - 1;
 
     if (nsing < n)
@@ -955,16 +946,12 @@ int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
  * En cas de succes, la valeur zero est retournee.
  * Sinon la valeur -1 est retournee.
  */
-int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
-                          double *jac, int ldfjac, int iflag),
-          int m, int n, double *x, double *fvec, double *fjac, int ldfjac,
-          double ftol, double xtol, double gtol, unsigned int maxfev,
-          double *diag, int mode, const double factor, int nprint, int *info,
-          unsigned int *nfev, int *njev, int *ipvt, double *qtf, double *wa1,
-          double *wa2, double *wa3, double *wa4)
+int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+          double *x, double *fvec, double *fjac, int ldfjac, double ftol, double xtol, double gtol, unsigned int maxfev,
+          double *diag, int mode, const double factor, int nprint, int *info, unsigned int *nfev, int *njev, int *ipvt,
+          double *qtf, double *wa1, double *wa2, double *wa3, double *wa4)
 {
-  const double tol1 = 0.1, tol5 = 0.5, tol25 = 0.25, tol75 = 0.75,
-               tol0001 = 0.0001;
+  const double tol1 = 0.1, tol5 = 0.5, tol25 = 0.25, tol75 = 0.75, tol0001 = 0.0001;
   int oncol = TRUE;
   int iflag, iter;
   int count = 0;
@@ -1000,8 +987,8 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     return 0;
   if (factor <= 0.0)
     return 0;
-  if ((n <= 0) || (m < n) || (ldfjac < m) || (ftol < 0.0) || (xtol < 0.0) ||
-      (gtol < 0.0) || (maxfev == 0) || (factor <= 0.0)) {
+  if ((n <= 0) || (m < n) || (ldfjac < m) || (ftol < 0.0) || (xtol < 0.0) || (gtol < 0.0) || (maxfev == 0) ||
+      (factor <= 0.0)) {
     /*
      * termination, normal ou imposee par l'utilisateur.
      */
@@ -1248,8 +1235,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
       /*
        *	determination du parametre de Levenberg-Marquardt.
        */
-      lmpar(n, fjac, ldfjac, ipvt, diag, qtf, &delta, &par, wa1, wa2, wa3,
-            wa4);
+      lmpar(n, fjac, ldfjac, ipvt, diag, qtf, &delta, &par, wa1, wa2, wa3, wa4);
 
       /*
        *	stockage de la direction p et x + p. calcul de la norme de p.
@@ -1338,8 +1324,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
       if (ratio > tol25) {
         // if ((par == 0.0) || (ratio <= tol75))
-        if ((std::fabs(par) <= std::numeric_limits<double>::epsilon()) ||
-            (ratio <= tol75)) {
+        if ((std::fabs(par) <= std::numeric_limits<double>::epsilon()) || (ratio <= tol75)) {
           delta = pnorm / tol5;
           par *= tol5;
         }
@@ -1383,15 +1368,13 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        *	tests pour convergence.
        */
 
-      if ((std::fabs(actred) <= ftol) && (prered <= ftol) &&
-          (tol5 * ratio <= 1.0))
+      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && (tol5 * ratio <= 1.0))
         *info = 1;
 
       if (delta <= xtol * xnorm)
         *info = 2;
 
-      if ((std::fabs(actred) <= ftol) && (prered <= ftol) &&
-          (tol5 * ratio <= 1.0) && *info == 2)
+      if ((std::fabs(actred) <= ftol) && (prered <= ftol) && (tol5 * ratio <= 1.0) && *info == 2)
         *info = 3;
 
       if (*info != 0) {
@@ -1416,8 +1399,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
       if (*nfev >= maxfev)
         *info = 5;
 
-      if ((std::fabs(actred) <= epsmch) && (prered <= epsmch) &&
-          (tol5 * ratio <= 1.0))
+      if ((std::fabs(actred) <= epsmch) && (prered <= epsmch) && (tol5 * ratio <= 1.0))
         *info = 6;
 
       if (delta <= epsmch * xnorm)
@@ -1526,10 +1508,8 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
  * Sinon, la valeur -1.
  *
  */
-int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
-                           double *jac, int ldfjac, int iflag),
-           int m, int n, double *x, double *fvec, double *fjac, int ldfjac,
-           double tol, int *info, int *ipvt, int lwa, double *wa)
+int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag), int m, int n,
+           double *x, double *fvec, double *fjac, int ldfjac, double tol, int *info, int *ipvt, int lwa, double *wa)
 {
   const double factor = 100.0;
   unsigned int maxfev, nfev;
@@ -1540,10 +1520,8 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
   /* verification des parametres en entree qui causent des erreurs */
 
-  if (/*(n <= 0) ||*/ (m < n) || (ldfjac < m) || (tol < 0.0) ||
-      (lwa < (5 * n + m))) {
-    printf("%d %d %d  %d \n", (m < n), (ldfjac < m), (tol < 0.0),
-           (lwa < (5 * n + m)));
+  if (/*(n <= 0) ||*/ (m < n) || (ldfjac < m) || (tol < 0.0) || (lwa < (5 * n + m))) {
+    printf("%d %d %d  %d \n", (m < n), (ldfjac < m), (tol < 0.0), (lwa < (5 * n + m)));
     return (-1);
   }
 
@@ -1556,9 +1534,8 @@ int lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
   mode = 1;
   nprint = 0;
 
-  lmder(ptr_fcn, m, n, x, fvec, fjac, ldfjac, ftol, xtol, gtol, maxfev, wa,
-        mode, factor, nprint, info, &nfev, &njev, ipvt, &wa[n], &wa[2 * n],
-        &wa[3 * n], &wa[4 * n], &wa[5 * n]);
+  lmder(ptr_fcn, m, n, x, fvec, fjac, ldfjac, ftol, xtol, gtol, maxfev, wa, mode, factor, nprint, info, &nfev, &njev,
+        ipvt, &wa[n], &wa[2 * n], &wa[3 * n], &wa[4 * n], &wa[5 * n]);
 
   if (*info == 8)
     *info = 4;

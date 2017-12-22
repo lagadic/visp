@@ -105,11 +105,9 @@ int main()
   //Sets the desired features rho and theta
   double rhod = 0;
   double thetad = 0;
-  //Sets the parameters which describe the equation of a plan in the camera
-frame : AX+BY+CZ+D=0.
+  //Sets the parameters which describe the equation of a plan in the camera frame : AX+BY+CZ+D=0.
   //The line described by the features belongs to this plan.
-  //Normally two plans are needed to describe a line. But to compute the
-interaction matrix only
+  //Normally two plans are needed to describe a line. But to compute the interaction matrix only
   //one equation of the two plans is needed.
   //Notes that the Dd value must not be equal to zero !
   double Ad = 0;
@@ -125,8 +123,7 @@ interaction matrix only
   double theta;  //You have to compute the value of theta.
   //Set the line feature thanks to the current parameters.
   s.buildfrom(rho, theta);
-  //In this case the parameters A, B, C, D are not needed because the
-interaction matrix is computed
+  //In this case the parameters A, B, C, D are not needed because the interaction matrix is computed
   //with the desired visual feature.
 
   // Set eye-in-hand control law.
@@ -167,9 +164,8 @@ int main()
   //Sets the desired features rho and theta
   double rhod = 0;
   double thetad = 0;
-  //Sets the parameters which describe the equation of a plan in the camera
-frame : AX+BY+CZ+D=0. double Ad = 0; double Bd = 0; double Cd = 1; double Dd =
--1;
+  //Sets the parameters which describe the equation of a plan in the camera frame : AX+BY+CZ+D=0.
+  double Ad = 0; double Bd = 0; double Cd = 1; double Dd = -1;
   //Set the line feature thanks to the desired parameters.
   sd.buildfrom(rhod, thetad, Ad,Bd, Cd, Dd);
 
@@ -177,18 +173,17 @@ frame : AX+BY+CZ+D=0. double Ad = 0; double Bd = 0; double Cd = 1; double Dd =
   //Sets the current features rho and theta
   double rho;  //You have to compute the value of rho.
   double theta;  //You have to compute the value of theta.
-  //Sets the parameters which describe the equation of a plan in the camera
-frame : AX+BY+CZ+D=0. double A;  //You have to compute the value of A. double
-B;  //You have to compute the value of B. double C;  //You have to compute the
-value of C. double D;  //You have to compute the value of D. D must not be
-equal to zero !
+  //Sets the parameters which describe the equation of a plan in the camera frame : AX+BY+CZ+D=0.
+  double A;  //You have to compute the value of A.
+  double B;  //You have to compute the value of B.
+  double C;  //You have to compute the value of C.
+  double D;  //You have to compute the value of D. D must not be equal to zero !
   //Set the line feature thanks to the current parameters.
   s.buildfrom(rho, theta, A, B, C, D);
 
   // Compute the interaction matrix L_s for the current line feature
   vpMatrix L = s.interaction();
-  // You can also compute the interaction matrix L_s for the desired line
-feature
+  // You can also compute the interaction matrix L_s for the desired line feature
   // The corresponding line of code is : vpMatrix L = sd.interaction();
 
   // Compute the error vector (s-sd) for the line feature
@@ -216,19 +211,15 @@ public:
   //  void buildFrom(const vpLine &l) ;
   //  void buildFrom(const vpCylinder &c, const int l) ;
   void buildFrom(const double rho, const double theta);
-  void buildFrom(const double rho, const double theta, const double A,
-                 const double B, const double C, const double D);
+  void buildFrom(const double rho, const double theta, const double A, const double B, const double C, const double D);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
   vpFeatureLine *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
   // vpColVector error(const int select = FEATURE_ALL)  ;
 
   /*!
@@ -247,8 +238,7 @@ public:
   void print(const unsigned int select = FEATURE_ALL) const;
 
   void setRhoTheta(const double rho, const double theta);
-  void setABCD(const double A, const double B, const double C,
-               const double D);
+  void setABCD(const double A, const double B, const double C, const double D);
 
 public:
   static unsigned int selectRho();

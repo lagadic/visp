@@ -44,9 +44,8 @@
 
 #include <string>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                \
-    (VISP_HAVE_OPENCV_VERSION <                                              \
-     0x030000) // Require opencv >= 2.0.0 and < 3.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000)  // Require opencv >= 2.0.0 and < 3.0.0
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -106,8 +105,8 @@ since OpenCV-2.0.0 int main()
 
   //Then grab another image which represents the current image Icurrent
 
-  //Match points between the reference points and the points detected in the
-current image. fern.matchPoint(Icurrent);
+  //Match points between the reference points and the points detected in the current image.
+  fern.matchPoint(Icurrent);
 
   //Display the matched points
   fern.display(Ireference, Icurrent);
@@ -138,9 +137,9 @@ since OpenCV-2.0.0 int main()
 
   //First grab the reference image Ireference
 
-  //Select a part of the image by clicking on two points which define a
-rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
-  {
+  //Select a part of the image by clicking on two points which define a rectangle
+  vpImagePoint corners[2];
+  for (int i=0 ; i < 2 ; i++)  {
     vpDisplay::getClick(Ireference, corners[i]);
   }
 
@@ -151,21 +150,20 @@ rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
   nbrRef = fern.buildReference(Ireference, corners[0], height, width);
 
-  //Then grab another image which represents the current image Icurrent
+  // Then grab another image which represents the current image Icurrent
 
-  //Select a part of the image by clincking on two points which define a
-rectangle for (int i=0 ; i < 2 ; i++)
-  {
+  //Select a part of the image by clincking on two points which define a rectangle
+  for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Icurrent, corners[i]);
   }
 
-  //Match points between the reference points and the points detected in the
-current image. int nbrMatched; height = (unsigned int)(corners[1].get_i() -
-corners[0].get_i()); width = (unsigned int)(corners[1].get_j() -
-corners[0].get_j()); nbrMatched = fern.matchPoint(Icurrent, corners[0],
-height, width);
+  // Match points between the reference points and the points detected in the current image.
+  int nbrMatched;
+  height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  nbrMatched = fern.matchPoint(Icurrent, corners[0], height, width);
 
-  //Display the matched points
+  // Display the matched points
   fern.display(Ireference, Icurrent);
 
   return(0);
@@ -245,39 +243,29 @@ protected:
 
 public:
   vpFernClassifier();
-  vpFernClassifier(const std::string &_dataFile,
-                   const std::string &_objectName);
+  vpFernClassifier(const std::string &_dataFile, const std::string &_objectName);
   virtual ~vpFernClassifier();
 
   /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
-  virtual unsigned int buildReference(const vpImage<unsigned char> &I,
-                                      const vpImagePoint &iP,
-                                      const unsigned int height,
-                                      const unsigned int width);
-  virtual unsigned int buildReference(const vpImage<unsigned char> &I,
-                                      const vpRect &rectangle);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                                      const unsigned int height, const unsigned int width);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* matching */
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
-                                  const vpImagePoint &iP,
-                                  const unsigned int height,
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
                                   const unsigned int width);
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
-                                  const vpRect &rectangle);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* display */
-  virtual void display(const vpImage<unsigned char> &Iref,
-                       const vpImage<unsigned char> &Icurrent,
+  virtual void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent,
                        unsigned int size = 3);
-  virtual void display(const vpImage<unsigned char> &Icurrent,
-                       unsigned int size = 3,
+  virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3,
                        const vpColor &color = vpColor::green);
 
   /* io methods */
-  void load(const std::string &_dataFile,
-            const std::string & /*_objectName*/);
+  void load(const std::string &_dataFile, const std::string & /*_objectName*/);
   void record(const std::string &_objectName, const std::string &_dataFile);
 
   /* accessors */

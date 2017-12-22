@@ -59,8 +59,7 @@ static bool horsImage(int i, int j, int half, int rows, int cols)
   int half_3 = half + 3;
   // return((i < half + 1) || ( i > (rows - half - 3) )||(j < half + 1) || (j
   // > (cols - half - 3) )) ;
-  return ((0 < (half_1 - i)) || ((i - rows + half_3) > 0) ||
-          (0 < (half_1 - j)) || ((j - cols + half_3) > 0));
+  return ((0 < (half_1 - i)) || ((i - rows + half_3) > 0) || (0 < (half_1 - j)) || ((j - cols + half_3) > 0));
 }
 #endif
 
@@ -94,9 +93,8 @@ void vpMeSite::init()
 }
 
 vpMeSite::vpMeSite()
-  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1),
-    alpha(0.), convlt(0.), normGradient(0), weight(1), selectDisplay(NONE),
-    state(NO_SUPPRESSION)
+  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
+    weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     suppress(0)
@@ -105,9 +103,8 @@ vpMeSite::vpMeSite()
 }
 
 vpMeSite::vpMeSite(double ip, double jp)
-  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1),
-    alpha(0.), convlt(0.), normGradient(0), weight(1), selectDisplay(NONE),
-    state(NO_SUPPRESSION)
+  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
+    weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     suppress(0)
@@ -123,9 +120,8 @@ vpMeSite::vpMeSite(double ip, double jp)
   Copy constructor.
 */
 vpMeSite::vpMeSite(const vpMeSite &mesite)
-  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1),
-    alpha(0.), convlt(0.), normGradient(0), weight(1), selectDisplay(NONE),
-    state(NO_SUPPRESSION)
+  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
+    weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     suppress(0)
@@ -170,8 +166,7 @@ void vpMeSite::init(double ip, double jp, double alphap, double convltp)
   j_1 = 0;
 }
 // initialise with convolution and sign
-void vpMeSite::init(double ip, double jp, double alphap, double convltp,
-                    int sign)
+void vpMeSite::init(double ip, double jp, double alphap, double convltp, int sign)
 {
   selectDisplay = NONE;
   ifloat = ip;
@@ -221,8 +216,7 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
  */
 // ===================================================================
 
-vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I,
-                                 const int range)
+vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
 {
 
   int k;
@@ -287,17 +281,13 @@ void vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
 
   // First extremity
   k = -range;
-  unsigned int i1 =
-      static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
-  unsigned int j1 =
-      static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
+  unsigned int i1 = static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
+  unsigned int j1 = static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
 
   // Second extremity
   k = range;
-  unsigned int i2 =
-      static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
-  unsigned int j2 =
-      static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
+  unsigned int i2 = static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
+  unsigned int j2 = static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
 
   // TODO: Here check if i1,j1,i2,j2 > 0 else ??
   if (I[i1][j1] > I[i2][j2])
@@ -339,8 +329,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
       thetadeg = 0;
     }
 
-    unsigned int index_mask =
-        (unsigned int)(thetadeg / (double)me->getAngleStep());
+    unsigned int index_mask = (unsigned int)(thetadeg / (double)me->getAngleStep());
 
     unsigned int i_ = static_cast<unsigned int>(i);
     unsigned int j_ = static_cast<unsigned int>(j);
@@ -370,8 +359,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
   is needed.
 
 */
-void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me,
-                     const bool test_contraste)
+void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool test_contraste)
 {
   //   vpMeSite  *list_query_pixels ;
   //   int  max_rank =0 ;
@@ -542,8 +530,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me,
       likelihood[n] = fabs(convolution_ + convlt);
       if (likelihood[n] > threshold) {
         contraste = convolution_ / convlt;
-        if ((contraste > contraste_min) && (contraste < contraste_max) &&
-            fabs(1 - contraste) < diff) {
+        if ((contraste > contraste_min) && (contraste < contraste_max) && fabs(1 - contraste) < diff) {
           diff = fabs(1 - contraste);
           max_convolution = convolution_;
           max = likelihood[n];
@@ -607,26 +594,19 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me,
   }
 }
 
-int vpMeSite::operator!=(const vpMeSite &m)
-{
-  return ((m.i != i) || (m.j != j));
-}
+int vpMeSite::operator!=(const vpMeSite &m) { return ((m.i != i) || (m.j != j)); }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt
-             << "  Flag: " << vpMeS.suppress << "  Weight: " << vpMeS.weight);
-#else
-  return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt
+  return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt << "  Flag: " << vpMeS.suppress
              << "  Weight: " << vpMeS.weight);
+#else
+  return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt << "  Weight: " << vpMeS.weight);
 #endif
 }
 
-void vpMeSite::display(const vpImage<unsigned char> &I)
-{
-  vpMeSite::display(I, ifloat, jfloat, state);
-}
+void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
 
 // Static functions
 
@@ -648,8 +628,7 @@ void vpMeSite::display(const vpImage<unsigned char> &I)
     \param j : Pixel j of the site
     \param state : state of the site
 */
-void vpMeSite::display(const vpImage<unsigned char> &I, const double &i,
-                       const double &j, const vpMeSiteState &state)
+void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const double &j, const vpMeSiteState &state)
 {
   switch (state) {
   case NO_SUPPRESSION:
@@ -695,8 +674,7 @@ void vpMeSite::display(const vpImage<unsigned char> &I, const double &i,
     \param j : Pixel j of the site
     \param state : state of the site
 */
-void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i,
-                       const double &j, const vpMeSiteState &state)
+void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &j, const vpMeSiteState &state)
 {
   switch (state) {
   case NO_SUPPRESSION:

@@ -72,8 +72,7 @@
   \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned int icamera,
-           std::string &opath)
+void usage(const char *name, const char *badparam, unsigned int icamera, std::string &opath)
 {
   fprintf(stdout, "\n\
 Acquire and display images using PointGrey FlyCapture SDK.\n\
@@ -123,8 +122,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &display, bool &click,
-                bool &save, std::string &opath, unsigned int &icamera)
+bool getOptions(int argc, const char **argv, bool &display, bool &click, bool &save, std::string &opath,
+                unsigned int &icamera)
 {
   const char *optarg_;
   int c;
@@ -182,8 +181,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I; // for gray images
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_display, opt_click, opt_save, opt_opath,
-                   opt_icamera) == false) {
+    if (getOptions(argc, argv, opt_display, opt_click, opt_save, opt_opath, opt_icamera) == false) {
       return 0;
     }
 
@@ -191,10 +189,8 @@ int main(int argc, const char **argv)
     vpFlyCaptureGrabber g;
     g.setCameraIndex(opt_icamera); // open the default camera
     g.open(I);
-    std::cout << "Camera serial: " << g.getCameraSerial(g.getCameraIndex())
-              << std::endl;
-    std::cout << "Image size   : " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "Camera serial: " << g.getCameraSerial(g.getCameraIndex()) << std::endl;
+    std::cout << "Image size   : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
     vpDisplay *display = NULL;
     if (opt_display) {
@@ -246,9 +242,6 @@ int main(int argc, const char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "PointGrey FlyCapture SDK is not available..." << std::endl;
-}
+int main() { std::cout << "PointGrey FlyCapture SDK is not available..." << std::endl; }
 
 #endif

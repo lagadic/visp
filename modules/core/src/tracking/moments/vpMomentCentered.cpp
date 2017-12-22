@@ -68,11 +68,9 @@ void vpMomentCentered::compute()
   values.resize((getObject().getOrder() + 1) * (getObject().getOrder() + 1));
 
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(
-          getMoments().get("vpMomentGravityCenter", found_moment_gravity));
+      static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
   if (!found_moment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
   unsigned int order = getObject().getOrder() + 1;
   for (unsigned int j = 0; j < (order); j++) {
@@ -83,10 +81,8 @@ void vpMomentCentered::compute()
         double Xg_i_k = pow(-momentGravity.get()[0], (int)(i - k));
         double comb_i_k = static_cast<double>(vpMath::comb(i, k));
         for (unsigned int l = 0; l <= j; l++) {
-          values[c] +=
-              static_cast<double>(comb_i_k * vpMath::comb(j, l) * Xg_i_k *
-                                  pow(-momentGravity.get()[1], (int)(j - l)) *
-                                  getObject().get(k, l));
+          values[c] += static_cast<double>(comb_i_k * vpMath::comb(j, l) * Xg_i_k *
+                                           pow(-momentGravity.get()[1], (int)(j - l)) * getObject().get(k, l));
         }
       }
     }
@@ -134,15 +130,13 @@ u30 x    x  x
  This output will be followed by an output with indexes as produced by
 printWithIndices() function
 */
-VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                     const vpMomentCentered &m)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &m)
 {
   for (unsigned int i = 0; i < m.values.size(); i++) {
     if (i % (m.getObject().getOrder() + 1) == 0)
       os << std::endl;
 
-    if ((i % (m.getObject().getOrder() + 1) +
-         i / (m.getObject().getOrder() + 1)) < m.getObject().getOrder() + 1)
+    if ((i % (m.getObject().getOrder() + 1) + i / (m.getObject().getOrder() + 1)) < m.getObject().getOrder() + 1)
       os << m.values[i];
     else
       os << "x";
@@ -189,11 +183,9 @@ void vpMomentCentered::printDependencies(std::ostream &os) const
   */
   bool found_moment_gravity;
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(
-          getMoments().get("vpMomentGravityCenter", found_moment_gravity));
+      static_cast<const vpMomentGravityCenter &>(getMoments().get("vpMomentGravityCenter", found_moment_gravity));
   if (!found_moment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
   os << "Xg = " << momentGravity.getXg() << "\t"
      << "Yg = " << momentGravity.getYg() << std::endl;
 }

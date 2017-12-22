@@ -39,9 +39,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                \
-    (VISP_HAVE_OPENCV_VERSION <                                              \
-     0x030000) // Require opencv >= 2.0.0 and < 3.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpDisplay.h>
@@ -55,18 +54,15 @@
 */
 vpFernClassifier::vpFernClassifier()
   : vpBasicKeyPoint(), ldetector(), fernClassifier(),
-    gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2,
-        CV_PI / 2),
-    hasLearn(false), threshold(20), nbView(2000), dist(2), nbClassfier(100),
-    ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
+    gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2, CV_PI / 2), hasLearn(false), threshold(20),
+    nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
     blurImage(true), radiusBlur(7), sigmaBlur(1), nbMinPoint(10),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     curImg(),
 #else
     curImg(NULL),
 #endif
-    objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(),
-    refPt(), curPt()
+    objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(), refPt(), curPt()
 {
 }
 
@@ -81,21 +77,17 @@ vpFernClassifier::vpFernClassifier()
     record methods).
   \param _objectName : the name of the object to load
 */
-vpFernClassifier::vpFernClassifier(const std::string &_dataFile,
-                                   const std::string &_objectName)
+vpFernClassifier::vpFernClassifier(const std::string &_dataFile, const std::string &_objectName)
   : vpBasicKeyPoint(), ldetector(), fernClassifier(),
-    gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2,
-        CV_PI / 2),
-    hasLearn(false), threshold(20), nbView(2000), dist(2), nbClassfier(100),
-    ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
+    gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2, CV_PI / 2), hasLearn(false), threshold(20),
+    nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
     blurImage(true), radiusBlur(7), sigmaBlur(1), nbMinPoint(10),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     curImg(),
 #else
     curImg(NULL),
 #endif
-    objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(),
-    refPt(), curPt()
+    objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(), refPt(), curPt()
 {
   this->load(_dataFile, _objectName);
 }
@@ -158,8 +150,7 @@ void vpFernClassifier::train()
   cv::Mat obj = (cv::Mat)curImg;
 
   if (this->getBlurSetting()) {
-    cv::GaussianBlur(obj, obj, cv::Size(getBlurSize(), getBlurSize()),
-                     getBlurSigma(), getBlurSigma());
+    cv::GaussianBlur(obj, obj, cv::Size(getBlurSize(), getBlurSize()), getBlurSigma(), getBlurSigma());
   }
 
   // build pyramid
@@ -175,15 +166,13 @@ void vpFernClassifier::train()
   modelROI = cv::Rect(0, 0, objpyr[0].cols, objpyr[0].rows);
   ldetector.getMostStable2D(objpyr[0], modelPoints, 100, gen);
 
-  fernClassifier.trainFromSingleView(
-      objpyr[0], modelPoints, patchSize, (int)modelPoints.size(), 100, 11,
-      10000, cv::FernClassifier::COMPRESSION_NONE, gen);
+  fernClassifier.trainFromSingleView(objpyr[0], modelPoints, patchSize, (int)modelPoints.size(), 100, 11, 10000,
+                                     cv::FernClassifier::COMPRESSION_NONE, gen);
 
   /* from OpenCV format to ViSP format */
   referenceImagePointsList.resize(0);
   for (unsigned int i = 0; i < modelPoints.size(); i += 1) {
-    vpImagePoint ip(modelPoints[i].pt.y + modelROI_Ref.y,
-                    modelPoints[i].pt.x + modelROI_Ref.x);
+    vpImagePoint ip(modelPoints[i].pt.y + modelROI_Ref.y, modelPoints[i].pt.x + modelROI_Ref.x);
     referenceImagePointsList.push_back(ip);
   }
 
@@ -204,8 +193,7 @@ void vpFernClassifier::train()
 
   \return the number of reference points.
 */
-unsigned int
-vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
+unsigned int vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
 {
   this->setImage(_I);
 
@@ -233,20 +221,16 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
 
   \return the number of reference points.
 */
-unsigned int vpFernClassifier::buildReference(
-    const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
-    const unsigned int _height, const unsigned int _width)
+unsigned int vpFernClassifier::buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
+                                              const unsigned int _height, const unsigned int _width)
 {
-  if ((_iP.get_i() + _height) >= _I.getHeight() ||
-      (_iP.get_j() + _width) >= _I.getWidth()) {
+  if ((_iP.get_i() + _height) >= _I.getHeight() || (_iP.get_j() + _width) >= _I.getWidth()) {
     vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage,
-                      "Bad size for the subimage"));
+    throw(vpException(vpImageException::notInTheImage, "Bad size for the subimage"));
   }
 
   vpImage<unsigned char> subImage;
-  vpImageTools::crop(_I, (unsigned int)_iP.get_i(), (unsigned int)_iP.get_j(),
-                     _height, _width, subImage);
+  vpImageTools::crop(_I, (unsigned int)_iP.get_i(), (unsigned int)_iP.get_j(), _height, _width, subImage);
   this->setImage(subImage);
 
   /* initialise a structure containing the region of interest used in the
@@ -277,15 +261,12 @@ unsigned int vpFernClassifier::buildReference(
 
   \return The number of reference points.
 */
-unsigned int
-vpFernClassifier::buildReference(const vpImage<unsigned char> &_I,
-                                 const vpRect &_rectangle)
+unsigned int vpFernClassifier::buildReference(const vpImage<unsigned char> &_I, const vpRect &_rectangle)
 {
   vpImagePoint iP;
   iP.set_i(_rectangle.getTop());
   iP.set_j(_rectangle.getLeft());
-  return (this->buildReference(_I, iP, (unsigned int)_rectangle.getHeight(),
-                               (unsigned int)_rectangle.getWidth()));
+  return (this->buildReference(_I, iP, (unsigned int)_rectangle.getHeight(), (unsigned int)_rectangle.getWidth()));
 }
 
 /*!
@@ -304,9 +285,7 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
 {
   if (!hasLearn) {
     vpERROR_TRACE("The object has not been learned. ");
-    throw vpException(
-        vpException::notInitialized,
-        "object is not learned, load database or build the reference ");
+    throw vpException(vpException::notInitialized, "object is not learned, load database or build the reference ");
   }
 
   setImage(_I);
@@ -316,9 +295,8 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
   cv::Mat img = this->curImg;
 
   if (this->getBlurSetting()) {
-    cv::GaussianBlur(img, img,
-                     cv::Size(this->getBlurSize(), this->getBlurSize()),
-                     this->getBlurSigma(), this->getBlurSigma());
+    cv::GaussianBlur(img, img, cv::Size(this->getBlurSize(), this->getBlurSize()), this->getBlurSigma(),
+                     this->getBlurSigma());
   }
 
   std::vector<cv::Mat> imgPyr;
@@ -341,11 +319,8 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
     cv::KeyPoint kpt = imgKeypoints[i];
     kpt.pt.x /= (float)(1 << kpt.octave);
     kpt.pt.y /= (float)(1 << kpt.octave);
-    int k =
-        fernClassifier(imgPyr[(unsigned int)kpt.octave], kpt.pt, signature);
-    if (k >= 0 &&
-        (bestMatches[(unsigned int)k] < 0 ||
-         signature[(unsigned int)k] > maxLogProb[(unsigned int)k])) {
+    int k = fernClassifier(imgPyr[(unsigned int)kpt.octave], kpt.pt, signature);
+    if (k >= 0 && (bestMatches[(unsigned int)k] < 0 || signature[(unsigned int)k] > maxLogProb[(unsigned int)k])) {
       maxLogProb[(unsigned int)k] = signature[(unsigned int)k];
       bestMatches[(unsigned int)k] = (int)i;
       totalMatch++;
@@ -382,22 +357,17 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
 
   \return the number of point which have been matched.
 */
-unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
-                                          const vpImagePoint &_iP,
-                                          const unsigned int _height,
-                                          const unsigned int _width)
+unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
+                                          const unsigned int _height, const unsigned int _width)
 {
-  if ((_iP.get_i() + _height) >= _I.getHeight() ||
-      (_iP.get_j() + _width) >= _I.getWidth()) {
+  if ((_iP.get_i() + _height) >= _I.getHeight() || (_iP.get_j() + _width) >= _I.getWidth()) {
     vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage,
-                      "Bad size for the subimage"));
+    throw(vpException(vpImageException::notInTheImage, "Bad size for the subimage"));
   }
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::crop(_I, (unsigned int)_iP.get_i(), (unsigned int)_iP.get_j(),
-                     _height, _width, subImage);
+  vpImageTools::crop(_I, (unsigned int)_iP.get_i(), (unsigned int)_iP.get_j(), _height, _width, subImage);
 
   return this->matchPoint(subImage);
 }
@@ -413,14 +383,12 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
 
   \return the number of point which have been matched.
 */
-unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
-                                          const vpRect &_rectangle)
+unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I, const vpRect &_rectangle)
 {
   vpImagePoint iP;
   iP.set_i(_rectangle.getTop());
   iP.set_j(_rectangle.getLeft());
-  return (this->matchPoint(_I, iP, (unsigned int)_rectangle.getHeight(),
-                           (unsigned int)_rectangle.getWidth()));
+  return (this->matchPoint(_I, iP, (unsigned int)_rectangle.getHeight(), (unsigned int)_rectangle.getWidth()));
 }
 
 /*!
@@ -440,16 +408,12 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
   \param size : Size in pixels of the cross that is used to display matched
   points.
 */
-void vpFernClassifier::display(const vpImage<unsigned char> &_Iref,
-                               const vpImage<unsigned char> &_Icurrent,
+void vpFernClassifier::display(const vpImage<unsigned char> &_Iref, const vpImage<unsigned char> &_Icurrent,
                                unsigned int size)
 {
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++) {
-    vpDisplay::displayCross(
-        _Iref, referenceImagePointsList[matchedReferencePoints[i]], size,
-        vpColor::red);
-    vpDisplay::displayCross(_Icurrent, currentImagePointsList[i], size,
-                            vpColor::green);
+    vpDisplay::displayCross(_Iref, referenceImagePointsList[matchedReferencePoints[i]], size, vpColor::red);
+    vpDisplay::displayCross(_Icurrent, currentImagePointsList[i], size, vpColor::green);
   }
 }
 
@@ -464,12 +428,10 @@ void vpFernClassifier::display(const vpImage<unsigned char> &_Iref,
 
   \param color : Color used to display the matched points.
 */
-void vpFernClassifier::display(const vpImage<unsigned char> &_Icurrent,
-                               unsigned int size, const vpColor &color)
+void vpFernClassifier::display(const vpImage<unsigned char> &_Icurrent, unsigned int size, const vpColor &color)
 {
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++) {
-    vpDisplay::displayCross(_Icurrent, currentImagePointsList[i], size,
-                            color);
+    vpDisplay::displayCross(_Icurrent, currentImagePointsList[i], size, color);
   }
 }
 
@@ -484,8 +446,7 @@ void vpFernClassifier::display(const vpImage<unsigned char> &_Icurrent,
   \param _dataFile : The name of the data filename (very large text file). It
   can have any file extension.
 */
-void vpFernClassifier::load(const std::string &_dataFile,
-                            const std::string & /*_objectName*/)
+void vpFernClassifier::load(const std::string &_dataFile, const std::string & /*_objectName*/)
 {
   std::cout << " > Load data for the planar object detector..." << std::endl;
 
@@ -514,8 +475,7 @@ void vpFernClassifier::load(const std::string &_dataFile,
   \param _dataFile : The name of the data filename (very large text file). It
   can have any file extension.
 */
-void vpFernClassifier::record(const std::string &_objectName,
-                              const std::string &_dataFile)
+void vpFernClassifier::record(const std::string &_objectName, const std::string &_dataFile)
 {
   /* part of code from OpenCV planarObjectDetector */
   cv::FileStorage fs(_dataFile, cv::FileStorage::WRITE);
@@ -557,13 +517,11 @@ void vpFernClassifier::setImage(const vpImage<unsigned char> &I)
     curImg = NULL;
   }
   if ((I.getWidth() % 8) == 0) {
-    curImg = cvCreateImageHeader(
-        cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
+    curImg = cvCreateImageHeader(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
     if (curImg != NULL) {
       curImg->imageData = (char *)I.bitmap;
     } else {
-      throw vpException(vpException::memoryAllocationError,
-                        "Could not create the image in the OpenCV format.");
+      throw vpException(vpException::memoryAllocationError, "Could not create the image in the OpenCV format.");
     }
   } else {
     vpImageConvert::convert(I, curImg);

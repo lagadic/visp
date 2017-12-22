@@ -119,8 +119,7 @@ void vpRequestImage::decode(){
     memcpy((void*)&w, (void*)listOfParams[1].c_str(), sizeof(unsigned int));
 
     I->resize(h,w);
-    memcpy((void*)I->bitmap,(void*)listOfParams[2].c_str(),w*h*sizeof(unsigned
-char));
+    memcpy((void*)I->bitmap,(void*)listOfParams[2].c_str(),w*h*sizeof(unsigned char));
   }
 }
   \endcode
@@ -142,8 +141,7 @@ public:
   void addParameter(char *params);
   void addParameter(std::string &params);
   void addParameter(std::vector<std::string> &listOfparams);
-  template <typename T>
-  void addParameterObject(T *params, const int &sizeOfObject = sizeof(T));
+  template <typename T> void addParameterObject(T *params, const int &sizeOfObject = sizeof(T));
 
   /*!
     Decode the parameters of the request (Funtion that has to be redifined).
@@ -169,20 +167,14 @@ public:
 
     \return Parameter at the index i.
   */
-  inline std::string &operator[](const unsigned int &i)
-  {
-    return listOfParams[i];
-  }
+  inline std::string &operator[](const unsigned int &i) { return listOfParams[i]; }
 
   /*!
     Accessor on the parameters (const).
 
     \return Parameter at the index i (const).
   */
-  inline const std::string &operator[](const unsigned int &i) const
-  {
-    return listOfParams[i];
-  }
+  inline const std::string &operator[](const unsigned int &i) const { return listOfParams[i]; }
 
   /*!
     Get the ID of the request.
@@ -226,8 +218,7 @@ public:
   \param params : Object to add.
   \param sizeOfObject : Size of the object.
 */
-template <typename T>
-void vpRequest::addParameterObject(T *params, const int &sizeOfObject)
+template <typename T> void vpRequest::addParameterObject(T *params, const int &sizeOfObject)
 {
   if (sizeOfObject != 0) {
     char *tempS = new char[sizeOfObject];

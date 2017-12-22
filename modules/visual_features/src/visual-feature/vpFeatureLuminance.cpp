@@ -79,9 +79,7 @@ void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
   nbc = _nbc;
 
   if ((nbr < 2 * bord) || (nbc < 2 * bord)) {
-    throw vpException(
-        vpException::dimensionError,
-        "border is too important compared to number of row or column.");
+    throw vpException(vpException::dimensionError, "border is too important compared to number of row or column.");
   }
 
   // number of feature = nb column x nb lines in the images
@@ -100,8 +98,7 @@ void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 /*!
   Default constructor that build a visual feature.
 */
-vpFeatureLuminance::vpFeatureLuminance()
-  : Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL), firstTimeIn(0), cam()
+vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL), firstTimeIn(0), cam()
 {
   nbParameters = 1;
   dim_s = 0;
@@ -114,8 +111,7 @@ vpFeatureLuminance::vpFeatureLuminance()
  Copy constructor.
  */
 vpFeatureLuminance::vpFeatureLuminance(const vpFeatureLuminance &f)
-  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL),
-    firstTimeIn(0), cam()
+  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL), firstTimeIn(0), cam()
 {
   *this = f;
 }
@@ -168,10 +164,7 @@ void vpFeatureLuminance::set_Z(const double Z_)
 */
 double vpFeatureLuminance::get_Z() const { return Z; }
 
-void vpFeatureLuminance::setCameraParameters(vpCameraParameters &_cam)
-{
-  cam = _cam;
-}
+void vpFeatureLuminance::setCameraParameters(vpCameraParameters &_cam) { cam = _cam; }
 
 /*!
 
@@ -288,8 +281,7 @@ void vpFeatureLuminance::error(const vpBasicFeature &s_star, vpColVector &e)
   \param select : Not used.
 
 */
-vpColVector vpFeatureLuminance::error(const vpBasicFeature &s_star,
-                                      const unsigned int /* select */)
+vpColVector vpFeatureLuminance::error(const vpBasicFeature &s_star, const unsigned int /* select */)
 {
   /* static */ vpColVector e; // warning C4640: 'e' : construction of local
                               // static object is not thread-safe
@@ -321,10 +313,8 @@ void vpFeatureLuminance::print(const unsigned int /* select */) const
   Not implemented.
 
  */
-void vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
-                                 const vpImage<unsigned char> & /* I */,
-                                 const vpColor & /* color */,
-                                 unsigned int /* thickness */) const
+void vpFeatureLuminance::display(const vpCameraParameters & /* cam */, const vpImage<unsigned char> & /* I */,
+                                 const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 
@@ -341,10 +331,8 @@ void vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
   Not implemented.
 
  */
-void vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
-                                 const vpImage<vpRGBa> & /* I */,
-                                 const vpColor & /* color */,
-                                 unsigned int /* thickness */) const
+void vpFeatureLuminance::display(const vpCameraParameters & /* cam */, const vpImage<vpRGBa> & /* I */,
+                                 const vpColor & /* color */, unsigned int /* thickness */) const
 {
   static int firsttime = 0;
 

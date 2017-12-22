@@ -25,8 +25,7 @@ int main(int argc, char **argv)
     while ((i++ < 100) && !cap.read(frame)) {
     }; // warm up camera by skiping unread frames
 
-    std::cout << "Image size: " << frame.rows << " " << frame.cols
-              << std::endl;
+    std::cout << "Image size: " << frame.rows << " " << frame.cols << std::endl;
 
     // vpImage<vpRGBa> I; // for color images
     vpImage<unsigned char> I; // for gray images

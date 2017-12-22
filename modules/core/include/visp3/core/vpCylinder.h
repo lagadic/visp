@@ -103,8 +103,8 @@ public:
 
   vpCylinder();
   explicit vpCylinder(const vpColVector &oP);
-  vpCylinder(const double A, const double B, const double C, const double X0,
-             const double Y0, const double Z0, const double R);
+  vpCylinder(const double A, const double B, const double C, const double X0, const double Y0, const double Z0,
+             const double R);
   virtual ~vpCylinder();
 
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
@@ -112,13 +112,10 @@ public:
 
   double computeZ(const double x, const double y) const;
 
-  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                const unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
 
   vpCylinder *duplicate() const;
 
@@ -183,9 +180,8 @@ public:
   void projection(const vpColVector &cP, vpColVector &p);
 
   void setWorldCoordinates(const vpColVector &oP);
-  void setWorldCoordinates(const double A, const double B, const double C,
-                           const double X0, const double Y0, const double Z0,
-                           const double R);
+  void setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
+                           const double Z0, const double R);
 };
 
 #endif

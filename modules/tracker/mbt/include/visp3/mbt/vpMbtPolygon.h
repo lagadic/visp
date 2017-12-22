@@ -109,11 +109,9 @@ public:
 
   inline bool isAppearing() const { return isappearing; }
   inline bool isPolygonOriented() { return hasOrientation; }
-  virtual bool
-  isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
-            const bool &modulo = false,
-            const vpCameraParameters &cam = vpCameraParameters(),
-            const vpImage<unsigned char> &I = vpImage<unsigned char>());
+  virtual bool isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false,
+                         const vpCameraParameters &cam = vpCameraParameters(),
+                         const vpImage<unsigned char> &I = vpImage<unsigned char>());
   bool isVisible() const { return isvisible; }
 
   vpMbtPolygon &operator=(const vpMbtPolygon &mbtp);
@@ -140,10 +138,7 @@ public:
 
     \sa setLoD()
    */
-  inline void setMinLineLengthThresh(const double min_line_length)
-  {
-    this->minLineLengthThresh = min_line_length;
-  }
+  inline void setMinLineLengthThresh(const double min_line_length) { this->minLineLengthThresh = min_line_length; }
   /*!
     Set the minimum polygon area to be considered as visible in the LOD (level
     of detail) case. This threshold is only used when setLoD() is turned on.
@@ -154,30 +149,21 @@ public:
 
     \sa setLoD()
   */
-  inline void setMinPolygonAreaThresh(const double min_polygon_area)
-  {
-    this->minPolygonAreaThresh = min_polygon_area;
-  }
+  inline void setMinPolygonAreaThresh(const double min_polygon_area) { this->minPolygonAreaThresh = min_polygon_area; }
 
   /*!
    Set the name of the face.
 
    \param face_name : name of the face.
    */
-  inline void setName(const std::string &face_name)
-  {
-    this->name = face_name;
-  }
+  inline void setName(const std::string &face_name) { this->name = face_name; }
 
   /*!
    Set if the polygon is oriented or not.
 
    \param oriented : True if the polygon is oriented, false otherwise.
    */
-  inline void setIsPolygonOriented(const bool &oriented)
-  {
-    this->hasOrientation = oriented;
-  }
+  inline void setIsPolygonOriented(const bool &oriented) { this->hasOrientation = oriented; }
 };
 
 #endif

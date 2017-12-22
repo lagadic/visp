@@ -38,9 +38,8 @@
 
 #include <visp3/vision/vpPlanarObjectDetector.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                \
-    (VISP_HAVE_OPENCV_VERSION <                                              \
-     0x030000) // Require opencv >= 2.0.0 and < 3.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpDisplay.h>
@@ -58,8 +57,8 @@
 
 */
 vpPlanarObjectDetector::vpPlanarObjectDetector()
-  : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(),
-    modelROI(), currentImagePoints(), refImagePoints(), minNbMatching(10)
+  : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(), modelROI(), currentImagePoints(),
+    refImagePoints(), minNbMatching(10)
 {
 }
 
@@ -71,10 +70,9 @@ vpPlanarObjectDetector::vpPlanarObjectDetector()
   \param _objectName : the name of the object to load.
 
 */
-vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string &_dataFile,
-                                               const std::string &_objectName)
-  : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(),
-    modelROI(), currentImagePoints(), refImagePoints(), minNbMatching(10)
+vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string &_dataFile, const std::string &_objectName)
+  : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(), modelROI(), currentImagePoints(),
+    refImagePoints(), minNbMatching(10)
 {
   load(_dataFile, _objectName);
 }
@@ -98,12 +96,10 @@ vpPlanarObjectDetector::~vpPlanarObjectDetector() {}
   \param ip : the list of image point.
   \param nbpt : the number of point.
 */
-void vpPlanarObjectDetector::computeRoi(vpImagePoint *ip,
-                                        const unsigned int nbpt)
+void vpPlanarObjectDetector::computeRoi(vpImagePoint *ip, const unsigned int nbpt)
 {
   if (nbpt < 3) {
-    throw vpException(vpException::badValue,
-                      "Not enough point to compute the region of interest.");
+    throw vpException(vpException::badValue, "Not enough point to compute the region of interest.");
   }
 
   std::vector<vpImagePoint> ptsx(nbpt);
@@ -142,8 +138,7 @@ void vpPlanarObjectDetector::computeRoi(vpImagePoint *ip,
 
   \return The number of reference points.
 */
-unsigned int
-vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I)
+unsigned int vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I)
 {
   modelROI.x = 0;
   modelROI.y = 0;
@@ -168,9 +163,8 @@ vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I)
 
   \return the number of reference points
 */
-unsigned int vpPlanarObjectDetector::buildReference(
-    const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
-    unsigned int _height, unsigned int _width)
+unsigned int vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
+                                                    unsigned int _height, unsigned int _width)
 {
   unsigned int res = fern.buildReference(_I, _iP, _height, _width);
   modelROI.x = (int)_iP.get_u();
@@ -193,9 +187,7 @@ unsigned int vpPlanarObjectDetector::buildReference(
 
   \return The number of reference points.
 */
-unsigned int
-vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
-                                       const vpRect &_rectangle)
+unsigned int vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I, const vpRect &_rectangle)
 {
   unsigned int res = fern.buildReference(_I, _rectangle);
 
@@ -253,8 +245,7 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
 
   /* part of code from OpenCV planarObjectDetector */
   std::vector<unsigned char> mask;
-  H = cv::findHomography(cv::Mat(refPts), cv::Mat(curPts), mask, cv::RANSAC,
-                         10);
+  H = cv::findHomography(cv::Mat(refPts), cv::Mat(curPts), mask, cv::RANSAC, 10);
 
   if (H.data) {
     const cv::Mat_<double> &H_tmp = H;
@@ -263,11 +254,8 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
       cv::Point2f pt = ref_corners[i];
 
       double w = 1. / (H_tmp(2, 0) * pt.x + H_tmp(2, 1) * pt.y + H_tmp(2, 2));
-      dst_corners[i] = cv::Point2f(
-          (float)((H_tmp(0, 0) * pt.x + H_tmp(0, 1) * pt.y + H_tmp(0, 2)) *
-                  w),
-          (float)((H_tmp(1, 0) * pt.x + H_tmp(1, 1) * pt.y + H_tmp(1, 2)) *
-                  w));
+      dst_corners[i] = cv::Point2f((float)((H_tmp(0, 0) * pt.x + H_tmp(0, 1) * pt.y + H_tmp(0, 2)) * w),
+                                   (float)((H_tmp(1, 0) * pt.x + H_tmp(1, 1) * pt.y + H_tmp(1, 2)) * w));
     }
 
     double *ptr = (double *)H_tmp.data;
@@ -313,22 +301,17 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
 
   \return true if the surface has been found.
 */
-bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
-                                        const vpImagePoint &iP,
-                                        const unsigned int height,
-                                        const unsigned int width)
+bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                                        const unsigned int height, const unsigned int width)
 {
-  if ((iP.get_i() + height) >= I.getHeight() ||
-      (iP.get_j() + width) >= I.getWidth()) {
+  if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage,
-                      "Bad size for the subimage"));
+    throw(vpException(vpImageException::notInTheImage, "Bad size for the subimage"));
   }
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::crop(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(),
-                     height, width, subImage);
+  vpImageTools::crop(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(), height, width, subImage);
 
   return this->matchPoint(subImage);
 }
@@ -344,14 +327,12 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
 
   \return True if the surface has been found.
 */
-bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
-                                        const vpRect &rectangle)
+bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());
   iP.set_j(rectangle.getLeft());
-  return (this->matchPoint(I, iP, (unsigned int)rectangle.getHeight(),
-                           (unsigned int)rectangle.getWidth()));
+  return (this->matchPoint(I, iP, (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
 }
 
 /*!
@@ -364,22 +345,18 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
   \param displayKpts : The flag to display keypoints in addition to the
   surface.
 */
-void vpPlanarObjectDetector::display(vpImage<unsigned char> &I,
-                                     bool displayKpts)
+void vpPlanarObjectDetector::display(vpImage<unsigned char> &I, bool displayKpts)
 {
   for (unsigned int i = 0; i < dst_corners.size(); i++) {
-    vpImagePoint ip1(dst_corners[i].y - modelROI.y,
-                     dst_corners[i].x - modelROI.x);
+    vpImagePoint ip1(dst_corners[i].y - modelROI.y, dst_corners[i].x - modelROI.x);
     vpImagePoint ip2(dst_corners[(i + 1) % dst_corners.size()].y - modelROI.y,
-                     dst_corners[(i + 1) % dst_corners.size()].x -
-                         modelROI.x);
+                     dst_corners[(i + 1) % dst_corners.size()].x - modelROI.x);
     vpDisplay::displayLine(I, ip1, ip2, vpColor::red);
   }
 
   if (displayKpts) {
     for (unsigned int i = 0; i < currentImagePoints.size(); ++i) {
-      vpImagePoint ip(currentImagePoints[i].get_i() - modelROI.y,
-                      currentImagePoints[i].get_j() - modelROI.x);
+      vpImagePoint ip(currentImagePoints[i].get_i() - modelROI.y, currentImagePoints[i].get_j() - modelROI.x);
       vpDisplay::displayCross(I, ip, 5, vpColor::red);
     }
   }
@@ -402,9 +379,7 @@ void vpPlanarObjectDetector::display(vpImage<unsigned char> &I,
   \param displayKpts : The flag to display keypoints in addition to the
   surface.
 */
-void vpPlanarObjectDetector::display(vpImage<unsigned char> &Iref,
-                                     vpImage<unsigned char> &Icurrent,
-                                     bool displayKpts)
+void vpPlanarObjectDetector::display(vpImage<unsigned char> &Iref, vpImage<unsigned char> &Icurrent, bool displayKpts)
 {
   display(Icurrent, displayKpts);
 
@@ -425,8 +400,7 @@ void vpPlanarObjectDetector::display(vpImage<unsigned char> &Iref,
   It can have any file extension.
   \param objName : The name of the object.
 */
-void vpPlanarObjectDetector::load(const std::string &dataFilename,
-                                  const std::string &objName)
+void vpPlanarObjectDetector::load(const std::string &dataFilename, const std::string &objName)
 {
   fern.load(dataFilename, objName);
   modelROI = fern.getModelROI();
@@ -440,8 +414,7 @@ void vpPlanarObjectDetector::load(const std::string &dataFilename,
   \param dataFile : The name of the data filename (very large text file).
   It can have any file extension.
 */
-void vpPlanarObjectDetector::recordDetector(const std::string &objectName,
-                                            const std::string &dataFile)
+void vpPlanarObjectDetector::recordDetector(const std::string &objectName, const std::string &dataFile)
 {
   fern.record(objectName, dataFile);
 }
@@ -490,24 +463,20 @@ void vpPlanarObjectDetector::initialiseRefCorners(const cv::Rect &_modelROI)
   ref_corners.push_back(ip);
 }
 
-void vpPlanarObjectDetector::getReferencePoint(unsigned int _i,
-                                               vpImagePoint &_imPoint)
+void vpPlanarObjectDetector::getReferencePoint(unsigned int _i, vpImagePoint &_imPoint)
 {
   if (_i >= refImagePoints.size()) {
-    throw vpException(vpException::fatalError,
-                      "index out of bound in getMatchedPoints.");
+    throw vpException(vpException::fatalError, "index out of bound in getMatchedPoints.");
   }
   _imPoint = refImagePoints[_i];
 }
 
-void vpPlanarObjectDetector::getMatchedPoints(const unsigned int _index,
-                                              vpImagePoint &_referencePoint,
+void vpPlanarObjectDetector::getMatchedPoints(const unsigned int _index, vpImagePoint &_referencePoint,
                                               vpImagePoint &_currentPoint)
 {
   //  fern.getMatchedPoints(_index, _referencePoint, _currentPoint);
   if (_index >= currentImagePoints.size()) {
-    throw vpException(vpException::fatalError,
-                      "index out of bound in getMatchedPoints.");
+    throw vpException(vpException::fatalError, "index out of bound in getMatchedPoints.");
   }
 
   _referencePoint = refImagePoints[_index];

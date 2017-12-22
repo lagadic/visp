@@ -6,14 +6,10 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vs/vpServo.h>
 
-void display_trajectory(const vpImage<unsigned char> &I,
-                        std::vector<vpPoint> &point,
-                        const vpHomogeneousMatrix &cMo,
+void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam);
 
-void display_trajectory(const vpImage<unsigned char> &I,
-                        std::vector<vpPoint> &point,
-                        const vpHomogeneousMatrix &cMo,
+void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam)
 {
   unsigned int thickness = 3;
@@ -22,14 +18,12 @@ void display_trajectory(const vpImage<unsigned char> &I,
   for (unsigned int i = 0; i < 4; i++) {
     // Project the point at the given camera position
     point[i].project(cMo);
-    vpMeterPixelConversion::convertPoint(cam, point[i].get_x(),
-                                         point[i].get_y(), cog);
+    vpMeterPixelConversion::convertPoint(cam, point[i].get_x(), point[i].get_y(), cog);
     traj[i].push_back(cog);
   }
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 1; j < traj[i].size(); j++) {
-      vpDisplay::displayLine(I, traj[i][j - 1], traj[i][j], vpColor::green,
-                             thickness);
+      vpDisplay::displayLine(I, traj[i][j - 1], traj[i][j], vpColor::green, thickness);
     }
   }
 }
@@ -39,8 +33,7 @@ int main()
 #if defined(VISP_HAVE_PTHREAD)
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10),
-                            vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
     /*
     Top view of the world frame, the camera frame and the object frame
@@ -64,9 +57,7 @@ int main()
              c_x <--
 
     */
-    vpHomogeneousMatrix wMo(
-        vpTranslationVector(0.40, 0, -0.15),
-        vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI / 2.)));
+    vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15), vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI / 2.)));
 
     std::vector<vpPoint> point;
     point.push_back(vpPoint(-0.1, -0.1, 0));
@@ -105,14 +96,12 @@ int main()
 
     std::cout << "Robot joint limits: " << std::endl;
     for (unsigned int i = 0; i < qmin.size(); i++)
-      std::cout << "Joint " << i << ": min " << vpMath::deg(qmin[i])
-                << " max " << vpMath::deg(qmax[i]) << " (deg)" << std::endl;
+      std::cout << "Joint " << i << ": min " << vpMath::deg(qmin[i]) << " max " << vpMath::deg(qmax[i]) << " (deg)"
+                << std::endl;
 
-    robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA,
-               vpCameraParameters::perspectiveProjWithoutDistortion);
+    robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
-    robot.initScene(vpWireFrameSimulator::PLATE,
-                    vpWireFrameSimulator::D_STANDARD);
+    robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
     robot.set_fMo(wMo);
     bool ret = robot.initialiseCameraRelativeToObject(cMo);
     if (ret == false)
@@ -120,8 +109,7 @@ int main()
     robot.setDesiredCameraPosition(cdMo);
     // We modify the default external camera position
     robot.setExternalCameraPosition(
-        vpHomogeneousMatrix(vpTranslationVector(-0.4, 0.4, 2),
-                            vpRotationMatrix(vpRxyzVector(M_PI / 2, 0, 0))));
+        vpHomogeneousMatrix(vpTranslationVector(-0.4, 0.4, 2), vpRotationMatrix(vpRxyzVector(M_PI / 2, 0, 0))));
 
     vpImage<unsigned char> Iint(480, 640, 255);
 #if defined(VISP_HAVE_X11)
@@ -134,8 +122,7 @@ int main()
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-    vpCameraParameters cam(840, 840, Iint.getWidth() / 2,
-                           Iint.getHeight() / 2);
+    vpCameraParameters cam(840, 840, Iint.getWidth() / 2, Iint.getHeight() / 2);
     // Modify the camera parameters to match those used in the other
     // simulations
     robot.setCameraParameters(cam);
@@ -154,8 +141,7 @@ int main()
       robot.getInternalView(Iint);
       if (!start) {
         display_trajectory(Iint, point, cMo, cam);
-        vpDisplay::displayText(Iint, 40, 120, "Click to stop the servo...",
-                               vpColor::red);
+        vpDisplay::displayText(Iint, 40, 120, "Click to stop the servo...", vpColor::red);
       }
       vpDisplay::flush(Iint);
 
@@ -170,8 +156,7 @@ int main()
         start = false;
         v = 0;
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-        vpDisplay::displayText(Iint, 40, 120, "Click to start the servo...",
-                               vpColor::blue);
+        vpDisplay::displayText(Iint, 40, 120, "Click to start the servo...", vpColor::blue);
         vpDisplay::flush(Iint);
         // vpDisplay::getClick(Iint);
       }

@@ -58,17 +58,12 @@ typedef long int integer;
 typedef int integer;
 #endif
 
-extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda,
-                       double *tau, double *work, integer *lwork,
+extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork,
                        integer *info);
-extern "C" int dormqr_(char *side, char *trans, integer *m, integer *n,
-                       integer *k, double *a, integer *lda, double *tau,
-                       double *c__, integer *ldc, double *work,
-                       integer *lwork, integer *info);
-extern "C" int dorgqr_(integer *, integer *, integer *, double *, integer *,
-                       double *, double *, integer *, integer *);
-extern "C" int dtrtri_(char *uplo, char *diag, integer *n, double *a,
-                       integer *lda, integer *info);
+extern "C" int dormqr_(char *side, char *trans, integer *m, integer *n, integer *k, double *a, integer *lda,
+                       double *tau, double *c__, integer *ldc, double *work, integer *lwork, integer *info);
+extern "C" int dorgqr_(integer *, integer *, integer *, double *, integer *, double *, double *, integer *, integer *);
+extern "C" int dtrtri_(char *uplo, char *diag, integer *n, double *a, integer *lda, integer *info);
 
 int allocate_work(double **work);
 
@@ -114,15 +109,13 @@ int main()
 vpMatrix vpMatrix::inverseByQRLapack() const
 {
   if (rowNum != colNum) {
-    throw(vpMatrixException(
-        vpMatrixException::matrixError,
-        "Cannot inverse a non-square matrix (%ux%u) by QR", rowNum, colNum));
+    throw(vpMatrixException(vpMatrixException::matrixError, "Cannot inverse a non-square matrix (%ux%u) by QR", rowNum,
+                            colNum));
   }
 
   integer rowNum_ = (integer)this->getRows();
   integer colNum_ = (integer)this->getCols();
-  integer lda = (integer)
-      rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
   integer dimTau = (std::min)(rowNum_, colNum_);
   integer dimWork = -1;
   double *tau = new double[dimTau];
@@ -143,18 +136,17 @@ vpMatrix vpMatrix::inverseByQRLapack() const
                          represent the orthogonal matrix Q as a   product of
                          min(m,n) elementary reflectors.
                           */
-            &lda, // The leading dimension of the array A.  LDA >= max(1,M).
-            tau,  /*Dimension (min(M,N))
-                    The scalar factors of the elementary reflectors
-                  */
-            work, // Internal working array. dimension (MAX(1,LWORK))
+            &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
+            tau,      /*Dimension (min(M,N))
+                        The scalar factors of the elementary reflectors
+                      */
+            work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
     );
 
     if (info != 0) {
-      std::cout << "dgeqrf_:Preparation:" << -info
-                << "th element had an illegal value" << std::endl;
+      std::cout << "dgeqrf_:Preparation:" << -info << "th element had an illegal value" << std::endl;
       throw vpMatrixException::badValue;
     }
     dimWork = allocate_work(&work);
@@ -169,18 +161,17 @@ vpMatrix vpMatrix::inverseByQRLapack() const
                          represent the orthogonal matrix Q as a   product of
                          min(m,n) elementary reflectors.
                           */
-            &lda, // The leading dimension of the array A.  LDA >= max(1,M).
-            tau,  /*Dimension (min(M,N))
-                    The scalar factors of the elementary reflectors
-                  */
-            work, // Internal working array. dimension (MAX(1,LWORK))
+            &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
+            tau,      /*Dimension (min(M,N))
+                        The scalar factors of the elementary reflectors
+                      */
+            work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
     );
 
     if (info != 0) {
-      std::cout << "dgeqrf_:" << -info << "th element had an illegal value"
-                << std::endl;
+      std::cout << "dgeqrf_:" << -info << "th element had an illegal value" << std::endl;
       throw vpMatrixException::badValue;
     }
 
@@ -192,8 +183,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     dtrtri_((char *)"U", (char *)"N", &dimTau, C.data, &lda, &info);
     if (info != 0) {
       if (info < 0)
-        std::cout << "dtrtri_:" << -info << "th element had an illegal value"
-                  << std::endl;
+        std::cout << "dtrtri_:" << -info << "th element had an illegal value" << std::endl;
       else if (info > 0) {
         std::cout << "dtrtri_:R(" << info << "," << info << ")"
                   << " is exactly zero.  The triangular matrix is singular "
@@ -220,21 +210,19 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     // get R^-1*tQ
     // C contains R^-1
     // A contains Q
-    dormqr_((char *)"R", (char *)"T", &rowNum_, &colNum_, &dimTau, A.data,
-            &lda, tau, C.data, &ldc, work, &dimWork, &info);
+    dormqr_((char *)"R", (char *)"T", &rowNum_, &colNum_, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork,
+            &info);
     if (info != 0) {
-      std::cout << "dormqr_:Preparation" << -info
-                << "th element had an illegal value" << std::endl;
+      std::cout << "dormqr_:Preparation" << -info << "th element had an illegal value" << std::endl;
       throw vpMatrixException::badValue;
     }
     dimWork = allocate_work(&work);
 
-    dormqr_((char *)"R", (char *)"T", &rowNum_, &colNum_, &dimTau, A.data,
-            &lda, tau, C.data, &ldc, work, &dimWork, &info);
+    dormqr_((char *)"R", (char *)"T", &rowNum_, &colNum_, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork,
+            &info);
 
     if (info != 0) {
-      std::cout << "dormqr_:" << -info << "th element had an illegal value"
-                << std::endl;
+      std::cout << "dormqr_:" << -info << "th element had an illegal value" << std::endl;
       throw vpMatrixException::badValue;
     }
     delete[] tau;
@@ -285,7 +273,6 @@ vpMatrix vpMatrix::inverseByQR() const
 #ifdef VISP_HAVE_LAPACK
   return inverseByQRLapack();
 #else
-  throw(vpException(vpException::fatalError,
-                    "Cannot inverse matrix by QR. Install Lapack 3rd party"));
+  throw(vpException(vpException::fatalError, "Cannot inverse matrix by QR. Install Lapack 3rd party"));
 #endif
 }

@@ -78,8 +78,7 @@ int main()
 
     unsigned long iter = 0;
 
-    std::cout << "Hit CTRL-C to or right mouse button to exit..."
-              << std::endl;
+    std::cout << "Hit CTRL-C to or right mouse button to exit..." << std::endl;
     bool end = false;
     while (!end) {
       if (iter < 300) {

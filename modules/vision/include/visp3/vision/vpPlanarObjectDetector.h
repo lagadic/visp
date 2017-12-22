@@ -41,9 +41,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                \
-    (VISP_HAVE_OPENCV_VERSION <                                              \
-     0x030000) // Require opencv >= 2.0.0 and < 3.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #include <opencv2/calib3d/calib3d.hpp>
@@ -101,9 +100,9 @@ available since 2.1.0 int main()
 
   //First grab the reference image Ireference
 
-  //Select a part of the image by clincking on two points which define a
-rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
-  {
+  //Select a part of the image by clincking on two points which define a rectangle
+  vpImagePoint corners[2];
+  for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Ireference, corners[i]);
   }
 
@@ -116,11 +115,10 @@ rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
 
   //Then grab another image which represents the current image Icurrent
 
-  //Match points between the reference points and the current points computed
-in the current image. bool isDetected; height = (unsigned
-int)(corners[1].get_i() - corners[0].get_i()); width = (unsigned
-int)(corners[1].get_j() - corners[0].get_j()); isDetected =
-planar.matchPoint(Icurrent, corners[0], height, width);
+  //Match points between the reference points and the current points computed in the current image.
+  bool isDetected; height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  isDetected = planar.matchPoint(Icurrent, corners[0], height, width);
 
   //Display the matched points
   if(isDetected){
@@ -129,8 +127,7 @@ planar.matchPoint(Icurrent, corners[0], height, width);
     planar.getHomography(homography);
   }
   else{
-    std::cerr << "planar surface not detected in the current image" <<
-std::endl;
+    std::cerr << "planar surface not detected in the current image" << std::endl;
   }
 
   return(0);
@@ -180,33 +177,28 @@ protected:
 public:
   // constructors and destructors
   vpPlanarObjectDetector();
-  vpPlanarObjectDetector(const std::string &dataFile,
-                         const std::string &objectName);
+  vpPlanarObjectDetector(const std::string &dataFile, const std::string &objectName);
   virtual ~vpPlanarObjectDetector();
 
   // main functions
   // creation of reference
   unsigned int buildReference(const vpImage<unsigned char> &I);
-  unsigned int buildReference(const vpImage<unsigned char> &I,
-                              const vpImagePoint &iP, unsigned int height,
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
                               unsigned int width);
-  unsigned int buildReference(const vpImage<unsigned char> &I,
-                              const vpRect &rectangle);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   // matching
   bool matchPoint(const vpImage<unsigned char> &I);
-  bool matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                  const unsigned int height, const unsigned int width);
+  bool matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
+                  const unsigned int width);
   bool matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
   // database management
-  void recordDetector(const std::string &objectName,
-                      const std::string &dataFile);
+  void recordDetector(const std::string &objectName, const std::string &dataFile);
   void load(const std::string &dataFilename, const std::string &objName);
 
   // display
   void display(vpImage<unsigned char> &I, bool displayKpts = false);
-  void display(vpImage<unsigned char> &Iref, vpImage<unsigned char> &Icurrent,
-               bool displayKpts = false);
+  void display(vpImage<unsigned char> &Iref, vpImage<unsigned char> &Icurrent, bool displayKpts = false);
 
   /*!
     Return the positions of the detected corners.
@@ -236,10 +228,7 @@ public:
 
     \return Number of reference points.
   */
-  inline unsigned int getNbRefPoints()
-  {
-    return (unsigned int)currentImagePoints.size();
-  }
+  inline unsigned int getNbRefPoints() { return (unsigned int)currentImagePoints.size(); }
 
   /*!
     Get the i-th reference point.
@@ -262,9 +251,7 @@ public:
    reference point are copied here. \param _currentPoint : The coordinates of
    the desired current point are copied here.
   */
-  void getMatchedPoints(const unsigned int _index,
-                        vpImagePoint &_referencePoint,
-                        vpImagePoint &_currentPoint);
+  void getMatchedPoints(const unsigned int _index, vpImagePoint &_referencePoint, vpImagePoint &_currentPoint);
 
   /*!
     Set the threshold for the minimal number of point to validate the
@@ -272,10 +259,7 @@ public:
 
     \param _min : the new threshold.
   */
-  void setMinNbPointValidation(const unsigned int _min)
-  {
-    this->minNbMatching = _min;
-  }
+  void setMinNbPointValidation(const unsigned int _min) { this->minNbMatching = _min; }
 
   /*!
     Get the threshold for the minimal number of point to validate the

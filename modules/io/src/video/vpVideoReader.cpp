@@ -59,9 +59,8 @@ vpVideoReader::vpVideoReader()
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
     capture(), frame(),
 #endif
-    formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false),
-    frameCount(0), firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false),
-    lastFrameIndexIsSet(false), frameStep(1), frameRate(0.)
+    formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0), firstFrame(0), lastFrame(0),
+    firstFrameIndexIsSet(false), lastFrameIndexIsSet(false), frameStep(1), frameRate(0.)
 {
 }
 
@@ -94,13 +93,11 @@ void vpVideoReader::setFileName(const char *filename)
 {
   if ((!filename) || (*filename == '\0')) {
     vpERROR_TRACE("filename empty ");
-    throw(vpImageException(vpImageException::noFileNameError,
-                           "filename empty "));
+    throw(vpImageException(vpImageException::noFileNameError, "filename empty "));
   }
 
   if (strlen(filename) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to initialize the file name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the file name"));
   }
 
   strcpy(this->fileName, filename);
@@ -108,17 +105,14 @@ void vpVideoReader::setFileName(const char *filename)
   formatType = getFormat(fileName);
 
   if (formatType == FORMAT_UNKNOWN) {
-    throw(vpException(vpException::badValue,
-                      "Filename extension not supported"));
+    throw(vpException(vpException::badValue, "Filename extension not supported"));
   }
 
   // checking image name format
   if (isImageExtensionSupported()) {
     std::string format = vpIoTools::getName(fileName);
     if (!checkImageNameFormat(format)) {
-      throw(vpException(vpException::badValue,
-                        "Format of image name wasn't recognized: %s",
-                        format.c_str()));
+      throw(vpException(vpException::badValue, "Format of image name wasn't recognized: %s", format.c_str()));
     }
   }
 
@@ -140,10 +134,7 @@ folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
 \param filename : Path to a video file or file name template of a image
 sequence.
 */
-void vpVideoReader::setFileName(const std::string &filename)
-{
-  setFileName(filename.c_str());
-}
+void vpVideoReader::setFileName(const std::string &filename) { setFileName(filename.c_str()); }
 
 /*!
   Open video stream and get first and last frame indexes.
@@ -151,8 +142,7 @@ void vpVideoReader::setFileName(const std::string &filename)
 void vpVideoReader::getProperties()
 {
   if (!initFileName) {
-    throw(vpImageException(vpImageException::noFileNameError,
-                           "The generic filename has to be set"));
+    throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set"));
   }
 
   if (isImageExtensionSupported()) {
@@ -168,8 +158,7 @@ void vpVideoReader::getProperties()
     capture.open(fileName);
 
     if (!capture.isOpened()) {
-      throw(vpException(vpException::ioError,
-                        "Could not open the video %s with OpenCV", fileName));
+      throw(vpException(vpException::ioError, "Could not open the video %s with OpenCV", fileName));
     }
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     width = (unsigned int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -182,9 +171,8 @@ void vpVideoReader::getProperties()
 #endif
 
 #else
-    throw(vpException(vpException::fatalError,
-                      "To read video files ViSP should be build with opencv "
-                      "3rd >= 2.1.0 party libraries."));
+    throw(vpException(vpException::fatalError, "To read video files ViSP should be build with opencv "
+                                               "3rd >= 2.1.0 party libraries."));
 #endif
   } else if (formatType == FORMAT_UNKNOWN) {
     // vpERROR_TRACE("The format of the file does not correspond to a readable
@@ -212,8 +200,7 @@ void vpVideoReader::open(vpImage<vpRGBa> &I)
 
   frameCount = firstFrame;
   if (!getFrame(I, firstFrame)) {
-    throw(vpException(vpException::ioError,
-                      "Could not read the video first frame"));
+    throw(vpException(vpException::ioError, "Could not read the video first frame"));
   }
 
   // Rewind to the first frame since open() should not increase the frame
@@ -246,8 +233,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 
   frameCount = firstFrame;
   if (!getFrame(I, firstFrame)) {
-    throw(vpException(vpException::ioError,
-                      "Could not read the video first frame"));
+    throw(vpException(vpException::ioError, "Could not read the video first frame"));
   }
 
   // Rewind to the first frame since open() should not increase the frame
@@ -433,8 +419,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       width = I.getWidth();
       height = I.getHeight();
       frameCount = imSequence->getImageNumber();
-      imSequence->setImageNumber(
-          frameCount); // to not increment vpDiskGrabber next image
+      imSequence->setImageNumber(frameCount); // to not increment vpDiskGrabber next image
       if (frameCount + frameStep > lastFrame) {
         imSequence->setImageNumber(frameCount);
       } else if (frameCount + frameStep < firstFrame) {
@@ -504,8 +489,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       width = I.getWidth();
       height = I.getHeight();
       frameCount = imSequence->getImageNumber();
-      imSequence->setImageNumber(
-          frameCount); // to not increment vpDiskGrabber next image
+      imSequence->setImageNumber(frameCount); // to not increment vpDiskGrabber next image
       if (frameCount + frameStep > lastFrame) {
         imSequence->setImageNumber(frameCount);
       } else if (frameCount + frameStep < firstFrame) {
@@ -563,8 +547,7 @@ Gets the format of the file(s) which has/have to be read.
 
 \return Returns the format.
 */
-vpVideoReader::vpVideoFormatType
-vpVideoReader::getFormat(const char *filename)
+vpVideoReader::vpVideoFormatType vpVideoReader::getFormat(const char *filename)
 {
   std::string sfilename(filename);
 
@@ -744,8 +727,7 @@ void vpVideoReader::findFirstFrameIndex()
         // Checking that file name satisfies image format, specified by
         // imageNameFormat, and extracting imageIndex
         long imageIndex = extractImageIndex(files[i], imageNameFormat);
-        if ((imageIndex != -1) &&
-            (imageIndex < firstFrame || firstFrame == -1)) {
+        if ((imageIndex != -1) && (imageIndex < firstFrame || firstFrame == -1)) {
           firstFrame = imageIndex;
         }
       }
@@ -764,11 +746,10 @@ Return true if the image file extension is supported, false otherwise.
 */
 bool vpVideoReader::isImageExtensionSupported()
 {
-  return (formatType == FORMAT_PGM || formatType == FORMAT_PPM ||
-          formatType == FORMAT_JPEG || formatType == FORMAT_PNG ||
-          formatType == FORMAT_TIFF || formatType == FORMAT_BMP ||
-          formatType == FORMAT_DIB || formatType == FORMAT_PBM ||
-          formatType == FORMAT_RASTER || formatType == FORMAT_JPEG2000);
+  return (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG ||
+          formatType == FORMAT_PNG || formatType == FORMAT_TIFF || formatType == FORMAT_BMP ||
+          formatType == FORMAT_DIB || formatType == FORMAT_PBM || formatType == FORMAT_RASTER ||
+          formatType == FORMAT_JPEG2000);
 }
 
 /*!
@@ -776,9 +757,8 @@ Return true if the video file extension is supported, false otherwise.
 */
 bool vpVideoReader::isVideoExtensionSupported()
 {
-  return (formatType == FORMAT_AVI || formatType == FORMAT_MPEG ||
-          formatType == FORMAT_MPEG4 || formatType == FORMAT_MOV ||
-          formatType == FORMAT_OGV || formatType == FORMAT_WMV ||
+  return (formatType == FORMAT_AVI || formatType == FORMAT_MPEG || formatType == FORMAT_MPEG4 ||
+          formatType == FORMAT_MOV || formatType == FORMAT_OGV || formatType == FORMAT_WMV ||
           formatType == FORMAT_FLV || formatType == FORMAT_MKV);
 }
 
@@ -853,8 +833,7 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
   \param format : format of image name
   \return extracted index on success, -1 otherwise.
 */
-long vpVideoReader::extractImageIndex(const std::string &imageName,
-                                      const std::string &format)
+long vpVideoReader::extractImageIndex(const std::string &imageName, const std::string &format)
 {
   size_t indexBegin = format.find_last_of('%');
   size_t indexEnd = format.find_first_of('d', indexBegin);

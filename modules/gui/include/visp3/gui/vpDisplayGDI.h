@@ -96,8 +96,7 @@ int main()
   vpImagePoint topLeftCorner;
   topLeftCorner.set_i(50);
   topLeftCorner.set_j(10);
-  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green,
-true);
+  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
 
   // Flush the foreground and background display
   vpDisplay::flush(I);
@@ -109,8 +108,8 @@ true);
   for (int i=0; i< 200; i++) {
     bool ret = vpDisplay::getKeyboardEvent(I, key, false);
     if (ret)
-      std::cout << "keyboard event: key: " << "\"" << key << "\"" <<
-std::endl; vpTime::wait(40);
+      std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
+    vpTime::wait(40);
   }
 
   // Get a blocking keyboard event
@@ -133,12 +132,10 @@ public:
   vpDisplayGDI();
   vpDisplayGDI(int winx, int winy, const std::string &title = "");
   vpDisplayGDI(vpImage<unsigned char> &I, vpScaleType type);
-  vpDisplayGDI(vpImage<unsigned char> &I, int winx = -1, int winy = -1,
-               const std::string &title = "",
+  vpDisplayGDI(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "",
                vpScaleType type = SCALE_DEFAULT);
   vpDisplayGDI(vpImage<vpRGBa> &I, vpScaleType type);
-  vpDisplayGDI(vpImage<vpRGBa> &I, int winx = -1, int winy = -1,
-               const std::string &title = "",
+  vpDisplayGDI(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "",
                vpScaleType type = SCALE_DEFAULT);
 
   virtual ~vpDisplayGDI();

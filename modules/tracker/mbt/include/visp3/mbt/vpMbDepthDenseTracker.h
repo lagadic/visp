@@ -51,38 +51,25 @@ public:
   vpMbDepthDenseTracker();
   virtual ~vpMbDepthDenseTracker();
 
-  virtual void display(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false);
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
-  virtual void display(const vpImage<vpRGBa> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false);
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   virtual inline vpColVector getError() const { return m_error_depthDense; }
 
-  virtual inline vpColVector getRobustWeights() const
-  {
-    return m_w_depthDense;
-  }
+  virtual inline vpColVector getRobustWeights() const { return m_w_depthDense; }
 
   virtual void init(const vpImage<unsigned char> &I);
 
   virtual void loadConfigFile(const std::string &configFile);
 
-  void reInitModel(const vpImage<unsigned char> &I,
-                   const std::string &cad_name,
-                   const vpHomogeneousMatrix &cMo_,
+  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo_,
                    const bool verbose = false);
 #if defined(VISP_HAVE_PCL)
-  void
-  reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-              const std::string &cad_name, const vpHomogeneousMatrix &cMo_,
-              const bool verbose = false);
+  void reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const std::string &cad_name,
+                   const vpHomogeneousMatrix &cMo_, const bool verbose = false);
 #endif
 
   virtual void resetTracker();
@@ -92,11 +79,9 @@ public:
   virtual void setDepthDenseFilteringMaxDistance(const double maxDistance);
   virtual void setDepthDenseFilteringMethod(const int method);
   virtual void setDepthDenseFilteringMinDistance(const double minDistance);
-  virtual void
-  setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
+  virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
 
-  inline void setDepthDenseSamplingStep(const unsigned int stepX,
-                                        const unsigned int stepY)
+  inline void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY)
   {
     if (stepX == 0 || stepY == 0) {
       std::cerr << "stepX and stepY must be greater than zero!" << std::endl;
@@ -109,12 +94,9 @@ public:
 
   virtual void setOgreVisibilityTest(const bool &v);
 
-  virtual void setPose(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
 #ifdef VISP_HAVE_PCL
-  virtual void
-  setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-          const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const vpHomogeneousMatrix &cdMo);
 #endif
 
   virtual void setScanLineVisibilityTest(const bool &v);
@@ -123,11 +105,9 @@ public:
 
   virtual void track(const vpImage<unsigned char> &);
 #ifdef VISP_HAVE_PCL
-  virtual void
-  track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
+  virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
-  virtual void track(const std::vector<vpColVector> &point_cloud,
-                     const unsigned int width, const unsigned int height);
+  virtual void track(const std::vector<vpColVector> &point_cloud, const unsigned int width, const unsigned int height);
 
 protected:
   //! Set of faces describing the object used only for display with scan line.
@@ -169,12 +149,10 @@ protected:
   virtual void computeVVSWeights();
   using vpMbTracker::computeVVSWeights;
 
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2,
-                          const vpPoint &p3, const double radius,
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "");
 
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2,
-                            const double radius, const int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
                             const std::string &name = "");
 
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
@@ -182,10 +160,9 @@ protected:
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
 
 #ifdef VISP_HAVE_PCL
-  void segmentPointCloud(
-      const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
+  void segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
-  void segmentPointCloud(const std::vector<vpColVector> &point_cloud,
-                         const unsigned int width, const unsigned int height);
+  void segmentPointCloud(const std::vector<vpColVector> &point_cloud, const unsigned int width,
+                         const unsigned int height);
 };
 #endif

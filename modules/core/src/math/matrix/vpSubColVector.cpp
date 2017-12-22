@@ -50,8 +50,7 @@ vpSubColVector::vpSubColVector() : vpColVector(), pRowNum(0), parent(NULL) {}
   \param offset : offset where the sub-column vector starts in the parent
   column vector. \param nrows : size of the sub-column vector.
 */
-vpSubColVector::vpSubColVector(vpColVector &v, const unsigned int &offset,
-                               const unsigned int &nrows)
+vpSubColVector::vpSubColVector(vpColVector &v, const unsigned int &offset, const unsigned int &nrows)
   : vpColVector(), pRowNum(0), parent(NULL)
 {
   init(v, offset, nrows);
@@ -63,8 +62,7 @@ vpSubColVector::vpSubColVector(vpColVector &v, const unsigned int &offset,
   \param offset : offset where the sub-column vector starts in the parent
   column vector. \param nrows : size of the sub-column vector.
 */
-void vpSubColVector::init(vpColVector &v, const unsigned int &offset,
-                          const unsigned int &nrows)
+void vpSubColVector::init(vpColVector &v, const unsigned int &offset, const unsigned int &nrows)
 {
   if (!v.data) {
     throw(vpException(vpException::fatalError, "Cannot initialize a "
@@ -91,9 +89,8 @@ void vpSubColVector::init(vpColVector &v, const unsigned int &offset,
 
     dsize = rowNum;
   } else {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot create a sub-column vector that is not "
-                      "completely containt in the parrent column vector"));
+    throw(vpException(vpException::dimensionError, "Cannot create a sub-column vector that is not "
+                                                   "completely containt in the parrent column vector"));
   }
 }
 
@@ -108,14 +105,10 @@ vpSubColVector::~vpSubColVector() { data = NULL; }
 void vpSubColVector::checkParentStatus() const
 {
   if (!data) {
-    throw(vpException(
-        vpException::fatalError,
-        "The parent of the current sub-column vector has been destroyed"));
+    throw(vpException(vpException::fatalError, "The parent of the current sub-column vector has been destroyed"));
   }
   if (pRowNum != parent->getRows()) {
-    throw(
-        vpException(vpException::dimensionError,
-                    "The size of the parent sub-column vector has changed"));
+    throw(vpException(vpException::dimensionError, "The size of the parent sub-column vector has changed"));
   }
 }
 
@@ -168,10 +161,8 @@ vpSubColVector &vpSubColVector::operator=(const vpColVector &B)
 vpSubColVector &vpSubColVector::operator=(const vpMatrix &B)
 {
   if ((B.getCols() != 1) || (rowNum != B.getRows())) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot initialize (%dx1) sub-column vector from (%dx%d) matrix",
-        rowNum, B.getRows(), B.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot initialize (%dx1) sub-column vector from (%dx%d) matrix",
+                      rowNum, B.getRows(), B.getCols()));
   }
 
   for (unsigned int i = 0; i < rowNum; i++)

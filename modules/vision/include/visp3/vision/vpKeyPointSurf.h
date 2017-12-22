@@ -104,8 +104,8 @@
 
 int main()
 {
-#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION <
-0x030000) vpImage<unsigned char> Ireference; vpImage<unsigned char> Icurrent;
+#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  vpImage<unsigned char> Ireference; vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
 
   // First grab the reference image Ireference
@@ -115,8 +115,8 @@ int main()
 
   // Then grab another image which represents the current image Icurrent
 
-  // Match points between the reference points and the SURF points computed in
-the current image. surf.matchPoint(Icurrent);
+  // Match points between the reference points and the SURF points computed in the current image.
+  surf.matchPoint(Icurrent);
 
   // Display the matched points
   surf.display(Ireference, Icurrent);
@@ -138,15 +138,14 @@ the current image. surf.matchPoint(Icurrent);
 
 int main()
 {
-#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION <
-0x030000) vpImage<unsigned char> Ireference; vpImage<unsigned char> Icurrent;
+#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  vpImage<unsigned char> Ireference; vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
 
   //First grab the reference image Ireference
 
-  //Select a part of the image by clincking on two points which define a
-rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
-  {
+  //Select a part of the image by clincking on two points which define a rectangle
+  vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Ireference, corners[i]);
   }
 
@@ -159,17 +158,16 @@ rectangle vpImagePoint corners[2]; for (int i=0 ; i < 2 ; i++)
 
   //Then grab another image which represents the current image Icurrent
 
-  //Select a part of the image by clincking on two points which define a
-rectangle for (int i=0 ; i < 2 ; i++)
-  {
+  //Select a part of the image by clincking on two points which define a rectangle
+  for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Icurrent, corners[i]);
   }
 
-  //Match points between the reference points and the SURF points computed in
-the current image. int nbrMatched; height = (unsigned int)(corners[1].get_i()
-- corners[0].get_i()); width = (unsigned int)(corners[1].get_j() -
-corners[0].get_j()); nbrMatched = surf.matchPoint(Icurrent, corners[0],
-height, width);
+  //Match points between the reference points and the SURF points computed in the current image.
+  int nbrMatched;
+  height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  nbrMatched = surf.matchPoint(Icurrent, corners[0], height, width);
 
   //Display the matched points
   surf.display(Ireference, Icurrent);
@@ -202,28 +200,19 @@ public:
   virtual ~vpKeyPointSurf();
 
   unsigned int buildReference(const vpImage<unsigned char> &I);
-  unsigned int buildReference(const vpImage<unsigned char> &I,
-                              const vpImagePoint &iP,
-                              const unsigned int height,
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
                               const unsigned int width);
-  unsigned int buildReference(const vpImage<unsigned char> &I,
-                              const vpRect &rectangle);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
   unsigned int matchPoint(const vpImage<unsigned char> &I);
-  unsigned int matchPoint(const vpImage<unsigned char> &I,
-                          const vpImagePoint &iP, const unsigned int height,
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
                           const unsigned int width);
-  unsigned int matchPoint(const vpImage<unsigned char> &I,
-                          const vpRect &rectangle);
-  void display(const vpImage<unsigned char> &Iref,
-               const vpImage<unsigned char> &Icurrent, unsigned int size = 3);
-  void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3,
-               const vpColor &color = vpColor::green);
-  std::list<int *> *matchPoint(std::list<float *> descriptorList,
-                               std::list<int> laplacianList);
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
+  void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent, unsigned int size = 3);
+  void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3, const vpColor &color = vpColor::green);
+  std::list<int *> *matchPoint(std::list<float *> descriptorList, std::list<int> laplacianList);
   float *getDescriptorReferencePoint(const int index);
   int getLaplacianReferencePoint(const int index);
-  void getDescriptorParamReferencePoint(const int index, int &size,
-                                        float &dir);
+  void getDescriptorParamReferencePoint(const int index, int &size, float &dir);
   /*!
 
     Sets the value of the hessian threhold.  Note that during the

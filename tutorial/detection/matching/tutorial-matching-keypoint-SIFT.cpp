@@ -9,9 +9,8 @@
 int main()
 {
 //! [Define]
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) &&                                \
-    (defined(VISP_HAVE_OPENCV_NONFREE) ||                                    \
-     defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) &&                                                                          \
+    (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
   //! [Define]
   vpImage<unsigned char> I;
 
@@ -25,14 +24,12 @@ int main()
   // Use L2 distance with a matching done using FLANN (Fast Library for
   // Approximate Nearest Neighbors)
   const std::string matcherName = "FlannBased";
-  vpKeyPoint::vpFilterMatchingType filterType =
-      vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
   vpKeyPoint keypoint(detectorName, extractorName, matcherName, filterType);
   //! [Construction]
 
   //! [Build Reference]
-  std::cout << "Reference keypoints=" << keypoint.buildReference(I)
-            << std::endl;
+  std::cout << "Reference keypoints=" << keypoint.buildReference(I) << std::endl;
   //! [Build Reference]
 
   //! [Create image]
@@ -55,8 +52,7 @@ int main()
 
     //! [Display]
     vpDisplay::display(Idisp);
-    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()),
-                           vpImagePoint(I.getHeight(), I.getWidth()),
+    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()), vpImagePoint(I.getHeight(), I.getWidth()),
                            vpColor::white, 2);
     //! [Display]
 
@@ -72,9 +68,7 @@ int main()
       keypoint.getMatchedPoints(i, iPref, iPcur);
       //! [Get matches]
       //! [Display matches]
-      vpDisplay::displayLine(Idisp, iPref,
-                             iPcur + vpImagePoint(0, I.getWidth()),
-                             vpColor::green);
+      vpDisplay::displayLine(Idisp, iPref, iPcur + vpImagePoint(0, I.getWidth()), vpColor::green);
       //! [Display matches]
     }
     //! [Display flush]

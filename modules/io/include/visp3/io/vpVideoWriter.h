@@ -222,10 +222,7 @@ public:
   void saveFrame(vpImage<unsigned char> &I);
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  inline void setCodec(const int fourcc_codec)
-  {
-    this->fourcc = fourcc_codec;
-  }
+  inline void setCodec(const int fourcc_codec) { this->fourcc = fourcc_codec; }
 #endif
 
   void setFileName(const char *filename);
@@ -235,10 +232,7 @@ public:
 
     \param first_frame : The first frame index.
   */
-  inline void setFirstFrameIndex(const unsigned int first_frame)
-  {
-    this->firstFrame = first_frame;
-  }
+  inline void setFirstFrameIndex(const unsigned int first_frame) { this->firstFrame = first_frame; }
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   /*!
       Sets the framerate in Hz of the video when encoding.
@@ -247,10 +241,7 @@ public:
 
       By default the framerate is set to 25Hz.
     */
-  inline void setFramerate(const double frame_rate)
-  {
-    this->framerate = frame_rate;
-  }
+  inline void setFramerate(const double frame_rate) { this->framerate = frame_rate; }
 #endif
 
 private:

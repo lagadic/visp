@@ -86,13 +86,10 @@ private:
 public:
   vpTemplateTrackerTriangle();
   vpTemplateTrackerTriangle(const vpTemplateTrackerTriangle &T);
-  vpTemplateTrackerTriangle(const vpColVector &c1, const vpColVector &c2,
-                            const vpColVector &c3);
-  vpTemplateTrackerTriangle(const vpImagePoint &c1, const vpImagePoint &c2,
-                            const vpImagePoint &c3);
+  vpTemplateTrackerTriangle(const vpColVector &c1, const vpColVector &c2, const vpColVector &c3);
+  vpTemplateTrackerTriangle(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3);
   vpTemplateTrackerTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
-  vpTemplateTrackerTriangle(double x1, double y1, double x2, double y2,
-                            double x3, double y3);
+  vpTemplateTrackerTriangle(double x1, double y1, double x2, double y2, double x3, double y3);
 
   /*!
     Return the area of the triangle.
@@ -158,10 +155,8 @@ public:
   void getSize(double &w, double &h) const;
   void getSize(int &w, int &h) const;
 
-  void init(const vpColVector &c1, const vpColVector &c2,
-            const vpColVector &c3);
-  void init(const vpImagePoint &c1, const vpImagePoint &c2,
-            const vpImagePoint &c3);
+  void init(const vpColVector &c1, const vpColVector &c2, const vpColVector &c3);
+  void init(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3);
   void init(int x1, int y1, int x2, int y2, int x3, int y3);
   void init(double x1, double y1, double x2, double y2, double x3, double y3);
   bool inTriangle(const vpImagePoint &ip) const;

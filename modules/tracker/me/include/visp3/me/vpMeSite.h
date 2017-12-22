@@ -118,8 +118,7 @@ public:
 
   vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range);
 
-  void track(const vpImage<unsigned char> &im, const vpMe *me,
-             const bool test_contraste = true);
+  void track(const vpImage<unsigned char> &im, const vpMe *me, const bool test_contraste = true);
 
   /*!
     Set the angle of tangent at site
@@ -206,8 +205,7 @@ public:
   vpMeSite &operator=(const vpMeSite &m);
   int operator!=(const vpMeSite &m);
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              vpMeSite &vpMeS);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS);
 
   // Static functions
   /*!
@@ -220,8 +218,7 @@ public:
   */
   static double distance(const vpMeSite &S1, const vpMeSite &S2)
   {
-    return (sqrt(vpMath::sqr(S1.ifloat - S2.ifloat) +
-                 vpMath::sqr(S1.jfloat - S2.jfloat)));
+    return (sqrt(vpMath::sqr(S1.ifloat - S2.ifloat) + vpMath::sqr(S1.jfloat - S2.jfloat)));
   }
 
   /*!
@@ -234,15 +231,12 @@ public:
   */
   static double sqrDistance(const vpMeSite &S1, const vpMeSite &S2)
   {
-    return (vpMath::sqr(S1.ifloat - S2.ifloat) +
-            vpMath::sqr(S1.jfloat - S2.jfloat));
+    return (vpMath::sqr(S1.ifloat - S2.ifloat) + vpMath::sqr(S1.jfloat - S2.jfloat));
   }
 
-  static void display(const vpImage<unsigned char> &I, const double &i,
-                      const double &j,
+  static void display(const vpImage<unsigned char> &I, const double &i, const double &j,
                       const vpMeSiteState &state = NO_SUPPRESSION);
-  static void display(const vpImage<vpRGBa> &I, const double &i,
-                      const double &j,
+  static void display(const vpImage<vpRGBa> &I, const double &i, const double &j,
                       const vpMeSiteState &state = NO_SUPPRESSION);
 
 // Deprecated
@@ -252,8 +246,7 @@ public:
   //! 1 = contrast, 2 = threshold, 3 = M-estimator, 0 = nosupp
   int suppress;
 
-  vp_deprecated void getSign(const vpImage<unsigned char> &I,
-                             const int range);
+  vp_deprecated void getSign(const vpImage<unsigned char> &I, const int range);
 #endif
 };
 

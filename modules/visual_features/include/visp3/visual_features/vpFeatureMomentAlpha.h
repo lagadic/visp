@@ -89,8 +89,7 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentAlpha(vpMomentDatabase &moments, double A, double B,
-                       double C,
+  vpFeatureMomentAlpha(vpMomentDatabase &moments, double A, double B, double C,
                        vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(moments, A, B, C, featureMoments, 1)
   {
@@ -174,8 +173,7 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentAlpha(vpMomentDatabase &data_base, double A_, double B_,
-                       double C_,
+  vpFeatureMomentAlpha(vpMomentDatabase &data_base, double A_, double B_, double C_,
                        vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
   {
@@ -191,8 +189,7 @@ public:
     */
   const char *name() const { return "vpFeatureMomentAlpha"; }
 
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 };
 #endif
 #endif

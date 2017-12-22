@@ -56,8 +56,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
-     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,8 +84,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -135,8 +133,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -257,15 +254,12 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "----------------------------------------------"
-              << std::endl;
+    std::cout << "----------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout << " Eye-in-hand task control, articular velocity are computed"
-              << std::endl;
+    std::cout << " Eye-in-hand task control, articular velocity are computed" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo 4 points " << std::endl;
-    std::cout << "----------------------------------------------"
-              << std::endl;
+    std::cout << "----------------------------------------------" << std::endl;
     std::cout << std::endl;
 
 // #define TRANS_Z_PURE
@@ -277,51 +271,39 @@ int main(int argc, const char **argv)
 
 #if defined(TRANS_Z_PURE)
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(0, 0, 3, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(0));
+    vpHomogeneousMatrix cMo(0, 0, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     // sets the desired camera location
-    vpHomogeneousMatrix cMod(0, 0, 2, vpMath::rad(0), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix cMod(0, 0, 2, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 #elif defined(TRANS_X_PURE)
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(0.3, 0.3, 3, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(0));
+    vpHomogeneousMatrix cMo(0.3, 0.3, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     // sets the desired camera location
-    vpHomogeneousMatrix cMod(0.5, 0.3, 3, vpMath::rad(0), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix cMod(0.5, 0.3, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
 #elif defined(ROT_Z_PURE)
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(0, 0, 3, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(0));
+    vpHomogeneousMatrix cMo(0, 0, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     // sets the desired camera location
-    vpHomogeneousMatrix cMod(0, 0, 3, vpMath::rad(0), vpMath::rad(0),
-                             vpMath::rad(180));
+    vpHomogeneousMatrix cMod(0, 0, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(180));
 
 #elif defined(ROT_X_PURE)
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(0, 0, 3, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(0));
+    vpHomogeneousMatrix cMo(0, 0, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     // sets the desired camera location
-    vpHomogeneousMatrix cMod(0, 0, 3, vpMath::rad(45), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix cMod(0, 0, 3, vpMath::rad(45), vpMath::rad(0), vpMath::rad(0));
 
 #elif defined(COMPLEX)
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(0.2, 0.2, 3, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(0));
+    vpHomogeneousMatrix cMo(0.2, 0.2, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     // sets the desired camera location
-    vpHomogeneousMatrix cMod(0, 0, 2.5, vpMath::rad(45), vpMath::rad(10),
-                             vpMath::rad(30));
+    vpHomogeneousMatrix cMod(0, 0, 2.5, vpMath::rad(45), vpMath::rad(10), vpMath::rad(30));
 
 #elif defined(PROBLEM)
     // Bad behavior with an interaction matrix computed from the desired
     // features sets the initial camera location
-    vpHomogeneousMatrix cMo(0.2, 0.2, 3, vpMath::rad(0), vpMath::rad(0),
-                            vpMath::rad(0));
+    vpHomogeneousMatrix cMo(0.2, 0.2, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     // sets the desired camera location
-    vpHomogeneousMatrix cMod(0.4, 0.2, 3, vpMath::rad(0), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix cMod(0.4, 0.2, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
 #endif
     // Compute the position of the object in the world frame
@@ -329,8 +311,7 @@ int main(int argc, const char **argv)
     robot.getPosition(wMc);
     wMo = wMc * cMo;
 
-    vpHomogeneousMatrix cextMo(0, 0, 6, vpMath::rad(40), vpMath::rad(10),
-                               vpMath::rad(60));
+    vpHomogeneousMatrix cextMo(0, 0, 6, vpMath::rad(40), vpMath::rad(10), vpMath::rad(60));
 
     // sets the point coordinates in the object frame
     vpPoint point[4];
@@ -398,8 +379,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // loop
     while (iter++ < 200) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // Set the Jacobian (expressed in the end-effector frame)
@@ -445,20 +425,17 @@ int main(int argc, const char **argv)
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
-           << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4] << " " << v[5] << " ";
 
       std::cout << "v: " << v.t() << std::endl;
 
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
 
       // Save feature error (s-s*) for the 4 feature points. For each feature
       // point, we have 2 errors (along x and y axis).  This error is
       // expressed in meters in the camera frame
       flog << (task.getError()).t() << " "; // s-s* for point 4
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
 
       // Save current visual feature s = (rho,theta)
       for (i = 0; i < 4; i++) {
@@ -475,10 +452,8 @@ int main(int argc, const char **argv)
         ip.set_i(10);
         ip.set_j(10);
 
-        std::cout << "\nClick in the internal camera view to continue..."
-                  << std::endl;
-        vpDisplay::displayText(Iint, ip, "A click to continue...",
-                               vpColor::red);
+        std::cout << "\nClick in the internal camera view to continue..." << std::endl;
+        vpDisplay::displayText(Iint, ip, "A click to continue...", vpColor::red);
         vpDisplay::flush(Iint);
         vpDisplay::getClick(Iint);
       }
@@ -507,11 +482,6 @@ int main(int argc, const char **argv)
   }
 }
 #else
-int main()
-{
-  std::cout
-      << "You do not have X11, GTK, GDI or OpenCV display functionalities..."
-      << std::endl;
-}
+int main() { std::cout << "You do not have X11, GTK, GDI or OpenCV display functionalities..." << std::endl; }
 
 #endif

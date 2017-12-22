@@ -65,8 +65,7 @@
 #include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
-     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
@@ -86,11 +85,9 @@
 // List of allowed command line options
 #define GETOPTARGS "cdi:p:hf:n:s:"
 
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string ppath, unsigned first, unsigned nimages,
-           unsigned step);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, unsigned &first, unsigned &nimages,
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+           unsigned nimages, unsigned step);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
                 unsigned &step, bool &click_allowed, bool &display);
 
 /*!
@@ -106,8 +103,8 @@ Print the program options.
   \param step : Step between two images.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string ppath, unsigned first, unsigned nimages, unsigned step)
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+           unsigned nimages, unsigned step)
 {
   fprintf(stdout, "\n\
 Test dot tracking.\n\
@@ -178,8 +175,7 @@ under Unix or using the task manager under Windows.
 \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, unsigned &first, unsigned &nimages,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
                 unsigned &step, bool &click_allowed, bool &display)
 {
   const char *optarg_;
@@ -248,15 +244,13 @@ int main(int argc, const char **argv)
 
     int i;
 
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  poseVirtualVS.cpp" << std::endl << std::endl;
 
     std::cout << "  Example of dots tracking in an image sequence and pose "
                  "computation"
               << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -268,8 +262,8 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages,
-                   opt_step, opt_click_allowed, opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_click_allowed,
+                   opt_display) == false) {
       exit(-1);
     }
 
@@ -283,26 +277,20 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
-      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages,
-            opt_step);
+      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << "  Use -p <personal image path> option if you want to "
-          << std::endl
-          << "  use personal images" << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << "  Use -p <personal image path> option if you want to " << std::endl
+                << "  use personal images" << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -376,13 +364,11 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot read " << filename << std::endl;
         std::cerr << "  Check your -i " << ipath << " option, " << std::endl
-                  << "  or VISP_INPUT_IMAGE_PATH environment variable"
-                  << std::endl;
+                  << "  or VISP_INPUT_IMAGE_PATH environment variable" << std::endl;
       } else {
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot read " << filename << std::endl;
-        std::cerr << "  or your -p " << opt_ppath << " option " << std::endl
-                  << std::endl;
+        std::cerr << "  or your -p " << opt_ppath << " option " << std::endl << std::endl;
       }
       exit(-1);
     }
@@ -415,8 +401,7 @@ int main(int argc, const char **argv)
     vpImagePoint cog[4]; // Center of gravity of the dot
     if (opt_display && opt_click_allowed) {
       // dot coordinates (u,v) = (column,row)
-      std::cout << "Click the four white dots on the object corner clockwise"
-                << std::endl;
+      std::cout << "Click the four white dots on the object corner clockwise" << std::endl;
       for (i = 0; i < 4; i++) {
         // tracking is initalized if no other parameters are given
         // to the iniTracking(..) method a right mouse click on the

@@ -228,34 +228,23 @@ public:
   // projection du plan sur plan image (coord en metre)
   void setCameraPosition(const vpHomogeneousMatrix &cMt);
 
-  void setInterpolationType(const vpInterpolationType interplt)
-  {
-    this->interp = interplt;
-  }
+  void setInterpolationType(const vpInterpolationType interplt) { this->interp = interplt; }
 
   void getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam);
   void getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam);
 
-  void getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc,
-                const vpCameraParameters &cam);
-  void getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc,
-                const vpCameraParameters &cam);
+  void getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc, const vpCameraParameters &cam);
+  void getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCameraParameters &cam);
 
-  void getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam,
-                vpMatrix &zBuffer);
-  void getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam,
-                vpMatrix &zBuffer);
+  void getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam, vpMatrix &zBuffer);
+  void getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam, vpMatrix &zBuffer);
 
-  static void getImage(vpImage<unsigned char> &I,
-                       std::list<vpImageSimulator> &list,
-                       const vpCameraParameters &cam);
-  static void getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> &list,
-                       const vpCameraParameters &cam);
+  static void getImage(vpImage<unsigned char> &I, std::list<vpImageSimulator> &list, const vpCameraParameters &cam);
+  static void getImage(vpImage<vpRGBa> &I, std::list<vpImageSimulator> &list, const vpCameraParameters &cam);
 
   std::vector<vpColVector> get3DcornersTextureRectangle();
 
-  friend VISP_EXPORT std::ostream &
-  operator<<(std::ostream &os, const vpImageSimulator & /*ip*/);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImageSimulator & /*ip*/);
 
   /*!
     As it can be time consuming to reset all the image to a default baground
@@ -268,8 +257,7 @@ public:
     \param clean : Enable the reset method.
     \param color : Color of the back ground.
   */
-  void setCleanPreviousImage(const bool &clean,
-                             const vpColor &color = vpColor::white)
+  void setCleanPreviousImage(const bool &clean, const vpColor &color = vpColor::white)
   {
     cleanPrevImage = clean;
     bgColor = color;
@@ -300,23 +288,19 @@ private:
   // and in this case return the corresponding image pixel Ipixelplan
   bool getPixel(const vpImagePoint &iP, unsigned char &Ipixelplan);
   bool getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan);
-  bool getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint &iP,
-                unsigned char &Ipixelplan);
-  bool getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP,
-                vpRGBa &Ipixelplan);
+  bool getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint &iP, unsigned char &Ipixelplan);
+  bool getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP, vpRGBa &Ipixelplan);
   bool getPixelDepth(const vpImagePoint &iP, double &Zpixelplan);
   bool getPixelVisibility(const vpImagePoint &iP, double &Zpixelplan);
 
   // operation 3D de base :
-  void project(const vpColVector &_vin, const vpHomogeneousMatrix &_cMt,
-               vpColVector &_vout);
+  void project(const vpColVector &_vin, const vpHomogeneousMatrix &_cMt, vpColVector &_vout);
   // donne coordonnes homogenes de _v;
   void getHomogCoord(const vpColVector &_v, vpColVector &_vH);
   // donne coordonnes _v en fction coord homogenes _vH;
   void getCoordFromHomog(const vpColVector &_vH, vpColVector &_v);
 
-  void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight,
-              const vpCameraParameters &cam,
+  void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, const vpCameraParameters &cam,
               const std::vector<vpPoint> &point, vpRect &rect);
 };
 

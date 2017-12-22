@@ -65,10 +65,9 @@ class VISP_EXPORT vpMbtXmlGenericParser : public vpXmlParser
 {
 public:
   enum vpParserType {
-    EDGE_PARSER = 1 << 0, /*!< Parser for model-based tracking using moving
-                             edges features. */
-    KLT_PARSER =
-        1 << 1, /*!< Parser for model-based tracking using KLT features. */
+    EDGE_PARSER = 1 << 0,         /*!< Parser for model-based tracking using moving
+                                     edges features. */
+    KLT_PARSER = 1 << 1,          /*!< Parser for model-based tracking using KLT features. */
     DEPTH_NORMAL_PARSER = 1 << 2, /*!< Parser for model-based tracking using
                                      depth normal features. */
     DEPTH_DENSE_PARSER = 1 << 3   /*!< Parser for model-based tracking using
@@ -123,8 +122,7 @@ protected:
   unsigned int m_kltPyramidLevels;
   // Depth normal
   //! Feature estimation method
-  vpMbtFaceDepthNormal::vpFeatureEstimationType
-      m_depthNormalFeatureEstimationMethod;
+  vpMbtFaceDepthNormal::vpFeatureEstimationType m_depthNormalFeatureEstimationMethod;
   //! PCL plane estimation method
   int m_depthNormalPclPlaneEstimationMethod;
   //! PCL RANSAC maximum number of iterations
@@ -229,24 +227,17 @@ public:
   /*!
     Get depth dense sampling step in X.
   */
-  inline unsigned int getDepthDenseSamplingStepX() const
-  {
-    return m_depthDenseSamplingStepX;
-  }
+  inline unsigned int getDepthDenseSamplingStepX() const { return m_depthDenseSamplingStepX; }
 
   /*!
     Get depth dense sampling step in Y.
   */
-  inline unsigned int getDepthDenseSamplingStepY() const
-  {
-    return m_depthDenseSamplingStepY;
-  }
+  inline unsigned int getDepthDenseSamplingStepY() const { return m_depthDenseSamplingStepY; }
 
   /*!
     Get depth normal feature estimation method.
   */
-  vpMbtFaceDepthNormal::vpFeatureEstimationType
-  getDepthNormalFeatureEstimationMethod() const
+  vpMbtFaceDepthNormal::vpFeatureEstimationType getDepthNormalFeatureEstimationMethod() const
   {
     return m_depthNormalFeatureEstimationMethod;
   }
@@ -254,10 +245,7 @@ public:
   /*!
     Get depth normal PCL plane estimation method.
   */
-  inline int getDepthNormalPclPlaneEstimationMethod() const
-  {
-    return m_depthNormalPclPlaneEstimationMethod;
-  }
+  inline int getDepthNormalPclPlaneEstimationMethod() const { return m_depthNormalPclPlaneEstimationMethod; }
 
   /*!
     Get depth normal PCL maximum number of iterations.
@@ -278,18 +266,12 @@ public:
   /*!
     Get depth normal sampling step in X.
   */
-  inline unsigned int getDepthNormalSamplingStepX() const
-  {
-    return m_depthNormalSamplingStepX;
-  }
+  inline unsigned int getDepthNormalSamplingStepX() const { return m_depthNormalSamplingStepX; }
 
   /*!
     Get depth normal sampling step in Y.
   */
-  inline unsigned int getDepthNormalSamplingStepY() const
-  {
-    return m_depthNormalSamplingStepY;
-  }
+  inline unsigned int getDepthNormalSamplingStepY() const { return m_depthNormalSamplingStepY; }
 
   /*!
     Get the far clipping distance.
@@ -329,10 +311,7 @@ public:
   /*!
     Get the number of pyramid levels
   */
-  inline unsigned int getKltPyramidLevels() const
-  {
-    return m_kltPyramidLevels;
-  }
+  inline unsigned int getKltPyramidLevels() const { return m_kltPyramidLevels; }
 
   /*!
     Get the quality of the KLT.
@@ -352,18 +331,12 @@ public:
   /*!
     Get the minimum line length to track a segment when LOD is enabled.
   */
-  inline double getLodMinLineLengthThreshold() const
-  {
-    return m_minLineLengthThreshold;
-  }
+  inline double getLodMinLineLengthThreshold() const { return m_minLineLengthThreshold; }
 
   /*!
     Get the minimum polygon area to track a face when LOD is enabled.
   */
-  inline double getLodMinPolygonAreaThreshold() const
-  {
-    return m_minPolygonAreaThreshold;
-  }
+  inline double getLodMinPolygonAreaThreshold() const { return m_minPolygonAreaThreshold; }
 
   /*!
     Get the near clipping distance.
@@ -393,58 +366,42 @@ public:
 
     \param aappear : New angleAppear
   */
-  inline void setAngleAppear(const double &aappear)
-  {
-    m_angleAppear = aappear;
-  }
+  inline void setAngleAppear(const double &aappear) { m_angleAppear = aappear; }
 
   /*!
     Set the angle to determine if a face disappeared.
 
     \param adisappear : New angleDisappear
   */
-  inline void setAngleDisappear(const double &adisappear)
-  {
-    m_angleDisappear = adisappear;
-  }
+  inline void setAngleDisappear(const double &adisappear) { m_angleDisappear = adisappear; }
 
   /*!
     Set camera parameters.
 
     \param _cam : New camera parameters
   */
-  inline void setCameraParameters(const vpCameraParameters &_cam)
-  {
-    m_cam = _cam;
-  }
+  inline void setCameraParameters(const vpCameraParameters &_cam) { m_cam = _cam; }
 
   /*!
     Set depth dense sampling step in X.
 
     \param stepX : New sampling step
   */
-  inline void setDepthDenseSamplingStepX(const unsigned int stepX)
-  {
-    m_depthDenseSamplingStepX = stepX;
-  }
+  inline void setDepthDenseSamplingStepX(const unsigned int stepX) { m_depthDenseSamplingStepX = stepX; }
 
   /*!
     Set depth dense sampling step in Y.
 
     \param stepY : New sampling step
   */
-  inline void setDepthDenseSamplingStepY(const unsigned int stepY)
-  {
-    m_depthDenseSamplingStepY = stepY;
-  }
+  inline void setDepthDenseSamplingStepY(const unsigned int stepY) { m_depthDenseSamplingStepY = stepY; }
 
   /*!
     Set depth normal feature estimation method.
 
     \param method : New feature estimation method
   */
-  inline void setDepthNormalFeatureEstimationMethod(
-      const vpMbtFaceDepthNormal::vpFeatureEstimationType &method)
+  inline void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method)
   {
     m_depthNormalFeatureEstimationMethod = method;
   }
@@ -474,8 +431,7 @@ public:
 
     \param threshold : New RANSAC threshold
   */
-  inline void
-  setDepthNormalPclPlaneEstimationRansacThreshold(const double threshold)
+  inline void setDepthNormalPclPlaneEstimationRansacThreshold(const double threshold)
   {
     m_depthNormalPclPlaneEstimationRansacThreshold = threshold;
   }
@@ -485,20 +441,14 @@ public:
 
     \param stepX : New sampling step
   */
-  inline void setDepthNormalSamplingStepX(const unsigned int stepX)
-  {
-    m_depthNormalSamplingStepX = stepX;
-  }
+  inline void setDepthNormalSamplingStepX(const unsigned int stepX) { m_depthNormalSamplingStepX = stepX; }
 
   /*!
     Set depth normal sampling step in Y.
 
     \param stepY : New sampling step
   */
-  inline void setDepthNormalSamplingStepY(const unsigned int stepY)
-  {
-    m_depthNormalSamplingStepY = stepY;
-  }
+  inline void setDepthNormalSamplingStepY(const unsigned int stepY) { m_depthNormalSamplingStepY = stepY; }
 
   /*!
     Set moving edge parameters.
@@ -512,10 +462,7 @@ public:
 
     \param fclip : New farClipping
   */
-  inline void setFarClippingDistance(const double &fclip)
-  {
-    m_farClipping = fclip;
-  }
+  inline void setFarClippingDistance(const double &fclip) { m_farClipping = fclip; }
 
   /*!
     Set the size of a block.
@@ -536,20 +483,14 @@ public:
 
     \param mb = new maskBorder
   */
-  inline void setKltMaskBorder(const unsigned int &mb)
-  {
-    m_kltMaskBorder = mb;
-  }
+  inline void setKltMaskBorder(const unsigned int &mb) { m_kltMaskBorder = mb; }
 
   /*!
     Set the maximum number of features for the KLT.
 
     \param mF : New maxFeatures
   */
-  inline void setKltMaxFeatures(const unsigned int &mF)
-  {
-    m_kltMaxFeatures = mF;
-  }
+  inline void setKltMaxFeatures(const unsigned int &mF) { m_kltMaxFeatures = mF; }
 
   /*!
     Set the minimum distance between KLT points.
@@ -563,10 +504,7 @@ public:
 
     \param pL : New pyramidLevels
   */
-  inline void setKltPyramidLevels(const unsigned int &pL)
-  {
-    m_kltPyramidLevels = pL;
-  }
+  inline void setKltPyramidLevels(const unsigned int &pL) { m_kltPyramidLevels = pL; }
 
   /*!
     Set the quality of the KLT.
@@ -587,10 +525,7 @@ public:
 
     \param nclip : New nearClipping
   */
-  inline void setNearClippingDistance(const double &nclip)
-  {
-    m_nearClipping = nclip;
-  }
+  inline void setNearClippingDistance(const double &nclip) { m_nearClipping = nclip; }
 
   void writeMainClass(xmlNodePtr node);
   //@}

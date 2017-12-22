@@ -12,11 +12,7 @@
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD)
 
 // Shared vars
-typedef enum {
-  capture_waiting,
-  capture_started,
-  capture_stopped
-} t_CaptureState;
+typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
 t_CaptureState s_capture_state = capture_waiting;
 vpImage<unsigned char> s_frame;
 vpMutex s_mutex_capture;
@@ -161,16 +157,11 @@ int main(int argc, const char *argv[])
 int main()
 {
 #ifndef VISP_HAVE_V4L2
-  std::cout << "You should enable V4L2 to make this example working..."
-            << std::endl;
-#elif !defined(_WIN32) &&                                                    \
-    (defined(__unix__) || defined(__unix) ||                                 \
-     (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..."
-            << std::endl;
+  std::cout << "You should enable V4L2 to make this example working..." << std::endl;
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
 #else
-  std::cout << "Multi-threading seems not supported on this platform"
-            << std::endl;
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
 }
 

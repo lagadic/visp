@@ -87,8 +87,7 @@ public:
     \param a : Additional value.
 
   */
-  inline vpRGBa(const unsigned char &r, const unsigned char &g,
-                const unsigned char &b, const unsigned char &a = 0)
+  inline vpRGBa(const unsigned char &r, const unsigned char &g, const unsigned char &b, const unsigned char &a = 0)
     : R(r), G(g), B(b), A(a)
   {
   }
@@ -117,11 +116,7 @@ public:
     A=v[3]
 
   */
-  inline vpRGBa(const vpColVector &v)
-    : R(0), G(0), B(0), A(vpRGBa::alpha_default)
-  {
-    *this = v;
-  }
+  inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default) { *this = v; }
 
   // We cannot add here the following destructor without changing the
   // hypothesis that the size of this class is 4. With the destructor it
@@ -147,8 +142,7 @@ public:
   bool operator<(const vpRGBa &v) const;
   bool operator>(const vpRGBa &v) const;
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpRGBa &rgba);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba);
 
 public:
   unsigned char R; //!< Red component.

@@ -149,9 +149,10 @@ int main()
   // Compute the interaction matrix L_s for the current point feature
   vpMatrix L = s.interaction();
 
-  // Compute the error vector (s-s*) for the point feature with s* considered
-as 0. vpColVector s_star(1); //the dimension is 1. s_star(1) = 0; //The value
-of s* is 0. s.error(s_star);
+  // Compute the error vector (s-s*) for the point feature with s* considered as 0.
+  vpColVector s_star(1); // The dimension is 1.
+  s_star(1) = 0; // The value of s* is 0.
+  s.error(s_star);
 }
   \endcode
 */
@@ -179,18 +180,14 @@ public:
     section Set coordinates
   */
 
-  void buildFrom(const double x, const double y, const double Z,
-                 const double LogZoverZstar);
+  void buildFrom(const double x, const double y, const double Z, const double LogZoverZstar);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
   vpFeatureDepth *duplicate() const;
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
   double get_x() const;
 
@@ -212,8 +209,7 @@ public:
 
   void set_LogZoverZstar(const double LogZoverZstar);
 
-  void set_xyZLogZoverZstar(const double x, const double y, const double Z,
-                            const double logZZs);
+  void set_xyZLogZoverZstar(const double x, const double y, const double Z, const double logZZs);
 };
 
 #endif

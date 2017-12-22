@@ -9,9 +9,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 
-template <typename Type>
-bool test(const std::string &display, vpImage<Type> &I, unsigned int scale,
-          bool click)
+template <typename Type> bool test(const std::string &display, vpImage<Type> &I, unsigned int scale, bool click)
 {
   bool success = true;
   unsigned int radius(I.getHeight() / 4);
@@ -51,16 +49,14 @@ bool test(const std::string &display, vpImage<Type> &I, unsigned int scale,
 #endif
   }
   std::cout << "Start test for " << display << " renderer..." << std::endl;
-  std::cout << "  Screen resolution: " << d->getScreenWidth() << " "
-            << d->getScreenHeight() << std::endl;
+  std::cout << "  Screen resolution: " << d->getScreenWidth() << " " << d->getScreenHeight() << std::endl;
   d->setDownScalingFactor(scale);
   d->init(I);
   vpDisplay::display(I);
   vpDisplay::flush(I);
 
   vpImage<Type> crop;
-  vpImageTools::crop(I, vpImagePoint(0, 245), (unsigned int)roi.getHeight(),
-                     (unsigned int)roi.getWidth(), crop);
+  vpImageTools::crop(I, vpImagePoint(0, 245), (unsigned int)roi.getHeight(), (unsigned int)roi.getWidth(), crop);
   I.insert(crop, roi.getTopLeft());
   vpDisplay::displayROI(I, roi);
   vpDisplay::flush(I);
@@ -79,8 +75,7 @@ bool test(const std::string &display, vpImage<Type> &I, unsigned int scale,
 
     if (Isampled != Irendered) {
       success = false;
-      std::cout << "  -- Test width scale= " << scale << " type= " << itype
-                << ": failed" << std::endl;
+      std::cout << "  -- Test width scale= " << scale << " type= " << itype << ": failed" << std::endl;
 
       std::stringstream ss;
       ss << "Isampled-" << itype << "-scale-" << scale;
@@ -116,8 +111,7 @@ bool test(const std::string &display, vpImage<Type> &I, unsigned int scale,
 
       vpImageIo::write(Idiff, ss.str());
     } else {
-      std::cout << "  ++ Test width scale= " << scale << " type= " << itype
-                << ": succeed" << std::endl;
+      std::cout << "  ++ Test width scale= " << scale << " type= " << itype << ": succeed" << std::endl;
     }
   } else {
     itype = "rgba";
@@ -133,8 +127,7 @@ bool test(const std::string &display, vpImage<Type> &I, unsigned int scale,
     vpImageConvert::convert(Isampled, IsampledCopy);
     if (IsampledCopy != Irendered) {
       success = false;
-      std::cout << "  -- Test width scale= " << scale << " type= " << itype
-                << ": failed" << std::endl;
+      std::cout << "  -- Test width scale= " << scale << " type= " << itype << ": failed" << std::endl;
 
       std::stringstream ss;
       ss << "Isampled-" << itype << "-scale-" << scale;
@@ -170,51 +163,33 @@ bool test(const std::string &display, vpImage<Type> &I, unsigned int scale,
       vpImageIo::write(Idiff, ss.str());
 
     } else {
-      std::cout << "  ++ Test width scale= " << scale << " type= " << itype
-                << ": succeed" << std::endl;
+      std::cout << "  ++ Test width scale= " << scale << " type= " << itype << ": succeed" << std::endl;
     }
   }
 
-  vpDisplay::displayRectangle(I, center - v_offset - h_offset, radius, radius,
-                              vpColor::blue, false, thickness);
-  vpDisplay::displayRectangle(I, center, center + v_offset + h_offset,
-                              vpColor::blue, false, thickness);
-  vpDisplay::displayRectangle(
-      I, vpRect(center - v_offset - h_offset, center + v_offset + h_offset),
-      vpColor::blue, false, thickness);
-  vpDisplay::displayRectangle(I, center - v_offset * 3. / 2 + h_offset,
-                              radius / 2, radius / 2, vpColor::green, true);
-  vpDisplay::displayCircle(I, center, radius, vpColor::blue, false,
-                           thickness);
-  vpDisplay::displayArrow(I, center, center - v_offset / 4 - h_offset,
-                          vpColor::red, 10, 6, thickness);
-  vpDisplay::displayCross(I, center - radius / 2., radius, vpColor::green,
-                          thickness);
-  vpDisplay::displayDotLine(I, center - v_offset - h_offset, center,
-                            vpColor::cyan, thickness);
-  vpDisplay::displayLine(I, center + v_offset - h_offset,
-                         center - v_offset + h_offset, vpColor::cyan,
-                         thickness);
+  vpDisplay::displayRectangle(I, center - v_offset - h_offset, radius, radius, vpColor::blue, false, thickness);
+  vpDisplay::displayRectangle(I, center, center + v_offset + h_offset, vpColor::blue, false, thickness);
+  vpDisplay::displayRectangle(I, vpRect(center - v_offset - h_offset, center + v_offset + h_offset), vpColor::blue,
+                              false, thickness);
+  vpDisplay::displayRectangle(I, center - v_offset * 3. / 2 + h_offset, radius / 2, radius / 2, vpColor::green, true);
+  vpDisplay::displayCircle(I, center, radius, vpColor::blue, false, thickness);
+  vpDisplay::displayArrow(I, center, center - v_offset / 4 - h_offset, vpColor::red, 10, 6, thickness);
+  vpDisplay::displayCross(I, center - radius / 2., radius, vpColor::green, thickness);
+  vpDisplay::displayDotLine(I, center - v_offset - h_offset, center, vpColor::cyan, thickness);
+  vpDisplay::displayLine(I, center + v_offset - h_offset, center - v_offset + h_offset, vpColor::cyan, thickness);
   int nbpoints = (int)(radius * sqrt(2.) / 8 / scale);
   for (int i = 0; i < nbpoints; i++) {
-    vpDisplay::displayPoint(I,
-                            center - h_offset / 2. +
-                                vpImagePoint(-i * radius_ / (nbpoints * 2),
-                                             i * radius_ / (nbpoints * 2)),
-                            vpColor::cyan);
     vpDisplay::displayPoint(
-        I,
-        center - h_offset +
-            vpImagePoint(-i * radius_ / nbpoints, i * radius_ / nbpoints),
-        vpColor::cyan, thickness);
+        I, center - h_offset / 2. + vpImagePoint(-i * radius_ / (nbpoints * 2), i * radius_ / (nbpoints * 2)),
+        vpColor::cyan);
+    vpDisplay::displayPoint(I, center - h_offset + vpImagePoint(-i * radius_ / nbpoints, i * radius_ / nbpoints),
+                            vpColor::cyan, thickness);
   }
 
   if (click)
-    vpDisplay::displayText(I, 10 * scale_, 10 * scale_, "A click to continue",
-                           vpColor::red);
+    vpDisplay::displayText(I, 10 * scale_, 10 * scale_, "A click to continue", vpColor::red);
   else
-    vpDisplay::displayText(I, 10 * scale_, 10 * scale_, "This is an image",
-                           vpColor::red);
+    vpDisplay::displayText(I, 10 * scale_, 10 * scale_, "This is an image", vpColor::red);
 
   vpDisplay::flush(I);
 
@@ -263,11 +238,8 @@ int main(int argc, const char *argv[])
       opt_display = false;
     else if (std::string(argv[i]) == "-i")
       opt_ipath = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--help" ||
-             std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0]
-                << " [-i <image path>] [-c] [-d] [--help]\n"
-                << std::endl;
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0] << " [-i <image path>] [-c] [-d] [--help]\n" << std::endl;
       std::cout << "\nOptions: " << std::endl;
       std::cout << "  -i <input image path> : set image input path.\n"
                 << "       From this path read \"Klimt/Klimt.pgm\" image.\n"
@@ -339,8 +311,7 @@ int main(int argc, const char *argv[])
     if (nbfailure == 0)
       std::cout << "Test succeed" << std::endl;
     else
-      std::cout << "Test failed with " << nbfailure << " failures"
-                << std::endl;
+      std::cout << "Test failed with " << nbfailure << " failures" << std::endl;
   }
 
   return 0;

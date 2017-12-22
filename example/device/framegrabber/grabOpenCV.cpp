@@ -84,11 +84,9 @@ int main(int argc, char **argv)
 
     std::cout << "Image size: "
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-              << (int)cap.get(cv::CAP_PROP_FRAME_WIDTH) << " "
-              << (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
+              << (int)cap.get(cv::CAP_PROP_FRAME_WIDTH) << " " << (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
 #else
-              << (int)cap.get(CV_CAP_PROP_FRAME_WIDTH) << " "
-              << (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+              << (int)cap.get(CV_CAP_PROP_FRAME_WIDTH) << " " << (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
 #endif
 
     // vpImage<vpRGBa> I; // for color images

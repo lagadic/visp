@@ -111,13 +111,12 @@ int main(int argc, char* argv[])
   // Define the name of the matrix to load
   std::string name = "eMc";
 
-  if (p.parse(eMc,"homogeneous_matrixes.xml", name) !=
-vpXmlParserHomogeneousMatrix::SEQUENCE_OK) { std::cout << "Cannot found the
-Homogeneous matrix named " << name << "." << std::endl;
+  if (p.parse(eMc,"homogeneous_matrixes.xml", name) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
+    std::cout << "Cannot found the Homogeneous matrix named " << name << "." << std::endl;
   }
   else
-    std::cout << "Homogeneous matrix " << name <<": " << std::endl << eMc <<
-std::endl; #endif
+    std::cout << "Homogeneous matrix " << name <<": " << std::endl << eMc << std::endl;
+#endif
 
   return 0;
 }
@@ -152,9 +151,8 @@ int main(int argc, char* argv[])
   char filename[FILENAME_MAX];
   sprintf(filename, "%s", "homogeneous_matrixes.xml");
 
-  if (p.save(M, filename, name_M) !=
-vpXmlParserHomogeneousMatrix::SEQUENCE_OK) { std::cout << "Cannot save the
-Homogeneous matrix" << std::endl;
+  if (p.save(M, filename, name_M) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
+    std::cout << "Cannot save the Homogeneous matrix" << std::endl;
   }
 
   vpXmlParser::cleanup();
@@ -200,18 +198,12 @@ public:
   vpHomogeneousMatrix getHomogeneousMatrix() const { return this->m_M; }
   std::string getHomogeneousMatrixName() const { return this->m_name; }
 
-  vpXmlParserHomogeneousMatrix &
-  operator=(const vpXmlParserHomogeneousMatrix &twinparser);
-  int parse(vpHomogeneousMatrix &M, const std::string &filename,
-            const std::string &name);
+  vpXmlParserHomogeneousMatrix &operator=(const vpXmlParserHomogeneousMatrix &twinparser);
+  int parse(vpHomogeneousMatrix &M, const std::string &filename, const std::string &name);
 
-  int save(const vpHomogeneousMatrix &M, const std::string &filename,
-           const std::string &name);
+  int save(const vpHomogeneousMatrix &M, const std::string &filename, const std::string &name);
 
-  void setHomogeneousMatrixName(const std::string &name)
-  {
-    this->m_name = name;
-  }
+  void setHomogeneousMatrixName(const std::string &name) { this->m_name = name; }
 
 private:
   int read(xmlDocPtr doc, xmlNodePtr node, const std::string &name);
@@ -220,15 +212,12 @@ private:
 
   int read_matrix(xmlDocPtr doc, xmlNodePtr node, const std::string &name);
 
-  vpXmlCodeSequenceType read_values(xmlDocPtr doc, xmlNodePtr node,
-                                    vpHomogeneousMatrix &M);
+  vpXmlCodeSequenceType read_values(xmlDocPtr doc, xmlNodePtr node, vpHomogeneousMatrix &M);
 
   static vpXmlCodeSequenceType str2xmlcode(char *str, vpXmlCodeType &res);
-  void myXmlReadIntChild(xmlDocPtr doc, xmlNodePtr node, int &res,
-                         vpXmlCodeSequenceType &code_error);
+  void myXmlReadIntChild(xmlDocPtr doc, xmlNodePtr node, int &res, vpXmlCodeSequenceType &code_error);
 
-  void myXmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node, double &res,
-                            vpXmlCodeSequenceType &code_error);
+  void myXmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node, double &res, vpXmlCodeSequenceType &code_error);
 
   void myXmlReadCharChild(xmlDocPtr doc, xmlNodePtr node, char **res);
   int write(xmlNodePtr node, const std::string &name);

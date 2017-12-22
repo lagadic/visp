@@ -7,10 +7,8 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/vision/vpPose.h>
 
-void computePose(std::vector<vpPoint> &point,
-                 const std::vector<vpImagePoint> &ip,
-                 const vpCameraParameters &cam, bool init,
-                 vpHomogeneousMatrix &cMo)
+void computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &ip, const vpCameraParameters &cam,
+                 bool init, vpHomogeneousMatrix &cMo)
 {
   vpPose pose;
   double x = 0, y = 0;
@@ -59,9 +57,8 @@ int main()
     point.push_back(vpPoint(-0.06, -0.06,
                             0)); // QCcode point 0 3D coordinates in plane Z=0
     point.push_back(vpPoint(0.06, -0.06,
-                            0)); // QCcode point 1 3D coordinates in plane Z=0
-    point.push_back(
-        vpPoint(0.06, 0.06, 0)); // QCcode point 2 3D coordinates in plane Z=0
+                            0));             // QCcode point 1 3D coordinates in plane Z=0
+    point.push_back(vpPoint(0.06, 0.06, 0)); // QCcode point 2 3D coordinates in plane Z=0
     point.push_back(vpPoint(-0.06, 0.06,
                             0)); // QCcode point 3 3D coordinates in plane Z=0
 
@@ -78,35 +75,28 @@ int main()
 
       std::ostringstream legend;
       legend << detector.getNbObjects() << " bar code detected";
-      vpDisplay::displayText(I, (int)I.getHeight() - 30, 10, legend.str(),
-                             vpColor::red);
+      vpDisplay::displayText(I, (int)I.getHeight() - 30, 10, legend.str(), vpColor::red);
 
       if (status) { // true if at least one QRcode is detected
         for (size_t i = 0; i < detector.getNbObjects(); i++) {
 
-          std::vector<vpImagePoint> p = detector.getPolygon(
-              i); // get the four corners location in the image
+          std::vector<vpImagePoint> p = detector.getPolygon(i); // get the four corners location in the image
 
           for (size_t j = 0; j < p.size(); j++) {
             vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
             std::ostringstream number;
             number << j;
-            vpDisplay::displayText(I, p[j] + vpImagePoint(15, 5),
-                                   number.str(), vpColor::blue);
+            vpDisplay::displayText(I, p[j] + vpImagePoint(15, 5), number.str(), vpColor::blue);
           }
 
           computePose(point, p, cam, init,
                       cMo); // resulting pose is available in cMo var
-          std::cout << "Pose translation (meter): "
-                    << cMo.getTranslationVector().t() << std::endl
-                    << "Pose rotation (quaternion): "
-                    << vpQuaternionVector(cMo.getRotationMatrix()).t()
-                    << std::endl;
+          std::cout << "Pose translation (meter): " << cMo.getTranslationVector().t() << std::endl
+                    << "Pose rotation (quaternion): " << vpQuaternionVector(cMo.getRotationMatrix()).t() << std::endl;
           vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
         }
       }
-      vpDisplay::displayText(I, (int)I.getHeight() - 15, 10,
-                             "A click to quit...", vpColor::red);
+      vpDisplay::displayText(I, (int)I.getHeight() - 15, 10, "A click to quit...", vpColor::red);
       vpDisplay::flush(I);
 
       if (vpDisplay::getClick(I, false))

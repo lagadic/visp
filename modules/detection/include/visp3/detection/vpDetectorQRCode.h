@@ -65,8 +65,10 @@ corners using getPolygon(), the encoded message using getMessage(), the
 bounding box using getBBox() and the center of gravity using getCog().
 
   The following sample code shows how to use this class to detect QR codes in
-an image. \code #include <visp3/detection/vpDetectorQRCode.h> #include
-<visp3/io/vpImageIo.h>
+an image.
+\code
+#include <visp3/detection/vpDetectorQRCode.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -83,8 +85,7 @@ int main()
       std::vector<vpImagePoint> p = detector.getPolygon(i);
       for(size_t j=0; j < p.size(); j++)
         std::cout << "  Point " << j << ": " << p[j] << std::endl;
-      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" <<
-std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
     }
   }
 #endif

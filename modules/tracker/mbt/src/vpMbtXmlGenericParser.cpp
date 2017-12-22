@@ -48,25 +48,19 @@ vpMbtXmlGenericParser::vpMbtXmlGenericParser(const vpParserType &type)
     //<camera>
     m_cam(),
     //<face>
-    m_angleAppear(70), m_angleDisappear(80), m_hasNearClipping(false),
-    m_nearClipping(false), m_hasFarClipping(false), m_farClipping(false),
-    m_fovClipping(false),
+    m_angleAppear(70), m_angleDisappear(80), m_hasNearClipping(false), m_nearClipping(false), m_hasFarClipping(false),
+    m_farClipping(false), m_fovClipping(false),
     //<lod>
-    m_useLod(false), m_minLineLengthThreshold(50.0),
-    m_minPolygonAreaThreshold(2500.0),
+    m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
     //<ecm>
     m_ecm(),
     //<klt>
-    m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0),
-    m_kltQualityValue(0.), m_kltMinDist(0.), m_kltHarrisParam(0.),
-    m_kltBlockSize(0), m_kltPyramidLevels(0),
+    m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
+    m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
     //<depth_normal>
-    m_depthNormalFeatureEstimationMethod(
-        vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
-    m_depthNormalPclPlaneEstimationMethod(2),
-    m_depthNormalPclPlaneEstimationRansacMaxIter(200),
-    m_depthNormalPclPlaneEstimationRansacThreshold(0.001),
-    m_depthNormalSamplingStepX(2), m_depthNormalSamplingStepY(2),
+    m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
+    m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
+    m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2), m_depthNormalSamplingStepY(2),
     //<depth_dense>
     m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2)
 {
@@ -150,10 +144,7 @@ void vpMbtXmlGenericParser::init()
 
   \param filename : File to parse.
 */
-void vpMbtXmlGenericParser::parse(const std::string &filename)
-{
-  vpXmlParser::parse(filename);
-}
+void vpMbtXmlGenericParser::parse(const std::string &filename) { vpXmlParser::parse(filename); }
 
 /*!
   Write info to file.
@@ -182,11 +173,9 @@ void vpMbtXmlGenericParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool depth_normal_node = false;
   bool depth_dense_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case camera:
@@ -245,91 +234,60 @@ void vpMbtXmlGenericParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!camera_node) {
-    std::cout << "camera : u0 : " << m_cam.get_u0() << " (default)"
-              << std::endl;
-    std::cout << "camera : v0 : " << m_cam.get_v0() << " (default)"
-              << std::endl;
-    std::cout << "camera : px : " << m_cam.get_px() << " (default)"
-              << std::endl;
-    std::cout << "camera : py : " << m_cam.get_py() << " (default)"
-              << std::endl;
+    std::cout << "camera : u0 : " << m_cam.get_u0() << " (default)" << std::endl;
+    std::cout << "camera : v0 : " << m_cam.get_v0() << " (default)" << std::endl;
+    std::cout << "camera : px : " << m_cam.get_px() << " (default)" << std::endl;
+    std::cout << "camera : py : " << m_cam.get_py() << " (default)" << std::endl;
   }
 
   if (!face_node) {
-    std::cout << "face : Angle Appear : " << m_angleAppear << " (default)"
-              << std::endl;
-    std::cout << "face : Angle Disappear : " << m_angleDisappear
-              << " (default)" << std::endl;
+    std::cout << "face : Angle Appear : " << m_angleAppear << " (default)" << std::endl;
+    std::cout << "face : Angle Disappear : " << m_angleDisappear << " (default)" << std::endl;
   }
 
   if (!lod_node) {
     std::cout << "lod : use lod : " << m_useLod << " (default)" << std::endl;
-    std::cout << "lod : min line length threshold : "
-              << m_minLineLengthThreshold << " (default)" << std::endl;
-    std::cout << "lod : min polygon area threshold : "
-              << m_minPolygonAreaThreshold << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << m_minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << m_minPolygonAreaThreshold << " (default)" << std::endl;
   }
 
   if (!ecm_node && (m_parserType & EDGE_PARSER)) {
-    std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)"
-              << std::endl;
-    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber()
-              << " (default)" << std::endl;
-    std::cout << "ecm : range : tracking : " << m_ecm.getRange()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : threshold : " << m_ecm.getThreshold()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu1 : " << m_ecm.getMu1() << " (default)"
-              << std::endl;
-    std::cout << "ecm : contrast : mu2 : " << m_ecm.getMu2() << " (default)"
-              << std::endl;
-    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep()
-              << " (default)" << std::endl;
+    std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+    std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : threshold : " << m_ecm.getThreshold() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu1 : " << m_ecm.getMu1() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu2 : " << m_ecm.getMu2() << " (default)" << std::endl;
+    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
   }
 
   if (!klt_node && (m_parserType & KLT_PARSER)) {
-    std::cout << "klt : Mask Border : " << m_kltMaskBorder << " (default)"
-              << std::endl;
-    std::cout << "klt : Max Features : " << m_kltMaxFeatures << " (default)"
-              << std::endl;
-    std::cout << "klt : Windows Size : " << m_kltWinSize << " (default)"
-              << std::endl;
-    std::cout << "klt : Quality : " << m_kltQualityValue << " (default)"
-              << std::endl;
-    std::cout << "klt : Min Distance : " << m_kltMinDist << " (default)"
-              << std::endl;
-    std::cout << "klt : Harris Parameter : " << m_kltHarrisParam
-              << " (default)" << std::endl;
-    std::cout << "klt : Block Size : " << m_kltBlockSize << " (default)"
-              << std::endl;
-    std::cout << "klt : Pyramid Levels : " << m_kltPyramidLevels
-              << " (default)" << std::endl;
+    std::cout << "klt : Mask Border : " << m_kltMaskBorder << " (default)" << std::endl;
+    std::cout << "klt : Max Features : " << m_kltMaxFeatures << " (default)" << std::endl;
+    std::cout << "klt : Windows Size : " << m_kltWinSize << " (default)" << std::endl;
+    std::cout << "klt : Quality : " << m_kltQualityValue << " (default)" << std::endl;
+    std::cout << "klt : Min Distance : " << m_kltMinDist << " (default)" << std::endl;
+    std::cout << "klt : Harris Parameter : " << m_kltHarrisParam << " (default)" << std::endl;
+    std::cout << "klt : Block Size : " << m_kltBlockSize << " (default)" << std::endl;
+    std::cout << "klt : Pyramid Levels : " << m_kltPyramidLevels << " (default)" << std::endl;
   }
 
   if (!depth_normal_node && (m_parserType & DEPTH_NORMAL_PARSER)) {
-    std::cout << "depth normal : feature_estimation_method : "
-              << m_depthNormalFeatureEstimationMethod << " (default)"
+    std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << " (default)"
               << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : method : "
-              << m_depthNormalPclPlaneEstimationMethod << " (default)"
-              << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : max_iter : "
-              << m_depthNormalPclPlaneEstimationRansacMaxIter << " (default)"
-              << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-              << m_depthNormalPclPlaneEstimationRansacThreshold
+    std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
               << " (default)" << std::endl;
-    std::cout << "depth normal : sampling_step : step_X "
-              << m_depthNormalSamplingStepX << " (default)" << std::endl;
-    std::cout << "depth normal : sampling_step : step_Y "
-              << m_depthNormalSamplingStepY << " (default)" << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
+              << " (default)" << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
+              << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
+    std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)" << std::endl;
+    std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)" << std::endl;
   }
 
   if (!depth_dense_node && (m_parserType & DEPTH_DENSE_PARSER)) {
-    std::cout << "depth dense : sampling_step : step_X "
-              << m_depthDenseSamplingStepX << " (default)" << std::endl;
-    std::cout << "depth dense : sampling_step : step_Y "
-              << m_depthDenseSamplingStepY << " (default)" << std::endl;
+    std::cout << "depth dense : sampling_step : step_X " << m_depthDenseSamplingStepX << " (default)" << std::endl;
+    std::cout << "depth dense : sampling_step : step_Y " << m_depthDenseSamplingStepY << " (default)" << std::endl;
   }
 }
 
@@ -354,11 +312,9 @@ void vpMbtXmlGenericParser::read_camera(xmlDocPtr doc, xmlNodePtr node)
   double d_px = m_cam.get_px();
   double d_py = m_cam.get_py();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case u0:
@@ -391,26 +347,22 @@ void vpMbtXmlGenericParser::read_camera(xmlDocPtr doc, xmlNodePtr node)
   m_cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0);
 
   if (!u0_node)
-    std::cout << "camera : u0 : " << m_cam.get_u0() << " (default)"
-              << std::endl;
+    std::cout << "camera : u0 : " << m_cam.get_u0() << " (default)" << std::endl;
   else
     std::cout << "camera : u0 : " << m_cam.get_u0() << std::endl;
 
   if (!v0_node)
-    std::cout << "camera : v0 : " << m_cam.get_v0() << " (default)"
-              << std::endl;
+    std::cout << "camera : v0 : " << m_cam.get_v0() << " (default)" << std::endl;
   else
     std::cout << "camera : v0 : " << m_cam.get_v0() << std::endl;
 
   if (!px_node)
-    std::cout << "camera : px : " << m_cam.get_px() << " (default)"
-              << std::endl;
+    std::cout << "camera : px : " << m_cam.get_px() << " (default)" << std::endl;
   else
     std::cout << "camera : px : " << m_cam.get_px() << std::endl;
 
   if (!py_node)
-    std::cout << "camera : py : " << m_cam.get_py() << " (default)"
-              << std::endl;
+    std::cout << "camera : py : " << m_cam.get_py() << " (default)" << std::endl;
   else
     std::cout << "camera : py : " << m_cam.get_py() << std::endl;
 }
@@ -429,17 +381,14 @@ void vpMbtXmlGenericParser::read_depth_normal(xmlDocPtr doc, xmlNodePtr node)
   bool PCL_plane_estimation_node = false;
   bool sampling_step_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case feature_estimation_method:
           m_depthNormalFeatureEstimationMethod =
-              (vpMbtFaceDepthNormal::vpFeatureEstimationType)xmlReadIntChild(
-                  doc, dataNode);
+              (vpMbtFaceDepthNormal::vpFeatureEstimationType)xmlReadIntChild(doc, dataNode);
           feature_estimation_method_node = true;
           break;
 
@@ -461,30 +410,23 @@ void vpMbtXmlGenericParser::read_depth_normal(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!feature_estimation_method_node)
-    std::cout << "depth normal : feature_estimation_method : "
-              << m_depthNormalFeatureEstimationMethod << " (default)"
+    std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << " (default)"
               << std::endl;
   else
-    std::cout << "depth normal : feature_estimation_method : "
-              << m_depthNormalFeatureEstimationMethod << std::endl;
+    std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << std::endl;
 
   if (!PCL_plane_estimation_node) {
-    std::cout << "depth normal : PCL_plane_estimation : method : "
-              << m_depthNormalPclPlaneEstimationMethod << " (default)"
-              << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : max_iter : "
-              << m_depthNormalPclPlaneEstimationRansacMaxIter << " (default)"
-              << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-              << m_depthNormalPclPlaneEstimationRansacThreshold
+    std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
               << " (default)" << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
+              << " (default)" << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
+              << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
   }
 
   if (!sampling_step_node) {
-    std::cout << "depth normal : sampling_step : step_X "
-              << m_depthNormalSamplingStepX << " (default)" << std::endl;
-    std::cout << "depth normal : sampling_step : step_Y "
-              << m_depthNormalSamplingStepY << " (default)" << std::endl;
+    std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)" << std::endl;
+    std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)" << std::endl;
   }
 }
 
@@ -496,35 +438,29 @@ void vpMbtXmlGenericParser::read_depth_normal(xmlDocPtr doc, xmlNodePtr node)
   \param doc : Pointer to the document.
   \param node : Pointer to the node information.
 */
-void vpMbtXmlGenericParser::read_depth_normal_PCL(xmlDocPtr doc,
-                                                  xmlNodePtr node)
+void vpMbtXmlGenericParser::read_depth_normal_PCL(xmlDocPtr doc, xmlNodePtr node)
 {
   bool PCL_plane_estimation_method_node = false;
   bool PCL_plane_estimation_ransac_max_iter_node = false;
   bool PCL_plane_estimation_ransac_threshold_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case PCL_plane_estimation_method:
-          m_depthNormalPclPlaneEstimationMethod =
-              xmlReadIntChild(doc, dataNode);
+          m_depthNormalPclPlaneEstimationMethod = xmlReadIntChild(doc, dataNode);
           PCL_plane_estimation_method_node = true;
           break;
 
         case PCL_plane_estimation_ransac_max_iter:
-          m_depthNormalPclPlaneEstimationRansacMaxIter =
-              xmlReadIntChild(doc, dataNode);
+          m_depthNormalPclPlaneEstimationRansacMaxIter = xmlReadIntChild(doc, dataNode);
           PCL_plane_estimation_ransac_max_iter_node = true;
           break;
 
         case PCL_plane_estimation_ransac_threshold:
-          m_depthNormalPclPlaneEstimationRansacThreshold =
-              xmlReadDoubleChild(doc, dataNode);
+          m_depthNormalPclPlaneEstimationRansacThreshold = xmlReadDoubleChild(doc, dataNode);
           PCL_plane_estimation_ransac_threshold_node = true;
           break;
 
@@ -536,25 +472,22 @@ void vpMbtXmlGenericParser::read_depth_normal_PCL(xmlDocPtr doc,
   }
 
   if (!PCL_plane_estimation_method_node)
-    std::cout << "depth normal : PCL_plane_estimation : method : "
-              << m_depthNormalPclPlaneEstimationMethod << " (default)"
-              << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
+              << " (default)" << std::endl;
   else
-    std::cout << "depth normal : PCL_plane_estimation : method : "
-              << m_depthNormalPclPlaneEstimationMethod << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
+              << std::endl;
 
   if (!PCL_plane_estimation_ransac_max_iter_node)
-    std::cout << "depth normal : PCL_plane_estimation : max_iter : "
-              << m_depthNormalPclPlaneEstimationRansacMaxIter << " (default)"
-              << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
+              << " (default)" << std::endl;
   else
-    std::cout << "depth normal : PCL_plane_estimation : max_iter : "
-              << m_depthNormalPclPlaneEstimationRansacMaxIter << std::endl;
+    std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
+              << std::endl;
 
   if (!PCL_plane_estimation_ransac_threshold_node)
     std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-              << m_depthNormalPclPlaneEstimationRansacThreshold
-              << " (default)" << std::endl;
+              << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
   else
     std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
               << m_depthNormalPclPlaneEstimationRansacThreshold << std::endl;
@@ -568,17 +501,14 @@ void vpMbtXmlGenericParser::read_depth_normal_PCL(xmlDocPtr doc,
   \param doc : Pointer to the document.
   \param node : Pointer to the node information.
 */
-void vpMbtXmlGenericParser::read_depth_normal_sampling_step(xmlDocPtr doc,
-                                                            xmlNodePtr node)
+void vpMbtXmlGenericParser::read_depth_normal_sampling_step(xmlDocPtr doc, xmlNodePtr node)
 {
   bool sampling_step_X_node = false;
   bool sampling_step_Y_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case depth_sampling_step_X:
@@ -599,18 +529,14 @@ void vpMbtXmlGenericParser::read_depth_normal_sampling_step(xmlDocPtr doc,
   }
 
   if (!sampling_step_X_node)
-    std::cout << "depth normal : sampling_step : step_X : "
-              << m_depthNormalSamplingStepX << " (default)" << std::endl;
+    std::cout << "depth normal : sampling_step : step_X : " << m_depthNormalSamplingStepX << " (default)" << std::endl;
   else
-    std::cout << "depth normal : sampling_step : step_X : "
-              << m_depthNormalSamplingStepX << std::endl;
+    std::cout << "depth normal : sampling_step : step_X : " << m_depthNormalSamplingStepX << std::endl;
 
   if (!sampling_step_Y_node)
-    std::cout << "depth normal : sampling_step : step_Y : "
-              << m_depthNormalSamplingStepY << " (default)" << std::endl;
+    std::cout << "depth normal : sampling_step : step_Y : " << m_depthNormalSamplingStepY << " (default)" << std::endl;
   else
-    std::cout << "depth normal : sampling_step : step_Y : "
-              << m_depthNormalSamplingStepY << std::endl;
+    std::cout << "depth normal : sampling_step : step_Y : " << m_depthNormalSamplingStepY << std::endl;
 }
 
 /*!
@@ -625,11 +551,9 @@ void vpMbtXmlGenericParser::read_depth_dense(xmlDocPtr doc, xmlNodePtr node)
 {
   bool sampling_step_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case depth_dense_sampling_step:
@@ -645,10 +569,8 @@ void vpMbtXmlGenericParser::read_depth_dense(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!sampling_step_node) {
-    std::cout << "depth dense : sampling_step : step_X "
-              << m_depthDenseSamplingStepX << " (default)" << std::endl;
-    std::cout << "depth dense : sampling_step : step_Y "
-              << m_depthDenseSamplingStepY << " (default)" << std::endl;
+    std::cout << "depth dense : sampling_step : step_X " << m_depthDenseSamplingStepX << " (default)" << std::endl;
+    std::cout << "depth dense : sampling_step : step_Y " << m_depthDenseSamplingStepY << " (default)" << std::endl;
   }
 }
 
@@ -660,17 +582,14 @@ void vpMbtXmlGenericParser::read_depth_dense(xmlDocPtr doc, xmlNodePtr node)
   \param doc : Pointer to the document.
   \param node : Pointer to the node of the range information.
 */
-void vpMbtXmlGenericParser::read_depth_dense_sampling_step(xmlDocPtr doc,
-                                                           xmlNodePtr node)
+void vpMbtXmlGenericParser::read_depth_dense_sampling_step(xmlDocPtr doc, xmlNodePtr node)
 {
   bool sampling_step_X_node = false;
   bool sampling_step_Y_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case depth_dense_sampling_step_X:
@@ -691,18 +610,14 @@ void vpMbtXmlGenericParser::read_depth_dense_sampling_step(xmlDocPtr doc,
   }
 
   if (!sampling_step_X_node)
-    std::cout << "depth dense : sampling_step : step_X : "
-              << m_depthDenseSamplingStepX << " (default)" << std::endl;
+    std::cout << "depth dense : sampling_step : step_X : " << m_depthDenseSamplingStepX << " (default)" << std::endl;
   else
-    std::cout << "depth dense : sampling_step : step_X : "
-              << m_depthDenseSamplingStepX << std::endl;
+    std::cout << "depth dense : sampling_step : step_X : " << m_depthDenseSamplingStepX << std::endl;
 
   if (!sampling_step_Y_node)
-    std::cout << "depth dense : sampling_step : step_Y : "
-              << m_depthDenseSamplingStepY << " (default)" << std::endl;
+    std::cout << "depth dense : sampling_step : step_Y : " << m_depthDenseSamplingStepY << " (default)" << std::endl;
   else
-    std::cout << "depth dense : sampling_step : step_Y : "
-              << m_depthDenseSamplingStepY << std::endl;
+    std::cout << "depth dense : sampling_step : step_Y : " << m_depthDenseSamplingStepY << std::endl;
 }
 
 /*!
@@ -720,11 +635,9 @@ void vpMbtXmlGenericParser::read_ecm(xmlDocPtr doc, xmlNodePtr node)
   bool contrast_node = false;
   bool sample_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case mask:
@@ -755,29 +668,22 @@ void vpMbtXmlGenericParser::read_ecm(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!mask_node) {
-    std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)"
-              << std::endl;
-    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber()
-              << " (default)" << std::endl;
+    std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
   }
 
   if (!range_node) {
-    std::cout << "ecm : range : tracking : " << m_ecm.getRange()
-              << " (default)" << std::endl;
+    std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
   }
 
   if (!contrast_node) {
-    std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold()
-              << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)"
-              << std::endl;
-    std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)"
-              << std::endl;
+    std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
+    std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
   }
 
   if (!sample_node) {
-    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep()
-              << " (default)" << std::endl;
+    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
   }
 }
 
@@ -800,11 +706,9 @@ void vpMbtXmlGenericParser::read_ecm_contrast(xmlDocPtr doc, xmlNodePtr node)
   double d_mu1 = m_ecm.getMu1();
   double d_mu2 = m_ecm.getMu2();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case edge_threshold:
@@ -834,21 +738,17 @@ void vpMbtXmlGenericParser::read_ecm_contrast(xmlDocPtr doc, xmlNodePtr node)
   m_ecm.setThreshold(d_edge_threshold);
 
   if (!edge_threshold_node)
-    std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold()
-              << " (default)" << std::endl;
+    std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
   else
-    std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold()
-              << std::endl;
+    std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << std::endl;
 
   if (!mu1_node)
-    std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)"
-              << std::endl;
+    std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
   else
     std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << std::endl;
 
   if (!mu2_node)
-    std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)"
-              << std::endl;
+    std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
   else
     std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << std::endl;
 }
@@ -870,11 +770,9 @@ void vpMbtXmlGenericParser::read_ecm_mask(xmlDocPtr doc, xmlNodePtr node)
   unsigned int d_size = m_ecm.getMaskSize();
   unsigned int d_nb_mask = m_ecm.getMaskNumber();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case size:
@@ -904,17 +802,14 @@ void vpMbtXmlGenericParser::read_ecm_mask(xmlDocPtr doc, xmlNodePtr node)
   m_ecm.setMaskNumber(d_nb_mask);
 
   if (!size_node)
-    std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)"
-              << std::endl;
+    std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
   else
     std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << std::endl;
 
   if (!nb_mask_node)
-    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber()
-              << " (default)" << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
   else
-    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber()
-              << std::endl;
+    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << std::endl;
 }
 
 /*!
@@ -932,11 +827,9 @@ void vpMbtXmlGenericParser::read_ecm_range(xmlDocPtr doc, xmlNodePtr node)
   // current data values.
   unsigned int m_range_tracking = m_ecm.getRange();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case tracking:
@@ -954,8 +847,7 @@ void vpMbtXmlGenericParser::read_ecm_range(xmlDocPtr doc, xmlNodePtr node)
   m_ecm.setRange(m_range_tracking);
 
   if (!tracking_node)
-    std::cout << "ecm : range : tracking : " << m_ecm.getRange()
-              << " (default)" << std::endl;
+    std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
   else
     std::cout << "ecm : range : tracking : " << m_ecm.getRange() << std::endl;
 }
@@ -975,11 +867,9 @@ void vpMbtXmlGenericParser::read_ecm_sample(xmlDocPtr doc, xmlNodePtr node)
   // current data values.
   double d_stp = m_ecm.getSampleStep();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case step:
@@ -997,11 +887,9 @@ void vpMbtXmlGenericParser::read_ecm_sample(xmlDocPtr doc, xmlNodePtr node)
   m_ecm.setSampleStep(d_stp);
 
   if (!step_node)
-    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep()
-              << " (default)" << std::endl;
+    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
   else
-    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep()
-              << std::endl;
+    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
 }
 
 /*!
@@ -1022,11 +910,9 @@ void vpMbtXmlGenericParser::read_face(xmlDocPtr doc, xmlNodePtr node)
   m_hasNearClipping = false;
   m_hasFarClipping = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case angle_appear:
@@ -1067,14 +953,12 @@ void vpMbtXmlGenericParser::read_face(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!angle_appear_node)
-    std::cout << "face : Angle Appear : " << m_angleAppear << " (default)"
-              << std::endl;
+    std::cout << "face : Angle Appear : " << m_angleAppear << " (default)" << std::endl;
   else
     std::cout << "face : Angle Appear : " << m_angleAppear << std::endl;
 
   if (!angle_disappear_node)
-    std::cout << "face : Angle Disappear : " << m_angleDisappear
-              << " (default)" << std::endl;
+    std::cout << "face : Angle Disappear : " << m_angleDisappear << " (default)" << std::endl;
   else
     std::cout << "face : Angle Disappear : " << m_angleDisappear << std::endl;
 
@@ -1111,11 +995,9 @@ void vpMbtXmlGenericParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
   bool size_block_node = false;
   bool pyramid_lvl_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case mask_border:
@@ -1166,50 +1048,42 @@ void vpMbtXmlGenericParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if (!mask_border_node)
-    std::cout << "klt : Mask Border : " << m_kltMaskBorder << " (default)"
-              << std::endl;
+    std::cout << "klt : Mask Border : " << m_kltMaskBorder << " (default)" << std::endl;
   else
     std::cout << "klt : Mask Border : " << m_kltMaskBorder << std::endl;
 
   if (!max_features_node)
-    std::cout << "klt : Max Features : " << m_kltMaxFeatures << " (default)"
-              << std::endl;
+    std::cout << "klt : Max Features : " << m_kltMaxFeatures << " (default)" << std::endl;
   else
     std::cout << "klt : Max Features : " << m_kltMaxFeatures << std::endl;
 
   if (!window_size_node)
-    std::cout << "klt : Windows Size : " << m_kltWinSize << " (default)"
-              << std::endl;
+    std::cout << "klt : Windows Size : " << m_kltWinSize << " (default)" << std::endl;
   else
     std::cout << "klt : Windows Size : " << m_kltWinSize << std::endl;
 
   if (!quality_node)
-    std::cout << "klt : Quality : " << m_kltQualityValue << " (default)"
-              << std::endl;
+    std::cout << "klt : Quality : " << m_kltQualityValue << " (default)" << std::endl;
   else
     std::cout << "klt : Quality : " << m_kltQualityValue << std::endl;
 
   if (!min_distance_node)
-    std::cout << "klt : Min Distance : " << m_kltMinDist << " (default)"
-              << std::endl;
+    std::cout << "klt : Min Distance : " << m_kltMinDist << " (default)" << std::endl;
   else
     std::cout << "klt : Min Distance : " << m_kltMinDist << std::endl;
 
   if (!harris_node)
-    std::cout << "klt : Harris Parameter : " << m_kltHarrisParam
-              << " (default)" << std::endl;
+    std::cout << "klt : Harris Parameter : " << m_kltHarrisParam << " (default)" << std::endl;
   else
     std::cout << "klt : Harris Parameter : " << m_kltHarrisParam << std::endl;
 
   if (!size_block_node)
-    std::cout << "klt : Block Size : " << m_kltBlockSize << " (default)"
-              << std::endl;
+    std::cout << "klt : Block Size : " << m_kltBlockSize << " (default)" << std::endl;
   else
     std::cout << "klt : Block Size : " << m_kltBlockSize << std::endl;
 
   if (!pyramid_lvl_node)
-    std::cout << "klt : Pyramid Levels : " << m_kltPyramidLevels
-              << " (default)" << std::endl;
+    std::cout << "klt : Pyramid Levels : " << m_kltPyramidLevels << " (default)" << std::endl;
   else
     std::cout << "klt : Pyramid Levels : " << m_kltPyramidLevels << std::endl;
 }
@@ -1220,11 +1094,9 @@ void vpMbtXmlGenericParser::read_lod(xmlDocPtr doc, xmlNodePtr node)
   bool min_line_length_threshold_node = false;
   bool min_polygon_area_threshold_node = false;
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case use_lod:
@@ -1255,18 +1127,14 @@ void vpMbtXmlGenericParser::read_lod(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "lod : use lod : " << m_useLod << std::endl;
 
   if (!min_line_length_threshold_node)
-    std::cout << "lod : min line length threshold : "
-              << m_minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << m_minLineLengthThreshold << " (default)" << std::endl;
   else
-    std::cout << "lod : min line length threshold : "
-              << m_minLineLengthThreshold << std::endl;
+    std::cout << "lod : min line length threshold : " << m_minLineLengthThreshold << std::endl;
 
   if (!min_polygon_area_threshold_node)
-    std::cout << "lod : min polygon area threshold : "
-              << m_minPolygonAreaThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << m_minPolygonAreaThreshold << " (default)" << std::endl;
   else
-    std::cout << "lod : min polygon area threshold : "
-              << m_minPolygonAreaThreshold << std::endl;
+    std::cout << "lod : min polygon area threshold : " << m_minPolygonAreaThreshold << std::endl;
 }
 
 /*!
@@ -1277,8 +1145,7 @@ void vpMbtXmlGenericParser::read_lod(xmlDocPtr doc, xmlNodePtr node)
   \param doc : Pointer to the document.
   \param node : Pointer to the node of the sample information.
 */
-void vpMbtXmlGenericParser::read_sample_deprecated(xmlDocPtr doc,
-                                                   xmlNodePtr node)
+void vpMbtXmlGenericParser::read_sample_deprecated(xmlDocPtr doc, xmlNodePtr node)
 {
   bool step_node = false;
   // bool nb_sample_node = false;
@@ -1286,11 +1153,9 @@ void vpMbtXmlGenericParser::read_sample_deprecated(xmlDocPtr doc,
   // current data values.
   double d_stp = m_ecm.getSampleStep();
 
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
-       dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
-      std::map<std::string, int>::const_iterator iter_data =
-          nodeMap.find((char *)dataNode->name);
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case step:
@@ -1308,15 +1173,12 @@ void vpMbtXmlGenericParser::read_sample_deprecated(xmlDocPtr doc,
   m_ecm.setSampleStep(d_stp);
 
   if (!step_node)
-    std::cout << "[DEPRECATED] sample : sample_step : "
-              << m_ecm.getSampleStep() << " (default)" << std::endl;
+    std::cout << "[DEPRECATED] sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
   else
-    std::cout << "[DEPRECATED] sample : sample_step : "
-              << m_ecm.getSampleStep() << std::endl;
+    std::cout << "[DEPRECATED] sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
 
   std::cout << "  WARNING : This node (sample) is deprecated." << std::endl;
-  std::cout << "  It should be moved in the ecm node (ecm : sample)."
-            << std::endl;
+  std::cout << "  It should be moved in the ecm node (ecm : sample)." << std::endl;
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

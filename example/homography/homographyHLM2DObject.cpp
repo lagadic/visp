@@ -187,8 +187,7 @@ int main(int argc, const char **argv)
     vpHomography::HLM(xb, yb, xa, ya, true, aHb);
 
     aHb /= aHb[2][2];
-    std::cout << "aHb computed using the Malis paralax  algorithm: \n"
-              << aHb << std::endl;
+    std::cout << "aHb computed using the Malis paralax  algorithm: \n" << aHb << std::endl;
 
     vpRotationMatrix aRb;
     vpTranslationVector aTb;
@@ -226,12 +225,10 @@ int main(int argc, const char **argv)
       std::cout << "Point " << i << std::endl;
       vpPoint p;
       std::cout << "(";
-      std::cout << aP[i].get_x() / aP[i].get_w() << ", "
-                << aP[i].get_y() / aP[i].get_w();
+      std::cout << aP[i].get_x() / aP[i].get_w() << ", " << aP[i].get_y() / aP[i].get_w();
       std::cout << ") =  (";
       p = aHb * bP[i];
-      std::cout << p.get_x() / p.get_w() << ",  " << p.get_y() / p.get_w()
-                << ")" << std::endl;
+      std::cout << p.get_x() / p.get_w() << ",  " << p.get_y() / p.get_w() << ")" << std::endl;
     }
 
     std::cout << "-------------------------------" << std::endl;
@@ -241,8 +238,7 @@ int main(int argc, const char **argv)
     std::list<vpTranslationVector> laTb;
     std::list<vpColVector> lnb;
 
-    vpHomography::computeDisplacement(aHb, bP[0].get_x(), bP[0].get_y(), laRb,
-                                      laTb, lnb);
+    vpHomography::computeDisplacement(aHb, bP[0].get_x(), bP[0].get_y(), laRb, laTb, lnb);
 
     std::list<vpRotationMatrix>::const_iterator it_laRb = laRb.begin();
     std::list<vpTranslationVector>::const_iterator it_laTb = laTb.begin();

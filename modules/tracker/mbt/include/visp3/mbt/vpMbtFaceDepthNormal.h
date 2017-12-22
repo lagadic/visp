@@ -86,103 +86,63 @@ public:
   vpMbtFaceDepthNormal();
   virtual ~vpMbtFaceDepthNormal();
 
-  void addLine(vpPoint &p1, vpPoint &p2,
-               vpMbHiddenFaces<vpMbtPolygon> *const faces, int polygon = -1,
+  void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, int polygon = -1,
                std::string name = "");
 
 #ifdef VISP_HAVE_PCL
-  bool computeDesiredFeatures(
-      const vpHomogeneousMatrix &cMo, const unsigned int width,
-      const unsigned int height,
-      const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-      vpColVector &desired_features, const unsigned int stepX,
-      const unsigned int stepY
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+                              const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
+                              vpColVector &desired_features, const unsigned int stepX, const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
-      ,
-      vpImage<unsigned char> &debugImage,
-      std::vector<std::vector<vpImagePoint> > &roiPts_vec
+                              ,
+                              vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
   );
 #endif
-  bool
-  computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
-                         const unsigned int width, const unsigned int height,
-                         const std::vector<vpColVector> &point_cloud,
-                         vpColVector &desired_features,
-                         const unsigned int stepX, const unsigned int stepY
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+                              const std::vector<vpColVector> &point_cloud, vpColVector &desired_features,
+                              const unsigned int stepX, const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
-                         ,
-                         vpImage<unsigned char> &debugImage,
-                         std::vector<std::vector<vpImagePoint> > &roiPts_vec
+                              ,
+                              vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
   );
 
-  void computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L,
-                                vpColVector &features);
+  void computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &features);
 
   void computeVisibility();
   void computeVisibilityDisplay();
 
-  void computeNormalVisibility(const double nx, const double ny,
-                               const double nz,
-                               const vpColVector &centroid_point,
+  void computeNormalVisibility(const double nx, const double ny, const double nz, const vpColVector &centroid_point,
                                vpColVector &face_normal);
 #ifdef VISP_HAVE_PCL
-  void computeNormalVisibility(const float nx, const float ny, const float nz,
-                               const pcl::PointXYZ &centroid_point,
+  void computeNormalVisibility(const float nx, const float ny, const float nz, const pcl::PointXYZ &centroid_point,
                                pcl::PointXYZ &face_normal);
 #endif
-  void computeNormalVisibility(const double nx, const double ny,
-                               const double nz,
-                               const vpHomogeneousMatrix &cMo,
-                               const vpCameraParameters &camera,
-                               vpColVector &correct_normal,
-                               vpPoint &centroid);
+  void computeNormalVisibility(const double nx, const double ny, const double nz, const vpHomogeneousMatrix &cMo,
+                               const vpCameraParameters &camera, vpColVector &correct_normal, vpPoint &centroid);
 
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1,
-               const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam, const vpColor &col,
-               const unsigned int thickness = 1,
-               const bool displayFullModel = false);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
-  void displayFeature(const vpImage<unsigned char> &I,
-                      const vpHomogeneousMatrix &cMo,
-                      const vpCameraParameters &cam,
-                      const double scale = 0.05,
-                      const unsigned int thickness = 1);
-  void displayFeature(const vpImage<vpRGBa> &I,
-                      const vpHomogeneousMatrix &cMo,
-                      const vpCameraParameters &cam,
-                      const double scale = 0.05,
-                      const unsigned int thickness = 1);
+  void displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                      const double scale = 0.05, const unsigned int thickness = 1);
+  void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                      const double scale = 0.05, const unsigned int thickness = 1);
 
   inline bool isVisible() const { return m_polygon->isvisible; }
 
   void setCameraParameters(const vpCameraParameters &camera);
 
-  inline void setFaceCentroidMethod(const vpFaceCentroidType &method)
-  {
-    m_faceCentroidMethod = method;
-  }
+  inline void setFaceCentroidMethod(const vpFaceCentroidType &method) { m_faceCentroidMethod = method; }
 
-  inline void
-  setFeatureEstimationMethod(const vpFeatureEstimationType &method)
-  {
-    m_featureEstimationMethod = method;
-  }
+  inline void setFeatureEstimationMethod(const vpFeatureEstimationType &method) { m_featureEstimationMethod = method; }
 
-  inline void setPclPlaneEstimationMethod(const int method)
-  {
-    m_pclPlaneEstimationMethod = method;
-  }
+  inline void setPclPlaneEstimationMethod(const int method) { m_pclPlaneEstimationMethod = method; }
 
-  inline void setPclPlaneEstimationRansacMaxIter(const int maxIter)
-  {
-    m_pclPlaneEstimationRansacMaxIter = maxIter;
-  }
+  inline void setPclPlaneEstimationRansacMaxIter(const int maxIter) { m_pclPlaneEstimationRansacMaxIter = maxIter; }
 
   inline void setPclPlaneEstimationRansacThreshold(const double threshold)
   {
@@ -209,8 +169,7 @@ private:
     PolygonLine() : m_p1(NULL), m_p2(NULL), m_poly(), m_imPt1(), m_imPt2() {}
 
     PolygonLine(const PolygonLine &polyLine)
-      : m_p1(NULL), m_p2(NULL), m_poly(polyLine.m_poly),
-        m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2)
+      : m_p1(NULL), m_p2(NULL), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2)
     {
       m_p1 = &m_poly.p[0];
       m_p2 = &m_poly.p[1];
@@ -248,8 +207,7 @@ private:
     Mat33 inverse() const
     {
       // determinant
-      T det = data[0] * (data[4] * data[8] - data[7] * data[5]) -
-              data[1] * (data[3] * data[8] - data[5] * data[6]) +
+      T det = data[0] * (data[4] * data[8] - data[7] * data[5]) - data[1] * (data[3] * data[8] - data[5] * data[6]) +
               data[2] * (data[3] * data[7] - data[4] * data[6]);
       T invdet = 1 / det;
 
@@ -298,45 +256,35 @@ protected:
   std::vector<PolygonLine> m_polygonLines;
 
 #ifdef VISP_HAVE_PCL
-  bool computeDesiredFeaturesPCL(
-      const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud_face,
-      vpColVector &desired_features, vpColVector &desired_normal,
-      vpColVector &centroid_point);
-#endif
-  void computeDesiredFeaturesRobustFeatures(
-      const std::vector<double> &point_cloud_face_custom,
-      const std::vector<double> &point_cloud_face,
-      const vpHomogeneousMatrix &cMo, vpColVector &desired_features,
-      vpColVector &desired_normal, vpColVector &centroid_point);
-  void computeDesiredFeaturesSVD(const std::vector<double> &point_cloud_face,
-                                 const vpHomogeneousMatrix &cMo,
-                                 vpColVector &desired_features,
-                                 vpColVector &desired_normal,
+  bool computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud_face,
+                                 vpColVector &desired_features, vpColVector &desired_normal,
                                  vpColVector &centroid_point);
-  void computeDesiredNormalAndCentroid(const vpHomogeneousMatrix &cMo,
-                                       const vpColVector &desired_normal,
+#endif
+  void computeDesiredFeaturesRobustFeatures(const std::vector<double> &point_cloud_face_custom,
+                                            const std::vector<double> &point_cloud_face, const vpHomogeneousMatrix &cMo,
+                                            vpColVector &desired_features, vpColVector &desired_normal,
+                                            vpColVector &centroid_point);
+  void computeDesiredFeaturesSVD(const std::vector<double> &point_cloud_face, const vpHomogeneousMatrix &cMo,
+                                 vpColVector &desired_features, vpColVector &desired_normal,
+                                 vpColVector &centroid_point);
+  void computeDesiredNormalAndCentroid(const vpHomogeneousMatrix &cMo, const vpColVector &desired_normal,
                                        const vpColVector &centroid_point);
 
-  bool computePolygonCentroid(const std::vector<vpPoint> &points,
-                              vpPoint &centroid);
+  bool computePolygonCentroid(const std::vector<vpPoint> &points, vpPoint &centroid);
 
-  void computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                  const unsigned int height, std::vector<vpImagePoint> &roiPts
+  void computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+                  std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_NORMAL
                   ,
                   std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
   );
 
-  void estimateFeatures(const std::vector<double> &point_cloud_face,
-                        const vpHomogeneousMatrix &cMo,
-                        vpColVector &x_estimated,
-                        std::vector<double> &weights);
+  void estimateFeatures(const std::vector<double> &point_cloud_face, const vpHomogeneousMatrix &cMo,
+                        vpColVector &x_estimated, std::vector<double> &weights);
 
-  void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
-                                const vpHomogeneousMatrix &cMo,
-                                vpColVector &plane_equation_estimated,
-                                vpColVector &centroid);
+  void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, const vpHomogeneousMatrix &cMo,
+                                vpColVector &plane_equation_estimated, vpColVector &centroid);
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };

@@ -38,8 +38,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -98,8 +97,8 @@ int main() {
     std::string msg = "", hostInfo = "";
       int res = server.receive(msg, hostInfo, 5000);
       if (res) {
-        std::cout << "Server received: " << msg << " from: " << hostInfo <<
-std::endl; std::cout << "Reply to the client: Echo: " << msg << std::endl;
+        std::cout << "Server received: " << msg << " from: " << hostInfo << std::endl;
+        std::cout << "Reply to the client: Echo: " << msg << std::endl;
 
         //Get address and port
         std::istringstream iss(hostInfo);
@@ -200,18 +199,15 @@ public:
   ~vpUDPServer();
 
   int receive(std::string &msg, const int timeoutMs = 0);
-  int receive(std::string &msg, std::string &hostInfo,
-              const int timeoutMs = 0);
-  int send(const std::string &msg, const std::string &hostname,
-           const int port);
+  int receive(std::string &msg, std::string &hostInfo, const int timeoutMs = 0);
+  int send(const std::string &msg, const std::string &hostname, const int port);
 
 private:
   char m_buf[VP_MAX_UDP_PAYLOAD];
   struct sockaddr_in m_clientAddress;
   int m_clientLength;
   struct sockaddr_in m_serverAddress;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   int m_socketFileDescriptor;
 #else
   SOCKET m_socketFileDescriptor;

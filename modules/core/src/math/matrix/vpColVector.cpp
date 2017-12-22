@@ -58,8 +58,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationVector.h>
 
-#if defined __SSE2__ || defined _M_X64 ||                                    \
-    (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
 #endif
@@ -68,10 +67,8 @@
 vpColVector vpColVector::operator+(const vpColVector &v) const
 {
   if (getRows() != v.getRows()) {
-    throw(
-        vpException(vpException::dimensionError,
-                    "Cannot add (%dx1) column vector to (%dx1) column vector",
-                    getRows(), v.getRows()));
+    throw(vpException(vpException::dimensionError, "Cannot add (%dx1) column vector to (%dx1) column vector", getRows(),
+                      v.getRows()));
   }
   vpColVector r(rowNum);
 
@@ -85,8 +82,14 @@ vpColVector vpColVector::operator+(const vpColVector &v) const
   \param t : 3-dimension translation vector to add.
 
   \return The sum of the current columnn vector (*this) and the translation
-  vector to add. \code vpTranslationVector t1(1,2,3); vpColVector v(3); v[0] =
-  4; v[1] = 5; v[2] = 6; vpTranslationVector t2;
+  vector to add.
+\code
+  vpTranslationVector t1(1,2,3);
+  vpColVector v(3);
+  v[0] = 4;
+  v[1] = 5;
+  v[2] = 6;
+  vpTranslationVector t2;
 
   t2 = v + t1;
   // t1 and v leave unchanged
@@ -97,10 +100,8 @@ vpColVector vpColVector::operator+(const vpColVector &v) const
 vpTranslationVector vpColVector::operator+(const vpTranslationVector &t) const
 {
   if (getRows() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot add %d-dimension column vector to a translation vector",
-        getRows()));
+    throw(vpException(vpException::dimensionError, "Cannot add %d-dimension column vector to a translation vector",
+                      getRows()));
   }
   vpTranslationVector s;
 
@@ -114,10 +115,8 @@ vpTranslationVector vpColVector::operator+(const vpTranslationVector &t) const
 vpColVector &vpColVector::operator+=(vpColVector v)
 {
   if (getRows() != v.getRows()) {
-    throw(
-        vpException(vpException::dimensionError,
-                    "Cannot add (%dx1) column vector to (%dx1) column vector",
-                    getRows(), v.getRows()));
+    throw(vpException(vpException::dimensionError, "Cannot add (%dx1) column vector to (%dx1) column vector", getRows(),
+                      v.getRows()));
   }
 
   for (unsigned int i = 0; i < rowNum; i++)
@@ -128,10 +127,8 @@ vpColVector &vpColVector::operator+=(vpColVector v)
 vpColVector &vpColVector::operator-=(vpColVector v)
 {
   if (getRows() != v.getRows()) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot substract (%dx1) column vector to (%dx1) column vector",
-        getRows(), v.getRows()));
+    throw(vpException(vpException::dimensionError, "Cannot substract (%dx1) column vector to (%dx1) column vector",
+                      getRows(), v.getRows()));
   }
 
   for (unsigned int i = 0; i < rowNum; i++)
@@ -210,9 +207,7 @@ vpColVector vpColVector::operator-(const vpColVector &m) const
 
   \sa init()
 */
-vpColVector::vpColVector(const vpColVector &v, unsigned int r,
-                         unsigned int nrows)
-  : vpArray2D<double>(nrows, 1)
+vpColVector::vpColVector(const vpColVector &v, unsigned int r, unsigned int nrows) : vpArray2D<double>(nrows, 1)
 {
   init(v, r, nrows);
 }
@@ -222,8 +217,9 @@ vpColVector::vpColVector(const vpColVector &v, unsigned int r,
 
   \param v : Input column vector used for initialization.
   \param r : row index in \e v that corresponds to the first element of the
-column vector to contruct. \param nrows : Number of rows of the constructed
-column vector.
+  column vector to contruct.
+  \param nrows : Number of rows of the constructed
+  column vector.
 
   The sub-vector starting from v[r] element and ending on v[r+nrows-1] element
   is used to initialize the contructed column vector.
@@ -253,16 +249,13 @@ v: 0 1 2 3
 w: 1 2
   \endcode
  */
-void vpColVector::init(const vpColVector &v, unsigned int r,
-                       unsigned int nrows)
+void vpColVector::init(const vpColVector &v, unsigned int r, unsigned int nrows)
 {
   unsigned int rnrows = r + nrows;
 
   if (rnrows > v.getRows())
-    throw(vpException(
-        vpException::dimensionError,
-        "Bad row dimension (%d > %d) used to initialize vpColVector", rnrows,
-        v.getRows()));
+    throw(vpException(vpException::dimensionError, "Bad row dimension (%d > %d) used to initialize vpColVector", rnrows,
+                      v.getRows()));
   resize(nrows, false);
 
   if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
@@ -271,30 +264,26 @@ void vpColVector::init(const vpColVector &v, unsigned int r,
     (*this)[i - r] = v[i];
 }
 
-vpColVector::vpColVector(const vpRotationVector &v)
-  : vpArray2D<double>(v.size(), 1)
+vpColVector::vpColVector(const vpRotationVector &v) : vpArray2D<double>(v.size(), 1)
 {
   for (unsigned int i = 0; i < v.size(); i++)
     (*this)[i] = v[i];
 }
 
-vpColVector::vpColVector(const vpPoseVector &p)
-  : vpArray2D<double>(p.size(), 1)
+vpColVector::vpColVector(const vpPoseVector &p) : vpArray2D<double>(p.size(), 1)
 {
   for (unsigned int i = 0; i < p.size(); i++)
     (*this)[i] = p[i];
 }
 
-vpColVector::vpColVector(const vpTranslationVector &v)
-  : vpArray2D<double>(v.size(), 1)
+vpColVector::vpColVector(const vpTranslationVector &v) : vpArray2D<double>(v.size(), 1)
 {
   for (unsigned int i = 0; i < v.size(); i++)
     (*this)[i] = v[i];
 }
 
 //! Constructor that take column j of matrix M.
-vpColVector::vpColVector(const vpMatrix &M, unsigned int j)
-  : vpArray2D<double>(M.getRows(), 1)
+vpColVector::vpColVector(const vpMatrix &M, unsigned int j) : vpArray2D<double>(M.getRows(), 1)
 {
   for (unsigned int i = 0; i < M.getCols(); i++)
     (*this)[i] = M[i][j];
@@ -306,14 +295,11 @@ vpColVector::vpColVector(const vpMatrix &M, unsigned int j)
    \exception vpException::dimensionError If the matrix is not a m-by-1
    matrix.
  */
-vpColVector::vpColVector(const vpMatrix &M)
-  : vpArray2D<double>(M.getRows(), 1)
+vpColVector::vpColVector(const vpMatrix &M) : vpArray2D<double>(M.getRows(), 1)
 {
   if (M.getCols() != 1) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot construct a (%dx1) row vector from a (%dx%d) matrix",
-        M.getRows(), M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot construct a (%dx1) row vector from a (%dx%d) matrix",
+                      M.getRows(), M.getRows(), M.getCols()));
   }
 
   for (unsigned int i = 0; i < M.getRows(); i++)
@@ -323,8 +309,7 @@ vpColVector::vpColVector(const vpMatrix &M)
 /*!
    Constructor that creates a column vector from a std vector of double.
  */
-vpColVector::vpColVector(const std::vector<double> &v)
-  : vpArray2D<double>((unsigned int)v.size(), 1)
+vpColVector::vpColVector(const std::vector<double> &v) : vpArray2D<double>((unsigned int)v.size(), 1)
 {
   for (unsigned int i = 0; i < v.size(); i++)
     (*this)[i] = v[i];
@@ -332,8 +317,7 @@ vpColVector::vpColVector(const std::vector<double> &v)
 /*!
    Constructor that creates a column vector from a std vector of float.
  */
-vpColVector::vpColVector(const std::vector<float> &v)
-  : vpArray2D<double>((unsigned int)v.size(), 1)
+vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsigned int)v.size(), 1)
 {
   for (unsigned int i = 0; i < v.size(); i++)
     (*this)[i] = (double)(v[i]);
@@ -500,10 +484,8 @@ vpColVector vpColVector::operator/(double x) const
 vpColVector &vpColVector::operator=(const vpMatrix &M)
 {
   if (M.getCols() != 1) {
-    throw(
-        vpException(vpException::dimensionError,
-                    "Cannot transform a (%dx%d) matrix into a column vector",
-                    M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot transform a (%dx%d) matrix into a column vector",
+                      M.getRows(), M.getCols()));
   }
 
   resize(M.getRows(), false);
@@ -721,12 +703,10 @@ vpColVector operator*(const double &x, const vpColVector &v)
 double vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
   if (a.data == NULL) {
-    throw(vpException(vpException::fatalError,
-                      "Cannot compute the dot product: first vector empty"));
+    throw(vpException(vpException::fatalError, "Cannot compute the dot product: first vector empty"));
   }
   if (b.data == NULL) {
-    throw(vpException(vpException::fatalError,
-                      "Cannot compute the dot product: second vector empty"));
+    throw(vpException(vpException::fatalError, "Cannot compute the dot product: second vector empty"));
   }
   if (a.size() != b.size()) {
     throw(vpException(vpException::dimensionError,
@@ -787,8 +767,7 @@ vpColVector &vpColVector::normalize()
 vpColVector vpColVector::invSort(const vpColVector &v)
 {
   if (v.data == NULL) {
-    throw(vpException(vpException::fatalError,
-                      "Cannot sort content of column vector: vector empty"));
+    throw(vpException(vpException::fatalError, "Cannot sort content of column vector: vector empty"));
   }
   vpColVector tab;
   tab = v;
@@ -817,8 +796,7 @@ vpColVector vpColVector::invSort(const vpColVector &v)
 vpColVector vpColVector::sort(const vpColVector &v)
 {
   if (v.data == NULL) {
-    throw(vpException(vpException::fatalError,
-                      "Cannot sort content of column vector: vector empty"));
+    throw(vpException(vpException::fatalError, "Cannot sort content of column vector: vector empty"));
   }
   vpColVector tab;
   tab = v;
@@ -881,10 +859,7 @@ void vpColVector::stack(const double &d)
   \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
 
 */
-void vpColVector::stack(const vpColVector &v)
-{
-  *this = vpColVector::stack(*this, v);
-}
+void vpColVector::stack(const vpColVector &v) { *this = vpColVector::stack(*this, v); }
 
 /*!
   Stack column vectors.
@@ -929,8 +904,7 @@ vpColVector vpColVector::stack(const vpColVector &A, const vpColVector &B)
   \sa stack(const vpColVector &)
   \sa stack(const vpColVector &, const vpColVector &)
 */
-void vpColVector::stack(const vpColVector &A, const vpColVector &B,
-                        vpColVector &C)
+void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector &C)
 {
   unsigned int nrA = A.getRows();
   unsigned int nrB = B.getRows();
@@ -966,8 +940,7 @@ void vpColVector::stack(const vpColVector &A, const vpColVector &B,
 double vpColVector::mean(const vpColVector &v)
 {
   if (v.data == NULL || v.size() == 0) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot compute column vector mean: vector empty"));
+    throw(vpException(vpException::dimensionError, "Cannot compute column vector mean: vector empty"));
   }
 
   // Use directly sum() function
@@ -987,8 +960,7 @@ double vpColVector::mean(const vpColVector &v)
 double vpColVector::median(const vpColVector &v)
 {
   if (v.data == NULL || v.size() == 0) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot compute column vector median: vector empty"));
+    throw(vpException(vpException::dimensionError, "Cannot compute column vector median: vector empty"));
   }
 
   std::vector<double> vectorOfDoubles(v.data, v.data + v.rowNum);
@@ -999,12 +971,10 @@ double vpColVector::median(const vpColVector &v)
 /*!
   Compute the standard deviation value of all the elements of the vector.
 */
-double vpColVector::stdev(const vpColVector &v,
-                          const bool useBesselCorrection)
+double vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 {
   if (v.data == NULL || v.size() == 0) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot compute column vector stdev: vector empty"));
+    throw(vpException(vpException::dimensionError, "Cannot compute column vector stdev: vector empty"));
   }
 
   double mean_value = mean(v);
@@ -1070,10 +1040,8 @@ vpMatrix vpColVector::skew(const vpColVector &v)
 {
   vpMatrix M;
   if (v.getRows() != 3) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot compute skew vector of a non 3-dimention vector (%d)",
-        v.getRows()));
+    throw(vpException(vpException::dimensionError, "Cannot compute skew vector of a non 3-dimention vector (%d)",
+                      v.getRows()));
   }
 
   M.resize(3, 3, false, false);
@@ -1120,8 +1088,7 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 
   \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpColVector::reshape(const unsigned int &nrows,
-                              const unsigned int &ncols)
+vpMatrix vpColVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
 {
   vpMatrix M(nrows, ncols);
   reshape(M, nrows, ncols);
@@ -1183,13 +1150,11 @@ remat:
 9  10  11  12
   \endcode
 */
-void vpColVector::reshape(vpMatrix &M, const unsigned int &nrows,
-                          const unsigned int &ncols)
+void vpColVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols)
 {
   if (dsize != nrows * ncols) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot reshape (%dx1) column vector in (%dx%d) matrix",
-                      rowNum, M.getRows(), M.getCols()));
+    throw(vpException(vpException::dimensionError, "Cannot reshape (%dx1) column vector in (%dx%d) matrix", rowNum,
+                      M.getRows(), M.getCols()));
   }
   if ((M.getRows() != nrows) || (M.getCols() != ncols))
     M.resize(nrows, ncols, false, false);
@@ -1234,8 +1199,7 @@ v: 0 10 11 3
 void vpColVector::insert(unsigned int i, const vpColVector &v)
 {
   if (i + v.size() > this->size())
-    throw(vpException(vpException::dimensionError,
-                      "Unable to insert a column vector"));
+    throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
 
   if (data != NULL && v.data != NULL && v.rowNum > 0) {
     memcpy(data + i, v.data, sizeof(double) * v.rowNum);
@@ -1261,8 +1225,7 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
 
   \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
 */
-int vpColVector::print(std::ostream &s, unsigned int length,
-                       char const *intro) const
+int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) const
 {
   typedef std::string::size_type size_type;
 
@@ -1407,8 +1370,7 @@ double vpColVector::sumSquare() const
     if (rowNum >= 4) {
       for (; i <= rowNum - 4; i += 4) {
         v_mul1 = _mm_mul_pd(_mm_loadu_pd(data + i), _mm_loadu_pd(data + i));
-        v_mul2 = _mm_mul_pd(_mm_loadu_pd(data + i + 2),
-                            _mm_loadu_pd(data + i + 2));
+        v_mul2 = _mm_mul_pd(_mm_loadu_pd(data + i + 2), _mm_loadu_pd(data + i + 2));
 
         v_sum = _mm_add_pd(v_mul1, v_sum);
         v_sum = _mm_add_pd(v_mul2, v_sum);
@@ -1463,8 +1425,7 @@ double vpColVector::euclideanNorm() const
 vpColVector vpColVector::hadamard(const vpColVector &v) const
 {
   if (v.getRows() != rowNum || v.getCols() != colNum) {
-    throw(vpException(vpException::dimensionError,
-                      "Hadamard product: bad dimensions!"));
+    throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
   }
 
   vpColVector out;
@@ -1475,8 +1436,7 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
 #if VISP_HAVE_SSE2
   if (vpCPUFeatures::checkSSE2() && dsize >= 2) {
     for (; i <= dsize - 2; i += 2) {
-      __m128d vout =
-          _mm_mul_pd(_mm_loadu_pd(data + i), _mm_loadu_pd(v.data + i));
+      __m128d vout = _mm_mul_pd(_mm_loadu_pd(data + i), _mm_loadu_pd(v.data + i));
       _mm_storeu_pd(out.data + i, vout);
     }
   }
@@ -1538,27 +1498,20 @@ vpColVector v (3);
 v[0] = 0;
 v[1] = 1;
 v[2] = 2;
-
   \endcode
 */
-std::ostream &vpColVector::cppPrint(std::ostream &os,
-                                    const std::string &matrixName,
-                                    bool octet) const
+std::ostream &vpColVector::cppPrint(std::ostream &os, const std::string &matrixName, bool octet) const
 {
-  os << "vpColVector " << matrixName << " (" << this->getRows() << "); "
-     << std::endl;
+  os << "vpColVector " << matrixName << " (" << this->getRows() << "); " << std::endl;
 
   for (unsigned int i = 0; i < this->getRows(); ++i) {
 
     if (!octet) {
-      os << matrixName << "[" << i << "] = " << (*this)[i] << "; "
-         << std::endl;
+      os << matrixName << "[" << i << "] = " << (*this)[i] << "; " << std::endl;
     } else {
       for (unsigned int k = 0; k < sizeof(double); ++k) {
-        os << "((unsigned char*)&(" << matrixName << "[" << i << "]) )[" << k
-           << "] = 0x" << std::hex
-           << (unsigned int)((unsigned char *)&((*this)[i]))[k] << "; "
-           << std::endl;
+        os << "((unsigned char*)&(" << matrixName << "[" << i << "]) )[" << k << "] = 0x" << std::hex
+           << (unsigned int)((unsigned char *)&((*this)[i]))[k] << "; " << std::endl;
       }
     }
   }
@@ -1704,8 +1657,7 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
   \param c : Not used.
 
  */
-void vpColVector::insert(const vpColVector &v, const unsigned int r,
-                         const unsigned int c)
+void vpColVector::insert(const vpColVector &v, const unsigned int r, const unsigned int c)
 {
   (void)c;
   insert(r, v);

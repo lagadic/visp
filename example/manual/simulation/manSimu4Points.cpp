@@ -78,8 +78,7 @@ static void *mainLoop(void *_simu)
 
   /////////////////////////////////////////
   // sets the initial camera location
-  vpHomogeneousMatrix cMo(-0.3, -0.2, 3, vpMath::rad(0), vpMath::rad(0),
-                          vpMath::rad(40));
+  vpHomogeneousMatrix cMo(-0.3, -0.2, 3, vpMath::rad(0), vpMath::rad(0), vpMath::rad(40));
   vpHomogeneousMatrix wMo; // Set to identity
   vpHomogeneousMatrix wMc; // Camera position in the world frame
 
@@ -222,8 +221,7 @@ int main()
     if (!ipath.empty())
       filename = vpIoTools::createFilePath(ipath, "iv/4points.iv");
 
-    std::cout << "Load : " << filename << std::endl
-              << "This file should be in the working directory" << std::endl;
+    std::cout << "Load : " << filename << std::endl << "This file should be in the working directory" << std::endl;
 
     simu.load(filename.c_str());
 

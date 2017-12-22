@@ -111,8 +111,7 @@ vpRobotPtu46::~vpRobotPtu46(void)
   setRobotState(vpRobot::STATE_STOP);
 
   if (0 != ptu.close()) {
-    vpERROR_TRACE(
-        "Error while closing communications with the robot ptu-46.");
+    vpERROR_TRACE("Error while closing communications with the robot ptu-46.");
   }
 
   vpRobotPtu46::robotAlreadyCreated = false;
@@ -144,8 +143,7 @@ void vpRobotPtu46::init()
   vpDEBUG_TRACE(12, "Open connection Ptu-46.");
   if (0 != ptu.init(device)) {
     vpERROR_TRACE("Cannot open connection with ptu-46.");
-    throw vpRobotException(vpRobotException::constructionError,
-                           "Cannot open connection with ptu-46");
+    throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with ptu-46");
   }
 
   return;
@@ -157,8 +155,7 @@ void vpRobotPtu46::init()
   speed control.
 
 */
-vpRobot::vpRobotStateType
-vpRobotPtu46::setRobotState(vpRobot::vpRobotStateType newState)
+vpRobot::vpRobotStateType vpRobotPtu46::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState) {
   case vpRobot::STATE_STOP: {
@@ -228,10 +225,7 @@ void vpRobotPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
   \param cMe :  Homogeneous matrix between camera and end effector frame.
 
 */
-void vpRobotPtu46::get_cMe(vpHomogeneousMatrix &cMe) const
-{
-  vpPtu46::get_cMe(cMe);
-}
+void vpRobotPtu46::get_cMe(vpHomogeneousMatrix &cMe) const { vpPtu46::get_cMe(cMe); }
 
 /*!
   Get the robot jacobian expressed in the end-effector frame.
@@ -282,20 +276,14 @@ void vpRobotPtu46::get_fJe(vpMatrix &fJe)
 
   \param velocity : Velocity in % of the maximum velocity between [0,100].
 */
-void vpRobotPtu46::setPositioningVelocity(const double velocity)
-{
-  positioningVelocity = velocity;
-}
+void vpRobotPtu46::setPositioningVelocity(const double velocity) { positioningVelocity = velocity; }
 /*!
   Get the velocity in % used for a position control.
 
   \return Positionning velocity in [0, 100]
 
 */
-double vpRobotPtu46::getPositioningVelocity(void)
-{
-  return positioningVelocity;
-}
+double vpRobotPtu46::getPositioningVelocity(void) { return positioningVelocity; }
 
 /*!
    Move the robot in position control.
@@ -313,8 +301,7 @@ double vpRobotPtu46::getPositioningVelocity(void)
 
 */
 
-void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame,
-                               const vpColVector &q)
+void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q)
 {
 
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState()) {
@@ -327,23 +314,20 @@ void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame,
   case vpRobot::CAMERA_FRAME:
     vpERROR_TRACE("Cannot move the robot in camera frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot move the robot in camera frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in camera frame: "
+                                                              "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot move the robot in reference frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot move the robot in reference frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in reference frame: "
+                                                              "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot move the robot in mixt frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot move the robot in mixt frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in mixt frame: "
+                                                              "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
     break;
@@ -357,8 +341,7 @@ void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame,
 
   if (0 != ptu.move(artpos, positioningVelocity, PTU_ABSOLUTE_MODE)) {
     vpERROR_TRACE("Positionning error.");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Positionning error.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error.");
   }
 
   return;
@@ -380,8 +363,7 @@ void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame,
    type is given.
 
 */
-void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame,
-                               const double &q1, const double &q2)
+void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2)
 {
   try {
     vpColVector q(2);
@@ -413,8 +395,7 @@ void vpRobotPtu46::setPosition(const char *filename)
   vpColVector q;
   if (readPositionFile(filename, q) == false) {
     vpERROR_TRACE("Cannot get ptu-46 position from file");
-    throw vpRobotException(vpRobotException::readingParametersError,
-                           "Cannot get ptu-46 position from file");
+    throw vpRobotException(vpRobotException::readingParametersError, "Cannot get ptu-46 position from file");
   }
   setPosition(vpRobot::ARTICULAR_FRAME, q);
 }
@@ -432,31 +413,27 @@ void vpRobotPtu46::setPosition(const char *filename)
   is given.
 
 */
-void vpRobotPtu46::getPosition(const vpRobot::vpControlFrameType frame,
-                               vpColVector &q)
+void vpRobotPtu46::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   vpDEBUG_TRACE(9, "# Entree.");
 
   switch (frame) {
   case vpRobot::CAMERA_FRAME:
     vpERROR_TRACE("Cannot get position in camera frame: not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Cannot get position in camera frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::lowLevelError, "Cannot get position in camera frame: "
+                                                            "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot get position in reference frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Cannot get position in reference frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::lowLevelError, "Cannot get position in reference frame: "
+                                                            "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot get position in mixt frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Cannot get position in mixt frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::lowLevelError, "Cannot get position in mixt frame: "
+                                                            "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
     break;
@@ -466,8 +443,7 @@ void vpRobotPtu46::getPosition(const vpRobot::vpControlFrameType frame,
 
   if (0 != ptu.getCurrentPosition(artpos)) {
     vpERROR_TRACE("Error when calling  recup_posit_Afma4.");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Error when calling  recup_posit_Afma4.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Error when calling  recup_posit_Afma4.");
   }
 
   q.resize(vpPtu46::ndof);
@@ -505,19 +481,16 @@ void vpRobotPtu46::getPosition(const vpRobot::vpControlFrameType frame,
   autorized speed (see vpRobot::maxRotationVelocity).
 */
 
-void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame,
-                               const vpColVector &v)
+void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
   TPtuFrame ptuFrameInterface;
 
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
-    vpERROR_TRACE(
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    throw vpRobotException(
-        vpRobotException::wrongStateError,
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    vpERROR_TRACE("Cannot send a velocity to the robot "
+                  "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot send a velocity to the robot "
+                           "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }
 
   switch (frame) {
@@ -525,9 +498,8 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame,
     ptuFrameInterface = PTU_CAMERA_FRAME;
     if (v.getRows() != 2) {
       vpERROR_TRACE("Bad dimension fo speed vector in camera frame");
-      throw vpRobotException(vpRobotException::wrongStateError,
-                             "Bad dimension for speed vector "
-                             "in camera frame");
+      throw vpRobotException(vpRobotException::wrongStateError, "Bad dimension for speed vector "
+                                                                "in camera frame");
     }
     break;
   }
@@ -535,9 +507,8 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame,
     ptuFrameInterface = PTU_ARTICULAR_FRAME;
     if (v.getRows() != 2) {
       vpERROR_TRACE("Bad dimension fo speed vector in articular frame");
-      throw vpRobotException(vpRobotException::wrongStateError,
-                             "Bad dimension for speed vector "
-                             "in articular frame");
+      throw vpRobotException(vpRobotException::wrongStateError, "Bad dimension for speed vector "
+                                                                "in articular frame");
     }
     break;
   }
@@ -545,25 +516,22 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame,
     vpERROR_TRACE("Cannot send a velocity to the robot "
                   "in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot send a velocity to the robot "
-                           "in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
+                                                              "in the reference frame:"
+                                                              "functionality not implemented");
   }
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Cannot send a velocity to the robot "
                   "in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot send a velocity to the robot "
-                           "in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
+                                                              "in the mixt frame:"
+                                                              "functionality not implemented");
   }
   default: {
     vpERROR_TRACE("Error in spec of vpRobot. "
                   "Case not taken in account.");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot send a velocity to the robot ");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot ");
   }
   }
 
@@ -574,8 +542,7 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::ARTICULAR_FRAME:
   case vpRobot::CAMERA_FRAME: {
     double max = this->maxRotationVelocity;
-    bool norm =
-        false; // Flag to indicate when velocities need to be nomalized
+    bool norm = false;                   // Flag to indicate when velocities need to be nomalized
     for (unsigned int i = 0; i < 2; ++i) // rx and ry of the camera
     {
       if (fabs(v[i]) > max) {
@@ -599,8 +566,7 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame,
     break;
   }
 
-  vpCDEBUG(12) << "v: " << ptuSpeedInterface[0] << " " << ptuSpeedInterface[1]
-               << std::endl;
+  vpCDEBUG(12) << "v: " << ptuSpeedInterface[0] << " " << ptuSpeedInterface[1] << std::endl;
   ptu.move(ptuSpeedInterface, ptuFrameInterface);
   return;
 }
@@ -623,8 +589,7 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame,
   \exception vpRobotException::wrongStateError : If a not supported frame type
   is given.
 */
-void vpRobotPtu46::getVelocity(const vpRobot::vpControlFrameType frame,
-                               vpColVector &q_dot)
+void vpRobotPtu46::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot)
 {
 
   TPtuFrame ptuFrameInterface = PTU_ARTICULAR_FRAME;
@@ -633,9 +598,8 @@ void vpRobotPtu46::getVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::CAMERA_FRAME: {
     vpERROR_TRACE("Cannot get a velocity in the camera frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get a velocity in the camera frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the camera frame:"
+                                                              "functionality not implemented");
   }
   case vpRobot::ARTICULAR_FRAME: {
     ptuFrameInterface = PTU_ARTICULAR_FRAME;
@@ -644,17 +608,15 @@ void vpRobotPtu46::getVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::REFERENCE_FRAME: {
     vpERROR_TRACE("Cannot get a velocity in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get a velocity in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the reference frame:"
+                                                              "functionality not implemented");
   }
   case vpRobot::MIXT_FRAME: {
 
     vpERROR_TRACE("Cannot get a velocity in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get a velocity in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the mixt frame:"
+                                                              "functionality not implemented");
   }
   }
 
@@ -705,8 +667,7 @@ vpColVector vpRobotPtu46::getVelocity(vpRobot::vpControlFrameType frame)
   \return true if a position was found, false otherwise.
 
 */
-bool vpRobotPtu46::readPositionFile(const std::string &filename,
-                                    vpColVector &q)
+bool vpRobotPtu46::readPositionFile(const std::string &filename, vpColVector &q)
 {
   std::ifstream fd(filename.c_str(), std::ios::in);
 
@@ -725,10 +686,8 @@ bool vpRobotPtu46::readPositionFile(const std::string &filename,
   while (std::getline(fd, line)) {
     lineNum++;
     if (lineNum == 1) {
-      if (!(line.compare(0, id.size(), id) ==
-            0)) { // check if Ptu-46 position file
-        std::cout << "Error: this position file " << filename
-                  << " is not for Ptu-46 robot" << std::endl;
+      if (!(line.compare(0, id.size(), id) == 0)) { // check if Ptu-46 position file
+        std::cout << "Error: this position file " << filename << " is not for Ptu-46 robot" << std::endl;
         return false;
       }
     }
@@ -737,8 +696,7 @@ bool vpRobotPtu46::readPositionFile(const std::string &filename,
     }
     if ((line.compare(0, key.size(), key) == 0)) { // decode position
       // check if there are at least njoint values in the line
-      std::vector<std::string> chain =
-          vpIoTools::splitChain(line, std::string(" "));
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
       if (chain.size() < vpPtu46::ndof + 1) // try to split with tab separator
         chain = vpIoTools::splitChain(line, std::string("\t"));
       if (chain.size() < vpPtu46::ndof + 1)
@@ -760,8 +718,7 @@ bool vpRobotPtu46::readPositionFile(const std::string &filename,
   fd.close();
 
   if (!pos_found) {
-    std::cout << "Error: unable to find a position for Ptu-46 robot in "
-              << filename << std::endl;
+    std::cout << "Error: unable to find a position for Ptu-46 robot in " << filename << std::endl;
     return false;
   }
 
@@ -787,8 +744,7 @@ bool vpRobotPtu46::readPositionFile(const std::string &filename,
   is given.
 
 */
-void vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame,
-                                   vpColVector &d)
+void vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &d)
 {
   double d_[6];
 
@@ -814,16 +770,14 @@ void vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame,
   case vpRobot::REFERENCE_FRAME: {
     vpERROR_TRACE("Cannot get a displacement in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get a displacement in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a displacement in the reference frame:"
+                                                              "functionality not implemented");
   }
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Cannot get a displacement in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get a displacement in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a displacement in the reference frame:"
+                                                              "functionality not implemented");
   }
   }
 }

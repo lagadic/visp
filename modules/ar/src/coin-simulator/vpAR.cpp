@@ -52,21 +52,21 @@
 #include <visp3/core/vpTime.h>
 
 /* Objets OIV. */
-#include <Inventor/nodes/SoCone.h> /* Objet cone.                            */
-#include <Inventor/nodes/SoCoordinate3.h> /* Liste de points.                */
-#include <Inventor/nodes/SoCylinder.h> /* Objet cylindre.                    */
+#include <Inventor/nodes/SoCone.h>           /* Objet cone.                            */
+#include <Inventor/nodes/SoCoordinate3.h>    /* Liste de points.                */
+#include <Inventor/nodes/SoCylinder.h>       /* Objet cylindre.                    */
 #include <Inventor/nodes/SoIndexedFaceSet.h> /* Liste de face.               */
-#include <Inventor/nodes/SoPointLight.h> /* Objet lumiere ponctuelle.        */
-#include <Inventor/nodes/SoRotationXYZ.h> /* Transfo rotation simple.       */
-#include <Inventor/nodes/SoScale.h> /* Trasnfo mise a l'echelle.             */
-#include <Inventor/nodes/SoTranslation.h> /* Trasnfo translation.            */
+#include <Inventor/nodes/SoPointLight.h>     /* Objet lumiere ponctuelle.        */
+#include <Inventor/nodes/SoRotationXYZ.h>    /* Transfo rotation simple.       */
+#include <Inventor/nodes/SoScale.h>          /* Trasnfo mise a l'echelle.             */
+#include <Inventor/nodes/SoTranslation.h>    /* Trasnfo translation.            */
 
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/nodes/SoDirectionalLight.h> /* Objet lumiere directionnelle*/
-#include <Inventor/nodes/SoDrawStyle.h> /* Style de rendu.                  */
-#include <Inventor/nodes/SoEnvironment.h> /* Eclairage ambiant.              */
-#include <Inventor/nodes/SoGroup.h> /* Groupement de noeuds (sans separation)*/
-#include <Inventor/nodes/SoMaterial.h> /* Matiere (couleur) des objets.     */
+#include <Inventor/nodes/SoDrawStyle.h>        /* Style de rendu.                  */
+#include <Inventor/nodes/SoEnvironment.h>      /* Eclairage ambiant.              */
+#include <Inventor/nodes/SoGroup.h>            /* Groupement de noeuds (sans separation)*/
+#include <Inventor/nodes/SoMaterial.h>         /* Matiere (couleur) des objets.     */
 
 /*!
         Basic Destructor that calls the kill() method of the vpSimulator
@@ -81,8 +81,7 @@ vpAR::~vpAR() { kill(); }
         \param height : Height of the internal view.
         \param type : Type of background image ie gray scaled or color.
 */
-void vpAR::initInternalViewer(const unsigned int width,
-                              const unsigned int height, vpImageType type)
+void vpAR::initInternalViewer(const unsigned int width, const unsigned int height, vpImageType type)
 {
 
   vpSimulator::initInternalViewer(width, height);
@@ -97,11 +96,9 @@ void vpAR::initInternalViewer(const unsigned int width,
 
   typeImage = type;
   if (typeImage == grayImage)
-    image_background =
-        (GLubyte *)malloc(internal_width * internal_height * sizeof(GLubyte));
+    image_background = (GLubyte *)malloc(internal_width * internal_height * sizeof(GLubyte));
   else
-    image_background = (GLubyte *)malloc(3 * internal_width *
-                                         internal_height * sizeof(GLubyte));
+    image_background = (GLubyte *)malloc(3 * internal_width * internal_height * sizeof(GLubyte));
 }
 
 /*!
@@ -113,11 +110,9 @@ void vpAR::initInternalViewer(const unsigned int width,
 void vpAR::setImage(vpImage<unsigned char> &I)
 {
 
-  if ((internal_width != I.getWidth()) ||
-      (internal_height != I.getHeight())) {
+  if ((internal_width != I.getWidth()) || (internal_height != I.getHeight())) {
     vpERROR_TRACE("The image size is different from the view size ");
-    throw(vpException(vpException::dimensionError),
-          "The image size is different from the view size");
+    throw(vpException(vpException::dimensionError), "The image size is different from the view size");
   }
 
   background = true;
@@ -138,11 +133,9 @@ void vpAR::setImage(vpImage<unsigned char> &I)
 void vpAR::setImage(vpImage<vpRGBa> &I)
 {
 
-  if ((internal_width != I.getWidth()) ||
-      (internal_height != I.getHeight())) {
+  if ((internal_width != I.getWidth()) || (internal_height != I.getHeight())) {
     vpERROR_TRACE("The image size is different from the view size ");
-    throw(vpException(vpException::dimensionError),
-          "The image size is different from the view size");
+    throw(vpException(vpException::dimensionError), "The image size is different from the view size");
   }
 
   background = true;
@@ -152,12 +145,9 @@ void vpAR::setImage(vpImage<vpRGBa> &I)
     for (unsigned int j = 0; j < I.getWidth(); j++)
     // le repere image open GL est en bas a gauche donc l'image serait inverse
     {
-      image_background[i * I.getWidth() * 3 + k + 0] =
-          I[I.getHeight() - i - 1][j].R;
-      image_background[i * I.getWidth() * 3 + k + 1] =
-          I[I.getHeight() - i - 1][j].G;
-      image_background[i * I.getWidth() * 3 + k + 2] =
-          I[I.getHeight() - i - 1][j].B;
+      image_background[i * I.getWidth() * 3 + k + 0] = I[I.getHeight() - i - 1][j].R;
+      image_background[i * I.getWidth() * 3 + k + 1] = I[I.getHeight() - i - 1][j].G;
+      image_background[i * I.getWidth() * 3 + k + 2] = I[I.getHeight() - i - 1][j].B;
       k += 3;
     }
   }

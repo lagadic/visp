@@ -79,21 +79,17 @@ public:
   //! Destructor. Does nothing.
   ~vpFeatureSegment() {}
   // change values of the segment
-  void buildFrom(const double x1, const double y1, const double Z1,
-                 const double x2, const double y2, const double Z2);
+  void buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2, const double Z2);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
   //! Feature duplication.
   vpFeatureSegment *duplicate() const;
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
   /*!
       Get the x coordinate of the segment center in the image plane.
@@ -247,16 +243,14 @@ public:
       vpERROR_TRACE("Point is behind the camera ");
       std::cout << "Z1 = " << Z1_ << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point Z1 is behind the camera "));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z1 is behind the camera "));
     }
 
     if (fabs(Z1_) < 1e-6) {
       vpERROR_TRACE("Point Z1 coordinates is null ");
       std::cout << "Z1 = " << Z1_ << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point Z1 coordinates is null"));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z1 coordinates is null"));
     }
 
     flags[4] = true;
@@ -282,16 +276,14 @@ public:
       vpERROR_TRACE("Point Z2 is behind the camera ");
       std::cout << "Z2 = " << Z2_ << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point Z2 is behind the camera "));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z2 is behind the camera "));
     }
 
     if (fabs(Z2_) < 1e-6) {
       vpERROR_TRACE("Point Z2 coordinates is null ");
       std::cout << "Z2 = " << Z2_ << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point Z2 coordinates is null"));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z2 coordinates is null"));
     }
 
     flags[5] = true;

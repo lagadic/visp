@@ -46,8 +46,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#if defined(VISP_HAVE_REALSENSE) &&                                          \
-    defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                \
+#if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                          \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <mutex>
 #include <thread>
@@ -62,31 +61,22 @@ namespace
 
 #ifdef VISP_HAVE_PCL
 // Global variables
-pcl::PointCloud<pcl::PointXYZ>::Ptr
-    pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-    pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
+pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 bool cancelled = false, update_pointcloud = false;
 
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(const bool color_mode, std::mutex &mutex)
-    : m_colorMode(color_mode), m_mutex(mutex)
-  {
-  }
+  explicit ViewerWorker(const bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
 
   void run()
   {
     std::string date = vpTime::getDateTime();
-    pcl::visualization::PCLVisualizer::Ptr viewer(
-        new pcl::visualization::PCLVisualizer("3D Viewer " + date));
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(
-        pointcloud_color);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(
-        new pcl::PointCloud<pcl::PointXYZ>());
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(
-        new pcl::PointCloud<pcl::PointXYZRGB>());
+    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer " + date));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 
     viewer->setBackgroundColor(0, 0, 0);
     viewer->initCameraParameters();
@@ -120,26 +110,19 @@ public:
 
         if (init) {
           if (m_colorMode) {
-            viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color,
-                                                    rgb, "RGB sample cloud");
-            viewer->setPointCloudRenderingProperties(
-                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
-                "RGB sample cloud");
+            viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
+            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
+                                                     "RGB sample cloud");
           } else {
-            viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud,
-                                                 "sample cloud");
-            viewer->setPointCloudRenderingProperties(
-                pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
-                "sample cloud");
+            viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
+            viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           }
           init = false;
         } else {
           if (m_colorMode) {
-            viewer->updatePointCloud<pcl::PointXYZRGB>(
-                local_pointcloud_color, rgb, "RGB sample cloud");
+            viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
           } else {
-            viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud,
-                                                    "sample cloud");
+            viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           }
         }
       }
@@ -156,24 +139,20 @@ private:
 };
 #endif //#ifdef VISP_HAVE_PCL
 
-void test_R200(
-    vpRealSense &rs, const std::map<rs::stream, bool> &enables,
-    const std::map<rs::stream, vpRealSense::vpRsStreamParams> &params,
-    const std::map<rs::option, double> &options, const std::string &title,
-    const bool depth_color_visualization = false,
-    const rs::stream &color_stream = rs::stream::color,
-    const rs::stream &depth_stream = rs::stream::depth,
-    const rs::stream &infrared2_stream = rs::stream::infrared2,
-    bool display_pcl = false, bool pcl_color = false)
+void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
+               const std::map<rs::stream, vpRealSense::vpRsStreamParams> &params,
+               const std::map<rs::option, double> &options, const std::string &title,
+               const bool depth_color_visualization = false, const rs::stream &color_stream = rs::stream::color,
+               const rs::stream &depth_stream = rs::stream::depth,
+               const rs::stream &infrared2_stream = rs::stream::infrared2, bool display_pcl = false,
+               bool pcl_color = false)
 {
   std::cout << std::endl;
 
   std::map<rs::stream, bool>::const_iterator it_enable;
-  std::map<rs::stream, vpRealSense::vpRsStreamParams>::const_iterator
-      it_param;
+  std::map<rs::stream, vpRealSense::vpRsStreamParams>::const_iterator it_param;
 
-  for (it_enable = enables.begin(), it_param = params.begin();
-       it_enable != enables.end(); ++it_enable) {
+  for (it_enable = enables.begin(), it_param = params.begin(); it_enable != enables.end(); ++it_enable) {
     rs.setEnableStream(it_enable->first, it_enable->second);
 
     if (it_enable->second) {
@@ -218,21 +197,18 @@ void test_R200(
 
         it_param = params.find(it_enable->first);
         if (it_param != params.end()) {
-          direct_infrared_conversion =
-              it_param->second.m_streamFormat == rs::format::y8;
+          direct_infrared_conversion = it_param->second.m_streamFormat == rs::format::y8;
         }
         break;
 
       case rs::stream::infrared2:
-        infrared2.init(
-            (unsigned int)rs.getIntrinsics(it_enable->first).height,
-            (unsigned int)rs.getIntrinsics(it_enable->first).width);
+        infrared2.init((unsigned int)rs.getIntrinsics(it_enable->first).height,
+                       (unsigned int)rs.getIntrinsics(it_enable->first).width);
         I_infrared2.init(infrared.getHeight(), infrared.getWidth());
 
         it_param = params.find(it_enable->first);
         if (it_param != params.end()) {
-          direct_infrared_conversion =
-              it_param->second.m_streamFormat == rs::format::y8;
+          direct_infrared_conversion = it_param->second.m_streamFormat == rs::format::y8;
         }
         break;
 
@@ -257,25 +233,19 @@ void test_R200(
 
       case rs::stream::depth:
         if (depth_color_visualization) {
-          dd.init(I_depth_color, (int)I_color.getWidth() + 80, 0,
-                  "Depth frame");
+          dd.init(I_depth_color, (int)I_color.getWidth() + 80, 0, "Depth frame");
         } else {
           dd.init(I_depth, (int)I_color.getWidth() + 80, 0, "Depth frame");
         }
         break;
 
       case rs::stream::infrared:
-        di.init(I_infrared, 0,
-                (int)(std::max)(I_color.getHeight(), I_depth.getHeight()) +
-                    30,
-                "Infrared frame");
+        di.init(I_infrared, 0, (int)(std::max)(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared frame");
         break;
 
       case rs::stream::infrared2:
         di2.init(I_infrared2, (int)I_infrared.getWidth(),
-                 (int)(std::max)(I_color.getHeight(), I_depth.getHeight()) +
-                     30,
-                 "Infrared2 frame");
+                 (int)(std::max)(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared2 frame");
         break;
 
       default:
@@ -284,8 +254,7 @@ void test_R200(
     }
   }
 
-  std::cout << "direct_infrared_conversion=" << direct_infrared_conversion
-            << std::endl;
+  std::cout << "direct_infrared_conversion=" << direct_infrared_conversion << std::endl;
 
 #ifdef VISP_HAVE_PCL
   std::mutex mutex;
@@ -307,8 +276,7 @@ void test_R200(
   while (true) {
     double t = vpTime::measureTimeMs();
 
-    for (std::map<rs::option, double>::const_iterator it = options.begin();
-         it != options.end(); ++it) {
+    for (std::map<rs::option, double>::const_iterator it = options.begin(); it != options.end(); ++it) {
       dev->set_option(it->first, it->second);
     }
 
@@ -318,31 +286,23 @@ void test_R200(
 
       if (direct_infrared_conversion) {
         if (pcl_color) {
-          rs.acquire((unsigned char *)I_color.bitmap,
-                     (unsigned char *)depth.bitmap, NULL, pointcloud_color,
-                     (unsigned char *)I_infrared.bitmap,
-                     (unsigned char *)I_infrared2.bitmap, color_stream,
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
+                     (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream,
                      depth_stream, rs::stream::infrared, infrared2_stream);
         } else {
-          rs.acquire((unsigned char *)I_color.bitmap,
-                     (unsigned char *)depth.bitmap, NULL, pointcloud,
-                     (unsigned char *)I_infrared.bitmap,
-                     (unsigned char *)I_infrared2.bitmap, color_stream,
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
+                     (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream,
                      depth_stream, rs::stream::infrared, infrared2_stream);
         }
       } else {
         if (pcl_color) {
-          rs.acquire((unsigned char *)I_color.bitmap,
-                     (unsigned char *)depth.bitmap, NULL, pointcloud_color,
-                     (unsigned char *)infrared.bitmap,
-                     (unsigned char *)infrared2.bitmap, color_stream,
-                     depth_stream, rs::stream::infrared, infrared2_stream);
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
+                     (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
+                     rs::stream::infrared, infrared2_stream);
         } else {
-          rs.acquire((unsigned char *)I_color.bitmap,
-                     (unsigned char *)depth.bitmap, NULL, pointcloud,
-                     (unsigned char *)infrared.bitmap,
-                     (unsigned char *)infrared2.bitmap, color_stream,
-                     depth_stream, rs::stream::infrared, infrared2_stream);
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
+                     (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
+                     rs::stream::infrared, infrared2_stream);
         }
 
         vpImageConvert::convert(infrared, I_infrared);
@@ -353,17 +313,13 @@ void test_R200(
 #endif
     } else {
       if (direct_infrared_conversion) {
-        rs.acquire((unsigned char *)I_color.bitmap,
-                   (unsigned char *)depth.bitmap, NULL,
-                   (unsigned char *)I_infrared.bitmap,
-                   (unsigned char *)I_infrared2.bitmap, color_stream,
-                   depth_stream, rs::stream::infrared, infrared2_stream);
+        rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL,
+                   (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream, depth_stream,
+                   rs::stream::infrared, infrared2_stream);
       } else {
-        rs.acquire((unsigned char *)I_color.bitmap,
-                   (unsigned char *)depth.bitmap, NULL,
-                   (unsigned char *)infrared.bitmap,
-                   (unsigned char *)infrared2.bitmap, color_stream,
-                   depth_stream, rs::stream::infrared, infrared2_stream);
+        rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL,
+                   (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
+                   rs::stream::infrared, infrared2_stream);
         vpImageConvert::convert(infrared, I_infrared);
         vpImageConvert::convert(infrared2, I_infrared2);
       }
@@ -394,10 +350,8 @@ void test_R200(
     vpDisplay::flush(I_infrared2);
 
     if (vpDisplay::getClick(I_color, false) ||
-        (depth_color_visualization ? vpDisplay::getClick(I_depth_color, false)
-                                   : vpDisplay::getClick(I_depth, false)) ||
-        vpDisplay::getClick(I_infrared, false) ||
-        vpDisplay::getClick(I_infrared2, false)) {
+        (depth_color_visualization ? vpDisplay::getClick(I_depth_color, false) : vpDisplay::getClick(I_depth, false)) ||
+        vpDisplay::getClick(I_infrared, false) || vpDisplay::getClick(I_infrared2, false)) {
       break;
     }
 
@@ -419,8 +373,7 @@ void test_R200(
   }
 
   std::cout << title << " - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector)
-            << " ms" << std::endl;
+            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   rs.close();
 }
@@ -434,18 +387,13 @@ int main(int argc, char *argv[])
 
     rs.setEnableStream(rs::stream::color, false);
     rs.open();
-    if (rs_get_device_name((const rs_device *)rs.getHandler(), nullptr) !=
-        std::string("Intel RealSense R200")) {
-      std::cout
-          << "This test file is used to test the Intel RealSense R200 only."
-          << std::endl;
+    if (rs_get_device_name((const rs_device *)rs.getHandler(), nullptr) != std::string("Intel RealSense R200")) {
+      std::cout << "This test file is used to test the Intel RealSense R200 only." << std::endl;
       return EXIT_SUCCESS;
     }
 
     std::cout << "API version: " << rs_get_api_version(nullptr) << std::endl;
-    std::cout << "Firmware: "
-              << rs_get_device_firmware_version(
-                     (const rs_device *)rs.getHandler(), nullptr)
+    std::cout << "Firmware: " << rs_get_device_firmware_version((const rs_device *)rs.getHandler(), nullptr)
               << std::endl;
     std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
@@ -460,26 +408,20 @@ int main(int argc, char *argv[])
     enables[rs::stream::infrared] = false;
     enables[rs::stream::infrared2] = false;
 
-    params[rs::stream::depth] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 90);
+    params[rs::stream::depth] = vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 90);
 
     options[rs::option::r200_lr_auto_exposure_enabled] = 1;
 
-    test_R200(rs, enables, params, options,
-              "R200_DEPTH_Z16_640x480_90FPS + r200_lr_auto_exposure_enabled",
-              true);
+    test_R200(rs, enables, params, options, "R200_DEPTH_Z16_640x480_90FPS + r200_lr_auto_exposure_enabled", true);
 
     enables[rs::stream::color] = false;
     enables[rs::stream::depth] = true;
     enables[rs::stream::infrared] = true;
     enables[rs::stream::infrared2] = true;
 
-    params[rs::stream::depth] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 90);
-    params[rs::stream::infrared] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
-    params[rs::stream::infrared2] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
+    params[rs::stream::depth] = vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 90);
+    params[rs::stream::infrared] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
+    params[rs::stream::infrared2] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
 
     options[rs::option::r200_lr_auto_exposure_enabled] = 0;
     options[rs::option::r200_emitter_enabled] = 0;
@@ -495,12 +437,9 @@ int main(int argc, char *argv[])
     enables[rs::stream::infrared] = true;
     enables[rs::stream::infrared2] = true;
 
-    params[rs::stream::depth] =
-        vpRealSense::vpRsStreamParams(628, 468, rs::format::z16, 90);
-    params[rs::stream::infrared] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y16, 90);
-    params[rs::stream::infrared2] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y16, 90);
+    params[rs::stream::depth] = vpRealSense::vpRsStreamParams(628, 468, rs::format::z16, 90);
+    params[rs::stream::infrared] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y16, 90);
+    params[rs::stream::infrared2] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y16, 90);
 
     options[rs::option::r200_lr_auto_exposure_enabled] = 1;
     options[rs::option::r200_emitter_enabled] = 1;
@@ -515,12 +454,9 @@ int main(int argc, char *argv[])
     enables[rs::stream::infrared] = true;
     enables[rs::stream::infrared2] = true;
 
-    params[rs::stream::depth] =
-        vpRealSense::vpRsStreamParams(628, 468, rs::format::z16, 90);
-    params[rs::stream::infrared] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
-    params[rs::stream::infrared2] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
+    params[rs::stream::depth] = vpRealSense::vpRsStreamParams(628, 468, rs::format::z16, 90);
+    params[rs::stream::infrared] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
+    params[rs::stream::infrared2] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
 
     options.clear();
 
@@ -533,14 +469,10 @@ int main(int argc, char *argv[])
     enables[rs::stream::infrared] = true;
     enables[rs::stream::infrared2] = true;
 
-    params[rs::stream::color] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30);
-    params[rs::stream::depth] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 90);
-    params[rs::stream::infrared] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
-    params[rs::stream::infrared2] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
+    params[rs::stream::color] = vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30);
+    params[rs::stream::depth] = vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 90);
+    params[rs::stream::infrared] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
+    params[rs::stream::infrared2] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 90);
 
     test_R200(rs, enables, params, options,
               "R200_COLOR_RGBA8_640x480_30FPS + R200_DEPTH_Z16_628x468_90FPS "
@@ -553,19 +485,16 @@ int main(int argc, char *argv[])
     enables[rs::stream::infrared] = false;
     enables[rs::stream::infrared2] = false;
 
-    params[rs::stream::color] =
-        vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30);
+    params[rs::stream::color] = vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30);
 
-    test_R200(rs, enables, params, options,
-              "R200_COLOR_RGBA8_1920x1080_30FPS");
+    test_R200(rs, enables, params, options, "R200_COLOR_RGBA8_1920x1080_30FPS");
 
     enables[rs::stream::color] = true;
     enables[rs::stream::depth] = false;
     enables[rs::stream::infrared] = false;
     enables[rs::stream::infrared2] = false;
 
-    params[rs::stream::color] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 60);
+    params[rs::stream::color] = vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 60);
     test_R200(rs, enables, params, options, "R200_COLOR_RGBA8_640x480_60FPS");
 
     enables[rs::stream::color] = true;
@@ -573,31 +502,22 @@ int main(int argc, char *argv[])
     enables[rs::stream::infrared] = true;
     enables[rs::stream::infrared2] = true;
 
-    params[rs::stream::color] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 60);
-    params[rs::stream::depth] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 60);
-    params[rs::stream::infrared] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
-    params[rs::stream::infrared2] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
+    params[rs::stream::color] = vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 60);
+    params[rs::stream::depth] = vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 60);
+    params[rs::stream::infrared] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
+    params[rs::stream::infrared2] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
 
     // depth == 0 ; color == 1 ; infrared2 == 3 ; rectified_color == 6 ;
     // color_aligned_to_depth == 7 ; infrared2_aligned_to_depth == 8 ;
     // depth_aligned_to_color == 9 ; depth_aligned_to_rectified_color == 10 ;
     // depth_aligned_to_infrared2 == 11  argv[2] <==> color stream
-    rs::stream color_stream = argc > 2 ? (rs::stream)atoi(argv[2])
-                                       : rs::stream::color_aligned_to_depth;
+    rs::stream color_stream = argc > 2 ? (rs::stream)atoi(argv[2]) : rs::stream::color_aligned_to_depth;
     std::cout << "\ncolor_stream: " << color_stream << std::endl;
     // argv[3] <==> depth stream
-    rs::stream depth_stream =
-        argc > 3 ? (rs::stream)atoi(argv[3])
-                 : rs::stream::depth_aligned_to_rectified_color;
+    rs::stream depth_stream = argc > 3 ? (rs::stream)atoi(argv[3]) : rs::stream::depth_aligned_to_rectified_color;
     std::cout << "depth_stream: " << depth_stream << std::endl;
     // argv[4] <==> depth stream
-    rs::stream infrared2_stream =
-        argc > 4 ? (rs::stream)atoi(argv[4])
-                 : rs::stream::infrared2_aligned_to_depth;
+    rs::stream infrared2_stream = argc > 4 ? (rs::stream)atoi(argv[4]) : rs::stream::infrared2_aligned_to_depth;
     std::cout << "infrared2_stream: " << infrared2_stream << std::endl;
 
     test_R200(rs, enables, params, options,
@@ -607,39 +527,33 @@ int main(int argc, char *argv[])
               "R200_INFRARED2_ALIGNED_TO_DEPTH_Y8_640x480_60FPS",
               true, color_stream, depth_stream, infrared2_stream);
 
-#if (!defined(__APPLE__) &&                                                  \
-     !defined(__MACH__)) // Not OSX, since viewer->spinOnce (10); produces a
-                         // segfault on OSX
+#if (!defined(__APPLE__) && !defined(__MACH__)) // Not OSX, since viewer->spinOnce (10); produces a
+                                                // segfault on OSX
 
     enables[rs::stream::color] = true;
     enables[rs::stream::depth] = true;
     enables[rs::stream::infrared] = true;
     enables[rs::stream::infrared2] = true;
 
-    params[rs::stream::color] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 60);
-    params[rs::stream::depth] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 60);
-    params[rs::stream::infrared] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
-    params[rs::stream::infrared2] =
-        vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
+    params[rs::stream::color] = vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 60);
+    params[rs::stream::depth] = vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 60);
+    params[rs::stream::infrared] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
+    params[rs::stream::infrared2] = vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 60);
 
     // Cannot render two pcl::visualization::PCLVisualizer so use an arg
     // option to switch between B&W and color point cloud rendering until a
     // solution is found
-    test_R200(
-        rs, enables, params, options,
-        "R200_COLOR_RGBA8_640x480_60FPS + R200_DEPTH_Z16_640x480_60FPS + "
-        "R200_INFRARED_Y8_640x480_60FPS + R200_INFRARED2_Y8_640x480_60FPS",
-        false, rs::stream::color, rs::stream::depth, rs::stream::infrared2,
-        true, (argc > 1 ? (bool)(atoi(argv[1]) > 0) : false));
+    test_R200(rs, enables, params, options,
+              "R200_COLOR_RGBA8_640x480_60FPS + R200_DEPTH_Z16_640x480_60FPS + "
+              "R200_INFRARED_Y8_640x480_60FPS + R200_INFRARED2_Y8_640x480_60FPS",
+              false, rs::stream::color, rs::stream::depth, rs::stream::infrared2, true,
+              (argc > 1 ? (bool)(atoi(argv[1]) > 0) : false));
 #endif
   } catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
   } catch (const rs::error &e) {
-    std::cerr << "RealSense error calling " << e.get_failed_function() << "("
-              << e.get_failed_args() << "): " << e.what() << std::endl;
+    std::cerr << "RealSense error calling " << e.get_failed_function() << "(" << e.get_failed_args()
+              << "): " << e.what() << std::endl;
   } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }

@@ -52,14 +52,12 @@
  * Authorize indexing on all movements by default.
  */
 vpVirtuose::vpVirtuose()
-  : m_virtContext(NULL), m_ip("localhost#5000"), m_verbose(false),
-    m_apiMajorVersion(0), m_apiMinorVersion(0), m_ctrlMajorVersion(0),
-    m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE),
-    m_indexType(INDEXING_ALL), m_is_init(false), m_period(0.001f)
+  : m_virtContext(NULL), m_ip("localhost#5000"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
+    m_ctrlMajorVersion(0), m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
+    m_is_init(false), m_period(0.001f)
 {
   virtAPIVersion(&m_apiMajorVersion, &m_apiMinorVersion);
-  std::cout << "API version: " << m_apiMajorVersion << "."
-            << m_apiMinorVersion << std::endl;
+  std::cout << "API version: " << m_apiMajorVersion << "." << m_apiMinorVersion << std::endl;
 }
 
 /*!
@@ -97,8 +95,7 @@ void vpVirtuose::addForce(vpColVector &force)
 
   if (virtAddForce(m_virtContext, virtforce)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtAddForce: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtAddForce: error code %d", err));
   }
 }
 
@@ -112,9 +109,7 @@ void vpVirtuose::enableForceFeedback(int enable)
 
   if (virtEnableForceFeedback(m_virtContext, enable)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(
-        vpException::fatalError,
-        "Error calling virtEnableForceFeedback(): error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtEnableForceFeedback(): error code %d", err));
   }
 }
 
@@ -124,8 +119,7 @@ void vpVirtuose::enableForceFeedback(int enable)
 vpColVector vpVirtuose::getArticularPosition() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpColVector articularPosition(6, 0);
@@ -133,9 +127,7 @@ vpColVector vpVirtuose::getArticularPosition() const
   float articular_position_[6];
   if (virtGetArticularPosition(m_virtContext, articular_position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(
-        vpException::fatalError,
-        "Error calling virtGetArticularPosition(): error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetArticularPosition(): error code %d", err));
   }
 
   for (unsigned int i = 0; i < 6; i++)
@@ -150,17 +142,14 @@ vpColVector vpVirtuose::getArticularPosition() const
 vpColVector vpVirtuose::getArticularVelocity() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpColVector articularVelocity(6, 0);
   float articular_velocity_[6];
   if (virtGetArticularSpeed(m_virtContext, articular_velocity_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetArticularSpeed: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetArticularSpeed: error code %d", err));
   }
 
   for (unsigned int i = 0; i < 6; i++)
@@ -179,8 +168,7 @@ vpColVector vpVirtuose::getArticularVelocity() const
 vpPoseVector vpVirtuose::getAvatarPosition() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   float position_[7];
@@ -190,9 +178,7 @@ vpPoseVector vpVirtuose::getAvatarPosition() const
 
   if (virtGetAvatarPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetAvatarPosition: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetAvatarPosition: error code %d", err));
   } else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
@@ -216,8 +202,7 @@ vpPoseVector vpVirtuose::getAvatarPosition() const
 vpPoseVector vpVirtuose::getBaseFrame() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpPoseVector position;
@@ -227,8 +212,7 @@ vpPoseVector vpVirtuose::getBaseFrame() const
 
   if (virtGetBaseFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetBaseFrame: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetBaseFrame: error code %d", err));
   } else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
@@ -249,17 +233,14 @@ vpPoseVector vpVirtuose::getBaseFrame() const
 VirtCommandType vpVirtuose::getCommandType() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   VirtCommandType type;
 
   if (virtGetCommandType(m_virtContext, &type)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetCommandType: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetCommandType: error code %d", err));
   }
   return type;
 }
@@ -271,15 +252,13 @@ VirtCommandType vpVirtuose::getCommandType() const
 bool vpVirtuose::getDeadMan() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   int deadman;
   if (virtGetDeadMan(m_virtContext, &deadman)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetDeadMan: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetDeadMan: error code %d", err));
   }
   return (deadman ? true : false);
 }
@@ -292,16 +271,13 @@ bool vpVirtuose::getDeadMan() const
 bool vpVirtuose::getEmergencyStop() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   int emergencyStop;
   if (virtGetEmergencyStop(m_virtContext, &emergencyStop)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetEmergencyStop: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetEmergencyStop: error code %d", err));
   }
   return (emergencyStop ? true : false);
 }
@@ -313,16 +289,14 @@ bool vpVirtuose::getEmergencyStop() const
 vpColVector vpVirtuose::getForce() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpColVector force(6, 0);
   float force_[6];
   if (virtGetForce(m_virtContext, force_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetForce: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetForce: error code %d", err));
   }
 
   for (unsigned int i = 0; i < 6; i++)
@@ -349,9 +323,8 @@ int main()
 
   VirtContext handler = virtuose.getHandler();
   float q[6];
-  if (virtGetArticularPosition(handler, q)) { // Use the handler to access to
-Haption API directly std::cout << "Cannot get articular position" <<
-std::endl;
+  if (virtGetArticularPosition(handler, q)) { // Use the handler to access to Haption API directly
+    std::cout << "Cannot get articular position" << std::endl;
   }
   std::cout << "Joint position: ";
   for (unsigned int i=0; i<6; i++)
@@ -374,8 +347,7 @@ VirtContext vpVirtuose::getHandler() { return m_virtContext; }
 vpPoseVector vpVirtuose::getObservationFrame() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpPoseVector position;
@@ -385,9 +357,7 @@ vpPoseVector vpVirtuose::getObservationFrame() const
 
   if (virtGetObservationFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetObservationFrame: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetObservationFrame: error code %d", err));
   } else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
@@ -409,8 +379,7 @@ vpPoseVector vpVirtuose::getObservationFrame() const
 vpPoseVector vpVirtuose::getPhysicalPosition() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpPoseVector position;
@@ -420,9 +389,7 @@ vpPoseVector vpVirtuose::getPhysicalPosition() const
 
   if (virtGetPhysicalPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetPhysicalPosition: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetPhysicalPosition: error code %d", err));
   } else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
@@ -445,16 +412,14 @@ vpPoseVector vpVirtuose::getPhysicalPosition() const
 vpColVector vpVirtuose::getPhysicalVelocity() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpColVector vel(6, 0);
   float speed[6];
   if (virtGetPhysicalSpeed(m_virtContext, speed)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetPhysicalSpeed: error code %s",
+    throw(vpException(vpException::fatalError, "Error calling virtGetPhysicalSpeed: error code %s",
                       virtGetErrorMessage(err)));
   }
   for (unsigned int i = 0; i < 6; i++)
@@ -470,8 +435,7 @@ vpColVector vpVirtuose::getPhysicalVelocity() const
 vpPoseVector vpVirtuose::getPosition() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpPoseVector position;
@@ -481,8 +445,7 @@ vpPoseVector vpVirtuose::getPosition() const
 
   if (virtGetPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtGetPosition: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtGetPosition: error code %d", err));
   } else {
     for (int i = 0; i < 3; i++)
       translation[i] = position_[i];
@@ -502,8 +465,7 @@ vpPoseVector vpVirtuose::getPosition() const
 bool vpVirtuose::getPower() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   int power;
@@ -520,17 +482,14 @@ bool vpVirtuose::getPower() const
 vpColVector vpVirtuose::getVelocity() const
 {
   if (!m_is_init) {
-    throw(vpException(vpException::fatalError,
-                      "Device not initialized. Call init()."));
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
   vpColVector vel(6, 0);
   float speed[6];
   if (virtGetSpeed(m_virtContext, speed)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Cannot get haptic device velocity: %s",
-                      virtGetErrorMessage(err)));
+    throw(vpException(vpException::fatalError, "Cannot get haptic device velocity: %s", virtGetErrorMessage(err)));
   }
   for (unsigned int i = 0; i < 6; i++)
     vel[i] = speed[i];
@@ -549,35 +508,28 @@ void vpVirtuose::init()
 
     if (m_virtContext == NULL) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError,
-                        "Cannot open haptic device: %s",
-                        virtGetErrorMessage(err)));
+      throw(vpException(vpException::fatalError, "Cannot open haptic device: %s", virtGetErrorMessage(err)));
     }
 
-    if (virtGetControlerVersion(m_virtContext, &m_ctrlMajorVersion,
-                                &m_ctrlMinorVersion)) {
+    if (virtGetControlerVersion(m_virtContext, &m_ctrlMajorVersion, &m_ctrlMinorVersion)) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError,
-                        "Cannot get haptic device controller version: %s",
+      throw(vpException(vpException::fatalError, "Cannot get haptic device controller version: %s",
                         virtGetErrorMessage(err)));
     }
 
     if (m_verbose) {
-      std::cout << "Controller version: " << m_ctrlMajorVersion << "."
-                << m_ctrlMinorVersion << std::endl;
+      std::cout << "Controller version: " << m_ctrlMajorVersion << "." << m_ctrlMinorVersion << std::endl;
     }
 
     if (virtSetCommandType(m_virtContext, m_typeCommand)) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError,
-                        "Cannot set haptic device command type: %s",
-                        virtGetErrorMessage(err)));
+      throw(
+          vpException(vpException::fatalError, "Cannot set haptic device command type: %s", virtGetErrorMessage(err)));
     }
 
     if (virtSetTimeStep(m_virtContext, m_period)) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError,
-                        "Error calling virtSetTimeStep: error code %d", err));
+      throw(vpException(vpException::fatalError, "Error calling virtSetTimeStep: error code %d", err));
     }
 
     m_is_init = true;
@@ -607,9 +559,7 @@ void vpVirtuose::setArticularForce(const vpColVector &articularForce)
 
   if (virtSetArticularForce(m_virtContext, articular_force)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetArticularForce: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetArticularForce: error code %d", err));
   }
 }
 
@@ -636,9 +586,7 @@ void vpVirtuose::setArticularPosition(const vpColVector &articularPosition)
 
   if (virtSetArticularPosition(m_virtContext, articular_position)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetArticularPosition: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetArticularPosition: error code %d", err));
   }
 }
 
@@ -665,9 +613,7 @@ void vpVirtuose::setArticularVelocity(const vpColVector &articularVelocity)
 
   if (virtSetArticularSpeed(m_virtContext, articular_velocity)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetArticularVelocity: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetArticularVelocity: error code %d", err));
   }
 }
 
@@ -696,8 +642,7 @@ void vpVirtuose::setBaseFrame(const vpPoseVector &position)
 
   if (virtSetBaseFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetBaseFrame: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetBaseFrame: error code %d", err));
   }
 }
 
@@ -720,9 +665,7 @@ void vpVirtuose::setCommandType(const VirtCommandType &type)
 
     if (virtSetCommandType(m_virtContext, m_typeCommand)) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError,
-                        "Error calling virtSetCommandType: error code %d",
-                        err));
+      throw(vpException(vpException::fatalError, "Error calling virtSetCommandType: error code %d", err));
     }
   }
 }
@@ -750,8 +693,7 @@ void vpVirtuose::setForce(const vpColVector &force)
 
   if (virtSetForce(m_virtContext, virtforce)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetForce: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetForce: error code %d", err));
   }
 }
 
@@ -766,9 +708,7 @@ void vpVirtuose::setForceFactor(const float &forceFactor)
 
   if (virtSetForceFactor(m_virtContext, forceFactor)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetForceFactor: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetForceFactor: error code %d", err));
   }
 }
 
@@ -795,8 +735,7 @@ void vpVirtuose::setIndexingMode(const VirtIndexingType &type)
 
     if (virtSetIndexingMode(m_virtContext, m_indexType)) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError,
-                        "Error calling setIndexingMode: error code %d", err));
+      throw(vpException(vpException::fatalError, "Error calling setIndexingMode: error code %d", err));
     }
   }
 }
@@ -826,9 +765,7 @@ void vpVirtuose::setObservationFrame(const vpPoseVector &position)
 
   if (virtSetObservationFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetObservationFrame: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetObservationFrame: error code %d", err));
   }
 }
 
@@ -877,9 +814,7 @@ void vpVirtuose::setPeriodicFunction(VirtPeriodicFunction CallBackVirt)
 
   if (virtSetPeriodicFunction(m_virtContext, CallBackVirt, &m_period, this)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetPeriodicFunction: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetPeriodicFunction: error code %d", err));
   }
 }
 
@@ -906,8 +841,7 @@ void vpVirtuose::setPosition(vpPoseVector &position)
 
   if (virtSetPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetPosition: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetPosition: error code %d", err));
   }
 }
 
@@ -920,8 +854,7 @@ void vpVirtuose::setPowerOff()
 
   if (virtSetPowerOn(m_virtContext, 0)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetPowerOff: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetPowerOff: error code %d", err));
   }
 }
 
@@ -934,8 +867,7 @@ void vpVirtuose::setPowerOn()
 
   if (virtSetPowerOn(m_virtContext, 1)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetPowerOn: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetPowerOn: error code %d", err));
   }
 }
 
@@ -944,16 +876,13 @@ void vpVirtuose::setPowerOn()
  * \param forceLimit : Value expressed in N.
  * \param torqueLimit : Value expressed in Nm.
  */
-void vpVirtuose::setSaturation(const float &forceLimit,
-                               const float &torqueLimit)
+void vpVirtuose::setSaturation(const float &forceLimit, const float &torqueLimit)
 {
   init();
 
   if (virtSaturateTorque(m_virtContext, forceLimit, torqueLimit)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSaturateTorque: error code %d",
-                      err));
+    throw(vpException(vpException::fatalError, "Error calling virtSaturateTorque: error code %d", err));
   }
 }
 
@@ -971,8 +900,7 @@ void vpVirtuose::setTimeStep(const float &timeStep)
 
     if (virtSetTimeStep(m_virtContext, m_period)) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError,
-                        "Error calling virtSetTimeStep: error code %d", err));
+      throw(vpException(vpException::fatalError, "Error calling virtSetTimeStep: error code %d", err));
     }
   }
 }
@@ -987,10 +915,8 @@ void vpVirtuose::setVelocity(vpColVector &velocity)
   init();
 
   if (velocity.size() != 6) {
-    throw(vpException(
-        vpException::dimensionError,
-        "Cannot set a velocity vector (dim %d) that is not 6-dimension",
-        velocity.size()));
+    throw(vpException(vpException::dimensionError, "Cannot set a velocity vector (dim %d) that is not 6-dimension",
+                      velocity.size()));
   }
 
   float speed[6];
@@ -999,8 +925,7 @@ void vpVirtuose::setVelocity(vpColVector &velocity)
 
   if (virtSetSpeed(m_virtContext, speed)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetSpeed: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling virtSetSpeed: error code %d", err));
   }
 }
 
@@ -1015,8 +940,7 @@ void vpVirtuose::setVelocityFactor(const float &velocityFactor)
 
   if (virtSetSpeedFactor(m_virtContext, velocityFactor)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling setVelocityFactor: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling setVelocityFactor: error code %d", err));
   }
 }
 
@@ -1031,8 +955,7 @@ void vpVirtuose::startPeriodicFunction()
 
   if (virtStartLoop(m_virtContext)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling startLoop: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling startLoop: error code %d", err));
   } else
     std::cout << "Haptic loop open." << std::endl;
 }
@@ -1048,8 +971,7 @@ void vpVirtuose::stopPeriodicFunction()
 
   if (virtStopLoop(m_virtContext)) {
     int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling stopLoop: error code %d", err));
+    throw(vpException(vpException::fatalError, "Error calling stopLoop: error code %d", err));
   } else
     std::cout << "Haptic loop closed." << std::endl;
 }

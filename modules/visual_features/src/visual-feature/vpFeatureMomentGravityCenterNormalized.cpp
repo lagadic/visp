@@ -69,45 +69,32 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
   bool found_featuremoment_gravity;
   bool found_featuremoment_surfacenormalized;
 
-  const vpMomentAreaNormalized &momentSurfaceNormalized =
-      static_cast<const vpMomentAreaNormalized &>(moments.get(
-          "vpMomentAreaNormalized", found_moment_surface_normalized));
+  const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
+      moments.get("vpMomentAreaNormalized", found_moment_surface_normalized));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(
-          moments.get("vpMomentGravityCenter", found_moment_gravity));
-  vpFeatureMomentGravityCenter &featureMomentGravity =
-      (static_cast<vpFeatureMomentGravityCenter &>(
-          featureMomentsDataBase->get("vpFeatureMomentGravityCenter",
-                                      found_featuremoment_gravity)));
-  vpFeatureMomentAreaNormalized featureMomentAreaNormalized =
-      (static_cast<vpFeatureMomentAreaNormalized &>(
-          featureMomentsDataBase->get(
-              "vpFeatureMomentAreaNormalized",
-              found_featuremoment_surfacenormalized)));
+      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
+  vpFeatureMomentGravityCenter &featureMomentGravity = (static_cast<vpFeatureMomentGravityCenter &>(
+      featureMomentsDataBase->get("vpFeatureMomentGravityCenter", found_featuremoment_gravity)));
+  vpFeatureMomentAreaNormalized featureMomentAreaNormalized = (static_cast<vpFeatureMomentAreaNormalized &>(
+      featureMomentsDataBase->get("vpFeatureMomentAreaNormalized", found_featuremoment_surfacenormalized)));
 
   if (!found_moment_surface_normalized)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentAreaNormalized not found");
+    throw vpException(vpException::notInitialized, "vpMomentAreaNormalized not found");
   if (!found_moment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
 
   if (!found_featuremoment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpFeatureMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpFeatureMomentGravityCenter not found");
   if (!found_featuremoment_surfacenormalized)
-    throw vpException(vpException::notInitialized,
-                      "vpFeatureMomentAreaNormalized not found");
+    throw vpException(vpException::notInitialized, "vpFeatureMomentAreaNormalized not found");
 
   interaction_matrices[0].resize(1, 6);
   interaction_matrices[1].resize(1, 6);
 
-  interaction_matrices[0] =
-      momentGravity.get()[0] * featureMomentAreaNormalized.interaction(1) +
-      momentSurfaceNormalized.get()[0] * featureMomentGravity.interaction(1);
-  interaction_matrices[1] =
-      momentGravity.get()[1] * featureMomentAreaNormalized.interaction(1) +
-      momentSurfaceNormalized.get()[0] * featureMomentGravity.interaction(2);
+  interaction_matrices[0] = momentGravity.get()[0] * featureMomentAreaNormalized.interaction(1) +
+                            momentSurfaceNormalized.get()[0] * featureMomentGravity.interaction(1);
+  interaction_matrices[1] = momentGravity.get()[1] * featureMomentAreaNormalized.interaction(1) +
+                            momentSurfaceNormalized.get()[0] * featureMomentGravity.interaction(2);
 }
 
 #else
@@ -138,24 +125,18 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
   bool found_moment_centered;
 
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(
-          moments.get("vpMomentCentered", found_moment_centered));
+      static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(
-          moments.get("vpMomentGravityCenter", found_moment_gravity));
-  const vpMomentAreaNormalized &momentSurfaceNormalized =
-      static_cast<const vpMomentAreaNormalized &>(moments.get(
-          "vpMomentAreaNormalized", found_moment_surface_normalized));
+      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
+  const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
+      moments.get("vpMomentAreaNormalized", found_moment_surface_normalized));
 
   if (!found_moment_surface_normalized)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentAreaNormalized not found");
+    throw vpException(vpException::notInitialized, "vpMomentAreaNormalized not found");
   if (!found_moment_gravity)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentGravityCenter not found");
+    throw vpException(vpException::notInitialized, "vpMomentGravityCenter not found");
   if (!found_moment_centered)
-    throw vpException(vpException::notInitialized,
-                      "vpMomentCentered not found");
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
   const vpMomentObject &momentObject = moment->getObject();
   interaction_matrices[0].resize(1, 6);
@@ -192,20 +173,17 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction()
     Xnvx = B * Xn * e11 - Yn * B - An * C - n02 * A * Xn / NA;
     Xnvy = A * Xn * e11 + n02 * B * Xn / NA;
 
-    Xnwx = An * e11 * NA + Yn * n10 - Xn * Xg * e11 + Xn * n01 +
-           Xn * n10 * e11 - Xn * e21 +
+    Xnwx = An * e11 * NA + Yn * n10 - Xn * Xg * e11 + Xn * n01 + Xn * n10 * e11 - Xn * e21 +
            (-Xn * n03 + (Xn * n01 - Yn * Xg) * n02) / NA;
-    Xnwy = -An * NA + Xn * e12 + Xn * Xg - An + e11 * Xg * Yn -
-           Xn * n01 * e11 - 2 * Xn * n10 + Xn * e30 + n02 * An +
+    Xnwy = -An * NA + Xn * e12 + Xn * Xg - An + e11 * Xg * Yn - Xn * n01 * e11 - 2 * Xn * n10 + Xn * e30 + n02 * An +
            (-Xn * Xg + Xn * n10) * n02 / NA;
 
     Ynvx = (Yn - n02 * Yn / NA) * A + Yn * e11 * B;
     Ynvy = (-Xn + e11 * Yn) * A + (-Yn + n02 * Yn / NA) * B - An * C;
 
-    Ynwx = n02 * An + Yn * n10 * e11 - e11 * Xg * Yn + An - Yn * e21 +
-           Yn * n01 + (-Yn * n03 + (Yn * n01 - Yn * Yg) * n02) / NA;
-    Ynwy = -An * e11 * NA + Yn * e11 * Yg - Yn * n01 * e11 + Yn * Xg +
-           Yn * e12 + Yn * e30 - Xn * n01 - 2 * Yn * n10 +
+    Ynwx = n02 * An + Yn * n10 * e11 - e11 * Xg * Yn + An - Yn * e21 + Yn * n01 +
+           (-Yn * n03 + (Yn * n01 - Yn * Yg) * n02) / NA;
+    Ynwy = -An * e11 * NA + Yn * e11 * Yg - Yn * n01 * e11 + Yn * Xg + Yn * e12 + Yn * e30 - Xn * n01 - 2 * Yn * n10 +
            (Yn * n10 - Yn * Xg) * n02 / NA;
 
   } else {

@@ -128,13 +128,12 @@ int main()
     vpColVector sigma_measure(nsignal);
     unsigned int state_size = 0; // Kalman state vector size
 
-    kalman.setStateModel(vpLinearKalmanFilterInstantiation::
-                             stateConstVelWithColoredNoise_MeasureVel);
+    kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
     state_size = kalman.getStateSize();
     sigma_state.resize(state_size * nsignal);
     sigma_state = 0.00001; // Same state variance for all signals
     sigma_measure = 0.05;  // Same measure variance for all the signals
-    double dummy = 0; // non used parameter dt for the velocity state model
+    double dummy = 0;      // non used parameter dt for the velocity state model
     kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
 
     // Initialize the robot
@@ -176,14 +175,11 @@ int main()
     }
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX display(I, (int)(100 + I.getWidth() + 30), 200,
-                       "Current image");
+    vpDisplayX display(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display(I, (int)(100 + I.getWidth() + 30), 200,
-                            "Current image");
+    vpDisplayOpenCV display(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, (int)(100 + I.getWidth() + 30), 200,
-                         "Current image");
+    vpDisplayGTK display(I, (int)(100 + I.getWidth() + 30), 200, "Current image");
 #endif
 
     vpDisplay::display(I);
@@ -336,8 +332,7 @@ int main()
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
-           << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -347,8 +342,7 @@ int main()
       //   velocities in m/s
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
-      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3]
-           << " " << qvel[4] << " " << qvel[5] << " ";
+      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -358,8 +352,7 @@ int main()
       //   positions in m
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
-      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4]
-           << " " << q[5] << " ";
+      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is

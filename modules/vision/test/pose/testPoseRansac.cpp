@@ -88,8 +88,7 @@ int main()
     for (size_t i = 0; i < P.size(); i++)
       pose.addPoint(P[i]);
 
-    unsigned int nbInlierToReachConsensus =
-        (unsigned int)(75.0 * (double)(P.size()) / 100.0);
+    unsigned int nbInlierToReachConsensus = (unsigned int)(75.0 * (double)(P.size()) / 100.0);
     double threshold = 0.001;
 
     pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
@@ -111,12 +110,8 @@ int main()
     vpPoseVector pose_est = vpPoseVector(cMo);
 
     std::cout << std::endl;
-    std::cout << "reference cMo :\n"
-              << pose_ref.t() << std::endl
-              << std::endl;
-    std::cout << "estimated cMo :\n"
-              << pose_est.t() << std::endl
-              << std::endl;
+    std::cout << "reference cMo :\n" << pose_ref.t() << std::endl << std::endl;
+    std::cout << "estimated cMo :\n" << pose_est.t() << std::endl << std::endl;
 
     int test_fail = 0;
     for (unsigned int i = 0; i < 6; i++) {
@@ -124,8 +119,7 @@ int main()
         test_fail = 1;
     }
 
-    std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated"
-              << std::endl;
+    std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
     return test_fail;
   } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

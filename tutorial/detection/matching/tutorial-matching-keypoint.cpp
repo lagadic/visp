@@ -22,11 +22,9 @@ int main()
   const std::string extractorName = "ORB";
   // Hamming distance must be used with ORB
   const std::string matcherName = "BruteForce-Hamming";
-  vpKeyPoint::vpFilterMatchingType filterType =
-      vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
   vpKeyPoint keypoint(detectorName, extractorName, matcherName, filterType);
-  std::cout << "Reference keypoints=" << keypoint.buildReference(I)
-            << std::endl;
+  std::cout << "Reference keypoints=" << keypoint.buildReference(I) << std::endl;
   //! [Construction]
 
   //! [Create image]
@@ -49,8 +47,7 @@ int main()
 
     //! [Display]
     vpDisplay::display(Idisp);
-    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()),
-                           vpImagePoint(I.getHeight(), I.getWidth()),
+    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()), vpImagePoint(I.getHeight(), I.getWidth()),
                            vpColor::white, 2);
     //! [Display]
 
@@ -66,9 +63,7 @@ int main()
       keypoint.getMatchedPoints(i, iPref, iPcur);
       //! [Get matches]
       //! [Display matches]
-      vpDisplay::displayLine(Idisp, iPref,
-                             iPcur + vpImagePoint(0, I.getWidth()),
-                             vpColor::green);
+      vpDisplay::displayLine(Idisp, iPref, iPcur + vpImagePoint(0, I.getWidth()), vpColor::green);
       //! [Display matches]
     }
     //! [Display flush]

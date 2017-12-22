@@ -38,13 +38,11 @@
  */
 
 vpParseArgv::vpArgvInfo vpParseArgv::defaultTable[2] = {
-    {"-help", ARGV_HELP, (char *)NULL, (char *)NULL,
-     "Print summary of command-line options and abort.\n"},
+    {"-help", ARGV_HELP, (char *)NULL, (char *)NULL, "Print summary of command-line options and abort.\n"},
     {NULL, ARGV_END, (char *)NULL, (char *)NULL, (char *)NULL}};
 
 int (*handlerProc1)(const char *dst, const char *key, const char *argument);
-int (*handlerProc2)(const char *dst, const char *key, int valargc,
-                    const char **argument);
+int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **argument);
 
 /*!
   Process an argv array according to a table of expectedvcommand-line options.
@@ -68,8 +66,7 @@ int (*handlerProc2)(const char *dst, const char *key, int valargc,
   the vpParseArgv::ARGV_NO_DEFAULTS bit is set, then
   don't generate information for default options.
 */
-bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
-                        int flags)
+bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, int flags)
 
 {
   vpArgvInfo *infoPtr;      /* Pointer to the current entry in the
@@ -90,8 +87,8 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
   unsigned long long nargs; /* Number of following arguments to get. */
 
 /* Macro to optionally print errors */
-#define FPRINTF                                                              \
-  if (!(flags & ARGV_NO_PRINT))                                              \
+#define FPRINTF                                                                                                        \
+  if (!(flags & ARGV_NO_PRINT))                                                                                        \
   (void)fprintf
 
   if (flags & ARGV_DONT_SKIP_FIRST_ARG) {
@@ -126,8 +123,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
         if (infoPtr->key == NULL) {
           continue;
         }
-        if ((infoPtr->key[1] != c) ||
-            (strncmp(infoPtr->key, curArg, length) != 0)) {
+        if ((infoPtr->key[1] != c) || (strncmp(infoPtr->key, curArg, length) != 0)) {
           continue;
         }
         if (infoPtr->key[length] == 0) {
@@ -182,12 +178,9 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
         } else {
           char *endPtr = NULL;
 
-          *(((int *)infoPtr->dst) + i) =
-              (int)strtol(argv[srcIndex], &endPtr, 0);
+          *(((int *)infoPtr->dst) + i) = (int)strtol(argv[srcIndex], &endPtr, 0);
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
-            FPRINTF(stderr,
-                    "expected integer argument for \"%s\" but got \"%s\"\n",
-                    infoPtr->key, argv[srcIndex]);
+            FPRINTF(stderr, "expected integer argument for \"%s\" but got \"%s\"\n", infoPtr->key, argv[srcIndex]);
             return true;
           }
           srcIndex++;
@@ -207,9 +200,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
 
           *(((long *)infoPtr->dst) + i) = strtol(argv[srcIndex], &endPtr, 0);
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
-            FPRINTF(stderr,
-                    "expected long argument for \"%s\" but got \"%s\"\n",
-                    infoPtr->key, argv[srcIndex]);
+            FPRINTF(stderr, "expected long argument for \"%s\" but got \"%s\"\n", infoPtr->key, argv[srcIndex]);
             return true;
           }
           srcIndex++;
@@ -244,13 +235,10 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
         } else {
           char *endPtr;
 
-          *(((float *)infoPtr->dst) + i) =
-              (float)strtod(argv[srcIndex], &endPtr); // Here we use strtod
+          *(((float *)infoPtr->dst) + i) = (float)strtod(argv[srcIndex], &endPtr); // Here we use strtod
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
-            FPRINTF(
-                stderr,
-                "expected floating-point argument for \"%s\" but got\"%s\"\n",
-                infoPtr->key, argv[srcIndex]);
+            FPRINTF(stderr, "expected floating-point argument for \"%s\" but got\"%s\"\n", infoPtr->key,
+                    argv[srcIndex]);
             return true;
           }
           srcIndex++;
@@ -270,10 +258,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
 
           *(((double *)infoPtr->dst) + i) = strtod(argv[srcIndex], &endPtr);
           if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
-            FPRINTF(
-                stderr,
-                "expected double-point argument for \"%s\" but got\"%s\"\n",
-                infoPtr->key, argv[srcIndex]);
+            FPRINTF(stderr, "expected double-point argument for \"%s\" but got\"%s\"\n", infoPtr->key, argv[srcIndex]);
             return true;
           }
           srcIndex++;
@@ -283,8 +268,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
       break;
 
     case ARGV_FUNC: {
-      handlerProc1 = (int (*)(const char *dst, const char *key,
-                              const char *argument))infoPtr->src;
+      handlerProc1 = (int (*)(const char *dst, const char *key, const char *argument))infoPtr->src;
 
       if ((*handlerProc1)(infoPtr->dst, infoPtr->key, argv[srcIndex])) {
         srcIndex += 1;
@@ -293,11 +277,9 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
       break;
     }
     case ARGV_GENFUNC: {
-      handlerProc2 = (int (*)(const char *dst, const char *key, int valargc,
-                              const char **argument))infoPtr->src;
+      handlerProc2 = (int (*)(const char *dst, const char *key, int valargc, const char **argument))infoPtr->src;
 
-      argc =
-          (*handlerProc2)(infoPtr->dst, infoPtr->key, argc, argv + srcIndex);
+      argc = (*handlerProc2)(infoPtr->dst, infoPtr->key, argc, argv + srcIndex);
       if (argc < 0) {
         return true;
       }
@@ -362,8 +344,8 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
   unsigned long long nargs;
 
 /* Macro to optionally print errors */
-#define FPRINTF                                                              \
-  if (!(flags & ARGV_NO_PRINT))                                              \
+#define FPRINTF                                                                                                        \
+  if (!(flags & ARGV_NO_PRINT))                                                                                        \
   (void)fprintf
 
   /*
@@ -373,8 +355,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
 
   width = 4;
   for (unsigned int i = 0; i < 2; i++) {
-    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END;
-         infoPtr++) {
+    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; infoPtr++) {
       int length;
       if (infoPtr->key == NULL) {
         continue;
@@ -388,8 +369,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
 
   FPRINTF(stderr, "Command-specific options:");
   for (unsigned int i = 0;; i++) {
-    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END;
-         infoPtr++) {
+    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; infoPtr++) {
       if ((infoPtr->type == ARGV_HELP) && (infoPtr->key == NULL)) {
         FPRINTF(stderr, "\n%s", infoPtr->help);
         continue;
@@ -515,8 +495,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
   is NULL.
 
 */
-int vpParseArgv::parse(int argc, const char **argv, const char *validOpts,
-                       const char **param)
+int vpParseArgv::parse(int argc, const char **argv, const char *validOpts, const char **param)
 {
   static int iArg = 1;
   int chOpt;

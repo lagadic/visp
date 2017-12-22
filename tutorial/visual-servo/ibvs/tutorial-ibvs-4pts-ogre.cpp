@@ -11,8 +11,7 @@ int main()
 {
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10),
-                            vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
     // Define the target as 4 points
     vpPoint point[4];
@@ -26,8 +25,7 @@ int main()
     vpImage<unsigned char> background(480, 640, 255);
 
     // Parameters of our camera
-    vpCameraParameters cam(840, 840, background.getWidth() / 2,
-                           background.getHeight() / 2);
+    vpCameraParameters cam(840, 840, background.getWidth() / 2, background.getHeight() / 2);
 
     // Our object
     // A simulator with the camera parameters defined above,
@@ -49,17 +47,14 @@ int main()
       ogre.setScale(name[i], 0.02f, 0.02f,
                     0.02f); // Rescale the sphere to 2 cm radius
       // Set the position of each sphere in the object frame
-      ogre.setPosition(name[i], vpTranslationVector(point[i].get_oX(),
-                                                    point[i].get_oY(),
-                                                    point[i].get_oZ()));
+      ogre.setPosition(name[i], vpTranslationVector(point[i].get_oX(), point[i].get_oY(), point[i].get_oZ()));
     }
 
     // Add an optional point light source
     Ogre::Light *light = ogre.getSceneManager()->createLight();
     light->setDiffuseColour(1, 1, 1);  // scaled RGB values
     light->setSpecularColour(1, 1, 1); // scaled RGB values
-    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3],
-                       (Ogre::Real)(-cdMo[2][3]));
+    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
     light->setType(Ogre::Light::LT_POINT);
 #endif
 

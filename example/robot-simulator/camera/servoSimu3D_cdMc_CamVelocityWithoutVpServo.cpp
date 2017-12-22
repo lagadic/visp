@@ -200,17 +200,12 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
-    std::cout << " Test program without vpServo and vpFeature classes "
-              << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
+    std::cout << " Test program without vpServo and vpFeature classes " << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task :  3D visual servoing " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // Sets the initial camera location
@@ -235,12 +230,9 @@ int main(int argc, const char **argv)
     // From the camera desired pose build the corresponding homogeneous matrix
     vpHomogeneousMatrix cdMo(cd_r_o);
 
-    vpHomogeneousMatrix
-        cdMc; // Transformation between desired and current camera frame
-    vpRotationMatrix
-        cdRc; // Rotation between desired and current camera frame
-    vpRotationMatrix
-        cRcd; // Rotation between current and desired camera frame
+    vpHomogeneousMatrix cdMc; // Transformation between desired and current camera frame
+    vpRotationMatrix cdRc;    // Rotation between desired and current camera frame
+    vpRotationMatrix cRcd;    // Rotation between current and desired camera frame
 
     // Set the constant gain of the servo
     double lambda = 1;
@@ -286,12 +278,10 @@ int main(int argc, const char **argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, velocity);
 
       // Retrieve the error (s-s*)
-      std::cout << "|| s - s* || = " << cdtc.t() << " " << tu_cdRc.t()
-                << std::endl;
+      std::cout << "|| s - s* || = " << cdtc.t() << " " << tu_cdRc.t() << std::endl;
 
       // Save log
-      flog << velocity.t() << " " << cdtc.t() << " " << tu_cdRc.t()
-           << std::endl;
+      flog << velocity.t() << " " << cdtc.t() << " " << tu_cdRc.t() << std::endl;
     }
     // Close the log file
     flog.close();

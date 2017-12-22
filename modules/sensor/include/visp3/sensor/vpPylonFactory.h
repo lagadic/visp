@@ -62,8 +62,7 @@
   Example code.
   \code
   vpPylonFactory &factory = vpPylonFactory::instance();
-  vpPylonGrabber *g =
-  factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
+  vpPylonGrabber *g = factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
   \endcode
  */
 class VISP_EXPORT vpPylonFactory
@@ -86,8 +85,7 @@ private:
   vpPylonFactory(vpPylonFactory const &);
   void operator=(vpPylonFactory const &);
 
-  Pylon::PylonAutoInitTerm
-      m_autoInitTerm; //!< Auto initialize and terminate object for pylon SDK.
+  Pylon::PylonAutoInitTerm m_autoInitTerm; //!< Auto initialize and terminate object for pylon SDK.
 };
 
 #endif // #ifdef VISP_HAVE_PYLON

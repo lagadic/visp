@@ -58,9 +58,7 @@
 
   \param n_signal : Number of signal to filter.
 */
-void vpKalmanFilter::init(unsigned int size_state_vector,
-                          unsigned int size_measure_vector,
-                          unsigned int n_signal)
+void vpKalmanFilter::init(unsigned int size_state_vector, unsigned int size_measure_vector, unsigned int n_signal)
 {
   this->size_state = size_state_vector;
   this->size_measure = size_measure_vector;
@@ -92,8 +90,8 @@ void vpKalmanFilter::init(unsigned int size_state_vector,
 
 */
 vpKalmanFilter::vpKalmanFilter()
-  : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false),
-    Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(), Pest(), W(), I()
+  : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false), Xest(), Xpre(), F(), H(), R(), Q(),
+    dt(-1), Ppre(), Pest(), W(), I()
 {
 }
 
@@ -105,9 +103,8 @@ vpKalmanFilter::vpKalmanFilter()
   \param n_signal : Number of signal to filter.
 */
 vpKalmanFilter::vpKalmanFilter(unsigned int n_signal)
-  : iter(0), size_state(0), size_measure(0), nsignal(n_signal),
-    verbose_mode(false), Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(),
-    Pest(), W(), I()
+  : iter(0), size_state(0), size_measure(0), nsignal(n_signal), verbose_mode(false), Xest(), Xpre(), F(), H(), R(), Q(),
+    dt(-1), Ppre(), Pest(), W(), I()
 {
 }
 
@@ -124,11 +121,9 @@ vpKalmanFilter::vpKalmanFilter(unsigned int n_signal)
 
   \param n_signal : Number of signal to filter.
 */
-vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector,
-                               unsigned int size_measure_vector,
-                               unsigned int n_signal)
-  : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false),
-    Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(), Pest(), W(), I()
+vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector, unsigned int size_measure_vector, unsigned int n_signal)
+  : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false), Xest(), Xpre(), F(), H(), R(), Q(),
+    dt(-1), Ppre(), Pest(), W(), I()
 {
   init(size_state_vector, size_measure_vector, n_signal);
 }
@@ -152,8 +147,7 @@ vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector,
 void vpKalmanFilter::prediction()
 {
   if (Xest.getRows() != size_state * nsignal) {
-    std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows() << " "
-              << size_state * nsignal << std::endl;
+    std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows() << " " << size_state * nsignal << std::endl;
     std::cout << " Error : Filter non initialized " << std::endl;
     exit(1);
   }

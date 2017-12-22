@@ -67,14 +67,14 @@ public:
   /*! Default constructor that initialize all the internal variable to zero.
    */
   vpLaserScan()
-    : listScanPoints(), startTimestamp(0), endTimestamp(0), measurementId(0),
-      numSteps(0), startAngle(0), stopAngle(0), numPoints(0)
+    : listScanPoints(), startTimestamp(0), endTimestamp(0), measurementId(0), numSteps(0), startAngle(0), stopAngle(0),
+      numPoints(0)
   {
   }
   /*! Copy constructor. */
   vpLaserScan(const vpLaserScan &scan)
-    : listScanPoints(scan.listScanPoints), startTimestamp(0), endTimestamp(0),
-      measurementId(0), numSteps(0), startAngle(0), stopAngle(0), numPoints(0)
+    : listScanPoints(scan.listScanPoints), startTimestamp(0), endTimestamp(0), measurementId(0), numSteps(0),
+      startAngle(0), stopAngle(0), numPoints(0)
   {
     startTimestamp = scan.startTimestamp;
     endTimestamp = scan.endTimestamp;
@@ -94,40 +94,19 @@ public:
   inline std::vector<vpScanPoint> getScanPoints() { return listScanPoints; }
   /*! Specifies the id of former measurements and increases with
       every measurement. */
-  inline void setMeasurementId(const unsigned short &id)
-  {
-    this->measurementId = id;
-  }
+  inline void setMeasurementId(const unsigned short &id) { this->measurementId = id; }
   /*! Start time of measurement. */
-  inline void setStartTimestamp(const double &start_timestamp)
-  {
-    this->startTimestamp = start_timestamp;
-  }
+  inline void setStartTimestamp(const double &start_timestamp) { this->startTimestamp = start_timestamp; }
   /*! End time of measurement. */
-  inline void setEndTimestamp(const double &end_timestamp)
-  {
-    this->endTimestamp = end_timestamp;
-  }
+  inline void setEndTimestamp(const double &end_timestamp) { this->endTimestamp = end_timestamp; }
   /*! Angular steps per scanner rotation. */
-  inline void setNumSteps(const unsigned short &num_steps)
-  {
-    this->numSteps = num_steps;
-  }
+  inline void setNumSteps(const unsigned short &num_steps) { this->numSteps = num_steps; }
   /*! Start angle of the measurement in angular steps. */
-  inline void setStartAngle(const short &start_angle)
-  {
-    this->startAngle = start_angle;
-  }
+  inline void setStartAngle(const short &start_angle) { this->startAngle = start_angle; }
   /*! Stop angle of the measurement in angular steps. */
-  inline void setStopAngle(const short &stop_angle)
-  {
-    this->stopAngle = stop_angle;
-  }
+  inline void setStopAngle(const short &stop_angle) { this->stopAngle = stop_angle; }
   /*! Number of measured points of the measurement. */
-  inline void setNumPoints(const unsigned short &num_points)
-  {
-    this->numPoints = num_points;
-  }
+  inline void setNumPoints(const unsigned short &num_points) { this->numPoints = num_points; }
   /*! Return the measurement start time. */
   inline double getStartTimestamp() { return startTimestamp; }
   /*! Return the measurement end time. */

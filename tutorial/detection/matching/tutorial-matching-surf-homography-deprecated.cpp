@@ -17,8 +17,7 @@ int main(int argc, const char **argv)
   if (method == 0)
     std::cout << "Uses Ransac to estimate the homography" << std::endl;
   else
-    std::cout << "Uses a robust scheme to estimate the homography"
-              << std::endl;
+    std::cout << "Uses a robust scheme to estimate the homography" << std::endl;
   //! [Select method]
 
   vpImage<unsigned char> I;
@@ -62,8 +61,7 @@ int main(int argc, const char **argv)
     reader.acquire(I);
     Idisp.insert(I, vpImagePoint(0, I.getWidth()));
     vpDisplay::display(Idisp);
-    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()),
-                           vpImagePoint(I.getHeight(), I.getWidth()),
+    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()), vpImagePoint(I.getHeight(), I.getWidth()),
                            vpColor::white, 2);
 
     //! [Matching]
@@ -82,10 +80,8 @@ int main(int argc, const char **argv)
       vpImagePoint matched_ref, matched_cur;
       surf.getMatchedPoints(i, matched_ref, matched_cur);
       //! [Pixel conversion]
-      vpPixelMeterConversion::convertPoint(cam, matched_ref, mPref_x[i],
-                                           mPref_y[i]);
-      vpPixelMeterConversion::convertPoint(cam, matched_cur, mPcur_x[i],
-                                           mPcur_y[i]);
+      vpPixelMeterConversion::convertPoint(cam, matched_ref, mPref_x[i], mPref_y[i]);
+      vpPixelMeterConversion::convertPoint(cam, matched_cur, mPcur_x[i], mPcur_y[i]);
       //! [Pixel conversion]
 
       // Store the image coordinates in pixel of the matched points
@@ -96,12 +92,10 @@ int main(int argc, const char **argv)
     //! [Homography estimation]
     double residual;
     if (method == 0)
-      vpHomography::ransac(
-          mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-          (unsigned int)mPref_x.size() / 2, 2.0 / cam.get_px(), true);
+      vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
+                           (unsigned int)mPref_x.size() / 2, 2.0 / cam.get_px(), true);
     else
-      vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref,
-                           inliers, residual, 0.4, 4, true);
+      vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual, 0.4, 4, true);
     //! [Homography estimation]
 
     //! [Projection]
@@ -114,20 +108,16 @@ int main(int argc, const char **argv)
     //! [Display contour]
     vpImagePoint offset(0, I.getWidth());
     for (int i = 0; i < 4; i++) {
-      vpDisplay::displayLine(Idisp, corner_cur[i] + offset,
-                             corner_cur[(i + 1) % 4] + offset, vpColor::blue,
-                             3);
+      vpDisplay::displayLine(Idisp, corner_cur[i] + offset, corner_cur[(i + 1) % 4] + offset, vpColor::blue, 3);
     }
     //! [Display contour]
 
     //! [Display matches]
     for (unsigned int i = 0; i < nbMatch; i++) {
       if (inliers[i] == true)
-        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset,
-                               vpColor::green);
+        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset, vpColor::green);
       else
-        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset,
-                               vpColor::red);
+        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset, vpColor::red);
     }
     //! [Display matches]
 

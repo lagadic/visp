@@ -24,10 +24,7 @@ int main(int argc, const char *argv[])
       if (std::string(argv[i]) == "--device")
         opt_device = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout
-            << "Usage: " << argv[0]
-            << " [--camera <0...9>] [--device <\"GigE\"|\"USB\">] [--help]"
-            << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--camera <0...9>] [--device <\"GigE\"|\"USB\">] [--help]" << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -44,16 +41,14 @@ int main(int argc, const char *argv[])
       g = factory.createPylonGrabber(vpPylonFactory::BASLER_USB);
       std::cout << "Opening Basler USB camera: " << opt_camera << std::endl;
     } else {
-      std::cout << "Error: only Basler GigE or USB cameras are supported."
-                << std::endl;
+      std::cout << "Error: only Basler GigE or USB cameras are supported." << std::endl;
       return EXIT_SUCCESS;
     }
     g->setCameraIndex(opt_camera);
 
     g->open(I);
 
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);

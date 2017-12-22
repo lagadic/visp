@@ -185,16 +185,12 @@ int main(int argc, const char **argv)
     vpSimulatorCamera robot;
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task :  3D visual servoing " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     // Sets the initial camera location
@@ -259,8 +255,7 @@ int main(int argc, const char **argv)
     unsigned int iter = 0;
     // Start the visual servoing loop. We stop the servo after 200 iterations
     while (iter++ < 200) {
-      std::cout << "------------------------------------" << iter
-                << std::endl;
+      std::cout << "------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // get the robot position
@@ -286,8 +281,7 @@ int main(int argc, const char **argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       // Retrieve the error
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
-                << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
 
       // Save log
       flog << v.t() << " " << (task.getError()).t() << std::endl;

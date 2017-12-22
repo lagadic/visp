@@ -40,15 +40,14 @@
 #include <visp3/mbt/vpMbtDistanceKltCylinder.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) &&                                         \
-    (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #if defined(VISP_HAVE_CLIPPER)
 #include <clipper.hpp> // clipper private library
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
-#include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
+#include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
 /*!
@@ -56,11 +55,9 @@
 
 */
 vpMbtDistanceKltCylinder::vpMbtDistanceKltCylinder()
-  : c0Mo(), p1Ext(), p2Ext(), cylinder(), circle1(), circle2(), initPoints(),
-    initPoints3D(), curPoints(), curPointsInd(), nbPointsCur(0),
-    nbPointsInit(0), minNbPoint(4), enoughPoints(false), cam(),
-    isTrackedKltCylinder(true), listIndicesCylinderBBox(), hiddenface(NULL),
-    useScanLine(false)
+  : c0Mo(), p1Ext(), p2Ext(), cylinder(), circle1(), circle2(), initPoints(), initPoints3D(), curPoints(),
+    curPointsInd(), nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), cam(),
+    isTrackedKltCylinder(true), listIndicesCylinderBBox(), hiddenface(NULL), useScanLine(false)
 {
 }
 
@@ -70,8 +67,7 @@ vpMbtDistanceKltCylinder::vpMbtDistanceKltCylinder()
 */
 vpMbtDistanceKltCylinder::~vpMbtDistanceKltCylinder() {}
 
-void vpMbtDistanceKltCylinder::buildFrom(const vpPoint &p1, const vpPoint &p2,
-                                         const double &r)
+void vpMbtDistanceKltCylinder::buildFrom(const vpPoint &p1, const vpPoint &p2, const double &r)
 {
   p1Ext = p1;
   p2Ext = p2;
@@ -91,16 +87,12 @@ void vpMbtDistanceKltCylinder::buildFrom(const vpPoint &p1, const vpPoint &p2,
   ABC = V1 - V2;
 
   // Build our extremity circles
-  circle1.setWorldCoordinates(ABC[0], ABC[1], ABC[2], p1.get_oX(),
-                              p1.get_oY(), p1.get_oZ(), r);
-  circle2.setWorldCoordinates(ABC[0], ABC[1], ABC[2], p2.get_oX(),
-                              p2.get_oY(), p2.get_oZ(), r);
+  circle1.setWorldCoordinates(ABC[0], ABC[1], ABC[2], p1.get_oX(), p1.get_oY(), p1.get_oZ(), r);
+  circle2.setWorldCoordinates(ABC[0], ABC[1], ABC[2], p2.get_oX(), p2.get_oY(), p2.get_oZ(), r);
 
   // Build our cylinder
-  cylinder.setWorldCoordinates(ABC[0], ABC[1], ABC[2],
-                               (p1.get_oX() + p2.get_oX()) / 2.0,
-                               (p1.get_oY() + p2.get_oY()) / 2.0,
-                               (p1.get_oZ() + p2.get_oZ()) / 2.0, r);
+  cylinder.setWorldCoordinates(ABC[0], ABC[1], ABC[2], (p1.get_oX() + p2.get_oX()) / 2.0,
+                               (p1.get_oY() + p2.get_oY()) / 2.0, (p1.get_oZ() + p2.get_oZ()) / 2.0, r);
 }
 
 /*!
@@ -111,8 +103,7 @@ void vpMbtDistanceKltCylinder::buildFrom(const vpPoint &p1, const vpPoint &p2,
   \param _tracker : ViSP OpenCV KLT Tracker.
   \param cMo : Pose of the object in the camera frame at initialization.
 */
-void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker,
-                                    const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogeneousMatrix &cMo)
 {
   c0Mo = cMo;
   cylinder.changeFrame(cMo);
@@ -125,8 +116,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker,
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
 
-  for (unsigned int i = 0;
-       i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     long id;
     float x_tmp, y_tmp;
     _tracker.getFeature((int)i, id, x_tmp, y_tmp);
@@ -134,15 +124,10 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker,
     bool add = false;
 
     if (useScanLine) {
-      if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer()
-                                    .getPrimitiveIDs()
-                                    .getHeight() &&
-          (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer()
-                                    .getPrimitiveIDs()
-                                    .getWidth()) {
+      if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+          (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth()) {
         for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++)
-          if (hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(
-                  unsigned int)y_tmp][(unsigned int)x_tmp] ==
+          if (hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
               listIndicesCylinderBBox[kc]) {
             add = true;
             break;
@@ -151,8 +136,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker,
     } else {
       std::vector<vpImagePoint> roi;
       for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++) {
-        hiddenface->getPolygon()[(size_t)listIndicesCylinderBBox[kc]]
-            ->getRoiClipped(cam, roi);
+        hiddenface->getPolygon()[(size_t)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
         if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
           add = true;
           break;
@@ -209,8 +193,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker,
   \return the number of points that are tracked in this face and in this
   instanciation of the tracker
 */
-unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(
-    const vpKltOpencv &_tracker)
+unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(const vpKltOpencv &_tracker)
 {
   long id;
   float x, y;
@@ -218,17 +201,14 @@ unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
 
-  for (unsigned int i = 0;
-       i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
     if (isTrackedFeature((int)id)) {
 #if TARGET_OS_IPHONE
-      curPoints[(int)id] =
-          vpImagePoint(static_cast<double>(y), static_cast<double>(x));
+      curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
 #else
-      curPoints[id] =
-          vpImagePoint(static_cast<double>(y), static_cast<double>(x));
+      curPoints[id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[id] = (int)i;
 #endif
       nbPointsCur++;
@@ -251,8 +231,7 @@ unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(
   \param threshold_outlier : Threshold to specify wether or not a point has to
   be deleted.
 */
-void vpMbtDistanceKltCylinder::removeOutliers(const vpColVector &_w,
-                                              const double &threshold_outlier)
+void vpMbtDistanceKltCylinder::removeOutliers(const vpColVector &_w, const double &threshold_outlier)
 {
   std::map<int, vpImagePoint> tmp;
   std::map<int, int> tmp2;
@@ -264,8 +243,7 @@ void vpMbtDistanceKltCylinder::removeOutliers(const vpColVector &_w,
   for (; iter != curPoints.end(); ++iter) {
     if (_w[k] > threshold_outlier && _w[k + 1] > threshold_outlier) {
       //     if(_w[k] > threshold_outlier || _w[k+1] > threshold_outlier){
-      tmp[iter->first] =
-          vpImagePoint(iter->second.get_i(), iter->second.get_j());
+      tmp[iter->first] = vpImagePoint(iter->second.get_i(), iter->second.get_j());
       tmp2[iter->first] = curPointsInd[iter->first];
       nbPointsCur++;
     } else {
@@ -300,8 +278,8 @@ void vpMbtDistanceKltCylinder::removeOutliers(const vpColVector &_w,
   \param _R : the residu vector
   \param _J : the interaction matrix
 */
-void vpMbtDistanceKltCylinder::computeInteractionMatrixAndResidu(
-    const vpHomogeneousMatrix &_cMc0, vpColVector &_R, vpMatrix &_J)
+void vpMbtDistanceKltCylinder::computeInteractionMatrixAndResidu(const vpHomogeneousMatrix &_cMc0, vpColVector &_R,
+                                                                 vpMatrix &_J)
 {
   unsigned int index_ = 0;
 
@@ -412,24 +390,19 @@ void vpMbtDistanceKltCylinder::updateMask(
 #endif
 
   for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++) {
-    if ((*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]
-            ->isVisible() &&
-        (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]
-                ->getNbPoint() > 2) {
+    if ((*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->isVisible() &&
+        (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getNbPoint() > 2) {
       int i_min, i_max, j_min, j_max;
       std::vector<vpImagePoint> roi;
-      (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(
-          cam, roi);
+      (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
 
       double shiftBorder_d = (double)shiftBorder;
 #if defined(VISP_HAVE_CLIPPER)
       std::vector<vpImagePoint> roi_offset;
 
       ClipperLib::Path path;
-      for (std::vector<vpImagePoint>::const_iterator it = roi.begin();
-           it != roi.end(); ++it) {
-        path.push_back(ClipperLib::IntPoint((ClipperLib::cInt)it->get_u(),
-                                            (ClipperLib::cInt)it->get_v()));
+      for (std::vector<vpImagePoint>::const_iterator it = roi.begin(); it != roi.end(); ++it) {
+        path.push_back(ClipperLib::IntPoint((ClipperLib::cInt)it->get_u(), (ClipperLib::cInt)it->get_v()));
       }
 
       ClipperLib::Paths solution;
@@ -449,8 +422,7 @@ void vpMbtDistanceKltCylinder::updateMask(
             std::vector<vpImagePoint> corners;
 
             for (size_t j = 0; j < solution[i].size(); j++) {
-              corners.push_back(vpImagePoint((double)(solution[i][j].Y),
-                                             (double)(solution[i][j].X)));
+              corners.push_back(vpImagePoint((double)(solution[i][j].Y), (double)(solution[i][j].X)));
             }
 
             polygon_area.buildFrom(corners);
@@ -462,9 +434,7 @@ void vpMbtDistanceKltCylinder::updateMask(
         }
 
         for (size_t i = 0; i < solution[index_max].size(); i++) {
-          roi_offset.push_back(
-              vpImagePoint((double)(solution[index_max][i].Y),
-                           (double)(solution[index_max][i].X)));
+          roi_offset.push_back(vpImagePoint((double)(solution[index_max][i].Y), (double)(solution[index_max][i].X)));
         }
       } else {
         roi_offset = roi;
@@ -509,14 +479,10 @@ void vpMbtDistanceKltCylinder::updateMask(
 #else
           if (shiftBorder != 0) {
             if (vpPolygon::isInside(roi, i_d, j_d) &&
-                vpPolygon::isInside(roi, i_d + shiftBorder_d,
-                                    j_d + shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d - shiftBorder_d,
-                                    j_d + shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d + shiftBorder_d,
-                                    j_d - shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d - shiftBorder_d,
-                                    j_d - shiftBorder_d)) {
+                vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d + shiftBorder_d) &&
+                vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d + shiftBorder_d) &&
+                vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d - shiftBorder_d) &&
+                vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d - shiftBorder_d)) {
               mask.at<unsigned char>(i, j) = nb;
             }
           } else {
@@ -528,22 +494,17 @@ void vpMbtDistanceKltCylinder::updateMask(
         }
       }
 #else
-      unsigned char *ptrData =
-          (unsigned char *)mask->imageData + i_min * mask->widthStep + j_min;
+      unsigned char *ptrData = (unsigned char *)mask->imageData + i_min * mask->widthStep + j_min;
       for (int i = i_min; i < i_max; i++) {
         double i_d = (double)i;
         for (int j = j_min; j < j_max; j++) {
           double j_d = (double)j;
           if (shiftBorder != 0) {
             if (vpPolygon::isInside(roi, i_d, j_d) &&
-                vpPolygon::isInside(roi, i_d + shiftBorder_d,
-                                    j_d + shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d - shiftBorder_d,
-                                    j_d + shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d + shiftBorder_d,
-                                    j_d - shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d - shiftBorder_d,
-                                    j_d - shiftBorder_d)) {
+                vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d + shiftBorder_d) &&
+                vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d + shiftBorder_d) &&
+                vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d - shiftBorder_d) &&
+                vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d - shiftBorder_d)) {
               *(ptrData++) = nb;
             } else {
               ptrData++;
@@ -568,8 +529,7 @@ void vpMbtDistanceKltCylinder::updateMask(
 
   \param _I : The image where to display.
 */
-void vpMbtDistanceKltCylinder::displayPrimitive(
-    const vpImage<unsigned char> &_I)
+void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char> &_I)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for (; iter != curPoints.end(); ++iter) {
@@ -612,12 +572,9 @@ void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &_I)
   }
 }
 
-void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I,
-                                       const vpHomogeneousMatrix &cMo,
-                                       const vpCameraParameters &camera,
-                                       const vpColor &col,
-                                       const unsigned int thickness,
-                                       const bool /*displayFullModel*/)
+void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                       const vpCameraParameters &camera, const vpColor &col,
+                                       const unsigned int thickness, const bool /*displayFullModel*/)
 {
   // if(isvisible || displayFullModel)
   {
@@ -643,10 +600,8 @@ void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I,
     double rho2, theta2;
 
     // Meters to pixels conversion
-    vpMeterPixelConversion::convertLine(camera, cylinder.getRho1(),
-                                        cylinder.getTheta1(), rho1, theta1);
-    vpMeterPixelConversion::convertLine(camera, cylinder.getRho2(),
-                                        cylinder.getTheta2(), rho2, theta2);
+    vpMeterPixelConversion::convertLine(camera, cylinder.getRho1(), cylinder.getTheta1(), rho1, theta1);
+    vpMeterPixelConversion::convertLine(camera, cylinder.getRho2(), cylinder.getTheta2(), rho2, theta2);
 
     // Determine intersections between circles and limbos
     double i11, i12, i21, i22, j11, j12, j21, j22;
@@ -670,12 +625,9 @@ void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I,
   }
 }
 
-void vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I,
-                                       const vpHomogeneousMatrix &cMo,
-                                       const vpCameraParameters &camera,
-                                       const vpColor &col,
-                                       const unsigned int thickness,
-                                       const bool /*displayFullModel*/)
+void vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                                       const vpCameraParameters &camera, const vpColor &col,
+                                       const unsigned int thickness, const bool /*displayFullModel*/)
 {
   // if(isvisible || displayFullModel)
   {
@@ -701,23 +653,17 @@ void vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I,
     double rho2, theta2;
 
     // Meters to pixels conversion
-    vpMeterPixelConversion::convertLine(camera, cylinder.getRho1(),
-                                        cylinder.getTheta1(), rho1, theta1);
-    vpMeterPixelConversion::convertLine(camera, cylinder.getRho2(),
-                                        cylinder.getTheta2(), rho2, theta2);
+    vpMeterPixelConversion::convertLine(camera, cylinder.getRho1(), cylinder.getTheta1(), rho1, theta1);
+    vpMeterPixelConversion::convertLine(camera, cylinder.getRho2(), cylinder.getTheta2(), rho2, theta2);
 
     // Determine intersections between circles and limbos
     double i11, i12, i21, i22, j11, j12, j21, j22;
 
-    vpCircle::computeIntersectionPoint(circle1, camera, rho1, theta1, i11,
-                                       j11);
-    vpCircle::computeIntersectionPoint(circle2, camera, rho1, theta1, i12,
-                                       j12);
+    vpCircle::computeIntersectionPoint(circle1, camera, rho1, theta1, i11, j11);
+    vpCircle::computeIntersectionPoint(circle2, camera, rho1, theta1, i12, j12);
 
-    vpCircle::computeIntersectionPoint(circle1, camera, rho2, theta2, i21,
-                                       j21);
-    vpCircle::computeIntersectionPoint(circle2, camera, rho2, theta2, i22,
-                                       j22);
+    vpCircle::computeIntersectionPoint(circle1, camera, rho2, theta2, i21, j21);
+    vpCircle::computeIntersectionPoint(circle2, camera, rho2, theta2, i22, j22);
 
     // Create the image points
     vpImagePoint ip11, ip12, ip21, ip22;

@@ -39,8 +39,7 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpImageTools.h>
 
-#if defined __SSE2__ || defined _M_X64 ||                                    \
-    (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
 #endif
@@ -96,21 +95,18 @@ int main()
   // - gray level values greater than 128 are set to 255
   vpImageTools::changeLUT(I, 127, 0, 128, 255);
 
-  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file
-format
+  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
 }
   \endcode
 
 */
-void vpImageTools::changeLUT(vpImage<unsigned char> &I, unsigned char A,
-                             unsigned char A_star, unsigned char B,
+void vpImageTools::changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigned char A_star, unsigned char B,
                              unsigned char B_star)
 {
   // Test if input values are valid
   if (B <= A) {
     vpERROR_TRACE("Bad gray levels");
-    throw(vpImageException(vpImageException::incorrectInitializationError,
-                           "Bad gray levels"));
+    throw(vpImageException(vpImageException::incorrectInitializationError, "Bad gray levels"));
   }
   unsigned char v;
 
@@ -141,25 +137,20 @@ void vpImageTools::changeLUT(vpImage<unsigned char> &I, unsigned char A,
   \param I2 : The second image.
   \param Idiff : The result of the difference.
 */
-void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
-                                   const vpImage<unsigned char> &I2,
+void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                    vpImage<unsigned char> &Idiff)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "The two images have not the same size"));
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images have not the same size"));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) ||
-      (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
   unsigned int n = I1.getHeight() * I1.getWidth();
   for (unsigned int b = 0; b < n; b++) {
     int diff = I1.bitmap[b] - I2.bitmap[b] + 128;
-    Idiff.bitmap[b] =
-        (unsigned char)(vpMath::maximum(vpMath::minimum(diff, 255), 0));
+    Idiff.bitmap[b] = (unsigned char)(vpMath::maximum(vpMath::minimum(diff, 255), 0));
   }
 }
 
@@ -176,21 +167,16 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
   \param I2 : The second image.
   \param Idiff : The result of the difference between RGB components.
 */
-void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1,
-                                   const vpImage<vpRGBa> &I2,
-                                   vpImage<vpRGBa> &Idiff)
+void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError,
                       "Cannot compute image difference. The two images "
                       "(%ux%u) and (%ux%u) have not the same size",
-                      I1.getWidth(), I1.getHeight(), I2.getWidth(),
-                      I2.getHeight()));
+                      I1.getWidth(), I1.getHeight(), I2.getWidth(), I2.getHeight()));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) ||
-      (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
   unsigned int n = I1.getHeight() * I1.getWidth();
@@ -199,14 +185,10 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1,
     int diffG = I1.bitmap[b].G - I2.bitmap[b].G + 128;
     int diffB = I1.bitmap[b].B - I2.bitmap[b].B + 128;
     int diffA = I1.bitmap[b].A - I2.bitmap[b].A + 128;
-    Idiff.bitmap[b].R =
-        (unsigned char)(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
-    Idiff.bitmap[b].G =
-        (unsigned char)(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
-    Idiff.bitmap[b].B =
-        (unsigned char)(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
-    Idiff.bitmap[b].A =
-        (unsigned char)(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
+    Idiff.bitmap[b].R = (unsigned char)(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
+    Idiff.bitmap[b].G = (unsigned char)(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
+    Idiff.bitmap[b].B = (unsigned char)(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
+    Idiff.bitmap[b].A = (unsigned char)(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
   }
 }
 
@@ -220,18 +202,14 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1,
   \param I2 : The second image.
   \param Idiff : The result of the difference.
 */
-void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
-                                           const vpImage<unsigned char> &I2,
+void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                            vpImage<unsigned char> &Idiff)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "The two images do not have the same size"));
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) ||
-      (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
   unsigned int n = I1.getHeight() * I1.getWidth();
@@ -254,18 +232,13 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
   \param I2 : The second image.
   \param Idiff : The result of the difference between RGB components.
 */
-void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1,
-                                           const vpImage<vpRGBa> &I2,
-                                           vpImage<vpRGBa> &Idiff)
+void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "The two images do not have the same size"));
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) ||
-      (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
   unsigned int n = I1.getHeight() * I1.getWidth();
@@ -291,18 +264,14 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1,
   \param saturate : If true, saturate the result to [0 ; 255] using
   vpMath::saturate, otherwise overflow may occur.
 */
-void vpImageTools::imageAdd(const vpImage<unsigned char> &I1,
-                            const vpImage<unsigned char> &I2,
+void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires, const bool saturate)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "The two images do not have the same size"));
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Ires.getHeight()) ||
-      (I1.getWidth() != Ires.getWidth())) {
+  if ((I1.getHeight() != Ires.getHeight()) || (I1.getWidth() != Ires.getWidth())) {
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
@@ -313,12 +282,10 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1,
 
 #if VISP_HAVE_SSE2
   if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
-    for (; cpt <= Ires.getSize() - 16;
-         cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
+    for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
       const __m128i v1 = _mm_loadu_si128((const __m128i *)ptr_I1);
       const __m128i v2 = _mm_loadu_si128((const __m128i *)ptr_I2);
-      const __m128i vres =
-          saturate ? _mm_adds_epu8(v1, v2) : _mm_add_epi8(v1, v2);
+      const __m128i vres = saturate ? _mm_adds_epu8(v1, v2) : _mm_add_epi8(v1, v2);
 
       _mm_storeu_si128((__m128i *)ptr_Ires, vres);
     }
@@ -326,9 +293,7 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1,
 #endif
 
   for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>(
-                               (short int)*ptr_I1 + (short int)*ptr_I2)
-                         : *ptr_I1 + *ptr_I2;
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 + (short int)*ptr_I2) : *ptr_I1 + *ptr_I2;
   }
 }
 
@@ -341,19 +306,14 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1,
   \param saturate : If true, saturate the result to [0 ; 255] using
   vpMath::saturate, otherwise overflow may occur.
 */
-void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1,
-                                 const vpImage<unsigned char> &I2,
-                                 vpImage<unsigned char> &Ires,
-                                 const bool saturate)
+void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
+                                 vpImage<unsigned char> &Ires, const bool saturate)
 {
-  if ((I1.getHeight() != I2.getHeight()) ||
-      (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "The two images do not have the same size"));
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Ires.getHeight()) ||
-      (I1.getWidth() != Ires.getWidth())) {
+  if ((I1.getHeight() != Ires.getHeight()) || (I1.getWidth() != Ires.getWidth())) {
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
@@ -364,12 +324,10 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1,
 
 #if VISP_HAVE_SSE2
   if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
-    for (; cpt <= Ires.getSize() - 16;
-         cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
+    for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
       const __m128i v1 = _mm_loadu_si128((const __m128i *)ptr_I1);
       const __m128i v2 = _mm_loadu_si128((const __m128i *)ptr_I2);
-      const __m128i vres =
-          saturate ? _mm_subs_epu8(v1, v2) : _mm_sub_epi8(v1, v2);
+      const __m128i vres = saturate ? _mm_subs_epu8(v1, v2) : _mm_sub_epi8(v1, v2);
 
       _mm_storeu_si128((__m128i *)ptr_Ires, vres);
     }
@@ -377,9 +335,7 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1,
 #endif
 
   for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>(
-                               (short int)*ptr_I1 - (short int)*ptr_I2)
-                         : *ptr_I1 - *ptr_I2;
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 - (short int)*ptr_I2) : *ptr_I1 - *ptr_I2;
   }
 }
 
@@ -390,8 +346,7 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1,
 // When t is 1, this will return C. In between values will return an
 // interpolation between B and C. A and B are used to calculate the slopes at
 // the edges.
-float vpImageTools::cubicHermite(const float A, const float B, const float C,
-                                 const float D, const float t)
+float vpImageTools::cubicHermite(const float A, const float B, const float C, const float D, const float t)
 {
   float a = (-A + 3.0f * B - 3.0f * C + D) / 2.0f;
   float b = A + 2.0f * C - (5.0f * B + D) / 2.0f;
@@ -401,7 +356,4 @@ float vpImageTools::cubicHermite(const float A, const float B, const float C,
   return a * t * t * t + b * t * t + c * t + d;
 }
 
-float vpImageTools::lerp(const float A, const float B, const float t)
-{
-  return A * (1.0f - t) + B * t;
-}
+float vpImageTools::lerp(const float A, const float B, const float t) { return A * (1.0f - t) + B * t; }

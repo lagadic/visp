@@ -72,17 +72,12 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP);
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                const unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
   vpPoint *duplicate() const;
 
   // Get coordinates
@@ -106,8 +101,7 @@ public:
   //! Basic construction.
   void init();
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpPoint &vpp);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint &vpp);
   vpPoint &operator=(const vpPoint &vpp);
 
   //! Projection onto the image plane of a point. Input: the 3D coordinates in

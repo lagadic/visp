@@ -63,8 +63,7 @@
 
 */
 vpRobust::vpRobust(unsigned int n_data)
-  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017),
-    sig_prev(0), it(0), swap(0), size(n_data)
+  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017), sig_prev(0), it(0), swap(0), size(n_data)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
 
@@ -78,8 +77,7 @@ vpRobust::vpRobust(unsigned int n_data)
   Default constructor.
 */
 vpRobust::vpRobust()
-  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017),
-    sig_prev(0), it(0), swap(0), size(0)
+  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017), sig_prev(0), it(0), swap(0), size(0)
 {
 }
 
@@ -175,8 +173,7 @@ void vpRobust::resize(unsigned int n_data)
  */
 
 // ===================================================================
-void vpRobust::MEstimator(const vpRobustEstimatorType method,
-                          const vpColVector &residues, vpColVector &weights)
+void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights)
 {
 
   double med = 0;        // median
@@ -192,8 +189,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
 
   // Calculate median
-  med = select(sorted_residues, 0, (int)n_data - 1,
-               (int)ind_med /*(int)n_data/2*/);
+  med = select(sorted_residues, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
   // residualMedian = med ;
 
   // Normalize residues
@@ -203,8 +199,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   }
 
   // Calculate MAD
-  normmedian = select(sorted_normres, 0, (int)n_data - 1,
-                      (int)ind_med /*(int)n_data/2*/);
+  normmedian = select(sorted_normres, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
   // normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   sigma = 1.4826 * normmedian; // median Absolute Deviation
@@ -233,10 +228,8 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   }
 }
 
-void vpRobust::MEstimator(const vpRobustEstimatorType method,
-                          const vpColVector &residues,
-                          const vpColVector &all_residues,
-                          vpColVector &weights)
+void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector &residues,
+                          const vpColVector &all_residues, vpColVector &weights)
 {
 
   double normmedian = 0; // Normalized median
@@ -247,8 +240,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
 
   // compute median with the residues vector, return all_normres which are the
   // normalized all_residues vector.
-  normmedian =
-      computeNormalizedMedian(all_normres, residues, all_residues, weights);
+  normmedian = computeNormalizedMedian(all_normres, residues, all_residues, weights);
 
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   sigma = 1.4826 * normmedian; // Median Absolute Deviation
@@ -277,10 +269,8 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   };
 }
 
-double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
-                                         const vpColVector &residues,
-                                         const vpColVector &all_residues,
-                                         const vpColVector &weights)
+double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVector &residues,
+                                         const vpColVector &all_residues, const vpColVector &weights)
 {
   double med = 0;
   double normmedian = 0;
@@ -309,20 +299,17 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
     }
   }
   sorted_residues.resize(index);
-  memcpy(sorted_residues.data, no_null_weight_residues.data,
-         index * sizeof(double));
+  memcpy(sorted_residues.data, no_null_weight_residues.data, index * sizeof(double));
   n_data = index;
 
-  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data
-              << std::endl;
+  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
 
   // Calculate Median
   // Be careful to not use the rejected residues for the
   // calculation.
 
   unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
-  med = select(sorted_residues, 0, (int)n_data - 1,
-               (int)ind_med /*(int)n_data/2*/);
+  med = select(sorted_residues, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
 
   unsigned int i;
   // Normalize residues
@@ -337,8 +324,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
 
   // normmedian = Median(normres, weights);
   // normmedian = Median(normres);
-  normmedian = select(sorted_normres, 0, (int)n_data - 1,
-                      (int)ind_med /*(int)n_data/2*/);
+  normmedian = select(sorted_normres, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
 
   return normmedian;
 }
@@ -362,8 +348,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
   vpColVector norm_res(n_data); // Normalized Residue
   vpColVector w(n_data);
 
-  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data
-              << std::endl;
+  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
 
   // Calculate Median
   unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
@@ -377,9 +362,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
   // For Huber compute Simultaneous scale estimate
   // For Others use MAD calculated on first iteration
   if (it == 0) {
-    double normmedian =
-        select(norm_res, 0, (int)n_data - 1,
-               (int)ind_med /*(int)n_data/2*/); // Normalized Median
+    double normmedian = select(norm_res, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/); // Normalized Median
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     sigma = 1.4826 * normmedian; // Median Absolute Deviation
   } else {
@@ -434,16 +417,13 @@ double vpRobust::simultscale(vpColVector &x)
 #endif
       std::cout << "x[i] = " << x[i] << std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
-      std::cout << "Sum chi = " << chiTmp * vpMath::sqr(sig_prev)
-                << std::endl;
+      std::cout << "Sum chi = " << chiTmp * vpMath::sqr(sig_prev) << std::endl;
 #if defined(VISP_HAVE_FUNC_STD_ERFC)
-      std::cout << "Expectation = " << chiTmp * std::erfc(chiTmp)
-                << std::endl;
+      std::cout << "Expectation = " << chiTmp * std::erfc(chiTmp) << std::endl;
 #elif defined(VISP_HAVE_FUNC_ERFC)
       std::cout << "Expectation = " << chiTmp * erfc(chiTmp) << std::endl;
 #else
-      std::cout << "Expectation = " << chiTmp * (1 - erf(chiTmp))
-                << std::endl;
+      std::cout << "Expectation = " << chiTmp * (1 - erf(chiTmp)) << std::endl;
 #endif
       // getchar();
     }
@@ -491,12 +471,9 @@ double vpRobust::constrainedChiTukey(double x)
     double a = 4.7;
     // sct =
     // (vpMath::sqr(s*a-x)*vpMath::sqr(s*a+x)*vpMath::sqr(x))/(s*vpMath::sqr(vpMath::sqr(a*vpMath::sqr(s))));
-    sct = (vpMath::sqr(s * a) * x - s * vpMath::sqr(s * a) -
-           x * vpMath::sqr(x)) *
-          (vpMath::sqr(s * a) * x + s * vpMath::sqr(s * a) -
-           x * vpMath::sqr(x)) /
-          s * vpMath::sqr(vpMath::sqr(vpMath::sqr(s))) /
-          vpMath::sqr(vpMath::sqr(a));
+    sct = (vpMath::sqr(s * a) * x - s * vpMath::sqr(s * a) - x * vpMath::sqr(x)) *
+          (vpMath::sqr(s * a) * x + s * vpMath::sqr(s * a) - x * vpMath::sqr(x)) / s *
+          vpMath::sqr(vpMath::sqr(vpMath::sqr(s))) / vpMath::sqr(vpMath::sqr(a));
   } else
     sct = -1 / s;
 
@@ -510,8 +487,7 @@ double vpRobust::constrainedChiCauchy(double x)
   double s = sig_prev;
   double b = 2.3849;
 
-  sct =
-      -1 * (vpMath::sqr(x) * b) / (s * (vpMath::sqr(s * b) + vpMath::sqr(x)));
+  sct = -1 * (vpMath::sqr(x) * b) / (s * (vpMath::sqr(s * b) + vpMath::sqr(x)));
 
   return sct;
 }
@@ -572,8 +548,7 @@ void vpRobust::psiTukey(double sig, vpColVector &x, vpColVector &weights)
     double xi_sig = x[i] / sig;
 
     // if((fabs(xi_sig)<=(cst_const)) && weights[i]!=0)
-    if ((std::fabs(xi_sig) <= (cst_const)) &&
-        std::fabs(weights[i]) > std::numeric_limits<double>::epsilon()) {
+    if ((std::fabs(xi_sig) <= (cst_const)) && std::fabs(weights[i]) > std::numeric_limits<double>::epsilon()) {
       weights[i] = vpMath::sqr(1 - vpMath::sqr(xi_sig / cst_const));
       // w[i] = vpMath::sqr(1-vpMath::sqr(x[i]/sig/4.7));
     } else {
@@ -685,10 +660,7 @@ double vpRobust::select(vpColVector &a, int l, int r, int k)
 }
 
 #if !defined(VISP_HAVE_FUNC_ERFC) && !defined(VISP_HAVE_FUNC_STD_ERFC)
-double vpRobust::erf(double x)
-{
-  return x < 0.0 ? -gammp(0.5, x * x) : gammp(0.5, x * x);
-}
+double vpRobust::erf(double x) { return x < 0.0 ? -gammp(0.5, x * x) : gammp(0.5, x * x); }
 
 double vpRobust::gammp(double a, double x)
 {
@@ -763,8 +735,7 @@ void vpRobust::gcf(double *gammcf, double a, double x, double *gln)
 double vpRobust::gammln(double xx)
 {
   double x, tmp, ser;
-  static double cof[6] = {76.18009173,  -86.50532033,   24.01409822,
-                          -1.231739516, 0.120858003e-2, -0.536382e-5};
+  static double cof[6] = {76.18009173, -86.50532033, 24.01409822, -1.231739516, 0.120858003e-2, -0.536382e-5};
 
   x = xx - 1.0;
   tmp = x + 5.5;

@@ -37,8 +37,7 @@
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
-#if defined(VISP_HAVE_MODULE_GUI) &&                                         \
-    ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <string>
@@ -61,9 +60,8 @@ const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
   Basic constructor
 */
 vpSimulatorAfma6::vpSimulatorAfma6()
-  : vpRobotWireFrameSimulator(), vpAfma6(), q_prev_getdis(),
-    first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
-    zeroPos(), reposPos(), toolCustom(false), arm_dir()
+  : vpRobotWireFrameSimulator(), vpAfma6(), q_prev_getdis(), first_time_getdis(true),
+    positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
@@ -115,9 +113,8 @@ vpSimulatorAfma6::vpSimulatorAfma6()
 
 */
 vpSimulatorAfma6::vpSimulatorAfma6(bool do_display)
-  : vpRobotWireFrameSimulator(do_display), q_prev_getdis(),
-    first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
-    zeroPos(), reposPos(), toolCustom(false), arm_dir()
+  : vpRobotWireFrameSimulator(do_display), q_prev_getdis(), first_time_getdis(true),
+    positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
@@ -212,8 +209,7 @@ void vpSimulatorAfma6::init()
 {
   // set arm_dir from #define VISP_ROBOT_ARMS_DIR if it exists
   // VISP_ROBOT_ARMS_DIR may contain multiple locations separated by ";"
-  std::vector<std::string> arm_dirs = vpIoTools::splitChain(
-      std::string(VISP_ROBOT_ARMS_DIR), std::string(";"));
+  std::vector<std::string> arm_dirs = vpIoTools::splitChain(std::string(VISP_ROBOT_ARMS_DIR), std::string(";"));
   bool armDirExists = false;
   for (size_t i = 0; i < arm_dirs.size(); i++)
     if (vpIoTools::checkDirectory(arm_dirs[i]) == true) { // directory exists
@@ -224,11 +220,9 @@ void vpSimulatorAfma6::init()
   if (!armDirExists) {
     try {
       arm_dir = vpIoTools::getenv("VISP_ROBOT_ARMS_DIR");
-      std::cout << "The simulator uses data from VISP_ROBOT_ARMS_DIR="
-                << arm_dir << std::endl;
+      std::cout << "The simulator uses data from VISP_ROBOT_ARMS_DIR=" << arm_dir << std::endl;
     } catch (...) {
-      std::cout << "Cannot get VISP_ROBOT_ARMS_DIR environment variable"
-                << std::endl;
+      std::cout << "Cannot get VISP_ROBOT_ARMS_DIR environment variable" << std::endl;
     }
   }
 
@@ -285,11 +279,9 @@ void vpSimulatorAfma6::initDisplay()
   robotArms = NULL;
   robotArms = new Bound_scene[6];
   initArms();
-  setExternalCameraPosition(
-      vpHomogeneousMatrix(0, 0, 0, 0, 0, vpMath::rad(180)) *
-      vpHomogeneousMatrix(-0.1, 0, 4, vpMath::rad(90), 0, 0));
-  cameraParam.initPersProjWithoutDistortion(558.5309599, 556.055053, 320,
-                                            240);
+  setExternalCameraPosition(vpHomogeneousMatrix(0, 0, 0, 0, 0, vpMath::rad(180)) *
+                            vpHomogeneousMatrix(-0.1, 0, 4, vpMath::rad(90), 0, 0));
+  cameraParam.initPersProjWithoutDistortion(558.5309599, 556.055053, 320, 240);
   setExternalCameraParameters(cameraParam);
   vpCameraParameters tmp;
   getCameraParameters(tmp, 640, 480);
@@ -313,20 +305,15 @@ void vpSimulatorAfma6::initDisplay()
 
   \sa vpCameraParameters, init()
 */
-void vpSimulatorAfma6::init(
-    vpAfma6::vpAfma6ToolType tool,
-    vpCameraParameters::vpCameraParametersProjType proj_model)
+void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraParametersProjType proj_model)
 {
   this->projModel = proj_model;
-  unsigned int name_length =
-      30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
+  unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
   if (arm_dir.size() > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Afma6 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
   unsigned int full_length = (unsigned int)arm_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Afma6 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
   // Use here default values of the robot constant parameters.
   switch (tool) {
@@ -338,8 +325,7 @@ void vpSimulatorAfma6::init(
     _etc[1] = 0.0033;              // ty
     _etc[2] = 0.2272;              // tz
 
-    setCameraParameters(
-        vpCameraParameters(1109.5735473989, 1112.1520168160, 320, 240));
+    setCameraParameters(vpCameraParameters(1109.5735473989, 1112.1520168160, 320, 240));
 
     if (robotArms != NULL) {
       while (get_displayBusy())
@@ -362,8 +348,7 @@ void vpSimulatorAfma6::init(
     _etc[1] = 0.1234;             // ty
     _etc[2] = 0.1638;             // tz
 
-    setCameraParameters(
-        vpCameraParameters(852.6583228197, 854.8084224761, 320, 240));
+    setCameraParameters(vpCameraParameters(852.6583228197, 854.8084224761, 320, 240));
 
     if (robotArms != NULL) {
       while (get_displayBusy())
@@ -386,8 +371,7 @@ void vpSimulatorAfma6::init(
     _etc[1] = 0.1281;             // ty
     _etc[2] = 0.1658;             // tz
 
-    setCameraParameters(
-        vpCameraParameters(853.4876600807, 856.0339170706, 320, 240));
+    setCameraParameters(vpCameraParameters(853.4876600807, 856.0339170706, 320, 240));
 
     if (robotArms != NULL) {
       while (get_displayBusy())
@@ -406,8 +390,7 @@ void vpSimulatorAfma6::init(
   }
   case vpAfma6::TOOL_CUSTOM:
   case vpAfma6::TOOL_GENERIC_CAMERA: {
-    std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp"
-              << std::endl;
+    std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
   }
   }
 
@@ -428,23 +411,20 @@ void vpSimulatorAfma6::init(
   \warning The image size must be : 640x480 !
 */
 
-void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam,
-                                           const unsigned int &image_width,
+void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                                            const unsigned int &image_height)
 {
   if (toolCustom) {
-    cam.initPersProjWithoutDistortion(px_int, py_int, image_width / 2,
-                                      image_height / 2);
+    cam.initPersProjWithoutDistortion(px_int, py_int, image_width / 2, image_height / 2);
   }
   // Set default parameters
   switch (getToolType()) {
   case vpAfma6::TOOL_CCMOP: {
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
-      std::cout << "Get default camera parameters for camera \""
-                << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\"" << std::endl;
-      cam.initPersProjWithoutDistortion(1109.5735473989, 1112.1520168160, 320,
-                                        240);
+      std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\""
+                << std::endl;
+      cam.initPersProjWithoutDistortion(1109.5735473989, 1112.1520168160, 320, 240);
     } else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
@@ -454,10 +434,9 @@ void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam,
   case vpAfma6::TOOL_GRIPPER: {
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
-      std::cout << "Get default camera parameters for camera \""
-                << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\"" << std::endl;
-      cam.initPersProjWithoutDistortion(852.6583228197, 854.8084224761, 320,
-                                        240);
+      std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\""
+                << std::endl;
+      cam.initPersProjWithoutDistortion(852.6583228197, 854.8084224761, 320, 240);
     } else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
@@ -467,8 +446,7 @@ void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam,
   case vpAfma6::TOOL_CUSTOM:
   case vpAfma6::TOOL_GENERIC_CAMERA:
   case vpAfma6::TOOL_VACUUM: {
-    std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp"
-              << std::endl;
+    std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
     break;
   }
   default:
@@ -486,8 +464,7 @@ void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam,
 
   \warning The image size must be : 640x480 !
 */
-void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam,
-                                           const vpImage<unsigned char> &I_)
+void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I_)
 {
   getCameraParameters(cam, I_.getWidth(), I_.getHeight());
 }
@@ -500,8 +477,7 @@ void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam,
 
   \warning The image size must be : 640x480 !
 */
-void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam,
-                                           const vpImage<vpRGBa> &I_)
+void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I_)
 {
   getCameraParameters(cam, I_.getWidth(), I_.getHeight());
 }
@@ -538,9 +514,9 @@ void vpSimulatorAfma6::updateArticularPosition()
       computeArticularVelocity();
 
       double ellapsedTime = (tcur - tprev) * 1e-3;
-      if (constantSamplingTimeMode) { // if we want a constant velocity, we
-                                      // force the ellapsed time to the given
-                                      // samplingTime
+      if (constantSamplingTimeMode) {     // if we want a constant velocity, we
+                                          // force the ellapsed time to the given
+                                          // samplingTime
         ellapsedTime = getSamplingTime(); // in second
       }
 
@@ -548,16 +524,12 @@ void vpSimulatorAfma6::updateArticularPosition()
       vpColVector articularVelocities = get_artVel();
 
       if (jointLimit) {
-        double art = articularCoordinates[jointLimitArt - 1] +
-                     ellapsedTime * articularVelocities[jointLimitArt - 1];
-        if (art <= _joint_min[jointLimitArt - 1] ||
-            art >= _joint_max[jointLimitArt - 1]) {
+        double art = articularCoordinates[jointLimitArt - 1] + ellapsedTime * articularVelocities[jointLimitArt - 1];
+        if (art <= _joint_min[jointLimitArt - 1] || art >= _joint_max[jointLimitArt - 1]) {
           if (verbose_) {
-            std::cout << "Joint " << jointLimitArt - 1 << " reaches a limit: "
-                      << vpMath::deg(_joint_min[jointLimitArt - 1]) << " < "
-                      << vpMath::deg(art) << " < "
-                      << vpMath::deg(_joint_max[jointLimitArt - 1])
-                      << std::endl;
+            std::cout << "Joint " << jointLimitArt - 1
+                      << " reaches a limit: " << vpMath::deg(_joint_min[jointLimitArt - 1]) << " < " << vpMath::deg(art)
+                      << " < " << vpMath::deg(_joint_max[jointLimitArt - 1]) << std::endl;
           }
 
           articularVelocities = 0.0;
@@ -565,34 +537,25 @@ void vpSimulatorAfma6::updateArticularPosition()
           jointLimit = false;
       }
 
-      articularCoordinates[0] =
-          articularCoordinates[0] + ellapsedTime * articularVelocities[0];
-      articularCoordinates[1] =
-          articularCoordinates[1] + ellapsedTime * articularVelocities[1];
-      articularCoordinates[2] =
-          articularCoordinates[2] + ellapsedTime * articularVelocities[2];
-      articularCoordinates[3] =
-          articularCoordinates[3] + ellapsedTime * articularVelocities[3];
-      articularCoordinates[4] =
-          articularCoordinates[4] + ellapsedTime * articularVelocities[4];
-      articularCoordinates[5] =
-          articularCoordinates[5] + ellapsedTime * articularVelocities[5];
+      articularCoordinates[0] = articularCoordinates[0] + ellapsedTime * articularVelocities[0];
+      articularCoordinates[1] = articularCoordinates[1] + ellapsedTime * articularVelocities[1];
+      articularCoordinates[2] = articularCoordinates[2] + ellapsedTime * articularVelocities[2];
+      articularCoordinates[3] = articularCoordinates[3] + ellapsedTime * articularVelocities[3];
+      articularCoordinates[4] = articularCoordinates[4] + ellapsedTime * articularVelocities[4];
+      articularCoordinates[5] = articularCoordinates[5] + ellapsedTime * articularVelocities[5];
 
       int jl = isInJointLimit();
 
       if (jl != 0 && jointLimit == false) {
         if (jl < 0)
-          ellapsedTime = (_joint_min[(unsigned int)(-jl - 1)] -
-                          articularCoordinates[(unsigned int)(-jl - 1)]) /
+          ellapsedTime = (_joint_min[(unsigned int)(-jl - 1)] - articularCoordinates[(unsigned int)(-jl - 1)]) /
                          (articularVelocities[(unsigned int)(-jl - 1)]);
         else
-          ellapsedTime = (_joint_max[(unsigned int)(jl - 1)] -
-                          articularCoordinates[(unsigned int)(jl - 1)]) /
+          ellapsedTime = (_joint_max[(unsigned int)(jl - 1)] - articularCoordinates[(unsigned int)(jl - 1)]) /
                          (articularVelocities[(unsigned int)(jl - 1)]);
 
         for (unsigned int i = 0; i < 6; i++)
-          articularCoordinates[i] =
-              articularCoordinates[i] + ellapsedTime * articularVelocities[i];
+          articularCoordinates[i] = articularCoordinates[i] + ellapsedTime * articularVelocities[i];
 
         jointLimit = true;
         jointLimitArt = (unsigned int)fabs((double)jl);
@@ -605,10 +568,8 @@ void vpSimulatorAfma6::updateArticularPosition()
 
       if (displayAllowed) {
         vpDisplay::display(I);
-        vpDisplay::displayFrame(I, getExternalCameraPosition(), cameraParam,
-                                0.2, vpColor::none, thickness_);
-        vpDisplay::displayFrame(I, getExternalCameraPosition() * fMi[7],
-                                cameraParam, 0.1, vpColor::none, thickness_);
+        vpDisplay::displayFrame(I, getExternalCameraPosition(), cameraParam, 0.2, vpColor::none, thickness_);
+        vpDisplay::displayFrame(I, getExternalCameraPosition() * fMi[7], cameraParam, 0.1, vpColor::none, thickness_);
       }
 
       if (displayType == MODEL_3D && displayAllowed) {
@@ -629,25 +590,20 @@ void vpSimulatorAfma6::updateArticularPosition()
         vpPoint pt(0, 0, 0);
 
         pt.track(getExternalCameraPosition());
-        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                             pt.get_y(), iP_1);
+        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP_1);
         pt.track(getExternalCameraPosition() * fMit[0]);
-        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                             pt.get_y(), iP);
+        vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP);
         vpDisplay::displayLine(I, iP_1, iP, vpColor::green, thickness_);
         for (unsigned int k = 1; k < 7; k++) {
           pt.track(getExternalCameraPosition() * fMit[k - 1]);
-          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                               pt.get_y(), iP_1);
+          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP_1);
 
           pt.track(getExternalCameraPosition() * fMit[k]);
-          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(),
-                                               pt.get_y(), iP);
+          vpMeterPixelConversion::convertPoint(cameraParam, pt.get_x(), pt.get_y(), iP);
 
           vpDisplay::displayLine(I, iP_1, iP, vpColor::green, thickness_);
         }
-        vpDisplay::displayCamera(I, getExternalCameraPosition() * fMit[7],
-                                 cameraParam, 0.1, vpColor::green,
+        vpDisplay::displayCamera(I, getExternalCameraPosition() * fMit[7], cameraParam, 0.1, vpColor::green,
                                  thickness_);
       }
 
@@ -815,8 +771,7 @@ Change the robot state.
 
 \param newState : New requested robot state.
 */
-vpRobot::vpRobotStateType
-vpSimulatorAfma6::setRobotState(vpRobot::vpRobotStateType newState)
+vpRobot::vpRobotStateType vpSimulatorAfma6::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState) {
   case vpRobot::STATE_STOP: {
@@ -828,8 +783,7 @@ vpSimulatorAfma6::setRobotState(vpRobot::vpRobotStateType newState)
   }
   case vpRobot::STATE_POSITION_CONTROL: {
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
-      std::cout
-          << "Change the control mode from velocity to position control.\n";
+      std::cout << "Change the control mode from velocity to position control.\n";
       stopMotion();
     } else {
       // std::cout << "Change the control mode from stop to position
@@ -925,17 +879,14 @@ int main()
 }
   \endcode
 */
-void vpSimulatorAfma6::setVelocity(const vpRobot::vpControlFrameType frame,
-                                   const vpColVector &vel)
+void vpSimulatorAfma6::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
-    vpERROR_TRACE(
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    throw vpRobotException(
-        vpRobotException::wrongStateError,
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    vpERROR_TRACE("Cannot send a velocity to the robot "
+                  "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot send a velocity to the robot "
+                           "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }
 
   vpColVector vel_sat(6);
@@ -1143,8 +1094,7 @@ int main()
 }
   \endcode
 */
-void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame,
-                                   vpColVector &vel)
+void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &vel)
 {
   vel.resize(6);
 
@@ -1196,8 +1146,7 @@ void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame,
 
   \sa getVelocity(const vpRobot::vpControlFrameType frame, vpColVector & vel)
 */
-void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame,
-                                   vpColVector &vel, double &timestamp)
+void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &vel, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
   getVelocity(frame, vel);
@@ -1265,8 +1214,7 @@ vpColVector vpSimulatorAfma6::getVelocity(vpRobot::vpControlFrameType frame)
 
   \sa getVelocity(vpRobot::vpControlFrameType frame)
 */
-vpColVector vpSimulatorAfma6::getVelocity(vpRobot::vpControlFrameType frame,
-                                          double &timestamp)
+vpColVector vpSimulatorAfma6::getVelocity(vpRobot::vpControlFrameType frame, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
   vpColVector vel(6);
@@ -1363,8 +1311,7 @@ like:
   \endcode
 
 */
-void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,
-                                   const vpColVector &q)
+void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q)
 {
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState()) {
     vpERROR_TRACE("Robot was not in position-based control\n"
@@ -1415,8 +1362,7 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,
         }
       } else {
         vpERROR_TRACE("Positionning error.");
-        throw vpRobotException(vpRobotException::positionOutOfRangeError,
-                               "Position out of range.");
+        throw vpRobotException(vpRobotException::positionOutOfRangeError, "Position out of range.");
       }
     } while (errsqr > 1e-8 && nbSol > 0);
 
@@ -1480,9 +1426,8 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Positionning error. Mixt frame not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Positionning error: "
-                           "Mixt frame not implemented.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "Mixt frame not implemented.");
   }
   }
 }
@@ -1544,17 +1489,14 @@ int main()
   robot.setPositioningVelocity(20);
 
   // Moves the robot in the camera frame
-  robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5,
-pos6);
+  robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5, pos6);
 }
   \endcode
 
   \sa setPosition()
 */
-void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,
-                                   const double pos1, const double pos2,
-                                   const double pos3, const double pos4,
-                                   const double pos5, const double pos6)
+void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2,
+                                   const double pos3, const double pos4, const double pos5, const double pos6)
 {
   try {
     vpColVector position(6);
@@ -1616,8 +1558,7 @@ void vpSimulatorAfma6::setPosition(const char *filename)
 
   if (ret == false) {
     vpERROR_TRACE("Bad position in \"%s\"", filename);
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Bad position in filename.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Bad position in filename.");
   }
   this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
   this->setPosition(vpRobot::ARTICULAR_FRAME, q);
@@ -1670,8 +1611,7 @@ int main()
   }
 
   // Create a rotation matrix from the Rxyz rotation angles
-  vpRotationMatrix fRc(frc); // reference frame to camera frame rotation
-matrix
+  vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
 
   // Create the camera to fix frame transformation in terms of a
   // homogeneous matrix
@@ -1684,8 +1624,7 @@ double &timestamp) \sa setPosition(const vpRobot::vpControlFrameType frame,
 const vpColVector & r)
 
 */
-void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
-                                   vpColVector &q)
+void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   q.resize(6);
 
@@ -1720,9 +1659,8 @@ void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
 
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Positionning error. Mixt frame not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError,
-                           "Positionning error: "
-                           "Mixt frame not implemented.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "Mixt frame not implemented.");
   }
   }
 }
@@ -1753,8 +1691,7 @@ void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
 
   \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
  */
-void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
-                                   vpColVector &q, double &timestamp)
+void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
   getPosition(frame, q);
@@ -1771,8 +1708,7 @@ void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
 
   \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &)
 */
-void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
-                                   vpPoseVector &position)
+void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position)
 {
   vpColVector posRxyz;
   // recupere  position en Rxyz
@@ -1799,8 +1735,7 @@ void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
   representation.
 
  */
-void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
-                                   vpPoseVector &position, double &timestamp)
+void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
   getPosition(frame, position);
@@ -1816,8 +1751,7 @@ void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame,
   \param limitMax : The maximum joint limits are given in a vector of size 6.
   The three first values have to be given in meter and the others in radian.
 */
-void vpSimulatorAfma6::setJointLimit(const vpColVector &limitMin,
-                                     const vpColVector &limitMax)
+void vpSimulatorAfma6::setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax)
 {
   if (limitMin.getRows() != 6 || limitMax.getRows() != 6) {
     vpTRACE("Joint limit vector has not a size of 6 !");
@@ -1897,8 +1831,8 @@ int vpSimulatorAfma6::isInJointLimit()
   }
 
   if (artNumb != 0)
-    std::cout << "\nWarning: Velocity control stopped: axis "
-              << fabs((float)artNumb) << " on joint limit!" << std::endl;
+    std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!"
+              << std::endl;
 
   return artNumb;
 }
@@ -1920,8 +1854,7 @@ int vpSimulatorAfma6::isInJointLimit()
   Euler Rxyz representation.
 
 */
-void vpSimulatorAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
-                                       vpColVector &displacement)
+void vpSimulatorAfma6::getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement)
 {
   displacement.resize(6);
   displacement = 0;
@@ -1993,9 +1926,12 @@ expressed in meters, while joint rotations A,B,C in radians.
 an error occurs.
 
 The code below shows how to read a position from a file and move the robot to
-this position. \code vpSimulatorAfma6 robot; vpColVector q;        // Joint
-position robot.readPosFile("myposition.pos", q); // Set the joint position
-from the file robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+this position.
+\code
+vpSimulatorAfma6 robot;
+vpColVector q;        // Joint position
+robot.readPosFile("myposition.pos", q); // Set the joint position from the file
+robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
 robot.setPositioningVelocity(5); // Positioning velocity set to 5%
 robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
@@ -2003,8 +1939,7 @@ robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
 
 \sa savePosFile()
 */
-bool vpSimulatorAfma6::readPosFile(const std::string &filename,
-                                   vpColVector &q)
+bool vpSimulatorAfma6::readPosFile(const std::string &filename, vpColVector &q)
 {
   std::ifstream fd(filename.c_str(), std::ios::in);
 
@@ -2023,10 +1958,8 @@ bool vpSimulatorAfma6::readPosFile(const std::string &filename,
   while (std::getline(fd, line)) {
     lineNum++;
     if (lineNum == 1) {
-      if (!(line.compare(0, id.size(), id) ==
-            0)) { // check if Afma6 position file
-        std::cout << "Error: this position file " << filename
-                  << " is not for Afma6 robot" << std::endl;
+      if (!(line.compare(0, id.size(), id) == 0)) { // check if Afma6 position file
+        std::cout << "Error: this position file " << filename << " is not for Afma6 robot" << std::endl;
         return false;
       }
     }
@@ -2035,8 +1968,7 @@ bool vpSimulatorAfma6::readPosFile(const std::string &filename,
     }
     if ((line.compare(0, key.size(), key) == 0)) { // decode position
       // check if there are at least njoint values in the line
-      std::vector<std::string> chain =
-          vpIoTools::splitChain(line, std::string(" "));
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
       if (chain.size() < njoint + 1) // try to split with tab separator
         chain = vpIoTools::splitChain(line, std::string("\t"));
       if (chain.size() < njoint + 1)
@@ -2060,8 +1992,7 @@ bool vpSimulatorAfma6::readPosFile(const std::string &filename,
   fd.close();
 
   if (!pos_found) {
-    std::cout << "Error: unable to find a position for Afma6 robot in "
-              << filename << std::endl;
+    std::cout << "Error: unable to find a position for Afma6 robot in " << filename << std::endl;
     return false;
   }
 
@@ -2090,8 +2021,7 @@ bool vpSimulatorAfma6::readPosFile(const std::string &filename,
 
   \sa readPosFile()
 */
-bool vpSimulatorAfma6::savePosFile(const std::string &filename,
-                                   const vpColVector &q)
+bool vpSimulatorAfma6::savePosFile(const std::string &filename, const vpColVector &q)
 {
   FILE *fd;
   fd = fopen(filename.c_str(), "w");
@@ -2108,8 +2038,8 @@ bool vpSimulatorAfma6::savePosFile(const std::string &filename,
 #\n\n");
 
   // Save positions in mm and deg
-  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n", q[0], q[1], q[2],
-          vpMath::deg(q[3]), vpMath::deg(q[4]), vpMath::deg(q[5]));
+  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n", q[0], q[1], q[2], vpMath::deg(q[3]), vpMath::deg(q[4]),
+          vpMath::deg(q[5]));
 
   fclose(fd);
   return (true);
@@ -2144,10 +2074,7 @@ void vpSimulatorAfma6::move(const char *filename)
   \param cMe : Transformation between the camera frame and the
   end-effector frame.
 */
-void vpSimulatorAfma6::get_cMe(vpHomogeneousMatrix &cMe)
-{
-  vpAfma6::get_cMe(cMe);
-}
+void vpSimulatorAfma6::get_cMe(vpHomogeneousMatrix &cMe) { vpAfma6::get_cMe(cMe); }
 
 /*!
   Get the twist transformation \f$^c{\bf V}_e\f$ from camera frame to
@@ -2237,12 +2164,10 @@ void vpSimulatorAfma6::initArms()
   // set scene_dir from #define VISP_SCENE_DIR if it exists
   // VISP_SCENES_DIR may contain multiple locations separated by ";"
   std::string scene_dir_;
-  std::vector<std::string> scene_dirs =
-      vpIoTools::splitChain(std::string(VISP_SCENES_DIR), std::string(";"));
+  std::vector<std::string> scene_dirs = vpIoTools::splitChain(std::string(VISP_SCENES_DIR), std::string(";"));
   bool sceneDirExists = false;
   for (size_t i = 0; i < scene_dirs.size(); i++)
-    if (vpIoTools::checkDirectory(scene_dirs[i]) ==
-        true) { // directory exists
+    if (vpIoTools::checkDirectory(scene_dirs[i]) == true) { // directory exists
       scene_dir_ = scene_dirs[i];
       sceneDirExists = true;
       break;
@@ -2250,23 +2175,18 @@ void vpSimulatorAfma6::initArms()
   if (!sceneDirExists) {
     try {
       scene_dir_ = vpIoTools::getenv("VISP_SCENES_DIR");
-      std::cout << "The simulator uses data from VISP_SCENES_DIR="
-                << scene_dir_ << std::endl;
+      std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir_ << std::endl;
     } catch (...) {
-      std::cout << "Cannot get VISP_SCENES_DIR environment variable"
-                << std::endl;
+      std::cout << "Cannot get VISP_SCENES_DIR environment variable" << std::endl;
     }
   }
 
-  unsigned int name_length =
-      30; // the size of this kind of string "/afma6_arm2.bnd"
+  unsigned int name_length = 30; // the size of this kind of string "/afma6_arm2.bnd"
   if (scene_dir_.size() > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Afma6 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
   unsigned int full_length = (unsigned int)scene_dir_.size() + name_length;
   if (full_length > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Afma6 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
   char *name_cam = new char[full_length];
 
@@ -2275,12 +2195,10 @@ void vpSimulatorAfma6::initArms()
   set_scene(name_cam, &camera, cameraFactor);
 
   if (arm_dir.size() > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Afma6 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
   full_length = (unsigned int)arm_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
-    throw vpException(vpException::dimensionError,
-                      "Cannot initialize Afma6 simulator");
+    throw vpException(vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
   char *name_arm = new char[full_length];
   strcpy(name_arm, arm_dir.c_str());
@@ -2317,13 +2235,11 @@ void vpSimulatorAfma6::initArms()
     break;
   }
   case vpAfma6::TOOL_CUSTOM: {
-    std::cout << "The custom tool is not handled in vpSimulatorAfma6.cpp"
-              << std::endl;
+    std::cout << "The custom tool is not handled in vpSimulatorAfma6.cpp" << std::endl;
     break;
   }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
-    std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp"
-              << std::endl;
+    std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
     break;
   }
   }
@@ -2360,17 +2276,13 @@ void vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I_)
   double v;
   // if(px_ext != 1 && py_ext != 1)
   // we assume px_ext and py_ext > 0
-  if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) *
-                                    std::numeric_limits<double>::epsilon()) &&
-      (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) *
-                                   std::numeric_limits<double>::epsilon())) {
+  if ((std::fabs(px_ext - 1.) > vpMath::maximum(px_ext, 1.) * std::numeric_limits<double>::epsilon()) &&
+      (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I_.getWidth() / (2 * px_ext);
     v = (double)I_.getHeight() / (2 * py_ext);
   } else {
-    u = (double)I_.getWidth() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
-    v = (double)I_.getHeight() /
-        (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
+    v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
 
   float w44o[4][4], w44cext[4][4], x, y, z;
@@ -2439,8 +2351,7 @@ void vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I_)
   \return false if the robot kinematics is not able to reach the cMo position.
 
 */
-bool vpSimulatorAfma6::initialiseCameraRelativeToObject(
-    const vpHomogeneousMatrix &cMo_)
+bool vpSimulatorAfma6::initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo_)
 {
   vpColVector stop(6);
   bool status = true;
@@ -2451,8 +2362,7 @@ bool vpSimulatorAfma6::initialiseCameraRelativeToObject(
   fMc_ = fMo * cMo_.inverse();
 
   vpColVector articularCoordinates = get_artCoord();
-  int nbSol =
-      getInverseKinematics(fMc_, articularCoordinates, true, verbose_);
+  int nbSol = getInverseKinematics(fMc_, articularCoordinates, true, verbose_);
 
   if (nbSol == 0) {
     status = false;
@@ -2460,8 +2370,7 @@ bool vpSimulatorAfma6::initialiseCameraRelativeToObject(
   }
 
   if (verbose_)
-    std::cout << "Used joint coordinates (rad): " << articularCoordinates.t()
-              << std::endl;
+    std::cout << "Used joint coordinates (rad): " << articularCoordinates.t() << std::endl;
 
   set_artCoord(articularCoordinates);
 
@@ -2483,8 +2392,7 @@ bool vpSimulatorAfma6::initialiseCameraRelativeToObject(
 
   \param cMo_ : the desired pose of the camera.
 */
-void vpSimulatorAfma6::initialiseObjectRelativeToCamera(
-    const vpHomogeneousMatrix &cMo_)
+void vpSimulatorAfma6::initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo_)
 {
   vpColVector stop(6);
   stop = 0;
@@ -2506,9 +2414,7 @@ void vpSimulatorAfma6::initialiseObjectRelativeToCamera(
 
   \return True is the pose is reached, False else
 */
-bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_,
-                                   vpImage<unsigned char> *Iint,
-                                   const double &errMax)
+bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<unsigned char> *Iint, const double &errMax)
 {
   // get rid of max velocity
   double vMax = getMaxTranslationVelocity();

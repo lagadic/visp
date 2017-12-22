@@ -62,15 +62,11 @@
 class VISP_EXPORT vpServoDisplay
 {
 public:
-  static void display(const vpServo &s, const vpCameraParameters &cam,
-                      const vpImage<unsigned char> &I,
-                      vpColor currentColor = vpColor::green,
-                      vpColor desiredColor = vpColor::red,
+  static void display(const vpServo &s, const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+                      vpColor currentColor = vpColor::green, vpColor desiredColor = vpColor::red,
                       unsigned int thickness = 1);
-  static void display(const vpServo &s, const vpCameraParameters &cam,
-                      const vpImage<vpRGBa> &I,
-                      vpColor currentColor = vpColor::green,
-                      vpColor desiredColor = vpColor::red,
+  static void display(const vpServo &s, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+                      vpColor currentColor = vpColor::green, vpColor desiredColor = vpColor::red,
                       unsigned int thickness = 1);
 };
 

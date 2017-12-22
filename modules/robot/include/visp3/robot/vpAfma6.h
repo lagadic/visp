@@ -135,17 +135,15 @@ public:
   //@{
   void init(void);
   void init(const std::string &camera_extrinsic_parameters);
-  void init(const std::string &camera_extrinsic_parameters,
-            const std::string &camera_intrinsic_parameters);
+  void init(const std::string &camera_extrinsic_parameters, const std::string &camera_intrinsic_parameters);
   void init(vpAfma6::vpAfma6ToolType tool, const std::string &filename);
   void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc_);
-  void init(vpAfma6::vpAfma6ToolType tool,
-            vpCameraParameters::vpCameraParametersProjType projModel =
-                vpCameraParameters::perspectiveProjWithoutDistortion);
+  void
+  init(vpAfma6::vpAfma6ToolType tool,
+       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
-  int getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q,
-                           const bool &nearest = true,
+  int getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q, const bool &nearest = true,
                            const bool &verbose = false) const;
 
   vpHomogeneousMatrix get_eMc() const;
@@ -161,19 +159,12 @@ public:
   //! Get the current tool type
   vpAfma6ToolType getToolType() const { return tool_current; };
   //! Get the current camera model projection type
-  vpCameraParameters::vpCameraParametersProjType
-  getCameraParametersProjType() const
-  {
-    return projModel;
-  };
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const { return projModel; };
 
-  void getCameraParameters(vpCameraParameters &cam,
-                           const unsigned int &image_width,
+  void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                            const unsigned int &image_height) const;
-  void getCameraParameters(vpCameraParameters &cam,
-                           const vpImage<unsigned char> &I) const;
-  void getCameraParameters(vpCameraParameters &cam,
-                           const vpImage<vpRGBa> &I) const;
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I) const;
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I) const;
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
@@ -185,8 +176,7 @@ public:
   virtual void set_eMc(const vpHomogeneousMatrix &eMc);
   //@}
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpAfma6 &afma6);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma6 &afma6);
 
 protected:
   /** @name Protected Member Functions Inherited from vpAfma6 */

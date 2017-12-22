@@ -55,8 +55,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
-#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) ||                     \
-     defined(VISP_HAVE_GDI))
+#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
@@ -80,11 +79,9 @@
 // List of allowed command line options
 #define GETOPTARGS "di:p:hf:n:s:w"
 
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string ppath, unsigned first, unsigned nimages,
-           unsigned step);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, unsigned &first, unsigned &nimages,
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+           unsigned nimages, unsigned step);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
                 unsigned &step, bool &display, bool &wait);
 
 /*!
@@ -100,8 +97,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   \param step : Step between two images.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           std::string ppath, unsigned first, unsigned nimages, unsigned step)
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
+           unsigned nimages, unsigned step)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk and display it.\n\
@@ -181,8 +178,7 @@ SYNOPSIS\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                std::string &ppath, unsigned &first, unsigned &nimages,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
                 unsigned &step, bool &display, bool &wait)
 {
   const char *optarg_;
@@ -258,8 +254,8 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages,
-                   opt_step, opt_display, opt_wait) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_display, opt_wait) ==
+        false) {
       exit(-1);
     }
 
@@ -276,27 +272,21 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
-      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages,
-            opt_step);
+      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << "  Use -p <personal image path> option if you want to "
-          << std::endl
-          << "  use personal images." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << "  Use -p <personal image path> option if you want to " << std::endl
+                << "  use personal images." << std::endl
+                << std::endl;
 
       exit(-1);
     }
@@ -353,8 +343,7 @@ int main(int argc, const char **argv)
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option, " << std::endl
                 << "  or your -p " << opt_ppath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable"
-                << std::endl;
+                << "  or VISP_INPUT_IMAGE_PATH environment variable" << std::endl;
       exit(-1);
     }
 
@@ -428,9 +417,6 @@ int main(int argc, const char **argv)
   }
 }
 #else
-int main()
-{
-  vpERROR_TRACE("You do not have X11 or GTK display functionalities...");
-}
+int main() { vpERROR_TRACE("You do not have X11 or GTK display functionalities..."); }
 
 #endif

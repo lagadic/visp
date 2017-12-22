@@ -48,10 +48,7 @@ void vpTracker::init() { cPAvailable = false; }
 
 vpTracker::vpTracker() : p(), cP(), cPAvailable(false) {}
 
-vpTracker::vpTracker(const vpTracker &tracker) : p(), cP(), cPAvailable(false)
-{
-  *this = tracker;
-}
+vpTracker::vpTracker(const vpTracker &tracker) : p(), cP(), cPAvailable(false) { *this = tracker; }
 
 vpTracker &vpTracker::operator=(const vpTracker &tracker)
 {

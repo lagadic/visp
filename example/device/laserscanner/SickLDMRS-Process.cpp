@@ -72,10 +72,8 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
-#if (!defined(_WIN32) && (defined(__unix__) || defined(__unix) ||            \
-                          (defined(__APPLE__) && defined(__MACH__)))) &&     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_GTK))
+#if (!defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) &&       \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
 
 static int save = 0;
 static int layerToDisplay = 0xF; // 0xF = 1111 => all the layers are selected
@@ -137,8 +135,7 @@ void *laser_display_and_save_loop(void *)
   unsigned int iter = 0;
   for (;;) {
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_GTK))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
     vpDisplay::display(map);
 #endif
 
@@ -157,8 +154,7 @@ void *laser_display_and_save_loop(void *)
     // Parse the four layers
     for (int layer = 0; layer < 4; layer++) {
       if (!((0x1 << layer) & layerToDisplay)) {
-        std::cout << "Layer " << layer + 1 << " is not displayed"
-                  << std::endl;
+        std::cout << "Layer " << layer + 1 << " is not displayed" << std::endl;
         continue;
       }
 
@@ -166,18 +162,13 @@ void *laser_display_and_save_loop(void *)
 
       if (save) {
         // Set the scan data filename to store the measures
-        sprintf(filename, "%s/scan%04u-layer%d.txt", output_path.c_str(),
-                iter, layer + 1);
+        sprintf(filename, "%s/scan%04u-layer%d.txt", output_path.c_str(), iter, layer + 1);
         fdscan.open(filename);
 
         // Write the file header
         fdscan << "# Scan layer [1 to 4] : " << layer + 1 << std::endl
-               << "# Start timestamp (s) : "
-               << laserscan[layer].getStartTimestamp() - time_offset
-               << std::endl
-               << "# End timestamp (s)   : "
-               << laserscan[layer].getEndTimestamp() - time_offset
-               << std::endl
+               << "# Start timestamp (s) : " << laserscan[layer].getStartTimestamp() - time_offset << std::endl
+               << "# End timestamp (s)   : " << laserscan[layer].getEndTimestamp() - time_offset << std::endl
                << "# Data : \"radial distance (m)\" \"horizontal angle "
                   "(rad)\" \"vertical angle (rad)\" \"X (m)\" \"Y (m)\" \"Z "
                   "(m)\""
@@ -192,11 +183,9 @@ void *laser_display_and_save_loop(void *)
       for (unsigned int i = 0; i < pointsLayer.size(); i++) {
         p = pointsLayer[i];
         E.set_i(height - resolution * p.getRadialDist() * cos(p.getHAngle()));
-        E.set_j(width / 2. -
-                resolution * p.getRadialDist() * sin(p.getHAngle()));
+        E.set_j(width / 2. - resolution * p.getRadialDist() * sin(p.getHAngle()));
 // std::cout << "E: " << E << std::endl;
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_GTK))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
         vpDisplay::displayLine(map, O, E, color[layer]);
 #endif
         if (save) {
@@ -208,8 +197,7 @@ void *laser_display_and_save_loop(void *)
         fdscan.close();
       }
     }
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_GTK))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
     vpDisplay::flush(map);
 #endif
     iter++;
@@ -245,8 +233,7 @@ void *laser_acq_loop(void *)
 #endif
 
     iter++;
-    std::cout << "laser acq time: " << vpTime::measureTimeMs() - t1
-              << std::endl;
+    std::cout << "laser acq time: " << vpTime::measureTimeMs() - t1 << std::endl;
   }
 
   return NULL;
@@ -257,8 +244,7 @@ void *camera_acq_and_display_loop(void *)
 #ifdef VISP_HAVE_DC1394
   try {
     // Initialize the firewire framegrabber
-    vp1394TwoGrabber
-        g; // Create a grabber based on libdc1394-2.x third party lib
+    vp1394TwoGrabber g; // Create a grabber based on libdc1394-2.x third party lib
 
     // If no camera found return
     if (g.getNumCameras() == 0)
@@ -268,9 +254,8 @@ void *camera_acq_and_display_loop(void *)
     //     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
 
     vpImage<unsigned char> I; // Create a gray level image container
-    vpImage<unsigned char>
-        Q;        // Create a quarter size gray level image container
-    g.acquire(I); // Acquire an image
+    vpImage<unsigned char> Q; // Create a quarter size gray level image container
+    g.acquire(I);             // Acquire an image
     I.quarterSizeImage(Q);
 
     vpDisplay *display = NULL;
@@ -297,20 +282,17 @@ void *camera_acq_and_display_loop(void *)
     uint64_t timestamp;
     uint32_t id;
     for (;;) {
-      dc1394video_frame_t *frame =
-          g.dequeue(I, timestamp, id); // Acquire an image
+      dc1394video_frame_t *frame = g.dequeue(I, timestamp, id); // Acquire an image
       I.quarterSizeImage(Q);
       double image_timestamp = timestamp / 1000000. - time_offset;
-      std::cout << "camera timestamp: " << image_timestamp << " s "
-                << std::endl;
+      std::cout << "camera timestamp: " << image_timestamp << " s " << std::endl;
       if (save) {
         // Set the image filename
         sprintf(filename, "%s/image%04u.png", output_path.c_str(), iter);
         vpImageIo::write(Q, filename);
         fdimage_ts << filename << " " << image_timestamp << std::endl;
       }
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
-     defined(VISP_HAVE_GTK))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
       vpDisplay::display(Q);
       vpDisplay::flush(Q);
 #endif
@@ -338,34 +320,29 @@ int main(int argc, const char **argv)
         // Create a directory with name "username"
         vpIoTools::makeDirectory(output_path);
       } catch (...) {
-        std::cout << "Cannot create " << output_path << " directory"
-                  << std::endl;
+        std::cout << "Cannot create " << output_path << " directory" << std::endl;
         return EXIT_FAILURE;
       }
     }
 
     // Parse the command line to set the variables
     vpParseArgv::vpArgvInfo argTable[] = {
-        {"-layer", vpParseArgv::ARGV_INT, (char *)NULL,
-         (char *)&layerToDisplay,
+        {"-layer", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&layerToDisplay,
          "The layer to display:\n"
          "\t\t. 0x1 for layer 1.\n"
          "\t\t. 0x2 for layer 2.\n"
          "\t\t. 0x4 for layer 3.\n"
          "\t\t. 0x8 for layer 4.\n"
          "\t\tTo display all the layers you should set 0xF value."},
-        {"-save", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&save,
-         "Turn to 1 in order to save data."},
+        {"-save", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&save, "Turn to 1 in order to save data."},
         {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL,
          "Display one or more measured layers form a Sick LD-MRS laser "
          "scanner."},
-        {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL,
-         (char *)NULL}};
+        {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL, (char *)NULL}};
 
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable,
-                           vpParseArgv::ARGV_NO_LEFTOVERS |
-                               vpParseArgv::ARGV_NO_ABBREV |
+                           vpParseArgv::ARGV_NO_LEFTOVERS | vpParseArgv::ARGV_NO_ABBREV |
                                vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (EXIT_FAILURE);
     }
@@ -375,11 +352,9 @@ int main(int argc, const char **argv)
     pthread_t thread_camera_acq;
     pthread_t thread_laser_acq;
     pthread_t thread_laser_display;
-    pthread_create(&thread_camera_acq, NULL, &camera_acq_and_display_loop,
-                   NULL);
+    pthread_create(&thread_camera_acq, NULL, &camera_acq_and_display_loop, NULL);
     pthread_create(&thread_laser_acq, NULL, &laser_acq_loop, NULL);
-    pthread_create(&thread_laser_display, NULL, &laser_display_and_save_loop,
-                   NULL);
+    pthread_create(&thread_laser_display, NULL, &laser_display_and_save_loop, NULL);
     pthread_join(thread_camera_acq, 0);
     pthread_join(thread_laser_acq, 0);
     pthread_join(thread_laser_display, 0);
@@ -397,8 +372,7 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "This example is only working on UNIX platforms \n"
-            << "since the Sick LD-MRS driver was not ported to Windows."
-            << std::endl;
+            << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
   return 0;
 }
 

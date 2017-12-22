@@ -87,46 +87,37 @@ public:
 
   void setImg(const vpImage<vpRGBa> &I);
   void setImg(const vpImage<unsigned char> &I);
-  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
-                 const unsigned int width, const unsigned int height);
-  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                 const unsigned int width, const unsigned int height);
+  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
+  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
+                 const unsigned int height);
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 
-  void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                const vpColor &color, unsigned int thickness,
+  void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
                 int style = PS_SOLID);
 
-  void drawRect(const vpImagePoint &topLeft, unsigned int width,
-                unsigned int height, const vpColor &color, bool fill = false,
-                unsigned int thickness = 1);
+  void drawRect(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
+                bool fill = false, unsigned int thickness = 1);
 
   void clear(const vpColor &color);
 
-  void drawCircle(const vpImagePoint &center, unsigned int radius,
-                  const vpColor &color, bool fill = false,
+  void drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
                   unsigned int thickness = 1);
 
-  void drawText(const vpImagePoint &ip, const char *text,
-                const vpColor &color);
+  void drawText(const vpImagePoint &ip, const char *text, const vpColor &color);
 
-  void drawCross(const vpImagePoint &ip, unsigned int size,
-                 const vpColor &color, unsigned int thickness = 1);
+  void drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
 
-  void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                 const vpColor &color, unsigned int w, unsigned int h,
+  void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
                  unsigned int thickness = 1);
 
   void getImage(vpImage<vpRGBa> &I);
 
 private:
   // updates the renderer hbitmaps.
-  bool updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigned int w,
-                    unsigned int h);
+  bool updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigned int w, unsigned int h);
   // updates the renderer hbitmaps.
-  bool updateBitmapROI(unsigned char *imBuffer, int i_min, int j_min, int w,
-                       int h);
+  bool updateBitmapROI(unsigned char *imBuffer, int i_min, int j_min, int w, int h);
 
   // converts a vpImage<vpRGBa> into a HBITMAP .
   void convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp);
@@ -135,12 +126,12 @@ private:
   void convert(const vpImage<unsigned char> &I, HBITMAP &hBmp);
 
   // converts a vpImage<vpRGBa> into a HBITMAP .
-  void convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
-                  const unsigned int width, const unsigned int height);
+  void convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
+                  const unsigned int height);
 
   // converst a vpImage<unsigned char> into a HBITMAP .
-  void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                  const unsigned int width, const unsigned int height);
+  void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
+                  const unsigned int height);
 };
 #endif
 #endif

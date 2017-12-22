@@ -58,8 +58,7 @@
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
@@ -114,8 +113,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed,
-                bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -183,8 +181,7 @@ int main(int argc, const char **argv)
 
     I = 0;
 
-    vpRect roi(I.getWidth() / 4, I.getHeight() / 4, I.getWidth() / 2,
-               I.getHeight() / 2);
+    vpRect roi(I.getWidth() / 4, I.getHeight() / 4, I.getWidth() / 2, I.getHeight() / 2);
     vpDisplay::displayROI(I, roi);
     vpDisplay::flush(I);
     if (opt_click_allowed) {

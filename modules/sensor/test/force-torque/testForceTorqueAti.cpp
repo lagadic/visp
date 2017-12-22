@@ -112,22 +112,16 @@ vpThread::Return scopeFunction(vpThread::Args args)
     scope.plot(0, shared_data.timestamp, force);
     scope.plot(1, shared_data.timestamp, torque);
 
-    vpDisplay::displayText(scope.I, 15, 500, "Left  click to quit",
-                           vpColor::red);
-    vpDisplay::displayText(scope.I, 30, 500, "Right click to bias/unbias",
-                           vpColor::red);
+    vpDisplay::displayText(scope.I, 15, 500, "Left  click to quit", vpColor::red);
+    vpDisplay::displayText(scope.I, 30, 500, "Right click to bias/unbias", vpColor::red);
     if (shared_data.bias_state == BIAS_DONE)
-      vpDisplay::displayText(scope.I, 45, 500, "Sensor is biased...",
-                             vpColor::blue);
+      vpDisplay::displayText(scope.I, 45, 500, "Sensor is biased...", vpColor::blue);
     else if (shared_data.bias_state == UNBIAS_DONE)
-      vpDisplay::displayText(scope.I, 45, 500, "Sensor is unbiased...",
-                             vpColor::blue);
+      vpDisplay::displayText(scope.I, 45, 500, "Sensor is unbiased...", vpColor::blue);
     else if (shared_data.bias_state == TO_BIAS)
-      vpDisplay::displayText(scope.I, 45, 500, "Sensor bias in progress...",
-                             vpColor::blue);
+      vpDisplay::displayText(scope.I, 45, 500, "Sensor bias in progress...", vpColor::blue);
     else if (shared_data.bias_state == TO_UNBIAS)
-      vpDisplay::displayText(scope.I, 45, 500, "Sensor unbias in progress...",
-                             vpColor::blue);
+      vpDisplay::displayText(scope.I, 45, 500, "Sensor unbias in progress...", vpColor::blue);
     vpDisplay::flush(scope.I);
     click = vpDisplay::getClick(scope.I, button, false);
     if (click && button == vpMouseButton::button3) {
@@ -144,13 +138,9 @@ vpThread::Return scopeFunction(vpThread::Args args)
 #endif
   }
 #ifdef VISP_HAVE_DISPLAY
-  while (
-      !(click &&
-        button ==
-            vpMouseButton::button1)); // Stop recording by a user left click
+  while (!(click && button == vpMouseButton::button1)); // Stop recording by a user left click
 #else
-  while (vpTime::measureTimeMs() - start_time <
-         20000); // Stop recording after 20 seconds
+  while (vpTime::measureTimeMs() - start_time < 20000); // Stop recording after 20 seconds
 #endif
 
   { // Update state to stop
@@ -169,16 +159,14 @@ int main(int argc, char **argv)
 #ifdef VISP_HAVE_VIPER850_DATA
   (void)argc;
   (void)argv;
-  std::string calibfile =
-      std::string(VISP_VIPER850_DATA_PATH) + std::string("/ati/FT17824.cal");
+  std::string calibfile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/ati/FT17824.cal");
   if (!vpIoTools::checkFilename(calibfile)) {
     std::cout << "ATI F/T calib file \"" << calibfile << "\" doesn't exist";
     return 0;
   }
 #else
   if (argc != 2) {
-    std::cout << "Usage: " << argv[0] << " <ATI calibration file FT*.cal]>"
-              << std::endl;
+    std::cout << "Usage: " << argv[0] << " <ATI calibration file FT*.cal]>" << std::endl;
     return -1;
   }
   std::string calibfile(argv[1]);
@@ -245,16 +233,10 @@ int main(int argc, char **argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout
-      << "You should install comedi and build atidaq to enable this test..."
-      << std::endl;
+  std::cout << "You should install comedi and build atidaq to enable this test..." << std::endl;
 #endif
 }
 
 #else
-int main()
-{
-  std::cout << "You should build this test with threading capabilities..."
-            << std::endl;
-}
+int main() { std::cout << "You should build this test with threading capabilities..." << std::endl; }
 #endif

@@ -116,10 +116,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, unsigned int &nb_matrices,
-                unsigned int &nb_iterations, bool &use_plot_file,
-                std::string &plotfile, unsigned int &nbrows,
-                unsigned int &nbcols, bool &verbose)
+bool getOptions(int argc, const char **argv, unsigned int &nb_matrices, unsigned int &nb_iterations,
+                bool &use_plot_file, std::string &plotfile, unsigned int &nbrows, unsigned int &nbcols, bool &verbose)
 {
   const char *optarg_;
   int c;
@@ -189,13 +187,11 @@ vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
   return A;
 }
 
-void create_bench_random_matrix(unsigned int nb_matrices,
-                                unsigned int nb_rows, unsigned int nb_cols,
-                                bool verbose, std::vector<vpMatrix> &bench)
+void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+                                std::vector<vpMatrix> &bench)
 {
   if (verbose)
-    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows
-              << " by " << nb_cols << " matrices" << std::endl;
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_cols << " matrices" << std::endl;
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M = make_random_matrix(nb_rows, nb_cols);
@@ -203,36 +199,30 @@ void create_bench_random_matrix(unsigned int nb_matrices,
   }
 }
 
-int test_pseudo_inverse(const std::vector<vpMatrix> &A,
-                        const std::vector<vpMatrix> &Api)
+int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatrix> &Api)
 {
   double allowed_error = 1e-3;
 
   for (unsigned int i = 0; i < A.size(); i++) {
     double error = (A[i] * Api[i] * A[i] - A[i]).euclideanNorm();
     if (error > allowed_error) {
-      std::cout << "Bad pseudo-inverse [" << i
-                << "]: euclidean norm: " << error << std::endl;
+      std::cout << "Bad pseudo-inverse [" << i << "]: euclidean norm: " << error << std::endl;
       return EXIT_FAILURE;
     }
   }
   return EXIT_SUCCESS;
 }
 
-int test_pseudo_inverse(const std::vector<vpMatrix> &A,
-                        const std::vector<vpMatrix> &Api,
-                        const std::vector<vpColVector> &sv,
-                        const std::vector<vpMatrix> &imA,
-                        const std::vector<vpMatrix> &imAt,
-                        const std::vector<vpMatrix> &kerAt)
+int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatrix> &Api,
+                        const std::vector<vpColVector> &sv, const std::vector<vpMatrix> &imA,
+                        const std::vector<vpMatrix> &imAt, const std::vector<vpMatrix> &kerAt)
 {
   double allowed_error = 1e-3;
   // test Api
   for (unsigned int i = 0; i < A.size(); i++) {
     double error = (A[i] * Api[i] * A[i] - A[i]).euclideanNorm();
     if (error > allowed_error) {
-      std::cout << "Bad pseudo-inverse [" << i
-                << "]: euclidean norm: " << error << std::endl;
+      std::cout << "Bad pseudo-inverse [" << i << "]: euclidean norm: " << error << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -244,8 +234,7 @@ int test_pseudo_inverse(const std::vector<vpMatrix> &A,
       double error = nullspace.euclideanNorm();
 
       if (error > allowed_error) {
-        std::cout << "Bad kernel [" << i << "]: euclidean norm: " << error
-                  << std::endl;
+        std::cout << "Bad kernel [" << i << "]: euclidean norm: " << error << std::endl;
         return EXIT_FAILURE;
       }
     }
@@ -266,8 +255,7 @@ int test_pseudo_inverse(const std::vector<vpMatrix> &A,
     double error = (U * S * Vt - A[i]).euclideanNorm();
 
     if (error > allowed_error) {
-      std::cout << "Bad imA, imAt, sv, kerAt [" << i
-                << "]: euclidean norm: " << error << std::endl;
+      std::cout << "Bad imA, imAt, sv, kerAt [" << i << "]: euclidean norm: " << error << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -275,15 +263,12 @@ int test_pseudo_inverse(const std::vector<vpMatrix> &A,
   return EXIT_SUCCESS;
 }
 
-int test_pseudo_inverse_default(bool verbose,
-                                const std::vector<vpMatrix> &bench,
-                                std::vector<double> &time)
+int test_pseudo_inverse_default(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
     std::cout << "Test pseudo-inverse using default 3rd party" << std::endl;
   if (verbose)
-    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   size_t size = bench.size();
   std::vector<vpMatrix> PI(size), imA(size), imAt(size), kerAt(size);
@@ -339,15 +324,12 @@ int test_pseudo_inverse_default(bool verbose,
 }
 
 #if defined(VISP_HAVE_EIGEN3)
-int test_pseudo_inverse_eigen3(bool verbose,
-                               const std::vector<vpMatrix> &bench,
-                               std::vector<double> &time)
+int test_pseudo_inverse_eigen3(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
     std::cout << "Test pseudo-inverse using Eigen3 3rd party" << std::endl;
   if (verbose)
-    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   size_t size = bench.size();
   std::vector<vpMatrix> PI(size), imA(size), imAt(size), kerAt(size);
@@ -391,8 +373,7 @@ int test_pseudo_inverse_eigen3(bool verbose,
   test++;
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    bench[i].pseudoInverseEigen3(PI[i], sv[i], 1e-6, imA[i], imAt[i],
-                                 kerAt[i]);
+    bench[i].pseudoInverseEigen3(PI[i], sv[i], 1e-6, imA[i], imAt[i], kerAt[i]);
   }
   time[test] = vpTime::measureTimeMs() - t;
 
@@ -405,15 +386,12 @@ int test_pseudo_inverse_eigen3(bool verbose,
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
-int test_pseudo_inverse_lapack(bool verbose,
-                               const std::vector<vpMatrix> &bench,
-                               std::vector<double> &time)
+int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
     std::cout << "Test pseudo-inverse using Lapack 3rd party" << std::endl;
   if (verbose)
-    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   size_t size = bench.size();
   std::vector<vpMatrix> PI(size), imA(size), imAt(size), kerAt(size);
@@ -457,8 +435,7 @@ int test_pseudo_inverse_lapack(bool verbose,
   test++;
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    bench[i].pseudoInverseLapack(PI[i], sv[i], 1e-6, imA[i], imAt[i],
-                                 kerAt[i]);
+    bench[i].pseudoInverseLapack(PI[i], sv[i], 1e-6, imA[i], imAt[i], kerAt[i]);
   }
   time[test] = vpTime::measureTimeMs() - t;
 
@@ -471,14 +448,12 @@ int test_pseudo_inverse_lapack(bool verbose,
 #endif
 
 #if defined(VISP_HAVE_GSL)
-int test_pseudo_inverse_gsl(bool verbose, const std::vector<vpMatrix> &bench,
-                            std::vector<double> &time)
+int test_pseudo_inverse_gsl(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
     std::cout << "Test pseudo-inverse using Gsl 3rd party" << std::endl;
   if (verbose)
-    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   size_t size = bench.size();
   std::vector<vpMatrix> PI(size), imA(size), imAt(size), kerAt(size);
@@ -535,15 +510,12 @@ int test_pseudo_inverse_gsl(bool verbose, const std::vector<vpMatrix> &bench,
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-int test_pseudo_inverse_opencv(bool verbose,
-                               const std::vector<vpMatrix> &bench,
-                               std::vector<double> &time)
+int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
     std::cout << "Test pseudo-inverse using OpenCV 3rd party" << std::endl;
   if (verbose)
-    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x"
-              << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
 
   size_t size = bench.size();
   std::vector<vpMatrix> PI(size), imA(size), imAt(size), kerAt(size);
@@ -587,8 +559,7 @@ int test_pseudo_inverse_opencv(bool verbose,
   test++;
   t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    bench[i].pseudoInverseOpenCV(PI[i], sv[i], 1e-6, imA[i], imAt[i],
-                                 kerAt[i]);
+    bench[i].pseudoInverseOpenCV(PI[i], sv[i], 1e-6, imA[i], imAt[i], kerAt[i]);
   }
   time[test] = vpTime::measureTimeMs() - t;
 
@@ -600,8 +571,7 @@ int test_pseudo_inverse_opencv(bool verbose,
 }
 #endif
 
-void save_time(const std::string &method, unsigned int nrows,
-               unsigned int ncols, bool verbose, bool use_plot_file,
+void save_time(const std::string &method, unsigned int nrows, unsigned int ncols, bool verbose, bool use_plot_file,
                std::ofstream &of, const std::vector<double> &time)
 {
   for (size_t i = 0; i < time.size(); i++) {
@@ -617,8 +587,8 @@ void save_time(const std::string &method, unsigned int nrows,
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) ||                \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
+    defined(VISP_HAVE_GSL)
     unsigned int nb_matrices = 500;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 12;
@@ -628,16 +598,14 @@ int main(int argc, const char *argv[])
     bool use_plot_file = false;
     std::ofstream of;
 
-    unsigned int nb_svd_functions =
-        4; // 4 tests for each existing vpMatrix::pseudoInverse(...) functions
+    unsigned int nb_svd_functions = 4;    // 4 tests for each existing vpMatrix::pseudoInverse(...) functions
     unsigned int nb_test_matrix_size = 3; // 3 tests: m > n, m = n, m < n
     std::vector<double> time(nb_svd_functions);
-    std::vector<unsigned int> nrows(nb_test_matrix_size),
-        ncols(nb_test_matrix_size);
+    std::vector<unsigned int> nrows(nb_test_matrix_size), ncols(nb_test_matrix_size);
 
     // Read the command line options
-    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file,
-                   plotfile, nb_rows, nb_cols, verbose) == false) {
+    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file, plotfile, nb_rows, nb_cols, verbose) ==
+        false) {
       exit(-1);
     }
 
@@ -662,32 +630,27 @@ int main(int argc, const char *argv[])
 
       for (unsigned int s = 0; s < nb_test_matrix_size; s++) {
         for (unsigned int i = 0; i < nb_svd_functions; i++)
-          of << "\"default " << nrows[s] << "x" << ncols[s] << " test " << i
-             << "\""
+          of << "\"default " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 
 #if defined(VISP_HAVE_LAPACK)
         for (unsigned int i = 0; i < nb_svd_functions; i++)
-          of << "\"Lapack " << nrows[s] << "x" << ncols[s] << " test " << i
-             << "\""
+          of << "\"Lapack " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 #endif
 #if defined(VISP_HAVE_EIGEN3)
         for (unsigned int i = 0; i < nb_svd_functions; i++)
-          of << "\"Eigen3 " << nrows[s] << "x" << ncols[s] << " test " << i
-             << "\""
+          of << "\"Eigen3 " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
         for (unsigned int i = 0; i < nb_svd_functions; i++)
-          of << "\"OpenCV " << nrows[s] << "x" << ncols[s] << " test " << i
-             << "\""
+          of << "\"OpenCV " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 #endif
 #if defined(VISP_HAVE_GSL)
         for (unsigned int i = 0; i < nb_svd_functions; i++)
-          of << "\"GSL " << nrows[s] << "x" << ncols[s] << " test " << i
-             << "\""
+          of << "\"GSL " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 #endif
       }
@@ -702,39 +665,29 @@ int main(int argc, const char *argv[])
 
       for (unsigned int s = 0; s < nb_test_matrix_size; s++) {
         std::vector<vpMatrix> bench_random_matrices;
-        create_bench_random_matrix(nb_matrices, nrows[s], ncols[s], verbose,
-                                   bench_random_matrices);
+        create_bench_random_matrix(nb_matrices, nrows[s], ncols[s], verbose, bench_random_matrices);
 
-        ret +=
-            test_pseudo_inverse_default(verbose, bench_random_matrices, time);
-        save_time("default -", nrows[s], ncols[s], verbose, use_plot_file, of,
-                  time);
+        ret += test_pseudo_inverse_default(verbose, bench_random_matrices, time);
+        save_time("default -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 
 #if defined(VISP_HAVE_LAPACK)
-        ret +=
-            test_pseudo_inverse_lapack(verbose, bench_random_matrices, time);
-        save_time("Lapack -", nrows[s], ncols[s], verbose, use_plot_file, of,
-                  time);
+        ret += test_pseudo_inverse_lapack(verbose, bench_random_matrices, time);
+        save_time("Lapack -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif
 
 #if defined(VISP_HAVE_EIGEN3)
-        ret +=
-            test_pseudo_inverse_eigen3(verbose, bench_random_matrices, time);
-        save_time("Eigen3 -", nrows[s], ncols[s], verbose, use_plot_file, of,
-                  time);
+        ret += test_pseudo_inverse_eigen3(verbose, bench_random_matrices, time);
+        save_time("Eigen3 -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-        ret +=
-            test_pseudo_inverse_opencv(verbose, bench_random_matrices, time);
-        save_time("OpenCV -", nrows[s], ncols[s], verbose, use_plot_file, of,
-                  time);
+        ret += test_pseudo_inverse_opencv(verbose, bench_random_matrices, time);
+        save_time("OpenCV -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif
 
 #if defined(VISP_HAVE_GSL)
         ret += test_pseudo_inverse_gsl(verbose, bench_random_matrices, time);
-        save_time("GSL -", nrows[s], ncols[s], verbose, use_plot_file, of,
-                  time);
+        save_time("GSL -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif
       }
       if (use_plot_file)

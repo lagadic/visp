@@ -93,9 +93,8 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentAreaNormalized(
-      vpMomentDatabase &database, double A_, double B_, double C_,
-      vpFeatureMomentDatabase *featureMoments = NULL)
+  vpFeatureMomentAreaNormalized(vpMomentDatabase &database, double A_, double B_, double C_,
+                                vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(database, A_, B_, C_, featureMoments, 1)
   {
   }
@@ -189,9 +188,8 @@ public:
   Feature database.
 
   */
-  vpFeatureMomentAreaNormalized(
-      vpMomentDatabase &data_base, double A_, double B_, double C_,
-      vpFeatureMomentDatabase *featureMoments = NULL)
+  vpFeatureMomentAreaNormalized(vpMomentDatabase &data_base, double A_, double B_, double C_,
+                                vpFeatureMomentDatabase *featureMoments = NULL)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
   {
   }

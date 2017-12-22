@@ -62,7 +62,9 @@ here https://visp.inria.fr/3rd_opencv.
   The following sample code shows how to use this class to detect the largest
 face in the image. The cascade classifier file
 "haarcascade_frontalface_alt.xml" can be found in ViSP source code or in
-OpenCV. \code #include <visp3/detection/vpDetectorFace.h>
+OpenCV.
+\code
+#include <visp3/detection/vpDetectorFace.h>
 
 int main()
 {
@@ -74,8 +76,7 @@ int main()
     // acquire a new image in I
     bool face_found = face_detector.track(I);
     if (face_found) {
-      vpRect face_bbox = face_detector.getBoundingBox(0); // largest face has
-index 0
+      vpRect face_bbox = face_detector.getBoundingBox(0); // largest face has index 0
     }
   }
 }
@@ -87,11 +88,9 @@ provided in tutorial-face-detector-live.cpp.
 class VISP_EXPORT vpDetectorFace : public vpDetectorBase
 {
 protected:
-  std::vector<cv::Rect> m_faces; //!< Bounding box of each detected face.
-  cv::CascadeClassifier
-      m_face_cascade; //!< Haar cascade classifier file name.
-  cv::Mat
-      m_frame_gray; //!< OpenCV image used as input for the face detection.
+  std::vector<cv::Rect> m_faces;        //!< Bounding box of each detected face.
+  cv::CascadeClassifier m_face_cascade; //!< Haar cascade classifier file name.
+  cv::Mat m_frame_gray;                 //!< OpenCV image used as input for the face detection.
 
 public:
   vpDetectorFace();

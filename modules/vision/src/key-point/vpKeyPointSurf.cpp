@@ -38,8 +38,7 @@
 
 #include <visp3/vision/vpKeyPointSurf.h>
 
-#if defined(VISP_HAVE_OPENCV_NONFREE) &&                                     \
-    (VISP_HAVE_OPENCV_VERSION >= 0x010100) &&                                \
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x010100) &&                                     \
     (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 1.1.0 < 3.0.0
 
 #include <visp3/core/vpDebug.h>
@@ -53,20 +52,14 @@
 #include <stdlib.h>
 #include <vector>
 
-double compareSURFDescriptors(const float *d1, const float *d2, double best,
-                              int length);
-int naiveNearestNeighbor(const float *vec, int laplacian,
-                         const CvSeq *model_keypoints,
-                         const CvSeq *model_descriptors);
-int naiveNearestNeighbor(const float *vec, const CvSeq *ref_keypoints,
-                         const CvSeq *ref_descriptors);
-void findPairs(const CvSeq *objectKeypoints, const CvSeq *objectDescriptors,
-               const CvSeq *imageKeypoints, const CvSeq *imageDescriptors,
-               std::vector<int> &ptpairs);
+double compareSURFDescriptors(const float *d1, const float *d2, double best, int length);
+int naiveNearestNeighbor(const float *vec, int laplacian, const CvSeq *model_keypoints, const CvSeq *model_descriptors);
+int naiveNearestNeighbor(const float *vec, const CvSeq *ref_keypoints, const CvSeq *ref_descriptors);
+void findPairs(const CvSeq *objectKeypoints, const CvSeq *objectDescriptors, const CvSeq *imageKeypoints,
+               const CvSeq *imageDescriptors, std::vector<int> &ptpairs);
 
 // Compare two surf descriptors.
-double compareSURFDescriptors(const float *d1, const float *d2, double best,
-                              int length)
+double compareSURFDescriptors(const float *d1, const float *d2, double best, int length)
 {
   double total_cost = 0;
   int i;
@@ -85,9 +78,7 @@ double compareSURFDescriptors(const float *d1, const float *d2, double best,
 
 // Find for a point candidate the most similar point in the reference point
 // list.
-int naiveNearestNeighbor(const float *vec, int laplacian,
-                         const CvSeq *model_keypoints,
-                         const CvSeq *model_descriptors)
+int naiveNearestNeighbor(const float *vec, int laplacian, const CvSeq *model_keypoints, const CvSeq *model_descriptors)
 {
   int length = (int)(model_descriptors->elem_size / (int)sizeof(float));
   int i, neighbor = -1;
@@ -118,8 +109,7 @@ int naiveNearestNeighbor(const float *vec, int laplacian,
 
 // Find for a point candidate the most similar point in the reference point
 // list.
-int naiveNearestNeighbor(const float *vec, const CvSeq *ref_keypoints,
-                         const CvSeq *ref_descriptors)
+int naiveNearestNeighbor(const float *vec, const CvSeq *ref_keypoints, const CvSeq *ref_descriptors)
 {
   int length = (int)(ref_descriptors->elem_size / (int)sizeof(float));
   int i, neighbor = -1;
@@ -146,9 +136,8 @@ int naiveNearestNeighbor(const float *vec, const CvSeq *ref_keypoints,
 }
 
 // Find all the matched points
-void findPairs(const CvSeq *objectKeypoints, const CvSeq *objectDescriptors,
-               const CvSeq *imageKeypoints, const CvSeq *imageDescriptors,
-               std::vector<int> &ptpairs)
+void findPairs(const CvSeq *objectKeypoints, const CvSeq *objectDescriptors, const CvSeq *imageKeypoints,
+               const CvSeq *imageDescriptors, std::vector<int> &ptpairs)
 {
   int i;
   CvSeqReader reader, kreader;
@@ -161,8 +150,7 @@ void findPairs(const CvSeq *objectKeypoints, const CvSeq *objectDescriptors,
     const float *descriptor = (const float *)reader.ptr;
     CV_NEXT_SEQ_ELEM(kreader.seq->elem_size, kreader);
     CV_NEXT_SEQ_ELEM(reader.seq->elem_size, reader);
-    int nearest_neighbor = naiveNearestNeighbor(
-        descriptor, kp->laplacian, imageKeypoints, imageDescriptors);
+    int nearest_neighbor = naiveNearestNeighbor(descriptor, kp->laplacian, imageKeypoints, imageDescriptors);
     if (nearest_neighbor >= 0) {
       ptpairs.push_back(i);
       ptpairs.push_back(nearest_neighbor);
@@ -178,10 +166,8 @@ void findPairs(const CvSeq *objectKeypoints, const CvSeq *objectDescriptors,
 
 */
 vpKeyPointSurf::vpKeyPointSurf()
-  : vpBasicKeyPoint(), storage(NULL), params(), storage_cur(NULL),
-    image_keypoints(NULL), image_descriptors(NULL), ref_keypoints(NULL),
-    ref_descriptors(NULL), hessianThreshold(500),
-    descriptorType(extendedDescriptor)
+  : vpBasicKeyPoint(), storage(NULL), params(), storage_cur(NULL), image_keypoints(NULL), image_descriptors(NULL),
+    ref_keypoints(NULL), ref_descriptors(NULL), hessianThreshold(500), descriptorType(extendedDescriptor)
 {
   init();
 }
@@ -275,30 +261,23 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   \return the number of reference points.
 */
-unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
-                                            const vpImagePoint &iP,
-                                            const unsigned int height,
-                                            const unsigned int width)
+unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                                            const unsigned int height, const unsigned int width)
 {
-  if ((iP.get_i() + height) >= I.getHeight() ||
-      (iP.get_j() + width) >= I.getWidth()) {
+  if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage,
-                      "Bad size for the subimage"));
+    throw(vpException(vpImageException::notInTheImage, "Bad size for the subimage"));
   }
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::crop(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(),
-                     height, width, subImage);
+  vpImageTools::crop(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(), height, width, subImage);
 
   unsigned int nbRefPoint = this->buildReference(subImage);
 
   for (unsigned int k = 0; k < nbRefPoint; k++) {
-    (referenceImagePointsList[k])
-        .set_i((referenceImagePointsList[k]).get_i() + iP.get_i());
-    (referenceImagePointsList[k])
-        .set_j((referenceImagePointsList[k]).get_j() + iP.get_j());
+    (referenceImagePointsList[k]).set_i((referenceImagePointsList[k]).get_i() + iP.get_i());
+    (referenceImagePointsList[k]).set_j((referenceImagePointsList[k]).get_j() + iP.get_j());
   }
   return (nbRefPoint);
 }
@@ -316,14 +295,12 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
 
   \return the number of reference points.
 */
-unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
-                                            const vpRect &rectangle)
+unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());
   iP.set_j(rectangle.getLeft());
-  return (this->buildReference(I, iP, (unsigned int)rectangle.getHeight(),
-                               (unsigned int)rectangle.getWidth()));
+  return (this->buildReference(I, iP, (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
 }
 
 /*!
@@ -358,8 +335,7 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   }
   storage_cur = cvCreateMemStorage(0);
 
-  cvExtractSURF(currentImage, 0, &image_keypoints, &image_descriptors,
-                storage_cur, params);
+  cvExtractSURF(currentImage, 0, &image_keypoints, &image_descriptors, storage_cur, params);
 
   CvSeqReader reader, kreader;
   cvStartReadSeq(ref_keypoints, &kreader);
@@ -375,8 +351,7 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
     const float *descriptor = (const float *)reader.ptr;
     CV_NEXT_SEQ_ELEM(kreader.seq->elem_size, kreader);
     CV_NEXT_SEQ_ELEM(reader.seq->elem_size, reader);
-    int nearest_neighbor = naiveNearestNeighbor(
-        descriptor, kp->laplacian, image_keypoints, image_descriptors);
+    int nearest_neighbor = naiveNearestNeighbor(descriptor, kp->laplacian, image_keypoints, image_descriptors);
     if (nearest_neighbor >= 0) {
       indexReferencePair.push_back(i);
       indexImagePair.push_back(nearest_neighbor);
@@ -385,8 +360,7 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   }
 
   std::list<int>::const_iterator indexImagePairIter = indexImagePair.begin();
-  std::list<int>::const_iterator indexReferencePairIter =
-      indexReferencePair.begin();
+  std::list<int>::const_iterator indexReferencePairIter = indexReferencePair.begin();
 
   matchedReferencePoints.resize(0);
 
@@ -438,30 +412,23 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
   \return the number of point which have been matched.
 */
-unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
-                                        const vpImagePoint &iP,
-                                        const unsigned int height,
-                                        const unsigned int width)
+unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                                        const unsigned int height, const unsigned int width)
 {
-  if ((iP.get_i() + height) >= I.getHeight() ||
-      (iP.get_j() + width) >= I.getWidth()) {
+  if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");
-    throw(vpException(vpImageException::notInTheImage,
-                      "Bad size for the subimage"));
+    throw(vpException(vpImageException::notInTheImage, "Bad size for the subimage"));
   }
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::crop(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(),
-                     height, width, subImage);
+  vpImageTools::crop(I, (unsigned int)iP.get_i(), (unsigned int)iP.get_j(), height, width, subImage);
 
   unsigned int nbMatchedPoint = this->matchPoint(subImage);
 
   for (unsigned int k = 0; k < nbMatchedPoint; k++) {
-    (currentImagePointsList[k])
-        .set_i((currentImagePointsList[k]).get_i() + iP.get_i());
-    (currentImagePointsList[k])
-        .set_j((currentImagePointsList[k]).get_j() + iP.get_j());
+    (currentImagePointsList[k]).set_i((currentImagePointsList[k]).get_i() + iP.get_i());
+    (currentImagePointsList[k]).set_j((currentImagePointsList[k]).get_j() + iP.get_j());
   }
 
   return (nbMatchedPoint);
@@ -481,14 +448,12 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
 
   \return the number of point which have been matched.
 */
-unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
-                                        const vpRect &rectangle)
+unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());
   iP.set_j(rectangle.getLeft());
-  return (this->matchPoint(I, iP, (unsigned int)rectangle.getHeight(),
-                           (unsigned int)rectangle.getWidth()));
+  return (this->matchPoint(I, iP, (unsigned int)rectangle.getHeight(), (unsigned int)rectangle.getWidth()));
 }
 
 /*!
@@ -510,8 +475,7 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
   points.
 
 */
-void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
-                             const vpImage<unsigned char> &Icurrent,
+void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference, const vpImage<unsigned char> &Icurrent,
                              unsigned int size)
 {
   //  matchedPointsCurrentImageList.front();
@@ -526,11 +490,8 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
   //   }
 
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++) {
-    vpDisplay::displayCross(
-        Ireference, referenceImagePointsList[matchedReferencePoints[i]], size,
-        vpColor::red);
-    vpDisplay::displayCross(Icurrent, currentImagePointsList[i], size,
-                            vpColor::green);
+    vpDisplay::displayCross(Ireference, referenceImagePointsList[matchedReferencePoints[i]], size, vpColor::red);
+    vpDisplay::displayCross(Icurrent, currentImagePointsList[i], size, vpColor::green);
     //       matchedPointsReferenceImageList.next();
     //       matchedPointsCurrentImageList.next();
   }
@@ -549,8 +510,7 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
 
   \param color : Color used to display the matched points.
 */
-void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent,
-                             unsigned int size, const vpColor &color)
+void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent, unsigned int size, const vpColor &color)
 {
   //   matchedPointsCurrentImageList.front();
   //
@@ -561,9 +521,7 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent,
   }
 }
 
-std::list<int *> *
-vpKeyPointSurf::matchPoint(std::list<float *> descriptorList,
-                           std::list<int> laplacianList)
+std::list<int *> *vpKeyPointSurf::matchPoint(std::list<float *> descriptorList, std::list<int> laplacianList)
 {
   std::list<int *> *pairPoints = new std::list<int *>;
 
@@ -575,16 +533,14 @@ vpKeyPointSurf::matchPoint(std::list<float *> descriptorList,
   CvSeqReader reader;
   cvStartReadSeq(ref_descriptors, &reader);
 
-  std::list<float *>::const_iterator descriptorListIter =
-      descriptorList.begin();
+  std::list<float *>::const_iterator descriptorListIter = descriptorList.begin();
   std::list<int>::const_iterator laplacianListIter = laplacianList.begin();
   descriptorList.front();
   int indexList = 0;
   while (descriptorListIter != descriptorList.end()) {
     float *descriptor = *descriptorListIter;
 
-    int nearest_neighbor = naiveNearestNeighbor(
-        descriptor, *laplacianListIter, ref_keypoints, ref_descriptors);
+    int nearest_neighbor = naiveNearestNeighbor(descriptor, *laplacianListIter, ref_keypoints, ref_descriptors);
 
     if (nearest_neighbor >= 0) {
       int *tab;
@@ -609,11 +565,9 @@ vpKeyPointSurf::matchPoint(std::list<float *> descriptorList,
 */
 float *vpKeyPointSurf::getDescriptorReferencePoint(const int index)
 {
-  if (index >= static_cast<int>(referenceImagePointsList.size()) ||
-      index < 0) {
+  if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0) {
     vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,
-                      "Index of the reference point out of range"));
+    throw(vpException(vpException::fatalError, "Index of the reference point out of range"));
   }
 
   float *descriptor = NULL;
@@ -640,11 +594,9 @@ float *vpKeyPointSurf::getDescriptorReferencePoint(const int index)
 */
 int vpKeyPointSurf::getLaplacianReferencePoint(const int index)
 {
-  if (index >= static_cast<int>(referenceImagePointsList.size()) ||
-      index < 0) {
+  if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0) {
     vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,
-                      "Index of the reference point out of range"));
+    throw(vpException(vpException::fatalError, "Index of the reference point out of range"));
   }
 
   CvSeqReader reader;
@@ -672,14 +624,11 @@ int vpKeyPointSurf::getLaplacianReferencePoint(const int index)
  the point used to compute the descriptor. \param dir : The orientation of the
  descriptor (in degree).
 */
-void vpKeyPointSurf::getDescriptorParamReferencePoint(const int index,
-                                                      int &size, float &dir)
+void vpKeyPointSurf::getDescriptorParamReferencePoint(const int index, int &size, float &dir)
 {
-  if (index >= static_cast<int>(referenceImagePointsList.size()) ||
-      index < 0) {
+  if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0) {
     vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,
-                      "Index of the reference point out of range"));
+    throw(vpException(vpException::fatalError, "Index of the reference point out of range"));
   }
 
   CvSeqReader reader;

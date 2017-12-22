@@ -169,10 +169,7 @@ public:
     Return the Denavit Hartenberg representation used to model the head.
     \sa vpBiclops::DenavitHartenbergModel
     */
-  inline vpBiclops::DenavitHartenbergModel getDenavitHartenbergModel() const
-  {
-    return dh_model_;
-  }
+  inline vpBiclops::DenavitHartenbergModel getDenavitHartenbergModel() const { return dh_model_; }
 
   void set_cMe();
   /*!
@@ -185,15 +182,10 @@ public:
 
     \sa vpBiclops::DenavitHartenbergModel
     */
-  inline void setDenavitHartenbergModel(
-      vpBiclops::DenavitHartenbergModel m = vpBiclops::DH1)
-  {
-    dh_model_ = m;
-  }
+  inline void setDenavitHartenbergModel(vpBiclops::DenavitHartenbergModel m = vpBiclops::DH1) { dh_model_ = m; }
 
   //@}
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpBiclops &constant);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops &constant);
 };
 
 #endif

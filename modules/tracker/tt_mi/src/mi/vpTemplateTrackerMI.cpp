@@ -73,19 +73,16 @@ void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
   /*std::cout<<Nc*Nc*influBspline<<std::endl;std::cout<<Nc*Nc*nbParam*influBspline<<std::endl;*/
   PrtD = new double[Nc * Nc * influBspline];
   dPrtD = new double[Nc * Nc * (int)(nbParam)*influBspline];
-  PrtTout = new double[Nc * Nc * influBspline *
-                       (1 + (int)(nbParam + nbParam * nbParam))];
+  PrtTout = new double[Nc * Nc * influBspline * (1 + (int)(nbParam + nbParam * nbParam))];
 
   hessianComputation = USE_HESSIEN_DESIRE;
 }
 
 vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp)
-  : vpTemplateTracker(_warp), hessianComputation(USE_HESSIEN_NORMAL),
-    ApproxHessian(HESSIAN_NEW), lambda(0), temp(NULL), Prt(NULL), dPrt(NULL),
-    Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL), PrtD(NULL),
-    dPrtD(NULL), influBspline(0), bspline(3), Nc(8), Ncb(0), d2Ix(), d2Iy(),
-    d2Ixy(), MI_preEstimation(0), MI_postEstimation(0), NMI_preEstimation(0),
-    NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
+  : vpTemplateTracker(_warp), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_NEW), lambda(0), temp(NULL),
+    Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
+    influBspline(0), bspline(3), Nc(8), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
+    NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
 {
   Ncb = Nc + bspline;
   influBspline = bspline * bspline;
@@ -111,8 +108,7 @@ vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp)
   dPrt = new double[Ncb * Ncb * (int)(nbParam)];
   d2Prt = new double[Ncb * Ncb * (int)(nbParam * nbParam)];
 
-  PrtTout = new double[Nc * Nc * influBspline *
-                       (1 + (int)(nbParam + nbParam * nbParam))];
+  PrtTout = new double[Nc * Nc * influBspline * (1 + (int)(nbParam + nbParam * nbParam))];
 
   lambda = lambdaDep;
 }
@@ -146,12 +142,10 @@ void vpTemplateTrackerMI::setNc(int nc)
   Pt = new double[Ncb];
   Pr = new double[Ncb];
   d2Prt = new double[Ncb * Ncb * (int)(nbParam * nbParam)]; //(r,t)
-  PrtTout = new double[Nc * Nc * influBspline *
-                       (1 + (int)(nbParam + nbParam * nbParam))];
+  PrtTout = new double[Nc * Nc * influBspline * (1 + (int)(nbParam + nbParam * nbParam))];
 }
 
-double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I,
-                                    const vpColVector &tp)
+double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double MI = 0;
   int Nbpoint = 0;
@@ -178,8 +172,7 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I,
     double i2 = X2[1];
 
     // Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
 
       double Tij = ptTemplate[point].val;
@@ -193,10 +186,9 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I,
       double er = (IW * (Nc - 1)) / 255. - cr;
       double et = ((double)Tij * (Nc - 1)) / 255. - ct;
 
-      // Calcul de l'histogramme joint par interpolation bilinÃaire (Bspline
-      // ordre 1)
-      vpTemplateTrackerMIBSpline::PutPVBsplineD(PrtD, cr, er, ct, et, Nc, 1.,
-                                                bspline);
+      // Calcul de l'histogramme joint par interpolation bilinÃaire
+      // (Bspline ordre 1)
+      vpTemplateTrackerMIBSpline::PutPVBsplineD(PrtD, cr, er, ct, et, Nc, 1., bspline);
     }
   }
 
@@ -247,15 +239,13 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I,
   for (unsigned int r = 0; r < Ncb_; r++)
     for (unsigned int t = 0; t < Ncb_; t++)
       // if(Prt[r*Ncb+t]!=0)
-      if (std::fabs(Prt[r * Ncb_ + t]) >
-          std::numeric_limits<double>::epsilon())
+      if (std::fabs(Prt[r * Ncb_ + t]) > std::numeric_limits<double>::epsilon())
         MI += Prt[r * Ncb_ + t] * log(Prt[r * Ncb_ + t]);
 
   return -MI;
 }
 
-double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I,
-                                              const vpColVector &tp)
+double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   // Attention, cette version calculée de la NMI ne pourra pas atteindre le
   // maximum de 2 Ceci est du au fait que par defaut, l'image est floutée dans
@@ -284,8 +274,7 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I,
     double j2 = X2[0];
     double i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
       double Tij = ptTemplate[point].val;
       if (!blur)
@@ -371,8 +360,7 @@ void vpTemplateTrackerMI::computeProba(int &nbpoint)
           for (unsigned int ip = 0; ip < nbParam; ip++) {
             dPrt[((r2 + r) * Ncb_ + (t2 + t)) * nbParam + ip] += *pt++;
             for (unsigned int it = 0; it < nbParam; it++) {
-              d2Prt[((r2 + r) * Ncb_ + (t2 + t)) * nbParam * nbParam +
-                    ip * nbParam + it] += *pt++;
+              d2Prt[((r2 + r) * Ncb_ + (t2 + t)) * nbParam * nbParam + ip * nbParam + it] += *pt++;
             }
           }
         }
@@ -427,8 +415,7 @@ void vpTemplateTrackerMI::computeProba(int &nbpoint)
 
   if (nbpoint == 0) {
     // std::cout<<"plus de point dans template suivi"<<std::endl;
-    throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                              "No points in the template"));
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
   }
   unsigned int indd, indd2;
   indd = indd2 = 0;
@@ -485,8 +472,7 @@ void vpTemplateTrackerMI::computeMI(double &MI)
   for (unsigned int r = 0; r < Ncb_; r++)
     for (unsigned int t = 0; t < Ncb_; t++)
       // if(Prt[r*Ncb+t]!=0)
-      if (std::fabs(Prt[r * Ncb_ + t]) >
-          std::numeric_limits<double>::epsilon())
+      if (std::fabs(Prt[r * Ncb_ + t]) > std::numeric_limits<double>::epsilon())
         MI += Prt[r * Ncb_ + t] * log(Prt[r * Ncb_ + t]);
 }
 
@@ -508,20 +494,13 @@ void vpTemplateTrackerMI::computeHessien(vpMatrix &Hessian)
           dtemp = 1. + log(Prt[r * Ncb_ + t] / Pt[t]);
           for (unsigned int it = 0; it < nbParam; it++)
             for (unsigned int jt = 0; jt < nbParam; jt++)
-              if (ApproxHessian != HESSIAN_NONSECOND &&
-                  ApproxHessian != HESSIAN_NEW)
-                Hessian[it][jt] += dprtemp[it] * dprtemp[jt] *
-                                       (1. / Prt[r * Ncb_ + t] - 1. / Pt[t]) +
-                                   d2Prt[(r * Ncb_ + t) * nbParam * nbParam +
-                                         it * nbParam + jt] *
-                                       dtemp;
+              if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_NEW)
+                Hessian[it][jt] += dprtemp[it] * dprtemp[jt] * (1. / Prt[r * Ncb_ + t] - 1. / Pt[t]) +
+                                   d2Prt[(r * Ncb_ + t) * nbParam * nbParam + it * nbParam + jt] * dtemp;
               else if (ApproxHessian == HESSIAN_NEW)
-                Hessian[it][jt] += d2Prt[(r * Ncb_ + t) * nbParam * nbParam +
-                                         it * nbParam + jt] *
-                                   dtemp;
+                Hessian[it][jt] += d2Prt[(r * Ncb_ + t) * nbParam * nbParam + it * nbParam + jt] * dtemp;
               else
-                Hessian[it][jt] += dprtemp[it] * dprtemp[jt] *
-                                   (1. / Prt[r * Ncb_ + t] - 1. / Pt[t]);
+                Hessian[it][jt] += dprtemp[it] * dprtemp[jt] * (1. / Prt[r * Ncb_ + t] - 1. / Pt[t]);
           /*std::cout<<"Prt[r*Ncb+t]="<<Prt[r*Ncb+t]<<std::endl;
           std::cout<<"Pt[t]="<<Pt[t]<<std::endl;
 
@@ -591,15 +570,10 @@ void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &Hessian)
           }
           for (unsigned int it = 0; it < nbParam; it++) {
             for (unsigned int jt = 0; jt < nbParam; jt++) {
-              d2u[it][jt] +=
-                  d2Prt[(r * Ncb_ + t) * nbParam * nbParam + it * nbParam +
-                        jt] *
-                      log(Pt[t] * Pr[r]) +
-                  (1.0 / Prt[r * Ncb_ + t]) * (dprtemp[it] * dprtemp[it]);
+              d2u[it][jt] += d2Prt[(r * Ncb_ + t) * nbParam * nbParam + it * nbParam + jt] * log(Pt[t] * Pr[r]) +
+                             (1.0 / Prt[r * Ncb_ + t]) * (dprtemp[it] * dprtemp[it]);
               d2v[it][jt] +=
-                  d2Prt[(r * Ncb_ + t) * nbParam * nbParam + it * nbParam +
-                        jt] *
-                      (1 + log(Prt[r * Ncb_ + t])) +
+                  d2Prt[(r * Ncb_ + t) * nbParam * nbParam + it * nbParam + jt] * (1 + log(Prt[r * Ncb_ + t])) +
                   (1.0 / Prt[r * Ncb_ + t]) * (dprtemp[it] * dprtemp[it]);
             }
           }
@@ -677,9 +651,7 @@ void vpTemplateTrackerMI::zeroProbabilities()
   memset(Prt, 0, Ncb_ * Ncb_ * sizeof(double));
   memset(dPrt, 0, Ncb_ * Ncb_ * nbParam * sizeof(double));
   memset(d2Prt, 0, Ncb_ * Ncb_ * nbParam * nbParam * sizeof(double));
-  memset(PrtTout, 0,
-         Nc_ * Nc_ * influBspline_ * (1 + nbParam + nbParam * nbParam) *
-             sizeof(double));
+  memset(PrtTout, 0, Nc_ * Nc_ * influBspline_ * (1 + nbParam + nbParam * nbParam) * sizeof(double));
 
   //    std::cout << Ncb*Ncb << std::endl;
   //    std::cout << Ncb*Ncb*nbParam << std::endl;
@@ -688,8 +660,7 @@ void vpTemplateTrackerMI::zeroProbabilities()
   //    std::endl;
 }
 
-double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc,
-                                  const int &bspline_, vpColVector &tp)
+double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, const int &bspline_, vpColVector &tp)
 {
   unsigned int tNcb = (unsigned int)(nc + bspline_);
   unsigned int tinfluBspline = (unsigned int)(bspline_ * bspline_);
@@ -723,8 +694,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc,
     double i2 = X2[1];
 
     // Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth()) - 1) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth()) - 1) {
       Nbpoint++;
 
       double Tij = ptTemplate[point].val;
@@ -740,8 +710,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc,
 
       // Calcul de l'histogramme joint par interpolation bilineaire (Bspline_
       // ordre 1)
-      vpTemplateTrackerMIBSpline::PutPVBsplineD(tPrtD, cr, er, ct, et, nc, 1.,
-                                                bspline_);
+      vpTemplateTrackerMIBSpline::PutPVBsplineD(tPrtD, cr, er, ct, et, nc, 1., bspline_);
     }
   }
   double *pt = tPrtD;
@@ -797,8 +766,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc,
     for (unsigned int r = 0; r < tNcb; r++)
       for (unsigned int t = 0; t < tNcb; t++)
         // if(tPrt[r*tNcb+t]!=0)
-        if (std::fabs(tPrt[r * tNcb + t]) >
-            std::numeric_limits<double>::epsilon())
+        if (std::fabs(tPrt[r * tNcb + t]) > std::numeric_limits<double>::epsilon())
           MI += tPrt[r * tNcb + t] * log(tPrt[r * tNcb + t]);
   }
   delete[] tPrtD;
@@ -809,8 +777,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc,
   return MI;
 }
 
-double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I,
-                                     const vpColVector &tp)
+double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   vpMatrix Prt256(256, 256);
   Prt256 = 0;
@@ -840,8 +807,7 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I,
     double i2 = X2[1];
 
     // Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth()) - 1) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth()) - 1) {
       Nbpoint++;
 
       Tij = (unsigned int)ptTemplate[point].val;
@@ -857,8 +823,7 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I,
   }
 
   if (Nbpoint == 0) {
-    throw(vpException(vpException::divideByZeroError,
-                      "Cannot get MI; number of points = 0"));
+    throw(vpException(vpException::divideByZeroError, "Cannot get MI; number of points = 0"));
   }
   Prt256 = Prt256 / Nbpoint;
   Pr256 = Pr256 / Nbpoint;

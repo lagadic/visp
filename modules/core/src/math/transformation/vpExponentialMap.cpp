@@ -56,10 +56,7 @@
 
   \sa inverse(const vpHomogeneousMatrix &)
 */
-vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v)
-{
-  return vpExponentialMap::direct(v, 1.0);
-}
+vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v) { return vpExponentialMap::direct(v, 1.0); }
 
 /*!
 
@@ -79,8 +76,7 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v)
 
   \sa inverse(const vpHomogeneousMatrix &, const double &)
 */
-vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v,
-                                             const double &delta_t)
+vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
 {
   double theta, si, co, sinc, mcosc, msinc;
   vpThetaUVector u;
@@ -101,16 +97,13 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v,
   mcosc = vpMath::mcosc(co, theta);
   msinc = vpMath::msinc(si, theta);
 
-  dt[0] = v_dt[0] * (sinc + u[0] * u[0] * msinc) +
-          v_dt[1] * (u[0] * u[1] * msinc - u[2] * mcosc) +
+  dt[0] = v_dt[0] * (sinc + u[0] * u[0] * msinc) + v_dt[1] * (u[0] * u[1] * msinc - u[2] * mcosc) +
           v_dt[2] * (u[0] * u[2] * msinc + u[1] * mcosc);
 
-  dt[1] = v_dt[0] * (u[0] * u[1] * msinc + u[2] * mcosc) +
-          v_dt[1] * (sinc + u[1] * u[1] * msinc) +
+  dt[1] = v_dt[0] * (u[0] * u[1] * msinc + u[2] * mcosc) + v_dt[1] * (sinc + u[1] * u[1] * msinc) +
           v_dt[2] * (u[1] * u[2] * msinc - u[0] * mcosc);
 
-  dt[2] = v_dt[0] * (u[0] * u[2] * msinc - u[1] * mcosc) +
-          v_dt[1] * (u[1] * u[2] * msinc + u[0] * mcosc) +
+  dt[2] = v_dt[0] * (u[0] * u[2] * msinc - u[1] * mcosc) + v_dt[1] * (u[1] * u[2] * msinc + u[0] * mcosc) +
           v_dt[2] * (sinc + u[2] * u[2] * msinc);
 
   vpHomogeneousMatrix Delta;
@@ -201,10 +194,7 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v,
 
   \sa direct(const vpColVector &)
 */
-vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M)
-{
-  return vpExponentialMap::inverse(M, 1.0);
-}
+vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M) { return vpExponentialMap::inverse(M, 1.0); }
 
 /*!
 
@@ -223,8 +213,7 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M)
 
   \sa direct(const vpColVector &, const double &)
 */
-vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M,
-                                      const double &delta_t)
+vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double &delta_t)
 {
   vpColVector v(6);
   unsigned int i;
@@ -261,22 +250,18 @@ vpColVector vpExponentialMap::inverse(const vpHomogeneousMatrix &M,
   a[2][1] = u[1] * u[2] * msinc + u[0] * mcosc;
   a[2][2] = sinc + u[2] * u[2] * msinc;
 
-  det = a[0][0] * a[1][1] * a[2][2] + a[1][0] * a[2][1] * a[0][2] +
-        a[0][1] * a[1][2] * a[2][0] - a[2][0] * a[1][1] * a[0][2] -
-        a[1][0] * a[0][1] * a[2][2] - a[0][0] * a[2][1] * a[1][2];
+  det = a[0][0] * a[1][1] * a[2][2] + a[1][0] * a[2][1] * a[0][2] + a[0][1] * a[1][2] * a[2][0] -
+        a[2][0] * a[1][1] * a[0][2] - a[1][0] * a[0][1] * a[2][2] - a[0][0] * a[2][1] * a[1][2];
 
   if (fabs(det) > 1.e-5) {
-    v[0] = (M[0][3] * a[1][1] * a[2][2] + M[1][3] * a[2][1] * a[0][2] +
-            M[2][3] * a[0][1] * a[1][2] - M[2][3] * a[1][1] * a[0][2] -
-            M[1][3] * a[0][1] * a[2][2] - M[0][3] * a[2][1] * a[1][2]) /
+    v[0] = (M[0][3] * a[1][1] * a[2][2] + M[1][3] * a[2][1] * a[0][2] + M[2][3] * a[0][1] * a[1][2] -
+            M[2][3] * a[1][1] * a[0][2] - M[1][3] * a[0][1] * a[2][2] - M[0][3] * a[2][1] * a[1][2]) /
            det;
-    v[1] = (a[0][0] * M[1][3] * a[2][2] + a[1][0] * M[2][3] * a[0][2] +
-            M[0][3] * a[1][2] * a[2][0] - a[2][0] * M[1][3] * a[0][2] -
-            a[1][0] * M[0][3] * a[2][2] - a[0][0] * M[2][3] * a[1][2]) /
+    v[1] = (a[0][0] * M[1][3] * a[2][2] + a[1][0] * M[2][3] * a[0][2] + M[0][3] * a[1][2] * a[2][0] -
+            a[2][0] * M[1][3] * a[0][2] - a[1][0] * M[0][3] * a[2][2] - a[0][0] * M[2][3] * a[1][2]) /
            det;
-    v[2] = (a[0][0] * a[1][1] * M[2][3] + a[1][0] * a[2][1] * M[0][3] +
-            a[0][1] * M[1][3] * a[2][0] - a[2][0] * a[1][1] * M[0][3] -
-            a[1][0] * a[0][1] * M[2][3] - a[0][0] * a[2][1] * M[1][3]) /
+    v[2] = (a[0][0] * a[1][1] * M[2][3] + a[1][0] * a[2][1] * M[0][3] + a[0][1] * M[1][3] * a[2][0] -
+            a[2][0] * a[1][1] * M[0][3] - a[1][0] * a[0][1] * M[2][3] - a[0][0] * a[2][1] * M[1][3]) /
            det;
   } else {
     v[0] = M[0][3];

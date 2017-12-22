@@ -57,11 +57,9 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
   Basic constructor
 */
 vpMbtDistanceLine::vpMbtDistanceLine()
-  : name(), index(0), cam(), me(NULL), isTrackedLine(true),
-    isTrackedLineWithVisibility(true), wmean(1), featureline(), poly(),
-    useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(),
-    error(), nbFeature(), nbFeatureTotal(0), Reinit(false), hiddenface(NULL),
-    Lindex_polygon(), Lindex_polygon_tracked(), isvisible(false)
+  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true), wmean(1), featureline(),
+    poly(), useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(), error(), nbFeature(), nbFeatureTotal(0),
+    Reinit(false), hiddenface(NULL), Lindex_polygon(), Lindex_polygon_tracked(), isvisible(false)
 {
 }
 
@@ -154,8 +152,7 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L)
   buildPlane(P1, P2, P3, plane1);
   buildPlane(P1, P2, P4, plane2);
 
-  L.setWorldCoordinates(plane1.getA(), plane1.getB(), plane1.getC(),
-                        plane1.getD(), plane2.getA(), plane2.getB(),
+  L.setWorldCoordinates(plane1.getA(), plane1.getB(), plane1.getC(), plane1.getD(), plane2.getA(), plane2.getB(),
                         plane2.getC(), plane2.getD());
 }
 
@@ -190,8 +187,7 @@ void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
   V2[2] = p2->get_oZ();
 
   // if((V1-V2).sumSquare()!=0)
-  if (std::fabs((V1 - V2).sumSquare()) >
-      std::numeric_limits<double>::epsilon()) {
+  if (std::fabs((V1 - V2).sumSquare()) > std::numeric_limits<double>::epsilon()) {
     vpColVector V3(3);
     V3[0] = double(rand() % 1000) / 100;
     V3[1] = double(rand() % 1000) / 100;
@@ -230,12 +226,10 @@ void vpMbtDistanceLine::addPolygon(const int &idx)
   \param polyname : name of the polygons that have to be modified.
   \param track : True if the polygon has to be tracked, False otherwise.
 */
-void vpMbtDistanceLine::setTracked(const std::string &polyname,
-                                   const bool &track)
+void vpMbtDistanceLine::setTracked(const std::string &polyname, const bool &track)
 {
   unsigned int ind = 0;
-  for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin();
-       itpoly != Lindex_polygon.end(); ++itpoly) {
+  for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
     if ((*hiddenface)[(unsigned)(*itpoly)]->getName() == polyname) {
       Lindex_polygon_tracked[ind] = track;
     }
@@ -271,10 +265,8 @@ void vpMbtDistanceLine::updateTracked()
 
   unsigned int ind = 0;
   isTrackedLineWithVisibility = false;
-  for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin();
-       itpoly != Lindex_polygon.end(); ++itpoly) {
-    if ((*hiddenface)[(unsigned)(*itpoly)]->isVisible() &&
-        Lindex_polygon_tracked[ind]) {
+  for (std::list<int>::const_iterator itpoly = Lindex_polygon.begin(); itpoly != Lindex_polygon.end(); ++itpoly) {
+    if ((*hiddenface)[(unsigned)(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]) {
       isTrackedLineWithVisibility = true;
       break;
     }
@@ -310,8 +302,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param cMo : The pose of the camera used to initialize the moving edges.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I,
-                                       const vpHomogeneousMatrix &cMo)
+bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -336,11 +327,9 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I,
       std::vector<std::pair<vpPoint, vpPoint> > linesLst;
 
       if (useScanLine) {
-        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,
-                                         poly.polyClipped[1].first, linesLst);
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst);
       } else {
-        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,
-                                          poly.polyClipped[1].first));
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
       }
 
       if (linesLst.size() == 0) {
@@ -366,8 +355,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I,
       line->projection();
       double rho, theta;
       // rho theta uv
-      vpMeterPixelConversion::convertLine(cam, line->getRho(),
-                                          line->getTheta(), rho, theta);
+      vpMeterPixelConversion::convertLine(cam, line->getRho(), line->getTheta(), rho, theta);
 
       while (theta > M_PI) {
         theta -= M_PI;
@@ -387,10 +375,8 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I,
         linesLst[i].first.project();
         linesLst[i].second.project();
 
-        vpMeterPixelConversion::convertPoint(cam, linesLst[i].first.get_x(),
-                                             linesLst[i].first.get_y(), ip1);
-        vpMeterPixelConversion::convertPoint(cam, linesLst[i].second.get_x(),
-                                             linesLst[i].second.get_y(), ip2);
+        vpMeterPixelConversion::convertPoint(cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
+        vpMeterPixelConversion::convertPoint(cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
         vpMbtMeLine *melinePt = new vpMbtMeLine;
         melinePt->setMe(me);
@@ -443,8 +429,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I,
-                                        const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
 {
 
   if (isvisible) {
@@ -496,8 +481,7 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I,
-                                         const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     p1->changeFrame(cMo);
@@ -513,11 +497,9 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I,
       std::vector<std::pair<vpPoint, vpPoint> > linesLst;
 
       if (useScanLine) {
-        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,
-                                         poly.polyClipped[1].first, linesLst);
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst);
       } else {
-        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,
-                                          poly.polyClipped[1].first));
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
       }
 
       if (linesLst.size() != meline.size() || linesLst.size() == 0) {
@@ -551,8 +533,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I,
         line->projection();
         double rho, theta;
         // rho theta uv
-        vpMeterPixelConversion::convertLine(cam, line->getRho(),
-                                            line->getTheta(), rho, theta);
+        vpMeterPixelConversion::convertLine(cam, line->getRho(), line->getTheta(), rho, theta);
 
         while (theta > M_PI) {
           theta -= M_PI;
@@ -573,12 +554,8 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I,
             linesLst[i].first.project();
             linesLst[i].second.project();
 
-            vpMeterPixelConversion::convertPoint(
-                cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(),
-                ip1);
-            vpMeterPixelConversion::convertPoint(
-                cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(),
-                ip2);
+            vpMeterPixelConversion::convertPoint(cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
+            vpMeterPixelConversion::convertPoint(cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
             int marge = /*10*/ 5; // ou 5 normalement
             if (ip1.get_j() < ip2.get_j()) {
@@ -635,8 +612,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I,
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I,
-                                         const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -664,11 +640,8 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I,
   \param displayFullModel : If true, the line is displayed even if it is not
   visible.
 */
-void vpMbtDistanceLine::display(const vpImage<unsigned char> &I,
-                                const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera,
-                                const vpColor &col,
-                                const unsigned int thickness,
+void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                 const bool displayFullModel)
 {
   if ((isvisible && isTrackedLine) || displayFullModel) {
@@ -683,39 +656,26 @@ void vpMbtDistanceLine::display(const vpImage<unsigned char> &I,
     poly.computePolygonClipped(c);
 
     if (poly.polyClipped.size() == 2 &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::NEAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::FAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::DOWN_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::UP_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::LEFT_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::RIGHT_CLIPPING) == 0)) {
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)) {
 
       std::vector<std::pair<vpPoint, vpPoint> > linesLst;
       if (useScanLine && !displayFullModel) {
-        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,
-                                         poly.polyClipped[1].first, linesLst,
-                                         true);
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst, true);
       } else {
-        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,
-                                          poly.polyClipped[1].first));
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
       }
 
       for (unsigned int i = 0; i < linesLst.size(); i++) {
         linesLst[i].first.project();
         linesLst[i].second.project();
 
-        vpMeterPixelConversion::convertPoint(camera,
-                                             linesLst[i].first.get_x(),
-                                             linesLst[i].first.get_y(), ip1);
-        vpMeterPixelConversion::convertPoint(camera,
-                                             linesLst[i].second.get_x(),
-                                             linesLst[i].second.get_y(), ip2);
+        vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
+        vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
         vpDisplay::displayLine(I, ip1, ip2, col, thickness);
       }
@@ -734,11 +694,8 @@ void vpMbtDistanceLine::display(const vpImage<unsigned char> &I,
   \param displayFullModel : If true, the line is displayed even if it is not
   visible.
 */
-void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I,
-                                const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera,
-                                const vpColor &col,
-                                const unsigned int thickness,
+void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                 const bool displayFullModel)
 {
   if ((isvisible && isTrackedLine) || displayFullModel) {
@@ -753,39 +710,26 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I,
     poly.computePolygonClipped(c);
 
     if (poly.polyClipped.size() == 2 &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::NEAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::FAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::DOWN_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::UP_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::LEFT_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second &
-          vpPolygon3D::RIGHT_CLIPPING) == 0)) {
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)) {
 
       std::vector<std::pair<vpPoint, vpPoint> > linesLst;
       if (useScanLine && !displayFullModel) {
-        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,
-                                         poly.polyClipped[1].first, linesLst,
-                                         true);
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst, true);
       } else {
-        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,
-                                          poly.polyClipped[1].first));
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
       }
 
       for (unsigned int i = 0; i < linesLst.size(); i++) {
         linesLst[i].first.project();
         linesLst[i].second.project();
 
-        vpMeterPixelConversion::convertPoint(camera,
-                                             linesLst[i].first.get_x(),
-                                             linesLst[i].first.get_y(), ip1);
-        vpMeterPixelConversion::convertPoint(camera,
-                                             linesLst[i].second.get_x(),
-                                             linesLst[i].second.get_y(), ip2);
+        vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
+        vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
         vpDisplay::displayLine(I, ip1, ip2, col, thickness);
       }
@@ -838,8 +782,7 @@ void vpMbtDistanceLine::initInteractionMatrixError()
   Compute the interaction matrix and the error vector corresponding to the
   line.
 */
-void vpMbtDistanceLine::computeInteractionMatrixError(
-    const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     try {
@@ -867,8 +810,7 @@ void vpMbtDistanceLine::computeInteractionMatrixError(
       unsigned int j = 0;
 
       for (unsigned int i = 0; i < meline.size(); i++) {
-        for (std::list<vpMeSite>::const_iterator it =
-                 meline[i]->getMeList().begin();
+        for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
           x = (double)it->j;
           y = (double)it->i;
@@ -890,13 +832,11 @@ void vpMbtDistanceLine::computeInteractionMatrixError(
       }
     } catch (const vpException &e) {
       std::cerr << "Catch an exception: " << e.what() << std::endl;
-      std::cerr << "Set the corresponding interaction matrix part to zero."
-                << std::endl;
+      std::cerr << "Set the corresponding interaction matrix part to zero." << std::endl;
 
       unsigned int j = 0;
       for (unsigned int i = 0; i < meline.size(); i++) {
-        for (std::list<vpMeSite>::const_iterator it =
-                 meline[i]->getMeList().begin();
+        for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
           for (unsigned int k = 0; k < 6; k++) {
             L[j][k] = 0.0;
@@ -918,8 +858,7 @@ void vpMbtDistanceLine::computeInteractionMatrixError(
   \param threshold : the threshold in pixel
   \return true if the line is near the border of the image
 */
-bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I,
-                                           const unsigned int threshold)
+bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, const unsigned int threshold)
 {
   if (threshold > I.getWidth() || threshold > I.getHeight()) {
     return true;
@@ -927,9 +866,8 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I,
   if (isvisible) {
 
     for (unsigned int i = 0; i < meline.size(); i++) {
-      for (std::list<vpMeSite>::const_iterator it =
-               meline[i]->getMeList().begin();
-           it != meline[i]->getMeList().end(); ++it) {
+      for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin(); it != meline[i]->getMeList().end();
+           ++it) {
         int i_ = it->i;
         int j_ = it->j;
 
@@ -937,10 +875,8 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I,
           return true;
         }
 
-        if (((unsigned int)i_ > (I.getHeight() - threshold)) ||
-            (unsigned int)i_ < threshold ||
-            ((unsigned int)j_ > (I.getWidth() - threshold)) ||
-            (unsigned int)j_ < threshold) {
+        if (((unsigned int)i_ > (I.getHeight() - threshold)) || (unsigned int)i_ < threshold ||
+            ((unsigned int)j_ > (I.getWidth() - threshold)) || (unsigned int)j_ < threshold) {
           return true;
         }
       }

@@ -72,14 +72,11 @@ int main()
   std::cout << "You should install pthread third-party library." << std::endl;
 }
 // No display available
-#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) &&               \
-    !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) &&                   \
+#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) &&  \
     !defined(VISP_HAVE_GTK)
 int main()
 {
-  std::cout
-      << "Can't run this example since no display capability is available."
-      << std::endl;
+  std::cout << "Can't run this example since no display capability is available." << std::endl;
   std::cout << "You should install one of the following third-party library: "
                "X11, OpenCV, GDI, GTK."
             << std::endl;
@@ -107,11 +104,9 @@ void removeJointLimits(vpSimulatorAfma6 &robot);
 int main()
 {
   try { // intial pose
-    vpHomogeneousMatrix cMo(0.05, 0.1, 1.5, vpMath::rad(30), vpMath::rad(20),
-                            -vpMath::rad(15));
+    vpHomogeneousMatrix cMo(0.05, 0.1, 1.5, vpMath::rad(30), vpMath::rad(20), -vpMath::rad(15));
     // Desired pose
-    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(
-        0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)));
+    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0)));
 
     // init and run the simulation
     init(cMo, cdMo);
@@ -142,13 +137,13 @@ vpHomogeneousMatrix cdMo;
 
 vpSimulatorAfma6 robot(false); // robot used in this simulation
 vpImage<vpRGBa> Iint(480, 640,
-                     255); // internal image used for interface display
+                     255);                             // internal image used for interface display
 vpServo::vpServoIteractionMatrixType interaction_type; // current or desired
 vpServo task;                                          // servoing task
-vpCameraParameters cam; // robot camera parameters
-double _error;          // current error
-vpImageSimulator imsim; // image simulator used to simulate the
-                        // perspective-projection camera
+vpCameraParameters cam;                                // robot camera parameters
+double _error;                                         // current error
+vpImageSimulator imsim;                                // image simulator used to simulate the
+                                                       // perspective-projection camera
 
 // moment sets and their corresponding features
 vpMomentCommon *moments;
@@ -215,11 +210,9 @@ void initFeatures()
   ////////////////////////////////////
   // don't need to be specific, vpMomentCommon automatically loads
   // Xg,Yg,An,Ci,Cj,Alpha moments
-  moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst),
-                               vpMomentCommon::getMu3(dst),
+  moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst), vpMomentCommon::getMu3(dst),
                                vpMomentCommon::getAlpha(dst), vec[2]);
-  momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst),
-                                  vpMomentCommon::getMu3(dst),
+  momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst), vpMomentCommon::getMu3(dst),
                                   vpMomentCommon::getAlpha(dst), vec[2]);
   // same thing with common features
   featureMoments = new vpFeatureMomentCommon(*moments);
@@ -234,16 +227,12 @@ void initFeatures()
   // setup the interaction type
   task.setInteractionMatrixType(interaction_type);
   //////////////////////////////////add useful features to
-  ///task//////////////////////////////
-  task.addFeature(featureMoments->getFeatureGravityNormalized(),
-                  featureMomentsDes->getFeatureGravityNormalized());
-  task.addFeature(featureMoments->getFeatureAn(),
-                  featureMomentsDes->getFeatureAn());
-  task.addFeature(featureMoments->getFeatureCInvariant(),
-                  featureMomentsDes->getFeatureCInvariant(),
+  /// task//////////////////////////////
+  task.addFeature(featureMoments->getFeatureGravityNormalized(), featureMomentsDes->getFeatureGravityNormalized());
+  task.addFeature(featureMoments->getFeatureAn(), featureMomentsDes->getFeatureAn());
+  task.addFeature(featureMoments->getFeatureCInvariant(), featureMomentsDes->getFeatureCInvariant(),
                   (1 << 3) | (1 << 5));
-  task.addFeature(featureMoments->getFeatureAlpha(),
-                  featureMomentsDes->getFeatureAlpha());
+  task.addFeature(featureMoments->getFeatureAlpha(), featureMomentsDes->getFeatureAlpha());
 
   task.setLambda(1.);
 }
@@ -268,10 +257,9 @@ void refreshScene(vpMomentObject &obj)
 void init(vpHomogeneousMatrix &_cMo, vpHomogeneousMatrix &_cdMo)
 
 {
-  cMo = _cMo;   // init source matrix
-  cdMo = _cdMo; // init destination matrix
-  interaction_type =
-      vpServo::CURRENT; // use interaction matrix for current position
+  cMo = _cMo;                          // init source matrix
+  cdMo = _cdMo;                        // init destination matrix
+  interaction_type = vpServo::CURRENT; // use interaction matrix for current position
 
   displayInt.init(Iint, 700, 0, "Visual servoing with moments");
 
@@ -382,14 +370,12 @@ void planeToABC(vpPlane &pl, double &A, double &B, double &C)
 void paramRobot()
 {
   /*Initialise the robot and especially the camera*/
-  robot.init(vpAfma6::TOOL_CCMOP,
-             vpCameraParameters::perspectiveProjWithoutDistortion);
+  robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithoutDistortion);
   robot.setCurrentViewColor(vpColor(150, 150, 150));
   robot.setDesiredViewColor(vpColor(200, 200, 200));
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
   removeJointLimits(robot);
-  robot.initScene(vpWireFrameSimulator::POINT_CLOUD,
-                  vpWireFrameSimulator::D_STANDARD);
+  robot.initScene(vpWireFrameSimulator::POINT_CLOUD, vpWireFrameSimulator::D_STANDARD);
   robot.setConstantSamplingTimeMode(true);
   /*Initialise the position of the object relative to the pose of the robot's
    * camera*/
@@ -400,10 +386,7 @@ void paramRobot()
   robot.getCameraParameters(cam, Iint);
 }
 
-void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type)
-{
-  interaction_type = type;
-}
+void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type) { interaction_type = type; }
 double error() { return _error; }
 
 #endif

@@ -72,10 +72,8 @@ void vpCircle::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
   \param Z0 : Z Coordinate of the center of the sphere.
   \param R : Radius of the sphere.
 */
-void vpCircle::setWorldCoordinates(const double A, const double B,
-                                   const double C, const double X0,
-                                   const double Y0, const double Z0,
-                                   const double R)
+void vpCircle::setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
+                                   const double Z0, const double R)
 {
   oP[0] = A;
   oP[1] = B;
@@ -117,8 +115,7 @@ vpCircle::vpCircle(const vpColVector &oP_)
 
   \sa setWorldCoordinates()
 */
-vpCircle::vpCircle(const double A, const double B, const double C,
-                   const double X0, const double Y0, const double Z0,
+vpCircle::vpCircle(const double A, const double B, const double C, const double X0, const double Y0, const double Z0,
                    const double R)
 {
   init();
@@ -200,8 +197,7 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
   double yc = (K[0] * K[4] - K[2] * K[3]) / det;
 
   double c = sqrt((K[0] - K[1]) * (K[0] - K[1]) + 4 * K[2] * K[2]);
-  double s =
-      2 * (K[0] * xc * xc + 2 * K[2] * xc * yc + K[1] * yc * yc - K[5]);
+  double s = 2 * (K[0] * xc * xc + 2 * K[2] * xc * yc + K[1] * yc * yc - K[5]);
 
   double A, B, E;
 
@@ -295,25 +291,20 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
   // vpTRACE("_cP :") ; std::cout << _cP.t() ;
 }
 
-void vpCircle::display(const vpImage<unsigned char> &I,
-                       const vpCameraParameters &cam, const vpColor &color,
+void vpCircle::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                        const unsigned int thickness)
 {
-  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I,
-                                   color, thickness);
+  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
 }
 
 // non destructive wrt. cP and p
-void vpCircle::display(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &color,
-                       const unsigned int thickness)
+void vpCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &color, const unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);
   projection(_cP, _p);
-  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I,
-                                   color, thickness);
+  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
 }
 //! for memory issue (used by the vpServo class only)
 vpCircle *vpCircle::duplicate() const
@@ -338,11 +329,8 @@ vpCircle *vpCircle::duplicate() const
   intersection point. \param j : resulting j-coordinate of the intersection
   point.
 */
-void vpCircle::computeIntersectionPoint(const vpCircle &circle,
-                                        const vpCameraParameters &cam,
-                                        const double &rho,
-                                        const double &theta, double &i,
-                                        double &j)
+void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraParameters &cam, const double &rho,
+                                        const double &theta, double &i, double &j)
 {
   // This was taken from the code of art-v1. (from the artCylinder class)
   double px = cam.get_px();
@@ -366,17 +354,14 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle,
   double ctheta2 = vpMath::sqr(ctheta);
   double m02xg = mu02 * Xg;
   double m11stheta = mu11 * stheta;
-  j = ((mu11 * Xg * sctheta - mu20 * Yg * sctheta + mu20 * rho * ctheta -
-        m11yg + m11yg * ctheta2 + m02xg - m02xg * ctheta2 + m11stheta * rho) /
+  j = ((mu11 * Xg * sctheta - mu20 * Yg * sctheta + mu20 * rho * ctheta - m11yg + m11yg * ctheta2 + m02xg -
+        m02xg * ctheta2 + m11stheta * rho) /
        (mu20 * ctheta2 + 2.0 * m11stheta * ctheta + mu02 - mu02 * ctheta2));
   // Optimised calculation for Y
   double rhom02 = rho * mu02;
   double sctheta2 = stheta * ctheta2;
   double ctheta3 = ctheta2 * ctheta;
-  i = (-(-rho * mu11 * stheta * ctheta - rhom02 + rhom02 * ctheta2 +
-         mu11 * Xg * sctheta2 - mu20 * Yg * sctheta2 - ctheta * mu11 * Yg +
-         ctheta3 * mu11 * Yg + ctheta * mu02 * Xg - ctheta3 * mu02 * Xg) /
-       (mu20 * ctheta2 + 2.0 * mu11 * stheta * ctheta + mu02 -
-        mu02 * ctheta2) /
-       stheta);
+  i = (-(-rho * mu11 * stheta * ctheta - rhom02 + rhom02 * ctheta2 + mu11 * Xg * sctheta2 - mu20 * Yg * sctheta2 -
+         ctheta * mu11 * Yg + ctheta3 * mu11 * Yg + ctheta * mu02 * Xg - ctheta3 * mu02 * Xg) /
+       (mu20 * ctheta2 + 2.0 * mu11 * stheta * ctheta + mu02 - mu02 * ctheta2) / stheta);
 }

@@ -17,8 +17,7 @@ int main(int argc, const char *argv[])
       if (std::string(argv[i]) == "--init-by-click")
         opt_init_by_click = true;
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "Usage: " << argv[0] << " [--init-by-click] [--help]"
-                  << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--init-by-click] [--help]" << std::endl;
         return 0;
       }
     }
@@ -72,14 +71,10 @@ int main(int argc, const char *argv[])
 #endif
       vpImagePoint ip;
       do {
-        vpDisplay::displayText(
-            I, 10, 10,
-            "Left click to select a point, right to start tracking",
-            vpColor::red);
+        vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
-            feature.push_back(
-                cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+            feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }
         }
@@ -98,8 +93,7 @@ int main(int argc, const char *argv[])
     }
 
     //! [How many features]
-    std::cout << "Tracker initialized with " << tracker.getNbFeatures()
-              << " features" << std::endl;
+    std::cout << "Tracker initialized with " << tracker.getNbFeatures() << " features" << std::endl;
     //! [How many features]
 
     //! [While loop]
@@ -109,8 +103,7 @@ int main(int argc, const char *argv[])
 
       vpImageConvert::convert(I, cvI);
 
-      if (opt_init_by_click &&
-          reader.getFrameIndex() == reader.getFirstFrameIndex() + 20) {
+      if (opt_init_by_click && reader.getFrameIndex() == reader.getFirstFrameIndex() + 20) {
         vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
         std::vector<CvPoint2D32f> feature;
@@ -119,14 +112,10 @@ int main(int argc, const char *argv[])
 #endif
         vpImagePoint ip;
         do {
-          vpDisplay::displayText(
-              I, 10, 10,
-              "Left click to select a point, right to start tracking",
-              vpColor::red);
+          vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
           if (vpDisplay::getClick(I, ip, button, false)) {
             if (button == vpMouseButton::button1) {
-              feature.push_back(
-                  cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+              feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
               vpDisplay::displayCross(I, ip, 12, vpColor::green);
             }
           }

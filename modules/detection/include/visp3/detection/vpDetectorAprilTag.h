@@ -51,7 +51,8 @@ href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
 is no need to download and install AprilTag from source code or existing
 pre-built packages since the source code is embedded in ViSP. Reference papers
 are <I> AprilTag: A robust and flexible visual fiducial system </I>
-(\cite olson2011tags) and <I> AprilTag 2: Efficient and robust fiducial detection
+(\cite olson2011tags) and <I> AprilTag 2: Efficient and robust fiducial
+detection
 </I> (\cite wang2016iros).
 
   The detect() function allows to detect multiple tags in an image. Once
@@ -66,8 +67,10 @@ also to estimate the 3D pose of the tag in terms of position and orientation
 wrt the camera.
 
   The following sample code shows how to use this class to detect the location
-of 36h11 AprilTag patterns in an image. \code #include
-<visp3/detection/vpDetectorAprilTag.h> #include <visp3/io/vpImageIo.h>
+of 36h11 AprilTag patterns in an image.
+\code
+#include <visp3/detection/vpDetectorAprilTag.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -84,8 +87,7 @@ int main()
       std::vector<vpImagePoint> p = detector.getPolygon(i);
       for(size_t j=0; j < p.size(); j++)
         std::cout << "  Point " << j << ": " << p[j] << std::endl;
-      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" <<
-std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
     }
   }
 #endif
@@ -109,8 +111,10 @@ Tag code 1:
   \endcode
 
   This other example shows how to estimate the 3D pose of 36h11 AprilTag
-patterns. \code #include <visp3/detection/vpDetectorAprilTag.h> #include
-<visp3/io/vpImageIo.h>
+patterns.
+\code
+#include <visp3/detection/vpDetectorAprilTag.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -121,15 +125,15 @@ int main()
   vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
   std::vector<vpHomogeneousMatrix> cMo;
   vpCameraParameters cam;
-  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954,
-243.4373779); double tagSize = 0.053;
+  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
+  double tagSize = 0.053;
 
   bool status = detector.detect(I, tagSize, cam, cMo);
   if (status) {
     for(size_t i=0; i < detector.getNbObjects(); i++) {
       std::cout << "Tag code " << i << ":" << std::endl;
-      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" <<
-std::endl; std::cout << "  Pose: " << vpPoseVector(cMo[i]).t() << std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
+      std::cout << "  Pose: " << vpPoseVector(cMo[i]).t() << std::endl;
     }
   }
 #endif
@@ -139,9 +143,11 @@ std::endl; std::cout << "  Pose: " << vpPoseVector(cMo[i]).t() << std::endl;
   \code
 Tag code 0:
   Message: "36h11 id: 0"
-  Pose: 0.1015061088  -0.05239057228  0.3549037285  1.991474322  2.04143538
--0.9412360063 Tag code 1: Message: "36h11 id: 1" Pose: 0.08951250829
-0.02243780207  0.306540622  1.998073197  2.061488008  -0.8699567948 \endcode
+  Pose: 0.1015061088  -0.05239057228  0.3549037285  1.991474322  2.04143538 -0.9412360063
+Tag code 1:
+  Message: "36h11 id: 1"
+  Pose: 0.08951250829 0.02243780207  0.306540622  1.998073197  2.061488008  -0.8699567948
+\endcode
 
   Other examples are also provided in tutorial-apriltag-detector.cpp and
   tutorial-apriltag-detector-live.cpp
@@ -183,26 +189,20 @@ public:
   };
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
-                     const vpPoseEstimationMethod &poseEstimationMethod =
-                         HOMOGRAPHY_VIRTUAL_VS);
+                     const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
   virtual ~vpDetectorAprilTag();
 
   bool detect(const vpImage<unsigned char> &I);
-  bool detect(const vpImage<unsigned char> &I, const double tagSize,
-              const vpCameraParameters &cam,
+  bool detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec);
 
   /*!
     Return the pose estimation method.
   */
-  inline vpPoseEstimationMethod getPoseEstimationMethod() const
-  {
-    return m_poseEstimationMethod;
-  }
+  inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
   void setAprilTagNbThreads(const int nThreads);
-  void setAprilTagPoseEstimationMethod(
-      const vpPoseEstimationMethod &poseEstimationMethod);
+  void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
   void setAprilTagQuadDecimate(const float quadDecimate);
   void setAprilTagQuadSigma(const float quadSigma);
   void setAprilTagRefineDecode(const bool refineDecode);
@@ -227,9 +227,7 @@ private:
   Impl *m_impl;
 };
 
-inline std::ostream &
-operator<<(std::ostream &os,
-           const vpDetectorAprilTag::vpPoseEstimationMethod &method)
+inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpPoseEstimationMethod &method)
 {
   switch (method) {
   case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
@@ -255,9 +253,7 @@ operator<<(std::ostream &os,
   return os;
 }
 
-inline std::ostream &
-operator<<(std::ostream &os,
-           const vpDetectorAprilTag::vpAprilTagFamily &tagFamily)
+inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAprilTagFamily &tagFamily)
 {
   switch (tagFamily) {
   case vpDetectorAprilTag::TAG_36h11:

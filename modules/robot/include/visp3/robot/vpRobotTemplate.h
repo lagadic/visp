@@ -76,8 +76,7 @@ public:
   //! send to the controller a velocity expressed in the articular frame
   void sendArticularVelocity(const vpColVector &qdot);
   //! send to the controller a velocity (frame as to be specified)
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
 
   //! get a position expressed in the robot reference frame
   void getPosition(vpPoseVector &q);
@@ -86,12 +85,10 @@ public:
   //! get a displacement (frame as to be specified)
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
   //! set a displacement (frame as to be specified)
-  void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
 
   //! get a displacement (frame as to be specified)
-  void getDisplacement(const vpRobot::vpControlFrameType frame,
-                       vpColVector &q);
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
 };
 
 #endif

@@ -50,8 +50,7 @@
 #include <functional>
 #endif
 
-#if defined __SSE2__ || defined _M_X64 ||                                    \
-    (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
 
@@ -107,8 +106,7 @@ template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec)
 // std::allocator<double> > const&, std::vector<double, std::allocator<double>
 // >&, double)'
 template <typename T>
-void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues,
-                                             std::vector<T> &weights,
+void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std::vector<T> &weights,
                                              const T NoiseThreshold)
 {
   if (residues.empty()) {
@@ -145,9 +143,8 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues,
 }
 
 template <>
-void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(
-    const std::vector<float> &residues, std::vector<float> &weights,
-    const float NoiseThreshold)
+void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues, std::vector<float> &weights,
+                                                       const float NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3
   if (residues.empty()) {
@@ -165,8 +162,7 @@ void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(
   if (m_residues.size() >= 4) {
     for (i = 0; i <= m_residues.size() - 4; i += 4) {
       __m128 residues_128 = _mm_loadu_ps(residues.data() + i);
-      _mm_storeu_ps(m_normres.data() + i,
-                    abs_ps(_mm_sub_ps(residues_128, med_128)));
+      _mm_storeu_ps(m_normres.data() + i, abs_ps(_mm_sub_ps(residues_128, med_128)));
     }
   }
 
@@ -195,9 +191,8 @@ void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(
 }
 
 template <>
-void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(
-    const std::vector<double> &residues, std::vector<double> &weights,
-    const double NoiseThreshold)
+void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double> &residues,
+                                                        std::vector<double> &weights, const double NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3
   if (residues.empty()) {
@@ -239,9 +234,8 @@ void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(
 }
 
 template <>
-void vpMbtTukeyEstimator<float>::MEstimator(
-    const std::vector<float> &residues, std::vector<float> &weights,
-    const float NoiseThreshold)
+void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
+                                            const float NoiseThreshold)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3
@@ -255,9 +249,8 @@ void vpMbtTukeyEstimator<float>::MEstimator(
 }
 
 template <>
-void vpMbtTukeyEstimator<double>::MEstimator(
-    const std::vector<double> &residues, std::vector<double> &weights,
-    const double NoiseThreshold)
+void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
+                                             const double NoiseThreshold)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3
@@ -270,9 +263,7 @@ void vpMbtTukeyEstimator<double>::MEstimator(
     MEstimator_impl(residues, weights, NoiseThreshold);
 }
 
-template <typename T>
-void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x,
-                                      vpColVector &weights)
+template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, vpColVector &weights)
 {
   T cst_const = static_cast<T>(4.6851);
   T inv_cst_const = 1 / cst_const;
@@ -281,10 +272,10 @@ void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x,
   for (unsigned int i = 0; i < (unsigned int)x.size(); i++) {
 #if USE_ORIGINAL_TUKEY_CODE
     if (std::fabs(sig) <= std::numeric_limits<T>::epsilon() &&
-        std::fabs(weights[i]) >
-            std::numeric_limits<double>::epsilon() // sig should be equal to 0
-                                                   // only if NoiseThreshold ==
-                                                   // 0
+        std::fabs(weights[i]) > std::numeric_limits<double>::epsilon() // sig should be equal to 0
+                                                                       // only if NoiseThreshold
+                                                                       // ==
+                                                                       // 0
     ) {
       weights[i] = 1;
       continue;
@@ -295,16 +286,14 @@ void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x,
 
     if ((std::fabs(xi_sig) <= cst_const)
 #if USE_ORIGINAL_TUKEY_CODE
-        && std::fabs(weights[i]) >
-               std::numeric_limits<double>::epsilon() // Consider the previous
-                                                      // weights here
+        && std::fabs(weights[i]) > std::numeric_limits<double>::epsilon() // Consider the previous
+                                                                          // weights here
 #endif
     ) {
       weights[i] = (1 - (xi_sig * inv_cst_const) * (xi_sig * inv_cst_const)) *
-                   (1 - (xi_sig * inv_cst_const) *
-                            (xi_sig * inv_cst_const)); // vpMath::sqr( 1 -
-                                                       // vpMath::sqr(xi_sig *
-                                                       // inv_cst_const) );
+                   (1 - (xi_sig * inv_cst_const) * (xi_sig * inv_cst_const)); // vpMath::sqr( 1 -
+                                                                              // vpMath::sqr(xi_sig *
+                                                                              // inv_cst_const) );
     } else {
       // Outlier - could resize list of points tracked here?
       weights[i] = 0;
@@ -313,8 +302,7 @@ void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x,
 }
 
 template <>
-void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues,
-                                             vpColVector &weights,
+void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues, vpColVector &weights,
                                              const double NoiseThreshold)
 {
   if (residues.size() == 0) {
@@ -323,8 +311,7 @@ void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues,
 
   m_residues.resize(0);
   m_residues.reserve(residues.size());
-  m_residues.insert(m_residues.end(), &residues.data[0],
-                    &residues.data[residues.size()]);
+  m_residues.insert(m_residues.end(), &residues.data[0], &residues.data[residues.size()]);
 
   double med = getMedian(m_residues);
 
@@ -349,8 +336,7 @@ void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues,
 }
 
 template <>
-void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues,
-                                            vpColVector &weights,
+void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, vpColVector &weights,
                                             const double NoiseThreshold)
 {
   if (residues.size() == 0) {
@@ -385,9 +371,7 @@ void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues,
   psiTukey(sigma, m_normres, weights);
 }
 
-template <class T>
-void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x,
-                                      std::vector<T> &weights)
+template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, std::vector<T> &weights)
 {
   T cst_const = static_cast<T>(4.6851);
   T inv_cst_const = 1 / cst_const;
@@ -396,9 +380,8 @@ void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x,
   for (size_t i = 0; i < x.size(); i++) {
 #if USE_ORIGINAL_TUKEY_CODE
     if (std::fabs(sig) <= std::numeric_limits<T>::epsilon() &&
-        std::fabs(weights[i]) >
-            std::numeric_limits<T>::epsilon() // sig should be equal to 0 only
-                                              // if NoiseThreshold == 0
+        std::fabs(weights[i]) > std::numeric_limits<T>::epsilon() // sig should be equal to 0 only
+                                                                  // if NoiseThreshold == 0
     ) {
       weights[i] = 1;
       continue;
@@ -409,9 +392,8 @@ void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x,
 
     if ((std::fabs(xi_sig) <= cst_const)
 #if USE_ORIGINAL_TUKEY_CODE
-        && std::fabs(weights[i]) >
-               std::numeric_limits<T>::epsilon() // Consider the previous
-                                                 // weights here
+        && std::fabs(weights[i]) > std::numeric_limits<T>::epsilon() // Consider the previous
+                                                                     // weights here
 #endif
     ) {
       // vpMath::sqr( 1 - vpMath::sqr(xi_sig * inv_cst_const) );

@@ -46,8 +46,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) &&                                         \
-    (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -107,12 +106,11 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.getCameraParameters(cam);   // Get the camera parameters used by the
-tracker (from the configuration file). tracker.loadModel("cube.cao");      //
-Load the 3d model in cao format. No 3rd party library is required
-  tracker.initClick(I, "cube.init");  // Initialise manually the pose by
-clicking on the image points associated to the 3d points contained in the
-cube.init file.
+  tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
+  tracker.loadModel("cube.cao");      // Load the 3d model in cao format. No 3rd party library is required
+  // Initialise manually the pose by clicking on the image points associated to the 3d points contained in the
+  // cube.init file.
+  tracker.initClick(I, "cube.init");
 
   while(true){
     // Acquire a new image
@@ -120,8 +118,8 @@ cube.init file.
     tracker.track(I);     // Track the object on this image
     tracker.getPose(cMo); // Get the pose
 
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at
-the computed pose. vpDisplay::flush(I);
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
+    vpDisplay::flush(I);
   }
 
 #if defined VISP_HAVE_XML2
@@ -149,8 +147,7 @@ int main()
 #if defined VISP_HAVE_OPENCV
   vpMbKltTracker tracker; // Create a model based tracker via Klt Points.
   vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then
-computed using the tracker.
+  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker.
 
   //acquire an image
   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
@@ -158,8 +155,8 @@ computed using the tracker.
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coin
-is required, if coin is not installed .cao file can be used.
+  // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao");
   tracker.initFromPose(I, cMo); // initialize the tracker with the given pose.
 
   while(true){
@@ -169,8 +166,9 @@ is required, if coin is not installed .cao file can be used.
   }
 
 #if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
+  vpXmlParser::cleanup();
+#endif
 
   return 0;
 #endif
@@ -207,22 +205,22 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.getCameraParameters(cam); // Get the camera parameters used by the
-tracker (from the configuration file). tracker.loadModel("cube.cao"); // load
-the 3d model, to read .wrl model coin is required, if coin is not installed
-.cao file can be used.
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+  // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao");
 
   while(true){
     // acquire a new image
     // Get the pose using any method
     vpDisplay::display(I);
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the
-model at the computed pose. vpDisplay::flush(I);
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
+    vpDisplay::flush(I);
   }
 
 #if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
+  vpXmlParser::cleanup();
+#endif
 
   return 0;
 #endif
@@ -287,34 +285,18 @@ public:
   /** @name Inherited functionalities from vpMbKltTracker */
   //@{
 
-  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3,
-                 const double r, const std::string &name = "");
-  virtual void display(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false);
-  virtual void display(const vpImage<vpRGBa> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false);
+  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name = "");
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   /*! Return the address of the circle feature list. */
-  virtual std::list<vpMbtDistanceCircle *> &getFeaturesCircle()
-  {
-    return circles_disp;
-  }
+  virtual std::list<vpMbtDistanceCircle *> &getFeaturesCircle() { return circles_disp; }
   /*! Return the address of the cylinder feature list. */
-  virtual std::list<vpMbtDistanceKltCylinder *> &getFeaturesKltCylinder()
-  {
-    return kltCylinders;
-  }
+  virtual std::list<vpMbtDistanceKltCylinder *> &getFeaturesKltCylinder() { return kltCylinders; }
   /*! Return the address of the Klt feature list. */
-  virtual std::list<vpMbtDistanceKltPoints *> &getFeaturesKlt()
-  {
-    return kltPolygons;
-  }
+  virtual std::list<vpMbtDistanceKltPoints *> &getFeaturesKlt() { return kltPolygons; }
 
 /*!
   Get the current list of KLT points.
@@ -322,10 +304,7 @@ public:
    \return the list of KLT points through vpKltOpencv.
  */
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  inline std::vector<cv::Point2f> getKltPoints() const
-  {
-    return tracker.getFeatures();
-  }
+  inline std::vector<cv::Point2f> getKltPoints() const { return tracker.getFeatures(); }
 #else
   inline CvPoint2D32f *getKltPoints() { return tracker.getFeatures(); }
 #endif
@@ -361,10 +340,7 @@ public:
     \return threshold_outlier : Threshold for the weight below which a point
     is rejected.
    */
-  inline double getKltThresholdAcceptation() const
-  {
-    return threshold_outlier;
-  }
+  inline double getKltThresholdAcceptation() const { return threshold_outlier; }
 
   virtual inline vpColVector getError() const { return m_error_klt; }
 
@@ -373,12 +349,9 @@ public:
   virtual void loadConfigFile(const std::string &configFile);
   void loadConfigFile(const char *configFile);
 
-  virtual void reInitModel(const vpImage<unsigned char> &I,
-                           const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_,
-                           const bool verbose = false);
-  void reInitModel(const vpImage<unsigned char> &I, const char *cad_name,
-                   const vpHomogeneousMatrix &cMo,
+  virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
+                           const vpHomogeneousMatrix &cMo_, const bool verbose = false);
+  void reInitModel(const vpImage<unsigned char> &I, const char *cad_name, const vpHomogeneousMatrix &cMo,
                    const bool verbose = false);
   void resetTracker();
 
@@ -403,10 +376,7 @@ public:
 
     \param th : Threshold for the weight below which a point is rejected.
    */
-  inline void setKltThresholdAcceptation(const double th)
-  {
-    threshold_outlier = th;
-  }
+  inline void setKltThresholdAcceptation(const double th) { threshold_outlier = th; }
 
   /*!
     Use Ogre3D for visibility tests
@@ -433,14 +403,11 @@ public:
   {
     vpMbTracker::setScanLineVisibilityTest(v);
 
-    for (std::list<vpMbtDistanceKltPoints *>::const_iterator it =
-             kltPolygons.begin();
-         it != kltPolygons.end(); ++it)
+    for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it)
       (*it)->useScanLine = v;
   }
 
-  virtual void setPose(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
 
   /*!
     Set if the projection error criteria has to be computed.
@@ -472,20 +439,14 @@ public:
 
     \return The erosion.
    */
-  /* vp_deprecated */ inline unsigned int getMaskBorder() const
-  {
-    return maskBorder;
-  }
+  /* vp_deprecated */ inline unsigned int getMaskBorder() const { return maskBorder; }
   /*!
     Get the current number of klt points.
     \deprecated Use rather getKltNbPoints()
 
     \return the number of features
    */
-  /* vp_deprecated */ inline int getNbKltPoints() const
-  {
-    return tracker.getNbFeatures();
-  }
+  /* vp_deprecated */ inline int getNbKltPoints() const { return tracker.getNbFeatures(); }
 
   /*!
     Get the threshold for the acceptation of a point.
@@ -494,10 +455,7 @@ public:
     \return threshold_outlier : Threshold for the weight below which a point
     is rejected.
    */
-  /* vp_deprecated */ inline double getThresholdAcceptation() const
-  {
-    return threshold_outlier;
-  }
+  /* vp_deprecated */ inline double getThresholdAcceptation() const { return threshold_outlier; }
   /*!
     Set the erosion of the mask used on the Model faces.
 
@@ -516,10 +474,7 @@ public:
 
     \param th : Threshold for the weight below which a point is rejected.
    */
-  /* vp_deprecated */ inline void setThresholdAcceptation(const double th)
-  {
-    threshold_outlier = th;
-  }
+  /* vp_deprecated */ inline void setThresholdAcceptation(const double th) { threshold_outlier = th; }
 
   //@}
 
@@ -533,11 +488,9 @@ protected:
   virtual void init(const vpImage<unsigned char> &I);
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &,
-                          const double, const int,
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double, const int,
                           const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, const double,
-                            const int, const std::string &name = "");
+  virtual void initCylinder(const vpPoint &, const vpPoint &, const double, const int, const std::string &name = "");
 
   void preTracking(const vpImage<unsigned char> &I);
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w);

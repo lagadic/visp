@@ -94,8 +94,7 @@ int main()
 /usr/share/BiclopsDefault.cfg"
 
   // Specify the config file location
-  robot.setConfigFile("/usr/share/BiclopsDefault.cfg"); // Not mandatory since
-the file is the default one
+  robot.setConfigFile("/usr/share/BiclopsDefault.cfg"); // Not mandatory since the file is the default one
 
   // Initialize the head
   robot.init();
@@ -113,9 +112,8 @@ the file is the default one
 
 */
 vpRobotBiclops::vpRobotBiclops()
-  : vpBiclops(), vpRobot(), control_thread(), controller(),
-    positioningVelocity(defaultPositioningVelocity), q_previous(),
-    controlThreadCreated(false)
+  : vpBiclops(), vpRobot(), control_thread(), controller(), positioningVelocity(defaultPositioningVelocity),
+    q_previous(), controlThreadCreated(false)
 {
   vpDEBUG_TRACE(12, "Begin default constructor.");
 
@@ -164,9 +162,8 @@ int main()
 
 */
 vpRobotBiclops::vpRobotBiclops(const std::string &filename)
-  : vpBiclops(), vpRobot(), control_thread(), controller(),
-    positioningVelocity(defaultPositioningVelocity), q_previous(),
-    controlThreadCreated(false)
+  : vpBiclops(), vpRobot(), control_thread(), controller(), positioningVelocity(defaultPositioningVelocity),
+    q_previous(), controlThreadCreated(false)
 {
   vpDEBUG_TRACE(12, "Begin default constructor.");
 
@@ -205,8 +202,7 @@ vpRobotBiclops::~vpRobotBiclops(void)
   if (controlThreadCreated == true) {
     int code = pthread_join(control_thread, NULL);
     if (code != 0) {
-      vpCERROR << "Cannot terminate the control thread: " << code
-               << " strErr=" << strerror(errno)
+      vpCERROR << "Cannot terminate the control thread: " << code << " strErr=" << strerror(errno)
                << " strCode=" << strerror(code) << std::endl;
     }
   }
@@ -233,10 +229,7 @@ vpRobotBiclops::~vpRobotBiclops(void)
   Set the Biclops config filename.
 
 */
-void vpRobotBiclops::setConfigFile(const std::string &filename)
-{
-  this->configfile = filename;
-}
+void vpRobotBiclops::setConfigFile(const std::string &filename) { this->configfile = filename; }
 
 /*!
 
@@ -252,10 +245,8 @@ void vpRobotBiclops::init()
   // test if the config file exists
   FILE *fd = fopen(configfile.c_str(), "r");
   if (fd == NULL) {
-    vpCERROR << "Cannot open biclops config file: " << configfile
-             << std::endl;
-    throw vpRobotException(vpRobotException::constructionError,
-                           "Cannot open connection with biclops");
+    vpCERROR << "Cannot open biclops config file: " << configfile << std::endl;
+    throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with biclops");
   }
   fclose(fd);
 
@@ -300,8 +291,7 @@ void vpRobotBiclops::init()
 */
 void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
 {
-  vpRobotBiclopsController *controller =
-      static_cast<vpRobotBiclopsController *>(arg);
+  vpRobotBiclopsController *controller = static_cast<vpRobotBiclopsController *>(arg);
 
   int iter = 0;
   //   PMDAxisControl *panAxis  = controller->getPanAxis();
@@ -318,13 +308,12 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   bool *force_halt = new bool[vpBiclops::ndof];   // force an axis to halt
   bool *enable_limit = new bool[vpBiclops::ndof]; // enable soft limit
   vpColVector prev_q_dot(vpBiclops::ndof);        // previous desired speed
-  double secure = vpMath::rad(2); // add a security angle before joint limit
+  double secure = vpMath::rad(2);                 // add a security angle before joint limit
 
   // Set the soft limits
   softLimit[0] = vpBiclops::panJointLimit - secure;
   softLimit[1] = vpBiclops::tiltJointLimit - secure;
-  vpDEBUG_TRACE(12, "soft limit pan: %f tilt: %f", vpMath::deg(softLimit[0]),
-                vpMath::deg(softLimit[1]));
+  vpDEBUG_TRACE(12, "soft limit pan: %f tilt: %f", vpMath::deg(softLimit[0]), vpMath::deg(softLimit[1]));
 
   // Initilisation
   vpDEBUG_TRACE(11, "Lock mutex vpShm_mutex");
@@ -382,14 +371,10 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
       shm.actual_q_dot[i] = mes_q_dot[i];
     }
 
-    vpDEBUG_TRACE(12, "mes pan: %f tilt: %f", vpMath::deg(mes_q[0]),
-                  vpMath::deg(mes_q[1]));
-    vpDEBUG_TRACE(13, "mes pan vel: %f tilt vel: %f",
-                  vpMath::deg(mes_q_dot[0]), vpMath::deg(mes_q_dot[1]));
-    vpDEBUG_TRACE(12, "desired  q_dot : %f %f", vpMath::deg(shm.q_dot[0]),
-                  vpMath::deg(shm.q_dot[1]));
-    vpDEBUG_TRACE(13, "previous q_dot : %f %f", vpMath::deg(prev_q_dot[0]),
-                  vpMath::deg(prev_q_dot[1]));
+    vpDEBUG_TRACE(12, "mes pan: %f tilt: %f", vpMath::deg(mes_q[0]), vpMath::deg(mes_q[1]));
+    vpDEBUG_TRACE(13, "mes pan vel: %f tilt vel: %f", vpMath::deg(mes_q_dot[0]), vpMath::deg(mes_q_dot[1]));
+    vpDEBUG_TRACE(12, "desired  q_dot : %f %f", vpMath::deg(shm.q_dot[0]), vpMath::deg(shm.q_dot[1]));
+    vpDEBUG_TRACE(13, "previous q_dot : %f %f", vpMath::deg(prev_q_dot[0]), vpMath::deg(prev_q_dot[1]));
 
     for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
       // test if joint limits are reached
@@ -409,8 +394,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
       // Test if new a speed is demanded
       // if (shm.q_dot[i] != prev_q_dot[i])
       if (std::fabs(shm.q_dot[i] - prev_q_dot[i]) >
-          std::fabs(vpMath::maximum(shm.q_dot[i], prev_q_dot[i])) *
-              std::numeric_limits<double>::epsilon())
+          std::fabs(vpMath::maximum(shm.q_dot[i], prev_q_dot[i])) * std::numeric_limits<double>::epsilon())
         new_q_dot[i] = true;
       else
         new_q_dot[i] = false;
@@ -422,13 +406,11 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
         change_dir[i] = false;
     }
     vpDEBUG_TRACE(13, "status      : %d %d", shm.status[0], shm.status[1]);
-    vpDEBUG_TRACE(13, "joint       : %d %d", shm.jointLimit[0],
-                  shm.jointLimit[1]);
+    vpDEBUG_TRACE(13, "joint       : %d %d", shm.jointLimit[0], shm.jointLimit[1]);
     vpDEBUG_TRACE(13, "new q_dot   : %d %d", new_q_dot[0], new_q_dot[1]);
     vpDEBUG_TRACE(13, "new dir     : %d %d", change_dir[0], change_dir[1]);
     vpDEBUG_TRACE(13, "force halt  : %d %d", force_halt[0], force_halt[1]);
-    vpDEBUG_TRACE(13, "enable limit: %d %d", enable_limit[0],
-                  enable_limit[1]);
+    vpDEBUG_TRACE(13, "enable limit: %d %d", enable_limit[0], enable_limit[1]);
 
     bool updateVelocity = false;
     for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
@@ -470,10 +452,9 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
               // Test if this axis was stopped before
               if (force_halt[i] == false) {
                 q_dot[i] = 0.;
-                force_halt[i] = true; // indicate that it will be stopped
-                enable_limit[i] =
-                    true;              // Joint limit detection must be active
-                updateVelocity = true; // We have to send this new speed
+                force_halt[i] = true;   // indicate that it will be stopped
+                enable_limit[i] = true; // Joint limit detection must be active
+                updateVelocity = true;  // We have to send this new speed
               }
             }
           }
@@ -490,7 +471,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
         // No change of the desired speed. We have to stop the robot in case
         // of joint limit
         if (shm.status[i] == vpRobotBiclopsController::STOP) { // axis limit
-          if (enable_limit[i] == true) { // limit detection active
+          if (enable_limit[i] == true) {                       // limit detection active
 
             // Test if this axis was stopped before
             if (force_halt[i] == false) {
@@ -502,8 +483,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
           }
         } else {
           // No need to stop the robot
-          enable_limit[i] =
-              true; // Normal situation, activate limit detection
+          enable_limit[i] = true; // Normal situation, activate limit detection
         }
       }
     }
@@ -514,8 +494,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
     pthread_mutex_unlock(&vpShm_mutex);
 
     if (updateVelocity) {
-      vpDEBUG_TRACE(12, "apply q_dot : %f %f", vpMath::deg(q_dot[0]),
-                    vpMath::deg(q_dot[1]));
+      vpDEBUG_TRACE(12, "apply q_dot : %f %f", vpMath::deg(q_dot[0]), vpMath::deg(q_dot[1]));
 
       // Apply the velocity
       controller->setVelocity(q_dot);
@@ -567,8 +546,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   speed control.
 
 */
-vpRobot::vpRobotStateType
-vpRobotBiclops::setRobotState(vpRobot::vpRobotStateType newState)
+vpRobot::vpRobotStateType vpRobotBiclops::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState) {
   case vpRobot::STATE_STOP: {
@@ -593,12 +571,9 @@ vpRobotBiclops::setRobotState(vpRobot::vpRobotStateType newState)
 
       vpDEBUG_TRACE(12, "Create speed control thread");
       int code;
-      code = pthread_create(&control_thread, NULL,
-                            &vpRobotBiclops::vpRobotBiclopsSpeedControlLoop,
-                            &controller);
+      code = pthread_create(&control_thread, NULL, &vpRobotBiclops::vpRobotBiclopsSpeedControlLoop, &controller);
       if (code != 0) {
-        vpCERROR << "Cannot create speed biclops control thread: " << code
-                 << " strErr=" << strerror(errno)
+        vpCERROR << "Cannot create speed biclops control thread: " << code << " strErr=" << strerror(errno)
                  << " strCode=" << strerror(code) << std::endl;
       }
 
@@ -657,10 +632,7 @@ void vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
   \param cMe :  Homogeneous matrix between camera and end effector frame.
 
 */
-void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const
-{
-  cMe = vpBiclops::get_cMe();
-}
+void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = vpBiclops::get_cMe(); }
 
 /*!
   Get the robot jacobian expressed in the end-effector frame.
@@ -716,8 +688,7 @@ void vpRobotBiclops::setPositioningVelocity(const double velocity)
 {
   if (velocity < 0 || velocity > 100) {
     vpERROR_TRACE("Bad positionning velocity");
-    throw vpRobotException(vpRobotException::constructionError,
-                           "Bad positionning velocity");
+    throw vpRobotException(vpRobotException::constructionError, "Bad positionning velocity");
   }
 
   positioningVelocity = velocity;
@@ -729,10 +700,7 @@ void vpRobotBiclops::setPositioningVelocity(const double velocity)
   maximum positionning velocity is given vpBiclops::speedLimit.
 
 */
-double vpRobotBiclops::getPositioningVelocity(void)
-{
-  return positioningVelocity;
-}
+double vpRobotBiclops::getPositioningVelocity(void) { return positioningVelocity; }
 
 /*!
    Move the robot in position control.
@@ -749,8 +717,7 @@ double vpRobotBiclops::getPositioningVelocity(void)
    type is given.
 
 */
-void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame,
-                                 const vpColVector &q)
+void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q)
 {
 
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState()) {
@@ -763,23 +730,20 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame,
   case vpRobot::CAMERA_FRAME:
     vpERROR_TRACE("Cannot move the robot in camera frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot move the robot in camera frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in camera frame: "
+                                                              "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot move the robot in reference frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot move the robot in reference frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in reference frame: "
+                                                              "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot move the robot in mixt frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot move the robot in mixt frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in mixt frame: "
+                                                              "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
     break;
@@ -817,8 +781,7 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame,
    type is given.
 
 */
-void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame,
-                                 const double &q1, const double &q2)
+void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2)
 {
   try {
     vpColVector q(2);
@@ -850,8 +813,7 @@ void vpRobotBiclops::setPosition(const char *filename)
   vpColVector q;
   if (readPositionFile(filename, q) == false) {
     vpERROR_TRACE("Cannot get biclops position from file");
-    throw vpRobotException(vpRobotException::readingParametersError,
-                           "Cannot get biclops position from file");
+    throw vpRobotException(vpRobotException::readingParametersError, "Cannot get biclops position from file");
   }
   setPosition(vpRobot::ARTICULAR_FRAME, q);
 }
@@ -871,29 +833,25 @@ void vpRobotBiclops::setPosition(const char *filename)
   is given.
 
 */
-void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame,
-                                 vpColVector &q)
+void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   switch (frame) {
   case vpRobot::CAMERA_FRAME:
     vpERROR_TRACE("Cannot get position in camera frame: not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get position in camera frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in camera frame: "
+                                                              "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot get position in reference frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get position in reference frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in reference frame: "
+                                                              "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot get position in mixt frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get position in mixt frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in mixt frame: "
+                                                              "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
     break;
@@ -914,8 +872,7 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame,
     q.resize(vpBiclops::ndof);
 
     vpDEBUG_TRACE(12, "Lock mutex vpMeasure_mutex");
-    pthread_mutex_lock(
-        &vpMeasure_mutex); // Wait until a position is available
+    pthread_mutex_lock(&vpMeasure_mutex); // Wait until a position is available
 
     vpRobotBiclopsController::shmType shm;
 
@@ -966,17 +923,14 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame,
   autorized speed (see vpRobot::maxRotationVelocity).
 
 */
-void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame,
-                                 const vpColVector &q_dot)
+void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
-    vpERROR_TRACE(
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    throw vpRobotException(
-        vpRobotException::wrongStateError,
-        "Cannot send a velocity to the robot "
-        "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    vpERROR_TRACE("Cannot send a velocity to the robot "
+                  "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot send a velocity to the robot "
+                           "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }
 
   switch (frame) {
@@ -984,17 +938,15 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame,
     vpERROR_TRACE("Cannot send a velocity to the robot "
                   "in the camera frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot send a velocity to the robot "
-                           "in the camera frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
+                                                              "in the camera frame:"
+                                                              "functionality not implemented");
   }
   case vpRobot::ARTICULAR_FRAME: {
     if (q_dot.getRows() != 2) {
       vpERROR_TRACE("Bad dimension fo speed vector in articular frame");
-      throw vpRobotException(vpRobotException::wrongStateError,
-                             "Bad dimension for speed vector "
-                             "in articular frame");
+      throw vpRobotException(vpRobotException::wrongStateError, "Bad dimension for speed vector "
+                                                                "in articular frame");
     }
     break;
   }
@@ -1002,25 +954,22 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame,
     vpERROR_TRACE("Cannot send a velocity to the robot "
                   "in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot send a velocity to the robot "
-                           "in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
+                                                              "in the reference frame:"
+                                                              "functionality not implemented");
   }
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Cannot send a velocity to the robot "
                   "in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot send a velocity to the robot "
-                           "in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
+                                                              "in the mixt frame:"
+                                                              "functionality not implemented");
   }
   default: {
     vpERROR_TRACE("Error in spec of vpRobot. "
                   "Case not taken in account.");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot send a velocity to the robot ");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot ");
   }
   }
 
@@ -1088,29 +1037,25 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame,
   \exception vpRobotException::wrongStateError : If a not supported frame type
   is given.
 */
-void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame,
-                                 vpColVector &q_dot)
+void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot)
 {
   switch (frame) {
   case vpRobot::CAMERA_FRAME:
     vpERROR_TRACE("Cannot get position in camera frame: not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get position in camera frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in camera frame: "
+                                                              "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot get position in reference frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get position in reference frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in reference frame: "
+                                                              "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot get position in mixt frame: "
                   "not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get position in mixt frame: "
-                           "not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in mixt frame: "
+                                                              "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
     break;
@@ -1131,8 +1076,7 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame,
     q_dot.resize(vpBiclops::ndof);
 
     vpDEBUG_TRACE(12, "Lock mutex vpMeasure_mutex");
-    pthread_mutex_lock(
-        &vpMeasure_mutex); // Wait until a position is available
+    pthread_mutex_lock(&vpMeasure_mutex); // Wait until a position is available
 
     vpRobotBiclopsController::shmType shm;
 
@@ -1195,8 +1139,7 @@ vpColVector vpRobotBiclops::getVelocity(vpRobot::vpControlFrameType frame)
   \return true if a position was found, false otherwise.
 
 */
-bool vpRobotBiclops::readPositionFile(const std::string &filename,
-                                      vpColVector &q)
+bool vpRobotBiclops::readPositionFile(const std::string &filename, vpColVector &q)
 {
   std::ifstream fd(filename.c_str(), std::ios::in);
 
@@ -1215,10 +1158,8 @@ bool vpRobotBiclops::readPositionFile(const std::string &filename,
   while (std::getline(fd, line)) {
     lineNum++;
     if (lineNum == 1) {
-      if (!(line.compare(0, id.size(), id) ==
-            0)) { // check if Biclops position file
-        std::cout << "Error: this position file " << filename
-                  << " is not for Biclops robot" << std::endl;
+      if (!(line.compare(0, id.size(), id) == 0)) { // check if Biclops position file
+        std::cout << "Error: this position file " << filename << " is not for Biclops robot" << std::endl;
         return false;
       }
     }
@@ -1227,10 +1168,8 @@ bool vpRobotBiclops::readPositionFile(const std::string &filename,
     }
     if ((line.compare(0, key.size(), key) == 0)) { // decode position
       // check if there are at least njoint values in the line
-      std::vector<std::string> chain =
-          vpIoTools::splitChain(line, std::string(" "));
-      if (chain.size() <
-          vpBiclops::ndof + 1) // try to split with tab separator
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
+      if (chain.size() < vpBiclops::ndof + 1) // try to split with tab separator
         chain = vpIoTools::splitChain(line, std::string("\t"));
       if (chain.size() < vpBiclops::ndof + 1)
         continue;
@@ -1251,8 +1190,7 @@ bool vpRobotBiclops::readPositionFile(const std::string &filename,
   fd.close();
 
   if (!pos_found) {
-    std::cout << "Error: unable to find a position for Biclops robot in "
-              << filename << std::endl;
+    std::cout << "Error: unable to find a position for Biclops robot in " << filename << std::endl;
     return false;
   }
 
@@ -1281,8 +1219,7 @@ bool vpRobotBiclops::readPositionFile(const std::string &filename,
   is given.
 
 */
-void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame,
-                                     vpColVector &d)
+void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &d)
 {
   vpColVector q_current; // current position
 
@@ -1313,16 +1250,14 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame,
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE("Cannot get a velocity in the reference frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get a velocity in the reference frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the reference frame:"
+                                                              "functionality not implemented");
     break;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE("Cannot get a velocity in the mixt frame: "
                   "functionality not implemented");
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Cannot get a velocity in the mixt frame:"
-                           "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the mixt frame:"
+                                                              "functionality not implemented");
     break;
   }
 

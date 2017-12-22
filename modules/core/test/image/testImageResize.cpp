@@ -66,8 +66,7 @@ namespace
   \param h : Resize height.
   \param m : Resize interpolation method.
  */
-void usage(const char *name, const char *badparam, std::string ipath,
-           unsigned int &w, unsigned int &h, int &m)
+void usage(const char *name, const char *badparam, std::string ipath, unsigned int &w, unsigned int &h, int &m)
 {
   fprintf(stdout, "\n\
   Test image resize.\n\
@@ -122,8 +121,7 @@ void usage(const char *name, const char *badparam, std::string ipath,
   \param opt_click : Do not need click if set.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                unsigned int &w, unsigned int &h, int &method,
+bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &w, unsigned int &h, int &method,
                 bool &opt_display, bool &opt_click)
 {
   const char *optarg_;
@@ -196,8 +194,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, width, height, method, opt_display,
-                   opt_click) == false) {
+    if (getOptions(argc, argv, opt_ipath, width, height, method, opt_display, opt_click) == false) {
       exit(EXIT_FAILURE);
     }
 
@@ -211,8 +208,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -221,13 +217,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, width, height, method);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -241,35 +234,27 @@ int main(int argc, const char **argv)
       for (unsigned int cpt = 0; cpt < Itest.getSize(); cpt++) {
         Itest.bitmap[cpt] = cpt;
       }
-      vpImage<unsigned char> Itest_resize(Itest.getHeight() * 2,
-                                          Itest.getWidth() * 2),
+      vpImage<unsigned char> Itest_resize(Itest.getHeight() * 2, Itest.getWidth() * 2),
           Itest_resize2(Itest.getHeight(), Itest.getWidth());
-      vpImageTools::resize(Itest, Itest_resize,
-                           (vpImageTools::vpImageInterpolationType)m);
-      vpImageTools::resize(Itest_resize, Itest_resize2,
-                           (vpImageTools::vpImageInterpolationType)m);
+      vpImageTools::resize(Itest, Itest_resize, (vpImageTools::vpImageInterpolationType)m);
+      vpImageTools::resize(Itest_resize, Itest_resize2, (vpImageTools::vpImageInterpolationType)m);
       std::cout << "Itest:\n" << Itest << std::endl;
       std::cout << "Itest_resize:\n" << Itest_resize << std::endl;
       std::cout << "Itest_resize2:\n" << Itest_resize2 << std::endl;
-      std::cout << "(Itest ==Itest_resize2)? " << (Itest == Itest_resize2)
-                << std::endl;
+      std::cout << "(Itest ==Itest_resize2)? " << (Itest == Itest_resize2) << std::endl;
 
       Itest.resize(4, 4);
       for (unsigned int cpt = 0; cpt < Itest.getSize(); cpt++) {
         Itest.bitmap[cpt] = cpt;
       }
-      vpImageTools::resize(Itest, Itest_resize, Itest.getWidth() / 2,
-                           Itest.getHeight() / 2,
+      vpImageTools::resize(Itest, Itest_resize, Itest.getWidth() / 2, Itest.getHeight() / 2,
                            (vpImageTools::vpImageInterpolationType)m);
-      vpImageTools::resize(Itest_resize, Itest_resize2, Itest.getWidth(),
-                           Itest.getHeight(),
+      vpImageTools::resize(Itest_resize, Itest_resize2, Itest.getWidth(), Itest.getHeight(),
                            (vpImageTools::vpImageInterpolationType)m);
       std::cout << "\nItest:\n" << Itest << std::endl;
       std::cout << "Itest_resize:\n" << Itest_resize << std::endl;
       std::cout << "Itest_resize2:\n" << Itest_resize2 << std::endl;
-      std::cout << "(Itest ==Itest_resize2)? " << (Itest == Itest_resize2)
-                << std::endl
-                << std::endl;
+      std::cout << "(Itest ==Itest_resize2)? " << (Itest == Itest_resize2) << std::endl << std::endl;
     }
 
     // Grayscale image
@@ -282,12 +267,10 @@ int main(int argc, const char **argv)
 
     vpImage<unsigned char> I_resize;
     double t = vpTime::measureTimeMs();
-    vpImageTools::resize(I, I_resize, width, height,
-                         (vpImageTools::vpImageInterpolationType)method);
+    vpImageTools::resize(I, I_resize, width, height, (vpImageTools::vpImageInterpolationType)method);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to resize from " << I.getWidth() << "x"
-              << I.getHeight() << " to " << width << "x" << height << ": "
-              << t << " ms" << std::endl;
+    std::cout << "Time to resize from " << I.getWidth() << "x" << I.getHeight() << " to " << width << "x" << height
+              << ": " << t << " ms" << std::endl;
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX *d1 = new vpDisplayX, *d2 = new vpDisplayX;
@@ -305,18 +288,15 @@ int main(int argc, const char **argv)
 #endif
 
     if (opt_display) {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) ||                   \
-    defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||                      \
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||         \
     defined(VISP_HAVE_D3D9)
       d1->init(I, 0, 0, "Grayscale image");
-      d2->init(I_resize, (int)I.getWidth() + 80, 0,
-               "Grayscale image resized");
+      d2->init(I_resize, (int)I.getWidth() + 80, 0, "Grayscale image resized");
 #endif
 
       vpDisplay::display(I);
       vpDisplay::display(I_resize);
-      vpDisplay::displayText(I_resize, 20, 20, "Click to continue.",
-                             vpColor::red);
+      vpDisplay::displayText(I_resize, 20, 20, "Click to continue.", vpColor::red);
       vpDisplay::flush(I);
       vpDisplay::flush(I_resize);
 
@@ -335,12 +315,10 @@ int main(int argc, const char **argv)
 
     vpImage<vpRGBa> I_color_resize;
     t = vpTime::measureTimeMs();
-    vpImageTools::resize(I_color, I_color_resize, width, height,
-                         (vpImageTools::vpImageInterpolationType)method);
+    vpImageTools::resize(I_color, I_color_resize, width, height, (vpImageTools::vpImageInterpolationType)method);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Time to resize from " << I_color.getWidth() << "x"
-              << I_color.getHeight() << " to " << width << "x" << height
-              << ": " << t << " ms" << std::endl;
+    std::cout << "Time to resize from " << I_color.getWidth() << "x" << I_color.getHeight() << " to " << width << "x"
+              << height << ": " << t << " ms" << std::endl;
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX *d3 = new vpDisplayX, *d4 = new vpDisplayX;
@@ -358,18 +336,15 @@ int main(int argc, const char **argv)
 #endif
 
     if (opt_display) {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) ||                   \
-    defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||                      \
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||         \
     defined(VISP_HAVE_D3D9)
       d3->init(I_color, 0, 0, "Color image");
-      d4->init(I_color_resize, (int)I_color.getWidth() + 80, 0,
-               "Color image resized");
+      d4->init(I_color_resize, (int)I_color.getWidth() + 80, 0, "Color image resized");
 #endif
 
       vpDisplay::display(I_color);
       vpDisplay::display(I_color_resize);
-      vpDisplay::displayText(I_color_resize, 20, 20, "Click to quit.",
-                             vpColor::red);
+      vpDisplay::displayText(I_color_resize, 20, 20, "Click to quit.", vpColor::red);
       vpDisplay::flush(I_color);
       vpDisplay::flush(I_color_resize);
       if (opt_click) {
@@ -377,8 +352,7 @@ int main(int argc, const char **argv)
       }
     }
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) ||                   \
-    defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||                      \
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) ||         \
     defined(VISP_HAVE_D3D9)
     delete d1;
     delete d2;
@@ -387,14 +361,11 @@ int main(int argc, const char **argv)
 #endif
 
     vpImage<vpRGBa> I_color_double, I_color_double_half;
-    vpImageTools::resize(I_color, I_color_double, I_color.getWidth() * 2,
-                         I_color.getHeight() * 2,
+    vpImageTools::resize(I_color, I_color_double, I_color.getWidth() * 2, I_color.getHeight() * 2,
                          (vpImageTools::vpImageInterpolationType)method);
-    vpImageTools::resize(I_color_double, I_color_double_half,
-                         I_color.getWidth(), I_color.getHeight(),
+    vpImageTools::resize(I_color_double, I_color_double_half, I_color.getWidth(), I_color.getHeight(),
                          (vpImageTools::vpImageInterpolationType)method);
-    std::cout << "\n(I_color == I_color_double_half)? "
-              << (I_color == I_color_double_half) << std::endl;
+    std::cout << "\n(I_color == I_color_double_half)? " << (I_color == I_color_double_half) << std::endl;
 
     double root_mean_square_error = 0.0;
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
@@ -403,19 +374,14 @@ int main(int argc, const char **argv)
         root_mean_square_error += c_error.sumSquare();
       }
     }
-    std::cout << "Root Mean Square Error: "
-              << sqrt(root_mean_square_error / (I_color.getSize() * 3))
-              << std::endl;
+    std::cout << "Root Mean Square Error: " << sqrt(root_mean_square_error / (I_color.getSize() * 3)) << std::endl;
 
     vpImage<vpRGBa> I_color_half, I_color_half_double;
-    vpImageTools::resize(I_color, I_color_half, I_color.getWidth() / 2,
-                         I_color.getHeight() / 2,
+    vpImageTools::resize(I_color, I_color_half, I_color.getWidth() / 2, I_color.getHeight() / 2,
                          (vpImageTools::vpImageInterpolationType)method);
-    vpImageTools::resize(I_color_half, I_color_half_double,
-                         I_color.getWidth(), I_color.getHeight(),
+    vpImageTools::resize(I_color_half, I_color_half_double, I_color.getWidth(), I_color.getHeight(),
                          (vpImageTools::vpImageInterpolationType)method);
-    std::cout << "\n(I_color == I_color_half_double)? "
-              << (I_color == I_color_half_double) << std::endl;
+    std::cout << "\n(I_color == I_color_half_double)? " << (I_color == I_color_half_double) << std::endl;
 
     root_mean_square_error = 0.0;
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
@@ -424,9 +390,7 @@ int main(int argc, const char **argv)
         root_mean_square_error += c_error.sumSquare();
       }
     }
-    std::cout << "Root Mean Square Error: "
-              << sqrt(root_mean_square_error / (I_color.getSize() * 3))
-              << std::endl;
+    std::cout << "Root Mean Square Error: " << sqrt(root_mean_square_error / (I_color.getSize() * 3)) << std::endl;
 
     return EXIT_SUCCESS;
   } catch (const vpException &e) {

@@ -44,9 +44,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_OPENCV_NONFREE) &&                                    \
-     (VISP_HAVE_OPENCV_VERSION <                                             \
-      0x030000)) // Require opencv >= 1.1.0 < 3.0.0
+#if (defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)) // Require opencv >= 1.1.0 < 3.0.0
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
@@ -69,8 +67,7 @@
 #define GETOPTARGS "cdi:h"
 
 void usage(const char *name, const char *badparam, std::string ipath);
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
 
 /*!
 
@@ -124,8 +121,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -185,8 +181,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) ==
-        false) {
+    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
       exit(-1);
     }
 
@@ -200,8 +195,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -210,13 +204,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 
@@ -253,11 +244,9 @@ int main(int argc, const char **argv)
       // another error message has been printed from readPGM to give more
       // information about the error
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr << "  Cannot read " << filenameRef << "or" << filenameCur
-                << std::endl;
+      std::cerr << "  Cannot read " << filenameRef << "or" << filenameCur << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable."
-                << std::endl;
+                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       exit(-1);
     }
 
@@ -321,8 +310,7 @@ int main(int argc, const char **argv)
 
     unsigned int nbrPair;
     if (opt_display) {
-      display[1].init(Icur, (int)(100 + Iref.getWidth()), 100,
-                      "Current image");
+      display[1].init(Icur, (int)(100 + Iref.getWidth()), 100, "Current image");
       // display variable.
       vpDisplay::display(Icur);
       // Flush the display
@@ -340,8 +328,7 @@ int main(int argc, const char **argv)
       for (int i = 0; i < 2; i++) {
         vpDisplay::getClick(Icur, corners[i]);
       }
-      vpDisplay::displayRectangle(Icur, corners[0], corners[1],
-                                  vpColor::green);
+      vpDisplay::displayRectangle(Icur, corners[0], corners[1], vpColor::green);
       vpDisplay::flush(Icur);
       unsigned int height, width;
       height = (unsigned int)(corners[1].get_i() - corners[0].get_i());

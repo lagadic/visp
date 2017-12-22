@@ -52,16 +52,13 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void vpHomography::HartleyNormalization(const std::vector<double> &x,
-                                        const std::vector<double> &y,
-                                        std::vector<double> &xn,
-                                        std::vector<double> &yn, double &xg,
-                                        double &yg, double &coef)
+void vpHomography::HartleyNormalization(const std::vector<double> &x, const std::vector<double> &y,
+                                        std::vector<double> &xn, std::vector<double> &yn, double &xg, double &yg,
+                                        double &coef)
 {
   if (x.size() != y.size())
-    throw(vpException(vpException::dimensionError,
-                      "Hartley normalization require that x and y vector "
-                      "have the same dimension"));
+    throw(vpException(vpException::dimensionError, "Hartley normalization require that x and y vector "
+                                                   "have the same dimension"));
 
   unsigned int n = (unsigned int)x.size();
   if (xn.size() != n)
@@ -105,10 +102,8 @@ void vpHomography::HartleyNormalization(const std::vector<double> &x,
   }
 }
 
-void vpHomography::HartleyNormalization(unsigned int n, const double *x,
-                                        const double *y, double *xn,
-                                        double *yn, double &xg, double &yg,
-                                        double &coef)
+void vpHomography::HartleyNormalization(unsigned int n, const double *x, const double *y, double *xn, double *yn,
+                                        double &xg, double &yg, double &coef)
 {
   unsigned int i;
   xg = 0;
@@ -149,11 +144,8 @@ void vpHomography::HartleyNormalization(unsigned int n, const double *x,
 
 //---------------------------------------------------------------------------------------
 
-void vpHomography::HartleyDenormalization(vpHomography &aHbn,
-                                          vpHomography &aHb, double xg1,
-                                          double yg1, double coef1,
-                                          double xg2, double yg2,
-                                          double coef2)
+void vpHomography::HartleyDenormalization(vpHomography &aHbn, vpHomography &aHb, double xg1, double yg1, double coef1,
+                                          double xg2, double yg2, double coef2)
 {
 
   // calcul des transformations a appliquer sur M_norm pour obtenir M
@@ -255,21 +247,16 @@ void vpHomography::HartleyDenormalization(vpHomography &aHbn,
   \exception vpMatrixException::rankDeficient : When the rank of the matrix
   that should be 8 is deficient.
 */
-void vpHomography::DLT(const std::vector<double> &xb,
-                       const std::vector<double> &yb,
-                       const std::vector<double> &xa,
-                       const std::vector<double> &ya, vpHomography &aHb,
-                       bool normalization)
+void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
+                       const std::vector<double> &ya, vpHomography &aHb, bool normalization)
 {
   unsigned int n = (unsigned int)xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
-    throw(vpException(vpException::dimensionError,
-                      "Bad dimension for DLT homography estimation"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for DLT homography estimation"));
 
   // 4 point are required
   if (n < 4)
-    throw(vpException(vpException::fatalError,
-                      "There must be at least 4 matched points"));
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
   try {
     std::vector<double> xan, yan, xbn, ybn;
@@ -341,9 +328,7 @@ void vpHomography::DLT(const std::vector<double> &xb,
       if (D[i] > 1e-7)
         rank++;
     if (rank < 7) {
-      throw(vpMatrixException(vpMatrixException::rankDeficient,
-                              "Matrix rank %d is deficient (should be 8)",
-                              rank));
+      throw(vpMatrixException(vpMatrixException::rankDeficient, "Matrix rank %d is deficient (should be 8)", rank));
     }
     // h = is the column of V associated with the smallest singular value of A
 
@@ -367,8 +352,7 @@ void vpHomography::DLT(const std::vector<double> &xb,
 
     if (normalization) {
       // H after denormalization
-      vpHomography::HartleyDenormalization(aHbn, aHb, xg1, yg1, coef1, xg2,
-                                           yg2, coef2);
+      vpHomography::HartleyDenormalization(aHbn, aHb, xg1, yg1, coef1, xg2, yg2, coef2);
     } else {
       aHb = aHbn;
     }

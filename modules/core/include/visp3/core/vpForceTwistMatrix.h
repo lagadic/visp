@@ -91,21 +91,21 @@ becomes block diagonal. It allows than to compute the force/torque at point
 
 int main()
 {
-  vpForceTwistMatrix sFp; // Twist transformation matrix from sensor to probe
-frame
+  // Twist transformation matrix from sensor to probe frame
+  vpForceTwistMatrix sFp;
 
-  vpHomogeneousMatrix sMp; // Force/torque sensor frame to probe frame
-transformation
+  // Force/torque sensor frame to probe frame transformation
+  vpHomogeneousMatrix sMp;
   // ... sMp need here to be initialized
 
   sFp.buildFrom(sMp);
 
-  vpColVector p_H(6); // Force/torque skew in the probe frame:
-fx,fy,fz,tx,ty,tz
+  // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
+  vpColVector p_H(6);
   // ... p_H should here have an initial value
 
-  vpColVector s_H(6); // Force/torque skew in the sensor frame:
-fx,fy,fz,tx,ty,tz
+  // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz
+  vpColVector s_H(6);
 
   // Compute the value of the force/torque in the sensor frame
   s_H = sFp * p_H;
@@ -125,10 +125,9 @@ public:
   // Construction from Translation and rotation (matrix parameterization)
   vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   // Construction from Translation and rotation (ThetaU parameterization)
-  vpForceTwistMatrix(const vpTranslationVector &t,
-                     const vpThetaUVector &thetau);
-  vpForceTwistMatrix(const double tx, const double ty, const double tz,
-                     const double tux, const double tuy, const double tuz);
+  vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpForceTwistMatrix(const double tx, const double ty, const double tz, const double tux, const double tuy,
+                     const double tuz);
 
   vpForceTwistMatrix(const vpRotationMatrix &R);
   vpForceTwistMatrix(const vpThetaUVector &thetau);
@@ -138,12 +137,9 @@ public:
   */
   virtual ~vpForceTwistMatrix(){};
 
-  vpForceTwistMatrix buildFrom(const vpTranslationVector &t,
-                               const vpRotationMatrix &R);
-  vpForceTwistMatrix buildFrom(const vpTranslationVector &t,
-                               const vpThetaUVector &thetau);
-  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M,
-                               bool full = true);
+  vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
+  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
 
   vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
   vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
@@ -159,22 +155,19 @@ public:
   // copy operator from vpMatrix (handle with care)
   vpForceTwistMatrix &operator=(const vpForceTwistMatrix &H);
 
-  int print(std::ostream &s, unsigned int length,
-            char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 
   /*!
     This function is not applicable to a velocity twist matrix that is always
     a 6-by-6 matrix. \exception vpException::fatalError When this function is
     called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError,
-                      "Cannot resize a velocity twist matrix"));
+    throw(vpException(vpException::fatalError, "Cannot resize a velocity twist matrix"));
   };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

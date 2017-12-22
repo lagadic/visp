@@ -57,9 +57,8 @@
  */
 void fprintf_Position(FILE *f, AritPosition *pp)
 {
-  fprintf(f, "%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n",
-          pp->rotate.x, pp->rotate.y, pp->rotate.z, pp->scale.x, pp->scale.y,
-          pp->scale.z, pp->translate.x, pp->translate.y, pp->translate.z);
+  fprintf(f, "%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n%.3f\t%.3f\t%.3f\n", pp->rotate.x, pp->rotate.y, pp->rotate.z,
+          pp->scale.x, pp->scale.y, pp->scale.z, pp->translate.x, pp->translate.y, pp->translate.z);
 }
 
 /*
@@ -69,8 +68,7 @@ void fprintf_Position(FILE *f, AritPosition *pp)
  */
 void fscanf_Point3f(Point3f *pp)
 {
-  static const char *err_tbl[] = {"float expected (coordinate ",
-                                  " of point)"};
+  static const char *err_tbl[] = {"float expected (coordinate ", " of point)"};
   int t;
 
   /* Lecture de la premiere coordonnee du point.	*/
@@ -99,8 +97,7 @@ void fscanf_Point3f(Point3f *pp)
  */
 void fscanf_Vector(Vector *vp)
 {
-  static const char *err_tbl[] = {"float expected (coordinate ",
-                                  " of vector)"};
+  static const char *err_tbl[] = {"float expected (coordinate ", " of vector)"};
 
   int t;
 

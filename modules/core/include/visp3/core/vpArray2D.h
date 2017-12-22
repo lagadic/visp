@@ -88,15 +88,11 @@ public:
   Basic constructor of a 2D array.
   Number of columns and rows are set to zero.
   */
-  vpArray2D<Type>()
-    : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
-  {
-  }
+  vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL) {}
   /*!
   Copy constructor of a 2D array.
   */
-  vpArray2D<Type>(const vpArray2D<Type> &A)
-    : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  vpArray2D<Type>(const vpArray2D<Type> &A) : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
   {
     resize(A.rowNum, A.colNum, false, false);
     memcpy(data, A.data, rowNum * colNum * sizeof(Type));
@@ -107,8 +103,7 @@ public:
   \param r : Array number of rows.
   \param c : Array number of columns.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c)
-    : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  vpArray2D<Type>(unsigned int r, unsigned int c) : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
   {
     resize(r, c);
   }
@@ -119,8 +114,7 @@ public:
   \param c : Array number of columns.
   \param val : Each element of the array is set to \e val.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
-    : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  vpArray2D<Type>(unsigned int r, unsigned int c, Type val) : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
   {
     resize(r, c, false, false);
     *this = val;
@@ -174,8 +168,8 @@ public:
   \param recopy_ : if true, will perform an explicit recopy of the old data
   if needed and if flagNullify is set to false.
   */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true, const bool recopy_ = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true,
+              const bool recopy_ = true)
   {
     if ((nrows == rowNum) && (ncols == colNum)) {
       if (flagNullify && this->data != NULL) {
@@ -183,8 +177,7 @@ public:
       }
     } else {
       bool recopy = !flagNullify && recopy_; // priority to flagNullify
-      const bool recopyNeeded = (ncols != this->colNum && this->colNum > 0 &&
-                                 ncols > 0 && (!flagNullify || recopy));
+      const bool recopyNeeded = (ncols != this->colNum && this->colNum > 0 && ncols > 0 && (!flagNullify || recopy));
       Type *copyTmp = NULL;
       unsigned int rowTmp = 0, colTmp = 0;
 
@@ -203,18 +196,15 @@ public:
       if ((NULL == this->data) && (0 != this->dsize)) {
         if (copyTmp != NULL)
           delete[] copyTmp;
-        throw(vpException(
-            vpException::memoryAllocationError,
-            "Memory allocation error when allocating 2D array data"));
+        throw(vpException(vpException::memoryAllocationError, "Memory allocation error when allocating 2D array data"));
       }
 
       this->rowPtrs = (Type **)realloc(this->rowPtrs, nrows * sizeof(Type *));
       if ((NULL == this->rowPtrs) && (0 != this->dsize)) {
         if (copyTmp != NULL)
           delete[] copyTmp;
-        throw(vpException(
-            vpException::memoryAllocationError,
-            "Memory allocation error when allocating 2D array rowPtrs"));
+        throw(vpException(vpException::memoryAllocationError,
+                          "Memory allocation error when allocating 2D array rowPtrs"));
       }
 
       // Update rowPtrs
@@ -233,10 +223,8 @@ public:
         memset(this->data, 0, this->dsize * sizeof(Type));
       } else if (recopyNeeded && this->rowPtrs != NULL) {
         // Recopy...
-        const unsigned int minRow =
-            (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
-        const unsigned int minCol =
-            (this->colNum < colTmp) ? this->colNum : colTmp;
+        const unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
+        const unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
         for (unsigned int i = 0; i < this->rowNum; ++i) {
           for (unsigned int j = 0; j < this->colNum; ++j) {
             if ((minRow > i) && (minCol > j)) {
@@ -327,8 +315,7 @@ public:
 
     \sa save()
   */
-  static bool load(const std::string &filename, vpArray2D<Type> &A,
-                   const bool binary = false, char *header = NULL)
+  static bool load(const std::string &filename, vpArray2D<Type> &A, const bool binary = false, char *header = NULL)
   {
     std::fstream file;
 
@@ -366,9 +353,8 @@ public:
       } while (!headerIsDecoded);
 
       if (header != NULL) {
-#if defined(__MINGW32__) ||                                                  \
-    !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if defined(__MINGW32__) ||                                                                                            \
+    !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         sprintf(header, "%s", h.c_str());
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
@@ -379,10 +365,8 @@ public:
       file >> rows;
       file >> cols;
 
-      if (rows >= (std::numeric_limits<unsigned int>::max)() ||
-          cols >= (std::numeric_limits<unsigned int>::max)())
-        throw vpException(vpException::badValue,
-                          "Array exceed the max size.");
+      if (rows >= (std::numeric_limits<unsigned int>::max)() || cols >= (std::numeric_limits<unsigned int>::max)())
+        throw vpException(vpException::badValue, "Array exceed the max size.");
 
       A.resize(rows, cols);
 
@@ -402,9 +386,8 @@ public:
         h += c;
       }
       if (header != NULL) {
-#if defined(__MINGW32__) ||                                                  \
-    !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if defined(__MINGW32__) ||                                                                                            \
+    !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         sprintf(header, "%s", h.c_str());
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
@@ -440,8 +423,7 @@ public:
     \sa saveYAML()
 
   */
-  static bool loadYAML(const std::string &filename, vpArray2D<Type> &A,
-                       char *header = NULL)
+  static bool loadYAML(const std::string &filename, vpArray2D<Type> &A, char *header = NULL)
   {
     std::fstream file;
 
@@ -485,8 +467,7 @@ public:
           // get indentation level which is common to all lines
           lineStart = (unsigned int)line.find("[") + 1;
         }
-        std::stringstream ss(
-            line.substr(lineStart, line.find("]") - lineStart));
+        std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
         j = 0;
         while (getline(ss, subs, ','))
           A[i][j++] = atof(subs.c_str());
@@ -496,9 +477,8 @@ public:
 
     if (header != NULL) {
       std::string h_ = h.substr(0, h.size() - 1); // Remove last '\n' char
-#if defined(__MINGW32__) ||                                                  \
-    !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
-                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if defined(__MINGW32__) ||                                                                                            \
+    !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       sprintf(header, "%s", h_.c_str());
 #else
       _snprintf_s(header, h_.size() + 1, _TRUNCATE, "%s", h_.c_str());
@@ -525,8 +505,8 @@ public:
 
     \sa load()
   */
-  static bool save(const std::string &filename, const vpArray2D<Type> &A,
-                   const bool binary = false, const char *header = "")
+  static bool save(const std::string &filename, const vpArray2D<Type> &A, const bool binary = false,
+                   const char *header = "")
   {
     std::fstream file;
 
@@ -614,8 +594,7 @@ public:
 
     \sa loadYAML()
   */
-  static bool saveYAML(const std::string &filename, const vpArray2D<Type> &A,
-                       const char *header = "")
+  static bool saveYAML(const std::string &filename, const vpArray2D<Type> &A, const char *header = "")
   {
     std::fstream file;
 
@@ -708,12 +687,10 @@ template <class Type> Type vpArray2D<Type>::getMaxValue() const
   \return m1.hadamard(m2) The Hadamard product : \f$ m1 \circ m2 = (m1 \circ
   m2)_{i,j} = (m1)_{i,j} (m2)_{i,j} \f$
 */
-template <class Type>
-vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<Type> &m) const
+template <class Type> vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<Type> &m) const
 {
   if (m.getRows() != rowNum || m.getCols() != colNum) {
-    throw(vpException(vpException::dimensionError,
-                      "Hadamard product: bad dimensions!"));
+    throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
   }
 
   vpArray2D<Type> out;

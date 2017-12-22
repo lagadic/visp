@@ -67,15 +67,12 @@
 
 */
 vpServo::vpServo()
-  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(),
-    servoType(vpServo::NONE), rankJ1(0), featureList(), desiredFeatureList(),
-    featureSelectionList(), lambda(), signInteractionMatrix(1),
-    interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(),
-    init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
-    init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
-    interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
-    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(),
-    mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6)
+  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE), rankJ1(0),
+    featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
+    interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false),
+    fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
+    interactionMatrixComputed(false), dim_task(0), taskWasKilled(false), forceInteractionMatrixComputation(false),
+    WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6)
 {
   cJc.eye();
 }
@@ -95,15 +92,12 @@ vpServo::vpServo()
 
  */
 vpServo::vpServo(vpServoType servo_type)
-  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(),
-    servoType(servo_type), rankJ1(0), featureList(), desiredFeatureList(),
-    featureSelectionList(), lambda(), signInteractionMatrix(1),
-    interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(),
-    init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
-    init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
-    interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
-    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(),
-    mu(4), e1_initial(), iscJcIdentity(true), cJc(6, 6)
+  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(servo_type), rankJ1(0), featureList(),
+    desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1), interactionMatrixType(DESIRED),
+    inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
+    init_eJe(false), fJe(), init_fJe(false), errorComputed(false), interactionMatrixComputed(false), dim_task(0),
+    taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial(),
+    iscJcIdentity(true), cJc(6, 6)
 {
   cJc.eye();
 }
@@ -201,17 +195,14 @@ void vpServo::kill()
     // kill the current and desired feature lists
 
     // current list
-    for (std::list<vpBasicFeature *>::iterator it = featureList.begin();
-         it != featureList.end(); ++it) {
+    for (std::list<vpBasicFeature *>::iterator it = featureList.begin(); it != featureList.end(); ++it) {
       if ((*it)->getDeallocate() == vpBasicFeature::vpServo) {
         delete (*it);
         (*it) = NULL;
       }
     }
     // desired list
-    for (std::list<vpBasicFeature *>::iterator it =
-             desiredFeatureList.begin();
-         it != desiredFeatureList.end(); ++it) {
+    for (std::list<vpBasicFeature *>::iterator it = desiredFeatureList.begin(); it != desiredFeatureList.end(); ++it) {
       if ((*it)->getDeallocate() == vpBasicFeature::vpServo) {
         delete (*it);
         (*it) = NULL;
@@ -265,7 +256,9 @@ considered dof:
   - dof[5] = 1 if rotation along Z is controled, 0 otherwise;
 
   The following example shows how to use this function to control only wx, wy
-like a pan/tilt: \code #include <visp3/visual_features/vpFeaturePoint.h>
+like a pan/tilt:
+\code
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
 int main()
@@ -317,8 +310,7 @@ void vpServo::setCameraDoF(const vpColVector &dof)
 
   \param os : Output stream.
 */
-void vpServo::print(const vpServo::vpServoPrintType displayLevel,
-                    std::ostream &os)
+void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 {
   switch (displayLevel) {
   case vpServo::ALL: {
@@ -356,15 +348,14 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel,
     std::list<vpBasicFeature *>::const_iterator it_s_star;
     std::list<unsigned int>::const_iterator it_select;
 
-    for (it_s = featureList.begin(), it_select = featureSelectionList.begin();
-         it_s != featureList.end(); ++it_s, ++it_select) {
+    for (it_s = featureList.begin(), it_select = featureSelectionList.begin(); it_s != featureList.end();
+         ++it_s, ++it_select) {
       os << "";
       (*it_s)->print((*it_select));
     }
 
     os << "List of desired visual features : s*" << std::endl;
-    for (it_s_star = desiredFeatureList.begin(),
-        it_select = featureSelectionList.begin();
+    for (it_s_star = desiredFeatureList.begin(), it_select = featureSelectionList.begin();
          it_s_star != desiredFeatureList.end(); ++it_s_star, ++it_select) {
       os << "";
       (*it_s_star)->print((*it_select));
@@ -425,8 +416,8 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel,
     std::list<vpBasicFeature *>::const_iterator it_s;
     std::list<unsigned int>::const_iterator it_select;
 
-    for (it_s = featureList.begin(), it_select = featureSelectionList.begin();
-         it_s != featureList.end(); ++it_s, ++it_select) {
+    for (it_s = featureList.begin(), it_select = featureSelectionList.begin(); it_s != featureList.end();
+         ++it_s, ++it_select) {
       os << "";
       (*it_s)->print((*it_select));
     }
@@ -438,8 +429,7 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel,
     std::list<vpBasicFeature *>::const_iterator it_s_star;
     std::list<unsigned int>::const_iterator it_select;
 
-    for (it_s_star = desiredFeatureList.begin(),
-        it_select = featureSelectionList.begin();
+    for (it_s_star = desiredFeatureList.begin(), it_select = featureSelectionList.begin();
          it_s_star != desiredFeatureList.end(); ++it_s_star, ++it_select) {
       os << "";
       (*it_s_star)->print((*it_select));
@@ -486,22 +476,25 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel,
   multiple features.
 
   The following sample code explain how to use this method to add a visual
-  feature point \f$(x,y)\f$: \code vpFeaturePoint s, s_star;
+  feature point \f$(x,y)\f$:
+ \code
+  vpFeaturePoint s, s_star;
   ...
   vpServo task;
   task.addFeature(s, s_star);
   \endcode
 
   For example to use only the \f$x\f$ visual feature, the previous code
-  becomes: \code vpFeaturePoint s, s_star;
+  becomes:
+  \code
+  vpFeaturePoint s, s_star;
   ...
   vpServo task;
   task.addFeature(s, s_star, vpFeaturePoint::selectX());
   \endcode
 
   */
-void vpServo::addFeature(vpBasicFeature &s_cur, vpBasicFeature &s_star,
-                         unsigned int select)
+void vpServo::addFeature(vpBasicFeature &s_cur, vpBasicFeature &s_star, unsigned int select)
 {
   featureList.push_back(&s_cur);
   desiredFeatureList.push_back(&s_star);
@@ -518,7 +511,8 @@ void vpServo::addFeature(vpBasicFeature &s_cur, vpBasicFeature &s_star,
   features.
 
   The following sample code explain how to use this method to add a \f$\theta
-  {\bf u} =(\theta u_x, \theta u_y, \theta u_z)\f$ feature: \code
+  {\bf u} =(\theta u_x, \theta u_y, \theta u_z)\f$ feature:
+  \code
   vpFeatureThetaU s(vpFeatureThetaU::cRcd);
   ...
   vpServo task;
@@ -526,7 +520,9 @@ void vpServo::addFeature(vpBasicFeature &s_cur, vpBasicFeature &s_star,
   \endcode
 
   For example to use only the \f$\theta u_x\f$ feature, the previous code
-  becomes: \code vpFeatureThetaU s(vpFeatureThetaU::cRcd);
+  becomes:
+  \code
+  vpFeatureThetaU s(vpFeatureThetaU::cRcd);
   ...
   vpServo task;
   task.addFeature(s, vpFeatureThetaU::selectTUx);
@@ -567,30 +563,27 @@ unsigned int vpServo::getDimension() const
   std::list<vpBasicFeature *>::const_iterator it_s;
   std::list<unsigned int>::const_iterator it_select;
 
-  for (it_s = featureList.begin(), it_select = featureSelectionList.begin();
-       it_s != featureList.end(); ++it_s, ++it_select) {
+  for (it_s = featureList.begin(), it_select = featureSelectionList.begin(); it_s != featureList.end();
+       ++it_s, ++it_select) {
     dim += (*it_s)->getDimension(*it_select);
   }
 
   return dim;
 }
 
-void vpServo::setInteractionMatrixType(
-    const vpServoIteractionMatrixType &interactionMatrix_type,
-    const vpServoInversionType &interactionMatrixInversion)
+void vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrix_type,
+                                       const vpServoInversionType &interactionMatrixInversion)
 {
   this->interactionMatrixType = interactionMatrix_type;
   this->inversionType = interactionMatrixInversion;
 }
 
-static void computeInteractionMatrixFromList(
-    const std::list<vpBasicFeature *> &featureList,
-    const std::list<unsigned int> &featureSelectionList, vpMatrix &L)
+static void computeInteractionMatrixFromList(const std::list<vpBasicFeature *> &featureList,
+                                             const std::list<unsigned int> &featureSelectionList, vpMatrix &L)
 {
   if (featureList.empty()) {
     vpERROR_TRACE("feature list empty, cannot compute Ls");
-    throw(vpServoException(vpServoException::noFeatureError,
-                           "feature list empty, cannot compute Ls"));
+    throw(vpServoException(vpServoException::noFeatureError, "feature list empty, cannot compute Ls"));
   }
 
   /* The matrix dimension is not known before the affectation loop.
@@ -624,8 +617,7 @@ static void computeInteractionMatrixFromList(
   std::list<vpBasicFeature *>::const_iterator it;
   std::list<unsigned int>::const_iterator it_select;
 
-  for (it = featureList.begin(), it_select = featureSelectionList.begin();
-       it != featureList.end(); ++it, ++it_select) {
+  for (it = featureList.begin(), it_select = featureSelectionList.begin(); it != featureList.end(); ++it, ++it_select) {
     /* Get s. */
     matrixTmp = (*it)->interaction(*it_select);
     unsigned int rowMatrixTmp = matrixTmp.getRows();
@@ -666,8 +658,7 @@ vpMatrix vpServo::computeInteractionMatrix()
     switch (interactionMatrixType) {
     case CURRENT: {
       try {
-        computeInteractionMatrixFromList(this->featureList,
-                                         this->featureSelectionList, L);
+        computeInteractionMatrixFromList(this->featureList, this->featureSelectionList, L);
         dim_task = L.getRows();
         interactionMatrixComputed = true;
       }
@@ -678,10 +669,8 @@ vpMatrix vpServo::computeInteractionMatrix()
     } break;
     case DESIRED: {
       try {
-        if (interactionMatrixComputed == false ||
-            forceInteractionMatrixComputation == true) {
-          computeInteractionMatrixFromList(this->desiredFeatureList,
-                                           this->featureSelectionList, L);
+        if (interactionMatrixComputed == false || forceInteractionMatrixComputation == true) {
+          computeInteractionMatrixFromList(this->desiredFeatureList, this->featureSelectionList, L);
 
           dim_task = L.getRows();
           interactionMatrixComputed = true;
@@ -694,10 +683,8 @@ vpMatrix vpServo::computeInteractionMatrix()
     case MEAN: {
       vpMatrix Lstar(L.getRows(), L.getCols());
       try {
-        computeInteractionMatrixFromList(this->featureList,
-                                         this->featureSelectionList, L);
-        computeInteractionMatrixFromList(this->desiredFeatureList,
-                                         this->featureSelectionList, Lstar);
+        computeInteractionMatrixFromList(this->featureList, this->featureSelectionList, L);
+        computeInteractionMatrixFromList(this->desiredFeatureList, this->featureSelectionList, Lstar);
       } catch (...) {
         throw;
       }
@@ -730,13 +717,11 @@ vpColVector vpServo::computeError()
 {
   if (featureList.empty()) {
     vpERROR_TRACE("feature list empty, cannot compute Ls");
-    throw(vpServoException(vpServoException::noFeatureError,
-                           "feature list empty, cannot compute Ls"));
+    throw(vpServoException(vpServoException::noFeatureError, "feature list empty, cannot compute Ls"));
   }
   if (desiredFeatureList.empty()) {
     vpERROR_TRACE("feature list empty, cannot compute Ls");
-    throw(vpServoException(vpServoException::noFeatureError,
-                           "feature list empty, cannot compute Ls"));
+    throw(vpServoException(vpServoException::noFeatureError, "feature list empty, cannot compute Ls"));
   }
 
   try {
@@ -789,8 +774,7 @@ vpColVector vpServo::computeError()
     std::list<vpBasicFeature *>::const_iterator it_s_star;
     std::list<unsigned int>::const_iterator it_select;
 
-    for (it_s = featureList.begin(), it_s_star = desiredFeatureList.begin(),
-        it_select = featureSelectionList.begin();
+    for (it_s = featureList.begin(), it_s_star = desiredFeatureList.begin(), it_select = featureSelectionList.begin();
          it_s != featureList.end(); ++it_s, ++it_s_star, ++it_select) {
       current_s = (*it_s);
       desired_s = (*it_s_star);
@@ -850,8 +834,7 @@ bool vpServo::testInitialization()
   switch (servoType) {
   case NONE:
     vpERROR_TRACE("No control law have been yet defined");
-    throw(vpServoException(vpServoException::servoError,
-                           "No control law have been yet defined"));
+    throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
     break;
   case EYEINHAND_CAMERA:
     return true;
@@ -890,8 +873,7 @@ bool vpServo::testUpdated()
   switch (servoType) {
   case NONE:
     vpERROR_TRACE("No control law have been yet defined");
-    throw(vpServoException(vpServoException::servoError,
-                           "No control law have been yet defined"));
+    throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
     break;
   case EYEINHAND_CAMERA:
     return true;
@@ -961,10 +943,9 @@ vpColVector vpServo::computeControlLaw()
     if (iteration == 0) {
       if (testInitialization() == false) {
         vpERROR_TRACE("All the matrices are not correctly initialized");
-        throw(vpServoException(vpServoException::servoError,
-                               "Cannot compute control law "
-                               "All the matrices are not correctly"
-                               "initialized"));
+        throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
+                                                             "All the matrices are not correctly"
+                                                             "initialized"));
       }
     }
     if (testUpdated() == false) {
@@ -975,8 +956,7 @@ vpColVector vpServo::computeControlLaw()
     switch (servoType) {
     case NONE:
       vpERROR_TRACE("No control law have been yet defined");
-      throw(vpServoException(vpServoException::servoError,
-                             "No control law have been yet defined"));
+      throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
       break;
     case EYEINHAND_CAMERA:
     case EYEINHAND_L_cVe_eJe:
@@ -1116,10 +1096,9 @@ vpColVector vpServo::computeControlLaw(double t)
     if (iteration == 0) {
       if (testInitialization() == false) {
         vpERROR_TRACE("All the matrices are not correctly initialized");
-        throw(vpServoException(vpServoException::servoError,
-                               "Cannot compute control law "
-                               "All the matrices are not correctly"
-                               "initialized"));
+        throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
+                                                             "All the matrices are not correctly"
+                                                             "initialized"));
       }
     }
     if (testUpdated() == false) {
@@ -1130,8 +1109,7 @@ vpColVector vpServo::computeControlLaw(double t)
     switch (servoType) {
     case NONE:
       vpERROR_TRACE("No control law have been yet defined");
-      throw(vpServoException(vpServoException::servoError,
-                             "No control law have been yet defined"));
+      throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
       break;
     case EYEINHAND_CAMERA:
     case EYEINHAND_L_cVe_eJe:
@@ -1209,8 +1187,7 @@ vpColVector vpServo::computeControlLaw(double t)
 
     // memorize the initial e1 value if the function is called the first time
     // or if the time given as parameter is equal to 0.
-    if (iteration == 0 ||
-        std::fabs(t) < std::numeric_limits<double>::epsilon()) {
+    if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
       e1_initial = e1;
     }
     // Security check. If size of e1_initial and e1 differ, that means that
@@ -1268,8 +1245,7 @@ vpColVector vpServo::computeControlLaw(double t)
   {{\bf e}(0)}\f$ is refreshed internally. \param e_dot_init : Initial value
   of \f${\bf \dot e}(0)\f$.
 */
-vpColVector vpServo::computeControlLaw(double t,
-                                       const vpColVector &e_dot_init)
+vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 {
   static int iteration = 0;
 
@@ -1280,10 +1256,9 @@ vpColVector vpServo::computeControlLaw(double t,
     if (iteration == 0) {
       if (testInitialization() == false) {
         vpERROR_TRACE("All the matrices are not correctly initialized");
-        throw(vpServoException(vpServoException::servoError,
-                               "Cannot compute control law "
-                               "All the matrices are not correctly"
-                               "initialized"));
+        throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
+                                                             "All the matrices are not correctly"
+                                                             "initialized"));
       }
     }
     if (testUpdated() == false) {
@@ -1294,8 +1269,7 @@ vpColVector vpServo::computeControlLaw(double t,
     switch (servoType) {
     case NONE:
       vpERROR_TRACE("No control law have been yet defined");
-      throw(vpServoException(vpServoException::servoError,
-                             "No control law have been yet defined"));
+      throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
       break;
     case EYEINHAND_CAMERA:
     case EYEINHAND_L_cVe_eJe:
@@ -1373,8 +1347,7 @@ vpColVector vpServo::computeControlLaw(double t,
 
     // memorize the initial e1 value if the function is called the first time
     // or if the time given as parameter is equal to 0.
-    if (iteration == 0 ||
-        std::fabs(t) < std::numeric_limits<double>::epsilon()) {
+    if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
       e1_initial = e1;
     }
     // Security check. If size of e1_initial and e1 differ, that means that
@@ -1382,8 +1355,7 @@ vpColVector vpServo::computeControlLaw(double t,
     if (e1_initial.getRows() != e1.getRows())
       e1_initial = e1;
 
-    e = -lambda(e1) * e1 +
-        (e_dot_init + lambda(e1) * e1_initial) * exp(-mu * t);
+    e = -lambda(e1) * e1 + (e_dot_init + lambda(e1) * e1_initial) * exp(-mu * t);
 
     vpMatrix I;
 
@@ -1489,35 +1461,35 @@ void vpServo::computeProjectionOperators()
   updates the projection operators.
 
   The following sample code shows how to use this method to compute a
-  secondary task using the classic projection operator: \code vpColVector v;
+  secondary task using the classic projection operator:
+  \code
+  vpColVector v;
   // Velocity applied to the robot vpColVector de2dt; vpServo task;
   ...
   v  = task.computeControlLaw(); // Compute the primary task
-  v += task.secondaryTask(de2dt) // Compute and add the secondary task using
-  the classical projection operator \endcode
+  v += task.secondaryTask(de2dt) // Compute and add the secondary task using the classical projection operator
+  \endcode
 
   The following sample code shows how to use this method to compute a
-  secondary task using the large projection operator: \code vpColVector v;
+  secondary task using the large projection operator:
+  \code
+  vpColVector v;
   // Velocity applied to the robot vpColVector de2dt; vpServo task;
   ...
   v  = task.computeControlLaw(); // Compute the primary task
-  v += task.secondaryTask(de2dt, true) // Compute and add the secondary task
-  using the large projection operator \endcode
+  v += task.secondaryTask(de2dt, true) // Compute and add the secondary task using the large projection operator
+  \endcode
 
   \sa computeControlLaw()
 */
-vpColVector vpServo::secondaryTask(const vpColVector &de2dt,
-                                   const bool &useLargeProjectionOperator)
+vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLargeProjectionOperator)
 {
   vpColVector sec;
 
   if (!useLargeProjectionOperator) {
     if (rankJ1 == J1.getCols()) {
-      vpERROR_TRACE(
-          "no degree of freedom is free, cannot use secondary task");
-      throw(vpServoException(
-          vpServoException::noDofFree,
-          "no degree of freedom is free, cannot use secondary task"));
+      vpERROR_TRACE("no degree of freedom is free, cannot use secondary task");
+      throw(vpServoException(vpServoException::noDofFree, "no degree of freedom is free, cannot use secondary task"));
     } else {
 #if 0
       // computed in computeControlLaw()
@@ -1590,39 +1562,39 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt,
   updates the projection operators.
 
   The following sample code shows how to use this method to compute a
-  secondary task using the classical projection operator: \code vpColVector v;
+  secondary task using the classical projection operator:
+  \code
+  vpColVector v;
   // Velocity applied to the robot vpColVector e2; vpColVector de2dt; vpServo
   task;
   ...
   v  = task.computeControlLaw();     // Compute the primary task
-  v += task.secondaryTask(e2, de2dt) // Compute and add the secondary task
-  using the classical projection operator \endcode
+  v += task.secondaryTask(e2, de2dt) // Compute and add the secondary task using the classical projection operator
+  \endcode
 
   The following sample code shows how to use this method to compute a
-  secondary task  using the large projection operator: \code vpColVector v;
+  secondary task  using the large projection operator:
+  \code
+  vpColVector v;
   // Velocity applied to the robot vpColVector e2; vpColVector de2dt; vpServo
   task;
   ...
   v  = task.computeControlLaw();     // Compute the primary task
-  v += task.secondaryTask(e2, de2dt, true) // Compute and add the secondary
-  task using the large projection operator \endcode
+  v += task.secondaryTask(e2, de2dt, true) // Compute and add the secondary task using the large projection operator
+  \endcode
 
 
   \sa computeControlLaw()
 */
-vpColVector vpServo::secondaryTask(const vpColVector &e2,
-                                   const vpColVector &de2dt,
+vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2dt,
                                    const bool &useLargeProjectionOperator)
 {
   vpColVector sec;
 
   if (!useLargeProjectionOperator) {
     if (rankJ1 == J1.getCols()) {
-      vpERROR_TRACE(
-          "no degree of freedom is free, cannot use secondary task");
-      throw(vpServoException(
-          vpServoException::noDofFree,
-          "no degree of freedom is free, cannot use secondary task"));
+      vpERROR_TRACE("no degree of freedom is free, cannot use secondary task");
+      throw(vpServoException(vpServoException::noDofFree, "no degree of freedom is free, cannot use secondary task"));
     } else {
 
 #if 0
@@ -1648,20 +1620,28 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2,
 /*!
   Compute and return the secondary task vector for joint limit avoidance
  \cite Marey:2010b using the new large projection operator (see equation(24)
-in the paper \cite Marey:2010). The robot avoids the joint limits very smoothly
-even when the main task constrains all the robot degrees of freedom.
+in the paper \cite Marey:2010). The robot avoids the joint limits very
+smoothly even when the main task constrains all the robot degrees of freedom.
 
   \param q : Actual joint positions vector
+
   \param dq : Actual joint velocities vector
+
   \param qmin : Vector containing the low limit value of each joint in the
-chain. \param qmax : Vector containing the high limit value of each joint in
-the chain. \param rho : tuning paramenter  \f${\left [ 0,\frac{1}{2} \right
+chain.
+  \param qmax : Vector containing the high limit value of each joint in
+the chain.
+
+  \param rho : tuning paramenter  \f${\left [ 0,\frac{1}{2} \right
 ]}\f$  used to define the safe configuration for the joint. When the joint
 angle value cross the max or min boundaries (\f${ q_{l_{0}}^{max} }\f$ and
-\f${q_{l_{0}}^{min}}\f$) the secondary task is actived gradually. \param rho1
+\f${q_{l_{0}}^{min}}\f$) the secondary task is actived gradually.
+
+  \param rho1
 : tuning paramenter \f${\left ] 0,1 \right ]}\f$ to compute the external
 boundaries (\f${q_{l_{1}}^{max}}\f$ and \f${q_{l_{1}}^{min}}\f$) for the joint
 limits. Here the secondary task it completely activated with the highest gain.
+
   \param lambda_tune : value \f${\left [ 0,1 \right ]}\f$ used to tune the
 difference in magnitude between the absolute value of the elements of the
 primary task and the elements of the secondary task. (See equation (17)
@@ -1673,21 +1653,21 @@ vpColVector qmin;
 vpColVector qmax;
 vpColVector q;
 vpColVector dq;
-// Fill vector qmin and qmax with min and max limits of the joints (same joint
-order than vector q).
+// Fill vector qmin and qmax with min and max limits of the joints (same joint order than vector q).
 // Update vector of joint position q and velocities dq;
 ...
-vpColVector  v = task.computeControlLaw(); // Compute the velocity
-corresponding to the visual servoing v +=
-task.secondaryTaskJointLimitAvoidance(q, dq, qmin, qmax) // Compute and add
-the secondary task for the joint limit avoidance using the large projection
-operator \endcode
+// Compute the velocity corresponding to the visual servoing
+vpColVector  v = task.computeControlLaw();
+// Compute and add the secondary task for the joint limit avoidance
+// using the large projection operator
+v += task.secondaryTaskJointLimitAvoidance(q, dq, qmin, qmax)
+\endcode
 
  */
-vpColVector vpServo::secondaryTaskJointLimitAvoidance(
-    const vpColVector &q, const vpColVector &dq, const vpColVector &qmin,
-    const vpColVector &qmax, const double &rho, const double &rho1,
-    const double &lambda_tune) const
+vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq,
+                                                      const vpColVector &qmin, const vpColVector &qmax,
+                                                      const double &rho, const double &rho1,
+                                                      const double &lambda_tune) const
 {
   unsigned int const n = J1.getCols();
 
@@ -1702,9 +1682,8 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(
   if (q.size() != n || dq.size() != n) {
     vpERROR_TRACE("Dimension vector q or dq does not correspont to the "
                   "number of jacobian columns");
-    throw(vpServoException(vpServoException::dimensionError,
-                           "Dimension vector q or dq does not correspont to "
-                           "the number of jacobian columns"));
+    throw(vpServoException(vpServoException::dimensionError, "Dimension vector q or dq does not correspont to "
+                                                             "the number of jacobian columns"));
   }
 
   double lambda_l = 0.0;
@@ -1752,14 +1731,10 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(
 
         else {
           if (q[i] >= q_l0_max[i] && q[i] <= q_l1_max[i])
-            lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_max[i]) /
-                                           (q_l1_max[i] - q_l0_max[i])) +
-                                    6));
+            lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_max[i]) / (q_l1_max[i] - q_l0_max[i])) + 6));
 
           else if (q[i] >= q_l1_min[i] && q[i] <= q_l0_min[i])
-            lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_min[i]) /
-                                           (q_l1_min[i] - q_l0_min[i])) +
-                                    6));
+            lambda_l = 1 / (1 + exp(-12 * ((q[i] - q_l0_min[i]) / (q_l1_min[i] - q_l0_min[i])) + 6));
 
           q2_i = -lambda_l * (1 + lambda_tune) * b * Pg_i;
         }
@@ -1777,9 +1752,10 @@ operator is updated after a call of computeControlLaw().
 \code
  vpServo task;
  ...
- vpColVector  v = task.computeControlLaw(); // Compute the velocity
-corresponding to the visual servoing vpMatrix I_WpW = task.getI_WpW();
-// Get the projection operator \endcode \sa getWpW()
+ vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+ vpMatrix I_WpW = task.getI_WpW(); // Get the projection operator
+\endcode
+ \sa getWpW()
  */
 vpMatrix vpServo::getI_WpW() const { return I_WpW; }
 
@@ -1787,12 +1763,13 @@ vpMatrix vpServo::getI_WpW() const { return I_WpW; }
    Return the large projection operator. This operator is updated
    after a call of computeControlLaw().
 
-\code
+ \code
  vpServo task;
  ...
- vpColVector  v = task.computeControlLaw(); // Compute the velocity
-corresponding to the visual servoing vpMatrix P = task.getP();          // Get
-the large projection operator \endcode \sa getP()
+ vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+ vpMatrix P = task.getP();          // Get the large projection operator
+ \endcode
+ \sa getP()
  */
 vpMatrix vpServo::getLargeP() const { return P; }
 
@@ -1801,12 +1778,14 @@ vpMatrix vpServo::getLargeP() const { return P; }
 of computeControlLaw().
 
    In the general case, the task jacobian is given by \f${\bf J} = {\widehat
-{\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$. \code vpServo task;
+{\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$.
+ \code
+ vpServo task;
  ...
- vpColVector v = task.computeControlLaw(); // Compute the velocity
-corresponding to the visual servoing vpMatrix    J = task.getTaskJacobian();
-// Get the task jacobian used to compute v \endcode \sa
-getTaskJacobianPseudoInverse(), getInteractionMatrix()
+ vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing vpMatrix
+ J = task.getTaskJacobian(); // Get the task jacobian used to compute v
+ \endcode
+ \sa getTaskJacobianPseudoInverse(), getInteractionMatrix()
  */
 vpMatrix vpServo::getTaskJacobian() const { return J1; }
 /*!
@@ -1822,10 +1801,8 @@ computeControlLaw().
 \code
  vpServo task;
  ...
- vpColVector v = task.computeControlLaw();            // Compute the velocity
-corresponding to the visual servoing vpMatrix   Jp =
-task.getTaskJacobianPseudoInverse(); // Get the pseudo inverse of task
-jacobian used to compute v \endcode
+ vpColVector v = task.computeControlLaw();            // Compute the velocity corresponding to the visual servoing vpMatrix
+ Jp = task.getTaskJacobianPseudoInverse(); // Get the pseudo inverse of task jacobian used to compute v \endcode
 
  \sa getTaskJacobian()
  */
@@ -1834,12 +1811,12 @@ vpMatrix vpServo::getTaskJacobianPseudoInverse() const { return J1p; }
    Return the rank of the task jacobian. The rank is updated after a call of
 computeControlLaw().
 
-\code
+ \code
  vpServo task;
  ...
- vpColVector v = task.computeControlLaw(); // Compute the velocity
-corresponding to the visual servoing unsigned int rank = task.getTaskRank();
-// Get the rank of the task jacobian \endcode
+ vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+ unsigned int rank = task.getTaskRank(); // Get the rank of the task jacobian
+ \endcode
  */
 unsigned int vpServo::getTaskRank() const { return rankJ1; }
 
@@ -1850,11 +1827,12 @@ updated after a call of computeControlLaw().
    When the dimension of the task is equal to the number of degrees of freedom
 available \f${\bf W^+W = I}\f$.
 
-\code
+ \code
  vpServo task;
  ...
- vpColVector v = task.computeControlLaw(); // Compute the velocity
-corresponding to the visual servoing vpMatrix  WpW = task.getWpW();
-// Get the projection operator \endcode \sa getI_WpW()
+ vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+ vpMatrix  WpW = task.getWpW(); // Get the projection operator
+ \endcode
+ \sa getI_WpW()
  */
 vpMatrix vpServo::getWpW() const { return WpW; }

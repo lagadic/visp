@@ -172,8 +172,7 @@ int main()
 
   // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distortion parameter
-  robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
-       vpCameraParameters::perspectiveProjWithDistortion);
+  robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
 #endif
 }
   \endcode
@@ -410,8 +409,7 @@ public: /* Methode publiques */
   void disableJoint6Limits() const;
   void enableJoint6Limits() const;
 
-  void getDisplacement(vpRobot::vpControlFrameType frame,
-                       vpColVector &displacement);
+  void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
   /*!
     \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
@@ -422,26 +420,19 @@ public: /* Methode publiques */
   vpColVector getForceTorque() const;
 
   double getMaxRotationVelocityJoint6() const;
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpColVector &position);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpColVector &position, double &timestamp);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position);
-  void getPosition(const vpRobot::vpControlFrameType frame,
-                   vpPoseVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
 
   double getPositioningVelocity(void) const;
   bool getPowerState() const;
 
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &velocity);
-  void getVelocity(const vpRobot::vpControlFrameType frame,
-                   vpColVector &velocity, double &timestamp);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity, double &timestamp);
 
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
-  vpColVector getVelocity(const vpRobot::vpControlFrameType frame,
-                          double &timestamp);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame, double &timestamp);
 
   double getTime() const;
 
@@ -451,9 +442,9 @@ public: /* Methode publiques */
   void get_fJe(vpMatrix &fJe);
 
   void init(void);
-  void init(vpViper850::vpToolType tool,
-            vpCameraParameters::vpCameraParametersProjType projModel =
-                vpCameraParameters::perspectiveProjWithoutDistortion);
+  void
+  init(vpViper850::vpToolType tool,
+       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper850::vpToolType tool, const std::string &filename);
   void init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
@@ -474,11 +465,9 @@ public: /* Methode publiques */
   void setMaxRotationVelocityJoint6(double w6_max);
 
   // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &position);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1,
-                   const double pos2, const double pos3, const double pos4,
-                   const double pos5, const double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2, const double pos3,
+                   const double pos4, const double pos5, const double pos6);
   void setPosition(const std::string &filename);
   void setPositioningVelocity(const double velocity);
 
@@ -486,8 +475,7 @@ public: /* Methode publiques */
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
   // Velocity control
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
 
   void stopMotion();
   void unbiasForceTorqueSensor();

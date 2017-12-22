@@ -166,10 +166,7 @@ public:
 
     \param nb_point : The number of control points used to compute the Nurbs.
   */
-  void setNbControlPoints(const unsigned int nb_point)
-  {
-    this->nbControlPoints = nb_point;
-  }
+  void setNbControlPoints(const unsigned int nb_point) { this->nbControlPoints = nb_point; }
 
   /*!
     Enables or disables the canny detection used during the extremities
@@ -177,10 +174,7 @@ public:
 
     \param enable_canny : if true it enables the canny detection.
   */
-  void setEnableCannyDetection(const bool enable_canny)
-  {
-    this->enableCannyDetection = enable_canny;
-  }
+  void setEnableCannyDetection(const bool enable_canny) { this->enableCannyDetection = enable_canny; }
 
   /*!
     Enables to set the two thresholds use by the canny detection.
@@ -195,8 +189,7 @@ public:
   }
 
   void initTracking(const vpImage<unsigned char> &I);
-  void initTracking(const vpImage<unsigned char> &I,
-                    const std::list<vpImagePoint> &ptList);
+  void initTracking(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ptList);
 
   void track(const vpImage<unsigned char> &Im);
 
@@ -219,25 +212,19 @@ public:
   void display(const vpImage<unsigned char> &I, vpColor col);
 
 private:
-  bool computeFreemanChainElement(const vpImage<unsigned char> &I,
-                                  vpImagePoint &iP, unsigned int &element);
+  bool computeFreemanChainElement(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int &element);
 
-  bool hasGoodLevel(const vpImage<unsigned char> &I,
-                    const vpImagePoint &iP) const;
+  bool hasGoodLevel(const vpImage<unsigned char> &I, const vpImagePoint &iP) const;
 
-  bool isInImage(const vpImage<unsigned char> &I,
-                 const vpImagePoint &iP) const;
+  bool isInImage(const vpImage<unsigned char> &I, const vpImagePoint &iP) const;
 
   void computeFreemanParameters(unsigned int element, vpImagePoint &diP);
 
-  bool farFromImageEdge(const vpImage<unsigned char> &I,
-                        const vpImagePoint &iP);
+  bool farFromImageEdge(const vpImage<unsigned char> &I, const vpImagePoint &iP);
 
 public:
-  static void display(const vpImage<unsigned char> &I, vpNurbs &n,
-                      vpColor color = vpColor::green);
-  static void display(const vpImage<vpRGBa> &I, vpNurbs &n,
-                      vpColor color = vpColor::green);
+  static void display(const vpImage<unsigned char> &I, vpNurbs &n, vpColor color = vpColor::green);
+  static void display(const vpImage<vpRGBa> &I, vpNurbs &n, vpColor color = vpColor::green);
 };
 
 #endif

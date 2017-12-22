@@ -64,7 +64,6 @@ int main()
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 #else
-  std::cout << "You should install Virtuose SDK to use this binary..."
-            << std::endl;
+  std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
 #endif
 }

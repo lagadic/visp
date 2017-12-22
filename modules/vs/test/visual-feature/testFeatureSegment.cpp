@@ -79,22 +79,17 @@ int main(int argc, const char **argv)
     // Parse the command line to set the variables
     vpParseArgv::vpArgvInfo argTable[] = {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
-      {"-d", vpParseArgv::ARGV_CONSTANT_INT, 0, (char *)&opt_no_display,
-       "Disable display and graphics viewer."},
+      {"-d", vpParseArgv::ARGV_CONSTANT_INT, 0, (char *)&opt_no_display, "Disable display and graphics viewer."},
 #endif
-      {"-normalized", vpParseArgv::ARGV_INT, (char *)NULL,
-       (char *)&opt_normalized,
+      {"-normalized", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&opt_normalized,
        "1 to use normalized features, 0 for non normalized."},
-      {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL,
-       "Print the help."},
-      {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL,
-       (char *)NULL}
+      {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL, "Print the help."},
+      {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL, (char *)NULL}
     };
 
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable,
-                           vpParseArgv::ARGV_NO_LEFTOVERS |
-                               vpParseArgv::ARGV_NO_ABBREV |
+                           vpParseArgv::ARGV_NO_LEFTOVERS | vpParseArgv::ARGV_NO_ABBREV |
                                vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (false);
     }
@@ -126,12 +121,9 @@ int main(int argc, const char **argv)
       display->init(I);
 #endif
 
-    vpHomogeneousMatrix
-        wMo; // Set to indentity. Robot world frame is equal to object frame
-    vpHomogeneousMatrix cMo(-0.5, 0.5, 2., vpMath::rad(10), vpMath::rad(20),
-                            vpMath::rad(30));
-    vpHomogeneousMatrix cdMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0),
-                             vpMath::rad(0));
+    vpHomogeneousMatrix wMo; // Set to indentity. Robot world frame is equal to object frame
+    vpHomogeneousMatrix cMo(-0.5, 0.5, 2., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+    vpHomogeneousMatrix cdMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     vpHomogeneousMatrix wMc; // Camera location in the robot world frame
 
     vpPoint P[4]; // 4 points in the object frame
@@ -237,7 +229,7 @@ int main(int argc, const char **argv)
 
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
       if (opt_curves) {
-        graph->plot(0, iter, v); // plot velocities applied to the robot
+        graph->plot(0, iter, v);               // plot velocities applied to the robot
         graph->plot(1, iter, task.getError()); // plot error vector
       }
 #endif
@@ -271,8 +263,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "Test empty since visp_robot module is not available.\n"
-            << std::endl;
+  std::cout << "Test empty since visp_robot module is not available.\n" << std::endl;
   return 0;
 }
 

@@ -110,8 +110,7 @@ int main()
   double Z;  //You have to compute the value of Z.
   //Set the point feature thanks to the current parameters.
   s.buildFrom(x, y, Z);
-  //In this case the parameter Z is not necessary because the interaction
-matrix is computed
+  //In this case the parameter Z is not necessary because the interaction matrix is computed
   //with the desired visual feature.
 
   // Set eye-in-hand control law.
@@ -167,8 +166,7 @@ int main()
 
   // Compute the interaction matrix L_s for the current point feature
   vpMatrix L = s.interaction();
-  // You can also compute the interaction matrix L_s for the desired point
-feature
+  // You can also compute the interaction matrix L_s for the desired point feature
   // The corresponding line of code is : vpMatrix L = sd.interaction();
 
   // Compute the error vector (s-sd) for the point feature
@@ -194,17 +192,14 @@ public:
 
   void buildFrom(const double x, const double y, const double Z);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   vpFeaturePoint *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
   //! Compute the error between a visual features and zero
   vpColVector error(const unsigned int select = FEATURE_ALL);
 

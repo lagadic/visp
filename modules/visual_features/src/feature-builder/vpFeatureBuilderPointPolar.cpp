@@ -99,8 +99,7 @@
   \endcode
 
 */
-void vpFeatureBuilder::create(vpFeaturePointPolar &s,
-                              const vpCameraParameters &cam, const vpDot &dot)
+void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &cam, const vpDot &dot)
 {
   try {
     double x = 0, y = 0;
@@ -172,9 +171,7 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   \endcode
 
 */
-void vpFeatureBuilder::create(vpFeaturePointPolar &s,
-                              const vpCameraParameters &cam,
-                              const vpDot2 &dot)
+void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &cam, const vpDot2 &dot)
 {
   try {
     double x = 0, y = 0;
@@ -245,9 +242,7 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   \endcode
 
 */
-void vpFeatureBuilder::create(vpFeaturePointPolar &s,
-                              const vpCameraParameters &cam,
-                              const vpImagePoint &iP)
+void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &cam, const vpImagePoint &iP)
 {
   try {
     double x = 0, y = 0;
@@ -302,16 +297,14 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpPoint &p)
       vpERROR_TRACE("Point is behind the camera ");
       std::cout << "Z = " << s.get_Z() << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point is behind the camera "));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
     }
 
     if (fabs(s.get_Z()) < 1e-6) {
       vpERROR_TRACE("Point Z coordinates is null ");
       std::cout << "Z = " << s.get_Z() << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point Z coordinates is null"));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
     }
 
   } catch (...) {
@@ -353,10 +346,8 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpPoint &p)
   image plane corresponding to the camera perspective projection, and
   with 3D depth \f$Z\f$.
 */
-void vpFeatureBuilder::create(vpFeaturePointPolar &s,
-                              const vpCameraParameters &goodCam,
-                              const vpCameraParameters &wrongCam,
-                              const vpPoint &p)
+void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpCameraParameters &goodCam,
+                              const vpCameraParameters &wrongCam, const vpPoint &p)
 {
   try {
     double x = p.get_x();

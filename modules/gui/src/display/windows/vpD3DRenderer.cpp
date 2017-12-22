@@ -83,58 +83,41 @@ vpD3DRenderer::vpD3DRenderer()
   // D3D palette
   vpColor pcolor; // Predefined colors
   pcolor = vpColor::black;
-  colors[vpColor::id_black] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_black] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::lightBlue;
-  colors[vpColor::id_lightBlue] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_lightBlue] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::blue;
-  colors[vpColor::id_blue] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_blue] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::darkBlue;
-  colors[vpColor::id_darkBlue] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_darkBlue] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::cyan;
-  colors[vpColor::id_cyan] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_cyan] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::lightGreen;
-  colors[vpColor::id_lightGreen] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_lightGreen] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::green;
-  colors[vpColor::id_green] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_green] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::darkGreen;
-  colors[vpColor::id_darkGreen] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_darkGreen] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::lightRed;
-  colors[vpColor::id_lightRed] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_lightRed] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::red;
   colors[vpColor::id_red] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::darkRed;
-  colors[vpColor::id_darkRed] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_darkRed] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::white;
-  colors[vpColor::id_white] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_white] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::lightGray;
-  colors[vpColor::id_lightGray] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_lightGray] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::gray;
-  colors[vpColor::id_gray] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_gray] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::darkGray;
-  colors[vpColor::id_darkGray] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_darkGray] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::yellow;
-  colors[vpColor::id_yellow] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_yellow] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::orange;
-  colors[vpColor::id_orange] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_orange] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
   pcolor = vpColor::purple;
-  colors[vpColor::id_purple] =
-      D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
+  colors[vpColor::id_purple] = D3DCOLOR_ARGB(0xFF, pcolor.R, pcolor.G, pcolor.B);
 
   // initialize the GDI palette
   pcolor = vpColor::black;
@@ -175,9 +158,8 @@ vpD3DRenderer::vpD3DRenderer()
   colorsGDI[vpColor::id_purple] = RGB(pcolor.R, pcolor.G, pcolor.B);
 
   // Creates a logical font
-  hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false,
-                     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                     DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, NULL);
+  hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                     CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, NULL);
 }
 
 /*!
@@ -229,13 +211,11 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
 
   // D3D initialize
   if (NULL == (pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
-    throw vpDisplayException(vpDisplayException::notInitializedError,
-                             "Can't initialize D3D!");
+    throw vpDisplayException(vpDisplayException::notInitializedError, "Can't initialize D3D!");
 
   D3DDISPLAYMODE d3ddm;
   if (FAILED(pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3ddm)))
-    throw vpDisplayException(vpDisplayException::notInitializedError,
-                             "Can't get the adapter's display mode!");
+    throw vpDisplayException(vpDisplayException::notInitializedError, "Can't get the adapter's display mode!");
 
   D3DPRESENT_PARAMETERS d3dpp;
   ZeroMemory(&d3dpp, sizeof(d3dpp));
@@ -246,11 +226,8 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
 
   // creates a d3d device
   if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
-                                D3DCREATE_SOFTWARE_VERTEXPROCESSING |
-                                    D3DCREATE_MULTITHREADED,
-                                &d3dpp, &pd3dDevice)))
-    throw vpDisplayException(vpDisplayException::notInitializedError,
-                             "Can't create the Direct3D device!");
+                                D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &pd3dDevice)))
+    throw vpDisplayException(vpDisplayException::notInitializedError, "Can't create the Direct3D device!");
 
   // disables scene lightning
   pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -264,25 +241,20 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
   // creates the system memory texture (the one we will directly modify)
   // unfortunately, needs to be X8R8G8B8 in order to be able to use GDI
   // drawing  functions
-  if (D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT, 0,
-                        D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM,
+  if (D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT, 0, D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM,
                         &pd3dText) != D3D_OK) {
-    throw vpDisplayException(vpDisplayException::notInitializedError,
-                             "Can't create memory texture!");
+    throw vpDisplayException(vpDisplayException::notInitializedError, "Can't create memory texture!");
   }
 
   // creates the video memory texture (the one we will display) -
-  if (D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT,
-                        D3DUSAGE_DYNAMIC, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT,
-                        &pd3dVideoText) != D3D_OK) {
-    throw vpDisplayException(vpDisplayException::notInitializedError,
-                             "Can't create video texture!");
+  if (D3DXCreateTexture(pd3dDevice, textWidth, textWidth, D3DX_DEFAULT, D3DUSAGE_DYNAMIC, D3DFMT_X8R8G8B8,
+                        D3DPOOL_DEFAULT, &pd3dVideoText) != D3D_OK) {
+    throw vpDisplayException(vpDisplayException::notInitializedError, "Can't create video texture!");
   }
 
   // creates the sprite used to render the texture
   if (D3DXCreateSprite(pd3dDevice, &pSprite) != S_OK)
-    throw vpDisplayException(vpDisplayException::notInitializedError,
-                             "Can't create the texture's sprite!");
+    throw vpDisplayException(vpDisplayException::notInitializedError, "Can't create the texture's sprite!");
 
   return true;
 }
@@ -303,8 +275,7 @@ void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
   if (pd3dDevice->SetTransform(D3DTS_PROJECTION, &Ortho2D) != D3D_OK ||
       pd3dDevice->SetTransform(D3DTS_WORLD, &Identity) != D3D_OK ||
       pd3dDevice->SetTransform(D3DTS_VIEW, &Identity) != D3D_OK)
-    throw vpDisplayException(vpDisplayException::notInitializedError,
-                             "Can't set the view!");
+    throw vpDisplayException(vpDisplayException::notInitializedError, "Can't set the view!");
 }
 
 /*!
@@ -313,8 +284,7 @@ void vpD3DRenderer::initView(float WindowWidth, float WindowHeight)
   \param imBuffer Destination buffer.
   \param pitch Pitch of the destination texture.
 */
-void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer,
-                            unsigned int pitch)
+void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pitch)
 {
   if (m_rscale == 1) {
     for (unsigned int i = 0; i < m_rheight; i++) {
@@ -350,8 +320,7 @@ void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer,
   \param imBuffer Destination buffer.
   \param pitch Pitch of the destination texture.
 */
-void vpD3DRenderer::convert(const vpImage<unsigned char> &I,
-                            unsigned char *imBuffer, unsigned int pitch)
+void vpD3DRenderer::convert(const vpImage<unsigned char> &I, unsigned char *imBuffer, unsigned int pitch)
 {
   if (m_rscale == 1) {
     for (unsigned int i = 0; i < m_rheight; i++) {
@@ -389,9 +358,8 @@ Converts a ViSP gray image to the Direct3D texture format (BGRA).
 \param i_min, i_min Upper/left coordinate of the roi.
 \param i_max, j_max Bottom/right coordinate of the roi.
 */
-void vpD3DRenderer::convertROI(const vpImage<unsigned char> &I,
-                               unsigned char *imBuffer, unsigned int pitch,
-                               int i_min, int j_min, int i_max, int j_max)
+void vpD3DRenderer::convertROI(const vpImage<unsigned char> &I, unsigned char *imBuffer, unsigned int pitch, int i_min,
+                               int j_min, int i_max, int j_max)
 {
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -433,9 +401,8 @@ Converts a ViSP gray image to the Direct3D texture format (BGRA).
 \param i_min, i_min Upper/left coordinate of the roi.
 \param i_max, j_max Bottom/right coordinate of the roi.
 */
-void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I,
-                               unsigned char *imBuffer, unsigned int pitch,
-                               int i_min, int j_min, int i_max, int j_max)
+void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pitch, int i_min,
+                               int j_min, int i_max, int j_max)
 {
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -508,9 +475,7 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa> &im)
   Sets the image to display.
   \param im The image to display.
 */
-void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im,
-                              const vpImagePoint &iP,
-                              const unsigned int width,
+void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, const unsigned int width,
                               const unsigned int height)
 {
   // if the device has been initialized
@@ -519,10 +484,8 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im,
 
     int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
     int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale),
-                           (int)m_rheight);
-    int j_max =
-        (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top = (LONG)i_min;
@@ -588,9 +551,7 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char> &im)
   Sets the image to display.
   \param im The image to display.
 */
-void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im,
-                              const vpImagePoint &iP,
-                              const unsigned int width,
+void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, const unsigned int width,
                               const unsigned int height)
 {
   // if the device has been initialized
@@ -599,10 +560,8 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im,
 
     int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
     int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale),
-                           (int)m_rheight);
-    int j_max =
-        (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top = (LONG)i_min;
@@ -682,8 +641,7 @@ bool vpD3DRenderer::render()
 void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 {
   vpImagePoint iPscaled = iP / m_rscale;
-  if (iPscaled.get_i() < 0 || iPscaled.get_j() < 0 ||
-      iPscaled.get_i() >= (int)m_rheight ||
+  if (iPscaled.get_i() < 0 || iPscaled.get_j() < 0 || iPscaled.get_i() >= (int)m_rheight ||
       iPscaled.get_j() >= (int)m_rwidth) {
     return;
   }
@@ -725,9 +683,8 @@ void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
   \param thickness : Thickness of the line.
   \param style style of the line
 */
-void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                             const vpColor &color, unsigned int thickness,
-                             int style)
+void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                             unsigned int thickness, int style)
 {
   // if the device has been initialized
   if (pd3dDevice != NULL) {
@@ -744,8 +701,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
     // create the pen
     HPEN hPen;
     if (color.id < vpColor::id_unknown)
-      hPen =
-          CreatePen(style, static_cast<int>(thickness), colorsGDI[color.id]);
+      hPen = CreatePen(style, static_cast<int>(thickness), colorsGDI[color.id]);
     else {
       COLORREF gdicolor = RGB(color.R, color.G, color.B);
       hPen = CreatePen(style, static_cast<int>(thickness), gdicolor);
@@ -762,30 +718,23 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
     // line manually drawing multiple small lines
     if (thickness != 1 && style != PS_SOLID) {
       double size = 10. * m_rscale;
-      double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) +
-                           vpMath::sqr(ip2.get_j() - ip1.get_j()));
+      double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
       double deltaj = size / length * (ip2.get_j() - ip1.get_j());
       double deltai = size / length * (ip2.get_i() - ip1.get_i());
-      double slope =
-          (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
+      double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
       double orig = ip1.get_i() - slope * ip1.get_j();
-      for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j();
-           j += (unsigned int)(2 * deltaj)) {
+      for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
         double i = slope * j + orig;
         // move to the starting point
-        MoveToEx(hDCMem, vpMath::round(j / m_rscale),
-                 vpMath::round(i / m_rscale), NULL);
+        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
         // Draw the line
-        LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale),
-               vpMath::round((i + deltai) / m_rscale));
+        LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
       }
     } else {
       // move to the starting point
-      MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale),
-               vpMath::round(ip1.get_v() / m_rscale), NULL);
+      MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
       // Draw the line
-      LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale),
-             vpMath::round(ip2.get_v() / m_rscale));
+      LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
     }
 
     // Releases the DC
@@ -806,28 +755,23 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
   \param fill  When set to true fill the rectangle.
   \param thickness : Line thickness
 */
-void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width,
-                             unsigned int height, const vpColor &color,
+void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
                              bool fill, unsigned int thickness)
 {
   // if the device has been initialized
   if (pd3dDevice != NULL) {
     if (fill == false) {
       drawLine(topLeft, topLeft + vpImagePoint(0, width), color, thickness);
-      drawLine(topLeft + vpImagePoint(0, width),
-               topLeft + vpImagePoint(height, width), color, thickness);
-      drawLine(topLeft + vpImagePoint(height, width),
-               topLeft + vpImagePoint(height, 0), color, thickness);
+      drawLine(topLeft + vpImagePoint(0, width), topLeft + vpImagePoint(height, width), color, thickness);
+      drawLine(topLeft + vpImagePoint(height, width), topLeft + vpImagePoint(height, 0), color, thickness);
       drawLine(topLeft + vpImagePoint(height, 0), topLeft, color, thickness);
     } else {
       vpImagePoint topLeftScaled = topLeft / m_rscale;
       unsigned int widthScaled = width / m_rscale;
       unsigned int heightScaled = height / m_rscale;
 
-      if (topLeftScaled.get_i() > (int)m_rheight - 1 ||
-          topLeftScaled.get_j() > (int)m_rwidth - 1 ||
-          topLeftScaled.get_i() + height < 0 ||
-          topLeftScaled.get_j() + width < 0) {
+      if (topLeftScaled.get_i() > (int)m_rheight - 1 || topLeftScaled.get_j() > (int)m_rwidth - 1 ||
+          topLeftScaled.get_i() + height < 0 || topLeftScaled.get_j() + width < 0) {
         //       vpCERROR<<"Invalid parameters!"<<std::endl;
         return;
       }
@@ -836,15 +780,11 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width,
 
       RECT r;
       r.top = (LONG)((topLeftScaled.get_i() > 0) ? topLeftScaled.get_i() : 0);
-      r.left =
-          (LONG)((topLeftScaled.get_j() > 0) ? topLeftScaled.get_j() : 0);
-      r.bottom =
-          (LONG)((topLeftScaled.get_i() + heightScaled < (int)m_rheight)
-                     ? topLeftScaled.get_i() + heightScaled
-                     : m_rheight - 1);
-      r.right = (LONG)((topLeftScaled.get_j() + widthScaled < (int)m_rwidth)
-                           ? topLeftScaled.get_j() + widthScaled
-                           : m_rwidth - 1);
+      r.left = (LONG)((topLeftScaled.get_j() > 0) ? topLeftScaled.get_j() : 0);
+      r.bottom = (LONG)((topLeftScaled.get_i() + heightScaled < (int)m_rheight) ? topLeftScaled.get_i() + heightScaled
+                                                                                : m_rheight - 1);
+      r.right = (LONG)((topLeftScaled.get_j() + widthScaled < (int)m_rwidth) ? topLeftScaled.get_j() + widthScaled
+                                                                             : m_rwidth - 1);
 
       /* unsigned */ int rectW = r.right - r.left;
       /* unsigned */ int rectH = r.bottom - r.top;
@@ -859,10 +799,8 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width,
       unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
       unsigned char *buf = (unsigned char *)d3dLRect.pBits;
 
-      if (topLeftScaled.get_i() >= 0 &&
-          topLeftScaled.get_j() + widthScaled < m_rwidth &&
-          topLeftScaled.get_i() + heightScaled < m_rheight &&
-          topLeftScaled.get_j() >= 0) {
+      if (topLeftScaled.get_i() >= 0 && topLeftScaled.get_j() + widthScaled < m_rwidth &&
+          topLeftScaled.get_i() + heightScaled < m_rheight && topLeftScaled.get_j() >= 0) {
         for (int x = 0; x < rectW; x++) {
           for (int y = 0; y < rectH; y++)
             setBufferPixel(buf, pitch, x, y, color);
@@ -922,8 +860,7 @@ void vpD3DRenderer::clear(const vpColor &color)
 
 // writes current circle pixels using symetry to reduce the algorithm's
 // complexity
-void vpD3DRenderer::subDrawCircle(int i, int j, int x, int y, vpColor col,
-                                  unsigned char *buf, unsigned int pitch,
+void vpD3DRenderer::subDrawCircle(int i, int j, int x, int y, vpColor col, unsigned char *buf, unsigned int pitch,
                                   unsigned int maxX, unsigned int maxY)
 {
   if (x == 0) {
@@ -954,14 +891,12 @@ void vpD3DRenderer::subDrawCircle(int i, int j, int x, int y, vpColor col,
   \param radius The circle's radius
   \param color The circle's color
 */
-void vpD3DRenderer::drawCircle(const vpImagePoint &center,
-                               unsigned int radius, const vpColor &color,
-                               bool /*fill*/, unsigned int /*thickness*/)
+void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool /*fill*/,
+                               unsigned int /*thickness*/)
 {
   unsigned int radiusScaled = radius / m_rscale;
   vpImagePoint centerScaled = center / m_rscale;
-  if (radiusScaled < 1 ||
-      vpMath::round(centerScaled.get_i() + radiusScaled) < 0 ||
+  if (radiusScaled < 1 || vpMath::round(centerScaled.get_i() + radiusScaled) < 0 ||
       vpMath::round(centerScaled.get_i() - radiusScaled) > (int)m_rheight ||
       vpMath::round(centerScaled.get_j() + radiusScaled) < 0 ||
       vpMath::round(centerScaled.get_j() - radiusScaled) > (int)m_rwidth)
@@ -982,14 +917,12 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center,
 
     rec.top = rtop;
     rec.left = rleft;
-    rec.bottom = (LONG)(
-        (vpMath::round(centerScaled.get_i() + radiusScaled_) < (int)m_rheight)
-            ? centerScaled.get_i() + radiusScaled_
-            : m_rheight - 1);
-    rec.right = (LONG)(
-        (vpMath::round(centerScaled.get_j() + radiusScaled_) < (int)m_rwidth)
-            ? centerScaled.get_j() + radiusScaled_
-            : m_rwidth - 1);
+    rec.bottom = (LONG)((vpMath::round(centerScaled.get_i() + radiusScaled_) < (int)m_rheight)
+                            ? centerScaled.get_i() + radiusScaled_
+                            : m_rheight - 1);
+    rec.right = (LONG)((vpMath::round(centerScaled.get_j() + radiusScaled_) < (int)m_rwidth)
+                           ? centerScaled.get_j() + radiusScaled_
+                           : m_rwidth - 1);
 
     // used as maxX and maxY for setBufferPixel
     unsigned int rectW = static_cast<unsigned int>(rec.right - rleft);
@@ -1015,8 +948,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center,
     ip.set_i(centerScaled.get_i() - rtop);
     ip.set_j(centerScaled.get_j() - rleft);
 
-    subDrawCircle(vpMath::round(ip.get_i()), vpMath::round(ip.get_j()), x, y,
-                  color, buf, pitch, rectW, rectH);
+    subDrawCircle(vpMath::round(ip.get_i()), vpMath::round(ip.get_j()), x, y, color, buf, pitch, rectW, rectH);
     while (x < y) {
       x++;
       if (p < 0) {
@@ -1025,8 +957,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center,
         y--;
         p += (((x - y) << 1) + 1) << 1;
       }
-      subDrawCircle(vpMath::round(ip.get_i()), vpMath::round(ip.get_j()), x,
-                    y, color, buf, pitch, rectW, rectH);
+      subDrawCircle(vpMath::round(ip.get_i()), vpMath::round(ip.get_j()), x, y, color, buf, pitch, rectW, rectH);
     }
 
     // unlocks the texture
@@ -1041,8 +972,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center,
   \param text The string to display
   \param color The text's color
 */
-void vpD3DRenderer::drawText(const vpImagePoint &ip, const char *text,
-                             const vpColor &color)
+void vpD3DRenderer::drawText(const vpImagePoint &ip, const char *text, const vpColor &color)
 {
   // Will contain the texture's surface drawing context
   HDC hDCMem;
@@ -1075,8 +1005,7 @@ void vpD3DRenderer::drawText(const vpImagePoint &ip, const char *text,
   GetTextExtentPoint32(hDCMem, text, length, &size);
 
   // displays the string
-  TextOut(hDCMem, vpMath::round(ip.get_u() / m_rscale),
-          vpMath::round(ip.get_v() / m_rscale), text, length);
+  TextOut(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale), text, length);
 
   // Releases the DC
   pd3dSurf->ReleaseDC(hDCMem);
@@ -1093,8 +1022,7 @@ void vpD3DRenderer::drawText(const vpImagePoint &ip, const char *text,
   \param color The cross' color
   \param thickness width of the cross
 */
-void vpD3DRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
-                              const vpColor &color, unsigned int thickness)
+void vpD3DRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness)
 {
   double i = ip.get_i();
   double j = ip.get_j();
@@ -1121,10 +1049,8 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpD3DRenderer::drawArrow(const vpImagePoint &ip1,
-                              const vpImagePoint &ip2, const vpColor &color,
-                              unsigned int w, unsigned int h,
-                              unsigned int thickness)
+void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
+                              unsigned int h, unsigned int thickness)
 {
   double a = ip2.get_i() - ip1.get_i();
   double b = ip2.get_j() - ip1.get_j();
@@ -1165,8 +1091,7 @@ void vpD3DRenderer::drawArrow(const vpImagePoint &ip1,
   \param imBuffer The texture's data.
   \param pitch The texture's pitch.
 */
-void TextureToRGBa(vpImage<vpRGBa> &I, unsigned char *imBuffer,
-                   unsigned int pitch)
+void TextureToRGBa(vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pitch)
 {
   unsigned int j = I.getWidth();
 

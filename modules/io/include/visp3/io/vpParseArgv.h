@@ -49,8 +49,8 @@
 #include <visp3/io/vpParseArgv.h>
 
 // Usage : [-bool] [-int <integer value>] [-long <long value>]
-//         [-float <float value>] [-double <double value>] [-string <string
-value>] [-h] int main(int argc, const char ** argv)
+//         [-float <float value>] [-double <double value>] [-string <string value>] [-h]
+int main(int argc, const char ** argv)
 {
   // Variables to set by command line parsing
   bool   b_val = false;
@@ -77,8 +77,7 @@ value>] [-h] int main(int argc, const char ** argv)
      "A string value."},
     {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
      "Print the help."},
-    {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*)
-NULL} } ;
+    {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL} } ;
 
   // Read the command line options
   if(vpParseArgv::parse(&argc, argv, argTable,
@@ -101,8 +100,7 @@ NULL} } ;
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the
-preceding option request an argument
+#define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the preceding option request an argument
 
 // Usage : [-b] [-i <integer value>] [-l <long value>]
 //         [-f <float value>] [-d <double value>] [-s <string value>] [-h]
@@ -154,9 +152,9 @@ public:
     Legal values for the type field of a vpArgvInfo.
   */
   typedef enum {
-    ARGV_CONSTANT, /*!< Stand alone argument. Same as ARGV_CONSTANT_INT. */
-    ARGV_CONSTANT_INT, /*!< Stand alone argument associated to an int var that
-                          is set to 1. */
+    ARGV_CONSTANT,      /*!< Stand alone argument. Same as ARGV_CONSTANT_INT. */
+    ARGV_CONSTANT_INT,  /*!< Stand alone argument associated to an int var that
+                           is set to 1. */
     ARGV_CONSTANT_BOOL, /*!< Stand alone argument associated to a bool var
                            that is set to true. */
     ARGV_INT,           /*!< Argument is associated to an int. */
@@ -175,12 +173,12 @@ public:
     Flag bits.
    */
   typedef enum {
-    ARGV_NO_DEFAULTS = 0x1,  /*!< No default options like -help. */
-    ARGV_NO_LEFTOVERS = 0x2, /*!< Print an error message if an option is not
-                                in the argument list. */
-    ARGV_NO_ABBREV = 0x4,    /*!< No abrevation. Print an error message if an
-                                option is abrevated (ie "-i" in place of "-int"
-                                which is requested). */
+    ARGV_NO_DEFAULTS = 0x1,         /*!< No default options like -help. */
+    ARGV_NO_LEFTOVERS = 0x2,        /*!< Print an error message if an option is not
+                                       in the argument list. */
+    ARGV_NO_ABBREV = 0x4,           /*!< No abrevation. Print an error message if an
+                                       option is abrevated (ie "-i" in place of "-int"
+                                       which is requested). */
     ARGV_DONT_SKIP_FIRST_ARG = 0x8, /*!< Don't skip first argument. */
     ARGV_NO_PRINT = 0x10            /*!< No printings. */
   } vpArgvFlags;
@@ -204,10 +202,8 @@ public:
 
 public:
   static vpArgvInfo defaultTable[2];
-  static bool parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
-                    int flags);
-  static int parse(int argc, const char **argv, const char *validOpts,
-                   const char **param);
+  static bool parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, int flags);
+  static int parse(int argc, const char **argv, const char *validOpts, const char **param);
 
 private:
   static void printUsage(vpArgvInfo *argTable, int flags);

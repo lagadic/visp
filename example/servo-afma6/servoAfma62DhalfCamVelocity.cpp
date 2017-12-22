@@ -129,16 +129,12 @@ int main()
     robot.getCameraParameters(cam, I);
 
     std::cout << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout
-        << " Eye-in-hand task control, velocity computed in the camera frame"
-        << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Simulation " << std::endl;
     std::cout << " task : servo a line " << std::endl;
-    std::cout << "-------------------------------------------------------"
-              << std::endl;
+    std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
     int nbline = 4;
@@ -196,8 +192,7 @@ int main()
     for (i = 0; i < nbline; i++) {
       double x = 0, y = 0;
 
-      if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline],
-                                  ip)) {
+      if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
         exit(-1);
       }
 
@@ -240,8 +235,7 @@ int main()
     // The second feature is the depth of the current square center relative
     // to the depth of the desired square center.
     vpFeatureDepth logZ;
-    logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(),
-                   log(pointc.get_Z() / pointcd.get_Z()));
+    logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
 
     // The last three features are the rotations thetau between the current
     // pose and the desired pose.
@@ -279,8 +273,7 @@ int main()
     double beta = 3;
 
     for (;;) {
-      std::cout << "---------------------------------------------" << iter
-                << std::endl;
+      std::cout << "---------------------------------------------" << iter << std::endl;
 
       try {
         g.acquire(I);
@@ -296,8 +289,7 @@ int main()
 
           double x = 0, y = 0;
 
-          if (!vpMeLine::intersection(line[i % nbline],
-                                      line[(i + 1) % nbline], ip)) {
+          if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
             exit(-1);
           }
 
@@ -328,8 +320,7 @@ int main()
           pointd[i].display(I, cam, vpColor::red);
 
         // Update the second feature
-        logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(),
-                       log(pointc.get_Z() / pointcd.get_Z()));
+        logZ.buildFrom(pointc.get_x(), pointc.get_y(), pointc.get_Z(), log(pointc.get_Z() / pointcd.get_Z()));
 
         // Update the last three features
         cdMc = cMod * cMo.inverse();
@@ -341,8 +332,7 @@ int main()
           if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
             gain = lambda_av;
           else {
-            gain = alpha * exp(-beta * (task.getError()).sumSquare()) +
-                   lambda_av;
+            gain = alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
           }
         }
 

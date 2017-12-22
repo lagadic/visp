@@ -122,8 +122,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
 {
   const char *optarg;
   int c;
@@ -204,23 +203,21 @@ static void *mainLoop(void *_simu)
   // Project : computes the point coordinates in the camera frame and its 2D
   // coordinates
   for (int i = 0; i < 4; i++) {
-    point[i].changeFrame(
-        cMo); // Compute point coordinates in the camera frame
-    point[i]
-        .project(); // Compute desired point doordinates in the camera frame
+    point[i].changeFrame(cMo); // Compute point coordinates in the camera frame
+    point[i].project();        // Compute desired point doordinates in the camera frame
   }
 
   // Sets the desired position of the point
   vpFeaturePointPolar p[4];
   for (int i = 0; i < 4; i++)
-    vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the
-                                              // vpPoint structure to build the
-                                              // polar coordinates
+    vpFeatureBuilder::create(p[i],
+                             point[i]); // retrieve x,y and Z of the
+                                        // vpPoint structure to build the
+                                        // polar coordinates
 
   std::cout << "s: \n";
   for (int i = 0; i < 4; i++) {
-    printf("[%d] rho %f theta %f Z %f\n", i, p[i].get_rho(), p[i].get_theta(),
-           p[i].get_Z());
+    printf("[%d] rho %f theta %f Z %f\n", i, p[i].get_rho(), p[i].get_theta(), p[i].get_Z());
   }
 
   // Sets the desired position of the point
@@ -240,10 +237,8 @@ static void *mainLoop(void *_simu)
   pointd[2].setWorldCoordinates(0.1, 0.1, 0);
   pointd[3].setWorldCoordinates(-0.1, 0.1, 0);
   for (int i = 0; i < 4; i++) {
-    pointd[i].changeFrame(
-        cMod); // Compute desired point doordinates in the camera frame
-    pointd[i]
-        .project(); // Compute desired point doordinates in the camera frame
+    pointd[i].changeFrame(cMod); // Compute desired point doordinates in the camera frame
+    pointd[i].project();         // Compute desired point doordinates in the camera frame
 
     vpFeatureBuilder::create(pd[i], pointd[i]); // retrieve x,y and Z of the
                                                 // vpPoint structure to build
@@ -251,8 +246,7 @@ static void *mainLoop(void *_simu)
   }
   std::cout << "s*: \n";
   for (int i = 0; i < 4; i++) {
-    printf("[%d] rho %f theta %f Z %f\n", i, pd[i].get_rho(),
-           pd[i].get_theta(), pd[i].get_Z());
+    printf("[%d] rho %f theta %f Z %f\n", i, pd[i].get_rho(), pd[i].get_theta(), pd[i].get_Z());
   }
 
   // Define the task
@@ -360,8 +354,7 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
-                  << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
@@ -370,13 +363,10 @@ int main(int argc, const char **argv)
     if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr
-          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-          << std::endl
-          << "  environment variable to specify the location of the "
-          << std::endl
-          << "  image path where test images are located." << std::endl
-          << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
       exit(-1);
     }
 

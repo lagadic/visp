@@ -15,14 +15,11 @@ int main()
 
     vpRealSense g;
     unsigned int width = 640, height = 480;
-    g.setStreamSettings(
-        rs::stream::color,
-        vpRealSense::vpRsStreamParams(width, height, rs::format::rgba8, 60));
+    g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(width, height, rs::format::rgba8, 60));
     g.open();
     g.acquire(I);
 
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
-              << std::endl;
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);

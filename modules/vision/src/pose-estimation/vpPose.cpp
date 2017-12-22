@@ -92,14 +92,11 @@ void vpPose::init()
 
 /*! Default constructor. */
 vpPose::vpPose()
-  : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(),
-    computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(4),
-    ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(),
-    ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001),
-    ransacFlags(PREFILTER_DUPLICATE_POINTS), listOfPoints(),
+  : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
+    ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
+    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS), listOfPoints(),
     useParallelRansac(false),
-    nbParallelRansacThreads(
-        0), // 0 means that OpenMP is used to get the number of CPU threads
+    nbParallelRansacThreads(0), // 0 means that OpenMP is used to get the number of CPU threads
     vvsEpsilon(1e-8)
 {
 }
@@ -159,10 +156,7 @@ void vpPose::addPoints(const std::vector<vpPoint> &lP)
   npt = (unsigned int)listP.size();
 }
 
-void vpPose::setDistanceToPlaneForCoplanarityTest(double d)
-{
-  distanceToPlaneForCoplanarityTest = d;
-}
+void vpPose::setDistanceToPlaneForCoplanarityTest(double d) { distanceToPlaneForCoplanarityTest = d; }
 
 /*!
   Test the coplanarity of the set of points
@@ -180,15 +174,13 @@ bool vpPose::coplanar(int &coplanar_plane_type)
   coplanar_plane_type = 0;
   if (npt < 2) {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-    throw(vpPoseException(vpPoseException::notEnoughPointError,
-                          "Not enough points "));
+    throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
   }
 
   if (npt == 3)
     return true;
 
-  double x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0, z1 = 0, z2 = 0,
-         z3 = 0;
+  double x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0, z1 = 0, z2 = 0, z3 = 0;
 
   std::list<vpPoint>::const_iterator it = listP.begin();
 
@@ -223,12 +215,9 @@ bool vpPose::coplanar(int &coplanar_plane_type)
           break;
         }
         P2 = *it_j;
-        if ((std::fabs(P2.get_oX()) <=
-             std::numeric_limits<double>::epsilon()) &&
-            (std::fabs(P2.get_oY()) <=
-             std::numeric_limits<double>::epsilon()) &&
-            (std::fabs(P2.get_oZ()) <=
-             std::numeric_limits<double>::epsilon())) {
+        if ((std::fabs(P2.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(P2.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(P2.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
           not_on_origin = false;
         } else {
           not_on_origin = true;
@@ -238,12 +227,9 @@ bool vpPose::coplanar(int &coplanar_plane_type)
           ++it_tmp; // k = j+1
           for (it_k = it_tmp; it_k != listP.end(); ++it_k) {
             P3 = *it_k;
-            if ((std::fabs(P3.get_oX()) <=
-                 std::numeric_limits<double>::epsilon()) &&
-                (std::fabs(P3.get_oY()) <=
-                 std::numeric_limits<double>::epsilon()) &&
-                (std::fabs(P3.get_oZ()) <=
-                 std::numeric_limits<double>::epsilon())) {
+            if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
+                (std::fabs(P3.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
+                (std::fabs(P3.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
               not_on_origin = false;
             } else {
               not_on_origin = true;
@@ -270,8 +256,7 @@ bool vpPose::coplanar(int &coplanar_plane_type)
               b_c[2] = z2 - z3;
 
               cross_prod = vpColVector::crossProd(a_b, b_c);
-              if (cross_prod.sumSquare() <=
-                  std::numeric_limits<double>::epsilon())
+              if (cross_prod.sumSquare() <= std::numeric_limits<double>::epsilon())
                 degenerate = true; // points are collinear
               else
                 degenerate = false;
@@ -292,8 +277,7 @@ bool vpPose::coplanar(int &coplanar_plane_type)
   double a = y1 * z2 - y1 * z3 - y2 * z1 + y2 * z3 + y3 * z1 - y3 * z2;
   double b = -x1 * z2 + x1 * z3 + x2 * z1 - x2 * z3 - x3 * z1 + x3 * z2;
   double c = x1 * y2 - x1 * y3 - x2 * y1 + x2 * y3 + x3 * y1 - x3 * y2;
-  double d = -x1 * y2 * z3 + x1 * y3 * z2 + x2 * y1 * z3 - x2 * y3 * z1 -
-             x3 * y1 * z2 + x3 * y2 * z1;
+  double d = -x1 * y2 * z3 + x1 * y3 * z2 + x2 * y1 * z3 - x2 * y3 * z1 - x3 * y1 * z2 + x3 * y2 * z1;
 
   // std::cout << "a=" << a << " b=" << b << " c=" << c << " d=" << d <<
   // std::endl;
@@ -312,8 +296,7 @@ bool vpPose::coplanar(int &coplanar_plane_type)
 
   for (it = listP.begin(); it != listP.end(); ++it) {
     P1 = *it;
-    double dist =
-        (a * P1.get_oX() + b * P1.get_oY() + c * P1.get_oZ() + d) / D;
+    double dist = (a * P1.get_oX() + b * P1.get_oY() + c * P1.get_oZ() + d) / D;
     // std::cout << "dist= " << dist << std::endl;
 
     if (fabs(dist) > distanceToPlaneForCoplanarityTest) {
@@ -342,8 +325,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
   double residual_ = 0;
   vpPoint P;
-  for (std::list<vpPoint>::const_iterator it = listP.begin();
-       it != listP.end(); ++it) {
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
     P = *it;
     double x = P.get_x();
     double y = P.get_y();
@@ -377,13 +359,11 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
   - vpPose::RANSAC: Robust Ransac aproach (does't need an initialization)
 
 */
-bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo,
-                         bool (*func)(vpHomogeneousMatrix *))
+bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *))
 {
   if (npt < 4) {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-    throw(vpPoseException(vpPoseException::notEnoughPointError,
-                          "No enough point "));
+    throw(vpPoseException(vpPoseException::notEnoughPointError, "No enough point "));
   }
 
   switch (method) {
@@ -394,8 +374,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo,
       vpERROR_TRACE("Dementhon method cannot be used in that case ");
       vpERROR_TRACE("(at least 4 points are required)");
       vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-      throw(vpPoseException(vpPoseException::notEnoughPointError,
-                            "Not enough points "));
+      throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
     }
 
     // test si les point 3D sont coplanaires
@@ -428,22 +407,19 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo,
     int coplanar_plane_type;
     bool plan = coplanar(coplanar_plane_type);
 
-    if (plan == true &&
-        coplanar_plane_type > 0) // only plane oX=d, oY=d or oZ=d
+    if (plan == true && coplanar_plane_type > 0) // only plane oX=d, oY=d or oZ=d
     {
 
       if (coplanar_plane_type == 4) {
         vpERROR_TRACE("Lagrange method cannot be used in that case ");
         vpERROR_TRACE("(points are collinear)");
-        throw(vpPoseException(vpPoseException::notEnoughPointError,
-                              "Points are collinear "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError, "Points are collinear "));
       }
       if (npt < 4) {
         vpERROR_TRACE("Lagrange method cannot be used in that case ");
         vpERROR_TRACE("(at least 4 points are required)");
         vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-        throw(vpPoseException(vpPoseException::notEnoughPointError,
-                              "Not enough points "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
       }
       try {
         poseLagrangePlan(cMo, coplanar_plane_type);
@@ -456,8 +432,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo,
         vpERROR_TRACE("Lagrange method cannot be used in that case ");
         vpERROR_TRACE("(at least 4 points are required)");
         vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-        throw(vpPoseException(vpPoseException::notEnoughPointError,
-                              "Not enough points "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
       }
       try {
         poseLagrangeNonPlan(cMo);
@@ -472,8 +447,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo,
       vpERROR_TRACE("Ransac method cannot be used in that case ");
       vpERROR_TRACE("(at least 4 points are required)");
       vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-      throw(vpPoseException(vpPoseException::notEnoughPointError,
-                            "Not enough points "));
+      throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
     }
     try {
       return poseRansac(cMo, func);
@@ -521,8 +495,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo,
 void vpPose::printPoint()
 {
   vpPoint P;
-  for (std::list<vpPoint>::const_iterator it = listP.begin();
-       it != listP.end(); ++it) {
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
     P = *it;
 
     std::cout << "3D oP " << P.oP.t();
@@ -540,8 +513,8 @@ void vpPose::printPoint()
    axis. If vpColor::none, red, green and blue will represent x-axiw, y-axis
    and z-axis respectively.
  */
-void vpPose::display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
-                     vpCameraParameters &cam, double size, vpColor col)
+void vpPose::display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
+                     vpColor col)
 {
   vpDisplay::displayFrame(I, cMo, cam, size, col);
 }
@@ -555,8 +528,7 @@ void vpPose::display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
    axis. If vpColor::none, red, green and blue will represent x-axiw, y-axis
    and z-axis respectively.
  */
-void vpPose::display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
-                     vpCameraParameters &cam, double size, vpColor col)
+void vpPose::display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size, vpColor col)
 {
   vpDisplay::displayFrame(I, cMo, cam, size, col);
 }
@@ -565,13 +537,11 @@ void vpPose::display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
   Display the coordinates of the points in the image plane that are used to
   compute the pose in image I.
 */
-void vpPose::displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam,
-                          vpColor col)
+void vpPose::displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col)
 {
   vpPoint P;
   vpImagePoint ip;
-  for (std::list<vpPoint>::const_iterator it = listP.begin();
-       it != listP.end(); ++it) {
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip);
     vpDisplay::displayCross(I, ip, 5, col);
@@ -585,13 +555,11 @@ void vpPose::displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam,
   Display the coordinates of the points in the image plane that are used to
   compute the pose in image I.
 */
-void vpPose::displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam,
-                          vpColor col)
+void vpPose::displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col)
 {
   vpPoint P;
   vpImagePoint ip;
-  for (std::list<vpPoint>::const_iterator it = listP.begin();
-       it != listP.end(); ++it) {
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip);
     vpDisplay::displayCross(I, ip, 5, col);
@@ -620,9 +588,7 @@ gives us the proportion of the rectangle
 \param cMo: the camera pose (output)
 \return int : OK if no pb occurs
 */
-double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3,
-                                 vpPoint &p4, double lx,
-                                 vpCameraParameters &cam,
+double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx, vpCameraParameters &cam,
                                  vpHomogeneousMatrix &cMo)
 {
 

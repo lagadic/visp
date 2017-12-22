@@ -65,8 +65,7 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
 public:
   vpHistogramValey() : vpHistogramPeak(){};
 
-  vpHistogramValey(unsigned char lvl, unsigned val)
-    : vpHistogramPeak(lvl, val){};
+  vpHistogramValey(unsigned char lvl, unsigned val) : vpHistogramPeak(lvl, val){};
 
   vpHistogramValey(const vpHistogramValey &v) : vpHistogramPeak(v){};
 
@@ -140,8 +139,7 @@ public:
   //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s,
-                                              const vpHistogramValey &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramValey &v);
 };
 
 /*

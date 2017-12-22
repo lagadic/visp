@@ -55,36 +55,39 @@ class vpMomentObject;
   \brief Class describing 2D gravity center moment.
 
   This moment can be computed from scratch (no need to compute any different
-moments before computing this). It gives access to both coordinates of the
-gravity center \f$x_g\f$ and \f$y_g\f$.
+  moments before computing this). It gives access to both coordinates of the
+  gravity center \f$x_g\f$ and \f$y_g\f$.
 
   These coordinates are defined as follows: \f$x_g = \frac{m_{01}}{m_{00}}
-\f$,\f$y_g = \frac{m_{10}}{m_{00}} \f$ \code #include <iostream> #include
-<visp3/core/vpMomentGravityCenter.h> #include <visp3/core/vpMomentObject.h>
+  \f$,\f$y_g = \frac{m_{10}}{m_{00}} \f$
+\code
+#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <iostream>
 
 int main()
 {
   // Define the contour of an object by a 5 clockwise vertices on a plane
   vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains the vertices of the
-contour polygon
+  std::vector<vpPoint> vec_p; // vector that contains the vertices of the contour polygon
 
-  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane
-(vertex 1) vec_p.push_back(p); p.set_x(+0.3); p.set_y(0.1); // coordinates in
-meters in the image plane (vertex 2) vec_p.push_back(p); p.set_x(+0.2);
-p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
+  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (vertex 1)
   vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane
-(vertex 4) vec_p.push_back(p); p.set_x(-0.2); p.set_y(0.1); // close the
-contour (vertex 5 = vertex 1) vec_p.push_back(p);
+  p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (vertex 2)
+  vec_p.push_back(p);
+  p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
+  vec_p.push_back(p);
+  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (vertex 4)
+  vec_p.push_back(p);
+  p.set_x(-0.2); p.set_y(0.1); // close the contour (vertex 5 = vertex 1)
+  vec_p.push_back(p);
 
   vpMomentObject obj(1); // Create an image moment object with 1 as
                          // maximum order (because only m00,m01,m10
-                         // are needed to compute the gravity center
-primitive. obj.setType(vpMomentObject::DENSE_POLYGON); // The object is
-defined by a countour polygon obj.fromVector(vec_p); // Init the dense object
-with the polygon
+                         // are needed to compute the gravity center primitive.
+  obj.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a countour polygon
+  obj.fromVector(vec_p); // Init the dense object with the polygon
 
   vpMomentGravityCenter g; // declaration of gravity center
   g.update(obj); // specify the object
@@ -133,8 +136,7 @@ public:
   const char *name() const { return "vpMomentGravityCenter"; }
   void printDependencies(std::ostream &os) const;
   //@}
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpMomentGravityCenter &v);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenter &v);
 };
 
 #endif

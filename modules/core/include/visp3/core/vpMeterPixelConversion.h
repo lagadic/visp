@@ -66,12 +66,10 @@
 class VISP_EXPORT vpMeterPixelConversion
 {
 public:
-  static void convertEllipse(const vpCameraParameters &cam,
-                             const vpCircle &circle, vpImagePoint &center,
+  static void convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center,
                              double &mu20_p, double &mu11_p, double &mu02_p);
 
-  static void convertLine(const vpCameraParameters &cam, const double &rho_m,
-                          const double &theta_m, double &rho_p,
+  static void convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m, double &rho_p,
                           double &theta_p);
 
   /*!
@@ -97,9 +95,7 @@ public:
     distortion.
   */
 
-  inline static void convertPoint(const vpCameraParameters &cam,
-                                  const double &x, const double &y, double &u,
-                                  double &v)
+  inline static void convertPoint(const vpCameraParameters &cam, const double &x, const double &y, double &u, double &v)
   {
     switch (cam.projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
@@ -135,9 +131,7 @@ public:
     distortion.
   */
 
-  inline static void convertPoint(const vpCameraParameters &cam,
-                                  const double &x, const double &y,
-                                  vpImagePoint &iP)
+  inline static void convertPoint(const vpCameraParameters &cam, const double &x, const double &y, vpImagePoint &iP)
   {
     switch (cam.projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
@@ -159,10 +153,8 @@ public:
     \f$ u = x*p_x+u_0 \f$ and  \f$ v = y*p_y+v_0  \f$
   */
 
-  inline static void
-  convertPointWithoutDistortion(const vpCameraParameters &cam,
-                                const double &x, const double &y, double &u,
-                                double &v)
+  inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const double &x, const double &y,
+                                                   double &u, double &v)
   {
     u = x * cam.px + cam.u0;
     v = y * cam.py + cam.v0;
@@ -178,10 +170,8 @@ public:
     \f$ u = x*p_x+u_0 \f$ and  \f$ v = y*p_y+v_0  \f$
   */
 
-  inline static void
-  convertPointWithoutDistortion(const vpCameraParameters &cam,
-                                const double &x, const double &y,
-                                vpImagePoint &iP)
+  inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const double &x, const double &y,
+                                                   vpImagePoint &iP)
   {
     iP.set_u(x * cam.px + cam.u0);
     iP.set_v(y * cam.py + cam.v0);
@@ -203,10 +193,8 @@ public:
     \f$ v = y*p_y*(1+k_{ud}*r^2)+v_0 \f$
     with \f$ r^2 = x^2+y^2 \f$
   */
-  inline static void convertPointWithDistortion(const vpCameraParameters &cam,
-                                                const double &x,
-                                                const double &y, double &u,
-                                                double &v)
+  inline static void convertPointWithDistortion(const vpCameraParameters &cam, const double &x, const double &y,
+                                                double &u, double &v)
   {
     double r2 = 1. + cam.kud * (x * x + y * y);
     u = cam.u0 + cam.px * x * r2;
@@ -229,9 +217,7 @@ public:
     \f$ v = y*p_y*(1+k_{ud}*r^2)+v_0 \f$
     with \f$ r^2 = x^2+y^2 \f$
   */
-  inline static void convertPointWithDistortion(const vpCameraParameters &cam,
-                                                const double &x,
-                                                const double &y,
+  inline static void convertPointWithDistortion(const vpCameraParameters &cam, const double &x, const double &y,
                                                 vpImagePoint &iP)
   {
     double r2 = 1. + cam.kud * (x * x + y * y);

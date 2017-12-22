@@ -42,9 +42,8 @@
   Elementary constructor.
 */
 vpDiskGrabber::vpDiskGrabber()
-  : m_image_number(0), m_image_number_next(0), m_image_step(1),
-    m_number_of_zero(0), m_directory("/tmp"), m_base_name("I"),
-    m_extension("pgm"), m_use_generic_name(false), m_generic_name("empty")
+  : m_image_number(0), m_image_number_next(0), m_image_step(1), m_number_of_zero(0), m_directory("/tmp"),
+    m_base_name("I"), m_extension("pgm"), m_use_generic_name(false), m_generic_name("empty")
 {
   init = false;
 }
@@ -53,9 +52,8 @@ vpDiskGrabber::vpDiskGrabber()
   Constructor that takes a generic image sequence as input.
 */
 vpDiskGrabber::vpDiskGrabber(const std::string &generic_name)
-  : m_image_number(0), m_image_number_next(0), m_image_step(1),
-    m_number_of_zero(0), m_directory("/tmp"), m_base_name("I"),
-    m_extension("pgm"), m_use_generic_name(true), m_generic_name(generic_name)
+  : m_image_number(0), m_image_number_next(0), m_image_step(1), m_number_of_zero(0), m_directory("/tmp"),
+    m_base_name("I"), m_extension("pgm"), m_use_generic_name(true), m_generic_name(generic_name)
 {
   init = false;
 }
@@ -71,13 +69,10 @@ vpDiskGrabber::vpDiskGrabber(const std::string &generic_name)
   \param ext : Extension of the image file.
 */
 
-vpDiskGrabber::vpDiskGrabber(const std::string &dir,
-                             const std::string &basename, long number,
-                             int step, unsigned int noz,
-                             const std::string &ext)
-  : m_image_number(number), m_image_number_next(number), m_image_step(step),
-    m_number_of_zero(noz), m_directory(dir), m_base_name(basename),
-    m_extension(ext), m_use_generic_name(false), m_generic_name("empty")
+vpDiskGrabber::vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step,
+                             unsigned int noz, const std::string &ext)
+  : m_image_number(number), m_image_number_next(number), m_image_step(step), m_number_of_zero(noz), m_directory(dir),
+    m_base_name(basename), m_extension(ext), m_use_generic_name(false), m_generic_name("empty")
 {
   init = false;
 }
@@ -156,8 +151,8 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I)
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0')
-       << std::setw(m_number_of_zero) << m_image_number << "." << m_extension;
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
+       << m_extension;
   }
 
   m_image_number_next += m_image_step;
@@ -183,8 +178,8 @@ void vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0')
-       << std::setw(m_number_of_zero) << m_image_number << "." << m_extension;
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
+       << m_extension;
   }
 
   m_image_number_next += m_image_step;
@@ -210,8 +205,8 @@ void vpDiskGrabber::acquire(vpImage<float> &I)
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0')
-       << std::setw(m_number_of_zero) << m_image_number << "." << m_extension;
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
+       << m_extension;
   }
 
   m_image_number_next += m_image_step;
@@ -238,8 +233,8 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I, long img_number)
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0')
-       << std::setw(m_number_of_zero) << img_number << "." << m_extension;
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << img_number << "."
+       << m_extension;
   }
 
   m_image_number_next += m_image_step;
@@ -266,8 +261,8 @@ void vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long img_number)
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0')
-       << std::setw(m_number_of_zero) << img_number << "." << m_extension;
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << img_number << "."
+       << m_extension;
   }
 
   m_image_number_next += m_image_step;
@@ -294,8 +289,8 @@ void vpDiskGrabber::acquire(vpImage<float> &I, long img_number)
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0')
-       << std::setw(m_number_of_zero) << img_number << "." << m_extension;
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << img_number << "."
+       << m_extension;
   }
 
   m_image_number_next += m_image_step;
@@ -326,26 +321,17 @@ vpDiskGrabber::~vpDiskGrabber() {}
 /*!
   Set the main directory name (ie location of the image sequence)
 */
-void vpDiskGrabber::setDirectory(const std::string &dir)
-{
-  m_directory = dir;
-}
+void vpDiskGrabber::setDirectory(const std::string &dir) { m_directory = dir; }
 
 /*!
   Set the image base name.
 */
-void vpDiskGrabber::setBaseName(const std::string &name)
-{
-  m_base_name = name;
-}
+void vpDiskGrabber::setBaseName(const std::string &name) { m_base_name = name; }
 
 /*!
   Set the image extension.
  */
-void vpDiskGrabber::setExtension(const std::string &ext)
-{
-  m_extension = ext;
-}
+void vpDiskGrabber::setExtension(const std::string &ext) { m_extension = ext; }
 
 /*!
   Set the number of the image to be read.
@@ -363,10 +349,7 @@ void vpDiskGrabber::setStep(long step) { m_image_step = step; }
 /*!
   Set the step between two images.
 */
-void vpDiskGrabber::setNumberOfZero(unsigned int noz)
-{
-  m_number_of_zero = noz;
-}
+void vpDiskGrabber::setNumberOfZero(unsigned int noz) { m_number_of_zero = noz; }
 
 void vpDiskGrabber::setGenericName(const std::string &generic_name)
 {

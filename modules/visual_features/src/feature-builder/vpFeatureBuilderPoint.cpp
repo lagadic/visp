@@ -90,8 +90,7 @@
   s.set_Z(Z);
   \endcode
 */
-void vpFeatureBuilder::create(vpFeaturePoint &s,
-                              const vpCameraParameters &cam, const vpDot &d)
+void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &cam, const vpDot &d)
 {
   try {
     double x = 0, y = 0;
@@ -151,8 +150,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   s.set_Z(Z);
   \endcode
 */
-void vpFeatureBuilder::create(vpFeaturePoint &s,
-                              const vpCameraParameters &cam, const vpDot2 &d)
+void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &cam, const vpDot2 &d)
 {
   try {
     double x = 0, y = 0;
@@ -213,9 +211,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s,
   s.set_Z(Z);
   \endcode
 */
-void vpFeatureBuilder::create(vpFeaturePoint &s,
-                              const vpCameraParameters &cam,
-                              const vpImagePoint &ip)
+void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &cam, const vpImagePoint &ip)
 {
   try {
     double x = 0, y = 0;
@@ -256,16 +252,14 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &p)
       vpERROR_TRACE("Point is behind the camera ");
       std::cout << "Z = " << s.get_Z() << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point is behind the camera "));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point is behind the camera "));
     }
 
     if (fabs(s.get_Z()) < 1e-6) {
       vpERROR_TRACE("Point Z coordinates is null ");
       std::cout << "Z = " << s.get_Z() << std::endl;
 
-      throw(vpFeatureException(vpFeatureException::badInitializationError,
-                               "Point Z coordinates is null"));
+      throw(vpFeatureException(vpFeatureException::badInitializationError, "Point Z coordinates is null"));
     }
 
   } catch (...) {
@@ -305,9 +299,7 @@ void vpFeatureBuilder::create(vpFeaturePoint &s, const vpPoint &p)
 
   \param p : The vpPoint used to create the vpFeaturePoint.
 */
-void vpFeatureBuilder::create(vpFeaturePoint &s,
-                              const vpCameraParameters &goodCam,
-                              const vpCameraParameters &wrongCam,
+void vpFeatureBuilder::create(vpFeaturePoint &s, const vpCameraParameters &goodCam, const vpCameraParameters &wrongCam,
                               const vpPoint &p)
 {
   try {

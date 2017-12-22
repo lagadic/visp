@@ -123,8 +123,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &on, int &nsec,
-                double &nmsec)
+bool getOptions(int argc, const char **argv, bool &on, int &nsec, double &nmsec)
 {
   const char *optarg;
   int c;

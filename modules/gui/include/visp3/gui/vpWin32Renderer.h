@@ -79,11 +79,9 @@ public:
   */
   virtual void setImg(const vpImage<vpRGBa> &im) = 0;
   virtual void setImg(const vpImage<unsigned char> &im) = 0;
-  virtual void setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
-                         const unsigned int width,
+  virtual void setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, const unsigned int width,
                          const unsigned int height) = 0;
-  virtual void setImgROI(const vpImage<unsigned char> &im,
-                         const vpImagePoint &iP, const unsigned int width,
+  virtual void setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, const unsigned int width,
                          const unsigned int height) = 0;
 
   /*!
@@ -105,8 +103,7 @@ public:
     \param thickness line thickness
     \param style style of the line
   */
-  virtual void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                        const vpColor &color, unsigned int thickness,
+  virtual void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
                         int style = PS_SOLID) = 0;
 
   /*!
@@ -118,8 +115,7 @@ public:
     \param fill True if it is a filled rectangle
     \param thickness line thickness
   */
-  virtual void drawRect(const vpImagePoint &topLeft, unsigned int width,
-                        unsigned int height, const vpColor &color,
+  virtual void drawRect(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
                         bool fill = false, unsigned int thickness = 1) = 0;
 
   /*!
@@ -136,8 +132,7 @@ public:
     \param fill When true fill the circle with the given color
     \param thickness Drawing thickness
   */
-  virtual void drawCircle(const vpImagePoint &center, unsigned int radius,
-                          const vpColor &color, bool fill,
+  virtual void drawCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
                           unsigned int thickness = 1) = 0;
 
   /*!
@@ -146,8 +141,7 @@ public:
     \param text The string to display
     \param color The text's color
   */
-  virtual void drawText(const vpImagePoint &ip, const char *text,
-                        const vpColor &color) = 0;
+  virtual void drawText(const vpImagePoint &ip, const char *text, const vpColor &color) = 0;
 
   /*!
     Draws a cross.
@@ -156,8 +150,7 @@ public:
     \param color The cross' color
     \param thickness Thickness of the drawing
   */
-  virtual void drawCross(const vpImagePoint &ip, unsigned int size,
-                         const vpColor &color,
+  virtual void drawCross(const vpImagePoint &ip, unsigned int size, const vpColor &color,
                          unsigned int thickness = 1) = 0;
 
   /*!
@@ -168,9 +161,8 @@ public:
     \param w,h Width and height of the arrow
     \param thickness Thickness of the drawing
   */
-  virtual void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2,
-                         const vpColor &color, unsigned int w, unsigned int h,
-                         unsigned int thickness) = 0;
+  virtual void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w,
+                         unsigned int h, unsigned int thickness) = 0;
 
   /*!
     Gets the currently displayed image.

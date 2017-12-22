@@ -36,8 +36,7 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/mbt/vpMbtFaceDepthDense.h>
 
-#if defined __SSE2__ || defined _M_X64 ||                                    \
-    (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
 #endif
@@ -50,14 +49,11 @@
 #endif
 
 vpMbtFaceDepthDense::vpMbtFaceDepthDense()
-  : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100),
-    m_distNearClip(0.001), m_hiddenFace(NULL), m_planeObject(),
-    m_polygon(NULL), m_useScanLine(false),
-    m_depthDenseFilteringMethod(DEPTH_OCCUPANCY_RATIO_FILTERING),
-    m_depthDenseFilteringMaxDist(3.0), m_depthDenseFilteringMinDist(0.8),
-    m_depthDenseFilteringOccupancyRatio(0.3), m_isTracked(false),
-    m_isVisible(false), m_listOfFaceLines(), m_planeCamera(),
-    m_pointCloudFace(), m_polygonLines()
+  : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
+    m_planeObject(), m_polygon(NULL), m_useScanLine(false),
+    m_depthDenseFilteringMethod(DEPTH_OCCUPANCY_RATIO_FILTERING), m_depthDenseFilteringMaxDist(3.0),
+    m_depthDenseFilteringMinDist(0.8), m_depthDenseFilteringOccupancyRatio(0.3), m_isTracked(false), m_isVisible(false),
+    m_listOfFaceLines(), m_planeCamera(), m_pointCloudFace(), m_polygonLines()
 {
 }
 
@@ -81,9 +77,8 @@ vpMbtFaceDepthDense::~vpMbtFaceDepthDense()
   \param polygon : The index of the polygon to which the line belongs.
   \param name : the optional name of the line
 */
-void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2,
-                                  vpMbHiddenFaces<vpMbtPolygon> *const faces,
-                                  int polygon, std::string name)
+void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMbtPolygon> *const faces, int polygon,
+                                  std::string name)
 {
   // Build a PolygonLine to be able to easily display the lines model
   PolygonLine polygon_line;
@@ -106,12 +101,10 @@ void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2,
   bool already_here = false;
   vpMbtDistanceLine *l;
 
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it =
-           m_listOfFaceLines.begin();
-       it != m_listOfFaceLines.end(); ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
+       ++it) {
     l = *it;
-    if ((samePoint(*(l->p1), P1) && samePoint(*(l->p2), P2)) ||
-        (samePoint(*(l->p1), P2) && samePoint(*(l->p2), P1))) {
+    if ((samePoint(*(l->p1), P1) && samePoint(*(l->p2), P2)) || (samePoint(*(l->p1), P2) && samePoint(*(l->p2), P1))) {
       already_here = true;
       l->addPolygon(polygon);
       l->hiddenface = faces;
@@ -134,12 +127,10 @@ void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2,
     if (m_clippingFlag != vpPolygon3D::NO_CLIPPING)
       l->getPolygon().setClipping(m_clippingFlag);
 
-    if ((m_clippingFlag & vpPolygon3D::NEAR_CLIPPING) ==
-        vpPolygon3D::NEAR_CLIPPING)
+    if ((m_clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
       l->getPolygon().setNearClippingDistance(m_distNearClip);
 
-    if ((m_clippingFlag & vpPolygon3D::FAR_CLIPPING) ==
-        vpPolygon3D::FAR_CLIPPING)
+    if ((m_clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
       l->getPolygon().setFarClippingDistance(m_distFarClip);
 
     m_listOfFaceLines.push_back(l);
@@ -147,14 +138,13 @@ void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2,
 }
 
 #ifdef VISP_HAVE_PCL
-bool vpMbtFaceDepthDense::computeDesiredFeatures(
-    const vpHomogeneousMatrix &cMo,
-    const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-    const unsigned int stepX, const unsigned int stepY
+bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
+                                                 const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
+                                                 const unsigned int stepX, const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
-    ,
-    vpImage<unsigned char> &debugImage,
-    std::vector<std::vector<vpImagePoint> > &roiPts_vec
+                                                 ,
+                                                 vpImage<unsigned char> &debugImage,
+                                                 std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
 )
 {
@@ -176,16 +166,13 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
 
   if (roiPts.size() <= 2) {
 #ifndef NDEBUG
-    std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures"
-              << std::endl;
+    std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures" << std::endl;
 #endif
     return false;
   }
 
-  if (((m_depthDenseFilteringMethod & MAX_DISTANCE_FILTERING) &&
-       distanceToFace > m_depthDenseFilteringMaxDist) ||
-      ((m_depthDenseFilteringMethod & MIN_DISTANCE_FILTERING) &&
-       distanceToFace < m_depthDenseFilteringMinDist)) {
+  if (((m_depthDenseFilteringMethod & MAX_DISTANCE_FILTERING) && distanceToFace > m_depthDenseFilteringMaxDist) ||
+      ((m_depthDenseFilteringMethod & MIN_DISTANCE_FILTERING) && distanceToFace < m_depthDenseFilteringMinDist)) {
     return false;
   }
 
@@ -193,11 +180,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom =
-      (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
+  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
   unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right =
-      (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -221,20 +206,13 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if ((m_useScanLine
-               ? (i < m_hiddenFace->getMbScanLineRenderer()
-                          .getPrimitiveIDs()
-                          .getHeight() &&
-                  j < m_hiddenFace->getMbScanLineRenderer()
-                          .getPrimitiveIDs()
-                          .getWidth() &&
-                  m_hiddenFace->getMbScanLineRenderer()
-                          .getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-               : polygon_2d.isInside(vpImagePoint(i, j)))) {
+      if ((m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+                            j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+                            m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
+                         : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (pcl::isFinite((*point_cloud)(j, i)) &&
-            (*point_cloud)(j, i).z > 0) {
+        if (pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
           totalPoints++;
 
           if (checkSSE2) {
@@ -278,10 +256,8 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
   }
 #endif
 
-  if (totalPoints == 0 ||
-      ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-       totalPoints / (double)totalTheoreticalPoints <
-           m_depthDenseFilteringOccupancyRatio)) {
+  if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
+                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 
@@ -289,14 +265,13 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
 }
 #endif
 
-bool vpMbtFaceDepthDense::computeDesiredFeatures(
-    const vpHomogeneousMatrix &cMo, const unsigned int width,
-    const unsigned int height, const std::vector<vpColVector> &point_cloud,
-    const unsigned int stepX, const unsigned int stepY
+bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width,
+                                                 const unsigned int height, const std::vector<vpColVector> &point_cloud,
+                                                 const unsigned int stepX, const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
-    ,
-    vpImage<unsigned char> &debugImage,
-    std::vector<std::vector<vpImagePoint> > &roiPts_vec
+                                                 ,
+                                                 vpImage<unsigned char> &debugImage,
+                                                 std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
 )
 {
@@ -317,16 +292,13 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
 
   if (roiPts.size() <= 2) {
 #ifndef NDEBUG
-    std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures"
-              << std::endl;
+    std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures" << std::endl;
 #endif
     return false;
   }
 
-  if (((m_depthDenseFilteringMethod & MAX_DISTANCE_FILTERING) &&
-       distanceToFace > m_depthDenseFilteringMaxDist) ||
-      ((m_depthDenseFilteringMethod & MIN_DISTANCE_FILTERING) &&
-       distanceToFace < m_depthDenseFilteringMinDist)) {
+  if (((m_depthDenseFilteringMethod & MAX_DISTANCE_FILTERING) && distanceToFace > m_depthDenseFilteringMaxDist) ||
+      ((m_depthDenseFilteringMethod & MIN_DISTANCE_FILTERING) && distanceToFace < m_depthDenseFilteringMinDist)) {
     return false;
   }
 
@@ -334,11 +306,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
   vpRect bb = polygon_2d.getBoundingBox();
 
   unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom =
-      (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
+  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
   unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right =
-      (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -358,16 +328,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if ((m_useScanLine
-               ? (i < m_hiddenFace->getMbScanLineRenderer()
-                          .getPrimitiveIDs()
-                          .getHeight() &&
-                  j < m_hiddenFace->getMbScanLineRenderer()
-                          .getPrimitiveIDs()
-                          .getWidth() &&
-                  m_hiddenFace->getMbScanLineRenderer()
-                          .getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-               : polygon_2d.isInside(vpImagePoint(i, j)))) {
+      if ((m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+                            j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+                            m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
+                         : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
         if (point_cloud[i * width + j][2] > 0) {
@@ -414,34 +378,27 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(
   }
 #endif
 
-  if (totalPoints == 0 ||
-      ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
-       totalPoints / (double)totalTheoreticalPoints <
-           m_depthDenseFilteringOccupancyRatio)) {
+  if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
+                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
     return false;
   }
 
   return true;
 }
 
-void vpMbtFaceDepthDense::computeVisibility()
-{
-  m_isVisible = m_polygon->isVisible();
-}
+void vpMbtFaceDepthDense::computeVisibility() { m_isVisible = m_polygon->isVisible(); }
 
 void vpMbtFaceDepthDense::computeVisibilityDisplay()
 {
   // Compute lines visibility, only for display
   vpMbtDistanceLine *line;
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it =
-           m_listOfFaceLines.begin();
-       it != m_listOfFaceLines.end(); ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
+       ++it) {
     line = *it;
     bool isvisible = false;
 
-    for (std::list<int>::const_iterator itindex =
-             line->Lindex_polygon.begin();
-         itindex != line->Lindex_polygon.end(); ++itindex) {
+    for (std::list<int>::const_iterator itindex = line->Lindex_polygon.begin(); itindex != line->Lindex_polygon.end();
+         ++itindex) {
       int index = *itindex;
       if (index == -1) {
         isvisible = true;
@@ -464,8 +421,8 @@ void vpMbtFaceDepthDense::computeVisibilityDisplay()
   }
 }
 
-void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(
-    const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &error)
+void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousMatrix &cMo, vpMatrix &L,
+                                                            vpColVector &error)
 {
   if (m_pointCloudFace.empty()) {
     L.resize(0, 0);
@@ -505,18 +462,14 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(
 
       double tmp_a1[2], tmp_a2[2], tmp_a3[2];
 
-      for (; cpt <= m_pointCloudFace.size() - 6;
-           cpt += 6, ptr_point_cloud += 6) {
+      for (; cpt <= m_pointCloudFace.size() - 6; cpt += 6, ptr_point_cloud += 6) {
         const __m128d vx = _mm_loadu_pd(ptr_point_cloud);
         const __m128d vy = _mm_loadu_pd(ptr_point_cloud + 2);
         const __m128d vz = _mm_loadu_pd(ptr_point_cloud + 4);
 
-        const __m128d va1 =
-            _mm_sub_pd(_mm_mul_pd(vnz, vy), _mm_mul_pd(vny, vz));
-        const __m128d va2 =
-            _mm_sub_pd(_mm_mul_pd(vnx, vz), _mm_mul_pd(vnz, vx));
-        const __m128d va3 =
-            _mm_sub_pd(_mm_mul_pd(vny, vx), _mm_mul_pd(vnx, vy));
+        const __m128d va1 = _mm_sub_pd(_mm_mul_pd(vnz, vy), _mm_mul_pd(vny, vz));
+        const __m128d va2 = _mm_sub_pd(_mm_mul_pd(vnx, vz), _mm_mul_pd(vnz, vx));
+        const __m128d va3 = _mm_sub_pd(_mm_mul_pd(vny, vx), _mm_mul_pd(vnx, vy));
 
         _mm_storeu_pd(tmp_a1, va1);
         _mm_storeu_pd(tmp_a2, va2);
@@ -549,8 +502,7 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(
         ptr_L++;
 
         const __m128d verror =
-            _mm_add_pd(_mm_add_pd(vd, _mm_mul_pd(vnx, vx)),
-                       _mm_add_pd(_mm_mul_pd(vny, vy), _mm_mul_pd(vnz, vz)));
+            _mm_add_pd(_mm_add_pd(vd, _mm_mul_pd(vnx, vx)), _mm_add_pd(_mm_mul_pd(vny, vy), _mm_mul_pd(vnz, vz)));
         _mm_storeu_pd(ptr_error, verror);
         ptr_error += 2;
       }
@@ -621,22 +573,20 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(
   }
 }
 
-void vpMbtFaceDepthDense::computeROI(
-    const vpHomogeneousMatrix &cMo, const unsigned int width,
-    const unsigned int height, std::vector<vpImagePoint> &roiPts
+void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width,
+                                     const unsigned int height, std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_DENSE
-    ,
-    std::vector<std::vector<vpImagePoint> > &roiPts_vec
+                                     ,
+                                     std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
-    ,
-    double &distanceToFace)
+                                     ,
+                                     double &distanceToFace)
 {
   if (m_useScanLine || m_clippingFlag > 2)
     m_cam.computeFov(width, height);
 
   if (m_useScanLine) {
-    for (std::vector<PolygonLine>::iterator it = m_polygonLines.begin();
-         it != m_polygonLines.end(); ++it) {
+    for (std::vector<PolygonLine>::iterator it = m_polygonLines.begin(); it != m_polygonLines.end(); ++it) {
       it->m_p1->changeFrame(cMo);
       it->m_p2->changeFrame(cMo);
 
@@ -646,29 +596,16 @@ void vpMbtFaceDepthDense::computeROI(
       it->m_poly.computePolygonClipped(m_cam);
 
       if (it->m_poly.polyClipped.size() == 2 &&
-          ((it->m_poly.polyClipped[1].second &
-            it->m_poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) ==
-           0) &&
-          ((it->m_poly.polyClipped[1].second &
-            it->m_poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) ==
-           0) &&
-          ((it->m_poly.polyClipped[1].second &
-            it->m_poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) ==
-           0) &&
-          ((it->m_poly.polyClipped[1].second &
-            it->m_poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) ==
-           0) &&
-          ((it->m_poly.polyClipped[1].second &
-            it->m_poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) ==
-           0) &&
-          ((it->m_poly.polyClipped[1].second &
-            it->m_poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) ==
-           0)) {
+          ((it->m_poly.polyClipped[1].second & it->m_poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+          ((it->m_poly.polyClipped[1].second & it->m_poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+          ((it->m_poly.polyClipped[1].second & it->m_poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+          ((it->m_poly.polyClipped[1].second & it->m_poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+          ((it->m_poly.polyClipped[1].second & it->m_poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+          ((it->m_poly.polyClipped[1].second & it->m_poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)) {
 
         std::vector<std::pair<vpPoint, vpPoint> > linesLst;
-        m_hiddenFace->computeScanLineQuery(it->m_poly.polyClipped[0].first,
-                                           it->m_poly.polyClipped[1].first,
-                                           linesLst, true);
+        m_hiddenFace->computeScanLineQuery(it->m_poly.polyClipped[0].first, it->m_poly.polyClipped[1].first, linesLst,
+                                           true);
 
         vpPoint faceCentroid;
 
@@ -676,12 +613,8 @@ void vpMbtFaceDepthDense::computeROI(
           linesLst[i].first.project();
           linesLst[i].second.project();
 
-          vpMeterPixelConversion::convertPoint(
-              m_cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(),
-              ip1);
-          vpMeterPixelConversion::convertPoint(
-              m_cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(),
-              ip2);
+          vpMeterPixelConversion::convertPoint(m_cam, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
+          vpMeterPixelConversion::convertPoint(m_cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
           it->m_imPt1 = ip1;
           it->m_imPt2 = ip2;
@@ -689,15 +622,9 @@ void vpMbtFaceDepthDense::computeROI(
           roiPts.push_back(ip1);
           roiPts.push_back(ip2);
 
-          faceCentroid.set_X(faceCentroid.get_X() +
-                             linesLst[i].first.get_X() +
-                             linesLst[i].second.get_X());
-          faceCentroid.set_Y(faceCentroid.get_Y() +
-                             linesLst[i].first.get_Y() +
-                             linesLst[i].second.get_Y());
-          faceCentroid.set_Z(faceCentroid.get_Z() +
-                             linesLst[i].first.get_Z() +
-                             linesLst[i].second.get_Z());
+          faceCentroid.set_X(faceCentroid.get_X() + linesLst[i].first.get_X() + linesLst[i].second.get_X());
+          faceCentroid.set_Y(faceCentroid.get_Y() + linesLst[i].first.get_Y() + linesLst[i].second.get_Y());
+          faceCentroid.set_Z(faceCentroid.get_Z() + linesLst[i].first.get_Z() + linesLst[i].second.get_Z());
 
 #if DEBUG_DISPLAY_DEPTH_DENSE
           std::vector<vpImagePoint> roiPts_;
@@ -714,9 +641,9 @@ void vpMbtFaceDepthDense::computeROI(
           faceCentroid.set_Y(faceCentroid.get_Y() / (2 * linesLst.size()));
           faceCentroid.set_Z(faceCentroid.get_Z() / (2 * linesLst.size()));
 
-          distanceToFace = sqrt(faceCentroid.get_X() * faceCentroid.get_X() +
-                                faceCentroid.get_Y() * faceCentroid.get_Y() +
-                                faceCentroid.get_Z() * faceCentroid.get_Z());
+          distanceToFace =
+              sqrt(faceCentroid.get_X() * faceCentroid.get_X() + faceCentroid.get_Y() * faceCentroid.get_Y() +
+                   faceCentroid.get_Z() * faceCentroid.get_Z());
         }
       }
     }
@@ -743,8 +670,7 @@ void vpMbtFaceDepthDense::computeROI(
       faceCentroid.set_Y(faceCentroid.get_Y() / polygonsClipped.size());
       faceCentroid.set_Z(faceCentroid.get_Z() / polygonsClipped.size());
 
-      distanceToFace = sqrt(faceCentroid.get_X() * faceCentroid.get_X() +
-                            faceCentroid.get_Y() * faceCentroid.get_Y() +
+      distanceToFace = sqrt(faceCentroid.get_X() * faceCentroid.get_X() + faceCentroid.get_Y() * faceCentroid.get_Y() +
                             faceCentroid.get_Z() * faceCentroid.get_Z());
     }
 
@@ -754,56 +680,44 @@ void vpMbtFaceDepthDense::computeROI(
   }
 }
 
-void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I,
-                                  const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam,
-                                  const vpColor &col,
-                                  const unsigned int thickness,
+void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
   if (m_polygon->isVisible() || displayFullModel) {
     computeVisibilityDisplay();
 
-    for (std::vector<vpMbtDistanceLine *>::const_iterator it =
-             m_listOfFaceLines.begin();
-         it != m_listOfFaceLines.end(); ++it) {
+    for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
+         ++it) {
       vpMbtDistanceLine *line = *it;
       line->display(I, cMo, cam, col, thickness, displayFullModel);
     }
   }
 }
 
-void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I,
-                                  const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam,
-                                  const vpColor &col,
-                                  const unsigned int thickness,
+void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
   if (m_polygon->isVisible() || displayFullModel) {
     computeVisibilityDisplay();
 
-    for (std::vector<vpMbtDistanceLine *>::const_iterator it =
-             m_listOfFaceLines.begin();
-         it != m_listOfFaceLines.end(); ++it) {
+    for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
+         ++it) {
       vpMbtDistanceLine *line = *it;
       line->display(I, cMo, cam, col, thickness, displayFullModel);
     }
   }
 }
 
-void vpMbtFaceDepthDense::displayFeature(const vpImage<unsigned char> & /*I*/,
-                                         const vpHomogeneousMatrix & /*cMo*/,
-                                         const vpCameraParameters & /*cam*/,
-                                         const double /*scale*/,
+void vpMbtFaceDepthDense::displayFeature(const vpImage<unsigned char> & /*I*/, const vpHomogeneousMatrix & /*cMo*/,
+                                         const vpCameraParameters & /*cam*/, const double /*scale*/,
                                          const unsigned int /*thickness*/)
 {
 }
 
-void vpMbtFaceDepthDense::displayFeature(const vpImage<vpRGBa> & /*I*/,
-                                         const vpHomogeneousMatrix & /*cMo*/,
-                                         const vpCameraParameters & /*cam*/,
-                                         const double /*scale*/,
+void vpMbtFaceDepthDense::displayFeature(const vpImage<vpRGBa> & /*I*/, const vpHomogeneousMatrix & /*cMo*/,
+                                         const vpCameraParameters & /*cam*/, const double /*scale*/,
                                          const unsigned int /*thickness*/)
 {
 }
@@ -817,29 +731,25 @@ void vpMbtFaceDepthDense::displayFeature(const vpImage<vpRGBa> & /*I*/,
   \param P1 : The first point to compare
   \param P2 : The second point to compare
 */
-bool vpMbtFaceDepthDense::samePoint(const vpPoint &P1,
-                                    const vpPoint &P2) const
+bool vpMbtFaceDepthDense::samePoint(const vpPoint &P1, const vpPoint &P2) const
 {
   double dx = fabs(P1.get_oX() - P2.get_oX());
   double dy = fabs(P1.get_oY() - P2.get_oY());
   double dz = fabs(P1.get_oZ() - P2.get_oZ());
 
-  if (dx <= std::numeric_limits<double>::epsilon() &&
-      dy <= std::numeric_limits<double>::epsilon() &&
+  if (dx <= std::numeric_limits<double>::epsilon() && dy <= std::numeric_limits<double>::epsilon() &&
       dz <= std::numeric_limits<double>::epsilon())
     return true;
   else
     return false;
 }
 
-void vpMbtFaceDepthDense::setCameraParameters(
-    const vpCameraParameters &camera)
+void vpMbtFaceDepthDense::setCameraParameters(const vpCameraParameters &camera)
 {
   m_cam = camera;
 
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it =
-           m_listOfFaceLines.begin();
-       it != m_listOfFaceLines.end(); ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
+       ++it) {
     (*it)->setCameraParameters(camera);
   }
 }
@@ -848,9 +758,8 @@ void vpMbtFaceDepthDense::setScanLineVisibilityTest(const bool v)
 {
   m_useScanLine = v;
 
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it =
-           m_listOfFaceLines.begin();
-       it != m_listOfFaceLines.end(); ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
+       ++it) {
     (*it)->useScanLine = v;
   }
 }

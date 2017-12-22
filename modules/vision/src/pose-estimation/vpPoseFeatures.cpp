@@ -43,12 +43,10 @@
   Default constructor.
 */
 vpPoseFeatures::vpPoseFeatures()
-  : maxSize(0), totalSize(0), vvsIterMax(200), lambda(1.0), verbose(false),
-    computeCovariance(false), covarianceMatrix(), featurePoint_Point_list(),
-    featurePoint3D_Point_list(), featureVanishingPoint_Point_list(),
-    featureVanishingPoint_DuoLine_list(), featureEllipse_Sphere_list(),
-    featureEllipse_Circle_list(), featureLine_Line_list(),
-    featureLine_DuoLineInt_List(), featureSegment_DuoPoints_list()
+  : maxSize(0), totalSize(0), vvsIterMax(200), lambda(1.0), verbose(false), computeCovariance(false),
+    covarianceMatrix(), featurePoint_Point_list(), featurePoint3D_Point_list(), featureVanishingPoint_Point_list(),
+    featureVanishingPoint_DuoLine_list(), featureEllipse_Sphere_list(), featureEllipse_Circle_list(),
+    featureLine_Line_list(), featureLine_DuoLineInt_List(), featureSegment_DuoPoints_list()
 {
 }
 
@@ -74,8 +72,7 @@ void vpPoseFeatures::clear()
     delete featureVanishingPoint_Point_list[(unsigned int)i].desiredFeature;
   featureVanishingPoint_Point_list.clear();
 
-  for (int i = (int)featureVanishingPoint_DuoLine_list.size() - 1; i >= 0;
-       i--)
+  for (int i = (int)featureVanishingPoint_DuoLine_list.size() - 1; i >= 0; i--)
     delete featureVanishingPoint_DuoLine_list[(unsigned int)i].desiredFeature;
   featureVanishingPoint_DuoLine_list.clear();
 
@@ -138,8 +135,7 @@ void vpPoseFeatures::addFeaturePoint3D(const vpPoint &p)
   featurePoint3D_Point_list.push_back(vpDuo<vpFeaturePoint3D, vpPoint>());
   featurePoint3D_Point_list.back().firstParam = p;
   featurePoint3D_Point_list.back().desiredFeature = new vpFeaturePoint3D();
-  vpFeatureBuilder::create(*featurePoint3D_Point_list.back().desiredFeature,
-                           p);
+  vpFeatureBuilder::create(*featurePoint3D_Point_list.back().desiredFeature, p);
 
   totalSize++;
   if (featurePoint3D_Point_list.size() > maxSize)
@@ -154,13 +150,10 @@ void vpPoseFeatures::addFeaturePoint3D(const vpPoint &p)
 */
 void vpPoseFeatures::addFeatureVanishingPoint(const vpPoint &p)
 {
-  featureVanishingPoint_Point_list.push_back(
-      vpDuo<vpFeatureVanishingPoint, vpPoint>());
+  featureVanishingPoint_Point_list.push_back(vpDuo<vpFeatureVanishingPoint, vpPoint>());
   featureVanishingPoint_Point_list.back().firstParam = p;
-  featureVanishingPoint_Point_list.back().desiredFeature =
-      new vpFeatureVanishingPoint();
-  vpFeatureBuilder::create(
-      *featureVanishingPoint_Point_list.back().desiredFeature, p);
+  featureVanishingPoint_Point_list.back().desiredFeature = new vpFeatureVanishingPoint();
+  vpFeatureBuilder::create(*featureVanishingPoint_Point_list.back().desiredFeature, p);
 
   totalSize++;
   if (featureVanishingPoint_Point_list.size() > maxSize)
@@ -174,17 +167,13 @@ void vpPoseFeatures::addFeatureVanishingPoint(const vpPoint &p)
   \param l1 : First line used to create the feature.
   \param l2 : Second line used to create the feature.
 */
-void vpPoseFeatures::addFeatureVanishingPoint(const vpLine &l1,
-                                              const vpLine &l2)
+void vpPoseFeatures::addFeatureVanishingPoint(const vpLine &l1, const vpLine &l2)
 {
-  featureVanishingPoint_DuoLine_list.push_back(
-      vpTrio<vpFeatureVanishingPoint, vpLine, vpLine>());
+  featureVanishingPoint_DuoLine_list.push_back(vpTrio<vpFeatureVanishingPoint, vpLine, vpLine>());
   featureVanishingPoint_DuoLine_list.back().firstParam = l1;
   featureVanishingPoint_DuoLine_list.back().secondParam = l2;
-  featureVanishingPoint_DuoLine_list.back().desiredFeature =
-      new vpFeatureVanishingPoint();
-  vpFeatureBuilder::create(
-      *featureVanishingPoint_DuoLine_list.back().desiredFeature, l1, l2);
+  featureVanishingPoint_DuoLine_list.back().desiredFeature = new vpFeatureVanishingPoint();
+  vpFeatureBuilder::create(*featureVanishingPoint_DuoLine_list.back().desiredFeature, l1, l2);
 
   totalSize++;
   if (featureVanishingPoint_DuoLine_list.size() > maxSize)
@@ -202,8 +191,7 @@ void vpPoseFeatures::addFeatureEllipse(const vpSphere &s)
   featureEllipse_Sphere_list.push_back(vpDuo<vpFeatureEllipse, vpSphere>());
   featureEllipse_Sphere_list.back().firstParam = s;
   featureEllipse_Sphere_list.back().desiredFeature = new vpFeatureEllipse();
-  vpFeatureBuilder::create(*featureEllipse_Sphere_list.back().desiredFeature,
-                           s);
+  vpFeatureBuilder::create(*featureEllipse_Sphere_list.back().desiredFeature, s);
 
   totalSize++;
   if (featureEllipse_Sphere_list.size() > maxSize)
@@ -221,8 +209,7 @@ void vpPoseFeatures::addFeatureEllipse(const vpCircle &c)
   featureEllipse_Circle_list.push_back(vpDuo<vpFeatureEllipse, vpCircle>());
   featureEllipse_Circle_list.back().firstParam = c;
   featureEllipse_Circle_list.back().desiredFeature = new vpFeatureEllipse();
-  vpFeatureBuilder::create(*featureEllipse_Circle_list.back().desiredFeature,
-                           c);
+  vpFeatureBuilder::create(*featureEllipse_Circle_list.back().desiredFeature, c);
 
   totalSize++;
   if (featureEllipse_Circle_list.size() > maxSize)
@@ -257,13 +244,11 @@ void vpPoseFeatures::addFeatureLine(const vpLine &l)
 */
 void vpPoseFeatures::addFeatureLine(const vpCylinder &c, const int &line)
 {
-  featureLine_DuoLineInt_List.push_back(
-      vpTrio<vpFeatureLine, vpCylinder, int>());
+  featureLine_DuoLineInt_List.push_back(vpTrio<vpFeatureLine, vpCylinder, int>());
   featureLine_DuoLineInt_List.back().firstParam = c;
   featureLine_DuoLineInt_List.back().secondParam = line;
   featureLine_DuoLineInt_List.back().desiredFeature = new vpFeatureLine();
-  vpFeatureBuilder::create(*featureLine_DuoLineInt_List.back().desiredFeature,
-                           c, line);
+  vpFeatureBuilder::create(*featureLine_DuoLineInt_List.back().desiredFeature, c, line);
 
   totalSize++;
   if (featureLine_DuoLineInt_List.size() > maxSize)
@@ -279,14 +264,11 @@ void vpPoseFeatures::addFeatureLine(const vpCylinder &c, const int &line)
 */
 void vpPoseFeatures::addFeatureSegment(vpPoint &P1, vpPoint &P2)
 {
-  featureSegment_DuoPoints_list.push_back(
-      vpTrio<vpFeatureSegment, vpPoint, vpPoint>());
+  featureSegment_DuoPoints_list.push_back(vpTrio<vpFeatureSegment, vpPoint, vpPoint>());
   featureSegment_DuoPoints_list.back().firstParam = P1;
   featureSegment_DuoPoints_list.back().secondParam = P2;
-  featureSegment_DuoPoints_list.back().desiredFeature =
-      new vpFeatureSegment();
-  vpFeatureBuilder::create(
-      *featureSegment_DuoPoints_list.back().desiredFeature, P1, P2);
+  featureSegment_DuoPoints_list.back().desiredFeature = new vpFeatureSegment();
+  vpFeatureBuilder::create(*featureSegment_DuoPoints_list.back().desiredFeature, P1, P2);
 
   totalSize++;
   if (featureSegment_DuoPoints_list.size() > maxSize)
@@ -300,8 +282,7 @@ void vpPoseFeatures::addFeatureSegment(vpPoint &P1, vpPoint &P2)
   \param err : Resulting error vector.
   \param L : Resulting interaction matrix.
 */
-void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo,
-                                           vpColVector &err, vpMatrix &L)
+void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo, vpColVector &err, vpMatrix &L)
 {
   err = vpColVector();
   L = vpMatrix();
@@ -336,8 +317,7 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo,
       vpPoint p(featureVanishingPoint_Point_list[i].firstParam);
       p.track(cMo);
       vpFeatureBuilder::create(fvp, p);
-      err.stack(
-          fvp.error(*(featureVanishingPoint_Point_list[i].desiredFeature)));
+      err.stack(fvp.error(*(featureVanishingPoint_Point_list[i].desiredFeature)));
       L.stack(fvp.interaction());
     }
     // From Duo of vpLines
@@ -348,8 +328,7 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo,
       l1.track(cMo);
       l2.track(cMo);
       vpFeatureBuilder::create(fvp, l1, l2);
-      err.stack(
-          fvp.error(*(featureVanishingPoint_DuoLine_list[i].desiredFeature)));
+      err.stack(fvp.error(*(featureVanishingPoint_DuoLine_list[i].desiredFeature)));
       L.stack(fvp.interaction());
     }
 
@@ -388,8 +367,7 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo,
       vpFeatureLine fl;
       vpCylinder c(featureLine_DuoLineInt_List[i].firstParam);
       c.track(cMo);
-      vpFeatureBuilder::create(fl, c,
-                               featureLine_DuoLineInt_List[i].secondParam);
+      vpFeatureBuilder::create(fl, c, featureLine_DuoLineInt_List[i].secondParam);
       err.stack(fl.error(*(featureLine_DuoLineInt_List[i].desiredFeature)));
       L.stack(fl.interaction());
     }
@@ -432,8 +410,7 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo,
   \cite Comport06b.
 
 */
-void vpPoseFeatures::computePose(vpHomogeneousMatrix &cMo,
-                                 const vpPoseFeaturesMethodType &type)
+void vpPoseFeatures::computePose(vpHomogeneousMatrix &cMo, const vpPoseFeaturesMethodType &type)
 {
   switch (type) {
   case VIRTUAL_VS:
@@ -473,8 +450,7 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix &cMo)
     unsigned int iter = 0;
 
     // while((int)((residu_1 - r)*1e12) != 0 )
-    while (std::fabs((residu_1 - r) * 1e12) >
-           std::numeric_limits<double>::epsilon()) {
+    while (std::fabs((residu_1 - r) * 1e12) > std::numeric_limits<double>::epsilon()) {
       residu_1 = r;
 
       // Compute the interaction matrix and the error
@@ -505,8 +481,7 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix &cMo)
     }
 
     if (computeCovariance)
-      covarianceMatrix =
-          vpMatrix::computeCovarianceMatrix(L, v, -lambda * err);
+      covarianceMatrix = vpMatrix::computeCovarianceMatrix(L, v, -lambda * err);
 
   } catch (...) {
     vpERROR_TRACE("vpPoseFeatures::computePoseVVS");
@@ -538,8 +513,7 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
     unsigned int iter = 0;
 
     // while((int)((residu_1 - r)*1e12) !=0)
-    while (std::fabs((residu_1 - r) * 1e12) >
-           std::numeric_limits<double>::epsilon()) {
+    while (std::fabs((residu_1 - r) * 1e12) > std::numeric_limits<double>::epsilon()) {
       residu_1 = r;
 
       // Compute the interaction matrix and the error
@@ -591,10 +565,10 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
     }
 
     if (computeCovariance)
-      covarianceMatrix = vpMatrix::computeCovarianceMatrix(
-          L, v, -lambda * error, W * W); // Remark: W*W = W*W.t() since the
-                                         // matrix is diagonale, but using W*W
-                                         // is more efficient.
+      covarianceMatrix =
+          vpMatrix::computeCovarianceMatrix(L, v, -lambda * error, W * W); // Remark: W*W = W*W.t() since the
+                                                                           // matrix is diagonale, but using W*W
+                                                                           // is more efficient.
   } catch (...) {
     vpERROR_TRACE("vpPoseFeatures::computePoseRobustVVS");
     throw;

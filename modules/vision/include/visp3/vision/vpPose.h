@@ -81,19 +81,19 @@ class VISP_EXPORT vpPose
 public:
   //! Methods that could be used to estimate the pose from points.
   typedef enum {
-    LAGRANGE, /*!< Linear Lagrange approach (does't need an initialization) */
-    DEMENTHON, /*!< Linear Dementhon aproach (does't need an initialization)
-                */
-    LOWE,      /*!< Lowe aproach based on a Levenberg Marquartd non linear
-                  minimization scheme that needs an initialization from Lagrange or
-                  Dementhon aproach */
-    RANSAC,    /*!< Robust Ransac aproach (does't need an initialization) */
-    LAGRANGE_LOWE,  /*!< Non linear Lowe aproach initialized by Lagrange
-                       approach */
-    DEMENTHON_LOWE, /*!< Non linear Lowe aproach initialized by Dementhon
-                       approach */
-    VIRTUAL_VS, /*!< Non linear virtual visual servoing approach that needs an
-                   initialization from Lagrange or Dementhon aproach */
+    LAGRANGE,             /*!< Linear Lagrange approach (does't need an initialization) */
+    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization)
+                           */
+    LOWE,                 /*!< Lowe aproach based on a Levenberg Marquartd non linear
+                             minimization scheme that needs an initialization from Lagrange or
+                             Dementhon aproach */
+    RANSAC,               /*!< Robust Ransac aproach (does't need an initialization) */
+    LAGRANGE_LOWE,        /*!< Non linear Lowe aproach initialized by Lagrange
+                             approach */
+    DEMENTHON_LOWE,       /*!< Non linear Lowe aproach initialized by Dementhon
+                             approach */
+    VIRTUAL_VS,           /*!< Non linear virtual visual servoing approach that needs an
+                             initialization from Lagrange or Dementhon aproach */
     DEMENTHON_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach
                              initialized by Dementhon approach */
     LAGRANGE_VIRTUAL_VS   /*!< Non linear virtual visual servoing approach
@@ -101,16 +101,14 @@ public:
   } vpPoseMethodType;
 
   enum FILTERING_RANSAC_FLAGS {
-    PREFILTER_DUPLICATE_POINTS =
-        0x1, /*!< Remove duplicate points before the RANSAC. */
+    PREFILTER_DUPLICATE_POINTS = 0x1,        /*!< Remove duplicate points before the RANSAC. */
     PREFILTER_ALMOST_DUPLICATE_POINTS = 0x2, /*!< Remove almost duplicate
                                                 points (up to a tolerance)
                                                 before the RANSAC. */
-    PREFILTER_DEGENERATE_POINTS = 0x4, /*!< Remove degenerate points (same 3D
-                                          or 2D coordinates) before the
-                                          RANSAC. */
-    CHECK_DEGENERATE_POINTS =
-        0x8 /*!< Check for degenerate points during the RANSAC. */
+    PREFILTER_DEGENERATE_POINTS = 0x4,       /*!< Remove degenerate points (same 3D
+                                                or 2D coordinates) before the
+                                                RANSAC. */
+    CHECK_DEGENERATE_POINTS = 0x8            /*!< Check for degenerate points during the RANSAC. */
   };
 
   unsigned int npt;         //!< Number of point used in pose computation
@@ -161,28 +159,21 @@ private:
   class RansacFunctor
   {
   public:
-    RansacFunctor(const vpHomogeneousMatrix &cMo_,
-                  const unsigned int ransacNbInlierConsensus_,
-                  const int ransacMaxTrials_, const double ransacThreshold_,
-                  const unsigned int initial_seed_,
-                  const bool checkDegeneratePoints_,
-                  const std::vector<vpPoint> &listOfUniquePoints_,
+    RansacFunctor(const vpHomogeneousMatrix &cMo_, const unsigned int ransacNbInlierConsensus_,
+                  const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
+                  const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
                   bool (*func_)(vpHomogeneousMatrix *))
-      : m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_),
-        m_cMo(cMo_), m_foundSolution(false), m_func(func_),
-        m_initial_seed(initial_seed_),
-        m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
-        m_ransacMaxTrials(ransacMaxTrials_),
-        m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
+      : m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
+        m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
+        m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
         m_ransacThreshold(ransacThreshold_)
     {
     }
 
     RansacFunctor()
-      : m_best_consensus(), m_checkDegeneratePoints(false), m_cMo(),
-        m_foundSolution(false), m_func(NULL), m_initial_seed(0),
-        m_listOfUniquePoints(), m_nbInliers(0), m_ransacMaxTrials(),
-        m_ransacNbInlierConsensus(), m_ransacThreshold()
+      : m_best_consensus(), m_checkDegeneratePoints(false), m_cMo(), m_foundSolution(false), m_func(NULL),
+        m_initial_seed(0), m_listOfUniquePoints(), m_nbInliers(0), m_ransacMaxTrials(), m_ransacNbInlierConsensus(),
+        m_ransacThreshold()
     {
     }
 
@@ -191,10 +182,7 @@ private:
     // Access the return value.
     bool getResult() const { return m_foundSolution; }
 
-    std::vector<unsigned int> getBestConsensus() const
-    {
-      return m_best_consensus;
-    }
+    std::vector<unsigned int> getBestConsensus() const { return m_best_consensus; }
 
     vpHomogeneousMatrix getEstimatedPose() const { return m_cMo; }
 
@@ -224,8 +212,7 @@ protected:
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo);
 
   // method used in poseDementhonPlan()
-  int calculArbreDementhon(vpMatrix &b, vpColVector &U,
-                           vpHomogeneousMatrix &cMo);
+  int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo);
 
 public:
   vpPose();
@@ -234,23 +221,18 @@ public:
   void addPoints(const std::vector<vpPoint> &lP);
   void clearPoint();
 
-  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo,
-                   bool (*func)(vpHomogeneousMatrix *) = NULL);
+  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *) = NULL);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
   bool coplanar(int &coplanar_plane_type);
-  void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam,
-                    vpColor col = vpColor::none);
-  void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam,
-                    vpColor col = vpColor::none);
+  void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
+  void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
   void init();
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
-  void poseLagrangePlan(vpHomogeneousMatrix &cMo,
-                        const int coplanar_plane_type = 0);
+  void poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type = 0);
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo);
   void poseLowe(vpHomogeneousMatrix &cMo);
-  bool poseRansac(vpHomogeneousMatrix &cMo,
-                  bool (*func)(vpHomogeneousMatrix *) = NULL);
+  bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *) = NULL);
   void poseVirtualVSrobust(vpHomogeneousMatrix &cMo);
   void poseVirtualVS(vpHomogeneousMatrix &cMo);
   void printPoint();
@@ -266,30 +248,19 @@ public:
   }
   void setVvsIterMax(int nb) { vvsIterMax = nb; }
 
-  void setRansacNbInliersToReachConsensus(const unsigned int &nbC)
-  {
-    ransacNbInlierConsensus = nbC;
-  }
+  void setRansacNbInliersToReachConsensus(const unsigned int &nbC) { ransacNbInlierConsensus = nbC; }
   void setRansacThreshold(const double &t)
   {
     // Test whether or not t is > 0
     if (t > std::numeric_limits<double>::epsilon()) {
       ransacThreshold = t;
     } else {
-      throw vpException(
-          vpException::badValue,
-          "The Ransac threshold must be positive as we deal with distance.");
+      throw vpException(vpException::badValue, "The Ransac threshold must be positive as we deal with distance.");
     }
   }
   void setRansacMaxTrials(const int &rM) { ransacMaxTrials = rM; }
-  unsigned int getRansacNbInliers() const
-  {
-    return (unsigned int)ransacInliers.size();
-  }
-  std::vector<unsigned int> getRansacInlierIndex() const
-  {
-    return ransacInlierIndex;
-  }
+  unsigned int getRansacNbInliers() const { return (unsigned int)ransacInliers.size(); }
+  std::vector<unsigned int> getRansacInlierIndex() const { return ransacInlierIndex; }
   std::vector<vpPoint> getRansacInliers() const { return ransacInliers; }
 
   /*!
@@ -298,10 +269,7 @@ public:
 
     \param flag : True if the covariance has to be computed, false otherwise.
   */
-  void setCovarianceComputation(const bool &flag)
-  {
-    computeCovariance = flag;
-  }
+  void setCovarianceComputation(const bool &flag) { computeCovariance = flag; }
 
   /*!
     Get the covariance matrix computed in the Virtual Visual Servoing
@@ -335,10 +303,7 @@ public:
 
     \sa setNbParallelRansacThreads
   */
-  inline int getNbParallelRansacThreads() const
-  {
-    return nbParallelRansacThreads;
-  }
+  inline int getNbParallelRansacThreads() const { return nbParallelRansacThreads; }
 
   /*!
     Set the number of threads for the parallel RANSAC implementation.
@@ -347,10 +312,7 @@ public:
     If the number of threads is 0, the number of threads to use is
     automatically determined with OpenMP. \sa setUseParallelRansac
   */
-  inline void setNbParallelRansacThreads(const int nb)
-  {
-    nbParallelRansacThreads = nb;
-  }
+  inline void setNbParallelRansacThreads(const int nb) { nbParallelRansacThreads = nb; }
 
   /*!
     \return True if the parallel RANSAC version should be used.
@@ -364,10 +326,7 @@ public:
 
     \note Need Pthread.
   */
-  inline void setUseParallelRansac(const bool use)
-  {
-    useParallelRansac = use;
-  }
+  inline void setUseParallelRansac(const bool use) { useParallelRansac = use; }
 
   /*!
     Get the vector of points.
@@ -380,26 +339,19 @@ public:
     return vectorOfPoints;
   }
 
-  static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
-                      vpCameraParameters &cam, double size,
+  static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
                       vpColor col = vpColor::none);
-  static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo,
-                      vpCameraParameters &cam, double size,
+  static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
                       vpColor col = vpColor::none);
-  static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3,
-                                  vpPoint &p4, double lx,
-                                  vpCameraParameters &cam,
-                                  vpHomogeneousMatrix &cMo);
+  static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
+                                  vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
 
-  static int computeRansacIterations(double probability, double epsilon,
-                                     const int sampleSize = 4,
+  static int computeRansacIterations(double probability, double epsilon, const int sampleSize = 4,
                                      int maxIterations = 2000);
 
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
-                        const unsigned int &numberOfInlierToReachAConsensus,
-                        const double &threshold, unsigned int &ninliers,
-                        std::vector<vpPoint> &listInliers,
-                        vpHomogeneousMatrix &cMo,
+                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
+                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                         const int &maxNbTrials = 10000);
 };
 

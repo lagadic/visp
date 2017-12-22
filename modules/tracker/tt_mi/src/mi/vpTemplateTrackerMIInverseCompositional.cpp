@@ -42,21 +42,16 @@
 
 #include <memory>
 
-vpTemplateTrackerMIInverseCompositional::
-    vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp)
-  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_LMA),
-    CompoInitialised(false), useTemplateSelect(false), evolRMS(0),
-    x_pos(NULL), y_pos(NULL), threshold_RMS(1e-20), p_prec(), G_prec(),
-    KQuasiNewton() //, useAYOptim(false)
+vpTemplateTrackerMIInverseCompositional::vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp)
+  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
+    evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(1e-20), p_prec(), G_prec(), KQuasiNewton() //, useAYOptim(false)
 {
   useInverse = true;
 }
 
-void vpTemplateTrackerMIInverseCompositional::initTemplateRefBspline(
-    unsigned int ptIndex, double &et) // AY : Optim
+void vpTemplateTrackerMIInverseCompositional::initTemplateRefBspline(unsigned int ptIndex, double &et) // AY : Optim
 {
-  ptTemplateSupp[ptIndex].BtInit =
-      new double[(1 + nbParam + nbParam * nbParam) * (unsigned int)bspline];
+  ptTemplateSupp[ptIndex].BtInit = new double[(1 + nbParam + nbParam * nbParam) * (unsigned int)bspline];
 
   unsigned int index = 0;
   int endIndex = 1;
@@ -82,28 +77,24 @@ void vpTemplateTrackerMIInverseCompositional::initTemplateRefBspline(
     ptTemplateSupp[ptIndex].BtInit[index++] = (*ptBspFct)((double)(-it) + et);
 
     for (unsigned int ip = 0; ip < nbParam; ++ip) {
-      ptTemplateSupp[ptIndex].BtInit[index++] =
-          (*ptdBspFct)((double)(-it) + et) * ptTemplate[ptIndex].dW[ip] *
-          (-1.0);
+      ptTemplateSupp[ptIndex].BtInit[index++] = (*ptdBspFct)((double)(-it) + et) * ptTemplate[ptIndex].dW[ip] * (-1.0);
       for (unsigned int ip2 = 0; ip2 < nbParam; ++ip2) {
         ptTemplateSupp[ptIndex].BtInit[index++] =
-            (*ptd2BspFct)((double)(-it) + et) * ptTemplate[ptIndex].dW[ip] *
-            ptTemplate[ptIndex].dW[ip2];
+            (*ptd2BspFct)((double)(-it) + et) * ptTemplate[ptIndex].dW[ip] * ptTemplate[ptIndex].dW[ip2];
       }
     }
   }
 }
 
-void vpTemplateTrackerMIInverseCompositional::initCompInverse(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsigned char> &I)
 {
   ptTemplateSupp = new vpTemplateTrackerPointSuppMIInv[templateSize];
 
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
 
-  if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 &&
-      ApproxHessian != HESSIAN_NEW && ApproxHessian != HESSIAN_YOUCEF) {
+  if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
+      ApproxHessian != HESSIAN_YOUCEF) {
     vpImageFilter::getGradX(dIx, d2Ix, fgdG, taillef);
     vpImageFilter::getGradY(dIx, d2Ixy, fgdG, taillef);
     vpImageFilter::getGradY(dIy, d2Iy, fgdG, taillef);
@@ -141,8 +132,7 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(
   }
   CompoInitialised = true;
 }
-void vpTemplateTrackerMIInverseCompositional::initHessienDesired(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   initCompInverse(I);
 
@@ -180,8 +170,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(
     double j2 = X2[0];
     double i2 = X2[1];
 
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-        (j2 < I.getWidth() - 1)) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
       // Tij=ptTemplate[point].val;
 
@@ -198,17 +187,13 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(
       // calcul de l'erreur
       // erreur+=(Tij-IW)*(Tij-IW);
 
-      if (ApproxHessian == HESSIAN_NONSECOND &&
-          (ptTemplateSelect[point] || !useTemplateSelect)) {
-        vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(
-            PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam,
-            bspline);
-      } else if ((ApproxHessian == HESSIAN_0 ||
-                  ApproxHessian == HESSIAN_NEW) &&
+      if (ApproxHessian == HESSIAN_NONSECOND && (ptTemplateSelect[point] || !useTemplateSelect)) {
+        vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam,
+                                                            bspline);
+      } else if ((ApproxHessian == HESSIAN_0 || ApproxHessian == HESSIAN_NEW) &&
                  (ptTemplateSelect[point] || !useTemplateSelect)) {
         if (bspline == 3) {
-          vpTemplateTrackerMIBSpline::PutTotPVBspline3(
-              PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam);
+          vpTemplateTrackerMIBSpline::PutTotPVBspline3(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam);
           //                    {
           //                        if(et>0.5){ct++;}
           //                        if(er>0.5){cr++;}
@@ -218,8 +203,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(
           //                        er, ptTemplateSupp[point].BtInit, size);
           //                    }
         } else {
-          vpTemplateTrackerMIBSpline::PutTotPVBspline4(
-              PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam);
+          vpTemplateTrackerMIBSpline::PutTotPVBspline4(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam);
 
           //                    {
           //                        // ################### AY : Optim
@@ -231,8 +215,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(
           //                    }
         }
       } else if (ptTemplateSelect[point] || !useTemplateSelect)
-        vpTemplateTrackerMIBSpline::PutTotPVBsplinePrt(
-            PrtTout, cr, er, ct, et, Nc, nbParam, bspline);
+        vpTemplateTrackerMIBSpline::PutTotPVBsplinePrt(PrtTout, cr, er, ct, et, Nc, nbParam, bspline);
     }
   }
 
@@ -249,8 +232,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(
   KQuasiNewton = HLMdesireInverse;
 }
 
-void vpTemplateTrackerMIInverseCompositional::trackNoPyr(
-    const vpImage<unsigned char> &I)
+void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (!CompoInitialised)
     std::cout << "Compositionnal tracking no initialised\nUse "
@@ -310,8 +292,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(
         j2 = x2[0];
         i2 = x2[1];
 
-        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) &&
-            (j2 < I.getWidth() - 1)) {
+        if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
           // if(m_ptCurrentMask == NULL ||(m_ptCurrentMask->getWidth() ==
           // I.getWidth() && m_ptCurrentMask->getHeight() == I.getHeight() &&
           // (*m_ptCurrentMask)[(unsigned int)i2][(unsigned int)j2] > 128))
@@ -329,26 +310,20 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(
             int cr = (int)tmp;
             double er = tmp - (double)cr;
 
-            if ((ApproxHessian == HESSIAN_NONSECOND ||
-                 hessianComputation ==
-                     vpTemplateTrackerMI::USE_HESSIEN_DESIRE) &&
+            if ((ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE) &&
                 (ptTemplateSelect[point] || !useTemplateSelect)) {
-              vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(
-                  Prt, dPrt, cr, er, ct, et, Ncb, ptTemplate[point].dW,
-                  nbParam, bspline);
+              vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(Prt, dPrt, cr, er, ct, et, Ncb, ptTemplate[point].dW,
+                                                                  nbParam, bspline);
             } else if (ptTemplateSelect[point] || !useTemplateSelect) {
               if (bspline == 3) {
-                vpTemplateTrackerMIBSpline::PutTotPVBspline3(
-                    Prt, dPrt, d2Prt, cr, er, ct, et, Ncb,
-                    ptTemplate[point].dW, nbParam);
+                vpTemplateTrackerMIBSpline::PutTotPVBspline3(Prt, dPrt, d2Prt, cr, er, ct, et, Ncb,
+                                                             ptTemplate[point].dW, nbParam);
               } else {
-                vpTemplateTrackerMIBSpline::PutTotPVBspline4(
-                    Prt, dPrt, d2Prt, cr, er, ct, et, Ncb,
-                    ptTemplate[point].dW, nbParam);
+                vpTemplateTrackerMIBSpline::PutTotPVBspline4(Prt, dPrt, d2Prt, cr, er, ct, et, Ncb,
+                                                             ptTemplate[point].dW, nbParam);
               }
             } else {
-              vpTemplateTrackerMIBSpline::PutTotPVBsplinePrt(
-                  Prt, cr, er, ct, et, Ncb, nbParam, bspline);
+              vpTemplateTrackerMIBSpline::PutTotPVBsplinePrt(Prt, cr, er, ct, et, Ncb, nbParam, bspline);
             }
           }
         }
@@ -359,8 +334,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(
       diverge = true;
       MI = 0;
       deletePosEvalRMS();
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-                                "No points in the template"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
 
     } else {
       //            computeProba(Nbpoint);
@@ -446,14 +420,11 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(
         /*if(s_scal_y!=0)//BFGS
                     KQuasiNewton=KQuasiNewton+0.01*(-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y);*/
         // if(s_scal_y!=0)//DFP
-        if (std::fabs(s_scal_y) >
-            std::numeric_limits<double>::epsilon()) // DFP
+        if (std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon()) // DFP
         {
-          KQuasiNewton =
-              KQuasiNewton +
-              0.0001 * (s_quasi * s_quasi.t() / s_scal_y -
-                        KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
-                            (y_quasi.t() * KQuasiNewton * y_quasi));
+          KQuasiNewton = KQuasiNewton + 0.0001 * (s_quasi * s_quasi.t() / s_scal_y -
+                                                  KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
+                                                      (y_quasi.t() * KQuasiNewton * y_quasi));
           // std::cout<<"mise a jour K"<<std::endl;
         }
       }
@@ -486,9 +457,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(
     computeEvalRMS(p);
 
     //        std::cout << p.t() << std::endl;
-  } while ((!diverge) &&
-           (std::fabs(MI - MIprec) >
-            std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
+  } while ((!diverge) && (std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
            (iteration < iterationMax) && (evolRMS > threshold_RMS));
   // while( (!diverge) && (MI!=MIprec) &&(iteration<
   // iterationMax)&&(evolRMS>threshold_RMS) );
@@ -536,8 +505,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(
   }
 }
 
-void vpTemplateTrackerMIInverseCompositional::initPosEvalRMS(
-    const vpColVector &pw)
+void vpTemplateTrackerMIInverseCompositional::initPosEvalRMS(const vpColVector &pw)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos = new double[nb_corners];
@@ -559,8 +527,7 @@ void vpTemplateTrackerMIInverseCompositional::initPosEvalRMS(
   }
 }
 
-void vpTemplateTrackerMIInverseCompositional::computeEvalRMS(
-    const vpColVector &pw)
+void vpTemplateTrackerMIInverseCompositional::computeEvalRMS(const vpColVector &pw)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 

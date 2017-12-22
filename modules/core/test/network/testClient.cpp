@@ -58,14 +58,12 @@ int main()
     int val = 0;
 
     while (1) {
-      if (client.send(&val) !=
-          sizeof(int)) // Sending the new value to the first client
+      if (client.send(&val) != sizeof(int)) // Sending the new value to the first client
         std::cout << "Error while sending" << std::endl;
       else
         std::cout << "Sending : " << val << std::endl;
 
-      if (client.receive(&val) !=
-          sizeof(int)) // Receiving a value from the first client
+      if (client.receive(&val) != sizeof(int)) // Receiving a value from the first client
         std::cout << "Error while receiving" << std::endl;
       else
         std::cout << "Received : " << val << std::endl;

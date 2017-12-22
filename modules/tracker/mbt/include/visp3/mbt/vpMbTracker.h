@@ -106,10 +106,7 @@
 class VISP_EXPORT vpMbTracker
 {
 public:
-  typedef enum {
-    GAUSS_NEWTON_OPT = 0,
-    LEVENBERG_MARQUARDT_OPT = 1
-  } vpMbtOptimizationMethod;
+  typedef enum { GAUSS_NEWTON_OPT = 0, LEVENBERG_MARQUARDT_OPT = 1 } vpMbtOptimizationMethod;
 
 protected:
   //! The camera parameters.
@@ -215,10 +212,7 @@ public:
 
     \param camera : copy of the camera parameters used by the tracker.
   */
-  virtual void getCameraParameters(vpCameraParameters &camera) const
-  {
-    camera = this->cam;
-  }
+  virtual void getCameraParameters(vpCameraParameters &camera) const { camera = this->cam; }
 
   /*!
     Get the clipping used and defined in
@@ -290,10 +284,11 @@ public:
 
     The following example shows how to use this function to compute the norm
     of the residual and the norm of the residual normalized by the number of
-    features that are tracked: \code tracker.track(I); std::cout << "Residual:
-    " << sqrt( (tracker.getError()).sumSquare()) << std::endl; std::cout <<
-    "Residual normalized: " << sqrt(
-    (tracker.getError()).sumSquare())/tracker.getError().size() << std::endl;
+    features that are tracked:
+    \code
+    tracker.track(I); std::cout << "Residual: " << sqrt( (tracker.getError()).sumSquare()) << std::endl;
+    std::cout << "Residual normalized: "
+              << sqrt( (tracker.getError()).sumSquare())/tracker.getError().size() << std::endl;
     \endcode
 
     \sa getRobustWeights()
@@ -324,9 +319,9 @@ public:
       for(unsigned int i=0; i<w.size(); i++)
         we[i] = w[i]*e[i];
 
-      std::cout << "Weighted residual: " << sqrt( (we).sumSquare() ) <<
-    std::endl; std::cout << "Weighted residual normalized: " << sqrt(
-    (we).sumSquare() ) / w.sum() << std::endl; \endcode
+      std::cout << "Weighted residual: " << sqrt( (we).sumSquare() ) << std::endl;
+      std::cout << "Weighted residual normalized: " << sqrt( (we).sumSquare() ) / w.sum() << std::endl;
+    \endcode
 
     \sa getError()
    */
@@ -337,20 +332,14 @@ public:
 
     \return Number of polygons.
   */
-  virtual inline unsigned int getNbPolygon() const
-  {
-    return static_cast<unsigned int>(faces.size());
-  }
+  virtual inline unsigned int getNbPolygon() const { return static_cast<unsigned int>(faces.size()); }
 
   /*!
     Get the near distance for clipping.
 
     \return Near clipping value.
   */
-  virtual inline double getNearClippingDistance() const
-  {
-    return distNearClip;
-  }
+  virtual inline double getNearClippingDistance() const { return distNearClip; }
 
   /*!
     Get the optimization method used during the tracking.
@@ -359,10 +348,7 @@ public:
 
     \return Optimization method.
   */
-  virtual inline vpMbtOptimizationMethod getOptimizationMethod() const
-  {
-    return m_optimizationMethod;
-  }
+  virtual inline vpMbtOptimizationMethod getOptimizationMethod() const { return m_optimizationMethod; }
 
   /*!
     Return the polygon (face) "index".
@@ -382,11 +368,8 @@ public:
     return faces[index];
   }
 
-  virtual std::pair<std::vector<vpPolygon>,
-                    std::vector<std::vector<vpPoint> > >
-  getPolygonFaces(const bool orderPolygons = true,
-                  const bool useVisibility = true,
-                  const bool clipPolygon = false);
+  virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
+  getPolygonFaces(const bool orderPolygons = true, const bool useVisibility = true, const bool clipPolygon = false);
 
   /*!
     Get the current pose between the object and the camera.
@@ -395,10 +378,7 @@ public:
 
     \param cMo_ : the pose
   */
-  virtual inline void getPose(vpHomogeneousMatrix &cMo_) const
-  {
-    cMo_ = this->cMo;
-  }
+  virtual inline void getPose(vpHomogeneousMatrix &cMo_) const { cMo_ = this->cMo; }
 
   /*!
     Get the current pose between the object and the camera.
@@ -409,38 +389,26 @@ public:
   */
   virtual inline vpHomogeneousMatrix getPose() const { return this->cMo; }
 
-  virtual inline double getStopCriteriaEpsilon() const
-  {
-    return m_stopCriteriaEpsilon;
-  }
+  virtual inline double getStopCriteriaEpsilon() const { return m_stopCriteriaEpsilon; }
 
 // Intializer
 
 #ifdef VISP_HAVE_MODULE_GUI
-  virtual void initClick(const vpImage<unsigned char> &I,
-                         const std::string &initFile,
-                         const bool displayHelp = false);
-  virtual void initClick(const vpImage<unsigned char> &I,
-                         const std::vector<vpPoint> &points3D_list,
+  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false);
+  virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
                          const std::string &displayFile = "");
 #endif
 
-  virtual void initFromPoints(const vpImage<unsigned char> &I,
-                              const std::string &initFile);
-  virtual void initFromPoints(const vpImage<unsigned char> &I,
-                              const std::vector<vpImagePoint> &points2D_list,
+  virtual void initFromPoints(const vpImage<unsigned char> &I, const std::string &initFile);
+  virtual void initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &points2D_list,
                               const std::vector<vpPoint> &points3D_list);
 
-  virtual void initFromPose(const vpImage<unsigned char> &I,
-                            const std::string &initFile);
-  virtual void initFromPose(const vpImage<unsigned char> &I,
-                            const vpHomogeneousMatrix &cMo);
-  virtual void initFromPose(const vpImage<unsigned char> &I,
-                            const vpPoseVector &cPo);
+  virtual void initFromPose(const vpImage<unsigned char> &I, const std::string &initFile);
+  virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  virtual void initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo);
 
   virtual void loadModel(const char *modelFile, const bool verbose = false);
-  virtual void loadModel(const std::string &modelFile,
-                         const bool verbose = false);
+  virtual void loadModel(const std::string &modelFile, const bool verbose = false);
 
   /*!
     Set the angle used to test polygons appearance.
@@ -462,20 +430,14 @@ public:
 
     \param a : new angle in radian.
   */
-  virtual inline void setAngleDisappear(const double &a)
-  {
-    angleDisappears = a;
-  }
+  virtual inline void setAngleDisappear(const double &a) { angleDisappears = a; }
 
   /*!
     Set the camera parameters.
 
     \param camera : the new camera parameters
   */
-  virtual void setCameraParameters(const vpCameraParameters &camera)
-  {
-    this->cam = camera;
-  }
+  virtual void setCameraParameters(const vpCameraParameters &camera) { this->cam = camera; }
 
   virtual void setClipping(const unsigned int &flags);
 
@@ -487,10 +449,7 @@ public:
 
     \sa getCovarianceMatrix()
   */
-  virtual void setCovarianceComputation(const bool &flag)
-  {
-    computeCovariance = flag;
-  }
+  virtual void setCovarianceComputation(const bool &flag) { computeCovariance = flag; }
 
   /*!
     Enable to display the features. By features, we meant the moving edges
@@ -508,10 +467,7 @@ public:
 
     \param displayF : set it to true to display the features.
   */
-  virtual void setDisplayFeatures(const bool displayF)
-  {
-    displayFeatures = displayF;
-  }
+  virtual void setDisplayFeatures(const bool displayF) { displayFeatures = displayF; }
 
   virtual void setEstimatedDoF(const vpColVector &v);
 
@@ -540,11 +496,9 @@ public:
    */
   virtual inline void setMaxIter(const unsigned int max) { m_maxIter = max; }
 
-  virtual void setMinLineLengthThresh(const double minLineLengthThresh,
-                                      const std::string &name = "");
+  virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
 
-  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh,
-                                       const std::string &name = "");
+  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name = "");
 
   virtual void setNearClippingDistance(const double &dist);
 
@@ -553,11 +507,7 @@ public:
 
     \param opt : Optimization method to use.
   */
-  virtual inline void
-  setOptimizationMethod(const vpMbtOptimizationMethod &opt)
-  {
-    m_optimizationMethod = opt;
-  }
+  virtual inline void setOptimizationMethod(const vpMbtOptimizationMethod &opt) { m_optimizationMethod = opt; }
 
   /*!
     Set the minimal error (previous / current estimation) to determine if
@@ -565,10 +515,7 @@ public:
 
     \param eps : Epsilon threshold.
   */
-  virtual inline void setStopCriteriaEpsilon(const double eps)
-  {
-    m_stopCriteriaEpsilon = eps;
-  }
+  virtual inline void setStopCriteriaEpsilon(const double eps) { m_stopCriteriaEpsilon = eps; }
 
   /*!
     Set if the projection error criteria has to be computed. This criteria
@@ -581,10 +528,7 @@ public:
 
     \sa getProjectionError()
   */
-  virtual void setProjectionErrorComputation(const bool &flag)
-  {
-    computeProjError = flag;
-  }
+  virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
 
   virtual void setScanLineVisibilityTest(const bool &v) { useScanLine = v; }
 
@@ -602,10 +546,7 @@ public:
     \param ratio : Ratio of succesful attempts that has to be considered.
     Value has to be between 0.0 (0%) and 1.0 (100%).
   */
-  virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio)
-  {
-    faces.setGoodNbRayCastingAttemptsRatio(ratio);
-  }
+  virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio) { faces.setGoodNbRayCastingAttemptsRatio(ratio); }
   /*!
     Set the number of rays that will be sent toward each polygon for
     visibility test. Each ray will go from the optic center of the camera to a
@@ -615,8 +556,7 @@ public:
 
     \param attempts Number of rays to be sent.
   */
-  virtual void
-  setNbRayCastingAttemptsForVisibility(const unsigned int &attempts)
+  virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts)
   {
     faces.setNbRayCastingAttemptsForVisibility(attempts);
   }
@@ -632,10 +572,7 @@ public:
     Ogre rendering options) when Ogre visibility is enabled. By default, this
     functionality is turned off.
   */
-  inline virtual void setOgreShowConfigDialog(const bool showConfigDialog)
-  {
-    ogreShowConfigDialog = showConfigDialog;
-  }
+  inline virtual void setOgreShowConfigDialog(const bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
 
   /*!
     Set the filename used to save the initial pose computed using the
@@ -647,10 +584,7 @@ public:
 
     \param filename : The new filename.
   */
-  inline void setPoseSavingFilename(const std::string &filename)
-  {
-    poseSavingFilename = filename;
-  }
+  inline void setPoseSavingFilename(const std::string &filename) { poseSavingFilename = filename; }
 
   /* PURE VIRTUAL METHODS */
 
@@ -666,11 +600,8 @@ public:
     \param displayFullModel : If true, the full model is displayed (even the
     non visible surfaces).
   */
-  virtual void display(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false) = 0;
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false) = 0;
   /*!
     Display the 3D model at a given position using the given camera parameters
     on a color (RGBa) image.
@@ -683,11 +614,8 @@ public:
     \param displayFullModel : If true, the full model is displayed (even the
     non visible surfaces).
   */
-  virtual void display(const vpImage<vpRGBa> &I,
-                       const vpHomogeneousMatrix &cMo,
-                       const vpCameraParameters &cam, const vpColor &col,
-                       const unsigned int thickness = 1,
-                       const bool displayFullModel = false) = 0;
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false) = 0;
 
   /*!
     Initialise the tracking.
@@ -720,8 +648,7 @@ public:
     \param I : image corresponding to the desired pose.
     \param cdMo : Pose to affect.
   */
-  virtual void setPose(const vpImage<unsigned char> &I,
-                       const vpHomogeneousMatrix &cdMo) = 0;
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) = 0;
 
   /*!
     Test the quality of the tracking.
@@ -741,64 +668,45 @@ public:
 protected:
   /** @name Protected Member Functions Inherited from vpMbTracker */
   //@{
-  void addPolygon(const std::vector<vpPoint> &corners, const int idFace = -1,
-                  const std::string &polygonName = "",
-                  const bool useLod = false,
-                  const double minPolygonAreaThreshold = 2500.0,
+  void addPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
+                  const bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
                   const double minLineLengthThreshold = 50.0);
-  void addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3,
-                  const double radius, const int idFace = -1,
-                  const std::string &polygonName = "",
-                  const bool useLod = false,
+  void addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, const int idFace = -1,
+                  const std::string &polygonName = "", const bool useLod = false,
                   const double minPolygonAreaThreshold = 2500.0);
-  void addPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace = -1,
-                  const std::string &polygonName = "",
-                  const bool useLod = false,
-                  const double minLineLengthThreshold = 50);
-  void addPolygon(const std::vector<std::vector<vpPoint> > &listFaces,
-                  const int idFace = -1, const std::string &polygonName = "",
-                  const bool useLod = false,
+  void addPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace = -1, const std::string &polygonName = "",
+                  const bool useLod = false, const double minLineLengthThreshold = 50);
+  void addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace = -1,
+                  const std::string &polygonName = "", const bool useLod = false,
                   const double minLineLengthThreshold = 50);
 
-  void createCylinderBBox(const vpPoint &p1, const vpPoint &p2,
-                          const double &radius,
+  void createCylinderBBox(const vpPoint &p1, const vpPoint &p2, const double &radius,
                           std::vector<std::vector<vpPoint> > &listFaces);
 
-  virtual void computeCovarianceMatrixVVS(const bool isoJoIdentity_,
-                                          const vpColVector &w_true,
-                                          const vpHomogeneousMatrix &cMoPrev,
-                                          const vpMatrix &L_true,
-                                          const vpMatrix &LVJ_true,
-                                          const vpColVector &error);
+  virtual void computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vpColVector &w_true,
+                                          const vpHomogeneousMatrix &cMoPrev, const vpMatrix &L_true,
+                                          const vpMatrix &LVJ_true, const vpColVector &error);
 
-  void computeJTR(const vpMatrix &J, const vpColVector &R,
-                  vpColVector &JTR) const;
+  void computeJTR(const vpMatrix &J, const vpColVector &R, vpColVector &JTR) const;
 
-  virtual void computeVVSCheckLevenbergMarquardt(
-      const unsigned int iter, vpColVector &error,
-      const vpColVector &m_error_prev, const vpHomogeneousMatrix &cMoPrev,
-      double &mu, bool &reStartFromLastIncrement, vpColVector *const w = NULL,
-      const vpColVector *const m_w_prev = NULL);
+  virtual void computeVVSCheckLevenbergMarquardt(const unsigned int iter, vpColVector &error,
+                                                 const vpColVector &m_error_prev, const vpHomogeneousMatrix &cMoPrev,
+                                                 double &mu, bool &reStartFromLastIncrement,
+                                                 vpColVector *const w = NULL, const vpColVector *const m_w_prev = NULL);
   virtual void computeVVSInit() = 0;
   virtual void computeVVSInteractionMatrixAndResidu() = 0;
-  virtual void computeVVSPoseEstimation(
-      const bool isoJoIdentity_, const unsigned int iter, vpMatrix &L,
-      vpMatrix &LTL, vpColVector &R, const vpColVector &error,
-      vpColVector &error_prev, vpColVector &LTR, double &mu, vpColVector &v,
-      const vpColVector *const w = NULL, vpColVector *const m_w_prev = NULL);
-  virtual void computeVVSWeights(vpRobust &robust, const vpColVector &error,
-                                 vpColVector &w);
+  virtual void computeVVSPoseEstimation(const bool isoJoIdentity_, const unsigned int iter, vpMatrix &L, vpMatrix &LTL,
+                                        vpColVector &R, const vpColVector &error, vpColVector &error_prev,
+                                        vpColVector &LTR, double &mu, vpColVector &v, const vpColVector *const w = NULL,
+                                        vpColVector *const m_w_prev = NULL);
+  virtual void computeVVSWeights(vpRobust &robust, const vpColVector &error, vpColVector &w);
 
 #ifdef VISP_HAVE_COIN3D
-  virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2,
-                            vpHomogeneousMatrix &transform, int &idFace);
-  virtual void extractFaces(SoVRMLIndexedFaceSet *face_set,
-                            vpHomogeneousMatrix &transform, int &idFace,
+  virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);
+  virtual void extractFaces(SoVRMLIndexedFaceSet *face_set, vpHomogeneousMatrix &transform, int &idFace,
                             const std::string &polygonName = "");
-  virtual void extractLines(SoVRMLIndexedLineSet *line_set, int &idFace,
-                            const std::string &polygonName = "");
-  virtual void extractCylinders(SoVRMLIndexedFaceSet *face_set,
-                                vpHomogeneousMatrix &transform, int &idFace,
+  virtual void extractLines(SoVRMLIndexedLineSet *line_set, int &idFace, const std::string &polygonName = "");
+  virtual void extractCylinders(SoVRMLIndexedFaceSet *face_set, vpHomogeneousMatrix &transform, int &idFace,
                                 const std::string &polygonName = "");
 #endif
 
@@ -816,10 +724,8 @@ protected:
     \param idFace : Id of the face associated to the circle.
     \param name : Name of the circle.
   */
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2,
-                          const vpPoint &p3, const double radius,
-                          const int idFace = 0,
-                          const std::string &name = "") = 0;
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+                          const int idFace = 0, const std::string &name = "") = 0;
   /*!
     Add a cylinder to track from two points on the axis (defining the length
     of the cylinder) and its radius.
@@ -830,8 +736,7 @@ protected:
     \param idFace : Id of the face associated to the cylinder.
     \param name : Name of the cylinder.
   */
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2,
-                            const double radius, const int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
                             const std::string &name = "") = 0;
 
   /*!
@@ -850,10 +755,8 @@ protected:
   virtual void initFaceFromLines(vpMbtPolygon &polygon) = 0;
 
   virtual void loadVRMLModel(const std::string &modelFile);
-  virtual void loadCAOModel(const std::string &modelFile,
-                            std::vector<std::string> &vectorOfModelFilename,
-                            int &startIdFace, const bool verbose = false,
-                            const bool parent = true);
+  virtual void loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
+                            int &startIdFace, const bool verbose = false, const bool parent = true);
 
   void removeComment(std::ifstream &fileId);
 
@@ -872,18 +775,13 @@ protected:
 
   inline std::string &ltrim(std::string &s) const
   {
-    s.erase(s.begin(),
-            std::find_if(s.begin(), s.end(),
-                         std::not1(std::ptr_fun<int, int>(std::isspace))));
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
     return s;
   }
 
   inline std::string &rtrim(std::string &s) const
   {
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-                         std::not1(std::ptr_fun<int, int>(std::isspace)))
-                .base(),
-            s.end());
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
     return s;
   }
 

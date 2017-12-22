@@ -59,25 +59,20 @@
   Default constructor.
  */
 vpKltOpencv::vpKltOpencv()
-  : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(),
-    m_winSize(10), m_qualityLevel(0.01), m_minDistance(15),
-    m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3),
-    m_useHarrisDetector(1), m_pyrMaxLevel(3), m_next_points_id(0),
-    m_initial_guess(false)
+  : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
+    m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
+    m_pyrMaxLevel(3), m_next_points_id(0), m_initial_guess(false)
 {
-  m_termcrit = cv::TermCriteria(
-      cv::TermCriteria::COUNT | cv::TermCriteria::EPS, 20, 0.03);
+  m_termcrit = cv::TermCriteria(cv::TermCriteria::COUNT | cv::TermCriteria::EPS, 20, 0.03);
 }
 
 /*!
   Copy constructor.
  */
 vpKltOpencv::vpKltOpencv(const vpKltOpencv &copy)
-  : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(),
-    m_winSize(10), m_qualityLevel(0.01), m_minDistance(15),
-    m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3),
-    m_useHarrisDetector(1), m_pyrMaxLevel(3), m_next_points_id(0),
-    m_initial_guess(false)
+  : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
+    m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
+    m_pyrMaxLevel(3), m_next_points_id(0), m_initial_guess(false)
 {
   *this = copy;
 }
@@ -133,13 +128,11 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 
   m_points_id.clear();
 
-  cv::goodFeaturesToTrack(m_gray, m_points[1], m_maxCount, m_qualityLevel,
-                          m_minDistance, mask, m_blockSize, false,
+  cv::goodFeaturesToTrack(m_gray, m_points[1], m_maxCount, m_qualityLevel, m_minDistance, mask, m_blockSize, false,
                           m_harris_k);
 
   if (m_points[1].size() > 0) {
-    cv::cornerSubPix(m_gray, m_points[1], cv::Size(m_winSize, m_winSize),
-                     cv::Size(-1, -1), m_termcrit);
+    cv::cornerSubPix(m_gray, m_points[1], cv::Size(m_winSize, m_winSize), cv::Size(-1, -1), m_termcrit);
 
     for (size_t i = 0; i < m_points[1].size(); i++)
       m_points_id.push_back(m_next_points_id++);
@@ -154,8 +147,7 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 void vpKltOpencv::track(const cv::Mat &I)
 {
   if (m_points[1].size() == 0)
-    throw vpTrackingException(vpTrackingException::fatalError,
-                              "Not enough key points to track.");
+    throw vpTrackingException(vpTrackingException::fatalError, "Not enough key points to track.");
 
   std::vector<float> err;
   int flags = 0;
@@ -178,10 +170,8 @@ void vpKltOpencv::track(const cv::Mat &I)
 
   std::vector<uchar> status;
 
-  cv::calcOpticalFlowPyrLK(m_prevGray, m_gray, m_points[0], m_points[1],
-                           status, err, cv::Size(m_winSize, m_winSize),
-                           m_pyrMaxLevel, m_termcrit, flags,
-                           m_minEigThreshold);
+  cv::calcOpticalFlowPyrLK(m_prevGray, m_gray, m_points[0], m_points[1], status, err, cv::Size(m_winSize, m_winSize),
+                           m_pyrMaxLevel, m_termcrit, flags, m_minEigThreshold);
 
   // Remove points that are lost
   for (int i = (int)status.size() - 1; i >= 0; i--) {
@@ -206,12 +196,10 @@ void vpKltOpencv::track(const cv::Mat &I)
   \param y : y coordinate.
 
 */
-void vpKltOpencv::getFeature(const int &index, long &id, float &x,
-                             float &y) const
+void vpKltOpencv::getFeature(const int &index, long &id, float &x, float &y) const
 {
   if ((size_t)index >= m_points[1].size()) {
-    throw(vpException(vpException::badValue, "Feature [%d] doesn't exist",
-                      index));
+    throw(vpException(vpException::badValue, "Feature [%d] doesn't exist", index));
   }
 
   x = m_points[1][(size_t)index].x;
@@ -226,8 +214,7 @@ void vpKltOpencv::getFeature(const int &index, long &id, float &x,
   \param color : Color used to display the features.
   \param thickness : Thickness of the drawings.
   */
-void vpKltOpencv::display(const vpImage<unsigned char> &I,
-                          const vpColor &color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
   vpKltOpencv::display(I, m_points[1], m_points_id, color, thickness);
 }
@@ -244,8 +231,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 
   \param thickness : Thickness of the points.
 */
-void vpKltOpencv::display(const vpImage<unsigned char> &I,
-                          const std::vector<cv::Point2f> &features,
+void vpKltOpencv::display(const vpImage<unsigned char> &I, const std::vector<cv::Point2f> &features,
                           const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip;
@@ -268,9 +254,8 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 
   \param thickness : Thickness of the points.
 */
-void vpKltOpencv::display(const vpImage<vpRGBa> &I,
-                          const std::vector<cv::Point2f> &features,
-                          const vpColor &color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2f> &features, const vpColor &color,
+                          unsigned int thickness)
 {
   vpImagePoint ip;
   for (size_t i = 0; i < features.size(); i++) {
@@ -294,10 +279,8 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I,
 
   \param thickness : Thickness of the points
 */
-void vpKltOpencv::display(const vpImage<unsigned char> &I,
-                          const std::vector<cv::Point2f> &features,
-                          const std::vector<long> &featuresid,
-                          const vpColor &color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char> &I, const std::vector<cv::Point2f> &features,
+                          const std::vector<long> &featuresid, const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (size_t i = 0; i < features.size(); i++) {
@@ -326,10 +309,8 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 
   \param thickness : Thickness of the points
 */
-void vpKltOpencv::display(const vpImage<vpRGBa> &I,
-                          const std::vector<cv::Point2f> &features,
-                          const std::vector<long> &featuresid,
-                          const vpColor &color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2f> &features,
+                          const std::vector<long> &featuresid, const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (size_t i = 0; i < features.size(); i++) {
@@ -350,10 +331,7 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I,
   \param maxCount : Maximum number of features to detect and track. Default
   value is set to 500.
 */
-void vpKltOpencv::setMaxFeatures(const int maxCount)
-{
-  m_maxCount = maxCount;
-}
+void vpKltOpencv::setMaxFeatures(const int maxCount) { m_maxCount = maxCount; }
 
 /*!
   Set the window size used to refine the corner locations.
@@ -375,10 +353,7 @@ void vpKltOpencv::setWindowSize(const int winSize) { m_winSize = winSize; }
   best corner has the quality measure = 1500, and the qualityLevel=0.01, then
   all the corners with the quality measure less than 15 are rejected.
  */
-void vpKltOpencv::setQuality(double qualityLevel)
-{
-  m_qualityLevel = qualityLevel;
-}
+void vpKltOpencv::setQuality(double qualityLevel) { m_qualityLevel = qualityLevel; }
 
 /*!
   Set the free parameter of the Harris detector.
@@ -386,10 +361,7 @@ void vpKltOpencv::setQuality(double qualityLevel)
   \param harris_k : Free parameter of the Harris detector. Default value is
   set to 0.04.
 */
-void vpKltOpencv::setHarrisFreeParameter(double harris_k)
-{
-  m_harris_k = harris_k;
-}
+void vpKltOpencv::setHarrisFreeParameter(double harris_k) { m_harris_k = harris_k; }
 
 /*!
   Set the parameter indicating whether to use a Harris detector or
@@ -397,10 +369,7 @@ void vpKltOpencv::setHarrisFreeParameter(double harris_k)
   \param useHarrisDetector : If 1 (default value), use the Harris detector. If
   0 use the eigenvalue.
 */
-void vpKltOpencv::setUseHarris(const int useHarrisDetector)
-{
-  m_useHarrisDetector = useHarrisDetector;
-}
+void vpKltOpencv::setUseHarris(const int useHarrisDetector) { m_useHarrisDetector = useHarrisDetector; }
 
 /*!
   Set the minimal Euclidean distance between detected corners during
@@ -409,20 +378,14 @@ void vpKltOpencv::setUseHarris(const int useHarrisDetector)
   \param minDistance : Minimal possible Euclidean distance between the
   detected corners. Default value is set to 15.
 */
-void vpKltOpencv::setMinDistance(double minDistance)
-{
-  m_minDistance = minDistance;
-}
+void vpKltOpencv::setMinDistance(double minDistance) { m_minDistance = minDistance; }
 
 /*!
   Set the minimal eigen value threshold used to reject a point during the
   tracking. \param minEigThreshold : Minimal eigen value threshold. Default
   value is set to 1e-4.
 */
-void vpKltOpencv::setMinEigThreshold(double minEigThreshold)
-{
-  m_minEigThreshold = minEigThreshold;
-}
+void vpKltOpencv::setMinEigThreshold(double minEigThreshold) { m_minEigThreshold = minEigThreshold; }
 
 /*!
   Set the size of the averaging block used to track the features.
@@ -433,10 +396,7 @@ void vpKltOpencv::setMinEigThreshold(double minEigThreshold)
   \param blockSize : Size of an average block for computing a derivative
   covariation matrix over each pixel neighborhood. Default value is set to 3.
 */
-void vpKltOpencv::setBlockSize(const int blockSize)
-{
-  m_blockSize = blockSize;
-}
+void vpKltOpencv::setBlockSize(const int blockSize) { m_blockSize = blockSize; }
 
 /*!
   Set the maximal pyramid level. If the level is zero, then no pyramid is
@@ -446,10 +406,7 @@ void vpKltOpencv::setBlockSize(const int blockSize)
   pyramids are not used (single level), if set to 1, two levels are used, and
   so on. Default value is set to 3.
 */
-void vpKltOpencv::setPyramidLevels(const int pyrMaxLevel)
-{
-  m_pyrMaxLevel = pyrMaxLevel;
-}
+void vpKltOpencv::setPyramidLevels(const int pyrMaxLevel) { m_pyrMaxLevel = pyrMaxLevel; }
 
 /*!
   Set the points that will be used as initial guess during the next call to
@@ -490,8 +447,7 @@ void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &guess_pts)
   \sa getFeatures(), getFeaturesId
   \sa initTracking()
 */
-void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &init_pts,
-                                  const std::vector<cv::Point2f> &guess_pts,
+void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &init_pts, const std::vector<cv::Point2f> &guess_pts,
                                   const std::vector<long> &fid)
 {
   if (guess_pts.size() != init_pts.size()) {
@@ -515,8 +471,7 @@ void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &init_pts,
   \param pts : Vector of points that should be tracked.
 
 */
-void vpKltOpencv::initTracking(const cv::Mat &I,
-                               const std::vector<cv::Point2f> &pts)
+void vpKltOpencv::initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts)
 {
   m_initial_guess = false;
   m_points[1] = pts;
@@ -529,9 +484,7 @@ void vpKltOpencv::initTracking(const cv::Mat &I,
   I.copyTo(m_gray);
 }
 
-void vpKltOpencv::initTracking(const cv::Mat &I,
-                               const std::vector<cv::Point2f> &pts,
-                               const std::vector<long> &ids)
+void vpKltOpencv::initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts, const std::vector<long> &ids)
 {
   m_initial_guess = false;
   m_points[1] = pts;
@@ -609,8 +562,7 @@ void vpKltOpencv::addFeature(const cv::Point2f &f)
 void vpKltOpencv::suppressFeature(const int &index)
 {
   if ((size_t)index >= m_points[1].size()) {
-    throw(vpException(vpException::badValue, "Feature [%d] doesn't exist",
-                      index));
+    throw(vpException(vpException::badValue, "Feature [%d] doesn't exist", index));
   }
 
   m_points[1].erase(m_points[1].begin() + index);
@@ -676,19 +628,15 @@ void vpKltOpencv::reset() { clean(); }
   Default constructor.
  */
 vpKltOpencv::vpKltOpencv()
-  : initialized(0), maxFeatures(50), globalcountFeatures(0), win_size(10),
-    quality(0.01), min_distance(10), harris_free_parameter(0.04),
-    block_size(3), use_harris(1), pyramid_level(3), _tid(-1), image(NULL),
-    prev_image(NULL), pyramid(NULL), prev_pyramid(NULL), swap_temp(NULL),
-    countFeatures(0), countPrevFeatures(0), features(NULL),
-    prev_features(NULL), featuresid(NULL), prev_featuresid(NULL), flags(0),
-    initial_guess(false), lostDuringTrack(0), status(0), OnInitialize(0),
-    OnFeatureLost(0), OnNewFeature(0), OnMeasureFeature(0), IsFeatureValid(0)
+  : initialized(0), maxFeatures(50), globalcountFeatures(0), win_size(10), quality(0.01), min_distance(10),
+    harris_free_parameter(0.04), block_size(3), use_harris(1), pyramid_level(3), _tid(-1), image(NULL),
+    prev_image(NULL), pyramid(NULL), prev_pyramid(NULL), swap_temp(NULL), countFeatures(0), countPrevFeatures(0),
+    features(NULL), prev_features(NULL), featuresid(NULL), prev_featuresid(NULL), flags(0), initial_guess(false),
+    lostDuringTrack(0), status(0), OnInitialize(0), OnFeatureLost(0), OnNewFeature(0), OnMeasureFeature(0),
+    IsFeatureValid(0)
 {
-  features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures *
-                                     sizeof(features[0]));
-  prev_features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures *
-                                          sizeof(prev_features[0]));
+  features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures * sizeof(features[0]));
+  prev_features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures * sizeof(prev_features[0]));
   status = (char *)cvAlloc((size_t)maxFeatures);
   lostDuringTrack = (bool *)cvAlloc((size_t)maxFeatures);
   featuresid = (long *)cvAlloc((unsigned int)maxFeatures * sizeof(long));
@@ -699,14 +647,12 @@ vpKltOpencv::vpKltOpencv()
   Copy constructor.
  */
 vpKltOpencv::vpKltOpencv(const vpKltOpencv &copy)
-  : initialized(0), maxFeatures(50), globalcountFeatures(0), win_size(10),
-    quality(0.01), min_distance(10), harris_free_parameter(0.04),
-    block_size(3), use_harris(1), pyramid_level(3), _tid(-1), image(NULL),
-    prev_image(NULL), pyramid(NULL), prev_pyramid(NULL), swap_temp(NULL),
-    countFeatures(0), countPrevFeatures(0), features(NULL),
-    prev_features(NULL), featuresid(NULL), prev_featuresid(NULL), flags(0),
-    initial_guess(false), lostDuringTrack(0), status(0), OnInitialize(0),
-    OnFeatureLost(0), OnNewFeature(0), OnMeasureFeature(0), IsFeatureValid(0)
+  : initialized(0), maxFeatures(50), globalcountFeatures(0), win_size(10), quality(0.01), min_distance(10),
+    harris_free_parameter(0.04), block_size(3), use_harris(1), pyramid_level(3), _tid(-1), image(NULL),
+    prev_image(NULL), pyramid(NULL), prev_pyramid(NULL), swap_temp(NULL), countFeatures(0), countPrevFeatures(0),
+    features(NULL), prev_features(NULL), featuresid(NULL), prev_featuresid(NULL), flags(0), initial_guess(false),
+    lostDuringTrack(0), status(0), OnInitialize(0), OnFeatureLost(0), OnNewFeature(0), OnMeasureFeature(0),
+    IsFeatureValid(0)
 {
   *this = copy;
 }
@@ -770,51 +716,44 @@ vpKltOpencv &vpKltOpencv::operator=(const vpKltOpencv &copy)
   }
 
   if (copy.prev_pyramid) {
-    prev_pyramid =
-        cvCreateImage(cvGetSize(copy.prev_pyramid), IPL_DEPTH_8U, 1);
+    prev_pyramid = cvCreateImage(cvGetSize(copy.prev_pyramid), IPL_DEPTH_8U, 1);
     //	/*IplImage **/cvCopyImage(copy.prev_pyramid,prev_pyramid);
     cvCopy(copy.prev_pyramid, prev_pyramid, 0);
   }
 
   // Deep copy of arrays
   if (copy.features) {
-    /*CvPoint2D32f **/ features = (CvPoint2D32f *)cvAlloc(
-        (unsigned int)copy.maxFeatures * sizeof(CvPoint2D32f));
+    /*CvPoint2D32f **/ features = (CvPoint2D32f *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(CvPoint2D32f));
     for (int i = 0; i < copy.maxFeatures; i++)
       features[i] = copy.features[i];
   }
 
   if (copy.prev_features) {
-    /*CvPoint2D32f **/ prev_features = (CvPoint2D32f *)cvAlloc(
-        (unsigned int)copy.maxFeatures * sizeof(CvPoint2D32f));
+    /*CvPoint2D32f **/ prev_features = (CvPoint2D32f *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(CvPoint2D32f));
     for (int i = 0; i < copy.maxFeatures; i++)
       prev_features[i] = copy.prev_features[i];
   }
 
   if (copy.featuresid) {
-    /*long **/ featuresid =
-        (long *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(long));
+    /*long **/ featuresid = (long *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(long));
     for (int i = 0; i < copy.maxFeatures; i++)
       featuresid[i] = copy.featuresid[i];
   }
 
   if (copy.prev_featuresid) {
-    /*long **/ prev_featuresid =
-        (long *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(long));
+    /*long **/ prev_featuresid = (long *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(long));
     for (int i = 0; i < copy.maxFeatures; i++)
       prev_featuresid[i] = copy.prev_featuresid[i];
   }
 
   if (copy.status) {
-    /*char **/ status =
-        (char *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(char));
+    /*char **/ status = (char *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(char));
     for (int i = 0; i < copy.maxFeatures; i++)
       status[i] = copy.status[i];
   }
 
   if (copy.lostDuringTrack) {
-    /*bool **/ lostDuringTrack =
-        (bool *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(bool));
+    /*bool **/ lostDuringTrack = (bool *)cvAlloc((unsigned int)copy.maxFeatures * sizeof(bool));
     for (int i = 0; i < copy.maxFeatures; i++)
       lostDuringTrack[i] = copy.lostDuringTrack[i];
   }
@@ -849,10 +788,8 @@ void vpKltOpencv::setMaxFeatures(const int input)
   if (prev_featuresid)
     cvFree(&prev_featuresid);
 
-  features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures *
-                                     sizeof(CvPoint2D32f));
-  prev_features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures *
-                                          sizeof(CvPoint2D32f));
+  features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures * sizeof(CvPoint2D32f));
+  prev_features = (CvPoint2D32f *)cvAlloc((unsigned int)maxFeatures * sizeof(CvPoint2D32f));
   status = (char *)cvAlloc((unsigned int)maxFeatures * sizeof(char));
   lostDuringTrack = (bool *)cvAlloc((unsigned int)maxFeatures * sizeof(bool));
   featuresid = (long *)cvAlloc((unsigned int)maxFeatures * sizeof(long));
@@ -872,19 +809,16 @@ void vpKltOpencv::setMaxFeatures(const int input)
 void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
 {
   if (!I) {
-    throw(vpException(vpTrackingException::initializationError,
-                      "Image Not initialized"));
+    throw(vpException(vpTrackingException::initializationError, "Image Not initialized"));
   }
 
   if (I->depth != IPL_DEPTH_8U || I->nChannels != 1) {
-    throw(vpException(vpTrackingException::initializationError,
-                      "Bad Image format"));
+    throw(vpException(vpTrackingException::initializationError, "Bad Image format"));
   }
 
   if (mask) {
     if (mask->depth != IPL_DEPTH_8U || I->nChannels != 1) {
-      throw(vpException(vpTrackingException::initializationError,
-                        "Bad Image format"));
+      throw(vpException(vpTrackingException::initializationError, "Bad Image format"));
     }
   }
 
@@ -897,8 +831,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
     if (SizeI.width != Sizeim.width || SizeI.height != Sizeim.height)
       b_imOK = false;
   }
-  if (image == NULL || prev_image == NULL || pyramid == NULL ||
-      prev_pyramid == NULL || !b_imOK) {
+  if (image == NULL || prev_image == NULL || pyramid == NULL || prev_pyramid == NULL || !b_imOK) {
     reset();
     image = cvCreateImage(cvGetSize(I), 8, 1);
     image->origin = I->origin;
@@ -924,13 +857,10 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
   countPrevFeatures = 0;
   IplImage *eig = cvCreateImage(cvGetSize(image), 32, 1);
   IplImage *temp = cvCreateImage(cvGetSize(image), 32, 1);
-  cvGoodFeaturesToTrack(image, eig, temp, features, &countFeatures, quality,
-                        min_distance, mask, block_size, use_harris,
+  cvGoodFeaturesToTrack(image, eig, temp, features, &countFeatures, quality, min_distance, mask, block_size, use_harris,
                         harris_free_parameter);
-  cvFindCornerSubPix(
-      image, features, countFeatures, cvSize(win_size, win_size),
-      cvSize(-1, -1),
-      cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
+  cvFindCornerSubPix(image, features, countFeatures, cvSize(win_size, win_size), cvSize(-1, -1),
+                     cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
   cvReleaseImage(&eig);
   cvReleaseImage(&temp);
 
@@ -943,8 +873,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
     globalcountFeatures++;
 
     if (OnNewFeature) {
-      OnNewFeature(_tid, boucle, featuresid[boucle], features[boucle].x,
-                   features[boucle].y);
+      OnNewFeature(_tid, boucle, featuresid[boucle], features[boucle].x, features[boucle].y);
     }
   }
 }
@@ -960,8 +889,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
 void vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts, int size)
 {
   if (size > maxFeatures)
-    throw(vpException(vpTrackingException::initializationError,
-                      "Cannot initialize tracker from points"));
+    throw(vpException(vpTrackingException::initializationError, "Cannot initialize tracker from points"));
 
   // Creation des buffers
   CvSize Sizeim, SizeI;
@@ -972,8 +900,7 @@ void vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts, int size)
     if (SizeI.width != Sizeim.width || SizeI.height != Sizeim.height)
       b_imOK = false;
   }
-  if (image == NULL || prev_image == NULL || pyramid == NULL ||
-      prev_pyramid == NULL || !b_imOK) {
+  if (image == NULL || prev_image == NULL || pyramid == NULL || prev_pyramid == NULL || !b_imOK) {
     reset();
     image = cvCreateImage(cvGetSize(I), 8, 1);
     image->origin = I->origin;
@@ -996,12 +923,10 @@ void vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts, int size)
   cvCopy(I, image, 0);
 }
 
-void vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts,
-                               long *fid, int size)
+void vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts, long *fid, int size)
 {
   if (size > maxFeatures)
-    throw(vpException(vpTrackingException::initializationError,
-                      "Cannot initialize tracker from points"));
+    throw(vpException(vpTrackingException::initializationError, "Cannot initialize tracker from points"));
 
   // Creation des buffers
   CvSize Sizeim, SizeI;
@@ -1012,8 +937,7 @@ void vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts,
     if (SizeI.width != Sizeim.width || SizeI.height != Sizeim.height)
       b_imOK = false;
   }
-  if (image == NULL || prev_image == NULL || pyramid == NULL ||
-      prev_pyramid == NULL || !b_imOK) {
+  if (image == NULL || prev_image == NULL || pyramid == NULL || prev_pyramid == NULL || !b_imOK) {
     reset();
     image = cvCreateImage(cvGetSize(I), 8, 1);
     image->origin = I->origin;
@@ -1043,18 +967,15 @@ void vpKltOpencv::track(const IplImage *I)
 {
   if (!initialized) {
     vpERROR_TRACE("KLT Not initialized");
-    throw(vpException(vpTrackingException::initializationError,
-                      "KLT Not initialized"));
+    throw(vpException(vpTrackingException::initializationError, "KLT Not initialized"));
   }
 
   if (!I) {
-    throw(vpException(vpTrackingException::initializationError,
-                      "Image Not initialized"));
+    throw(vpException(vpTrackingException::initializationError, "Image Not initialized"));
   }
 
   if (I->depth != IPL_DEPTH_8U || I->nChannels != 1) {
-    throw(vpException(vpTrackingException::initializationError,
-                      "Bad Image format"));
+    throw(vpException(vpTrackingException::initializationError, "Bad Image format"));
   }
 
   CV_SWAP(prev_image, image, swap_temp);
@@ -1076,10 +997,9 @@ void vpKltOpencv::track(const IplImage *I)
   if (countFeatures <= 0)
     return;
 
-  cvCalcOpticalFlowPyrLK(
-      prev_image, image, prev_pyramid, pyramid, prev_features, features,
-      countFeatures, cvSize(win_size, win_size), pyramid_level, status, 0,
-      cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03), flags);
+  cvCalcOpticalFlowPyrLK(prev_image, image, prev_pyramid, pyramid, prev_features, features, countFeatures,
+                         cvSize(win_size, win_size), pyramid_level, status, 0,
+                         cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03), flags);
 
   if (!initial_guess)
     flags |= CV_LKFLOW_PYR_A_READY;
@@ -1124,16 +1044,14 @@ void vpKltOpencv::track(const IplImage *I)
   \param color : Color used to display the features.
   \param thickness : Thickness of the drawings.
   */
-void vpKltOpencv::display(const vpImage<unsigned char> &I, vpColor color,
-                          unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char> &I, vpColor color, unsigned int thickness)
 {
   if ((features == 0) || (I.bitmap == 0) || (!initialized)) {
     vpERROR_TRACE(" Memory problem ");
     throw(vpException(vpException::memoryAllocationError, " Memory problem"));
   }
 
-  vpKltOpencv::display(I, features, featuresid, countFeatures, color,
-                       thickness);
+  vpKltOpencv::display(I, features, featuresid, countFeatures, color, thickness);
 }
 
 /*!
@@ -1203,9 +1121,7 @@ void vpKltOpencv::setInitialGuess(CvPoint2D32f **guess_pts)
   \sa getFeatures(), getFeaturesId
   \sa initTracking()
 */
-void vpKltOpencv::setInitialGuess(CvPoint2D32f **init_pts,
-                                  CvPoint2D32f **guess_pts, long *fid,
-                                  int size)
+void vpKltOpencv::setInitialGuess(CvPoint2D32f **init_pts, CvPoint2D32f **guess_pts, long *fid, int size)
 {
   countPrevFeatures = size;
   countFeatures = size;
@@ -1298,10 +1214,8 @@ void vpKltOpencv::suppressFeature(int index)
 
   \param thickness : Thickness of the points.
 */
-void vpKltOpencv::display(const vpImage<unsigned char> &I,
-                          const CvPoint2D32f *features_list,
-                          const int &nbFeatures, vpColor color,
-                          unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char> &I, const CvPoint2D32f *features_list, const int &nbFeatures,
+                          vpColor color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (int i = 0; i < nbFeatures; i++) {
@@ -1324,10 +1238,8 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 
   \param thickness : Thickness of the points.
 */
-void vpKltOpencv::display(const vpImage<vpRGBa> &I,
-                          const CvPoint2D32f *features_list,
-                          const int &nbFeatures, vpColor color,
-                          unsigned int thickness)
+void vpKltOpencv::display(const vpImage<vpRGBa> &I, const CvPoint2D32f *features_list, const int &nbFeatures,
+                          vpColor color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (int i = 0; i < nbFeatures; i++) {
@@ -1353,10 +1265,8 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I,
 
   \param thickness : Thickness of the points
 */
-void vpKltOpencv::display(const vpImage<unsigned char> &I,
-                          const CvPoint2D32f *features_list,
-                          const long *featuresid_list, const int &nbFeatures,
-                          vpColor color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char> &I, const CvPoint2D32f *features_list,
+                          const long *featuresid_list, const int &nbFeatures, vpColor color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (int i = 0; i < nbFeatures; i++) {
@@ -1387,10 +1297,8 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 
   \param thickness : Thickness of the points
 */
-void vpKltOpencv::display(const vpImage<vpRGBa> &I,
-                          const CvPoint2D32f *features_list,
-                          const long *featuresid_list, const int &nbFeatures,
-                          vpColor color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<vpRGBa> &I, const CvPoint2D32f *features_list, const long *featuresid_list,
+                          const int &nbFeatures, vpColor color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (int i = 0; i < nbFeatures; i++) {

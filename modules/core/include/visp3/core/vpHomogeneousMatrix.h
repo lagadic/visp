@@ -94,16 +94,14 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
 public:
   vpHomogeneousMatrix();
   vpHomogeneousMatrix(const vpHomogeneousMatrix &M);
-  vpHomogeneousMatrix(const vpTranslationVector &t,
-                      const vpRotationMatrix &R);
+  vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu);
-  vpHomogeneousMatrix(const vpTranslationVector &t,
-                      const vpQuaternionVector &q);
+  vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q);
   explicit vpHomogeneousMatrix(const vpPoseVector &p);
   explicit vpHomogeneousMatrix(const std::vector<float> &v);
   explicit vpHomogeneousMatrix(const std::vector<double> &v);
-  vpHomogeneousMatrix(const double tx, const double ty, const double tz,
-                      const double tux, const double tuy, const double tuz);
+  vpHomogeneousMatrix(const double tx, const double ty, const double tz, const double tux, const double tuy,
+                      const double tuz);
   /*!
     Destructor.
   */
@@ -115,8 +113,8 @@ public:
   void buildFrom(const vpPoseVector &p);
   void buildFrom(const std::vector<float> &v);
   void buildFrom(const std::vector<double> &v);
-  void buildFrom(const double tx, const double ty, const double tz,
-                 const double tux, const double tuy, const double tuz);
+  void buildFrom(const double tx, const double ty, const double tz, const double tux, const double tuy,
+                 const double tuz);
 
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);
@@ -169,14 +167,12 @@ public:
     4-by-4 matrix.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError,
-                      "Cannot resize an homogeneous matrix"));
+    throw(vpException(vpException::fatalError, "Cannot resize an homogeneous matrix"));
   };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

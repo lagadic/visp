@@ -221,8 +221,8 @@ int main()
   \f$s\f$ is four.
 
   \code
-  // Add the rho subset feature from the 2D point polar coordinates visual
-features task.addFeature(p[i], pd[i], vpFeaturePointPolar::selectRho());
+  // Add the rho subset feature from the 2D point polar coordinates visual features
+  task.addFeature(p[i], pd[i], vpFeaturePointPolar::selectRho());
   \endcode
 
   If you want to build your own control law, this other example shows how
@@ -249,8 +249,8 @@ int main()
   // Compute the interaction matrix L_s for the current feature
   vpMatrix L = s.interaction();
 
-  // Compute the error vector (s-s*) for the point feature with polar
-coordinates s.error(s_star);
+  // Compute the error vector (s-s*) for the point feature with polar coordinates
+  s.error(s_star);
 
   return 0;
 }
@@ -272,11 +272,9 @@ public:
 
   void buildFrom(const double rho, const double theta, const double Z);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
-               const vpColor &color = vpColor::green,
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
   // feature duplication
@@ -284,8 +282,7 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 
   // basic construction
   void init();

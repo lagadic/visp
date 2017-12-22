@@ -189,27 +189,34 @@
   during vpCameraParameters initialisation.
 
   Here an example of camera initialisation, for a model without distortion. A
-  complete example is given in initPersProjWithoutDistortion(). \code double
-  px = 600; double py = 600; double u0 = 320; double v0 = 240;
+  complete example is given in initPersProjWithoutDistortion().
+
+\code
+  double px = 600; double py = 600; double u0 = 320; double v0 = 240;
 
   // Create a camera parameter container
   vpCameraParameters cam;
   // Camera initialization with a perspective projection without distortion
-  model cam.initPersProjWithoutDistortion(px,py,u0,v0);
+  // model
+  cam.initPersProjWithoutDistortion(px,py,u0,v0);
   // It is also possible to print the current camera parameters
   std::cout << cam << std::endl;
-  \endcode
+\endcode
 
   Here an example of camera initialisation, for a model with distortion. A
-  complete example is given in initPersProjWithDistortion(). \code double px =
-  600; double py = 600; double u0 = 320; double v0 = 240; double kud = -0.19;
-  double kdu = 0.20;
+  complete example is given in initPersProjWithDistortion().
+
+\code
+  double px = 600; double py = 600;
+  double u0 = 320; double v0 = 240;
+  double kud = -0.19; double kdu = 0.20;
 
   // Create a camera parameter container
   vpCameraParameters cam;
 
   // Camera initialization with a perspective projection without distortion
-  model cam.initPersProjWithDistortion(px,py,u0,v0,kud,kdu); \endcode
+  model cam.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
+\endcode
 
   The code below shows how to know the currently used projection model:
   \code
@@ -231,17 +238,16 @@ public:
   typedef enum {
     perspectiveProjWithoutDistortion, //!< Perspective projection without
                                       //!< distortion model
-    perspectiveProjWithDistortion //!< Perspective projection with distortion
-                                  //!< model
+    perspectiveProjWithDistortion     //!< Perspective projection with distortion
+                                      //!< model
   } vpCameraParametersProjType;
 
   // generic functions
   vpCameraParameters();
   vpCameraParameters(const vpCameraParameters &c);
-  vpCameraParameters(const double px, const double py, const double u0,
-                     const double v0);
-  vpCameraParameters(const double px, const double py, const double u0,
-                     const double v0, const double kud, const double kdu);
+  vpCameraParameters(const double px, const double py, const double u0, const double v0);
+  vpCameraParameters(const double px, const double py, const double u0, const double v0, const double kud,
+                     const double kdu);
 
   vpCameraParameters &operator=(const vpCameraParameters &c);
   virtual ~vpCameraParameters();
@@ -249,13 +255,10 @@ public:
   void init();
   void init(const vpCameraParameters &c);
   void initFromCalibrationMatrix(const vpMatrix &_K);
-  void initFromFov(const unsigned int &w, const unsigned int &h,
-                   const double &hfov, const double &vfov);
-  void initPersProjWithoutDistortion(const double px, const double py,
-                                     const double u0, const double v0);
-  void initPersProjWithDistortion(const double px, const double py,
-                                  const double u0, const double v0,
-                                  const double kud, const double kdu);
+  void initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov);
+  void initPersProjWithoutDistortion(const double px, const double py, const double u0, const double v0);
+  void initPersProjWithDistortion(const double px, const double py, const double u0, const double v0, const double kud,
+                                  const double kdu);
 
   /*!
     Specify if the fov has been computed.
@@ -327,17 +330,13 @@ public:
   inline double get_kud() const { return kud; }
   inline double get_kdu() const { return kdu; }
 
-  inline vpCameraParametersProjType get_projModel() const
-  {
-    return projModel;
-  }
+  inline vpCameraParametersProjType get_projModel() const { return projModel; }
 
   vpMatrix get_K() const;
   vpMatrix get_K_inverse() const;
 
   void printParameters();
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
-                                              const vpCameraParameters &cam);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters &cam);
 
 private:
   static const double DEFAULT_U0_PARAMETER;
@@ -353,13 +352,12 @@ private:
   double kud;    //!< radial distortion (from undistorted to distorted)
   double kdu;    //!< radial distortion (from distorted to undistorted)
 
-  unsigned int width;  //!< Width of the image used for the fov computation
-  unsigned int height; //!< Height of the image used for the fov computation
-  bool isFov;          //!< Boolean to specify if the fov has been computed
-  double m_hFovAngle;  //!< Field of view horizontal angle
-  double m_vFovAngle;  //!< Field of view vertical angle
-  std::vector<vpColVector>
-      fovNormals; //!< Normals of the planes describing the fov
+  unsigned int width;                  //!< Width of the image used for the fov computation
+  unsigned int height;                 //!< Height of the image used for the fov computation
+  bool isFov;                          //!< Boolean to specify if the fov has been computed
+  double m_hFovAngle;                  //!< Field of view horizontal angle
+  double m_vFovAngle;                  //!< Field of view vertical angle
+  std::vector<vpColVector> fovNormals; //!< Normals of the planes describing the fov
 
   double inv_px, inv_py;
 

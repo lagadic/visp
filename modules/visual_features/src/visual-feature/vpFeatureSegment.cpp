@@ -84,8 +84,7 @@ void vpFeatureSegment::init()
   y_c, l_c, \alpha)\f$.
 */
 vpFeatureSegment::vpFeatureSegment(bool normalized)
-  : xc_(0), yc_(0), l_(0), alpha_(0), Z1_(0), Z2_(0), cos_a_(0), sin_a_(0),
-    normalized_(normalized)
+  : xc_(0), yc_(0), l_(0), alpha_(0), Z1_(0), Z2_(0), cos_a_(0), sin_a_(0), normalized_(normalized)
 {
   init();
 }
@@ -162,13 +161,12 @@ int main()
   // Compute the coordinates of the points in the camera frame
   p1.changeFrame(cMo);
   p2.changeFrame(cMo);
-  // Compute the coordinates of the points in the image plane by perspective
-projection p1.project(); p2.project();
+  // Compute the coordinates of the points in the image plane by perspective projection
+  p1.project(); p2.project();
 
   // Build the segment visual feature
   vpFeatureSegment s;
-  s.buildFrom(p1.get_x(), p1.get_y(), p1.get_Z(), p2.get_x(), p2.get_y(),
-p2.get_Z());
+  s.buildFrom(p1.get_x(), p1.get_y(), p1.get_Z(), p2.get_x(), p2.get_y(), p2.get_Z());
 
   // Compute the interaction matrix
   vpMatrix L = s.interaction( vpBasicFeature::FEATURE_ALL );
@@ -182,8 +180,8 @@ p2.get_Z());
 previous code to consider as visual feature \f$s = (l, \alpha)\f$.
 
   \code
-  vpMatrix L = s.interaction( vpFeatureSegment::selectL() |
-vpFeatureSegment::selectAlpha() ); \endcode
+  vpMatrix L = s.interaction( vpFeatureSegment::selectL() | vpFeatureSegment::selectAlpha() );
+  \endcode
 
   In that case, L is a 2 by 6 matrix.
 */
@@ -362,8 +360,7 @@ vpMatrix vpFeatureSegment::interaction(const unsigned int select)
   visual feature.
 
 */
-vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star,
-                                    const unsigned int select)
+vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star, const unsigned int select)
 {
   vpColVector e(0);
 
@@ -410,8 +407,8 @@ vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star,
   produces the following output:
 
   \code
-  vpFeatureSegment: (xc = -0.255634; yc = -0.13311; l = 0.105005; alpha
-  = 92.1305 deg) \endcode
+  vpFeatureSegment: (xc = -0.255634; yc = -0.13311; l = 0.105005; alpha = 92.1305 deg)
+  \endcode
 
   while
   \code
@@ -483,9 +480,7 @@ vpFeatureSegment *vpFeatureSegment::duplicate() const
   \param thickness : Thickness of the feature representation.
 
 */
-void vpFeatureSegment::display(const vpCameraParameters &cam,
-                               const vpImage<unsigned char> &I,
-                               const vpColor &color,
+void vpFeatureSegment::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                                unsigned int thickness) const
 {
   double l, x, y;
@@ -523,8 +518,7 @@ void vpFeatureSegment::display(const vpCameraParameters &cam,
   \param color : Color to use for the segment.
   \param thickness : Thickness of the feature representation.
 */
-void vpFeatureSegment::display(const vpCameraParameters &cam,
-                               const vpImage<vpRGBa> &I, const vpColor &color,
+void vpFeatureSegment::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                unsigned int thickness) const
 {
   double l, x, y;
@@ -569,9 +563,8 @@ void vpFeatureSegment::display(const vpCameraParameters &cam,
   - x_2}^2 + {y_1 - y_2}^2} \f] \f[ \alpha = arctan(\frac{y_1 - y_2}{x_1 -
   x_2}) \f]
 */
-void vpFeatureSegment::buildFrom(const double x1, const double y1,
-                                 const double Z1, const double x2,
-                                 const double y2, const double Z2)
+void vpFeatureSegment::buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2,
+                                 const double Z2)
 {
   double l = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   double x_c = (x1 + x2) / 2.;

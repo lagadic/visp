@@ -50,9 +50,8 @@
  * Default constructor.
  */
 vpRealSense::vpRealSense()
-  : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(),
-    m_intrinsics(), m_max_Z(8), m_enableStreams(), m_useStreamPresets(),
-    m_streamPresets(), m_streamParams(), m_invalidDepthValue(0.0f)
+  : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(), m_intrinsics(), m_max_Z(8), m_enableStreams(),
+    m_useStreamPresets(), m_streamPresets(), m_streamParams(), m_invalidDepthValue(0.0f)
 {
   initStream();
 }
@@ -69,26 +68,22 @@ void vpRealSense::initStream()
   // Color stream
   m_useStreamPresets[rs::stream::color] = true;
   m_streamPresets[rs::stream::color] = rs::preset::best_quality;
-  m_streamParams[rs::stream::color] =
-      vpRsStreamParams(640, 480, rs::format::rgba8, 60);
+  m_streamParams[rs::stream::color] = vpRsStreamParams(640, 480, rs::format::rgba8, 60);
 
   // Depth stream
   m_useStreamPresets[rs::stream::depth] = true;
   m_streamPresets[rs::stream::depth] = rs::preset::best_quality;
-  m_streamParams[rs::stream::depth] =
-      vpRsStreamParams(640, 480, rs::format::z16, 60);
+  m_streamParams[rs::stream::depth] = vpRsStreamParams(640, 480, rs::format::z16, 60);
 
   // Infrared stream
   m_useStreamPresets[rs::stream::infrared] = true;
   m_streamPresets[rs::stream::infrared] = rs::preset::best_quality;
-  m_streamParams[rs::stream::infrared] =
-      vpRsStreamParams(640, 480, rs::format::y16, 60);
+  m_streamParams[rs::stream::infrared] = vpRsStreamParams(640, 480, rs::format::y16, 60);
 
   // Infrared stream 2
   m_useStreamPresets[rs::stream::infrared2] = true;
   m_streamPresets[rs::stream::infrared2] = rs::preset::best_quality;
-  m_streamParams[rs::stream::infrared2] =
-      vpRsStreamParams(640, 480, rs::format::y16, 60);
+  m_streamParams[rs::stream::infrared2] = vpRsStreamParams(640, 480, rs::format::y16, 60);
 
   // Enable all streams
   m_enableStreams[rs::stream::color] = true;
@@ -105,8 +100,7 @@ void vpRealSense::open()
   m_num_devices = m_context.get_device_count();
 
   if (m_num_devices == 0)
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - No device detected.");
+    throw vpException(vpException::fatalError, "RealSense Camera - No device detected.");
 
   std::vector<rs::device *> detected_devices;
   rs::device *device;
@@ -141,14 +135,12 @@ void vpRealSense::open()
   // the code will proceed.
   m_device = m_context.get_device(0);
 
-  std::cout << "RealSense Camera - Connecting to camera with Serial No: "
-            << m_device->get_serial() << std::endl;
+  std::cout << "RealSense Camera - Connecting to camera with Serial No: " << m_device->get_serial() << std::endl;
 
   // Enable only infrared2 stream if supported
-  m_enableStreams[rs::stream::infrared2] =
-      m_enableStreams[rs::stream::infrared2]
-          ? m_device->supports(rs::capabilities::infrared2)
-          : m_enableStreams[rs::stream::infrared2];
+  m_enableStreams[rs::stream::infrared2] = m_enableStreams[rs::stream::infrared2]
+                                               ? m_device->supports(rs::capabilities::infrared2)
+                                               : m_enableStreams[rs::stream::infrared2];
 
   if (m_device->is_streaming()) {
     m_device->stop();
@@ -164,55 +156,45 @@ void vpRealSense::open()
 
   if (m_enableStreams[rs::stream::color]) {
     if (m_useStreamPresets[rs::stream::color]) {
-      m_device->enable_stream(rs::stream::color,
-                              m_streamPresets[rs::stream::color]);
+      m_device->enable_stream(rs::stream::color, m_streamPresets[rs::stream::color]);
     } else {
-      m_device->enable_stream(
-          rs::stream::color, m_streamParams[rs::stream::color].m_streamWidth,
-          m_streamParams[rs::stream::color].m_streamHeight,
-          m_streamParams[rs::stream::color].m_streamFormat,
-          m_streamParams[rs::stream::color].m_streamFramerate);
+      m_device->enable_stream(rs::stream::color, m_streamParams[rs::stream::color].m_streamWidth,
+                              m_streamParams[rs::stream::color].m_streamHeight,
+                              m_streamParams[rs::stream::color].m_streamFormat,
+                              m_streamParams[rs::stream::color].m_streamFramerate);
     }
   }
 
   if (m_enableStreams[rs::stream::depth]) {
     if (m_useStreamPresets[rs::stream::depth]) {
-      m_device->enable_stream(rs::stream::depth,
-                              m_streamPresets[rs::stream::depth]);
+      m_device->enable_stream(rs::stream::depth, m_streamPresets[rs::stream::depth]);
     } else {
-      m_device->enable_stream(
-          rs::stream::depth, m_streamParams[rs::stream::depth].m_streamWidth,
-          m_streamParams[rs::stream::depth].m_streamHeight,
-          m_streamParams[rs::stream::depth].m_streamFormat,
-          m_streamParams[rs::stream::depth].m_streamFramerate);
+      m_device->enable_stream(rs::stream::depth, m_streamParams[rs::stream::depth].m_streamWidth,
+                              m_streamParams[rs::stream::depth].m_streamHeight,
+                              m_streamParams[rs::stream::depth].m_streamFormat,
+                              m_streamParams[rs::stream::depth].m_streamFramerate);
     }
   }
 
   if (m_enableStreams[rs::stream::infrared]) {
     if (m_useStreamPresets[rs::stream::infrared]) {
-      m_device->enable_stream(rs::stream::infrared,
-                              m_streamPresets[rs::stream::infrared]);
+      m_device->enable_stream(rs::stream::infrared, m_streamPresets[rs::stream::infrared]);
     } else {
-      m_device->enable_stream(
-          rs::stream::infrared,
-          m_streamParams[rs::stream::infrared].m_streamWidth,
-          m_streamParams[rs::stream::infrared].m_streamHeight,
-          m_streamParams[rs::stream::infrared].m_streamFormat,
-          m_streamParams[rs::stream::infrared].m_streamFramerate);
+      m_device->enable_stream(rs::stream::infrared, m_streamParams[rs::stream::infrared].m_streamWidth,
+                              m_streamParams[rs::stream::infrared].m_streamHeight,
+                              m_streamParams[rs::stream::infrared].m_streamFormat,
+                              m_streamParams[rs::stream::infrared].m_streamFramerate);
     }
   }
 
   if (m_enableStreams[rs::stream::infrared2]) {
     if (m_useStreamPresets[rs::stream::infrared2]) {
-      m_device->enable_stream(rs::stream::infrared2,
-                              m_streamPresets[rs::stream::infrared2]);
+      m_device->enable_stream(rs::stream::infrared2, m_streamPresets[rs::stream::infrared2]);
     } else {
-      m_device->enable_stream(
-          rs::stream::infrared2,
-          m_streamParams[rs::stream::infrared2].m_streamWidth,
-          m_streamParams[rs::stream::infrared2].m_streamHeight,
-          m_streamParams[rs::stream::infrared2].m_streamFormat,
-          m_streamParams[rs::stream::infrared2].m_streamFramerate);
+      m_device->enable_stream(rs::stream::infrared2, m_streamParams[rs::stream::infrared2].m_streamWidth,
+                              m_streamParams[rs::stream::infrared2].m_streamHeight,
+                              m_streamParams[rs::stream::infrared2].m_streamFormat,
+                              m_streamParams[rs::stream::infrared2].m_streamFramerate);
     }
   }
 
@@ -229,8 +211,7 @@ void vpRealSense::open()
 
   // Add synthetic stream intrinsics
   if (m_enableStreams[rs::stream::color]) {
-    m_intrinsics[rs::stream::rectified_color] =
-        m_device->get_stream_intrinsics(rs::stream::rectified_color);
+    m_intrinsics[rs::stream::rectified_color] = m_device->get_stream_intrinsics(rs::stream::rectified_color);
 
     if (m_enableStreams[rs::stream::depth]) {
       m_intrinsics[rs::stream::color_aligned_to_depth] =
@@ -238,19 +219,15 @@ void vpRealSense::open()
       m_intrinsics[rs::stream::depth_aligned_to_color] =
           m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_color);
       m_intrinsics[rs::stream::depth_aligned_to_rectified_color] =
-          m_device->get_stream_intrinsics(
-              rs::stream::depth_aligned_to_rectified_color);
+          m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_rectified_color);
     }
   }
 
-  if (m_enableStreams[rs::stream::depth] &&
-      m_enableStreams[rs::stream::infrared2]) {
+  if (m_enableStreams[rs::stream::depth] && m_enableStreams[rs::stream::infrared2]) {
     m_intrinsics[rs::stream::depth_aligned_to_infrared2] =
-        m_device->get_stream_intrinsics(
-            rs::stream::depth_aligned_to_infrared2);
+        m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_infrared2);
     m_intrinsics[rs::stream::infrared2_aligned_to_depth] =
-        m_device->get_stream_intrinsics(
-            rs::stream::infrared2_aligned_to_depth);
+        m_device->get_stream_intrinsics(rs::stream::infrared2_aligned_to_depth);
   }
 
   // Start device
@@ -306,9 +283,8 @@ void vpRealSense::setDeviceBySerialNumber(const std::string &serial_no)
    \sa getIntrinsics()
  */
 
-vpCameraParameters vpRealSense::getCameraParameters(
-    const rs::stream &stream,
-    vpCameraParameters::vpCameraParametersProjType type) const
+vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream,
+                                                    vpCameraParameters::vpCameraParametersProjType type) const
 {
   auto intrinsics = this->getIntrinsics(stream);
 
@@ -335,9 +311,8 @@ vpCameraParameters vpRealSense::getCameraParameters(
 rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
 {
   if (!m_device) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - device handler is null. Cannot "
-                      "retrieve intrinsics. Exiting!");
+    throw vpException(vpException::fatalError, "RealSense Camera - device handler is null. Cannot "
+                                               "retrieve intrinsics. Exiting!");
   }
   if (!m_device->is_stream_enabled(stream)) {
     throw vpException(vpException::fatalError,
@@ -346,8 +321,7 @@ rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
                       (int)stream);
   }
 
-  std::map<rs::stream, rs::intrinsics>::const_iterator it_intrin =
-      m_intrinsics.find(stream);
+  std::map<rs::stream, rs::intrinsics>::const_iterator it_intrin = m_intrinsics.find(stream);
   if (it_intrin != m_intrinsics.end()) {
     return it_intrin->second;
   }
@@ -362,13 +336,11 @@ rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
 
    \sa getTransformation()
   */
-rs::extrinsics vpRealSense::getExtrinsics(const rs::stream &from,
-                                          const rs::stream &to) const
+rs::extrinsics vpRealSense::getExtrinsics(const rs::stream &from, const rs::stream &to) const
 {
   if (!m_device) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - device handler is null. Cannot "
-                      "retrieve extrinsics. Exiting!");
+    throw vpException(vpException::fatalError, "RealSense Camera - device handler is null. Cannot "
+                                               "retrieve extrinsics. Exiting!");
   }
   if (!m_device->is_stream_enabled(from)) {
     throw vpException(vpException::fatalError,
@@ -392,8 +364,7 @@ rs::extrinsics vpRealSense::getExtrinsics(const rs::stream &from,
 
    \sa getExtrinsics()
   */
-vpHomogeneousMatrix vpRealSense::getTransformation(const rs::stream &from,
-                                                   const rs::stream &to) const
+vpHomogeneousMatrix vpRealSense::getTransformation(const rs::stream &from, const rs::stream &to) const
 {
   rs::extrinsics extrinsics = this->getExtrinsics(from, to);
   vpTranslationVector t;
@@ -414,8 +385,7 @@ vpHomogeneousMatrix vpRealSense::getTransformation(const rs::stream &from,
 void vpRealSense::acquire(vpImage<unsigned char> &grey)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -434,12 +404,10 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey)
   column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of
   a point.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey,
-                          std::vector<vpColVector> &pointcloud)
+void vpRealSense::acquire(vpImage<unsigned char> &grey, std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -451,8 +419,7 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -464,8 +431,7 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
 void vpRealSense::acquire(std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -474,8 +440,7 @@ void vpRealSense::acquire(std::vector<vpColVector> &pointcloud)
   m_device->wait_for_frames();
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -485,8 +450,7 @@ void vpRealSense::acquire(std::vector<vpColVector> &pointcloud)
 void vpRealSense::acquire(vpImage<vpRGBa> &color)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -507,13 +471,11 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color)
   column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of
   a point.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
-                          vpImage<uint16_t> &depth,
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                           std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -525,15 +487,13 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
   vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve infrared image
-  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared,
-                            infrared);
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -545,14 +505,11 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
   column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of
   a point.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey,
-                          vpImage<uint16_t> &infrared,
-                          vpImage<uint16_t> &depth,
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                           std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -564,15 +521,13 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
 
   // Retrieve infrared image
-  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared,
-                            infrared);
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -582,12 +537,10 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of
   a point.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color,
-                          std::vector<vpColVector> &pointcloud)
+void vpRealSense::acquire(vpImage<vpRGBa> &color, std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -599,8 +552,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color,
   vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -620,16 +572,14 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color,
   stream_infrared2 : Type of infrared2 stream (e.g. rs::stream::infrared2,
   rs::stream::infrared2_aligned_to_depth) if supported by the camera.
  */
-void vpRealSense::acquire(
-    unsigned char *const data_image, unsigned char *const data_depth,
-    std::vector<vpColVector> *const data_pointCloud,
-    unsigned char *const data_infrared, unsigned char *const data_infrared2,
-    const rs::stream &stream_color, const rs::stream &stream_depth,
-    const rs::stream &stream_infrared, const rs::stream &stream_infrared2)
+void vpRealSense::acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                          std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
+                          unsigned char *const data_infrared2, const rs::stream &stream_color,
+                          const rs::stream &stream_depth, const rs::stream &stream_infrared,
+                          const rs::stream &stream_infrared2)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
 
   if (!m_device->is_streaming()) {
@@ -639,31 +589,23 @@ void vpRealSense::acquire(
   m_device->wait_for_frames();
 
   if (data_image != NULL) {
-    vp_rs_get_native_frame_data_impl(
-        m_device, m_intrinsics, rs::stream::color, data_image, stream_color);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::color, data_image, stream_color);
   }
 
   if (data_depth != NULL) {
-    vp_rs_get_native_frame_data_impl(
-        m_device, m_intrinsics, rs::stream::depth, data_depth, stream_depth);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, data_depth, stream_depth);
 
     if (data_pointCloud != NULL) {
-      vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z,
-                                *data_pointCloud, m_invalidDepthValue,
-                                stream_depth);
+      vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud, m_invalidDepthValue, stream_depth);
     }
   }
 
   if (data_infrared != NULL) {
-    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics,
-                                     rs::stream::infrared, data_infrared,
-                                     stream_infrared);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, data_infrared, stream_infrared);
   }
 
   if (data_infrared2 != NULL) {
-    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics,
-                                     rs::stream::infrared2, data_infrared2,
-                                     stream_infrared2);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared2, data_infrared2, stream_infrared2);
   }
 }
 
@@ -672,8 +614,7 @@ void vpRealSense::acquire(
   \param stream : Stream type (color / depth / infrared).
   \param preset : Preset to use.
  */
-void vpRealSense::setStreamSettings(const rs::stream &stream,
-                                    const rs::preset &preset)
+void vpRealSense::setStreamSettings(const rs::stream &stream, const rs::preset &preset)
 {
   m_useStreamPresets[stream] = true;
   m_streamPresets[stream] = preset;
@@ -698,8 +639,7 @@ int main()
   rs.setEnableStream(rs::stream::color, true);
   rs.setEnableStream(rs::stream::depth, false);
   rs.setEnableStream(rs::stream::infrared, false);
-  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920,
-1080, rs::format::rgba8, 30));
+  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
 
   rs.open();
 
@@ -707,8 +647,7 @@ int main()
 }
   \endcode
  */
-void vpRealSense::setStreamSettings(const rs::stream &stream,
-                                    const vpRsStreamParams &params)
+void vpRealSense::setStreamSettings(const rs::stream &stream, const vpRsStreamParams &params)
 {
   m_useStreamPresets[stream] = false;
   m_streamParams[stream] = params;
@@ -729,8 +668,7 @@ int main()
   rs.setEnableStream(rs::stream::color, true);
   rs.setEnableStream(rs::stream::depth, false);
   rs.setEnableStream(rs::stream::infrared, false);
-  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920,
-1080, rs::format::rgba8, 30));
+  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
 
   rs.open();
 
@@ -738,10 +676,7 @@ int main()
 }
   \endcode
  */
-void vpRealSense::setEnableStream(const rs::stream &stream, const bool status)
-{
-  m_enableStreams[stream] = status;
-}
+void vpRealSense::setEnableStream(const rs::stream &stream, const bool status) { m_enableStreams[stream] = status; }
 
 #ifdef VISP_HAVE_PCL
 /*!
@@ -751,8 +686,7 @@ void vpRealSense::setEnableStream(const rs::stream &stream, const bool status)
 void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -761,8 +695,7 @@ void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
   m_device->wait_for_frames();
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -772,8 +705,7 @@ void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -782,8 +714,7 @@ void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
   m_device->wait_for_frames();
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -791,12 +722,10 @@ void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
   \param grey : Grey level image.
   \param pointcloud : Point cloud data information.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey,
-                          pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+void vpRealSense::acquire(vpImage<unsigned char> &grey, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -808,8 +737,7 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -817,12 +745,10 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   \param color : Color image.
   \param pointcloud : Point cloud data information.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color,
-                          pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+void vpRealSense::acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -834,8 +760,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color,
   vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -845,13 +770,11 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color,
   \param depth : Depth image.
   \param pointcloud : Point cloud data information.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
-                          vpImage<uint16_t> &depth,
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                           pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -863,15 +786,13 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
   vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve infrared image
-  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared,
-                            infrared);
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -881,14 +802,11 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
   \param depth : Depth image.
   \param pointcloud : Point cloud data information.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey,
-                          vpImage<uint16_t> &infrared,
-                          vpImage<uint16_t> &depth,
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                           pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -900,15 +818,13 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
 
   // Retrieve infrared image
-  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared,
-                            infrared);
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -918,13 +834,11 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   \param depth : Depth image.
   \param pointcloud : Point cloud data with texture information.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
-                          vpImage<uint16_t> &depth,
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                           pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -936,15 +850,13 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
   vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve infrared image
-  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared,
-                            infrared);
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -954,14 +866,11 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared,
   \param depth : Depth image.
   \param pointcloud : Point cloud data with texture information.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey,
-                          vpImage<uint16_t> &infrared,
-                          vpImage<uint16_t> &depth,
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth,
                           pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
   if (!m_device->is_streaming()) {
     open();
@@ -973,15 +882,13 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
 
   // Retrieve infrared image
-  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared,
-                            infrared);
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
   // Retrieve point cloud
-  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                            m_invalidDepthValue);
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue);
 }
 
 /*!
@@ -1003,17 +910,15 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey,
   stream_infrared2 : Type of infrared2 stream (e.g. rs::stream::infrared2,
   rs::stream::infrared2_aligned_to_depth) if supported by the camera.
  */
-void vpRealSense::acquire(
-    unsigned char *const data_image, unsigned char *const data_depth,
-    std::vector<vpColVector> *const data_pointCloud,
-    pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-    unsigned char *const data_infrared, unsigned char *const data_infrared2,
-    const rs::stream &stream_color, const rs::stream &stream_depth,
-    const rs::stream &stream_infrared, const rs::stream &stream_infrared2)
+void vpRealSense::acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                          std::vector<vpColVector> *const data_pointCloud,
+                          pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char *const data_infrared,
+                          unsigned char *const data_infrared2, const rs::stream &stream_color,
+                          const rs::stream &stream_depth, const rs::stream &stream_infrared,
+                          const rs::stream &stream_infrared2)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
 
   if (!m_device->is_streaming()) {
@@ -1023,36 +928,27 @@ void vpRealSense::acquire(
   m_device->wait_for_frames();
 
   if (data_image != NULL) {
-    vp_rs_get_native_frame_data_impl(
-        m_device, m_intrinsics, rs::stream::color, data_image, stream_color);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::color, data_image, stream_color);
   }
 
   if (data_depth != NULL) {
-    vp_rs_get_native_frame_data_impl(
-        m_device, m_intrinsics, rs::stream::depth, data_depth, stream_depth);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, data_depth, stream_depth);
   }
 
   if (data_pointCloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z,
-                              *data_pointCloud, m_invalidDepthValue,
-                              stream_depth);
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud, m_invalidDepthValue, stream_depth);
   }
 
   if (pointcloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                              m_invalidDepthValue, stream_depth);
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue, stream_depth);
   }
 
   if (data_infrared != NULL) {
-    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics,
-                                     rs::stream::infrared, data_infrared,
-                                     stream_infrared);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, data_infrared, stream_infrared);
   }
 
   if (data_infrared2 != NULL) {
-    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics,
-                                     rs::stream::infrared2, data_infrared2,
-                                     stream_infrared2);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared2, data_infrared2, stream_infrared2);
   }
 }
 
@@ -1074,17 +970,15 @@ void vpRealSense::acquire(
   stream_infrared2 : Type of infrared2 stream (e.g. rs::stream::infrared2,
   rs::stream::infrared2_aligned_to_depth) if supported by the camera.
  */
-void vpRealSense::acquire(
-    unsigned char *const data_image, unsigned char *const data_depth,
-    std::vector<vpColVector> *const data_pointCloud,
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-    unsigned char *const data_infrared, unsigned char *const data_infrared2,
-    const rs::stream &stream_color, const rs::stream &stream_depth,
-    const rs::stream &stream_infrared, const rs::stream &stream_infrared2)
+void vpRealSense::acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                          std::vector<vpColVector> *const data_pointCloud,
+                          pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char *const data_infrared,
+                          unsigned char *const data_infrared2, const rs::stream &stream_color,
+                          const rs::stream &stream_depth, const rs::stream &stream_infrared,
+                          const rs::stream &stream_infrared2)
 {
   if (m_device == NULL) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - Device not opened!");
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
 
   if (!m_device->is_streaming()) {
@@ -1094,37 +988,28 @@ void vpRealSense::acquire(
   m_device->wait_for_frames();
 
   if (data_image != NULL) {
-    vp_rs_get_native_frame_data_impl(
-        m_device, m_intrinsics, rs::stream::color, data_image, stream_color);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::color, data_image, stream_color);
   }
 
   if (data_depth != NULL) {
-    vp_rs_get_native_frame_data_impl(
-        m_device, m_intrinsics, rs::stream::depth, data_depth, stream_depth);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, data_depth, stream_depth);
   }
 
   if (data_pointCloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z,
-                              *data_pointCloud, m_invalidDepthValue,
-                              stream_depth);
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud, m_invalidDepthValue, stream_depth);
   }
 
   if (pointcloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud,
-                              m_invalidDepthValue, stream_color,
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, m_invalidDepthValue, stream_color,
                               stream_depth);
   }
 
   if (data_infrared != NULL) {
-    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics,
-                                     rs::stream::infrared, data_infrared,
-                                     stream_infrared);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, data_infrared, stream_infrared);
   }
 
   if (data_infrared2 != NULL) {
-    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics,
-                                     rs::stream::infrared2, data_infrared2,
-                                     stream_infrared2);
+    vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared2, data_infrared2, stream_infrared2);
   }
 }
 #endif
@@ -1158,10 +1043,8 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense &rs)
     if (!rs.getHandler()->is_stream_enabled(stream))
       continue;
     auto intrin = rs.getHandler()->get_stream_intrinsics(stream);
-    std::cout << "Capturing " << stream << " at " << intrin.width << " x "
-              << intrin.height;
-    std::cout << std::setprecision(1) << std::fixed
-              << ", fov = " << intrin.hfov() << " x " << intrin.vfov()
+    std::cout << "Capturing " << stream << " at " << intrin.width << " x " << intrin.height;
+    std::cout << std::setprecision(1) << std::fixed << ", fov = " << intrin.hfov() << " x " << intrin.vfov()
               << ", distortion = " << intrin.model() << std::endl;
   }
   std::cout.precision(ss);
