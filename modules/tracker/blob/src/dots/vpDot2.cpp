@@ -2530,11 +2530,16 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n,
 /*!
   Tracks a number of dots in an image and displays their trajectories
 
-        \param dot : dot2 array
-        \param n : number of dots, array dimension
-        \param I : image
-        \param cogs : vector of vpImagePoint that will be updated with the new
-  dots, will be displayed in green \param cogStar (optional) : array of
+  \param dot : dot2 array
+
+  \param n : number of dots, array dimension
+
+  \param I : image
+
+  \param cogs : vector of vpImagePoint that will be updated with the new
+  dots, will be displayed in green
+
+  \param cogStar (optional) : array of
   vpImagePoint indicating the desired position (default NULL), will be
   displayed in red
 */

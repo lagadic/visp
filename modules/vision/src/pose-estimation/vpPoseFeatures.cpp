@@ -428,8 +428,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo,
 
   - The virtual visual servoing approach is described in \cite Marchand02c.
 
-  - The robust virtual visual servoing approach is described in \cite
-  Comport06b.
+  - The robust virtual visual servoing approach is described in
+  \cite Comport06b.
 
 */
 void vpPoseFeatures::computePose(vpHomogeneousMatrix &cMo,

@@ -191,8 +191,8 @@ class vpMomentDatabase;
   non-symmetric invariant moment feature. Computes the interaction matrix
   associated with vpMomentCInvariant.
 
-  The interaction matrix for the moment feature can be deduced from \cite
-  Tahri05z, equations (9). To do so, one must derive them and obtain a
+  The interaction matrix for the moment feature can be deduced from
+  \cite Tahri05z, equations (9). To do so, one must derive them and obtain a
   combination of interaction matrices by using (1). It allows to compute the
   interaction matrix for \f$ c_i, i \in [1..10] \f$.
 

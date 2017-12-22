@@ -58,12 +58,12 @@ enum RETINEX_LEVEL { RETINEX_UNIFORM = 0, RETINEX_LOW = 1, RETINEX_HIGH = 2 };
 typedef enum {
   AUTO_THRESHOLD_HUANG,      /*!< Huang L.-K. and Wang M.-J.J. (1995) "Image
                                 Thresholding by Minimizing the Measures of
-                                Fuzziness" Pattern Recognition, 28(1): 41-51 \cite
-                                Huang_imagethresholding */
+                                Fuzziness" Pattern Recognition, 28(1): 41-51
+                                \cite Huang_imagethresholding */
   AUTO_THRESHOLD_INTERMODES, /*!< Prewitt, JMS & Mendelsohn, ML (1966), "The
                                 analysis of cell images", Annals of the New
-                                York Academy of Sciences 128: 1035-1053 \cite
-                                NYAS:NYAS1035 */
+                                York Academy of Sciences 128: 1035-1053
+                                \cite NYAS:NYAS1035 */
   AUTO_THRESHOLD_ISODATA,    /*!< Ridler, TW & Calvard, S (1978), "Picture
                                 thresholding using an iterative selection
                                 method", IEEE Transactions on Systems, Man and
@@ -74,8 +74,8 @@ typedef enum {
                                 \cite Glasbey:1993:AHT:167725.167747 */
   AUTO_THRESHOLD_OTSU, /*!< Otsu, N (1979), "A threshold selection method from
                           gray-level histograms", IEEE Trans. Sys., Man.,
-                          Cyber. 9: 62-66, doi:10.1109/TSMC.1979.4310076 \cite
-                          article4310076 */
+                          Cyber. 9: 62-66, doi:10.1109/TSMC.1979.4310076
+                           \cite article4310076 */
   AUTO_THRESHOLD_TRIANGLE /*!< Zack GW, Rogers WE, Latt SA (1977), "Automatic
                              measurement of sister chromatid exchange
                              frequency", J. Histochem. Cytochem. 25 (7):

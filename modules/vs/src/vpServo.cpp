@@ -1441,9 +1441,9 @@ void vpServo::computeProjectionOperators()
 
 /*!
   Compute and return the secondary task vector according to the classic
-  projection operator \f${\bf I-W^+W}\f$ (see equation(7) in the paper \cite
-  Marchand05b) or the new large projection operator (see equation(24) in the
-  paper \cite Marey:2010).
+  projection operator \f${\bf I-W^+W}\f$ (see equation(7) in the paper
+  \cite Marchand05b) or the new large projection operator (see equation(24)
+  in the paper \cite Marey:2010).
 
   \param de2dt : Value of \f$\frac{\partial {\bf e_2}}{\partial t}\f$ the
   derivative of the secondary task \f${\bf e}_2\f$. \param
@@ -1540,9 +1540,9 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt,
 
 /*!
   Compute and return the secondary task vector according to the classic
-  projection operator \f${\bf I-W^+W}\f$ (see equation(7) in the paper \cite
-  Marchand05b) or the new large projection operator (see equation(24) in the
-  paper \cite Marey:2010).
+  projection operator \f${\bf I-W^+W}\f$ (see equation(7) in the paper
+  \cite Marchand05b) or the new large projection operator (see equation(24)
+  in the paper \cite Marey:2010).
 
   \param e2 : Value of the secondary task \f${\bf e}_2\f$.
   \param de2dt : Value of \f$\frac{\partial {\bf e_2}}{\partial t}\f$ the
@@ -1646,10 +1646,10 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2,
 }
 
 /*!
-  Compute and return the secondary task vector for joint limit avoidance \cite
-Marey:2010b using the new large projection operator (see equation(24) in the
-paper \cite Marey:2010). The robot avoids the joint limits very smoothly even
-when the main task constrains all the robot degrees of freedom.
+  Compute and return the secondary task vector for joint limit avoidance
+ \cite Marey:2010b using the new large projection operator (see equation(24)
+in the paper \cite Marey:2010). The robot avoids the joint limits very smoothly
+even when the main task constrains all the robot degrees of freedom.
 
   \param q : Actual joint positions vector
   \param dq : Actual joint velocities vector
@@ -1664,8 +1664,8 @@ boundaries (\f${q_{l_{1}}^{max}}\f$ and \f${q_{l_{1}}^{min}}\f$) for the joint
 limits. Here the secondary task it completely activated with the highest gain.
   \param lambda_tune : value \f${\left [ 0,1 \right ]}\f$ used to tune the
 difference in magnitude between the absolute value of the elements of the
-primary task and the elements of the secondary task. (See equation (17) \cite
-Marey:2010b )
+primary task and the elements of the secondary task. (See equation (17)
+\cite Marey:2010b )
 
 \code
 vpServo task;

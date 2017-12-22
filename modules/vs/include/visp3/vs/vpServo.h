@@ -653,8 +653,8 @@ protected:
   //! Projection operators \f$\bf I-WpW\f$.
   vpMatrix I_WpW;
   /*!
-    New Large projection operator (see equation(24) in the paper \cite
-  Marey:2010). This projection operator allows performing secondary task even
+    New Large projection operator (see equation(24) in the paper
+  \cite Marey:2010). This projection operator allows performing secondary task even
   when the main task is full rank. \f[
    {\bf P} =\bar{\lambda }\left ( \left \| {\bf e} \right \| \right ){\bf P}_{
   \left \| {\bf e } \right \| } \left ( 1 - \bar{\lambda }\left ( \left \|
