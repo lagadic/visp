@@ -41,6 +41,8 @@
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
 
 #include <librealsense2/rs.hpp>
+#include <librealsense2/rsutil.h>
+
 #ifdef VISP_HAVE_PCL
 #include <pcl/common/common_headers.h>
 #endif

@@ -37,7 +37,6 @@
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
 #include <iomanip>
-#include <librealsense2/rsutil.h>
 #include <map>
 #include <set>
 #include <visp3/core/vpImageConvert.h>

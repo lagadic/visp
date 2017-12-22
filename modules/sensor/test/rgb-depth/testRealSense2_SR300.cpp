@@ -46,7 +46,6 @@
     defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
-#include <librealsense2/rsutil.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayGDI.h>
