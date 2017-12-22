@@ -61,7 +61,7 @@ if(WITH_APRILTAG)
   if(UNIX OR MINGW)
     vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp -Wno-unused-parameter -Wno-strict-overflow)
   else(WIN32)
-    vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp /wd4200)
+    vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp /wd"4200")
   endif()
 endif()
 

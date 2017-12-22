@@ -64,12 +64,12 @@ if(USE_VIRTUOSE)
     # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file
     # VirtuoseAPI.h(280): warning C4312: 'type cast': conversion from 'int' to 'char *' of greater size
   # VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
-    vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd4312)
-    vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd4312)
-    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd4312)
-    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp /wd4312)
-    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp /wd4312)
-    vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp /wd4312)
+    vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd"4312")
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd"4312")
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd"4312")
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp /wd"4312")
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp /wd"4312")
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp /wd"4312")
   endif()
 endif()
 
