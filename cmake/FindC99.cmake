@@ -73,7 +73,7 @@ if(C99_FLAG_DETECTED)
   " __compiler_doesnt_need_c99_flag)
 endif()
 
-if(NOT __compiler_doesnt_need_c99_flag)
+if(C99_FLAG_DETECTED AND NOT __compiler_doesnt_need_c99_flag)
   set(C99_C_FLAGS "${C99_C_FLAGS_INTERNAL}")
   set(C99_FOUND TRUE)
 else()
