@@ -5,6 +5,13 @@
      Copyright (C) 2005 - 2017 by Inria. All rights reserved.
                       https://visp.inria.fr
 
+ViSP 3.2.0 (under development)
+  - New features
+  - Tutorials
+  - Bug fixed
+    . [#279] Unable to build ViSP with Visual Studio 2010
+
+----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
   - Contributors:
     . This release was possible thanks to contributions from Fabien Spindler,
