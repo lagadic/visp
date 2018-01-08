@@ -262,8 +262,8 @@ int test_inverse(const std::vector<vpMatrix> &bench, const std::vector<vpMatrix>
 {
   for (unsigned int i = 0; i < bench.size(); i++) {
     vpMatrix I = bench[i] * result[i];
-    if (std::fabs(I.euclideanNorm() - sqrt(bench[0].AtA().getRows())) > 1e-10) {
-      std::cout << "Bad inverse[" << i << "]: " << I.euclideanNorm() << " " << sqrt(bench[0].AtA().getRows())
+    if (std::fabs(I.euclideanNorm() - sqrt((float)bench[0].AtA().getRows())) > 1e-10) {
+      std::cout << "Bad inverse[" << i << "]: " << I.euclideanNorm() << " " << sqrt((float)bench[0].AtA().getRows())
                 << std::endl;
       return EXIT_FAILURE;
     }
