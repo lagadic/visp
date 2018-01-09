@@ -520,7 +520,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatr
       }
 
       std::map<vpPoint, size_t, CompareImagePointDegenerate> filterImagePointMap;
-      for (std::map<vpPoint, size_t>::const_iterator it = filterObjectPointMap.begin();
+      for (std::map<vpPoint, size_t, CompareObjectPointDegenerate>::const_iterator it = filterObjectPointMap.begin();
            it != filterObjectPointMap.end(); ++it) {
         if (filterImagePointMap.find(it->first) == filterImagePointMap.end()) {
           filterImagePointMap[it->first] = it->second;
