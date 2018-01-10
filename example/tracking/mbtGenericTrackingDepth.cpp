@@ -64,8 +64,119 @@
 #define USE_XML 1
 #define USE_SMALL_DATASET 1 // small depth dataset in ViSP-images
 
+// Detect endianness of the host machine
+// Reference: http://www.boost.org/doc/libs/1_36_0/boost/detail/endian.hpp
+#if defined(__GLIBC__)
+#include <endian.h>
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#define VISP_LITTLE_ENDIAN
+#elif (__BYTE_ORDER == __BIG_ENDIAN)
+#define VISP_BIG_ENDIAN
+#elif (__BYTE_ORDER == __PDP_ENDIAN)
+// Currently not supported when reading / writing binary file
+#define VISP_PDP_ENDIAN
+#else
+#error Unknown machine endianness detected.
+#endif
+#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
+#define VISP_BIG_ENDIAN
+#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) || defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
+#define VISP_LITTLE_ENDIAN
+#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || defined(__ppc__) ||         \
+    defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
+
+#define VISP_BIG_ENDIAN
+#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
+    defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
+    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64)
+
+#define VISP_LITTLE_ENDIAN
+#else
+#error Cannot detect host machine endianness.
+#endif
+
 namespace
 {
+#ifdef VISP_BIG_ENDIAN
+// Swap 16 bits by shifting to the right the first byte and by shifting to the
+// left the second byte
+uint16_t swap16bits(const uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00)); }
+
+// Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
+// the left the last 2 bytes
+uint32_t swap32bits(const uint32_t val)
+{
+  return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
+          ((val << 24) & 0xFF000000));
+}
+
+// Swap a float, the union is necessary because of the representation of a
+// float in memory in IEEE 754.
+float swapFloat(const float f)
+{
+  union {
+    float f;
+    unsigned char b[4];
+  } dat1, dat2;
+
+  dat1.f = f;
+  dat2.b[0] = dat1.b[3];
+  dat2.b[1] = dat1.b[2];
+  dat2.b[2] = dat1.b[1];
+  dat2.b[3] = dat1.b[0];
+  return dat2.f;
+}
+
+// Swap a double, the union is necessary because of the representation of a
+// double in memory in IEEE 754.
+double swapDouble(const double d)
+{
+  union {
+    double d;
+    unsigned char b[8];
+  } dat1, dat2;
+
+  dat1.d = d;
+  dat2.b[0] = dat1.b[7];
+  dat2.b[1] = dat1.b[6];
+  dat2.b[2] = dat1.b[5];
+  dat2.b[3] = dat1.b[4];
+  dat2.b[4] = dat1.b[3];
+  dat2.b[5] = dat1.b[2];
+  dat2.b[6] = dat1.b[1];
+  dat2.b[7] = dat1.b[0];
+  return dat2.d;
+}
+#endif
+
+// Read an int stored in little endian
+void readBinaryUIntLE(std::ifstream &file, unsigned int &uint_value)
+{
+  // Read
+  file.read((char *)(&uint_value), sizeof(uint_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  if (sizeof(uint_value) == 4) {
+    uint_value = (unsigned int)swap32bits((uint32_t)uint_value);
+  } else {
+    uint_value = swap16bits((uint16_t)uint_value);
+  }
+#endif
+}
+
+// Read an int stored in little endian
+void readBinaryUIntLE(std::ifstream &file, uint16_t &uint_value)
+{
+  // Read
+  file.read((char *)(&uint_value), sizeof(uint_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  uint_value = swap16bits((uint16_t)uint_value);
+#endif
+}
+
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
@@ -294,14 +405,15 @@ bool read_data(const unsigned int cpt, const std::string &input_directory, vpIma
   }
 
   unsigned int height = 0, width = 0;
-  file_depth.read((char *)(&height), sizeof(height));
-  file_depth.read((char *)(&width), sizeof(width));
+  readBinaryUIntLE(file_depth, height);
+  readBinaryUIntLE(file_depth, width);
+
   I_depth_raw.resize(height, width);
 
   uint16_t depth_value = 0;
   for (unsigned int i = 0; i < height; i++) {
     for (unsigned int j = 0; j < width; j++) {
-      file_depth.read((char *)(&depth_value), sizeof(depth_value));
+      readBinaryUIntLE(file_depth, depth_value);
       I_depth_raw[i][j] = depth_value;
     }
   }
