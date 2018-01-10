@@ -10,6 +10,7 @@ ViSP 3.2.0 (under development)
   - Tutorials
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
+    . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
