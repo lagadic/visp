@@ -1,0 +1,54 @@
+
+/**
+  \page tutorial-basic-drawings Tutorial: How to draw basic drawings
+  \tableofcontents
+
+\section image_display_intro Introduction
+
+\note We assume in this tutorial that you have successfully build your first project using ViSP as 3rd party as explained in one of the \ref tutorial_started tutorials.
+
+In this tutorial you will learn how to display images with ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
+
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+
+\section image_display_default How to display an image
+
+ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities. This module may use several optional third-party libraries which are: <a href="http://visp.inria.fr/3rdparty_gui/">OpenCV, X11, GTK, GDI, Direct3D</a>. We recommand to use X11 on unix-like systems thanks to vpDisplayX class and GDI on Windows thanks to vpDisplayGDI. 
+
+The following example also available in tutorial-image-display.cpp shows how to create a gray level 3840x2160 image with all the pixels set to 128, and display a red circle with 200 pixel radius in the middle of the image. 
+
+\include tutorial-viewer.cpp
+
+Here is the detailed explanation of the source, line by line :
+\snippet tutorial-viewer.cpp Include display
+
+Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
+
+\snippet tutorial-viewer.cpp Include io
+Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
+
+\snippet tutorial-viewer.cpp vpImage construction
+Create an instance of a color image where each pixel is coded in RGBa.
+
+\snippet tutorial-viewer.cpp vpImage reading
+The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
+
+\snippet tutorial-viewer.cpp vpDisplay construction
+Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. 
+
+\snippet tutorial-viewer.cpp vpDisplay set title
+The title of the display is then set to \c "My image".  
+
+\snippet tutorial-viewer.cpp vpDisplay display
+First we display the content of the image \c I, then we flush the display to render the image.
+
+\snippet tutorial-viewer.cpp vpDisplay get click
+Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
+
+Here is a screen shot of the resulting output window :
+
+  \image html img-monkey.png
