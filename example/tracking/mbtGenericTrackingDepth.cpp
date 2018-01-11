@@ -109,44 +109,6 @@ uint32_t swap32bits(const uint32_t val)
   return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
           ((val << 24) & 0xFF000000));
 }
-
-// Swap a float, the union is necessary because of the representation of a
-// float in memory in IEEE 754.
-float swapFloat(const float f)
-{
-  union {
-    float f;
-    unsigned char b[4];
-  } dat1, dat2;
-
-  dat1.f = f;
-  dat2.b[0] = dat1.b[3];
-  dat2.b[1] = dat1.b[2];
-  dat2.b[2] = dat1.b[1];
-  dat2.b[3] = dat1.b[0];
-  return dat2.f;
-}
-
-// Swap a double, the union is necessary because of the representation of a
-// double in memory in IEEE 754.
-double swapDouble(const double d)
-{
-  union {
-    double d;
-    unsigned char b[8];
-  } dat1, dat2;
-
-  dat1.d = d;
-  dat2.b[0] = dat1.b[7];
-  dat2.b[1] = dat1.b[6];
-  dat2.b[2] = dat1.b[5];
-  dat2.b[3] = dat1.b[4];
-  dat2.b[4] = dat1.b[3];
-  dat2.b[5] = dat1.b[2];
-  dat2.b[6] = dat1.b[1];
-  dat2.b[7] = dat1.b[0];
-  return dat2.d;
-}
 #endif
 
 // Read an int stored in little endian
