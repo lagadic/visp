@@ -238,9 +238,10 @@ int main(int argc, const char **argv)
 
     // Read Klimt.ppm
     filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-    vpImage<vpRGBa> I_color;
+    vpImage<vpRGBa> I_color, Iinput_color;
     std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::read(I_color, filename);
+    vpImageIo::read(Iinput_color, filename);
+    Iinput_color.halfSizeImage(I_color);
     std::cout << "Image: " << I_color.getWidth() << "x" << I_color.getHeight() << std::endl;
 
     // Adjust
@@ -325,7 +326,7 @@ int main(int argc, const char **argv)
     // CLAHE
     vpImage<vpRGBa> I_color_clahe;
     t = vpTime::measureTimeMs();
-    vp::clahe(I_color, I_color_clahe);
+    vp::clahe(I_color, I_color_clahe, 50);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color CLAHE: " << t << " ms" << std::endl;
 
@@ -339,9 +340,10 @@ int main(int argc, const char **argv)
 
     // Read image0000.pgm
     filename = vpIoTools::createFilePath(ipath, "mbt/cube/image0000.pgm");
-    vpImage<unsigned char> I;
+    vpImage<unsigned char> Iinput, I;
     std::cout << "\nRead image: " << filename << std::endl;
-    vpImageIo::read(I, filename);
+    vpImageIo::read(Iinput, filename);
+    Iinput.halfSizeImage(I);
     std::cout << "Image: " << I.getWidth() << "x" << I.getHeight() << std::endl;
 
     // Adjust
@@ -404,7 +406,7 @@ int main(int argc, const char **argv)
     // CLAHE
     vpImage<unsigned char> I_clahe;
     t = vpTime::measureTimeMs();
-    vp::clahe(I, I_clahe);
+    vp::clahe(I, I_clahe, 50);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale CLAHE: " << t << " ms" << std::endl;
 

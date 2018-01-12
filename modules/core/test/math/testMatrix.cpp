@@ -471,9 +471,9 @@ int main()
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix insert() with same colNum " << std::endl;
       std::cout << "------------------------" << std::endl;
-      const unsigned int nb = 100; // 10000; //for ctest otherwise takes too
+      const unsigned int nb = 10; // 10000; //for ctest otherwise takes too
                                    // long time with static call
-      const unsigned int size = 100;
+      const unsigned int size = 10;
 
       vpMatrix m_big(nb * size, 6);
       std::vector<vpMatrix> submatrices(nb);
@@ -686,7 +686,7 @@ int main()
       std::cout << "--- BENCHMARK dgemm/dgemv" << std::endl;
       std::cout << "------------------------" << std::endl;
 
-      size_t nb_matrices = 10000;
+      size_t nb_matrices = 100;
       unsigned int rows = 200, cols = 6;
       double min = -1.0, max = 1.0;
       std::vector<vpMatrix> vec_A, vec_B, vec_C, vec_C_regular;
