@@ -550,7 +550,12 @@ int main(int argc, const char **argv)
     bool projectionError = false;
     int trackerType_image = vpMbGenericTracker::EDGE_TRACKER;
     int trackerType_depth = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
+#if defined(__mips__) || defined(__mips) || defined(mips) || defined(__MIPS__)
+    // To avoid Debian test timeout
+    int opt_lastFrame = 5;
+#else
     int opt_lastFrame = -1;
+#endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
