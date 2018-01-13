@@ -70,7 +70,11 @@
 #endif
 
 #ifndef PATH_MAX
-#define PATH_MAX _MAX_PATH
+#  ifdef _MAX_PATH
+#    define PATH_MAX _MAX_PATH
+#  else
+#    define PATH_MAX 1024
+#  endif
 #endif
 
 std::string vpIoTools::baseName = "";
