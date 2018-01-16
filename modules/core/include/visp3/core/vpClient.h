@@ -46,6 +46,9 @@
 #include <visp3/core/vpRequest.h>
 #include <visp3/core/vpTime.h>
 
+// Only available since Windows 8.1 where inet_atoa() is supported
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+
 /*!
   \class vpClient
 
@@ -214,4 +217,5 @@ public:
   void stop();
 };
 
+#endif
 #endif

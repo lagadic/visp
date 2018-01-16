@@ -47,6 +47,7 @@
 
 int main()
 {
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
   try {
     std::string servername = "localhost";
     unsigned int port = 35000;
@@ -73,4 +74,7 @@ int main()
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
+#else
+  std::cout << "This test doesn't work on platform prior to win 8.1" << std::endl;
+#endif
 }

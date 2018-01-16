@@ -38,6 +38,9 @@
 
 #include <visp3/core/vpClient.h>
 
+// Only available since Windows 8.1 where inet_atoa() is supported
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+
 vpClient::vpClient() : vpNetwork(), numberOfAttempts(0) {}
 
 /*!
@@ -210,3 +213,8 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   std::cout << "Connected!" << std::endl;
   return true;
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpClient.cpp.o) has no symbols
+void dummy_vpClient(){};
+#endif
