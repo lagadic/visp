@@ -38,12 +38,15 @@
 
 #include <visp3/core/vpConfig.h>
 
+// Only available since Windows 8.1 where inet_atoa() is supported
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#  include <netinet/in.h>
+#  include <sys/socket.h>
+#  include <sys/types.h>
 #else
-#include <winsock2.h>
+#  include <winsock2.h>
 #endif
 
 #include <visp3/core/vpException.h>
@@ -185,4 +188,5 @@ private:
   void init(const std::string &hostname, const int port);
 };
 
+#endif
 #endif

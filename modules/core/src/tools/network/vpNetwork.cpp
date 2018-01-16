@@ -38,6 +38,9 @@
 
 #include <visp3/core/vpNetwork.h>
 
+// Only available since Windows 8.1 where inet_atoa() is supported
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+
 vpNetwork::vpNetwork()
   : emitter(), receptor_list(), readFileDescriptor(), socketMax(0), request_list(), max_size_message(999999),
     separator("[*@*]"), beginning("[*start*]"), end("[*end*]"), param_sep("[*|*]"), currentMessageReceived(), tv(),
@@ -785,3 +788,8 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 
   return numbytes;
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpNetwork.cpp.o) has no symbols
+void dummy_vpNetwork(){};
+#endif

@@ -44,6 +44,9 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpNetwork.h>
 
+// Only available since Windows 8.1 where inet_atoa() is supported
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+
 /*!
   \class vpServer
 
@@ -219,4 +222,5 @@ public:
   void setMaxNumberOfClients(unsigned int &l) { max_clients = l; }
 };
 
+#endif
 #endif
