@@ -36,18 +36,21 @@
 #include <cstring>
 #include <sstream>
 
+// Only available since Windows 8.1 where inet_atoa() is supported
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <arpa/inet.h>
-#include <errno.h>
-#include <netdb.h>
-#include <unistd.h>
-#define DWORD int
-#define WSAGetLastError() strerror(errno)
+#  include <arpa/inet.h>
+#  include <errno.h>
+#  include <netdb.h>
+#  include <unistd.h>
+#  define DWORD int
+#  define WSAGetLastError() strerror(errno)
 #else
-#if defined(__MINGW32__)
-#define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
-#endif
-#include <Ws2tcpip.h>
+#  if defined(__MINGW32__)
+#    define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#  endif
+#  include <Ws2tcpip.h>
 #endif
 
 #include <visp3/core/vpUDPServer.h>
@@ -317,3 +320,8 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, const
                 m_clientLength);
 #endif
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
+void dummy_vpUDPServer(){};
+#endif

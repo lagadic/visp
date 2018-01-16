@@ -60,6 +60,7 @@ struct DataType {
 
 int main()
 {
+#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
   try {
     int port = 50037;
     vpUDPServer server(port);
@@ -114,4 +115,8 @@ int main()
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  std::cout << "This test doesn't work on platform prior to win 8.1" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

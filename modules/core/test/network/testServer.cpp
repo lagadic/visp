@@ -79,5 +79,6 @@ int main()
   }
 #else
   std::cout << "This test doesn't work on platform prior to win 8.1" << std::endl;
+  return EXIT_SUCCESS;
 #endif
 }
