@@ -47,7 +47,8 @@
 
 int main()
 {
-#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+// inet_ntop() used in vpClient is not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
   try {
     std::string servername = "localhost";
     unsigned int port = 35000;
@@ -75,7 +76,7 @@ int main()
     return 1;
   }
 #else
-  std::cout << "This test doesn't work on platform prior to win 8.1" << std::endl;
+  std::cout << "This test doesn't work on win XP where inet_ntop() is not available" << std::endl;
   return EXIT_SUCCESS;
 #endif
 }

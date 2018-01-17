@@ -529,6 +529,18 @@ macro(VP_CHECK_PACKAGE package)
   endif()
 endmacro()
 
+# Macros that checks if a functions exists in libraries
+# After it set vars:
+#   HAVE_FUNC_<function>
+include(CheckFunctionExists)
+macro(VP_CHECK_FUNCTION_EXISTS function libraries)
+  set(ALIAS                 ${function})
+  string(TOUPPER "${ALIAS}" ALIAS_UPPER)
+  set(ALIAS_HAVE            HAVE_FUNC_${ALIAS_UPPER})
+  set(CMAKE_REQUIRED_LIBRARIES "${libraries}")
+  check_function_exists(${ALIAS} ${ALIAS_HAVE})
+endmacro()
+
 # Macro the get the list of subdirs from the path
 # var: returned variable name
 # path: path from witch relative subdirs are

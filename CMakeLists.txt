@@ -253,6 +253,72 @@ if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
 endif(UNIX)
 
+# ----------------------------------------------------------------------------
+# Check for system libs
+# ----------------------------------------------------------------------------
+include(CheckLibraryExists)
+
+if(UNIX)
+  # try to found -lm requested on some platforms to link with X11
+  find_library(M_LIBRARY NAMES m)
+  mark_as_advanced(M_LIBRARY)
+  if(M_LIBRARY)
+    list(APPEND VISP_LINKER_LIBS ${M_LIBRARY})
+  endif()
+  # try to found -lsocket -lnsl requested for vpNetwork and vpSickLDMRS
+  find_library(SOCKET_LIBRARY NAMES socket)
+  find_library(NSL_LIBRARY NAMES nsl)
+  mark_as_advanced(SOCKET_LIBRARY NSL_LIBRARY)
+  if (SOCKET_LIBRARY)
+    list(APPEND VISP_LINKER_LIBS ${SOCKET_LIBRARY})
+  endif()
+  if (NSL_LIBRARY)
+    list(APPEND VISP_LINKER_LIBS ${NSL_LIBRARY})
+  endif()
+endif()
+
+if(WIN32)
+  # winmm.lib for timeGetTime() under windows
+  check_library_exists("winmm.lib" getch "" HAVE_LIBWINMM) # for timeGetTime()
+  if(HAVE_LIBWINMM)
+    list(APPEND VISP_LINKER_LIBS "winmm.lib")
+  endif()
+endif()
+
+# Add library ws2_32.a or ws2_32.lib for vpNetwork class
+if(WIN32 AND NOT CYGWIN)
+  if(MINGW)
+    set(WS2_32_LIBRARY "ws2_32.a")
+    check_library_exists(${WS2_32_LIBRARY} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
+    if(HAVE_LIBWS2_32)
+      list(APPEND VISP_LINKER_LIBS ${WS2_32_LIBRARY})
+    else()
+      find_library(HAVE_LIBWS2_32 ${WS2_32_LIBRARY}
+        "$ENV{MINGW_DIR}/lib"
+        "$ENV{MINGW_DIR}/mingw/lib"
+        C:/mingw/mingw/lib)
+      if(HAVE_LIBWS2_32)
+        list(APPEND VISP_LINKER_LIBS "${WS2_32_LIBRARY}")
+      endif()
+    endif()
+  elseif(WINRT)
+    # Since check_library_exists() and find_library() does't work to detect ws2_32.lib we add the lib that is part of Windows SDK
+    set(WS2_32_LIBRARY "ws2_32.lib")
+    list(APPEND VISP_LINKER_LIBS  ${WS2_32_LIBRARY})
+  else() # pure WIN32
+    set(WS2_32_LIBRARY "ws2_32.lib")
+    #check_library_exists("ws2_32.lib" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
+    check_library_exists(${WS2_32_LIBRARY} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
+    if(HAVE_LIBWS2_32)
+      list(APPEND VISP_LINKER_LIBS ${WS2_32_LIBRARY})
+    endif()
+  endif()
+  mark_as_advanced(HAVE_LIBWS2_32)
+endif()
+
+# Should be before USE_CPP11
+VP_CHECK_FUNCTION_EXISTS(inet_ntop "${VISP_LINKER_LIBS}")
+
 #--------------------------------------------------------------------
 # Option management
 #--------------------------------------------------------------------
@@ -544,30 +610,6 @@ elseif(CMAKE_TOOLCHAIN_FILE)
   vp_set_ogre_advanced_var()
 endif()
 
-# ----------------------------------------------------------------------------
-# Check for system libs
-# ----------------------------------------------------------------------------
-include(CheckLibraryExists)
-
-if(UNIX)
-  # try to found -lm requested on some platforms to link with X11
-  find_library(M_LIBRARY NAMES m)
-  mark_as_advanced(M_LIBRARY)
-  if(M_LIBRARY)
-    list(APPEND VISP_LINKER_LIBS ${M_LIBRARY})
-  endif()
-  # try to found -lsocket -lnsl requested for vpNetwork and vpSickLDMRS
-  find_library(SOCKET_LIBRARY NAMES socket)
-  find_library(NSL_LIBRARY NAMES nsl)
-  mark_as_advanced(SOCKET_LIBRARY NSL_LIBRARY)
-  if (SOCKET_LIBRARY)
-    list(APPEND VISP_LINKER_LIBS ${SOCKET_LIBRARY})
-  endif()
-  if (NSL_LIBRARY)
-    list(APPEND VISP_LINKER_LIBS ${NSL_LIBRARY})
-  endif()
-endif()
-
 #----------------------------------------------------------------------
 # Add definitions
 #----------------------------------------------------------------------
@@ -799,6 +841,8 @@ VP_SET(VISP_HAVE_FUNC_STD_ERFC TRUE IF HAVE_FUNC_STD_ERFC) # for header vpConfig
 VP_SET(VISP_HAVE_FUNC_STRTOF TRUE IF HAVE_FUNC_STRTOF) # for header vpConfig.h
 # Find log1p function (math.h)
 VP_SET(VISP_HAVE_FUNC_LOG1P TRUE IF HAVE_FUNC_LOG1P) # for header vpConfig.h
+# Find inet_ntop function
+VP_SET(VISP_HAVE_FUNC_INET_NTOP TRUE IF HAVE_FUNC_INET_NTOP) # for header vpConfig.h
 
 VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for header vpConfig.h
 VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # for header vpConfig.h
