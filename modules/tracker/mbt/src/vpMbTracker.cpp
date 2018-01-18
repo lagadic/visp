@@ -750,11 +750,11 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vec
   in the file initFile. The structure of this file is (without the comments):
   \code
   // The six value of the pose vector
-  0.0000    //  \
-  0.0000    //  |
-  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
-  0.0000    //  |
-  0.0000    //  |
+  0.1000    //  \
+  0.1000    //  | Exemple of value for the pose vector where 
+  1.0000    //  | X = 0.1 meter
+  0.0000    //  | Y = 0.1 meter
+  0.0000    //  | Z = 1 meter
   0.0000    //  /
   \endcode
 
