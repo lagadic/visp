@@ -422,6 +422,9 @@
 // Defined if log1p function is available
 #cmakedefine VISP_HAVE_FUNC_LOG1P
 
+// Defined if inet_ntop function is available
+#cmakedefine VISP_HAVE_FUNC_INET_NTOP
+
 // Defined if xrandr program available
 #cmakedefine VISP_HAVE_XRANDR
 

@@ -42,40 +42,6 @@
 set(opt_incs "")
 set(opt_libs "")
 
-# winmm.lib for timeGetTime() under windows
-CHECK_LIBRARY_EXISTS("winmm.lib" getch "" HAVE_LIBWINMM) # for timeGetTime()
-if(HAVE_LIBWINMM)
-  list(APPEND opt_libs "winmm.lib")
-endif()
-
-# Add library ws2_32.a or ws2_32.lib for vpNetwork class
-if(WIN32 AND NOT CYGWIN)
-  if(MINGW)
-    CHECK_LIBRARY_EXISTS("ws2_32.a" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    if(HAVE_LIBWS2_32)
-      list(APPEND opt_libs "ws2_32.a")
-    else()
-      find_library(WS2_32_LIBRARY "libws2_32.a"
-        "$ENV{MINGW_DIR}/lib"
-        "$ENV{MINGW_DIR}/mingw/lib"
-        C:/mingw/mingw/lib)
-      mark_as_advanced(WS2_32_LIBRARY)
-      if(WS2_32_LIBRARY)
-        list(APPEND opt_libs "${WS2_32_LIBRARY}")
-      endif()
-    endif()
-  elseif(WINRT)
-    # Since check_library_exists() and find_library() does't work to detect ws2_32.lib we add the lib that is part of Windows SDK
-    list(APPEND opt_libs "ws2_32.lib")
-  else() # pure WIN32
-    CHECK_LIBRARY_EXISTS("ws2_32.lib" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    if(HAVE_LIBWS2_32)
-      #message("have ws2_32.lib")
-      list(APPEND opt_libs "ws2_32.lib")
-    endif()
-  endif()
-endif()
-
 # OpenCV
 if(USE_OPENCV)
   # On win32 since OpenCV 2.4.7 and on OSX with OpenCV 2.4.10 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.

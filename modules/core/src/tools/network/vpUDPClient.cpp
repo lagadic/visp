@@ -36,8 +36,10 @@
 #include <cstring>
 #include <sstream>
 
-// Only available since Windows 8.1 where inet_atoa() is supported
-#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+#include <visp3/core/vpConfig.h>
+
+// inet_ntop() not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <arpa/inet.h>

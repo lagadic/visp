@@ -57,7 +57,8 @@ struct DataType {
 
 int main()
 {
-#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+// inet_ntop() used in vpUDPClient is not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
   try {
     std::string servername = "127.0.0.1";
     unsigned int port = 50037;
@@ -97,7 +98,7 @@ int main()
     return EXIT_FAILURE;
   }
 #else
-  std::cout << "This test doesn't work on platform prior to win 8.1" << std::endl;
+  std::cout << "This test doesn't work on win XP where inet_ntop() is not available" << std::endl;
   return EXIT_SUCCESS;
 #endif
 }

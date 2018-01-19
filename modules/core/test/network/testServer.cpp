@@ -47,7 +47,7 @@
 
 int main()
 {
-#if !(defined(_WIN32) && (_WIN32_WINNT < 0x0603))
+#ifdef VISP_HAVE_FUNC_INET_NTOP
   try {
     int port = 35000;
     vpServer serv(port); // Launch the server on localhost
@@ -78,7 +78,7 @@ int main()
     return 1;
   }
 #else
-  std::cout << "This test doesn't work on platform prior to win 8.1" << std::endl;
+  std::cout << "This test doesn't work on win XP where inet_ntop() is not available" << std::endl;
   return EXIT_SUCCESS;
 #endif
 }
