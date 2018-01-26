@@ -524,7 +524,7 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
   for (unsigned int i = 0; i < 3; i++) {
     t[i] = extrinsics.translation[i];
     for (unsigned int j = 0; j < 3; j++)
-      R[i][j] = extrinsics.rotation[i * 3 + j];
+      R[i][j] = extrinsics.rotation[j * 3 + i]; //rotation is column-major order
   }
 
   vpHomogeneousMatrix to_M_from(t, R);
