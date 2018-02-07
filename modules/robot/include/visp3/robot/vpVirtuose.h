@@ -156,6 +156,7 @@ public:
   VirtCommandType getCommandType() const;
   bool getDeadMan() const;
   bool getEmergencyStop() const;
+  unsigned int getJointsNumber() const;
   vpColVector getForce() const;
   VirtContext getHandler();
   vpPoseVector getObservationFrame() const;
@@ -208,6 +209,7 @@ protected:
   VirtIndexingType m_indexType;
   bool m_is_init;
   float m_period;
+  unsigned int m_njoints;
 };
 
 #endif
