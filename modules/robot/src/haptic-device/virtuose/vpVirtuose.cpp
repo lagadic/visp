@@ -63,12 +63,20 @@ vpVirtuose::vpVirtuose()
 /*!
  * Default destructor that delete the VirtContext object.
  */
-vpVirtuose::~vpVirtuose()
+void vpVirtuose::close()
 {
   if (m_virtContext != NULL) {
     virtClose(m_virtContext);
     m_virtContext = NULL;
   }
+}
+
+/*!
+ * Default destructor that delete the VirtContext object.
+ */
+vpVirtuose::~vpVirtuose()
+{
+  close();
 }
 
 /*!

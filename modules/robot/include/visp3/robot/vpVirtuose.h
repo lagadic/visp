@@ -147,6 +147,7 @@ public:
   ~vpVirtuose();
 
   void addForce(vpColVector &force);
+  void close();
   void enableForceFeedback(int enable);
 
   vpColVector getArticularPosition() const;
