@@ -432,7 +432,16 @@ VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "
 VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "" ON IF WIN32 AND NOT WINRT)
 #VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  ""    "Include dshow support"            "" ON IF WIN32 AND NOT WINRT)
-VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON)
+
+# Workaround libomp.so missing at run-time when using clang: https://github.com/travis-ci/travis-ci/issues/8613
+string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
+if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+  set(COMPILER_SUPPORTS_OPENMP FALSE)
+else()
+  set(COMPILER_SUPPORTS_OPENMP TRUE)
+endif()
+
+VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON IF COMPILER_SUPPORTS_OPENMP)
 VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"           "" ON IF NOT WINRT)
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
