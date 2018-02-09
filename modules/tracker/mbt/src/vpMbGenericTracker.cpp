@@ -352,6 +352,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
         if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
           for (unsigned int i = 0; i < tracker->m_error_depthNormal.getRows(); i++) {
             double wi = tracker->m_w_depthNormal[i] * factorDepth;
+            W_true[start_index + i] = wi;
             m_weightedError[start_index + i] = wi * m_error[start_index + i];
 
             num += wi * vpMath::sqr(m_error[start_index + i]);
@@ -368,6 +369,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
         if (tracker->m_trackerType & DEPTH_DENSE_TRACKER) {
           for (unsigned int i = 0; i < tracker->m_error_depthDense.getRows(); i++) {
             double wi = tracker->m_w_depthDense[i] * factorDepthDense;
+            W_true[start_index + i] = wi;
             m_weightedError[start_index + i] = wi * m_error[start_index + i];
 
             num += wi * vpMath::sqr(m_error[start_index + i]);
