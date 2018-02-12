@@ -970,6 +970,8 @@ void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, co
   \param width : Resized width.
   \param height : Resized height.
   \param method : Interpolation method.
+
+  \warning The input \e I and output \e Ires images must be different.
 */
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width,
@@ -987,6 +989,8 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const uns
   \param I : Input image.
   \param Ires : Output image resized (you have to init the image \e Ires at
   the desired size). \param method : Interpolation method.
+
+  \warning The input \e I and output \e Ires images must be different.
 */
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method)
