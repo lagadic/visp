@@ -39,6 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
+#include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
 #include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -47,7 +48,6 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/robot/vpRobotPioneer.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpOpenCVGrabber.h>

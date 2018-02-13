@@ -12,6 +12,7 @@ ViSP 3.2.0 (under development)
     . [#279] Unable to build ViSP with Visual Studio 2010
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
     . [#287] On Win XP inet_ntop() could not be located in WS2_32.dll
+    . [#299] Unable to build when libaria is used
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
