@@ -16,7 +16,9 @@ int main()
     
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
+    //! [Line]
     vpDisplay::displayLine(I, I.getHeight() / 4, I.getWidth() / 4, (3 * I.getHeight() ) / 4, (3 * I.getWidth() ) / 4, vpColor::red, 10);
+    //! [Line]
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);

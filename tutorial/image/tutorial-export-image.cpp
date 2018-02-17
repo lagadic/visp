@@ -1,3 +1,4 @@
+//! \example tutorial-export-image.cpp
 #include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>

@@ -1,4 +1,4 @@
-//! \example tutorial-draw-cross.cpp
+//! \example tutorial-draw-text.cpp
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 

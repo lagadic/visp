@@ -5,9 +5,7 @@
 
 \section image_display_intro Introduction
 
-\note We assume in this tutorial that you have successfully build your first project using ViSP as 3rd party as explained in one of the \ref tutorial_started tutorials.
-
-In this tutorial you will learn how to display images with ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
+In this tutorial you will learn how to draw basic drawings with ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
 
 Note that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -52,3 +50,63 @@ Here we handle mouse events. We are waiting for a blocking mouse click to end th
 Here is a screen shot of the resulting output window :
 
   \image html img-monkey.png
+
+\section basic_drawings How to draw basic drawings
+
+\subsection point How to draw a point
+
+We use displayPoint function of vpDisplay class to draw a point on the screen.
+
+\include tutorial-draw-point.cpp
+
+Here we draw a point at the center of a grey image with red color and thickness 2.
+
+\subsection line How to draw a line segment
+
+We use displayLine function of vpDisplay class to draw a line segment on the screen.
+
+\snippet tutorial-draw-line.cpp Line
+
+Here we draw a red coloured line segment with the specified initial and final coordinates and thickness 10.
+
+\subsection circle How to draw a circle
+
+We use displayCircle function of vpDisplay class to draw a circle on the screen.
+
+\snippet tutorial-image-display-scaled-auto.cpp Circle
+
+Here we draw a red coloured filled circle at the center with radius of 200.
+
+\subsection rectangle How to draw a rectangle
+
+We use displayRectangle function of vpDisplay class to draw a rectangle on the screen.
+
+\snippet tutorial-draw-rectangle.cpp Rectangle
+
+Here we draw a red coloured filled rectangle with specified top-left coordinates and width and height.
+
+\subsection cross How to draw a cross
+
+We use displayCross function of vpDisplay class to draw a rectangle on the screen.
+
+\snippet tutorial-draw-cross.cpp Cross
+
+Here we draw a red coloured corss on the center with speicfied size and thickness 2.
+
+\section adding_text How to add text in the window overlay
+
+We use displayCharString of vpDisplay class to add text in the window overlay.
+
+\include tutorial-draw-text.cpp
+
+\section adding_text How to export an image
+
+We use getImage of vpDisplay class to update the image with an overlay. 
+
+\include tutorial-export-image.cpp
+
+\section event_keyboard How to handle keyboard events
+
+We use getKeyboardEvent of vpDisplay class to get the value of the key pressed.
+
+\include tutorial-event-keyboard.cpp

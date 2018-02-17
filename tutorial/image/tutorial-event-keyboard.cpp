@@ -1,3 +1,4 @@
+//! \example tutorial-event-keyboard.cpp
 #include <visp/vpConfig.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
@@ -52,4 +53,3 @@ int main()
   delete d;
 #endif
 }
-  
