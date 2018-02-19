@@ -184,7 +184,8 @@ vp_add_tests(
 if(USE_VIRTUOSE)
   # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
   vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp -Wno-int-to-pointer-cast)
-  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp -Wno-int-to-pointer-cast)
+  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseWithGlove.cpp -Wno-int-to-pointer-cast)
+  vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp -Wno-int-to-pointer-cast)

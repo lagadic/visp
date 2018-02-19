@@ -147,6 +147,7 @@ public:
   ~vpVirtuose();
 
   void addForce(vpColVector &force);
+  void close();
   void enableForceFeedback(int enable);
 
   vpColVector getArticularPosition() const;
@@ -156,6 +157,7 @@ public:
   VirtCommandType getCommandType() const;
   bool getDeadMan() const;
   bool getEmergencyStop() const;
+  unsigned int getJointsNumber() const;
   vpColVector getForce() const;
   VirtContext getHandler();
   vpPoseVector getObservationFrame() const;
@@ -208,6 +210,7 @@ protected:
   VirtIndexingType m_indexType;
   bool m_is_init;
   float m_period;
+  unsigned int m_njoints;
 };
 
 #endif
