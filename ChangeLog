@@ -13,6 +13,7 @@ ViSP 3.2.0 (under development)
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
     . [#287] On Win XP inet_ntop() could not be located in WS2_32.dll
     . [#299] Unable to build when libaria is used
+    . [#302] Fix build issue with librealsense 2.9.1 or higher
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)

@@ -39,6 +39,7 @@
 #include <iomanip>
 #include <map>
 #include <set>
+#include <cstring>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -95,7 +96,11 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 {
   auto data = m_pipe.wait_for_frames();
   if (align_to != NULL)
+#if 0// (RS2_API_MAJOR_VERSION > 2) && (RS2_API_MINOR_VERSION > 9) && (RS2_API_PATCH_VERSION > 0)
+    data = align_to->process(data);
+#else
     data = align_to->proccess(data);
+#endif
 
   if (data_image != NULL) {
     auto color_frame = data.get_color_frame();
