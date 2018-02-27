@@ -625,14 +625,16 @@ void vpVirtuose::setArticularPosition(const vpColVector &articularPosition)
                       m_njoints, articularPosition.size()));
   }
 
-  float articular_position[m_njoints];
+  float *articular_position = new float[m_njoints];
   for (unsigned int i = 0; i < m_njoints; i++)
     articular_position[i] = (float)articularPosition[i];
 
   if (virtSetArticularPosition(m_virtContext, articular_position)) {
     int err = virtGetErrorCode(m_virtContext);
+    delete [] articular_position;
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularPosition: error code %d", err));
   }
+  delete[] articular_position;
 }
 
 /*!
@@ -653,14 +655,16 @@ void vpVirtuose::setArticularVelocity(const vpColVector &articularVelocity)
                       m_njoints, articularVelocity.size()));
   }
 
-  float articular_velocity[m_njoints];
+  float *articular_velocity = new float [m_njoints];
   for (unsigned int i = 0; i < m_njoints; i++)
     articular_velocity[i] = (float)articularVelocity[i];
 
   if (virtSetArticularSpeed(m_virtContext, articular_velocity)) {
     int err = virtGetErrorCode(m_virtContext);
+    delete [] articular_velocity;
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularVelocity: error code %d", err));
   }
+  delete[] articular_velocity;
 }
 
 /*!
