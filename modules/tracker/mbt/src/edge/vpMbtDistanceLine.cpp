@@ -454,13 +454,13 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const v
     try {
       nbFeature.clear();
       nbFeatureTotal = 0;
-      for (unsigned int i = 0; i < meline.size(); i++) {
+      for (size_t i = 0; i < meline.size(); i++) {
         meline[i]->track(I);
         nbFeature.push_back((unsigned int)meline[i]->getMeList().size());
         nbFeatureTotal += (unsigned int)meline[i]->getMeList().size();
       }
     } catch (...) {
-      for (unsigned int i = 0; i < meline.size(); i++) {
+      for (size_t i = 0; i < meline.size(); i++) {
         if (meline[i] != NULL)
           delete meline[i];
       }
@@ -502,7 +502,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
       }
 
       if (linesLst.size() != meline.size() || linesLst.size() == 0) {
-        for (unsigned int i = 0; i < meline.size(); i++) {
+        for (size_t i = 0; i < meline.size(); i++) {
           if (meline[i] != NULL)
             delete meline[i];
         }
@@ -577,7 +577,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
             nbFeatureTotal += nbFeature[i];
           }
         } catch (...) {
-          for (unsigned int j = 0; j < meline.size(); j++) {
+          for (size_t j = 0; j < meline.size(); j++) {
             if (meline[j] != NULL)
               delete meline[j];
           }
@@ -590,7 +590,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         }
       }
     } else {
-      for (unsigned int i = 0; i < meline.size(); i++) {
+      for (size_t i = 0; i < meline.size(); i++) {
         if (meline[i] != NULL)
           delete meline[i];
       }
@@ -613,7 +613,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 */
 void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  for (unsigned int i = 0; i < meline.size(); i++) {
+  for (size_t i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
       delete meline[i];
   }
@@ -752,7 +752,7 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 */
 void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
-  for (unsigned int i = 0; i < meline.size(); i++)
+  for (size_t i = 0; i < meline.size(); i++)
     if (meline[i] != NULL) {
       meline[i]->display(I);
     }
@@ -763,11 +763,11 @@ void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 */
 void vpMbtDistanceLine::initInteractionMatrixError()
 {
-  if (isvisible == true) {
+  if (isvisible) {
     L.resize(nbFeatureTotal, 6);
     error.resize(nbFeatureTotal);
   } else {
-    for (unsigned int i = 0; i < meline.size(); i++) {
+    for (size_t i = 0; i < meline.size(); i++) {
       nbFeature[i] = 0;
       // To be consistent with nbFeature[i] = 0
       std::list<vpMeSite> &me_site_list = meline[i]->getMeList();
@@ -808,7 +808,7 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
       double x, y;
       unsigned int j = 0;
 
-      for (unsigned int i = 0; i < meline.size(); i++) {
+      for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
           x = (double)it->j;
@@ -834,7 +834,7 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
       std::cerr << "Set the corresponding interaction matrix part to zero." << std::endl;
 
       unsigned int j = 0;
-      for (unsigned int i = 0; i < meline.size(); i++) {
+      for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
           for (unsigned int k = 0; k < 6; k++) {
@@ -864,7 +864,7 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
   }
   if (isvisible) {
 
-    for (unsigned int i = 0; i < meline.size(); i++) {
+    for (size_t i = 0; i < meline.size(); i++) {
       for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin(); it != meline[i]->getMeList().end();
            ++it) {
         int i_ = it->i;

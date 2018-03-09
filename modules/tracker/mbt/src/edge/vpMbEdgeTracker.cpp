@@ -111,20 +111,20 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
         cy = NULL;
       }
 
+      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
+        ci = *it;
+        if (ci != NULL) {
+          delete ci;
+        }
+        ci = NULL;
+      }
+
       lines[i].clear();
       cylinders[i].clear();
+      circles[i].clear();
     }
   }
-  for (unsigned int i = 0; i < circles.size(); i += 1) {
-    for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
-      ci = *it;
-      if (ci != NULL) {
-        delete ci;
-      }
-      ci = NULL;
-    }
-    circles[i].clear();
-  }
+
   cleanPyramid(Ipyramid);
 }
 
@@ -330,7 +330,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, con
 
       unsigned int indexFeature = 0;
 
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         if (iter == 0 && l->meline[a] != NULL)
           itListLine = l->meline[a]->getMeList().begin();
 
@@ -583,7 +583,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
       }
 
       unsigned int indexFeature = 0;
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         std::list<vpMeSite>::const_iterator itListLine;
         if (l->meline[a] != NULL) {
           itListLine = l->meline[a]->getMeList().begin();
@@ -873,7 +873,7 @@ void vpMbEdgeTracker::computeProjectionError(const vpImage<unsigned char> &_I)
        ++it) {
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         if (l->meline[a] != NULL) {
           double lineNormGradient;
           unsigned int lineNbFeatures;
@@ -944,7 +944,7 @@ void vpMbEdgeTracker::testTracking()
        ++it) {
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         if (l->meline[a] != NULL) {
           nbExpectedPoint += (int)l->meline[a]->expecteddensity;
           for (std::list<vpMeSite>::const_iterator itme = l->meline[a]->getMeList().begin();
@@ -1147,10 +1147,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
   if (clippingFlag > 2)
     cam.computeFov(I.getWidth(), I.getHeight());
 
-  initPyramid(I, Ipyramid);
   visibleFace(I, cMo, a);
-  unsigned int i = (unsigned int)scales.size();
-
   resetMovingEdge();
 
   if (useScanLine) {
@@ -1161,6 +1158,8 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
     faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
   }
 
+  initPyramid(I, Ipyramid);
+  unsigned int i = (unsigned int)scales.size();
   do {
     i--;
     if (scales[i]) {
@@ -1453,11 +1452,11 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     if (isvisible) {
       l->setVisible(true);
       l->updateTracked();
-      if (l->meline.size() == 0 && l->isTracked())
+      if (l->meline.empty() && l->isTracked())
         l->initMovingEdge(I, _cMo);
     } else {
       l->setVisible(false);
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         if (l->meline[a] != NULL)
           delete l->meline[a];
         if (a < l->nbFeature.size())
@@ -1547,7 +1546,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
        ++it) {
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
-      if (l->meline.size() == 0) {
+      if (l->meline.empty()) {
         l->initMovingEdge(I, cMo);
       }
       l->trackMovingEdge(I, cMo);
@@ -1632,7 +1631,7 @@ void vpMbEdgeTracker::updateMovingEdgeWeights()
       l = *it;
       unsigned int indexLine = 0;
       double wmean = 0;
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         if (l->nbFeature[a] > 0) {
           std::list<vpMeSite>::iterator itListLine;
           itListLine = l->meline[a]->getMeList().begin();
@@ -1820,7 +1819,7 @@ void vpMbEdgeTracker::resetMovingEdge()
   for (unsigned int i = 0; i < scales.size(); i += 1) {
     if (scales[i]) {
       for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
-        for (unsigned int a = 0; a < (*it)->meline.size(); a++) {
+        for (size_t a = 0; a < (*it)->meline.size(); a++) {
           if ((*it)->meline[a] != NULL) {
             delete (*it)->meline[a];
             (*it)->meline[a] = NULL;
@@ -2454,7 +2453,7 @@ unsigned int vpMbEdgeTracker::getNbPoints(const unsigned int level) const
   for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[level].begin(); it != lines[level].end(); ++it) {
     l = *it;
     if (l->isVisible() && l->isTracked()) {
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         if (l->nbFeature[a] != 0)
           for (std::list<vpMeSite>::const_iterator itme = l->meline[a]->getMeList().begin();
                itme != l->meline[a]->getMeList().end(); ++itme) {

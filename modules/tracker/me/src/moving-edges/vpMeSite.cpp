@@ -218,26 +218,19 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
 
 vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
 {
-
-  int k;
-
-  int n;
-  vpMeSite *list_query_pixels;
-  list_query_pixels = NULL;
-
   unsigned int range_ = static_cast<unsigned int>(range);
   // Size of query list includes the point on the line
-  list_query_pixels = new vpMeSite[2 * range_ + 1];
+  vpMeSite *list_query_pixels = new vpMeSite[2 * range_ + 1];
 
   // range : +/- the range within which the pixel's
   // correspondent will be sought
 
   double salpha = sin(alpha);
   double calpha = cos(alpha);
-  n = 0;
+  int n = 0;
   vpImagePoint ip;
 
-  for (k = -range; k <= range; k++) {
+  for (int k = -range; k <= range; k++) {
     double ii = (ifloat + k * salpha);
     double jj = (jfloat + k * calpha);
 
@@ -485,7 +478,6 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
   //       delete []likelihood; // modif portage
   //     }
 
-  vpMeSite *list_query_pixels;
   int max_rank = -1;
   //   int max_rank1=-1 ;
   //   int max_rank2 = -1;
@@ -502,7 +494,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool
 
   //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  <<
   //  std::endl ;
-  list_query_pixels = getQueryList(I, (int)range);
+  vpMeSite *list_query_pixels = getQueryList(I, (int)range);
 
   double contraste_max = 1 + me->getMu2();
   double contraste_min = 1 - me->getMu1();

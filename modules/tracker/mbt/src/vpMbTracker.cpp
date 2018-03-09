@@ -1948,7 +1948,6 @@ void vpMbTracker::extractFaces(SoVRMLIndexedFaceSet *face_set, vpHomogeneousMatr
                                const std::string &polygonName)
 {
   std::vector<vpPoint> corners;
-  corners.resize(0);
 
   //  SoMFInt32 indexList = _face_set->coordIndex;
   //  int indexListSize = indexList.getNum();
