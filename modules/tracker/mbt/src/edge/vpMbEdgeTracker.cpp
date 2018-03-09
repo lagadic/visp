@@ -1825,10 +1825,11 @@ void vpMbEdgeTracker::resetMovingEdge()
             delete (*it)->meline[a];
             (*it)->meline[a] = NULL;
           }
-          (*it)->meline.clear();
-          (*it)->nbFeature.clear();
-          (*it)->nbFeatureTotal = 0;
         }
+
+        (*it)->meline.clear();
+        (*it)->nbFeature.clear();
+        (*it)->nbFeatureTotal = 0;
       }
 
       for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
