@@ -403,9 +403,8 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         try {
           melinePt->initTracking(I, ip1, ip2, rho, theta);
           meline.push_back(melinePt);
-          //        nbFeature.push_back((unsigned int)
-          //        melinePt->getMeList().size()); nbFeatureTotal +=
-          //        nbFeature.back();
+          nbFeature.push_back((unsigned int) melinePt->getMeList().size());
+          nbFeatureTotal += nbFeature.back();
         } catch (...) {
           // vpTRACE("the line can't be initialized");
           delete melinePt;
