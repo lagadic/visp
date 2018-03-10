@@ -419,7 +419,7 @@ void vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
       unsigned int indexLine = 0;
       double wmean = 0;
 
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         std::list<vpMeSite>::iterator itListLine;
         if (l->nbFeature[a] > 0)
           itListLine = l->meline[a]->getMeList().begin();
@@ -894,7 +894,7 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
       }
 
       unsigned int indexFeature = 0;
-      for (unsigned int a = 0; a < l->meline.size(); a++) {
+      for (size_t a = 0; a < l->meline.size(); a++) {
         std::list<vpMeSite>::const_iterator itListLine;
         if (l->meline[a] != NULL) {
           itListLine = l->meline[a]->getMeList().begin();

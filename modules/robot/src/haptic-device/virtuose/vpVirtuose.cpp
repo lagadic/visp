@@ -54,7 +54,7 @@
 vpVirtuose::vpVirtuose()
   : m_virtContext(NULL), m_ip("localhost#5000"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
     m_ctrlMajorVersion(0), m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
-    m_is_init(false), m_period(0.001f)
+    m_is_init(false), m_period(0.001f), m_njoints(6)
 {
   virtAPIVersion(&m_apiMajorVersion, &m_apiMinorVersion);
   std::cout << "API version: " << m_apiMajorVersion << "." << m_apiMinorVersion << std::endl;
@@ -63,12 +63,20 @@ vpVirtuose::vpVirtuose()
 /*!
  * Default destructor that delete the VirtContext object.
  */
-vpVirtuose::~vpVirtuose()
+void vpVirtuose::close()
 {
   if (m_virtContext != NULL) {
     virtClose(m_virtContext);
     m_virtContext = NULL;
   }
+}
+
+/*!
+ * Default destructor that delete the VirtContext object.
+ */
+vpVirtuose::~vpVirtuose()
+{
+  close();
 }
 
 /*!
@@ -122,15 +130,16 @@ vpColVector vpVirtuose::getArticularPosition() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  vpColVector articularPosition(6, 0);
 
-  float articular_position_[6];
+  float articular_position_[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
   if (virtGetArticularPosition(m_virtContext, articular_position_)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtGetArticularPosition(): error code %d", err));
   }
 
-  for (unsigned int i = 0; i < 6; i++)
+  vpColVector articularPosition(m_njoints, 0);
+  for (unsigned int i = 0; i < m_njoints; i++)
     articularPosition[i] = articular_position_[i];
 
   return articularPosition;
@@ -145,14 +154,16 @@ vpColVector vpVirtuose::getArticularVelocity() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  vpColVector articularVelocity(6, 0);
-  float articular_velocity_[6];
+  float articular_velocity_[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
   if (virtGetArticularSpeed(m_virtContext, articular_velocity_)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtGetArticularSpeed: error code %d", err));
   }
 
-  for (unsigned int i = 0; i < 6; i++)
+  vpColVector articularVelocity(m_njoints, 0);
+
+  for (unsigned int i = 0; i < m_njoints; i++)
     articularVelocity[i] = articular_velocity_[i];
 
   return articularVelocity;
@@ -339,6 +350,21 @@ int main()
 VirtContext vpVirtuose::getHandler() { return m_virtContext; }
 
 /*!
+  Get device number of joints.
+
+  \return The number of joints of the device. Sould be 6 for Virtuose, 9 for the glove fingers.
+ */
+unsigned int vpVirtuose::getJointsNumber() const
+{
+  if (!m_is_init) {
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
+  }
+
+  return m_njoints;
+}
+
+
+/*!
  * Return the cartesian current position of the observation reference frame
  * with respect to the environment reference frame.
  *
@@ -373,8 +399,9 @@ vpPoseVector vpVirtuose::getObservationFrame() const
 
 /*!
  * Return the cartesian physical position of the Virtuose expressed in the
- * coordinates of the base reference frame. \sa getAvatarPosition(),
- * getPosition()
+ * coordinates of the base reference frame.
+ *
+ * \sa getAvatarPosition(), getPosition()
  */
 vpPoseVector vpVirtuose::getPhysicalPosition() const
 {
@@ -532,6 +559,22 @@ void vpVirtuose::init()
       throw(vpException(vpException::fatalError, "Error calling virtSetTimeStep: error code %d", err));
     }
 
+    // Update number of joints
+    float articular_position_[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+    if (virtGetArticularPosition(m_virtContext, articular_position_)) {
+      int err = virtGetErrorCode(m_virtContext);
+      throw(vpException(vpException::fatalError, "Error calling virtGetArticularPosition() in int(): error code %d", err));
+    }
+
+    m_njoints = 6; // At least 6 joints
+    for (unsigned int i=m_njoints; i < 20; i++) {
+      m_njoints = i;
+      if (std::fabs(articular_position_[i]) <= std::numeric_limits<float>::epsilon()) {
+        break;
+      }
+    }
+
     m_is_init = true;
   }
 }
@@ -539,8 +582,9 @@ void vpVirtuose::init()
 /*!
  * Send a command of articular force to the Virtuose.
  * setArticularForce() only works in mode COMMAND_TYPE_ARTICULAR_IMPEDANCE, to
- * be set with setCommandType(). \param articularForce :  Six dimension torque
- * vector.
+ * be set with setCommandType().
+ *
+ * \param articularForce : Six dimension torque vector.
  */
 void vpVirtuose::setArticularForce(const vpColVector &articularForce)
 {
@@ -566,55 +610,61 @@ void vpVirtuose::setArticularForce(const vpColVector &articularForce)
 /*!
  * Send a command of articular (joint) position to the virtuose.
  * This function works only in COMMAND_TYPE_ARTICULAR mode, to be set with
- * setCommandType(). \param articularPosition : Six dimension joint position
- * vector.
+ * setCommandType().
+ *
+ * \param articularPosition : Six dimension joint position vector.
  */
 void vpVirtuose::setArticularPosition(const vpColVector &articularPosition)
 {
   init();
 
-  if (articularPosition.size() != 6) {
+  if (articularPosition.size() != m_njoints) {
     throw(vpException(vpException::dimensionError,
                       "Cannot send an articular position command (dim %d) to "
-                      "the haptic device that is not 6-dimension",
-                      articularPosition.size()));
+                      "the haptic device that is not %d-dimension",
+                      m_njoints, articularPosition.size()));
   }
 
-  float articular_position[6];
-  for (unsigned int i = 0; i < 6; i++)
+  float *articular_position = new float[m_njoints];
+  for (unsigned int i = 0; i < m_njoints; i++)
     articular_position[i] = (float)articularPosition[i];
 
   if (virtSetArticularPosition(m_virtContext, articular_position)) {
     int err = virtGetErrorCode(m_virtContext);
+    delete [] articular_position;
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularPosition: error code %d", err));
   }
+  delete[] articular_position;
 }
 
 /*!
  * Send a command of articular (joint) velocity to the virtuose.
  * This function works only in COMMAND_TYPE_ARTICULAR mode, to be set with
- * setCommandType(). \param articularVelocity : Six dimension joint velocity
- * vector.
+ * setCommandType().
+ *
+ * \param articularVelocity : Six dimension joint velocity vector.
  */
 void vpVirtuose::setArticularVelocity(const vpColVector &articularVelocity)
 {
   init();
 
-  if (articularVelocity.size() != 6) {
+  if (articularVelocity.size() != m_njoints) {
     throw(vpException(vpException::dimensionError,
                       "Cannot send an articular velocity command (dim %d) to "
-                      "the haptic device that is not 6-dimension",
-                      articularVelocity.size()));
+                      "the haptic device that is not %d-dimension",
+                      m_njoints, articularVelocity.size()));
   }
 
-  float articular_velocity[6];
-  for (unsigned int i = 0; i < 6; i++)
+  float *articular_velocity = new float [m_njoints];
+  for (unsigned int i = 0; i < m_njoints; i++)
     articular_velocity[i] = (float)articularVelocity[i];
 
   if (virtSetArticularSpeed(m_virtContext, articular_velocity)) {
     int err = virtGetErrorCode(m_virtContext);
+    delete [] articular_velocity;
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularVelocity: error code %d", err));
   }
+  delete[] articular_velocity;
 }
 
 /*!
