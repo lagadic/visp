@@ -208,13 +208,12 @@ macro(add_android_project target path)
                      The project ${target} will not be build")
   endif()
 
-# TODO to be edited    
-#  # check native dependencies
-#  if(android_proj_IGNORE_JAVA)
-#    ocv_check_dependencies(${android_proj_NATIVE_DEPS})
-#  else()
-#    ocv_check_dependencies(${android_proj_NATIVE_DEPS} opencv_java)
-#  endif()
+  # check native dependencies
+  if(android_proj_IGNORE_JAVA)
+    vp_check_dependencies(${android_proj_NATIVE_DEPS})
+  else()
+    vp_check_dependencies(${android_proj_NATIVE_DEPS} opencv_java)
+  endif()
 
   if(EXISTS "${path}/jni/Android.mk" )
     # find if native_app_glue is used
@@ -348,7 +347,7 @@ macro(add_android_project target path)
     endif()
     set(__android_project_chain ${target} CACHE INTERNAL "auxiliary variable used for Android progects chaining")
 
-    # put the final .apk to the OpenCV's bin folder
+    # put the final .apk to the VISP's bin folder
     add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${android_proj_bin_dir}/bin/${target}-debug.apk" "${VISP_BINARY_DIR}/bin/${target}.apk")
     if(INSTALL_ANDROID_EXAMPLES AND "${target}" MATCHES "^example-")
       #apk
