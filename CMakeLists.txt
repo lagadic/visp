@@ -42,10 +42,12 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
   if(WIN32)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
   endif()
-else()
+else(NOT CMAKE_TOOLCHAIN_FILE)
+  #Android: set output folder to ${CMAKE_BINARY_DIR}
+  set( LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_BINARY_DIR} CACHE PATH "root for library output, set this to change where android libs are compiled to" )
   # Crosscompiling
   set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
-endif()
+endif(NOT CMAKE_TOOLCHAIN_FILE)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)
