@@ -5069,11 +5069,11 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   m_depthNormalFaces.clear();
 
   // Depth dense
-  for (size_t i = 0; i < m_depthDenseNormalFaces.size(); i++) {
-    delete m_depthDenseNormalFaces[i];
-    m_depthDenseNormalFaces[i] = NULL;
+  for (size_t i = 0; i < m_depthDenseFaces.size(); i++) {
+    delete m_depthDenseFaces[i];
+    m_depthDenseFaces[i] = NULL;
   }
-  m_depthDenseNormalFaces.clear();
+  m_depthDenseFaces.clear();
 
   faces.reset();
 

@@ -54,7 +54,7 @@
 
 vpMbDepthDenseTracker::vpMbDepthDenseTracker()
   : m_depthDenseHiddenFacesDisplay(), m_depthDenseI_dummyVisibility(), m_depthDenseListOfActiveFaces(),
-    m_denseDepthNbFeatures(0), m_depthDenseNormalFaces(), m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
+    m_denseDepthNbFeatures(0), m_depthDenseFaces(), m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
     m_error_depthDense(), m_L_depthDense(), m_robust_depthDense(), m_w_depthDense(), m_weightedError_depthDense()
 #if DEBUG_DISPLAY_DEPTH_DENSE
     ,
@@ -74,8 +74,8 @@ vpMbDepthDenseTracker::vpMbDepthDenseTracker()
 
 vpMbDepthDenseTracker::~vpMbDepthDenseTracker()
 {
-  for (size_t i = 0; i < m_depthDenseNormalFaces.size(); i++) {
-    delete m_depthDenseNormalFaces[i];
+  for (size_t i = 0; i < m_depthDenseFaces.size(); i++) {
+    delete m_depthDenseFaces[i];
   }
 
 #if DEBUG_DISPLAY_DEPTH_DENSE
@@ -123,7 +123,7 @@ void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, const bool alreadyClo
   pts[2] = polygon.p[2];
   normal_face->m_planeObject = vpPlane(pts[0], pts[1], pts[2], vpPlane::object_frame);
 
-  m_depthDenseNormalFaces.push_back(normal_face);
+  m_depthDenseFaces.push_back(normal_face);
 }
 
 void vpMbDepthDenseTracker::computeVisibility(const unsigned int width, const unsigned int height)
@@ -144,8 +144,8 @@ void vpMbDepthDenseTracker::computeVisibility(const unsigned int width, const un
                                 m_depthDenseI_dummyVisibility.getHeight());
   }
 
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     vpMbtFaceDepthDense *face_normal = *it;
     face_normal->computeVisibility();
   }
@@ -303,8 +303,8 @@ void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHom
     m_depthDenseHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
   }
 
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     vpMbtFaceDepthDense *face_normal = *it;
     face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
 
@@ -332,8 +332,8 @@ void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneou
     m_depthDenseHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
   }
 
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     vpMbtFaceDepthDense *face_normal = *it;
     face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
 
@@ -423,12 +423,12 @@ void vpMbDepthDenseTracker::reInitModel(const vpImage<unsigned char> &I, const s
 {
   cMo.eye();
 
-  for (size_t i = 0; i < m_depthDenseNormalFaces.size(); i++) {
-    delete m_depthDenseNormalFaces[i];
-    m_depthDenseNormalFaces[i] = NULL;
+  for (size_t i = 0; i < m_depthDenseFaces.size(); i++) {
+    delete m_depthDenseFaces[i];
+    m_depthDenseFaces[i] = NULL;
   }
 
-  m_depthDenseNormalFaces.clear();
+  m_depthDenseFaces.clear();
 
   loadModel(cad_name, verbose);
   initFromPose(I, cMo_);
@@ -449,14 +449,14 @@ void vpMbDepthDenseTracker::resetTracker()
 {
   cMo.eye();
 
-  for (std::vector<vpMbtFaceDepthDense *>::iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     vpMbtFaceDepthDense *normal_face = *it;
     delete normal_face;
     normal_face = NULL;
   }
 
-  m_depthDenseNormalFaces.clear();
+  m_depthDenseFaces.clear();
 
   m_computeInteraction = true;
   computeCovariance = false;
@@ -510,16 +510,16 @@ void vpMbDepthDenseTracker::setScanLineVisibilityTest(const bool &v)
 {
   vpMbTracker::setScanLineVisibilityTest(v);
 
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     (*it)->setScanLineVisibilityTest(v);
   }
 }
 
 void vpMbDepthDenseTracker::setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking)
 {
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     vpMbtFaceDepthDense *face = *it;
     if (face->m_polygon->getName() == name) {
       face->setTracked(useDepthDenseTracking);
@@ -544,8 +544,8 @@ void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXY
   std::vector<std::vector<vpImagePoint> > roiPts_vec;
 #endif
 
-  for (std::vector<vpMbtFaceDepthDense *>::iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     vpMbtFaceDepthDense *face = *it;
 
     if (face->isVisible() && face->isTracked()) {
@@ -601,8 +601,8 @@ void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &po
   std::vector<std::vector<vpImagePoint> > roiPts_vec;
 #endif
 
-  for (std::vector<vpMbtFaceDepthDense *>::iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     vpMbtFaceDepthDense *face = *it;
 
     if (face->isVisible() && face->isTracked()) {
@@ -647,32 +647,32 @@ void vpMbDepthDenseTracker::setCameraParameters(const vpCameraParameters &camera
 {
   this->cam = camera;
 
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     (*it)->setCameraParameters(camera);
   }
 }
 
 void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(const double maxDistance)
 {
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     (*it)->setDepthDenseFilteringMaxDistance(maxDistance);
   }
 }
 
 void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method)
 {
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     (*it)->setDepthDenseFilteringMethod(method);
   }
 }
 
 void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(const double minDistance)
 {
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     (*it)->setDepthDenseFilteringMinDistance(minDistance);
   }
 }
@@ -684,8 +684,8 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(const double oc
     return;
   }
 
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
-       it != m_depthDenseNormalFaces.end(); ++it) {
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
     (*it)->setDepthDenseFilteringOccupancyRatio(occupancyRatio);
   }
 }
