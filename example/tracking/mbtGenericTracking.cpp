@@ -390,6 +390,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I2);
     }
 
+    // Object pointer to check that inheritance is ok
     vpMbTracker *tracker = new vpMbGenericTracker(2, trackerType);
     vpHomogeneousMatrix c1Mo, c2Mo;
     vpCameraParameters cam1, cam2;
@@ -653,7 +654,7 @@ int main(int argc, const char **argv)
 #endif
 
     return EXIT_SUCCESS;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

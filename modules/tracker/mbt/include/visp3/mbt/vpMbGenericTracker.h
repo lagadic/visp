@@ -305,6 +305,8 @@ public:
   virtual void setTrackerType(const int type);
   virtual void setTrackerType(const std::map<std::string, int> &mapOfTrackerTypes);
 
+  virtual void setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking);
+  virtual void setUseDepthNormalTracking(const std::string &name, const bool &useDepthNormalTracking);
   virtual void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   virtual void setUseKltTracking(const std::string &name, const bool &useKltTracking);

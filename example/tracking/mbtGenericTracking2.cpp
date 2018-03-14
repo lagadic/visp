@@ -404,6 +404,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I3);
     }
 
+    // Object pointer to check that inheritance is ok
     vpMbTracker *tracker = new vpMbGenericTracker(3, trackerType);
     std::map<std::string, vpHomogeneousMatrix> mapOfCameraPoses;
     std::map<std::string, vpCameraParameters> mapOfCameraParams;
@@ -741,7 +742,7 @@ int main(int argc, const char **argv)
 #endif
 
     return EXIT_SUCCESS;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

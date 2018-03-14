@@ -123,6 +123,8 @@ public:
 
   inline unsigned int getNbFeatures() const { return (unsigned int)(m_pointCloudFace.size() / 3); }
 
+  inline bool isTracked() const { return m_isTrackedDepthDenseFace; }
+
   inline bool isVisible() const { return m_polygon->isvisible; }
 
   void setCameraParameters(const vpCameraParameters &camera);
@@ -149,6 +151,8 @@ public:
       m_depthDenseFilteringOccupancyRatio = occupancyRatio;
     }
   }
+
+  inline void setTracked(const bool tracked) { m_isTrackedDepthDenseFace = tracked; }
 
 private:
   class PolygonLine
@@ -202,7 +206,7 @@ protected:
   //! Ratio between available depth points and theoretical number of points
   double m_depthDenseFilteringOccupancyRatio;
   //! Flag to define if the face should be tracked or not
-  bool m_isTracked;
+  bool m_isTrackedDepthDenseFace;
   //! Visibility flag
   bool m_isVisible;
   std::vector<vpMbtDistanceLine *> m_listOfFaceLines;

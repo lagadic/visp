@@ -132,6 +132,8 @@ public:
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const double scale = 0.05, const unsigned int thickness = 1);
 
+  inline bool isTracked() const { return m_isTrackedDepthNormalFace; }
+
   inline bool isVisible() const { return m_polygon->isvisible; }
 
   void setCameraParameters(const vpCameraParameters &camera);
@@ -150,6 +152,8 @@ public:
   }
 
   void setScanLineVisibilityTest(const bool v);
+
+  inline void setTracked(const bool tracked) { m_isTrackedDepthNormalFace = tracked; }
 
 private:
   class PolygonLine
@@ -238,7 +242,7 @@ protected:
   //! Method to estimate the desired features
   vpFeatureEstimationType m_featureEstimationMethod;
   //!
-  bool m_isTracked;
+  bool m_isTrackedDepthNormalFace;
   //!
   bool m_isVisible;
   //!

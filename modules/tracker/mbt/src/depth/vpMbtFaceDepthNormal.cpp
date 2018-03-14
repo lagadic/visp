@@ -59,8 +59,9 @@ vpMbtFaceDepthNormal::vpMbtFaceDepthNormal()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
     m_planeObject(), m_polygon(NULL), m_useScanLine(false), m_faceActivated(false),
     m_faceCentroidMethod(GEOMETRIC_CENTROID), m_faceDesiredCentroid(), m_faceDesiredNormal(),
-    m_featureEstimationMethod(ROBUST_FEATURE_ESTIMATION), m_isTracked(false), m_isVisible(false), m_listOfFaceLines(),
-    m_planeCamera(), m_pclPlaneEstimationMethod(2), // SAC_MSAC, see pcl/sample_consensus/method_types.h
+    m_featureEstimationMethod(ROBUST_FEATURE_ESTIMATION), m_isTrackedDepthNormalFace(true), m_isVisible(false),
+    m_listOfFaceLines(), m_planeCamera(),
+    m_pclPlaneEstimationMethod(2), // SAC_MSAC, see pcl/sample_consensus/method_types.h
     m_pclPlaneEstimationRansacMaxIter(200), m_pclPlaneEstimationRansacThreshold(0.001), m_polygonLines()
 {
 }
@@ -899,7 +900,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomo
                                    const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                    const bool displayFullModel)
 {
-  if (m_polygon->isVisible() || displayFullModel) {
+  if ((m_polygon->isVisible() && m_isTrackedDepthNormalFace) || displayFullModel) {
     computeVisibilityDisplay();
 
     for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
@@ -914,7 +915,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneous
                                    const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                    const bool displayFullModel)
 {
-  if (m_polygon->isVisible() || displayFullModel) {
+  if ((m_polygon->isVisible() && m_isTrackedDepthNormalFace) || displayFullModel) {
     computeVisibilityDisplay();
 
     for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
@@ -929,7 +930,7 @@ void vpMbtFaceDepthNormal::displayFeature(const vpImage<unsigned char> &I, const
                                           const vpCameraParameters &cam, const double scale,
                                           const unsigned int thickness)
 {
-  if (m_faceActivated /*&& m_isTracked*/ && m_isVisible) {
+  if (m_faceActivated && m_isTrackedDepthNormalFace && m_isVisible) {
     // Desired feature
     vpPoint pt_centroid = m_faceDesiredCentroid;
     pt_centroid.changeFrame(cMo);
@@ -985,7 +986,7 @@ void vpMbtFaceDepthNormal::displayFeature(const vpImage<vpRGBa> &I, const vpHomo
                                           const vpCameraParameters &cam, const double scale,
                                           const unsigned int thickness)
 {
-  if (m_faceActivated /*&& m_isTracked*/ && m_isVisible) {
+  if (m_faceActivated && m_isTrackedDepthNormalFace && m_isVisible) {
     // Desired feature
     vpPoint pt_centroid = m_faceDesiredCentroid;
     pt_centroid.changeFrame(cMo);

@@ -516,6 +516,17 @@ void vpMbDepthDenseTracker::setScanLineVisibilityTest(const bool &v)
   }
 }
 
+void vpMbDepthDenseTracker::setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking)
+{
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseNormalFaces.begin();
+       it != m_depthDenseNormalFaces.end(); ++it) {
+    vpMbtFaceDepthDense *face = *it;
+    if (face->m_polygon->getName() == name) {
+      face->setTracked(useDepthDenseTracking);
+    }
+  }
+}
+
 void vpMbDepthDenseTracker::testTracking() {}
 
 #ifdef VISP_HAVE_PCL
@@ -537,7 +548,7 @@ void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXY
        it != m_depthDenseNormalFaces.end(); ++it) {
     vpMbtFaceDepthDense *face = *it;
 
-    if (face->isVisible()) {
+    if (face->isVisible() && face->isTracked()) {
 #if DEBUG_DISPLAY_DEPTH_DENSE
       std::vector<std::vector<vpImagePoint> > roiPts_vec_;
 #endif
@@ -594,7 +605,7 @@ void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &po
        it != m_depthDenseNormalFaces.end(); ++it) {
     vpMbtFaceDepthDense *face = *it;
 
-    if (face->isVisible()) {
+    if (face->isVisible() && face->isTracked()) {
 #if DEBUG_DISPLAY_DEPTH_DENSE
       std::vector<std::vector<vpImagePoint> > roiPts_vec_;
 #endif

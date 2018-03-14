@@ -101,6 +101,8 @@ public:
 
   virtual void setScanLineVisibilityTest(const bool &v);
 
+  void setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking);
+
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &);
