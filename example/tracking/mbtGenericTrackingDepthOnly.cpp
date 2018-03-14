@@ -410,11 +410,10 @@ void loadConfiguration(vpMbTracker *const tracker, const std::string &
 
   dynamic_cast<vpMbGenericTracker *>(tracker)->setDepthDenseSamplingStep(4, 4);
 
-  vpCameraParameters cam1, cam2;
-  cam1.initPersProjWithoutDistortion(615.1674804688, 615.1675415039, 312.1889953613, 243.4373779297);
-  cam2.initPersProjWithoutDistortion(476.0536193848, 476.0534973145, 311.4845581055, 246.2832336426);
+  vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(476.0536193848, 476.0534973145, 311.4845581055, 246.2832336426);
 
-  dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraParameters(cam1, cam2);
+  dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraParameters(cam);
 
   tracker->setAngleAppear(vpMath::rad(70));
   tracker->setAngleDisappear(vpMath::rad(80));
