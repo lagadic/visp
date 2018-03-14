@@ -34,7 +34,7 @@
  *****************************************************************************/
 
 /*!
-  \example mbtGenericTrackingDepth.cpp
+  \example mbtGenericTrackingDepthOnly.cpp
 
   \brief Example of tracking with vpGenericTracker on Castel.
 */
@@ -43,7 +43,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -59,7 +59,7 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS "x:X:m:M:i:n:dchfolwvpt:T:e:"
+#define GETOPTARGS "X:M:i:n:dchfolwvpT:e:u:"
 
 #define USE_XML 1
 #define USE_SMALL_DATASET 1 // small depth dataset in ViSP-images
@@ -145,10 +145,11 @@ void usage(const char *name, const char *badparam)
   Example of tracking with vpGenericTracker.\n\
   \n\
   SYNOPSIS\n\
-    %s [-i <test image path>] [-x <config file>] [-X <config file depth>]\n\
-    [-m <model name>] [-M <model name depth>] [-n <initialisation file base name>]\n\
+    %s [-i <test image path>] [-X <config file depth>]\n\
+    [-M <model name depth>] [-n <initialisation file base name>]\n\
     [-f] [-c] [-d] [-h] [-o] [-w] [-l] [-v] [-p]\n\
-    [-t <tracker type>] [-T <tracker type>] [-e <last frame index>]\n", name);
+    [-T <tracker type>] [-e <last frame index>]\n\
+    [-u <disable face>]\n", name);
 
   fprintf(stdout, "\n\
   OPTIONS:                                               \n\
@@ -160,17 +161,9 @@ void usage(const char *name, const char *badparam)
        variable produces the same behavior than using\n\
        this option.\n\
   \n\
-    -x <config file>                                     \n\
-       Set the config file (the xml file) to use.\n\
-       The config file is used to specify the parameters of the tracker.\n\
-  \n\
     -X <config file>                                     \n\
        Set the config file (the xml file) to use for the depth sensor.\n\
        The config file is used to specify the parameters of the tracker.\n\
-  \n\
-    -m <model name>                                 \n\
-       Specify the name of the file of the model.\n\
-       The model can either be a vrml model (.wrl) or a .cao file.\n\
   \n\
     -M <model name>                                 \n\
        Specify the name of the file of the model for the depth sensor.\n\
@@ -182,7 +175,7 @@ void usage(const char *name, const char *badparam)
        click (a .ppm picture).\n\
   \n\
     -f \n\
-       Turn off the display of the the moving edges and Klt points. \n\
+       Turn off the display of the visual features. \n\
   \n\
     -d \n\
        Turn off the display.\n\
@@ -206,14 +199,14 @@ void usage(const char *name, const char *badparam)
     -p\n\
        Compute gradient projection error.\n\
   \n\
-    -t <tracker type>\n\
-       Set tracker type (<1 (Edge)>, <2 (KLT)>, <3 (both)>) for color sensor.\n\
-  \n\
     -T <tracker type>\n\
        Set tracker type (<4 (Depth normal)>, <8 (Depth dense)>, <12 (both)>) for depth sensor.\n\
   \n\
     -e <last frame index>\n\
        Specify the index of the last frame. Once reached, the tracking is stopped.\n\
+  \n\
+    -u <disable>\n\
+       Disable castle element (1=floor, 2=front_door, 4=slope, 8=tower_front, 16=tower_left, 32=tower_right, 64=tower_back).\n\
   \n\
     -h \n\
        Print the help.\n\n");
@@ -222,11 +215,10 @@ void usage(const char *name, const char *badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &configFile_depth,
-                std::string &modelFile, std::string &modelFile_depth, std::string &initFile, bool &displayFeatures,
-                bool &click_allowed, bool &display, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
-                bool &computeCovariance, bool &projectionError, int &trackerType, int &tracker_type_depth,
-                int &lastFrame)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile_depth,
+                std::string &modelFile_depth, std::string &initFile, bool &displayFeatures, bool &click_allowed,
+                bool &display, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline, bool &computeCovariance,
+                bool &projectionError, int &tracker_type_depth, int &lastFrame, int &disable_castle_faces)
 {
   const char *optarg_;
   int c;
@@ -236,14 +228,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'i':
       ipath = optarg_;
       break;
-    case 'x':
-      configFile = optarg_;
-      break;
     case 'X':
       configFile_depth = optarg_;
-      break;
-    case 'm':
-      modelFile = optarg_;
       break;
     case 'M':
       modelFile_depth = optarg_;
@@ -275,20 +261,20 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'p':
       projectionError = true;
       break;
-    case 't':
-      trackerType = atoi(optarg_);
-      break;
     case 'T':
       tracker_type_depth = atoi(optarg_);
       break;
     case 'e':
       lastFrame = atoi(optarg_);
       break;
+    case 'u':
+      disable_castle_faces = atoi(optarg_);
+      break;
+
     case 'h':
       usage(argv[0], NULL);
       return false;
       break;
-
     default:
       usage(argv[0], optarg_);
       return false;
@@ -337,26 +323,13 @@ void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, co
   point[2] = depth;
 }
 
-bool read_data(const unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
-               vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
-               unsigned int &pointcloud_height)
+bool read_data(const unsigned int cpt, const std::string &input_directory, vpImage<uint16_t> &I_depth_raw,
+               std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width, unsigned int &pointcloud_height)
 {
   char buffer[256];
 
-  // Read image
-  std::stringstream ss;
-  ss << input_directory << "/image_%04d.pgm";
-  sprintf(buffer, ss.str().c_str(), cpt);
-  std::string filename_image = buffer;
-
-  if (!vpIoTools::checkFilename(filename_image)) {
-    std::cerr << "Cannot read: " << filename_image << std::endl;
-    return false;
-  }
-  vpImageIo::read(I, filename_image);
-
   // Read raw depth
-  ss.str("");
+  std::stringstream ss;
   ss << input_directory << "/depth_image_%04d.bin";
   sprintf(buffer, ss.str().c_str(), cpt);
   std::string filename_depth = buffer;
@@ -417,48 +390,16 @@ bool read_data(const unsigned int cpt, const std::string &input_directory, vpIma
   return true;
 }
 
-void loadConfiguration(vpMbTracker *const tracker,
-                       const std::string &
+void loadConfiguration(vpMbTracker *const tracker, const std::string &
 #if defined(VISP_HAVE_XML2) && USE_XML
-                           configFile
-#endif
-                       ,
-                       const std::string &
-#if defined(VISP_HAVE_XML2) && USE_XML
-                           configFile_depth
+                       configFile_depth
 #endif
 )
 {
 #if defined(VISP_HAVE_XML2) && USE_XML
   // From the xml file
-  dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(configFile, configFile_depth);
+  dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(configFile_depth);
 #else
-  // Edge
-  vpMe me;
-  me.setMaskSize(5);
-  me.setMaskNumber(180);
-  me.setRange(8);
-  me.setThreshold(10000);
-  me.setMu1(0.5);
-  me.setMu2(0.5);
-  me.setSampleStep(4);
-  dynamic_cast<vpMbGenericTracker *>(tracker)->setMovingEdge(me);
-
-// Klt
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  vpKltOpencv klt;
-  klt.setMaxFeatures(10000);
-  klt.setWindowSize(5);
-  klt.setQuality(0.01);
-  klt.setMinDistance(5);
-  klt.setHarrisFreeParameter(0.02);
-  klt.setBlockSize(3);
-  klt.setPyramidLevels(3);
-
-  dynamic_cast<vpMbGenericTracker *>(tracker)->setKltOpencv(klt);
-  dynamic_cast<vpMbGenericTracker *>(tracker)->setKltMaskBorder(5);
-#endif
-
   // Depth
   dynamic_cast<vpMbGenericTracker *>(tracker)->setDepthNormalFeatureEstimationMethod(
       vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
@@ -469,11 +410,10 @@ void loadConfiguration(vpMbTracker *const tracker,
 
   dynamic_cast<vpMbGenericTracker *>(tracker)->setDepthDenseSamplingStep(4, 4);
 
-  vpCameraParameters cam1, cam2;
-  cam1.initPersProjWithoutDistortion(615.1674804688, 615.1675415039, 312.1889953613, 243.4373779297);
-  cam2.initPersProjWithoutDistortion(476.0536193848, 476.0534973145, 311.4845581055, 246.2832336426);
+  vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(476.0536193848, 476.0534973145, 311.4845581055, 246.2832336426);
 
-  dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraParameters(cam1, cam2);
+  dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraParameters(cam);
 
   tracker->setAngleAppear(vpMath::rad(70));
   tracker->setAngleDisappear(vpMath::rad(80));
@@ -487,56 +427,37 @@ void loadConfiguration(vpMbTracker *const tracker,
 //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 }
+
+std::vector<std::string> getCastleElementNames(const int element)
+{
+  std::vector<std::string> element_names;
+
+  if (element & 0x1)
+    element_names.push_back("floor");
+  if (element & 0x2)
+    element_names.push_back("front_door");
+  if (element & 0x4)
+    element_names.push_back("slope");
+  if (element & 0x8)
+    element_names.push_back("tower_front");
+  if (element & 0x10)
+    element_names.push_back("tower_left");
+  if (element & 0x20)
+    element_names.push_back("tower_right");
+  if (element & 0x40)
+    element_names.push_back("tower_back");
+
+  return element_names;
+}
 }
 
 int main(int argc, const char **argv)
 {
-  {
-    // Test TukeyEstimator
-    {
-      vpMbtTukeyEstimator<double> tukey_estimator;
-      std::vector<double> residues;
-      residues.push_back(0.5);
-      residues.push_back(0.1);
-      residues.push_back(0.15);
-      residues.push_back(0.14);
-      residues.push_back(0.12);
-      std::vector<double> weights(5, 1);
-
-      tukey_estimator.MEstimator(residues, weights, 1e-3);
-
-      for (size_t i = 0; i < weights.size(); i++) {
-        std::cout << "residues[" << i << "]=" << residues[i] << " ; weights[i" << i << "]=" << weights[i] << std::endl;
-      }
-      std::cout << std::endl;
-    }
-
-    {
-      vpMbtTukeyEstimator<float> tukey_estimator;
-      std::vector<float> residues;
-      residues.push_back(0.5f);
-      residues.push_back(0.1f);
-      residues.push_back(0.15f);
-      residues.push_back(0.14f);
-      residues.push_back(0.12f);
-      std::vector<float> weights(5, 1);
-
-      tukey_estimator.MEstimator(residues, weights, (float)1e-3);
-
-      for (size_t i = 0; i < weights.size(); i++) {
-        std::cout << "residues[" << i << "]=" << residues[i] << " ; weights[i" << i << "]=" << weights[i] << std::endl;
-      }
-      std::cout << std::endl;
-    }
-  }
-
   try {
     std::string env_ipath;
     std::string opt_ipath;
     std::string ipath;
-    std::string opt_configFile;
     std::string opt_configFile_depth;
-    std::string opt_modelFile;
     std::string opt_modelFile_depth;
     std::string opt_initFile;
     std::string initFile;
@@ -548,7 +469,6 @@ int main(int argc, const char **argv)
     bool useScanline = false;
     bool computeCovariance = false;
     bool projectionError = false;
-    int trackerType_image = vpMbGenericTracker::EDGE_TRACKER;
     int trackerType_depth = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
 #if defined(__mips__) || defined(__mips) || defined(mips) || defined(__MIPS__)
     // To avoid Debian test timeout
@@ -556,6 +476,7 @@ int main(int argc, const char **argv)
 #else
     int opt_lastFrame = -1;
 #endif
+    int disable_castle_faces = 0;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -566,21 +487,11 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_configFile_depth, opt_modelFile, opt_modelFile_depth,
-                    opt_initFile, displayFeatures, opt_click_allowed, opt_display, useOgre, showOgreConfigDialog,
-                    useScanline, computeCovariance, projectionError, trackerType_image, trackerType_depth,
-                    opt_lastFrame)) {
+    if (!getOptions(argc, argv, opt_ipath, opt_configFile_depth, opt_modelFile_depth, opt_initFile, displayFeatures,
+                    opt_click_allowed, opt_display, useOgre, showOgreConfigDialog, useScanline, computeCovariance,
+                    projectionError, trackerType_depth, opt_lastFrame, disable_castle_faces)) {
       return EXIT_FAILURE;
     }
-
-#if !defined(VISP_HAVE_MODULE_KLT) || (!defined(VISP_HAVE_OPENCV) || (VISP_HAVE_OPENCV_VERSION < 0x020100))
-    if (trackerType_image == /*vpMbGenericTracker::KLT_TRACKER*/ 2) {
-      std::cout << "KLT only features cannot be used: ViSP is not built with "
-                   "KLT module or OpenCV is not available."
-                << std::endl;
-      return EXIT_SUCCESS;
-    }
-#endif
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
@@ -603,31 +514,14 @@ int main(int argc, const char **argv)
       return EXIT_SUCCESS;
     }
 
-    std::string configFile, configFile_depth;
-    if (!opt_configFile.empty())
-      configFile = opt_configFile;
-    else
-      configFile =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.xml");
-
+    std::string configFile_depth;
     if (!opt_configFile_depth.empty())
       configFile_depth = opt_configFile_depth;
     else
       configFile_depth =
           vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_depth.xml");
 
-    std::string modelFile, modelFile_depth;
-    if (!opt_modelFile.empty())
-      modelFile = opt_modelFile;
-    else {
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3 || COIN_MAJOR_VERSION == 4)
-      modelFile =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_gantry.wrl");
-#else
-      modelFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
-#endif
-    }
-
+    std::string modelFile_depth;
     if (!opt_modelFile_depth.empty())
       modelFile_depth = opt_modelFile_depth;
     else
@@ -636,7 +530,6 @@ int main(int argc, const char **argv)
 
     std::string vrml_ext = ".wrl";
     bool use_vrml =
-        (modelFile.compare(modelFile.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0) ||
         (modelFile_depth.compare(modelFile_depth.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0);
 
     if (use_vrml) {
@@ -655,11 +548,11 @@ int main(int argc, const char **argv)
     else
       initFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.init");
 
-    vpImage<unsigned char> I, I_depth;
+    vpImage<unsigned char> I_depth;
     vpImage<uint16_t> I_depth_raw;
     std::vector<vpColVector> pointcloud;
     unsigned int pointcloud_width, pointcloud_height;
-    if (!read_data(0, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height)) {
+    if (!read_data(0, ipath, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height)) {
       std::cerr << "Cannot open sequence: " << ipath << std::endl;
       return EXIT_FAILURE;
     }
@@ -668,52 +561,33 @@ int main(int argc, const char **argv)
 
 // initialise a  display
 #if defined VISP_HAVE_X11
-    vpDisplayX display1, display2;
+    vpDisplayX display;
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display1, display2;
+    vpDisplayGDI display;
 #elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV display1, display2;
+    vpDisplayOpenCV display;
 #elif defined VISP_HAVE_D3D9
-    vpDisplayD3D display1, display2;
+    vpDisplayD3D display;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display1, display2;
+    vpDisplayGTK display;
 #else
     opt_display = false;
 #endif
     if (opt_display) {
 #if (defined VISP_HAVE_DISPLAY)
-      display1.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display1.init(I, 100, 100, "Test tracking (Left)");
-      display2.init(I_depth, (int)(I.getWidth() / vpDisplay::getDownScalingFactor(I)) + 110, 100,
-                    "Test tracking (Right)");
+      display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+      display.init(I_depth, 100, 100, "Depth");
 #endif
-      vpDisplay::display(I);
       vpDisplay::display(I_depth);
-      vpDisplay::flush(I);
       vpDisplay::flush(I_depth);
     }
 
-    std::vector<int> trackerTypes(2);
-    trackerTypes[0] = trackerType_image;
-    trackerTypes[1] = trackerType_depth;
     // Object pointer to check that inheritance is ok
-    vpMbTracker *tracker = new vpMbGenericTracker(trackerTypes);
-    vpHomogeneousMatrix c1Mo, c2Mo;
-    vpCameraParameters cam1, cam2;
+    vpMbTracker *tracker = new vpMbGenericTracker(1, trackerType_depth);
+    vpHomogeneousMatrix cMo;
+    vpCameraParameters cam;
 
-    loadConfiguration(tracker, configFile, configFile_depth);
-
-    vpHomogeneousMatrix depth_M_color;
-    std::string depth_M_color_filename =
-        vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/depth_M_color.txt");
-    {
-      std::ifstream depth_M_color_file(depth_M_color_filename.c_str());
-      depth_M_color.load(depth_M_color_file);
-      std::map<std::string, vpHomogeneousMatrix> mapOfCameraTransformationMatrices;
-      mapOfCameraTransformationMatrices["Camera2"] = depth_M_color;
-      dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraTransformationMatrix(mapOfCameraTransformationMatrices);
-    }
+    loadConfiguration(tracker, configFile_depth);
 
     // Display the moving edges, and the Klt points
     tracker->setDisplayFeatures(displayFeatures);
@@ -733,105 +607,92 @@ int main(int argc, const char **argv)
     tracker->setProjectionErrorComputation(projectionError);
 
     // Retrieve the camera parameters from the tracker
-    dynamic_cast<vpMbGenericTracker *>(tracker)->getCameraParameters(cam1, cam2);
+    dynamic_cast<vpMbGenericTracker *>(tracker)->getCameraParameters(cam);
 
     // Loop to position the cube
     if (opt_display && opt_click_allowed) {
-      while (!vpDisplay::getClick(I, false)) {
-        vpDisplay::display(I);
-        vpDisplay::displayText(I, 15, 10, "click after positioning the object", vpColor::red);
-        vpDisplay::flush(I);
+      while (!vpDisplay::getClick(I_depth, false)) {
+        vpDisplay::display(I_depth);
+        vpDisplay::displayText(I_depth, 15, 10, "click after positioning the object", vpColor::red);
+        vpDisplay::flush(I_depth);
       }
     }
 
     // Load the 3D model (either a vrml file or a .cao file)
-    dynamic_cast<vpMbGenericTracker *>(tracker)->loadModel(modelFile, modelFile_depth);
+    dynamic_cast<vpMbGenericTracker *>(tracker)->loadModel(modelFile_depth);
 
     if (opt_display && opt_click_allowed) {
-      std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
-      mapOfImages["Camera1"] = &I;
-      mapOfImages["Camera2"] = &I_depth;
-      std::map<std::string, std::string> mapOfInitFiles;
-      mapOfInitFiles["Camera1"] = initFile;
-
       // Initialise the tracker by clicking on the image
-      dynamic_cast<vpMbGenericTracker *>(tracker)->initClick(mapOfImages, mapOfInitFiles, true);
-      dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(c1Mo, c2Mo);
+      dynamic_cast<vpMbGenericTracker *>(tracker)->initClick(I_depth, initFile, true);
+      dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(cMo);
       // display the 3D model at the given pose
-      dynamic_cast<vpMbGenericTracker *>(tracker)->display(I, I_depth, c1Mo, c2Mo, cam1, cam2, vpColor::red);
+      dynamic_cast<vpMbGenericTracker *>(tracker)->display(I_depth, cMo, cam, vpColor::red);
     } else {
-      vpHomogeneousMatrix c1Moi(0.06846423368, 0.09062570884, 0.3401096693, -2.671882598, 0.1174275908, -0.6011935263);
-      vpHomogeneousMatrix c2Moi(0.04431452054, 0.09294637757, 0.3357760654, -2.677922443, 0.121297639, -0.6028463357);
-      dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I, I_depth, c1Moi, c2Moi);
+      vpHomogeneousMatrix cMoi(0.04431452054, 0.09294637757, 0.3357760654, -2.677922443, 0.121297639, -0.6028463357);
+      dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I_depth, cMoi);
     }
 
     // track the model
     {
       std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
-      mapOfImages["Camera1"] = &I;
       std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds;
-      mapOfPointclouds["Camera2"] = &pointcloud;
+      mapOfPointclouds["Camera"] = &pointcloud;
       std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
-      mapOfWidths["Camera2"] = pointcloud_width;
-      mapOfHeights["Camera2"] = pointcloud_height;
+      mapOfWidths["Camera"] = pointcloud_width;
+      mapOfHeights["Camera"] = pointcloud_height;
 
       dynamic_cast<vpMbGenericTracker *>(tracker)->track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
     }
-    dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(c1Mo, c2Mo);
+    dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(cMo);
 
     if (opt_display) {
-      vpDisplay::flush(I);
       vpDisplay::flush(I_depth);
     }
 
     bool quit = false, click = false;
     unsigned int frame_index = 0;
     std::vector<double> time_vec;
-    while (read_data(frame_index, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit &&
+    while (read_data(frame_index, ipath, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit &&
            (opt_lastFrame > 0 ? (int)frame_index <= opt_lastFrame : true)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       if (opt_display) {
-        vpDisplay::display(I);
         vpDisplay::display(I_depth);
 
         std::stringstream ss;
         ss << "Num frame: " << frame_index;
-        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+        vpDisplay::displayText(I_depth, 40, 20, ss.str(), vpColor::red);
       }
 
       // Test reset the tracker
       if (frame_index == 10) {
         std::cout << "----------Test reset tracker----------" << std::endl;
         if (opt_display) {
-          vpDisplay::display(I);
           vpDisplay::display(I_depth);
         }
 
         tracker->resetTracker();
 
-        loadConfiguration(tracker, configFile, configFile_depth);
-        dynamic_cast<vpMbGenericTracker *>(tracker)->loadModel(modelFile, modelFile_depth);
-        dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraParameters(cam1, cam2);
+        loadConfiguration(tracker, configFile_depth);
+        dynamic_cast<vpMbGenericTracker *>(tracker)->loadModel(modelFile_depth);
+        dynamic_cast<vpMbGenericTracker *>(tracker)->setCameraParameters(cam);
         tracker->setOgreVisibilityTest(useOgre);
         tracker->setScanLineVisibilityTest(useScanline);
         tracker->setCovarianceComputation(computeCovariance);
         tracker->setProjectionErrorComputation(projectionError);
-        dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I, I_depth, c1Mo, c2Mo);
+        dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I_depth, cMo);
       }
 
 // Test to set an initial pose
 #if USE_SMALL_DATASET
       if (frame_index == 20) {
-        c1Mo.buildFrom(0.07734634051, 0.08993639906, 0.342344402, -2.708409543, 0.0669276477, -0.3798958303);
-        c2Mo.buildFrom(0.05319520317, 0.09223511976, 0.3380095812, -2.71438192, 0.07141055397, -0.3810081638);
+        cMo.buildFrom(0.05319520317, 0.09223511976, 0.3380095812, -2.71438192, 0.07141055397, -0.3810081638);
 #else
       if (frame_index == 50) {
-        c1Mo.buildFrom(0.09280663035, 0.09277655672, 0.330415149, -2.724431817, 0.0293932671, 0.02027966377);
-        c2Mo.buildFrom(0.06865933578, 0.09494713501, 0.3260555142, -2.730027451, 0.03498390135, 0.01989831338);
+        cMo.buildFrom(0.06865933578, 0.09494713501, 0.3260555142, -2.730027451, 0.03498390135, 0.01989831338);
 #endif
         std::cout << "Test set pose" << std::endl;
-        dynamic_cast<vpMbGenericTracker *>(tracker)->setPose(I, I_depth, c1Mo, c2Mo);
+        dynamic_cast<vpMbGenericTracker *>(tracker)->setPose(I_depth, cMo);
       }
 
 #if USE_SMALL_DATASET
@@ -842,30 +703,44 @@ int main(int argc, const char **argv)
       if (frame_index < 30 || frame_index >= 50) {
 #endif
         std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
-        mapOfImages["Camera1"] = &I;
         std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds;
-        mapOfPointclouds["Camera2"] = &pointcloud;
+        mapOfPointclouds["Camera"] = &pointcloud;
         std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
-        mapOfWidths["Camera2"] = pointcloud_width;
-        mapOfHeights["Camera2"] = pointcloud_height;
+        mapOfWidths["Camera"] = pointcloud_width;
+        mapOfHeights["Camera"] = pointcloud_height;
+
+        if (disable_castle_faces) {
+          std::vector<std::string> element_names = getCastleElementNames(disable_castle_faces);
+          std::cout << "Disable: ";
+          for (size_t idx = 0; idx < element_names.size(); idx++) {
+            std::cout << element_names[idx];
+            if (idx + 1 < element_names.size())
+              std::cout << ", ";
+
+            if (trackerType_depth & vpMbGenericTracker::DEPTH_DENSE_TRACKER)
+              dynamic_cast<vpMbGenericTracker *>(tracker)->setUseDepthDenseTracking(element_names[idx], false);
+            if (trackerType_depth & vpMbGenericTracker::DEPTH_NORMAL_TRACKER)
+              dynamic_cast<vpMbGenericTracker *>(tracker)->setUseDepthNormalTracking(element_names[idx], false);
+          }
+          std::cout << std::endl;
+        }
 
         double t = vpTime::measureTimeMs();
         dynamic_cast<vpMbGenericTracker *>(tracker)->track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
         t = vpTime::measureTimeMs() - t;
         time_vec.push_back(t);
 
-        dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(c1Mo, c2Mo);
+        dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(cMo);
 
         if (opt_display) {
           // display the 3D model
-          dynamic_cast<vpMbGenericTracker *>(tracker)->display(I, I_depth, c1Mo, c2Mo, cam1, cam2, vpColor::darkRed);
+          dynamic_cast<vpMbGenericTracker *>(tracker)->display(I_depth, cMo, cam, vpColor::darkRed);
           // display the frame
-          vpDisplay::displayFrame(I, c1Mo, cam1, 0.05);
-          vpDisplay::displayFrame(I_depth, c2Mo, cam2, 0.05);
+          vpDisplay::displayFrame(I_depth, cMo, cam, 0.05);
           // computation time
           std::stringstream ss;
           ss << "Computation time: " << t << " ms";
-          vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_depth, 60, 20, ss.str(), vpColor::red);
           // nb features
           ss.str("");
           ss << "nb features: " << tracker->getError().getRows();
@@ -874,9 +749,9 @@ int main(int argc, const char **argv)
       }
 
       if (opt_click_allowed) {
-        vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
+        vpDisplay::displayText(I_depth, 10, 10, "Click to quit", vpColor::red);
         vpMouseButton::vpMouseButtonType button;
-        if (vpDisplay::getClick(I, button, click)) {
+        if (vpDisplay::getClick(I_depth, button, click)) {
           switch (button) {
           case vpMouseButton::button1:
             quit = !click;
@@ -900,19 +775,18 @@ int main(int argc, const char **argv)
         std::cout << "Projection error: " << tracker->getProjectionError() << std::endl << std::endl;
       }
 
-      vpDisplay::flush(I);
       vpDisplay::flush(I_depth);
 
       frame_index++;
     }
 
-    std::cout << "\nFinal poses, c1Mo:\n" << c1Mo << "\nc2Mo:\n" << c2Mo << std::endl;
+    std::cout << "\nFinal poses, cMo:\n" << cMo << std::endl;
     std::cout << "\nComputation time, Mean: " << vpMath::getMean(time_vec)
               << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
               << std::endl;
 
     if (opt_click_allowed && !quit) {
-      vpDisplay::getClick(I);
+      vpDisplay::getClick(I_depth);
     }
 
     delete tracker;

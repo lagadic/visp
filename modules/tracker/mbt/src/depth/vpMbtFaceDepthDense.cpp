@@ -52,8 +52,8 @@ vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
     m_planeObject(), m_polygon(NULL), m_useScanLine(false),
     m_depthDenseFilteringMethod(DEPTH_OCCUPANCY_RATIO_FILTERING), m_depthDenseFilteringMaxDist(3.0),
-    m_depthDenseFilteringMinDist(0.8), m_depthDenseFilteringOccupancyRatio(0.3), m_isTracked(false), m_isVisible(false),
-    m_listOfFaceLines(), m_planeCamera(), m_pointCloudFace(), m_polygonLines()
+    m_depthDenseFilteringMinDist(0.8), m_depthDenseFilteringOccupancyRatio(0.3), m_isTrackedDepthDenseFace(true),
+    m_isVisible(false), m_listOfFaceLines(), m_planeCamera(), m_pointCloudFace(), m_polygonLines()
 {
 }
 
@@ -684,7 +684,7 @@ void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomog
                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
-  if (m_polygon->isVisible() || displayFullModel) {
+  if ((m_polygon->isVisible() && m_isTrackedDepthDenseFace) || displayFullModel) {
     computeVisibilityDisplay();
 
     for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
@@ -699,7 +699,7 @@ void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
-  if (m_polygon->isVisible() || displayFullModel) {
+  if ((m_polygon->isVisible() && m_isTrackedDepthDenseFace) || displayFullModel) {
     computeVisibilityDisplay();
 
     for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();

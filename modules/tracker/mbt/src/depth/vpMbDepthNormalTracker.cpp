@@ -520,6 +520,17 @@ void vpMbDepthNormalTracker::setScanLineVisibilityTest(const bool &v)
   }
 }
 
+void vpMbDepthNormalTracker::setUseDepthNormalTracking(const std::string &name, const bool &useDepthNormalTracking)
+{
+  for (std::vector<vpMbtFaceDepthNormal *>::const_iterator it = m_depthNormalFaces.begin();
+       it != m_depthNormalFaces.end(); ++it) {
+    vpMbtFaceDepthNormal *face = *it;
+    if (face->m_polygon->getName() == name) {
+      face->setTracked(useDepthNormalTracking);
+    }
+  }
+}
+
 void vpMbDepthNormalTracker::testTracking() {}
 
 #ifdef VISP_HAVE_PCL
@@ -542,7 +553,7 @@ void vpMbDepthNormalTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointX
        ++it) {
     vpMbtFaceDepthNormal *face = *it;
 
-    if (face->isVisible()) {
+    if (face->isVisible() && face->isTracked()) {
       vpColVector desired_features;
 
 #if DEBUG_DISPLAY_DEPTH_NORMAL
@@ -604,7 +615,7 @@ void vpMbDepthNormalTracker::segmentPointCloud(const std::vector<vpColVector> &p
        ++it) {
     vpMbtFaceDepthNormal *face = *it;
 
-    if (face->isVisible()) {
+    if (face->isVisible() && face->isTracked()) {
       vpColVector desired_features;
 
 #if DEBUG_DISPLAY_DEPTH_NORMAL

@@ -101,6 +101,8 @@ public:
 
   virtual void setScanLineVisibilityTest(const bool &v);
 
+  void setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking);
+
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &);
@@ -119,7 +121,7 @@ protected:
   //! Nb features
   unsigned int m_denseDepthNbFeatures;
   //! List of faces
-  std::vector<vpMbtFaceDepthDense *> m_depthDenseNormalFaces;
+  std::vector<vpMbtFaceDepthDense *> m_depthDenseFaces;
   //! Sampling step in x-direction
   unsigned int m_depthDenseSamplingStepX;
   //! Sampling step in y-direction
