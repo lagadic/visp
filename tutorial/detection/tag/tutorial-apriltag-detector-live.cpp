@@ -108,15 +108,15 @@ int main(int argc, const char **argv)
     vpDisplayOpenCV d(I);
 #endif
 
-    //! [Create base detector]
-    vpDetectorBase *detector = new vpDetectorAprilTag(tagFamily);
-    //! [Create base detector]
+    //! [Create AprilTag detector]
+    vpDetectorAprilTag detector(tagFamily);
+    //! [Create AprilTag detector]
 
     //! [AprilTag detector settings]
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagQuadDecimate(quad_decimate);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagPoseEstimationMethod(poseEstimationMethod);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagNbThreads(nThreads);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setDisplayTag(display_tag);
+    detector.setAprilTagQuadDecimate(quad_decimate);
+    detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
+    detector.setAprilTagNbThreads(nThreads);
+    detector.setDisplayTag(display_tag);
     //! [AprilTag detector settings]
 
     std::vector<double> time_vec;
@@ -135,13 +135,13 @@ int main(int argc, const char **argv)
       double t = vpTime::measureTimeMs();
       //! [Detect and compute pose]
       std::vector<vpHomogeneousMatrix> cMo_vec;
-      dynamic_cast<vpDetectorAprilTag *>(detector)->detect(I, tagSize, cam, cMo_vec);
+      detector.detect(I, tagSize, cam, cMo_vec);
       //! [Detect and compute pose]
       t = vpTime::measureTimeMs() - t;
       time_vec.push_back(t);
 
       std::stringstream ss;
-      ss << "Detection time: " << t << " ms for " << detector->getNbObjects() << " tags";
+      ss << "Detection time: " << t << " ms for " << detector.getNbObjects() << " tags";
       vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
 
       //! [Display camera pose for each tag]
@@ -160,8 +160,6 @@ int main(int argc, const char **argv)
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
               << " ; " << vpMath::getMedian(time_vec) << " ms"
               << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
-
-    delete detector;
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }

@@ -85,15 +85,15 @@ int main(int argc, const char **argv)
     vpDisplayOpenCV d(I);
 #endif
 
-    //! [Create base detector]
-    vpDetectorBase *detector = new vpDetectorAprilTag(tagFamily);
-    //! [Create base detector]
+    //! [Create AprilTag detector]
+    vpDetectorAprilTag detector(tagFamily);
+    //! [Create AprilTag detector]
 
     //! [AprilTag detector settings]
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagQuadDecimate(quad_decimate);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagPoseEstimationMethod(poseEstimationMethod);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagNbThreads(nThreads);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setDisplayTag(display_tag);
+    detector.setAprilTagQuadDecimate(quad_decimate);
+    detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
+    detector.setAprilTagNbThreads(nThreads);
+    detector.setDisplayTag(display_tag);
     //! [AprilTag detector settings]
 
     vpDisplay::display(I);
@@ -101,25 +101,25 @@ int main(int argc, const char **argv)
     double t = vpTime::measureTimeMs();
     //! [Detect and compute pose]
     std::vector<vpHomogeneousMatrix> cMo_vec;
-    dynamic_cast<vpDetectorAprilTag *>(detector)->detect(I, tagSize, cam, cMo_vec);
+    detector.detect(I, tagSize, cam, cMo_vec);
     //! [Detect and compute pose]
     t = vpTime::measureTimeMs() - t;
 
     std::stringstream ss;
-    ss << "Detection time: " << t << " ms for " << detector->getNbObjects() << " tags";
+    ss << "Detection time: " << t << " ms for " << detector.getNbObjects() << " tags";
     vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
 
     //! [Parse detected codes]
-    for (size_t i = 0; i < detector->getNbObjects(); i++) {
+    for (size_t i = 0; i < detector.getNbObjects(); i++) {
       //! [Parse detected codes]
       //! [Get location]
-      std::vector<vpImagePoint> p = detector->getPolygon(i);
-      vpRect bbox = detector->getBBox(i);
+      std::vector<vpImagePoint> p = detector.getPolygon(i);
+      vpRect bbox = detector.getBBox(i);
       //! [Get location]
       vpDisplay::displayRectangle(I, bbox, vpColor::green);
       //! [Get message]
       vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(),
-                             "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
+                             "Message: \"" + detector.getMessage(i) + "\"", vpColor::red);
       //! [Get message]
       for (size_t j = 0; j < p.size(); j++) {
         vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
@@ -144,8 +144,6 @@ int main(int argc, const char **argv)
     vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
-
-    delete detector;
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
