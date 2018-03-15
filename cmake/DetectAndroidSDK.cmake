@@ -1,3 +1,44 @@
+# Extra macros added by @AKS1996
+# add prefix to each item in the list
+macro(vp_list_add_prefix LST PREFIX)
+  set(__tmp "")
+  foreach(item ${${LST}})
+    list(APPEND __tmp "${PREFIX}${item}")
+  endforeach()
+  set(${LST} ${__tmp})
+  unset(__tmp)
+endmacro()
+
+
+# add suffix to each item in the list
+macro(vp_list_add_suffix LST SUFFIX)
+  set(__tmp "")
+  foreach(item ${${LST}})
+    list(APPEND __tmp "${item}${SUFFIX}")
+  endforeach()
+  set(${LST} ${__tmp})
+  unset(__tmp)
+endmacro()
+
+# setup include paths for the list of passed modules and recursively add dependent modules
+macro(vp_target_include_modules_recurse target)
+  foreach(d ${ARGN})
+    # note: it should be ^visp, not ^vp. Refer VISPModule.cmake 
+    if(d MATCHES "^visp_" AND HAVE_${d})
+      if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
+        vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
+      endif()
+      if(VISP_MODULE_${d}_DEPS)
+        vp_target_include_modules(${target} ${VISP_MODULE_${d}_DEPS})
+      endif()
+    elseif(EXISTS "${d}")
+      vp_target_include_directories(${target} "${d}")
+    endif()
+  endforeach()
+endmacro()
+
+# Extra macros end
+
 if(EXISTS "${ANDROID_EXECUTABLE}")
   set(ANDROID_SDK_DETECT_QUIET TRUE)
 endif()
@@ -177,7 +218,7 @@ endmacro()
 
 unset(__android_project_chain CACHE)
 
-# This function was used in building opencv tutorial's apks
+# This function will be used to build apks for tutorials
 # TODO check building an apk
 # add_android_project(target_name ${path} NATIVE_DEPS VISP_BINARY_DIR LIBRARY_DEPS ${VISP_BINARY_DIR} SDK_TARGET 11)
 macro(add_android_project target path)
@@ -212,7 +253,7 @@ macro(add_android_project target path)
   if(android_proj_IGNORE_JAVA)
     vp_check_dependencies(${android_proj_NATIVE_DEPS})
   else()
-    vp_check_dependencies(${android_proj_NATIVE_DEPS} opencv_java)
+    vp_check_dependencies(${android_proj_NATIVE_DEPS} visp_java)
   endif()
 
   if(EXISTS "${path}/jni/Android.mk" )
@@ -220,12 +261,12 @@ macro(add_android_project target path)
     file(STRINGS "${path}/jni/Android.mk" NATIVE_APP_GLUE REGEX ".*(call import-module,android/native_app_glue)" )
     if(NATIVE_APP_GLUE)
       if(ANDROID_NATIVE_API_LEVEL LESS 9 OR NOT EXISTS "${ANDROID_NDK}/sources/android/native_app_glue")
-        set(OCV_DEPENDENCIES_FOUND FALSE)
+        set(VP_DEPENDENCIES_FOUND FALSE)
       endif()
     endif()
   endif()
 
-  if(OCV_DEPENDENCIES_FOUND AND android_proj_sdk_target AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND ANDROID_TOOLS_Pkg_Revision GREATER 13 AND EXISTS "${path}/${ANDROID_MANIFEST_FILE}")
+  if(VP_DEPENDENCIES_FOUND AND android_proj_sdk_target AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND ANDROID_TOOLS_Pkg_Revision GREATER 13 AND EXISTS "${path}/${ANDROID_MANIFEST_FILE}")
 
     project(${target})
     set(android_proj_bin_dir "${CMAKE_CURRENT_BINARY_DIR}/.build")
@@ -250,7 +291,7 @@ macro(add_android_project target path)
 
     set(android_proj_lib_deps_commands "")
     set(android_proj_target_files ${ANDROID_PROJECT_FILES})
-    ocv_list_add_prefix(android_proj_target_files "${android_proj_bin_dir}/")
+    vp_list_add_prefix(android_proj_target_files "${android_proj_bin_dir}/")
 
     # process Android library dependencies
     foreach(dep ${android_proj_LIBRARY_DEPS})
@@ -274,7 +315,7 @@ macro(add_android_project target path)
 
     # build native part
     file(GLOB_RECURSE android_proj_jni_files "${path}/jni/*.c" "${path}/jni/*.h" "${path}/jni/*.cpp" "${path}/jni/*.hpp")
-    ocv_list_filterout(android_proj_jni_files "\\\\.svn")
+    vp_list_filterout(android_proj_jni_files "\\\\.svn")
 
     if(android_proj_jni_files AND EXISTS ${path}/jni/Android.mk AND NOT DEFINED JNI_LIB_NAME)
       # find local module name in Android.mk file to build native lib
@@ -285,14 +326,14 @@ macro(add_android_project target path)
         if(NATIVE_APP_GLUE)
           include_directories(${ANDROID_NDK}/sources/android/native_app_glue)
           list(APPEND android_proj_jni_files ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
-          ocv_warnings_disable(CMAKE_C_FLAGS -Wstrict-prototypes -Wunused-parameter -Wmissing-prototypes)
+          vp_warnings_disable(CMAKE_C_FLAGS -Wstrict-prototypes -Wunused-parameter -Wmissing-prototypes)
           set(android_proj_NATIVE_DEPS ${android_proj_NATIVE_DEPS} android)
         endif()
 
         add_library(${JNI_LIB_NAME} SHARED ${android_proj_jni_files})
-        ocv_target_include_modules_recurse(${JNI_LIB_NAME} ${android_proj_NATIVE_DEPS})
-        ocv_target_include_directories(${JNI_LIB_NAME} "${path}/jni")
-        ocv_target_link_libraries(${JNI_LIB_NAME} LINK_PRIVATE ${VISP_LINKER_LIBS} ${android_proj_NATIVE_DEPS})
+        vp_target_include_modules_recurse(${JNI_LIB_NAME} ${android_proj_NATIVE_DEPS})
+        vp_target_include_directories(${JNI_LIB_NAME} "${path}/jni")
+        vp_target_link_libraries(${JNI_LIB_NAME} LINK_PRIVATE ${VISP_LINKER_LIBS} ${android_proj_NATIVE_DEPS})
 
         set_target_properties(${JNI_LIB_NAME} PROPERTIES
             OUTPUT_NAME "${JNI_LIB_NAME}"
@@ -309,7 +350,7 @@ macro(add_android_project target path)
     if(android_proj_IGNORE_JAVA)
       set(android_proj_extra_deps "")
     else()
-      list(APPEND android_proj_extra_deps "${VISP_BINARY_DIR}/bin/classes.jar.dephelper" opencv_java)
+      list(APPEND android_proj_extra_deps "${VISP_BINARY_DIR}/bin/classes.jar.dephelper" visp_java)
     endif()
     add_custom_command(
        OUTPUT "${android_proj_bin_dir}/bin/${target}-debug.apk"
@@ -323,7 +364,7 @@ macro(add_android_project target path)
 
     add_custom_target(${target} ALL SOURCES "${android_proj_bin_dir}/bin/${target}-debug.apk" )
     if(NOT android_proj_IGNORE_JAVA)
-      add_dependencies(${target} opencv_java)
+      add_dependencies(${target} visp_java)
     endif()
     if(android_proj_native_deps)
       add_dependencies(${target} ${android_proj_native_deps})
@@ -338,7 +379,7 @@ macro(add_android_project target path)
       )
       add_dependencies(${target} ${target}_copy_libs)
       if (ANDROID_EXAMPLES_WITH_LIBS)
-        add_dependencies(${target}_copy_libs "${VISP_BINARY_DIR}/bin/classes.jar.dephelper" opencv_java)
+        add_dependencies(${target}_copy_libs "${VISP_BINARY_DIR}/bin/classes.jar.dephelper" visp_java)
       endif()
     endif()
 
@@ -361,7 +402,7 @@ macro(add_android_project target path)
       endforeach()
       #jni part + eclipse files
       file(GLOB_RECURSE jni_files RELATIVE "${path}" "${path}/jni/*" "${path}/.cproject")
-      ocv_list_filterout(jni_files "\\\\.svn")
+      vp_list_filterout(jni_files "\\\\.svn")
       foreach(f ${jni_files} ".classpath" ".project" ".settings/org.eclipse.jdt.core.prefs")
         get_filename_component(install_subdir "${f}" PATH)
         install(FILES "${path}/${f}" DESTINATION "samples/${sample_dir}/${install_subdir}" COMPONENT samples)
