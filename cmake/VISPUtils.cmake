@@ -53,6 +53,52 @@ if(NOT COMMAND find_host_package)
   endmacro()
 endif()
 
+# TODO: adding macros for android build
+# -------------------------------------------
+
+macro(visp_get_libname var_name)
+  get_filename_component(__libname "${ARGN}" NAME)
+  # visp_core.so.3.4 -> visp_core
+  string(REGEX REPLACE "^lib(.+)\\.(a|so|dll)(\\.[.0-9]+)?$" "\\1" __libname "${__libname}")
+  # MacOSX: libvisp_core.3.3.1.dylib -> visp_core
+  string(REGEX REPLACE "^lib(.+[^.0-9])\\.([.0-9]+\\.)?dylib$" "\\1" __libname "${__libname}")
+  set(${var_name} "${__libname}")
+endmacro()
+
+macro(vp_path_join result_var P1 P2_)
+  string(REGEX REPLACE "^[/]+" "" P2 "${P2_}")
+  if("${P1}" STREQUAL "" OR "${P1}" STREQUAL ".")
+    set(${result_var} "${P2}")
+  elseif("${P1}" STREQUAL "/")
+    set(${result_var} "/${P2}")
+  elseif("${P2}" STREQUAL "")
+    set(${result_var} "${P1}")
+  else()
+    set(${result_var} "${P1}/${P2}")
+  endif()
+  string(REGEX REPLACE "([/\\]?)[\\.][/\\]" "\\1" ${result_var} "${${result_var}}")
+  if("${${result_var}}" STREQUAL "")
+    set(${result_var} ".")
+  endif()
+  #message(STATUS "'${P1}' '${P2_}' => '${${result_var}}'")
+endmacro()
+
+macro(vp_update VAR)
+  if(NOT DEFINED ${VAR})
+    if("x${ARGN}" STREQUAL "x")
+      set(${VAR} "")
+    else()
+      set(${VAR} ${ARGN})
+    endif()
+  else()
+    #ocv_debug_message("Preserve old value for ${VAR}: ${${VAR}}")
+  endif()
+endmacro()
+
+# Finished adding macros for visp
+# -------------------------------------------
+
+
 # adds include directories in such way that directories from the ViSP source tree go first
 function(vp_include_directories)
   vp_debug_message("vp_include_directories( ${ARGN} )")

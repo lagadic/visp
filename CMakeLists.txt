@@ -144,14 +144,14 @@ else()
 endif()
 
 if(ANDROID)
-  set(LIBRARY_OUTPUT_PATH                "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
-  ocv_update(3P_LIBRARY_OUTPUT_PATH      "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
-  ocv_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
-  ocv_update(VISP_3P_LIB_INSTALL_PATH  sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
-  ocv_update(VISP_CONFIG_INSTALL_PATH  sdk/native/jni)
-  ocv_update(VISP_INCLUDE_INSTALL_PATH sdk/native/jni/include)
-  ocv_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
-  ocv_update(VISP_OTHER_INSTALL_PATH   sdk/etc)
+  set(LIBRARY_OUTPUT_PATH             "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(3P_LIBRARY_OUTPUT_PATH    "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_3P_LIB_INSTALL_PATH  sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_CONFIG_INSTALL_PATH  sdk/native/jni)
+  vp_update(VISP_INCLUDE_INSTALL_PATH sdk/native/jni/include)
+  vp_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
+  vp_update(VISP_OTHER_INSTALL_PATH   sdk/etc)
 endif()
 
 # where to install the library and headers
@@ -934,8 +934,8 @@ endif(BUILD_PACKAGE)
 # ----------------------------------------------------------------------------
 #  Path for build/platform -specific headers
 # ----------------------------------------------------------------------------
-ocv_update(VISP_CONFIG_FILE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/" CACHE PATH "Where to create the platform-dependant cvconfig.h")
-ocv_include_directories(${VISP_CONFIG_FILE_INCLUDE_DIR})
+vp_update(VISP_CONFIG_FILE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/" CACHE PATH "Where to create the platform-dependant cvconfig.h")
+vp_include_directories(${VISP_CONFIG_FILE_INCLUDE_DIR})
 
 #----------------------------------------------------------------------
 # Generate the package dependent visp-config shell script for projects which

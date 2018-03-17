@@ -41,7 +41,7 @@ if (ANDROID)
                         set(lib_name "${output_name}")
                     endif ()
                 else ()
-                    ocv_get_libname(lib_name "${_output}")
+                    visp_get_libname(lib_name "${_output}")
                 endif ()
             endif ()
             set(${var} "${${var}} ${lib_name}")
@@ -63,7 +63,7 @@ if (ANDROID)
     # -------------------------------------------------------------------------------------------
     set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\"${VISP_CONFIG_FILE_INCLUDE_DIR}\"")
     set(VISP_BASE_INCLUDE_DIR_CONFIGCMAKE "\"${VISP_SOURCE_DIR}\"")
-    set(VISP_LIBS_DIR_CONFIGCMAKE "\$(OPENCV_THIS_DIR)/lib/\$(VISP_TARGET_ARCH_ABI)")
+    set(VISP_LIBS_DIR_CONFIGCMAKE "\$(VISP_THIS_DIR)/lib/\$(VISP_TARGET_ARCH_ABI)")
 
     # 3rd party later
     # set(OPENCV_3RDPARTY_LIBS_DIR_CONFIGCMAKE "\$(OPENCV_THIS_DIR)/3rdparty/lib/\$(OPENCV_TARGET_ARCH_ABI)")
@@ -74,9 +74,13 @@ if (ANDROID)
     # -------------------------------------------------------------------------------------------
     #  Part 2/2: ${BIN_DIR}/unix-install/VISP.mk -> For use with "make install"
     # -------------------------------------------------------------------------------------------
-    set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\"\$(LOCAL_PATH)/\$(OPENCV_THIS_DIR)/include/opencv\" \"\$(LOCAL_PATH)/\$(OPENCV_THIS_DIR)/include\"")
+
+    # TODO : no need for includes in VISP
+    # set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\"\$(LOCAL_PATH)/\$(VISP_THIS_DIR)/include/opencv\" \"\$(LOCAL_PATH)/\$(VISP_THIS_DIR)/include\"")
+    set(VISP_INCLUDE_DIRS_CONFIGCMAKE  "")
+
     set(VISP_BASE_INCLUDE_DIR_CONFIGCMAKE "")
-    set(VISP_LIBS_DIR_CONFIGCMAKE "\$(OPENCV_THIS_DIR)/../libs/\$(VISP_TARGET_ARCH_ABI)")
+    set(VISP_LIBS_DIR_CONFIGCMAKE "\$(VISP_THIS_DIR)/../libs/\$(VISP_TARGET_ARCH_ABI)")
 
     # 3rd party later
     # set(OPENCV_3RDPARTY_LIBS_DIR_CONFIGCMAKE "\$(OPENCV_THIS_DIR)/../3rdparty/libs/\$(OPENCV_TARGET_ARCH_ABI)")
