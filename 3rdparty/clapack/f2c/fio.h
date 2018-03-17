@@ -34,6 +34,21 @@
 #define FTELL ftell
 #endif
 
+// TODO @AKS1996 made some changes here.
+// Refer https://github.com/nmoinvaz/minizip/issues/137
+#ifdef __ANDROID__
+#  define fopen64 fopen
+#  define freopen64 freopen
+#  ifdef __USE_FILE_OFFSET64
+#    define ftello64 ftello
+#    define fseeko64 fseeko
+#  else
+#    define ftello64 ftell
+#    define fseeko64 fseek
+#  endif
+#endif
+// extra changes end
+
 #ifndef OFF_T
 #define OFF_T long
 #endif
