@@ -775,11 +775,11 @@ macro(_vp_create_module)
     ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     RUNTIME_OUTPUT_DIRECTORY ${BINARY_OUTPUT_PATH}
-    DEFINE_SYMBOL CVAPI_EXPORTS
+    DEFINE_SYMBOL VISP_EXPORTS
   )
 
   if(ANDROID AND BUILD_FAT_JAVA_LIB)
-    target_compile_definitions(${the_module} PRIVATE CVAPI_EXPORTS)
+    target_compile_definitions(${the_module} PRIVATE VISP_EXPORTS)
   endif()
 
   set_property(TARGET ${the_module} APPEND PROPERTY

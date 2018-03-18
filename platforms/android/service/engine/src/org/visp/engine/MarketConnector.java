@@ -1,4 +1,4 @@
-package org.opencv.engine;
+package org.visp.engine;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.util.Log;
 
 public class MarketConnector {
-    protected static final String OpenCVPackageNamePreffix = "org.opencv.lib";
-    private static final String TAG = "OpenCVEngine/MarketConnector";
+    protected static final String VISPPackageNamePreffix = "org.visp.lib";
+    private static final String TAG = "VISPEngine/MarketConnector";
     protected Context mContext;
 
     public MarketConnector(Context context) {

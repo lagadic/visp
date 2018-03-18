@@ -90,14 +90,36 @@ macro(vp_update VAR)
     else()
       set(${VAR} ${ARGN})
     endif()
-  else()
-    #ocv_debug_message("Preserve old value for ${VAR}: ${${VAR}}")
   endif()
 endmacro()
 
-# Finished adding macros for visp
-# -------------------------------------------
+function(vp_gen_config TMP_DIR NESTED_PATH ROOT_NAME)
+  vp_path_join(__install_nested "${VISP_CONFIG_INSTALL_PATH}" "${NESTED_PATH}")
+  vp_path_join(__tmp_nested "${TMP_DIR}" "${NESTED_PATH}")
 
+  file(RELATIVE_PATH VISP_INSTALL_PATH_RELATIVE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${__install_nested}" "${CMAKE_INSTALL_PREFIX}/")
+
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig-version.cmake.in" "${TMP_DIR}/VISPConfig-version.cmake" @ONLY)
+
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig.cmake.in" "${__tmp_nested}/VISPConfig.cmake" @ONLY)
+  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModule.cmake COMPONENT dev)
+  install(FILES
+      "${TMP_DIR}/VISPConfig-version.cmake"
+      "${__tmp_nested}/VISPConfig.cmake"
+      DESTINATION "${__install_nested}" COMPONENT dev)
+
+  if(ROOT_NAME)
+    # Root config file
+    configure_file("${VISP_SOURCE_DIR}/cmake/templates/${ROOT_NAME}" "${TMP_DIR}/VISPConfig.cmake" @ONLY)
+    install(FILES
+        "${TMP_DIR}/VISPConfig-version.cmake"
+        "${TMP_DIR}/VISPConfig.cmake"
+        DESTINATION "${VISP_CONFIG_INSTALL_PATH}" COMPONENT dev)
+  endif()
+endfunction()
+
+# Finished adding android macros for visp
+# -------------------------------------------
 
 # adds include directories in such way that directories from the ViSP source tree go first
 function(vp_include_directories)

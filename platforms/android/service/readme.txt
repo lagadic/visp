@@ -1,20 +1,17 @@
-How to select the proper version of OpenCV Manager
+How to select the proper version of VISP Manager
 --------------------------------------------------
 
-Since version 1.7 several packages of OpenCV Manager are built. Every package is targeted for some
-specific hardware platform and includes corresponding OpenCV binaries. So, in all cases OpenCV
-Manager uses built-in version of OpenCV. The new package selection logic in most cases simplifies
-OpenCV installation on end user devices. In most cases OpenCV Manager may be installed automatically
+The new package selection logic in most cases simplifies VISP installation on end user devices. In most cases VISP Manager may be installed automatically
 from Google Play.
 
 If Google Play is not available (i.e. on emulator, developer board, etc), you can install it
 manually using adb tool:
 
-    adb install <path-to-OpenCV-sdk>/apk/OpenCV_<version>_Manager_<app_version>_<platform>.apk
+    adb install <path-to-VISP-sdk>/apk/VISP_<version>_Manager_<app_version>_<platform>.apk
 
-Example: OpenCV_3.4.0-dev_Manager_3.40_armeabi-v7a.apk
+Example: VISP_3.4.0-dev_Manager_3.40_armeabi-v7a.apk
 
-Use the list of platforms below to determine proper OpenCV Manager package for your device:
+Use the list of platforms below to determine proper VISP Manager package for your device:
 
 - armeabi (ARMv5, ARMv6)
 - armeabi-v7a (ARMv7-A + NEON)

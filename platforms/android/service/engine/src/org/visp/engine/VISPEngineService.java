@@ -1,4 +1,4 @@
-package org.opencv.engine;
+package org.visp.engine;
 
 import android.app.Service;
 import android.content.Intent;
@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 
-public class OpenCVEngineService extends Service {
-    private static final String TAG = "OpenCVEngine/Service";
+public class VISPEngineService extends Service {
+    private static final String TAG = "VISPEngine/Service";
     private IBinder mEngineInterface = null;
     private List<LibVariant> variants = new ArrayList<LibVariant>();
 
@@ -108,7 +108,7 @@ public class OpenCVEngineService extends Service {
             }
         }
         super.onCreate();
-        mEngineInterface = new OpenCVEngineInterface.Stub() {
+        mEngineInterface = new VISPEngineInterface.Stub() {
 
             @Override
             public boolean installVersion(String version)
@@ -156,7 +156,7 @@ public class OpenCVEngineService extends Service {
     }
 
     public void OnDestroy() {
-        Log.i(TAG, "OpenCV Engine service destruction");
+        Log.i(TAG, "VISP Engine service destruction");
     }
 
 }

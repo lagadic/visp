@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OpenCV Manager</string>
+    <string name="app_name">VISP Manager</string>
     <string name="about">About</string>
     <string name="checkUpdate">Check for update</string>
-    <string name="intro">OpenCV library is used by other applications for image enhancement, panorama stitching, object detection, recognition and tracking and so on. OpenCV Manager provides the best version of the OpenCV for your hardware. See opencv.org for details.</string>
+    <string name="intro">ViSP standing for Visual Servoing Platform is a modular cross platform library that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done by Inria Lagadic team. ViSP is able to compute control laws that can be applied to robotic systems. See https://visp.inria.fr/ for details.</string>
 </resources>

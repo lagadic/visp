@@ -1,10 +1,10 @@
-package org.opencv.engine.manager;
+package org.visp.engine.manager;
 
-import org.opencv.engine.MarketConnector;
-import org.opencv.engine.HardwareDetector;
-import org.opencv.engine.OpenCVEngineInterface;
-import org.opencv.engine.OpenCVEngineService;
-import org.opencv.engine.R;
+import org.visp.engine.MarketConnector;
+import org.visp.engine.HardwareDetector;
+import org.visp.engine.VISPEngineInterface;
+import org.visp.engine.VISPEngineService;
+import org.visp.engine.R;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ManagerActivity extends Activity {
-    protected static final String TAG = "OpenCVEngine/Activity";
+    protected static final String TAG = "VISPEngine/Activity";
     protected MarketConnector mMarket;
     protected TextView mVersionText;
     protected boolean mExtraInfo = false;
@@ -34,7 +34,7 @@ public class ManagerActivity extends Activity {
 
         setContentView(R.layout.main);
 
-        final Class<OpenCVEngineService> c = OpenCVEngineService.class;
+        final Class<VISPEngineService> c = VISPEngineService.class;
         final String packageName = c.getPackage().getName();
 
         mMarket = new MarketConnector(this);
@@ -68,7 +68,7 @@ public class ManagerActivity extends Activity {
 
         mVersionText = (TextView) findViewById(R.id.textView5);
         if (!bindService(new Intent(this, c),
-                new OpenCVEngineServiceConnection(), Context.BIND_AUTO_CREATE)) {
+                new VISPEngineServiceConnection(), Context.BIND_AUTO_CREATE)) {
             Log.e(TAG, "Failed to bind to service:" + c.getName());
             mVersionText.setText("not avaliable");
         } else {
@@ -78,17 +78,17 @@ public class ManagerActivity extends Activity {
 
     }
 
-    protected class OpenCVEngineServiceConnection implements ServiceConnection {
+    protected class VISPEngineServiceConnection implements ServiceConnection {
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "Handle: service disconnected");
         }
 
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "Handle: service connected");
-            OpenCVEngineInterface engine = OpenCVEngineInterface.Stub
+            VISPEngineInterface engine = VISPEngineInterface.Stub
                     .asInterface(service);
             if (engine == null) {
-                Log.e(TAG, "Cannot connect to OpenCV Manager Service!");
+                Log.e(TAG, "Cannot connect to VISP Manager Service!");
                 unbindService(this);
                 return;
             }

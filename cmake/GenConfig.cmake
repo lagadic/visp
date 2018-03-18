@@ -11,10 +11,6 @@ else()
   set(VISP_USE_MANGLED_PATHS_CONFIGCMAKE FALSE)
 endif()
 
-if(HAVE_CUDA)
-  vp_cmake_configure("${CMAKE_CURRENT_LIST_DIR}/templates/VISPConfig-CUDA.cmake.in" CUDA_CONFIGCMAKE @ONLY)
-endif()
-
 if(ANDROID)
   if(NOT ANDROID_NATIVE_API_LEVEL)
     set(VISP_ANDROID_NATIVE_API_LEVEL_CONFIGCMAKE 0)
@@ -80,31 +76,6 @@ set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\"\${VISP_INSTALL_PATH}/${VISP_INCLUDE_INSTAL
 #  file(RELATIVE_PATH IPPIW_INSTALL_PATH_RELATIVE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}" "${IPPIW_INSTALL_PATH}")
 #  ocv_cmake_configure("${CMAKE_CURRENT_LIST_DIR}/templates/VISPConfig-IPPIW.cmake.in" IPPIW_CONFIGCMAKE @ONLY)
 #endif()
-
-function(vp_gen_config TMP_DIR NESTED_PATH ROOT_NAME)
-  vp_path_join(__install_nested "${VISP_CONFIG_INSTALL_PATH}" "${NESTED_PATH}")
-  vp_path_join(__tmp_nested "${TMP_DIR}" "${NESTED_PATH}")
-
-  file(RELATIVE_PATH VISP_INSTALL_PATH_RELATIVE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${__install_nested}" "${CMAKE_INSTALL_PREFIX}/")
-
-  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig-version.cmake.in" "${TMP_DIR}/VISPConfig-version.cmake" @ONLY)
-
-  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig.cmake.in" "${__tmp_nested}/VISPConfig.cmake" @ONLY)
-  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModule.cmake COMPONENT dev)
-  install(FILES
-      "${TMP_DIR}/VISPConfig-version.cmake"
-      "${__tmp_nested}/VISPConfig.cmake"
-      DESTINATION "${__install_nested}" COMPONENT dev)
-
-  if(ROOT_NAME)
-    # Root config file
-    configure_file("${VISP_SOURCE_DIR}/cmake/templates/${ROOT_NAME}" "${TMP_DIR}/VISPConfig.cmake" @ONLY)
-    install(FILES
-        "${TMP_DIR}/VISPConfig-version.cmake"
-        "${TMP_DIR}/VISPConfig.cmake"
-        DESTINATION "${VISP_CONFIG_INSTALL_PATH}" COMPONENT dev)
-  endif()
-endfunction()
 
 if((CMAKE_HOST_SYSTEM_NAME MATCHES "Linux" OR UNIX) AND NOT ANDROID)
   vp_gen_config("${CMAKE_BINARY_DIR}/unix-install" "" "")
