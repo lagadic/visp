@@ -15,7 +15,7 @@ sudo: required
 dist: trusty
 
 before_install:
-  - git clone https://github.com/lagadic/ViSP-images ${TRAVIS_BUILD_DIR}/ViSP-images
+  - git clone --depth 1 https://github.com/lagadic/ViSP-images ${TRAVIS_BUILD_DIR}/ViSP-images
 #  - cd ${TRAVIS_BUILD_DIR} && { curl -O http://visp-doc.inria.fr/download/dataset/ViSP-images-3.0.0.zip ; cd -; }
 #  - unzip ${TRAVIS_BUILD_DIR}/ViSP-images-3.0.0.zip -d ${TRAVIS_BUILD_DIR}
   # Get libs for OSX
