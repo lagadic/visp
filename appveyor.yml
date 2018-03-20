@@ -36,7 +36,7 @@ install:
   - cd C:\projects\deps
 
   # visp-images
-  - git clone https://github.com/lagadic/ViSP-images C:\projects\deps\ViSP-images
+  - git clone --depth 1 https://github.com/lagadic/ViSP-images C:\projects\deps\ViSP-images
   - set VISP_INPUT_IMAGE_PATH=C:\projects\deps
 
   # opencv
