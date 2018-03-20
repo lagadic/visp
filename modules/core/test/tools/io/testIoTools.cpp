@@ -31,11 +31,7 @@
  * Description:
  * Test functions in vpIoTools.
  *
- * Authors:
- * Souriya Trinh
- *
  *****************************************************************************/
-
 /*!
   \example testIoTools.cpp
 
@@ -46,6 +42,21 @@
 #include <stdio.h>
 #include <string.h>
 #include <visp3/core/vpIoTools.h>
+
+namespace
+{
+template <typename T>
+void checkReadBinaryValue(std::ifstream &file, const T checkValue)
+{
+  T value = (T)10;
+  vpIoTools::readBinaryValueLE(file, value);
+  if (value != checkValue) {
+    std::stringstream ss;
+    ss << "Read: " << value << " ; Expected: " << checkValue;
+    throw vpException(vpException::badValue, ss.str());
+  }
+}
+}
 
 int main(int argc, const char **argv)
 {
@@ -571,6 +582,34 @@ int main(int argc, const char **argv)
     return EXIT_FAILURE;
   }
   std::cout << "Test vpIoTools::checkFilename() is ok." << std::endl;
+
+  // Test endianness
+  {
+    std::string filename_endianness =  vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "endianness/test_endianness_little_endian.bin");
+    std::ifstream file_endianness(filename_endianness.c_str(), std::ios::in | std::ios::binary);
+    if (file_endianness.is_open()) {
+      checkReadBinaryValue<short>(file_endianness, std::numeric_limits<short>::min());
+      checkReadBinaryValue<short>(file_endianness, std::numeric_limits<short>::max());
+
+      checkReadBinaryValue<unsigned short>(file_endianness, std::numeric_limits<unsigned short>::min());
+      checkReadBinaryValue<unsigned short>(file_endianness, std::numeric_limits<unsigned short>::max());
+
+      checkReadBinaryValue<int>(file_endianness, std::numeric_limits<int>::min());
+      checkReadBinaryValue<int>(file_endianness, std::numeric_limits<int>::max());
+
+      checkReadBinaryValue<unsigned int>(file_endianness, std::numeric_limits<unsigned int>::min());
+      checkReadBinaryValue<unsigned int>(file_endianness, std::numeric_limits<unsigned int>::max());
+
+      checkReadBinaryValue<float>(file_endianness, -std::numeric_limits<float>::max());
+      checkReadBinaryValue<float>(file_endianness, std::numeric_limits<float>::max());
+
+      checkReadBinaryValue<double>(file_endianness, -std::numeric_limits<double>::max());
+      checkReadBinaryValue<double>(file_endianness, std::numeric_limits<double>::max());
+    } else {
+      std::cout << "Cannot open file: " << filename_endianness << std::endl;
+    }
+    std::cout << "Test endianness is ok." << std::endl;
+  }
 
   std::cout << std::endl << "End" << std::endl;
   return EXIT_SUCCESS;
