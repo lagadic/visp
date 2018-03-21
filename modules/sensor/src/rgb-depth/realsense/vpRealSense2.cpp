@@ -340,6 +340,12 @@ void vpRealSense2::getNativeFrameData(const rs2::frame &frame, unsigned char *co
 
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &pointcloud)
 {
+  if (m_depthScale <= std::numeric_limits<float>::epsilon()) {
+    std::stringstream ss;
+    ss << "Error, depth scale <= 0: " << m_depthScale;
+    throw vpException(vpException::fatalError, ss.str());
+  }
+
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
@@ -347,11 +353,21 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
 
   const uint16_t *p_depth_frame = reinterpret_cast<const uint16_t *>(depth_frame.get_data());
 
+  // Multi-threading if OpenMP
+  // Concurrent writes at different locations are safe
 #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
     for (int j = 0; j < width; j++, depth_pixel_index++) {
+      if (p_depth_frame[depth_pixel_index] == 0) {
+        pointcloud[(size_t)depth_pixel_index][0] = m_invalidDepthValue;
+        pointcloud[(size_t)depth_pixel_index][1] = m_invalidDepthValue;
+        pointcloud[(size_t)depth_pixel_index][2] = m_invalidDepthValue;
+        pointcloud[(size_t)depth_pixel_index][3] = 1.0;
+        continue;
+      }
+
       // Get the depth value of the current pixel
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
@@ -359,15 +375,13 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
       const float pixel[] = {(float)j, (float)i};
       rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel, pixels_distance);
 
-      if (pixels_distance <= 0 || pixels_distance > m_max_Z)
+      if (pixels_distance > m_max_Z)
         points[0] = points[1] = points[2] = m_invalidDepthValue;
 
-      vpColVector v(4);
-      v[0] = points[0];
-      v[1] = points[1];
-      v[2] = points[2];
-      v[3] = 1.0;
-      pointcloud[(size_t)depth_pixel_index] = v;
+      pointcloud[(size_t)depth_pixel_index][0] = points[0];
+      pointcloud[(size_t)depth_pixel_index][1] = points[1];
+      pointcloud[(size_t)depth_pixel_index][2] = points[2];
+      pointcloud[(size_t)depth_pixel_index][3] = 1.0;
     }
   }
 }
@@ -375,6 +389,12 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
 #ifdef VISP_HAVE_PCL
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
+  if (m_depthScale <= std::numeric_limits<float>::epsilon()) {
+    std::stringstream ss;
+    ss << "Error, depth scale <= 0: " << m_depthScale;
+    throw vpException(vpException::fatalError, ss.str());
+  }
+
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
@@ -382,14 +402,23 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
   pointcloud->height = (uint32_t)height;
   pointcloud->resize((size_t)(width * height));
 
-#if MANUAL_POINTCLOUD // faster when tested
+#if MANUAL_POINTCLOUD // faster to compute manually when tested
   const uint16_t *p_depth_frame = reinterpret_cast<const uint16_t *>(depth_frame.get_data());
 
+  // Multi-threading if OpenMP
+  // Concurrent writes at different locations are safe
 #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
     for (int j = 0; j < width; j++, depth_pixel_index++) {
+      if (p_depth_frame[depth_pixel_index] == 0) {
+        pointcloud->points[(size_t)(depth_pixel_index)].x = m_invalidDepthValue;
+        pointcloud->points[(size_t)(depth_pixel_index)].y = m_invalidDepthValue;
+        pointcloud->points[(size_t)(depth_pixel_index)].z = m_invalidDepthValue;
+        continue;
+      }
+
       // Get the depth value of the current pixel
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
@@ -397,7 +426,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
       const float pixel[] = {(float)j, (float)i};
       rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel, pixels_distance);
 
-      if (pixels_distance <= 0 || pixels_distance > m_max_Z)
+      if (pixels_distance > m_max_Z)
         points[0] = points[1] = points[2] = m_invalidDepthValue;
 
       pointcloud->points[(size_t)(depth_pixel_index)].x = points[0];
@@ -426,6 +455,12 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2::frame &color_frame,
                                  pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
+  if (m_depthScale <= std::numeric_limits<float>::epsilon()) {
+    std::stringstream ss;
+    ss << "Error, depth scale <= 0: " << m_depthScale;
+    throw vpException(vpException::fatalError, ss.str());
+  }
+
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
@@ -441,11 +476,34 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
   unsigned int nb_color_pixel = (color_format == RS2_FORMAT_RGB8 || color_format == RS2_FORMAT_BGR8) ? 3 : 4;
   const unsigned char *p_color_frame = reinterpret_cast<const unsigned char *>(color_frame.get_data());
 
+  // Multi-threading if OpenMP
+  // Concurrent writes at different locations are safe
 #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
     for (int j = 0; j < width; j++, depth_pixel_index++) {
+      if (p_depth_frame[depth_pixel_index] == 0) {
+        pointcloud->points[(size_t)depth_pixel_index].x = m_invalidDepthValue;
+        pointcloud->points[(size_t)depth_pixel_index].y = m_invalidDepthValue;
+        pointcloud->points[(size_t)depth_pixel_index].z = m_invalidDepthValue;
+
+        // For out of bounds color data, default to a shade of blue in order to
+        // visually distinguish holes. This color value is same as the librealsense
+        // out of bounds color value.
+#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+        unsigned int r = 96, g = 157, b = 198;
+        uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+
+        pointcloud->points[(size_t)depth_pixel_index].rgb = *reinterpret_cast<float *>(&rgb);
+#else
+        pointcloud->points[(size_t)depth_pixel_index].r = (uint8_t)96;
+        pointcloud->points[(size_t)depth_pixel_index].g = (uint8_t)157;
+        pointcloud->points[(size_t)depth_pixel_index].b = (uint8_t)198;
+#endif
+        continue;
+      }
+
       // Get the depth value of the current pixel
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
@@ -453,7 +511,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
       const float pixel[] = {(float)j, (float)i};
       rs2_deproject_pixel_to_point(depth_point, &m_depthIntrinsics, pixel, pixels_distance);
 
-      if (pixels_distance <= 0 || pixels_distance > m_max_Z)
+      if (pixels_distance > m_max_Z)
         depth_point[0] = depth_point[1] = depth_point[2] = m_invalidDepthValue;
 
       pointcloud->points[(size_t)depth_pixel_index].x = depth_point[0];
@@ -555,7 +613,7 @@ void vpRealSense2::open(const rs2::config &cfg)
 
   // Go over the device's sensors
   for (rs2::sensor &sensor : dev.query_sensors()) {
-    // Check if the sensor if a depth sensor
+    // Check if the sensor is a depth sensor
     if (rs2::depth_sensor dpt = sensor.as<rs2::depth_sensor>()) {
       m_depthScale = dpt.get_depth_scale();
     }
