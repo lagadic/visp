@@ -619,12 +619,25 @@ void vpRealSense2::open(const rs2::config &cfg)
     }
   }
 
-  auto depth_stream = m_pipelineProfile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
-  m_depthIntrinsics = depth_stream.get_intrinsics();
+  try {
+    auto depth_stream = m_pipelineProfile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
+    m_depthIntrinsics = depth_stream.get_intrinsics();
 
-  auto color_stream = m_pipelineProfile.get_stream(RS2_STREAM_COLOR);
-  m_colorIntrinsics = m_pipelineProfile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>().get_intrinsics();
-  m_depth2ColorExtrinsics = depth_stream.get_extrinsics_to(color_stream);
+    try {
+      auto color_stream = m_pipelineProfile.get_stream(RS2_STREAM_COLOR);
+      m_depth2ColorExtrinsics = depth_stream.get_extrinsics_to(color_stream);
+    } catch (const std::runtime_error &e) {
+      std::cout << "Error getting depth to color extrinsics: " << e.what() << std::endl;
+    }
+  } catch (const std::runtime_error &e) {
+    std::cout << "Error getting depth intrinsics: " << e.what() << std::endl;
+  }
+
+  try {
+    m_colorIntrinsics = m_pipelineProfile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>().get_intrinsics();
+  } catch (const std::runtime_error &e) {
+    std::cout << "Error getting color intrinsics: " << e.what() << std::endl;
+  }
 }
 
 namespace
