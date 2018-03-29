@@ -38,23 +38,21 @@
 
 #include "vpJointVelTrajGenerator_impl.h"
 
-#include <algorithm>
-#include <array>
-#include <cmath>
-#include <iostream>
-#include <iomanip>
+#include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_FRANKA
+#include <cmath>
+#include <iomanip>
+#include <algorithm>
+
 #include <franka/exception.h>
 #include <franka/robot.h>
 #include <franka/model.h>
-#endif
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpMatrix.h>
 
-#ifdef VISP_HAVE_FRANKA
 void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
                                              std::atomic_bool &stop,
                                              const vpRobot::vpControlFrameType &frame,
@@ -298,7 +296,6 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   }
   }
 }
-#endif // VISP_HAVE_FRANKA
 
 void vpJointVelTrajGenerator::init(const std::array<double, 7> &q,
                                    const std::array<double, 7> &q_min,
@@ -547,4 +544,9 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
   }
   return limited_values;
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
+void dummy_vpJointVelTrajGenerator(){};
+#endif // VISP_HAVE_FRANKA
 

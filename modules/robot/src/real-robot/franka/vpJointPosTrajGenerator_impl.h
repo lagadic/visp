@@ -56,7 +56,6 @@
 #include <franka/control_types.h>
 #include <franka/duration.h>
 #include <franka/robot_state.h>
-#endif
 
 /**
  * An example showing how to generate a joint pose motion to a goal position. Adapted from:
@@ -73,7 +72,6 @@ class vpJointPosTrajGenerator {
    */
   vpJointPosTrajGenerator(double speed_factor, const std::array<double, 7> q_goal);
 
-#ifdef VISP_HAVE_FRANKA
   /**
    * Sends joint position calculations
    *
@@ -83,7 +81,6 @@ class vpJointPosTrajGenerator {
    * @return Joint positions for use inside a control loop.
    */
   franka::JointPositions operator()(const franka::RobotState& robot_state, franka::Duration period);
-#endif
 
  private:
   bool calculateDesiredValues(double t, vpColVector &delta_q_d) const;

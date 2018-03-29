@@ -39,22 +39,22 @@
 #ifndef __vpJointVelTrajGenerator_impl_h_
 #define __vpJointVelTrajGenerator_impl_h_
 
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_FRANKA
 #include <array>
 #include <vector>
 #include <iostream>
 #include <atomic>
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobot.h>
-
-#ifdef VISP_HAVE_FRANKA
 #include <franka/exception.h>
 #include <franka/robot.h>
 
 #include <franka/control_types.h>
 #include <franka/duration.h>
 #include <franka/robot_state.h>
-#endif
+
+#include <visp3/robot/vpRobot.h>
 
 class vpJointVelTrajGenerator {
 public:
@@ -69,7 +69,6 @@ public:
                 std::array<double, 7> &q_cmd,
                 std::array<double, 7> &dq_cmd);
 
-#ifdef VISP_HAVE_FRANKA
   void control_thread(franka::Robot *robot, std::atomic_bool &stop,
                       const vpRobot::vpControlFrameType &frame,
                       const vpHomogeneousMatrix &eMc,
@@ -81,7 +80,6 @@ public:
                       const std::array<double, 7> &ddq_max,
                       franka::RobotState &robot_state,
                       std::mutex &mutex);
-#endif
 
   void init (const std::array<double, 7> &q,
              const std::array<double, 7> &q_min,
@@ -131,4 +129,5 @@ private:
   const double m_delta_q_min =	1e-9;	                // Delta q minimum (rad)
 };
 
+#endif
 #endif
