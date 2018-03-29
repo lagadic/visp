@@ -73,6 +73,8 @@ Irisa's Viper850 robot.  This robot is an ADEPT six degrees of freedom arm.
   - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
   in the reference frame and rotations in the camera frame.
 
+  End-effector frame (vpRobot::END_EFFECTOR_FRAME) is not implemented.
+
   All the translations are expressed in meters for positions and m/s
   for the velocities. Rotations are expressed in radians for the
   positions, and rad/s for the rotation velocities.
