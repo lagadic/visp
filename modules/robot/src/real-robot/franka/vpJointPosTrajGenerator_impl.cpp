@@ -39,6 +39,10 @@
  *
  *****************************************************************************/
 
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_FRANKA
+
 #include "vpJointPosTrajGenerator_impl.h"
 
 #include <algorithm>
@@ -151,6 +155,7 @@ void vpJointPosTrajGenerator::calculateSynchronizedValues()
   }
 }
 
+#ifdef VISP_HAVE_FRANKA
 franka::JointPositions vpJointPosTrajGenerator::operator()(const franka::RobotState& robot_state,
                                                            franka::Duration period) {
   m_time += period.toSec();
@@ -176,3 +181,6 @@ franka::JointPositions vpJointPosTrajGenerator::operator()(const franka::RobotSt
   output.motion_finished = motion_finished;
   return output;
 }
+#endif
+
+#endif

@@ -45,17 +45,18 @@
 #include <iostream>
 #include <atomic>
 
+#include <visp3/core/vpConfig.h>
+
 #include <visp3/core/vpColVector.h>
 
-#include <Eigen/Core>
-
+#ifdef VISP_HAVE_FRANKA
 #include <franka/exception.h>
 #include <franka/robot.h>
 
 #include <franka/control_types.h>
 #include <franka/duration.h>
 #include <franka/robot_state.h>
-
+#endif
 
 /**
  * An example showing how to generate a joint pose motion to a goal position. Adapted from:
@@ -72,6 +73,7 @@ class vpJointPosTrajGenerator {
    */
   vpJointPosTrajGenerator(double speed_factor, const std::array<double, 7> q_goal);
 
+#ifdef VISP_HAVE_FRANKA
   /**
    * Sends joint position calculations
    *
@@ -81,6 +83,7 @@ class vpJointPosTrajGenerator {
    * @return Joint positions for use inside a control loop.
    */
   franka::JointPositions operator()(const franka::RobotState& robot_state, franka::Duration period);
+#endif
 
  private:
   bool calculateDesiredValues(double t, vpColVector &delta_q_d) const;
@@ -103,4 +106,5 @@ class vpJointPosTrajGenerator {
   double m_time = 0.0;
 };
 
+#endif
 #endif
