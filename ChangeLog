@@ -7,6 +7,8 @@
 
 ViSP 3.2.0 (under development)
   - New features
+    . New vpRobotFranka class, examples and test showing how to use Panda robot
+      from Franka Emika.
   - Tutorials
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
