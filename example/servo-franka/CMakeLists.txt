@@ -40,21 +40,10 @@ project(example-servo-franka)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_robot)
+find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui visp_vs visp_visual_features visp_detection)
 
 set(example_cpp
-  franka_echo_robot_state.cpp
-  franka_execute_trajectory.cpp
-  franka_generate_cartesian_pose_motion.cpp
-  franka_generate_cartesian_velocity_motion.cpp
-  franka_generate_consecutive_motions.cpp
-  franka_generate_joint_position_motion.cpp
-  franka_generate_joint_velocity_motion.cpp
-  franka_grasp_object.cpp
-  franka_joint_impedance_control.cpp
-  franka_joint_point_to_point_motion.cpp
-  franka_motion_with_control.cpp
-  franka_print_joint_positions.cpp
+  servoFrankaPBVS.cpp
 )
 
 foreach(cpp ${example_cpp})
