@@ -1,11 +1,51 @@
-// Copyright (c) 2017 Franka Emika GmbH
-// Use of this source code is governed by the Apache-2.0 license, see LICENSE
+/****************************************************************************
+ *
+ * This file is part of the ViSP software.
+ * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See http://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Description:
+ * Trajectory generator for joint positioning.
+ *
+ * This code was originally part of libfranka and adapted to use ViSP instead
+ * of Eigen.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 #ifndef __vpJointPosTrajGenerator_impl_h_
 #define __vpJointPosTrajGenerator_impl_h_
 
 #include <array>
 #include <iostream>
 #include <atomic>
+
+#include <visp3/core/vpColVector.h>
 
 #include <Eigen/Core>
 
@@ -43,29 +83,24 @@ class vpJointPosTrajGenerator {
   franka::JointPositions operator()(const franka::RobotState& robot_state, franka::Duration period);
 
  private:
-  using Vector7d = Eigen::Matrix<double, 7, 1, Eigen::ColMajor>;
-  using Vector7i = Eigen::Matrix<int, 7, 1, Eigen::ColMajor>;
-
-  bool calculateDesiredValues(double t, Vector7d* delta_q_d) const;
+  bool calculateDesiredValues(double t, vpColVector &delta_q_d) const;
   void calculateSynchronizedValues();
 
   static constexpr double kDeltaQMotionFinished = 1e-6;
-  const Vector7d q_goal_;
+  vpColVector m_q_goal;
+  vpColVector m_q_start;
+  vpColVector m_delta_q;
+  vpColVector m_dq_max_sync;
+  vpColVector m_t_1_sync;
+  vpColVector m_t_2_sync;
+  vpColVector m_t_f_sync;
+  vpColVector m_q_1;
 
-  Vector7d q_start_;
-  Vector7d delta_q_;
+  vpColVector m_dq_max;
+  vpColVector m_ddq_max_start;
+  vpColVector m_ddq_max_goal;
 
-  Vector7d dq_max_sync_;
-  Vector7d t_1_sync_;
-  Vector7d t_2_sync_;
-  Vector7d t_f_sync_;
-  Vector7d q_1_;
-
-  double time_ = 0.0;
-
-  Vector7d dq_max_ = (Vector7d() << 2.0, 2.0, 2.0, 2.0, 2.5, 2.5, 2.5).finished();
-  Vector7d ddq_max_start_ = (Vector7d() << 5, 5, 5, 5, 5, 5, 5).finished();
-  Vector7d ddq_max_goal_ = (Vector7d() << 5, 5, 5, 5, 5, 5, 5).finished();
+  double m_time = 0.0;
 };
 
 #endif
