@@ -236,6 +236,12 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
  * homogeneous matrix \f${^f}{\bf M}_c\f$ that gives the position of the camera frame (or in general of
  * any tool attached to the robot) in the robot base frame.
  *
+ * By default, the transformation \f$^{e}{\bf M}_c\f$ that corresponds to the transformation between
+ * the end-effector and the camera (or tool) frame is set to identity, meaning that the camera (or tool)
+ * frame is located on the end-effector.
+ *
+ * To change the position of the camera (or tool) frame , use set_eMc().
+ *
  * \param[in] q : Joint position as a 7-dim vector.
  * \return Position of the camera frame (or tool frame) in the robot base frame.
  */
@@ -375,7 +381,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
 
   Set the maximal velocity percentage to use for a position control.
 
-  \param velocity : Percentage of the maximal velocity. Values should
+  \param[in] velocity : Percentage of the maximal velocity. Values should
   be in ]0:100].
 
 */
@@ -388,7 +394,7 @@ void vpRobotFranka::setPositioningVelocity(const double velocity)
 
   Change the robot state.
 
-  \param newState : New requested robot state.
+  \param[in] newState : New requested robot state.
 */
 vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType newState)
 {
@@ -439,12 +445,12 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
 /*!
   Apply a velocity to the robot.
 
-  \param frame : Control frame in which the velocity is expressed. Velocities
+  \param[in] frame : Control frame in which the velocity is expressed. Velocities
   could be expressed as joint velocities, cartesian velocity twist expressed in
   the robot reference frame, in the end-effector frame or in the camera or tool
   frame.
 
-  \param vel : Velocity vector. Translation velocities are expressed
+  \param[in] vel : Velocity vector. Translation velocities are expressed
   in m/s while rotation velocities in rad/s. The size of this vector
   is always 6 for a cartsian velocity skew, and 7 for joint velocities.
 
@@ -606,6 +612,12 @@ vpColVector vpRobotFranka::getJointMax() const
 /*!
  * Return the \f$ ^{e}{\bf M}_c\f$ homogeneous transformation that gives the position
  * of the camera frame (or in general of any tool frame) in the robot end-effector frame.
+ *
+ * By default, this transformation is set to identity, meaning that the camera (or tool)
+ * frame is located on the end-effector.
+ *
+ * To change the position of the camera (or tool) frame , use set_eMc().
+
  */
 vpHomogeneousMatrix vpRobotFranka::get_eMc() const
 {
@@ -615,6 +627,9 @@ vpHomogeneousMatrix vpRobotFranka::get_eMc() const
 /*!
  * Set the \f$ ^{e}{\bf M}_c\f$ homogeneous transformation that gives the position
  * of the camera frame (or in general of any tool frame) in the robot end-effector frame.
+ *
+ * By default, this transformation is set to identity, meaning that the camera (or tool)
+ * frame is located on the end-effector.
  *
  * This transformation has to be set before controlling the robot cartesian velocity in
  * the camera frame or getting the position of the robot in the camera frame.
