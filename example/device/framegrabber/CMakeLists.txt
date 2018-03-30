@@ -54,6 +54,8 @@ set(example_cpp
   grabRealSense.cpp
   grabRealSense2.cpp
   grabV4l2MultiCpp11Thread.cpp
+  readRealSenseData.cpp
+  saveRealSenseData.cpp
 )
 
 if(VISP_HAVE_FLYCAPTURE)
@@ -64,6 +66,8 @@ endif()
 if(VISP_HAVE_PCL)
   # Add specific build flag to turn off warnings coming from PCL 3rd party
   visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
+  visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
+  visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
 endif()
 
 foreach(cpp ${example_cpp})

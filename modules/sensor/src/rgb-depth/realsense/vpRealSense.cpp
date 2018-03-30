@@ -314,19 +314,8 @@ rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
     throw vpException(vpException::fatalError, "RealSense Camera - device handler is null. Cannot "
                                                "retrieve intrinsics. Exiting!");
   }
-  if (!m_device->is_stream_enabled(stream)) {
-    throw vpException(vpException::fatalError,
-                      "RealSense Camera - stream (%d) is not enabled to "
-                      "retrieve intrinsics. Exiting!",
-                      (int)stream);
-  }
 
-  std::map<rs::stream, rs::intrinsics>::const_iterator it_intrin = m_intrinsics.find(stream);
-  if (it_intrin != m_intrinsics.end()) {
-    return it_intrin->second;
-  }
-
-  return rs::intrinsics();
+  return m_device->get_stream_intrinsics(stream);
 }
 
 /*!
