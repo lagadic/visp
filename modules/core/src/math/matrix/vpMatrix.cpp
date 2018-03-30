@@ -1939,8 +1939,7 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 #elif defined(VISP_HAVE_GSL)
   return pseudoInverseGsl(svThreshold);
 #else
-  (void)w;
-  (void)V;
+  (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
                                              "Install Lapack, Eigen3, OpenCV "
                                              "or GSL 3rd party"));
