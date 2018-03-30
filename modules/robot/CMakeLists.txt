@@ -110,11 +110,13 @@ endif()
 if(USE_FRANKA)
   get_target_property(Franka_inc_dirs_ ${Franka_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND opt_incs ${Franka_inc_dirs_})
+  message("Franka_inc_dirs_: ${Franka_inc_dirs_}")
 
-  set(config_ "release" "debug" "releasewithdebinfo" "relwithdebinfo" "none")
+  set(config_ "release" "debug" "releasewithdebinfo" "relwithdebinfo" "none" "noconfig")
   foreach(imp_config_ ${config_})
     string(TOUPPER "${imp_config_}" imp_config_up_)
     get_target_property(Franka_lib ${Franka_LIBRARIES} IMPORTED_LOCATION_${imp_config_up_})
+    message("Franka_lib: ${Franka_lib}")
     if(Franka_lib)
        list(APPEND opt_libs ${Franka_lib})
        break()
@@ -179,7 +181,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH virtuose
+  CTEST_EXCLUDE_PATH virtuose servo-franka
   CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp )
 
 if(USE_VIRTUOSE)

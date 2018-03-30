@@ -703,8 +703,8 @@ double vpRobotAfma4::getPositioningVelocity(void) { return positioningVelocity; 
 
   \param frame : Frame in which the position is expressed.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME and
+  vpRobot::END_EFFECTOR_FRAME not implemented.
 
   \exception vpRobotException::positionOutOfRangeError : The requested
   position is out of range.
@@ -729,8 +729,8 @@ double vpRobotAfma4::getPositioningVelocity(void) { return positioningVelocity; 
   \endcode
 
   \exception vpRobotException::lowLevelError : If the requested frame
-  (vpRobot::REFERENCE_FRAME, vpRobot::CAMERA_FRAME, or vpRobot::MIXT_FRAME)
-  are requested since they are not implemented.
+  (vpRobot::REFERENCE_FRAME, vpRobot::CAMERA_FRAME, vpRobot::END_EFFECTOR_FRAME
+  or vpRobot::MIXT_FRAME) are requested since they are not implemented.
 
   \exception vpRobotException::positionOutOfRangeError : The requested
   position is out of range.
@@ -763,19 +763,20 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const vp
 
   switch (frame) {
   case vpRobot::REFERENCE_FRAME:
-    vpERROR_TRACE("Positionning error. Reference frame not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
                                                             "Reference frame not implemented.");
     break;
   case vpRobot::CAMERA_FRAME:
-    vpERROR_TRACE("Positionning error. Camera frame not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
                                                             "Camera frame not implemented.");
     break;
   case vpRobot::MIXT_FRAME:
-    vpERROR_TRACE("Positionning error. Mixt frame not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
                                                             "Mixt frame not implemented.");
+    break;
+  case vpRobot::END_EFFECTOR_FRAME:
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "End-effector frame not implemented.");
     break;
 
   case vpRobot::ARTICULAR_FRAME: {
@@ -832,8 +833,8 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const vp
 
   \param frame : Frame in which the position is expressed.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME
+  and vpRobot::END_EFFECTOR_FRAME not implemented.
 
   \exception vpRobotException::positionOutOfRangeError : The requested
   position is out of range.
@@ -895,8 +896,8 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const do
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
   \endcode
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME
+  and vpRobot::END_EFFECTOR_FRAME not implemented.
 
   \exception vpRobotException::positionOutOfRangeError : The requested
   position is out of range.
@@ -1036,8 +1037,11 @@ void vpRobotAfma4::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
     break;
   }
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE("Cannot get position in mixt frame: not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Cannot get position in mixt frame: "
+                                                            "not implemented");
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    throw vpRobotException(vpRobotException::lowLevelError, "Cannot get position in end-effector frame: "
                                                             "not implemented");
   }
   }
@@ -1145,31 +1149,27 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
   }
   case vpRobot::ARTICULAR_FRAME: {
     if (vel.getRows() != this->njoint) {
-      vpERROR_TRACE("Bad dimension of the articular velocity vector");
       throw vpRobotException(vpRobotException::wrongStateError, "Bad dimension of the articular "
                                                                 "velocity vector ");
     }
     break;
   }
   case vpRobot::REFERENCE_FRAME: {
-    vpERROR_TRACE("Cannot send a velocity to the robot "
-                  "in the reference frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
                                                               "in the reference frame:"
                                                               "functionality not implemented");
   }
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE("Cannot send a velocity to the robot "
-                  "in the mixt frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
                                                               "in the mixt frame:"
                                                               "functionality not implemented");
   }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
+                                                              "in the end-effector frame:"
+                                                              "functionality not implemented");
+  }
   default: {
-    vpERROR_TRACE("Error in spec of vpRobot. "
-                  "Case not taken in account.");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot ");
   }
   }
@@ -1379,9 +1379,13 @@ void vpRobotAfma4::getVelocity(const vpRobot::vpControlFrameType frame, vpColVec
     }
 
     case vpRobot::MIXT_FRAME: {
-      vpERROR_TRACE("Cannot get a velocity in the mixt frame: "
-                    "functionality not implemented");
       throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a displacement in the mixt frame:"
+                                                                "functionality not implemented");
+
+      break;
+    }
+    case vpRobot::END_EFFECTOR_FRAME: {
+      throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a displacement in the end-effector frame:"
                                                                 "functionality not implemented");
 
       break;
@@ -1718,6 +1722,10 @@ void vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
 
     case vpRobot::MIXT_FRAME: {
       std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
+      return;
+    }
+    case vpRobot::END_EFFECTOR_FRAME: {
+      std::cout << "getDisplacement() END_EFFECTOR_FRAME not implemented\n";
       return;
     }
     }

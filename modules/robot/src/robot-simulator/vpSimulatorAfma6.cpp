@@ -965,6 +965,13 @@ void vpSimulatorAfma6::setVelocity(const vpRobot::vpControlFrameType frame, cons
     break;
   }
   case vpRobot::MIXT_FRAME: {
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in MIXT_FRAME frame:"
+                                                              "functionality not implemented");
+    break;
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in END_EFFECTOT_FRAME frame:"
+                                                              "functionality not implemented");
     break;
   }
   }
@@ -1014,6 +1021,7 @@ void vpSimulatorAfma6::computeArticularVelocity()
     set_artVel(articularVelocity);
     break;
   }
+  case vpRobot::END_EFFECTOR_FRAME:
   case vpRobot::MIXT_FRAME: {
     break;
   }
@@ -1042,6 +1050,7 @@ void vpSimulatorAfma6::computeArticularVelocity()
     break;
   }
   case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::END_EFFECTOR_FRAME:
   case vpRobot::MIXT_FRAME: {
     break;
   }
@@ -1119,6 +1128,7 @@ void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpCo
     vel = fJe_ * articularVelocity;
     break;
   }
+  case vpRobot::END_EFFECTOR_FRAME:
   case vpRobot::MIXT_FRAME: {
     break;
   }
@@ -1427,7 +1437,12 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE("Positionning error. Mixt frame not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
-                                                            "Mixt frame not implemented.");
+                                                            "MIXT_FRAME not implemented.");
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    vpERROR_TRACE("Positionning error. Mixt frame not implemented");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "END_EFFECTOR_FRAME not implemented.");
   }
   }
 }
@@ -1658,9 +1673,12 @@ void vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpCo
   }
 
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE("Positionning error. Mixt frame not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
                                                             "Mixt frame not implemented.");
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "End-effector frame not implemented.");
   }
   }
 }
@@ -1868,19 +1886,20 @@ void vpSimulatorAfma6::getDisplacement(vpRobot::vpControlFrameType frame, vpColV
       std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
       return;
     }
-
     case vpRobot::ARTICULAR_FRAME: {
       displacement = q_cur - q_prev_getdis;
       break;
     }
-
     case vpRobot::REFERENCE_FRAME: {
       std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
       return;
     }
-
     case vpRobot::MIXT_FRAME: {
       std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
+      return;
+    }
+    case vpRobot::END_EFFECTOR_FRAME: {
+      std::cout << "getDisplacement() END_EFFECTOR_FRAME not implemented\n";
       return;
     }
     }
