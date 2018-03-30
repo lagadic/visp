@@ -39,6 +39,9 @@
 #ifndef vpConfig_h
 #define vpConfig_h
 
+// To get access to EXIT_SUCCESS and EXIT_FAILURE
+#include <cstdlib>
+
 #if defined _MSC_VER && _MSC_VER >= 1200
   #pragma warning( disable: 4100 4127 4251 4275 4351 4514 4668 4710 4820 )
   #if _MSC_VER >= 1400 // 1400 = MSVC 8 2005

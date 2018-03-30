@@ -406,6 +406,6 @@ int main() {
   std::cout << "You do not have X11 functionalities to display images..." << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
-  return EXIT_SUCCESS
+  return EXIT_SUCCESS;
 }
 #endif
