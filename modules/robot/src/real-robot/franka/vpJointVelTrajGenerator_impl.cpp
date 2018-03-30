@@ -55,6 +55,7 @@
 
 void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
                                              std::atomic_bool &stop,
+                                             const std::string &log_folder,
                                              const vpRobot::vpControlFrameType &frame,
                                              const vpHomogeneousMatrix &eMc,
                                              const vpColVector &v_cart_des, // end-effector velocity
@@ -73,12 +74,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   vpMatrix eJe(6, 7), fJe(6, 7);
   vpVelocityTwistMatrix eVc(eMc);
 
-  std::ofstream log_time("time.log");
-  std::ofstream log_q_mes("q-mes.log");
-  std::ofstream log_dq_mes("dq-mes.log");
-  std::ofstream log_dq_des("dq-des.log");
-  std::ofstream log_dq_cmd("dq-cmd.log");
-  std::ofstream log_v_des("v-des.log");
+  std::ofstream log_time;
+  std::ofstream log_q_mes;
+  std::ofstream log_dq_mes;
+  std::ofstream log_dq_des;
+  std::ofstream log_dq_cmd;
+  std::ofstream log_v_des;
 
   auto joint_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &log_v_des, &time, &q_prev, &dq_des, &stop, &robot_state, &mutex]
       (const franka::RobotState& state, franka::Duration period) -> franka::JointVelocities {
@@ -88,6 +89,14 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     static vpJointVelTrajGenerator joint_vel_traj_generator;
 
     if (time == 0.0) {
+      if (! log_folder.empty()) {
+        std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
+        log_time.open(log_folder + "/time.log");
+        log_q_mes.open(log_folder + "/q-mes.log");
+        log_dq_mes.open(log_folder + "/dq-mes.log");
+        log_dq_des.open(log_folder + "/dq-des.log");
+        log_dq_cmd.open(log_folder + "/dq-cmd.log");
+      }
       q_prev = state.q_d;
       joint_vel_traj_generator.init(state.q_d, q_min, q_max, dq_max, ddq_max, delta_t);
     }
@@ -109,11 +118,13 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     joint_vel_traj_generator.applyVel(dq_des_, q_cmd, dq_cmd);
 
-    log_time << time << std::endl;
-    log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2] << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6] << std::endl;
-    log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2] << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6] << std::endl;
-    log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " " << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
-    log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " " << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
+    if (! log_folder.empty()) {
+      log_time << time << std::endl;
+      log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2] << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6] << std::endl;
+      log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2] << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6] << std::endl;
+      log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " " << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
+      log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " " << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
+    }
 
     franka::JointVelocities velocities = {dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6]};
 
@@ -133,12 +144,13 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
       cpt_dbg ++;
 
       if (stop == 7) {
-        log_time.close();
-        log_q_mes.close();
-        log_dq_mes.close();
-        log_dq_des.close();
-        log_dq_cmd.close();
-        log_v_des.close();
+        if (! log_folder.empty()) {
+          log_time.close();
+          log_q_mes.close();
+          log_dq_mes.close();
+          log_dq_des.close();
+          log_dq_cmd.close();
+        }
         return franka::MotionFinished(velocities);
       }
     }
@@ -167,6 +179,15 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     static vpJointVelTrajGenerator joint_vel_traj_generator;
 
     if (time == 0.0) {
+      if (! log_folder.empty()) {
+        std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
+        log_time.open(log_folder + "/time.log");
+        log_q_mes.open(log_folder + "/q-mes.log");
+        log_dq_mes.open(log_folder + "/dq-mes.log");
+        log_dq_des.open(log_folder + "/dq-des.log");
+        log_dq_cmd.open(log_folder + "/dq-cmd.log");
+        log_v_des.open(log_folder + "v-des.log");
+      }
       q_prev = state.q_d;
       joint_vel_traj_generator.init(state.q_d, q_min, q_max, dq_max, ddq_max, delta_t);
     }
@@ -225,13 +246,14 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     joint_vel_traj_generator.applyVel(dq_des_, q_cmd, dq_cmd);
 
-    log_time << time << std::endl;
-    log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2] << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6] << std::endl;
-    log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2] << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6] << std::endl;
-    log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " " << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
-    log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " " << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
-    log_v_des << std::fixed << std::setprecision(8) << v_cart_des[0] << " " << v_cart_des[1] << " " << v_cart_des[2] << " " << v_cart_des[3] << " " << v_cart_des[4] << " " << v_cart_des[5] << std::endl;
-
+    if (! log_folder.empty()) {
+      log_time << time << std::endl;
+      log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2] << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6] << std::endl;
+      log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2] << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6] << std::endl;
+      log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " " << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
+      log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " " << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
+      log_v_des << std::fixed << std::setprecision(8) << v_cart_des[0] << " " << v_cart_des[1] << " " << v_cart_des[2] << " " << v_cart_des[3] << " " << v_cart_des[4] << " " << v_cart_des[5] << std::endl;
+    }
 //    std::cout << "DBG apply joint vel: " << dq_cmd[0] << " " << dq_cmd[1] << " " <<  dq_cmd[2] << " " <<  dq_cmd[3] << " " <<  dq_cmd[4] << " " <<  dq_cmd[5]<< " " <<  dq_cmd[6] << std::endl;
 
 //    franka::JointVelocities velocities = {0,0,0,0,0,0,0};
@@ -253,12 +275,14 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
       }
       cpt_dbg ++;
       if (stop == 7) {
-        log_time.close();
-        log_q_mes.close();
-        log_dq_mes.close();
-        log_dq_des.close();
-        log_dq_cmd.close();
-        log_v_des.close();
+        if (! log_folder.empty()) {
+          log_time.close();
+          log_q_mes.close();
+          log_dq_mes.close();
+          log_dq_des.close();
+          log_dq_cmd.close();
+          log_v_des.close();
+        }
         return franka::MotionFinished(velocities);
       }
     }

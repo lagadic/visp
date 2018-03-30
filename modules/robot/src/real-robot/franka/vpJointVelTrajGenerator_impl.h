@@ -70,6 +70,7 @@ public:
                 std::array<double, 7> &dq_cmd);
 
   void control_thread(franka::Robot *robot, std::atomic_bool &stop,
+                      const std::string &log_folder,
                       const vpRobot::vpControlFrameType &frame,
                       const vpHomogeneousMatrix &eMc,
                       const vpColVector &v_cart_des,

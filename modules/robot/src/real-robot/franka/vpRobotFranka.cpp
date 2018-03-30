@@ -42,6 +42,7 @@
 
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotFranka.h>
+#include <visp3/core/vpIoTools.h>
 
 #include "vpJointPosTrajGenerator_impl.h"
 #include "vpJointVelTrajGenerator_impl.h"
@@ -54,7 +55,7 @@
 vpRobotFranka::vpRobotFranka()
   : vpRobot(), m_handler(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
     m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_dq_des(), m_eMc()
+    m_mutex(), m_dq_des(), m_eMc(), m_log_folder()
 {
   init();
 }
@@ -68,7 +69,7 @@ vpRobotFranka::vpRobotFranka()
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
   : vpRobot(), m_handler(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
     m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_dq_des(), m_v_cart_des(), m_eMc()
+    m_mutex(), m_dq_des(), m_v_cart_des(), m_eMc(),m_log_folder()
 {
   init();
   connect(franka_address, realtime_config);
@@ -343,6 +344,34 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe)
   // TODO check from vpRobot fJe and fJeAvailable
 }
 
+/*!
+ * Set the folder or directory used to record logs at 1Kz when setVelocity() is used.
+ * By default the log folder is empty.
+ *
+ * When the log folder is empty, logs are not created.
+ *
+ * \param[in] folder : A path to a folder that will contain a basket of log files. If the folder doesn't exist
+ * it will be created recursively.
+ */
+void vpRobotFranka::setLogFolder(const std::string &folder)
+{
+  if (!folder.empty()) {
+    if (vpIoTools::checkDirectory(folder) == false) {
+      try {
+        vpIoTools::makeDirectory(folder);
+        m_log_folder = folder;
+      }
+      catch(const vpException &e) {
+        std::string error;
+        error = "Unable to create Franka log folder: " + folder;
+        throw(vpException(vpException::fatalError, error));
+      }
+    }
+    else {
+       m_log_folder = folder;
+    }
+  }
+}
 
 /*!
  * Set robot position. This function is blocking; it returns when the desired position is reached.
@@ -553,7 +582,7 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
     m_controlThreadIsRunning = true;
 //    std::cout << "DBG: Start control thread... ++++++++++++++++++++" << std::endl;
     m_controlThread = std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(),
-                                  std::ref(m_handler), std::ref(m_controlThreadStopAsked),
+                                  std::ref(m_handler), std::ref(m_controlThreadStopAsked), m_log_folder,
                                   frame, m_eMc, std::ref(m_v_cart_des), std::ref(m_dq_des),
                                   std::cref(m_q_min), std::cref(m_q_max), std::cref(m_dq_max), std::cref(m_ddq_max),
                                   std::ref(m_robot_state), std::ref(m_mutex));

@@ -249,6 +249,7 @@ private:
   std::array<double, 7> m_dq_des;   // Desired joint velocity
   vpColVector m_v_cart_des;             // Desired cartesian velocity either in reference, end-effector, camera, or tool frame
   vpHomogeneousMatrix m_eMc;
+  std::string m_log_folder;
 
 public:
   vpRobotFranka();
@@ -288,6 +289,7 @@ public:
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose);
 
   void set_eMc(const vpHomogeneousMatrix &eMc);
+  void setLogFolder(const std::string &folder);
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
   void setPositioningVelocity(const double velocity);
 
