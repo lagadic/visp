@@ -355,19 +355,29 @@ int main(int argc, const char **argv)
         std::cout << "Click in the internal view window to end..." << std::endl;
         vpDisplay::getClick(Iint);
       }
-      return 0;
-    } catch (vpException &e) {
+      return EXIT_SUCCESS;
+    } catch (const vpException &e) {
       std::cout << "Catch a ViSP exception: " << e << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
-  vpERROR_TRACE("You do not have X11, OpenCV or GDI display functionalities "
-                "or threading capabilities...");
+#if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
+  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+#else
+  std::cout << "You do not have threading capabilities" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install pthread, configure again ViSP using cmake and build again this example" << std::endl;
+#endif
+  return EXIT_SUCCESS;
 }
 
 #endif

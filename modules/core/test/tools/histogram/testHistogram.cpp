@@ -359,7 +359,7 @@ int main(int argc, const char **argv)
 
     std::cout << "testHistogram is OK!" << std::endl;
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return 1;
   }

@@ -111,14 +111,15 @@ int main()
       }
       iter++;
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 #else
   std::cout << "Plot functionalities are not avalaible since no display is "
                "available."
             << std::endl;
+  return EXIT_SUCCESS;
 #endif
 }

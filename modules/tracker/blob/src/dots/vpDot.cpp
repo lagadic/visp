@@ -655,7 +655,7 @@ void vpDot::initTracking(const vpImage<unsigned char> &I)
 
   try {
     track(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     throw(e);
   }
 }
@@ -705,7 +705,7 @@ void vpDot::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip
     gray_level_max = 255;
   try {
     track(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     throw(e);
   }
 }
@@ -748,7 +748,7 @@ void vpDot::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip
 
   try {
     track(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     throw(e);
   }
 }
@@ -790,7 +790,7 @@ void vpDot::track(const vpImage<unsigned char> &I)
       vpDisplay::displayCross(I, this->cog, 3 * thickness + 8, vpColor::red, thickness);
     }
 
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     throw(e);
   }
 }

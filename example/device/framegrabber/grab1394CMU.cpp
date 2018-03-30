@@ -257,15 +257,18 @@ int main(int argc, const char **argv)
     }
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
     std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else
 int main()
 {
   std::cout << "This example requires CMU 1394 Digital Camera SDK. " << std::endl;
-  return 0;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install CMU 1394 SDK, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

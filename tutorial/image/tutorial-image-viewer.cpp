@@ -37,7 +37,7 @@ int main()
     }
 
     vpDisplay::getClick(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

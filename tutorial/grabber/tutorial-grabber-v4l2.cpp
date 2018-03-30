@@ -56,7 +56,7 @@ int main(int argc, const char *argv[])
       if (vpDisplay::getClick(I, false))
         break;
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else

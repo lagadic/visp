@@ -360,7 +360,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
   } catch (vpMatrixException &me) {
     vpTRACE("Matrix Exception ");
     throw(me);
-  } catch (vpException &me) {
+  } catch (const vpException &me) {
     vpERROR_TRACE("caught another error");
     std::cout << std::endl << me << std::endl;
     throw(me);

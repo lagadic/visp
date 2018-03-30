@@ -307,7 +307,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
         vpDisplay::flush(I);
       }
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     vpERROR_TRACE("Error while tracking dots");
     vpCTRACE << e;
     return;
@@ -576,23 +576,32 @@ int main(int argc, const char **argv)
     }
     // Close the grabber
     grabber.close();
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   } catch (Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   } catch (...) {
     std::cout << "Catch an exception " << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else // VISP_HAVE_OGRE && VISP_HAVE_DISPLAY
 int main()
 {
-  std::cout << "You should install Ogre3D or a display (GTK or OpenCV...) to "
-               "run this example..."
-            << std::endl;
+#if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
+  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+#else
+  std::cout << "You do not have Ogre functionalities" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install Ogre3D, configure again ViSP using cmake and build again this example" << std::endl;
+#endif
+  return EXIT_SUCCESS;
 }
 #endif

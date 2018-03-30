@@ -268,7 +268,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
           dp = gain * 0.2 * HLM.inverseByLU() * G;
           break;
         }
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         // std::cerr<<"probleme inversion"<<std::endl;
         throw(e);
       }

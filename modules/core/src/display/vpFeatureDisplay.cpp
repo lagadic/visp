@@ -206,7 +206,7 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu
       x2 = x1;
       k += incr;
     } // end for loop
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     throw(e);
   }
 }
@@ -366,7 +366,7 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu
       x2 = x1;
       k += incr;
     } // end for loop
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     throw(e);
   }
 }

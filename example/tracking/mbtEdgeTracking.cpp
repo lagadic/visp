@@ -579,10 +579,10 @@ int main(int argc, const char **argv)
       SoDB::finish();
 #endif
 
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
@@ -591,7 +591,7 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "visp_mbt module is required to run this example." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

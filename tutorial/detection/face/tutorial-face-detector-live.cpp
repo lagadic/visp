@@ -112,7 +112,7 @@ int main(int argc, const char *argv[])
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << " ms" << std::endl;
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
   }
 #else

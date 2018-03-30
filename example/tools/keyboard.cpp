@@ -77,12 +77,12 @@ int main()
   int myvalue;
   std::cin >> myvalue;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
-  vpTRACE("Sorry, for the moment, vpKeyboard class works only on unix...");
-  return 0;
+  std::cout << "vpKeyboard class works only on unix..." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

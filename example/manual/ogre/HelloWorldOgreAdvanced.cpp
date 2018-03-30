@@ -182,12 +182,12 @@ int main()
 #else
     std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   } catch (...) {
     std::cout << "Catch an exception " << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

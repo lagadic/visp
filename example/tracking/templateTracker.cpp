@@ -533,10 +533,10 @@ int main(int argc, const char **argv)
     delete warp;
     delete tracker;
 
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 }
 
@@ -545,7 +545,7 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "visp_tt module or display not available." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

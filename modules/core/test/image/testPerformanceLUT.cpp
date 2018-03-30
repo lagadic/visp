@@ -526,7 +526,7 @@ int main(int argc, const char **argv)
     I_test_color.performLut(lut_color, nbThreads);
 
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return 1;
   }

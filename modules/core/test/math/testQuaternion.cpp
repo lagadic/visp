@@ -132,7 +132,7 @@ int main()
 
     std::cout << "vpQuaternion operations are ok !" << std::endl;
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e << std::endl;
     return 1;
   }

@@ -3078,7 +3078,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
              it != m_mapOfEdgeTrackers.end(); ++it) {
           it->second->upScale(lvl);
         }
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         if (lvl != 0) {
           cMo = cMo_1;
           reInitLevel(lvl);

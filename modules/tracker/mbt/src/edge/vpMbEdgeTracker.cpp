@@ -1101,7 +1101,7 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
           computeProjectionError(I);
 
         upScale(lvl);
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         if (lvl != 0) {
           cMo = cMo_1;
           reInitLevel(lvl);

@@ -117,17 +117,18 @@ int main()
     vpCTRACE << "Set articular frame velocity " << qdot.t();
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
     sleep(2);
-  } catch (...) {
-    std::cout << "Sorry PtU46 not available ..." << std::endl;
   }
-
-  return 0;
+  catch (const vpException &e) {
+    std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
+    return EXIT_FAILURE
+  }
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
-  vpERROR_TRACE("You do not have a ptu-46 robot connected to your computer...");
-  return 0;
+  std::cout << "You do not have an PTU46 PT robot connected to your computer..." << std::endl;
+  return EXIT_SUCCESS;
 }
 
 #endif

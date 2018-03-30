@@ -343,17 +343,21 @@ Create a display for each different cameras.
                  "refers to the html documentation to access the list of all "
                  "functions"
               << std::endl;
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_SUCCESS;
   }
 }
 #else
 int main()
 {
-  vpERROR_TRACE("You do not have X11, OpenCV, GDI, D3D9 or GTK display "
-                "functionalities...");
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
 }
 
 #endif

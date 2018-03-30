@@ -358,7 +358,7 @@ int main(int argc, const char **argv)
     }
 
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

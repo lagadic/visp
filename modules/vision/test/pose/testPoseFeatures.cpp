@@ -219,7 +219,7 @@ int main()
       return -1;
 
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return -1;
   }

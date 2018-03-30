@@ -60,7 +60,7 @@ int main()
       std::cout << "The system is not operational. \nPlease plug the "
                    "emergency stop to the system (or untrigger it)."
                 << std::endl;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 #else

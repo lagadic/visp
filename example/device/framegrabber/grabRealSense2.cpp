@@ -228,17 +228,22 @@ int main()
     std::cerr << e.what() << std::endl;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
-  std::cout << "Install librealsense2." << std::endl;
+  std::cout << "You do not realsense2 SDK functionality enabled..." << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
 #endif
 #if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
-  std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON)." << std::endl;
+  std::cout << "You do not build ViSP with C++11 compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CPP11=ON, and build again this example" << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

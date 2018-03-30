@@ -299,15 +299,15 @@ int main(int argc, const char **argv)
       std::cout << "Click to exit this example" << std::endl;
       vpDisplay::getClick(I);
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
   std::cout << "Sorry, no display is available. We quit this example." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

@@ -322,9 +322,9 @@ int main(int argc, const char **argv)
     task.kill();
     // Final camera location
     std::cout << "Final camera location: \n" << cMo << std::endl;
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
+    return EXIT_SUCCESS;
   }
 }

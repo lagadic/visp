@@ -19,7 +19,7 @@ int main()
 #ifdef VISP_HAVE_PNG
     vpImageIo::write(I, "monkey.png"); // Gray
 #endif
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

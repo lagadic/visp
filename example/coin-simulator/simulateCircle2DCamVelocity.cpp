@@ -360,13 +360,19 @@ int main(int argc, const char **argv)
       simu.initApplication(&mainLoop);
       simu.mainLoop();
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
 #else
-int main() { vpTRACE("You should install Coin3D and SoQT or SoWin or SoXt"); }
+int main()
+{
+  std::cout << "You do not have Coin3D and SoQT or SoWin or SoXt functionalities enabled..." << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install Coin3D and SoQT or SoWin or SoXt, configure ViSP again using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

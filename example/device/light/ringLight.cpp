@@ -210,12 +210,12 @@ int main(int argc, const char **argv)
   } catch (...) {
     printf("An error occurs...\n");
   }
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
-  vpTRACE("Sorry, for the moment, vpRingLight class works only on unix...");
-  return 0;
+  std::cout << "vpRingLight class works only on unix on a the Inria Afma6 platform..." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

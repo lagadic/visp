@@ -110,7 +110,7 @@ int main()
     std::cout << "Matching is " << (test_fail ? "badly" : "well") << " performed" << std::endl;
 
     return test_fail;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

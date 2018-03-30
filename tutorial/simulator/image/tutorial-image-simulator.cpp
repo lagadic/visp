@@ -80,7 +80,7 @@ int main()
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

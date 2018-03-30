@@ -50,7 +50,7 @@ int main(int argc, char **)
     if (save)
       writer.close();
 
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else

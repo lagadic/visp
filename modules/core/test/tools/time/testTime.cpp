@@ -120,7 +120,7 @@ int main()
     std::cout << "t8-t7: wait(2 ms): " << t8 - t7 << std::endl;
 
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

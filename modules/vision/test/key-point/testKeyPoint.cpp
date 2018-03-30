@@ -243,7 +243,7 @@ int main(int argc, const char **argv)
       }
     }
 
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }

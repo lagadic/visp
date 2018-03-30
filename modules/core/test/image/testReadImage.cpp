@@ -226,7 +226,7 @@ int main(int argc, const char **argv)
       vpImageIo::read(I, filename);
       printf("Image \"%s\" read successfully\n", filename.c_str());
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
   return 0;

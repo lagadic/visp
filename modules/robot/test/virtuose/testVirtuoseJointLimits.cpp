@@ -158,7 +158,7 @@ int main()
     }
 
     std::cout << "The end" << std::endl;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 }

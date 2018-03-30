@@ -143,7 +143,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
 
     try {
       dp = 1. * HLM.inverseByLU() * G;
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       // std::cout<<"probleme inversion"<<std::endl;
       throw(e);
     }

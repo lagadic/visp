@@ -747,7 +747,7 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
     HdesirePyr[0] = Hdesire;
     HLMdesirePyr[0] = HLMdesire;
     HLMdesireInversePyr[0] = HLMdesireInverse;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     ptTemplateSuppPyr[0] = ptTemplateSupp;
     ptTemplateCompoPyr[0] = ptTemplateCompo;
     HdesirePyr[0] = Hdesire;
@@ -774,7 +774,7 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
         HdesirePyr[i] = Hdesire;
         HLMdesirePyr[i] = HLMdesire;
         HLMdesireInversePyr[i] = HLMdesireInverse;
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         ptTemplateSuppPyr[i] = ptTemplateSupp;
         ptTemplateCompoPyr[i] = ptTemplateCompo;
         HdesirePyr[i] = Hdesire;
@@ -890,7 +890,7 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
       trackRobust(I);
     }
     delete[] pyr_I;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     delete[] pyr_I;
     throw(vpTrackingException(vpTrackingException::badValue, e.getMessage()));
   }

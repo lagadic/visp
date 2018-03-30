@@ -367,17 +367,19 @@ int main()
     vpTRACE("Display task information ");
     task.print();
     task.kill();
-  } catch (...) {
-    vpERROR_TRACE(" Test failed");
-    return 0;
+    return EXIT_SUCCESS;
+  }
+  catch (const vpException &e) {
+    std::cout << "Test failed with exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 }
 
 #else
 int main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber "
-                "connected to your computer...");
+  std::cout << "You do not have an afma6 robot connected to your computer..." << std::endl;
+  return EXIT_SUCCESS;
 }
 
 #endif

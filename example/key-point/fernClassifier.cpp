@@ -346,14 +346,14 @@ int main(int argc, const char **argv)
 
       try {
         fern.buildReference(Iref, roi);
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         std::cout << e.getMessage() << std::endl;
       } catch (...) {
         std::cout << "unknown error, line " << __LINE__ << std::endl;
       }
       try {
         fern.record(objectName, dataFile);
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         std::cout << e.getMessage() << std::endl;
       } catch (...) {
         std::cout << "unknown error, line " << __LINE__ << std::endl;
@@ -411,7 +411,7 @@ int main(int argc, const char **argv)
       unsigned int nbpts;
       try {
         nbpts = fern.matchPoint(I);
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         std::cout << e.getMessage() << std::endl;
         return -1;
       } catch (...) {
@@ -431,10 +431,10 @@ int main(int argc, const char **argv)
       }
     }
 
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_SUCCESS;
   }
 }
 
@@ -442,10 +442,17 @@ int main(int argc, const char **argv)
 int main()
 {
 #if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
-  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
+  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
 #else
-  vpERROR_TRACE("You do not have OpenCV-2.0.0 or a more recent release...");
+  std::cout << "You do not have OpenCV functionalities" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install OpenCV, configure again ViSP using cmake and build again this example" << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }
 
 #endif

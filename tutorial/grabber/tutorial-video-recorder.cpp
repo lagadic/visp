@@ -114,7 +114,7 @@ int main(int argc, const char *argv[])
       vpDisplay::flush(I);
     }
     std::cout << "The video was recorded in \"" << opt_videoname << "\"" << std::endl;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
