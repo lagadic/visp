@@ -255,16 +255,28 @@ int main(int argc, const char **argv)
 
     // Release the framegrabber
     delete grabber;
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else  // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
-int main() { vpTRACE("GDI or GTK is not available..."); }
+int main()
+{
+  std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 #else  // defined (VISP_HAVE_DIRECTSHOW)
-int main() { vpTRACE("DirectShow is not available..."); }
+int main()
+{
+  std::cout << "This example requires Direct Show SDK. " << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install Direct Show, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif // defined (VISP_HAVE_DIRECTSHOW)

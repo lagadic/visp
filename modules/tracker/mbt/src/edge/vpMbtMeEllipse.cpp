@@ -479,7 +479,7 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
 
   try {
     track(I);
-  } catch (vpException &exception) {
+  } catch (const vpException &exception) {
     throw(exception);
   }
 }
@@ -493,7 +493,7 @@ void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 {
   try {
     vpMeTracker::track(I);
-  } catch (vpException &exception) {
+  } catch (const vpException &exception) {
     throw(exception);
   }
 }

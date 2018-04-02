@@ -263,17 +263,17 @@ int main()
     // Kill the task
     task.kill();
 
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
 #else
 int main()
 {
-  vpERROR_TRACE("You do not have an afma4 robot or a firewire framegrabber "
-                "connected to your computer...");
+  std::cout << "You do not have an afma4 robot connected to your computer..." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

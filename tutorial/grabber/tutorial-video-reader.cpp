@@ -69,7 +69,7 @@ int main(int argc, char **argv)
       vpTime::wait(t, 1000. / g.getFramerate());
       //! [vpVideoReader loop rate]
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
   }
 #else

@@ -107,15 +107,16 @@ int main()
     // Save the datas as text files
     plot.saveData(0, "dataCos.txt", "# ");
     plot.saveData(1, "dataSin.txt", "# ");
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
 #else
   std::cout << "Plot functionalities are not avalaible since no display is "
                "available."
             << std::endl;
+  return EXIT_SUCCESS;
 #endif
 }

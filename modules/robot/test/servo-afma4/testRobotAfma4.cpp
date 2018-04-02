@@ -60,7 +60,7 @@ int main()
     vpRobotAfma4 afma4;
 
     std::cout << afma4 << std::endl;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;

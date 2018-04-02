@@ -177,9 +177,9 @@ int main()
       vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
     } while ((task.getError()).sumSquare() > 0.005);
     std::cout << "final error=" << (task.getError()).sumSquare() << std::endl;
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

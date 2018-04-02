@@ -31,7 +31,7 @@ int main()
       if (vpDisplay::getClick(I, false)) // A click to exit
         break;
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

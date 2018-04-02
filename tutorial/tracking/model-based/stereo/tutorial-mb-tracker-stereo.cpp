@@ -229,7 +229,7 @@ int main(int argc, char **argv)
     delete display_right;
     delete tracker;
     //! [Cleanup]
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Catch a ViSP exception: " << e.getMessage() << std::endl;
   }
 #else

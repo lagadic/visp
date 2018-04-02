@@ -358,9 +358,9 @@ int main(int argc, const char **argv)
       vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d", valey.getLevel(), valey.getValue(),
               peakl.getLevel(), peakl.getValue(), peakr.getLevel(), peakr.getValue());
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

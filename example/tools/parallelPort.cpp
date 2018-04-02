@@ -175,15 +175,15 @@ int main(int argc, const char **argv)
       printf("Can't close the parallel port\n");
       break;
     }
-  } catch (...) {
-    printf("An error occurs...\n");
+  } catch (const vpException &e) {
+    std::cout << "An error occurs: " << e.getMessage() << std::endl;
   }
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
-  vpTRACE("Sorry, for the moment, vpParallelPort class works only on unix...");
-  return 0;
+  std::cout << "vpParallelPort class works only on unix..." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

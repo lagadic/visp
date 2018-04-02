@@ -172,9 +172,9 @@ int main(int argc, const char **argv)
     cout << "  Double  value: " << d_val << endl << endl;
     cout << "Call  " << argv[0] << " -h to see how to change these parameters." << endl;
 
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

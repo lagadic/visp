@@ -221,13 +221,13 @@ int main(int argc, const char **argv)
 
     if (inliers == inliers_ground_truth) {
       std::cout << "Ransac estimation succeed" << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     } else {
       std::cout << "Ransac estimation fails" << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

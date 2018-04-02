@@ -501,10 +501,10 @@ int main(int argc, const char **argv)
       // Wait for a blocking mouse click
       vpDisplay::getClick(I);
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else
@@ -515,6 +515,7 @@ int main()
   std::cout << "visp_me module or X11, GTK, GDI or OpenCV display "
                "functionalities are required..."
             << std::endl;
+  return EXIT_SUCCESS;
 }
 
 #endif

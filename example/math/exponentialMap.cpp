@@ -116,9 +116,9 @@ int main()
     v = vpExponentialMap::inverse(M, 2.f);
 
     std::cout << "Velocity from displacement observed during 2 s: \n" << v << std::endl;
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

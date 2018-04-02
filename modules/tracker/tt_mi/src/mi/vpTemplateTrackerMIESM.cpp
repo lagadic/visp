@@ -467,7 +467,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
             break;
           }
         }
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         // std::cerr<<"probleme inversion"<<std::endl;
         throw(e);
       }

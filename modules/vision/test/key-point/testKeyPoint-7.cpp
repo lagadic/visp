@@ -672,7 +672,7 @@ int main(int argc, const char **argv)
     }
 #endif
 
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }

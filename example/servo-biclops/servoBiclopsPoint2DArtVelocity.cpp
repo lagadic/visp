@@ -413,15 +413,18 @@ int main(int argc, const char **argv)
 
     fclose(fd);
 
-  } catch (...) {
-    vpERROR_TRACE("Throw uncatched...");
+    return EXIT_SUCCESS
+  }
+  catch (const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+    return EXIT_FAILURE
   }
 }
 
 #else
 int main()
 {
-  vpERROR_TRACE("You don't have a biclops head connected to your computer or "
-                "1394 framegrabbing capabilities...");
+  std::cout << "You do not have an biclops PT robot connected to your computer..." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

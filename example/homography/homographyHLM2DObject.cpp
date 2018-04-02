@@ -262,9 +262,9 @@ int main(int argc, const char **argv)
       ++it_laTb;
       ++it_lnb;
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

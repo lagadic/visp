@@ -134,10 +134,10 @@ int main()
     vpDisplay::getImage(I, Ic);
     std::cout << "ViSP creates \"./geometricFeatures.ppm\" B&W image " << std::endl;
     vpImageIo::write(Ic, "./geometricFeatures.ppm");
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
 #endif

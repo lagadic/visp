@@ -340,7 +340,7 @@ int main()
     envvalue = vpIoTools::getenv("HOME");
     std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
   }
-  catch (vpException &e) {
+  catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
     return -1;
   }
@@ -391,7 +391,7 @@ int main()
     envvalue = vpIoTools::getenv(env);
     std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
   }
-  catch (vpException &e) {
+  catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
     return -1;
   }

@@ -68,9 +68,9 @@ int main()
       g.acquire(I); // Acquire a 768x576 grey image
 #endif
 
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

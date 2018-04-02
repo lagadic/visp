@@ -138,7 +138,7 @@ int main()
     robot.stopMotion();
     virtuose.setPowerOff();
     std::cout << "The end" << std::endl;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     robot.stopMotion();
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }

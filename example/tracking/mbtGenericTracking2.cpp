@@ -755,7 +755,7 @@ int main()
   std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run "
                "this example."
             << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

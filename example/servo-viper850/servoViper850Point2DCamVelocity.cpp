@@ -268,18 +268,19 @@ int main()
     // Kill the task
     task.kill();
 
-    return 0;
-  } catch (...) {
+    return EXIT_SUCCESS;
+  }
+  catch (const vpException &e) {
     flog.close(); // Close the log file
-    vpERROR_TRACE(" Test failed");
-    return 0;
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+    return EXIT_FAILURE;
   }
 }
 
 #else
 int main()
 {
-  vpERROR_TRACE("You do not have a Viper robot or a firewire framegrabber "
-                "connected to your computer...");
+  std::cout << "You do not have an Viper 850 robot connected to your computer..." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

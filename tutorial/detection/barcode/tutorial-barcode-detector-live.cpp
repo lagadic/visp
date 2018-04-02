@@ -115,7 +115,7 @@ int main(int argc, const char **argv)
         break;
     }
     delete detector;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else

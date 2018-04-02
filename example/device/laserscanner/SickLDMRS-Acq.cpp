@@ -71,20 +71,19 @@ int main()
       iter++;
       std::cout << "iter: " << iter << " time: " << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
 #else  // #ifdef UNIX
-
 int main()
 {
-  std::cout << "This example is only working on UNIX platforms \n"
+  std::cout << "This example is only working on unix-like platforms \n"
             << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif // #ifdef UNIX

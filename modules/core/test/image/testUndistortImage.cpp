@@ -284,7 +284,7 @@ int main(int argc, const char **argv)
     std::cout << "Write undistorted image: " << filename << std::endl;
     vpImageIo::write(U, filename);
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

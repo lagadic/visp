@@ -276,7 +276,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 
   try {
     track(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     // vpERROR_TRACE("Error caught") ;
     throw(e);
   }
@@ -334,7 +334,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 
   try {
     track(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     // vpERROR_TRACE("Error caught") ;
     throw(e);
   }
@@ -392,7 +392,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 
   try {
     track(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     // vpERROR_TRACE("Error caught") ;
     throw(e);
   }

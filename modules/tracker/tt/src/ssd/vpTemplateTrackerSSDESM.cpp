@@ -181,7 +181,7 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
       // dp=HLMInv.inverseByLU()*GInv+HLMDir.inverseByLU()*GDir;
       // dp=HLMInv.inverseByLU()*GInv;
       dp = (HLMDir).inverseByLU() * (GDir);
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       // std::cout<<"probleme inversion"<<std::endl;
       throw(e);
     }

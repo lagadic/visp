@@ -367,15 +367,29 @@ int main(int argc, const char **argv)
     }
 
     g.close();
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else
-int main() { vpTRACE("X11 or GTK display are not available"); }
+int main()
+{
+  std::cout << "You do not have X11, or GTK functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GTK, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif
 #else
-int main() { vpTRACE("Video 4 Linux 2 frame grabber drivers are not available"); }
+int main()
+{
+  std::cout << "You do not have Video 4 Linux 2 functionality enabled" << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install libv4l2, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

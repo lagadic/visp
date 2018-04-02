@@ -1,4 +1,41 @@
-#include <visp3/core/vpConfig.h>
+/****************************************************************************
+ *
+ * This file is part of the ViSP software.
+ * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See http://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Description:
+ * Acquire images using 1394 device with cfox (MAC OSX) and display it
+ * using GTK or GTK.
+ *
+ * Authors:
+ * Fabien Spindler
+ *
+ *****************************************************************************/
 
 /*!
   \example grabV4l2MultiCpp11Thread.cpp
@@ -6,6 +43,10 @@
   \brief Example of using V4l2 backend to capture multiple camera streams
          with C++11 threads.
 */
+
+#include <iostream>
+
+#include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_CPP11_COMPATIBILITY) && defined(VISP_HAVE_V4L2) &&                                               \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
@@ -410,7 +451,7 @@ int main(int argc, char *argv[])
       pGrabber->setScale(cameraScale);
 
       grabbers.push_back(pGrabber);
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       std::cerr << "Exception: " << e.what() << std::endl;
     }
   }
@@ -486,16 +527,35 @@ int main(int argc, char *argv[])
     st.join();
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
-#include <iostream>
-
+#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 int main()
 {
-  std::cout << "Warning: This example need to be build with cxx11 compiler "
-               "flags, v4l2 and x11 or gtk 3rd partiess. "
-            << std::endl;
-  return 0;
+  std::cout << "You do not have X11, or GTK functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GTK, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
+#elif !defined(VISP_HAVE_V4L2)
+int main()
+{
+  std::cout << "You do not have Video 4 Linux 2 functionality enabled" << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install libv4l2, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
+#else
+int main()
+{
+  std::cout << "You do not build ViSP with C++11 compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CPP11=ON, and build again this example" << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif
+#endif
+

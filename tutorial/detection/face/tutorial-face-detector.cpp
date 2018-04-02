@@ -85,7 +85,7 @@ int main(int argc, const char *argv[])
     }
     if (!exit_requested)
       vpDisplay::getClick(I);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
   }
 #else

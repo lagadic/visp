@@ -971,7 +971,7 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
     if (m_computeCovariance) {
       m_covarianceMatrix = pose.getCovarianceMatrix();
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "e=" << e.what() << std::endl;
     elapsedTime = (vpTime::measureTimeMs() - t);
     return false;

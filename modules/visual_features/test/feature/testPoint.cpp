@@ -135,7 +135,7 @@ int main()
       std::cout << e << std::endl;
     } catch (vpFeatureException &me) {
       std::cout << me << std::endl;
-    } catch (vpException &me) {
+    } catch (const vpException &me) {
       std::cout << me << std::endl;
     }
     std::cout << "------------------------------------------------------" << std::endl;
@@ -161,7 +161,7 @@ int main()
     dim = p.getDimension(vpFeaturePoint::selectAll());
     std::cout << "Dimension = " << dim << std::endl;
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

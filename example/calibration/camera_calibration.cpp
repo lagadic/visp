@@ -366,12 +366,18 @@ int main(int argc, const char **argv)
     } else
       std::cout << "Calibration with distortion failed." << std::endl;
 
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else
-int main() { std::cout << "OpenCV 2.3.0 or higher is requested to run the calibration." << std::endl; }
+int main()
+{
+  std::cout << "OpenCV 2.3.0 or higher is requested to run the calibration." << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install OpenCV, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

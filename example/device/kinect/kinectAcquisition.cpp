@@ -134,13 +134,13 @@ int main()
     }
     std::cout << "Stop acquisition" << std::endl;
     kinect.stop(); // Stop acquisition thread
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   } catch (...) {
     std::cout << "Catch an exception " << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
@@ -148,13 +148,21 @@ int main()
 
 int main()
 {
-  std::cout << "You should install a video device (X11, GTK, OpenCV, GDI) to "
-               "run this example"
-            << std::endl;
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK, or OpenCV functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif
 
 #else
-int main() { std::cout << "You should install libfreenect to run this example" << std::endl; }
-
+int main()
+{
+  std::cout << "You do not have Freenect functionality enabled" << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install libfreenect, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

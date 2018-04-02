@@ -4850,7 +4850,7 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
   if (m_trackerType & KLT_TRACKER) {
     try {
       vpMbKltTracker::preTracking(*ptr_I);
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       std::cerr << "Error in KLT tracking: " << e.what() << std::endl;
       throw;
     }
@@ -4947,7 +4947,7 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
   if (m_trackerType & KLT_TRACKER) {
     try {
       vpMbKltTracker::preTracking(*ptr_I);
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       std::cerr << "Error in KLT tracking: " << e.what() << std::endl;
       throw;
     }

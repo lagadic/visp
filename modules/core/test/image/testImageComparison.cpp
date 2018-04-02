@@ -278,7 +278,7 @@ int main(int argc, const char **argv)
       throw vpException(vpException::fatalError, ss.str());
     }
 
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "\nCatch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

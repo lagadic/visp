@@ -2184,7 +2184,7 @@ int main()
 
     std::cout << "\n\ntestPoseRansac2 is ok!" << std::endl;
     return EXIT_SUCCESS;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
