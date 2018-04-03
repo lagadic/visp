@@ -967,12 +967,10 @@ void vpSimulatorAfma6::setVelocity(const vpRobot::vpControlFrameType frame, cons
   case vpRobot::MIXT_FRAME: {
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in MIXT_FRAME frame:"
                                                               "functionality not implemented");
-    break;
   }
   case vpRobot::END_EFFECTOR_FRAME: {
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in END_EFFECTOT_FRAME frame:"
                                                               "functionality not implemented");
-    break;
   }
   }
 
