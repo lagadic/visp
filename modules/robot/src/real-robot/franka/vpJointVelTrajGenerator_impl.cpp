@@ -316,7 +316,6 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   }
   case vpRobot::MIXT_FRAME: {
     throw vpException(vpException::fatalError, "Velocity controller not supported");
-    break;
   }
   }
 }
@@ -447,7 +446,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
     m_dist_to_final[i] = ( m_q_final[i] - m_q_cmd[i]) * m_sign[i];
     if ((m_dist_to_final[i] - m_delta_q_max[i]) <=  m_dist_AD[i]) {
       if (m_dist_AD[i] > 0) {
-        if (!m_flagJointLimit) printf("Joint limit flag axis %lu\n", i);
+        if (!m_flagJointLimit) printf("Joint limit flag axis %lu\n", (unsigned long)i);
         m_flagJointLimit = true;
         for(size_t k=0; k < m_njoints; k++)
         {
@@ -522,7 +521,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
         m_q_cmd[j] -= m_sign[j]*m_delta_q[j];
       }
       m_q_cmd[i] = butee;
-      printf("Joint limit axis %lu\n", i);
+      printf("Joint limit axis %lu\n", (unsigned long)i);
       break;
     }
     butee = (float) (m_q_max[i] - m_offset_joint_limit);
@@ -531,7 +530,7 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
         m_q_cmd[j] -= m_sign[j]*m_delta_q[j];
       }
       m_q_cmd[i] = butee;
-      printf("Joint limit axis %lu\n", i);
+      printf("Joint limit axis %lu\n", (unsigned long)i);
       break;
     }
   }
