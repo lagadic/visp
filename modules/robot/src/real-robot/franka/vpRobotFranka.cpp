@@ -192,7 +192,6 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
   }
   default: {
     throw(vpException(vpException::fatalError, "Cannot get Franka cartesian position: wrong method"));
-    break;
   }
   }
 }
@@ -289,7 +288,6 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
   }
   default: {
     throw(vpException(vpException::fatalError, "Cannot get Franka cartesian position: not implemented"));
-    break;
   }
   }
 }
@@ -574,7 +572,6 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   case vpRobot::MIXT_FRAME: {
     throw vpRobotException(vpRobotException::wrongStateError,
                            "Velocity controller not supported");
-    break;
   }
   }
 
