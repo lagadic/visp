@@ -838,7 +838,7 @@ bool vpIoTools::remove(const char *file_or_dir)
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
-    sprintf(cmd, "rm -rf %s", file_or_dir);
+    sprintf(cmd, "rm -rf \"%s\"", file_or_dir);
     int ret = system(cmd);
     if (ret) {
     }; // to avoid a warning
