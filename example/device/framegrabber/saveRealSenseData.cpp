@@ -235,11 +235,22 @@ class StorageWorker {
 public:
   StorageWorker(FrameQueue &queue, const std::string &directory, const bool save_color,
                 const bool save_depth, const bool save_pointcloud, const bool save_infrared,
-                const bool save_pointcloud_binary_format, int width, int height) :
+                const bool save_pointcloud_binary_format, int
+#ifndef VISP_HAVE_PCL
+                width
+#endif
+                , int
+#ifndef VISP_HAVE_PCL
+                height
+#endif
+                ) :
     m_queue(queue), m_directory(directory), m_cpt(0), m_save_color(save_color), m_save_depth(save_depth),
     m_save_pointcloud(save_pointcloud), m_save_infrared(save_infrared),
-    m_save_pointcloud_binary_format(save_pointcloud_binary_format),
-    m_size_height(height), m_size_width(width) {
+    m_save_pointcloud_binary_format(save_pointcloud_binary_format)
+#ifndef VISP_HAVE_PCL
+  , m_size_height(height), m_size_width(width)
+#endif
+  {
   }
 
   //Thread main loop
@@ -376,8 +387,10 @@ private:
   bool m_save_pointcloud;
   bool m_save_infrared;
   bool m_save_pointcloud_binary_format;
+#ifndef VISP_HAVE_PCL
   int m_size_height;
   int m_size_width;
+#endif
 };
 } //Namespace
 
@@ -532,8 +545,13 @@ int main(int argc, char *argv[]) {
   while (!quit) {
     if (use_aligned_stream) {
 #ifdef USE_REALSENSE2
+  #ifdef VISP_HAVE_PCL
       realsense.acquire((unsigned char *) I_color.bitmap, (unsigned char *) I_depth_raw.bitmap, NULL, pointCloud, NULL,
                         &align_to);
+  #else
+      realsense.acquire((unsigned char *) I_color.bitmap, (unsigned char *) I_depth_raw.bitmap, &pointCloud, NULL,
+                        &align_to);
+  #endif
 #else
   #ifdef VISP_HAVE_PCL
       realsense.acquire((unsigned char *) I_color.bitmap, (unsigned char *) I_depth_raw.bitmap, NULL, pointCloud, (unsigned char *) I_infrared.bitmap,
