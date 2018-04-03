@@ -254,7 +254,7 @@ int main(int argc, const char **argv)
     }
 
     // Create the debug file: debugdir/$user/biclops.txt
-    char *filename = new char[FILENAME_MAX];
+    char filename[FILENAME_MAX];
     sprintf(filename, "%s/biclops.txt", debugdir.c_str());
     FILE *fd = fopen(filename, "w");
 
