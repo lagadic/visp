@@ -221,7 +221,6 @@ int main()
     // Kill the task
     task.kill();
 
-    return 0;
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
