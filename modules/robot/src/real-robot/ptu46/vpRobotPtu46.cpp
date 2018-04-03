@@ -604,6 +604,7 @@ void vpRobotPtu46::getVelocity(const vpRobot::vpControlFrameType frame, vpColVec
   case vpRobot::MIXT_FRAME: {
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the mixt frame:"
                                                               "functionality not implemented");
+  }
   case vpRobot::END_EFFECTOR_FRAME: {
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the end-effector frame:"
                                                               "functionality not implemented");
