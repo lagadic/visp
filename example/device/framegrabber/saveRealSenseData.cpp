@@ -323,8 +323,8 @@ public:
 #else
                 uint32_t width = m_size_width;
                 uint32_t height = m_size_height;
-                //true if pointcloud does not contain NaN or Inf, not handled currently
-                char is_dense = pointCloud->is_dense;
+                //to be consistent with PCL version
+                char is_dense = 1;
 
                 vpIoTools::writeBinaryValueLE(file_pointcloud, height);
                 vpIoTools::writeBinaryValueLE(file_pointcloud, width);
