@@ -104,8 +104,8 @@ bool cancelled = false, update_pointcloud = false;
 
 class ViewerWorker {
 public:
-  ViewerWorker(std::mutex &mutex) :
-    m_mutex(mutex), m_cancelled(false) { }
+  explicit ViewerWorker(std::mutex &mutex) :
+    m_mutex(mutex) { }
 
   void run() {
     pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
@@ -151,7 +151,6 @@ public:
 
 private:
   std::mutex &m_mutex;
-  bool m_cancelled;
 };
 #endif
 
