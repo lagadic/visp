@@ -98,15 +98,12 @@ void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<
 void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &pnd, vpMatrix &pn,
                  vpMatrix &M, vpMatrix &Mdp)
 {
-  unsigned int i, j, k;
-  unsigned int cont_pts; /* */
-
   /* Construction des matrices de changement de repere */
   vpMatrix Md(3, 3);
   vpMatrix Mp(3, 3);
 
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
       M[j][i] = p[pts_ref[i]][j];
       Md[j][i] = pd[pts_ref[i]][j];
     }
@@ -120,15 +117,15 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
     double lamb_des[3];
     double lamb_cour[3];
 
-    for (i = 0; i < 3; i++) {
-      for (j = 0; j < 3; j++) {
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 3; j++) {
         lamb_cour[i] = Mp[i][j] * p[pts_ref[3]][j];
         lamb_des[i] = Mdp[i][j] * pd[pts_ref[3]][j];
       }
     }
 
-    for (i = 0; i < 3; i++) {
-      for (j = 0; j < 3; j++) {
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 3; j++) {
         M[i][j] = M[i][j] * lamb_cour[j];
         Md[i][j] = Md[i][j] * lamb_des[j];
       }
@@ -140,13 +137,13 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
   /* changement de repere pour tous les points autres que
      les trois points de reference */
 
-  cont_pts = 0;
-  for (k = 0; k < nb_pts; k++) {
+  unsigned int cont_pts = 0;
+  for (unsigned int k = 0; k < nb_pts; k++) {
     if ((pts_ref[0] != k) && (pts_ref[1] != k) && (pts_ref[2] != k)) {
-      for (i = 0; i < 3; i++) {
+      for (unsigned int i = 0; i < 3; i++) {
         pn[cont_pts][i] = 0.0;
         pnd[cont_pts][i] = 0.0;
-        for (j = 0; j < 3; j++) {
+        for (unsigned int j = 0; j < 3; j++) {
           pn[cont_pts][i] = pn[cont_pts][i] + Mp[i][j] * p[k][j];
           pnd[cont_pts][i] = pnd[cont_pts][i] + Mdp[i][j] * pd[k][j];
         }
@@ -185,8 +182,6 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
  ****************************************************************************/
 void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpMatrix &H)
 {
-  unsigned int i, j;
-
   double vals_inf;
   unsigned int contZeros, vect;
 
@@ -196,7 +191,7 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
   vpColVector sv(9);
 
   /** construction de la matrice M des coefficients dans le cas general **/
-  for (j = 0; j < nb_pts; j++) {
+  for (unsigned int j = 0; j < nb_pts; j++) {
     M[3 * j][0] = 0;
     M[3 * j][1] = 0;
     M[3 * j][2] = 0;
@@ -245,7 +240,7 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
   if (fabs(sv[0]) < eps) {
     contZeros = contZeros + 1;
   }
-  for (j = 1; j < 9; j++) {
+  for (unsigned int j = 1; j < 9; j++) {
     if (fabs(sv[j]) < vals_inf) {
       vals_inf = fabs(sv[j]);
       vect = j;
@@ -263,8 +258,8 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
 
   H.resize(3, 3);
   /** construction de la matrice H **/
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
       H[i][j] = V[3 * i + j][vect];
     }
   }
@@ -295,25 +290,8 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
  **/
 void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
 {
-  unsigned int i, j, k, ii, jj;
-  unsigned int cont_pts; /* Pour compter le nombre de points dans l'image */
-  // unsigned int nl;			/*** Nombre de lignes ***/
-  unsigned int nc;         /*** Nombre de colonnes ***/
   unsigned int pts_ref[4]; /*** definit lesquels des points de
                         l'image sont les points de reference***/
-  /***  ***/
-  unsigned int perm; /***  Compte le nombre de permutations, quand le nombre
-                   de permutations =0 arret de l'ordonnancement **/
-  int cont_zeros;    /*** pour compter les valeurs quasi= a zero	***/
-  unsigned int cont;
-  unsigned int vect;
-
-  // int 	 prob;
-
-  /***** Corps de la fonction	*****/
-
-  /* allocation des matrices utilisees uniquement dans la procedure */
-  // prob=0;
 
   vpMatrix M(3, 3);
   vpMatrix Mdp(3, 3);
@@ -342,7 +320,7 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
 
   changeFrame(pts_ref, nb_pts, pd, p, pnd, pn, M, Mdp);
 
-  cont_pts = nb_pts - 3;
+  unsigned int cont_pts = nb_pts - 3;
 
   if (cont_pts < 5) {
     // vpERROR_TRACE(" not enough point to compute the homography ... ");
@@ -350,14 +328,14 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
   }
 
   // nl = cont_pts*(cont_pts-1)*(cont_pts-2)/6 ;
-  nc = 7;
+  unsigned int nc = 7;
 
   /* Allocation matrice CtC */
   vpMatrix CtC(nc, nc);
 
   /* Initialisation matrice CtC */
-  for (i = 0; i < nc; i++)
-    for (j = 0; j < nc; j++)
+  for (unsigned int i = 0; i < nc; i++)
+    for (unsigned int j = 0; j < nc; j++)
       CtC[i][j] = 0.0;
 
   /* Allocation matrice M */
@@ -373,10 +351,10 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
        v3 = x2*x4 ; v4 = x2*x6 ;
        v5 = x3*x5 ; v6 = x3*x4 ;
   ****/
-  cont = 0;
-  for (i = 0; i < nb_pts - 5; i++) {
-    for (j = i + 1; j < nb_pts - 4; j++) {
-      for (k = j + 1; k < nb_pts - 3; k++) {
+  unsigned int cont = 0;
+  for (unsigned int i = 0; i < nb_pts - 5; i++) {
+    for (unsigned int j = i + 1; j < nb_pts - 4; j++) {
+      for (unsigned int k = j + 1; k < nb_pts - 3; k++) {
         /* coeff a^2*b  */
         C[0] = pn[i][2] * pn[j][2] * pn[k][1] * pnd[k][0]               //
                    * (pnd[j][0] * pnd[i][1] - pnd[j][1] * pnd[i][0])    //
@@ -437,8 +415,8 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
 
         cont = cont + 1;
         /* construction de la matrice CtC */
-        for (ii = 0; ii < nc; ii++) {
-          for (jj = ii; jj < nc; jj++) {
+        for (unsigned int ii = 0; ii < nc; ii++) {
+          for (unsigned int jj = ii; jj < nc; jj++) {
             CtC[ii][jj] = CtC[ii][jj] + C[ii] * C[jj];
           }
         }
@@ -447,8 +425,8 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
   }
 
   /* calcul de CtC */
-  for (i = 0; i < nc; i++) {
-    for (j = i + 1; j < nc; j++)
+  for (unsigned int i = 0; i < nc; i++) {
+    for (unsigned int j = i + 1; j < nc; j++)
       CtC[j][i] = CtC[i][j];
   }
 
@@ -474,24 +452,7 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
         absolu
   *****/
 
-  vpColVector svSorted(nc); // sorted singular value
-
-  // sorting the singular value
-  for (i = 0; i < nc; i++)
-    svSorted[i] = sv[i];
-  perm = 1;
-  double v_temp;
-  while (perm != 0) {
-    perm = 0;
-    for (i = 1; i < nc; i++) {
-      if (svSorted[i - 1] > svSorted[i]) {
-        v_temp = svSorted[i - 1];
-        svSorted[i - 1] = svSorted[i];
-        svSorted[i] = v_temp;
-        perm = perm + 1;
-      }
-    }
-  }
+  vpColVector svSorted = vpColVector::invSort(sv); // sorted singular value
 
   /*****
         Parcours de la matrice ordonnee des valeurs singulieres
@@ -500,10 +461,10 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
         en valeur absolu
   *****/
 
-  vect = 0;
-  cont_zeros = 0;
+  unsigned int vect = 0;
+  int cont_zeros = 0;
   cont = 0;
-  for (j = 0; j < nc; j++) {
+  for (unsigned int j = 0; j < nc; j++) {
     // if (fabs(sv[j]) == svSorted[cont]) vect = j ;
     if (std::fabs(sv[j] - svSorted[cont]) <= std::fabs(vpMath::maximum(sv[j], svSorted[cont])))
       vect = j;
@@ -585,7 +546,7 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
     T[8][2] = V[2][vect];
 
     vpMatrix Hd(3, 3); //  diag(gu,gv,gw)
-    for (i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; i++)
       Hd[i][i] = H_nr[i];
 
     // H = M diag(gu,gv,gw) M*-1
