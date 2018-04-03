@@ -70,7 +70,7 @@ class vpJointPosTrajGenerator {
    * @param[in] speed_factor General speed factor in range [0, 1].
    * @param[in] q_goal Target joint positions.
    */
-  vpJointPosTrajGenerator(double speed_factor, const std::array<double, 7> q_goal);
+  vpJointPosTrajGenerator(double speed_factor, const std::array<double, 7> &q_goal);
 
   /**
    * Sends joint position calculations

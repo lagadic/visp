@@ -54,7 +54,7 @@
 #include <franka/robot.h>
 
 
-vpJointPosTrajGenerator::vpJointPosTrajGenerator(double speed_factor, const std::array<double, 7> q_goal)
+vpJointPosTrajGenerator::vpJointPosTrajGenerator(double speed_factor, const std::array<double, 7> &q_goal)
   : m_q_goal(7), m_q_start(7), m_delta_q(7), m_dq_max_sync(7), m_t_1_sync(7), m_t_2_sync(7), m_t_f_sync(7), m_q_1(7),
     m_dq_max(7), m_ddq_max_start(7), m_ddq_max_goal(7)
 {
