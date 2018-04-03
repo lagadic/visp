@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP configuration file. 
+# ViSP configuration file.
 #
 # Authors:
 # Fabien Spindler
@@ -63,11 +63,12 @@ if(VISP_HAVE_FLYCAPTURE)
   visp_set_source_file_compile_flag(grabFlyCapture.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
 endif()
 
-if(VISP_HAVE_PCL)
+if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
   # Add specific build flag to turn off warnings coming from PCL 3rd party
   visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
-  visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
-  visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
+  visp_set_source_file_compile_flag(grabRealSense2.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
+  visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
+  visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
 
 foreach(cpp ${example_cpp})
