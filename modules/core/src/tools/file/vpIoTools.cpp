@@ -528,6 +528,8 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
   char *p = NULL;
   const char sep = vpIoTools::separator;
 
+  std::fill(_path, _path + PATH_MAX, 0);
+
   errno = 0;
   if (len > sizeof(_path) - 1) {
     errno = ENAMETOOLONG;
