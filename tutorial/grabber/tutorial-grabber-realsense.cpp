@@ -3,20 +3,30 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense.h>
+#include <visp3/sensor/vpRealSense2.h>
 
 /*!
   Grab images from an Intel realsense camera
  */
 int main()
 {
-#ifdef VISP_HAVE_REALSENSE
+#if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)
   try {
     vpImage<unsigned char> I;
 
+#ifdef VISP_HAVE_REALSENSE
     vpRealSense g;
     unsigned int width = 640, height = 480;
     g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(width, height, rs::format::rgba8, 60));
     g.open();
+#else
+    vpRealSense2 g;
+    rs2::config config;
+    config.disable_stream(RS2_STREAM_DEPTH);
+    config.disable_stream(RS2_STREAM_INFRARED);
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    g.open(config);
+#endif
     g.acquire(I);
 
     std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
@@ -45,5 +55,7 @@ int main()
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#else
+  std::cout << "Install librealsense, configure and build ViSP again to use this example" << std::endl;
 #endif
 }
