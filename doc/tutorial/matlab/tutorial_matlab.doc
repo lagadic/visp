@@ -1,0 +1,63 @@
+/**
+
+\page tutorial-visp-matlab Tutorial: Using ViSP and MATLAB
+\tableofcontents
+
+\section intro_visp_matlab Introduction
+
+This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine. The MATLAB C/C++ engine library contains routines that allow you to call MATLAB from your own programs, using MATLAB as a computation engine. This can be used to extend ViSP functionality using MATLAB.
+
+Standalone programs written using MATLAB engine communicates with MATLAB process using pipes on UNIX system and Component Object Model (COM) interface on a Microsoft Windows system. MATLAB provides an API to start and end MATLAB process, send and receive data, and send commands to be processed in MATLAB. 
+
+Using the MATLAB engine requires an installed version of MATLAB; you cannot run the MATLAB engine on a machine that only has the MATLAB Runtime. Also, path to MATLAB runtime must be set in the PATH environment variable. For a 64bit machine, the path is path\to\MATLAB\R20XXy\bin\win64.
+
+For this tutorial, we create a vpMatrix object containing a 3x3 matrix and pass it to MATLAB function sum to compute a column wise sum of the vpMatrix. 
+
+Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/matlab
+\endcode
+
+\section visp_matlab_column_sum Call MATLAB function from ViSP program
+
+This example shows the use of MATLAB engine in a ViSP program.
+
+\include tutorial-visp-matlab.o
+
+The output of the program is the column-wise sum of the matrix stored in vpMatrix object computed using MATLAB.
+\image html visp-matlab-result.jpg
+
+Now we explain the main lines of the source.
+
+First, we include matrix.h and engine.h libraries from MATLAB for matrix implementation and connection to MATLAB respectively. We also include the ViSP vmMatrix.h library for ViSP based matrix implementation and operation.
+\snippet tutorial-visp-matlab.cpp Include
+
+The initial input is available in a ViSP matrix, which in our case is a 3x3 matrix. It contains numbers from 1 to 9 sequentially in a row-major order.
+\snippet tutorial-visp-matlab.cpp InputData
+
+We then declare MATLAB variables i.e. Engine object reference and MATLAB matrix references for storing input and output MATLAB data. We also initialize the MATLAB matrix (of the same size as input vpMatrix) for storing input data using mxCreateDoubleMatrix.
+\snippet tutorial-visp-matlab.cpp MATLABVariables
+
+Then we start a MATLAB engine process using engOpen and assign the engine handle to the pre-declared Engine pointer \e ep. If the process initiation is unsuccessful, then engOpen() will return NULL and this program terminates with a failure.
+\snippet tutorial-visp-matlab.cpp EngineOpen
+
+The contents of the vpMatrix is available in \e data attribute of vpMatrix class which points to a double array. This content is copied to the MATLAB matrix variable \e T of type double defined earlier. The mxGetPr() function returns a pointer to the first mxDouble element of the data.
+\snippet tutorial-visp-matlab.cpp CopyToVariable
+
+The MATLAB variable is then put onto the MATLAB workspace.
+\snippet tutorial-visp-matlab.cpp AddToWorkspace
+
+Once the matrix is available in the MATLAB workspace, we can use the \e engEvalString() function to evaluate an expression in MATLAB environment. So, we pass the MATLAB Engine the expression to determine the sum of each column of input matrix \e and obtain an output matrix \e D which will be again stored in the MATLAB workspace. Since, ViSP matrix is row-major and MATLAB matrix is column-major, so we transpose the matrix \e T before evaluation.
+\snippet tutorial-visp-matlab.cpp EvalFunction
+
+The MATLAB variable \e Dm is retrieved from the MATLAB workspace and stored in a local MATLAB array \e D.
+\snippet tutorial-visp-matlab.cpp GetFromWorkspace
+
+We then copy the contents of MATLAB variable \e Dm to local double array \e res and print the result on the screen.
+\snippet tutorial-visp-matlab.cpp CopyFromVariable
+
+Finally, we free the MATLAB variables, close MATLAB Engine and Exit
+\snippet tutorial-visp-matlab.cpp Exit
+
+*/
