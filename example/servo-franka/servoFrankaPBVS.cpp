@@ -60,7 +60,7 @@
 
 int main(int argc, char **argv)
 {
-  double opt_tagSize = 0.082;
+  double opt_tagSize = 0.120;
   std::string opt_robot_ip = "192.168.1.1";
   std::string opt_eMc_filename = "";
   bool display_tag = true;
@@ -97,8 +97,8 @@ int main(int argc, char **argv)
       opt_quad_decimate = std::stod(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << argv[0] << " [--ip 192.168.1.1] [--tag_size <marker size in m>] [--eMc <eMc extrinsic file>] "
-                           << "[--quad_decimate <decimation>] [--adaptive_gain] [--plot] [--task_sequencing] [--verbose] [--help] [-h]"
+      std::cout << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default " << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
+                           << "[--quad_decimate <decimation; default " << opt_quad_decimate << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--verbose] [--help] [-h]"
                            << "\n";
       return EXIT_SUCCESS;
     }
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
     detector.setAprilTagQuadDecimate(opt_quad_decimate);
 
     // Servo
-    vpHomogeneousMatrix cdMc, cMo, cdMo;
+    vpHomogeneousMatrix cdMc, cMo, cdMo, oMo;
 
     // Desired pose to reach
     cdMo[0][0] = 1; cdMo[0][1] =  0; cdMo[0][2] =  0;
@@ -233,17 +233,34 @@ int main(int argc, char **argv)
 
       vpColVector v_c(6);
 
-      //Display desired pose
-      vpDisplay::displayFrame(I, cdMo, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
-
-      //Only one tag is detected
+      // Only one tag is detected
       if (cMo_vec.size() == 1) {
-        vpDisplay::displayFrame(I, cMo_vec[0], cam, opt_tagSize / 2, vpColor::none, 3);
-
         cMo = cMo_vec[0];
 
+        static bool first_time = true;
+        if (first_time) {
+          // Introduce security wrt tag positionning in order to avoid PI rotation
+          std::vector<vpHomogeneousMatrix> v_oMo(2), v_cdMc(2);
+          v_oMo[1].buildFrom(0, 0, 0, 0, 0, M_PI);
+          for (size_t i = 0; i < 2; i++) {
+            v_cdMc[i] = cdMo * v_oMo[i] * cMo.inverse();
+          }
+          if (std::fabs(v_cdMc[0].getThetaUVector().getTheta()) < std::fabs(v_cdMc[1].getThetaUVector().getTheta())) {
+            oMo = v_oMo[0];
+          }
+          else {
+            std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
+            oMo = v_oMo[1];   // Introduce PI rotation
+          }
+
+          first_time = false;
+        }
+        // Display desired and current pose
+        vpDisplay::displayFrame(I, cdMo * oMo, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
+        vpDisplay::displayFrame(I, cMo,  cam, opt_tagSize / 2,   vpColor::none,   3);
+
         // VVS
-        cdMc = cdMo * cMo.inverse();
+        cdMc = cdMo * oMo * cMo.inverse();
         t.buildFrom(cdMc);
         tu.buildFrom(cdMc);
 
@@ -373,10 +390,13 @@ int main(int argc, char **argv)
 int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
-  std::cout << "Install librealsense2." << std::endl;
+  std::cout << "Install librealsense-2.x" << std::endl;
 #endif
 #if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
   std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON)." << std::endl;
+#endif
+#if !defined(VISP_HAVE_FRANKA)
+  std::cout << "Install libfranka." << std::endl;
 #endif
   return 0;
 }
