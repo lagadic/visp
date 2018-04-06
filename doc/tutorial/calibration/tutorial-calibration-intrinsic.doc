@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-calibration Tutorial: Camera calibration 
+\page tutorial-calibration-intrinsic Tutorial: Camera intrinsic calibration
 \tableofcontents
 
 This tutorial focuses on pinhole camera calibration. The goal of the calibration is here to estimate some camera parameters that allows to make the relation between camera's natural units (pixel positions in the image) and real world units (normalized position in meters in the image plane).
@@ -231,5 +231,9 @@ Finally, we create a new image \c Iud where distortion is removed. This image is
 The resulting \c chessboard-undistort.pgm image is the following.
 
 \image html img-chessboard-undistort.png \c chessboard-undistort.pgm image where distortion was removed.
+
+\section calibration_next Next tutorial
+
+You are now ready to see the \ref tutorial-calibration-extrinsic that will explain how to estimate the eye-in-hand transformation when the camera is mounted on a robot end-effector.
 
 */

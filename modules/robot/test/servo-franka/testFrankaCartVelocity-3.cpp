@@ -37,11 +37,10 @@
  *****************************************************************************/
 
 /*!
-  \example testFrankaGetPose.cpp
+  \example testFrankaCartVelocity-3.cpp
 
-  Test Panda robot from Franka Emika getting robot state implemented in vpRobotFranka.
+  Test Panda robot from Franka Emika cartesian velocity controller implemented in vpRobotFranka.
 */
-
 
 #include <iostream>
 
@@ -50,7 +49,6 @@
 #if defined(VISP_HAVE_FRANKA)
 
 #include <visp3/robot/vpRobotFranka.h>
-
 
 int main(int argc, char **argv)
 {
@@ -68,23 +66,59 @@ int main(int argc, char **argv)
   }
 
   try {
-    std::cout << "Start test 1/2" << std::endl;
     vpRobotFranka robot;
     robot.connect(robot_ip);
 
-    vpColVector q;
+    /*
+       * Move to a safe position
+       */
+    vpColVector q(7, 0);
+    q[3] = -M_PI_2;
+    q[5] = M_PI_2;
+    q[6] = M_PI_4;
+    std::cout << "Move to joint position: " << q.t() << std::endl;
+    robot.setPositioningVelocity(10.);
+    robot.setPosition(vpRobot::JOINT_STATE, q);
 
-    for (unsigned i = 0; i < 10; i++) {
-      robot.getPosition(vpRobot::JOINT_STATE, q);
-      std::cout << "Joint position: " << q.t() << std::endl;
-      vpTime::wait(10);
-    }
+    /*
+       * Move in cartesian velocity
+       */
+    double t0 = vpTime::measureTimeSecond();
+    double delta_t = 4.0; // Time in second
+    vpColVector qdot;
+    vpColVector vc(6);
+    //      vc[0] = -0.01; // vx goes toward the user
+    //      vc[1] = 0.01; // vy goes left
+    vc[2] = 0.04; // vz goes down
+    //      vc[3] = vpMath::rad(5); // wx
+    //      vc[4] = vpMath::rad(5); // wy
+    //      vc[5] = vpMath::rad(5); // wz
 
-    vpPoseVector fPe;
-    robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
-    std::cout << "fMe pose vector: " << fPe.t() << std::endl;
-    std::cout << "fMe pose matrix: \n" << vpHomogeneousMatrix(fPe) << std::endl;
+    vpHomogeneousMatrix eMc;
+    robot.set_eMc(eMc);
 
+    std::cout << "Apply cartesian vel in a loop for " << delta_t << " sec : " << vc.t() << std::endl;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    do {
+      robot.setVelocity(vpRobot::CAMERA_FRAME, vc);
+      vpTime::wait(100);
+    } while (vpTime::measureTimeSecond() - t0 < delta_t);
+
+    //      vc[0] = -0.01; // vx goes toward the user
+    //            ve[1] = -0.01; // vy goes left
+    vc[2] = -0.02; // vz goes down
+    //      vc[3] = vpMath::rad(5); // wx
+    //      vc[4] = vpMath::rad(5); // wy
+    //      vc[5] = vpMath::rad(5); // wz
+    std::cout << "Apply cartesian vel in a loop for " << delta_t << " sec : " << vc.t() << std::endl;
+    t0 = vpTime::measureTimeSecond();
+    do {
+      robot.setVelocity(vpRobot::CAMERA_FRAME, vc);
+      vpTime::wait(100);
+    } while (vpTime::measureTimeSecond() - t0 < delta_t);
+
+    std::cout << "Ask to stop the robot " << std::endl;
+    robot.setRobotState(vpRobot::STATE_STOP);
   }
   catch(const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
@@ -95,57 +129,6 @@ int main(int argc, char **argv)
     std::cout << "Check if you are connected to the Franka robot"
               << " or if you specified the right IP using --ip command"
               << " line option set by default to 192.168.1.1. " << std::endl;
-     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
-    std::cout << "Franka exception: " << e.what() << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  try {
-    std::cout << "Start test 2/2" << std::endl;
-    vpRobotFranka robot(robot_ip);
-
-    franka::Robot *handler = robot.getHandler();
-
-    // Get end-effector cartesian position
-    std::array<double, 16> pose = handler->readOnce().O_T_EE;
-    vpHomogeneousMatrix oMee;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        oMee[i][j] = pose[j*4 + i];
-      }
-    }
-    std::cout << "oMee: \n" << oMee << std::endl;
-
-    // Get flange to end-effector frame transformation
-    pose = handler->readOnce().F_T_EE;
-    vpHomogeneousMatrix fMee;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        fMee[i][j] = pose[j*4 + i];
-      }
-    }
-    std::cout << "fMee: \n" << fMee << std::endl;
-
-    // Get end-effector to K frame transformation
-    pose = handler->readOnce().EE_T_K;
-    vpHomogeneousMatrix eeMk;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        eeMk[i][j] = pose[j*4 + i];
-      }
-    }
-    std::cout << "eeMk: \n" << eeMk << std::endl;
-  }
-  catch(const vpException &e) {
-    std::cout << "ViSP exception: " << e.what() << std::endl;
-    return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
-    std::cout << "Franka network exception: " << e.what() << std::endl;
-    std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
     return EXIT_FAILURE;
   }
   catch(const std::exception &e) {

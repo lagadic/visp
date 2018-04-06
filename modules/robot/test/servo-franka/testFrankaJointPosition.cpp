@@ -37,11 +37,10 @@
  *****************************************************************************/
 
 /*!
-  \example testFrankaGetPose.cpp
+  \example testFrankaJointPosition.cpp
 
-  Test Panda robot from Franka Emika getting robot state implemented in vpRobotFranka.
+  Test Panda robot from Franka Emika joint positioning controller implemented in vpRobotFranka.
 */
-
 
 #include <iostream>
 
@@ -51,10 +50,10 @@
 
 #include <visp3/robot/vpRobotFranka.h>
 
-
 int main(int argc, char **argv)
 {
   std::string robot_ip = "192.168.1.1";
+  std::string log_folder;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
@@ -68,23 +67,19 @@ int main(int argc, char **argv)
   }
 
   try {
-    std::cout << "Start test 1/2" << std::endl;
     vpRobotFranka robot;
     robot.connect(robot_ip);
+    robot.setLogFolder(log_folder);
 
-    vpColVector q;
-
-    for (unsigned i = 0; i < 10; i++) {
-      robot.getPosition(vpRobot::JOINT_STATE, q);
-      std::cout << "Joint position: " << q.t() << std::endl;
-      vpTime::wait(10);
-    }
-
-    vpPoseVector fPe;
-    robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
-    std::cout << "fMe pose vector: " << fPe.t() << std::endl;
-    std::cout << "fMe pose matrix: \n" << vpHomogeneousMatrix(fPe) << std::endl;
-
+    /*
+       * Move to a safe position
+       */
+    vpColVector q(7, 0);
+    q[3] = -M_PI_2;
+    q[5] = M_PI_2;
+    q[6] = M_PI_4;
+    std::cout << "Move to joint position: " << q.t() << std::endl;
+    robot.setPosition(vpRobot::JOINT_STATE, q);
   }
   catch(const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
@@ -95,57 +90,6 @@ int main(int argc, char **argv)
     std::cout << "Check if you are connected to the Franka robot"
               << " or if you specified the right IP using --ip command"
               << " line option set by default to 192.168.1.1. " << std::endl;
-     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
-    std::cout << "Franka exception: " << e.what() << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  try {
-    std::cout << "Start test 2/2" << std::endl;
-    vpRobotFranka robot(robot_ip);
-
-    franka::Robot *handler = robot.getHandler();
-
-    // Get end-effector cartesian position
-    std::array<double, 16> pose = handler->readOnce().O_T_EE;
-    vpHomogeneousMatrix oMee;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        oMee[i][j] = pose[j*4 + i];
-      }
-    }
-    std::cout << "oMee: \n" << oMee << std::endl;
-
-    // Get flange to end-effector frame transformation
-    pose = handler->readOnce().F_T_EE;
-    vpHomogeneousMatrix fMee;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        fMee[i][j] = pose[j*4 + i];
-      }
-    }
-    std::cout << "fMee: \n" << fMee << std::endl;
-
-    // Get end-effector to K frame transformation
-    pose = handler->readOnce().EE_T_K;
-    vpHomogeneousMatrix eeMk;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        eeMk[i][j] = pose[j*4 + i];
-      }
-    }
-    std::cout << "eeMk: \n" << eeMk << std::endl;
-  }
-  catch(const vpException &e) {
-    std::cout << "ViSP exception: " << e.what() << std::endl;
-    return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
-    std::cout << "Franka network exception: " << e.what() << std::endl;
-    std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
     return EXIT_FAILURE;
   }
   catch(const std::exception &e) {

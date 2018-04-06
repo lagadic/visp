@@ -7,7 +7,7 @@ ViSP is interfaced with OpenCV third party. In this tutorial we explain how to c
 
 \section tutorial_bridge_opencv_cam Camera parameters conversions
 
-ViSP camera parameters are implemented in vpCameraParameters class. If you want to calibrate a camera with ViSP tools follow \ref tutorial-calibration.
+ViSP camera parameters are implemented in vpCameraParameters class. If you want to calibrate a camera with ViSP tools follow \ref tutorial-calibration-intrinsic.
 
 Let us recall the pinhole camera model implemented in ViSP. In this model, a scene view is formed by projecting 3D points into the image plane using a perspective transformation.
 
