@@ -1,0 +1,174 @@
+/**
+
+\page tutorial-calibration-extrinsic Tutorial: Camera extrinsic calibration 
+\tableofcontents
+
+\section calib_ext_intro Introduction
+
+This tutorial focuses estimation of the homogeneous transformation between the robot end-effector and the camera frame. As a use case, we will consider in this tutorial the case of a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from <a href="https://www.franka.de/">Franka Emika</a> equipped with an Intel Realsense <a href="https://software.intel.com/en-us/realsense/sr300">SR300</a> camera mounted on its end-effector. The principle of the extrinsic calibration is easy to apply to any other robot equipped with any other camera attached to the robot end-effector.
+ 
+Let us consider:
+- \f$^f{\bf M}_e\f$ the homogeneous transformation between the robot base frame (also called fixed frame) and the robot end-effector
+- \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and a calibration grid frame (also called object frame), typically the OpenCV chessboard
+- \f$^e{\bf M}_c\f$ the homogeneous transformation between the end-effector and the camera frame. This is the transformation corresponding to the extrinsic eye-in-hand transformation that we have to estimate.
+
+The calibration process described in this tutorial consists in three stages:
+1. acquiring couples of \f$^f{\bf M}_e\f$ poses and images of the chessboard
+2. computing the corresponding \f$^c{\bf M}_o\f$ pose of the chessboard from the images
+3. from the basket of \f$\{^f{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is to estimate the \f$^e{\bf M}_c\f$ transformation.
+
+Note that all the material (source code) described in this tutorial is part of ViSP source code (in `tutorial/calibration` folder) and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/calibration
+\endcode
+
+\section calib_ext_prereq Prerequisites
+
+\subsection calib_ext_intrinsic Get camera intrinsic parameters
+
+In order to compute the pose \f$^c{\bf M}_o\f$ from the chessboard image, there is the need to get the camera intrinsic parameters. Depending on the device, these parameters are part of the device SDK or firmware. This is for example the case for our SR300 camera considered in this tutorial. These intrinsic parameters could be retrieved using vpRealSense2::getCameraParameters(). 
+
+If you have an other camera, or if you want to have a better estimation than the factory parameters you may follow \ref tutorial-calibration-intrinsic. Otherwise you can skip this section. 
+
+\subsection calib_ext_chessboard Print a chessboard
+
+Download and print a black and white chessboard [<a href="http://visp-doc.inria.fr/download/calib-grid/OpenCV_Chessboard.pdf" target="_blank">OpenCV_Chessboard.pdf</a>].
+
+Glue the chessboard on a flat surface and put it under the camera.
+
+\section calib_ext_calib Calibrate extrinsic
+
+\subsection calib_ext_acq_data Acquire robot pose and images
+
+The objective here is to complete step 1. by acquiring couples of \f$^f{\bf M}_e\f$ poses and the corresponding images of the chessboard. To this end move the camera attached to the robot to different positions. At least 8 to 10 positions are requested. To define a good position you have to imagine a half sphere over the chessboard and select positions that discretise as much as possible all the half sphere surface. For each position you should see all the chessboard as large as possible in the image.
+ 
+If you have a Franka robot, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
+
+Connect the Realsense SR300 camera to the computer, put the chessboard in the camera field of view, enter in `tutorial/calibration` folder and run `tutorial-franka-acquire-calib-data` binary to acquire the image and the corresponding robot end-effector position:
+
+    $ cd tutorial/calibration
+    $ ./tutorial-franka-acquire-calib-data
+
+By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use `--ip` option like:
+
+    $ ./tutorial-franka-acquire-calib-data --ip 10.0.0.2
+
+Click with the left mouse button to acquire data.
+It records the following outputs:
+
+- `camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
+- couples of `image-<number>.png` + `pose-fMe-<number>.txt` with number starting from 1. `pose-fMe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$, while `image-<number>.png` is the image captured at the corresponding robot position.
+
+Move the robot to an other position such as the chessboard remains in the image and repeat data acquisition by a left mouse click. We recommend to acquire data at 8 to 10 different robot positions. 
+
+A right mouse click ends this step exiting the binary.
+
+This is the output when 8 different positions are considered:
+
+\code
+$ ./tutorial-franka-acquire-calib-data 
+Image size: 640 x 480
+Found camera with name: "Camera"
+Save: image-1.png and pose_fPe_1.yaml
+Save: image-2.png and pose_fPe_2.yaml
+Save: image-3.png and pose_fPe_3.yaml
+Save: image-4.png and pose_fPe_4.yaml
+Save: image-5.png and pose_fPe_5.yaml
+Save: image-6.png and pose_fPe_6.yaml
+Save: image-7.png and pose_fPe_7.yaml
+Save: image-8.png and pose_fPe_8.yaml
+\endcode
+
+The source code corresponding to the binary is available in tutorial-franka-acquire-calib-data.cpp. If your setup is different, it could be easily adapted to your robot or camera.
+
+\subsection calib_ext_camera_pose Compute camera pose from images
+
+Here we will complete step 2. by computing for each image the corresponding \f$^c{\bf M}_o\f$ pose of the chessboard using the camera intrinsic parameters recorded in `camera.xml` file.
+
+To this end run `camera_pose` binary to compute the pose of the chessboard with respect to the camera frame. Here we consider that the size of the each chessboard square is 0.027 by 0.027 meter. Modify option `--square_size` according to your chessboard.
+
+    $ ./tutorial-chessboard-pose --square_size 0.027 --input image-%d.png
+
+It produces as output the corresponding poses `pose-cMo-<number>.yaml`.
+
+\code
+$ ./tutorial-chessboard-pose --square_size 0.027 --input image-%d.png
+Parameters:
+chessboard_width=9
+chessboard_height=6
+chessboard_square_size=0.027
+input_filename=image-%d.png
+intrinsic_file=camera.xml
+camera_name=Camera
+Found camera with name: "Camera"
+cam:
+Camera parameters for perspective projection with distortion:
+  px = 620.9260254	 py = 620.9261475
+  u0 = 315.6608887	 v0 = 238.5752258
+  kud = -0
+  kdu = 0
+
+Save pose_cPo_1.yaml
+Save pose_cPo_2.yaml
+Save pose_cPo_3.yaml
+Save pose_cPo_4.yaml
+Save pose_cPo_5.yaml
+Save pose_cPo_6.yaml
+Save pose_cPo_7.yaml
+Save pose_cPo_8.yaml
+\endcode
+
+The source code corresponding to the binary is available in tutorial-chessboard-pose.cpp.
+
+\subsection calib_ext_tsai Estimate end-effector to camera transformation
+
+The final step 3. consists now to estimate the \f$^c{\bf M}_o\f$ transformation from the couples of \f$^f{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
+
+Complete the calibration running `tutorial-tsai` binary with the number of poses to consider:
+
+    $ ./tutorial-tsai --ndata <number of images or robot poses>
+
+It produces as output the end-effector to camera frame transformation in `eMc.yaml` and `eMc.txt` files.
+
+\code
+$ ./tutorial-tsai --ndata 8
+Use fPe=pose_fPe_1.yaml, cPo=pose_cPo_1.yaml
+Use fPe=pose_fPe_2.yaml, cPo=pose_cPo_2.yaml
+Use fPe=pose_fPe_3.yaml, cPo=pose_cPo_3.yaml
+Use fPe=pose_fPe_4.yaml, cPo=pose_cPo_4.yaml
+Use fPe=pose_fPe_5.yaml, cPo=pose_cPo_5.yaml
+Use fPe=pose_fPe_6.yaml, cPo=pose_cPo_6.yaml
+Use fPe=pose_fPe_7.yaml, cPo=pose_cPo_7.yaml
+Use fPe=pose_fPe_8.yaml, cPo=pose_cPo_8.yaml
+
+Save eMc.yaml
+
+Output: hand to eye calibration result: eMc estimated 
+-0.005085455157  -0.9978663939  -0.0650906906  0.05336799539
+0.9993875258  -0.002817972976  -0.03488025544  -0.008241089806
+0.03462241091  -0.06522820621  0.9972695572  -0.04543907603
+0  0  0  1
+\endcode
+
+The result of the calibration is available in `eMc.yaml` file that contains the \f$^e{\bf M}_c\f$ as a pose vector, with translation in meter and rotation as a \f$\theta_{\bf u} \f$ vector with values in radians.
+\code
+$ more eMc.yaml 
+rows: 6
+cols: 1
+data: 
+  - [0.053368]
+  - [-0.00824109]
+  - [-0.0454391]
+  - [-0.0239162]
+  - [-0.0785807]
+  - [1.57397]
+\endcode
+
+The source code corresponding to the binary is available in tutorial-tsai.cpp.
+
+\section calib_ext_next Next tutorial
+
+You are now ready to follow \ref tutorial-franka-pbvs.
+
+*/
