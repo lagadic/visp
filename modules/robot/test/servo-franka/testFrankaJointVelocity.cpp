@@ -117,7 +117,8 @@ int main(int argc, char **argv)
   catch(const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
+              << " or if you specified the right IP using --ip command"
+              << " line option set by default to 192.168.1.1. " << std::endl;
     return EXIT_FAILURE;
   }
   catch(const std::exception &e) {
