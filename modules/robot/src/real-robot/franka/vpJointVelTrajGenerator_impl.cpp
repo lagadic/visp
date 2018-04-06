@@ -72,7 +72,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   std::array<double, 7> q_prev;
   franka::Model model = robot->loadModel();
   vpMatrix eJe(6, 7), fJe(6, 7);
-  vpVelocityTwistMatrix eVc(eMc);
+  vpVelocityTwistMatrix cVe(eMc.inverse());
 
   std::ofstream log_time;
   std::ofstream log_q_mes;
@@ -81,7 +81,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   std::ofstream log_dq_cmd;
   std::ofstream log_v_des;
 
-  auto joint_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &log_v_des, &time, &q_prev, &dq_des, &stop, &robot_state, &mutex]
+  auto joint_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &time, &q_prev, &dq_des, &stop, &robot_state, &mutex]
       (const franka::RobotState& state, franka::Duration period) -> franka::JointVelocities {
 
     time += period.toSec();
@@ -128,22 +128,18 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     franka::JointVelocities velocities = {dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6]};
 
-    static bool display_dbg = true;
     if (stop) {
-      if (display_dbg) {
-        display_dbg = false;
-      }
-      unsigned int stop = 0;
+      unsigned int nb_joint_stop = 0;
       static int cpt_dbg = 0;
       const double q_eps = (1.0/100000.);
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
-          stop ++;
+          nb_joint_stop ++;
         }
       }
       cpt_dbg ++;
 
-      if (stop == 7) {
+      if (nb_joint_stop == 7) {
         if (! log_folder.empty()) {
           log_time.close();
           log_q_mes.close();
@@ -153,9 +149,6 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
         }
         return franka::MotionFinished(velocities);
       }
-    }
-    else {
-      display_dbg = true;
     }
 
     q_prev = state.q_d;
@@ -198,7 +191,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     }
 
     // Get robot Jacobian
-    if (frame == vpRobot::END_EFFECTOR_FRAME) {
+    if (frame == vpRobot::END_EFFECTOR_FRAME || frame == vpRobot::TOOL_FRAME) {
       std::array<double, 42> jacobian = model.bodyJacobian(franka::Frame::kEndEffector, state);
       // Convert row-major to col-major
       for (size_t i = 0; i < 6; i ++) { // TODO make a function
@@ -219,15 +212,14 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     // Compute joint velocity
     vpColVector q_dot;
-
     if (frame == vpRobot::END_EFFECTOR_FRAME) {
       q_dot = eJe.pseudoInverse() * v_cart_des; // TODO introduce try catch
     }
     else if (frame == vpRobot::TOOL_FRAME) {
-      q_dot = (eJe * eVc).pseudoInverse() * v_cart_des; // TODO introduce try catch
+      q_dot = (cVe * eJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
     }
     else if (frame == vpRobot::REFERENCE_FRAME) {
-      q_dot = (fJe * eVc).pseudoInverse() * v_cart_des; // TODO introduce try catch
+      q_dot = (cVe * fJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
     }
 
     std::array<double, 7> dq_des;
@@ -254,27 +246,20 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
       log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " " << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
       log_v_des << std::fixed << std::setprecision(8) << v_cart_des[0] << " " << v_cart_des[1] << " " << v_cart_des[2] << " " << v_cart_des[3] << " " << v_cart_des[4] << " " << v_cart_des[5] << std::endl;
     }
-//    std::cout << "DBG apply joint vel: " << dq_cmd[0] << " " << dq_cmd[1] << " " <<  dq_cmd[2] << " " <<  dq_cmd[3] << " " <<  dq_cmd[4] << " " <<  dq_cmd[5]<< " " <<  dq_cmd[6] << std::endl;
 
-//    franka::JointVelocities velocities = {0,0,0,0,0,0,0};
     franka::JointVelocities velocities = {dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6]};
 
-    static bool display_dbg = true;
     if (stop) {
-      if (display_dbg) {
-//        std::cout << std::endl << "DBG: control_thread() asked to finish waiting for joint stop" << std::endl;
-        display_dbg = false;
-      }
-      unsigned int stop = 0;
+      unsigned int nb_joint_stop = 0;
       static int cpt_dbg = 0;
       const double q_eps = (1.0/100000.);
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
-          stop ++;
+          nb_joint_stop ++;
         }
       }
       cpt_dbg ++;
-      if (stop == 7) {
+      if (nb_joint_stop == 7) {
         if (! log_folder.empty()) {
           log_time.close();
           log_q_mes.close();
@@ -285,9 +270,6 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
         }
         return franka::MotionFinished(velocities);
       }
-    }
-    else {
-      display_dbg = true;
     }
 
     q_prev = state.q_d;
