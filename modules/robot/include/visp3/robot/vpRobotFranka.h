@@ -201,6 +201,8 @@
 
   What is not implemented is:
   - move to a given cartesian end-effector position
+  - gripper controller
+  - force/torque feadback and control
 
   Known issues:
   - sometimes the joint to joint trajectory generator provided by Franka complains about discontinuities.
