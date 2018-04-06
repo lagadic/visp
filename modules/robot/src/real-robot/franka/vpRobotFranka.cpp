@@ -577,7 +577,6 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
 
   if(! m_controlThreadIsRunning) {
     m_controlThreadIsRunning = true;
-//    std::cout << "DBG: Start control thread... ++++++++++++++++++++" << std::endl;
     m_controlThread = std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(),
                                   std::ref(m_handler), std::ref(m_controlThreadStopAsked), m_log_folder,
                                   frame, m_eMc, std::ref(m_v_cart_des), std::ref(m_dq_des),
