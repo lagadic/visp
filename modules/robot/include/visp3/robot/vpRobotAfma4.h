@@ -84,6 +84,7 @@ extern "C" {
 
   Mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
   in the reference frame and rotations in the camera frame is not implemented.
+  End-effector frame (vpRobot::END_EFFECTOR_FRAME) is also not implemented.
 
   All the translations are expressed in meters for positions and m/s
   for the velocities. Rotations are expressed in radians for the

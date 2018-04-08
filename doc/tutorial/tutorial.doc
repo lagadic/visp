@@ -29,6 +29,8 @@ This page references all the tutorials.
 
 - \subpage tutorial_tools
 
+- \subpage tutorial_matlab
+
 */
 
 /*! \page tutorial_ios ViSP iOS
@@ -115,8 +117,8 @@ This page introduces some image processing methods.
 /*! \page tutorial_calib Camera calibration
 This page introduces the user to the way to calibrate a camera.
 
-- \subpage tutorial-calibration <br>This tutorial explains how to calibrate a camera.
-
+- \subpage tutorial-calibration-intrinsic <br>This tutorial explains how to calibrate intrinsic camera parameters.
+- \subpage tutorial-calibration-extrinsic <br>This tutorial explains how to get the camera eye-in-hand extrinsic transformation when the camera is mounted on a robot end-effector.
 */
 
 /*! \page tutorial_tracking Tracking
@@ -161,6 +163,7 @@ This page introduces the user to the way to achieve a visual servoing.
 - \subpage tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \subpage tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \subpage tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
+- \subpage tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 
 */
 
@@ -178,5 +181,12 @@ This page introduces the user to other tools that may be useful.
 - \subpage tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
 - \subpage tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
+
+*/
+
+/*! \page tutorial_matlab ViSP and MATLAB
+This page introduces the user to the way to use MATLAB functions in ViSP.
+
+- \subpage tutorial-visp-matlab <br>This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine. 
 
 */

@@ -101,7 +101,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const doubl
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
       dp = HLM.inverseByLU() * G_;
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       // std::cout<<"Cannot inverse the matrix by LU "<<std::endl;
       throw(e);
     }

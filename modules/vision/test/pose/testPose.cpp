@@ -203,7 +203,7 @@ int main()
     std::cout << "\nGlobal pose estimation test " << (test_fail ? "fail" : "is ok") << std::endl;
 
     return test_fail;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

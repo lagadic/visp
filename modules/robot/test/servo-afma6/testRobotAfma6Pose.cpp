@@ -217,7 +217,7 @@ int main()
               << std::endl
               << std::endl;
 
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;

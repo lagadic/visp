@@ -81,16 +81,48 @@
 #  endif
 #endif
 
+// Detect endianness of the host machine
+// Reference: http://www.boost.org/doc/libs/1_36_0/boost/detail/endian.hpp
+#if defined(__GLIBC__)
+#include <endian.h>
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#define VISP_LITTLE_ENDIAN
+#elif (__BYTE_ORDER == __BIG_ENDIAN)
+#define VISP_BIG_ENDIAN
+#elif (__BYTE_ORDER == __PDP_ENDIAN)
+// Currently not supported when reading / writing binary file
+#define VISP_PDP_ENDIAN
+//#error PDP endian is not supported. //Uncomment if needed/happens
+#else
+#error Unknown machine endianness detected.
+#endif
+#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
+#define VISP_BIG_ENDIAN
+#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) || defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
+#define VISP_LITTLE_ENDIAN
+#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || defined(__ppc__) ||         \
+    defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
+
+#define VISP_BIG_ENDIAN
+#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
+    defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
+    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64)
+
+#define VISP_LITTLE_ENDIAN
+#else
+#error Cannot detect host machine endianness.
+#endif
+
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
 std::string vpIoTools::configFile = "";
 std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
 std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
-#if TARGET_OS_IOS == 0 // The following code is not working on iOS since
-                       // wordexp() is not available
 namespace
 {
+#if TARGET_OS_IOS == 0 // The following code is not working on iOS since
+                       // wordexp() is not available
 void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
   size_t start_pos = 0;
@@ -100,8 +132,63 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
                                    // substring of 'search'
   }
 }
+#endif
+
+#ifdef VISP_BIG_ENDIAN
+// Swap 16 bits by shifting to the right the first byte and by shifting to the
+// left the second byte
+uint16_t swap16bits(const uint16_t val)
+{
+  return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00));
+}
+
+// Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
+// the left the last 2 bytes
+uint32_t swap32bits(const uint32_t val)
+{
+  return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
+          ((val << 24) & 0xFF000000));
+}
+
+// Swap a float, the union is necessary because of the representation of a
+// float in memory in IEEE 754.
+float swapFloat(const float f)
+{
+  union {
+    float f;
+    unsigned char b[4];
+  } dat1, dat2;
+
+  dat1.f = f;
+  dat2.b[0] = dat1.b[3];
+  dat2.b[1] = dat1.b[2];
+  dat2.b[2] = dat1.b[1];
+  dat2.b[3] = dat1.b[0];
+  return dat2.f;
+}
+
+// Swap a double, the union is necessary because of the representation of a
+// double in memory in IEEE 754.
+double swapDouble(const double d)
+{
+  union {
+    double d;
+    unsigned char b[8];
+  } dat1, dat2;
+
+  dat1.d = d;
+  dat2.b[0] = dat1.b[7];
+  dat2.b[1] = dat1.b[6];
+  dat2.b[2] = dat1.b[5];
+  dat2.b[3] = dat1.b[4];
+  dat2.b[4] = dat1.b[3];
+  dat2.b[5] = dat1.b[2];
+  dat2.b[6] = dat1.b[1];
+  dat2.b[7] = dat1.b[0];
+  return dat2.d;
 }
 #endif
+}
 
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
@@ -257,7 +344,7 @@ int main()
     envvalue = vpIoTools::getenv("HOME");
     std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
   }
-  catch (vpException &e) {
+  catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
     return -1;
   }
@@ -308,7 +395,7 @@ int main()
     envvalue = vpIoTools::getenv(env);
     std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
   }
-  catch (vpException &e) {
+  catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
     return -1;
   }
@@ -444,6 +531,8 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
   char _path[PATH_MAX];
   char *p = NULL;
   const char sep = vpIoTools::separator;
+
+  std::fill(_path, _path + PATH_MAX, 0);
 
   errno = 0;
   if (len > sizeof(_path) - 1) {
@@ -755,7 +844,7 @@ bool vpIoTools::remove(const char *file_or_dir)
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
-    sprintf(cmd, "rm -rf %s", file_or_dir);
+    sprintf(cmd, "rm -rf \"%s\"", file_or_dir);
     int ret = system(cmd);
     if (ret) {
     }; // to avoid a warning
@@ -1761,5 +1850,167 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
                       "Universal Windows Platform",
                       dirName.c_str()));
 #endif
+#endif
+}
+
+/*!
+   Read a 16-bits integer value stored in little endian.
+ */
+void vpIoTools::readBinaryValueLE(std::ifstream &file, int16_t &short_value)
+{
+  file.read((char *)(&short_value), sizeof(short_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  short_value = swap16bits((uint16_t)short_value);
+#endif
+}
+
+/*!
+   Read a 16-bits unsigned integer value stored in little endian.
+ */
+void vpIoTools::readBinaryValueLE(std::ifstream &file, uint16_t &ushort_value)
+{
+  file.read((char *)(&ushort_value), sizeof(ushort_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  ushort_value = swap16bits(ushort_value);
+#endif
+}
+
+/*!
+   Read a 32-bits integer value stored in little endian.
+ */
+void vpIoTools::readBinaryValueLE(std::ifstream &file, int32_t &int_value)
+{
+  file.read((char *)(&int_value), sizeof(int_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  int_value = swap32bits((uint32_t)int_value);
+#endif
+}
+
+/*!
+   Read a 32-bits unsigned integer value stored in little endian.
+ */
+void vpIoTools::readBinaryValueLE(std::ifstream &file, uint32_t &uint_value)
+{
+  file.read((char *)(&uint_value), sizeof(uint_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  uint_value = swap32bits(uint_value);
+#endif
+}
+
+/*!
+   Read a float value stored in little endian.
+ */
+void vpIoTools::readBinaryValueLE(std::ifstream &file, float &float_value)
+{
+  file.read((char *)(&float_value), sizeof(float_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  float_value = swapFloat(float_value);
+#endif
+}
+
+/*!
+   Read a double value stored in little endian.
+ */
+void vpIoTools::readBinaryValueLE(std::ifstream &file, double &double_value)
+{
+  file.read((char *)(&double_value), sizeof(double_value));
+
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order from little endian to big endian
+  double_value = swapDouble(double_value);
+#endif
+}
+
+/*!
+   Write a 16-bits integer value in little endian.
+ */
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, const int16_t short_value)
+{
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order to little endian
+  uint16_t swap_short = swap16bits((uint16_t)short_value);
+  file.write((char *)(&swap_short), sizeof(swap_short));
+#else
+  file.write((char *)(&short_value), sizeof(short_value));
+#endif
+}
+
+/*!
+   Write a 16-bits unsigned integer value in little endian.
+ */
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint16_t ushort_value)
+{
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order to little endian
+  uint16_t swap_ushort = swap16bits(ushort_value);
+  file.write((char *)(&swap_ushort), sizeof(swap_ushort));
+#else
+  file.write((char *)(&ushort_value), sizeof(ushort_value));
+#endif
+}
+
+/*!
+   Write a 32-bits integer value in little endian.
+ */
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, const int32_t int_value)
+{
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order to little endian
+  uint32_t swap_int = swap32bits((uint32_t)int_value);
+  file.write((char *)(&swap_int), sizeof(swap_int));
+#else
+  file.write((char *)(&int_value), sizeof(int_value));
+#endif
+}
+
+/*!
+   Write a 32-bits unsigned integer value in little endian.
+ */
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint32_t uint_value)
+{
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order to little endian
+  uint32_t swap_int = swap32bits(uint_value);
+  file.write((char *)(&swap_int), sizeof(swap_int));
+#else
+  file.write((char *)(&uint_value), sizeof(uint_value));
+#endif
+}
+
+/*!
+   Write a float value in little endian.
+ */
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, const float float_value)
+{
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order to little endian
+  float swap_float = swapFloat(float_value);
+  file.write((char *)(&swap_float), sizeof(swap_float));
+#else
+  file.write((char *)(&float_value), sizeof(float_value));
+#endif
+}
+
+/*!
+   Write a double value in little endian.
+ */
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, const double double_value)
+{
+#ifdef VISP_BIG_ENDIAN
+  // Swap bytes order to little endian
+  double swap_double = swapDouble(double_value);
+  file.write((char *)(&swap_double), sizeof(swap_double));
+#else
+  file.write((char *)(&double_value), sizeof(double_value));
 #endif
 }

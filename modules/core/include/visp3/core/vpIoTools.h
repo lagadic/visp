@@ -52,6 +52,7 @@
 #include <string>
 #include <vector>
 #include <visp3/core/vpColor.h>
+#include <stdint.h> //for uint32_t related types ; works also with >= VS2010 / _MSC_VER >= 1600
 
 /*!
   \class vpIoTools
@@ -230,6 +231,20 @@ public:
   static void saveConfigFile(const bool &actuallySave = true);
   static void createBaseNamePath(const bool &empty = false);
   //@}
+
+  static void readBinaryValueLE(std::ifstream &file, int16_t &short_value);
+  static void readBinaryValueLE(std::ifstream &file, uint16_t &ushort_value);
+  static void readBinaryValueLE(std::ifstream &file, int32_t &int_value);
+  static void readBinaryValueLE(std::ifstream &file, uint32_t &int_value);
+  static void readBinaryValueLE(std::ifstream &file, float &float_value);
+  static void readBinaryValueLE(std::ifstream &file, double &double_value);
+
+  static void writeBinaryValueLE(std::ofstream &file, const int16_t short_value);
+  static void writeBinaryValueLE(std::ofstream &file, const uint16_t ushort_value);
+  static void writeBinaryValueLE(std::ofstream &file, const int32_t int_value);
+  static void writeBinaryValueLE(std::ofstream &file, const uint32_t int_value);
+  static void writeBinaryValueLE(std::ofstream &file, const float float_value);
+  static void writeBinaryValueLE(std::ofstream &file, const double double_value);
 
 protected:
   static std::string baseName;

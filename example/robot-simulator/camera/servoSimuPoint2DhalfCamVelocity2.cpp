@@ -344,9 +344,9 @@ int main(int argc, const char **argv)
     task.kill();
     // Final camera location
     std::cout << cMo << std::endl;
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

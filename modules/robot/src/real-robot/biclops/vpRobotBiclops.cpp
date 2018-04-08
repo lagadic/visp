@@ -728,21 +728,19 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
 
   switch (frame) {
   case vpRobot::CAMERA_FRAME:
-    vpERROR_TRACE("Cannot move the robot in camera frame: "
-                  "not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in camera frame: "
                                                               "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
-    vpERROR_TRACE("Cannot move the robot in reference frame: "
-                  "not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in reference frame: "
                                                               "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
-    vpERROR_TRACE("Cannot move the robot in mixt frame: "
-                  "not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in mixt frame: "
+                                                              "not implemented");
+    break;
+  case vpRobot::END_EFFECTOR_FRAME:
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in end-effector frame: "
                                                               "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
@@ -837,20 +835,19 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
 {
   switch (frame) {
   case vpRobot::CAMERA_FRAME:
-    vpERROR_TRACE("Cannot get position in camera frame: not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in camera frame: "
                                                               "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
-    vpERROR_TRACE("Cannot get position in reference frame: "
-                  "not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in reference frame: "
                                                               "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
-    vpERROR_TRACE("Cannot get position in mixt frame: "
-                  "not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in mixt frame: "
+                                                              "not implemented");
+    break;
+  case vpRobot::END_EFFECTOR_FRAME:
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in end-effector frame: "
                                                               "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
@@ -903,8 +900,8 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
 
   \param frame : Control frame. This biclops head can only be controlled in
   articular. Be aware, the camera frame (vpRobot::CAMERA_FRAME), the reference
-  frame (vpRobot::REFERENCE_FRAME) and the mixt frame (vpRobot::MIXT_FRAME)
-  are not implemented.
+  frame (vpRobot::REFERENCE_FRAME), end-effector frame (vpRobot::END_EFFECTOR_FRAME)
+  and the mixt frame (vpRobot::MIXT_FRAME) are not implemented.
 
   \param q_dot : The desired articular velocity of the axis in rad/s. \f$ \dot
   {r} = [\dot{q}_1, \dot{q}_2]^t \f$ with \f$ \dot{q}_1 \f$ the pan of the
@@ -916,8 +913,8 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
   vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
   \exception vpRobotException::wrongStateError : If a not supported frame type
-  (vpRobot::CAMERA_FRAME, vpRobot::REFERENCE_FRAME or vpRobot::MIXT_FRAME) is
-  given.
+  (vpRobot::CAMERA_FRAME, vpRobot::REFERENCE_FRAME, vpRobot::END_EFFECTOR_FRAME
+  or vpRobot::MIXT_FRAME) is given.
 
   \warning Velocities could be saturated if one of them exceed the maximal
   autorized speed (see vpRobot::maxRotationVelocity).
@@ -951,24 +948,21 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
     break;
   }
   case vpRobot::REFERENCE_FRAME: {
-    vpERROR_TRACE("Cannot send a velocity to the robot "
-                  "in the reference frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
                                                               "in the reference frame:"
                                                               "functionality not implemented");
   }
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE("Cannot send a velocity to the robot "
-                  "in the mixt frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
                                                               "in the mixt frame:"
                                                               "functionality not implemented");
   }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
+                                                              "in the end-effector frame:"
+                                                              "functionality not implemented");
+  }
   default: {
-    vpERROR_TRACE("Error in spec of vpRobot. "
-                  "Case not taken in account.");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot ");
   }
   }
@@ -1041,20 +1035,19 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
 {
   switch (frame) {
   case vpRobot::CAMERA_FRAME:
-    vpERROR_TRACE("Cannot get position in camera frame: not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in camera frame: "
                                                               "not implemented");
     break;
   case vpRobot::REFERENCE_FRAME:
-    vpERROR_TRACE("Cannot get position in reference frame: "
-                  "not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in reference frame: "
                                                               "not implemented");
     break;
   case vpRobot::MIXT_FRAME:
-    vpERROR_TRACE("Cannot get position in mixt frame: "
-                  "not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in mixt frame: "
+                                                              "not implemented");
+    break;
+  case vpRobot::END_EFFECTOR_FRAME:
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in end-effector frame: "
                                                               "not implemented");
     break;
   case vpRobot::ARTICULAR_FRAME:
@@ -1248,15 +1241,15 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
   }
 
   case vpRobot::REFERENCE_FRAME:
-    vpERROR_TRACE("Cannot get a velocity in the reference frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the reference frame:"
                                                               "functionality not implemented");
     break;
   case vpRobot::MIXT_FRAME:
-    vpERROR_TRACE("Cannot get a velocity in the mixt frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the mixt frame:"
+                                                              "functionality not implemented");
+    break;
+  case vpRobot::END_EFFECTOR_FRAME:
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot get a velocity in the end-effector frame:"
                                                               "functionality not implemented");
     break;
   }

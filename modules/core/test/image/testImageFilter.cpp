@@ -510,7 +510,7 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 #endif
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

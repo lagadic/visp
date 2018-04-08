@@ -1612,7 +1612,7 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Ty
   try {
     if ((this->getHeight() != C.getHeight()) || (this->getWidth() != C.getWidth()))
       C.resize(this->getHeight(), this->getWidth());
-  } catch (vpException &me) {
+  } catch (const vpException &me) {
     std::cout << me << std::endl;
     throw;
   }
@@ -1643,7 +1643,7 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &A, const vpIm
   try {
     if ((A.getHeight() != C.getHeight()) || (A.getWidth() != C.getWidth()))
       C.resize(A.getHeight(), A.getWidth());
-  } catch (vpException &me) {
+  } catch (const vpException &me) {
     std::cout << me << std::endl;
     throw;
   }

@@ -153,7 +153,7 @@ int main()
       vpTime::wait(1000 * robot.getSamplingTime());
     }
     task.kill();
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

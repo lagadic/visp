@@ -130,7 +130,7 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
     vpMatrix::computeHLM(Hdesire, lambda, HLMdesire);
     try {
       HLMdesireInverse = HLMdesire.inverseByLU();
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       // std::cerr<<"probleme inversion"<<std::endl;
       throw(e);
     }
@@ -258,7 +258,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
           dp = gain * 0.2 * HLM.inverseByLU() * G;
           break;
         }
-      } catch (vpException &e) {
+      } catch (const vpException &e) {
         // std::cerr<<"probleme inversion"<<std::endl;
         deletePosEvalRMS();
         throw(e);

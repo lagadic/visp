@@ -254,7 +254,7 @@ int main(int argc, const char **argv)
 
     std::cout << "final error=" << (task.getError()).sumSquare() << std::endl;
     return 0;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

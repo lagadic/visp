@@ -64,7 +64,6 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpSickLDMRS.h>
 #ifdef VISP_HAVE_MODULE_GUI
-#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayX.h>
 #endif
@@ -73,7 +72,7 @@
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
 #if (!defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) &&       \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
 static int save = 0;
 static int layerToDisplay = 0xF; // 0xF = 1111 => all the layers are selected
@@ -124,8 +123,6 @@ void *laser_display_and_save_loop(void *)
 #ifdef VISP_HAVE_MODULE_GUI
 #if defined VISP_HAVE_X11
   display = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
-  display = new vpDisplayGDI;
 #elif defined VISP_HAVE_GTK
   display = new vpDisplayGTK;
 #endif
@@ -262,8 +259,6 @@ void *camera_acq_and_display_loop(void *)
 #ifdef VISP_HAVE_MODULE_GUI
 #if defined VISP_HAVE_X11
     display = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
-    display = new vpDisplayGDI;
 #elif defined VISP_HAVE_GTK
     display = new vpDisplayGTK;
 #endif
@@ -361,19 +356,29 @@ int main(int argc, const char **argv)
 #endif
 
     return EXIT_SUCCESS;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }
 
+#elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+int main()
+{
+  std::cout << "You do not have X11, or GTK functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GTK, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #else // #ifdef UNIX and display
 
 int main()
 {
-  std::cout << "This example is only working on UNIX platforms \n"
+  std::cout << "This example is only working on unix-like platforms \n"
             << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif // #ifdef UNIX

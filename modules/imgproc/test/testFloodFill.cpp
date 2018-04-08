@@ -376,7 +376,7 @@ int main(int argc, const char **argv)
 
     std::cout << "\nTest flood fill is ok!" << std::endl;
     return EXIT_SUCCESS;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

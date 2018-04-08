@@ -1081,8 +1081,8 @@ double vpRobotViper850::getPositioningVelocity(void) const { return positioningV
   expressed in the reference frame, and rotations in the camera
   frame.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME
+  and vpRobot::END_EFFECTOR_FRAME not implemented.
 
   \exception vpRobotException::positionOutOfRangeError : The requested
   position is out of range.
@@ -1218,9 +1218,12 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
     break;
   }
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE("Positionning error. Mixt frame not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
                                                             "Mixt frame not implemented.");
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+                                                            "End-effector frame not implemented.");
   }
   }
 
@@ -1275,8 +1278,8 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
   expressed in the reference frame, and rotations in the camera
   frame.
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME
+  and vpRobot::END_EFFECTOR_FRAME not implemented.
 
   \exception vpRobotException::positionOutOfRangeError : The requested
   position is out of range.
@@ -1360,8 +1363,8 @@ int main()
 }
   \endcode
 
-  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
-  implemented.
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME
+  and vpRobot::END_EFFECTOR_FRAME not implemented.
 
   \exception vpRobotException::positionOutOfRangeError : The requested
   position is out of range.
@@ -1495,8 +1498,11 @@ void vpRobotViper850::getPosition(const vpRobot::vpControlFrameType frame, vpCol
     break;
   }
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE("Cannot get position in mixt frame: not implemented");
     throw vpRobotException(vpRobotException::lowLevelError, "Cannot get position in mixt frame: "
+                                                            "not implemented");
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    throw vpRobotException(vpRobotException::lowLevelError, "Cannot get position in end-effector frame: "
                                                             "not implemented");
   }
   }
@@ -1690,6 +1696,7 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
   // saturation in cartesian space
   case vpRobot::CAMERA_FRAME:
   case vpRobot::REFERENCE_FRAME:
+  case vpRobot::END_EFFECTOR_FRAME:
   case vpRobot::MIXT_FRAME: {
     vpColVector vel_max(6);
 
@@ -1913,6 +1920,10 @@ void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
       // Compute the velocity
       velocity /= (time_cur - time_prev_getvel);
       break;
+    }
+    default: {
+      throw(vpException(vpException::functionNotImplementedError,
+                        "vpRobotViper850::getVelocity() not implemented in end-effector"));
     }
     }
   } else {
@@ -2273,6 +2284,10 @@ void vpRobotViper850::getDisplacement(vpRobot::vpControlFrameType frame, vpColVe
 
     case vpRobot::MIXT_FRAME: {
       std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
+      return;
+    }
+    case vpRobot::END_EFFECTOR_FRAME: {
+      std::cout << "getDisplacement() END_EFFECTOR_FRAME not implemented\n";
       return;
     }
     }

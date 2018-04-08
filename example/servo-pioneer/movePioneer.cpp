@@ -48,7 +48,7 @@ int main()
   std::cout << "\nThis example requires Aria 3rd party library. You should "
                "install it.\n"
             << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #else
@@ -140,10 +140,10 @@ int main(int argc, char **argv)
 
     // exit
     ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 

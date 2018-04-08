@@ -21,7 +21,9 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/tag
 
 \section apriltag_detection_print Print an AprilTag marker
 
-You can directly download on the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
+We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a>.
+
+If you prefer, you can also directly download on the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended)</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h10.tgz">36h10</a>
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag25h9.tgz">25h9</a>
@@ -103,7 +105,7 @@ Next in the code we display the 3D pose of each tag as a RGB frame.
 
 \note
   - To get absolute pose (not relative to a scale factor), you have to provide the real size of the marker (length of a marker side).
-  - To calibrate your camera, you can follow this tutorial: \ref tutorial-calibration
+  - To calibrate your camera, you can follow this tutorial: \ref tutorial-calibration-intrinsic
 
 \section apriltag_detection_live AprilTag detection and pose estimation (live camera)
 

@@ -414,9 +414,10 @@ int main(int argc, char **argv)
     // Kill the servo task
     task.print();
     task.kill();
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 #endif
 #endif
@@ -425,6 +426,6 @@ int main(int argc, char **argv)
 int main()
 {
   std::cout << "ViSP is not able to control the Pioneer robot" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

@@ -31,11 +31,7 @@
  * Description:
  * Test functions in vpIoTools.
  *
- * Authors:
- * Souriya Trinh
- *
  *****************************************************************************/
-
 /*!
   \example testIoTools.cpp
 
@@ -46,6 +42,45 @@
 #include <stdio.h>
 #include <string.h>
 #include <visp3/core/vpIoTools.h>
+
+namespace
+{
+template <typename T>
+void checkReadBinaryValue(std::ifstream &file, const T checkValue)
+{
+  T value = (T)10;
+  vpIoTools::readBinaryValueLE(file, value);
+  if (value != checkValue) {
+    std::stringstream ss;
+    ss << "Read: " << value << " ; Expected: " << checkValue;
+    throw vpException(vpException::badValue, ss.str());
+  }
+}
+
+template <>
+void checkReadBinaryValue<float>(std::ifstream &file, const float checkValue)
+{
+  float value = 10.0f;
+  vpIoTools::readBinaryValueLE(file, value);
+  if (!vpMath::equal(value, checkValue, std::numeric_limits<float>::epsilon())) {
+    std::stringstream ss;
+    ss << "Read: " << value << " ; Expected: " << checkValue;
+    throw vpException(vpException::badValue, ss.str());
+  }
+}
+
+template <>
+void checkReadBinaryValue<double>(std::ifstream &file, const double checkValue)
+{
+  double value = 10.0;
+  vpIoTools::readBinaryValueLE(file, value);
+  if (!vpMath::equal(value, checkValue, std::numeric_limits<double>::epsilon())) {
+    std::stringstream ss;
+    ss << "Read: " << value << " ; Expected: " << checkValue;
+    throw vpException(vpException::badValue, ss.str());
+  }
+}
+}
 
 int main(int argc, const char **argv)
 {
@@ -416,9 +451,14 @@ int main(int argc, const char **argv)
     std::string username, directory_filename;
     vpIoTools::getUserName(username);
 #if defined(_WIN32)
-    directory_filename = "C:/temp/" + username + "/test_directory1/test directory 2/";
+    std::string tmp_dir = "C:/temp/" + username;
 #elif (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-    directory_filename = "/tmp/" + username + "/test_directory1/test directory 2/";
+    std::string tmp_dir = "/tmp/" + username;
+#endif
+#if defined(_WIN32)
+    directory_filename = tmp_dir + "/test_directory1/test directory 2/";
+#elif (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+    directory_filename = tmp_dir + "/test_directory1/test directory 2/";
 #endif
     vpIoTools::makeDirectory(directory_filename);
     vpIoTools::makeDirectory(directory_filename);
@@ -426,9 +466,9 @@ int main(int argc, const char **argv)
               << " ; check: " << vpIoTools::checkDirectory(directory_filename) << std::endl;
 
 #if defined(_WIN32)
-    directory_filename = "C:/temp/" + username + "/test_directory1/test directory 3";
+    directory_filename = tmp_dir + "/test_directory1/test directory 3";
 #elif (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-    directory_filename = "/tmp/" + username + "/test_directory1/test directory 3";
+    directory_filename = tmp_dir + "/test_directory1/test directory 3";
 #endif
     vpIoTools::makeDirectory(directory_filename);
     std::cout << "Create directories: " << directory_filename
@@ -452,6 +492,11 @@ int main(int argc, const char **argv)
     vpIoTools::makeDirectory(directory_filename);
     std::cout << "Create directories: " << directory_filename
               << " ; check: " << vpIoTools::checkDirectory(directory_filename) << std::endl;
+
+    //Delete test directory
+    if (!vpIoTools::remove(tmp_dir + "/test_directory1")) {
+      std::cerr << "Cannot remove directory: " << tmp_dir << "/test_directory1" << std::endl;
+    }
   } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
@@ -549,6 +594,15 @@ int main(int argc, const char **argv)
 
   std::cout << "Test vpIoTools::isSamePathname (Unix platform) - passed: " << nbOk << "/" << (nbOk + nbFail)
             << std::endl;
+
+  //Delete test directory
+  if (!vpIoTools::remove("/tmp/" + username + "/test")) {
+    std::cerr << "Cannot remove directory: " << "/tmp/" << username << "/test" << std::endl;
+  }
+  if (!vpIoTools::remove("/tmp/" + username + "/dummy dir")) {
+    std::cerr << "Cannot remove directory: " << "/tmp/" << username << "/dummy dir" << std::endl;
+  }
+
   if (nbFail) {
     std::cerr << "Failed test: vpIoTools::isSamePathname (Unix platform)" << std::endl;
     return EXIT_FAILURE;
@@ -571,6 +625,40 @@ int main(int argc, const char **argv)
     return EXIT_FAILURE;
   }
   std::cout << "Test vpIoTools::checkFilename() is ok." << std::endl;
+
+  //Delete test directory
+  if (!vpIoTools::remove("/tmp/" + username + "/directory (1) with ' quote and spaces")) {
+    std::cerr << "Cannot remove directory: " << "/tmp/" << username << "/directory (1) with ' quote and spaces" << std::endl;
+  }
+
+  // Test endianness
+  {
+    std::string filename_endianness =  vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "endianness/test_endianness_little_endian.bin");
+    std::ifstream file_endianness(filename_endianness.c_str(), std::ios::in | std::ios::binary);
+    if (file_endianness.is_open()) {
+      checkReadBinaryValue<short>(file_endianness, std::numeric_limits<short>::min());
+      checkReadBinaryValue<short>(file_endianness, std::numeric_limits<short>::max());
+
+      checkReadBinaryValue<unsigned short>(file_endianness, std::numeric_limits<unsigned short>::min());
+      checkReadBinaryValue<unsigned short>(file_endianness, std::numeric_limits<unsigned short>::max());
+
+      checkReadBinaryValue<int>(file_endianness, std::numeric_limits<int>::min());
+      checkReadBinaryValue<int>(file_endianness, std::numeric_limits<int>::max());
+
+      checkReadBinaryValue<unsigned int>(file_endianness, std::numeric_limits<unsigned int>::min());
+      checkReadBinaryValue<unsigned int>(file_endianness, std::numeric_limits<unsigned int>::max());
+
+      checkReadBinaryValue<float>(file_endianness, -std::numeric_limits<float>::max());
+      checkReadBinaryValue<float>(file_endianness, std::numeric_limits<float>::max());
+
+      checkReadBinaryValue<double>(file_endianness, -std::numeric_limits<double>::max());
+      checkReadBinaryValue<double>(file_endianness, std::numeric_limits<double>::max());
+
+      std::cout << "Test endianness is ok." << std::endl;
+    } else {
+      std::cout << "Cannot open file: " << filename_endianness << std::endl;
+    }
+  }
 
   std::cout << std::endl << "End" << std::endl;
   return EXIT_SUCCESS;

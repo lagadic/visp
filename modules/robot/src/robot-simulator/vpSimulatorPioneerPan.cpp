@@ -172,6 +172,9 @@ void vpSimulatorPioneerPan::setVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::MIXT_FRAME:
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the mixt frame:"
                                                               "functionality not implemented");
+  case vpRobot::END_EFFECTOR_FRAME:
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the end-effector frame:"
+                                                              "functionality not implemented");
   }
 }
 
@@ -231,5 +234,7 @@ void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::MIXT_FRAME:
     std::cout << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
+  case vpRobot::END_EFFECTOR_FRAME:
+    std::cout << "END_EFFECTOR_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
   }
 }

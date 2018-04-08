@@ -345,14 +345,21 @@ int main(int argc, const char **argv)
       // Synchronise the loop to 40 ms
       vpTime::wait(tms, 40);
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
 #else
-int main() { vpERROR_TRACE("You do not have X11 or GTK display functionalities..."); }
-
+int main()
+{
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a unix-like system:" << std::endl;
+  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "Tip if you are on a windows-like system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

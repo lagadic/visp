@@ -92,6 +92,7 @@ extern Keyword keyword_tbl[];
 #define T_VRP 293
 #define T_VUP 294
 #define T_WINDOW 295
+#define T_NULL 296
 
 #endif
 #endif

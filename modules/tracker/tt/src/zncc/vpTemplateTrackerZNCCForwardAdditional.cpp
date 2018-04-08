@@ -287,7 +287,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
       // vpMatrix::computeHLM(H,lambda,HLM);
       // dp=1.*HLM.inverseByLU()*G;
       dp = 1. * HLMdesireInverse * G;
-    } catch (vpException &e) {
+    } catch (const vpException &e) {
       // std::cout<<"probleme inversion"<<std::endl;
       throw(e);
     }

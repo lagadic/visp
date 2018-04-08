@@ -391,7 +391,7 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
   try {
     std::cout << " *********** Parsing XML for Mb Depth Tracker ************ " << std::endl;
     xmlp.parse(configFile);
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());
   }

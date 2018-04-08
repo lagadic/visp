@@ -224,14 +224,28 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
 int main(int argc, char *argv[])
 {
+#ifdef VISP_HAVE_PCL
   bool pcl_color = false;
+#endif
   bool show_info = false;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--pcl_color") {
-      pcl_color = true;
-    } else if (std::string(argv[i]) == "--show_info") {
+    if (std::string(argv[i]) == "--show_info") {
       show_info = true;
+    }
+#ifdef VISP_HAVE_PCL
+    else if (std::string(argv[i]) == "--pcl_color") {
+      pcl_color = true;
+    }
+#endif
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << argv[0] << " [--show_info]"
+#ifdef VISP_HAVE_PCL
+                           << " [--pcl_color]"
+#endif
+                           << " [--help] [-h]"
+                           << "\n";
+      return EXIT_SUCCESS;
     }
   }
 

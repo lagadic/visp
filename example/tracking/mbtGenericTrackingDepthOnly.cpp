@@ -43,7 +43,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -64,81 +64,8 @@
 #define USE_XML 1
 #define USE_SMALL_DATASET 1 // small depth dataset in ViSP-images
 
-// Detect endianness of the host machine
-// Reference: http://www.boost.org/doc/libs/1_36_0/boost/detail/endian.hpp
-#if defined(__GLIBC__)
-#include <endian.h>
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
-#define VISP_LITTLE_ENDIAN
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
-#define VISP_BIG_ENDIAN
-#elif (__BYTE_ORDER == __PDP_ENDIAN)
-// Currently not supported when reading / writing binary file
-#define VISP_PDP_ENDIAN
-#else
-#error Unknown machine endianness detected.
-#endif
-#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
-#define VISP_BIG_ENDIAN
-#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) || defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
-#define VISP_LITTLE_ENDIAN
-#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || defined(__ppc__) ||         \
-    defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
-
-#define VISP_BIG_ENDIAN
-#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
-    defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
-    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64)
-
-#define VISP_LITTLE_ENDIAN
-#else
-#error Cannot detect host machine endianness.
-#endif
-
 namespace
 {
-#ifdef VISP_BIG_ENDIAN
-// Swap 16 bits by shifting to the right the first byte and by shifting to the
-// left the second byte
-uint16_t swap16bits(const uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00)); }
-
-// Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
-// the left the last 2 bytes
-uint32_t swap32bits(const uint32_t val)
-{
-  return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
-          ((val << 24) & 0xFF000000));
-}
-#endif
-
-// Read an int stored in little endian
-void readBinaryUIntLE(std::ifstream &file, unsigned int &uint_value)
-{
-  // Read
-  file.read((char *)(&uint_value), sizeof(uint_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  if (sizeof(uint_value) == 4) {
-    uint_value = (unsigned int)swap32bits((uint32_t)uint_value);
-  } else {
-    uint_value = swap16bits((uint16_t)uint_value);
-  }
-#endif
-}
-
-// Read an int stored in little endian
-void readBinaryUIntLE(std::ifstream &file, uint16_t &uint_value)
-{
-  // Read
-  file.read((char *)(&uint_value), sizeof(uint_value));
-
-#ifdef VISP_BIG_ENDIAN
-  // Swap bytes order from little endian to big endian
-  uint_value = swap16bits((uint16_t)uint_value);
-#endif
-}
-
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
@@ -340,15 +267,15 @@ bool read_data(const unsigned int cpt, const std::string &input_directory, vpIma
   }
 
   unsigned int height = 0, width = 0;
-  readBinaryUIntLE(file_depth, height);
-  readBinaryUIntLE(file_depth, width);
+  vpIoTools::readBinaryValueLE(file_depth, height);
+  vpIoTools::readBinaryValueLE(file_depth, width);
 
   I_depth_raw.resize(height, width);
 
   uint16_t depth_value = 0;
   for (unsigned int i = 0; i < height; i++) {
     for (unsigned int j = 0; j < width; j++) {
-      readBinaryUIntLE(file_depth, depth_value);
+      vpIoTools::readBinaryValueLE(file_depth, depth_value);
       I_depth_raw[i][j] = depth_value;
     }
   }

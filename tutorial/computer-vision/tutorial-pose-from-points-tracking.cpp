@@ -130,7 +130,7 @@ int main()
       if (vpDisplay::getClick(I, false))
         break;
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

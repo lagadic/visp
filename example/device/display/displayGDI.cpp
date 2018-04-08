@@ -44,6 +44,8 @@
 
 */
 
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
@@ -424,12 +426,18 @@ int main(int argc, const char **argv)
         std::cout << "Bye" << std::endl;
       }
     }
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else
-int main() { vpERROR_TRACE("GDI display only works under windows..."); }
+int main()
+{
+  std::cout << "You do not have GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "Tip if you are on a windows system:" << std::endl;
+  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

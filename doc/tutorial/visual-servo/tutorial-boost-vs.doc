@@ -86,7 +86,6 @@ As implemented in tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp it is 
   - \f$\mu\f$ is a gain. We recommend to set this value to 4.
   - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$.
 
-
 The effect of continuous sequencing is illustrated in the next figure where during the first iterations velocities are starting from zero.
 
 \image html img-ibvs-control-law-continuous-adaptive.png "Convergence in 98 iterations with an adaptive gain and continuous sequencing."
@@ -96,5 +95,9 @@ This behavior can be reproduced running tutorial-ibvs-4pts-plotter-continuous-ga
 \code
       vpColVector v = task.computeControlLaw(iter*robot.getSamplingTime());
 \endcode
+
+\section boost_vs_next Next tutorial
+
+You are now ready to see the \ref tutorial-franka-pbvs that will show how to use adaptive gain and task sequencing on a real robot. 
 
 */

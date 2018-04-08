@@ -90,7 +90,7 @@ int main()
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;

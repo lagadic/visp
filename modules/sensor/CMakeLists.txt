@@ -193,17 +193,16 @@ if(USE_REALSENSE)
 endif()
 if(USE_REALSENSE2)
   # Add specific build flag to turn off warnings coming from RealSense2 3rd party
-  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp -Wno-reorder -Wno-unused-function)
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-reorder -Wno-unused-function)
+  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare)
+endif()
+if(USE_REALSENSE OR USE_REALSENSE2)
+  # Add specific build flag to turn off warnings coming from PCL 3rd party
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_R200.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-unused-function -Wno-reorder -Wno-sign-compare)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-unused-function -Wno-reorder -Wno-sign-compare)
 endif()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON visp_io visp_gui)
-
-if(USE_PCL)
-  # Add specific build flag to turn off warnings coming from PCL 3rd party
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_R200.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
-endif()

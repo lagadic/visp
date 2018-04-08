@@ -50,7 +50,7 @@ int main()
       //! [vpFlyCaptureGrabber click to exit]
       vpDisplay::flush(I);
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 #endif

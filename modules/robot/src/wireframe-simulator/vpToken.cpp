@@ -67,6 +67,6 @@ Keyword keyword_tbl[] = {/* tableau des mots cles termine par NULL*/
                          {"vrp", T_VRP},
                          {"vup", T_VUP},
                          {"window", T_WINDOW},
-                         {NULL, NULL}};
+                         {NULL, T_NULL}};
 
 #endif

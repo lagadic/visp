@@ -366,7 +366,7 @@ int main()
     }
     std::cout << "The end" << std::endl;
     std::cout << "Test succeed" << std::endl;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e.getMessage() << std::endl;
   }
 }

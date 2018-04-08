@@ -99,7 +99,7 @@ and that in \c \<path2\> you have the following data:
 - \c myobject.init: The coordinates of at least four 3D points used for the initialization.
 - \c myobject.cao: The CAD model of the object to track.
 - \c myobject.ppm: An optional image that shows where the user has to click the points defined in \c myobject.init.
-- \c myobject.xml: An optional files that contains the tracker parameters that are specific to the image sequence and that contains also the camera intrinsic parameters obtained by calibration (see \ref tutorial-calibration). This file is handled in tutorial-mb-tracker-full.cpp but not in tutorial-mb-tracker.cpp. That's why since the video \c teabox.mpg was acquired by an other camera than yours, you have to set the camera intrinsic parameters in tutorial-mb-tracker.cpp source code modifying the line:
+- \c myobject.xml: An optional files that contains the tracker parameters that are specific to the image sequence and that contains also the camera intrinsic parameters obtained by calibration (see \ref tutorial-calibration-intrinsic). This file is handled in tutorial-mb-tracker-full.cpp but not in tutorial-mb-tracker.cpp. That's why since the video \c teabox.mpg was acquired by an other camera than yours, you have to set the camera intrinsic parameters in tutorial-mb-tracker.cpp source code modifying the line:
 \snippet tutorial-mb-tracker.cpp Set camera parameters
 
 and build again before using \c "--model" command line option.
@@ -390,7 +390,7 @@ of from source code using vpMbTracker::setCameraParameters() method:
 
 As described in vpCameraParameters class, these parameters correspond to \f$(p_x, p_y)\f$ the ratio between the focal length and the size of a pixel, and \f$(u_0, v_0)\f$ the coordinates of the principal point in pixel.
 
-\note The \ref tutorial-calibration explains how to obtain these parameters from a camera calibration stage.
+\note The \ref tutorial-calibration-intrinsic explains how to obtain these parameters from a camera calibration stage.
 
 \subsection mb_settings_visibility Visibility settings
 

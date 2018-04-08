@@ -42,7 +42,7 @@ int main(int argc, char **argv)
       if (vpDisplay::getClick(I, false)) // a click to exit
         break;
     }
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

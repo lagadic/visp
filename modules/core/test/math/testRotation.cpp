@@ -348,7 +348,7 @@ int main()
     }
     std::cout << "All tests succeed" << std::endl;
     return EXIT_SUCCESS;
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

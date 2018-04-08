@@ -761,7 +761,31 @@ vpColVector &vpColVector::normalize()
 }
 
 /*!
-   Return a column vector with elements of \e v that are reverse sorted.
+   Return a column vector with elements of \e v that are reverse sorted with
+   values going from greatest to lowest.
+
+   Example:
+   \code
+#include <visp/vpColVector.h>
+
+int main()
+{
+  vpColVector v(10);
+  v[0] = 5; v[1] = 7; v[2] = 4; v[3] = 2; v[4] = 8;
+  v[5] = 6; v[6] = 1; v[7] = 9; v[8] = 0; v[9] = 3;
+
+  std::cout << "v: " << v.t() << std::endl;
+
+  vpColVector s = vpColVector::invSort(v);
+  std::cout << "s: " << s.t() << std::endl;
+}
+   \endcode
+   Output:
+   \code
+v: 5  7  4  2  8  6  1  9  0  3
+s: 9  8  7  6  5  4  3  2  1  0
+   \endcode
+
    \sa sort()
  */
 vpColVector vpColVector::invSort(const vpColVector &v)
@@ -790,7 +814,30 @@ vpColVector vpColVector::invSort(const vpColVector &v)
 }
 
 /*!
-   Return a column vector with elements of \e v that are sorted.
+   Return a column vector with elements of \e v that are sorted with values
+   going from lowest to geatest.
+
+   Example:
+   \code
+#include <visp/vpColVector.h>
+
+int main()
+{
+  vpColVector v(10);
+  v[0] = 5; v[1] = 7; v[2] = 4; v[3] = 2; v[4] = 8;
+  v[5] = 6; v[6] = 1; v[7] = 9; v[8] = 0; v[9] = 3;
+
+  std::cout << "v: " << v.t() << std::endl;
+
+  vpColVector s = vpColVector::sort(v);
+  std::cout << "s: " << s.t() << std::endl;
+}
+   \endcode
+   Output:
+   \code
+v: 5  7  4  2  8  6  1  9  0  3
+s: 0  1  2  3  4  5  6  7  8  9
+   \endcode
    \sa invSort()
  */
 vpColVector vpColVector::sort(const vpColVector &v)

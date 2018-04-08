@@ -302,11 +302,16 @@ int main(int argc, char **argv)
 
     // wait for the thread to stop
     robot.waitForRunExit();
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else
-int main() { std::cout << "You don't have the right 3rd party libraries to run this example..." << std::endl; }
+int main()
+{
+  std::cout << "You don't have the right 3rd party libraries to run this example..." << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

@@ -197,7 +197,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
-      exit(-1);
+      return EXIT_SUCCESS;
     }
 
     // Get the option values
@@ -219,7 +219,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -242,7 +242,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_SUCCESS;
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -268,8 +268,8 @@ int main(int argc, const char **argv)
     try {
       filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       vpImageIo::read(I, filename);
-    } catch (vpException &e) {
-      std::cout << "Catch an exception: " << e << std::endl;
+    } catch (const vpException &e) {
+      std::cout << "Catch an expected exception: " << e << std::endl;
     }
 
     // same thing if you to write in a directory that does not exist
@@ -277,8 +277,8 @@ int main(int argc, const char **argv)
     try {
       filename = vpIoTools::createFilePath(dirname, "directory-that-does-not-exist/Klimt.ppm");
       vpImageIo::write(I, filename);
-    } catch (vpException &e) {
-      std::cout << "Catch an exception: " << e << std::endl;
+    } catch (const vpException &e) {
+      std::cout << "Catch an expected exception: " << e << std::endl;
     }
 
     std::cout << "----------------------------------------------------" << std::endl;
@@ -300,8 +300,8 @@ int main(int argc, const char **argv)
     try {
       filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       vpImageIo::read(Irgba, filename);
-    } catch (vpException &e) {
-      std::cout << "Catch an exception: " << e << std::endl;
+    } catch (const vpException &e) {
+      std::cout << "Catch an expected exception: " << e << std::endl;
     }
 
     // test io error
@@ -309,13 +309,12 @@ int main(int argc, const char **argv)
       filename = vpIoTools::createFilePath(dirname, "directory-that-does-not-exist/Klimt.ppm");
       vpImageIo::write(Irgba, filename);
     }
-
-    catch (vpException &e) {
-      std::cout << "Catch an exception: " << e << std::endl;
+    catch (const vpException &e) {
+      std::cout << "Catch an expected exception: " << e << std::endl;
     }
-    return 0;
-  } catch (vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
+    std::cout << "Catch an unexpected exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 }

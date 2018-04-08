@@ -242,17 +242,17 @@ int main(int argc, const char **argv)
     sleep(5);
 
     std::cout << "The end" << std::endl;
-    return 0;
-  } catch (vpException &e) {
+    return EXIT_SUCCESS;
+  } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 #else
 int main()
 {
-  vpERROR_TRACE("You do not have an afma4 robot connected to your computer...");
-  return 0;
+  std::cout << "You do not have an afma4 robot connected to your computer..." << std::endl;
+  return EXIT_SUCCESS;
 }
 
 #endif
