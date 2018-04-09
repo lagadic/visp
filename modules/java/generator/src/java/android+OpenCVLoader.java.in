@@ -1,0 +1,132 @@
+package org.visp.android;
+
+import android.content.Context;
+
+/**
+ * Helper class provides common initialization methods for ViSP library.
+ */
+public class ViSPLoader
+{
+    /**
+     * ViSP Library version 2.4.2.
+     */
+    public static final String OPENCV_VERSION_2_4_2 = "2.4.2";
+
+    /**
+     * ViSP Library version 2.4.3.
+     */
+    public static final String OPENCV_VERSION_2_4_3 = "2.4.3";
+
+    /**
+     * ViSP Library version 2.4.4.
+     */
+    public static final String OPENCV_VERSION_2_4_4 = "2.4.4";
+
+    /**
+     * ViSP Library version 2.4.5.
+     */
+    public static final String OPENCV_VERSION_2_4_5 = "2.4.5";
+
+    /**
+     * ViSP Library version 2.4.6.
+     */
+    public static final String OPENCV_VERSION_2_4_6 = "2.4.6";
+
+    /**
+     * ViSP Library version 2.4.7.
+     */
+    public static final String OPENCV_VERSION_2_4_7 = "2.4.7";
+
+    /**
+     * ViSP Library version 2.4.8.
+     */
+    public static final String OPENCV_VERSION_2_4_8 = "2.4.8";
+
+    /**
+     * ViSP Library version 2.4.9.
+     */
+    public static final String OPENCV_VERSION_2_4_9 = "2.4.9";
+
+    /**
+     * ViSP Library version 2.4.10.
+     */
+    public static final String OPENCV_VERSION_2_4_10 = "2.4.10";
+
+    /**
+     * ViSP Library version 2.4.11.
+     */
+    public static final String OPENCV_VERSION_2_4_11 = "2.4.11";
+
+    /**
+     * ViSP Library version 2.4.12.
+     */
+    public static final String OPENCV_VERSION_2_4_12 = "2.4.12";
+
+    /**
+     * ViSP Library version 2.4.13.
+     */
+    public static final String OPENCV_VERSION_2_4_13 = "2.4.13";
+
+    /**
+     * ViSP Library version 3.0.0.
+     */
+    public static final String OPENCV_VERSION_3_0_0 = "3.0.0";
+
+    /**
+     * ViSP Library version 3.1.0.
+     */
+    public static final String OPENCV_VERSION_3_1_0 = "3.1.0";
+
+    /**
+     * ViSP Library version 3.2.0.
+     */
+    public static final String OPENCV_VERSION_3_2_0 = "3.2.0";
+
+    /**
+     * ViSP Library version 3.3.0.
+     */
+    public static final String OPENCV_VERSION_3_3_0 = "3.3.0";
+
+    /**
+     * ViSP Library version 3.4.0.
+     */
+    public static final String OPENCV_VERSION_3_4_0 = "3.4.0";
+
+    /**
+     * Current ViSP Library version
+     */
+    public static final String VISP_VERSION = "@VISP_VERSION_MAJOR@.@VISP_VERSION_MINOR@.@VISP_VERSION_PATCH@";
+
+
+    /**
+     * Loads and initializes ViSP library from current application package. Roughly, it's an analog of system.loadLibrary("visp_java").
+     * @return Returns true is initialization of ViSP was successful.
+     */
+    public static boolean initDebug()
+    {
+        return StaticHelper.initOpenCV(false);
+    }
+
+    /**
+     * Loads and initializes ViSP library from current application package. Roughly, it's an analog of system.loadLibrary("visp_java").
+     * @param InitCuda load and initialize CUDA runtime libraries.
+     * @return Returns true is initialization of ViSP was successful.
+     */
+    public static boolean initDebug(boolean InitCuda)
+    {
+        return StaticHelper.initOpenCV(InitCuda);
+    }
+
+    /**
+     * Loads and initializes ViSP library using ViSP Engine service.
+     * @param Version ViSP library version.
+     * @param AppContext application context for connecting to the service.
+     * @param Callback object, that implements LoaderCallbackInterface for handling the connection status.
+     * @return Returns true if initialization of ViSP is successful.
+     */
+    public static boolean initAsync(String Version, Context AppContext,
+            LoaderCallbackInterface Callback)
+    {
+        return AsyncServiceHelper.initOpenCV(Version, AppContext, Callback);
+    }
+}
