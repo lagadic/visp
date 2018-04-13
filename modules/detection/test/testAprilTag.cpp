@@ -52,7 +52,7 @@
 #if defined(VISP_HAVE_APRILTAG)
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:p:h"
+#define GETOPTARGS "cdi:p:C:T:h"
 
 namespace
 {
@@ -69,7 +69,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
   Test AprilTag detection.\n\
   \n\
   SYNOPSIS\n\
-    %s [-c] [-d] [-i <input image path>] [-p <personal image path>]\n\
+    %s [-c] [-d] [-i <input image path>] [-p <personal image path>] \
+       [-C <tag color>] [-T <tag thickness>]\n\
        [-h]\n            \
   ", name);
 
@@ -87,11 +88,17 @@ void usage(const char *name, const char *badparam, std::string ipath)
        Example: -p /my_path_to/image.png\n\
   \n\
     -c \n\
-       Disable the mouse click. Useful to automaze the \n\
+       Disable the mouse click. Useful to automate the \n\
        execution of this program without human intervention.\n\
   \n\
     -d \n\
        Turn off the display.\n\
+  \n\
+    -C <color (0, 1, ...)> \n\
+       Color for tag detection display.\n\
+  \n\
+    -T <thickness> \n\
+       Thickness for tag detection display.\n\
   \n\
     -h\n\
        Print the help.\n\n", ipath.c_str());
@@ -109,9 +116,12 @@ void usage(const char *name, const char *badparam, std::string ipath)
   \param ppath : Personal image path.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
+  \param color_id : Color id for tag detection display.
+  \param thickness : Thickness for tag detection display.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed, bool &display,
+                int &color_id, unsigned int &thickness)
 {
   const char *optarg_;
   int c;
@@ -133,6 +143,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       break;
     case 'd':
       display = false;
+      break;
+    case 'C':
+      color_id = atoi(optarg_);
+      break;
+    case 'T':
+      thickness = (unsigned int) atoi(optarg_);
       break;
 
     default:
@@ -191,13 +207,15 @@ std::ostream &operator<<(std::ostream &os, TagGroundTruth &t)
 int main(int argc, const char *argv[])
 {
   try {
-    std::string env_ipath;
-    std::string opt_ipath;
-    std::string opt_ppath;
-    std::string ipath;
-    std::string filename;
+    std::string env_ipath = "";
+    std::string opt_ipath = "";
+    std::string opt_ppath = "";
+    std::string ipath = "";
+    std::string filename = "";
     bool opt_click_allowed = true;
     bool opt_display = true;
+    int opt_color_id = -1;
+    unsigned int opt_thickness = 2;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -208,7 +226,8 @@ int main(int argc, const char *argv[])
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display,
+                   opt_color_id, opt_thickness) == false) {
       exit(EXIT_FAILURE);
     }
 
@@ -265,7 +284,9 @@ int main(int argc, const char *argv[])
     dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagQuadDecimate(quad_decimate);
     dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagPoseEstimationMethod(poseEstimationMethod);
     dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagNbThreads(nThreads);
-    dynamic_cast<vpDetectorAprilTag *>(detector)->setDisplayTag(display_tag);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setDisplayTag(display_tag,
+                                                                opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id),
+                                                                opt_thickness);
 
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
@@ -319,6 +340,8 @@ int main(int argc, const char *argv[])
         }
       }
     }
+
+    std::cout << "use_pose_ground_truth: " << use_pose_ground_truth << std::endl;
 
     for (size_t i = 0; i < detector->getNbObjects(); i++) {
       std::vector<vpImagePoint> p = detector->getPolygon(i);

@@ -132,7 +132,8 @@ public:
   }
 
   bool detect(const vpImage<unsigned char> &I, std::vector<std::vector<vpImagePoint> > &polygons,
-              std::vector<std::string> &messages, const bool computePose, const bool displayTag)
+              std::vector<std::string> &messages, const bool computePose, const bool displayTag,
+              const vpColor color, const unsigned int thickness)
   {
     m_tagPoses.clear();
 
@@ -162,14 +163,19 @@ public:
       messages[i] = ss.str();
 
       if (displayTag) {
+        vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
+        vpColor Oy = (color == vpColor::none) ? vpColor::green : color;
+        vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
+        vpColor Oy2 = (color == vpColor::none) ? vpColor::blue : color;
+
         vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[1][1], (int)det->p[1][0],
-                               vpColor::red, 2);
+                               Ox, thickness);
         vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[3][1], (int)det->p[3][0],
-                               vpColor::green, 2);
+                               Oy, thickness);
         vpDisplay::displayLine(I, (int)det->p[1][1], (int)det->p[1][0], (int)det->p[2][1], (int)det->p[2][0],
-                               vpColor::blue, 2);
+                               Ox2, thickness);
         vpDisplay::displayLine(I, (int)det->p[2][1], (int)det->p[2][0], (int)det->p[3][1], (int)det->p[3][0],
-                               vpColor::yellow, 2);
+                               Oy2, thickness);
       }
 
       if (computePose) {
@@ -306,7 +312,8 @@ protected:
 */
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
-  : m_displayTag(false), m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily),
+  : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
+    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily),
     m_impl(new Impl(tagFamily, poseEstimationMethod))
 {
 }
@@ -329,7 +336,8 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   m_polygon.clear();
   m_nb_objects = 0;
 
-  bool detected = m_impl->detect(I, m_polygon, m_message, false, m_displayTag);
+  bool detected = m_impl->detect(I, m_polygon, m_message, false, m_displayTag,
+                                 m_displayTagColor, m_displayTagThickness);
   m_nb_objects = m_message.size();
 
   return detected;
@@ -352,7 +360,8 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
 
   m_impl->setTagSize(tagSize);
   m_impl->setCameraParameters(cam);
-  bool detected = m_impl->detect(I, m_polygon, m_message, true, m_displayTag);
+  bool detected = m_impl->detect(I, m_polygon, m_message, true, m_displayTag,
+                                 m_displayTagColor, m_displayTagThickness);
   m_nb_objects = m_message.size();
   m_impl->getTagPoses(cMo_vec);
 
