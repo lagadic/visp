@@ -76,11 +76,52 @@ C:\> setx XML2_DIR "C:\workspace\libxml2-2.9.7\build-vc14"
 \endcode
 - You have also to add the location of libxml2 library in the PATH environment variable following the indications mentioned in \ref install_win10_msvc14_env_var.
 
-\subsection install_win10_msvc14_3rdparty_realsense librealsense 3rd party
+\subsection install_win10_msvc14_3rdparty_realsense2 librealsense 2.x 3rd party
 
-I you have an Intel RealSense Depth camera (F200, SR300, R200, LR200, ZR300, and D400 series cameras), you may install librealsense 1.12.1. Otherwise you can skip this section.
+I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x. If you have an older Realsense camera you may install \ref install_win10_msvc14_3rdparty_realsense. Otherwise you can skip this section.
 
-\note There is also librealsense 2.x.y, but ViSP is not compatible yet with this version, that is why we recommend to install the last stable release 1.12.1.
+<b>1. Get librealsense 2.x</b>
+
+- Get librealsense 2.x source code from github
+
+        C:\> cd C:\workspace
+        C:\> git clone https://github.com/IntelRealSense/librealsense.git librealsense-2
+        C:\> cd librealsense-2
+    
+- Here we suppose that you have librealsense source code in `C:\workspace\librealsense-2` folder.
+
+<b>2. Configure librealsense 2.x</b>
+
+- Launch CMake (cmake-gui), complete the source code and build locations as in the next image to set the location of the build to `C:/workspace/librealsense-2/build-vc14`:
+\image html img-cmake-win10-msvc14-realsense2-config.png
+- Click then on "Configure" button and accept the creation of the build directory by a click on "Yes" button. 
+- Select then your compiler "Visual Studio 14 2015 Win64" and click on "Finish" button. 
+- Modify `CMAKE_INSTALL_PREFIX` var to `C:/workspace/librealsense-2/build-vc14` folder location.
+\image html img-cmake-win10-msvc14-realsense2-install.png
+- Click again on "Configure" button. All the red lines should disappear.
+- To finish the configuration, click on "Generate" button.
+
+<b>3. Install librealsense 2.x</b>
+
+- To build librealsense just double click on `C:/workspace/librealsense-2/build-vc14/libealsense2.sln` solution file. This action will open Realsense project in Visual Studio C++ 14 2015.
+- Select `Release` configuration and build `INSTALL` target
+\image html img-win10-msvc14-realsense2-build.png
+- After these steps, librealsense library could be found in `C:/workspace/librealsense-2/build-vc14/bin/realsense.dll`
+
+<b>4. Complete librealsense 2.x installation</b>
+
+- set `REALSENSE_DIR` environment variable:
+\code
+C:\> setx REALSENSE_DIR "C:\workspace\librealsense-2\build-vc14"
+\endcode
+- You have also to add the location of librealsense library in the PATH environment variable following the indications mentioned in \ref install_win10_msvc14_env_var.
+
+\subsection install_win10_msvc14_3rdparty_realsense librealsense 1.12.1 3rd party
+
+\note We recommend rather to install \ref install_win10_msvc12_3rdparty_realsense2 to have an up-to-date Realsense SDK.
+
+The following instructions are provided to install the old Realsense 1.12.1 SDK compatible with F200, R200, LR200, ZR300 cameras.
+If you have already installed \ref install_win10_msvc12_3rdparty_realsense2 you may skip this section.
 
 <b>1. Get librealsense 1.12.1</b>
 
@@ -106,7 +147,7 @@ I you have an Intel RealSense Depth camera (F200, SR300, R200, LR200, ZR300, and
 
 <b>3. Install librealsense 1.12.1</b>
 
-- To build librealsense just double click on `C:/workspace/librealsense-1.12.1/Realsense.sln` solution file. This action will open Realsense project in Visual Studio C++ 14 2015.
+- To build librealsense just double click on `C:/workspace/librealsense-1.12.1/build-vc14/Realsense.sln` solution file. This action will open Realsense project in Visual Studio C++ 14 2015.
 - Select `Release` configuration and build `INSTALL` target
 \image html img-win10-msvc14-realsense-build.png
 - After these steps, librealsense library could be found in `C:/workspace/librealsense-1.12.1/build-vc14/bin/realsense.dll`
@@ -118,6 +159,10 @@ I you have an Intel RealSense Depth camera (F200, SR300, R200, LR200, ZR300, and
 C:\> setx REALSENSE_DIR "C:\workspace\librealsense-1.12.1\build-vc14"
 \endcode
 - You have also to add the location of librealsense library in the PATH environment variable following the indications mentioned in \ref install_win10_msvc14_env_var.
+
+
+
+
 
 \subsection install_win10_msvc14_3rdparty_flycapture FlyCapture 3rd party
 
@@ -312,6 +357,11 @@ C:\> setx PATH "%PATH%;C:\workspace\libxml2-2.9.7\build-vc14\bin"
 Then to add the path to librealsense 3rd party library location, close and re-open a cmd-terminal and run:
 \code
 C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\workspace\librealsense-2\build-vc14\bin"
+\endcode
+
+\note If you rather install librealsense 1.12.1 use rather:
+\code
 C:\> setx PATH "%PATH%;C:\workspace\librealsense-1.12.1\build-vc14\bin"
 \endcode
 

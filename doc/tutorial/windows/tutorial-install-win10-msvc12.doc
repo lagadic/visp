@@ -56,12 +56,15 @@ where `C:\workspace\opencv-3.0.0\build` is where you have installed OpenCV. Insi
 
 - You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win10_msvc12_env_var.
 
+\subsection install_win10_msvc12_3rdparty_realsense2 librealsense 2.x 3rd party
 
-\subsection install_win10_msvc12_3rdparty_realsense librealsense 3rd party
+This section is uncomplete. See instructions provided in \ref install_win10_msvc14_3rdparty_realsense2 installation and adapt the build folder to `build-vc12`.
 
-I you have an Intel RealSense Depth camera (F200, SR300, R200, LR200, ZR300, and D400 series cameras), you may install librealsense 1.12.1. Otherwise you can skip this section.
+\subsection install_win10_msvc12_3rdparty_realsense librealsense 1.12.1 3rd party
 
-\note There is also librealsense 2.x.y, but ViSP is not compatible yet with this version, that is why we recommend to install the last stable release 1.12.1.
+\note We recommend rather to install \ref install_win10_msvc12_3rdparty_realsense2 to have an up-to-date Realsense SDK.
+
+The following instructions are provided to install the old Realsense 1.12.1 SDK. If you have already installed \ref install_win10_msvc12_3rdparty_realsense2 you may skip this section.
 
 <b>1. Get librealsense 1.12.1</b>
 
@@ -87,7 +90,7 @@ I you have an Intel RealSense Depth camera (F200, SR300, R200, LR200, ZR300, and
 
 <b>3. Install librealsense 1.12.1</b>
 
-- To build librealsense just double click on `C:/workspace/librealsense-1.12.1/Realsense.sln` solution file. This action will open Realsense project in Visual Studio C++ 12 2013.
+- To build librealsense just double click on `C:/workspace/librealsense-1.12.1/build-vc12/Realsense.sln` solution file. This action will open Realsense project in Visual Studio C++ 12 2013.
 - Select `Release` configuration and build `INSTALL` target
 \image html img-win10-msvc12-realsense-build.png
 - After these steps, librealsense library could be found in `C:/workspace/librealsense-1.12.1/build-vc12/bin/realsense.dll`
@@ -251,6 +254,10 @@ C:\> setx PATH "%PATH%;C:\workspace\opencv-3.0.0\build\x64\vc12\bin"
 Then to add the path to librealsense 3rd party library location, close and re-open a cmd-terminal and run:
 \code
 C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\workspace\librealsense-2\build-vc12\bin"
+\endcode
+\note If you rather install librealsense 1.12.1 use rather:
+\code
 C:\> setx PATH "%PATH%;C:\workspace\librealsense-1.12.1\build-vc12\bin"
 \endcode
 
