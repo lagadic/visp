@@ -95,9 +95,11 @@ For each tag, we can then get the location of the 4 points that define the polyg
 
 \snippet tutorial-apriltag-detector.cpp Get location
 
-And finally, we are also able to get the tag id calling vpDetectorAprilTag::getMessage().
+And finally, we are also able to get the tag id by calling vpDetectorAprilTag::getMessage() and parsing the returned message.
 
 \snippet tutorial-apriltag-detector.cpp Get message
+
+\snippet tutorial-apriltag-detector.cpp Get tag id
 
 Next in the code we display the 3D pose of each tag as a RGB frame.
 

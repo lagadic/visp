@@ -201,7 +201,7 @@ public:
     that this color is not a predefined one.
 
   */
-  inline vpColor() : vpRGBa(), id(id_unknown){};
+  inline vpColor() : vpRGBa(), id(id_unknown){}
   /*!
     Construct a color from its RGB values.
 
@@ -214,9 +214,9 @@ public:
   */
   inline vpColor(unsigned char r, unsigned char g, unsigned char b,
                  vpColor::vpColorIdentifier cid = vpColor::id_unknown)
-    : vpRGBa(r, g, b), id(cid){};
+    : vpRGBa(r, g, b), id(cid){}
   /*! Default destructor. */
-  inline virtual ~vpColor(){};
+  inline virtual ~vpColor(){}
 
   friend VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2);
   friend VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2);
@@ -238,7 +238,7 @@ public:
     this->B = b;
     this->A = 0;
     id = id_unknown;
-  };
+  }
 
   /*!
 
@@ -246,7 +246,7 @@ public:
 
    \param i : color indice
    */
-  static inline vpColor getColor(const unsigned int &i) { return vpColor::allColors[i % vpColor::nbColors]; };
+  static inline vpColor getColor(const unsigned int &i) { return vpColor::allColors[i % vpColor::nbColors]; }
 };
 
 // In this file if windows

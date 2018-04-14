@@ -41,6 +41,7 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpColor.h>
 #include <visp3/detection/vpDetectorBase.h>
 
 /*!
@@ -131,9 +132,14 @@ int main()
   bool status = detector.detect(I, tagSize, cam, cMo);
   if (status) {
     for(size_t i=0; i < detector.getNbObjects(); i++) {
-      std::cout << "Tag code " << i << ":" << std::endl;
+      std::cout << "Tag number " << i << ":" << std::endl;
       std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
       std::cout << "  Pose: " << vpPoseVector(cMo[i]).t() << std::endl;
+      std::size_t tag_id_pos = detector.getMessage(i).find("id: ");
+      if (tag_id_pos != std::string::npos) {
+        std::string tag_id = detector.getMessage(i).substr(tag_id_pos + 4);
+        std::cout << "  Tag Id: " << tag_id << std::endl;
+      }
     }
   }
 #endif
@@ -141,12 +147,14 @@ int main()
   \endcode
   The previous example may produce results like:
   \code
-Tag code 0:
+Tag number 0:
   Message: "36h11 id: 0"
   Pose: 0.1015061088  -0.05239057228  0.3549037285  1.991474322  2.04143538 -0.9412360063
-Tag code 1:
+  Tag Id: 0
+Tag number 1:
   Message: "36h11 id: 1"
   Pose: 0.08951250829 0.02243780207  0.306540622  1.998073197  2.061488008  -0.8699567948
+  Tag Id: 1
 \endcode
 
   Other examples are also provided in tutorial-apriltag-detector.cpp and
@@ -211,10 +219,17 @@ public:
 
   /*! Allow to enable the display of overlay tag information in the windows
    * (vpDisplay) associated to the input image. */
-  inline void setDisplayTag(const bool display) { m_displayTag = display; }
+  inline void setDisplayTag(const bool display, const vpColor &color=vpColor::none,
+                            const unsigned int thickness=2) {
+    m_displayTag = display;
+    m_displayTagColor = color;
+    m_displayTagThickness = thickness;
+  }
 
 protected:
   bool m_displayTag;
+  vpColor m_displayTagColor;
+  unsigned int m_displayTagThickness;
   vpPoseEstimationMethod m_poseEstimationMethod;
   vpAprilTagFamily m_tagFamily;
 
