@@ -98,7 +98,7 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   }
 
   normalized_multiplier =
-      (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) * sqrt(momentSurfaceNormalized.getDesiredSurface() / a);
+      (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) * sqrt(momentSurfaceNormalized.getDesiredArea() / a);
   interaction_matrices[0] = normalized_multiplier * La;
 }
 
