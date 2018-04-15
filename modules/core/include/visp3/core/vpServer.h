@@ -50,7 +50,7 @@
 /*!
   \class vpServer
 
-  \ingroup group_core_network
+  \ingroup group_core_com_ethernet
 
   \brief This class represents a Transmission Control Protocol (TCP) server.
 

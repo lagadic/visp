@@ -152,6 +152,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \ref tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
 - \ref tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
+- \ref tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
 
 \subsection tuto_bridge Bridges over other frameworks
 
@@ -293,8 +294,18 @@ scheme, ...</p>
 */
 /*!
   \ingroup group_core_tools
-  \defgroup group_core_network Networking
+  \defgroup group_core_com Communication
   Networking.
+*/
+/*!
+  \ingroup group_core_com
+  \defgroup group_core_com_ethernet Ethernet
+  Ethernet communication either using TCPIP or UDP protocol.
+*/
+/*!
+  \ingroup group_core_com
+  \defgroup group_core_com_serial Serial
+  Serial communication.
 */
 /*!
   \ingroup group_core_tools

@@ -56,7 +56,7 @@
 /*!
   \class vpUDPServer
 
-  \ingroup group_core_network
+  \ingroup group_core_com_ethernet
 
   \brief This class implements a basic (IPv4) User Datagram Protocol (UDP)
 server.
