@@ -7,6 +7,7 @@
 
 ViSP 3.2.0 (under development)
   - New features
+    . Introduce vpSerial class to handle serial communication
     . New vpRobotFranka class, examples and test showing how to use Panda robot
       from Franka Emika.
   - Tutorials
