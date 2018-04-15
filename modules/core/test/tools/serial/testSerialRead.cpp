@@ -49,6 +49,7 @@
 
 int main(int argc, char **argv)
 {
+#if !defined(_WIN32)
   std::string port;
 
   unsigned long baud = 9600;
@@ -81,6 +82,10 @@ int main(int argc, char **argv)
     }
     vpTime::wait(100);
   } while(vpTime::measureTimeSecond() - t < 30);
-
+#else
+  (void) argc;
+  (void) argv;
+  std::cout << "Serial test is only working on unix-like OS." << std::endl;
+#endif
   return EXIT_SUCCESS;
 }

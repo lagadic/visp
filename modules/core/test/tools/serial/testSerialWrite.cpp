@@ -44,10 +44,13 @@
   \brief Test that writes data on serial port.
 */
 
+#include <iostream>
+#include <stdlib.h>
 #include <visp3/core/vpSerial.h>
 
 int main(int argc, char **argv)
 {
+#if !defined(_WIN32)
   std::string port;
 
   unsigned long baud = 9600;
@@ -73,4 +76,11 @@ int main(int argc, char **argv)
   vpSerial serial(port, baud);
 
   serial.write("hello\n");
+
+#else
+  (void) argc;
+  (void) argv;
+  std::cout << "Serial test is only working on unix-like OS." << std::endl;
+#endif
+  return EXIT_SUCCESS;
 }
