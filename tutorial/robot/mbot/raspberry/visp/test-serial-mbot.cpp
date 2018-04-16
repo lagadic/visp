@@ -4,6 +4,7 @@
 
 int main(int argc, char *argv[])
 {
+#if !defined(_WIN32)
   double time = 4;
   double v_x = 0;
   double w_z = 0;
@@ -75,6 +76,10 @@ int main(int argc, char *argv[])
   serial.write("LED_RING=0,0,0,0\n");
   vpTime::sleepMs(500);
   serial.close();
-
+#else
+  (void) argc;
+  (void) argv;
+  std::cout << "Serial test is only working on unix-like OS." << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
