@@ -458,4 +458,7 @@ General configuration information for ViSP 3.1.0
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project on Raspberry Pi or on any other system. Then if you have a Raspberry Pi camera module, you can also follow the \ref tutorial-tracking-blob especially subsection Tracking form v4l2 live cameras.
 
 You may also be interested in \ref tutorial-install-crosscompiling-raspberry if you want to speed up the build process or deploy ViSP on other Rapberry boards.
+
+There is also \ref tutorial-mbot-vs that uses a Raspberry Pi in order to control a mBot Ranger educational robot kit by visual-servoing.
+
 */

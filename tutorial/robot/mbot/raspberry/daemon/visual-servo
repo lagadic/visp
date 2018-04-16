@@ -1,0 +1,51 @@
+#! /bin/sh
+
+DAEMON="/home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp/mbot-apriltag-ibvs"
+
+PID_FILE="/var/run/visual-servo.pid" 
+PATH="/sbin:/bin:/usr/sbin:/usr/bin"
+ 
+test -x $DAEMON || exit 0
+ 
+. /lib/lsb/init-functions
+ 
+d_start () {
+        log_daemon_msg "Starting system visual_servo daemon"
+        start-stop-daemon --background --start --quiet --exec $DAEMON --pidfile $PID_FILE --make-pidfile --
+        log_end_msg $?
+}
+ 
+d_stop () {
+        log_daemon_msg "Stopping system visual_servo daemon"
+        start-stop-daemon --stop --retry 5 --quiet --pidfile $PID_FILE 
+        log_end_msg $?
+}
+ 
+case "$1" in
+ 
+        start|stop)
+                d_${1}
+                ;;
+ 
+        restart|reload|force-reload)
+                d_stop
+                d_start
+                ;;
+ 
+        force-stop)
+                d_stop
+                killall -q $daemon_NAME || true
+                sleep 2
+                killall -q -9 $daemon_NAME || true
+                ;;
+ 
+        status)
+                status_of_proc "visual_Servo" "$DAEMON" "system-wide $visual_servo" && exit 0 || exit $?
+                ;;
+        *)
+                echo "Usage: /etc/init.d/visual_servo {start|stop|force-stop|restart|reload|force-reload|status}"
+                exit 1
+                ;;
+esac
+exit 0
+
