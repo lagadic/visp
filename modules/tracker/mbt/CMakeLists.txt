@@ -221,4 +221,24 @@ endif()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_core)
+
+# TODO: remove hack to glob the test folder
+# TODO: ignore Ogre warnings for test files
+vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io)
+add_test(testTukeyEstimator        testTukeyEstimator)
+
+add_test(testGenericTracker-edge                            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -D)
+add_test(testGenericTracker-edge-scanline                   testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -D -l)
+add_test(testGenericTracker-KLT                             testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -D)
+add_test(testGenericTracker-KLT-scanline                    testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -D -l)
+add_test(testGenericTracker-edge-KLT                        testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -D)
+add_test(testGenericTracker-edge-KLT-scanline               testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -D -l)
+add_test(testGenericTracker-edge-depth-dense                testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -e 30)
+add_test(testGenericTracker-edge-depth-dense-scanline       testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -l -e 30)
+add_test(testGenericTracker-KLT-depth-dense                 testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -e 30)
+add_test(testGenericTracker-KLT-depth-dense-scanline        testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -l -e 30)
+add_test(testGenericTracker-edge-KLT-depth-dense            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -e 30)
+add_test(testGenericTracker-edge-KLT-depth-dense-scanline   testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -l -e 30)
+
+add_test(testGenericTrackerDepth            testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testGenericTrackerDepth-scanline   testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -l -e 20)
