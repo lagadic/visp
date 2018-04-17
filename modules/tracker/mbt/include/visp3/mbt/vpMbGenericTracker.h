@@ -167,9 +167,11 @@ public:
 #ifdef VISP_HAVE_MODULE_GUI
   using vpMbTracker::initClick;
   virtual void initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                         const std::string &initFile1, const std::string &initFile2, const bool displayHelp = false);
+                         const std::string &initFile1, const std::string &initFile2, const bool displayHelp = false,
+                         const vpHomogeneousMatrix &T1=vpHomogeneousMatrix(), const vpHomogeneousMatrix &T2=vpHomogeneousMatrix());
   virtual void initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                         const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp = false);
+                         const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp = false,
+                         const std::map<std::string, vpHomogeneousMatrix> &mapOfT=std::map<std::string, vpHomogeneousMatrix>());
 #endif
 
   using vpMbTracker::initFromPoints;
@@ -193,20 +195,24 @@ public:
   virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2);
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles);
 
-  using vpMbTracker::loadModel;
-  virtual void loadModel(const std::string &modelFile, const bool verbose = false);
-  virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, const bool verbose = false);
-  virtual void loadModel(const std::map<std::string, std::string> &mapOfModelFiles, const bool verbose = false);
+  virtual void loadModel(const std::string &modelFile, const bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, const bool verbose = false,
+                         const vpHomogeneousMatrix &T1=vpHomogeneousMatrix(), const vpHomogeneousMatrix &T2=vpHomogeneousMatrix());
+  virtual void loadModel(const std::map<std::string, std::string> &mapOfModelFiles, const bool verbose = false,
+                         const std::map<std::string, vpHomogeneousMatrix> &mapOfT=std::map<std::string, vpHomogeneousMatrix>());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false);
+                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name1, const std::string &cad_name2, const vpHomogeneousMatrix &c1Mo,
-                           const vpHomogeneousMatrix &c2Mo, const bool verbose = false);
+                           const vpHomogeneousMatrix &c2Mo, const bool verbose = false,
+                           const vpHomogeneousMatrix &T1=vpHomogeneousMatrix(), const vpHomogeneousMatrix &T2=vpHomogeneousMatrix());
   virtual void reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                            const std::map<std::string, std::string> &mapOfModelFiles,
                            const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                           const bool verbose = false);
+                           const bool verbose = false,
+                           const std::map<std::string, vpHomogeneousMatrix> &mapOfT=std::map<std::string, vpHomogeneousMatrix>());
 
   virtual void resetTracker();
 
@@ -401,7 +407,8 @@ private:
     virtual void loadConfigFile(const std::string &configFile);
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                             const vpHomogeneousMatrix &cMo_, const bool verbose = false);
+                             const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                             const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
     virtual void resetTracker();
 
