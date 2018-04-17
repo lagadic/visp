@@ -366,7 +366,7 @@ int main(int argc, const char **argv)
 #else
       opt_display = false;
 #endif
-#if (defined VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
       display->init(I, 100, 100, "Test tracking");
 #endif
       vpDisplay::display(I);

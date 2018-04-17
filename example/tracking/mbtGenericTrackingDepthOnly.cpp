@@ -501,7 +501,7 @@ int main(int argc, const char **argv)
     opt_display = false;
 #endif
     if (opt_display) {
-#if (defined VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
       display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display.init(I_depth, 100, 100, "Depth");
 #endif
@@ -675,7 +675,7 @@ int main(int argc, const char **argv)
         }
       }
 
-      if (opt_click_allowed) {
+      if (opt_click_allowed && opt_display) {
         vpDisplay::displayText(I_depth, 10, 10, "Click to quit", vpColor::red);
         vpMouseButton::vpMouseButtonType button;
         if (vpDisplay::getClick(I_depth, button, click)) {
@@ -702,7 +702,8 @@ int main(int argc, const char **argv)
         std::cout << "Projection error: " << tracker->getProjectionError() << std::endl << std::endl;
       }
 
-      vpDisplay::flush(I_depth);
+      if (opt_display)
+        vpDisplay::flush(I_depth);
 
       frame_index++;
     }
