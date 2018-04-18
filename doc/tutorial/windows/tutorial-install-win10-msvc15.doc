@@ -104,7 +104,7 @@ C:\> setx XML2_DIR "C:\workspace\libxml2-2.9.7\build-vc15"
 \endcode
 - You have also to add the location of libxml2 library in the PATH environment variable following the indications mentioned in \ref install_win10_msvc15_env_var.
 
-\subsection install_win10_msvc12_3rdparty_realsense2 librealsense 2.x 3rd party
+\subsection install_win10_msvc15_3rdparty_realsense2 librealsense 2.x 3rd party
 
 This section is uncomplete. See instructions provided in \ref install_win10_msvc14_3rdparty_realsense2 installation and adapt the build folder to `build-vc15`.
 
