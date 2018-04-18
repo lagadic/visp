@@ -152,7 +152,7 @@ int main(int argc, const char **argv)
     std::cout << "eJe: \n" << eJe << std::endl;
 
     // Desired distance to the target
-    double Z_d = 0.3;
+    double Z_d = 0.4;
 
     // Define the desired polygon corresponding the the AprilTag CLOCKWISE
     double X[4] = {tagSize/2.,  tagSize/2., -tagSize/2., -tagSize/2.};
@@ -291,8 +291,8 @@ int main(int argc, const char **argv)
         double motor_right = ( v[0] - L * v[1]) / radius;
         std::cout << "motor left vel: " << motor_left << " motor right vel: " << motor_right << std::endl;
         if (! serial_off) {
-          serial->write("LED_RING=3,0,0,10\n"); // Switch on led 3 to blue: motor left servoed
-          serial->write("LED_RING=4,0,0,10\n"); // Switch on led 4 to blue: motor right servoed
+//          serial->write("LED_RING=3,0,0,10\n"); // Switch on led 3 to blue: motor left servoed
+//          serial->write("LED_RING=4,0,0,10\n"); // Switch on led 4 to blue: motor right servoed
         }
         std::stringstream ss;
         double rpm_left  = motor_left  * 30. / M_PI;
@@ -307,8 +307,8 @@ int main(int argc, const char **argv)
         // stop the robot
         if (! serial_off) {
           serial->write("LED_RING=2,10,0,0\n"); // Switch on led 2 to red: tag not detected
-          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
-          serial->write("LED_RING=4,0,0,0\n");  // Switch on led 4 to blue: motor right not servoed
+//          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
+//          serial->write("LED_RING=4,0,0,0\n");  // Switch on led 4 to blue: motor right not servoed
           serial->write("MOTOR_RPM=0,-0\n");    // Stop the robot
         }
       }
