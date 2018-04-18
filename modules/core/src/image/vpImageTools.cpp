@@ -170,9 +170,8 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
 void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError,
-                      "Cannot compute image difference. The two images "
-                      "(%ux%u) and (%ux%u) have not the same size",
+    throw(vpException(vpException::dimensionError, "Cannot compute image difference. The two images "
+                                                   "(%ux%u) and (%ux%u) have not the same size",
                       I1.getWidth(), I1.getHeight(), I2.getWidth(), I2.getHeight()));
   }
 
@@ -216,6 +215,30 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1, con
   for (unsigned int b = 0; b < n; b++) {
     int diff = I1.bitmap[b] - I2.bitmap[b];
     Idiff.bitmap[b] = diff;
+  }
+}
+
+/*!
+  Compute the difference between the two images I1 and I2
+
+  \param I1 : The first image.
+  \param I2 : The second image.
+  \param Idiff : The result of the difference.
+*/
+void vpImageTools::imageDifferenceAbsolute(const vpImage<double> &I1, const vpImage<double> &I2, vpImage<double> &Idiff)
+{
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
+  }
+
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+    Idiff.resize(I1.getHeight(), I1.getWidth());
+
+  unsigned int n = I1.getHeight() * I1.getWidth();
+  double diff;
+  for (unsigned int b = 0; b < n; b++) {
+    diff = I1.bitmap[b] - I2.bitmap[b];
+    Idiff.bitmap[b] = vpMath::abs(diff);
   }
 }
 
@@ -337,6 +360,147 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
   for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
     *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 - (short int)*ptr_I2) : *ptr_I1 - *ptr_I2;
   }
+}
+
+/*!
+  Compute a correlation between 2 images.
+
+  \param I1 : The first image.
+  \param I2 : The second image.
+*/
+double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2)
+{
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    std::cerr << "Error: in vpImageTools::normalizedCorrelation(): "
+              << "image dimensions mismatch." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+  double a = I1.getMeanValue();
+  double b = I2.getMeanValue();
+
+  double ab = 0.0;
+  double a2 = 0.0;
+  double b2 = 0.0;
+
+  for (unsigned int i = 0; i < I1.getHeight(); ++i)
+    for (unsigned int j = 0; j < I1.getWidth(); ++j) {
+      ab += (I1(i, j) - a) * (I2(i, j) - b);
+      a2 += vpMath::sqr(I1(i, j) - a);
+      b2 += vpMath::sqr(I2(i, j) - b);
+    }
+
+  return ab / sqrt(a2 * b2);
+}
+
+/*!
+  Compute the column-wise mean intensities.
+
+  \param I : The image.
+  \param V : The result vector.
+*/
+
+void vpImageTools::columnMean(const vpImage<double> &I, vpRowVector &V)
+{
+  unsigned int height(I.getHeight()), width(I.getWidth());
+  V.resize(width);
+  for (unsigned int j = 0; j < width; ++j)
+    V[j] = 0.0;
+  for (unsigned int i = 0; i < height; ++i)
+    for (unsigned int j = 0; j < width; ++j)
+      V[j] += I[i][j];
+  for (unsigned int j = 0; j < width; ++j)
+    V[j] /= height;
+}
+
+/*!
+  Normalize the image intensities.
+  \param I : The image to normalize.
+*/
+void vpImageTools::normalize(vpImage<double> &I)
+{
+  double s = I.getSum();
+  for (unsigned int i = 0; i < I.getHeight(); ++i)
+    for (unsigned int j = 0; j < I.getWidth(); ++j)
+      I(i, j, I(i, j) / s);
+}
+
+/*!
+  Get the interpolated value at a given location.
+  \param I : The image to perform intepolation in.
+  \param point : The image point.
+  \param it : The interpolation type.
+*/
+double vpImageTools::interpolate(const vpImage<unsigned char> &I, vpImagePoint point, vpImageInterpolationType it)
+{
+  switch (it) {
+  case INTERPOLATION_NEAREST:
+    return I(vpMath::round(point.get_i()), vpMath::round(point.get_j()));
+  case INTERPOLATION_LINEAR: {
+    int x1 = (int)floor(point.get_i());
+    int x2 = (int)ceil(point.get_i());
+    int y1 = (int)floor(point.get_j());
+    int y2 = (int)ceil(point.get_j());
+    double v1, v2;
+    if (x1 == x2) {
+      v1 = I(x1, y1);
+      v2 = I(x1, y2);
+    } else {
+      v1 = (x2 - point.get_i()) * I(x1, y1) + (point.get_i() - x1) * I(x2, y1);
+      v2 = (x2 - point.get_i()) * I(x1, y2) + (point.get_i() - x1) * I(x2, y2);
+    }
+    if (y1 == y2)
+      return v1;
+    return (y2 - point.get_j()) * v1 + (point.get_j() - y1) * v2;
+  }
+  case INTERPOLATION_CUBIC:
+    std::cerr << "Error: bi-cubic interpolation is not implemented." << std::endl;
+    exit(EXIT_FAILURE);
+  default:
+    std::cerr << "Error: invalid interpolation type (" << it << ")" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+}
+
+/*!
+  Extract a rectangular region from an image.
+  \param Src : The source image.
+  \param Dst : The resulting image.
+  \param r : The rectangle area.
+*/
+void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<unsigned char> &Dst, const vpRectOriented &r)
+{
+  unsigned int x_d = vpMath::round(r.getHeight());
+  unsigned int y_d = vpMath::round(r.getWidth());
+  double x1 = r.getTopLeft().get_i();
+  double y1 = r.getTopLeft().get_j();
+  double t = r.getOrientation();
+  Dst.resize(x_d, y_d);
+  for (unsigned int x = 0; x < x_d; ++x)
+    for (unsigned int y = 0; y < y_d; ++y)
+      Dst(x, y,
+          (unsigned char)interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
+                                     vpImageTools::INTERPOLATION_LINEAR));
+}
+
+/*!
+  Extract a rectangular region from an image.
+  \param Src : The source image.
+  \param Dst : The resulting image.
+  \param r : The rectangle area.
+*/
+void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &Dst, const vpRectOriented &r)
+{
+  unsigned int x_d = vpMath::round(r.getHeight());
+  unsigned int y_d = vpMath::round(r.getWidth());
+  double x1 = r.getTopLeft().get_i();
+  double y1 = r.getTopLeft().get_j();
+  double t = r.getOrientation();
+  Dst.resize(x_d, y_d);
+  for (unsigned int x = 0; x < x_d; ++x)
+    for (unsigned int y = 0; y < y_d; ++y)
+      Dst(x, y, interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
+                            vpImageTools::INTERPOLATION_LINEAR));
 }
 
 // Reference:

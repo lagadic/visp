@@ -179,6 +179,8 @@ public:
 
   // Return the maximum value within the bitmap
   Type getMaxValue() const;
+  // Return the mean value of the bitmap
+  Type getMeanValue() const;
   // Return the minumum value within the bitmap
   Type getMinValue() const;
   // Look for the minumum and the maximum value within the bitmap
@@ -218,6 +220,10 @@ public:
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(vpImagePoint &ip) const;
+
+  // return image sum (for unsigned char and double template types only)
+  double getSum() const;
+
   /*!
     Get the image width.
 
@@ -943,6 +949,8 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
 */
 template <class Type> Type vpImage<Type>::getMaxValue() const
 {
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an image containg no pixels"));
   Type m = bitmap[0];
   for (unsigned int i = 0; i < npixels; i++) {
     if (bitmap[i] > m)
@@ -952,12 +960,29 @@ template <class Type> Type vpImage<Type>::getMaxValue() const
 }
 
 /*!
+  \brief Return the mean value of the bitmap
+*/
+template <class Type> Type vpImage<Type>::getMeanValue() const
+{
+  double res = 0.0;
+  if ((height == 0) || (width == 0))
+    return 0.0;
+  for (unsigned int i = 0; i < height; ++i)
+    for (unsigned int j = 0; j < width; ++j)
+      res += *(this)[i][j];
+  res /= (height * width);
+  return res;
+}
+
+/*!
   \brief Return the minimum value within the bitmap
 
   \sa getMaxValue()
 */
 template <class Type> Type vpImage<Type>::getMinValue() const
 {
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot compute minimum value of an image containg no pixels"));
   Type m = bitmap[0];
   for (unsigned int i = 0; i < npixels; i++)
     if (bitmap[i] < m)
@@ -973,6 +998,8 @@ template <class Type> Type vpImage<Type>::getMinValue() const
 */
 template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
 {
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot compute minimum/maximum values of an image containg no pixels"));
   min = max = bitmap[0];
   for (unsigned int i = 0; i < npixels; i++) {
     if (bitmap[i] < min)
@@ -1575,6 +1602,44 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
                   ((double)row[iround][jround + 1].B * rfrac + (double)row[iround + 1][jround + 1].B * rratio) * cratio;
   return vpRGBa((unsigned char)vpMath::round(valueR), (unsigned char)vpMath::round(valueG),
                 (unsigned char)vpMath::round(valueB));
+}
+
+/**
+* Compute the sum of image intensities.
+*/
+template <class Type> inline double vpImage<Type>::getSum() const
+{
+  throw(vpException(vpException::notImplementedError,
+                    "vpImage::getSum is only available for unsigned char and double template types."));
+  return .0;
+}
+
+/**
+* Compute the sum of image intensities.
+*/
+template <> inline double vpImage<unsigned char>::getSum() const
+{
+  double res = 0.0;
+  if ((height == 0) || (width == 0))
+    return 0.0;
+  for (unsigned int i = 0; i < height; ++i)
+    for (unsigned int j = 0; j < width; ++j)
+      res += static_cast<double>((*this)[i][j]);
+  return res;
+}
+
+/**
+* Compute the sum of image intensities.
+*/
+template <> inline double vpImage<double>::getSum() const
+{
+  double res = 0.0;
+  if ((height == 0) || (width == 0))
+    return 0.0;
+  for (unsigned int i = 0; i < height; ++i)
+    for (unsigned int j = 0; j < width; ++j)
+      res += (*this)[i][j];
+  return res;
 }
 
 /*!
