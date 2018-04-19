@@ -664,7 +664,7 @@ static inline void TFN(s_mat_ABC)(const TNAME *A, int Arows, int Acols,
                                   TNAME *R, int Rrows, int Rcols)
 {
 #ifdef _MSC_VER
-    TNAME *tmp = malloc(Arows*Bcols * sizeof *tmp);
+    TNAME *tmp = (TNAME *)malloc(Arows*Bcols * sizeof *tmp);
 #else
     TNAME tmp[Arows*Bcols];
 #endif

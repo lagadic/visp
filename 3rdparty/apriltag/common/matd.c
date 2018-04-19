@@ -37,6 +37,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+#include <algorithm>
 
 #include "common/math_util.h"
 #include "common/svd22.h"
@@ -817,7 +818,7 @@ matd_t *matd_op(const char *expr, ...)
     va_start(ap, expr);
 
 #ifdef _MSC_VER
-    matd_t **args = malloc(nargs*sizeof *args);
+    matd_t **args = (matd_t **)malloc(nargs*sizeof *args);
 #else
     matd_t *args[nargs];
 #endif
@@ -834,7 +835,7 @@ matd_t *matd_op(const char *expr, ...)
     int garbpos = 0;
 
 #ifdef _MSC_VER
-    matd_t **garb = malloc(2 * exprlen*sizeof *garb);
+    matd_t **garb = (matd_t **)malloc(2 * exprlen*sizeof *garb);
 #else
     matd_t *garb[2*exprlen]; // can't create more than 2 new result per character
                              // one result, and possibly one argument to free
@@ -978,7 +979,7 @@ TYPE matd_err_inf(const matd_t *a, const matd_t *b)
             TYPE bv = MATD_EL(b, i, j);
 
             TYPE err = fabs(av - bv);
-            maxf = fmax(maxf, err);
+            maxf = (std::max)(maxf, err);
         }
     }
 
@@ -1040,7 +1041,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             int vlen = A->nrows - hhidx;
 
 #ifdef _MSC_VER
-            double *v = malloc(vlen*sizeof *v);
+            double *v = (double *)malloc(vlen*sizeof *v);
 #else
             double v[vlen];
 #endif
@@ -1105,7 +1106,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             int vlen = A->ncols - hhidx - 1;
 
 #ifdef _MSC_VER
-            double *v = malloc(vlen*sizeof *v);
+            double *v = (double *)malloc(vlen*sizeof *v);
 #else
             double v[vlen];
 #endif
@@ -1182,7 +1183,7 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
     // for each of the first B->ncols rows, which index has the
     // maximum absolute value? (used by method 1)
 #ifdef _MSC_VER
-    int *maxrowidx = malloc(B->ncols*sizeof *maxrowidx);
+    int *maxrowidx = (int *)malloc(B->ncols*sizeof *maxrowidx);
 #else
     int maxrowidx[B->ncols];
 #endif
@@ -1409,8 +1410,8 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
     // them all positive by flipping the corresponding columns of
     // U/LS.
 #ifdef _MSC_VER
-    int *idxs = malloc(A->ncols*sizeof *idxs);
-    double *vals = malloc(A->ncols*sizeof *vals);
+    int *idxs = (int *)malloc(A->ncols*sizeof *idxs);
+    double *vals = (double *)malloc(A->ncols*sizeof *vals);
 #else
     int idxs[A->ncols];
     double vals[A->ncols];
@@ -1581,7 +1582,7 @@ matd_plu_t *matd_plu(const matd_t *a)
         // swap rows p and j?
         if (p != j) {
 #ifdef _MSC_VER
-          TYPE *tmp = malloc(lu->ncols*sizeof *tmp);
+          TYPE *tmp = (TYPE *)malloc(lu->ncols*sizeof *tmp);
 #else
             TYPE tmp[lu->ncols];
 #endif

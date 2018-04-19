@@ -33,7 +33,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #ifndef _TIME_UTIL_H
 #define _TIME_UTIL_H
 
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <stdint.h>
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #include "sys/times.h"

@@ -37,7 +37,9 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <inttypes.h>
+#include <math.h>
+#include <algorithm>
+//#include <inttypes.h>
 
 #include "common/image_u8.h"
 #include "common/image_u8x3.h"
@@ -394,6 +396,7 @@ void apriltag_detector_destroy(apriltag_detector_t *td)
     free(td);
 }
 
+typedef struct quad_decode_task quad_decode_task_t;
 struct quad_decode_task
 {
     int i0, i1;
@@ -530,7 +533,7 @@ double quad_goodness(apriltag_family_t *family, image_u8_t *im, struct quad *qua
             Hh += MATD_EL(Hinv, 2, 0);
 
             float txa = fabsf((float) tx), tya = fabsf((float) ty);
-            float xymax = fmaxf(txa, tya);
+            float xymax = (std::max)(txa, tya);
 
 //            if (txa >= 1 + wsz || tya >= 1 + wsz)
             if (xymax >= 1 + wsz)
@@ -725,7 +728,7 @@ float quad_decode(apriltag_family_t *family, image_u8_t *im, struct quad *quad, 
 
     quick_decode_codeword(family, rcode, entry);
 
-    return fmin(white_score / white_score_count, black_score / black_score_count);
+    return (std::min)(white_score / white_score_count, black_score / black_score_count);
 }
 
 double score_goodness(apriltag_family_t *family, image_u8_t *im, struct quad *quad, void *user)
@@ -1231,7 +1234,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
         int chunksize = 1 + zarray_size(quads) / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
 
 #ifdef _MSC_VER
-        struct quad_decode_task *tasks = malloc((zarray_size(quads) / chunksize + 1)*sizeof *tasks);
+        struct quad_decode_task *tasks = (quad_decode_task_t *)malloc((zarray_size(quads) / chunksize + 1)*sizeof *tasks);
 #else
         struct quad_decode_task tasks[zarray_size(quads) / chunksize + 1];
 #endif
@@ -1375,7 +1378,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
         // assume letter, which is 612x792 points.
         FILE *f = fopen("debug_output.ps", "w");
         fprintf(f, "%%!PS\n\n");
-        double scale = fmin(612.0/darker->width, 792.0/darker->height);
+        double scale = (std::min)(612.0/darker->width, 792.0/darker->height);
         fprintf(f, "%f %f scale\n", scale, scale);
         fprintf(f, "0 %d translate\n", darker->height);
         fprintf(f, "1 -1 scale\n");
@@ -1454,7 +1457,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
         image_u8_darken(darker);
 
         // assume letter, which is 612x792 points.
-        double scale = fmin(612.0/darker->width, 792.0/darker->height);
+        double scale = (std::min)(612.0/darker->width, 792.0/darker->height);
         fprintf(f, "%f %f scale\n", scale, scale);
         fprintf(f, "0 %d translate\n", darker->height);
         fprintf(f, "1 -1 scale\n");

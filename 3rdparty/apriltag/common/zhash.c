@@ -231,7 +231,7 @@ int zhash_remove(zhash_t *zh, const void *key, void *old_key, void *old_value)
                 if (zh->entries[entry_idx * zh->entrysz]) {
                     // completely remove this entry
 #ifdef _MSC_VER
-                  char *tmp = malloc(zh->entrysz*sizeof *tmp);
+                  char *tmp = (char *)malloc(zh->entrysz*sizeof *tmp);
 #else
                     char tmp[zh->entrysz];
 #endif
@@ -350,7 +350,7 @@ void zhash_iterator_remove(zhash_iterator_t *zit)
     while (zh->entries[entry_idx *zh->entrysz]) {
         // completely remove this entry
 #ifdef _MSC_VER
-      char *tmp = malloc(zh->entrysz*sizeof *tmp);
+      char *tmp = (char *)malloc(zh->entrysz*sizeof *tmp);
 #else
         char tmp[zh->entrysz];
 #endif

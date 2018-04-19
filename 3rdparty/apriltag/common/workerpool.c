@@ -36,7 +36,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
+//#include <inttypes.h>
 
 #include "workerpool.h"
 #include "timeprofile.h"
@@ -230,7 +230,7 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
         return -1;
     }
     if (bufptr == NULL) {
-        bufptr = malloc(128);
+        bufptr = (char *)malloc(128);
         if (bufptr == NULL) {
             return -1;
         }
@@ -241,7 +241,7 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
         int offset = p - bufptr;
         if ((p - bufptr + 1) > size) {
             size = size + 128;
-            bufptr = realloc(bufptr, size);
+            bufptr = (char *)realloc(bufptr, size);
             if (bufptr == NULL) {
                 return -1;
             }

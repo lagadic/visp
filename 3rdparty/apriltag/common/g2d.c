@@ -34,6 +34,8 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+#include <algorithm>
 
 #include "g2d.h"
 #include "common/math_util.h"
@@ -300,7 +302,7 @@ zarray_t *g2d_convex_hull(const zarray_t *points)
 void g2d_polygon_closest_boundary_point(const zarray_t *poly, const double q[2], double *p)
 {
     int psz = zarray_size(poly);
-    double min_dist = HUGE_VALF;
+	double min_dist = std::numeric_limits<double>::infinity(); //HUGE_VALF;
 
     for (int i = 0; i < psz; i++) {
         double *p0, *p1;

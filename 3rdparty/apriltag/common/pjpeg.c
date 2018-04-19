@@ -448,7 +448,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
 
                 // for each component, what is the index into our pjd->components[] array?
 #ifdef _MSC_VER
-                uint8_t *comp_idx = malloc(ns*sizeof *comp_idx);
+                uint8_t *comp_idx = (uint8_t *)malloc(ns*sizeof *comp_idx);
 #else
                 uint8_t comp_idx[ns];
 #endif
@@ -521,7 +521,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
 
                 // each component has its own DC prediction
 #ifdef _MSC_VER
-                int32_t *dcpred = malloc(ns*sizeof *dcpred);
+                int32_t *dcpred = (int32_t *)malloc(ns*sizeof *dcpred);
 #else
                 int32_t dcpred[ns];
 #endif

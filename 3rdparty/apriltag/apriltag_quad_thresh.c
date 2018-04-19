@@ -38,6 +38,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <algorithm>
 
 #include "apriltag.h"
 #include "common/image_u8x3.h"
@@ -70,6 +71,7 @@ struct uint64_zarray_entry
 # define M_PI 3.141592653589793238462643383279502884196
 #endif
 
+typedef struct pt pt_t;
 struct pt
 {
     // Note: these represent 2*actual value.
@@ -78,6 +80,7 @@ struct pt
     int16_t gx, gy;
 };
 
+typedef struct unionfind_task unionfind_task_t;
 struct unionfind_task
 {
     int y0, y1;
@@ -86,6 +89,7 @@ struct unionfind_task
     image_u8_t *im;
 };
 
+typedef struct quad_task quad_task_t;
 struct quad_task
 {
     zarray_t *clusters;
@@ -183,7 +187,7 @@ static inline void ptsort(struct pt *pts, int sz)
         stacksz = 0;
 
 #ifdef _MSC_VER
-    struct pt *_tmp_stack = malloc(stacksz*sizeof *_tmp_stack);
+    struct pt *_tmp_stack = (pt_t *)malloc(stacksz*sizeof *_tmp_stack);
 #else
     struct pt _tmp_stack[stacksz];
 #endif
@@ -426,7 +430,7 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 //    printf("sz %5d, ksz %3d\n", sz, ksz);
 
 #ifdef _MSC_VER
-    double *errs = malloc(sz*sizeof *errs);
+    double *errs = (double *)malloc(sz*sizeof *errs);
 #else
     double errs[sz];
 #endif
@@ -438,7 +442,7 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
     // apply a low-pass filter to errs
     if (1) {
 #ifdef _MSC_VER
-        double *y = malloc(sz*sizeof *y);
+        double *y = (double *) malloc(sz*sizeof *y);
 #else
         double y[sz];
 #endif
@@ -464,7 +468,7 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
         // For default values of cutoff = 0.05, sigma = 3,
         // we have fsz = 17.
 #ifdef _MSC_VER
-        float *f = malloc(fsz*sizeof *f);
+        float *f = (float *)malloc(fsz*sizeof *f);
 #else
         float f[fsz];
 #endif
@@ -496,8 +500,8 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
     }
 
 #ifdef _MSC_VER
-    int *maxima = malloc(sz*sizeof *maxima);
-    double *maxima_errs = malloc(sz*sizeof *maxima_errs);
+    int *maxima = (int *)malloc(sz*sizeof *maxima);
+    double *maxima_errs =(double *) malloc(sz*sizeof *maxima_errs);
 #else
     int maxima[sz];
     double maxima_errs[sz];
@@ -527,7 +531,7 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 
     if (nmaxima > max_nmaxima) {
 #ifdef _MSC_VER
-      double *maxima_errs_copy = malloc(nmaxima*sizeof *maxima_errs_copy);
+      double *maxima_errs_copy = (double *)malloc(nmaxima*sizeof *maxima_errs_copy);
       memcpy(maxima_errs_copy, maxima_errs, nmaxima * sizeof *maxima_errs_copy);
 #else
         double maxima_errs_copy[nmaxima];
@@ -840,9 +844,9 @@ int fit_quad(apriltag_detector_t *td, image_u8_t *im, zarray_t *cluster, struct 
 
 #define ASSOC 2
 #ifdef _MSC_VER
-        struct pt **v = malloc(nbuckets * sizeof *v);
+        struct pt **v = (pt_t **)malloc(nbuckets * sizeof *v);
         for (int i = 0; i < nbuckets; i++) {
-          v[i] = malloc(ASSOC*sizeof *v[i]);
+          v[i] = (pt_t *)malloc(ASSOC*sizeof *v[i]);
           for (int j = 0; j < ASSOC; j++) {
             v[i][j].gx = 0;
             v[i][j].gy = 0;
@@ -1615,7 +1619,7 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
         int sz = h - 1;
         int chunksize = 1 + sz / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
 #ifdef _MSC_VER
-        struct unionfind_task *tasks = malloc((sz / chunksize + 1)*sizeof *tasks);
+        struct unionfind_task *tasks = (unionfind_task_t *)malloc((sz / chunksize + 1)*sizeof *tasks);
 #else
         struct unionfind_task tasks[sz / chunksize + 1];
 #endif
@@ -1837,7 +1841,7 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
     int sz = zarray_size(clusters);
     int chunksize = 1 + sz / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
 #ifdef _MSC_VER
-    struct quad_task *tasks = malloc((sz / chunksize + 1)*sizeof *tasks);
+    struct quad_task *tasks = (quad_task_t *) malloc((sz / chunksize + 1)*sizeof *tasks);
 #else
     struct quad_task tasks[sz / chunksize + 1];
 #endif
@@ -1874,7 +1878,7 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
         image_u8_darken(im2);
 
         // assume letter, which is 612x792 points.
-        double scale = fmin(612.0/im->width, 792.0/im2->height);
+        double scale = (std::min)(612.0/im->width, 792.0/im2->height);
         fprintf(f, "%.15f %.15f scale\n", scale, scale);
         fprintf(f, "0 %d translate\n", im2->height);
         fprintf(f, "1 -1 scale\n");
