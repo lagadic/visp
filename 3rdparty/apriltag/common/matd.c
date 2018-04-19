@@ -55,7 +55,7 @@ matd_t *matd_create(int rows, int cols)
     if (rows == 0 || cols == 0)
         return matd_create_scalar(0);
 
-    matd_t *m = calloc(1, sizeof(matd_t) + (rows*cols*sizeof(double)));
+    matd_t *m = (matd_t *)calloc(1, sizeof(matd_t) + (rows*cols*sizeof(double)));
     m->nrows = rows;
     m->ncols = cols;
 
@@ -64,7 +64,7 @@ matd_t *matd_create(int rows, int cols)
 
 matd_t *matd_create_scalar(TYPE v)
 {
-    matd_t *m = calloc(1, sizeof(matd_t) + sizeof(double));
+    matd_t *m = (matd_t *)calloc(1, sizeof(matd_t) + sizeof(double));
     m->nrows = 0;
     m->ncols = 0;
     m->data[0] = v;
@@ -1544,14 +1544,14 @@ matd_svd_t matd_svd_flags(matd_t *A, int flags)
 
 matd_plu_t *matd_plu(const matd_t *a)
 {
-    unsigned int *piv = calloc(a->nrows, sizeof(unsigned int));
+    unsigned int *piv = (unsigned int *)calloc(a->nrows, sizeof(unsigned int));
     int pivsign = 1;
     matd_t *lu = matd_copy(a);
 
     // only for square matrices.
     assert(a->nrows == a->ncols);
 
-    matd_plu_t *mlu = calloc(1, sizeof(matd_plu_t));
+    matd_plu_t *mlu = (matd_plu_t *)calloc(1, sizeof(matd_plu_t));
 
     for (int i = 0; i < a->nrows; i++)
         piv[i] = i;
@@ -1930,7 +1930,7 @@ MATD_EL(U, i, j) = 0;
         }
     }
 
-    matd_chol_t *chol = calloc(1, sizeof(matd_chol_t));
+    matd_chol_t *chol = (matd_chol_t *)calloc(1, sizeof(matd_chol_t));
     chol->is_spd = is_spd;
     chol->u = U;
     return chol;

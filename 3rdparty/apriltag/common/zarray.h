@@ -39,7 +39,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <string.h>
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 #if defined(_MSC_VER)
@@ -385,7 +385,7 @@ static inline void zarray_map(zarray_t *za, void (*f)(void*))
  *
  * void map_function(element_type *element)
  */
-    void zarray_vmap(zarray_t *za, void (*f)());
+    void zarray_vmap(zarray_t *za, void (*f)(void *));
 
 /**
  * Removes all elements from the array and sets its size to zero. Pointers to
@@ -490,7 +490,7 @@ static inline void zarray_add_all(zarray_t * dest, const zarray_t * source)
 }
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

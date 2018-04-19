@@ -54,7 +54,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 typedef struct timeutil_rest timeutil_rest_t;
@@ -85,7 +85,7 @@ int64_t time_util_hhmmss_ss_to_utime(double time);
 
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

@@ -164,7 +164,7 @@ void quad_destroy(struct quad *quad)
 
 struct quad *quad_copy(struct quad *quad)
 {
-    struct quad *q = calloc(1, sizeof(struct quad));
+    struct quad *q = (apriltag_quad_t *)calloc(1, sizeof(struct quad));
     memcpy(q, quad, sizeof(struct quad));
     if (quad->H)
         q->H = matd_copy(quad->H);
@@ -202,7 +202,7 @@ void quick_decode_init(apriltag_family_t *family, int maxhamming)
     assert(family->impl == NULL);
     assert(family->ncodes < 65535);
 
-    struct quick_decode *qd = calloc(1, sizeof(struct quick_decode));
+    struct quick_decode *qd = (quick_decode *)calloc(1, sizeof(struct quick_decode));
     int capacity = family->ncodes;
 
     int nbits = family->d * family->d;
@@ -221,7 +221,7 @@ void quick_decode_init(apriltag_family_t *family, int maxhamming)
 //    printf("capacity %d, size: %.0f kB\n",
 //           capacity, qd->nentries * sizeof(struct quick_decode_entry) / 1024.0);
 
-    qd->entries = calloc(qd->nentries, sizeof(struct quick_decode_entry));
+    qd->entries = (quick_decode_entry *)calloc(qd->nentries, sizeof(struct quick_decode_entry));
     if (qd->entries == NULL) {
         printf("apriltag.c: failed to allocate hamming decode table. Reduce max hamming size.\n");
         exit(-1);
@@ -1023,7 +1023,7 @@ static void quad_decode_task(void *_u)
             float decision_margin = quad_decode(family, im, quad, &entry, task->im_samples);
 
             if (entry.hamming < 255 && decision_margin >= 0) {
-                apriltag_detection_t *det = calloc(1, sizeof(apriltag_detection_t));
+                apriltag_detection_t *det = (apriltag_detection_t *)calloc(1, sizeof(apriltag_detection_t));
 
                 det->family = family;
                 det->id = entry.id;
@@ -1430,11 +1430,12 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             for (int i = 0; i < 3; i++)
                 rgb[i] = bias + (random() % (255-bias));
 
+            uint8_t rgb_array[] = { rgb[0], rgb[1], rgb[2] };
             for (int j = 0; j < 4; j++) {
                 int k = (j + 1) & 3;
                 image_u8x3_draw_line(out,
                                      det->p[j][0], det->p[j][1], det->p[k][0], det->p[k][1],
-                                     (uint8_t[]) { rgb[0], rgb[1], rgb[2] },
+                                     rgb_array,
                                      1);
             }
         }

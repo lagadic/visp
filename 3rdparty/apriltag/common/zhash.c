@@ -88,7 +88,7 @@ zhash_t *zhash_create_capacity(size_t keysz, size_t valuesz,
 
     zh->entrysz = 1 + zh->keysz + zh->valuesz;
 
-    zh->entries = calloc(zh->nentries, zh->entrysz);
+    zh->entries = (char *)calloc(zh->nentries, zh->entrysz);
     zh->nentries = nentries;
 
     return zh;
@@ -368,7 +368,7 @@ void zhash_iterator_remove(zhash_iterator_t *zit)
     zit->last_entry--;
 }
 
-void zhash_map_keys(zhash_t *zh, void (*f)())
+void zhash_map_keys(zhash_t *zh, void (*f)(void *))
 {
     assert(zh != NULL);
     if (f == NULL)
@@ -384,7 +384,7 @@ void zhash_map_keys(zhash_t *zh, void (*f)())
     }
 }
 
-void zhash_vmap_keys(zhash_t * zh, void (*f)())
+void zhash_vmap_keys(zhash_t * zh, void (*f)(void *))
 {
     assert(zh != NULL);
     if (f == NULL)
@@ -401,7 +401,7 @@ void zhash_vmap_keys(zhash_t * zh, void (*f)())
     }
 }
 
-void zhash_map_values(zhash_t * zh, void (*f)())
+void zhash_map_values(zhash_t * zh, void (*f)(void *))
 {
     assert(zh != NULL);
     if (f == NULL)
@@ -416,7 +416,7 @@ void zhash_map_values(zhash_t * zh, void (*f)())
     }
 }
 
-void zhash_vmap_values(zhash_t * zh, void (*f)())
+void zhash_vmap_values(zhash_t * zh, void (*f)(void *))
 {
     assert(zh != NULL);
     if (f == NULL)

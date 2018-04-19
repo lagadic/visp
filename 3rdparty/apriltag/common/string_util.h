@@ -45,7 +45,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 
@@ -465,7 +465,7 @@ char *str_expand_envs(const char *in);
 #endif
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

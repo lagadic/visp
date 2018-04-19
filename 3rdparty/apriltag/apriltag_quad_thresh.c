@@ -191,7 +191,7 @@ static inline void ptsort(struct pt *pts, int sz)
 
     if (stacksz == 0) {
         // it was too big, malloc it instead.
-        tmp = malloc(sizeof(struct pt) * sz);
+        tmp = (pt *)malloc(sizeof(struct pt) * sz);
     }
 
     memcpy(tmp, pts, sizeof(struct pt) * sz);
@@ -380,8 +380,8 @@ int pt_compare_theta(const void *_a, const void *_b)
 
 int err_compare_descending(const void *_a, const void *_b)
 {
-    const double *a =  _a;
-    const double *b =  _b;
+    const double *a =  (double *)_a;
+    const double *b =  (double *)_b;
 
     return ((*a) < (*b)) ? 1 : -1;
 }
@@ -638,9 +638,9 @@ int quad_segment_agg(apriltag_detector_t *td, zarray_t *cluster, struct line_fit
 
     int rvalloc_pos = 0;
     int rvalloc_size = 3*sz;
-    struct remove_vertex *rvalloc = calloc(rvalloc_size, sizeof(struct remove_vertex));
+    struct remove_vertex *rvalloc = (remove_vertex *)calloc(rvalloc_size, sizeof(struct remove_vertex));
 
-    struct segment *segs = calloc(sz, sizeof(struct segment));
+    struct segment *segs = (segment *)calloc(sz, sizeof(struct segment));
 
     // populate with initial entries
     for (int i = 0; i < sz; i++) {
@@ -903,7 +903,7 @@ int fit_quad(apriltag_detector_t *td, image_u8_t *im, zarray_t *cluster, struct 
     // Step 2. Precompute statistics that allow line fit queries to be
     // efficiently computed for any contiguous range of indices.
 
-    struct line_fit_pt *lfps = calloc(sz, sizeof(struct line_fit_pt));
+    struct line_fit_pt *lfps = (line_fit_pt *)calloc(sz, sizeof(struct line_fit_pt));
 
     for (int i = 0; i < sz; i++) {
         struct pt *p;
@@ -1285,8 +1285,8 @@ image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
     int tw = w / tilesz;
     int th = h / tilesz;
 
-    uint8_t *im_max = calloc(tw*th, sizeof(uint8_t));
-    uint8_t *im_min = calloc(tw*th, sizeof(uint8_t));
+    uint8_t *im_max = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
+    uint8_t *im_min = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
 
     // first, collect min/max statistics for each tile
     for (int ty = 0; ty < th; ty++) {
@@ -1314,8 +1314,8 @@ image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
     // over larger areas. This reduces artifacts due to abrupt changes
     // in the threshold value.
     if (1) {
-        uint8_t *im_max_tmp = calloc(tw*th, sizeof(uint8_t));
-        uint8_t *im_min_tmp = calloc(tw*th, sizeof(uint8_t));
+        uint8_t *im_max_tmp = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
+        uint8_t *im_min_tmp = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
 
         for (int ty = 0; ty < th; ty++) {
             for (int tx = 0; tx < tw; tx++) {
@@ -1488,8 +1488,8 @@ image_u8_t *threshold_bayer(apriltag_detector_t *td, image_u8_t *im)
 
     uint8_t *im_max[4], *im_min[4];
     for (int i = 0; i < 4; i++) {
-        im_max[i] = calloc(tw*th, sizeof(uint8_t));
-        im_min[i] = calloc(tw*th, sizeof(uint8_t));
+        im_max[i] = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
+        im_min[i] = (uint8_t *)calloc(tw*th, sizeof(uint8_t));
     }
 
     for (int ty = 0; ty < th; ty++) {
@@ -1653,7 +1653,7 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
     // XXX sizing??
     int nclustermap = 2*w*h - 1;
 
-    struct uint64_zarray_entry **clustermap = calloc(nclustermap, sizeof(struct uint64_zarray_entry*));
+    struct uint64_zarray_entry **clustermap = (uint64_zarray_entry **)calloc(nclustermap, sizeof(struct uint64_zarray_entry*));
 
     for (int y = 1; y < h-1; y++) {
         for (int x = 1; x < w-1; x++) {
@@ -1705,14 +1705,18 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
                     }                                                   \
                                                                         \
                     if (!entry) {                                       \
-                        entry = calloc(1, sizeof(struct uint64_zarray_entry)); \
+                        entry = (uint64_zarray_entry *)calloc(1, sizeof(struct uint64_zarray_entry)); \
                         entry->id = clusterid;                          \
                         entry->cluster = zarray_create(sizeof(struct pt)); \
                         entry->next = clustermap[clustermap_bucket];    \
                         clustermap[clustermap_bucket] = entry;          \
                     }                                                   \
                                                                         \
-                    struct pt p = { .x = 2*x + dx, .y = 2*y + dy, .gx = dx*((int) v1-v0), .gy = dy*((int) v1-v0)}; \
+                    struct pt p; \
+                    p.x = 2*x + dx; \
+                    p.y = 2*y + dy; \
+                    p.gx = dx*((int) v1-v0); \
+                    p.gy = dy*((int) v1-v0); \
                     zarray_add(entry->cluster, &p);                     \
                 }                                                       \
             }

@@ -64,7 +64,7 @@ static inline TNAME *TFN(s_dup)(const TNAME *v, int len)
     if (!v)
         return NULL;
 
-    TNAME *r = malloc(len * sizeof(TNAME));
+    TNAME *r = (TNAME *)malloc(len * sizeof(TNAME));
     memcpy(r, v, len * sizeof(TNAME));
     return r;
 }

@@ -37,7 +37,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 apriltag_family_t *tag36artoolkit_create()
 {
-    apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
+    apriltag_family_t *tf = (apriltag_family_t *)calloc(1, sizeof(apriltag_family_t));
 #ifdef WINRT
     tf->name = _strdup("artoolkit");
 #else
@@ -47,7 +47,7 @@ apriltag_family_t *tag36artoolkit_create()
     tf->d = 6;
     tf->h = 7; // not sure.
     tf->ncodes = 512;
-    tf->codes = calloc(512, sizeof(uint64_t));
+    tf->codes = (uint64_t *)calloc(512, sizeof(uint64_t));
 
     tf->codes[0] = 0x0006dc269c27UL;
     tf->codes[1] = 0x0006d4229e26UL;

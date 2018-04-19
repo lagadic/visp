@@ -37,7 +37,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "string_util.h"
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 typedef struct getopt getopt_t;
@@ -66,7 +66,7 @@ int getopt_was_specified(getopt_t *gopt, const char *lname);
 const zarray_t *getopt_get_extra_args(getopt_t *gopt);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 

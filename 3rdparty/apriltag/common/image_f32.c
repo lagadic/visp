@@ -54,7 +54,7 @@ static inline float sqf(float v)
 
 image_f32_t *image_f32_create_stride(int width, int height, int stride)
 {
-    float *buf = calloc(height * stride, sizeof(float));
+    float *buf = (float *)calloc(height * stride, sizeof(float));
     // const initializer
     image_f32_t tmp = { .width = width, .height = height, .stride = stride, .buf = buf };
 
