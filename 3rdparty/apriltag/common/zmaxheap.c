@@ -238,8 +238,8 @@ int zmaxheap_remove_index(zmaxheap_t *heap, int idx, void *p, float *v)
 
 //            assert(parent_score == heap->values[parent]);
 
-		float left_score = (left < heap->size) ? heap->values[left] : -std::numeric_limits<float>::infinity(); // INFINITY;
-        float right_score = (right < heap->size) ? heap->values[right] : -std::numeric_limits<float>::infinity(); //INFINITY;
+        float left_score = (left < heap->size) ? heap->values[left] : -0x7f800000;//std::numeric_limits<float>::infinity(); // INFINITY;
+        float right_score = (right < heap->size) ? heap->values[right] : -0x7f800000;//std::numeric_limits<float>::infinity(); //INFINITY;
 
         // put the biggest of (parent, left, right) as the parent.
 
