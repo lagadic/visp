@@ -36,14 +36,14 @@ either expressed or implied, of the Regents of The University of Michigan.
 #define _TAG36ARTOOLKIT
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 apriltag_family_t *tag36artoolkit_create();
 void tag36artoolkit_destroy(apriltag_family_t *tf);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

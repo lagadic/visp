@@ -36,7 +36,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 #define PNM_FORMAT_BINARY 4
@@ -60,7 +60,7 @@ pnm_t *pnm_create_from_file(const char *path);
 void pnm_destroy(pnm_t *pnm);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

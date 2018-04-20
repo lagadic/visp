@@ -41,6 +41,11 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "string_util.h"
 #include "zarray.h"
 
+// fix va_copy missing with msvc11 Visual 2012
+#ifdef _MSC_VER
+#define my_va_copy(dest, src) (dest = src)
+#endif
+
 struct string_buffer
 {
     char *s;
@@ -68,12 +73,15 @@ char *vsprintf_alloc(const char *fmt, va_list orig_args)
     assert(fmt != NULL);
 
     int size = MIN_PRINTF_ALLOC;
-    char *buf = malloc(size * sizeof(char));
+    char *buf = (char *)malloc(size * sizeof(char));
 
     int returnsize;
     va_list args;
-
+#ifdef _MSC_VER
+	my_va_copy(args, orig_args);
+#else
     va_copy(args, orig_args);
+#endif
     returnsize = vsnprintf(buf, size, fmt, args);
     va_end(args);
 
@@ -85,9 +93,14 @@ char *vsprintf_alloc(const char *fmt, va_list orig_args)
     // otherwise, we should try again
     free(buf);
     size = returnsize + 1;
-    buf = malloc(size * sizeof(char));
+    buf = (char *)malloc(size * sizeof(char));
 
+#ifdef _MSC_VER
+	my_va_copy(args, orig_args);
+#else
     va_copy(args, orig_args);
+#endif
+
     returnsize = vsnprintf(buf, size, fmt, args);
     va_end(args);
 
@@ -112,7 +125,7 @@ char *_str_concat_private(const char *first, ...)
     }
 
     // write the string
-    char *str = malloc(len*sizeof(char) + 1);
+    char *str = (char *)malloc(len*sizeof(char) + 1);
     char *ptr = str;
     {
         va_list args;
@@ -208,7 +221,7 @@ zarray_t *str_split_spaces(const char *str)
       size_t off1 = pos;
 
       size_t len = off1 - off0;
-      char *tok = malloc(len + 1);
+      char *tok = (char *)malloc(len + 1);
       memcpy(tok, &str[off0], len);
       tok[len] = 0;
       zarray_add(parts, &tok);
@@ -325,7 +338,7 @@ string_buffer_t* string_buffer_create()
     string_buffer_t *sb = (string_buffer_t*) calloc(1, sizeof(string_buffer_t));
     assert(sb != NULL);
     sb->alloc = 32;
-    sb->s = calloc(sb->alloc, 1);
+    sb->s = (char *)calloc(sb->alloc, 1);
     return sb;
 }
 
@@ -347,7 +360,7 @@ void string_buffer_append(string_buffer_t *sb, char c)
 
     if (sb->size+2 >= sb->alloc) {
         sb->alloc *= 2;
-        sb->s = realloc(sb->s, sb->alloc);
+        sb->s = (char *)realloc(sb->s, sb->alloc);
     }
 
     sb->s[sb->size++] = c;
@@ -370,7 +383,7 @@ void string_buffer_appendf(string_buffer_t *sb, const char *fmt, ...)
     assert(fmt != NULL);
 
     int size = MIN_PRINTF_ALLOC;
-    char *buf = malloc(size * sizeof(char));
+    char *buf = (char *)malloc(size * sizeof(char));
 
     int returnsize;
     va_list args;
@@ -383,7 +396,7 @@ void string_buffer_appendf(string_buffer_t *sb, const char *fmt, ...)
         // otherwise, we should try again
         free(buf);
         size = returnsize + 1;
-        buf = malloc(size * sizeof(char));
+        buf = (char *)malloc(size * sizeof(char));
 
         va_start(args, fmt);
         returnsize = vsnprintf(buf, size, fmt, args);
@@ -405,7 +418,7 @@ void string_buffer_append_string(string_buffer_t *sb, const char *str)
 
     while (sb->size+len + 1 >= sb->alloc) {
         sb->alloc *= 2;
-        sb->s = realloc(sb->s, sb->alloc);
+        sb->s = (char *)realloc(sb->s, sb->alloc);
     }
 
     memcpy(&sb->s[sb->size], str, len);
@@ -518,7 +531,7 @@ char *string_feeder_next_length(string_feeder_t *sf, size_t length)
     if (sf->pos + length > sf->len)
         length = sf->len - sf->pos;
 
-    char *substr = calloc(length+1, sizeof(char));
+    char *substr = (char *)calloc(length+1, sizeof(char));
     for (int i = 0 ; i < length ; i++)
         substr[i] = string_feeder_next(sf);
     return substr;
@@ -541,7 +554,7 @@ char *string_feeder_peek_length(string_feeder_t *sf, size_t length)
     if (sf->pos + length > sf->len)
         length = sf->len - sf->pos;
 
-    char *substr = calloc(length+1, sizeof(char));
+    char *substr = (char *)calloc(length+1, sizeof(char));
     memcpy(substr, &sf->s[sf->pos], length*sizeof(char));
     return substr;
 }
@@ -584,7 +597,7 @@ bool str_ends_with(const char *haystack, const char *needle)
     return !strncmp(&haystack[lens - lenneedle], needle, lenneedle);
 }
 
-inline bool str_starts_with(const char *haystack, const char *needle)
+/*inline*/ bool str_starts_with(const char *haystack, const char *needle)
 {
     assert(haystack != NULL);
     assert(needle != NULL);
@@ -641,7 +654,7 @@ char *str_substring(const char *str, size_t startidx, long endidx)
         endidx = (long) strlen(str);
 
     size_t blen = endidx - startidx; // not counting \0
-    char *b = malloc(blen + 1);
+    char *b = (char *)malloc(blen + 1);
     memcpy(b, &str[startidx], blen);
     b[blen] = 0;
     return b;
@@ -702,26 +715,26 @@ char *str_replace_many(const char *_haystack, ...)
     return haystack;
 }
 
-static void buffer_appendf(char **_buf, int *bufpos, void *fmt, ...)
+static void buffer_appendf(char **_buf, int *bufpos, const void *fmt, ...)
 {
     char *buf = *_buf;
     va_list ap;
 
     int salloc = 128;
-    char *s = malloc(salloc);
+    char *s = (char *)malloc(salloc);
 
     va_start(ap, fmt);
-    int slen = vsnprintf(s, salloc, fmt, ap);
+    int slen = vsnprintf(s, salloc, (const char *)fmt, ap);
     va_end(ap);
 
     if (slen >= salloc) {
-        s = realloc(s, slen + 1);
+        s = (char *)realloc(s, slen + 1);
         va_start(ap, fmt);
-        vsprintf((char*) s, fmt, ap);
+        vsprintf((char*) s, (const char *)fmt, ap);
         va_end(ap);
     }
 
-    buf = realloc(buf, *bufpos + slen + 1);
+    buf = (char *)realloc(buf, *bufpos + slen + 1);
     *_buf = buf;
 
     memcpy(&buf[*bufpos], s, slen + 1); // get trailing \0

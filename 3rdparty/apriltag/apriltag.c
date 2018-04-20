@@ -37,7 +37,9 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <inttypes.h>
+#include <math.h>
+#include <algorithm>
+//#include <inttypes.h>
 
 #include "common/image_u8.h"
 #include "common/image_u8x3.h"
@@ -164,7 +166,7 @@ void quad_destroy(struct quad *quad)
 
 struct quad *quad_copy(struct quad *quad)
 {
-    struct quad *q = calloc(1, sizeof(struct quad));
+    struct quad *q = (apriltag_quad_t *)calloc(1, sizeof(struct quad));
     memcpy(q, quad, sizeof(struct quad));
     if (quad->H)
         q->H = matd_copy(quad->H);
@@ -202,7 +204,7 @@ void quick_decode_init(apriltag_family_t *family, int maxhamming)
     assert(family->impl == NULL);
     assert(family->ncodes < 65535);
 
-    struct quick_decode *qd = calloc(1, sizeof(struct quick_decode));
+    struct quick_decode *qd = (quick_decode *)calloc(1, sizeof(struct quick_decode));
     int capacity = family->ncodes;
 
     int nbits = family->d * family->d;
@@ -221,7 +223,7 @@ void quick_decode_init(apriltag_family_t *family, int maxhamming)
 //    printf("capacity %d, size: %.0f kB\n",
 //           capacity, qd->nentries * sizeof(struct quick_decode_entry) / 1024.0);
 
-    qd->entries = calloc(qd->nentries, sizeof(struct quick_decode_entry));
+    qd->entries = (quick_decode_entry *)calloc(qd->nentries, sizeof(struct quick_decode_entry));
     if (qd->entries == NULL) {
         printf("apriltag.c: failed to allocate hamming decode table. Reduce max hamming size.\n");
         exit(-1);
@@ -394,6 +396,7 @@ void apriltag_detector_destroy(apriltag_detector_t *td)
     free(td);
 }
 
+typedef struct quad_decode_task quad_decode_task_t;
 struct quad_decode_task
 {
     int i0, i1;
@@ -530,7 +533,7 @@ double quad_goodness(apriltag_family_t *family, image_u8_t *im, struct quad *qua
             Hh += MATD_EL(Hinv, 2, 0);
 
             float txa = fabsf((float) tx), tya = fabsf((float) ty);
-            float xymax = fmaxf(txa, tya);
+            float xymax = (std::max)(txa, tya);
 
 //            if (txa >= 1 + wsz || tya >= 1 + wsz)
             if (xymax >= 1 + wsz)
@@ -588,42 +591,42 @@ float quad_decode(apriltag_family_t *family, image_u8_t *im, struct quad *quad, 
     // { initial x, initial y, delta x, delta y, WHITE=1 }
     float patterns[] = {
         // left white column
-        0 - white_border / 2.0, 0.5,
+        0 - white_border / 2.0f, 0.5,
         0, 1,
         1,
 
         // left black column
-        0 + family->black_border / 2.0, 0.5,
+        0 + family->black_border / 2.0f, 0.5,
         0, 1,
         0,
 
         // right white column
-        2*family->black_border + family->d + white_border / 2.0, .5,
+        2*family->black_border + family->d + white_border / 2.0f, .5,
         0, 1,
         1,
 
         // right black column
-        2*family->black_border + family->d - family->black_border / 2.0, .5,
+        2*family->black_border + family->d - family->black_border / 2.0f, .5,
         0, 1,
         0,
 
         // top white row
-        0.5, -white_border / 2.0,
+        0.5, -white_border / 2.0f,
         1, 0,
         1,
 
         // top black row
-        0.5, family->black_border / 2.0,
+        0.5, family->black_border / 2.0f,
         1, 0,
         0,
 
         // bottom white row
-        0.5, 2*family->black_border + family->d + white_border / 2.0,
+        0.5, 2*family->black_border + family->d + white_border / 2.0f,
         1, 0,
         1,
 
         // bottom black row
-        0.5, 2*family->black_border + family->d - family->black_border / 2.0,
+        0.5, 2*family->black_border + family->d - family->black_border / 2.0f,
         1, 0,
         0
 
@@ -725,7 +728,7 @@ float quad_decode(apriltag_family_t *family, image_u8_t *im, struct quad *quad, 
 
     quick_decode_codeword(family, rcode, entry);
 
-    return fmin(white_score / white_score_count, black_score / black_score_count);
+    return (std::min)(white_score / white_score_count, black_score / black_score_count);
 }
 
 double score_goodness(apriltag_family_t *family, image_u8_t *im, struct quad *quad, void *user)
@@ -1023,7 +1026,7 @@ static void quad_decode_task(void *_u)
             float decision_margin = quad_decode(family, im, quad, &entry, task->im_samples);
 
             if (entry.hamming < 255 && decision_margin >= 0) {
-                apriltag_detection_t *det = calloc(1, sizeof(apriltag_detection_t));
+                apriltag_detection_t *det = (apriltag_detection_t *)calloc(1, sizeof(apriltag_detection_t));
 
                 det->family = family;
                 det->id = entry.id;
@@ -1231,7 +1234,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
         int chunksize = 1 + zarray_size(quads) / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
 
 #ifdef _MSC_VER
-        struct quad_decode_task *tasks = malloc((zarray_size(quads) / chunksize + 1)*sizeof *tasks);
+        struct quad_decode_task *tasks = (quad_decode_task_t *)malloc((zarray_size(quads) / chunksize + 1)*sizeof *tasks);
 #else
         struct quad_decode_task tasks[zarray_size(quads) / chunksize + 1];
 #endif
@@ -1375,7 +1378,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
         // assume letter, which is 612x792 points.
         FILE *f = fopen("debug_output.ps", "w");
         fprintf(f, "%%!PS\n\n");
-        double scale = fmin(612.0/darker->width, 792.0/darker->height);
+        double scale = (std::min)(612.0/darker->width, 792.0/darker->height);
         fprintf(f, "%f %f scale\n", scale, scale);
         fprintf(f, "0 %d translate\n", darker->height);
         fprintf(f, "1 -1 scale\n");
@@ -1430,11 +1433,12 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             for (int i = 0; i < 3; i++)
                 rgb[i] = bias + (random() % (255-bias));
 
+            uint8_t rgb_array[] = { (uint8_t)rgb[0], (uint8_t)rgb[1], (uint8_t)rgb[2] };
             for (int j = 0; j < 4; j++) {
                 int k = (j + 1) & 3;
                 image_u8x3_draw_line(out,
                                      det->p[j][0], det->p[j][1], det->p[k][0], det->p[k][1],
-                                     (uint8_t[]) { rgb[0], rgb[1], rgb[2] },
+                                     rgb_array,
                                      1);
             }
         }
@@ -1453,7 +1457,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
         image_u8_darken(darker);
 
         // assume letter, which is 612x792 points.
-        double scale = fmin(612.0/darker->width, 792.0/darker->height);
+        double scale = (std::min)(612.0/darker->width, 792.0/darker->height);
         fprintf(f, "%f %f scale\n", scale, scale);
         fprintf(f, "0 %d translate\n", darker->height);
         fprintf(f, "1 -1 scale\n");

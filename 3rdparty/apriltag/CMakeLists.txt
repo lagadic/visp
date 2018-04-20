@@ -13,18 +13,18 @@ vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
 vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
 vp_list_filterout(lib_hdrs common/getopt.h)    # useless and produces errors on uwp
 
+foreach(f ${lib_srcs})
+  set_source_files_properties(${f} PROPERTIES LANGUAGE CXX )
+endforeach()
+
 add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 if(WIN32 AND MSVC)
   target_link_libraries (${APRILTAG_LIBRARY} ${PTHREADS_LIBRARY})
 endif()
 
-if(C99_FOUND)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C99_C_FLAGS}")
-endif()
-
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+      set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fPIC")
   endif()
 endif()
 
@@ -70,4 +70,8 @@ if(MSVC)
   vp_set_source_file_compile_flag(tag36artoolkit.c /wd"4996")
   vp_set_source_file_compile_flag(tag36h10.c /wd"4996")
   vp_set_source_file_compile_flag(tag36h11.c /wd"4996")
+else()
+  foreach(f ${lib_srcs})
+    vp_set_source_file_compile_flag(${f} -Wno-deprecated -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable)
+  endforeach()
 endif()

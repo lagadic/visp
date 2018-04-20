@@ -42,13 +42,13 @@ int zstrcmp(const void * a_pp, const void * b_pp)
     assert(a_pp != NULL);
     assert(b_pp != NULL);
 
-    char * a = *(void**)a_pp;
-    char * b = *(void**)b_pp;
+    char * a = *(char**)a_pp;
+    char * b = *(char**)b_pp;
 
     return strcmp(a,b);
 }
 
-void zarray_vmap(zarray_t *za, void (*f)())
+void zarray_vmap(zarray_t *za, void (*f)(void *))
 {
     assert(za != NULL);
     assert(f != NULL);

@@ -64,7 +64,7 @@ static inline TNAME *TFN(s_dup)(const TNAME *v, int len)
     if (!v)
         return NULL;
 
-    TNAME *r = malloc(len * sizeof(TNAME));
+    TNAME *r = (TNAME *)malloc(len * sizeof(TNAME));
     memcpy(r, v, len * sizeof(TNAME));
     return r;
 }
@@ -664,7 +664,7 @@ static inline void TFN(s_mat_ABC)(const TNAME *A, int Arows, int Acols,
                                   TNAME *R, int Rrows, int Rcols)
 {
 #ifdef _MSC_VER
-    TNAME *tmp = malloc(Arows*Bcols * sizeof *tmp);
+    TNAME *tmp = (TNAME *)malloc(Arows*Bcols * sizeof *tmp);
 #else
     TNAME tmp[Arows*Bcols];
 #endif

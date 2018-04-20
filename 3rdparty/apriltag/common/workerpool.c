@@ -36,7 +36,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
+//#include <inttypes.h>
 
 #include "workerpool.h"
 #include "timeprofile.h"
@@ -104,12 +104,12 @@ workerpool_t *workerpool_create(int nthreads)
 {
     assert(nthreads > 0);
 
-    workerpool_t *wp = calloc(1, sizeof(workerpool_t));
+    workerpool_t *wp = (workerpool_t *)calloc(1, sizeof(workerpool_t));
     wp->nthreads = nthreads;
     wp->tasks = zarray_create(sizeof(struct task));
 
     if (nthreads > 1) {
-        wp->threads = calloc(wp->nthreads, sizeof(pthread_t));
+        wp->threads = (pthread_t *)calloc(wp->nthreads, sizeof(pthread_t));
 
         pthread_mutex_init(&wp->mutex, NULL);
         pthread_cond_init(&wp->startcond, NULL);
@@ -230,7 +230,7 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
         return -1;
     }
     if (bufptr == NULL) {
-        bufptr = malloc(128);
+        bufptr = (char *)malloc(128);
         if (bufptr == NULL) {
             return -1;
         }
@@ -241,7 +241,7 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
         int offset = p - bufptr;
         if ((p - bufptr + 1) > size) {
             size = size + 128;
-            bufptr = realloc(bufptr, size);
+            bufptr = (char *)realloc(bufptr, size);
             if (bufptr == NULL) {
                 return -1;
             }

@@ -37,14 +37,14 @@ either expressed or implied, of the Regents of The University of Michigan.
 #define _TAG16H5
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 apriltag_family_t *tag16h5_create();
 void tag16h5_destroy(apriltag_family_t *tf);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

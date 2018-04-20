@@ -46,25 +46,25 @@ image_u8x3_t *image_u8x3_create_alignment(unsigned int width, unsigned int heigh
     if ((stride % alignment) != 0)
         stride += alignment - (stride % alignment);
 
-    uint8_t *buf = calloc(height*stride, sizeof(uint8_t));
+    uint8_t *buf = (uint8_t *)calloc(height*stride, sizeof(uint8_t));
 
     // const initializer
-    image_u8x3_t tmp = { .width = width, .height = height, .stride = stride, .buf = buf };
+    image_u8x3_t tmp = { (int32_t)width, (int32_t)height, (int32_t)stride, buf };
 
-    image_u8x3_t *im = calloc(1, sizeof(image_u8x3_t));
+    image_u8x3_t *im = (image_u8x3_t *)calloc(1, sizeof(image_u8x3_t));
     memcpy(im, &tmp, sizeof(image_u8x3_t));
     return im;
 }
 
 image_u8x3_t *image_u8x3_copy(const image_u8x3_t *in)
 {
-    uint8_t *buf = malloc(in->height*in->stride*sizeof(uint8_t));
+    uint8_t *buf = (uint8_t *)malloc(in->height*in->stride*sizeof(uint8_t));
     memcpy(buf, in->buf, in->height*in->stride*sizeof(uint8_t));
 
     // const initializer
-    image_u8x3_t tmp = { .width = in->width, .height = in->height, .stride = in->stride, .buf = buf };
+    image_u8x3_t tmp = { in->width, in->height, in->stride, buf };
 
-    image_u8x3_t *copy = calloc(1, sizeof(image_u8x3_t));
+    image_u8x3_t *copy = (image_u8x3_t *)calloc(1, sizeof(image_u8x3_t));
     memcpy(copy, &tmp, sizeof(image_u8x3_t));
     return copy;
 }
@@ -136,7 +136,9 @@ int image_u8x3_write_pnm(const image_u8x3_t *im, const char *path)
 
     if (f == NULL) {
         res = -1;
-        goto finish;
+        fclose(f);
+        return res;
+//        goto finish;
     }
 
     // Only outputs to RGB
@@ -145,11 +147,13 @@ int image_u8x3_write_pnm(const image_u8x3_t *im, const char *path)
     for (int y = 0; y < im->height; y++) {
         if (linesz != fwrite(&im->buf[y*im->stride], 1, linesz, f)) {
             res = -1;
-            goto finish;
+            fclose(f);
+            return res;
+//            goto finish;
         }
     }
 
-finish:
+//finish:
     if (f != NULL)
         fclose(f);
 
@@ -205,7 +209,7 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
 
     // build the kernel.
 #ifdef _MSC_VER
-    double *dk = malloc(ksz*sizeof *dk);
+    double *dk = (double *)malloc(ksz*sizeof *dk);
 #else
     double dk[ksz];
 #endif
@@ -227,7 +231,7 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
         dk[i] /= acc;
 
 #ifdef _MSC_VER
-    uint8_t *k = malloc(ksz*sizeof *k);
+    uint8_t *k = (uint8_t *)malloc(ksz*sizeof *k);
 #else
     uint8_t k[ksz];
 #endif
@@ -242,8 +246,8 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
     for (int c = 0; c < 3; c++) {
         for (int y = 0; y < im->height; y++) {
 #ifdef _MSC_VER
-          uint8_t *in = malloc(im->stride*sizeof *in);
-          uint8_t *out = malloc(im->stride*sizeof *out);
+          uint8_t *in = (uint8_t *)malloc(im->stride*sizeof *in);
+          uint8_t *out = (uint8_t *)malloc(im->stride*sizeof *out);
 #else
             uint8_t in[im->stride];
             uint8_t out[im->stride];
@@ -265,8 +269,8 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
 
         for (int x = 0; x < im->width; x++) {
 #ifdef _MSC_VER
-          uint8_t *in = malloc(im->height*sizeof *in);
-          uint8_t *out = malloc(im->height*sizeof *out);
+          uint8_t *in = (uint8_t *)malloc(im->height*sizeof *in);
+          uint8_t *out = (uint8_t *)malloc(im->height*sizeof *out);
 #else
             uint8_t in[im->height];
             uint8_t out[im->height];
