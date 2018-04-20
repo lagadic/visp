@@ -1005,7 +1005,7 @@ static void quad_decode_task(void *_u)
                 // probably don't use 1, 0.5, 0.25, etc.)
 
                 // XXX Tunable
-                float stepsizes[] = { 1, .4, .16, .064 };
+                float stepsizes[] = { 1.f, .4f, .16f, .064f };
                 int nstepsizes = sizeof(stepsizes)/sizeof(float);
 
                 goodness = optimize_quad_generic(family, im, quad, stepsizes, nstepsizes, score_goodness, NULL);
