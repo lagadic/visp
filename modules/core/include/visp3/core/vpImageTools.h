@@ -57,6 +57,7 @@
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
+#include <visp3/core/vpRectOriented.h>
 
 #include <fstream>
 #include <iostream>
@@ -91,6 +92,8 @@ public:
   static void crop(const vpImage<Type> &I, double roi_top, double roi_left, unsigned int roi_height,
                    unsigned int roi_width, vpImage<Type> &crop, unsigned int v_scale = 1, unsigned int h_scale = 1);
 
+  static void columnMean(const vpImage<double> &I, vpRowVector &result);
+
   template <class Type>
   static void crop(const vpImage<Type> &I, const vpImagePoint &topLeft, unsigned int roi_height, unsigned int roi_width,
                    vpImage<Type> &crop, unsigned int v_scale = 1, unsigned int h_scale = 1);
@@ -100,6 +103,9 @@ public:
   template <class Type>
   static void crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi,
                    vpImage<Type> &crop, unsigned int v_scale = 1, unsigned int h_scale = 1);
+
+  static void extract(const vpImage<unsigned char> &Src, vpImage<unsigned char> &Dst, const vpRectOriented &r);
+  static void extract(const vpImage<unsigned char> &Src, vpImage<double> &Dst, const vpRectOriented &r);
 
   template <class Type> static void flip(const vpImage<Type> &I, vpImage<Type> &newI);
 
@@ -111,6 +117,7 @@ public:
 
   static void imageDifferenceAbsolute(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                       vpImage<unsigned char> &Idiff);
+  static void imageDifferenceAbsolute(const vpImage<double> &I1, const vpImage<double> &I2, vpImage<double> &Idiff);
   static void imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff);
 
   static void imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Ires,
@@ -118,6 +125,12 @@ public:
 
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires, const bool saturate = false);
+
+  static double interpolate(const vpImage<unsigned char> &I, vpImagePoint point, vpImageInterpolationType it);
+
+  static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2);
+
+  static void normalize(vpImage<double> &I);
 
   template <class Type>
   static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height,
