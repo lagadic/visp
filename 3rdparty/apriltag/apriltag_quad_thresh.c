@@ -35,6 +35,8 @@ either expressed or implied, of the Regents of The University of Michigan.
 // fractional bit.
 #include <math.h>
 #include <assert.h>
+// To ensure UINT32_MAX, INT32_MX are defined on centos, ubuntu 12.04 we define __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -55,7 +57,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #endif
 
 static inline uint32_t u64hash_2(uint64_t x) {
-    return (2654435761 * x) >> 32;
+    return (2654435761u * x) >> 32;
     return (uint32_t) x;
 }
 

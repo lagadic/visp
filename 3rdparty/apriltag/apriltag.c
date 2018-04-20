@@ -30,6 +30,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
+// To ensure UINT32_MAX, INT32_MX are defined on centos, ubuntu 12.04 we define __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+
 #include "apriltag.h"
 
 #include <math.h>
@@ -1005,7 +1008,7 @@ static void quad_decode_task(void *_u)
                 // probably don't use 1, 0.5, 0.25, etc.)
 
                 // XXX Tunable
-                float stepsizes[] = { 1, .4, .16, .064 };
+                float stepsizes[] = { 1.f, .4f, .16f, .064f };
                 int nstepsizes = sizeof(stepsizes)/sizeof(float);
 
                 goodness = optimize_quad_generic(family, im, quad, stepsizes, nstepsizes, score_goodness, NULL);
