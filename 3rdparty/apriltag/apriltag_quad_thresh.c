@@ -35,6 +35,8 @@ either expressed or implied, of the Regents of The University of Michigan.
 // fractional bit.
 #include <math.h>
 #include <assert.h>
+// To ensure UINT32_MAX, INT32_MX are defined on centos, ubuntu 12.04 we define __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
