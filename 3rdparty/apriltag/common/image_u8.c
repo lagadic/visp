@@ -50,7 +50,7 @@ image_u8_t *image_u8_create_stride(unsigned int width, unsigned int height, unsi
     uint8_t *buf = (uint8_t *)calloc(height*stride, sizeof(uint8_t));
 
     // const initializer
-    image_u8_t tmp = { width, height, stride, buf };
+    image_u8_t tmp = { (int32_t)width, (int32_t)height, (int32_t)stride, buf };
 
     image_u8_t *im = (image_u8_t *)calloc(1, sizeof(image_u8_t));
     memcpy(im, &tmp, sizeof(image_u8_t));
@@ -421,7 +421,7 @@ image_u8_t *image_u8_rotate(const image_u8_t *in, double rad, uint8_t pad)
 
     float c = cos(rad), s = sin(rad);
 
-    float p[][2] = { { 0, 0}, { iwidth, 0 }, { iwidth, iheight }, { 0, iheight} };
+    float p[][2] = { { 0, 0}, { (float)iwidth, 0 }, { (float)iwidth, (float)iheight }, { 0, (float)iheight} };
 
     //float xmin = HUGE_VALF, xmax = -HUGE_VALF, ymin = HUGE_VALF, ymax = -HUGE_VALF;
     float xmin = 0x7f800000;//std::numeric_limits<float>::infinity(),

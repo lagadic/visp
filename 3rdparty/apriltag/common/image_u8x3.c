@@ -49,7 +49,7 @@ image_u8x3_t *image_u8x3_create_alignment(unsigned int width, unsigned int heigh
     uint8_t *buf = (uint8_t *)calloc(height*stride, sizeof(uint8_t));
 
     // const initializer
-    image_u8x3_t tmp = { width, height, stride, buf };
+    image_u8x3_t tmp = { (int32_t)width, (int32_t)height, (int32_t)stride, buf };
 
     image_u8x3_t *im = (image_u8x3_t *)calloc(1, sizeof(image_u8x3_t));
     memcpy(im, &tmp, sizeof(image_u8x3_t));

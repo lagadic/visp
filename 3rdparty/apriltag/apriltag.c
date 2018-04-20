@@ -591,42 +591,42 @@ float quad_decode(apriltag_family_t *family, image_u8_t *im, struct quad *quad, 
     // { initial x, initial y, delta x, delta y, WHITE=1 }
     float patterns[] = {
         // left white column
-        0 - white_border / 2.0, 0.5,
+        0 - white_border / 2.0f, 0.5,
         0, 1,
         1,
 
         // left black column
-        0 + family->black_border / 2.0, 0.5,
+        0 + family->black_border / 2.0f, 0.5,
         0, 1,
         0,
 
         // right white column
-        2*family->black_border + family->d + white_border / 2.0, .5,
+        2*family->black_border + family->d + white_border / 2.0f, .5,
         0, 1,
         1,
 
         // right black column
-        2*family->black_border + family->d - family->black_border / 2.0, .5,
+        2*family->black_border + family->d - family->black_border / 2.0f, .5,
         0, 1,
         0,
 
         // top white row
-        0.5, -white_border / 2.0,
+        0.5, -white_border / 2.0f,
         1, 0,
         1,
 
         // top black row
-        0.5, family->black_border / 2.0,
+        0.5, family->black_border / 2.0f,
         1, 0,
         0,
 
         // bottom white row
-        0.5, 2*family->black_border + family->d + white_border / 2.0,
+        0.5, 2*family->black_border + family->d + white_border / 2.0f,
         1, 0,
         1,
 
         // bottom black row
-        0.5, 2*family->black_border + family->d - family->black_border / 2.0,
+        0.5, 2*family->black_border + family->d - family->black_border / 2.0f,
         1, 0,
         0
 
@@ -1433,7 +1433,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             for (int i = 0; i < 3; i++)
                 rgb[i] = bias + (random() % (255-bias));
 
-            uint8_t rgb_array[] = { rgb[0], rgb[1], rgb[2] };
+            uint8_t rgb_array[] = { (uint8_t)rgb[0], (uint8_t)rgb[1], (uint8_t)rgb[2] };
             for (int j = 0; j < 4; j++) {
                 int k = (j + 1) & 3;
                 image_u8x3_draw_line(out,
