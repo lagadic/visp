@@ -54,7 +54,7 @@ class VISP_EXPORT vpRectOriented
 public:
   vpRectOriented();
 
-  vpRectOriented(const vpImagePoint center, const double width, const double height, const double theta = 0);
+  vpRectOriented(const vpImagePoint &center, const double width, const double height, const double theta = 0);
 
   vpRectOriented(const vpRect &rect);
 
@@ -64,10 +64,10 @@ public:
 
   operator vpRect();
 
-  void setCenter(const vpImagePoint center);
+  void setCenter(const vpImagePoint &center);
 
-  void setPoints(const vpImagePoint topLeft, const vpImagePoint topRight, const vpImagePoint bottomLeft,
-                 const vpImagePoint bottomRight);
+  void setPoints(const vpImagePoint &topLeft, const vpImagePoint &topRight, const vpImagePoint &bottomLeft,
+                 const vpImagePoint &bottomRight);
 
   vpImagePoint getCenter() const;
 
@@ -89,7 +89,7 @@ public:
 
   double getOrientation() const;
 
-  bool isInside(vpImagePoint point) const;
+  bool isInside(const vpImagePoint &point) const;
 
 private:
   vpImagePoint m_center;
@@ -100,7 +100,6 @@ private:
   vpImagePoint m_topRight;
   vpImagePoint m_bottomLeft;
   vpImagePoint m_bottomRight;
-  bool isLeft(vpImagePoint pointToTest, vpImagePoint point1, vpImagePoint point2) const;
+  bool isLeft(const vpImagePoint &pointToTest, const vpImagePoint &point1, const vpImagePoint &point2) const;
 };
-
 #endif // vpRectOriented_h

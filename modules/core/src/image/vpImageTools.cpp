@@ -219,7 +219,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1, con
 }
 
 /*!
-  Compute the difference between the two images I1 and I2
+  Compute the difference between the two images I1 and I2.
 
   \param I1 : The first image.
   \param I2 : The second image.
@@ -453,12 +453,13 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, vpImagePoint p
       return v1;
     return (y2 - point.get_j()) * v1 + (point.get_j() - y1) * v2;
   }
-  case INTERPOLATION_CUBIC:
-    std::cerr << "Error: bi-cubic interpolation is not implemented." << std::endl;
-    exit(EXIT_FAILURE);
-  default:
-    std::cerr << "Error: invalid interpolation type (" << it << ")" << std::endl;
-    exit(EXIT_FAILURE);
+  case INTERPOLATION_CUBIC: {
+    throw vpException(vpException::notImplementedError,
+                      "vpImageTools::interpolate(): bi-cubic interpolation is not implemented.");
+  }
+  default: {
+    throw vpException(vpException::notImplementedError, "vpImageTools::interpolate(): invalid interpolation type");
+  }
   }
 }
 
@@ -476,11 +477,13 @@ void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<unsigned c
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
   Dst.resize(x_d, y_d);
-  for (unsigned int x = 0; x < x_d; ++x)
-    for (unsigned int y = 0; y < y_d; ++y)
+  for (unsigned int x = 0; x < x_d; ++x) {
+    for (unsigned int y = 0; y < y_d; ++y) {
       Dst(x, y,
           (unsigned char)interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
                                      vpImageTools::INTERPOLATION_LINEAR));
+    }
+  }
 }
 
 /*!
@@ -497,10 +500,12 @@ void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &D
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
   Dst.resize(x_d, y_d);
-  for (unsigned int x = 0; x < x_d; ++x)
-    for (unsigned int y = 0; y < y_d; ++y)
+  for (unsigned int x = 0; x < x_d; ++x) {
+    for (unsigned int y = 0; y < y_d; ++y) {
       Dst(x, y, interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
                             vpImageTools::INTERPOLATION_LINEAR));
+    }
+  }
 }
 
 // Reference:

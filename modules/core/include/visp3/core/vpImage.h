@@ -950,7 +950,7 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
 template <class Type> Type vpImage<Type>::getMaxValue() const
 {
   if (npixels == 0)
-    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an image containg no pixels"));
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
   Type m = bitmap[0];
   for (unsigned int i = 0; i < npixels; i++) {
     if (bitmap[i] > m)
@@ -982,7 +982,7 @@ template <class Type> Type vpImage<Type>::getMeanValue() const
 template <class Type> Type vpImage<Type>::getMinValue() const
 {
   if (npixels == 0)
-    throw(vpException(vpException::fatalError, "Cannot compute minimum value of an image containg no pixels"));
+    throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
   Type m = bitmap[0];
   for (unsigned int i = 0; i < npixels; i++)
     if (bitmap[i] < m)
@@ -999,7 +999,7 @@ template <class Type> Type vpImage<Type>::getMinValue() const
 template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
 {
   if (npixels == 0)
-    throw(vpException(vpException::fatalError, "Cannot compute minimum/maximum values of an image containg no pixels"));
+    throw(vpException(vpException::fatalError, "Cannot compute minimum/maximum values of an empty image"));
   min = max = bitmap[0];
   for (unsigned int i = 0; i < npixels; i++) {
     if (bitmap[i] < min)

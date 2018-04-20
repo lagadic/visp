@@ -52,7 +52,7 @@ vpRectOriented::vpRectOriented()
  * @param height The rectangle height.
  * @param theta The rectangle orientation (rad).
  */
-vpRectOriented::vpRectOriented(const vpImagePoint center, const double width, const double height, const double theta)
+vpRectOriented::vpRectOriented(const vpImagePoint &center, const double width, const double height, const double theta)
 {
   m_center = center;
   m_width = width;
@@ -124,7 +124,6 @@ vpRectOriented &vpRectOriented::operator=(const vpRect &rect)
 }
 
 /** Conversion to vpRect operator.
- * @param rect Rectangle to copy.
  */
 vpRectOriented::operator vpRect()
 {
@@ -137,8 +136,8 @@ vpRectOriented::operator vpRect()
  *  @warning This method doesn't check whether the 4 points actually form a rectangle!
  *  The behaviour is undefined if it is not the case.
  */
-void vpRectOriented::setPoints(const vpImagePoint topLeft, const vpImagePoint topRight, const vpImagePoint bottomLeft,
-                               const vpImagePoint bottomRight)
+void vpRectOriented::setPoints(const vpImagePoint &topLeft, const vpImagePoint &topRight,
+                               const vpImagePoint &bottomLeft, const vpImagePoint &bottomRight)
 {
   m_topLeft = topLeft;
   m_bottomLeft = bottomLeft;
@@ -154,7 +153,7 @@ void vpRectOriented::setPoints(const vpImagePoint topLeft, const vpImagePoint to
 }
 
 /// Set the center of the rectangle.
-void vpRectOriented::setCenter(const vpImagePoint center)
+void vpRectOriented::setCenter(const vpImagePoint &center)
 {
   m_topLeft += center - m_center;
   m_bottomLeft += center - m_center;
@@ -217,7 +216,7 @@ void vpRectOriented::setOrientation(double theta)
 double vpRectOriented::getOrientation() const { return m_theta; }
 
 /// Check whether the point is inside the rectangle.
-bool vpRectOriented::isInside(vpImagePoint point) const
+bool vpRectOriented::isInside(const vpImagePoint &point) const
 {
   if (!isLeft(point, m_topLeft, m_bottomLeft))
     return false;
@@ -230,7 +229,8 @@ bool vpRectOriented::isInside(vpImagePoint point) const
   return true;
 }
 
-bool vpRectOriented::isLeft(vpImagePoint pointToTest, vpImagePoint point1, vpImagePoint point2) const
+bool vpRectOriented::isLeft(const vpImagePoint &pointToTest, const vpImagePoint &point1,
+                            const vpImagePoint &point2) const
 {
   double a = point1.get_j() - point2.get_j();
   double b = point2.get_i() - point1.get_i();
