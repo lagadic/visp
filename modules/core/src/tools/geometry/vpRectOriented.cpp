@@ -127,7 +127,7 @@ vpRectOriented &vpRectOriented::operator=(const vpRect &rect)
  */
 vpRectOriented::operator vpRect()
 {
-  if (m_theta != .0)
+  if (std::fabs(m_theta) == std::numeric_limits<double>::epsilon())
     throw(vpException(vpException::badValue, "cannot convert a vpRectOriented with non-zero orientation to a vpRect"));
   return vpRect(m_topLeft, m_bottomRight);
 }
