@@ -45,7 +45,7 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 if(MSVC)
-  vp_set_source_file_compile_flag(apriltag.c /wd"4018" /wd"4305" /wd"4334" /wd"4244")
+  vp_set_source_file_compile_flag(apriltag.c /wd"4018" /wd"4305" /wd"4334" /wd"4244" /wd"4838")
   vp_set_source_file_compile_flag(apriltag_quad_thresh.c /wd"4018" /wd"4244")
   vp_set_source_file_compile_flag(common/g2d.c /wd"4244")
   vp_set_source_file_compile_flag(common/getopt.c /wd"4018" /wd"4244" /wd"4996")
