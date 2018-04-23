@@ -13,6 +13,12 @@ vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
 vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
 vp_list_filterout(lib_hdrs common/getopt.h)    # useless and produces errors on uwp
 
+if(UNIX)
+  if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  endif()
+endif()
+
 foreach(f ${lib_srcs})
   set_source_files_properties(${f} PROPERTIES LANGUAGE CXX )
 endforeach()
