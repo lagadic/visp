@@ -342,6 +342,7 @@ if(APPS_FOUND)
 endif()
 # Build deprecated functions as an option.
 VP_OPTION(BUILD_DEPRECATED_FUNCTIONS  "" "" "Build deprecated functionalities" "" ON)
+VP_OPTION(ACTIVATE_WARNING_3PARTY_MUTE  "" "" "Add flags to disable warning due to known 3rd parties" "" ON)
 # Debug and trace cflags
 set(ENABLE_DEBUG_LEVEL 0 CACHE STRING "Set a debug level value between 0 and 9")
 
@@ -671,15 +672,15 @@ if(UNIX)
   endif()
 endif()
 
-#-----------------------------------------------------------------------------
-# Add extra compilation flags
-#-----------------------------------------------------------------------------
-include(cmake/AddExtraCompilationFlags.cmake) # should be called after FindOpenMP
-
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
 include(cmake/VISP3rdParty.cmake)
+
+#-----------------------------------------------------------------------------
+# Add extra compilation flags
+#-----------------------------------------------------------------------------
+include(cmake/AddExtraCompilationFlags.cmake) # should be called after FindOpenMP
 
 #----------------------------------------------------------------------
 # Modules
