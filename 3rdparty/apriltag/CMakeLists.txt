@@ -22,12 +22,6 @@ if(WIN32 AND MSVC)
   target_link_libraries (${APRILTAG_LIBRARY} ${PTHREADS_LIBRARY})
 endif()
 
-if(UNIX)
-  if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
-      set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-  endif()
-endif()
-
 if(ENABLE_SOLUTION_FOLDERS)
   set_target_properties(${APRILTAG_LIBRARY} PROPERTIES FOLDER "3rdparty")
 endif()
