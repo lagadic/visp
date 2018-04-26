@@ -1471,8 +1471,12 @@ void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2
   have the same generic name as the init file (ie teabox.ppm). This image may
   be used to show where to click. This functionality is only available if
   visp_io module is used.
-  \param T1 : optional transformation matrix for the first camera.
-  \param T2 : optional transformation matrix for the second camera.
+  \param T1 : optional transformation matrix to transform 3D points in \a initFile1
+  expressed in the original object frame to the desired object frame.
+  \param T2 : optional transformation matrix to transform 3D points in \a initFile2
+  expressed in the original object frame to the desired object frame
+  (T2==T1 if the init points are expressed in the same object frame which should be the case
+  most of the time).
 
   \exception vpException::ioError : The file specified in \e initFile doesn't
   exist.
@@ -1532,7 +1536,10 @@ void vpMbGenericTracker::initClick(const vpImage<unsigned char> &I1, const vpIma
   should have the same generic name as the init file (ie teabox.ppm). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
-  \param mapOfT : optional map of transformation matrices.
+  \param mapOfT : optional map of transformation matrices to transform
+  3D points in \a mapOfInitFiles expressed in the original object frame to the
+  desired object frame (if the init points are expressed in the same object frame
+  which should be the case most of the time, all the transformation matrices are identical).
 
   \exception vpException::ioError : The file specified in \e initFile doesn't
   exist.
@@ -2072,7 +2079,8 @@ is not wrl or cao.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
 CAO model files which include other CAO model files.
-  \param T : optional transformation matrix (currently only for .cao).
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 
   \note All the trackers will use the same model in case of stereo / multiple
 cameras configuration.
@@ -2112,8 +2120,11 @@ first camera. The extension of this file is either .wrl or .cao.
 camera. The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading CAO model files
 which include other CAO model files.
-  \param T1 : optional transformation matrix for the first camera (currently only for .cao).
-  \param T2 : optional transformation matrix for the second camera (currently only for .cao).
+  \param T1 : optional transformation matrix (currently only for .cao) to transform
+  3D points in \a modelFile1 expressed in the original object frame to the desired object frame.
+  \param T2 : optional transformation matrix (currently only for .cao) to transform
+  3D points in \a modelFile2 expressed in the original object frame to the desired object frame (
+  T2==T1 if the two models have the same object frame which should be the case most of the time).
 
   \note This function assumes a stereo configuration of the generic tracker.
 */
@@ -2157,7 +2168,10 @@ is not wrl or cao.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
 CAO model files which include other CAO model files.
-  \param mapOfT : optional map of transformation matrices (currently only for .cao).
+  \param mapOfT : optional map of transformation matrices (currently only for .cao)
+  to transform 3D points in \a mapOfModelFiles expressed in the original object frame to
+  the desired object frame (if the models have the same object frame which should be the
+  case most of the time, all the transformation matrices are identical).
 
   \note Each camera must have a model file.
 */
@@ -2254,8 +2268,11 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I, const std:
   \param c2Mo : The new vpHomogeneousMatrix between the second camera and the new model.
   \param verbose : verbose option to print additional information when
   loading CAO model files which include other CAO model files.
-  \param T1 : optional transformation matrix for the first camera (currently only for .cao).
-  \param T2 : optional transformation matrix for the second camera (currently only for .cao).
+  \param T1 : optional transformation matrix (currently only for .cao) to transform
+  3D points in \a cad_name1 expressed in the original object frame to the desired object frame.
+  \param T2 : optional transformation matrix (currently only for .cao) to transform
+  3D points in \a cad_name2 expressed in the original object frame to the desired object frame (
+  T2==T1 if the two models have the same object frame which should be the case most of the time).
 
   \note This function assumes a stereo configuration of the generic tracker.
 */
@@ -2295,7 +2312,10 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I1, const vpI
   and the current object position.
   \param verbose : Verbose option to print additional information when loading CAO model
   files which include other CAO model files.
-  \param mapOfT : optional map of transformation matrices (currently only for .cao).
+  \param mapOfT : optional map of transformation matrices (currently only for .cao) to transform
+  3D points in \a mapOfModelFiles expressed in the original object frame to the desired object frame
+  (if the models have the same object frame which should be the case most of the time,
+  all the transformation matrices are identical).
 */
 void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      const std::map<std::string, std::string> &mapOfModelFiles,

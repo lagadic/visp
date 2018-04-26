@@ -1187,24 +1187,6 @@ void vpMbEdgeTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneo
 }
 
 /*!
-  Load the xml configuration file. An example of such a file is provided in
-  loadConfigFile(const char*) documentation. From the configuration file
-  initialize the parameters corresponding to the objects: moving-edges, camera
-  and visibility angles.
-
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
-  \param configFile : full name of the xml file.
-
-  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
-*/
-void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
-{
-  vpMbEdgeTracker::loadConfigFile(configFile.c_str());
-}
-
-/*!
   Load the xml configuration file.
   From the configuration file initialize the parameters corresponding to the
 objects: moving-edges, camera and visibility angles.
@@ -1252,9 +1234,9 @@ not found or wrong format for the data).
 </conf>
   \endcode
 
-  \sa loadConfigFile(const std::string&), vpXmlParser::cleanup()
+  \sa vpXmlParser::cleanup()
 */
-void vpMbEdgeTracker::loadConfigFile(const char *configFile)
+void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
 {
 #ifdef VISP_HAVE_XML2
   vpMbtXmlParser xmlp;
@@ -1266,9 +1248,9 @@ void vpMbEdgeTracker::loadConfigFile(const char *configFile)
 
   try {
     std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
-    xmlp.parse(configFile);
+    xmlp.parse(configFile.c_str());
   } catch (...) {
-    throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile);
+    throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());
   }
 
   vpCameraParameters camera;
@@ -1303,7 +1285,7 @@ void vpMbEdgeTracker::loadConfigFile(const char *configFile)
   }
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile);
+  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
 #endif
 }
 
@@ -2362,26 +2344,15 @@ void vpMbEdgeTracker::resetTracker()
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
-  model \param verbose : verbose option to print additional information when
+  model
+  \param verbose : verbose option to print additional information when
   loading CAO model files which include other CAO model files.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                  const vpHomogeneousMatrix &cMo_, const bool verbose)
-{
-  reInitModel(I, cad_name.c_str(), cMo_, verbose);
-}
-
-/*!
-  Re-initialize the model used by the tracker.
-
-  \param I : The image containing the object to initialize.
-  \param cad_name : Path to the file containing the 3D model description.
-  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
-  model \param verbose : verbose option to print additional information when
-  loading CAO model files which include other CAO model files.
-*/
-void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const char *cad_name,
-                                  const vpHomogeneousMatrix &cMo_, const bool verbose)
+                                  const vpHomogeneousMatrix &cMo_, const bool verbose,
+                                  const vpHomogeneousMatrix &T)
 {
   this->cMo.eye();
   vpMbtDistanceLine *l;
@@ -2427,7 +2398,7 @@ void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const char *c
   // lambda = 1;
   nbvisiblepolygone = 0;
 
-  loadModel(cad_name, verbose);
+  loadModel(cad_name, verbose, T);
   initFromPose(I, cMo_);
 }
 

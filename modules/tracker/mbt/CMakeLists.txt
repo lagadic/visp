@@ -222,23 +222,26 @@ endif()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 
-# TODO: remove hack to glob the test folder
-# TODO: ignore Ogre warnings for test files
+if(BUILD_TESTS)
+  vp_set_source_file_compile_flag(test/testGenericTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+  vp_set_source_file_compile_flag(test/testGenericTrackerDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+endif()
+
+# Improvement: remove hack to glob the test folder with vp_add_tests
 vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io)
-add_test(testTukeyEstimator        testTukeyEstimator)
 
-add_test(testGenericTracker-edge                            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -D)
-add_test(testGenericTracker-edge-scanline                   testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -D -l)
-add_test(testGenericTracker-KLT                             testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -D)
-add_test(testGenericTracker-KLT-scanline                    testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -D -l)
-add_test(testGenericTracker-edge-KLT                        testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -D)
-add_test(testGenericTracker-edge-KLT-scanline               testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -D -l)
-add_test(testGenericTracker-edge-depth-dense                testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -e 30)
-add_test(testGenericTracker-edge-depth-dense-scanline       testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -l -e 30)
-add_test(testGenericTracker-KLT-depth-dense                 testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -e 30)
-add_test(testGenericTracker-KLT-depth-dense-scanline        testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -l -e 30)
-add_test(testGenericTracker-edge-KLT-depth-dense            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -e 30)
-add_test(testGenericTracker-edge-KLT-depth-dense-scanline   testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -l -e 30)
+#add_test(testGenericTracker-edge                            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1) #already added by vp_add_tests
+add_test(testGenericTracker-edge-scanline                   testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -l)
+add_test(testGenericTracker-KLT                             testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2)
+add_test(testGenericTracker-KLT-scanline                    testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -l)
+add_test(testGenericTracker-edge-KLT                        testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3)
+add_test(testGenericTracker-edge-KLT-scanline               testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -l)
+add_test(testGenericTracker-edge-depth-dense                testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -D -e 30)
+add_test(testGenericTracker-edge-depth-dense-scanline       testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -D -l -e 30)
+add_test(testGenericTracker-KLT-depth-dense                 testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -D -e 30)
+add_test(testGenericTracker-KLT-depth-dense-scanline        testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -D -l -e 30)
+add_test(testGenericTracker-edge-KLT-depth-dense            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -D -e 30)
+add_test(testGenericTracker-edge-KLT-depth-dense-scanline   testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -D -l -e 30)
 
-add_test(testGenericTrackerDepth            testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(testGenericTrackerDepth-scanline   testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -l -e 20)
+#add_test(testGenericTrackerDepth            testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY}) #already added by vp_add_tests
+add_test(testGenericTrackerDepth-scanline   testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -l -e 30)

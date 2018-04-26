@@ -91,7 +91,7 @@ namespace
          Specify the index of the last frame. Once reached, the tracking is stopped.\n\
     \n\
       -D \n\
-         Disable depth.\n\
+         Use depth.\n\
     \n\
       -h \n\
          Print the help.\n\n");
@@ -101,7 +101,7 @@ namespace
   }
 
   bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
-                  bool &useScanline, int &trackerType, int &lastFrame, bool &disable_depth)
+                  bool &useScanline, int &trackerType, int &lastFrame, bool &use_depth)
   {
     const char *optarg_;
     int c;
@@ -127,7 +127,7 @@ namespace
         lastFrame = atoi(optarg_);
         break;
       case 'D':
-        disable_depth = true;
+        use_depth = true;
         break;
       case 'h':
         usage(argv[0], NULL);
@@ -173,7 +173,7 @@ namespace
     vpImageIo::read(I, image_filename);
 
     unsigned int depth_width = 0, depth_height = 0;
-    std::ifstream file_depth(depth_filename, std::ios::in | std::ios::binary);
+    std::ifstream file_depth(depth_filename.c_str(), std::ios::in | std::ios::binary);
     if (!file_depth.is_open())
       return false;
 
@@ -196,7 +196,7 @@ namespace
       }
     }
 
-    std::ifstream file_pose(pose_filename);
+    std::ifstream file_pose(pose_filename.c_str());
     if (!file_pose.is_open()) {
       return false;
     }
@@ -226,7 +226,7 @@ int main(int argc, const char *argv[])
 #else
     int opt_lastFrame = -1;
 #endif
-    bool disable_depth = false;
+    bool use_depth = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -234,7 +234,7 @@ int main(int argc, const char *argv[])
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display,
-                    useScanline, trackerType_image, opt_lastFrame, disable_depth)) {
+                    useScanline, trackerType_image, opt_lastFrame, use_depth)) {
       return EXIT_FAILURE;
     }
 
@@ -249,7 +249,7 @@ int main(int argc, const char *argv[])
 
     std::cout << "trackerType_image: " << trackerType_image << std::endl;
     std::cout << "useScanline: " << useScanline << std::endl;
-    std::cout << "disable_depth: " << disable_depth << std::endl;
+    std::cout << "use_depth: " << use_depth << std::endl;
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
@@ -289,7 +289,11 @@ int main(int argc, const char *argv[])
     tracker_type[1] = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
     vpMbGenericTracker tracker(tracker_type);
     tracker.loadConfigFile(input_directory + "/Config/chateau.xml", input_directory + "/Config/chateau_depth.xml");
+#ifdef VISP_HAVE_COIN3D
     tracker.loadModel(input_directory + "/Models/chateau.wrl", input_directory + "/Models/chateau.cao");
+#else
+    tracker.loadModel(input_directory + "/Models/chateau.cao", input_directory + "/Models/chateau.cao");
+#endif
     vpHomogeneousMatrix T;
     T[0][0] = -1;
     T[0][3] = -0.2;
@@ -306,18 +310,34 @@ int main(int argc, const char *argv[])
     tracker.setScanLineVisibilityTest(useScanline);
 
     std::map<int, std::pair<double, double> > map_thresh;
+    //Take the highest thresholds between all CI machines
+#ifdef VISP_HAVE_COIN3D
     map_thresh[vpMbGenericTracker::EDGE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.004, 3.2) : std::pair<double, double>(0.006, 2.8);
+        = useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.006, 2.8);
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.006, 1.9) : std::pair<double, double>(0.004, 1.1);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.004, 3.2) : std::pair<double, double>(0.006, 2.5);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.002, 1.5) : std::pair<double, double>(0.002, 0.8);
+        = useScanline ? std::pair<double, double>(0.002, 1.7) : std::pair<double, double>(0.002, 0.8);
     map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = std::pair<double, double>(0.002, 0.3);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.002, 1.2) : std::pair<double, double>(0.002, 0.6);
+        = useScanline ? std::pair<double, double>(0.002, 1.8) : std::pair<double, double>(0.002, 0.7);
+#else
+    map_thresh[vpMbGenericTracker::EDGE_TRACKER]
+        = useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.007, 2.0);
+    map_thresh[vpMbGenericTracker::KLT_TRACKER]
+        = useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);
+    map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
+        = useScanline ? std::pair<double, double>(0.003, 0.8) : std::pair<double, double>(0.004, 0.9);
+    map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
+        = useScanline ? std::pair<double, double>(0.002, 0.6) : std::pair<double, double>(0.001, 0.4);
+    map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
+        = std::pair<double, double>(0.002, 0.3);
+    map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
+        = useScanline ? std::pair<double, double>(0.001, 0.4) : std::pair<double, double>(0.001, 0.3);
+#endif
 
     vpImage<unsigned char> I, I_depth;
     vpImage<uint16_t> I_depth_raw;
@@ -342,6 +362,7 @@ int main(int argc, const char *argv[])
 
     bool click = false, quit = false;
     std::vector<double> vec_err_t, vec_err_tu;
+    std::vector<double> time_vec;
     while (read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth) && !quit
            && (opt_lastFrame > 0 ? (int)cpt_frame <= opt_lastFrame : true)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
@@ -351,21 +372,25 @@ int main(int argc, const char *argv[])
         vpDisplay::display(I_depth);
       }
 
+      double t = vpTime::measureTimeMs();
       std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
       mapOfImages["Camera1"] = &I;
       std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds;
       mapOfPointclouds["Camera2"] = &pointcloud;
       std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
-      if (disable_depth) {
+      if (!use_depth) {
         mapOfWidths["Camera2"] = 0;
         mapOfHeights["Camera2"] = 0;
       } else {
         mapOfWidths["Camera2"] = I_depth.getWidth();
         mapOfHeights["Camera2"] = I_depth.getHeight();
       }
-      tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
 
+      tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
       vpHomogeneousMatrix cMo = tracker.getPose();
+      t = vpTime::measureTimeMs() - t;
+      time_vec.push_back(t);
+
       if (opt_display) {
         tracker.display(I, I_depth, cMo, depth_M_color*cMo, cam_color, cam_depth, vpColor::red, 3);
         vpDisplay::displayFrame(I, cMo, cam_depth, 0.05, vpColor::none, 3);
@@ -391,8 +416,8 @@ int main(int argc, const char *argv[])
       }
 
       vpColVector t_err = t_truth-t_est, tu_err = tu_truth-tu_est;
-      const double t_thresh = map_thresh[disable_depth ? trackerType_image : trackerType_image | vpMbGenericTracker::DEPTH_DENSE_TRACKER].first;
-      const double tu_thresh = map_thresh[disable_depth ? trackerType_image : trackerType_image | vpMbGenericTracker::DEPTH_DENSE_TRACKER].second;
+      const double t_thresh = map_thresh[!use_depth ? trackerType_image : trackerType_image | vpMbGenericTracker::DEPTH_DENSE_TRACKER].first;
+      const double tu_thresh = map_thresh[!use_depth ? trackerType_image : trackerType_image | vpMbGenericTracker::DEPTH_DENSE_TRACKER].second;
       double t_err2 = sqrt(t_err.sumSquare()), tu_err2 = vpMath::deg(sqrt(tu_err.sumSquare()));
       vec_err_t.push_back( t_err2 );
       vec_err_tu.push_back( tu_err2 );
@@ -428,6 +453,10 @@ int main(int argc, const char *argv[])
       cpt_frame++;
     }
 
+    if (!time_vec.empty())
+      std::cout << "Computation time, Mean: " << vpMath::getMean(time_vec) << " ms ; Median: " << vpMath::getMedian(time_vec)
+                << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms" << std::endl;
+
     if (!vec_err_t.empty())
       std::cout << "Max translation error: " << *std::max_element(vec_err_t.begin(), vec_err_t.end()) << std::endl;
 
@@ -438,6 +467,11 @@ int main(int argc, const char *argv[])
     // file in vpMbGenericTracker::loadConfigFile()
     vpXmlParser::cleanup();
 
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3)
+    // Cleanup memory allocated by Coin library used to load a vrml model. We clean only if Coin was used.
+    SoDB::finish();
+#endif
+
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
@@ -446,7 +480,7 @@ int main(int argc, const char *argv[])
 }
 #else
 int main() {
-  std::cout << "Missing VISP_HAVE_MODULE_MBT or VISP_HAVE_DISPLAY or VISP_HAVE_XML2" << std::endl;
+  std::cout << "Missing VISP_HAVE_MODULE_MBT or VISP_HAVE_DISPLAY or VISP_HAVE_XML2." << std::endl;
   return 0;
 }
 #endif

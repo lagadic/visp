@@ -185,7 +185,8 @@ vpMbTracker::~vpMbTracker() {}
   should have the same generic name as the init file (ie teabox.ppm). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
-  \param mapOfT : optional transformation matrix.
+  \param T : optional transformation matrix to transform
+  3D points expressed in the original object frame to the desired object frame.
 
   \exception vpException::ioError : The file specified in \e initFile doesn't
   exist.
@@ -1064,7 +1065,8 @@ is not wrl or cao.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
 CAO model files which include other CAO model files.
-  \param T : optional transformation matrix (currently only for .cao).
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose, const vpHomogeneousMatrix &T)
 {
@@ -1287,6 +1289,8 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   \param parent : This parameter is
   set to true when parsing a parent CAO model file, and false when parsing an
   included CAO model file.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
                                int &startIdFace, const bool verbose, const bool parent,

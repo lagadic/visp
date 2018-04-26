@@ -161,7 +161,7 @@ namespace
     vpImageIo::read(I, image_filename);
 
     unsigned int depth_width = 0, depth_height = 0;
-    std::ifstream file_depth(depth_filename, std::ios::in | std::ios::binary);
+    std::ifstream file_depth(depth_filename.c_str(), std::ios::in | std::ios::binary);
     if (!file_depth.is_open())
       return false;
 
@@ -184,7 +184,7 @@ namespace
       }
     }
 
-    std::ifstream file_pose(pose_filename);
+    std::ifstream file_pose(pose_filename.c_str());
     if (!file_pose.is_open()) {
       return false;
     }
@@ -259,7 +259,8 @@ int main(int argc, const char *argv[])
     opt_display = false;
 #endif
 
-    std::vector<int> tracker_type = {vpMbGenericTracker::DEPTH_DENSE_TRACKER};
+    std::vector<int> tracker_type;
+    tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
     vpMbGenericTracker tracker(tracker_type);
     tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
     tracker.loadModel(input_directory + "/Models/chateau.cao");
@@ -300,6 +301,8 @@ int main(int argc, const char *argv[])
     tracker.initFromPose(I, depth_M_color*cMo_truth);
 
     bool click = false, quit = false;
+    std::vector<double> vec_err_t, vec_err_tu;
+    std::vector<double> time_vec;
     while (read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth) && !quit
            && (opt_lastFrame > 0 ? (int)cpt_frame <= opt_lastFrame : true)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
@@ -309,15 +312,19 @@ int main(int argc, const char *argv[])
         vpDisplay::display(I_depth);
       }
 
+      double t = vpTime::measureTimeMs();
       std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
       std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds;
       mapOfPointclouds["Camera"] = &pointcloud;
       std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
       mapOfWidths["Camera"] = I_depth.getWidth();
       mapOfHeights["Camera"] = I_depth.getHeight();
-      tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
 
+      tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
       vpHomogeneousMatrix cMo = tracker.getPose();
+      t = vpTime::measureTimeMs() - t;
+      time_vec.push_back(t);
+
       if (opt_display) {
         tracker.display(I_depth, cMo, cam_depth, vpColor::red, 3);
         vpDisplay::displayFrame(I_depth, cMo, cam_depth, 0.05, vpColor::none, 3);
@@ -342,8 +349,12 @@ int main(int argc, const char *argv[])
       }
 
       vpColVector t_err = t_truth-t_est, tu_err = tu_truth-tu_est;
-      const double t_thresh = 0.003, tu_thresh = 0.5;
-      if ( sqrt(t_err.sumSquare()) > t_thresh || vpMath::deg(sqrt(tu_err.sumSquare())) > tu_thresh ) {
+      double t_err2 = sqrt(t_err.sumSquare()), tu_err2 = vpMath::deg(sqrt(tu_err.sumSquare()));
+      vec_err_t.push_back( t_err2 );
+      vec_err_tu.push_back( tu_err2 );
+      const double t_thresh = useScanline ? 0.003 : 0.002;
+      const double tu_thresh = useScanline ? 0.5 : 0.4;
+      if ( t_err2 > t_thresh || tu_err2 > tu_thresh ) {
         std::cerr << "Pose estimated exceeds the threshold (t_thresh = 0.003, tu_thresh = 0.5)!" << std::endl;
         std::cout << "t_err: " << sqrt(t_err.sumSquare()) << " ; tu_err: " << vpMath::deg(sqrt(tu_err.sumSquare())) << std::endl;
         return EXIT_FAILURE;
@@ -375,9 +386,19 @@ int main(int argc, const char *argv[])
       cpt_frame++;
     }
 
-  // Cleanup memory allocated by xml library used to parse the xml config
-  // file in vpMbGenericTracker::loadConfigFile()
-  vpXmlParser::cleanup();
+    if (!time_vec.empty())
+      std::cout << "Computation time, Mean: " << vpMath::getMean(time_vec) << " ms ; Median: " << vpMath::getMedian(time_vec)
+                << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms" << std::endl;
+
+    if (!vec_err_t.empty())
+      std::cout << "Max translation error: " << *std::max_element(vec_err_t.begin(), vec_err_t.end()) << std::endl;
+
+    if (!vec_err_tu.empty())
+      std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
+
+    // Cleanup memory allocated by xml library used to parse the xml config
+    // file in vpMbGenericTracker::loadConfigFile()
+    vpXmlParser::cleanup();
 
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
