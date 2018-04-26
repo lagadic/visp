@@ -192,7 +192,7 @@ C:\> echo %PATH%
 
 \section install_win10_mingw64_dataset Install ViSP dataset
 
-Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
+Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c visp-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
 
 Download `visp-images-3.1.0.zip` from http://visp.inria.fr/download and uncompress it in your workspace `C:/workspace`. 
 \image html img-win10-visp-images.png
@@ -202,7 +202,7 @@ ViSP examples and tests are able to detect automatically the location of the req
 C:\> setx VISP_INPUT_IMAGE_PATH C:\workspace\visp-images-3.1.0
 \endcode
 
-From now, you can try to run ViSP examples and tests. For example, if you want to run `C:/worspace/visp/visp-build-mingw/example/device/display/Debug/displayGDI.exe`, open a command window, enter in the right folder, and run:
+From now, you can try to run ViSP examples and tests. For example, if you want to run `C:/workspace/visp/visp-build-mingw/example/device/display/Debug/displayGDI.exe`, open a command window, enter in the right folder, and run:
 
 \image html img-win10-mingw-cmd-displayGDI.png
 

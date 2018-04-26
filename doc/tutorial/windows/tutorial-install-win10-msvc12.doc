@@ -280,7 +280,7 @@ ViSP examples and tests are able to detect automatically the location of the req
 C:\> setx VISP_INPUT_IMAGE_PATH C:\workspace\visp-images-3.1.0
 \endcode
 
-From now, you can try to run ViSP examples and tests. For example, if you want to run `C:/worspace/visp/visp-build-vc12/example/device/display/Debug/displayGDI.exe`, open a command window, enter in the right folder, and run:
+From now, you can try to run ViSP examples and tests. For example, if you want to run `C:/workspace/visp/visp-build-vc12/example/device/display/Debug/displayGDI.exe`, open a command window, enter in the right folder, and run:
 
 \image html img-win8.1-cmd-displayGDI.jpg 
 
