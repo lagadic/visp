@@ -75,6 +75,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
 - \ref tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
 - \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
+- \ref tutorial-install-jetson <br>In this tutorial you will learn how to install ViSP from source on Jetson equipped with a Connect Tech Orbitty Carrier board.
 - \ref tutorial-install-win7 <br>In this tutorial you will learn how to install ViSP from source on Windows 7 with Visual C++ 2012 (vc11).
 - \ref tutorial-install-win10-msvc12 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2013 (vc12).
 - \ref tutorial-install-win10-msvc14 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2015 (vc14).
