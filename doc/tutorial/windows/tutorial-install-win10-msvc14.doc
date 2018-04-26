@@ -173,7 +173,7 @@ C:\> setx ZBAR_DIR "C:\workspace\ZBarWin64"
 
 \subsection install_win10_msvc14_3rdparty_eigen eigen 3rd party
 
-Even if eigen is designed as a template we recommand to install the library with Visual Studio.
+Even if eigen is designed as a template we recommend to install the library with Visual Studio.
 
 <b>1. Get eigen</b>
 
@@ -340,7 +340,7 @@ ViSP examples and tests are able to detect automatically the location of the req
 C:\> setx VISP_INPUT_IMAGE_PATH C:\workspace\visp-images-3.1.0
 \endcode
 
-From now, you can try to run ViSP examples and tests. For example, if you want to run `C:/worspace/visp/visp-build-vc14/example/device/display/Debug/displayGDI.exe`, open a command window, enter in the right folder, and run:
+From now, you can try to run ViSP examples and tests. For example, if you want to run `C:/workspace/visp/visp-build-vc14/example/device/display/Debug/displayGDI.exe`, open a command window, enter in the right folder, and run:
 
 \image html img-win10-msvc14-cmd-displayGDI.png
 

@@ -161,7 +161,7 @@ From now, you can try to run ViSP examples and tests. For example, if you want t
 
 \subsection install_win7_tip_git How to install Git
 
-We recommand to install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git in a cmd.exe command dos shell. 
+We recommend to install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git in a cmd.exe command dos shell. 
 
 \section install_win7_next Next tutorial
 
