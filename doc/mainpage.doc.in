@@ -154,9 +154,10 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \ref tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
 
-\subsection tuto_bridge Bridges over other frameworks
+\subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB)
 
 - \ref tutorial-bridge-opencv <br>This tutorial explicit how to convert OpenCV to/from ViSP structures such as camera parameters, images...
+- \ref tutorial-visp-matlab <br>This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine.
 
 \subsection tuto_tools Other tools
 
@@ -164,10 +165,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
 - \ref tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
-
-\subsection tuto_matlab ViSP and MATLAB
-
-- \ref tutorial-visp-matlab <br>This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine.
 
 @VISP_MAINPAGE_EXTENSION@
 
