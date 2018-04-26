@@ -49,6 +49,7 @@ before_script:
 
 script: 
   - make
+  - ./modules/core/testTime
   - ctest
 
 notifications:
