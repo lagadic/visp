@@ -181,7 +181,7 @@ vpMbTracker::~vpMbTracker() {}
   \param initFile : File containing the coordinates of at least 4 3D points
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
-  \param displayHelp : Optionnal display of an image that
+  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
   should have the same generic name as the init file (ie teabox.ppm). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
@@ -199,14 +199,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
   std::string ext = ".init";
   std::string str_pose = "";
-  size_t pos = (unsigned int)initFile.rfind(ext);
+  size_t pos = initFile.rfind(ext);
 
   // Load the last poses from files
   std::fstream finitpos;
-  std::fstream finit;
+  std::ifstream finit;
   char s[FILENAME_MAX];
   if (poseSavingFilename.empty()) {
-    if (pos == initFile.size() - ext.size() && pos != 0)
+    if (pos != std::string::npos)
       str_pose = initFile.substr(0, pos) + ".0.pos";
     else
       str_pose = initFile + ".0.pos";
@@ -262,13 +262,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
     // number of points
     // X Y Z
     // X Y Z
-    if (pos == initFile.size() - ext.size() && pos != 0)
+    if (pos != std::string::npos)
       sprintf(s, "%s", initFile.c_str());
     else
       sprintf(s, "%s.init", initFile.c_str());
 
     std::cout << "Load 3D points from: " << s << std::endl;
-    finit.open(s, std::ios::in);
+    finit.open(s);
     if (finit.fail()) {
       std::cout << "cannot read " << s << std::endl;
       throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", s);
@@ -278,13 +278,22 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
     // Display window creation and initialisation
     try {
       if (displayHelp) {
+        const std::string imgExtVec[] = {".ppm", ".pgm", ".jpg", ".jpeg", ".png"};
         std::string dispF;
-        if (pos == initFile.size() - ext.size() && pos != 0)
-          dispF = initFile.substr(0, pos) + ".ppm";
-        else
-          dispF = initFile + ".ppm";
+        bool foundHelpImg = false;
+        if (pos != std::string::npos) {
+          for (size_t i = 0; i < 5 && !foundHelpImg; i++) {
+            dispF = initFile.substr(0, pos) + imgExtVec[i];
+            foundHelpImg = vpIoTools::checkFilename(dispF);
+          }
+        } else {
+          for (size_t i = 0; i < 5 && !foundHelpImg; i++) {
+            dispF = initFile + imgExtVec[i];
+            foundHelpImg = vpIoTools::checkFilename(dispF);
+          }
+        }
 
-        if (vpIoTools::checkFilename(dispF)) {
+        if (foundHelpImg) {
           std::cout << "Load image to help initialization: " << dispF << std::endl;
 #if defined VISP_HAVE_X11
           d_help = new vpDisplayX;
@@ -313,14 +322,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 #else  //#ifdef VISP_HAVE_MODULE_IO
     (void)(displayHelp);
 #endif //#ifdef VISP_HAVE_MODULE_IO
-    char c;
     // skip lines starting with # as comment
-    finit.get(c);
-    while (!finit.fail() && (c == '#')) {
-      finit.ignore(256, '\n');
-      finit.get(c);
-    }
-    finit.unget();
+    removeComment(finit);
 
     unsigned int n3d;
     finit >> n3d;
@@ -330,15 +333,10 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
       throw vpException(vpException::badValue, "In %s file, the number of 3D points exceed the max allowed", s);
     }
 
-    vpPoint *P = new vpPoint[n3d];
+    std::vector<vpPoint> P(n3d);
     for (unsigned int i = 0; i < n3d; i++) {
       // skip lines starting with # as comment
-      finit.get(c);
-      while (!finit.fail() && (c == '#')) {
-        finit.ignore(256, '\n');
-        finit.get(c);
-      }
-      finit.unget();
+      removeComment(finit);
       double X, Y, Z;
 
       finit >> X;
@@ -412,8 +410,6 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
       }
     }
     vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
-
-    delete[] P;
 
     // save the pose into file
     if (poseSavingFilename.empty())
