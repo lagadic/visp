@@ -639,7 +639,9 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     for (unsigned int cpt = 0, idx = 0; cpt < I.getHeight()-height_tpl; cpt+=step_v, idx++) {
       vec_step_v[(size_t)idx] = cpt;
     }
+    #if defined _OPENMP //only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
     #pragma omp parallel for schedule(dynamic)
+    #endif
     for (int cpt = 0; cpt < end; cpt++) {
       for (unsigned int j = 0; j < I.getWidth()-width_tpl; j+=step_u) {
         I_score[vec_step_v[cpt]][j] = normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
