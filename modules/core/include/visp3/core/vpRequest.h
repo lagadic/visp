@@ -50,7 +50,7 @@
 /*!
   \class vpRequest
 
-  \ingroup group_core_network
+  \ingroup group_core_com_ethernet
 
   \brief This the request that will transit on the network
 

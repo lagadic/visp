@@ -171,7 +171,7 @@ We suppose now that ViSP source is in the directory \c $VISP_WS/visp. The follow
 
 \subsection install_raspberry_visp_config Configure ViSP from source
 
-- In the worspace, create first a directory named \c visp-build that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
+- In the workspace, create first a directory named \c visp-build that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
 \code
 $ mkdir $VISP_WS/visp-build
 \endcode
@@ -229,14 +229,14 @@ $ make -j4 visp_doc
 \endcode
 
 \section install_raspberry_dataset Install ViSP dataset
-- Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
+- Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c visp-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
 \code
-$ unzip ViSP-images-3.1.0.zip -d $VISP_WS
+$ unzip visp-images-3.1.0.zip -d $VISP_WS
 \endcode
 
-- We suppose now that the data are located in \c $VISP_WS/ViSP-images-3.1.0.
+- We suppose now that the data are located in \c $VISP_WS/visp-images-3.1.0.
 \code
-$ ls $VISP_WS/ViSP-images-3.1.0
+$ ls $VISP_WS/visp-images-3.1.0
 AprilTag     circle   ellipse    iv     LICENSE.txt  mbt    mire-2     video
 calibration  cube     ellipse-1  Klimt  line         mire   README.md  
 \endcode
@@ -244,7 +244,7 @@ calibration  cube     ellipse-1  Klimt  line         mire   README.md
 - Set \c VISP_INPUT_IMAGE_PATH environment variable to help ViSP examples and tests to find the location of the data set. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
 \code
 $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/ViSP-images-3.1.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.1.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
 
@@ -306,6 +306,7 @@ $ make help | grep visp
 ... visp_apriltag
 ... visp_core
 ... visp_gui
+... visp_imgproc
 ... visp_io
 ... visp_klt
 ... visp_me
@@ -458,4 +459,7 @@ General configuration information for ViSP 3.1.0
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project on Raspberry Pi or on any other system. Then if you have a Raspberry Pi camera module, you can also follow the \ref tutorial-tracking-blob especially subsection Tracking form v4l2 live cameras.
 
 You may also be interested in \ref tutorial-install-crosscompiling-raspberry if you want to speed up the build process or deploy ViSP on other Rapberry boards.
+
+There is also \ref tutorial-mbot-vs that uses a Raspberry Pi in order to control a mBot Ranger educational robot kit by visual-servoing.
+
 */

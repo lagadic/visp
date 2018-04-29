@@ -10,7 +10,7 @@ This tutorial explains how to do a position-based visual-servoing with the Panda
 The following video shows the resulting robot trajectory when the robot is achieving a position-based visual servoing over an Apriltag target.
 
 \htmlonly
-<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/IU9Ky5FFc00" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></p>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/7A5cqUEKXHg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></p>
 \endhtmlonly
 
 \section franka_prereq Prerequisites

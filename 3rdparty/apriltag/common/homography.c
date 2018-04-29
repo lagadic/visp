@@ -190,8 +190,8 @@ matd_t *homography_compute(zarray_t *correspondences, int flags)
 
             matd_destroy(Ainv);
         } else {
-
-            matd_t *b = matd_create_data(9, 1, (double[]) { 1, 0, 0, 0, 0, 0, 0, 0, 0 });
+          double data_[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+            matd_t *b = matd_create_data(9, 1, data_);
             matd_t *Ainv = NULL;
 
             if (0) {
@@ -322,10 +322,10 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
         // do polar decomposition. This makes the rotation matrix
         // "proper", but probably increases the reprojection error. An
         // iterative alignment step would be superior.
-
-        matd_t *R = matd_create_data(3, 3, (double[]) { R00, R01, R02,
-                                                        R10, R11, R12,
-                                                        R20, R21, R22 });
+        double data_[] = { R00, R01, R02,
+                           R10, R11, R12,
+                           R20, R21, R22 };
+        matd_t *R = matd_create_data(3, 3, data_);
 
         matd_svd_t svd = matd_svd(R);
         matd_destroy(R);
@@ -348,11 +348,11 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
 
         matd_destroy(R);
     }
-
-    return matd_create_data(4, 4, (double[]) { -R00, R01, -R02, -TX*markerScale,
-                                               -R10, R11, -R12, -TY*markerScale,
-                                               -R20, R21, -R22, -TZ*markerScale,
-                                                0, 0, 0, 1 });
+    double data_[] = { -R00, R01, -R02, -TX*markerScale,
+                       -R10, R11, -R12, -TY*markerScale,
+                       -R20, R21, -R22, -TZ*markerScale,
+                       0, 0, 0, 1 };
+    return matd_create_data(4, 4, data_);
 }
 
 // Similar to above
@@ -403,11 +403,11 @@ matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, 
     double R22 = R00*R11 - R10*R01;
 
     // TODO XXX: Improve rotation matrix by applying polar decomposition.
-
-    return matd_create_data(4, 4, (double[]) { R00, R01, R02, TX,
-        R10, R11, R12, TY,
-        R20, R21, R22, TZ,
-        0, 0, 0, 1 });
+    double data_[] = { R00, R01, R02, TX,
+                       R10, R11, R12, TY,
+                       R20, R21, R22, TZ,
+                       0, 0, 0, 1 };
+    return matd_create_data(4, 4, data_);
 }
 
 // Only uses the upper 3x3 matrix.

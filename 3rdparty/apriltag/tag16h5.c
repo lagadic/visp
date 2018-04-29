@@ -38,7 +38,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 apriltag_family_t *tag16h5_create()
 {
-   apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
+   apriltag_family_t *tf = (apriltag_family_t *)calloc(1, sizeof(apriltag_family_t));
 #ifdef WINRT
    tf->name = _strdup("tag16h5");
 #else
@@ -48,7 +48,7 @@ apriltag_family_t *tag16h5_create()
    tf->d = 4;
    tf->h = 5;
    tf->ncodes = 30;
-   tf->codes = calloc(30, sizeof(uint64_t));
+   tf->codes = (uint64_t *)calloc(30, sizeof(uint64_t));
    tf->codes[0] = 0x000000000000231bUL;
    tf->codes[1] = 0x0000000000002ea5UL;
    tf->codes[2] = 0x000000000000346aUL;

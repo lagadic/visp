@@ -34,7 +34,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #define _APRILTAG_H
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 #include <stdlib.h>
@@ -48,6 +48,7 @@ extern "C" {
 
 #define APRILTAG_TASKS_PER_THREAD_TARGET 10
 
+typedef struct quad apriltag_quad_t;
 struct quad
 {
     float p[4][2]; // corners
@@ -287,7 +288,7 @@ void apriltag_detections_destroy(zarray_t *detections);
 image_u8_t *apriltag_to_image(apriltag_family_t *fam, int idx);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

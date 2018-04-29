@@ -342,7 +342,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
                     return PJPEG_ERR_SOF;
 
                 pjd->ncomponents = nf;
-                pjd->components = calloc(nf, sizeof(struct pjpeg_component));
+                pjd->components = (pjpeg_component_t *)calloc(nf, sizeof(struct pjpeg_component));
 
                 for (int i = 0; i < nf; i++) {
                     // comp. identifier
@@ -448,7 +448,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
 
                 // for each component, what is the index into our pjd->components[] array?
 #ifdef _MSC_VER
-                uint8_t *comp_idx = malloc(ns*sizeof *comp_idx);
+                uint8_t *comp_idx = (uint8_t *)malloc(ns*sizeof *comp_idx);
 #else
                 uint8_t comp_idx[ns];
 #endif
@@ -515,13 +515,13 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
                     if ((comp->stride % alignment) != 0)
                         comp->stride += alignment - (comp->stride % alignment);
 
-                    comp->data = calloc(comp->height * comp->stride, 1);
+                    comp->data = (uint8_t *)calloc(comp->height * comp->stride, 1);
                 }
 
 
                 // each component has its own DC prediction
 #ifdef _MSC_VER
-                int32_t *dcpred = malloc(ns*sizeof *dcpred);
+                int32_t *dcpred = (int32_t *)malloc(ns*sizeof *dcpred);
 #else
                 int32_t dcpred[ns];
 #endif
@@ -840,7 +840,7 @@ pjpeg_t *pjpeg_create_from_file(const char *path, uint32_t flags, int *error)
     fseek(f, 0, SEEK_END);
     long buflen = ftell(f);
 
-    uint8_t *buf = malloc(buflen);
+    uint8_t *buf = (uint8_t *)malloc(buflen);
     fseek(f, 0, SEEK_SET);
     int res = fread(buf, 1, buflen, f);
     fclose(f);
@@ -885,7 +885,7 @@ pjpeg_t *pjpeg_create_from_buffer(uint8_t *buf, int buflen, uint32_t flags, int 
         return NULL;
     }
 
-    pjpeg_t *pj = calloc(1, sizeof(pjpeg_t));
+    pjpeg_t *pj = (pjpeg_t *)calloc(1, sizeof(pjpeg_t));
 
     pj->width = pjd.width;
     pj->height = pjd.height;

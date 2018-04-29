@@ -134,8 +134,9 @@ void vpRealSense::open()
   // specified and only one camera is connected. This is a valid use case and
   // the code will proceed.
   m_device = m_context.get_device(0);
+  m_serial_no = m_device->get_serial();
 
-  std::cout << "RealSense Camera - Connecting to camera with Serial No: " << m_device->get_serial() << std::endl;
+  std::cout << "RealSense Camera - Connecting to camera with Serial No: " << m_serial_no << std::endl;
 
   // Enable only infrared2 stream if supported
   m_enableStreams[rs::stream::infrared2] = m_enableStreams[rs::stream::infrared2]

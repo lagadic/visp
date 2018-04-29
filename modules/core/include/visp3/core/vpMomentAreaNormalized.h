@@ -142,20 +142,35 @@ private:
   double desiredDepth;
 
 public:
-  vpMomentAreaNormalized(double desiredSurface, double desiredDepth);
+  vpMomentAreaNormalized(double a_star, double Z_star);
   virtual ~vpMomentAreaNormalized(){};
   void compute();
   /*!
-  Retrieves the desired depth \e Z* as specified in the constructor.
+    Retrieves the desired surface \e a* as specified in the constructor.
+  */
+  double getDesiredArea() const { return desiredSurface; }
+  /*!
+    Retrieves the desired depth \e Z* as specified in the constructor.
   */
   double getDesiredDepth() const { return desiredDepth; }
   /*!
-  Retrieves the desired surface \e a* as specified in the constructor.
+    \deprecated Use rather getDesiredArea()
+    Retrieves the desired surface \e a* as specified in the constructor.
   */
-  double getDesiredSurface() const { return desiredSurface; }
+  vp_deprecated double getDesiredSurface() const { return desiredSurface; }
+  /*!
+    Set the desired depth \e Z* to a new value than the one specified in the constructor.
+    This value has to be set before calling compute().
+  */
+  void setDesiredDepth(double Z_star) { desiredDepth = Z_star; }
+  /*!
+    Set the desired area \e a* to a new value than the one specified in the constructor.
+    This value has to be set before calling compute().
+  */
+  void setDesiredArea(double a_star) { desiredSurface = a_star; }
 
   /*!
-  Moment name.
+    Moment name.
   */
   const char *name() const { return "vpMomentAreaNormalized"; }
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);

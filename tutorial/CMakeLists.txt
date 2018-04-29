@@ -43,6 +43,7 @@ visp_add_subdirectory(imgproc/contrast-sharpening          REQUIRED_DEPS visp_co
 visp_add_subdirectory(imgproc/count-coins                  REQUIRED_DEPS visp_core visp_io visp_gui visp_imgproc)
 visp_add_subdirectory(imgproc/flood-fill                   REQUIRED_DEPS visp_core visp_io visp_gui visp_imgproc)
 visp_add_subdirectory(robot/pioneer                        REQUIRED_DEPS visp_core visp_robot visp_vs visp_gui)
+visp_add_subdirectory(robot/mbot/raspberry/visp            REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor visp_vs)
 visp_add_subdirectory(simulator/image                      REQUIRED_DEPS visp_core visp_robot visp_io visp_gui)
 visp_add_subdirectory(trace                                REQUIRED_DEPS visp_core)
 visp_add_subdirectory(tracking/blob                        REQUIRED_DEPS visp_core visp_blob visp_io visp_gui visp_sensor)

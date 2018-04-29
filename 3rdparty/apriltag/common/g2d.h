@@ -34,7 +34,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #define _G2D_H
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 #include "common/zarray.h"
@@ -126,7 +126,7 @@ int g2d_polygon_overlaps_polygon(const zarray_t *polya, const zarray_t *polyb);
 int g2d_polygon_rasterize(const zarray_t *poly, double y, double *x);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

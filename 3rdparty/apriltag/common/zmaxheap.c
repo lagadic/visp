@@ -36,6 +36,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <math.h>
 #include <assert.h>
 #include <stdint.h>
+#include <algorithm>
 
 #include "zmaxheap.h"
 
@@ -80,7 +81,7 @@ static inline void swap_default(zmaxheap_t *heap, int a, int b)
     heap->values[b] = t;
 
 #ifdef _MSC_VER
-    char *tmp = malloc(heap->el_sz*sizeof *tmp);
+    char *tmp = (char *)malloc(heap->el_sz*sizeof *tmp);
 #else
     char tmp[heap->el_sz];
 #endif
@@ -108,7 +109,7 @@ static inline void swap_pointer(zmaxheap_t *heap, int a, int b)
 
 zmaxheap_t *zmaxheap_create(size_t el_sz)
 {
-    zmaxheap_t *heap = calloc(1, sizeof(zmaxheap_t));
+    zmaxheap_t *heap = (zmaxheap_t *)calloc(1, sizeof(zmaxheap_t));
     heap->el_sz = el_sz;
 
     heap->swap = swap_default;
@@ -148,15 +149,15 @@ void zmaxheap_ensure_capacity(zmaxheap_t *heap, int capacity)
         newcap *= 2;
     }
 
-    heap->values = realloc(heap->values, newcap * sizeof(float));
-    heap->data = realloc(heap->data, newcap * heap->el_sz);
+    heap->values = (float *)realloc(heap->values, newcap * sizeof(float));
+    heap->data = (char *)realloc(heap->data, newcap * heap->el_sz);
     heap->alloc = newcap;
 }
 
 void zmaxheap_add(zmaxheap_t *heap, void *p, float v)
 {
 
-    assert (isfinite(v) && "zmaxheap_add: Trying to add non-finite number to heap.  NaN's prohibited, could allow INF with testing");
+//    assert (isfinite(v) && "zmaxheap_add: Trying to add non-finite number to heap.  NaN's prohibited, could allow INF with testing");
     zmaxheap_ensure_capacity(heap, heap->size + 1);
 
     int idx = heap->size;
@@ -180,7 +181,7 @@ void zmaxheap_add(zmaxheap_t *heap, void *p, float v)
     }
 }
 
-void zmaxheap_vmap(zmaxheap_t *heap, void (*f)())
+void zmaxheap_vmap(zmaxheap_t *heap, void (*f)(void *))
 {
     assert(heap != NULL);
     assert(f != NULL);
@@ -237,8 +238,8 @@ int zmaxheap_remove_index(zmaxheap_t *heap, int idx, void *p, float *v)
 
 //            assert(parent_score == heap->values[parent]);
 
-        float left_score = (left < heap->size) ? heap->values[left] : -INFINITY;
-        float right_score = (right < heap->size) ? heap->values[right] : -INFINITY;
+        float left_score = (left < heap->size) ? heap->values[left] : -0x7f800000;//std::numeric_limits<float>::infinity(); // INFINITY;
+        float right_score = (right < heap->size) ? heap->values[right] : -0x7f800000;//std::numeric_limits<float>::infinity(); //INFINITY;
 
         // put the biggest of (parent, left, right) as the parent.
 
@@ -375,7 +376,7 @@ void zmaxheap_test()
 {
     int cap = 10000;
     int sz = 0;
-    int32_t *vals = calloc(sizeof(int32_t), cap);
+    int32_t *vals = (int32_t *)calloc(sizeof(int32_t), cap);
 
     zmaxheap_t *heap = zmaxheap_create(sizeof(int32_t));
 

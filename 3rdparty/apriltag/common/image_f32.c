@@ -54,9 +54,9 @@ static inline float sqf(float v)
 
 image_f32_t *image_f32_create_stride(int width, int height, int stride)
 {
-    float *buf = calloc(height * stride, sizeof(float));
+    float *buf = (float *)calloc(height * stride, sizeof(float));
     // const initializer
-    image_f32_t tmp = { .width = width, .height = height, .stride = stride, .buf = buf };
+	image_f32_t tmp = {width, height, stride, buf};
 
     image_f32_t *fim = (image_f32_t*) calloc(1, sizeof(image_f32_t));
 
@@ -117,7 +117,7 @@ void image_f32_gaussian_blur(image_f32_t *im, double sigma, int ksz)
 
     // build the kernel.
 #ifdef _MSC_VER
-    float *k = malloc(ksz*sizeof *k);
+    float *k = (float *)malloc(ksz*sizeof *k);
 #else
     float k[ksz];
 #endif
@@ -144,7 +144,7 @@ void image_f32_gaussian_blur(image_f32_t *im, double sigma, int ksz)
 
     for (int y = 0; y < im->height; y++) {
 #ifdef _MSC_VER
-        float *x = malloc(im->stride*sizeof *x);
+        float *x = (float *)malloc(im->stride*sizeof *x);
 #else
         float x[im->stride];
 #endif
@@ -158,8 +158,8 @@ void image_f32_gaussian_blur(image_f32_t *im, double sigma, int ksz)
 
     for (int x = 0; x < im->width; x++) {
 #ifdef _MSC_VER
-        float *xb = malloc(im->height*sizeof *xb);
-        float *yb = malloc(im->height*sizeof *yb);
+        float *xb = (float *)malloc(im->height*sizeof *xb);
+        float *yb = (float *)malloc(im->height*sizeof *yb);
 #else
         float xb[im->height];
         float yb[im->height];
@@ -233,7 +233,7 @@ int image_f32_write_pnm(const image_f32_t *im, const char *path)
 
     for (int y = 0; y < im->height; y++) {
 #ifdef _MSC_VER
-        uint8_t *line = malloc(im->width*sizeof *line);
+        uint8_t *line = (uint8_t *)malloc(im->width*sizeof *line);
 #else
         uint8_t line[im->width];
 #endif
