@@ -22,8 +22,8 @@ else()
   set(LIB_NAME_SUFIX "${VISP_VERSION_MAJOR}${VISP_VERSION_MINOR}${VISP_VERSION_PATCH}")
 endif()
 
-ocv_module_include_directories("${CMAKE_CURRENT_SOURCE_DIR}/generator/src/cpp")
-ocv_module_include_directories("${VISP_SOURCE_DIR}/include")
+vp_module_include_directories("${CMAKE_CURRENT_SOURCE_DIR}/generator/src/cpp")
+vp_module_include_directories("${VISP_SOURCE_DIR}/include")
 
 if(NOT ANDROID)
   include_directories(${JNI_INCLUDE_DIRS})
@@ -37,10 +37,10 @@ set(JNI_INSTALL_ROOT  "sdk/native")
 # message(STATUS "Wrapped in java:")
 set(VISP_JAVA_MODULES)
 foreach(m ${VISP_MODULES_BUILD})
-  if (";${OPENCV_MODULE_${m}_WRAPPERS};" MATCHES ";java;" AND HAVE_${m})
-    string(REPLACE "opencv_" "" m ${m})
+  if (";${VISP_MODULE_${m}_WRAPPERS};" MATCHES ";java;" AND HAVE_${m})
+    string(REPLACE "visp_" "" m ${m})
     list(APPEND VISP_JAVA_MODULES ${m})
-    # message(STATUS "\topencv_${m}")
+    # message(STATUS "\tvisp_${m}")
   endif()
 endforeach()
 
@@ -49,7 +49,7 @@ endforeach()
 # UTILITY: make C headers go first
 macro(sort_headers_c_cpp __lst)
   set(__cpp ${${__lst}})
-  ocv_list_filterout(__cpp "\\\\.h$")
+  vp_list_filterout(__cpp "\\\\.h$")
   if(__cpp)
     list(REMOVE_ITEM ${__lst} ${__cpp})
     list(APPEND ${__lst} ${__cpp})
@@ -109,7 +109,7 @@ endmacro()
 macro(copy_modules_tests _modules _dst_location _deps)
   set(_dst ${${_dst_location}})
   foreach(module ${${_modules}})
-    set(_src "${OPENCV_MODULE_opencv_${module}_LOCATION}/misc/java/test")
+    set(_src "${VISP_MODULE_visp_${module}_LOCATION}/misc/java/test")
     set(_tree "src/org/visp/test/${module}")
     file(GLOB _files RELATIVE "${_src}" "${_src}/*.java")
     foreach (f ${_files})
@@ -144,27 +144,27 @@ glob_more_specific_sources(AIDL "${CMAKE_CURRENT_SOURCE_DIR}/generator" handwrit
 
 # headers of ViSP modules
 set(visp_public_headers "")
-set(opencv_type_dicts "")
+set(vp_type_dicts "")
 set(generated_cpp_sources "")
 set(generated_java_sources "")
 foreach(module ${VISP_JAVA_MODULES})
-  set(module_java_dir "${OPENCV_MODULE_opencv_${module}_LOCATION}/misc/java")
+  set(module_java_dir "${VISP_MODULE_visp_${module}_LOCATION}/misc/java")
   # custom mappings between c and java/JNI types
   set(custom_type_dict "${module_java_dir}/gen_dict.json")
   if(EXISTS "${custom_type_dict}")
-    list(APPEND opencv_java_type_dict_${module} ${custom_type_dict})
+    list(APPEND vp_java_type_dict_${module} ${custom_type_dict})
   endif()
 
   set(custom_header_list "${module_java_dir}/filelist")
   if(EXISTS "${custom_header_list}")
     file(STRINGS "${custom_header_list}" module_headers)
-    vp_list_add_prefix(module_headers "${OPENCV_MODULE_opencv_${module}_LOCATION}/")
+    vp_list_add_prefix(module_headers "${VISP_MODULE_visp_${module}_LOCATION}/")
   else()
     set(module_headers "")
-    # TODO Implement module's "_HEADERS_PUBLIC" variable (OpenCVModule.cmake)
-    foreach(hdr ${OPENCV_MODULE_opencv_${module}_HEADERS})
-      string(REGEX REPLACE "^.*opencv2/" "opencv2/" hdr2 "${hdr}")
-      if(NOT hdr2 MATCHES "opencv2/${m}/private.*" AND hdr2 MATCHES "^(opencv2/?.*)/[^/]+.h(..)?$" )
+    # TODO Implement module's "_HEADERS_PUBLIC" variable (VISPModule.cmake)
+    foreach(hdr ${VISP_MODULE_visp_${module}_HEADERS})
+      string(REGEX REPLACE "^.*visp2/" "visp2/" hdr2 "${hdr}")
+      if(NOT hdr2 MATCHES "visp2/${m}/private.*" AND hdr2 MATCHES "^(visp2/?.*)/[^/]+.h(..)?$" )
         list(APPEND module_headers "${hdr}")
       endif()
     endforeach()
@@ -176,7 +176,7 @@ foreach(module ${VISP_JAVA_MODULES})
 
   sort_headers_c_cpp(module_headers)
 
-  set(opencv_public_headers_${module} ${module_headers})
+  set(vp_public_headers_${module} ${module_headers})
   list(APPEND visp_public_headers ${module_headers})
   list(APPEND generated_cpp_sources "${CMAKE_CURRENT_BINARY_DIR}/gen/${module}.cpp")
 
@@ -185,21 +185,21 @@ foreach(module ${VISP_JAVA_MODULES})
   set(common_header_list "${module_java_dir}/filelist_common")
   if(EXISTS "${common_header_list}")
     file(STRINGS "${common_header_list}" __headers)
-    vp_list_add_prefix(__headers "${OPENCV_MODULE_opencv_${module}_LOCATION}/")
-    list(APPEND opencv_java_common_headers_${module} ${__headers})
+    vp_list_add_prefix(__headers "${VISP_MODULE_visp_${module}_LOCATION}/")
+    list(APPEND visp_java_common_headers_${module} ${__headers})
   endif()
 
-  foreach(m ${OPENCV_MODULE_opencv_${module}_DEPS})
-    set(common_header_list "${OPENCV_MODULE_${m}_LOCATION}/misc/java/filelist_common")
+  foreach(m ${VISP_MODULE_visp_${module}_DEPS})
+    set(common_header_list "${VISP_MODULE_${m}_LOCATION}/misc/java/filelist_common")
     if(EXISTS "${common_header_list}")
       file(STRINGS "${common_header_list}" __headers)
-      vp_list_add_prefix(__headers "${OPENCV_MODULE_${m}_LOCATION}/")
-      list(APPEND opencv_java_common_headers_${module} ${__headers})
+      vp_list_add_prefix(__headers "${VISP_MODULE_${m}_LOCATION}/")
+      list(APPEND visp_java_common_headers_${module} ${__headers})
     endif()
-    set(custom_type_dict "${OPENCV_MODULE_${m}_LOCATION}/misc/java/gen_dict.json")
+    set(custom_type_dict "${VISP_MODULE_${m}_LOCATION}/misc/java/gen_dict.json")
     if(EXISTS "${custom_type_dict}")
-      list(APPEND opencv_java_type_dict_${module} ${custom_type_dict})
-      list(APPEND opencv_type_dicts ${custom_type_dicts})
+      list(APPEND vp_java_type_dict_${module} ${custom_type_dict})
+      list(APPEND vp_type_dicts ${custom_type_dicts})
     endif()
   endforeach()
 
@@ -211,7 +211,7 @@ foreach(module ${VISP_JAVA_MODULES})
   # first run of gen_java.py (to get list of generated files)
   file(REMOVE_RECURSE "${probe_dir}")
   file(MAKE_DIRECTORY "${probe_dir}")
-  execute_process(COMMAND ${PYTHON_DEFAULT_EXECUTABLE} "${scripts_gen_java}" "-p" "${scripts_hdr_parser}" "-m" ${module} "-s" ${opencv_public_headers_${module}} "-c" ${opencv_java_common_headers_${module}} "-t" ${opencv_java_type_dict_${module}}
+  execute_process(COMMAND ${PYTHON_DEFAULT_EXECUTABLE} "${scripts_gen_java}" "-p" "${scripts_hdr_parser}" "-m" ${module} "-s" ${vp_public_headers_${module}} "-c" ${visp_java_common_headers_${module}} "-t" ${vp_java_type_dict_${module}}
                   WORKING_DIRECTORY "${probe_dir}"
                   OUTPUT_QUIET ERROR_QUIET)
   file(GLOB_RECURSE generated_java_sources_${module} RELATIVE "${probe_dir}" "${probe_dir}/*.java")
@@ -222,8 +222,8 @@ endforeach()
 file(REMOVE_RECURSE "${probe_dir}")
 
 if(NOT ANDROID)
-  ocv_list_filterout(handwritten_java_sources "/(engine|android)\\\\+")
-  ocv_list_filterout(handwritten_aidl_sources "/(engine|android)\\\\+")
+  vp_list_filterout(handwritten_java_sources "/(engine|android)\\\\+")
+  vp_list_filterout(handwritten_aidl_sources "/(engine|android)\\\\+")
 else()
   file(GLOB_RECURSE handwrittren_lib_project_files_rel RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/android_lib/" "${CMAKE_CURRENT_SOURCE_DIR}/android_lib/*")
   list(REMOVE_ITEM handwrittren_lib_project_files_rel "${ANDROID_MANIFEST_FILE}")
@@ -234,25 +234,25 @@ else()
   # filter out
   if( (ANDROID_SDK_TARGET AND ANDROID_SDK_TARGET LESS 21) OR (android_sdk_target_num LESS 21) )
     message(STATUS "[ViSP Android SDK]: A new OpenGL Camera Bridge (CameraGLSurfaceView, CameraGLRendererBase, CameraRenderer, Camera2Renderer) is disabled, because ANDROID_SDK_TARGET (${android_sdk_target_num}) < 21")
-    ocv_list_filterout(handwritten_java_sources "android\\\\+CameraGL")
-    ocv_list_filterout(handwritten_java_sources "android\\\\+Camera.?Renderer")
+    vp_list_filterout(handwritten_java_sources "android\\\\+CameraGL")
+    vp_list_filterout(handwritten_java_sources "android\\\\+Camera.?Renderer")
   endif()
 endif()
 
 # IMPORTANT: add dependencies to cmake (we should rerun cmake if any of these files are modified)
-add_cmake_dependencies(${scripts_gen_java} ${scripts_hdr_parser} ${visp_public_headers} ${opencv_type_dicts})
+add_cmake_dependencies(${scripts_gen_java} ${scripts_hdr_parser} ${visp_public_headers} ${vp_type_dicts})
 
 ######################################################################################################################################
 
 # step 1: generate .cpp/.java from ViSP headers
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/gen")
-set(step1_depends "${scripts_gen_java}" "${scripts_hdr_parser}" ${visp_public_headers} ${opencv_type_dicts})
+set(step1_depends "${scripts_gen_java}" "${scripts_hdr_parser}" ${visp_public_headers} ${vp_type_dicts})
 foreach(module ${VISP_JAVA_MODULES})
   # second run of gen_java.py (at build time)
   add_custom_command(OUTPUT ${generated_java_sources_${module}} "${CMAKE_CURRENT_BINARY_DIR}/gen/${module}.cpp"
-                     COMMAND ${PYTHON_DEFAULT_EXECUTABLE} "${scripts_gen_java}" "-p" "${scripts_hdr_parser}" "-m" ${module} "-s" ${opencv_public_headers_${module}} "-c" ${opencv_java_common_headers_${module}} "-t" ${opencv_java_type_dict_${module}}
+                     COMMAND ${PYTHON_DEFAULT_EXECUTABLE} "${scripts_gen_java}" "-p" "${scripts_hdr_parser}" "-m" ${module} "-s" ${vp_public_headers_${module}} "-c" ${visp_java_common_headers_${module}} "-t" ${vp_java_type_dict_${module}}
                      WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/gen/"
-                     DEPENDS "${scripts_gen_java}" "${scripts_hdr_parser}" ${opencv_public_headers_${module}} ${opencv_java_common_headers_${module}} ${opencv_java_type_dict_${module}}
+                     DEPENDS "${scripts_gen_java}" "${scripts_hdr_parser}" ${vp_public_headers_${module}} ${visp_java_common_headers_${module}} ${vp_java_type_dict_${module}}
                     )
 endforeach()
 
@@ -344,7 +344,7 @@ if(ANDROID AND ANDROID_EXECUTABLE)
   add_custom_command(OUTPUT ${lib_target_files} "${VISP_BINARY_DIR}/${ANDROID_MANIFEST_FILE}"
                      COMMAND ${CMAKE_COMMAND} -E remove ${lib_target_files}
                      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_MANIFEST_FILE}" "${VISP_BINARY_DIR}/${ANDROID_MANIFEST_FILE}"
-                     COMMAND ${ANDROID_EXECUTABLE} --silent create lib-project --path \"${VISP_BINARY_DIR}\" --target \"${lib_target_sdk_target}\" --name OpenCV --package org.visp 2>\"${CMAKE_CURRENT_BINARY_DIR}/create_lib_project.log\"
+                     COMMAND ${ANDROID_EXECUTABLE} --silent create lib-project --path \"${VISP_BINARY_DIR}\" --target \"${lib_target_sdk_target}\" --name ViSP --package org.visp 2>\"${CMAKE_CURRENT_BINARY_DIR}/create_lib_project.log\"
                      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_MANIFEST_FILE}" "${VISP_BINARY_DIR}/${ANDROID_MANIFEST_FILE}"
                      MAIN_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/${ANDROID_MANIFEST_FILE}"
                      DEPENDS ${android_step3_input_files} ${android_copied_files}
@@ -391,7 +391,7 @@ if(ANDROID)
                       )
   endif()
 else(ANDROID)
-  set(JAR_NAME opencv-${LIB_NAME_SUFIX}.jar)
+  set(JAR_NAME visp-${LIB_NAME_SUFIX}.jar)
   set(JAR_FILE "${VISP_BINARY_DIR}/bin/${JAR_NAME}")
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build.xml.in" "${VISP_BINARY_DIR}/build.xml" @ONLY)
   list(APPEND step3_depends "${VISP_BINARY_DIR}/build.xml")
@@ -412,40 +412,40 @@ endif(ANDROID)
 # workarounding lack of `__attribute__ ((visibility("default")))` in jni_md.h/JNIEXPORT
 string(REPLACE "-fvisibility=hidden" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 if(MSVC)
-  ocv_warnings_disable(CMAKE_CXX_FLAGS /wd4996)
+  vp_warnings_disable(CMAKE_CXX_FLAGS /wd4996)
 else()
-  ocv_warnings_disable(CMAKE_CXX_FLAGS -Wunused-const-variable -Wundef -Wdeprecated-declarations)
+  vp_warnings_disable(CMAKE_CXX_FLAGS -Wunused-const-variable -Wundef -Wdeprecated-declarations)
 endif()
 
 
-ocv_add_library(${the_module} SHARED ${handwritten_h_sources} ${handwritten_cpp_sources} ${generated_cpp_sources}
+vp_add_library(${the_module} SHARED ${handwritten_h_sources} ${handwritten_cpp_sources} ${generated_cpp_sources}
                                 ${copied_files}
                                "${JAR_FILE}" "${JAR_FILE}.dephelper")
 
 if(BUILD_FAT_JAVA_LIB)
-  set(__deps ${OPENCV_MODULE_${the_module}_DEPS} ${VISP_MODULES_BUILD})
+  set(__deps ${VISP_MODULE_${the_module}_DEPS} ${VISP_MODULES_BUILD})
   foreach(m ${VISP_MODULES_BUILD}) # filterout INTERNAL and BINDINGS modules
-    ocv_assert(DEFINED OPENCV_MODULE_${m}_CLASS)
-    if(NOT OPENCV_MODULE_${m}_CLASS STREQUAL "PUBLIC")
+    vp_assert(DEFINED VISP_MODULE_${m}_CLASS)
+    if(NOT VISP_MODULE_${m}_CLASS STREQUAL "PUBLIC")
       list(REMOVE_ITEM __deps ${m})
     endif()
   endforeach()
-  ocv_list_unique(__deps)
+  vp_list_unique(__deps)
   set(__extradeps ${__deps})
-  ocv_list_filterout(__extradeps "^opencv_")
+  vp_list_filterout(__extradeps "^visp_")
   if(__extradeps)
     list(REMOVE_ITEM __deps ${__extradeps})
   endif()
   if(APPLE)
     foreach(_dep ${__deps})
-      ocv_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-force_load "${_dep}")
+      vp_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-force_load "${_dep}")
     endforeach()
   else()
-    ocv_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-whole-archive ${__deps} -Wl,-no-whole-archive)
+    vp_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-whole-archive ${__deps} -Wl,-no-whole-archive)
   endif()
-  ocv_target_link_libraries(${the_module} LINK_PRIVATE ${__extradeps} ${VISP_LINKER_LIBS})
+  vp_target_link_libraries(${the_module} LINK_PRIVATE ${__extradeps} ${VISP_LINKER_LIBS})
 else()
-  ocv_target_link_libraries(${the_module} LINK_PRIVATE ${OPENCV_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
+  vp_target_link_libraries(${the_module} LINK_PRIVATE ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
 endif()
 
 # Additional target properties
@@ -458,9 +458,9 @@ set_target_properties(${the_module} PROPERTIES
     )
 
 if(ANDROID)
-  ocv_target_link_libraries(${the_module} LINK_PUBLIC jnigraphics) # for Mat <=> Bitmap converters
-  ocv_target_link_libraries(${the_module} LINK_PUBLIC log dl z)
-  ocv_target_link_libraries(${the_module} LINK_PRIVATE ${VISP_LINKER_LIBS})
+  vp_target_link_libraries(${the_module} LINK_PUBLIC jnigraphics) # for Mat <=> Bitmap converters
+  vp_target_link_libraries(${the_module} LINK_PUBLIC log dl z)
+  vp_target_link_libraries(${the_module} LINK_PRIVATE ${VISP_LINKER_LIBS})
 
   # force strip library after the build command
   # because samples and tests will make a copy of the library before install
@@ -479,16 +479,16 @@ if(ENABLE_SOLUTION_FOLDERS)
 endif()
 
 if(ANDROID)
-  ocv_install_target(${the_module} OPTIONAL EXPORT VISPModules
+  vp_install_target(${the_module} OPTIONAL EXPORT VISPModules
           LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT java
           ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT java)
 else()
   if(NOT INSTALL_CREATE_DISTRIB)
-    ocv_install_target(${the_module} OPTIONAL
+    vp_install_target(${the_module} OPTIONAL
             RUNTIME DESTINATION ${VISP_JAR_INSTALL_PATH} COMPONENT java
             LIBRARY DESTINATION ${VISP_JAR_INSTALL_PATH} COMPONENT java)
   else()
-    ocv_install_target(${the_module} OPTIONAL
+    vp_install_target(${the_module} OPTIONAL
             RUNTIME DESTINATION ${VISP_JAR_INSTALL_PATH}/${VISP_ARCH} COMPONENT java
             LIBRARY DESTINATION ${VISP_JAR_INSTALL_PATH}/${VISP_ARCH} COMPONENT java)
   endif()

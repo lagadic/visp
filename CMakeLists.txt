@@ -685,6 +685,16 @@ if(UNIX)
   endif()
 endif()
 
+#---------------------------------------------------------------------
+# Android support
+#---------------------------------------------------------------------
+if(ANDROID)
+    include(cmake/DetectAndroidSDK.cmake)
+    if(NOT ANDROID_NATIVE_API_LEVEL GREATER 23)
+      message(WARNING "ViSP requires Android SDK tools revision 24 or newer. Otherwise tests and samples will no be compiled.")
+    endif()
+endif()
+
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
