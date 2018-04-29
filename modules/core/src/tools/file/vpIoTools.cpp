@@ -106,8 +106,9 @@
 #define VISP_BIG_ENDIAN
 #elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
     defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
-    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64)
-
+    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) || defined(__ANDROID__)
+    // It appears that all Android systems are little endian.
+    // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
 #define VISP_LITTLE_ENDIAN
 #else
 #error Cannot detect host machine endianness.

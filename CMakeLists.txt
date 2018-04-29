@@ -695,6 +695,9 @@ if(ANDROID)
     endif()
 endif()
 
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/android" CACHE PATH "Output directory for applications")
+
+
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------

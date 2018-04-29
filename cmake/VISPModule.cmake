@@ -775,11 +775,11 @@ macro(_vp_create_module)
     ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     RUNTIME_OUTPUT_DIRECTORY ${BINARY_OUTPUT_PATH}
-    DEFINE_SYMBOL VISP_EXPORTS
+    DEFINE_SYMBOL VISP_EXPORT
   )
 
   if(ANDROID AND BUILD_FAT_JAVA_LIB)
-    target_compile_definitions(${the_module} PRIVATE VISP_EXPORTS)
+    target_compile_definitions(${the_module} PRIVATE VISP_EXPORT)
   endif()
 
   set_property(TARGET ${the_module} APPEND PROPERTY
@@ -798,8 +798,8 @@ macro(_vp_create_module)
 
   if((NOT DEFINED VISP_MODULE_TYPE AND BUILD_SHARED_LIBS)
       OR (DEFINED VISP_MODULE_TYPE AND VISP_MODULE_TYPE STREQUAL SHARED))
-    set_target_properties(${the_module} PROPERTIES COMPILE_DEFINITIONS visp_EXPORTS)
-    set_target_properties(${the_module} PROPERTIES DEFINE_SYMBOL visp_EXPORTS)
+    set_target_properties(${the_module} PROPERTIES COMPILE_DEFINITIONS VISP_EXPORT)
+    set_target_properties(${the_module} PROPERTIES DEFINE_SYMBOL VISP_EXPORT)
   endif()
 
   if(MSVC)
