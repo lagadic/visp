@@ -62,7 +62,11 @@
 #include <windows.h>
 #endif
 #if !defined(_WIN32)
-#include <wordexp.h>
+	#ifdef __ANDROID__
+	// Like IOS, wordexp.cpp is not defined for Android
+	#else
+	#include <wordexp.h>
+	#endif
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
@@ -941,16 +945,20 @@ std::string vpIoTools::path(const char *pathname)
   for (unsigned int i = 0; i < path.length(); i++)
     if (path[i] == '\\')
       path[i] = '/';
-#if TARGET_OS_IOS == 0 // The following code is not working on iOS since
+#if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
                        // wordexp() is not available
-  wordexp_t exp_result;
+	#ifdef __ANDROID__
+	// Do nothing
+	#else
+	  wordexp_t exp_result;
 
-  // escape quote character
-  replaceAll(path, "'", "'\\''");
-  // add quotes to handle special characters like parentheses and spaces
-  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
-  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
-  wordfree(&exp_result);
+	  // escape quote character
+	  replaceAll(path, "'", "'\\''");
+	  // add quotes to handle special characters like parentheses and spaces
+	  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
+	  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
+	  wordfree(&exp_result);
+	#endif
 #endif
 #endif
 

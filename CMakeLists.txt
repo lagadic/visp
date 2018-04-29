@@ -42,7 +42,9 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
   if(WIN32)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
   endif()
-else()
+else(NOT CMAKE_TOOLCHAIN_FILE)
+  #Android: set output folder to ${CMAKE_BINARY_DIR}
+  set( LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_BINARY_DIR} CACHE PATH "root for library output, set this to change where android libs are compiled to" )
   # Crosscompiling
   set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
 endif()
@@ -139,6 +141,17 @@ if(WIN32)
   endif()
 else()
   set(VISP_INSTALL_BINARIES_PREFIX "")
+endif()
+
+if(ANDROID)
+  set(LIBRARY_OUTPUT_PATH             "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(3P_LIBRARY_OUTPUT_PATH    "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_3P_LIB_INSTALL_PATH  sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_CONFIG_INSTALL_PATH  sdk/native/jni)
+  vp_update(VISP_INCLUDE_INSTALL_PATH sdk/native/jni/include)
+  vp_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
+  vp_update(VISP_OTHER_INSTALL_PATH   sdk/etc)
 endif()
 
 # where to install the library and headers
@@ -506,7 +519,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF (USE_REALSENSE OR USE_REALSENSE2) AND NOT WINRT AND NOT IOS)
-VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
+VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW OR ANDROID) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
 VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
@@ -925,6 +938,11 @@ if(BUILD_PACKAGE)
   include(cmake/CPackConfig.cmake)
 endif(BUILD_PACKAGE)
 
+# ----------------------------------------------------------------------------
+#  Path for build/platform -specific headers
+# ----------------------------------------------------------------------------
+vp_update(VISP_CONFIG_FILE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/" CACHE PATH "Where to create the platform-dependant cvconfig.h")
+vp_include_directories(${VISP_CONFIG_FILE_INCLUDE_DIR})
 
 #----------------------------------------------------------------------
 # Generate the package dependent visp-config shell script for projects which

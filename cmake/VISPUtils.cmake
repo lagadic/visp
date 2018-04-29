@@ -53,6 +53,74 @@ if(NOT COMMAND find_host_package)
   endmacro()
 endif()
 
+# TODO: adding macros for android build
+# -------------------------------------------
+
+macro(visp_get_libname var_name)
+  get_filename_component(__libname "${ARGN}" NAME)
+  # visp_core.so.3.4 -> visp_core
+  string(REGEX REPLACE "^lib(.+)\\.(a|so|dll)(\\.[.0-9]+)?$" "\\1" __libname "${__libname}")
+  # MacOSX: libvisp_core.3.3.1.dylib -> visp_core
+  string(REGEX REPLACE "^lib(.+[^.0-9])\\.([.0-9]+\\.)?dylib$" "\\1" __libname "${__libname}")
+  set(${var_name} "${__libname}")
+endmacro()
+
+macro(vp_path_join result_var P1 P2_)
+  string(REGEX REPLACE "^[/]+" "" P2 "${P2_}")
+  if("${P1}" STREQUAL "" OR "${P1}" STREQUAL ".")
+    set(${result_var} "${P2}")
+  elseif("${P1}" STREQUAL "/")
+    set(${result_var} "/${P2}")
+  elseif("${P2}" STREQUAL "")
+    set(${result_var} "${P1}")
+  else()
+    set(${result_var} "${P1}/${P2}")
+  endif()
+  string(REGEX REPLACE "([/\\]?)[\\.][/\\]" "\\1" ${result_var} "${${result_var}}")
+  if("${${result_var}}" STREQUAL "")
+    set(${result_var} ".")
+  endif()
+  #message(STATUS "'${P1}' '${P2_}' => '${${result_var}}'")
+endmacro()
+
+macro(vp_update VAR)
+  if(NOT DEFINED ${VAR})
+    if("x${ARGN}" STREQUAL "x")
+      set(${VAR} "")
+    else()
+      set(${VAR} ${ARGN})
+    endif()
+  endif()
+endmacro()
+
+function(vp_gen_config TMP_DIR NESTED_PATH ROOT_NAME)
+  vp_path_join(__install_nested "${VISP_CONFIG_INSTALL_PATH}" "${NESTED_PATH}")
+  vp_path_join(__tmp_nested "${TMP_DIR}" "${NESTED_PATH}")
+
+  file(RELATIVE_PATH VISP_INSTALL_PATH_RELATIVE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${__install_nested}" "${CMAKE_INSTALL_PREFIX}/")
+
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig-version.cmake.in" "${TMP_DIR}/VISPConfig-version.cmake" @ONLY)
+
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig.cmake.in" "${__tmp_nested}/VISPConfig.cmake" @ONLY)
+  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModule.cmake COMPONENT dev)
+  install(FILES
+      "${TMP_DIR}/VISPConfig-version.cmake"
+      "${__tmp_nested}/VISPConfig.cmake"
+      DESTINATION "${__install_nested}" COMPONENT dev)
+
+  if(ROOT_NAME)
+    # Root config file
+    configure_file("${VISP_SOURCE_DIR}/cmake/templates/${ROOT_NAME}" "${TMP_DIR}/VISPConfig.cmake" @ONLY)
+    install(FILES
+        "${TMP_DIR}/VISPConfig-version.cmake"
+        "${TMP_DIR}/VISPConfig.cmake"
+        DESTINATION "${VISP_CONFIG_INSTALL_PATH}" COMPONENT dev)
+  endif()
+endfunction()
+
+# Finished adding android macros for visp
+# -------------------------------------------
+
 # adds include directories in such way that directories from the ViSP source tree go first
 function(vp_include_directories)
   vp_debug_message("vp_include_directories( ${ARGN} )")
