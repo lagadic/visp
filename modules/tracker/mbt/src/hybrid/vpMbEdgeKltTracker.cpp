@@ -180,24 +180,6 @@ unsigned int vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
 }
 
 /*!
-  Load the xml configuration file. An example of such a file is provided in
-  loadConfigFile(const char*) documentation. From the configuration file
-  initialize the parameters corresponding to the objects: moving-edges, KLT,
-  camera.
-
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
-  \param configFile : full name of the xml file.
-
-  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
-*/
-void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
-{
-  vpMbEdgeKltTracker::loadConfigFile(configFile.c_str());
-}
-
-/*!
   Load the xml configuration file.
   From the configuration file initialize the parameters corresponding to the
 objects: moving-edges, KLT, camera.
@@ -259,9 +241,9 @@ not found or wrong format for the data).
 </conf>
   \endcode
 
-  \sa loadConfigFile(const std::string&), vpXmlParser::cleanup()
+  \sa vpXmlParser::cleanup()
 */
-void vpMbEdgeKltTracker::loadConfigFile(const char *configFile)
+void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
 {
 #ifdef VISP_HAVE_XML2
   vpMbtEdgeKltXmlParser xmlp;
@@ -283,9 +265,9 @@ void vpMbEdgeKltTracker::loadConfigFile(const char *configFile)
 
   try {
     std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
-    xmlp.parse(configFile);
+    xmlp.parse(configFile.c_str());
   } catch (...) {
-    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile);
+    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile.c_str());
     throw vpException(vpException::ioError, "problem to parse configuration file.");
   }
 
@@ -335,7 +317,7 @@ void vpMbEdgeKltTracker::loadConfigFile(const char *configFile)
   faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile);
+  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
 #endif
 }
 
@@ -1210,117 +1192,106 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
-  model \param verbose : verbose option to print additional information when
+  model
+  \param verbose : verbose option to print additional information when
   loading CAO model files which include other CAO model files.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo_, const bool verbose)
+                                     const vpHomogeneousMatrix &cMo_, const bool verbose,
+                                     const vpHomogeneousMatrix &T)
 {
-  reInitModel(I, cad_name.c_str(), cMo_, verbose);
-}
-
-/*!
-  Re-initialize the model used by the tracker.
-
-  \param I : The image containing the object to initialize.
-  \param cad_name : Path to the file containing the 3D model description.
-  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
-  model \param verbose : verbose option to print additional information when
-  loading CAO model files which include other CAO model files.
-*/
-void vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char> &I, const char *cad_name,
-                                     const vpHomogeneousMatrix &cMo_, const bool verbose)
-{
-// Reinit klt
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  if (cur != NULL) {
-    cvReleaseImage(&cur);
-    cur = NULL;
-  }
-#endif
-
-  // delete the Klt Polygon features
-  for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-    vpMbtDistanceKltPoints *kltpoly = *it;
-    if (kltpoly != NULL) {
-      delete kltpoly;
+  // Reinit klt
+  #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+    if (cur != NULL) {
+      cvReleaseImage(&cur);
+      cur = NULL;
     }
-    kltpoly = NULL;
-  }
-  kltPolygons.clear();
+  #endif
 
-  for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-       ++it) {
-    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (kltPolyCylinder != NULL) {
-      delete kltPolyCylinder;
-    }
-    kltPolyCylinder = NULL;
-  }
-  kltCylinders.clear();
-
-  // delete the structures used to display circles
-  vpMbtDistanceCircle *ci;
-  for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
-    ci = *it;
-    if (ci != NULL) {
-      delete ci;
-    }
-    ci = NULL;
-  }
-
-  circles_disp.clear();
-
-  firstInitialisation = true;
-
-  // Reinit edge
-  vpMbtDistanceLine *l;
-  vpMbtDistanceCylinder *cy;
-
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
-        l = *it;
-        if (l != NULL)
-          delete l;
-        l = NULL;
+    // delete the Klt Polygon features
+    for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
+      vpMbtDistanceKltPoints *kltpoly = *it;
+      if (kltpoly != NULL) {
+        delete kltpoly;
       }
-
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
-           ++it) {
-        cy = *it;
-        if (cy != NULL)
-          delete cy;
-        cy = NULL;
-      }
-
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
-        ci = *it;
-        if (ci != NULL)
-          delete ci;
-        ci = NULL;
-      }
-
-      lines[i].clear();
-      cylinders[i].clear();
-      circles[i].clear();
+      kltpoly = NULL;
     }
-  }
+    kltPolygons.clear();
 
-  // compute_interaction=1;
-  nline = 0;
-  ncylinder = 0;
-  ncircle = 0;
-  // lambda = 1;
-  nbvisiblepolygone = 0;
+    for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
+         ++it) {
+      vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
+      if (kltPolyCylinder != NULL) {
+        delete kltPolyCylinder;
+      }
+      kltPolyCylinder = NULL;
+    }
+    kltCylinders.clear();
 
-  // Reinit common parts
-  faces.reset();
+    // delete the structures used to display circles
+    vpMbtDistanceCircle *ci;
+    for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
+      ci = *it;
+      if (ci != NULL) {
+        delete ci;
+      }
+      ci = NULL;
+    }
 
-  loadModel(cad_name, verbose);
+    circles_disp.clear();
 
-  this->cMo = cMo_;
-  init(I);
+    firstInitialisation = true;
+
+    // Reinit edge
+    vpMbtDistanceLine *l;
+    vpMbtDistanceCylinder *cy;
+
+    for (unsigned int i = 0; i < scales.size(); i += 1) {
+      if (scales[i]) {
+        for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
+          l = *it;
+          if (l != NULL)
+            delete l;
+          l = NULL;
+        }
+
+        for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
+             ++it) {
+          cy = *it;
+          if (cy != NULL)
+            delete cy;
+          cy = NULL;
+        }
+
+        for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
+          ci = *it;
+          if (ci != NULL)
+            delete ci;
+          ci = NULL;
+        }
+
+        lines[i].clear();
+        cylinders[i].clear();
+        circles[i].clear();
+      }
+    }
+
+    // compute_interaction=1;
+    nline = 0;
+    ncylinder = 0;
+    ncircle = 0;
+    // lambda = 1;
+    nbvisiblepolygone = 0;
+
+    // Reinit common parts
+    faces.reset();
+
+    loadModel(cad_name, verbose, T);
+
+    this->cMo = cMo_;
+    init(I);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

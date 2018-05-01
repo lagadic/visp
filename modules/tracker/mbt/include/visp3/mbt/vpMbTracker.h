@@ -394,7 +394,8 @@ public:
 // Intializer
 
 #ifdef VISP_HAVE_MODULE_GUI
-  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false);
+  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false,
+                         const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
                          const std::string &displayFile = "");
 #endif
@@ -407,8 +408,7 @@ public:
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo);
 
-  virtual void loadModel(const char *modelFile, const bool verbose = false);
-  virtual void loadModel(const std::string &modelFile, const bool verbose = false);
+  virtual void loadModel(const std::string &modelFile, const bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   /*!
     Set the angle used to test polygons appearance.
@@ -756,7 +756,8 @@ protected:
 
   virtual void loadVRMLModel(const std::string &modelFile);
   virtual void loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                            int &startIdFace, const bool verbose = false, const bool parent = true);
+                            int &startIdFace, const bool verbose = false, const bool parent = true,
+                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   void removeComment(std::ifstream &fileId);
 

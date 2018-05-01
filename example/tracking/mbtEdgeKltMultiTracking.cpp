@@ -368,7 +368,7 @@ int main(int argc, const char **argv)
     opt_display = false;
 #endif
     if (opt_display) {
-#if (defined VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
       display1.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display1.init(I1, 100, 100, "Test tracking (Left)");
@@ -590,8 +590,10 @@ int main(int argc, const char **argv)
         std::cout << "Projection error: " << tracker.getProjectionError() << std::endl << std::endl;
       }
 
-      vpDisplay::flush(I1);
-      vpDisplay::flush(I2);
+      if (opt_display) {
+        vpDisplay::flush(I1);
+        vpDisplay::flush(I2);
+      }
     }
 
     std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;

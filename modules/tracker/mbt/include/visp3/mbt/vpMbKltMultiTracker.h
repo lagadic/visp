@@ -190,7 +190,8 @@ public:
   virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
                          const std::string &displayFile = "");
 
-  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false);
+  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false,
+                         const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                          const std::string &initFile1, const std::string &initFile2, const bool displayHelp = false,
@@ -222,10 +223,12 @@ public:
 
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles);
 
-  virtual void loadModel(const std::string &modelFile, const bool verbose = false);
+  virtual void loadModel(const std::string &modelFile, const bool verbose = false,
+                         const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false);
+                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
                            const vpHomogeneousMatrix &c2Mo, const bool verbose = false,
