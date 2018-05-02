@@ -2748,6 +2748,30 @@ void vpMbGenericTracker::setClipping(const unsigned int &flags1, const unsigned 
 }
 
 /*!
+  Specify which clipping to use.
+
+  \sa vpMbtPolygonClipping
+
+  \param mapOfClippingFlags : Map of new clipping flags.
+*/
+void vpMbGenericTracker::setClipping(const std::map<std::string, unsigned int> &mapOfClippingFlags)
+{
+  for (std::map<std::string, unsigned int>::const_iterator it = mapOfClippingFlags.begin();
+       it != mapOfClippingFlags.end(); ++it) {
+    std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(it->first);
+
+    if (it_tracker != m_mapOfTrackers.end()) {
+      TrackerWrapper *tracker = it_tracker->second;
+      tracker->setClipping(it->second);
+
+      if (it->first == m_referenceCameraName) {
+        clippingFlag = it->second;
+      }
+    }
+  }
+}
+
+/*!
   Set maximum distance to consider a face.
   You should use the maximum depth range of the sensor used.
 
@@ -2930,30 +2954,6 @@ void vpMbGenericTracker::setDepthNormalSamplingStep(const unsigned int stepX, co
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
     tracker->setDepthNormalSamplingStep(stepX, stepY);
-  }
-}
-
-/*!
-  Specify which clipping to use.
-
-  \sa vpMbtPolygonClipping
-
-  \param mapOfClippingFlags : Map of new clipping flags.
-*/
-void vpMbGenericTracker::setClipping(const std::map<std::string, unsigned int> &mapOfClippingFlags)
-{
-  for (std::map<std::string, unsigned int>::const_iterator it = mapOfClippingFlags.begin();
-       it != mapOfClippingFlags.end(); ++it) {
-    std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(it->first);
-
-    if (it_tracker != m_mapOfTrackers.end()) {
-      TrackerWrapper *tracker = it_tracker->second;
-      tracker->setClipping(it->second);
-
-      if (it->first == m_referenceCameraName) {
-        clippingFlag = it->second;
-      }
-    }
   }
 }
 
@@ -5156,7 +5156,10 @@ void vpMbGenericTracker::TrackerWrapper::setCameraParameters(const vpCameraParam
   vpMbDepthDenseTracker::setCameraParameters(cam);
 }
 
-void vpMbGenericTracker::TrackerWrapper::setClipping(const unsigned int &flags) { vpMbEdgeTracker::setClipping(flags); }
+void vpMbGenericTracker::TrackerWrapper::setClipping(const unsigned int &flags)
+{
+  vpMbEdgeTracker::setClipping(flags);
+}
 
 void vpMbGenericTracker::TrackerWrapper::setFarClippingDistance(const double &dist)
 {
