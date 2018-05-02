@@ -79,7 +79,6 @@ before_build:
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set OpenCV_DLL_DIR=%OpenCV_DIR%\x86\mingw\bin
   - set PATH=%OPENCV_DLL_DIR%;%PATH%
   # Issue with pthreads threading on MinGW AppVeyor
-  - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" set APPVEYOR_THREADING=true
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set APPVEYOR_THREADING=false
 
 build_script:

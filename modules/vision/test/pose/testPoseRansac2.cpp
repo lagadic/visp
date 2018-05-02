@@ -1863,15 +1863,15 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 #define TEST_PARALLEL_RANSAC
 #endif
 
-  std::string appveyor_threading = "";
+  std::string use_threading = "true";
   try {
-    appveyor_threading = vpIoTools::getenv("APPVEYOR_THREADING");
+    use_threading = vpIoTools::getenv("APPVEYOR_THREADING");
   } catch (...) {
   }
 
 #ifdef TEST_PARALLEL_RANSAC
   vpPose pose_ransac_parallel, pose_ransac_parallel2;
-  if (appveyor_threading == "true") {
+  if (use_threading == "true") {
     pose_ransac_parallel.setUseParallelRansac(true);
     pose_ransac_parallel2.setUseParallelRansac(true);
 
@@ -1894,7 +1894,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   pose_ransac.addPoints(bunnyModelPoints_noisy);
   pose_ransac2.addPoints(bunnyModelPoints_noisy);
 #ifdef TEST_PARALLEL_RANSAC
-  if (appveyor_threading == "true") {
+  if (use_threading == "true") {
     pose_ransac_parallel.addPoints(bunnyModelPoints_noisy);
     pose_ransac_parallel2.addPoints(bunnyModelPoints_noisy);
   }
@@ -1913,7 +1913,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   pose_ransac.setRansacThreshold(threshold);
   pose_ransac.setRansacMaxTrials(1000);
 #ifdef TEST_PARALLEL_RANSAC
-  if (appveyor_threading == "true") {
+  if (use_threading == "true") {
     pose_ransac_parallel.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
     pose_ransac_parallel.setRansacThreshold(threshold);
     pose_ransac_parallel.setRansacMaxTrials(1000);
@@ -1973,7 +1973,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 
 #ifdef TEST_PARALLEL_RANSAC
   double r_RANSAC_estimated_parallel = std::numeric_limits<double>::max();
-  if (appveyor_threading == "true") {
+  if (use_threading == "true") {
     vpHomogeneousMatrix cMo_estimated_RANSAC_parallel;
     double t_RANSAC_parallel = vpTime::measureTimeMs();
     pose_ransac_parallel.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_parallel);
@@ -2045,7 +2045,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   }
 
 #ifdef TEST_PARALLEL_RANSAC
-  if (appveyor_threading == "true") {
+  if (use_threading == "true") {
     // Check for parallel RANSAC
     // Check inlier index
     std::cout << "\nCheck for parallel RANSAC (1000 iterations)" << std::endl;
@@ -2099,7 +2099,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
     return false;
   } else {
 #ifdef TEST_PARALLEL_RANSAC
-    if (appveyor_threading == "true") {
+    if (use_threading == "true") {
       if (r_RANSAC_estimated_parallel > threshold) {
         std::cerr << "The pose estimated with the parallel RANSAC method is "
                      "badly estimated!"
