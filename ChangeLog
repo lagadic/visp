@@ -9,14 +9,36 @@ ViSP 3.2.0 (under development)
   - New features
     . Introduce vpSerial class to handle serial communication
     . New vpRobotFranka class, examples and test showing how to use Panda robot
-      from Franka Emika.
+      from Franka Emika
+    . In MBT:
+      - Improve the generic tracker
+      - Add possibility to introduce a homogeneous transformation matrix
+        when loading model and init files in vpMbGenericTracker
+      - Add support of pgm, png, jpg image format for initClick helper.
+    . Add basic template matching algorithm in vpImageTools
+    . Improve vpRealsense2 the wrapper over librealsense 2.x
   - Tutorials
+    . New tutorial: Using ViSP and Matlab
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-visp-matlab.html
+    . New tutorial: Installation from source on a Jetson equipped with an Orbitty
+      Carrier board
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
+    . New tutorial: PBVS with Panda 7-dof robot from Franka Emika
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-franka-pbvs.html
+    . New tutorial: Visual-servoing with mBot Ranger educational robot kit
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mbot-vs.html
+    . New tutorial: Camera extrinsic calibration
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
+    . [#286] Fix build issue on Debian hurd-i386 arch
     . [#287] On Win XP inet_ntop() could not be located in WS2_32.dll
+    . [#293] Rotation extrinsic for RealSense is not correct
     . [#299] Unable to build when libaria is used
     . [#302] Fix build issue with librealsense 2.9.1 or higher
+    . [#324] How to compile ViSP within Visual Studio 2013 on windows 7?
+    . [#348] ViSP-third-party.txt is erased after make
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
