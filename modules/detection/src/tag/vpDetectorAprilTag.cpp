@@ -180,7 +180,8 @@ public:
 
       if (computePose) {
         vpHomogeneousMatrix cMo;
-        if (m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS || m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
+        if (m_poseEstimationMethod == HOMOGRAPHY || m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS
+            || m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
           double fx = m_cam.get_px(), fy = m_cam.get_py();
           double cx = m_cam.get_u0(), cy = m_cam.get_v0();
 
@@ -197,42 +198,45 @@ public:
         }
 
         // Add marker object points
-        vpPoint pt;
-        vpImagePoint imPt;
-        double x = 0.0, y = 0.0;
-        std::vector<vpPoint> pts(4);
-        pt.setWorldCoordinates(-m_tagSize / 2.0, -m_tagSize / 2.0, 0.0);
-        imPt.set_uv(det->p[0][0], det->p[0][1]);
-        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-        pt.set_x(x);
-        pt.set_y(y);
-        pts[0] = pt;
-
-        pt.setWorldCoordinates(m_tagSize / 2.0, -m_tagSize / 2.0, 0.0);
-        imPt.set_uv(det->p[1][0], det->p[1][1]);
-        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-        pt.set_x(x);
-        pt.set_y(y);
-        pts[1] = pt;
-
-        pt.setWorldCoordinates(m_tagSize / 2.0, m_tagSize / 2.0, 0.0);
-        imPt.set_uv(det->p[2][0], det->p[2][1]);
-        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-        pt.set_x(x);
-        pt.set_y(y);
-        pts[2] = pt;
-
-        pt.setWorldCoordinates(-m_tagSize / 2.0, m_tagSize / 2.0, 0.0);
-        imPt.set_uv(det->p[3][0], det->p[3][1]);
-        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-        pt.set_x(x);
-        pt.set_y(y);
-        pts[3] = pt;
-
         vpPose pose;
-        pose.addPoints(pts);
+        if (m_poseEstimationMethod != HOMOGRAPHY) {
+          vpPoint pt;
 
-        if (m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS) {
+          vpImagePoint imPt;
+          double x = 0.0, y = 0.0;
+          std::vector<vpPoint> pts(4);
+          pt.setWorldCoordinates(-m_tagSize / 2.0, -m_tagSize / 2.0, 0.0);
+          imPt.set_uv(det->p[0][0], det->p[0][1]);
+          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+          pt.set_x(x);
+          pt.set_y(y);
+          pts[0] = pt;
+
+          pt.setWorldCoordinates(m_tagSize / 2.0, -m_tagSize / 2.0, 0.0);
+          imPt.set_uv(det->p[1][0], det->p[1][1]);
+          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+          pt.set_x(x);
+          pt.set_y(y);
+          pts[1] = pt;
+
+          pt.setWorldCoordinates(m_tagSize / 2.0, m_tagSize / 2.0, 0.0);
+          imPt.set_uv(det->p[2][0], det->p[2][1]);
+          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+          pt.set_x(x);
+          pt.set_y(y);
+          pts[2] = pt;
+
+          pt.setWorldCoordinates(-m_tagSize / 2.0, m_tagSize / 2.0, 0.0);
+          imPt.set_uv(det->p[3][0], det->p[3][1]);
+          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+          pt.set_x(x);
+          pt.set_y(y);
+          pts[3] = pt;
+
+          pose.addPoints(pts);
+        }
+
+        if (m_poseEstimationMethod != HOMOGRAPHY && m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS) {
           if (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
             vpHomogeneousMatrix cMo_dementhon, cMo_lagrange, cMo_homography = cMo;
 
@@ -264,8 +268,11 @@ public:
           }
         }
 
-        // Compute final pose using VVS
-        pose.computePose(vpPose::VIRTUAL_VS, cMo);
+        if (m_poseEstimationMethod != HOMOGRAPHY) {
+          // Compute final pose using VVS
+          pose.computePose(vpPose::VIRTUAL_VS, cMo);
+        }
+
         m_tagPoses.push_back(cMo);
       }
     }
