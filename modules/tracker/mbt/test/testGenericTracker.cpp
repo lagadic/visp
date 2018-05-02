@@ -43,12 +43,16 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_MODULE_MBT)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 #define GETOPTARGS "i:dclt:e:Dh"
@@ -288,7 +292,58 @@ int main(int argc, const char *argv[])
     tracker_type[0] = trackerType_image;
     tracker_type[1] = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
     vpMbGenericTracker tracker(tracker_type);
+#if defined(VISP_HAVE_XML2)
     tracker.loadConfigFile(input_directory + "/Config/chateau.xml", input_directory + "/Config/chateau_depth.xml");
+#else
+    {
+      vpCameraParameters cam_color, cam_depth;
+      cam_color.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+      cam_depth.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+      tracker.setCameraParameters(cam_color, cam_depth);
+    }
+
+    // Edge
+    vpMe me;
+    me.setMaskSize(5);
+    me.setMaskNumber(180);
+    me.setRange(8);
+    me.setThreshold(10000);
+    me.setMu1(0.5);
+    me.setMu2(0.5);
+    me.setSampleStep(5);
+    tracker.setMovingEdge(me);
+
+    // Klt
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    vpKltOpencv klt;
+    tracker.setKltMaskBorder(5);
+    klt.setMaxFeatures(10000);
+    klt.setWindowSize(5);
+    klt.setQuality(0.01);
+    klt.setMinDistance(5);
+    klt.setHarrisFreeParameter(0.02);
+    klt.setBlockSize(3);
+    klt.setPyramidLevels(3);
+
+    tracker.setKltOpencv(klt);
+#endif
+
+    // Depth
+    tracker.setDepthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+    tracker.setDepthNormalPclPlaneEstimationMethod(2);
+    tracker.setDepthNormalPclPlaneEstimationRansacMaxIter(200);
+    tracker.setDepthNormalPclPlaneEstimationRansacThreshold(0.001);
+    tracker.setDepthNormalSamplingStep(2, 2);
+
+    tracker.setDepthDenseSamplingStep(4, 4);
+
+    tracker.setAngleAppear(vpMath::rad(85.0));
+    tracker.setAngleDisappear(vpMath::rad(89.0));
+    tracker.setNearClippingDistance(0.01);
+    tracker.setFarClippingDistance(2.0);
+    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+#endif
+
 #ifdef VISP_HAVE_COIN3D
     tracker.loadModel(input_directory + "/Models/chateau.wrl", input_directory + "/Models/chateau.cao");
 #else
@@ -326,17 +381,17 @@ int main(int argc, const char *argv[])
         = useScanline ? std::pair<double, double>(0.002, 1.8) : std::pair<double, double>(0.002, 0.7);
 #else
     map_thresh[vpMbGenericTracker::EDGE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.007, 2.0);
+        = useScanline ? std::pair<double, double>(0.007, 2.3) : std::pair<double, double>(0.007, 2.0);
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
-        = useScanline ? std::pair<double, double>(0.003, 0.8) : std::pair<double, double>(0.004, 0.9);
+        = useScanline ? std::pair<double, double>(0.004, 1.2) : std::pair<double, double>(0.004, 1.0);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.002, 0.6) : std::pair<double, double>(0.001, 0.4);
     map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = std::pair<double, double>(0.002, 0.3);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.001, 0.4) : std::pair<double, double>(0.001, 0.3);
+        = useScanline ? std::pair<double, double>(0.001, 0.5) : std::pair<double, double>(0.001, 0.4);
 #endif
 
     vpImage<unsigned char> I, I_depth;
@@ -351,8 +406,10 @@ int main(int argc, const char *argv[])
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
     if (opt_display) {
+#ifdef VISP_HAVE_DISPLAY
       display1.init(I, 0, 0, "Image");
       display2.init(I_depth, I.getWidth(), 0, "Depth");
+#endif
     }
 
     vpHomogeneousMatrix depth_M_color;
@@ -432,7 +489,7 @@ int main(int argc, const char *argv[])
         vpDisplay::flush(I_depth);
       }
 
-      if (opt_click_allowed) {
+      if (opt_display && opt_click_allowed) {
         vpMouseButton::vpMouseButtonType button;
         if (vpDisplay::getClick(I, button, click)) {
           switch (button) {
@@ -463,9 +520,11 @@ int main(int argc, const char *argv[])
     if (!vec_err_tu.empty())
       std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
 
+#if defined(VISP_HAVE_XML2)
     // Cleanup memory allocated by xml library used to parse the xml config
     // file in vpMbGenericTracker::loadConfigFile()
     vpXmlParser::cleanup();
+#endif
 
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3)
     // Cleanup memory allocated by Coin library used to load a vrml model. We clean only if Coin was used.
@@ -480,7 +539,7 @@ int main(int argc, const char *argv[])
 }
 #else
 int main() {
-  std::cout << "Missing VISP_HAVE_MODULE_MBT or VISP_HAVE_DISPLAY or VISP_HAVE_XML2." << std::endl;
+  std::cout << "Enable MBT module (VISP_HAVE_MODULE_MBT) to launch this test." << std::endl;
   return 0;
 }
 #endif

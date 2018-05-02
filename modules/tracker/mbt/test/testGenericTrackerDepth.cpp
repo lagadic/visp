@@ -43,12 +43,16 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_MODULE_MBT)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 #define GETOPTARGS "i:dcle:h"
@@ -262,7 +266,33 @@ int main(int argc, const char *argv[])
     std::vector<int> tracker_type;
     tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
     vpMbGenericTracker tracker(tracker_type);
+#if defined(VISP_HAVE_XML2)
     tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
+#else
+    {
+      vpCameraParameters cam_depth;
+      cam_depth.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+      tracker.setCameraParameters(cam_depth);
+    }
+    // Depth
+    tracker.setDepthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+    tracker.setDepthNormalPclPlaneEstimationMethod(2);
+    tracker.setDepthNormalPclPlaneEstimationRansacMaxIter(200);
+    tracker.setDepthNormalPclPlaneEstimationRansacThreshold(0.001);
+    tracker.setDepthNormalSamplingStep(2, 2);
+
+    tracker.setDepthDenseSamplingStep(4, 4);
+
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    tracker.setKltMaskBorder(5);
+#endif
+
+    tracker.setAngleAppear(vpMath::rad(85.0));
+    tracker.setAngleDisappear(vpMath::rad(89.0));
+    tracker.setNearClippingDistance(0.01);
+    tracker.setFarClippingDistance(2.0);
+    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+#endif
     tracker.loadModel(input_directory + "/Models/chateau.cao");
     vpHomogeneousMatrix T;
     T[0][0] = -1;
@@ -292,8 +322,10 @@ int main(int argc, const char *argv[])
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
     if (opt_display) {
+#ifdef VISP_HAVE_DISPLAY
       display1.init(I, 0, 0, "Image");
       display2.init(I_depth, I.getWidth(), 0, "Depth");
+#endif
     }
 
     vpHomogeneousMatrix depth_M_color;
@@ -365,7 +397,7 @@ int main(int argc, const char *argv[])
         vpDisplay::flush(I_depth);
       }
 
-      if (opt_click_allowed) {
+      if (opt_display && opt_click_allowed) {
         vpMouseButton::vpMouseButtonType button;
         if (vpDisplay::getClick(I, button, click)) {
           switch (button) {
@@ -396,9 +428,11 @@ int main(int argc, const char *argv[])
     if (!vec_err_tu.empty())
       std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
 
+#if defined(VISP_HAVE_XML2)
     // Cleanup memory allocated by xml library used to parse the xml config
     // file in vpMbGenericTracker::loadConfigFile()
     vpXmlParser::cleanup();
+#endif
 
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
@@ -408,7 +442,7 @@ int main(int argc, const char *argv[])
 }
 #else
 int main() {
-  std::cout << "Missing VISP_HAVE_MODULE_MBT or VISP_HAVE_DISPLAY or VISP_HAVE_XML2" << std::endl;
+  std::cout << "Enable MBT module (VISP_HAVE_MODULE_MBT) to launch this test." << std::endl;
   return 0;
 }
 #endif
