@@ -143,13 +143,13 @@ bool check(const vpColVector &v1, const vpColVector &v2, const vpColVector &res_
 
 int main()
 {
-  std::string appveyor_threading = "";
+  std::string use_threading = "true";
   try {
-    appveyor_threading = vpIoTools::getenv("APPVEYOR_THREADING");
+    use_threading = vpIoTools::getenv("APPVEYOR_THREADING");
   } catch (...) {
   }
 
-  if (appveyor_threading == "true") {
+  if (use_threading == "true") {
     unsigned int nb_threads = 4;
     unsigned int size = 1000007;
     srand((unsigned int)time(NULL));
