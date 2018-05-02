@@ -212,6 +212,7 @@ vpMatrix M(R);
   // [ this A ]^T
   void stack(const vpMatrix &A);
   void stack(const vpRowVector &r);
+  void stack(const vpColVector &c);
   // Stacks columns of a matrix in a vector
   void stackColumns(vpColVector &out);
 
@@ -534,10 +535,12 @@ vpMatrix M(R);
   // Stack two matrices C = [ A B ]^T
   static vpMatrix stack(const vpMatrix &A, const vpMatrix &B);
   static vpMatrix stack(const vpMatrix &A, const vpRowVector &r);
+  static vpMatrix stack(const vpMatrix &A, const vpColVector &c);
 
   // Stack two matrices C = [ A B ]^T
   static void stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
   static void stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C);
+  static void stack(const vpMatrix &A, const vpColVector &c, vpMatrix &C);
   //@}
 
   //---------------------------------

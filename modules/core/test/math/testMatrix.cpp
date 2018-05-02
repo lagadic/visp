@@ -95,7 +95,6 @@ bool equalMatrix(const vpMatrix &A, const vpMatrix &B, const double tol = std::n
   return true;
 }
 
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
 vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, const double min, const double max)
 {
   vpMatrix M(rows, cols);
@@ -109,6 +108,7 @@ vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, 
   return M;
 }
 
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
 vpColVector generateRandomVector(const unsigned int rows, const double min, const double max)
 {
   vpColVector v(rows);
@@ -237,9 +237,16 @@ vpMatrix mat_mul_twist_matrix(const vpMatrix &A, const vpVelocityTwistMatrix &V)
 #endif
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   try {
+    bool ctest = true;
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--benchmark") {
+        ctest = false;
+      }
+    }
+
     int err = 1;
     {
       vpColVector c(6, 1);
@@ -471,9 +478,8 @@ int main()
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix insert() with same colNum " << std::endl;
       std::cout << "------------------------" << std::endl;
-      const unsigned int nb = 10; // 10000; //for ctest otherwise takes too
-                                   // long time with static call
-      const unsigned int size = 10;
+      const unsigned int nb = ctest ? 10 : 100; // 10000;
+      const unsigned int size = ctest ? 10 : 100;
 
       vpMatrix m_big(nb * size, 6);
       std::vector<vpMatrix> submatrices(nb);
@@ -518,7 +524,7 @@ int main()
       std::cout << "m2:\n" << m2 << std::endl;
       std::cout << "m3:\n" << m3 << std::endl;
 
-      std::cout << "------------------------" << std::endl;
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix stack()" << std::endl;
       std::cout << "------------------------" << std::endl;
 
@@ -533,22 +539,27 @@ int main()
         std::cout << "L:\n" << L << std::endl;
       }
 
-      vpMatrix m_big_stack;
-      t = vpTime::measureTimeMs();
-      for (unsigned int i = 0; i < nb; i++) {
-        m_big_stack.stack(submatrices[(size_t)i]);
-      }
-      t = vpTime::measureTimeMs() - t;
-      std::cout << "\nMatrix stack(): " << t << " ms" << std::endl;
+      {
+        vpMatrix m_big_stack;
+        t = vpTime::measureTimeMs();
+        for (unsigned int i = 0; i < nb; i++) {
+          m_big_stack.stack(submatrices[(size_t)i]);
+        }
+        t = vpTime::measureTimeMs() - t;
+        std::cout << "Matrix stack(): " << t << " ms" << std::endl;
 
-      if (!equalMatrix(m_big, m_big_stack)) {
-        std::cerr << "Problem with vpMatrix stack()!" << std::endl;
-        return EXIT_FAILURE;
+        if (!equalMatrix(m_big, m_big_stack)) {
+          std::cerr << "Problem with vpMatrix stack()!" << std::endl;
+          return EXIT_FAILURE;
+        }
       }
 
-      std::cout << "------------------------" << std::endl;
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix stack(vpRowVector)" << std::endl;
       std::cout << "------------------------" << std::endl;
+
+      vpMatrix m_big_stack = generateRandomMatrix(10000, ctest ? 10 : 100, -1000.0, 1000.0);
+      std::cout << "m_big_stack: " << m_big_stack.getRows() << "x" << m_big_stack.getCols() << std::endl;
 
       vpMatrix m_big_stack_row;
       t = vpTime::measureTimeMs();
@@ -556,14 +567,31 @@ int main()
         m_big_stack_row.stack(m_big_stack.getRow(i));
       }
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\nMatrix stack(vpRowVector): " << t << " ms" << std::endl;
+      std::cout << "Matrix stack(vpRowVector): " << t << " ms" << std::endl;
 
       if (!equalMatrix(m_big_stack, m_big_stack_row)) {
         std::cerr << "Problem with vpMatrix stack(vpRowVector)!" << std::endl;
         return EXIT_FAILURE;
       }
 
+      std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix stack(vpColVector)" << std::endl;
       std::cout << "------------------------" << std::endl;
+
+      vpMatrix m_big_stack_col;
+      t = vpTime::measureTimeMs();
+      for (unsigned int j = 0; j < m_big_stack.getCols(); j++) {
+        m_big_stack_col.stack(m_big_stack.getCol(j));
+      }
+      t = vpTime::measureTimeMs() - t;
+      std::cout << "Matrix stack(vpColVector): " << t << " ms" << std::endl;
+
+      if (!equalMatrix(m_big_stack, m_big_stack_col)) {
+        std::cerr << "Problem with vpMatrix stack(vpColVector)!" << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::stack()" << std::endl;
       std::cout << "------------------------" << std::endl;
 
@@ -579,23 +607,28 @@ int main()
         std::cout << "L:\n" << L << std::endl;
       }
 
-      vpMatrix m_big_stack_static, m_big_stack_static_tmp;
-      t = vpTime::measureTimeMs();
-      for (unsigned int i = 0; i < nb; i++) {
-        vpMatrix::stack(m_big_stack_static_tmp, submatrices[(size_t)i], m_big_stack_static);
-        m_big_stack_static_tmp = m_big_stack_static;
-      }
-      t = vpTime::measureTimeMs() - t;
-      std::cout << "\nMatrix::stack(): " << t << " ms" << std::endl;
+      {
+        vpMatrix m_big_stack_static, m_big_stack_static_tmp;
+        t = vpTime::measureTimeMs();
+        for (unsigned int i = 0; i < nb; i++) {
+          vpMatrix::stack(m_big_stack_static_tmp, submatrices[(size_t)i], m_big_stack_static);
+          m_big_stack_static_tmp = m_big_stack_static;
+        }
+        t = vpTime::measureTimeMs() - t;
+        std::cout << "Matrix::stack(): " << t << " ms" << std::endl;
 
-      if (!equalMatrix(m_big, m_big_stack_static)) {
-        std::cerr << "Problem with vpMatrix::stack()!" << std::endl;
-        return EXIT_FAILURE;
+        if (!equalMatrix(m_big, m_big_stack_static)) {
+          std::cerr << "Problem with vpMatrix::stack()!" << std::endl;
+          return EXIT_FAILURE;
+        }
       }
 
-      std::cout << "------------------------" << std::endl;
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::stack(vpMatrix, vpRowVector, vpMatrix)" << std::endl;
       std::cout << "------------------------" << std::endl;
+
+      vpMatrix m_big_stack_static = generateRandomMatrix(ctest ? 100 : 1000, ctest ? 10 : 100, -1000.0, 1000.0);
+      std::cout << "m_big_stack_static: " << m_big_stack_static.getRows() << "x" << m_big_stack_static.getCols() << std::endl;
 
       vpMatrix m_big_stack_static_row, m_big_stack_static_row_tmp;
       t = vpTime::measureTimeMs();
@@ -604,10 +637,30 @@ int main()
         m_big_stack_static_row_tmp = m_big_stack_static_row;
       }
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\nMatrix::stack(vpMatrix, vpRowVector, vpMatrix): " << t << " ms" << std::endl;
+      std::cout << "Matrix::stack(vpMatrix, vpRowVector, vpMatrix): " << t << " ms" << std::endl;
 
       if (!equalMatrix(m_big_stack_static, m_big_stack_static_row)) {
         std::cerr << "Problem with vpMatrix::stack(vpMatrix, vpRowVector, "
+                     "vpMatrix)!"
+                  << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::stack(vpMatrix, vpColVector, vpMatrix)" << std::endl;
+      std::cout << "------------------------" << std::endl;
+
+      vpMatrix m_big_stack_static_col, m_big_stack_static_col_tmp;
+      t = vpTime::measureTimeMs();
+      for (unsigned int j = 0; j < m_big_stack_static.getCols(); j++) {
+        vpMatrix::stack(m_big_stack_static_col_tmp, m_big_stack_static.getCol(j), m_big_stack_static_col);
+        m_big_stack_static_col_tmp = m_big_stack_static_col;
+      }
+      t = vpTime::measureTimeMs() - t;
+      std::cout << "Matrix::stack(vpMatrix, vpColVector, vpMatrix): " << t << " ms" << std::endl;
+
+      if (!equalMatrix(m_big_stack_static, m_big_stack_static_col)) {
+        std::cerr << "Problem with vpMatrix::stack(vpMatrix, vpColVector, "
                      "vpMatrix)!"
                   << std::endl;
         return EXIT_FAILURE;
@@ -660,7 +713,7 @@ int main()
     }
 
     {
-      std::cout << "------------------------" << std::endl;
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::juxtaposeMatrices()" << std::endl;
       std::cout << "------------------------" << std::endl;
 
@@ -682,11 +735,11 @@ int main()
 
 #if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
     {
-      std::cout << "------------------------" << std::endl;
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- BENCHMARK dgemm/dgemv" << std::endl;
       std::cout << "------------------------" << std::endl;
 
-      size_t nb_matrices = 100;
+      size_t nb_matrices = ctest ? 100 : 10000;
       unsigned int rows = 200, cols = 6;
       double min = -1.0, max = 1.0;
       std::vector<vpMatrix> vec_A, vec_B, vec_C, vec_C_regular;
@@ -838,7 +891,7 @@ int main()
 #endif
 
     {
-      std::cout << "------------------------" << std::endl;
+      std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::hadamard()" << std::endl;
       std::cout << "------------------------" << std::endl;
 

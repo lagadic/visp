@@ -256,7 +256,8 @@ public:
   vpArray2D<Type> &operator=(const vpArray2D<Type> &A)
   {
     resize(A.rowNum, A.colNum, false, false);
-    memcpy(data, A.data, rowNum * colNum * sizeof(Type));
+    if (data != NULL && A.data != NULL && rowNum * colNum > 0)
+      memcpy(data, A.data, rowNum * colNum * sizeof(Type));
     return *this;
   }
 
