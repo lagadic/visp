@@ -300,9 +300,10 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
+  \param doNotTrack : If true, ME are not tracked.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -401,7 +402,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         }
 
         try {
-          melinePt->initTracking(I, ip1, ip2, rho, theta);
+          melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack);
           meline.push_back(melinePt);
           nbFeature.push_back((unsigned int) melinePt->getMeList().size());
           nbFeatureTotal += nbFeature.back();
@@ -622,7 +623,7 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const 
   meline.clear();
   nbFeatureTotal = 0;
 
-  if (initMovingEdge(I, cMo) == false)
+  if (!initMovingEdge(I, cMo, false))
     Reinit = true;
 
   Reinit = false;

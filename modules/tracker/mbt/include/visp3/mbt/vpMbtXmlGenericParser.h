@@ -72,6 +72,7 @@ public:
                                      depth normal features. */
     DEPTH_DENSE_PARSER = 1 << 3   /*!< Parser for model-based tracking using
                                      depth dense features. */
+    , PROJECTION_ERROR_PARSER = 0 /*!< Parser for projection error computation parameters. */
   };
 
 protected:
@@ -138,6 +139,11 @@ protected:
   unsigned int m_depthDenseSamplingStepX;
   //! Sampling step in Y
   unsigned int m_depthDenseSamplingStepY;
+  // Projection error
+  //! ME parameters for projection error computation
+  vpMe m_projectionErrorMe;
+  //! Kernel size (actual_kernel_size = size*2 + 1) used for projection error computation
+  unsigned int m_projectionErrorKernelSize;
 
   enum vpDataToParseMb {
     //<conf>
@@ -198,7 +204,11 @@ protected:
     depth_dense,
     depth_dense_sampling_step,
     depth_dense_sampling_step_X,
-    depth_dense_sampling_step_Y
+    depth_dense_sampling_step_Y,
+    //<projection_error>
+    projection_error,
+    projection_error_sample_step,
+    projection_error_kernel_size
   };
 
 public:
@@ -344,6 +354,13 @@ public:
   inline double getNearClippingDistance() const { return m_nearClipping; }
 
   /*!
+    Get ME parameters for projection error computation.
+  */
+  inline void getProjectionErrorMe(vpMe &me) const { me = m_projectionErrorMe; }
+
+  inline unsigned int getProjectionErrorKernelSize() const { return m_projectionErrorKernelSize; }
+
+  /*!
     Has Far clipping been specified?
 
     \return True if yes, False otherwise.
@@ -356,8 +373,6 @@ public:
     \return True if yes, False otherwise.
   */
   inline bool hasNearClippingDistance() const { return m_hasNearClipping; }
-
-  void parse(const std::string &filename);
 
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
 
@@ -527,6 +542,20 @@ public:
   */
   inline void setNearClippingDistance(const double &nclip) { m_nearClipping = nclip; }
 
+  /*!
+    Set ME parameters for projection error computation.
+
+    \param me : ME parameters
+  */
+  inline void setProjectionErrorMe(const vpMe &me) { m_projectionErrorMe = me; }
+
+  /*!
+    Set kernel size used for projection error computation.
+
+    \param size : Kernel size computed as kernel_size = size*2 + 1
+  */
+  inline void setProjectionErrorKernelSize(const unsigned int &size) { m_projectionErrorKernelSize = size; }
+
   void writeMainClass(xmlNodePtr node);
   //@}
 
@@ -556,6 +585,9 @@ protected:
   // Depth dense
   void read_depth_dense(xmlDocPtr doc, xmlNodePtr node);
   void read_depth_dense_sampling_step(xmlDocPtr doc, xmlNodePtr node);
+
+  // Projection error
+  void read_projection_error(xmlDocPtr doc, xmlNodePtr node);
 };
 
 #endif

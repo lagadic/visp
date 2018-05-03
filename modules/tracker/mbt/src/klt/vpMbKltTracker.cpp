@@ -942,6 +942,9 @@ not found or wrong format for the data).
 */
 void vpMbKltTracker::loadConfigFile(const std::string &configFile)
 {
+  // Load projection error config
+  vpMbTracker::loadConfigFile(configFile);
+
 #ifdef VISP_HAVE_XML2
   vpMbtKltXmlParser xmlp;
 

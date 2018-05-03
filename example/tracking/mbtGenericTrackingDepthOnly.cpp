@@ -250,13 +250,25 @@ void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, co
   point[2] = depth;
 }
 
-bool read_data(const unsigned int cpt, const std::string &input_directory, vpImage<uint16_t> &I_depth_raw,
+bool read_data(const unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
                std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width, unsigned int &pointcloud_height)
 {
   char buffer[256];
 
-  // Read raw depth
+  // Read image
   std::stringstream ss;
+  ss << input_directory << "/image_%04d.pgm";
+  sprintf(buffer, ss.str().c_str(), cpt);
+  std::string filename_image = buffer;
+
+  if (!vpIoTools::checkFilename(filename_image)) {
+    std::cerr << "Cannot read: " << filename_image << std::endl;
+    return false;
+  }
+  vpImageIo::read(I, filename_image);
+
+  // Read raw depth
+  ss.str("");
   ss << input_directory << "/depth_image_%04d.bin";
   sprintf(buffer, ss.str().c_str(), cpt);
   std::string filename_depth = buffer;
@@ -475,11 +487,11 @@ int main(int argc, const char **argv)
     else
       initFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.init");
 
-    vpImage<unsigned char> I_depth;
+    vpImage<unsigned char> I, I_depth;
     vpImage<uint16_t> I_depth_raw;
     std::vector<vpColVector> pointcloud;
     unsigned int pointcloud_width, pointcloud_height;
-    if (!read_data(0, ipath, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height)) {
+    if (!read_data(0, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height)) {
       std::cerr << "Cannot open sequence: " << ipath << std::endl;
       return EXIT_FAILURE;
     }
@@ -488,15 +500,15 @@ int main(int argc, const char **argv)
 
 // initialise a  display
 #if defined VISP_HAVE_X11
-    vpDisplayX display;
+    vpDisplayX display, display2;
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display;
+    vpDisplayGDI display, display2;
 #elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV display;
+    vpDisplayOpenCV display, display2;
 #elif defined VISP_HAVE_D3D9
-    vpDisplayD3D display;
+    vpDisplayD3D display, display2;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display;
+    vpDisplayGTK display, display2;
 #else
     opt_display = false;
 #endif
@@ -504,9 +516,13 @@ int main(int argc, const char **argv)
 #if defined(VISP_HAVE_DISPLAY)
       display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display.init(I_depth, 100, 100, "Depth");
+      display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+      display2.init(I, I_depth.getWidth()+100, 100, "Image");
 #endif
       vpDisplay::display(I_depth);
+      vpDisplay::display(I);
       vpDisplay::flush(I_depth);
+      vpDisplay::flush(I);
     }
 
     // Object pointer to check that inheritance is ok
@@ -533,10 +549,25 @@ int main(int argc, const char **argv)
     // Tells if the tracker has to compute the projection error
     tracker->setProjectionErrorComputation(projectionError);
 
+    // For generic projection error computation
+    tracker->setProjectionErrorDisplay(true);
+    tracker->setProjectionErrorDisplayArrowLength(30);
+    tracker->setProjectionErrorDisplayArrowThickness(2);
+
     // Retrieve the camera parameters from the tracker
     dynamic_cast<vpMbGenericTracker *>(tracker)->getCameraParameters(cam);
 
-    // Loop to position the cube
+    vpCameraParameters cam_color;
+    cam_color.initPersProjWithoutDistortion(615.1674804688, 615.1675415039, 312.1889953613, 243.4373779297);
+    vpHomogeneousMatrix depth_M_color;
+    std::string depth_M_color_filename =
+        vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/depth_M_color.txt");
+    {
+      std::ifstream depth_M_color_file(depth_M_color_filename.c_str());
+      depth_M_color.load(depth_M_color_file);
+    }
+
+    // Loop to position the object
     if (opt_display && opt_click_allowed) {
       while (!vpDisplay::getClick(I_depth, false)) {
         vpDisplay::display(I_depth);
@@ -579,12 +610,13 @@ int main(int argc, const char **argv)
     bool quit = false, click = false;
     unsigned int frame_index = 0;
     std::vector<double> time_vec;
-    while (read_data(frame_index, ipath, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit &&
+    while (read_data(frame_index, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit &&
            (opt_lastFrame > 0 ? (int)frame_index <= opt_lastFrame : true)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       if (opt_display) {
         vpDisplay::display(I_depth);
+        vpDisplay::display(I);
 
         std::stringstream ss;
         ss << "Num frame: " << frame_index;
@@ -610,7 +642,7 @@ int main(int argc, const char **argv)
         dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I_depth, cMo);
       }
 
-// Test to set an initial pose
+      // Test set an initial pose
 #if USE_SMALL_DATASET
       if (frame_index == 20) {
         cMo.buildFrom(0.05319520317, 0.09223511976, 0.3380095812, -2.71438192, 0.07141055397, -0.3810081638);
@@ -672,6 +704,12 @@ int main(int argc, const char **argv)
           ss.str("");
           ss << "nb features: " << tracker->getError().getRows();
           vpDisplay::displayText(I_depth, 80, 20, ss.str(), vpColor::red);
+
+          // generic projection error computed on image from the RGB camera
+          double projection_error = tracker->computeCurrentProjectionError(I, depth_M_color.inverse()*cMo, cam_color);
+          ss.str("");
+          ss << "Projection error: " << projection_error;
+          vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
         }
       }
 
@@ -702,8 +740,10 @@ int main(int argc, const char **argv)
         std::cout << "Projection error: " << tracker->getProjectionError() << std::endl << std::endl;
       }
 
-      if (opt_display)
+      if (opt_display) {
         vpDisplay::flush(I_depth);
+        vpDisplay::flush(I);
+      }
 
       frame_index++;
     }

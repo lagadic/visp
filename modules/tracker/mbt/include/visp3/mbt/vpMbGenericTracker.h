@@ -64,6 +64,9 @@ public:
 
   virtual ~vpMbGenericTracker();
 
+  virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
+                                               const vpCameraParameters &_cam);
+
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
@@ -303,6 +306,10 @@ public:
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
   virtual void setProjectionErrorComputation(const bool &flag);
+
+  virtual void setProjectionErrorDisplay(const bool display);
+  virtual void setProjectionErrorDisplayArrowLength(const unsigned int length);
+  virtual void setProjectionErrorDisplayArrowThickness(const unsigned int thickness);
 
   virtual void setReferenceCameraName(const std::string &referenceCameraName);
 

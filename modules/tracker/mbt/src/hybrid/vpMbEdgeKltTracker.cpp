@@ -245,6 +245,9 @@ not found or wrong format for the data).
 */
 void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
 {
+  // Load projection error config
+  vpMbTracker::loadConfigFile(configFile);
+
 #ifdef VISP_HAVE_XML2
   vpMbtEdgeKltXmlParser xmlp;
 

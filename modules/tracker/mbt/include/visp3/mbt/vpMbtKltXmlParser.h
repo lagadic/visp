@@ -155,8 +155,6 @@ Get the Border of the mask.
   */
   inline unsigned int getWindowSize() const { return winSize; }
 
-  void parse(const char *filename);
-
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void read_klt(xmlDocPtr doc, xmlNodePtr node);
 

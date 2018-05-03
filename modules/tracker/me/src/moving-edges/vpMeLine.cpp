@@ -139,13 +139,15 @@ vpMeLine::~vpMeLine() { list.clear(); }
   step between the two extremities of the line.
 
   \param I : Image in which the line appears.
+  \param doNotTrack : Inherited parameter, not used.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 
 */
-void vpMeLine::sample(const vpImage<unsigned char> &I)
+void vpMeLine::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
 {
+  (void)doNotTrack;
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
     throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
