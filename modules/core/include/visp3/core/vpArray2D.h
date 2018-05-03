@@ -243,10 +243,7 @@ public:
   //! Set all the elements of the array to \e x.
   vpArray2D<Type> &operator=(Type x)
   {
-    for (unsigned int i = 0; i < rowNum; i++)
-      for (unsigned int j = 0; j < colNum; j++)
-        rowPtrs[i][j] = x;
-
+    std::fill(data, data + dsize, x);
     return *this;
   }
 
@@ -256,7 +253,7 @@ public:
   vpArray2D<Type> &operator=(const vpArray2D<Type> &A)
   {
     resize(A.rowNum, A.colNum, false, false);
-    if (data != NULL && A.data != NULL && rowNum * colNum > 0)
+    if (data != NULL && A.data != NULL && data != A.data)
       memcpy(data, A.data, rowNum * colNum * sizeof(Type));
     return *this;
   }

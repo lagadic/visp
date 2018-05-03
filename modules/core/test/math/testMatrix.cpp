@@ -247,17 +247,35 @@ int main(int argc, char *argv[])
       }
     }
 
-    int err = 1;
+    {
+      const double val = 10.0;
+      vpMatrix M, M2(5, 5, val);
+      M.resize(5, 5, false, false);
+      M = val;
+      for (unsigned int i = 0; i < M.getRows(); i++) {
+        for (unsigned int j = 0; j < M.getCols(); j++) {
+          if (!vpMath::equal(M[i][j], val, std::numeric_limits<double>::epsilon())) {
+            std::cerr << "Issue with matrix assignment with value." << std::endl;
+            return EXIT_FAILURE;
+          }
+
+          if (!vpMath::equal(M2[i][j], val, std::numeric_limits<double>::epsilon())) {
+            std::cerr << "Issue with matrix constructor initialized with value." << std::endl;
+            return EXIT_FAILURE;
+          }
+        }
+      }
+    }
     {
       vpColVector c(6, 1);
       vpRowVector r(6, 1);
       std::vector<double> bench(6, 1);
       vpMatrix M1(c);
       if (test("M1", M1, bench) == false)
-        return err;
+        return EXIT_FAILURE;
       vpMatrix M2(r);
       if (test("M2", M2, bench) == false)
-        return err;
+        return EXIT_FAILURE;
     }
     {
       vpMatrix M(4, 5);
@@ -280,7 +298,7 @@ int main(int argc, char *argv[])
       if (vpMatrix::saveMatrix("matrix.mat", M, false, header.c_str()))
         std::cout << "Matrix saved in matrix.mat file" << std::endl;
       else
-        return err;
+        return EXIT_FAILURE;
 
       // Load matrix in text format
       vpMatrix M1;
@@ -288,43 +306,43 @@ int main(int argc, char *argv[])
       if (vpMatrix::loadMatrix("matrix.mat", M1, false, header_))
         std::cout << "Matrix loaded from matrix.mat file with header \"" << header_ << "\": \n" << M1 << std::endl;
       else
-        return err;
+        return EXIT_FAILURE;
       if (header != std::string(header_)) {
         std::cout << "Bad header in matrix.mat" << std::endl;
-        return err;
+        return EXIT_FAILURE;
       }
 
       // Save matrix in binary format
       if (vpMatrix::saveMatrix("matrix.bin", M, true, header.c_str()))
         std::cout << "Matrix saved in matrix.bin file" << std::endl;
       else
-        return err;
+        return EXIT_FAILURE;
 
       // Load matrix in binary format
       if (vpMatrix::loadMatrix("matrix.bin", M1, true, header_))
         std::cout << "Matrix loaded from matrix.bin file with header \"" << header_ << "\": \n" << M1 << std::endl;
       else
-        return err;
+        return EXIT_FAILURE;
       if (header != std::string(header_)) {
         std::cout << "Bad header in matrix.bin" << std::endl;
-        return err;
+        return EXIT_FAILURE;
       }
 
       // Save matrix in YAML format
       if (vpMatrix::saveMatrixYAML("matrix.yml", M, header.c_str()))
         std::cout << "Matrix saved in matrix.yml file" << std::endl;
       else
-        return err;
+        return EXIT_FAILURE;
 
       // Read matrix in YAML format
       vpMatrix M2;
       if (vpMatrix::loadMatrixYAML("matrix.yml", M2, header_))
         std::cout << "Matrix loaded from matrix.yml file with header \"" << header_ << "\": \n" << M2 << std::endl;
       else
-        return err;
+        return EXIT_FAILURE;
       if (header != std::string(header_)) {
         std::cout << "Bad header in matrix.mat" << std::endl;
-        return err;
+        return EXIT_FAILURE;
       }
     }
 
