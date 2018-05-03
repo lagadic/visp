@@ -242,18 +242,21 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
+    std::cout << "trackerType_image: " << trackerType_image << std::endl;
+    std::cout << "useScanline: " << useScanline << std::endl;
+    std::cout << "use_depth: " << use_depth << std::endl;
+#ifdef VISP_HAVE_COIN3D
+    std::cout << "COIN3D available." << std::endl;
+#endif
+
 #if !defined(VISP_HAVE_MODULE_KLT) || (!defined(VISP_HAVE_OPENCV) || (VISP_HAVE_OPENCV_VERSION < 0x020100))
-    if (trackerType_image == /*vpMbGenericTracker::KLT_TRACKER*/ 2) {
-      std::cout << "KLT only features cannot be used: ViSP is not built with "
-                   "KLT module or OpenCV is not available."
+    if (trackerType_image & 2) {
+      std::cout << "KLT features cannot be used: ViSP is not built with "
+                   "KLT module or OpenCV is not available.\nTest is not run."
                 << std::endl;
       return EXIT_SUCCESS;
     }
 #endif
-
-    std::cout << "trackerType_image: " << trackerType_image << std::endl;
-    std::cout << "useScanline: " << useScanline << std::endl;
-    std::cout << "use_depth: " << use_depth << std::endl;
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
@@ -368,30 +371,38 @@ int main(int argc, const char *argv[])
     //Take the highest thresholds between all CI machines
 #ifdef VISP_HAVE_COIN3D
     map_thresh[vpMbGenericTracker::EDGE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.006, 2.8);
+        = useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 2.9);
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
-        = useScanline ? std::pair<double, double>(0.006, 1.9) : std::pair<double, double>(0.004, 1.1);
+        = useScanline ? std::pair<double, double>(0.006, 1.9) : std::pair<double, double>(0.005, 1.3);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
-        = useScanline ? std::pair<double, double>(0.004, 3.2) : std::pair<double, double>(0.006, 2.5);
+        = useScanline ? std::pair<double, double>(0.004, 3.2) : std::pair<double, double>(0.006, 2.8);
+#endif
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.002, 1.7) : std::pair<double, double>(0.002, 0.8);
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = std::pair<double, double>(0.002, 0.3);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.002, 1.8) : std::pair<double, double>(0.002, 0.7);
+#endif
 #else
     map_thresh[vpMbGenericTracker::EDGE_TRACKER]
         = useScanline ? std::pair<double, double>(0.007, 2.3) : std::pair<double, double>(0.007, 2.0);
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.004, 1.2) : std::pair<double, double>(0.004, 1.0);
+#endif
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.002, 0.6) : std::pair<double, double>(0.001, 0.4);
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = std::pair<double, double>(0.002, 0.3);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.001, 0.5) : std::pair<double, double>(0.001, 0.4);
+#endif
 #endif
 
     vpImage<unsigned char> I, I_depth;
