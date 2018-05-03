@@ -406,6 +406,9 @@ public:
   static void getGradY(const vpImage<double> &I, vpImage<double> &dIy, const double *filter, unsigned int size);
   static void getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *gaussianKernel,
                               const double *gaussianDerivativeKernel, unsigned int size);
+
+  static double getSobelKernelX(double *filter, unsigned int size);
+  static double getSobelKernelY(double *filter, unsigned int size);
 };
 
 #endif
