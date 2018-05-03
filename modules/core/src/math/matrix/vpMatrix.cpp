@@ -4027,7 +4027,7 @@ vpMatrix vpMatrix::stack(const vpMatrix &A, const vpColVector &c)
   matrix in \e C.
 
   \param  A : Left matrix.
-  \param  r : Right column vector.
+  \param  c : Right column vector.
   \param  C : Stacked matrix C = [ A c ]
 
   \warning A and c must have the same number of rows. A and C must be two
@@ -5146,6 +5146,96 @@ double vpMatrix::sumSquare() const
   }
 
   return sum_square;
+}
+
+/*!
+  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+  \param M : First matrix.
+  \param kernel : Second matrix.
+  \param mode : Convolution mode: "full" (default), "same", "valid".
+
+  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+  \note This is a very basic implementation that does not use FFT.
+ */
+vpMatrix vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode)
+{
+  vpMatrix res;
+  conv2(M, kernel, res, mode);
+  return res;
+}
+
+/*!
+  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+  \param M : First matrix.
+  \param kernel : Second matrix.
+  \param res : Result.
+  \param mode : Convolution mode: "full" (default), "same", "valid".
+
+  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+  \note This is a very basic implementation that does not use FFT.
+ */
+void vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode)
+{
+  if (M.getRows()*M.getCols() == 0 || kernel.getRows()*kernel.getCols() == 0)
+    return;
+
+  if (mode == "valid") {
+    if (kernel.getRows() > M.getRows() || kernel.getCols() > M.getCols())
+      return;
+  }
+
+  vpMatrix M_padded, res_same;
+
+  if (mode == "full" || mode == "same") {
+    const unsigned int pad_x = kernel.getCols()-1;
+    const unsigned int pad_y = kernel.getRows()-1;
+    M_padded.resize(M.getRows() + 2*pad_y, M.getCols() + 2*pad_x, true, false);
+    M_padded.insert(M, pad_y, pad_x);
+
+    if (mode == "same") {
+      res.resize(M.getRows(), M.getCols(), false, false);
+      res_same.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    } else {
+      res.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    }
+  } else if (mode == "valid") {
+    M_padded = M;
+    res.resize(M.getRows()-kernel.getRows()+1, M.getCols()-kernel.getCols()+1);
+  } else {
+    return;
+  }
+
+  if (mode == "same") {
+    for (unsigned int i = 0; i < res_same.getRows(); i++) {
+      for (unsigned int j = 0; j < res_same.getCols(); j++) {
+        for (unsigned int k = 0; k < kernel.getRows(); k++) {
+          for (unsigned int l = 0; l < kernel.getCols(); l++) {
+            res_same[i][j] += M_padded[i+k][j+l] * kernel[kernel.getRows()-k-1][kernel.getCols()-l-1];
+          }
+        }
+      }
+    }
+
+    const unsigned int start_i = kernel.getRows()/2;
+    const unsigned int start_j = kernel.getCols()/2;
+    for (unsigned int i = 0; i < M.getRows(); i++) {
+      memcpy(res.data + i*M.getCols(), res_same.data + (i+start_i)*res_same.getCols() + start_j, sizeof(double)*M.getCols());
+    }
+  } else {
+    for (unsigned int i = 0; i < res.getRows(); i++) {
+      for (unsigned int j = 0; j < res.getCols(); j++) {
+        for (unsigned int k = 0; k < kernel.getRows(); k++) {
+          for (unsigned int l = 0; l < kernel.getCols(); l++) {
+            res[i][j] += M_padded[i+k][j+l] * kernel[kernel.getRows()-k-1][kernel.getCols()-l-1];
+          }
+        }
+      }
+    }
+  }
 }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
