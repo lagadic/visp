@@ -39,6 +39,7 @@ ViSP 3.2.0 (under development)
     . [#302] Fix build issue with librealsense 2.9.1 or higher
     . [#324] How to compile ViSP within Visual Studio 2013 on windows 7?
     . [#348] ViSP-third-party.txt is erased after make
+    . [#355] Segmentation fault with vpRealSense2 acquire
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)

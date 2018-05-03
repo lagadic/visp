@@ -550,7 +550,9 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 {
   resize(A.getRows(), A.getCols(), false, false);
 
-  memcpy(data, A.data, dsize * sizeof(double));
+  if (data != NULL && A.data != NULL && data != A.data) {
+    memcpy(data, A.data, dsize * sizeof(double));
+  }
 
   return *this;
 }
@@ -558,9 +560,11 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 {
-  resize(A.getRows(), A.getCols(), false);
+  resize(A.getRows(), A.getCols(), false, false);
 
-  memcpy(data, A.data, dsize * sizeof(double));
+  if (data != NULL && A.data != NULL && data != A.data) {
+    memcpy(data, A.data, dsize * sizeof(double));
+  }
 
   return *this;
 }
@@ -591,10 +595,7 @@ vpMatrix &vpMatrix::operator=(vpMatrix &&other)
 //! Set all the element of the matrix A to \e x.
 vpMatrix &vpMatrix::operator=(double x)
 {
-  for (unsigned int i = 0; i < rowNum; i++)
-    for (unsigned int j = 0; j < colNum; j++)
-      rowPtrs[i][j] = x;
-
+  std::fill(data, data + rowNum*colNum, x);
   return *this;
 }
 
@@ -3847,7 +3848,7 @@ vpRowVector vpMatrix::getRow(const unsigned int i) const
   vpRowVector r;
   r.resize(colNum, false);
 
-  if (r.data != NULL && data != NULL && colNum > 0) {
+  if (r.data != NULL && data != NULL && r.data != data) {
     memcpy(r.data, data + i * colNum, sizeof(double) * colNum);
   }
 
@@ -4505,7 +4506,7 @@ void vpMatrix::stack(const vpRowVector &r)
     unsigned int oldSize = size();
     resize(rowNum + 1, colNum, false, false);
 
-    if (data != NULL && r.data != NULL && r.size() > 0) {
+    if (data != NULL && r.data != NULL && data != r.data) {
       // Copy r in data
       memcpy(data + oldSize, r.data, sizeof(double) * r.size());
     }
@@ -4545,7 +4546,7 @@ void vpMatrix::stack(const vpColVector &c)
     unsigned int oldColNum = colNum;
     resize(rowNum, colNum + 1, false, false);
 
-    if (data != NULL && tmp.data != NULL && c.size() > 0) {
+    if (data != NULL && tmp.data != NULL && data != tmp.data) {
       // Copy c in data
       for (unsigned int i = 0; i < rowNum; i++) {
         memcpy(data + i*colNum, tmp.data + i*oldColNum, sizeof(double) * oldColNum);
@@ -4568,9 +4569,9 @@ void vpMatrix::stack(const vpColVector &c)
 void vpMatrix::insert(const vpMatrix &A, const unsigned int r, const unsigned int c)
 {
   if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
-    if (A.colNum == colNum && data != NULL && A.data != NULL && A.size() > 0) {
+    if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
       memcpy(data + r * colNum, A.data, sizeof(double) * A.size());
-    } else if (data != NULL && A.data != NULL && A.colNum > 0) {
+    } else if (data != NULL && A.data != NULL && A.data != data) {
       for (unsigned int i = r; i < (r + A.getRows()); i++) {
         memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(double) * A.colNum);
       }
