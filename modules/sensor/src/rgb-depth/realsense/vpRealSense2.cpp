@@ -355,12 +355,13 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
 
   // Multi-threading if OpenMP
   // Concurrent writes at different locations are safe
-#pragma omp parallel for schedule(dynamic)
+  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
     for (int j = 0; j < width; j++, depth_pixel_index++) {
       if (p_depth_frame[depth_pixel_index] == 0) {
+        pointcloud[(size_t)depth_pixel_index].resize(4, false);
         pointcloud[(size_t)depth_pixel_index][0] = m_invalidDepthValue;
         pointcloud[(size_t)depth_pixel_index][1] = m_invalidDepthValue;
         pointcloud[(size_t)depth_pixel_index][2] = m_invalidDepthValue;
@@ -378,6 +379,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
       if (pixels_distance > m_max_Z)
         points[0] = points[1] = points[2] = m_invalidDepthValue;
 
+      pointcloud[(size_t)depth_pixel_index].resize(4, false);
       pointcloud[(size_t)depth_pixel_index][0] = points[0];
       pointcloud[(size_t)depth_pixel_index][1] = points[1];
       pointcloud[(size_t)depth_pixel_index][2] = points[2];
