@@ -61,6 +61,18 @@ $ sudo apt-get install libzbar-dev
 $ sudo apt-get install libpthread-stubs0-dev
 \endcode
 
+\subsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
+
+I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class.
+
+Installation instructions are given in the <a href="https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md">tutorial</a>.
+
+Follow \ref franka_prereq_librealsense where we resume installation instructions.
+
+\subsection install_ubuntu_3rdparty_franka libfranka 3rd party
+
+I you have a Panda robot from Franka Emika, you may install libfranka in order to use vpRobotFranka class. Installation instructions are provided following \ref franka_prereq_libfranka. There is also the \ref tutorial-franka-pbvs that explains how to install a real-time Linux kernel requested to control the robot by \ref franka_prereq_rt_linux.
+
 \subsection install_ubuntu_3rdparty_other Other optional 3rd parties
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.
