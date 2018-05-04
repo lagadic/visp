@@ -567,7 +567,7 @@ double quad_goodness(apriltag_family_t *family, image_u8_t *im, struct quad *qua
 
 
     // score = average margin between white and black pixels near border.
-    double margin = 1.0 * W1 / Wn - 1.0 * B1 / Bn;
+    double margin = (float )W1 / Wn - (float )B1 / Bn;
 //    printf("margin %f: W1 %f, B1 %f\n", margin, W1, B1);
 
     return margin;
