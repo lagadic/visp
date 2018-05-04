@@ -58,13 +58,13 @@ where `C:\workspace\opencv-3.0.0\build` is where you have installed OpenCV. Insi
 
 \subsection install_win10_msvc12_3rdparty_realsense2 librealsense 2.x 3rd party
 
-This section is uncomplete. See instructions provided in \ref install_win10_msvc14_3rdparty_realsense2 installation and adapt the build folder to `build-vc12`.
+In order to use vpRealSense2 class, see instructions provided in \ref install_win10_msvc14_3rdparty_realsense2 installation and adapt the build folder to `build-vc12`.
 
 \subsection install_win10_msvc12_3rdparty_realsense librealsense 1.12.1 3rd party
 
 \note We recommend rather to install \ref install_win10_msvc12_3rdparty_realsense2 to have an up-to-date Realsense SDK.
 
-The following instructions are provided to install the old Realsense 1.12.1 SDK. If you have already installed \ref install_win10_msvc12_3rdparty_realsense2 you may skip this section.
+The following instructions are provided to install the old Realsense 1.12.1 SDK compatible with F200, R200, LR200, ZR300 cameras in order to use vpRealSense class. If you have already installed \ref install_win10_msvc12_3rdparty_realsense2 you may skip this section.
 
 <b>1. Get librealsense 1.12.1</b>
 

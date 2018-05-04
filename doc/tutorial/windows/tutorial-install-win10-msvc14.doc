@@ -78,7 +78,7 @@ C:\> setx XML2_DIR "C:\workspace\libxml2-2.9.7\build-vc14"
 
 \subsection install_win10_msvc14_3rdparty_realsense2 librealsense 2.x 3rd party
 
-I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x. If you have an older Realsense camera you may install \ref install_win10_msvc14_3rdparty_realsense. Otherwise you can skip this section.
+I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class. If you have an older Realsense camera you may install \ref install_win10_msvc14_3rdparty_realsense. Otherwise you can skip this section.
 
 <b>1. Get librealsense 2.x</b>
 
@@ -120,7 +120,7 @@ C:\> setx REALSENSE_DIR "C:\workspace\librealsense-2\build-vc14"
 
 \note We recommend rather to install \ref install_win10_msvc12_3rdparty_realsense2 to have an up-to-date Realsense SDK.
 
-The following instructions are provided to install the old Realsense 1.12.1 SDK compatible with F200, R200, LR200, ZR300 cameras.
+The following instructions are provided to install the old Realsense 1.12.1 SDK compatible with F200, R200, LR200, ZR300 cameras in order to use vpRealSense class.
 If you have already installed \ref install_win10_msvc12_3rdparty_realsense2 you may skip this section.
 
 <b>1. Get librealsense 1.12.1</b>
@@ -159,10 +159,6 @@ If you have already installed \ref install_win10_msvc12_3rdparty_realsense2 you 
 C:\> setx REALSENSE_DIR "C:\workspace\librealsense-1.12.1\build-vc14"
 \endcode
 - You have also to add the location of librealsense library in the PATH environment variable following the indications mentioned in \ref install_win10_msvc14_env_var.
-
-
-
-
 
 \subsection install_win10_msvc14_3rdparty_flycapture FlyCapture 3rd party
 

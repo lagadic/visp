@@ -106,13 +106,13 @@ C:\> setx XML2_DIR "C:\workspace\libxml2-2.9.7\build-vc15"
 
 \subsection install_win10_msvc15_3rdparty_realsense2 librealsense 2.x 3rd party
 
-This section is uncomplete. See instructions provided in \ref install_win10_msvc14_3rdparty_realsense2 installation and adapt the build folder to `build-vc15`.
+In order to use vpRealSense2 class, see instructions provided in \ref install_win10_msvc14_3rdparty_realsense2 installation and adapt the build folder to `build-vc15`.
 
 \subsection install_win10_msvc15_3rdparty_realsense librealsense 1.12.1 3rd party
 
 \note We recommend rather to install \ref install_win10_msvc15_3rdparty_realsense2 to have an up-to-date Realsense SDK.
 
-The following instructions are provided to install the old Realsense 1.12.1 SDK compatible with F200, R200, LR200, ZR300 cameras.
+The following instructions are provided to install the old Realsense 1.12.1 SDK compatible with F200, R200, LR200, ZR300 cameras in order to use vpRealSense class.
 If you have already installed \ref install_win10_msvc15_3rdparty_realsense2 you may skip this section.
 
 <b>1. Get librealsense 1.12.1</b>
