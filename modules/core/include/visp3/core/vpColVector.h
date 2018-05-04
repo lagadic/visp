@@ -196,6 +196,9 @@ public:
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   vpColVector &operator=(vpColVector &&v);
 #endif
+  //! Comparison operator.
+  bool operator==(const vpColVector &v) const;
+  bool operator!=(const vpColVector &v) const;
 
   double operator*(const vpColVector &x) const;
   vpMatrix operator*(const vpRowVector &v) const;

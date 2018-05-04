@@ -250,6 +250,8 @@ public:
                      const double kdu);
 
   vpCameraParameters &operator=(const vpCameraParameters &c);
+  bool operator==(const vpCameraParameters &c) const;
+  bool operator!=(const vpCameraParameters &c) const;
   virtual ~vpCameraParameters();
 
   void init();
