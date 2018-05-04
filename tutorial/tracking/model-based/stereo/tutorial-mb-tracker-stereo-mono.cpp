@@ -1,4 +1,8 @@
 //! \example tutorial-mb-tracker-stereo-mono.cpp
+#include <iostream>
+#include <visp3/core/vpConfig.h>
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -161,3 +165,10 @@ int main(int argc, char **argv)
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }
+#else
+int main()
+{
+  std::cout << "Nothing to run, deprecated tutorial." << std::endl;
+  return 0;
+}
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
