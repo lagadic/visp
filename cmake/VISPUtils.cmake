@@ -175,6 +175,39 @@ macro(vp_clear_vars)
   endforeach()
 endmacro()
 
+# assert macro
+# Note: it doesn't support lists in arguments
+# Usage samples:
+#   ocv_assert(MyLib_FOUND)
+#   ocv_assert(DEFINED MyLib_INCLUDE_DIRS)
+macro(vp_assert)
+  if(NOT (${ARGN}))
+    string(REPLACE ";" " " __assert_msg "${ARGN}")
+    message(AUTHOR_WARNING "Assertion failed: ${__assert_msg}")
+  endif()
+endmacro()
+
+# add prefix to each item in the list
+macro(vp_list_add_prefix LST PREFIX)
+  set(__tmp "")
+  foreach(item ${${LST}})
+    list(APPEND __tmp "${PREFIX}${item}")
+  endforeach()
+  set(${LST} ${__tmp})
+  unset(__tmp)
+endmacro()
+
+
+# add suffix to each item in the list
+macro(vp_list_add_suffix LST SUFFIX)
+  set(__tmp "")
+  foreach(item ${${LST}})
+    list(APPEND __tmp "${item}${SUFFIX}")
+  endforeach()
+  set(${LST} ${__tmp})
+  unset(__tmp)
+endmacro()
+
 # print message
 macro(vp_debug_message)
   #string(REPLACE ";" " " __msg "${ARGN}")

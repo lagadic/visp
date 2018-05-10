@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.StringTokenizer;
 
 import org.visp.core.Core;
-import org.visp.engine.OpenCVEngineInterface;
+import org.visp.engine.ViSPEngineInterface;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,7 +17,7 @@ import android.util.Log;
 
 class AsyncServiceHelper
 {
-    public static boolean initOpenCV(String Version, final Context AppContext,
+    public static boolean initViSP(String Version, final Context AppContext,
             final LoaderCallbackInterface Callback)
     {
         AsyncServiceHelper helper = new AsyncServiceHelper(Version, AppContext, Callback);
@@ -37,16 +37,16 @@ class AsyncServiceHelper
 
     protected AsyncServiceHelper(String Version, Context AppContext, LoaderCallbackInterface Callback)
     {
-        mOpenCVersion = Version;
+        mViSPersion = Version;
         mUserAppCallback = Callback;
         mAppContext = AppContext;
     }
 
-    protected static final String TAG = "OpenCVManager/Helper";
+    protected static final String TAG = "ViSPManager/Helper";
     protected static final int MINIMUM_ENGINE_VERSION = 2;
-    protected OpenCVEngineInterface mEngineService;
+    protected ViSPEngineInterface mEngineService;
     protected LoaderCallbackInterface mUserAppCallback;
-    protected String mOpenCVersion;
+    protected String mViSPersion;
     protected Context mAppContext;
     protected static boolean mServiceInstallationProgress = false;
     protected static boolean mLibraryInstallationProgress = false;
@@ -56,7 +56,7 @@ class AsyncServiceHelper
         boolean result = true;
         try
         {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(OPEN_CV_SERVICE_URL));
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(VISP_SERVICE_URL));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
@@ -151,14 +151,14 @@ class AsyncServiceHelper
     /**
      *  URL of ViSP Manager page on Google Play Market.
      */
-    protected static final String OPEN_CV_SERVICE_URL = "market://details?id=org.visp.engine";
+    protected static final String VISP_SERVICE_URL = "market://details?id=org.visp.engine";
 
     protected ServiceConnection mServiceConnection = new ServiceConnection()
     {
         public void onServiceConnected(ComponentName className, IBinder service)
         {
             Log.d(TAG, "Service connection created");
-            mEngineService = OpenCVEngineInterface.Stub.asInterface(service);
+            mEngineService = ViSPEngineInterface.Stub.asInterface(service);
             if (null == mEngineService)
             {
                 Log.d(TAG, "ViSP Manager Service connection fails. May be service was not installed?");
@@ -180,7 +180,7 @@ class AsyncServiceHelper
                     }
 
                     Log.d(TAG, "Trying to get library path");
-                    String path = mEngineService.getLibPathByVersion(mOpenCVersion);
+                    String path = mEngineService.getLibPathByVersion(mViSPersion);
                     if ((null == path) || (path.length() == 0))
                     {
                         if (!mLibraryInstallationProgress)
@@ -194,7 +194,7 @@ class AsyncServiceHelper
                                     Log.d(TAG, "Trying to install ViSP lib via Google Play");
                                     try
                                     {
-                                        if (mEngineService.installVersion(mOpenCVersion))
+                                        if (mEngineService.installVersion(mViSPersion))
                                         {
                                             mLibraryInstallationProgress = true;
                                             Log.d(TAG, "Package installation started");
@@ -259,7 +259,7 @@ class AsyncServiceHelper
                                     Log.d(TAG, "Waiting for current installation");
                                     try
                                     {
-                                        if (!mEngineService.installVersion(mOpenCVersion))
+                                        if (!mEngineService.installVersion(mViSPersion))
                                         {
                                             Log.d(TAG, "ViSP package was not installed!");
                                             Log.d(TAG, "Init finished with status " + LoaderCallbackInterface.MARKET_ERROR);
@@ -293,11 +293,11 @@ class AsyncServiceHelper
                     {
                         Log.d(TAG, "Trying to get library list");
                         mLibraryInstallationProgress = false;
-                        String libs = mEngineService.getLibraryList(mOpenCVersion);
+                        String libs = mEngineService.getLibraryList(mViSPersion);
                         Log.d(TAG, "Library list: \"" + libs + "\"");
                         Log.d(TAG, "First attempt to load libs");
                         int status;
-                        if (initOpenCVLibs(path, libs))
+                        if (initViSPLibs(path, libs))
                         {
                             Log.d(TAG, "First attempt to load libs is OK");
                             String eol = System.getProperty("line.separator");
@@ -357,7 +357,7 @@ class AsyncServiceHelper
         return result;
     }
 
-    private boolean initOpenCVLibs(String Path, String Libs)
+    private boolean initViSPLibs(String Path, String Libs)
     {
         Log.d(TAG, "Trying to init ViSP libs");
         if ((null != Path) && (Path.length() != 0))
@@ -376,7 +376,7 @@ class AsyncServiceHelper
             else
             {
                 // If the dependencies list is not defined or empty.
-                String AbsLibraryPath = Path + File.separator + "libopencv_java3.so";
+                String AbsLibraryPath = Path + File.separator + "libvisp_java3.so";
                 result &= loadLibrary(AbsLibraryPath);
             }
 

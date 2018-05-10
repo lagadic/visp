@@ -54,10 +54,10 @@ func_arg_fix = {}
 
 def getLibVersion(version_hpp_path):
     version_file = open(version_hpp_path, "rt").read()
-    major = re.search("^W*#\W*define\W+CV_VERSION_MAJOR\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
-    minor = re.search("^W*#\W*define\W+CV_VERSION_MINOR\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
-    revision = re.search("^W*#\W*define\W+CV_VERSION_REVISION\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
-    status = re.search("^W*#\W*define\W+CV_VERSION_STATUS\W+\"(.*?)\"\W*$", version_file, re.MULTILINE).group(1)
+    major = re.search("^W*#\W*define\W+VISP_VERSION_MAJOR\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
+    minor = re.search("^W*#\W*define\W+VISP_VERSION_MINOR\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
+    revision = re.search("^W*#\W*define\W+VISP_VERSION_REVISION\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
+    status = re.search("^W*#\W*define\W+VISP_VERSION_STATUS\W+\"(.*?)\"\W*$", version_file, re.MULTILINE).group(1)
     return (major, minor, revision, status)
 
 def libVersionBlock():
@@ -148,7 +148,7 @@ T_CPP_MODULE = """
 
 $includes
 
-using namespace cv;
+using namespace vp;
 
 /// throw java exception
 static void throwJavaException(JNIEnv *env, const std::exception *e, const char *method) {
@@ -158,8 +158,8 @@ static void throwJavaException(JNIEnv *env, const std::exception *e, const char 
   if(e) {
     std::string exception_type = "std::exception";
 
-    if(dynamic_cast<const cv::Exception*>(e)) {
-      exception_type = "cv::Exception";
+    if(dynamic_cast<const vp::Exception*>(e)) {
+      exception_type = "vp::Exception";
       je = env->FindClass("org/visp/core/VpException");
     }
 
@@ -296,8 +296,8 @@ class ClassInfo(GeneralInfo):
                 self.imports.add("java.util.List")
                 self.imports.add("java.util.ArrayList")
                 self.imports.add("org.visp.utils.Converters")
-                if type_dict[ctype]["v_type"] in ("Mat", "vector_Mat"):
-                    self.imports.add("org.visp.core.Mat")
+                if type_dict[ctype]["v_type"] in ("vpMatrix", "vector_Mat"):
+                    self.imports.add("org.visp.core.vpMatrix")
 
     def getAllMethods(self):
         result = []
@@ -392,7 +392,7 @@ class FuncInfo(GeneralInfo):
             if m.startswith("="):
                 self.jname = m[1:]
         self.static = ["","static"][ "/S" in decl[2] ]
-        self.ctype = re.sub(r"^CvTermCriteria", "TermCriteria", decl[1] or "")
+        self.ctype = re.sub(r"^VpTermCriteria", "TermCriteria", decl[1] or "")
         self.args = []
         func_fix_map = func_arg_fix.get(self.jname, {})
         for a in decl[3]:
@@ -414,8 +414,8 @@ class JavaWrapperGenerator(object):
         self.clear()
 
     def clear(self):
-        self.namespaces = set(["cv"])
-        self.classes = { "Mat" : ClassInfo([ 'class Mat', '', [], [] ], self.namespaces) }
+        self.namespaces = set(["vp"])
+        self.classes = { "vpMatrix" : ClassInfo([ 'class vpMatrix', '', [], [] ], self.namespaces) }
         self.module = ""
         self.Module = ""
         self.ported_func_list = []
@@ -546,7 +546,7 @@ class JavaWrapperGenerator(object):
         logging.info("\n\n===== Generating... =====")
         moduleCppCode = StringIO()
         for ci in self.classes.values():
-            if ci.name == "Mat":
+            if ci.name == "vpMatrix":
                 continue
             ci.initCodeStreams(self.Module)
             self.gen_class(ci)
@@ -584,7 +584,7 @@ class JavaWrapperGenerator(object):
         cpp_code = ci.cpp_code
 
         # c_decl
-        # e.g: void add(Mat src1, Mat src2, Mat dst, Mat mask = Mat(), int dtype = -1)
+        # e.g: void add(vpMatrix src1, vpMatrix src2, vpMatrix dst, vpMatrix mask = vpMatrix(), int dtype = -1)
         if prop_name:
             c_decl = "%s %s::%s" % (fi.ctype, fi.classname, prop_name)
         else:
@@ -661,26 +661,26 @@ class JavaWrapperGenerator(object):
                     continue
                 ci.addImports(a.ctype)
                 if "v_type" in type_dict[a.ctype]: # pass as vector
-                    if type_dict[a.ctype]["v_type"] in ("Mat", "vector_Mat"): #pass as Mat or vector_Mat
+                    if type_dict[a.ctype]["v_type"] in ("vpMatrix", "vector_Mat"): #pass as vpMatrix or vector_Mat
                         jn_args.append  ( ArgInfo([ "__int64", "%s_mat.nativeObj" % a.name, "", [], "" ]) )
                         jni_args.append ( ArgInfo([ "__int64", "%s_mat_nativeObj" % a.name, "", [], "" ]) )
                         c_prologue.append( type_dict[a.ctype]["jni_var"] % {"n" : a.name} + ";" )
-                        c_prologue.append( "Mat& %(n)s_mat = *((Mat*)%(n)s_mat_nativeObj)" % {"n" : a.name} + ";" )
+                        c_prologue.append( "vpMatrix& %(n)s_mat = *((vpMatrix*)%(n)s_mat_nativeObj)" % {"n" : a.name} + ";" )
                         if "I" in a.out or not a.out:
                             if type_dict[a.ctype]["v_type"] == "vector_Mat":
-                                j_prologue.append( "List<Mat> %(n)s_tmplm = new ArrayList<Mat>((%(n)s != null) ? %(n)s.size() : 0);" % {"n" : a.name } )
-                                j_prologue.append( "Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s, %(n)s_tmplm);" % {"n" : a.name, "t" : a.ctype} )
+                                j_prologue.append( "List<vpMatrix> %(n)s_tmplm = new ArrayList<vpMatrix>((%(n)s != null) ? %(n)s.size() : 0);" % {"n" : a.name } )
+                                j_prologue.append( "vpMatrix %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s, %(n)s_tmplm);" % {"n" : a.name, "t" : a.ctype} )
                             else:
                                 if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
-                                    j_prologue.append( "Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s);" % {"n" : a.name, "t" : a.ctype} )
+                                    j_prologue.append( "vpMatrix %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s);" % {"n" : a.name, "t" : a.ctype} )
                                 else:
-                                    j_prologue.append( "Mat %s_mat = %s;" % (a.name, a.name) )
+                                    j_prologue.append( "vpMatrix %s_mat = %s;" % (a.name, a.name) )
                             c_prologue.append( "Mat_to_%(t)s( %(n)s_mat, %(n)s );" % {"n" : a.name, "t" : a.ctype} )
                         else:
                             if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
-                                j_prologue.append( "Mat %s_mat = new Mat();" % a.name )
+                                j_prologue.append( "vpMatrix %s_mat = new vpMatrix();" % a.name )
                             else:
-                                j_prologue.append( "Mat %s_mat = %s;" % (a.name, a.name) )
+                                j_prologue.append( "vpMatrix %s_mat = %s;" % (a.name, a.name) )
                         if "O" in a.out:
                             if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
                                 j_epilogue.append("Converters.Mat_to_%(t)s(%(n)s_mat, %(n)s);" % {"t" : a.ctype, "n" : a.name})
@@ -768,7 +768,7 @@ class JavaWrapperGenerator(object):
 
             # public java wrapper method impl (calling native one above)
             # e.g.
-            # public static void add( Mat src1, Mat src2, Mat dst, Mat mask, int dtype )
+            # public static void add( vpMatrix src1, vpMatrix src2, vpMatrix dst, vpMatrix mask, int dtype )
             # { add_0( src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj, dtype );  }
             ret_type = fi.ctype
             if fi.ctype.endswith('*'):
@@ -778,12 +778,12 @@ class JavaWrapperGenerator(object):
             ret = "return retVal;"
             if "v_type" in type_dict[ret_type]:
                 j_type = type_dict[ret_type]["j_type"]
-                if type_dict[ret_type]["v_type"] in ("Mat", "vector_Mat"):
+                if type_dict[ret_type]["v_type"] in ("vpMatrix", "vector_Mat"):
                     tail = ")"
                     if j_type.startswith('MatOf'):
                         ret_val += j_type + ".fromNativeAddr("
                     else:
-                        ret_val = "Mat retValMat = new Mat("
+                        ret_val = "vpMatrix retValMat = new vpMatrix("
                         j_prologue.append( j_type + ' retVal = new Array' + j_type+'();')
                         j_epilogue.append('Converters.Mat_to_' + ret_type + '(retValMat, retVal);')
             elif ret_type.startswith("Ptr_"):
@@ -837,7 +837,7 @@ class JavaWrapperGenerator(object):
 
 
             # cpp part:
-            # jni_func(..) { _retval_ = cv_func(..); return _retval_; }
+            # jni_func(..) { _retval_ = vp_func(..); return _retval_; }
             ret = "return _retval_;"
             default = "return 0;"
             if fi.ctype == "void":
@@ -846,7 +846,7 @@ class JavaWrapperGenerator(object):
             elif not fi.ctype: # c-tor
                 ret = "return (jlong) _retval_;"
             elif "v_type" in type_dict[fi.ctype]: # c-tor
-                if type_dict[fi.ctype]["v_type"] in ("Mat", "vector_Mat"):
+                if type_dict[fi.ctype]["v_type"] in ("vpMatrix", "vector_Mat"):
                     ret = "return (jlong) _retval_;"
                 else: # returned as jobject
                     ret = "return _retval_;"
@@ -871,32 +871,32 @@ class JavaWrapperGenerator(object):
                 else:
                     name = prop_name + ";//"
 
-            cvname = fi.fullName(isCPP=True)
+            vpname = fi.fullName(isCPP=True)
             retval = self.fullTypeName(fi.ctype) + " _retval_ = "
             if fi.ctype == "void":
                 retval = ""
             elif fi.ctype == "String":
-                retval = "cv::" + retval
+                retval = "vp::" + retval
             elif "v_type" in type_dict[fi.ctype]: # vector is returned
                 retval = type_dict[fi.ctype]['jni_var'] % {"n" : '_ret_val_vector_'} + " = "
-                if type_dict[fi.ctype]["v_type"] in ("Mat", "vector_Mat"):
-                    c_epilogue.append("Mat* _retval_ = new Mat();")
+                if type_dict[fi.ctype]["v_type"] in ("vpMatrix", "vector_Mat"):
+                    c_epilogue.append("vpMatrix* _retval_ = new vpMatrix();")
                     c_epilogue.append(fi.ctype+"_to_Mat(_ret_val_vector_, *_retval_);")
                 else:
                     c_epilogue.append("jobject _retval_ = " + fi.ctype + "_to_List(env, _ret_val_vector_);")
             if len(fi.classname)>0:
                 if not fi.ctype: # c-tor
                     retval = fi.fullClass(isCPP=True) + "* _retval_ = "
-                    cvname = "new " + fi.fullClass(isCPP=True)
+                    vpname = "new " + fi.fullClass(isCPP=True)
                 elif fi.static:
-                    cvname = fi.fullName(isCPP=True)
+                    vpname = fi.fullName(isCPP=True)
                 else:
-                    cvname = ("me->" if  not self.isSmartClass(ci) else "(*me)->") + name
+                    vpname = ("me->" if  not self.isSmartClass(ci) else "(*me)->") + name
                     c_prologue.append(\
                         "%(cls)s* me = (%(cls)s*) self; //TODO: check for NULL" \
                             % { "cls" : self.smartWrap(ci, fi.fullClass(isCPP=True))} \
                     )
-            cvargs = []
+            vpargs = []
             for a in args:
                 if a.pointer:
                     jni_name = "&%(n)s"
@@ -908,7 +908,7 @@ class JavaWrapperGenerator(object):
                         jni_name  = "(%s)%s" % (a.ctype, jni_name)
                 if not a.ctype: # hidden
                     jni_name = a.defval
-                cvargs.append( type_dict[a.ctype].get("jni_name", jni_name) % {"n" : a.name})
+                vpargs.append( type_dict[a.ctype].get("jni_name", jni_name) % {"n" : a.name})
                 if "v_type" not in type_dict[a.ctype]:
                     if ("I" in a.out or not a.out or self.isWrapped(a.ctype)) and "jni_var" in type_dict[a.ctype]: # complex type
                         c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n" : a.name} + ";")
@@ -930,7 +930,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
     try {
         LOGD("%s", method_name);
         $prologue
-        $retval$cvname( $cvargs );
+        $retval$vpname( $vpargs );
         $epilogue$ret
     } catch(const std::exception &e) {
         throwJavaException(env, &e, method_name);
@@ -951,8 +951,8 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
         prologue = "\n        ".join(c_prologue), \
         epilogue = "  ".join(c_epilogue) + ("\n        " if c_epilogue else ""), \
         ret = ret, \
-        cvname = cvname, \
-        cvargs = ", ".join(cvargs), \
+        vpname = vpname, \
+        vpargs = ", ".join(vpargs), \
         default = default, \
         retval = retval, \
         namespace = ('using namespace ' + ci.namespace.replace('.', '::') + ';') if ci.namespace else ''

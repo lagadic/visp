@@ -17,7 +17,7 @@
 #endif
 
 
-#define MATOFINT(ENV) static_cast<jclass>(ENV->NewGlobalRef(ENV->FindClass("org/visp/core/MatOfInt")))
+#define VPMATRIXOFINT(ENV) static_cast<jclass>(ENV->NewGlobalRef(ENV->FindClass("org/visp/core/vpMatrixOfInt")))
 #define GETNATIVEOBJ(ENV, CLS, MAT) ENV->GetLongField(MAT, ENV->GetFieldID(CLS, "nativeObj", "J"))
 
 #define CONSTRUCTOR(ENV, CLS) ENV->GetMethodID(CLS, "<init>", "(I)V")

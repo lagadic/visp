@@ -7,8 +7,8 @@
 #endif
 #include <jni.h>
 
-#include "opencv2/java.hpp"
-#include "opencv2/core/utility.hpp"
+#include "visp/java.hpp"
+//#include "visp/core/utility.hpp" TODO to be defined or remove
 
 #include "converters.h"
 #include "listconverters.hpp"
