@@ -1,18 +1,6 @@
 #include "common.h"
 
-#include "opencv2/opencv_modules.hpp"
-
-#ifdef HAVE_OPENCV_FEATURES2D
-#  include "opencv2/features2d.hpp"
-#endif
-
-#ifdef HAVE_OPENCV_VIDEO
-#  include "opencv2/video.hpp"
-#endif
-
-#ifdef HAVE_OPENCV_CONTRIB
-#  include "opencv2/contrib.hpp"
-#endif
+// The file just gets JNI version. No relation to ViSP project's source code
 
 extern "C" {
 

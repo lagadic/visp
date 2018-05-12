@@ -158,7 +158,7 @@ static void throwJavaException(JNIEnv *env, const std::exception *e, const char 
   if(e) {
     std::string exception_type = "std::exception";
 
-    if(dynamic_cast<const vp::Exception*>(e)) {
+    if(dynamic_cast<const vpException*>(e)) {
       exception_type = "vp::Exception";
       je = env->FindClass("org/visp/core/VpException");
     }

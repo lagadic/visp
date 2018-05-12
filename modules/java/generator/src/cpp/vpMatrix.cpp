@@ -12,8 +12,6 @@
 #include "common.h"
 #include "visp3/core/vpMatrix.h"
 
-using namespace vp;
-
 /// throw java exception
 static void throwJavaException(JNIEnv *env, const std::exception *e, const char *method) {
   std::string what = "unknown exception";
@@ -22,10 +20,11 @@ static void throwJavaException(JNIEnv *env, const std::exception *e, const char 
   if(e) {
     std::string exception_type = "std::exception";
 
-    if(dynamic_cast<const vp::Exception*>(e)) {
-      exception_type = "vp::Exception";
-      je = env->FindClass("org/visp/core/VpException");
-    }
+      // In opencv its cv::Exception. Here its vpException
+      if(dynamic_cast<const vpException*>(e)) {
+          exception_type = "vpException";
+          je = env->FindClass("org/visp/core/VpException");
+      }
 
     what = exception_type + ": " + e->what();
   }
@@ -45,14 +44,16 @@ extern "C" {
 //
 
 
-JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
-  (JNIEnv*, jclass);
+JNIEXPORT jlong
+JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
+        (JNIEnv *, jclass);
 
-JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
-  (JNIEnv*, jclass)
-{
+JNIEXPORT jlong
+JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
+        (JNIEnv *, jclass) {
     LOGD("VpMatrix::n_1VpMatrix__()");
-    return (jlong) new vpMatrix(); // Returns the hex address of the object - like 0x55d3f2d9d890
+    return (jlong)
+    new vpMatrix(); // Returns the hex address of the object - like 0x55d3f2d9d890
 }
 
 
@@ -61,17 +62,19 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
 //   vpMatrix::vpMatrix(int rows, int cols, double value)
 //
 
-JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
-  (JNIEnv* env, jclass, jint rows, jint cols, jdouble value);
+JNIEXPORT jlong
+JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
+        (JNIEnv *env, jclass, jint rows, jint cols, jdouble value);
 
-JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
-  (JNIEnv* env, jclass, jint rows, jint cols, jdouble value)
-{
+JNIEXPORT jlong
+JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
+        (JNIEnv *env, jclass, jint rows, jint cols, jdouble value) {
     static const char method_name[] = "VpMatrix::n_1VpMatrix__IID()";
     try {
         LOGD("%s", method_name);
-        return (jlong) new vpMatrix( rows, cols, value);
-    } catch(const std::exception &e) {
+        return (jlong)
+        new vpMatrix(rows, cols, value);
+    } catch (const std::exception &e) {
         throwJavaException(env, &e, method_name);
     } catch (...) {
         throwJavaException(env, 0, method_name);
@@ -85,21 +88,24 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
 //   vpMatrix::vpMatrix(int rows, int cols) - Initialize with value 0
 //
 
-JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__II
-  (JNIEnv* env, jclass, jint rows, jint cols, jdouble value);
+JNIEXPORT jlong
+JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__II
+        (JNIEnv *env, jclass, jint rows, jint cols, jdouble value);
 
-JNIEXPORT jlong JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__II
-  (JNIEnv* env, jclass, jint rows, jint cols, jdouble value)
-{
+JNIEXPORT jlong
+JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__II
+        (JNIEnv *env, jclass, jint rows, jint cols, jdouble value) {
     static const char method_name[] = "VpMatrix::n_1VpMatrix__II()";
     try {
         LOGD("%s", method_name);
-        return (jlong) new vpMatrix( rows, cols);
-    } catch(const std::exception &e) {
+        return (jlong)
+        new vpMatrix(rows, cols);
+    } catch (const std::exception &e) {
         throwJavaException(env, &e, method_name);
     } catch (...) {
         throwJavaException(env, 0, method_name);
     }
 
     return 0;
+}
 }

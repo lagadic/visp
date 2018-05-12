@@ -6,8 +6,8 @@
 
 // TODO Check if need to add more test functions
 
-void Mat_to_vector_double(const vp::vpMatrix& mat, std::vector<double>& v_double);
-void vector_double_to_Mat(const std::vector<double>& v_double, vp::vpMatrix& mat);
+void Mat_to_vector_double(const vpMatrix& mat, std::vector<double>& v_double);
+void vector_double_to_Mat(const std::vector<double>& v_double, vpMatrix& mat);
 
 /*
 void Mat_to_vector_Rect(const vp::vpMatrix& mat, std::vector<vp::vpRect>& v_rect);

@@ -28,6 +28,7 @@ JNIEXPORT void JNICALL Java_org_visp_android_Utils_nBitmapToVpImage2
 JNIEXPORT void JNICALL Java_org_visp_android_Utils_nBitmapToVpImage2
   (JNIEnv * env, jclass, jobject bitmap, jlong m_addr, jboolean needUnPremultiplyAlpha)
 {
+/*
     AndroidBitmapInfo  info;
     void*              pixels = 0;
     vpImage&               dst = *((vpImage*)m_addr);
@@ -39,7 +40,8 @@ JNIEXPORT void JNICALL Java_org_visp_android_Utils_nBitmapToVpImage2
                        info.format == ANDROID_BITMAP_FORMAT_RGB_565 );
             assert( AndroidBitmap_lockPixels(env, bitmap, &pixels) >= 0 );
             assert( pixels );
-            dst.create(info.height, info.width, CV_8UC4);
+
+            dst.init(info.height, info.width, CV_8UC4);
             if( info.format == ANDROID_BITMAP_FORMAT_RGBA_8888 )
             {
                 LOGD("nBitmapToVpImage: RGBA_8888 -> CV_8UC4");
@@ -52,6 +54,7 @@ JNIEXPORT void JNICALL Java_org_visp_android_Utils_nBitmapToVpImage2
                 Mat tmp(info.height, info.width, CV_8UC2, pixels);
                 cvtColor(tmp, dst, COLOR_BGR5652RGBA);
             }
+
             AndroidBitmap_unlockPixels(env, bitmap);
             return;
         } catch(const cv::Exception& e) {
@@ -68,6 +71,7 @@ JNIEXPORT void JNICALL Java_org_visp_android_Utils_nBitmapToVpImage2
             env->ThrowNew(je, "Unknown exception in JNI code {nBitmapToVpImage}");
             return;
         }
+        */
 }
 
 // old signature is left for binary compatibility with 2.4.0 & 2.4.1, to removed in 2.5
@@ -91,16 +95,19 @@ JNIEXPORT void JNICALL Java_org_visp_android_Utils_nVpImageToBitmap2
 JNIEXPORT void JNICALL Java_org_visp_android_Utils_nVpImageToBitmap2
   (JNIEnv * env, jclass, jlong m_addr, jobject bitmap, jboolean needPremultiplyAlpha)
 {
+/*
     AndroidBitmapInfo  info;
     void*              pixels = 0;
     vpImage&               src = *((vpImage*)m_addr);
+
 
     try {
             LOGD("nVpImageToBitmap");
             assert( AndroidBitmap_getInfo(env, bitmap, &info) >= 0 );
             assert( info.format == ANDROID_BITMAP_FORMAT_RGBA_8888 ||
                        info.format == ANDROID_BITMAP_FORMAT_RGB_565 );
-            assert( src.dims == 2 && info.height == (uint32_t)src.rows && info.width == (uint32_t)src.cols );
+
+            assert( src.he == 2 && info.height == (uint32_t)src.rows && info.width == (uint32_t)src.cols );
             assert( src.type() == CV_8UC1 || src.type() == CV_8UC3 || src.type() == CV_8UC4 );
             assert( AndroidBitmap_lockPixels(env, bitmap, &pixels) >= 0 );
             assert( pixels );
@@ -150,6 +157,7 @@ JNIEXPORT void JNICALL Java_org_visp_android_Utils_nVpImageToBitmap2
             env->ThrowNew(je, "Unknown exception in JNI code {nVpImageToBitmap}");
             return;
         }
+*/	
 }
 
 // old signature is left for binary compatibility with 2.4.0 & 2.4.1, to removed in 2.5

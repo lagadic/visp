@@ -1,8 +1,7 @@
 #define LOG_TAG "org.visp.utils.Converters"
 #include "common.h"
 
-using namespace vp;
-// CHECK_MAT is defined in visp/modules/java/include/visp/java.hpp
+// CHECK_MAT is defined in visp/modules/java/include/visp/java.hpp. Not needed actually
 
 //vector_double
 
