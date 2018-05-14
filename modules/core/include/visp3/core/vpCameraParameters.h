@@ -77,8 +77,8 @@
   0   & 0   & 1
   \end{array}\right]
   \left[ \begin{array}{c}
-  X_c / Z_c  \\
-  Y_c / Z_c   \\
+  x  \\
+  y   \\
   1
   \end{array}\right]
   \f]
@@ -86,6 +86,7 @@
   where:
 
   - \f$(X_c,Y_c,Z_c)\f$ are the coordinates of a 3D point in the camera frame
+  - \f$(x,y)\f$ are the coordinates of the projection of the 3D point in the image plane 
   - \f$(u,v)\f$ are the coordinates in pixels of the projected 3D point
   - \f$(u_0,v_0)\f$ are the coordinates of the principal point (the
   intersection of the optical axes with the image plane) that is usually near
@@ -95,7 +96,7 @@
   \f$p_x=f/l_x\f$ (resp, \f$l_y\f$ being the height of a pixel,
   \f$p_y=f/l_y\f$).
 
-  When \f$Z_c \neq 0\f$, the previous equation si equivalent to the following:
+  When \f$Z_c \neq 0\f$, the previous equation is equivalent to the following:
   \f[
   \begin{array}{lcl}
   x &=& X_c / Z_c \\
