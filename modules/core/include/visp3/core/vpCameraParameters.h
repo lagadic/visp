@@ -72,14 +72,14 @@
   1
   \end{array}\right] =
   \left[ \begin{array}{ccc}
-  u_0 & 0   & p_x  \\
-  0   & v_0 & p_y \\
+  p_x & 0   & u_0  \\
+  0   & p_y & v_0 \\
   0   & 0   & 1
   \end{array}\right]
   \left[ \begin{array}{c}
-  X_c  \\
-  Y_c \\
-  Z_c
+  X_c / Z_c  \\
+  Y_c / Z_c   \\
+  1
   \end{array}\right]
   \f]
 
