@@ -3,7 +3,7 @@
 # ----------------------------------------------------------------------------
 if(APPLE_FRAMEWORK OR WINRT OR NOT PYTHON_DEFAULT_AVAILABLE OR NOT ANT_EXECUTABLE
     OR NOT (JNI_FOUND OR (ANDROID AND ANDROID_NATIVE_API_LEVEL GREATER 7)))
-  __vp_module_turn_off(java)
+  vp_module_disable(java)
 endif()
 
 set(the_description "The java bindings")
@@ -454,7 +454,7 @@ set_target_properties(${the_module} PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-    DEFINE_SYMBOL VPAPI_EXPORTS
+    DEFINE_SYMBOL visp_EXPORTS
     )
 
 if(ANDROID)

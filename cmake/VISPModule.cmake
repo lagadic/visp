@@ -210,6 +210,27 @@ macro(vp_add_module _name)
   endif()
 endmacro()
 
+# excludes module from current configuration
+macro(vp_module_disable_ module)
+  set(__modname ${module})
+  if(NOT __modname MATCHES "^visp_")
+    set(__modname visp_${module})
+  endif()
+  list(APPEND VISP_MODULES_DISABLED_FORCE "${__modname}")
+  set(HAVE_${__modname} OFF CACHE INTERNAL "Module ${__modname} can not be built in current configuration")
+  set(VISP_MODULE_${__modname}_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Location of ${__modname} module sources")
+  set(VISP_MODULES_DISABLED_FORCE "${VISP_MODULES_DISABLED_FORCE}" CACHE INTERNAL "List of ViSP modules which can not be build in current configuration")
+  if(BUILD_${__modname})
+    # touch variable controlling build of the module to suppress "unused variable" CMake warning
+  endif()
+  unset(__modname)
+endmacro()
+
+macro(vp_module_disable module)
+  vp_module_disable_(${module})
+  return() # leave the current folder
+endmacro()
+
 # remove visp_ prefix from name
 macro(vp_short_module_name name)
   if(${name} MATCHES "^visp_")
@@ -775,11 +796,12 @@ macro(_vp_create_module)
     ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     RUNTIME_OUTPUT_DIRECTORY ${BINARY_OUTPUT_PATH}
-    DEFINE_SYMBOL VISP_EXPORT
+    # FS: Remove next line. Should be added only for shared libs. See below
+    #DEFINE_SYMBOL visp_EXPORTS
   )
 
   if(ANDROID AND BUILD_FAT_JAVA_LIB)
-    target_compile_definitions(${the_module} PRIVATE VISP_EXPORT)
+    target_compile_definitions(${the_module} PRIVATE visp_EXPORTS)
   endif()
 
   set_property(TARGET ${the_module} APPEND PROPERTY
@@ -798,8 +820,8 @@ macro(_vp_create_module)
 
   if((NOT DEFINED VISP_MODULE_TYPE AND BUILD_SHARED_LIBS)
       OR (DEFINED VISP_MODULE_TYPE AND VISP_MODULE_TYPE STREQUAL SHARED))
-    set_target_properties(${the_module} PROPERTIES COMPILE_DEFINITIONS VISP_EXPORT)
-    set_target_properties(${the_module} PROPERTIES DEFINE_SYMBOL VISP_EXPORT)
+    set_target_properties(${the_module} PROPERTIES COMPILE_DEFINITIONS visp_EXPORTS)
+    set_target_properties(${the_module} PROPERTIES DEFINE_SYMBOL visp_EXPORTS)
   endif()
 
   if(MSVC)
