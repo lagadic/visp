@@ -77,13 +77,8 @@
   0   & 0   & 1
   \end{array}\right]
   \left[ \begin{array}{c}
-<<<<<<< HEAD
-  X_c / Z_c  \\
-  Y_c / Z_c   \\
-=======
   x  \\
   y   \\
->>>>>>> lagadic/master
   1
   \end{array}\right]
   \f]
