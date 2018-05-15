@@ -490,7 +490,7 @@ void vpImageTools::normalize(vpImage<double> &I)
   Get the interpolated value at a given location.
   \param I : The image to perform intepolation in.
   \param point : The image point.
-  \param it : The interpolation type (only interpolation with vpImageTools::INTERPOLATION_NEAREST and
+  \param method : The interpolation method (only interpolation with vpImageTools::INTERPOLATION_NEAREST and
   vpImageTools::INTERPOLATION_LINEAR are implemented).
 */
 double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImagePoint &point,
