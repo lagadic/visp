@@ -37,8 +37,8 @@
  *****************************************************************************/
 
 #include <visp3/core/vpCPUFeatures.h>
-#include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpImageTools.h>
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
@@ -379,13 +379,13 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
     return;
   }
 
-  II.resize(I.getHeight()+1, I.getWidth()+1, 0.0);
-  IIsq.resize(I.getHeight()+1, I.getWidth()+1, 0.0);
+  II.resize(I.getHeight() + 1, I.getWidth() + 1, 0.0);
+  IIsq.resize(I.getHeight() + 1, I.getWidth() + 1, 0.0);
 
   for (unsigned int i = 1; i < II.getHeight(); i++) {
     for (unsigned int j = 1; j < II.getWidth(); j++) {
-      II[i][j] = I[i-1][j-1] + II[i-1][j] + II[i][j-1] - II[i-1][j-1];
-      IIsq[i][j] = vpMath::sqr(I[i-1][j-1]) + IIsq[i-1][j] + IIsq[i][j-1] - IIsq[i-1][j-1];
+      II[i][j] = I[i - 1][j - 1] + II[i - 1][j] + II[i][j - 1] - II[i - 1][j - 1];
+      IIsq[i][j] = vpMath::sqr(I[i - 1][j - 1]) + IIsq[i - 1][j] + IIsq[i][j - 1] - IIsq[i - 1][j - 1];
     }
   }
 }
@@ -430,9 +430,9 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
       const __m128d v2 = _mm_loadu_pd(ptr_I2);
       const __m128d norm_a = _mm_sub_pd(v1, v_mean_a);
       const __m128d norm_b = _mm_sub_pd(v2, v_mean_b);
-      v_ab = _mm_add_pd( v_ab, _mm_mul_pd(norm_a, norm_b) );
-      v_a2 = _mm_add_pd( v_a2, _mm_mul_pd(norm_a, norm_a) );
-      v_b2 = _mm_add_pd( v_b2, _mm_mul_pd(norm_b, norm_b) );
+      v_ab = _mm_add_pd(v_ab, _mm_mul_pd(norm_a, norm_b));
+      v_a2 = _mm_add_pd(v_a2, _mm_mul_pd(norm_a, norm_a));
+      v_b2 = _mm_add_pd(v_b2, _mm_mul_pd(norm_b, norm_b));
     }
 
     double v_res_ab[2], v_res_a2[2], v_res_b2[2];
@@ -465,7 +465,7 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
 void vpImageTools::columnMean(const vpImage<double> &I, vpRowVector &V)
 {
   unsigned int height = I.getHeight(), width = I.getWidth();
-  V.resize(width); //resize and nullify
+  V.resize(width); // resize and nullify
 
   for (unsigned int i = 0; i < height; ++i)
     for (unsigned int j = 0; j < width; ++j)
@@ -490,12 +490,13 @@ void vpImageTools::normalize(vpImage<double> &I)
   Get the interpolated value at a given location.
   \param I : The image to perform intepolation in.
   \param point : The image point.
-  \param it : The interpolation type (only interpolation with INTERPOLATION_NEAREST and INTERPOLATION_LINEAR
-  are implemented).
+  \param method : The interpolation method (only interpolation with vpImageTools::INTERPOLATION_NEAREST and
+  vpImageTools::INTERPOLATION_LINEAR are implemented).
 */
-double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImagePoint &point, const vpImageInterpolationType &it)
+double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImagePoint &point,
+                                 const vpImageInterpolationType &method)
 {
-  switch (it) {
+  switch (method) {
   case INTERPOLATION_NEAREST:
     return I(vpMath::round(point.get_i()), vpMath::round(point.get_j()));
   case INTERPOLATION_LINEAR: {
@@ -608,7 +609,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
   vpImageConvert::convert(I_tpl, I_tpl_double);
 
   const unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
-  I_score.resize(I.getHeight()-height_tpl, I.getWidth()-width_tpl, 0.0);
+  I_score.resize(I.getHeight() - height_tpl, I.getWidth() - width_tpl, 0.0);
 
   if (useOptimized) {
     vpImage<double> II, IIsq;
@@ -617,43 +618,43 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     vpImage<double> II_tpl, IIsq_tpl;
     integralImage(I_tpl, II_tpl, IIsq_tpl);
 
-    //zero-mean template image
-    const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] -
-        II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
+    // zero-mean template image
+    const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
     const double mean2 = sum2 / I_tpl.getSize();
     for (unsigned int cpt = 0; cpt < I_tpl_double.getSize(); cpt++) {
       I_tpl_double.bitmap[cpt] -= mean2;
     }
 
-  #if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
-    #pragma omp parallel for schedule(dynamic)
-    for (unsigned int i = 0; i < I.getHeight()-height_tpl; i+=step_v) {
-      for (unsigned int j = 0; j < I.getWidth()-width_tpl; j+=step_u) {
+#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#pragma omp parallel for schedule(dynamic)
+    for (unsigned int i = 0; i < I.getHeight() - height_tpl; i += step_v) {
+      for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
         I_score[i][j] = normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, i, j);
       }
     }
-  #else
-    //error C3016: 'i': index variable in OpenMP 'for' statement must have signed integral type
-    int end = (int) ((I.getHeight()-height_tpl) / step_v) + 1;
-    std::vector<unsigned int> vec_step_v((size_t) end);
-    for (unsigned int cpt = 0, idx = 0; cpt < I.getHeight()-height_tpl; cpt+=step_v, idx++) {
+#else
+    // error C3016: 'i': index variable in OpenMP 'for' statement must have signed integral type
+    int end = (int)((I.getHeight() - height_tpl) / step_v) + 1;
+    std::vector<unsigned int> vec_step_v((size_t)end);
+    for (unsigned int cpt = 0, idx = 0; cpt < I.getHeight() - height_tpl; cpt += step_v, idx++) {
       vec_step_v[(size_t)idx] = cpt;
     }
-    #if defined _OPENMP //only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
-    #pragma omp parallel for schedule(dynamic)
-    #endif
+#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#pragma omp parallel for schedule(dynamic)
+#endif
     for (int cpt = 0; cpt < end; cpt++) {
-      for (unsigned int j = 0; j < I.getWidth()-width_tpl; j+=step_u) {
-        I_score[vec_step_v[cpt]][j] = normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
+      for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
+        I_score[vec_step_v[cpt]][j] =
+            normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
       }
     }
-  #endif
+#endif
   } else {
     vpImage<double> I_cur;
 
-    for (unsigned int i = 0; i < I.getHeight()-height_tpl; i += step_v) {
-      for (unsigned int j = 0; j < I.getWidth()-width_tpl; j += step_u) {
-        vpRect roi( vpImagePoint(i, j), vpImagePoint(i+height_tpl-1, j+width_tpl-1) );
+    for (unsigned int i = 0; i < I.getHeight() - height_tpl; i += step_v) {
+      for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
+        vpRect roi(vpImagePoint(i, j), vpImagePoint(i + height_tpl - 1, j + width_tpl - 1));
         vpImageTools::crop(I_double, roi, I_cur);
 
         I_score[i][j] = vpImageTools::normalizedCorrelation(I_cur, I_tpl_double, useOptimized);
@@ -702,11 +703,11 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
       for (; j <= I2.getWidth() - 2; j += 2, ptr_I1 += 2, ptr_I2 += 2) {
         const __m128d v1 = _mm_loadu_pd(ptr_I1);
         const __m128d v2 = _mm_loadu_pd(ptr_I2);
-        v_ab = _mm_add_pd( v_ab, _mm_mul_pd(v1, v2) );
+        v_ab = _mm_add_pd(v_ab, _mm_mul_pd(v1, v2));
       }
 
       for (; j < I2.getWidth(); j++) {
-        ab += (I1[i0+i][j0+j]) * I2[i][j];
+        ab += (I1[i0 + i][j0 + j]) * I2[i][j];
       }
     }
 
@@ -724,23 +725,22 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
   if (!use_sse_version) {
     for (unsigned int i = 0; i < I2.getHeight(); i++) {
       for (unsigned int j = 0; j < I2.getWidth(); j++) {
-        ab += (I1[i0+i][j0+j]) * I2[i][j];
+        ab += (I1[i0 + i][j0 + j]) * I2[i][j];
       }
     }
   }
 
   const unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
-  const double sum1 = (II[i0+height_tpl][j0+width_tpl] + II[i0][j0] -
-      II[i0][j0+width_tpl] - II[i0+height_tpl][j0]);
-  const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] -
-      II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
+  const double sum1 =
+      (II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0] - II[i0][j0 + width_tpl] - II[i0 + height_tpl][j0]);
+  const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
 
-  double a2 = ( ( IIsq[i0+I2.getHeight()][j0+I2.getWidth()] + IIsq[i0][j0] -
-      IIsq[i0][j0+I2.getWidth()] - IIsq[i0+I2.getHeight()][j0] ) - (1.0 / I2.getSize()) *
-      vpMath::sqr(sum1) );
+  double a2 = ((IIsq[i0 + I2.getHeight()][j0 + I2.getWidth()] + IIsq[i0][j0] - IIsq[i0][j0 + I2.getWidth()] -
+                IIsq[i0 + I2.getHeight()][j0]) -
+               (1.0 / I2.getSize()) * vpMath::sqr(sum1));
 
-  double b2 = ( ( IIsq_tpl[I2.getHeight()][I2.getWidth()] + IIsq_tpl[0][0] -
-      IIsq_tpl[0][I2.getWidth()] - IIsq_tpl[I2.getHeight()][0] ) - (1.0 / I2.getSize()) *
-      vpMath::sqr(sum2) );
+  double b2 = ((IIsq_tpl[I2.getHeight()][I2.getWidth()] + IIsq_tpl[0][0] - IIsq_tpl[0][I2.getWidth()] -
+                IIsq_tpl[I2.getHeight()][0]) -
+               (1.0 / I2.getSize()) * vpMath::sqr(sum2));
   return ab / sqrt(a2 * b2);
 }
