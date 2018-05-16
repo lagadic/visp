@@ -46,10 +46,14 @@
 #ifndef __vpMbEdgeMultiTracker_h__
 #define __vpMbEdgeMultiTracker_h__
 
+#include <visp3/core/vpConfig.h>
+
 #include <iostream>
 #include <vector>
 
 #include <visp3/mbt/vpMbEdgeTracker.h>
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!
   \class vpMbEdgeMultiTracker
@@ -66,7 +70,7 @@
   may also use an xml file used to tune the behavior of the tracker and an
   init file used to compute the pose at the very first image.
 */
-class VISP_EXPORT vpMbEdgeMultiTracker : public vpMbEdgeTracker
+class VISP_EXPORT vp_deprecated vpMbEdgeMultiTracker : public vpMbEdgeTracker
 {
 protected:
   //! Map of camera transformation matrix between the current camera frame to
@@ -376,4 +380,5 @@ protected:
   //@}
 };
 
-#endif
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#endif //__vpMbEdgeMultiTracker_h__

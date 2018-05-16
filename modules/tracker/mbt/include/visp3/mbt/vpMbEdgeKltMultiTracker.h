@@ -51,6 +51,8 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 #include <visp3/mbt/vpMbEdgeMultiTracker.h>
@@ -72,7 +74,7 @@
   may also use an xml file used to tune the behavior of the tracker and an
   init file used to compute the pose at the very first image.
 */
-class VISP_EXPORT vpMbEdgeKltMultiTracker : public vpMbEdgeMultiTracker, public vpMbKltMultiTracker
+class VISP_EXPORT vp_deprecated vpMbEdgeKltMultiTracker : public vpMbEdgeMultiTracker, public vpMbKltMultiTracker
 {
 protected:
   //! Factor for KLT trackers.
@@ -390,4 +392,5 @@ protected:
 };
 
 #endif // VISP_HAVE_OPENCV
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 #endif //__vpMbEdgeKltMultiTracker_h__

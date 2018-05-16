@@ -46,6 +46,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) &&                     \
     defined(VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
@@ -573,7 +575,6 @@ int main(int argc, const char **argv)
 }
 
 #else
-
 int main()
 {
   std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run "
@@ -581,5 +582,11 @@ int main()
             << std::endl;
   return EXIT_SUCCESS;
 }
-
 #endif
+#else
+int main()
+{
+  std::cout << "Nothing to run, deprecated example." << std::endl;
+  return 0;
+}
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
