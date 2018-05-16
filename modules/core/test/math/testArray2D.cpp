@@ -69,13 +69,12 @@ template <typename Type> bool test(const std::string &s, const vpArray2D<Type> &
 
 int main()
 {
-  int err = 1;
   {
     // test default constructor
     vpArray2D<double> A;
     std::vector<double> bench;
     if (test("A", A, bench) == false)
-      return err;
+      return EXIT_FAILURE;
   }
   {
     // test copy constructor
@@ -89,11 +88,11 @@ int main()
       }
     }
     if (test("A", A, bench) == false)
-      return err;
+      return EXIT_FAILURE;
 
     vpArray2D<double> B(A);
     if (test("B", B, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     std::cout << "Min/Max: " << B.getMinValue() << " " << B.getMaxValue() << std::endl;
   }
   {
@@ -101,17 +100,17 @@ int main()
     vpArray2D<double> A(3, 4, 2.);
     std::vector<double> bench1(12, 2);
     if (test("A", A, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
 
     A.resize(5, 6);
     std::vector<double> bench2(30, 0);
     if (test("A", A, bench2) == false)
-      return err;
+      return EXIT_FAILURE;
 
     A = -2.;
     std::vector<double> bench3(30, -2);
     if (test("A", A, bench3) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   // Test with float
@@ -120,7 +119,7 @@ int main()
     vpArray2D<float> A;
     std::vector<float> bench;
     if (test("A", A, bench) == false)
-      return err;
+      return EXIT_FAILURE;
   }
   {
     // test copy constructor
@@ -134,11 +133,11 @@ int main()
       }
     }
     if (test("A", A, bench) == false)
-      return err;
+      return EXIT_FAILURE;
 
     vpArray2D<float> B(A);
     if (test("B", B, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     std::cout << "Min/Max: " << B.getMinValue() << " " << B.getMaxValue() << std::endl;
   }
   {
@@ -146,17 +145,17 @@ int main()
     vpArray2D<float> A(3, 4, 2.);
     std::vector<float> bench1(12, 2);
     if (test("A", A, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
 
     A.resize(5, 6);
     std::vector<float> bench2(30, 0);
     if (test("A", A, bench2) == false)
-      return err;
+      return EXIT_FAILURE;
 
     A = -2.;
     std::vector<float> bench3(30, -2);
     if (test("A", A, bench3) == false)
-      return err;
+      return EXIT_FAILURE;
   }
   {
     // Test Hadamard product

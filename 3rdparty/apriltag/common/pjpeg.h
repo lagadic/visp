@@ -26,7 +26,7 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 #include "image_u8x3.h"
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 typedef struct pjpeg_component pjpeg_component_t;
@@ -94,7 +94,7 @@ image_u8_t *pjpeg_to_u8_baseline(pjpeg_t *pj);
 image_u8x3_t *pjpeg_to_u8x3_baseline(pjpeg_t *pj);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

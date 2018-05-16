@@ -366,7 +366,7 @@ int main(int argc, const char **argv)
     opt_display = false;
 #endif
     if (opt_display) {
-#if (defined VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
       display.init(I, 100, 100, "Test tracking");
 #endif
       vpDisplay::display(I);
@@ -556,7 +556,8 @@ int main(int argc, const char **argv)
         std::cout << "Projection error: " << tracker.getProjectionError() << std::endl << std::endl;
       }
 
-      vpDisplay::flush(I);
+      if (opt_display)
+        vpDisplay::flush(I);
     }
 
     std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;

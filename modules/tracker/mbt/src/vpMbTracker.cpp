@@ -181,16 +181,18 @@ vpMbTracker::~vpMbTracker() {}
   \param initFile : File containing the coordinates of at least 4 3D points
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
-  \param displayHelp : Optionnal display of an image that
+  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
   should have the same generic name as the init file (ie teabox.ppm). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
+  \param T : optional transformation matrix to transform
+  3D points expressed in the original object frame to the desired object frame.
 
   \exception vpException::ioError : The file specified in \e initFile doesn't
   exist.
-
 */
-void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp)
+void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp,
+                            const vpHomogeneousMatrix &T)
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
@@ -199,14 +201,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
   std::string ext = ".init";
   std::string str_pose = "";
-  size_t pos = (unsigned int)initFile.rfind(ext);
+  size_t pos = initFile.rfind(ext);
 
   // Load the last poses from files
   std::fstream finitpos;
-  std::fstream finit;
+  std::ifstream finit;
   char s[FILENAME_MAX];
   if (poseSavingFilename.empty()) {
-    if (pos == initFile.size() - ext.size() && pos != 0)
+    if (pos != std::string::npos)
       str_pose = initFile.substr(0, pos) + ".0.pos";
     else
       str_pose = initFile + ".0.pos";
@@ -262,13 +264,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
     // number of points
     // X Y Z
     // X Y Z
-    if (pos == initFile.size() - ext.size() && pos != 0)
+    if (pos != std::string::npos)
       sprintf(s, "%s", initFile.c_str());
     else
       sprintf(s, "%s.init", initFile.c_str());
 
     std::cout << "Load 3D points from: " << s << std::endl;
-    finit.open(s, std::ios::in);
+    finit.open(s);
     if (finit.fail()) {
       std::cout << "cannot read " << s << std::endl;
       throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", s);
@@ -278,13 +280,22 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
     // Display window creation and initialisation
     try {
       if (displayHelp) {
+        const std::string imgExtVec[] = {".ppm", ".pgm", ".jpg", ".jpeg", ".png"};
         std::string dispF;
-        if (pos == initFile.size() - ext.size() && pos != 0)
-          dispF = initFile.substr(0, pos) + ".ppm";
-        else
-          dispF = initFile + ".ppm";
+        bool foundHelpImg = false;
+        if (pos != std::string::npos) {
+          for (size_t i = 0; i < 5 && !foundHelpImg; i++) {
+            dispF = initFile.substr(0, pos) + imgExtVec[i];
+            foundHelpImg = vpIoTools::checkFilename(dispF);
+          }
+        } else {
+          for (size_t i = 0; i < 5 && !foundHelpImg; i++) {
+            dispF = initFile + imgExtVec[i];
+            foundHelpImg = vpIoTools::checkFilename(dispF);
+          }
+        }
 
-        if (vpIoTools::checkFilename(dispF)) {
+        if (foundHelpImg) {
           std::cout << "Load image to help initialization: " << dispF << std::endl;
 #if defined VISP_HAVE_X11
           d_help = new vpDisplayX;
@@ -313,14 +324,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 #else  //#ifdef VISP_HAVE_MODULE_IO
     (void)(displayHelp);
 #endif //#ifdef VISP_HAVE_MODULE_IO
-    char c;
     // skip lines starting with # as comment
-    finit.get(c);
-    while (!finit.fail() && (c == '#')) {
-      finit.ignore(256, '\n');
-      finit.get(c);
-    }
-    finit.unget();
+    removeComment(finit);
 
     unsigned int n3d;
     finit >> n3d;
@@ -330,24 +335,21 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
       throw vpException(vpException::badValue, "In %s file, the number of 3D points exceed the max allowed", s);
     }
 
-    vpPoint *P = new vpPoint[n3d];
+    std::vector<vpPoint> P(n3d);
     for (unsigned int i = 0; i < n3d; i++) {
       // skip lines starting with # as comment
-      finit.get(c);
-      while (!finit.fail() && (c == '#')) {
-        finit.ignore(256, '\n');
-        finit.get(c);
-      }
-      finit.unget();
-      double X, Y, Z;
+      removeComment(finit);
 
-      finit >> X;
-      finit >> Y;
-      finit >> Z;
+      vpColVector pt_3d(4, 1.0);
+      finit >> pt_3d[0];
+      finit >> pt_3d[1];
+      finit >> pt_3d[2];
       finit.ignore(256, '\n'); // skip the rest of the line
 
-      std::cout << "Point " << i + 1 << " with 3D coordinates: " << X << " " << Y << " " << Z << std::endl;
-      P[i].setWorldCoordinates(X, Y, Z); // (X,Y,Z)
+      vpColVector pt_3d_tf = T*pt_3d;
+      std::cout << "Point " << i + 1 << " with 3D coordinates: " << pt_3d_tf[0] << " " << pt_3d_tf[1] << " " << pt_3d_tf[2] << std::endl;
+
+      P[i].setWorldCoordinates(pt_3d_tf[0], pt_3d_tf[1], pt_3d_tf[2]); // (X,Y,Z)
     }
 
     finit.close();
@@ -412,8 +414,6 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
       }
     }
     vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
-
-    delete[] P;
 
     // save the pose into file
     if (poseSavingFilename.empty())
@@ -1065,35 +1065,10 @@ is not wrl or cao.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
 CAO model files which include other CAO model files.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbTracker::loadModel(const char *modelFile, const bool verbose) { loadModel(std::string(modelFile), verbose); }
-
-/*!
-  Load a 3D model from the file in parameter. This file must either be a vrml
-  file (.wrl) or a CAO file (.cao). CAO format is described in the
-  loadCAOModel() method.
-
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
-  \throw vpException::ioError if the file cannot be open, or if its extension
-is not wrl or cao.
-
-  \param modelFile : the file containing the the 3D model description.
-  The extension of this file is either .wrl or .cao.
-  \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
-*/
-void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose)
+void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose, const vpHomogeneousMatrix &T)
 {
   std::string::const_iterator it;
 
@@ -1109,7 +1084,7 @@ void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose)
       nbPolygonPoints = 0;
       nbCylinders = 0;
       nbCircles = 0;
-      loadCAOModel(modelFile, vectorOfModelFilename, startIdFace, verbose, true);
+      loadCAOModel(modelFile, vectorOfModelFilename, startIdFace, verbose, true, T);
     } else if ((*(it - 1) == 'l' && *(it - 2) == 'r' && *(it - 3) == 'w' && *(it - 4) == '.') ||
                (*(it - 1) == 'L' && *(it - 2) == 'R' && *(it - 3) == 'W' && *(it - 4) == '.')) {
       loadVRMLModel(modelFile);
@@ -1314,9 +1289,12 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   \param parent : This parameter is
   set to true when parsing a parent CAO model file, and false when parsing an
   included CAO model file.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                               int &startIdFace, const bool verbose, const bool parent)
+                               int &startIdFace, const bool verbose, const bool parent,
+                               const vpHomogeneousMatrix &T)
 {
   std::ifstream fileId;
   fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
@@ -1354,8 +1332,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     removeComment(fileId);
 
-    //////////////////////////Read the header part if
-    /// present//////////////////////////
+    //////////////////////////Read the header part if present//////////////////////////
     std::string line;
     std::string prefix = "load";
 
@@ -1395,7 +1372,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
         if (!cyclic) {
           if (vpIoTools::checkFilename(headerPath)) {
-            loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false);
+            loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false, T);
           } else {
             throw vpException(vpException::ioError, "file cannot be open");
           }
@@ -1412,8 +1389,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId.unget();
     }
 
-    //////////////////////////Read the point declaration
-    /// part//////////////////////////
+    //////////////////////////Read the point declaration part//////////////////////////
     unsigned int caoNbrPoint;
     fileId >> caoNbrPoint;
     fileId.ignore(256, '\n'); // skip the rest of the line
@@ -1432,19 +1408,16 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     }
     vpPoint *caoPoints = new vpPoint[caoNbrPoint];
 
-    double x; // 3D coordinates
-    double y;
-    double z;
-
     int i; // image coordinate (used for matching)
     int j;
 
     for (unsigned int k = 0; k < caoNbrPoint; k++) {
       removeComment(fileId);
 
-      fileId >> x;
-      fileId >> y;
-      fileId >> z;
+      vpColVector pt_3d(4, 1.0);
+      fileId >> pt_3d[0];
+      fileId >> pt_3d[1];
+      fileId >> pt_3d[2];
 
       if (caoVersion == 2) {
         fileId >> i;
@@ -1453,13 +1426,13 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       fileId.ignore(256, '\n'); // skip the rest of the line
 
-      caoPoints[k].setWorldCoordinates(x, y, z);
+      vpColVector pt_3d_tf = T*pt_3d;
+      caoPoints[k].setWorldCoordinates(pt_3d_tf[0], pt_3d_tf[1], pt_3d_tf[2]);
     }
 
     removeComment(fileId);
 
-    //////////////////////////Read the segment declaration
-    /// part//////////////////////////
+    //////////////////////////Read the segment declaration part//////////////////////////
     // Store in a map the potential segments to add
     std::map<std::pair<unsigned int, unsigned int>, SegmentInfo> segmentTemporaryMap;
     unsigned int caoNbrLine;
@@ -1491,8 +1464,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId >> index1;
       fileId >> index2;
 
-      //////////////////////////Read the parameter value if
-      /// present//////////////////////////
+      //////////////////////////Read the parameter value if present//////////////////////////
       // Get the end of the line
       char buffer[256];
       fileId.getline(buffer, 256);

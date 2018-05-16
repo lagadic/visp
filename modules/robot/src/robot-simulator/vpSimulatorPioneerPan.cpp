@@ -234,7 +234,9 @@ void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::MIXT_FRAME:
     std::cout << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
+    break;
   case vpRobot::END_EFFECTOR_FRAME:
     std::cout << "END_EFFECTOR_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
+    break;
   }
 }

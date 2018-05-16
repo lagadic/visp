@@ -550,7 +550,9 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 {
   resize(A.getRows(), A.getCols(), false, false);
 
-  memcpy(data, A.data, dsize * sizeof(double));
+  if (data != NULL && A.data != NULL && data != A.data) {
+    memcpy(data, A.data, dsize * sizeof(double));
+  }
 
   return *this;
 }
@@ -558,9 +560,11 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 {
-  resize(A.getRows(), A.getCols(), false);
+  resize(A.getRows(), A.getCols(), false, false);
 
-  memcpy(data, A.data, dsize * sizeof(double));
+  if (data != NULL && A.data != NULL && data != A.data) {
+    memcpy(data, A.data, dsize * sizeof(double));
+  }
 
   return *this;
 }
@@ -591,10 +595,7 @@ vpMatrix &vpMatrix::operator=(vpMatrix &&other)
 //! Set all the element of the matrix A to \e x.
 vpMatrix &vpMatrix::operator=(double x)
 {
-  for (unsigned int i = 0; i < rowNum; i++)
-    for (unsigned int j = 0; j < colNum; j++)
-      rowPtrs[i][j] = x;
-
+  std::fill(data, data + rowNum*colNum, x);
   return *this;
 }
 
@@ -3847,7 +3848,7 @@ vpRowVector vpMatrix::getRow(const unsigned int i) const
   vpRowVector r;
   r.resize(colNum, false);
 
-  if (r.data != NULL && data != NULL && colNum > 0) {
+  if (r.data != NULL && data != NULL && r.data != data) {
     memcpy(r.data, data + i * colNum, sizeof(double) * colNum);
   }
 
@@ -3921,25 +3922,6 @@ vpMatrix vpMatrix::stack(const vpMatrix &A, const vpMatrix &B)
 }
 
 /*!
-  Stack row vector \e r to matrix \e A and return the resulting matrix [ A r
-  ]^T
-
-  \param A : Upper matrix.
-  \param r : Lower matrix.
-  \return Stacked matrix [ A r ]^T
-
-  \warning \e A and \e r must have the same number of columns.
-*/
-vpMatrix vpMatrix::stack(const vpMatrix &A, const vpRowVector &r)
-{
-  vpMatrix C;
-
-  vpMatrix::stack(A, r, C);
-
-  return C;
-}
-
-/*!
   Stack matrix \e B to the end of matrix \e A and return the resulting matrix
   in \e C.
 
@@ -3986,7 +3968,24 @@ void vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 }
 
 /*!
-  Stack row vector \e v to the end of matrix \e A and return the resulting
+  Stack row vector \e r to matrix \e A and return the resulting matrix [ A r ]^T
+
+  \param A : Upper matrix.
+  \param r : Lower row vector.
+  \return Stacked matrix [ A r ]^T
+
+  \warning \e A and \e r must have the same number of columns.
+*/
+vpMatrix vpMatrix::stack(const vpMatrix &A, const vpRowVector &r)
+{
+  vpMatrix C;
+  vpMatrix::stack(A, r, C);
+
+  return C;
+}
+
+/*!
+  Stack row vector \e r to the end of matrix \e A and return the resulting
   matrix in \e C.
 
   \param  A : Upper matrix.
@@ -3998,36 +3997,52 @@ void vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 */
 void vpMatrix::stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C)
 {
-  unsigned int nra = A.getRows();
-
-  if (nra != 0) {
-    if (A.getCols() != r.getCols()) {
-      throw(vpException(vpException::dimensionError, "Cannot stack (%dx%d) matrix with (1x%d) row vector", A.getRows(),
-                        A.getCols(), r.getCols()));
-    }
-  }
-
   if (A.data != NULL && A.data == C.data) {
     std::cerr << "A and C must be two different objects!" << std::endl;
     return;
   }
 
-  if (r.size() == 0) {
-    C = A;
+  C = A;
+  C.stack(r);
+}
+
+/*!
+  Stack column vector \e c to matrix \e A and return the resulting matrix [ A c ]
+
+  \param A : Left matrix.
+  \param c : Right column vector.
+  \return Stacked matrix [ A c ]
+
+  \warning \e A and \e c must have the same number of rows.
+*/
+vpMatrix vpMatrix::stack(const vpMatrix &A, const vpColVector &c)
+{
+  vpMatrix C;
+  vpMatrix::stack(A, c, C);
+
+  return C;
+}
+
+/*!
+  Stack column vector \e c to the end of matrix \e A and return the resulting
+  matrix in \e C.
+
+  \param  A : Left matrix.
+  \param  r : Right column vector.
+  \param  C : Stacked matrix C = [ A c ]
+
+  \warning A and c must have the same number of rows. A and C must be two
+  different objects.
+*/
+void vpMatrix::stack(const vpMatrix &A, const vpColVector &c, vpMatrix &C)
+{
+  if (A.data != NULL && A.data == C.data) {
+    std::cerr << "A and C must be two different objects!" << std::endl;
     return;
   }
 
-  C.resize(nra + 1, r.getCols(), false, false);
-
-  if (C.data != NULL && A.data != NULL && A.size() > 0) {
-    // Copy A in C
-    memcpy(C.data, A.data, sizeof(double) * A.size());
-  }
-
-  if (C.data != NULL && r.data != NULL && r.size() > 0) {
-    // Copy r in C
-    memcpy(C.data + A.size(), r.data, sizeof(double) * r.size());
-  }
+  C = A;
+  C.stack(c);
 }
 
 /*!
@@ -4461,7 +4476,7 @@ void vpMatrix::stack(const vpMatrix &A)
 
 /*!
   Stack row vector \e r at the end of the current matrix, or copy if the
-matrix has no dimensions : this = [ this r ]^T.
+matrix has no dimensions: this = [ this r ]^T.
 
   Here an example for a robot velocity log :
 \code
@@ -4470,7 +4485,7 @@ vpColVector v(6);
 for(unsigned int i = 0;i<100;i++)
 {
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
-  Velocities.stackMatrices(v.t());
+  Velocities.stack(v.t());
 }
 \endcode
 */
@@ -4491,9 +4506,52 @@ void vpMatrix::stack(const vpRowVector &r)
     unsigned int oldSize = size();
     resize(rowNum + 1, colNum, false, false);
 
-    if (data != NULL && r.data != NULL && r.size() > 0) {
+    if (data != NULL && r.data != NULL && data != r.data) {
       // Copy r in data
       memcpy(data + oldSize, r.data, sizeof(double) * r.size());
+    }
+  }
+}
+
+/*!
+  Stack column vector \e c at the right of the current matrix, or copy if the
+matrix has no dimensions: this = [ this c ].
+
+  Here an example for a robot velocity log :
+\code
+vpMatrix A;
+vpColVector v(6);
+for(unsigned int i = 0;i<100;i++)
+{
+  robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
+  Velocities.stack(v);
+}
+\endcode
+*/
+void vpMatrix::stack(const vpColVector &c)
+{
+  if (colNum == 0) {
+    *this = c;
+  } else {
+    if (rowNum != c.getRows()) {
+      throw(vpException(vpException::dimensionError, "Cannot stack (%dx%d) matrix with (%dx1) column vector", rowNum,
+                        colNum, c.getRows()));
+    }
+
+    if (c.size() == 0) {
+      return;
+    }
+
+    vpMatrix tmp = *this;
+    unsigned int oldColNum = colNum;
+    resize(rowNum, colNum + 1, false, false);
+
+    if (data != NULL && tmp.data != NULL && data != tmp.data) {
+      // Copy c in data
+      for (unsigned int i = 0; i < rowNum; i++) {
+        memcpy(data + i*colNum, tmp.data + i*oldColNum, sizeof(double) * oldColNum);
+        rowPtrs[i][oldColNum] = c[i];
+      }
     }
   }
 }
@@ -4511,9 +4569,9 @@ void vpMatrix::stack(const vpRowVector &r)
 void vpMatrix::insert(const vpMatrix &A, const unsigned int r, const unsigned int c)
 {
   if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
-    if (A.colNum == colNum && data != NULL && A.data != NULL && A.size() > 0) {
+    if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
       memcpy(data + r * colNum, A.data, sizeof(double) * A.size());
-    } else if (data != NULL && A.data != NULL && A.colNum > 0) {
+    } else if (data != NULL && A.data != NULL && A.data != data) {
       for (unsigned int i = r; i < (r + A.getRows()); i++) {
         memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(double) * A.colNum);
       }

@@ -57,6 +57,7 @@
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
+#include <visp3/core/vpRectOriented.h>
 
 #include <fstream>
 #include <iostream>
@@ -91,6 +92,8 @@ public:
   static void crop(const vpImage<Type> &I, double roi_top, double roi_left, unsigned int roi_height,
                    unsigned int roi_width, vpImage<Type> &crop, unsigned int v_scale = 1, unsigned int h_scale = 1);
 
+  static void columnMean(const vpImage<double> &I, vpRowVector &result);
+
   template <class Type>
   static void crop(const vpImage<Type> &I, const vpImagePoint &topLeft, unsigned int roi_height, unsigned int roi_width,
                    vpImage<Type> &crop, unsigned int v_scale = 1, unsigned int h_scale = 1);
@@ -100,6 +103,9 @@ public:
   template <class Type>
   static void crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi,
                    vpImage<Type> &crop, unsigned int v_scale = 1, unsigned int h_scale = 1);
+
+  static void extract(const vpImage<unsigned char> &Src, vpImage<unsigned char> &Dst, const vpRectOriented &r);
+  static void extract(const vpImage<unsigned char> &Src, vpImage<double> &Dst, const vpRectOriented &r);
 
   template <class Type> static void flip(const vpImage<Type> &I, vpImage<Type> &newI);
 
@@ -111,6 +117,7 @@ public:
 
   static void imageDifferenceAbsolute(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                       vpImage<unsigned char> &Idiff);
+  static void imageDifferenceAbsolute(const vpImage<double> &I1, const vpImage<double> &I2, vpImage<double> &Idiff);
   static void imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff);
 
   static void imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Ires,
@@ -119,6 +126,16 @@ public:
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires, const bool saturate = false);
 
+  static double interpolate(const vpImage<unsigned char> &I, const vpImagePoint &point,
+                            const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
+
+  static void integralImage(const vpImage<unsigned char> &I, vpImage<double> &II, vpImage<double> &IIsq);
+
+  static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
+                                      const bool useOptimized = true);
+
+  static void normalize(vpImage<double> &I);
+
   template <class Type>
   static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height,
                      const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
@@ -126,6 +143,10 @@ public:
   template <class Type>
   static void resize(const vpImage<Type> &I, vpImage<Type> &Ires,
                      const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
+
+  static void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
+                               vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
+                               const bool useOptimized = true);
 
   template <class Type>
   static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI);
@@ -152,6 +173,10 @@ private:
 
   // Linear interpolation
   static float lerp(const float A, const float B, const float t);
+
+  static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2, const vpImage<double> &II,
+                                      const vpImage<double> &IIsq, const vpImage<double> &II_tpl,
+                                      const vpImage<double> &IIsq_tpl, const unsigned int i0, const unsigned int j0);
 
   template <class Type>
   static void resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i, const unsigned int j,
@@ -344,7 +369,7 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 {
   int i_min = (std::max)((int)(ceil(roi.getTop() / v_scale)), 0);
   int j_min = (std::max)((int)(ceil(roi.getLeft() / h_scale)), 0);
-  int i_max = (std::min)((int)(ceil((roi.getTop() + roi.getHeight())) / v_scale), (int)(height / v_scale));
+  int i_max = (std::min)((int)(ceil((roi.getTop() + roi.getHeight()) / v_scale)), (int)(height / v_scale));
   int j_max = (std::min)((int)(ceil((roi.getLeft() + roi.getWidth()) / h_scale)), (int)(width / h_scale));
 
   unsigned int i_min_u = (unsigned int)i_min;
@@ -467,9 +492,9 @@ public:
   unsigned int threadid;
 
 public:
-  vpUndistortInternalType() : src(NULL), dst(NULL), width(0), height(0), cam(), nthreads(0), threadid(0){};
+  vpUndistortInternalType() : src(NULL), dst(NULL), width(0), height(0), cam(), nthreads(0), threadid(0) {}
 
-  vpUndistortInternalType(const vpUndistortInternalType<Type> &u) { *this = u; };
+  vpUndistortInternalType(const vpUndistortInternalType<Type> &u) { *this = u; }
   vpUndistortInternalType &operator=(const vpUndistortInternalType<Type> &u)
   {
     src = u.src;

@@ -41,7 +41,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <string.h> // memcpy
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
 #if defined(_MSC_VER)
@@ -223,7 +223,7 @@ static inline int dblcmp (double d1, double d2)
 }
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

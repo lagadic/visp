@@ -67,7 +67,7 @@ if(USE_OPENCV)
     if(POLICY CMP0045)
       # Fix Error on non-existent target in get_target_property for 3rd party location extraction
       cmake_policy(PUSH)
-      cmake_policy(SET CMP0045 NEW)
+      cmake_policy(SET CMP0045 OLD)
     endif()
 
     foreach(component_ ${OpenCV_LIB_COMPONENTS})
@@ -225,12 +225,16 @@ if(MSVC)
   # warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead
   # warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead
   # warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead
-  vp_set_source_file_compile_flag(src/tools/network/vpClient.cpp /wd"4996")
-  vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp /wd"4996")
-  vp_set_source_file_compile_flag(src/tools/network/vpNetwork.cpp /wd"4996")
-  if(BUILD_TESTS)
-    vp_set_source_file_compile_flag(test/network/testClient.cpp /wd"4996")
-    vp_set_source_file_compile_flag(test/network/testServer.cpp /wd"4996")
+  if(BUILD_SHARED_LIBS)
+    vp_set_source_file_compile_flag(src/tools/network/vpClient.cpp /wd"4996")
+    vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp /wd"4996")
+    vp_set_source_file_compile_flag(src/tools/network/vpNetwork.cpp /wd"4996")
+    if(BUILD_TESTS)
+      vp_set_source_file_compile_flag(test/network/testClient.cpp /wd"4996")
+      vp_set_source_file_compile_flag(test/network/testServer.cpp /wd"4996")
+    endif()
+  else()
+    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4996)
   endif()
 endif()
 

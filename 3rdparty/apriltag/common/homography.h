@@ -37,7 +37,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "zarray.h"
 
 #ifdef __cplusplus
-extern "C" {
+//extern "C" {
 #endif
 
     /** Given a 3x3 homography matrix and the focal lengths of the
@@ -185,7 +185,7 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
 matd_t *homography_to_model_view(const matd_t *H, double F, double G, double A, double B, double C, double D);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif

@@ -448,12 +448,18 @@ macro(visp_check_compiler_flag LANG FLAG RESULT)
       unset(_fname)
     endif()
     if(_fname)
+      # Since cxx11 option makes try_compile() result wrong, we remove all the CXX_FLAGS
+      # when we check if an option is available or not
+      set(CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
+      set(CMAKE_CXX_FLAGS "")
       message(STATUS "Performing Test ${RESULT}")
       try_compile(${RESULT}
         "${CMAKE_BINARY_DIR}"
         "${_fname}"
         COMPILE_DEFINITIONS "${FLAG}"
         OUTPUT_VARIABLE OUTPUT)
+      set(CMAKE_CXX_FLAGS ${CXX_FLAGS_BACKUP})
+      unset(CXX_FLAGS_BACKUP)
 
       foreach(_regex ${VISP_COMPILER_FAIL_REGEX})
         if("${OUTPUT}" MATCHES "${_regex}")
