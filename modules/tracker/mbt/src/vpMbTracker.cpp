@@ -2916,7 +2916,7 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
     l->hiddenface = &m_projectionErrorFaces;
     l->useScanLine = useScanLine;
 
-    l->setIndex(m_projectionErrorLines.size());
+    l->setIndex((unsigned int)m_projectionErrorLines.size());
     l->setName(name);
 
     if (clippingFlag != vpPolygon3D::NO_CLIPPING)
@@ -2953,7 +2953,7 @@ void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2,
     ci->setCameraParameters(cam);
     ci->buildFrom(P1, P2, P3, r);
     ci->setMovingEdge(&m_projectionErrorMe);
-    ci->setIndex(m_projectionErrorCircles.size());
+    ci->setIndex((unsigned int)m_projectionErrorCircles.size());
     ci->setName(name);
     ci->index_polygon = idFace;
     ci->hiddenface = &m_projectionErrorFaces;
@@ -2984,7 +2984,7 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
     cy->setCameraParameters(cam);
     cy->buildFrom(P1, P2, r);
     cy->setMovingEdge(&m_projectionErrorMe);
-    cy->setIndex(m_projectionErrorCylinders.size());
+    cy->setIndex((unsigned int)m_projectionErrorCylinders.size());
     cy->setName(name);
     cy->index_polygon = idFace;
     cy->hiddenface = &m_projectionErrorFaces;

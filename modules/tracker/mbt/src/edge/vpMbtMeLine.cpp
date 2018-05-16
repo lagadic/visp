@@ -431,13 +431,16 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
       double angle2 = acos(vecLine * (-vecGrad));
 
       if (display) {
-        vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), it->get_i() + length*cos(deltaNormalized), it->get_j() + length*sin(deltaNormalized), vpColor::blue,
+        vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(deltaNormalized)),
+                                (int)(it->get_j() + length*sin(deltaNormalized)), vpColor::blue,
                                 length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
         if (angle1 < angle2) {
-          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), it->get_i() + length*cos(angle), it->get_j() + length*sin(angle), vpColor::red,
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle)),
+                                  (int)(it->get_j() + length*sin(angle)), vpColor::red,
                                   length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
         } else {
-          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), it->get_i() + length*cos(angle+M_PI), it->get_j() + length*sin(angle+M_PI), vpColor::red,
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle+M_PI)),
+                                  (int)(it->get_j() + length*sin(angle+M_PI)), vpColor::red,
                                   length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
         }
       }

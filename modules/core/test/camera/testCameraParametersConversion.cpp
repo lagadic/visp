@@ -70,7 +70,7 @@ int main()
         return EXIT_FAILURE;
       }
 
-      cam2.computeFov(640.0, 480.0);
+      cam2.computeFov(640u, 480u);
       if (cam1 == cam2) {
         std::cerr << "Issue with vpCameraParameters comparison operator." << std::endl;
         return EXIT_FAILURE;
