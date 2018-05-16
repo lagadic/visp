@@ -109,7 +109,7 @@ public:
   void reset();
 
   //! Sample pixels at a given interval
-  virtual void sample(const vpImage<unsigned char> &image) = 0;
+  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false) = 0;
 
   /*!
     Set the initial range.

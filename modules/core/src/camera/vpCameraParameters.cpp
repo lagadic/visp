@@ -382,6 +382,49 @@ vpCameraParameters &vpCameraParameters::operator=(const vpCameraParameters &cam)
 }
 
 /*!
+  True if the two objects are absolutely identical.
+ */
+bool vpCameraParameters::operator==(const vpCameraParameters &c) const {
+  if (projModel != c.projModel)
+    return false;
+
+  if (!vpMath::equal(px, c.px, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(py, c.py, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(u0, c.u0, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(v0, c.v0, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(kud, c.kud, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(kdu, c.kdu, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(inv_px, c.inv_px, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(inv_py, c.inv_py, std::numeric_limits<double>::epsilon()))
+    return false;
+
+  if (isFov != c.isFov ||
+      !vpMath::equal(m_hFovAngle, c.m_hFovAngle, std::numeric_limits<double>::epsilon()) ||
+      !vpMath::equal(m_vFovAngle, c.m_vFovAngle, std::numeric_limits<double>::epsilon()) ||
+      width != c.width || height != c.height)
+    return false;
+
+  if (fovNormals.size() != c.fovNormals.size())
+    return false;
+
+  std::vector<vpColVector>::const_iterator it1 = fovNormals.begin();
+  std::vector<vpColVector>::const_iterator it2 = c.fovNormals.begin();
+  for (; it1 != fovNormals.end() && it2 != c.fovNormals.end(); it1++, it2++) {
+    if (*it1 != *it2)
+      return false;
+  }
+
+  return true;
+}
+
+/*!
+  False if the two objects are absolutely identical.
+ */
+bool vpCameraParameters::operator!=(const vpCameraParameters &c) const {
+  return !(*this == c);
+}
+
+/*!
   Compute angles and normals of the FOV.
 
   \param w : Width of the image

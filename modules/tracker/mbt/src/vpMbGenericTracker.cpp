@@ -174,6 +174,39 @@ vpMbGenericTracker::~vpMbGenericTracker()
   }
 }
 
+/*!
+  Compute projection error given an input image and camera pose.
+
+  \param I : Input grayscale image.
+  \param _cMo : Camera pose.
+  \param _cam : Camera parameters.
+*/
+double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
+                                                         const vpCameraParameters &_cam)
+{
+  double rawTotalProjectionError = 0.0;
+  unsigned int nbTotalFeaturesUsed = 0;
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+       it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+
+    unsigned int nbFeaturesUsed = 0;
+    double curProjError = tracker->computeProjectionErrorImpl(I, _cMo, _cam, nbFeaturesUsed);
+
+    if (nbFeaturesUsed > 0) {
+      nbTotalFeaturesUsed += nbFeaturesUsed;
+      rawTotalProjectionError += curProjError;
+    }
+  }
+
+  if (nbTotalFeaturesUsed > 0) {
+    return vpMath::deg(rawTotalProjectionError / (double)nbTotalFeaturesUsed);
+  }
+
+  return 90.0;
+}
+
 void vpMbGenericTracker::computeProjectionError()
 {
   if (computeProjError) {
@@ -3692,6 +3725,45 @@ void vpMbGenericTracker::setProjectionErrorComputation(const bool &flag)
 }
 
 /*!
+  Display or not gradient and model orientation when computing the projection error.
+*/
+void vpMbGenericTracker::setProjectionErrorDisplay(const bool display)
+{
+  vpMbTracker::setProjectionErrorDisplay(display);
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+       it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setProjectionErrorDisplay(display);
+  }
+}
+
+/*!
+  Arrow length used to display gradient and model orientation for projection error computation.
+*/
+void vpMbGenericTracker::setProjectionErrorDisplayArrowLength(const unsigned int length)
+{
+  vpMbTracker::setProjectionErrorDisplayArrowLength(length);
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+       it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setProjectionErrorDisplayArrowLength(length);
+  }
+}
+
+void vpMbGenericTracker::setProjectionErrorDisplayArrowThickness(const unsigned int thickness)
+{
+  vpMbTracker::setProjectionErrorDisplayArrowThickness(thickness);
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+       it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setProjectionErrorDisplayArrowThickness(thickness);
+  }
+}
+
+/*!
   Set the reference camera name.
 
   \param referenceCameraName : Name of the reference camera.
@@ -4053,6 +4125,8 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper()
 
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT TrackerWrapper");
+
+  m_projectionErrorFaces.getOgreContext()->setWindowName("MBT TrackerWrapper (projection error)");
 #endif
 }
 
@@ -4072,13 +4146,39 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper(const int trackerType)
 
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT TrackerWrapper");
+
+  m_projectionErrorFaces.getOgreContext()->setWindowName("MBT TrackerWrapper (projection error)");
 #endif
 }
 
-vpMbGenericTracker::TrackerWrapper::~TrackerWrapper() {}
+vpMbGenericTracker::TrackerWrapper::~TrackerWrapper() {
+  vpMbtDistanceLine *l;
+  vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
 
-// Implemented only for debugging purposes: use TrackerWrapper as a standalone
-// tracker
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end(); ++it) {
+    l = *it;
+    if (l != NULL)
+      delete l;
+    l = NULL;
+  }
+
+  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin(); it != m_projectionErrorCylinders.end(); ++it) {
+    cy = *it;
+    if (cy != NULL)
+      delete cy;
+    cy = NULL;
+  }
+
+  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin(); it != m_projectionErrorCircles.end(); ++it) {
+    ci = *it;
+    if (ci != NULL)
+      delete ci;
+    ci = NULL;
+  }
+}
+
+// Implemented only for debugging purposes: use TrackerWrapper as a standalone tracker
 void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char> *const ptr_I)
 {
   computeVVSInit(ptr_I);
@@ -4708,6 +4808,9 @@ void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned 
 
 void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile)
 {
+  // Load projection error config
+  vpMbTracker::loadConfigFile(configFile);
+
 #ifdef VISP_HAVE_XML2
   vpMbtXmlGenericParser xmlp((vpMbtXmlGenericParser::vpParserType)m_trackerType);
 
@@ -4766,7 +4869,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
     }
 
     std::cout << "Model-Based Tracker ************ " << std::endl;
-    xmlp.parse(configFile.c_str());
+    xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
   }

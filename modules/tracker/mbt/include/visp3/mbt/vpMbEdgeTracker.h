@@ -395,6 +395,7 @@ public:
   virtual inline vpColVector getRobustWeights() const { return m_w_edge; }
 
   void loadConfigFile(const std::string &configFile);
+
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
                            const vpHomogeneousMatrix &cMo_, const bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
@@ -496,7 +497,6 @@ public:
 protected:
   /** @name Protected Member Functions Inherited from vpMbEdgeTracker */
   //@{
-  bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1,
                  const std::string &name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string &name = "");

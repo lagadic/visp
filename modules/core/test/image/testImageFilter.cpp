@@ -416,32 +416,14 @@ int main(int argc, const char *argv[])
 #endif
 
     // Test Sobel
+    vpMatrix kernel_sobel_x_flip(5, 5);
+    vpImageFilter::getSobelKernelX(kernel_sobel_x_flip.data, 2);
     vpMatrix kernel_sobel_x(5, 5);
-    kernel_sobel_x[0][0] = 1.0;
-    kernel_sobel_x[0][1] = 2.0;
-    kernel_sobel_x[0][2] = 0.0;
-    kernel_sobel_x[0][3] = -2.0;
-    kernel_sobel_x[0][4] = -1.0;
-    kernel_sobel_x[1][0] = 4.0;
-    kernel_sobel_x[1][1] = 8.0;
-    kernel_sobel_x[1][2] = 0.0;
-    kernel_sobel_x[1][3] = -8.0;
-    kernel_sobel_x[1][4] = -4.0;
-    kernel_sobel_x[2][0] = 6.0;
-    kernel_sobel_x[2][1] = 12.0;
-    kernel_sobel_x[2][2] = 0.0;
-    kernel_sobel_x[2][3] = -12.0;
-    kernel_sobel_x[2][4] = -6.0;
-    kernel_sobel_x[3][0] = 4.0;
-    kernel_sobel_x[3][1] = 8.0;
-    kernel_sobel_x[3][2] = 0.0;
-    kernel_sobel_x[3][3] = -8.0;
-    kernel_sobel_x[3][4] = -4.0;
-    kernel_sobel_x[4][0] = 1.0;
-    kernel_sobel_x[4][1] = 2.0;
-    kernel_sobel_x[4][2] = 0.0;
-    kernel_sobel_x[4][3] = -2.0;
-    kernel_sobel_x[4][4] = -1.0;
+    for (unsigned int i = 0; i < kernel_sobel_x.getRows(); i++) {
+      for (unsigned int j = 0; j < kernel_sobel_x.getCols(); j++) {
+        kernel_sobel_x[i][j] = kernel_sobel_x_flip[i][kernel_sobel_x.getCols()-1-j];
+      }
+    }
 
     vpImage<double> I_sobel_x;
     t = vpTime::measureTimeMs();

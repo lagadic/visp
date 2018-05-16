@@ -877,7 +877,9 @@ void vpMbEdgeTracker::computeProjectionError(const vpImage<unsigned char> &_I)
         if (l->meline[a] != NULL) {
           double lineNormGradient;
           unsigned int lineNbFeatures;
-          l->meline[a]->computeProjectionError(_I, lineNormGradient, lineNbFeatures);
+          l->meline[a]->computeProjectionError(_I, lineNormGradient, lineNbFeatures, m_SobelX, m_SobelY,
+                                               m_projectionErrorDisplay, m_projectionErrorDisplayLength,
+                                               m_projectionErrorDisplayThickness);
           projectionError += lineNormGradient;
           nbFeatures += lineNbFeatures;
         }
@@ -892,7 +894,9 @@ void vpMbEdgeTracker::computeProjectionError(const vpImage<unsigned char> &_I)
       if (cy->meline1 != NULL) {
         double cylinderNormGradient = 0;
         unsigned int cylinderNbFeatures = 0;
-        cy->meline1->computeProjectionError(_I, cylinderNormGradient, cylinderNbFeatures);
+        cy->meline1->computeProjectionError(_I, cylinderNormGradient, cylinderNbFeatures, m_SobelX, m_SobelY,
+                                            m_projectionErrorDisplay, m_projectionErrorDisplayLength,
+                                            m_projectionErrorDisplayThickness);
         projectionError += cylinderNormGradient;
         nbFeatures += cylinderNbFeatures;
       }
@@ -900,7 +904,9 @@ void vpMbEdgeTracker::computeProjectionError(const vpImage<unsigned char> &_I)
       if (cy->meline2 != NULL) {
         double cylinderNormGradient = 0;
         unsigned int cylinderNbFeatures = 0;
-        cy->meline2->computeProjectionError(_I, cylinderNormGradient, cylinderNbFeatures);
+        cy->meline2->computeProjectionError(_I, cylinderNormGradient, cylinderNbFeatures, m_SobelX, m_SobelY,
+                                            m_projectionErrorDisplay, m_projectionErrorDisplayLength,
+                                            m_projectionErrorDisplayThickness);
         projectionError += cylinderNormGradient;
         nbFeatures += cylinderNbFeatures;
       }
@@ -913,7 +919,9 @@ void vpMbEdgeTracker::computeProjectionError(const vpImage<unsigned char> &_I)
     if (c->isVisible() && c->isTracked() && c->meEllipse != NULL) {
       double circleNormGradient = 0;
       unsigned int circleNbFeatures = 0;
-      c->meEllipse->computeProjectionError(_I, circleNormGradient, circleNbFeatures);
+      c->meEllipse->computeProjectionError(_I, circleNormGradient, circleNbFeatures, m_SobelX, m_SobelY,
+                                           m_projectionErrorDisplay, m_projectionErrorDisplayLength,
+                                           m_projectionErrorDisplayThickness);
       projectionError += circleNormGradient;
       nbFeatures += circleNbFeatures;
     }
@@ -1188,56 +1196,22 @@ void vpMbEdgeTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneo
 
 /*!
   Load the xml configuration file.
-  From the configuration file initialize the parameters corresponding to the
-objects: moving-edges, camera and visibility angles.
+  From the configuration file
+  initialize the parameters corresponding to the objects: moving-edges, camera
+  and visibility angles.
 
   \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
-  \throw vpException::ioError if the file has not been properly parsed (file
-not found or wrong format for the data).
+  call vpXmlParser::cleanup() before the exit().
 
   \param configFile : full name of the xml file.
 
-  The XML configuration file has the following form:
-  \code
-<?xml version="1.0"?>
-<conf>
-  <ecm>
-    <mask>
-      <size>5</size>
-      <nb_mask>180</nb_mask>
-    </mask>
-    <range>
-      <tracking>7</tracking>
-    </range>
-    <contrast>
-      <edge_threshold>5000</edge_threshold>
-      <mu1>0.5</mu1>
-      <mu2>0.5</mu2>
-    </contrast>
-    <sample>
-      <step>4</step>
-    </sample>
-  </ecm>
-  <face>
-    <near_clipping>0.01</near_clipping>
-    <far_clipping>0.90</far_clipping>
-    <fov_clipping>1</fov_clipping>
-  </face>
-  <camera>
-    <u0>320</u0>
-    <v0>240</v0>
-    <px>686.24</px>
-    <py>686.24</py>
-  </camera>
-</conf>
-  \endcode
-
-  \sa vpXmlParser::cleanup()
+  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
 */
 void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
 {
+  // Load projection error config
+  vpMbTracker::loadConfigFile(configFile);
+
 #ifdef VISP_HAVE_XML2
   vpMbtXmlParser xmlp;
 
@@ -1248,7 +1222,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
 
   try {
     std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
-    xmlp.parse(configFile.c_str());
+    xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());
   }
@@ -1409,11 +1383,11 @@ void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<unsigned char> &I, co
 */
 void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
-  vpMbtDistanceLine *l;
+  const bool doNotTrack = false;
 
   for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
        ++it) {
-    l = *it;
+    vpMbtDistanceLine *l = *it;
     bool isvisible = false;
 
     for (std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex != l->Lindex_polygon.end();
@@ -1435,7 +1409,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
       l->setVisible(true);
       l->updateTracked();
       if (l->meline.empty() && l->isTracked())
-        l->initMovingEdge(I, _cMo);
+        l->initMovingEdge(I, _cMo, doNotTrack);
     } else {
       l->setVisible(false);
       for (size_t a = 0; a < l->meline.size(); a++) {
@@ -1450,10 +1424,9 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     }
   }
 
-  vpMbtDistanceCylinder *cy;
   for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
        it != cylinders[scaleLevel].end(); ++it) {
-    cy = *it;
+    vpMbtDistanceCylinder *cy = *it;
 
     bool isvisible = false;
 
@@ -1471,7 +1444,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
       cy->setVisible(true);
       if (cy->meline1 == NULL || cy->meline2 == NULL) {
         if (cy->isTracked())
-          cy->initMovingEdge(I, _cMo);
+          cy->initMovingEdge(I, _cMo, doNotTrack);
       }
     } else {
       cy->setVisible(false);
@@ -1487,10 +1460,9 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
     }
   }
 
-  vpMbtDistanceCircle *ci;
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
        it != circles[scaleLevel].end(); ++it) {
-    ci = *it;
+    vpMbtDistanceCircle *ci = *it;
     bool isvisible = false;
 
     int index = ci->index_polygon;
@@ -1505,7 +1477,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
       ci->setVisible(true);
       if (ci->meEllipse == NULL) {
         if (ci->isTracked())
-          ci->initMovingEdge(I, _cMo);
+          ci->initMovingEdge(I, _cMo, doNotTrack);
       }
     } else {
       ci->setVisible(false);
@@ -1524,12 +1496,14 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
 */
 void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
 {
+  const bool doNotTrack = false;
+
   for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
        ++it) {
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
       if (l->meline.empty()) {
-        l->initMovingEdge(I, cMo);
+        l->initMovingEdge(I, cMo, doNotTrack);
       }
       l->trackMovingEdge(I, cMo);
     }
@@ -1540,7 +1514,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceCylinder *cy = *it;
     if (cy->isVisible() && cy->isTracked()) {
       if (cy->meline1 == NULL || cy->meline2 == NULL) {
-        cy->initMovingEdge(I, cMo);
+        cy->initMovingEdge(I, cMo, doNotTrack);
       }
       cy->trackMovingEdge(I, cMo);
     }
@@ -1551,7 +1525,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceCircle *ci = *it;
     if (ci->isVisible() && ci->isTracked()) {
       if (ci->meEllipse == NULL) {
-        ci->initMovingEdge(I, cMo);
+        ci->initMovingEdge(I, cMo, doNotTrack);
       }
       ci->trackMovingEdge(I, cMo);
     }
@@ -1841,28 +1815,6 @@ void vpMbEdgeTracker::resetMovingEdge()
 }
 
 /*!
-  Check if two vpPoints are similar.
-
-  To be similar : \f$ (X_1 - X_2)^2 + (Y_1 - Y_2)^2 + (Z_1 - Z_2)^2 < epsilon
-  \f$.
-
-  \param P1 : The first point to compare
-  \param P2 : The second point to compare
-*/
-bool vpMbEdgeTracker::samePoint(const vpPoint &P1, const vpPoint &P2) const
-{
-  double dx = fabs(P1.get_oX() - P2.get_oX());
-  double dy = fabs(P1.get_oY() - P2.get_oY());
-  double dz = fabs(P1.get_oZ() - P2.get_oZ());
-
-  if (dx <= std::numeric_limits<double>::epsilon() && dy <= std::numeric_limits<double>::epsilon() &&
-      dz <= std::numeric_limits<double>::epsilon())
-    return true;
-  else
-    return false;
-}
-
-/*!
   Add a line belonging to the \f$ index \f$ the polygon to the list of lines.
   It is defined by its two extremities.
 
@@ -1876,49 +1828,51 @@ bool vpMbEdgeTracker::samePoint(const vpPoint &P1, const vpPoint &P2) const
 */
 void vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string name)
 {
-  // suppress line already in the model
-  bool already_here = false;
-  vpMbtDistanceLine *l;
+  {
+    // suppress line already in the model
+    bool already_here = false;
+    vpMbtDistanceLine *l;
 
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      downScale(i);
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
-        l = *it;
-        if ((samePoint(*(l->p1), P1) && samePoint(*(l->p2), P2)) ||
-            (samePoint(*(l->p1), P2) && samePoint(*(l->p2), P1))) {
-          already_here = true;
-          l->addPolygon(polygon);
-          l->hiddenface = &faces;
+    for (unsigned int i = 0; i < scales.size(); i += 1) {
+      if (scales[i]) {
+        downScale(i);
+        for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
+          l = *it;
+          if ((samePoint(*(l->p1), P1) && samePoint(*(l->p2), P2)) ||
+              (samePoint(*(l->p1), P2) && samePoint(*(l->p2), P1))) {
+            already_here = true;
+            l->addPolygon(polygon);
+            l->hiddenface = &faces;
+          }
         }
+
+        if (!already_here) {
+          l = new vpMbtDistanceLine;
+
+          l->setCameraParameters(cam);
+          l->buildFrom(P1, P2);
+          l->addPolygon(polygon);
+          l->setMovingEdge(&me);
+          l->hiddenface = &faces;
+          l->useScanLine = useScanLine;
+
+          l->setIndex(nline);
+          l->setName(name);
+
+          if (clippingFlag != vpPolygon3D::NO_CLIPPING)
+            l->getPolygon().setClipping(clippingFlag);
+
+          if ((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
+            l->getPolygon().setNearClippingDistance(distNearClip);
+
+          if ((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
+            l->getPolygon().setFarClippingDistance(distFarClip);
+
+          nline += 1;
+          lines[i].push_back(l);
+        }
+        upScale(i);
       }
-
-      if (!already_here) {
-        l = new vpMbtDistanceLine;
-
-        l->setCameraParameters(cam);
-        l->buildFrom(P1, P2);
-        l->addPolygon(polygon);
-        l->setMovingEdge(&me);
-        l->hiddenface = &faces;
-        l->useScanLine = useScanLine;
-
-        l->setIndex(nline);
-        l->setName(name);
-
-        if (clippingFlag != vpPolygon3D::NO_CLIPPING)
-          l->getPolygon().setClipping(clippingFlag);
-
-        if ((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
-          l->getPolygon().setNearClippingDistance(distNearClip);
-
-        if ((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
-          l->getPolygon().setFarClippingDistance(distFarClip);
-
-        nline += 1;
-        lines[i].push_back(l);
-      }
-      upScale(i);
     }
   }
 }
@@ -1958,47 +1912,49 @@ void vpMbEdgeTracker::removeLine(const std::string &name)
 void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace,
                                 const std::string &name)
 {
-  bool already_here = false;
-  vpMbtDistanceCircle *ci;
+  {
+    bool already_here = false;
+    vpMbtDistanceCircle *ci;
 
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      downScale(i);
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
-        ci = *it;
-        if ((samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P2) && samePoint(*(ci->p3), P3)) ||
-            (samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P3) && samePoint(*(ci->p3), P2))) {
-          already_here =
-              (std::fabs(ci->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(ci->radius, r));
+    for (unsigned int i = 0; i < scales.size(); i += 1) {
+      if (scales[i]) {
+        downScale(i);
+        for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
+          ci = *it;
+          if ((samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P2) && samePoint(*(ci->p3), P3)) ||
+              (samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P3) && samePoint(*(ci->p3), P2))) {
+            already_here =
+                (std::fabs(ci->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(ci->radius, r));
+          }
         }
+
+        if (!already_here) {
+          ci = new vpMbtDistanceCircle;
+
+          ci->setCameraParameters(cam);
+          ci->buildFrom(P1, P2, P3, r);
+          ci->setMovingEdge(&me);
+          ci->setIndex(ncircle);
+          ci->setName(name);
+          ci->index_polygon = idFace;
+          ci->hiddenface = &faces;
+
+          //        if(clippingFlag != vpPolygon3D::NO_CLIPPING)
+          //          ci->getPolygon().setClipping(clippingFlag);
+
+          //        if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) ==
+          //        vpPolygon3D::NEAR_CLIPPING)
+          //          ci->getPolygon().setNearClippingDistance(distNearClip);
+
+          //        if((clippingFlag & vpPolygon3D::FAR_CLIPPING) ==
+          //        vpPolygon3D::FAR_CLIPPING)
+          //          ci->getPolygon().setFarClippingDistance(distFarClip);
+
+          ncircle += 1;
+          circles[i].push_back(ci);
+        }
+        upScale(i);
       }
-
-      if (!already_here) {
-        ci = new vpMbtDistanceCircle;
-
-        ci->setCameraParameters(cam);
-        ci->buildFrom(P1, P2, P3, r);
-        ci->setMovingEdge(&me);
-        ci->setIndex(ncircle);
-        ci->setName(name);
-        ci->index_polygon = idFace;
-        ci->hiddenface = &faces;
-
-        //        if(clippingFlag != vpPolygon3D::NO_CLIPPING)
-        //          ci->getPolygon().setClipping(clippingFlag);
-
-        //        if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) ==
-        //        vpPolygon3D::NEAR_CLIPPING)
-        //          ci->getPolygon().setNearClippingDistance(distNearClip);
-
-        //        if((clippingFlag & vpPolygon3D::FAR_CLIPPING) ==
-        //        vpPolygon3D::FAR_CLIPPING)
-        //          ci->getPolygon().setFarClippingDistance(distFarClip);
-
-        ncircle += 1;
-        circles[i].push_back(ci);
-      }
-      upScale(i);
     }
   }
 }
@@ -2015,36 +1971,38 @@ void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPo
 void vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace,
                                   const std::string &name)
 {
-  bool already_here = false;
-  vpMbtDistanceCylinder *cy;
+  {
+    bool already_here = false;
+    vpMbtDistanceCylinder *cy;
 
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      downScale(i);
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
-           ++it) {
-        cy = *it;
-        if ((samePoint(*(cy->p1), P1) && samePoint(*(cy->p2), P2)) ||
-            (samePoint(*(cy->p1), P2) && samePoint(*(cy->p2), P1))) {
-          already_here =
-              (std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(cy->radius, r));
+    for (unsigned int i = 0; i < scales.size(); i += 1) {
+      if (scales[i]) {
+        downScale(i);
+        for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
+             ++it) {
+          cy = *it;
+          if ((samePoint(*(cy->p1), P1) && samePoint(*(cy->p2), P2)) ||
+              (samePoint(*(cy->p1), P2) && samePoint(*(cy->p2), P1))) {
+            already_here =
+                (std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(cy->radius, r));
+          }
         }
-      }
 
-      if (!already_here) {
-        cy = new vpMbtDistanceCylinder;
+        if (!already_here) {
+          cy = new vpMbtDistanceCylinder;
 
-        cy->setCameraParameters(cam);
-        cy->buildFrom(P1, P2, r);
-        cy->setMovingEdge(&me);
-        cy->setIndex(ncylinder);
-        cy->setName(name);
-        cy->index_polygon = idFace;
-        cy->hiddenface = &faces;
-        ncylinder += 1;
-        cylinders[i].push_back(cy);
+          cy->setCameraParameters(cam);
+          cy->buildFrom(P1, P2, r);
+          cy->setMovingEdge(&me);
+          cy->setIndex(ncylinder);
+          cy->setName(name);
+          cy->index_polygon = idFace;
+          cy->hiddenface = &faces;
+          ncylinder += 1;
+          cylinders[i].push_back(cy);
+        }
+        upScale(i);
       }
-      upScale(i);
     }
   }
 }

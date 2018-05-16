@@ -660,6 +660,23 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
 }
 #endif
 
+bool vpColVector::operator==(const vpColVector &v) const {
+  if (rowNum != v.rowNum ||
+      colNum != v.colNum /* should not happen */)
+    return false;
+
+  for (unsigned int i = 0; i < rowNum; i++) {
+    if (!vpMath::equal(data[i], v.data[i], std::numeric_limits<double>::epsilon()))
+      return false;
+  }
+
+  return true;
+}
+
+bool vpColVector::operator!=(const vpColVector &v) const {
+  return !(*this == v);
+}
+
 /*!
   Transpose the column vector. The resulting vector becomes a row vector.
 */

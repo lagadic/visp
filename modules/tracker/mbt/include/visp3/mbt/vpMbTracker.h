@@ -68,6 +68,10 @@
 #include <visp3/mbt/vpMbHiddenFaces.h>
 #include <visp3/mbt/vpMbtPolygon.h>
 
+#include <visp3/mbt/vpMbtDistanceCircle.h>
+#include <visp3/mbt/vpMbtDistanceCylinder.h>
+#include <visp3/mbt/vpMbtDistanceLine.h>
+
 #ifdef VISP_HAVE_COIN3D
 // Work around to avoid type redefinition int8_t with Coin
 // #if defined(_WIN32) && defined(VISP_HAVE_OGRE) && (_MSC_VER >= 1600) //
@@ -194,12 +198,40 @@ protected:
   //! Initial Mu for Levenberg Marquardt optimization loop
   double m_initialMu;
 
+  //! Distance line primitives for projection error
+  std::vector<vpMbtDistanceLine *> m_projectionErrorLines;
+  //! Distance cylinder primitives for projection error
+  std::vector<vpMbtDistanceCylinder *> m_projectionErrorCylinders;
+  //! Distance circle primitive for projection error
+  std::vector<vpMbtDistanceCircle *> m_projectionErrorCircles;
+  //! Set of faces describing the object, used for projection error
+  vpMbHiddenFaces<vpMbtPolygon> m_projectionErrorFaces;
+  bool m_projectionErrorOgreShowConfigDialog;
+  //! Moving-Edges parameters for projection error
+  vpMe m_projectionErrorMe;
+  //! Kernel size used to compute the gradient orientation
+  unsigned int m_projectionErrorKernelSize;
+  //! Sobel kernel in X
+  vpMatrix m_SobelX;
+  //! Sobel kernel in Y
+  vpMatrix m_SobelY;
+  //! Display gradient and model orientation for projection error computation
+  bool m_projectionErrorDisplay;
+  //! Length of the arrows used to show the gradient and model orientation
+  unsigned int m_projectionErrorDisplayLength;
+  //! Thickness of the arrows used to show the gradient and model orientation
+  unsigned int m_projectionErrorDisplayThickness;
+  //! Camera parameters used for projection error computation
+  vpCameraParameters m_projectionErrorCam;
+
 public:
   vpMbTracker();
   virtual ~vpMbTracker();
 
   /** @name Inherited functionalities from vpMbTracker */
   //@{
+  virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
+                                               const vpCameraParameters &_cam);
 
   /*! Return the angle used to test polygons appearance. */
   virtual inline double getAngleAppear() const { return angleAppears; }
@@ -509,6 +541,10 @@ public:
   */
   virtual inline void setOptimizationMethod(const vpMbtOptimizationMethod &opt) { m_optimizationMethod = opt; }
 
+  void setProjectionErrorMovingEdge(const vpMe &me);
+
+  void setProjectionErrorKernelSize(const unsigned int &size);
+
   /*!
     Set the minimal error (previous / current estimation) to determine if
     there is convergence or not.
@@ -529,6 +565,21 @@ public:
     \sa getProjectionError()
   */
   virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
+
+  /*!
+    Display or not gradient and model orientation when computing the projection error.
+  */
+  virtual void setProjectionErrorDisplay(const bool display) { m_projectionErrorDisplay = display; }
+
+  /*!
+    Arrow length used to display gradient and model orientation for projection error computation.
+  */
+  virtual void setProjectionErrorDisplayArrowLength(const unsigned int length) { m_projectionErrorDisplayLength = length; }
+
+  /*!
+    Arrow thickness used to display gradient and model orientation for projection error computation.
+  */
+  virtual void setProjectionErrorDisplayArrowThickness(const unsigned int thickness) { m_projectionErrorDisplayThickness = thickness; }
 
   virtual void setScanLineVisibilityTest(const bool &v) { useScanLine = v; }
 
@@ -631,7 +682,7 @@ public:
 
     \param configFile : An xml config file to parse.
   */
-  virtual void loadConfigFile(const std::string &configFile) = 0;
+  virtual void loadConfigFile(const std::string &configFile);
 
   /*!
     Reset the tracker.
@@ -680,6 +731,23 @@ protected:
                   const std::string &polygonName = "", const bool useLod = false,
                   const double minLineLengthThreshold = 50);
 
+  void addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1,
+                                const std::string &name = "");
+  void addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string &name = "");
+  void addProjectionErrorLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
+
+  void addProjectionErrorPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
+                                 const bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
+                                 const double minLineLengthThreshold = 50.0);
+  void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, const int idFace = -1,
+                                 const std::string &polygonName = "", const bool useLod = false,
+                                 const double minPolygonAreaThreshold = 2500.0);
+  void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace = -1, const std::string &polygonName = "",
+                                 const bool useLod = false, const double minLineLengthThreshold = 50);
+  void addProjectionErrorPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace = -1,
+                                 const std::string &polygonName = "", const bool useLod = false,
+                                 const double minLineLengthThreshold = 50);
+
   void createCylinderBBox(const vpPoint &p1, const vpPoint &p2, const double &radius,
                           std::vector<std::vector<vpPoint> > &listFaces);
 
@@ -688,6 +756,9 @@ protected:
                                           const vpMatrix &LVJ_true, const vpColVector &error);
 
   void computeJTR(const vpMatrix &J, const vpColVector &R, vpColVector &JTR) const;
+
+  double computeProjectionErrorImpl(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
+                                    const vpCameraParameters &_cam, unsigned int &nbFeatures);
 
   virtual void computeVVSCheckLevenbergMarquardt(const unsigned int iter, vpColVector &error,
                                                  const vpColVector &m_error_prev, const vpHomogeneousMatrix &cMoPrev,
@@ -754,10 +825,21 @@ protected:
   virtual void initFaceFromCorners(vpMbtPolygon &polygon) = 0;
   virtual void initFaceFromLines(vpMbtPolygon &polygon) = 0;
 
+  void initProjectionErrorCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+                                 const int idFace = 0, const std::string &name = "");
+  void initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
+                                   const std::string &name = "");
+  void initProjectionErrorFaceFromCorners(vpMbtPolygon &polygon);
+  void initProjectionErrorFaceFromLines(vpMbtPolygon &polygon);
+
   virtual void loadVRMLModel(const std::string &modelFile);
   virtual void loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
                             int &startIdFace, const bool verbose = false, const bool parent = true,
                             const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+
+  void projectionErrorInitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
+  void projectionErrorResetMovingEdges();
+  void projectionErrorVisibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo);
 
   void removeComment(std::ifstream &fileId);
 
@@ -787,6 +869,8 @@ protected:
   }
 
   inline std::string &trim(std::string &s) const { return ltrim(rtrim(s)); }
+
+  bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
   //@}
 };
 

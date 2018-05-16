@@ -177,9 +177,10 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
 
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
+  \param doNotTrack : If true, ME are not tracked.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack)
 {
   if (isvisible) {
     // Perspective projection
@@ -294,13 +295,13 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
       theta2 = M_PI / 2.0 - theta2;
 
     try {
-      meline1->initTracking(I, ip11, ip12, rho1, theta1);
+      meline1->initTracking(I, ip11, ip12, rho1, theta1, doNotTrack);
     } catch (...) {
       // vpTRACE("the line can't be initialized");
       return false;
     }
     try {
-      meline2->initTracking(I, ip21, ip22, rho2, theta2);
+      meline2->initTracking(I, ip21, ip22, rho2, theta2, doNotTrack);
     } catch (...) {
       // vpTRACE("the line can't be initialized");
       return false;
@@ -490,7 +491,7 @@ void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, co
   meline1 = NULL;
   meline2 = NULL;
 
-  if (initMovingEdge(I, cMo) == false)
+  if (!initMovingEdge(I, cMo, false))
     Reinit = true;
 
   Reinit = false;
