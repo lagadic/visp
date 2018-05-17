@@ -388,7 +388,7 @@ int main(int argc, const char *argv[])
 #endif
 #else
     map_thresh[vpMbGenericTracker::EDGE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.007, 2.3) : std::pair<double, double>(0.007, 2.0);
+        = useScanline ? std::pair<double, double>(0.007, 2.3) : std::pair<double, double>(0.007, 2.1);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);

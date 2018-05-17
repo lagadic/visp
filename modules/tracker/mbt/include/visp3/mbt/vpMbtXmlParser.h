@@ -95,8 +95,6 @@ public:
 
   void getMe(vpMe &_ecm) const { _ecm = this->m_ecm; }
 
-  void parse(const char *filename);
-
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void read_ecm(xmlDocPtr doc, xmlNodePtr node);
   void read_sample(xmlDocPtr doc, xmlNodePtr node);

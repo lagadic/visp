@@ -188,8 +188,6 @@ public:
   */
   inline bool hasNearClippingDistance() const { return hasNearClipping; }
 
-  void parse(const char *filename);
-
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void read_camera(xmlDocPtr doc, xmlNodePtr node);
   void read_face(xmlDocPtr doc, xmlNodePtr node);

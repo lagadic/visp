@@ -93,102 +93,22 @@ vpMbtMeEllipse::~vpMbtMeEllipse() { list.clear(); }
   \param _I : Image in which the line appears.
   \param _sumErrorRad : sum of the error per feature.
   \param _nbFeatures : Number of features used to compute _sumErrorRad.
+  \param SobelX : Sobel kernel in X-direction.
+  \param SobelX : Sobel kernel in Y-direction.
+  \param display : If true, display gradient and model orientation.
+  \param length : Length of arrows used to show gradient and model orientation.
+  \param thickness : Thickness of arrows used to show gradient and model orientation.
 */
 void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
-                                            unsigned int &_nbFeatures)
+                                            unsigned int &_nbFeatures,
+                                            const vpMatrix &SobelX, const vpMatrix &SobelY,
+                                            const bool display, const unsigned int length,
+                                            const unsigned int thickness)
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;
 
-  //  vpMatrix filterX(3,3);
-  //  filterX[0][0] = -1;
-  //  filterX[1][0] = -2;
-  //  filterX[2][0] = -1;
-
-  //  filterX[0][1] = 0;
-  //  filterX[1][1] = 0;
-  //  filterX[2][1] = 0;
-
-  //  filterX[0][2] = 1;
-  //  filterX[1][2] = 2;
-  //  filterX[2][2] = 1;
-
-  //  vpMatrix filterY(3,3);
-  //  filterY[0][0] = -1;
-  //  filterY[0][1] = -2;
-  //  filterY[0][2] = -1;
-
-  //  filterY[1][0] = 0;
-  //  filterY[1][1] = 0;
-  //  filterY[1][2] = 0;
-
-  //  filterY[2][0] = 1;
-  //  filterY[2][1] = 2;
-  //  filterY[2][2] = 1;
-
-  vpMatrix filterX(5, 5);
-  filterX[0][0] = -1;
-  filterX[1][0] = -4;
-  filterX[2][0] = -6;
-  filterX[3][0] = -4;
-  filterX[4][0] = -1;
-
-  filterX[0][1] = -2;
-  filterX[1][1] = -8;
-  filterX[2][1] = -12;
-  filterX[3][1] = -8;
-  filterX[4][1] = -2;
-
-  filterX[0][2] = 0;
-  filterX[1][2] = 0;
-  filterX[2][2] = 0;
-  filterX[3][2] = 0;
-  filterX[4][2] = 0;
-
-  filterX[0][3] = 2;
-  filterX[1][3] = 8;
-  filterX[2][3] = 12;
-  filterX[3][3] = 8;
-  filterX[4][3] = 2;
-
-  filterX[0][4] = 1;
-  filterX[1][4] = 4;
-  filterX[2][4] = 6;
-  filterX[3][4] = 4;
-  filterX[4][4] = 1;
-
-  vpMatrix filterY(5, 5);
-  filterY[0][0] = -1;
-  filterY[0][1] = -4;
-  filterY[0][2] = -6;
-  filterY[0][3] = -4;
-  filterY[0][4] = -1;
-
-  filterY[1][0] = -2;
-  filterY[1][1] = -8;
-  filterY[1][2] = -12;
-  filterY[1][3] = -8;
-  filterY[1][4] = -2;
-
-  filterY[2][0] = 0;
-  filterY[2][1] = 0;
-  filterY[2][2] = 0;
-  filterY[2][3] = 0;
-  filterY[2][4] = 0;
-
-  filterY[3][0] = 2;
-  filterY[3][1] = 8;
-  filterY[3][2] = 12;
-  filterY[3][3] = 8;
-  filterY[3][4] = 2;
-
-  filterY[4][0] = 1;
-  filterY[4][1] = 4;
-  filterY[4][2] = 6;
-  filterY[4][3] = 4;
-  filterY[4][4] = 1;
-
-  double offset = std::floor(filterX.getRows() / 2.0f);
+  double offset = std::floor(SobelX.getRows() / 2.0f);
   //  std::cout << "offset=" << offset << std::endl;
   int height = (int)_I.getHeight();
   int width = (int)_I.getWidth();
@@ -218,9 +138,9 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
       double gradientX = 0;
       double gradientY = 0;
 
-      for (unsigned int i = 0; i < filterX.getRows(); i++) {
+      for (unsigned int i = 0; i < SobelX.getRows(); i++) {
         double iImg = iSite + (i - offset);
-        for (unsigned int j = 0; j < filterX.getCols(); j++) {
+        for (unsigned int j = 0; j < SobelX.getCols(); j++) {
           double jImg = jSite + (j - offset);
 
           if (iImg < 0)
@@ -233,13 +153,13 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
           if (jImg > _I.getWidth() - 1)
             jImg = _I.getWidth() - 1;
 
-          gradientX += filterX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+          gradientX += SobelX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
-      for (unsigned int i = 0; i < filterY.getRows(); i++) {
+      for (unsigned int i = 0; i < SobelY.getRows(); i++) {
         double iImg = iSite + (i - offset);
-        for (unsigned int j = 0; j < filterY.getCols(); j++) {
+        for (unsigned int j = 0; j < SobelY.getCols(); j++) {
           double jImg = jSite + (j - offset);
 
           if (iImg < 0)
@@ -252,7 +172,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
           if (jImg > _I.getWidth() - 1)
             jImg = _I.getWidth() - 1;
 
-          gradientY += filterY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+          gradientY += SobelY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
@@ -282,6 +202,21 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
       double angle1 = acos(vecSite * vecGrad);
       double angle2 = acos(vecSite * (-vecGrad));
 
+      if (display) {
+        vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(deltaNormalized)),
+                                (int)(it->get_j() + length*sin(deltaNormalized)), vpColor::blue,
+                                length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        if (angle1 < angle2) {
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle)),
+                                  (int)(it->get_j() + length*sin(angle)), vpColor::red,
+                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        } else {
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle+M_PI)),
+                                  (int)(it->get_j() + length*sin(angle+M_PI)), vpColor::red,
+                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        }
+      }
+
       _sumErrorRad += (std::min)(angle1, angle2);
 
       _nbFeatures++;
@@ -295,12 +230,12 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
   the points with the smallest and the biggest \f$ alpha \f$ angle.
 
   \param I : Image in which the ellipse appears.
+  \param doNotTrack : If true, ME are not tracked.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
-
 */
-void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I)
+void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
@@ -361,11 +296,11 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I)
     k += incr;
   }
 
-  vpMeTracker::initTracking(I);
+  if (!doNotTrack)
+    vpMeTracker::initTracking(I);
 }
 
 /*!
-
   Resample the ellipse if the number of sample is less than 90% of the
   expected value.
 
@@ -377,7 +312,6 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I)
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
-
 */
 void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
 {
@@ -448,7 +382,8 @@ void vpMbtMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
 }
 
 void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                                  double mu02_p)
+                                  double mu02_p,
+                                  const bool doNotTrack)
 {
   iPc = ic;
   mu20 = mu20_p;
@@ -473,12 +408,14 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
   ce = cos(e);
   se = sin(e);
 
-  sample(I);
+  sample(I, doNotTrack);
 
-  vpMeTracker::initTracking(I);
+  if (!doNotTrack)
+    vpMeTracker::initTracking(I);
 
   try {
-    track(I);
+    if (!doNotTrack)
+      track(I);
   } catch (const vpException &exception) {
     throw(exception);
   }

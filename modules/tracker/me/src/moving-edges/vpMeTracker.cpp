@@ -161,7 +161,6 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
   nGoodElement = 0;
 
   int d = 0;
-  vpImagePoint ip1, ip2;
 
   // Loop through list of sites to track
   for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
@@ -183,6 +182,7 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 
 #if (DEBUG_LEVEL2)
     {
+      vpImagePoint ip1, ip2;
       double a, b;
       a = refp.i_1 - refp.i;
       b = refp.j_1 - refp.j;

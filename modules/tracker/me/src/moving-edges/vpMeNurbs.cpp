@@ -289,9 +289,11 @@ void vpMeNurbs::initTracking(const vpImage<unsigned char> &I, const std::list<vp
   step between the two extremities of the nurbs.
 
   \param I : Image in which the edge appears.
+  \param doNotTrack : Inherited parameter, not used.
 */
-void vpMeNurbs::sample(const vpImage<unsigned char> &I)
+void vpMeNurbs::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
 {
+  (void)doNotTrack;
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
   double step = 1.0 / (double)me->getPointsToTrack();
@@ -299,7 +301,6 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I)
   // Delete old list
   list.clear();
 
-  vpImagePoint ip;
   double u = 0.0;
   vpImagePoint *pt = NULL;
   vpImagePoint pt_1(-rows, -cols);
