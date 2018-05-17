@@ -376,7 +376,7 @@ int main(int argc, const char *argv[])
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.006, 1.9) : std::pair<double, double>(0.005, 1.3);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
-        = useScanline ? std::pair<double, double>(0.004, 3.2) : std::pair<double, double>(0.006, 2.8);
+        = useScanline ? std::pair<double, double>(0.005, 3.2) : std::pair<double, double>(0.006, 2.8);
 #endif
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.003, 1.7) : std::pair<double, double>(0.002, 0.8);
