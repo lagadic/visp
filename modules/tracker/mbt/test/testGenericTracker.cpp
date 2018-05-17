@@ -379,7 +379,7 @@ int main(int argc, const char *argv[])
         = useScanline ? std::pair<double, double>(0.004, 3.2) : std::pair<double, double>(0.006, 2.8);
 #endif
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.002, 1.7) : std::pair<double, double>(0.002, 0.8);
+        = useScanline ? std::pair<double, double>(0.003, 1.7) : std::pair<double, double>(0.002, 0.8);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = std::pair<double, double>(0.002, 0.3);
@@ -396,7 +396,7 @@ int main(int argc, const char *argv[])
         = useScanline ? std::pair<double, double>(0.004, 1.2) : std::pair<double, double>(0.004, 1.0);
 #endif
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.002, 0.6) : std::pair<double, double>(0.001, 0.4);
+        = useScanline ? std::pair<double, double>(0.002, 0.7) : std::pair<double, double>(0.001, 0.4);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = std::pair<double, double>(0.002, 0.3);
