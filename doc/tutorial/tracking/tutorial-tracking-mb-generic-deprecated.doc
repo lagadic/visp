@@ -1,13 +1,12 @@
 /**
 
-\page tutorial-tracking-mb-generic-deprecated Tutorial: Markerless generic model-based tracking (deprecated)
+\page tutorial-tracking-mb-generic-rgbd Tutorial: Markerless generic model-based tracking using a RGB-D camera
 \tableofcontents
 
-\section mbdep_generic_intro Introduction
+\section mb_rgbd_intro Introduction
 
-This tutorial describes how to use the generic model-based tracker. You are advised to have read these tutorials:
-- \ref tutorial-tracking-mb to have an overview of the model-based edge / KLT / hybrid tracker and to know how to model an object to track and how to configure the tracker
-- \ref tutorial-tracking-mb-stereo and specifically the \ref mbdep_stereo_intro section for some details about advantages and limitations of using multiple cameras and the \ref mbdep_stereo_moving_cameras section
+This tutorial describes how to use the generic model-based tracker with a RGB-D camera like the Intel RealSense devices. You are advised to have read the tutorial:
+- \ref tutorial-tracking-mb-generic to have an overview of the generic model-based tracker working on a images acquired a color camera that uses moving-edges and keypoints as visual features. This tutorial explains also how to model an object to track and how to configure the tracker
 
 \subsection mbdep_generic_overview Overview
 
