@@ -189,9 +189,9 @@ void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
   // if((V1-V2).sumSquare()!=0)
   if (std::fabs((V1 - V2).sumSquare()) > std::numeric_limits<double>::epsilon()) {
     vpColVector V3(3);
-    V3[0] = double(rand() % 1000) / 100;
-    V3[1] = double(rand() % 1000) / 100;
-    V3[2] = double(rand() % 1000) / 100;
+    V3[0] = 3.8300000000000001; //double(rand() % 1000) / 100
+    V3[1] = 8.8599999999999994; //double(rand() % 1000) / 100
+    V3[2] = 7.7699999999999996; //double(rand() % 1000) / 100
 
     vpColVector v_tmp1, v_tmp2;
     v_tmp1 = V2 - V1;
