@@ -898,7 +898,7 @@ vpColVector vpColVector::sort(const vpColVector &v)
   \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
 
 */
-void vpColVector::stack(const double &d)
+void vpColVector::stack(double d)
 {
   this->resize(rowNum + 1, false);
   (*this)[rowNum - 1] = d;

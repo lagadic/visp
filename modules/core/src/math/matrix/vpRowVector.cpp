@@ -673,7 +673,7 @@ void vpRowVector::insert(unsigned int i, const vpRowVector &v)
   \sa stack(const vpRowVector &, const vpRowVector &, vpRowVector &)
 
 */
-void vpRowVector::stack(const double &d)
+void vpRowVector::stack(double d)
 {
   this->resize(colNum + 1, false);
   (*this)[colNum - 1] = d;
