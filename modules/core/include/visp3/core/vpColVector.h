@@ -262,7 +262,7 @@ public:
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
   }
 
-  void stack(const double &d);
+  void stack(double d);
   void stack(const vpColVector &v);
 
   double sum() const;
