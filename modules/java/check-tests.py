@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys, os, re
 
 classes_ignore_list = (
-    'ViSP(Test)?Case',
-    'ViSP(Test)?Runner',
+    'OpenCV(Test)?Case',
+    'OpenCV(Test)?Runner',
     'VpException',
 )
 
@@ -148,9 +149,9 @@ class JavaParser:
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print "Usage:\n", \
+        print("Usage:\n", \
             os.path.basename(sys.argv[0]), \
-            "<Classes/Tests dir1/file1> [<Classes/Tests dir2/file2> ...]\n", "Not tested methods are loggedto stdout."
+            "<Classes/Tests dir1/file1> [<Classes/Tests dir2/file2> ...]\n", "Not tested methods are loggedto stdout.")
         exit(0)
     parser = JavaParser()
     for x in sys.argv[1:]:

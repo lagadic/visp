@@ -1,0 +1,16 @@
+if(ANDROID)
+  vp_update(VISP_JAVA_LIB_NAME_SUFFIX "${VISP_VERSION_MAJOR}")
+  vp_update(JAVA_INSTALL_ROOT "sdk/java")
+else()
+  vp_update(VISP_JAVA_LIB_NAME_SUFFIX "${VISP_VERSION_MAJOR}${VISP_VERSION_MINOR}${VISP_VERSION_PATCH}")
+endif()
+
+# get list of modules to wrap
+# message(STATUS "Wrapped in java:")
+set(VISP_JAVA_MODULES)
+foreach(m ${VISP_MODULES_BUILD})
+  if (";${OPENCV_MODULE_${m}_WRAPPERS};" MATCHES ";java;" AND HAVE_${m})
+    list(APPEND VISP_JAVA_MODULES ${m})
+    #message(STATUS "\t${m}")
+  endif()
+endforeach()

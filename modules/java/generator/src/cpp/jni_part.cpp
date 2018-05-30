@@ -1,6 +1,22 @@
+// This file is part of ViSP project.
+// It is subject to the license terms in the LICENSE file found in the top-level directory
+// of this distribution and at http://opencv.org/license.html
+
 #include "common.h"
 
-// The file just gets JNI version. No relation to ViSP project's source code
+#include "opencv2/opencv_modules.hpp"
+
+#ifdef HAVE_OPENCV_FEATURES2D
+#  include "opencv2/features2d.hpp"
+#endif
+
+#ifdef HAVE_OPENCV_VIDEO
+#  include "opencv2/video.hpp"
+#endif
+
+#ifdef HAVE_OPENCV_CONTRIB
+#  include "opencv2/contrib.hpp"
+#endif
 
 extern "C" {
 

@@ -1,0 +1,1872 @@
+
+Remapped configured files (3):
+{'/home/akshay/Projects/vision/opencv/modules/core/misc/java/src/java/core+Core.jcode.in': '/home/akshay/Projects/vision/build/configured/modules/core/misc/java/src/java/core+Core.jcode',
+ '/home/akshay/Projects/vision/opencv/modules/java/generator/android/java/org/visp/android/ViSPLoader.java.in': '/home/akshay/Projects/vision/build/configured/modules/java/generator/android/java/org/visp/android/ViSPLoader.java',
+ '/home/akshay/Projects/vision/opencv/modules/java/generator/src/java/org/visp/osgi/OpenCVNativeLoader.java.in': '/home/akshay/Projects/vision/build/configured/modules/java/generator/src/java/org/visp/osgi/OpenCVNativeLoader.java'}
+
+=== MODULE: core (/home/akshay/Projects/vision/opencv/modules/core) ===
+
+
+Files (4):
+['/home/akshay/Projects/vision/opencv/modules/core/include/opencv2/core/base.hpp',
+ '/home/akshay/Projects/vision/opencv/modules/core/include/opencv2/core.hpp',
+ '/home/akshay/Projects/vision/opencv/modules/core/include/opencv2/core/utility.hpp',
+ '/home/akshay/Projects/vision/opencv/modules/core/misc/java/src/cpp/core_manual.hpp']
+
+Common headers (0):
+[]
+ok: class CLASS ::.Core : , name: Core, base: 
+
+
+===== Header: /home/akshay/Projects/vision/opencv/modules/core/include/opencv2/core/base.hpp =====
+Namespaces: {'cv.ipp', 'cv.Error', 'cv.cuda', 'cv.ogl', 'cv.cudev', 'cv'}
+
+--- Incoming ---
+['const cv.Error.StsOk', '0', [], [], None]
+ok: CONST StsOk=0
+
+--- Incoming ---
+['const cv.Error.StsBackTrace', '-1', [], [], None]
+ok: CONST StsBackTrace=-1
+
+--- Incoming ---
+['const cv.Error.StsError', '-2', [], [], None]
+ok: CONST StsError=-2
+
+--- Incoming ---
+['const cv.Error.StsInternal', '-3', [], [], None]
+ok: CONST StsInternal=-3
+
+--- Incoming ---
+['const cv.Error.StsNoMem', '-4', [], [], None]
+ok: CONST StsNoMem=-4
+
+--- Incoming ---
+['const cv.Error.StsBadArg', '-5', [], [], None]
+ok: CONST StsBadArg=-5
+
+--- Incoming ---
+['const cv.Error.StsBadFunc', '-6', [], [], None]
+ok: CONST StsBadFunc=-6
+
+--- Incoming ---
+['const cv.Error.StsNoConv', '-7', [], [], None]
+ok: CONST StsNoConv=-7
+
+--- Incoming ---
+['const cv.Error.StsAutoTrace', '-8', [], [], None]
+ok: CONST StsAutoTrace=-8
+
+--- Incoming ---
+['const cv.Error.HeaderIsNull', '-9', [], [], None]
+ok: CONST HeaderIsNull=-9
+
+--- Incoming ---
+['const cv.Error.BadImageSize', '-10', [], [], None]
+ok: CONST BadImageSize=-10
+
+--- Incoming ---
+['const cv.Error.BadOffset', '-11', [], [], None]
+ok: CONST BadOffset=-11
+
+--- Incoming ---
+['const cv.Error.BadDataPtr', '-12', [], [], None]
+ok: CONST BadDataPtr=-12
+
+--- Incoming ---
+['const cv.Error.BadStep', '-13', [], [], None]
+ok: CONST BadStep=-13
+
+--- Incoming ---
+['const cv.Error.BadModelOrChSeq', '-14', [], [], None]
+ok: CONST BadModelOrChSeq=-14
+
+--- Incoming ---
+['const cv.Error.BadNumChannels', '-15', [], [], None]
+ok: CONST BadNumChannels=-15
+
+--- Incoming ---
+['const cv.Error.BadNumChannel1U', '-16', [], [], None]
+ok: CONST BadNumChannel1U=-16
+
+--- Incoming ---
+['const cv.Error.BadDepth', '-17', [], [], None]
+ok: CONST BadDepth=-17
+
+--- Incoming ---
+['const cv.Error.BadAlphaChannel', '-18', [], [], None]
+ok: CONST BadAlphaChannel=-18
+
+--- Incoming ---
+['const cv.Error.BadOrder', '-19', [], [], None]
+ok: CONST BadOrder=-19
+
+--- Incoming ---
+['const cv.Error.BadOrigin', '-20', [], [], None]
+ok: CONST BadOrigin=-20
+
+--- Incoming ---
+['const cv.Error.BadAlign', '-21', [], [], None]
+ok: CONST BadAlign=-21
+
+--- Incoming ---
+['const cv.Error.BadCallBack', '-22', [], [], None]
+ok: CONST BadCallBack=-22
+
+--- Incoming ---
+['const cv.Error.BadTileSize', '-23', [], [], None]
+ok: CONST BadTileSize=-23
+
+--- Incoming ---
+['const cv.Error.BadCOI', '-24', [], [], None]
+ok: CONST BadCOI=-24
+
+--- Incoming ---
+['const cv.Error.BadROISize', '-25', [], [], None]
+ok: CONST BadROISize=-25
+
+--- Incoming ---
+['const cv.Error.MaskIsTiled', '-26', [], [], None]
+ok: CONST MaskIsTiled=-26
+
+--- Incoming ---
+['const cv.Error.StsNullPtr', '-27', [], [], None]
+ok: CONST StsNullPtr=-27
+
+--- Incoming ---
+['const cv.Error.StsVecLengthErr', '-28', [], [], None]
+ok: CONST StsVecLengthErr=-28
+
+--- Incoming ---
+['const cv.Error.StsFilterStructContentErr', '-29', [], [], None]
+ok: CONST StsFilterStructContentErr=-29
+
+--- Incoming ---
+['const cv.Error.StsKernelStructContentErr', '-30', [], [], None]
+ok: CONST StsKernelStructContentErr=-30
+
+--- Incoming ---
+['const cv.Error.StsFilterOffsetErr', '-31', [], [], None]
+ok: CONST StsFilterOffsetErr=-31
+
+--- Incoming ---
+['const cv.Error.StsBadSize', '-201', [], [], None]
+ok: CONST StsBadSize=-201
+
+--- Incoming ---
+['const cv.Error.StsDivByZero', '-202', [], [], None]
+ok: CONST StsDivByZero=-202
+
+--- Incoming ---
+['const cv.Error.StsInplaceNotSupported', '-203', [], [], None]
+ok: CONST StsInplaceNotSupported=-203
+
+--- Incoming ---
+['const cv.Error.StsObjectNotFound', '-204', [], [], None]
+ok: CONST StsObjectNotFound=-204
+
+--- Incoming ---
+['const cv.Error.StsUnmatchedFormats', '-205', [], [], None]
+ok: CONST StsUnmatchedFormats=-205
+
+--- Incoming ---
+['const cv.Error.StsBadFlag', '-206', [], [], None]
+ok: CONST StsBadFlag=-206
+
+--- Incoming ---
+['const cv.Error.StsBadPoint', '-207', [], [], None]
+ok: CONST StsBadPoint=-207
+
+--- Incoming ---
+['const cv.Error.StsBadMask', '-208', [], [], None]
+ok: CONST StsBadMask=-208
+
+--- Incoming ---
+['const cv.Error.StsUnmatchedSizes', '-209', [], [], None]
+ok: CONST StsUnmatchedSizes=-209
+
+--- Incoming ---
+['const cv.Error.StsUnsupportedFormat', '-210', [], [], None]
+ok: CONST StsUnsupportedFormat=-210
+
+--- Incoming ---
+['const cv.Error.StsOutOfRange', '-211', [], [], None]
+ok: CONST StsOutOfRange=-211
+
+--- Incoming ---
+['const cv.Error.StsParseError', '-212', [], [], None]
+ok: CONST StsParseError=-212
+
+--- Incoming ---
+['const cv.Error.StsNotImplemented', '-213', [], [], None]
+ok: CONST StsNotImplemented=-213
+
+--- Incoming ---
+['const cv.Error.StsBadMemBlock', '-214', [], [], None]
+ok: CONST StsBadMemBlock=-214
+
+--- Incoming ---
+['const cv.Error.StsAssert', '-215', [], [], None]
+ok: CONST StsAssert=-215
+
+--- Incoming ---
+['const cv.Error.GpuNotSupported', '-216', [], [], None]
+ok: CONST GpuNotSupported=-216
+
+--- Incoming ---
+['const cv.Error.GpuApiCallError', '-217', [], [], None]
+ok: CONST GpuApiCallError=-217
+
+--- Incoming ---
+['const cv.Error.OpenGlNotSupported', '-218', [], [], None]
+ok: CONST OpenGlNotSupported=-218
+
+--- Incoming ---
+['const cv.Error.OpenGlApiCallError', '-219', [], [], None]
+ok: CONST OpenGlApiCallError=-219
+
+--- Incoming ---
+['const cv.Error.OpenCLApiCallError', '-220', [], [], None]
+ok: CONST OpenCLApiCallError=-220
+
+--- Incoming ---
+['const cv.Error.OpenCLDoubleNotSupported', '-221', [], [], None]
+ok: CONST OpenCLDoubleNotSupported=-221
+
+--- Incoming ---
+['const cv.Error.OpenCLInitError', '-222', [], [], None]
+ok: CONST OpenCLInitError=-222
+
+--- Incoming ---
+['const cv.Error.OpenCLNoAMDBlasFft', '-223', [], [], None]
+ok: CONST OpenCLNoAMDBlasFft=-223
+
+--- Incoming ---
+['const cv.DECOMP_LU', '0', [], [], None]
+ok: CONST DECOMP_LU=0
+
+--- Incoming ---
+['const cv.DECOMP_SVD', '1', [], [], None]
+ok: CONST DECOMP_SVD=1
+
+--- Incoming ---
+['const cv.DECOMP_EIG', '2', [], [], None]
+ok: CONST DECOMP_EIG=2
+
+--- Incoming ---
+['const cv.DECOMP_CHOLESKY', '3', [], [], None]
+ok: CONST DECOMP_CHOLESKY=3
+
+--- Incoming ---
+['const cv.DECOMP_QR', '4', [], [], None]
+ok: CONST DECOMP_QR=4
+
+--- Incoming ---
+['const cv.DECOMP_NORMAL', '16', [], [], None]
+ok: CONST DECOMP_NORMAL=16
+
+--- Incoming ---
+['const cv.NORM_INF', '1', [], [], None]
+ok: CONST NORM_INF=1
+
+--- Incoming ---
+['const cv.NORM_L1', '2', [], [], None]
+ok: CONST NORM_L1=2
+
+--- Incoming ---
+['const cv.NORM_L2', '4', [], [], None]
+ok: CONST NORM_L2=4
+
+--- Incoming ---
+['const cv.NORM_L2SQR', '5', [], [], None]
+ok: CONST NORM_L2SQR=5
+
+--- Incoming ---
+['const cv.NORM_HAMMING', '6', [], [], None]
+ok: CONST NORM_HAMMING=6
+
+--- Incoming ---
+['const cv.NORM_HAMMING2', '7', [], [], None]
+ok: CONST NORM_HAMMING2=7
+
+--- Incoming ---
+['const cv.NORM_TYPE_MASK', '7', [], [], None]
+ok: CONST NORM_TYPE_MASK=7
+
+--- Incoming ---
+['const cv.NORM_RELATIVE', '8', [], [], None]
+ok: CONST NORM_RELATIVE=8
+
+--- Incoming ---
+['const cv.NORM_MINMAX', '32', [], [], None]
+ok: CONST NORM_MINMAX=32
+
+--- Incoming ---
+['const cv.CMP_EQ', '0', [], [], None]
+ok: CONST CMP_EQ=0
+
+--- Incoming ---
+['const cv.CMP_GT', '1', [], [], None]
+ok: CONST CMP_GT=1
+
+--- Incoming ---
+['const cv.CMP_GE', '2', [], [], None]
+ok: CONST CMP_GE=2
+
+--- Incoming ---
+['const cv.CMP_LT', '3', [], [], None]
+ok: CONST CMP_LT=3
+
+--- Incoming ---
+['const cv.CMP_LE', '4', [], [], None]
+ok: CONST CMP_LE=4
+
+--- Incoming ---
+['const cv.CMP_NE', '5', [], [], None]
+ok: CONST CMP_NE=5
+
+--- Incoming ---
+['const cv.GEMM_1_T', '1', [], [], None]
+ok: CONST GEMM_1_T=1
+
+--- Incoming ---
+['const cv.GEMM_2_T', '2', [], [], None]
+ok: CONST GEMM_2_T=2
+
+--- Incoming ---
+['const cv.GEMM_3_T', '4', [], [], None]
+ok: CONST GEMM_3_T=4
+
+--- Incoming ---
+['const cv.DFT_INVERSE', '1', [], [], None]
+ok: CONST DFT_INVERSE=1
+
+--- Incoming ---
+['const cv.DFT_SCALE', '2', [], [], None]
+ok: CONST DFT_SCALE=2
+
+--- Incoming ---
+['const cv.DFT_ROWS', '4', [], [], None]
+ok: CONST DFT_ROWS=4
+
+--- Incoming ---
+['const cv.DFT_COMPLEX_OUTPUT', '16', [], [], None]
+ok: CONST DFT_COMPLEX_OUTPUT=16
+
+--- Incoming ---
+['const cv.DFT_REAL_OUTPUT', '32', [], [], None]
+ok: CONST DFT_REAL_OUTPUT=32
+
+--- Incoming ---
+['const cv.DFT_COMPLEX_INPUT', '64', [], [], None]
+ok: CONST DFT_COMPLEX_INPUT=64
+
+--- Incoming ---
+['const cv.DCT_INVERSE', 'DFT_INVERSE', [], [], None]
+ok: CONST DCT_INVERSE=DFT_INVERSE
+
+--- Incoming ---
+['const cv.DCT_ROWS', 'DFT_ROWS', [], [], None]
+ok: CONST DCT_ROWS=DFT_ROWS
+
+--- Incoming ---
+['const cv.BORDER_CONSTANT', '0', [], [], None]
+ok: CONST BORDER_CONSTANT=0
+
+--- Incoming ---
+['const cv.BORDER_REPLICATE', '1', [], [], None]
+ok: CONST BORDER_REPLICATE=1
+
+--- Incoming ---
+['const cv.BORDER_REFLECT', '2', [], [], None]
+ok: CONST BORDER_REFLECT=2
+
+--- Incoming ---
+['const cv.BORDER_WRAP', '3', [], [], None]
+ok: CONST BORDER_WRAP=3
+
+--- Incoming ---
+['const cv.BORDER_REFLECT_101', '4', [], [], None]
+ok: CONST BORDER_REFLECT_101=4
+
+--- Incoming ---
+['const cv.BORDER_TRANSPARENT', '5', [], [], None]
+ok: CONST BORDER_TRANSPARENT=5
+
+--- Incoming ---
+['const cv.BORDER_REFLECT101', 'BORDER_REFLECT_101', [], [], None]
+ok: CONST BORDER_REFLECT101=BORDER_REFLECT_101
+
+--- Incoming ---
+['const cv.BORDER_DEFAULT', 'BORDER_REFLECT_101', [], [], None]
+ok: CONST BORDER_DEFAULT=BORDER_REFLECT_101
+
+--- Incoming ---
+['const cv.BORDER_ISOLATED', '16', [], [], None]
+ok: CONST BORDER_ISOLATED=16
+
+--- Incoming ---
+['const cv.Hamming.normType', 'NORM_HAMMING', [], [], None]
+class not found: CONST normType=NORM_HAMMING
+
+--- Incoming ---
+['cv.cubeRoot', 'float', [], [['float', 'val', '', []]], 'float']
+ok: FUNC <float cv..cubeRoot [ARG float val=]>
+
+--- Incoming ---
+[   'cv.fastAtan2',
+    'float',
+    [],
+    [['float', 'y', '', []], ['float', 'x', '', []]],
+    'float']
+ok: FUNC <float cv..fastAtan2 [ARG float y=, ARG float x=]>
+
+--- Incoming ---
+['cv.ipp.useIPP', 'bool', [], [], 'bool']
+ok: FUNC <bool cv.ipp..useIPP []>
+
+--- Incoming ---
+['cv.ipp.setUseIPP', 'void', [], [['bool', 'flag', '', []]], 'void']
+ok: FUNC <void cv.ipp..setUseIPP [ARG bool flag=]>
+
+--- Incoming ---
+['cv.ipp.getIppVersion', 'String', [], [], 'String']
+ok: FUNC <String cv.ipp..getIppVersion []>
+
+--- Incoming ---
+['cv.ipp.useIPP_NE', 'bool', [], [], 'bool']
+ok: FUNC <bool cv.ipp..useIPP_NE []>
+
+--- Incoming ---
+['cv.ipp.setUseIPP_NE', 'void', [], [['bool', 'flag', '', []]], 'void']
+ok: FUNC <void cv.ipp..setUseIPP_NE [ARG bool flag=]>
+
+
+===== Header: /home/akshay/Projects/vision/opencv/modules/core/include/opencv2/core.hpp =====
+Namespaces: {'cv.ipp', 'cv.Error', 'cv.cuda', 'cv.ogl', 'cv.cudev', 'cv'}
+
+--- Incoming ---
+['const cv.SORT_EVERY_ROW', '0', [], [], None]
+ok: CONST SORT_EVERY_ROW=0
+
+--- Incoming ---
+['const cv.SORT_EVERY_COLUMN', '1', [], [], None]
+ok: CONST SORT_EVERY_COLUMN=1
+
+--- Incoming ---
+['const cv.SORT_ASCENDING', '0', [], [], None]
+ok: CONST SORT_ASCENDING=0
+
+--- Incoming ---
+['const cv.SORT_DESCENDING', '16', [], [], None]
+ok: CONST SORT_DESCENDING=16
+
+--- Incoming ---
+['const cv.COVAR_SCRAMBLED', '0', [], [], None]
+ok: CONST COVAR_SCRAMBLED=0
+
+--- Incoming ---
+['const cv.COVAR_NORMAL', '1', [], [], None]
+ok: CONST COVAR_NORMAL=1
+
+--- Incoming ---
+['const cv.COVAR_USE_AVG', '2', [], [], None]
+ok: CONST COVAR_USE_AVG=2
+
+--- Incoming ---
+['const cv.COVAR_SCALE', '4', [], [], None]
+ok: CONST COVAR_SCALE=4
+
+--- Incoming ---
+['const cv.COVAR_ROWS', '8', [], [], None]
+ok: CONST COVAR_ROWS=8
+
+--- Incoming ---
+['const cv.COVAR_COLS', '16', [], [], None]
+ok: CONST COVAR_COLS=16
+
+--- Incoming ---
+['const cv.KMEANS_RANDOM_CENTERS', '0', [], [], None]
+ok: CONST KMEANS_RANDOM_CENTERS=0
+
+--- Incoming ---
+['const cv.KMEANS_PP_CENTERS', '2', [], [], None]
+ok: CONST KMEANS_PP_CENTERS=2
+
+--- Incoming ---
+['const cv.KMEANS_USE_INITIAL_LABELS', '1', [], [], None]
+ok: CONST KMEANS_USE_INITIAL_LABELS=1
+
+--- Incoming ---
+['const cv.FILLED', '-1', [], [], None]
+manual: CONST FILLED=-1
+
+--- Incoming ---
+['const cv.LINE_4', '4', [], [], None]
+ok: CONST LINE_4=4
+
+--- Incoming ---
+['const cv.LINE_8', '8', [], [], None]
+ok: CONST LINE_8=8
+
+--- Incoming ---
+['const cv.LINE_AA', '16', [], [], None]
+ok: CONST LINE_AA=16
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_SIMPLEX', '0', [], [], None]
+ok: CONST FONT_HERSHEY_SIMPLEX=0
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_PLAIN', '1', [], [], None]
+ok: CONST FONT_HERSHEY_PLAIN=1
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_DUPLEX', '2', [], [], None]
+ok: CONST FONT_HERSHEY_DUPLEX=2
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_COMPLEX', '3', [], [], None]
+ok: CONST FONT_HERSHEY_COMPLEX=3
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_TRIPLEX', '4', [], [], None]
+ok: CONST FONT_HERSHEY_TRIPLEX=4
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_COMPLEX_SMALL', '5', [], [], None]
+ok: CONST FONT_HERSHEY_COMPLEX_SMALL=5
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_SCRIPT_SIMPLEX', '6', [], [], None]
+ok: CONST FONT_HERSHEY_SCRIPT_SIMPLEX=6
+
+--- Incoming ---
+['const cv.FONT_HERSHEY_SCRIPT_COMPLEX', '7', [], [], None]
+ok: CONST FONT_HERSHEY_SCRIPT_COMPLEX=7
+
+--- Incoming ---
+['const cv.FONT_ITALIC', '16', [], [], None]
+ok: CONST FONT_ITALIC=16
+
+--- Incoming ---
+['const cv.REDUCE_SUM', '0', [], [], None]
+manual: CONST REDUCE_SUM=0
+
+--- Incoming ---
+['const cv.REDUCE_AVG', '1', [], [], None]
+manual: CONST REDUCE_AVG=1
+
+--- Incoming ---
+['const cv.REDUCE_MAX', '2', [], [], None]
+manual: CONST REDUCE_MAX=2
+
+--- Incoming ---
+['const cv.REDUCE_MIN', '3', [], [], None]
+manual: CONST REDUCE_MIN=3
+
+--- Incoming ---
+[   'cv.borderInterpolate',
+    'int',
+    [],
+    [   ['int', 'p', '', []],
+        ['int', 'len', '', []],
+        ['int', 'borderType', '', []]],
+    'int']
+ok: FUNC <int cv..borderInterpolate [ARG int p=, ARG int len=, ARG int borderType=]>
+
+--- Incoming ---
+[   'cv.copyMakeBorder',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'top', '', []],
+        ['int', 'bottom', '', []],
+        ['int', 'left', '', []],
+        ['int', 'right', '', []],
+        ['int', 'borderType', '', []],
+        ['Scalar', 'value', 'Scalar()', ['/C', '/Ref']]],
+    'void']
+ok: FUNC <void cv..copyMakeBorder [ARG Mat src=, ARG Mat dst=, ARG int top=, ARG int bottom=, ARG int left=, ARG int right=, ARG int borderType=, ARG Scalar value=Scalar()]>
+
+--- Incoming ---
+[   'cv.add',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..add [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG Mat mask=Mat(), ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.subtract',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..subtract [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG Mat mask=Mat(), ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.multiply',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['double', 'scale', '1', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..multiply [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG double scale=1, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.divide',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['double', 'scale', '1', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..divide [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG double scale=1, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.divide',
+    'void',
+    [],
+    [   ['double', 'scale', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..divide [ARG double scale=, ARG Mat src2=, ARG Mat dst=, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.scaleAdd',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['double', 'alpha', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..scaleAdd [ARG Mat src1=, ARG double alpha=, ARG Mat src2=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.addWeighted',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['double', 'alpha', '', []],
+        ['Mat', 'src2', '', []],
+        ['double', 'beta', '', []],
+        ['double', 'gamma', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..addWeighted [ARG Mat src1=, ARG double alpha=, ARG Mat src2=, ARG double beta=, ARG double gamma=, ARG Mat dst=, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.convertScaleAbs',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['double', 'alpha', '1', []],
+        ['double', 'beta', '0', []]],
+    'void']
+ok: FUNC <void cv..convertScaleAbs [ARG Mat src=, ARG Mat dst=, ARG double alpha=1, ARG double beta=0]>
+
+--- Incoming ---
+[   'cv.convertFp16',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..convertFp16 [ARG Mat src=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.LUT',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'lut', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..LUT [ARG Mat src=, ARG Mat lut=, ARG Mat dst=]>
+
+--- Incoming ---
+['cv.sum', 'Scalar', ['=sumElems'], [['Mat', 'src', '', []]], 'Scalar']
+ok: FUNC <Scalar cv..sum [ARG Mat src=]>
+
+--- Incoming ---
+['cv.countNonZero', 'int', [], [['Mat', 'src', '', []]], 'int']
+ok: FUNC <int cv..countNonZero [ARG Mat src=]>
+
+--- Incoming ---
+[   'cv.findNonZero',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'idx', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..findNonZero [ARG Mat src=, ARG Mat idx=]>
+
+--- Incoming ---
+[   'cv.mean',
+    'Scalar',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'mask', 'Mat()', []]],
+    'Scalar']
+ok: FUNC <Scalar cv..mean [ARG Mat src=, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.meanStdDev',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'mean', '', ['/O']],
+        ['Mat', 'stddev', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []]],
+    'void']
+ok: FUNC <void cv..meanStdDev [ARG Mat src=, ARG vector_double mean=, ARG vector_double stddev=, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.norm',
+    'double',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['int', 'normType', 'NORM_L2', []],
+        ['Mat', 'mask', 'Mat()', []]],
+    'double']
+ok: FUNC <double cv..norm [ARG Mat src1=, ARG int normType=NORM_L2, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.norm',
+    'double',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['int', 'normType', 'NORM_L2', []],
+        ['Mat', 'mask', 'Mat()', []]],
+    'double']
+ok: FUNC <double cv..norm [ARG Mat src1=, ARG Mat src2=, ARG int normType=NORM_L2, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.PSNR',
+    'double',
+    [],
+    [['Mat', 'src1', '', []], ['Mat', 'src2', '', []]],
+    'double']
+ok: FUNC <double cv..PSNR [ARG Mat src1=, ARG Mat src2=]>
+
+--- Incoming ---
+[   'cv.batchDistance',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dist', '', ['/O']],
+        ['int', 'dtype', '', []],
+        ['Mat', 'nidx', '', ['/O']],
+        ['int', 'normType', 'NORM_L2', []],
+        ['int', 'K', '0', []],
+        ['Mat', 'mask', 'Mat()', []],
+        ['int', 'update', '0', []],
+        ['bool', 'crosscheck', 'false', []]],
+    'void']
+ok: FUNC <void cv..batchDistance [ARG Mat src1=, ARG Mat src2=, ARG Mat dist=, ARG int dtype=, ARG Mat nidx=, ARG int normType=NORM_L2, ARG int K=0, ARG Mat mask=Mat(), ARG int update=0, ARG bool crosscheck=false]>
+
+--- Incoming ---
+[   'cv.normalize',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/IO']],
+        ['double', 'alpha', '1', []],
+        ['double', 'beta', '0', []],
+        ['int', 'norm_type', 'NORM_L2', []],
+        ['int', 'dtype', '-1', []],
+        ['Mat', 'mask', 'Mat()', []]],
+    'void']
+ok: FUNC <void cv..normalize [ARG Mat src=, ARG Mat dst=, ARG double alpha=1, ARG double beta=0, ARG int norm_type=NORM_L2, ARG int dtype=-1, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.minMaxLoc',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['double*', 'minVal', '', ['/O']],
+        ['double*', 'maxVal', '0', ['/O']],
+        ['Point*', 'minLoc', '0', ['/O']],
+        ['Point*', 'maxLoc', '0', ['/O']],
+        ['Mat', 'mask', 'Mat()', []]],
+    'void']
+manual: FUNC <void cv..minMaxLoc [ARG Mat src=, ARG double * minVal=, ARG double * maxVal=0, ARG Point * minLoc=0, ARG Point * maxLoc=0, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.reduce',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'dim', '', []],
+        ['int', 'rtype', '', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..reduce [ARG Mat src=, ARG Mat dst=, ARG int dim=, ARG int rtype=, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.merge',
+    'void',
+    [],
+    [['vector_Mat', 'mv', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..merge [ARG vector_Mat mv=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.split',
+    'void',
+    [],
+    [['Mat', 'm', '', []], ['vector_Mat', 'mv', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..split [ARG Mat m=, ARG vector_Mat mv=]>
+
+--- Incoming ---
+[   'cv.mixChannels',
+    'void',
+    [],
+    [   ['vector_Mat', 'src', '', []],
+        ['vector_Mat', 'dst', '', ['/IO']],
+        ['vector_int', 'fromTo', '', ['/C', '/Ref']]],
+    'void']
+ok: FUNC <void cv..mixChannels [ARG vector_Mat src=, ARG vector_Mat dst=, ARG vector_int fromTo=]>
+
+--- Incoming ---
+[   'cv.extractChannel',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'coi', '', []]],
+    'void']
+ok: FUNC <void cv..extractChannel [ARG Mat src=, ARG Mat dst=, ARG int coi=]>
+
+--- Incoming ---
+[   'cv.insertChannel',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/IO']],
+        ['int', 'coi', '', []]],
+    'void']
+ok: FUNC <void cv..insertChannel [ARG Mat src=, ARG Mat dst=, ARG int coi=]>
+
+--- Incoming ---
+[   'cv.flip',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flipCode', '', []]],
+    'void']
+ok: FUNC <void cv..flip [ARG Mat src=, ARG Mat dst=, ARG int flipCode=]>
+
+--- Incoming ---
+['const cv.ROTATE_90_CLOCKWISE', '0', [], [], None]
+ok: CONST ROTATE_90_CLOCKWISE=0
+
+--- Incoming ---
+['const cv.ROTATE_180', '1', [], [], None]
+ok: CONST ROTATE_180=1
+
+--- Incoming ---
+['const cv.ROTATE_90_COUNTERCLOCKWISE', '2', [], [], None]
+ok: CONST ROTATE_90_COUNTERCLOCKWISE=2
+
+--- Incoming ---
+[   'cv.rotate',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'rotateCode', '', []]],
+    'void']
+ok: FUNC <void cv..rotate [ARG Mat src=, ARG Mat dst=, ARG int rotateCode=]>
+
+--- Incoming ---
+[   'cv.repeat',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['int', 'ny', '', []],
+        ['int', 'nx', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..repeat [ARG Mat src=, ARG int ny=, ARG int nx=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.hconcat',
+    'void',
+    [],
+    [['vector_Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..hconcat [ARG vector_Mat src=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.vconcat',
+    'void',
+    [],
+    [['vector_Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..vconcat [ARG vector_Mat src=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.bitwise_and',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []]],
+    'void']
+ok: FUNC <void cv..bitwise_and [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.bitwise_or',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []]],
+    'void']
+ok: FUNC <void cv..bitwise_or [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.bitwise_xor',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []]],
+    'void']
+ok: FUNC <void cv..bitwise_xor [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.bitwise_not',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []]],
+    'void']
+ok: FUNC <void cv..bitwise_not [ARG Mat src=, ARG Mat dst=, ARG Mat mask=Mat()]>
+
+--- Incoming ---
+[   'cv.absdiff',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..absdiff [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.inRange',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'lowerb', '', []],
+        ['Mat', 'upperb', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..inRange [ARG Mat src=, ARG Scalar lowerb=, ARG Scalar upperb=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.compare',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'cmpop', '', []]],
+    'void']
+ok: FUNC <void cv..compare [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG int cmpop=]>
+
+--- Incoming ---
+[   'cv.min',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..min [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.max',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..max [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.sqrt',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..sqrt [ARG Mat src=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.pow',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['double', 'power', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..pow [ARG Mat src=, ARG double power=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.exp',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..exp [ARG Mat src=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.log',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..log [ARG Mat src=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.polarToCart',
+    'void',
+    [],
+    [   ['Mat', 'magnitude', '', []],
+        ['Mat', 'angle', '', []],
+        ['Mat', 'x', '', ['/O']],
+        ['Mat', 'y', '', ['/O']],
+        ['bool', 'angleInDegrees', 'false', []]],
+    'void']
+ok: FUNC <void cv..polarToCart [ARG Mat magnitude=, ARG Mat angle=, ARG Mat x=, ARG Mat y=, ARG bool angleInDegrees=false]>
+
+--- Incoming ---
+[   'cv.cartToPolar',
+    'void',
+    [],
+    [   ['Mat', 'x', '', []],
+        ['Mat', 'y', '', []],
+        ['Mat', 'magnitude', '', ['/O']],
+        ['Mat', 'angle', '', ['/O']],
+        ['bool', 'angleInDegrees', 'false', []]],
+    'void']
+ok: FUNC <void cv..cartToPolar [ARG Mat x=, ARG Mat y=, ARG Mat magnitude=, ARG Mat angle=, ARG bool angleInDegrees=false]>
+
+--- Incoming ---
+[   'cv.phase',
+    'void',
+    [],
+    [   ['Mat', 'x', '', []],
+        ['Mat', 'y', '', []],
+        ['Mat', 'angle', '', ['/O']],
+        ['bool', 'angleInDegrees', 'false', []]],
+    'void']
+ok: FUNC <void cv..phase [ARG Mat x=, ARG Mat y=, ARG Mat angle=, ARG bool angleInDegrees=false]>
+
+--- Incoming ---
+[   'cv.magnitude',
+    'void',
+    [],
+    [   ['Mat', 'x', '', []],
+        ['Mat', 'y', '', []],
+        ['Mat', 'magnitude', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..magnitude [ARG Mat x=, ARG Mat y=, ARG Mat magnitude=]>
+
+--- Incoming ---
+[   'cv.checkRange',
+    'bool',
+    [],
+    [   ['Mat', 'a', '', []],
+        ['bool', 'quiet', 'true', []],
+        ['Point*', 'pos', '0', ['/O']],
+        ['double', 'minVal', '-DBL_MAX', []],
+        ['double', 'maxVal', 'DBL_MAX', []]],
+    'bool']
+ok: FUNC <bool cv..checkRange [ARG Mat a=, ARG bool quiet=true, ARG  * pos=0, ARG double minVal=-DBL_MAX, ARG double maxVal=DBL_MAX]>
+
+--- Incoming ---
+[   'cv.patchNaNs',
+    'void',
+    [],
+    [['Mat', 'a', '', ['/IO']], ['double', 'val', '0', []]],
+    'void']
+ok: FUNC <void cv..patchNaNs [ARG Mat a=, ARG double val=0]>
+
+--- Incoming ---
+[   'cv.gemm',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['double', 'alpha', '', []],
+        ['Mat', 'src3', '', []],
+        ['double', 'beta', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', '0', []]],
+    'void']
+ok: FUNC <void cv..gemm [ARG Mat src1=, ARG Mat src2=, ARG double alpha=, ARG Mat src3=, ARG double beta=, ARG Mat dst=, ARG int flags=0]>
+
+--- Incoming ---
+[   'cv.mulTransposed',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['bool', 'aTa', '', []],
+        ['Mat', 'delta', 'Mat()', []],
+        ['double', 'scale', '1', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..mulTransposed [ARG Mat src=, ARG Mat dst=, ARG bool aTa=, ARG Mat delta=Mat(), ARG double scale=1, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.transpose',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..transpose [ARG Mat src=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.transform',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']], ['Mat', 'm', '', []]],
+    'void']
+ok: FUNC <void cv..transform [ARG Mat src=, ARG Mat dst=, ARG Mat m=]>
+
+--- Incoming ---
+[   'cv.perspectiveTransform',
+    'void',
+    [],
+    [['Mat', 'src', '', []], ['Mat', 'dst', '', ['/O']], ['Mat', 'm', '', []]],
+    'void']
+ok: FUNC <void cv..perspectiveTransform [ARG Mat src=, ARG Mat dst=, ARG Mat m=]>
+
+--- Incoming ---
+[   'cv.completeSymm',
+    'void',
+    [],
+    [['Mat', 'm', '', ['/IO']], ['bool', 'lowerToUpper', 'false', []]],
+    'void']
+ok: FUNC <void cv..completeSymm [ARG Mat m=, ARG bool lowerToUpper=false]>
+
+--- Incoming ---
+[   'cv.setIdentity',
+    'void',
+    [],
+    [['Mat', 'mtx', '', ['/IO']], ['Scalar', 's', 'Scalar(1)', ['/C', '/Ref']]],
+    'void']
+ok: FUNC <void cv..setIdentity [ARG Mat mtx=, ARG Scalar s=Scalar(1)]>
+
+--- Incoming ---
+['cv.determinant', 'double', [], [['Mat', 'mtx', '', []]], 'double']
+ok: FUNC <double cv..determinant [ARG Mat mtx=]>
+
+--- Incoming ---
+['cv.trace', 'Scalar', [], [['Mat', 'mtx', '', []]], 'Scalar']
+ok: FUNC <Scalar cv..trace [ARG Mat mtx=]>
+
+--- Incoming ---
+[   'cv.invert',
+    'double',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', 'DECOMP_LU', []]],
+    'double']
+ok: FUNC <double cv..invert [ARG Mat src=, ARG Mat dst=, ARG int flags=DECOMP_LU]>
+
+--- Incoming ---
+[   'cv.solve',
+    'bool',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Mat', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', 'DECOMP_LU', []]],
+    'bool']
+ok: FUNC <bool cv..solve [ARG Mat src1=, ARG Mat src2=, ARG Mat dst=, ARG int flags=DECOMP_LU]>
+
+--- Incoming ---
+[   'cv.sort',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', '', []]],
+    'void']
+ok: FUNC <void cv..sort [ARG Mat src=, ARG Mat dst=, ARG int flags=]>
+
+--- Incoming ---
+[   'cv.sortIdx',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', '', []]],
+    'void']
+ok: FUNC <void cv..sortIdx [ARG Mat src=, ARG Mat dst=, ARG int flags=]>
+
+--- Incoming ---
+[   'cv.solveCubic',
+    'int',
+    [],
+    [['Mat', 'coeffs', '', []], ['Mat', 'roots', '', ['/O']]],
+    'int']
+ok: FUNC <int cv..solveCubic [ARG Mat coeffs=, ARG Mat roots=]>
+
+--- Incoming ---
+[   'cv.solvePoly',
+    'double',
+    [],
+    [   ['Mat', 'coeffs', '', []],
+        ['Mat', 'roots', '', ['/O']],
+        ['int', 'maxIters', '300', []]],
+    'double']
+ok: FUNC <double cv..solvePoly [ARG Mat coeffs=, ARG Mat roots=, ARG int maxIters=300]>
+
+--- Incoming ---
+[   'cv.eigen',
+    'bool',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'eigenvalues', '', ['/O']],
+        ['Mat', 'eigenvectors', 'Mat()', ['/O']]],
+    'bool']
+ok: FUNC <bool cv..eigen [ARG Mat src=, ARG Mat eigenvalues=, ARG Mat eigenvectors=Mat()]>
+
+--- Incoming ---
+[   'cv.eigenNonSymmetric',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'eigenvalues', '', ['/O']],
+        ['Mat', 'eigenvectors', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..eigenNonSymmetric [ARG Mat src=, ARG Mat eigenvalues=, ARG Mat eigenvectors=]>
+
+--- Incoming ---
+[   'cv.calcCovarMatrix',
+    'void',
+    [],
+    [   ['Mat', 'samples', '', []],
+        ['Mat', 'covar', '', ['/O']],
+        ['Mat', 'mean', '', ['/IO']],
+        ['int', 'flags', '', []],
+        ['int', 'ctype', 'CV_64F', []]],
+    'void']
+ok: FUNC <void cv..calcCovarMatrix [ARG Mat samples=, ARG Mat covar=, ARG Mat mean=, ARG int flags=, ARG int ctype=CV_64F]>
+
+--- Incoming ---
+[   'cv.PCACompute',
+    'void',
+    [],
+    [   ['Mat', 'data', '', []],
+        ['Mat', 'mean', '', ['/IO']],
+        ['Mat', 'eigenvectors', '', ['/O']],
+        ['int', 'maxComponents', '0', []]],
+    'void']
+ok: FUNC <void cv..PCACompute [ARG Mat data=, ARG Mat mean=, ARG Mat eigenvectors=, ARG int maxComponents=0]>
+
+--- Incoming ---
+[   'cv.PCACompute',
+    'void',
+    [],
+    [   ['Mat', 'data', '', []],
+        ['Mat', 'mean', '', ['/IO']],
+        ['Mat', 'eigenvectors', '', ['/O']],
+        ['double', 'retainedVariance', '', []]],
+    'void']
+ok: FUNC <void cv..PCACompute [ARG Mat data=, ARG Mat mean=, ARG Mat eigenvectors=, ARG double retainedVariance=]>
+
+--- Incoming ---
+[   'cv.PCAProject',
+    'void',
+    [],
+    [   ['Mat', 'data', '', []],
+        ['Mat', 'mean', '', []],
+        ['Mat', 'eigenvectors', '', []],
+        ['Mat', 'result', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..PCAProject [ARG Mat data=, ARG Mat mean=, ARG Mat eigenvectors=, ARG Mat result=]>
+
+--- Incoming ---
+[   'cv.PCABackProject',
+    'void',
+    [],
+    [   ['Mat', 'data', '', []],
+        ['Mat', 'mean', '', []],
+        ['Mat', 'eigenvectors', '', []],
+        ['Mat', 'result', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..PCABackProject [ARG Mat data=, ARG Mat mean=, ARG Mat eigenvectors=, ARG Mat result=]>
+
+--- Incoming ---
+[   'cv.SVDecomp',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'w', '', ['/O']],
+        ['Mat', 'u', '', ['/O']],
+        ['Mat', 'vt', '', ['/O']],
+        ['int', 'flags', '0', []]],
+    'void']
+ok: FUNC <void cv..SVDecomp [ARG Mat src=, ARG Mat w=, ARG Mat u=, ARG Mat vt=, ARG int flags=0]>
+
+--- Incoming ---
+[   'cv.SVBackSubst',
+    'void',
+    [],
+    [   ['Mat', 'w', '', []],
+        ['Mat', 'u', '', []],
+        ['Mat', 'vt', '', []],
+        ['Mat', 'rhs', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..SVBackSubst [ARG Mat w=, ARG Mat u=, ARG Mat vt=, ARG Mat rhs=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.Mahalanobis',
+    'double',
+    [],
+    [['Mat', 'v1', '', []], ['Mat', 'v2', '', []], ['Mat', 'icovar', '', []]],
+    'double']
+ok: FUNC <double cv..Mahalanobis [ARG Mat v1=, ARG Mat v2=, ARG Mat icovar=]>
+
+--- Incoming ---
+[   'cv.dft',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', '0', []],
+        ['int', 'nonzeroRows', '0', []]],
+    'void']
+ok: FUNC <void cv..dft [ARG Mat src=, ARG Mat dst=, ARG int flags=0, ARG int nonzeroRows=0]>
+
+--- Incoming ---
+[   'cv.idft',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', '0', []],
+        ['int', 'nonzeroRows', '0', []]],
+    'void']
+ok: FUNC <void cv..idft [ARG Mat src=, ARG Mat dst=, ARG int flags=0, ARG int nonzeroRows=0]>
+
+--- Incoming ---
+[   'cv.dct',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', '0', []]],
+    'void']
+ok: FUNC <void cv..dct [ARG Mat src=, ARG Mat dst=, ARG int flags=0]>
+
+--- Incoming ---
+[   'cv.idct',
+    'void',
+    [],
+    [   ['Mat', 'src', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'flags', '0', []]],
+    'void']
+ok: FUNC <void cv..idct [ARG Mat src=, ARG Mat dst=, ARG int flags=0]>
+
+--- Incoming ---
+[   'cv.mulSpectrums',
+    'void',
+    [],
+    [   ['Mat', 'a', '', []],
+        ['Mat', 'b', '', []],
+        ['Mat', 'c', '', ['/O']],
+        ['int', 'flags', '', []],
+        ['bool', 'conjB', 'false', []]],
+    'void']
+ok: FUNC <void cv..mulSpectrums [ARG Mat a=, ARG Mat b=, ARG Mat c=, ARG int flags=, ARG bool conjB=false]>
+
+--- Incoming ---
+['cv.getOptimalDFTSize', 'int', [], [['int', 'vecsize', '', []]], 'int']
+ok: FUNC <int cv..getOptimalDFTSize [ARG int vecsize=]>
+
+--- Incoming ---
+['cv.setRNGSeed', 'void', [], [['int', 'seed', '', []]], 'void']
+ok: FUNC <void cv..setRNGSeed [ARG int seed=]>
+
+--- Incoming ---
+[   'cv.randu',
+    'void',
+    [],
+    [   ['Mat', 'dst', '', ['/IO']],
+        ['Mat', 'low', '', []],
+        ['Mat', 'high', '', []]],
+    'void']
+ok: FUNC <void cv..randu [ARG Mat dst=, ARG double low=, ARG double high=]>
+
+--- Incoming ---
+[   'cv.randn',
+    'void',
+    [],
+    [   ['Mat', 'dst', '', ['/IO']],
+        ['Mat', 'mean', '', []],
+        ['Mat', 'stddev', '', []]],
+    'void']
+ok: FUNC <void cv..randn [ARG Mat dst=, ARG double mean=, ARG double stddev=]>
+
+--- Incoming ---
+[   'cv.randShuffle',
+    'void',
+    [],
+    [   ['Mat', 'dst', '', ['/IO']],
+        ['double', 'iterFactor', '1.', []],
+        ['RNG*', 'rng', '0', []]],
+    'void']
+ok: FUNC <void cv..randShuffle [ARG Mat dst=, ARG double iterFactor=1., ARG RNG * rng=0]>
+
+--- Incoming ---
+['const cv.PCA.DATA_AS_ROW', '0', [], [], None]
+class not found: CONST DATA_AS_ROW=0
+
+--- Incoming ---
+['const cv.PCA.DATA_AS_COL', '1', [], [], None]
+class not found: CONST DATA_AS_COL=1
+
+--- Incoming ---
+['const cv.PCA.USE_AVG', '2', [], [], None]
+class not found: CONST USE_AVG=2
+
+--- Incoming ---
+['const cv.SVD.MODIFY_A', '1', [], [], None]
+class not found: CONST MODIFY_A=1
+
+--- Incoming ---
+['const cv.SVD.NO_UV', '2', [], [], None]
+class not found: CONST NO_UV=2
+
+--- Incoming ---
+['const cv.SVD.FULL_UV', '4', [], [], None]
+class not found: CONST FULL_UV=4
+
+--- Incoming ---
+['const cv.RNG.UNIFORM', '0', [], [], None]
+class not found: CONST UNIFORM=0
+
+--- Incoming ---
+['const cv.RNG.NORMAL', '1', [], [], None]
+class not found: CONST NORMAL=1
+
+--- Incoming ---
+[   'cv.kmeans',
+    'double',
+    [],
+    [   ['Mat', 'data', '', []],
+        ['int', 'K', '', []],
+        ['Mat', 'bestLabels', '', ['/IO']],
+        ['TermCriteria', 'criteria', '', []],
+        ['int', 'attempts', '', []],
+        ['int', 'flags', '', []],
+        ['Mat', 'centers', 'Mat()', ['/O']]],
+    'double']
+ok: FUNC <double cv..kmeans [ARG Mat data=, ARG int K=, ARG Mat bestLabels=, ARG TermCriteria criteria=, ARG int attempts=, ARG int flags=, ARG Mat centers=Mat()]>
+
+--- Incoming ---
+['const cv.Formatter.FMT_DEFAULT', '0', [], [], None]
+class not found: CONST FMT_DEFAULT=0
+
+--- Incoming ---
+['const cv.Formatter.FMT_MATLAB', '1', [], [], None]
+class not found: CONST FMT_MATLAB=1
+
+--- Incoming ---
+['const cv.Formatter.FMT_CSV', '2', [], [], None]
+class not found: CONST FMT_CSV=2
+
+--- Incoming ---
+['const cv.Formatter.FMT_PYTHON', '3', [], [], None]
+class not found: CONST FMT_PYTHON=3
+
+--- Incoming ---
+['const cv.Formatter.FMT_NUMPY', '4', [], [], None]
+class not found: CONST FMT_NUMPY=4
+
+--- Incoming ---
+['const cv.Formatter.FMT_C', '5', [], [], None]
+class not found: CONST FMT_C=5
+
+--- Incoming ---
+['class cv.Algorithm', '', [], [], None]
+duplicated: CLASS cv::.Algorithm : 
+
+--- Incoming ---
+['cv.Algorithm.clear', 'void', ['/V'], [], 'void']
+ok: FUNC <void cv.Algorithm.clear []>
+
+--- Incoming ---
+[   'cv.Algorithm.write',
+    'void',
+    ['/C'],
+    [   ['Ptr_FileStorage', 'fs', '', ['/C', '/Ref']],
+        ['String', 'name', 'String()', ['/C', '/Ref']]],
+    'void']
+ok: FUNC <void cv.Algorithm.write [ARG Ptr_FileStorage fs=, ARG String name=String()]>
+
+--- Incoming ---
+[   'cv.Algorithm.read',
+    'void',
+    ['/V'],
+    [['FileNode', 'fn', '', ['/C', '/Ref']]],
+    'void']
+ok: FUNC <void cv.Algorithm.read [ARG FileNode fn=]>
+
+--- Incoming ---
+['cv.Algorithm.empty', 'bool', ['/C', '/V'], [], 'bool']
+ok: FUNC <bool cv.Algorithm.empty []>
+
+--- Incoming ---
+[   'cv.Algorithm.save',
+    'void',
+    ['/C', '/V'],
+    [['String', 'filename', '', ['/C', '/Ref']]],
+    'void']
+ok: FUNC <void cv.Algorithm.save [ARG String filename=]>
+
+--- Incoming ---
+['cv.Algorithm.getDefaultName', 'String', ['/C', '/V'], [], 'String']
+ok: FUNC <String cv.Algorithm.getDefaultName []>
+
+--- Incoming ---
+['const cv.Param.INT', '0', [], [], None]
+class not found: CONST INT=0
+
+--- Incoming ---
+['const cv.Param.BOOLEAN', '1', [], [], None]
+class not found: CONST BOOLEAN=1
+
+--- Incoming ---
+['const cv.Param.REAL', '2', [], [], None]
+class not found: CONST REAL=2
+
+--- Incoming ---
+['const cv.Param.STRING', '3', [], [], None]
+class not found: CONST STRING=3
+
+--- Incoming ---
+['const cv.Param.MAT', '4', [], [], None]
+class not found: CONST MAT=4
+
+--- Incoming ---
+['const cv.Param.MAT_VECTOR', '5', [], [], None]
+class not found: CONST MAT_VECTOR=5
+
+--- Incoming ---
+['const cv.Param.ALGORITHM', '6', [], [], None]
+class not found: CONST ALGORITHM=6
+
+--- Incoming ---
+['const cv.Param.FLOAT', '7', [], [], None]
+class not found: CONST FLOAT=7
+
+--- Incoming ---
+['const cv.Param.UNSIGNED_INT', '8', [], [], None]
+class not found: CONST UNSIGNED_INT=8
+
+--- Incoming ---
+['const cv.Param.UINT64', '9', [], [], None]
+class not found: CONST UINT64=9
+
+--- Incoming ---
+['const cv.Param.UCHAR', '11', [], [], None]
+class not found: CONST UCHAR=11
+
+--- Incoming ---
+['const cv.Param.SCALAR', '12', [], [], None]
+class not found: CONST SCALAR=12
+
+
+===== Header: /home/akshay/Projects/vision/opencv/modules/core/include/opencv2/core/utility.hpp =====
+Namespaces: {'cv.ipp', 'cv.Error', 'cv.utils', 'cv.cuda', 'cv.instr', 'cv.ogl', 'cv.cudev', 'cv'}
+
+--- Incoming ---
+['cv.setNumThreads', 'void', [], [['int', 'nthreads', '', []]], 'void']
+ok: FUNC <void cv..setNumThreads [ARG int nthreads=]>
+
+--- Incoming ---
+['cv.getNumThreads', 'int', [], [], 'int']
+ok: FUNC <int cv..getNumThreads []>
+
+--- Incoming ---
+['cv.getThreadNum', 'int', [], [], 'int']
+ok: FUNC <int cv..getThreadNum []>
+
+--- Incoming ---
+['cv.getBuildInformation', 'String', [], [], 'String']
+ok: FUNC <String cv..getBuildInformation []>
+
+--- Incoming ---
+['cv.getVersionString', 'String', [], [], 'String']
+ok: FUNC <String cv..getVersionString []>
+
+--- Incoming ---
+['cv.getVersionMajor', 'int', [], [], 'int']
+ok: FUNC <int cv..getVersionMajor []>
+
+--- Incoming ---
+['cv.getVersionMinor', 'int', [], [], 'int']
+ok: FUNC <int cv..getVersionMinor []>
+
+--- Incoming ---
+['cv.getVersionRevision', 'int', [], [], 'int']
+ok: FUNC <int cv..getVersionRevision []>
+
+--- Incoming ---
+['cv.getTickCount', 'int64', [], [], 'int64']
+ok: FUNC <int64 cv..getTickCount []>
+
+--- Incoming ---
+['cv.getTickFrequency', 'double', [], [], 'double']
+ok: FUNC <double cv..getTickFrequency []>
+
+--- Incoming ---
+['class cv.TickMeter', '', [], [], None]
+ok: class CLASS cv::.TickMeter : , name: TickMeter, base: 
+
+--- Incoming ---
+['cv.TickMeter.TickMeter', '', [], [], None]
+ok: FUNC < cv.TickMeter.TickMeter []>
+
+--- Incoming ---
+['cv.TickMeter.start', 'void', [], [], 'void']
+ok: FUNC <void cv.TickMeter.start []>
+
+--- Incoming ---
+['cv.TickMeter.stop', 'void', [], [], 'void']
+ok: FUNC <void cv.TickMeter.stop []>
+
+--- Incoming ---
+['cv.TickMeter.getTimeTicks', 'int64', ['/C'], [], 'int64']
+ok: FUNC <int64 cv.TickMeter.getTimeTicks []>
+
+--- Incoming ---
+['cv.TickMeter.getTimeMicro', 'double', ['/C'], [], 'double']
+ok: FUNC <double cv.TickMeter.getTimeMicro []>
+
+--- Incoming ---
+['cv.TickMeter.getTimeMilli', 'double', ['/C'], [], 'double']
+ok: FUNC <double cv.TickMeter.getTimeMilli []>
+
+--- Incoming ---
+['cv.TickMeter.getTimeSec', 'double', ['/C'], [], 'double']
+ok: FUNC <double cv.TickMeter.getTimeSec []>
+
+--- Incoming ---
+['cv.TickMeter.getCounter', 'int64', ['/C'], [], 'int64']
+ok: FUNC <int64 cv.TickMeter.getCounter []>
+
+--- Incoming ---
+['cv.TickMeter.reset', 'void', [], [], 'void']
+ok: FUNC <void cv.TickMeter.reset []>
+
+--- Incoming ---
+['cv.getCPUTickCount', 'int64', [], [], 'int64']
+ok: FUNC <int64 cv..getCPUTickCount []>
+
+--- Incoming ---
+['cv.checkHardwareSupport', 'bool', [], [['int', 'feature', '', []]], 'bool']
+manual: FUNC <bool cv..checkHardwareSupport [ARG int feature=]>
+
+--- Incoming ---
+[   'cv.getHardwareFeatureName',
+    'String',
+    [],
+    [['int', 'feature', '', []]],
+    'String']
+ok: FUNC <String cv..getHardwareFeatureName [ARG int feature=]>
+
+--- Incoming ---
+['cv.getNumberOfCPUs', 'int', [], [], 'int']
+ok: FUNC <int cv..getNumberOfCPUs []>
+
+--- Incoming ---
+['cv.setUseOptimized', 'void', [], [['bool', 'onoff', '', []]], 'void']
+manual: FUNC <void cv..setUseOptimized [ARG bool onoff=]>
+
+--- Incoming ---
+['cv.useOptimized', 'bool', [], [], 'bool']
+manual: FUNC <bool cv..useOptimized []>
+
+--- Incoming ---
+['const cv.instr.TYPE_GENERAL', '0', [], [], None]
+ok: CONST TYPE_GENERAL=0
+
+--- Incoming ---
+['const cv.instr.TYPE_MARKER', '0+1', [], [], None]
+ok: CONST TYPE_MARKER=0+1
+
+--- Incoming ---
+['const cv.instr.TYPE_WRAPPER', '0+2', [], [], None]
+ok: CONST TYPE_WRAPPER=0+2
+
+--- Incoming ---
+['const cv.instr.TYPE_FUN', '0+3', [], [], None]
+ok: CONST TYPE_FUN=0+3
+
+--- Incoming ---
+['const cv.instr.IMPL_PLAIN', '0', [], [], None]
+ok: CONST IMPL_PLAIN=0
+
+--- Incoming ---
+['const cv.instr.IMPL_IPP', '0+1', [], [], None]
+ok: CONST IMPL_IPP=0+1
+
+--- Incoming ---
+['const cv.instr.IMPL_OPENCL', '0+2', [], [], None]
+ok: CONST IMPL_OPENCL=0+2
+
+--- Incoming ---
+['const cv.instr.FLAGS_NONE', '0', [], [], None]
+ok: CONST FLAGS_NONE=0
+
+--- Incoming ---
+['const cv.instr.FLAGS_MAPPING', '0x01', [], [], None]
+ok: CONST FLAGS_MAPPING=0x01
+
+--- Incoming ---
+['const cv.instr.FLAGS_EXPAND_SAME_NAMES', '0x02', [], [], None]
+ok: CONST FLAGS_EXPAND_SAME_NAMES=0x02
+
+
+===== Header: /home/akshay/Projects/vision/opencv/modules/core/misc/java/src/cpp/core_manual.hpp =====
+Namespaces: {'cv.ipp', 'cv.Error', 'cv.utils', 'cv.cuda', 'cv.instr', 'cv.ogl', 'cv.cudev', 'cv'}
+
+--- Incoming ---
+['cv.setErrorVerbosity', 'void', [], [['bool', 'verbose', '', []]], 'void']
+ok: FUNC <void cv..setErrorVerbosity [ARG bool verbose=]>
+
+--- Incoming ---
+[   'cv.add',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..add [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=, ARG Mat mask=Mat(), ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.subtract',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['Mat', 'mask', 'Mat()', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..subtract [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=, ARG Mat mask=Mat(), ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.multiply',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['double', 'scale', '1', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..multiply [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=, ARG double scale=1, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.divide',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['double', 'scale', '1', []],
+        ['int', 'dtype', '-1', []]],
+    'void']
+ok: FUNC <void cv..divide [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=, ARG double scale=1, ARG int dtype=-1]>
+
+--- Incoming ---
+[   'cv.absdiff',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..absdiff [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.compare',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']],
+        ['int', 'cmpop', '', []]],
+    'void']
+ok: FUNC <void cv..compare [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=, ARG int cmpop=]>
+
+--- Incoming ---
+[   'cv.min',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..min [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=]>
+
+--- Incoming ---
+[   'cv.max',
+    'void',
+    [],
+    [   ['Mat', 'src1', '', []],
+        ['Scalar', 'src2', '', []],
+        ['Mat', 'dst', '', ['/O']]],
+    'void']
+ok: FUNC <void cv..max [ARG Mat src1=, ARG Scalar src2=, ARG Mat dst=]>
+
+
+===== Generating... =====
+CLASS ::.Core : 
+[CONST CV_8U=0(manual), CONST CV_8S=1(manual), CONST CV_16U=2(manual), CONST CV_16S=3(manual), CONST CV_32S=4(manual), CONST CV_32F=5(manual), CONST CV_64F=6(manual), CONST CV_USRTYPE1=7(manual)]
+[CONST SVD_MODIFY_A=1(manual), CONST SVD_NO_UV=2(manual), CONST SVD_FULL_UV=4(manual), CONST FILLED=-1(manual), CONST REDUCE_SUM=0(manual), CONST REDUCE_AVG=1(manual), CONST REDUCE_MAX=2(manual), CONST REDUCE_MIN=3(manual), CONST StsOk=0, CONST StsBackTrace=-1, CONST StsError=-2, CONST StsInternal=-3, CONST StsNoMem=-4, CONST StsBadArg=-5, CONST StsBadFunc=-6, CONST StsNoConv=-7, CONST StsAutoTrace=-8, CONST HeaderIsNull=-9, CONST BadImageSize=-10, CONST BadOffset=-11, CONST BadDataPtr=-12, CONST BadStep=-13, CONST BadModelOrChSeq=-14, CONST BadNumChannels=-15, CONST BadNumChannel1U=-16, CONST BadDepth=-17, CONST BadAlphaChannel=-18, CONST BadOrder=-19, CONST BadOrigin=-20, CONST BadAlign=-21, CONST BadCallBack=-22, CONST BadTileSize=-23, CONST BadCOI=-24, CONST BadROISize=-25, CONST MaskIsTiled=-26, CONST StsNullPtr=-27, CONST StsVecLengthErr=-28, CONST StsFilterStructContentErr=-29, CONST StsKernelStructContentErr=-30, CONST StsFilterOffsetErr=-31, CONST StsBadSize=-201, CONST StsDivByZero=-202, CONST StsInplaceNotSupported=-203, CONST StsObjectNotFound=-204, CONST StsUnmatchedFormats=-205, CONST StsBadFlag=-206, CONST StsBadPoint=-207, CONST StsBadMask=-208, CONST StsUnmatchedSizes=-209, CONST StsUnsupportedFormat=-210, CONST StsOutOfRange=-211, CONST StsParseError=-212, CONST StsNotImplemented=-213, CONST StsBadMemBlock=-214, CONST StsAssert=-215, CONST GpuNotSupported=-216, CONST GpuApiCallError=-217, CONST OpenGlNotSupported=-218, CONST OpenGlApiCallError=-219, CONST OpenCLApiCallError=-220, CONST OpenCLDoubleNotSupported=-221, CONST OpenCLInitError=-222, CONST OpenCLNoAMDBlasFft=-223, CONST DECOMP_LU=0, CONST DECOMP_SVD=1, CONST DECOMP_EIG=2, CONST DECOMP_CHOLESKY=3, CONST DECOMP_QR=4, CONST DECOMP_NORMAL=16, CONST NORM_INF=1, CONST NORM_L1=2, CONST NORM_L2=4, CONST NORM_L2SQR=5, CONST NORM_HAMMING=6, CONST NORM_HAMMING2=7, CONST NORM_TYPE_MASK=7, CONST NORM_RELATIVE=8, CONST NORM_MINMAX=32, CONST CMP_EQ=0, CONST CMP_GT=1, CONST CMP_GE=2, CONST CMP_LT=3, CONST CMP_LE=4, CONST CMP_NE=5, CONST GEMM_1_T=1, CONST GEMM_2_T=2, CONST GEMM_3_T=4, CONST DFT_INVERSE=1, CONST DFT_SCALE=2, CONST DFT_ROWS=4, CONST DFT_COMPLEX_OUTPUT=16, CONST DFT_REAL_OUTPUT=32, CONST DFT_COMPLEX_INPUT=64, CONST DCT_INVERSE=DFT_INVERSE, CONST DCT_ROWS=DFT_ROWS, CONST BORDER_CONSTANT=0, CONST BORDER_REPLICATE=1, CONST BORDER_REFLECT=2, CONST BORDER_WRAP=3, CONST BORDER_REFLECT_101=4, CONST BORDER_TRANSPARENT=5, CONST BORDER_REFLECT101=BORDER_REFLECT_101, CONST BORDER_DEFAULT=BORDER_REFLECT_101, CONST BORDER_ISOLATED=16, CONST SORT_EVERY_ROW=0, CONST SORT_EVERY_COLUMN=1, CONST SORT_ASCENDING=0, CONST SORT_DESCENDING=16, CONST COVAR_SCRAMBLED=0, CONST COVAR_NORMAL=1, CONST COVAR_USE_AVG=2, CONST COVAR_SCALE=4, CONST COVAR_ROWS=8, CONST COVAR_COLS=16, CONST KMEANS_RANDOM_CENTERS=0, CONST KMEANS_PP_CENTERS=2, CONST KMEANS_USE_INITIAL_LABELS=1, CONST LINE_4=4, CONST LINE_8=8, CONST LINE_AA=16, CONST FONT_HERSHEY_SIMPLEX=0, CONST FONT_HERSHEY_PLAIN=1, CONST FONT_HERSHEY_DUPLEX=2, CONST FONT_HERSHEY_COMPLEX=3, CONST FONT_HERSHEY_TRIPLEX=4, CONST FONT_HERSHEY_COMPLEX_SMALL=5, CONST FONT_HERSHEY_SCRIPT_SIMPLEX=6, CONST FONT_HERSHEY_SCRIPT_COMPLEX=7, CONST FONT_ITALIC=16, CONST ROTATE_90_CLOCKWISE=0, CONST ROTATE_180=1, CONST ROTATE_90_COUNTERCLOCKWISE=2, CONST TYPE_GENERAL=0, CONST TYPE_MARKER=0+1, CONST TYPE_WRAPPER=0+2, CONST TYPE_FUN=0+3, CONST IMPL_PLAIN=0, CONST IMPL_IPP=0+1, CONST IMPL_OPENCL=0+2, CONST FLAGS_NONE=0, CONST FLAGS_MAPPING=0x01, CONST FLAGS_EXPAND_SAME_NAMES=0x02]
+FUNC <Scalar cv..mean [ARG Mat src=, ARG Mat mask=Mat()]>

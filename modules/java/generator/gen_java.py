@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-import sys, re, os.path
+import sys, re, os.path, errno, fnmatch
 import json
 import logging
+from shutil import copyfile
 from pprint import pformat
 from string import Template
 
@@ -10,6 +11,35 @@ if sys.version_info[0] >= 3:
     from io import StringIO
 else:
     from cStringIO import StringIO
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# list of modules + files remap
+config = None
+ROOT_DIR = None
+FILES_REMAP = {}
+
+'''
+    # INFO: Function that returns the path mapped by `path` argument in FILES_REMAP dict above
+    Keys of the above dict are relative path specified files, that contain template strings
+    that should contain values generated at compile time
+    Values of the above dict are absolute path specified files, that contain OS specific,
+    platform specific and revision specific info. 
+    Therefore it serves as a generic output template for all platforms
+'''
+def checkFileRemap(path):
+    path = os.path.realpath(path)
+    if path in FILES_REMAP:
+        return FILES_REMAP[path]
+    assert path[-3:] != '.in', path
+    return path
+
+total_files = 0
+updated_files = 0
+
+module_imports = []
+module_j_code = None
+module_jn_code = None
 
 # list of class names, which should be skipped by wrapper generator
 # the list is loaded from misc/java/gen_dict.json defined for the module and its dependencies
@@ -52,136 +82,31 @@ ManualFuncs = {}
 # { class : { func : { arg_name : {"ctype" : ctype, "attrib" : [attrib]} } } }
 func_arg_fix = {}
 
-def getLibVersion(version_hpp_path):
-    version_file = open(version_hpp_path, "rt").read()
-    major = re.search("^W*#\W*define\W+VISP_VERSION_MAJOR\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
-    minor = re.search("^W*#\W*define\W+VISP_VERSION_MINOR\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
-    revision = re.search("^W*#\W*define\W+VISP_VERSION_REVISION\W+(\d+)\W*$", version_file, re.MULTILINE).group(1)
-    status = re.search("^W*#\W*define\W+VISP_VERSION_STATUS\W+\"(.*?)\"\W*$", version_file, re.MULTILINE).group(1)
-    return (major, minor, revision, status)
+'''
+    # INFO: Needs no comments :D
+'''
+def read_contents(fname):
+    with open(fname, 'r') as f:
+        data = f.read()
+    return data
 
-def libVersionBlock():
-    (major, minor, revision, status) = getLibVersion(
-    (os.path.dirname(__file__) or '.') + '/../../core/include/visp2/core/version.hpp')
-    version_str    = '.'.join( (major, minor, revision) ) + status
-    version_suffix =  ''.join( (major, minor, revision) )
-    return """
-    // these constants are wrapped inside functions to prevent inlining
-    private static String getVersion() { return "%(v)s"; }
-    private static String getNativeLibraryName() { return "visp_java%(vs)s"; }
-    private static int getVersionMajor() { return %(ma)s; }
-    private static int getVersionMinor() { return %(mi)s; }
-    private static int getVersionRevision() { return %(re)s; }
-    private static String getVersionStatus() { return "%(st)s"; }
+'''
+    # INFO: Create dir or a file if not created already
+'''
+def mkdir_p(path):
+    ''' mkdir -p '''
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
-    public static final String VERSION = getVersion();
-    public static final String NATIVE_LIBRARY_NAME = getNativeLibraryName();
-    public static final int VERSION_MAJOR = getVersionMajor();
-    public static final int VERSION_MINOR = getVersionMinor();
-    public static final int VERSION_REVISION = getVersionRevision();
-    public static final String VERSION_STATUS = getVersionStatus();
-""" % { 'v' : version_str, 'vs' : version_suffix, 'ma' : major, 'mi' : minor, 're' : revision, 'st': status }
-
-
-T_JAVA_START_INHERITED = """
-//
-// This file is auto-generated. Please don't modify it!
-//
-package org.visp.$module;
-
-$imports
-
-$docs
-$annotation
-public class $jname extends $base {
-
-    protected $jname(long addr) { super(addr); }
-
-"""
-
-T_JAVA_START_ORPHAN = """
-//
-// This file is auto-generated. Please don't modify it!
-//
-package org.visp.$module;
-
-$imports
-
-$docs
-$annotation
-public class $jname {
-
-    protected final long nativeObj;
-    protected $jname(long addr) { nativeObj = addr; }
-
-    public long getNativeObjAddr() { return nativeObj; }
-"""
-
-T_JAVA_START_MODULE = """
-//
-// This file is auto-generated. Please don't modify it!
-//
-package org.visp.$module;
-
-$imports
-
-$docs
-$annotation
-public class $jname {
-"""
-
-T_CPP_MODULE = """
-//
-// This file is auto-generated, please don't edit!
-//
-
-#define LOG_TAG "org.visp.$m"
-
-#include "common.h"
-
-#include "visp2/visp_modules.hpp"
-#ifdef HAVE_VISP_$M
-
-#include <string>
-
-#include "visp2/$m.hpp"
-
-$includes
-
-using namespace vp;
-
-/// throw java exception
-static void throwJavaException(JNIEnv *env, const std::exception *e, const char *method) {
-  std::string what = "unknown exception";
-  jclass je = 0;
-
-  if(e) {
-    std::string exception_type = "std::exception";
-
-    if(dynamic_cast<const vpException*>(e)) {
-      exception_type = "vp::Exception";
-      je = env->FindClass("org/visp/core/VpException");
-    }
-
-    what = exception_type + ": " + e->what();
-  }
-
-  if(!je) je = env->FindClass("java/lang/Exception");
-  env->ThrowNew(je, what.c_str());
-
-  LOGE("%s caught %s", method, what.c_str());
-  (void)method;        // avoid "unused" warning
-}
-
-
-extern "C" {
-
-$code
-
-} // extern "C"
-
-#endif // HAVE_VISP_$M
-"""
+T_JAVA_START_INHERITED = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_class_inherited.prolog'))
+T_JAVA_START_ORPHAN = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_class.prolog'))
+T_JAVA_START_MODULE = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_module.prolog'))
+T_CPP_MODULE = Template(read_contents(os.path.join(SCRIPT_DIR, 'templates/cpp_module.template')))
 
 class GeneralInfo():
     def __init__(self, type, decl, namespaces):
@@ -195,7 +120,7 @@ class GeneralInfo():
         else:
             docstring=""
         if len(decl)>5 and decl[5]:
-            logging.info('docstring: %s', decl[5])
+            #logging.info('docstring: %s', decl[5])
             if re.search("(@|\\\\)deprecated", decl[5]):
                 self.annotation.append("@Deprecated")
 
@@ -265,8 +190,8 @@ class ClassInfo(GeneralInfo):
         self.cname = self.name.replace(".", "::")
         self.methods = []
         self.methods_suffixes = {}
-        self.consts = [] # using a list to save the occurence order
-        self.private_consts = []
+        self.consts = [] # using a list to save the occurrence order
+        self.private_consts = []  # TODO: ViSP wont need these
         self.imports = set()
         self.props= []
         self.jname = self.name
@@ -296,8 +221,8 @@ class ClassInfo(GeneralInfo):
                 self.imports.add("java.util.List")
                 self.imports.add("java.util.ArrayList")
                 self.imports.add("org.visp.utils.Converters")
-                if type_dict[ctype]["v_type"] in ("vpMatrix", "vector_Mat"):
-                    self.imports.add("org.visp.core.vpMatrix")
+                if type_dict[ctype]["v_type"] in ("Mat", "vector_Mat"):
+                    self.imports.add("org.visp.core.Mat")
 
     def getAllMethods(self):
         result = []
@@ -327,6 +252,8 @@ class ClassInfo(GeneralInfo):
         self.j_code = StringIO()
         self.jn_code = StringIO()
         self.cpp_code = StringIO();
+
+        # INFO: All of these T_JAVA are templates for starting portion of Java classes
         if self.base:
             self.j_code.write(T_JAVA_START_INHERITED)
         else:
@@ -334,10 +261,17 @@ class ClassInfo(GeneralInfo):
                 self.j_code.write(T_JAVA_START_ORPHAN)
             else:
                 self.j_code.write(T_JAVA_START_MODULE)
-        # misc handling
-        if self.name == 'Core':
-            self.imports.add("java.lang.String")
-            self.j_code.write(libVersionBlock())
+
+        # INFO: Misc folder handling for modules like Core, Imgproc
+        if self.name == Module:
+
+            # INFO: module_imports - read from gen_dict.json. Contains 'java.lang.String', 'java.lang.Character' etc
+            for i in module_imports or []:
+                self.imports.add(i)
+            if module_j_code:
+                self.j_code.write(module_j_code)
+            if module_jn_code:
+                self.jn_code.write(module_jn_code)
 
     def cleanupCodeStreams(self):
         self.j_code.close()
@@ -392,7 +326,7 @@ class FuncInfo(GeneralInfo):
             if m.startswith("="):
                 self.jname = m[1:]
         self.static = ["","static"][ "/S" in decl[2] ]
-        self.ctype = re.sub(r"^VpTermCriteria", "TermCriteria", decl[1] or "")
+        self.ctype = re.sub(r"^CvTermCriteria", "TermCriteria", decl[1] or "")
         self.args = []
         func_fix_map = func_arg_fix.get(self.jname, {})
         for a in decl[3]:
@@ -411,11 +345,12 @@ class FuncInfo(GeneralInfo):
 
 class JavaWrapperGenerator(object):
     def __init__(self):
+        self.cpp_files = []
         self.clear()
 
     def clear(self):
-        self.namespaces = set(["vp"])
-        self.classes = { "vpMatrix" : ClassInfo([ 'class vpMatrix', '', [], [] ], self.namespaces) }
+        self.namespaces = set(["cv"])
+        self.classes = { "Mat" : ClassInfo([ 'class Mat', '', [], [] ], self.namespaces) }
         self.module = ""
         self.Module = ""
         self.ported_func_list = []
@@ -435,16 +370,22 @@ class JavaWrapperGenerator(object):
         if name in type_dict and not classinfo.base:
             logging.warning('duplicated: %s', classinfo)
             return
-        type_dict[name] = \
+        type_dict.setdefault(name, {}).update(
             { "j_type" : classinfo.jname,
               "jn_type" : "long", "jn_args" : (("__int64", ".nativeObj"),),
               "jni_name" : "(*("+classinfo.fullName(isCPP=True)+"*)%(n)s_nativeObj)", "jni_type" : "jlong",
-              "suffix" : "J" }
-        type_dict[name+'*'] = \
+              "suffix" : "J",
+              "j_import" : "org.visp.%s.%s" % (self.module, classinfo.jname)
+            }
+        )
+        type_dict.setdefault(name+'*', {}).update(
             { "j_type" : classinfo.jname,
               "jn_type" : "long", "jn_args" : (("__int64", ".nativeObj"),),
               "jni_name" : "("+classinfo.fullName(isCPP=True)+"*)%(n)s_nativeObj", "jni_type" : "jlong",
-              "suffix" : "J" }
+              "suffix" : "J",
+              "j_import" : "org.visp.%s.%s" % (self.module, classinfo.jname)
+            }
+        )
 
         # missing_consts { Module : { public : [[name, val],...], private : [[]...] } }
         if name in missing_consts:
@@ -464,11 +405,14 @@ class JavaWrapperGenerator(object):
 
         if classinfo.base:
             classinfo.addImports(classinfo.base)
-        type_dict["Ptr_"+name] = \
+        type_dict.setdefault("Ptr_"+name, {}).update(
             { "j_type" : classinfo.jname,
               "jn_type" : "long", "jn_args" : (("__int64", ".getNativeObjAddr()"),),
               "jni_name" : "*((Ptr<"+classinfo.fullName(isCPP=True)+">*)%(n)s_nativeObj)", "jni_type" : "jlong",
-              "suffix" : "J" }
+              "suffix" : "J",
+              "j_import" : "org.visp.%s.%s" % (self.module, classinfo.jname)
+            }
+        )
         logging.info('ok: class %s, name: %s, base: %s', classinfo, name, classinfo.base)
 
     def add_const(self, decl): # [ "const cname", val, [], [] ]
@@ -489,6 +433,7 @@ class JavaWrapperGenerator(object):
                 ci.addConst(constinfo)
                 logging.info('ok: %s', constinfo)
 
+    # INFO: Some functions are to be ignored - either they can't exist in java or have to be implemtd manully
     def add_func(self, decl):
         fi = FuncInfo(decl, namespaces=self.namespaces)
         classname = fi.classname or self.Module
@@ -506,35 +451,71 @@ class JavaWrapperGenerator(object):
             self.def_args_hist[cnt] = self.def_args_hist.get(cnt, 0) + 1
 
     def save(self, path, buf):
-        f = open(path, "wt")
-        f.write(buf)
-        f.close()
+        global total_files, updated_files
+        total_files += 1
+        if os.path.exists(path):
+            with open(path, "rt") as f:
+                content = f.read()
+                if content == buf:
+                    return
+        with open(path, "wt") as f:
+            f.write(buf)
+        updated_files += 1
 
-    def gen(self, srcfiles, module, output_path, common_headers):
+    def gen(self, srcfiles, module, output_path, output_jni_path, output_java_path, common_headers):
         self.clear()
         self.module = module
         self.Module = module.capitalize()
-        # TODO: support UMat versions of declarations (implement UMat-wrapper for Java)
+
+        # INFO: In opencv 4, hdr_parser is imported to gen2.py which is imported to gen_java
         parser = hdr_parser.CppHeaderParser(generate_umat_decls=False)
 
         self.add_class( ['class ' + self.Module, '', [], []] ) # [ 'class/struct cname', ':bases', [modlist] [props] ]
 
         # scan the headers and build more descriptive maps of classes, consts, functions
         includes = [];
+
+        # INFO: Don't know yet what it does
         for hdr in common_headers:
             logging.info("\n===== Common header : %s =====", hdr)
             includes.append('#include "' + hdr + '"')
+
+        # INFO: These are .hpp files containing enums, template classes and some CV_EXPORT functions
         for hdr in srcfiles:
+
+            '''
+                # INFO: decls is anything thats declared in .hpp file. Be it enum, const,
+                function declarations too. From hdr_parser.py
+                
+                Each declaration is [funcname, return_value_type /* in C, not in Python */, <list_of_modifiers>, <list_of_arguments>, original_return_type, docstring],
+                where each element of <list_of_arguments> is 4-element list itself:
+                [argtype, argname, default_value /* or "" if none */, <list_of_modifiers>]
+                where the list of modifiers is yet another nested list of strings
+                   (currently recognized are "/O" for output argument, "/S" for static (i.e. class) methods
+                   and "/A value" for the plain C arrays with counters)
+                original_return_type is None if the original_return_type is the same as return_value_type
+                
+                Ex:
+                ['const cv.Error.StsOk', '0', [], [], None, '']   , where cv and Error are namespaces
+                ['cv.cubeRoot', 'float', [], [['float', 'val', '', []]], 'float', '@brief Computes the cube root of an ...']
+                
+            '''
             decls = parser.parse(hdr)
+
+            # INFO: List of all namespaces mentioned in the .hpp file. Like cv,ogl,cuda etc
             self.namespaces = parser.namespaces
             logging.info("\n\n===== Header: %s =====", hdr)
             logging.info("Namespaces: %s", parser.namespaces)
+
             if decls:
                 includes.append('#include "' + hdr + '"')
             else:
                 logging.info("Ignore header: %s", hdr)
+                
+            # INFO: Now split each declaration in categories - class, const or function
+            # INFO: Some functions are to be ignored - either they can't exist in java or have to be implemtd manully
             for decl in decls:
-                logging.info("\n--- Incoming ---\n%s", pformat(decl, 4))
+                logging.info("\n--- Incoming ---\n%s", pformat(decl[:5], 4)) # without docstring
                 name = decl[0]
                 if name.startswith("struct") or name.startswith("class"):
                     self.add_class(decl)
@@ -545,17 +526,22 @@ class JavaWrapperGenerator(object):
 
         logging.info("\n\n===== Generating... =====")
         moduleCppCode = StringIO()
+        package_path = os.path.join(output_java_path, module)
+        mkdir_p(package_path)
         for ci in self.classes.values():
-            if ci.name == "vpMatrix":
+            # INFO: Ignore classes that are manually. For opencv it was Mat, for Visp it'll be vpMat and vpImage
+            if ci.name == "Mat":
                 continue
             ci.initCodeStreams(self.Module)
             self.gen_class(ci)
             classJavaCode = ci.generateJavaCode(self.module, self.Module)
-            self.save("%s/%s+%s.java" % (output_path, module, ci.jname), classJavaCode)
+            self.save("%s/%s/%s.java" % (output_java_path, module, ci.jname), classJavaCode)
             moduleCppCode.write(ci.generateCppCode())
             ci.cleanupCodeStreams()
-        self.save(output_path+"/"+module+".cpp", Template(T_CPP_MODULE).substitute(m = module, M = module.upper(), code = moduleCppCode.getvalue(), includes = "\n".join(includes)))
-        self.save(output_path+"/"+module+".txt", self.makeReport())
+        cpp_file = os.path.abspath(os.path.join(output_jni_path, module + ".inl.hpp"))
+        self.cpp_files.append(cpp_file)
+        self.save(cpp_file, T_CPP_MODULE.substitute(m = module, M = module.upper(), code = moduleCppCode.getvalue(), includes = "\n".join(includes)))
+        self.save(os.path.join(output_path, module+".txt"), self.makeReport())
 
     def makeReport(self):
         '''
@@ -584,12 +570,12 @@ class JavaWrapperGenerator(object):
         cpp_code = ci.cpp_code
 
         # c_decl
-        # e.g: void add(vpMatrix src1, vpMatrix src2, vpMatrix dst, vpMatrix mask = vpMatrix(), int dtype = -1)
+        # e.g: void add(Mat src1, Mat src2, Mat dst, Mat mask = Mat(), int dtype = -1)
         if prop_name:
             c_decl = "%s %s::%s" % (fi.ctype, fi.classname, prop_name)
         else:
             decl_args = []
-            for a in fi.args:
+            for a in fi.args: # INFO: Even arguments have their own class: [type, defval, name, isPointer(bool), out(ret type)]
                 s = a.ctype or ' _hidden_ '
                 if a.pointer:
                     s += "*"
@@ -601,8 +587,9 @@ class JavaWrapperGenerator(object):
                 decl_args.append(s)
             c_decl = "%s %s %s(%s)" % ( fi.static, fi.ctype, fi.cname, ", ".join(decl_args) )
 
-        # java comment
+        # INFO: This is the java comment above every function
         j_code.write( "\n    //\n    // C++: %s\n    //\n\n" % c_decl )
+
         # check if we 'know' all the types
         if fi.ctype not in type_dict: # unsupported ret type
             msg = "// Return type '%s' is not supported, skipping the function\n\n" % fi.ctype
@@ -610,6 +597,7 @@ class JavaWrapperGenerator(object):
             j_code.write( " "*4 + msg )
             logging.warning("SKIP:" + c_decl.strip() + "\t due to RET type" + fi.ctype)
             return
+
         for a in fi.args:
             if a.ctype not in type_dict:
                 if not a.defval and a.ctype.endswith("*"):
@@ -629,7 +617,7 @@ class JavaWrapperGenerator(object):
         jn_code.write( "\n    // C++: %s\n" % c_decl )
         cpp_code.write( "\n//\n// %s\n//\n" % c_decl )
 
-        # java args
+        # INFO: Generating the JNI method signatures
         args = fi.args[:] # copy
         j_signatures=[]
         suffix_counter = int(ci.methods_suffixes.get(fi.jname, -1))
@@ -661,26 +649,26 @@ class JavaWrapperGenerator(object):
                     continue
                 ci.addImports(a.ctype)
                 if "v_type" in type_dict[a.ctype]: # pass as vector
-                    if type_dict[a.ctype]["v_type"] in ("vpMatrix", "vector_Mat"): #pass as vpMatrix or vector_Mat
+                    if type_dict[a.ctype]["v_type"] in ("Mat", "vector_Mat"): #pass as Mat or vector_Mat
                         jn_args.append  ( ArgInfo([ "__int64", "%s_mat.nativeObj" % a.name, "", [], "" ]) )
                         jni_args.append ( ArgInfo([ "__int64", "%s_mat_nativeObj" % a.name, "", [], "" ]) )
                         c_prologue.append( type_dict[a.ctype]["jni_var"] % {"n" : a.name} + ";" )
-                        c_prologue.append( "vpMatrix& %(n)s_mat = *((vpMatrix*)%(n)s_mat_nativeObj)" % {"n" : a.name} + ";" )
+                        c_prologue.append( "Mat& %(n)s_mat = *((Mat*)%(n)s_mat_nativeObj)" % {"n" : a.name} + ";" )
                         if "I" in a.out or not a.out:
                             if type_dict[a.ctype]["v_type"] == "vector_Mat":
-                                j_prologue.append( "List<vpMatrix> %(n)s_tmplm = new ArrayList<vpMatrix>((%(n)s != null) ? %(n)s.size() : 0);" % {"n" : a.name } )
-                                j_prologue.append( "vpMatrix %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s, %(n)s_tmplm);" % {"n" : a.name, "t" : a.ctype} )
+                                j_prologue.append( "List<Mat> %(n)s_tmplm = new ArrayList<Mat>((%(n)s != null) ? %(n)s.size() : 0);" % {"n" : a.name } )
+                                j_prologue.append( "Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s, %(n)s_tmplm);" % {"n" : a.name, "t" : a.ctype} )
                             else:
                                 if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
-                                    j_prologue.append( "vpMatrix %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s);" % {"n" : a.name, "t" : a.ctype} )
+                                    j_prologue.append( "Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s);" % {"n" : a.name, "t" : a.ctype} )
                                 else:
-                                    j_prologue.append( "vpMatrix %s_mat = %s;" % (a.name, a.name) )
+                                    j_prologue.append( "Mat %s_mat = %s;" % (a.name, a.name) )
                             c_prologue.append( "Mat_to_%(t)s( %(n)s_mat, %(n)s );" % {"n" : a.name, "t" : a.ctype} )
                         else:
                             if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
-                                j_prologue.append( "vpMatrix %s_mat = new vpMatrix();" % a.name )
+                                j_prologue.append( "Mat %s_mat = new Mat();" % a.name )
                             else:
-                                j_prologue.append( "vpMatrix %s_mat = %s;" % (a.name, a.name) )
+                                j_prologue.append( "Mat %s_mat = %s;" % (a.name, a.name) )
                         if "O" in a.out:
                             if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
                                 j_epilogue.append("Converters.Mat_to_%(t)s(%(n)s_mat, %(n)s);" % {"t" : a.ctype, "n" : a.name})
@@ -734,7 +722,7 @@ class JavaWrapperGenerator(object):
 
             if(j_signature in j_signatures):
                 if args:
-                    pop(args)
+                    args.pop()
                     continue
                 else:
                     break
@@ -768,7 +756,7 @@ class JavaWrapperGenerator(object):
 
             # public java wrapper method impl (calling native one above)
             # e.g.
-            # public static void add( vpMatrix src1, vpMatrix src2, vpMatrix dst, vpMatrix mask, int dtype )
+            # public static void add( Mat src1, Mat src2, Mat dst, Mat mask, int dtype )
             # { add_0( src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj, dtype );  }
             ret_type = fi.ctype
             if fi.ctype.endswith('*'):
@@ -778,16 +766,16 @@ class JavaWrapperGenerator(object):
             ret = "return retVal;"
             if "v_type" in type_dict[ret_type]:
                 j_type = type_dict[ret_type]["j_type"]
-                if type_dict[ret_type]["v_type"] in ("vpMatrix", "vector_Mat"):
+                if type_dict[ret_type]["v_type"] in ("Mat", "vector_Mat"):
                     tail = ")"
                     if j_type.startswith('MatOf'):
                         ret_val += j_type + ".fromNativeAddr("
                     else:
-                        ret_val = "vpMatrix retValMat = new vpMatrix("
+                        ret_val = "Mat retValMat = new Mat("
                         j_prologue.append( j_type + ' retVal = new Array' + j_type+'();')
                         j_epilogue.append('Converters.Mat_to_' + ret_type + '(retValMat, retVal);')
             elif ret_type.startswith("Ptr_"):
-                ret_val = type_dict[fi.ctype]["j_type"] + " retVal = new " + type_dict[ret_type]["j_type"] + "("
+                ret_val = type_dict[fi.ctype]["j_type"] + " retVal = " + type_dict[ret_type]["j_type"] + ".__fromPtr__("
                 tail = ")"
             elif ret_type == "void":
                 ret_val = ""
@@ -837,7 +825,7 @@ class JavaWrapperGenerator(object):
 
 
             # cpp part:
-            # jni_func(..) { _retval_ = vp_func(..); return _retval_; }
+            # jni_func(..) { _retval_ = cv_func(..); return _retval_; }
             ret = "return _retval_;"
             default = "return 0;"
             if fi.ctype == "void":
@@ -846,7 +834,7 @@ class JavaWrapperGenerator(object):
             elif not fi.ctype: # c-tor
                 ret = "return (jlong) _retval_;"
             elif "v_type" in type_dict[fi.ctype]: # c-tor
-                if type_dict[fi.ctype]["v_type"] in ("vpMatrix", "vector_Mat"):
+                if type_dict[fi.ctype]["v_type"] in ("Mat", "vector_Mat"):
                     ret = "return (jlong) _retval_;"
                 else: # returned as jobject
                     ret = "return _retval_;"
@@ -871,32 +859,32 @@ class JavaWrapperGenerator(object):
                 else:
                     name = prop_name + ";//"
 
-            vpname = fi.fullName(isCPP=True)
+            cvname = fi.fullName(isCPP=True)
             retval = self.fullTypeName(fi.ctype) + " _retval_ = "
             if fi.ctype == "void":
                 retval = ""
             elif fi.ctype == "String":
-                retval = "vp::" + retval
+                retval = "cv::" + retval
             elif "v_type" in type_dict[fi.ctype]: # vector is returned
                 retval = type_dict[fi.ctype]['jni_var'] % {"n" : '_ret_val_vector_'} + " = "
-                if type_dict[fi.ctype]["v_type"] in ("vpMatrix", "vector_Mat"):
-                    c_epilogue.append("vpMatrix* _retval_ = new vpMatrix();")
+                if type_dict[fi.ctype]["v_type"] in ("Mat", "vector_Mat"):
+                    c_epilogue.append("Mat* _retval_ = new Mat();")
                     c_epilogue.append(fi.ctype+"_to_Mat(_ret_val_vector_, *_retval_);")
                 else:
                     c_epilogue.append("jobject _retval_ = " + fi.ctype + "_to_List(env, _ret_val_vector_);")
             if len(fi.classname)>0:
                 if not fi.ctype: # c-tor
                     retval = fi.fullClass(isCPP=True) + "* _retval_ = "
-                    vpname = "new " + fi.fullClass(isCPP=True)
+                    cvname = "new " + fi.fullClass(isCPP=True)
                 elif fi.static:
-                    vpname = fi.fullName(isCPP=True)
+                    cvname = fi.fullName(isCPP=True)
                 else:
-                    vpname = ("me->" if  not self.isSmartClass(ci) else "(*me)->") + name
+                    cvname = ("me->" if  not self.isSmartClass(ci) else "(*me)->") + name
                     c_prologue.append(\
                         "%(cls)s* me = (%(cls)s*) self; //TODO: check for NULL" \
                             % { "cls" : self.smartWrap(ci, fi.fullClass(isCPP=True))} \
                     )
-            vpargs = []
+            cvargs = []
             for a in args:
                 if a.pointer:
                     jni_name = "&%(n)s"
@@ -908,7 +896,7 @@ class JavaWrapperGenerator(object):
                         jni_name  = "(%s)%s" % (a.ctype, jni_name)
                 if not a.ctype: # hidden
                     jni_name = a.defval
-                vpargs.append( type_dict[a.ctype].get("jni_name", jni_name) % {"n" : a.name})
+                cvargs.append( type_dict[a.ctype].get("jni_name", jni_name) % {"n" : a.name})
                 if "v_type" not in type_dict[a.ctype]:
                     if ("I" in a.out or not a.out or self.isWrapped(a.ctype)) and "jni_var" in type_dict[a.ctype]: # complex type
                         c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n" : a.name} + ";")
@@ -921,16 +909,16 @@ class JavaWrapperGenerator(object):
 """
 ${namespace}
 
-JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname ($argst);
+JNIEXPORT $rtype JNICALL Java_org_opencv_${module}_${clazz}_$fname ($argst);
 
-JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
+JNIEXPORT $rtype JNICALL Java_org_opencv_${module}_${clazz}_$fname
   ($args)
 {
     static const char method_name[] = "$module::$fname()";
     try {
         LOGD("%s", method_name);
         $prologue
-        $retval$vpname( $vpargs );
+        $retval$cvname( $cvargs );
         $epilogue$ret
     } catch(const std::exception &e) {
         throwJavaException(env, &e, method_name);
@@ -951,8 +939,8 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
         prologue = "\n        ".join(c_prologue), \
         epilogue = "  ".join(c_epilogue) + ("\n        " if c_epilogue else ""), \
         ret = ret, \
-        vpname = vpname, \
-        vpargs = ", ".join(vpargs), \
+        cvname = cvname, \
+        cvargs = ", ".join(cvargs), \
         default = default, \
         retval = retval, \
         namespace = ('using namespace ' + ci.namespace.replace('.', '::') + ';') if ci.namespace else ''
@@ -971,7 +959,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
                     break
 
 
-
+    # INFO: Regex starts here
     def gen_class(self, ci):
         logging.info("%s", ci)
         # constants
@@ -1032,9 +1020,9 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
 //  native support for java finalize()
 //  static void %(cls)s::delete( __int64 self )
 //
-JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete(JNIEnv*, jclass, jlong);
+JNIEXPORT void JNICALL Java_org_opencv_%(module)s_%(j_cls)s_delete(JNIEnv*, jclass, jlong);
 
-JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete
+JNIEXPORT void JNICALL Java_org_opencv_%(module)s_%(j_cls)s_delete
   (JNIEnv*, jclass, jlong self)
 {
     delete (%(cls)s*) self;
@@ -1078,19 +1066,97 @@ JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete
             return "Ptr<" + fullname + ">"
         return fullname
 
+    '''
+        # INFO: Generate a opencv_jni.hpp file. Contains #include tags for all
+        modules that very to be built and specified at compile time
+    '''
+    def finalize(self, output_jni_path):
+        list_file = os.path.join(output_jni_path, "opencv_jni.hpp")
+        self.save(list_file, '\n'.join(['#include "%s"' % f for f in self.cpp_files]))
+
+
+'''
+    # INFO: As name suggests, copies some files specified at the desired location.
+    Are the files edited as they are copied? No
+'''
+def copy_java_files(java_files_dir, java_base_path, default_package_path='org/visp/'):
+    global total_files, updated_files
+    java_files = []
+    re_filter = re.compile(r'^.+\.(java|aidl)(.in)?$')
+    for root, dirnames, filenames in os.walk(java_files_dir):
+       java_files += [os.path.join(root, filename) for filename in filenames if re_filter.match(filename)]
+    java_files = [f.replace('\\', '/') for f in java_files]
+
+    re_package = re.compile(r'^package +(.+);')
+    re_prefix = re.compile(r'^.+[\+/]([^\+]+).(java|aidl)(.in)?$')
+    for java_file in java_files:
+
+        '''
+            # INFO: Not all files are copied directly. There's a set of files
+            read in the `config.json`. Instead of copyong them, the code copies
+            a diffrent set of files(also mentioned in gen_config.json, stored as 
+            a dict). 
+        '''
+
+        src = checkFileRemap(java_file)
+        with open(src, 'r') as f:
+            package_line = f.readline()
+        m = re_prefix.match(java_file)
+
+        # INFO: using absolute path, get the filename.extension <- @a
+        target_fname = (m.group(1) + '.' + m.group(2)) if m else os.path.basename(java_file)
+
+        # INFO: Using the package name mentioned at the top of java file
+        # INFO: generate a path. Ex package org.visp.core to ./org/visp/core <- @b
+        m = re_package.match(package_line)
+        if m:
+            package = m.group(1)
+            package_path = package.replace('.', '/')
+        else:
+            package_path = default_package_path
+
+        #print(java_file, package_path, target_fname)
+
+        # INFO: dest path = ./gen/java/@b/@a
+        # INFO: ./gen/java is given as function argument
+        dest = os.path.join(java_base_path, os.path.join(package_path, target_fname))
+        assert dest[-3:] != '.in', dest + ' | ' + target_fname
+
+        mkdir_p(os.path.dirname(dest))
+        total_files += 1
+
+        if (not os.path.exists(dest)) or (os.stat(src).st_mtime - os.stat(dest).st_mtime > 1):
+            copyfile(src, dest)
+            updated_files += 1
+
 
 if __name__ == "__main__":
+    # initialize logger
+    logging.basicConfig(filename='gen_java.log', format=None, filemode='w', level=logging.INFO)
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.WARNING)
+    logging.getLogger().addHandler(handler)
 
     # parse command line parameters
     import argparse
     arg_parser = argparse.ArgumentParser(description='ViSP Java Wrapper Generator')
-    arg_parser.add_argument('-p', '--parser', required=True, help='ViSP header parser')
-    arg_parser.add_argument('-m', '--module', required=True, help='ViSP module name')
-    arg_parser.add_argument('-s', '--srcfiles', required=True, nargs='+', help='Source headers to be wrapped')
-    arg_parser.add_argument('-c', '--common', nargs='*', help='Common headers')
-    arg_parser.add_argument('-t', '--gendict', nargs='*', help='Custom module dictionaries for C++ to Java conversion')
+    arg_parser.add_argument('-p', '--parser', required=False, help='ViSP header parser')
+    arg_parser.add_argument('-c', '--config', required=False, help='ViSP modules config')
 
     args=arg_parser.parse_args()
+
+    # INFO: Config file contains which modules to build, with their location + some FILE_REMAPS
+    args.parser = '/home/akshay/Projects/Visp-WS/visp/modules/java/generator/gen2.py'
+    args.config = '/home/akshay/Projects/Visp-WS/build/modules/java_bindings_generator/gen_java.json'
+
+    # parser - opencv/modules/python/src2/gen2.py
+    # config - opencv/../build/modules/java_bindings_generator/gen_java.json
+
+    # INFO: There's a file called gen2.py. It contains some functions Arginfo
+    # , GeneralINfo, FuncIfno and some template strings. I guess its called
+    # header parsers. I guess thats used for extracting Class name, function name
+    # and module name from a .cpp file. These values must be fed in the
+    # template given above to create JNI code.
 
     # import header parser
     hdr_parser_path = os.path.abspath(args.parser)
@@ -1099,38 +1165,122 @@ if __name__ == "__main__":
     sys.path.append(hdr_parser_path)
     import hdr_parser
 
-    module = args.module
-    srcfiles = args.srcfiles
-    common_headers= args.common
-    gen_dict_files = args.gendict
+    with open(args.config) as f:
+        config = json.load(f)
 
-    dstdir = "."
+    ROOT_DIR = config['rootdir']; assert os.path.exists(ROOT_DIR)
+    FILES_REMAP = { os.path.realpath(os.path.join(ROOT_DIR, f['src'])): f['target'] for f in config['files_remap'] }
+    logging.info("\nRemapped configured files (%d):\n%s", len(FILES_REMAP), pformat(FILES_REMAP))
 
-    # initialize logger
-    logging.basicConfig(filename='%s/%s.log' % (dstdir, module), format=None, filemode='w', level=logging.INFO)
-    handler = logging.StreamHandler()
-    handler.setLevel(logging.WARNING)
-    logging.getLogger().addHandler(handler)
+    # INFO: Now we create some folders inside the <build> folder viz. gen/cpp, gen/java
 
-    # load dictionaries
-    for gdf in gen_dict_files:
-        with open(gdf) as f:
-            gen_type_dict = json.load(f)
-            if "class_ignore_list" in gen_type_dict:
-                class_ignore_list += gen_type_dict["class_ignore_list"]
-            if "const_ignore_list" in gen_type_dict:
-                const_ignore_list += gen_type_dict["const_ignore_list"]
-            if "const_private_list" in gen_type_dict:
-                const_private_list += gen_type_dict["const_private_list"]
-            if "missing_consts" in gen_type_dict:
-                missing_consts.update(gen_type_dict["missing_consts"])
-            if "type_dict" in gen_type_dict:
-                type_dict.update(gen_type_dict["type_dict"])
-            if "ManualFuncs" in gen_type_dict:
-                ManualFuncs.update(gen_type_dict["ManualFuncs"])
-            if "func_arg_fix" in gen_type_dict:
-                func_arg_fix.update(gen_type_dict["func_arg_fix"])
+    dstdir = "./gen"
+    jni_path = os.path.join(dstdir, 'cpp'); mkdir_p(jni_path)
+    java_base_path = os.path.join(dstdir, 'java'); mkdir_p(java_base_path)
+    java_test_base_path = os.path.join(dstdir, 'test'); mkdir_p(java_test_base_path)
+
+    for (subdir, target_subdir) in [('src/java', 'java'), ('android/java', None), ('android-21/java', None)]:
+        if target_subdir is None:
+            target_subdir = subdir
+        java_files_dir = os.path.join(SCRIPT_DIR, subdir)
+        if os.path.exists(java_files_dir):
+            target_path = os.path.join(dstdir, target_subdir); mkdir_p(target_path)
+            copy_java_files(java_files_dir, target_path)
 
     # launch Java Wrapper generator
     generator = JavaWrapperGenerator()
-    generator.gen(srcfiles, module, dstdir, common_headers)
+
+    gen_dict_files = []
+
+    print("JAVA: Processing ViSP modules: %d" % len(config['modules']))
+    for e in config['modules']:
+
+        # INFO: Get absolute location of the module
+        (module, module_location) = (e['name'], os.path.join(ROOT_DIR, e['location']))
+        logging.info("\n=== MODULE: %s (%s) ===\n" % (module, module_location))
+
+        java_path = os.path.join(java_base_path, 'org/visp')
+        mkdir_p(java_path)
+
+        module_imports = []
+        module_j_code = None
+        module_jn_code = None
+        srcfiles = []
+        common_headers = []
+
+        misc_location = os.path.join(module_location, 'misc/java')
+
+        # INFO: Get some specific .hpp files for the module. Not all modules contain the set of files
+        srcfiles_fname = os.path.join(misc_location, 'filelist')
+        if os.path.exists(srcfiles_fname):
+            with open(srcfiles_fname) as f:
+                srcfiles = [os.path.join(module_location, str(l).strip()) for l in f.readlines() if str(l).strip()]
+        else:
+            re_bad = re.compile(r'(private|.inl.hpp$|_inl.hpp$|.details.hpp$|_winrt.hpp$|/cuda/)')
+            # .h files before .hpp
+            h_files = []
+            hpp_files = []
+            for root, dirnames, filenames in os.walk(os.path.join(module_location, 'include')):
+               h_files += [os.path.join(root, filename) for filename in fnmatch.filter(filenames, '*.h')]
+               hpp_files += [os.path.join(root, filename) for filename in fnmatch.filter(filenames, '*.hpp')]
+            srcfiles = h_files + hpp_files
+            srcfiles = [f for f in srcfiles if not re_bad.search(f.replace('\\', '/'))]
+        logging.info("\nFiles (%d):\n%s", len(srcfiles), pformat(srcfiles))
+
+        # INFO: Again, get some more .hpp files. Not for all modules
+        common_headers_fname = os.path.join(misc_location, 'filelist_common')
+        if os.path.exists(common_headers_fname):
+            with open(common_headers_fname) as f:
+                common_headers = [os.path.join(module_location, str(l).strip()) for l in f.readlines() if str(l).strip()]
+        logging.info("\nCommon headers (%d):\n%s", len(common_headers), pformat(common_headers))
+
+        '''
+            # INFO: Not all C++ files can be directly turned to Java/JNI files. Get all
+            such files and classes here. Include classes/functions that are to be ignored, 
+            new classes to be added manually. Sometimes arguments are to be changed while the 
+            function can be used
+            
+            Such files exist for a few root/core modules only like core, imgproc, calib
+        '''
+        gendict_fname = os.path.join(misc_location, 'gen_dict.json')
+        if os.path.exists(gendict_fname):
+            with open(gendict_fname) as f:
+                gen_type_dict = json.load(f)
+            class_ignore_list += gen_type_dict.get("class_ignore_list", [])
+            const_ignore_list += gen_type_dict.get("const_ignore_list", [])
+            const_private_list += gen_type_dict.get("const_private_list", [])
+            missing_consts.update(gen_type_dict.get("missing_consts", {}))
+            type_dict.update(gen_type_dict.get("type_dict", {}))
+            ManualFuncs.update(gen_type_dict.get("ManualFuncs", {}))
+            func_arg_fix.update(gen_type_dict.get("func_arg_fix", {}))
+            if 'module_j_code' in gen_type_dict:
+                module_j_code = read_contents(checkFileRemap(os.path.join(misc_location, gen_type_dict['module_j_code'])))
+            if 'module_jn_code' in gen_type_dict:
+                module_jn_code = read_contents(checkFileRemap(os.path.join(misc_location, gen_type_dict['module_jn_code'])))
+            module_imports += gen_type_dict.get("module_imports", [])
+
+        '''
+            # INFO: In light of above, copy the .java files that were manually created to dst folder
+            Later machine will generate all other files  
+        '''
+        java_files_dir = os.path.join(misc_location, 'src/java')
+        if os.path.exists(java_files_dir):
+            copy_java_files(java_files_dir, java_base_path, 'org/visp/' + module)
+
+        java_test_files_dir = os.path.join(misc_location, 'test')
+        if os.path.exists(java_test_files_dir):
+            copy_java_files(java_test_files_dir, java_test_base_path, 'org/visp/test/' + module)
+
+        # INFO: Here's the meat. Most important function of the whole file
+        if len(srcfiles) > 0:
+            generator.gen(srcfiles, module, dstdir, jni_path, java_path, common_headers)
+        else:
+            logging.info("No generated code for module: %s", module)
+
+    '''
+        # INFO: Generate a opencv_jni.hpp file. Contains #include tags for all
+        modules that very to be built and specified at compile time
+    '''
+    generator.finalize(jni_path)
+
+    print('Generated files: %d (updated %d)' % (total_files, updated_files))
