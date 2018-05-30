@@ -351,6 +351,9 @@ VP_OPTION(BUILD_EXAMPLES  "" "" "Build ViSP examples" "" ON)
 VP_OPTION(BUILD_TESTS  "" "" "Build ViSP tests" "" ON)
 VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX AND CMAKE_BUILD_TYPE MATCHES "Debug"))
 
+# Build java as an option
+VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
+
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
 # Build tutorials as an option.
@@ -702,13 +705,24 @@ if(ANDROID)
     endif()
 endif()
 
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/android" CACHE PATH "Output directory for applications")
+# Keeping it commented. Creates problem while building java module
+# set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/android" CACHE PATH "Output directory for applications")
 
 
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
 include(cmake/VISP3rdParty.cmake)
+
+# --- Java Support ---
+if(BUILD_JAVA)
+  if(ANDROID)
+    include(cmake/DetectAndroidSDK.cmake)
+  else()
+    include(cmake/VISPDetectApacheAnt.cmake)
+    find_package(JNI)
+  endif()
+endif()
 
 #-----------------------------------------------------------------------------
 # Add extra compilation flags
