@@ -208,6 +208,81 @@ macro(vp_list_add_suffix LST SUFFIX)
   unset(__tmp)
 endmacro()
 
+macro(vp_copyfiles_append_dir list_var src dst)
+  set(__glob ${ARGN})
+  list(LENGTH ${list_var} __id)
+  list(APPEND ${list_var} ${__id})
+  set(${list_var}_SRC_${__id} "${src}")
+  set(${list_var}_DST_${__id} "${dst}")
+  set(${list_var}_MODE_${__id} "COPYDIR")
+  if(__glob)
+    set(${list_var}_GLOB_${__id} ${__glob})
+  endif()
+endmacro()
+
+macro(vp_copyfiles_make_config_string content_var list_var)
+  set(var_name "${list_var}")
+  set(${content_var} "${${content_var}}
+set(${var_name} \"${${var_name}}\")
+")
+  foreach(__id ${${list_var}})
+    set(${content_var} "${${content_var}}
+set(${list_var}_SRC_${__id} \"${${list_var}_SRC_${__id}}\")
+set(${list_var}_DST_${__id} \"${${list_var}_DST_${__id}}\")
+")
+    if(DEFINED ${list_var}_MODE_${__id})
+      set(${content_var} "${${content_var}}set(${list_var}_MODE_${__id} \"${${list_var}_MODE_${__id}}\")\n")
+    endif()
+    if(DEFINED ${list_var}_GLOB_${__id})
+      set(${content_var} "${${content_var}}set(${list_var}_GLOB_${__id} \"${${list_var}_GLOB_${__id}}\")\n")
+    endif()
+  endforeach()
+endmacro()
+
+
+macro(vp_copyfiles_make_config_file filename_var list_var)
+  vp_copyfiles_make_config_string(${list_var}_CONFIG ${list_var})
+  set(${filename_var} "${CMAKE_CURRENT_BINARY_DIR}/copyfiles-${list_var}.cmake")
+  file(WRITE "${${filename_var}}" "${${list_var}_CONFIG}")
+endmacro()
+
+
+macro(vp_copyfiles_add_forced_target target list_var comment_str)
+  vp_copyfiles_make_config_file(CONFIG_FILE ${list_var})
+  vp_cmake_byproducts(__byproducts BYPRODUCTS "${VISP_DEPHELPER}/${target}")
+  add_custom_target(${target}
+      ${__byproducts}  # required for add_custom_target() by ninja
+      COMMAND ${CMAKE_COMMAND}
+        "-DCONFIG_FILE:PATH=${CONFIG_FILE}"
+        "-DCOPYLIST_VAR:STRING=${list_var}"
+        "-DDEPHELPER=${VISP_DEPHELPER}/${target}"
+        -P "${VISP_SOURCE_DIR}/cmake/copy_files.cmake"
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "${comment_str}"
+      DEPENDS "${VISP_SOURCE_DIR}/cmake/copy_files.cmake"
+              # ninja warn about file(WRITE): "${SRC_COPY_CONFIG_FILE}"
+  )
+endmacro()
+
+macro(vp_copyfiles_add_target target list_var comment_str)
+  set(deps ${ARGN})
+  vp_copyfiles_make_config_file(CONFIG_FILE ${list_var})
+  add_custom_command(OUTPUT "${VISP_DEPHELPER}/${target}"
+      COMMAND ${CMAKE_COMMAND}
+        "-DCONFIG_FILE:PATH=${CONFIG_FILE}"
+        "-DCOPYLIST_VAR:STRING=${list_var}"
+        "-DDEPHELPER=${VISP_DEPHELPER}/${target}"
+        -P "${VISP_SOURCE_DIR}/cmake/copy_files.cmake"
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "${comment_str}"
+      DEPENDS "${VISP_SOURCE_DIR}/cmake/copy_files.cmake" ${deps}
+              # ninja warn about file(WRITE): "${SRC_COPY_CONFIG_FILE}"
+  )
+  add_custom_target(${target} DEPENDS "${VISP_DEPHELPER}/${target}")
+endmacro()
+
+
+
 # print message
 macro(vp_debug_message)
   #string(REPLACE ";" " " __msg "${ARGN}")
@@ -236,6 +311,20 @@ macro(vp_list_remove_empty __lst)
     list(REMOVE_ITEM ${__lst} "")
   endif()
 endmacro()
+
+# needed by visp-java
+if(CMAKE_VERSION VERSION_LESS "3.2")
+  macro(vp_cmake_byproducts var_name)
+    set(${var_name}) # nothing
+  endmacro()
+else()
+  macro(vp_cmake_byproducts var_name)
+    set(${var_name} BYPRODUCTS ${ARGN})
+  endmacro()
+endif()
+
+set(VISP_DEPHELPER "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/dephelper" CACHE INTERNAL "")
+file(MAKE_DIRECTORY ${VISP_DEPHELPER})
 
 # list elements removal macro
 macro(vp_list_remove_item __lst __item)
