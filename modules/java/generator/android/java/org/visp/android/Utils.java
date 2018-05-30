@@ -17,7 +17,7 @@ import java.io.InputStream;
 public class Utils {
 
     public static String exportResource(Context context, int resourceId) {
-        return exportResource(context, resourceId, "OpenCV_data");
+        return exportResource(context, resourceId, "ViSP_data");
     }
 
     public static String exportResource(Context context, int resourceId, String dirname) {

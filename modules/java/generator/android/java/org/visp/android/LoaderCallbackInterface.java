@@ -1,7 +1,7 @@
 package org.visp.android;
 
 /**
- * Interface for callback object in case of asynchronous initialization of OpenCV.
+ * Interface for callback object in case of asynchronous initialization of ViSP.
  */
 public interface LoaderCallbackInterface
 {

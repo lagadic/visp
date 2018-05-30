@@ -4,12 +4,12 @@
 
 #undef LOG_TAG
 
-#include "opencv2/opencv_modules.hpp"
-#ifdef HAVE_OPENCV_$M
+#include "visp3/visp_modules.hpp"
+#ifdef HAVE_VISP_$M
 
 #include <string>
 
-#include "opencv2/$m.hpp"
+#include "visp3/$m.hpp"
 
 $includes
 
@@ -29,7 +29,7 @@ static void throwJavaException(JNIEnv *env, const std::exception *e, const char 
     std::string exception_type = "std::exception";
 
     if(dynamic_cast<const cv::Exception*>(e)) {
-      exception_type = "cv::Exception";
+      exception_type = "vp::Exception";
       je = env->FindClass("org/visp/core/VpException");
     }
 
@@ -49,4 +49,4 @@ $code
 
 } // extern "C"
 
-#endif // HAVE_OPENCV_$M
+#endif // HAVE_VISP_$M

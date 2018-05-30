@@ -64,7 +64,7 @@ public class JavaCamera2View extends CameraBridgeViewBase {
     private void startBackgroundThread() {
         Log.i(LOGTAG, "startBackgroundThread");
         stopBackgroundThread();
-        mBackgroundThread = new HandlerThread("OpenCVCameraBackground");
+        mBackgroundThread = new HandlerThread("ViSPCameraBackground");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }

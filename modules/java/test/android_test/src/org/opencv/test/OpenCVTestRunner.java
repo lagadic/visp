@@ -56,7 +56,7 @@ public class ViSPTestRunner extends InstrumentationTestRunner {
         if (!extension.startsWith("."))
             extension = "." + extension;
         try {
-            File tmp = File.createTempFile("OpenCV", extension, cache);
+            File tmp = File.createTempFile("ViSP", extension, cache);
             String path = tmp.getAbsolutePath();
             tmp.delete();
             return path;

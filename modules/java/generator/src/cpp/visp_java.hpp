@@ -1,8 +1,4 @@
 // This file is part of ViSP project.
-// It is subject to the license terms in the LICENSE file found in the top-level directory
-// of this distribution and at http://opencv.org/license.html
-
-// Author: abratchik
 
 #undef LOGE
 #undef LOGD
@@ -19,8 +15,8 @@
 #  define LOGD(...)
 #endif
 
-#ifndef OPENCV_JAVA_HPP
-#define	OPENCV_JAVA_HPP
+#ifndef VISP_JAVA_HPP
+#define	VISP_JAVA_HPP
 
 #define MATOFINT(ENV) static_cast<jclass>(ENV->NewGlobalRef(ENV->FindClass("org/visp/core/MatOfInt")))
 #define GETNATIVEOBJ(ENV, CLS, MAT) ENV->GetLongField(MAT, ENV->GetFieldID(CLS, "nativeObj", "J"))
@@ -33,6 +29,4 @@
 #define LIST_SIZE(ENV, LIST) ENV->GetMethodID(LIST, "size", "()I")
 #define LIST_CLEAR(ENV, LIST) ENV->GetMethodID(LIST, "clear", "()V")
 
-#define CHECK_MAT(cond) if(!(cond)){ LOGD("FAILED: " #cond); return; }
-
-#endif	// OPENCV_JAVA_HPP
+#endif	// VISP_JAVA_HPP

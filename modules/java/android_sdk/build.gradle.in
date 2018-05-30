@@ -1,11 +1,9 @@
 // This file is part of ViSP project.
-// It is subject to the license terms in the LICENSE file found in the top-level directory
-// of this distribution and at http://opencv.org/license.html.
 
 //
 // Notes about integration ViSP into existed Android Studio application project are below (application 'app' module should exist).
 //
-// This file is located in <OpenCV-android-sdk>/sdk directory (near 'etc', 'java', 'native' subdirectories)
+// This file is located in <ViSP-android-sdk>/sdk directory (near 'etc', 'java', 'native' subdirectories)
 //
 // Add module into Android Studio application project:
 //
@@ -14,18 +12,18 @@
 //
 //   Import module: Menu -> "File" -> "New" -> "Module" -> "Import Gradle project":
 //   Source directory: select this "sdk" directory
-//   Module name: ":opencv"
+//   Module name: ":visp"
 //
 // - or attach library module from ViSP Android SDK
 //   (without copying into application project directory, allow to share the same module between projects)
 //
 //   Edit "settings.gradle" and add these lines:
 //
-//   def opencvsdk='<path_to_opencv_android_sdk_rootdir>'
+//   def visp_sdk='<path_to_visp_android_sdk_rootdir>'
 //   // You can put declaration above into gradle.properties file instead (including file in HOME directory),
-//   // but without 'def' and apostrophe symbols ('): opencvsdk=<path_to_opencv_android_sdk_rootdir>
-//   include ':opencv'
-//   project(':opencv').projectDir = new File(opencvsdk + '/sdk')
+//   // but without 'def' and apostrophe symbols ('): visp_sdk=<path_to_visp_android_sdk_rootdir>
+//   include ':visp'
+//   project(':visp').projectDir = new File(visp_sdk + '/sdk')
 //
 //
 //
@@ -34,12 +32,12 @@
 // - Android Studio way:
 //   "Open Module Settings" (F4) -> "Dependencies" tab
 //
-// - or add "project(':opencv')" dependency into app/build.gradle:
+// - or add "project(':visp')" dependency into app/build.gradle:
 //
 //   dependencies {
 //       implementation fileTree(dir: 'libs', include: ['*.jar'])
 //       ...
-//       implementation project(':opencv')
+//       implementation project(':visp')
 //   }
 //
 //
@@ -49,7 +47,7 @@
 // - avoid using of "ViSPLoader.initAsync()" approach - it is deprecated
 //   It may load library with different version (from ViSP Android Manager, which is installed separatelly on device)
 //
-// - use "System.loadLibrary("opencv_java4")" or "ViSPLoader.initDebug()"
+// - use "System.loadLibrary("visp_java")" or "ViSPLoader.initDebug()"
 //   TODO: Add accurate API to load ViSP native library
 //
 //
@@ -60,9 +58,9 @@
 //
 //   find_package(ViSP 3.4 REQUIRED java)
 //   ...
-//   target_link_libraries(native-lib ${OpenCV_LIBRARIES})
+//   target_link_libraries(native-lib ${ViSP_LIBRARIES})
 //
-// - Add "OpenCV_DIR" and enable C++ exceptions/RTTI support via app/build.gradle
+// - Add "ViSP_DIR" and enable C++ exceptions/RTTI support via app/build.gradle
 //   Documentation about CMake options: https://developer.android.com/ndk/guides/cmake.html
 //
 //   defaultConfig {
@@ -70,7 +68,7 @@
 //       externalNativeBuild {
 //           cmake {
 //               cppFlags "-std=c++11 -frtti -fexceptions"
-//               arguments "-DOpenCV_DIR=" + opencvsdk + "/sdk/native/jni" // , "-DANDROID_ARM_NEON=TRUE"
+//               arguments "-DViSP_DIR=" + visp_sdk + "/sdk/native/jni" // , "-DANDROID_ARM_NEON=TRUE"
 //           }
 //       }
 //   }
@@ -90,7 +88,7 @@
 
 apply plugin: 'com.android.library'
 
-println "OpenCV: " + project.buildscript.sourceFile
+println "ViSP: " + project.buildscript.sourceFile
 
 android {
     compileSdkVersion 27

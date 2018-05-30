@@ -1,17 +1,17 @@
-if(OPENCV_INITIAL_PASS)
+if(VISP_INITIAL_PASS)
   # generator for JNI/JAR source code and documentation signatures
   add_subdirectory(generator)
 endif()
 
 if(APPLE_FRAMEWORK OR WINRT OR NOT PYTHON_DEFAULT_AVAILABLE OR NOT ANT_EXECUTABLE
     OR NOT (JNI_FOUND OR (ANDROID AND ANDROID_NATIVE_API_LEVEL GREATER 7))
-    OR BUILD_opencv_world
+    OR BUILD_visp_world
     )
   __vp_module_turn_off(java)
 endif()
 
 set(the_description "The java bindings")
-vp_add_module(java BINDINGS visp_core visp_imgproc PRIVATE_REQUIRED opencv_java_bindings_generator)
+vp_add_module(java BINDINGS visp_core visp_imgproc PRIVATE_REQUIRED visp_java_bindings_generator)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/common.cmake)
 

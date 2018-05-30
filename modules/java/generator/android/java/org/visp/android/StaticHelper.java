@@ -7,36 +7,27 @@ import android.util.Log;
 
 class StaticHelper {
 
-    public static boolean initOpenCV(boolean InitCuda)
+	// open-cv had cuda support. ViSP java wont
+    public static boolean initViSP(boolean InitCuda)
     {
         boolean result;
         String libs = "";
-
-        if(InitCuda)
-        {
-            loadLibrary("cudart");
-            loadLibrary("nppc");
-            loadLibrary("nppi");
-            loadLibrary("npps");
-            loadLibrary("cufft");
-            loadLibrary("cublas");
-        }
 
         Log.d(TAG, "Trying to get library list");
 
         try
         {
-            System.loadLibrary("opencv_info");
+            System.loadLibrary("visp_info");
             libs = getLibraryList();
         }
         catch(UnsatisfiedLinkError e)
         {
-            Log.e(TAG, "ViSP error: Cannot load info library for OpenCV");
+            Log.e(TAG, "ViSP error: Cannot load info library for ViSP");
         }
 
         Log.d(TAG, "Library list: \"" + libs + "\"");
         Log.d(TAG, "First attempt to load libs");
-        if (initOpenCVLibs(libs))
+        if (initViSPLibs(libs))
         {
             Log.d(TAG, "First attempt to load libs is OK");
             String eol = System.getProperty("line.separator");
@@ -74,7 +65,7 @@ class StaticHelper {
         return result;
     }
 
-    private static boolean initOpenCVLibs(String Libs)
+    private static boolean initViSPLibs(String Libs)
     {
         Log.d(TAG, "Trying to init ViSP libs");
 
@@ -92,13 +83,13 @@ class StaticHelper {
         else
         {
             // If dependencies list is not defined or empty.
-            result = loadLibrary("opencv_java4");
+            result = loadLibrary("visp_java");
         }
 
         return result;
     }
 
-    private static final String TAG = "OpenCV/StaticHelper";
+    private static final String TAG = "ViSP/StaticHelper";
 
     private static native String getLibraryList();
 }

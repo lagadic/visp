@@ -1,14 +1,9 @@
 // This file is part of ViSP project.
-// It is subject to the license terms in the LICENSE file found in the top-level directory
-// of this distribution and at http://opencv.org/license.html
-
-// Author: abratchik
 
 #ifndef LISTCONVERTERS_HPP
 #define	LISTCONVERTERS_HPP
 
-#include "opencv2/opencv_modules.hpp"
-#include "opencv2/core.hpp"
+#include "visp3/visp_modules.hpp"
 
 jobject vector_String_to_List(JNIEnv* env, std::vector<cv::String>& vs);
 

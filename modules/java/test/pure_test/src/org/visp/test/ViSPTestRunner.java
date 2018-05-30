@@ -18,7 +18,7 @@ public class ViSPTestRunner {
         if (!extension.startsWith("."))
             extension = "." + extension;
         try {
-            File tmp = File.createTempFile("OpenCV", extension);
+            File tmp = File.createTempFile("ViSP", extension);
             String path = tmp.getAbsolutePath();
             tmp.delete();
             return path;

@@ -326,7 +326,7 @@ class FuncInfo(GeneralInfo):
             if m.startswith("="):
                 self.jname = m[1:]
         self.static = ["","static"][ "/S" in decl[2] ]
-        self.ctype = re.sub(r"^CvTermCriteria", "TermCriteria", decl[1] or "")
+        self.ctype = re.sub(r"^VpTermCriteria", "TermCriteria", decl[1] or "")
         self.args = []
         func_fix_map = func_arg_fix.get(self.jname, {})
         for a in decl[3]:
@@ -349,8 +349,8 @@ class JavaWrapperGenerator(object):
         self.clear()
 
     def clear(self):
-        self.namespaces = set(["cv"])
-        self.classes = { "Mat" : ClassInfo([ 'class Mat', '', [], [] ], self.namespaces) }
+        self.namespaces = set(["vp"])
+        self.classes = { "vpMatrix" : ClassInfo([ 'class vpMatrix', '', [], [] ], self.namespaces) }
         self.module = ""
         self.Module = ""
         self.ported_func_list = []
@@ -467,7 +467,7 @@ class JavaWrapperGenerator(object):
         self.module = module
         self.Module = module.capitalize()
 
-        # INFO: In opencv 4, hdr_parser is imported to gen2.py which is imported to gen_java
+        # INFO: In open-cv 4, hdr_parser is imported to gen2.py which is imported to gen_java
         parser = hdr_parser.CppHeaderParser(generate_umat_decls=False)
 
         self.add_class( ['class ' + self.Module, '', [], []] ) # [ 'class/struct cname', ':bases', [modlist] [props] ]
@@ -480,7 +480,7 @@ class JavaWrapperGenerator(object):
             logging.info("\n===== Common header : %s =====", hdr)
             includes.append('#include "' + hdr + '"')
 
-        # INFO: These are .hpp files containing enums, template classes and some CV_EXPORT functions
+        # INFO: These are .hpp files containing enums, template classes and some VP_EXPORT functions
         for hdr in srcfiles:
 
             '''
@@ -529,7 +529,7 @@ class JavaWrapperGenerator(object):
         package_path = os.path.join(output_java_path, module)
         mkdir_p(package_path)
         for ci in self.classes.values():
-            # INFO: Ignore classes that are manually. For opencv it was Mat, for Visp it'll be vpMat and vpImage
+            # INFO: Ignore classes that are manually. For open-cv it was Mat, for Visp it'll be vpMat and vpImage
             if ci.name == "Mat":
                 continue
             ci.initCodeStreams(self.Module)
@@ -864,7 +864,7 @@ class JavaWrapperGenerator(object):
             if fi.ctype == "void":
                 retval = ""
             elif fi.ctype == "String":
-                retval = "cv::" + retval
+                retval = "vp::" + retval
             elif "v_type" in type_dict[fi.ctype]: # vector is returned
                 retval = type_dict[fi.ctype]['jni_var'] % {"n" : '_ret_val_vector_'} + " = "
                 if type_dict[fi.ctype]["v_type"] in ("Mat", "vector_Mat"):
@@ -909,9 +909,9 @@ class JavaWrapperGenerator(object):
 """
 ${namespace}
 
-JNIEXPORT $rtype JNICALL Java_org_opencv_${module}_${clazz}_$fname ($argst);
+JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname ($argst);
 
-JNIEXPORT $rtype JNICALL Java_org_opencv_${module}_${clazz}_$fname
+JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
   ($args)
 {
     static const char method_name[] = "$module::$fname()";
@@ -1020,9 +1020,9 @@ JNIEXPORT $rtype JNICALL Java_org_opencv_${module}_${clazz}_$fname
 //  native support for java finalize()
 //  static void %(cls)s::delete( __int64 self )
 //
-JNIEXPORT void JNICALL Java_org_opencv_%(module)s_%(j_cls)s_delete(JNIEnv*, jclass, jlong);
+JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete(JNIEnv*, jclass, jlong);
 
-JNIEXPORT void JNICALL Java_org_opencv_%(module)s_%(j_cls)s_delete
+JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete
   (JNIEnv*, jclass, jlong self)
 {
     delete (%(cls)s*) self;
@@ -1067,11 +1067,11 @@ JNIEXPORT void JNICALL Java_org_opencv_%(module)s_%(j_cls)s_delete
         return fullname
 
     '''
-        # INFO: Generate a opencv_jni.hpp file. Contains #include tags for all
+        # INFO: Generate a visp_jni.hpp file. Contains #include tags for all
         modules that very to be built and specified at compile time
     '''
     def finalize(self, output_jni_path):
-        list_file = os.path.join(output_jni_path, "opencv_jni.hpp")
+        list_file = os.path.join(output_jni_path, "visp_jni.hpp")
         self.save(list_file, '\n'.join(['#include "%s"' % f for f in self.cpp_files]))
 
 
@@ -1148,9 +1148,6 @@ if __name__ == "__main__":
     # INFO: Config file contains which modules to build, with their location + some FILE_REMAPS
     args.parser = '/home/akshay/Projects/Visp-WS/visp/modules/java/generator/gen2.py'
     args.config = '/home/akshay/Projects/Visp-WS/build/modules/java_bindings_generator/gen_java.json'
-
-    # parser - opencv/modules/python/src2/gen2.py
-    # config - opencv/../build/modules/java_bindings_generator/gen_java.json
 
     # INFO: There's a file called gen2.py. It contains some functions Arginfo
     # , GeneralINfo, FuncIfno and some template strings. I guess its called
@@ -1278,7 +1275,7 @@ if __name__ == "__main__":
             logging.info("No generated code for module: %s", module)
 
     '''
-        # INFO: Generate a opencv_jni.hpp file. Contains #include tags for all
+        # INFO: Generate a visp_jni.hpp file. Contains #include tags for all
         modules that very to be built and specified at compile time
     '''
     generator.finalize(jni_path)

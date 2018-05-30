@@ -1,9 +1,9 @@
 package org.visp.engine;
 
 /**
-* Class provides a Java interface for ViSP Engine Service. It's synchronous with native OpenCVEngine class.
+* Class provides a Java interface for ViSP Engine Service. It's synchronous with native ViSPEngine class.
 */
-interface OpenCVEngineInterface
+interface ViSPEngineInterface
 {
     /**
     * @return Returns service version.

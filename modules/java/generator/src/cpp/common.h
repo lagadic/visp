@@ -1,9 +1,6 @@
 // This file is part of ViSP project.
-// It is subject to the license terms in the LICENSE file found in the top-level directory
-// of this distribution and at http://opencv.org/license.html
-
-#ifndef __OPENCV_JAVA_COMMON_H__
-#define __OPENCV_JAVA_COMMON_H__
+#ifndef __VISP_JAVA_COMMON_H__
+#define __VISP_JAVA_COMMON_H__
 
 #include <stdexcept>
 #include <string>
@@ -19,7 +16,7 @@ extern "C" {
 } // extern "C"
 
 #include "visp_java.hpp"
-#include "opencv2/core/utility.hpp"
+//#include "visp/core/utility.hpp" TODO to be defined or remove
 
 #include "converters.h"
 #include "listconverters.hpp"
@@ -28,4 +25,4 @@ extern "C" {
 #  pragma warning(disable:4800 4244)
 #endif
 
-#endif //__OPENCV_JAVA_COMMON_H__
+#endif //__VISP_JAVA_COMMON_H__

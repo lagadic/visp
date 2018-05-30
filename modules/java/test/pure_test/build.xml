@@ -1,6 +1,6 @@
-<project name="OpenCV-Test">
+<project name="ViSP-Test">
   <property environment="env"/>
-  <property file="ant-${opencv.build.type}.properties"/>
+  <property file="ant-${visp.build.type}.properties"/>
   <property name="test.dir" value="testResults"/>
   <property name="build.dir" value="build"/>
 
@@ -49,7 +49,7 @@
       <formatter type="xml"/>
 
       <batchtest fork="yes" todir="${test.dir}">
-        <zipfileset src="build/jar/visp-test.jar" includes="**/*.class" excludes="**/OpenCVTest*">
+        <zipfileset src="build/jar/visp-test.jar" includes="**/*.class" excludes="**/ViSPTest*">
           <exclude name="**/*$*.class"/>
         </zipfileset>
       </batchtest>

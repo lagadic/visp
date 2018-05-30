@@ -4,11 +4,12 @@ from __future__ import print_function
 import sys, os, re
 
 classes_ignore_list = (
-    'OpenCV(Test)?Case',
-    'OpenCV(Test)?Runner',
+    'ViSP(Test)?Case',
+    'ViSP(Test)?Runner',
     'VpException',
 )
 
+# TODO: By akshay. The functions below aren't needed in visp
 funcs_ignore_list = (
     '\w+--HashCode',
     'Mat--MatLong',
