@@ -281,7 +281,17 @@ macro(vp_copyfiles_add_target target list_var comment_str)
   add_custom_target(${target} DEPENDS "${VISP_DEPHELPER}/${target}")
 endmacro()
 
-
+# Used in detecting PATH variables
+macro(vp_check_environment_variables)
+  foreach(_var ${ARGN})
+    if(" ${${_var}}" STREQUAL " " AND DEFINED ENV{${_var}})
+      set(__value "$ENV{${_var}}")
+      file(TO_CMAKE_PATH "${__value}" __value) # Assume that we receive paths
+      set(${_var} "${__value}")
+      message(STATUS "Update variable ${_var} from environment: ${${_var}}")
+    endif()
+  endforeach()
+endmacro()
 
 # print message
 macro(vp_debug_message)

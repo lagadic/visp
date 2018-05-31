@@ -86,12 +86,12 @@ set(java_generated_files
 
 add_custom_command(
     OUTPUT ${java_generated_files}
-    COMMAND ${PYTHON_DEFAULT_EXECUTABLE} "${JAVA_SOURCE_DIR}/generator/gen_java.py" -p "${JAVA_SOURCE_DIR}/../python/src2/gen2.py" -c "${CONFIG_FILE}"
+    COMMAND ${PYTHON_DEFAULT_EXECUTABLE} "${JAVA_SOURCE_DIR}/generator/gen_java.py" -p "${JAVA_SOURCE_DIR}/generator/gen2.py" -c "${CONFIG_FILE}"
     COMMAND ${CMAKE_COMMAND} -E touch "${VISP_DEPHELPER}/gen_visp_java_source"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     DEPENDS "${JAVA_SOURCE_DIR}/generator/gen_java.py"
-            "${JAVA_SOURCE_DIR}/../python/src2/gen2.py"
-            "${JAVA_SOURCE_DIR}/../python/src2/hdr_parser.py"
+            "${JAVA_SOURCE_DIR}/generator/gen2.py"
+            "${JAVA_SOURCE_DIR}/generator/hdr_parser.py"
             # don't, result of file(WRITE): "${CMAKE_CURRENT_BINARY_DIR}/gen_java.json"
             ${deps} ${__remap_targets}
             # not allowed (file(WRITE) result): "${CONFIG_FILE}"
