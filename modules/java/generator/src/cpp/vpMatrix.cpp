@@ -94,7 +94,7 @@ JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__II
 
 JNIEXPORT jlong
 JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__II
-        (JNIEnv *env, jclass, jint rows, jint cols {
+        (JNIEnv *env, jclass, jint rows, jint cols) {
     static const char method_name[] = "vpMatrix::n_1vpMatrix__II()";
     try {
         LOGD("%s", method_name);

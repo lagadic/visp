@@ -1145,10 +1145,6 @@ if __name__ == "__main__":
 
     args=arg_parser.parse_args()
 
-    # INFO: Config file contains which modules to build, with their location + some FILE_REMAPS
-    args.parser = '/home/akshay/Projects/Visp-WS/visp/modules/java/generator/gen2.py'
-    args.config = '/home/akshay/Projects/Visp-WS/build/modules/java_bindings_generator/gen_java.json'
-
     # INFO: There's a file called gen2.py. It contains some functions Arginfo
     # , GeneralINfo, FuncIfno and some template strings. I guess its called
     # header parsers. I guess thats used for extracting Class name, function name
