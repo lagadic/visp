@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <sstream>
+#include <stdexcept>
 #include "visp3/core/vpArray2D.h"
 
 

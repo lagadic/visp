@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <sstream>
+#include <stdexcept>
 #include "visp3/core/vpImage.h"
 typedef unsigned char u_char;
 
