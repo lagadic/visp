@@ -12,6 +12,10 @@ file(MAKE_DIRECTORY "${java_src_dir}")
 set(JAR_NAME visp-${VISP_JAVA_LIB_NAME_SUFFIX}.jar)
 set(VISP_JAR_FILE "${VISP_BINARY_DIR}/bin/${JAR_NAME}" CACHE INTERNAL "")
 
+# TODO: Some strange error. VISP_JAVA_BINDINGS_DIR is null at this line of execution. I dont know why its happening
+# Currently using a temporary workaround 
+set(VISP_JAVA_BINDINGS_DIR "${VISP_BINARY_DIR}/modules/java_bindings_generator")
+
 vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/java" "${java_src_dir}")
 
 set(depends gen_visp_java_source "${VISP_DEPHELPER}/gen_visp_java_source")
