@@ -1,4 +1,4 @@
-package org.opencv.imgproc;
+package org.visp.imgproc;
 
 import java.lang.Math;
 

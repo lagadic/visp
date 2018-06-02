@@ -92,7 +92,7 @@
                     "\n",
                     "    } catch(const cv::Exception& e) {",
                     "        LOGD(\"Imgproc::n_1getTextSize() caught cv::Exception: %s\", e.what());",
-                    "        jclass je = env->FindClass(\"org/opencv/core/CvException\");",
+                    "        jclass je = env->FindClass(\"org/opencv/core/VpException\");",
                     "        if(!je) je = env->FindClass(\"java/lang/Exception\");",
                     "        env->ThrowNew(je, e.what());",
                     "        return NULL;",

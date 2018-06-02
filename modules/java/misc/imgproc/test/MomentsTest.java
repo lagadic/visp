@@ -1,23 +1,21 @@
-package org.opencv.test.imgproc;
+package org.visp.test.imgproc;
 
-import org.opencv.test.OpenCVTestCase;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.CvType;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
+import org.visp.test.ViSPTestCase;
+import org.visp.core.Core;
+import org.visp.core.VpMatrix;
+import org.visp.imgproc.Imgproc;
+import org.visp.imgproc.Moments;
 
-public class MomentsTest extends OpenCVTestCase {
+public class MomentsTest extends ViSPTestCase {
 
-    Mat data;
+	VpMatrix data;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        data = new Mat(3,3, CvType.CV_8UC1, new Scalar(1));
-        data.row(1).setTo(new Scalar(5));
+        data = new VpMatrix(3,3,1.0);
+        data.row(1).setTo(5.0);
     }
 
     public void testAll() {

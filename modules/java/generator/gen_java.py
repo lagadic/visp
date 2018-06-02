@@ -468,7 +468,7 @@ class JavaWrapperGenerator(object):
         self.Module = module.capitalize()
 
         # INFO: In open-cv 4, hdr_parser is imported to gen2.py which is imported to gen_java
-        parser = hdr_parser.CppHeaderParser(generate_umat_decls=False)
+        parser = hdr_parser.CppHeaderParser()
 
         self.add_class( ['class ' + self.Module, '', [], []] ) # [ 'class/struct cname', ':bases', [modlist] [props] ]
 
@@ -484,8 +484,8 @@ class JavaWrapperGenerator(object):
         for hdr in srcfiles:
 
             '''
-                # INFO: decls is anything thats declared in .hpp file. Be it enum, const,
-                function declarations too. From hdr_parser.py
+                # INFO: decls contains enum and const declared in .hpp files. It also contains function declarations,
+                but only those which have a VISP_EXPORT macro with them. Read a snippet from `hdr_parser.py` for more
                 
                 Each declaration is [funcname, return_value_type /* in C, not in Python */, <list_of_modifiers>, <list_of_arguments>, original_return_type, docstring],
                 where each element of <list_of_arguments> is 4-element list itself:
@@ -530,7 +530,7 @@ class JavaWrapperGenerator(object):
         mkdir_p(package_path)
         for ci in self.classes.values():
             # INFO: Ignore classes that are manually. For open-cv it was Mat, for Visp it'll be vpMat and vpImage
-            if ci.name == "Mat":
+            if ci.name == "vpMatrix" or ci.name == "vpImage" :
                 continue
             ci.initCodeStreams(self.Module)
             self.gen_class(ci)
@@ -1205,7 +1205,7 @@ if __name__ == "__main__":
         srcfiles = []
         common_headers = []
 
-        misc_location = os.path.join(module_location, 'misc/java')
+        misc_location = os.path.join(hdr_parser_path, '../misc/'+module)
 
         # INFO: Get some specific .hpp files for the module. Not all modules contain the set of files
         srcfiles_fname = os.path.join(misc_location, 'filelist')
