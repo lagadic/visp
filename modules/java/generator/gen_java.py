@@ -513,7 +513,7 @@ class JavaWrapperGenerator(object):
                 logging.info("Ignore header: %s", hdr)
                 
             # INFO: Now split each declaration in categories - class, const or function
-            # INFO: Some functions are to be ignored - either they can't exist in java or have to be implemtd manully
+            # INFO: Some functions .are to be ignored - either they can't exist in java or have to be implemtd manully
             for decl in decls:
                 logging.info("\n--- Incoming ---\n%s", pformat(decl[:5], 4)) # without docstring
                 name = decl[0]
@@ -1189,6 +1189,8 @@ if __name__ == "__main__":
 
     gen_dict_files = []
 
+    # INFO: I'm not adding modules manually. Each folder in modules/java/misc
+    # is treated as a module to be added. They are read from <buildPath>/modules/java_bindings_generator/gen_java.json
     print("JAVA: Processing ViSP modules: %d" % len(config['modules']))
     for e in config['modules']:
 

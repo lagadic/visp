@@ -1,5 +1,4 @@
 // This file is part of ViSP project.
-#include "visp3/visp_modules.h"
 #include "visp3/core/vpMatrix.h"
 //#include "visp3/core/vpRect.h"
 //#include "visp3/core/vpPoint.h"

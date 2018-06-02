@@ -3,4 +3,5 @@
 #include "common.h"
 
 // Include all generated JNI code
-#include "visp_jni.hpp"
+// TODO: The files not linkinig properly. Will see later
+//#include "visp_jni.hpp"

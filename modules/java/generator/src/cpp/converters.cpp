@@ -2,8 +2,6 @@
 #define LOG_TAG "org.visp.utils.Converters"
 #include "common.h"
 
-using namespace cv;
-
 //vector_double
 
 void Mat_to_vector_double(const vpMatrix& mat, std::vector<double>& v_double){

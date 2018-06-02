@@ -3,8 +3,6 @@
 //
 
 #undef LOG_TAG
-
-#include "visp3/visp_modules.hpp"
 #ifdef HAVE_VISP_$M
 
 #include <string>
