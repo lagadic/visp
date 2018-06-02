@@ -3,7 +3,7 @@
  * This file contains the JNI equivalent member functions of C++ class `vpMatrix`
  * Refer http://visp-doc.inria.fr/doxygen/visp-daily/classvpMatrix.html for member functions of vpMatrix class
 
- * TODO The link contains some 120 member functions. Most of them are yet to be added. Refer OpenCV's equivalent files
+ * TODO The link contains some 120 member functions. Most of them are yet to be added. Refer Open-CV's equivalent files
  * author: AKS1996
  */
 #include <stdexcept>
@@ -20,7 +20,7 @@ static void throwJavaException(JNIEnv *env, const std::exception *e, const char 
   if(e) {
     std::string exception_type = "std::exception";
 
-      // In opencv its cv::Exception. Here its vpException
+      // In open-cv its cv::Exception. Here its vpException
       if(dynamic_cast<const vpException*>(e)) {
           exception_type = "vpException";
           je = env->FindClass("org/visp/core/VpException");
@@ -45,13 +45,13 @@ extern "C" {
 
 
 JNIEXPORT jlong
-JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
+JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__
         (JNIEnv *, jclass);
 
 JNIEXPORT jlong
-JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
+JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__
         (JNIEnv *, jclass) {
-    LOGD("VpMatrix::n_1VpMatrix__()");
+    LOGD("vpMatrix::n_1vpMatrix__()");
     return (jlong)
     new vpMatrix(); // Returns the hex address of the object - like 0x55d3f2d9d890
 }
@@ -63,13 +63,13 @@ JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__
 //
 
 JNIEXPORT jlong
-JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
+JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__IID
         (JNIEnv *env, jclass, jint rows, jint cols, jdouble value);
 
 JNIEXPORT jlong
-JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
+JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__IID
         (JNIEnv *env, jclass, jint rows, jint cols, jdouble value) {
-    static const char method_name[] = "VpMatrix::n_1VpMatrix__IID()";
+    static const char method_name[] = "vpMatrix::n_1vpMatrix__IID()";
     try {
         LOGD("%s", method_name);
         return (jlong)
@@ -89,13 +89,13 @@ JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__IID
 //
 
 JNIEXPORT jlong
-JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__II
+JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__II
         (JNIEnv *env, jclass, jint rows, jint cols, jdouble value);
 
 JNIEXPORT jlong
-JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__II
+JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__II
         (JNIEnv *env, jclass, jint rows, jint cols, jdouble value) {
-    static const char method_name[] = "VpMatrix::n_1VpMatrix__II()";
+    static const char method_name[] = "vpMatrix::n_1vpMatrix__II()";
     try {
         LOGD("%s", method_name);
         return (jlong)
@@ -108,4 +108,43 @@ JNICALL Java_org_visp_core_VpMatrix_n_1VpMatrix__II
 
     return 0;
 }
+}
+
+//
+// vpMatrix::vpMatrix(vpMatrix,int rows,int cols,int nrows, int ncols)
+//
+
+JNIEXPORT jlong JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__JIIII
+  (JNIEnv *, jclass, jlong address, jint rows, jint cols, jint nrows, jint ncols);
+
+JNIEXPORT jlong JNICALL Java_org_visp_core_vpMatrix_n_1vpMatrix__JIIII
+  (JNIEnv *, jclass, jlong address, jint rows, jint cols, jint nrows, jint ncols){
+	vpMatrix* me = (vpMatrix*) address; //TODO: check for NULL
+	return (jlong) new vpMatrix(*me,rows,cols,nrows,ncols);
+}
+
+//
+// vpMatrix::getCols()
+//
+
+JNIEXPORT jint JNICALL Java_org_visp_core_vpMatrix_n_1cols
+  (JNIEnv *, jclass, jlong self);
+
+JNIEXPORT jint JNICALL Java_org_visp_core_vpMatrix_n_1cols
+  (JNIEnv *, jclass, jlong self){
+	vpMatrix* me = (vpMatrix*) self; //TODO: check for NULL
+	return me->getCols();
+}
+
+//
+// vpMatrix::getRows()
+//
+
+JNIEXPORT jint JNICALL Java_org_visp_core_vpMatrix_n_1cols
+  (JNIEnv *, jclass, jlong self);
+
+JNIEXPORT jint JNICALL Java_org_visp_core_vpMatrix_n_1rows
+  (JNIEnv *, jclass, jlong self){
+	vpMatrix* me = (vpMatrix*) self; //TODO: check for NULL
+	return me->getRows();
 }

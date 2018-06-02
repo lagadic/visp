@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys, os, re
 
 classes_ignore_list = (
@@ -8,6 +9,7 @@ classes_ignore_list = (
     'VpException',
 )
 
+# TODO: By akshay. The functions below aren't needed in visp
 funcs_ignore_list = (
     '\w+--HashCode',
     'Mat--MatLong',
@@ -148,9 +150,9 @@ class JavaParser:
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print "Usage:\n", \
+        print("Usage:\n", \
             os.path.basename(sys.argv[0]), \
-            "<Classes/Tests dir1/file1> [<Classes/Tests dir2/file2> ...]\n", "Not tested methods are loggedto stdout."
+            "<Classes/Tests dir1/file1> [<Classes/Tests dir2/file2> ...]\n", "Not tested methods are loggedto stdout.")
         exit(0)
     parser = JavaParser()
     for x in sys.argv[1:]:

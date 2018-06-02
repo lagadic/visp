@@ -1,4 +1,17 @@
+// This file is part of ViSP project.
 #include "common.h"
+
+#ifdef HAVE_VISP_FEATURES2D
+#  include "visp/features2d.hpp"
+#endif
+
+#ifdef HAVE_VISP_VIDEO
+#  include "visp/video.hpp"
+#endif
+
+#ifdef HAVE_VISP_CONTRIB
+#  include "visp/contrib.hpp"
+#endif
 
 // The file just gets JNI version. No relation to ViSP project's source code
 

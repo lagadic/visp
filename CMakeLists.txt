@@ -230,6 +230,20 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
 
+if(ANDROID)
+  vp_update(VISP_JNI_INSTALL_PATH "${VISP_LIB_INSTALL_PATH}")
+elseif(INSTALL_CREATE_DISTRIB)
+  vp_update(VISP_JNI_INSTALL_PATH "${VISP_JAR_INSTALL_PATH}/${VISP_ARCH}")
+else()
+  vp_update(VISP_JNI_INSTALL_PATH "${VISP_JAR_INSTALL_PATH}")
+endif()
+vp_update(VISP_JNI_BIN_INSTALL_PATH "${VISP_JNI_INSTALL_PATH}")
+
+if(NOT VISP_LIB_ARCHIVE_INSTALL_PATH)
+  set(VISP_LIB_ARCHIVE_INSTALL_PATH ${VISP_LIB_INSTALL_PATH})
+endif()
+
+
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -353,6 +367,7 @@ VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AN
 
 # Build java as an option
 VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
+VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
 
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
@@ -705,9 +720,7 @@ if(ANDROID)
     endif()
 endif()
 
-# Keeping it commented. Creates problem while building java module
-# set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin/android" CACHE PATH "Output directory for applications")
-
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Output directory for applications")
 
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
@@ -1073,6 +1086,12 @@ elseif(NOT DEFINED VISP_VCSVERSION)
   set(VISP_VCSVERSION "unknown")
 endif()
 
+# --- Python Support ---
+if(NOT IOS)
+  include(cmake/VISPDetectPython.cmake)
+endif()
+
+
 # ----------------------------------------------------------------------------
 # Summary:
 # ----------------------------------------------------------------------------
@@ -1207,6 +1226,19 @@ if(WIN32)
     status("    Building for version: " ${CMAKE_SYSTEM_VERSION})
   endif()
 endif()
+
+# ========================== java ==========================
+if(BUILD_JAVA OR BUILD_visp_java)
+  status("")
+  status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                                      ELSE "")
+  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"                    ELSE NO)
+  if(NOT ANDROID)
+    status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE NO)
+  endif()
+  status("    Java wrappers:" HAVE_visp_java                                                            THEN YES ELSE NO)
+  status("    Java tests:"    BUILD_TESTS AND visp_test_java_BINARY_DIR                                 THEN YES ELSE NO)
+endif()
+
 
 # ============================ Options ===========================
 status("")

@@ -1,0 +1,70 @@
+<project name="ViSP-Test">
+  <property environment="env"/>
+  <property file="ant-${visp.build.type}.properties"/>
+  <property name="test.dir" value="testResults"/>
+  <property name="build.dir" value="build"/>
+
+  <path id="master-classpath">
+    <fileset dir="lib">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="bin">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="clean">
+    <delete dir="build"/>
+    <delete dir="${test.dir}"/>
+  </target>
+
+  <target name="compile">
+    <mkdir dir="build/classes"/>
+
+    <javac sourcepath="" srcdir="src" destdir="build/classes" includeantruntime="false" >
+      <include name="**/*.java"/>
+      <classpath refid="master-classpath"/>
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <mkdir dir="build/jar"/>
+    <jar destfile="build/jar/visp-test.jar" basedir="build/classes">
+      <manifest>
+        <attribute name="Main-Class" value="org.visp.test.ViSPTestRunner"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="test" depends="jar">
+    <mkdir dir="${test.dir}"/>
+    <junit printsummary="true" haltonfailure="false" haltonerror="false" showoutput="true" logfailedtests="true" maxmemory="256m">
+      <sysproperty key="java.library.path" path="${visp.lib.path}"/>
+      <env key="PATH" path="${visp.lib.path}:${env.PATH}:${env.Path}"/>
+      <classpath refid="master-classpath"/>
+      <classpath>
+        <pathelement location="build/classes"/>
+      </classpath>
+
+      <formatter type="xml"/>
+
+      <batchtest fork="yes" todir="${test.dir}">
+        <zipfileset src="build/jar/visp-test.jar" includes="**/*.class" excludes="**/ViSPTest*">
+          <exclude name="**/*$*.class"/>
+        </zipfileset>
+      </batchtest>
+    </junit>
+    <junitreport todir="${test.dir}">
+      <fileset dir="${test.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="noframes" todir="${test.dir}"/>
+    </junitreport>
+  </target>
+
+  <target name="build" depends="jar">
+  </target>
+
+  <target name="buildAndTest" depends="test">
+  </target>
+</project>

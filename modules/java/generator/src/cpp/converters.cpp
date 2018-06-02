@@ -1,7 +1,8 @@
+// This file is part of ViSP project.
 #define LOG_TAG "org.visp.utils.Converters"
 #include "common.h"
 
-// CHECK_MAT is defined in visp/modules/java/include/visp/java.hpp. Not needed actually
+using namespace cv;
 
 //vector_double
 
