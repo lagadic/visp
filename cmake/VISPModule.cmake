@@ -1057,7 +1057,7 @@ macro(vp_add_config_file)
     vp_create_compat_headers("${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
 
     # begin part of vp_create_global_module_header() macro
-    set(__header_content "${__header_content}\n#include <visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
+    set(__header_content "${__header_content}\n#include <visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}>")
     # end part of vp_create_global_module_header() macro
 
     install(FILES "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}"
