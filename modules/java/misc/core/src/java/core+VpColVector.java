@@ -97,4 +97,17 @@ public class VpColVector {
 		for (int i=0;i<data.size();++i)
 		    data.set(i,data.get(i)*d);
 	}
+
+	// C++: void resize(int n)
+	public void resize(int n) {
+		try {
+			data = new ArrayList<Double>(Collections.nCopies(n, 0.0));
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void set(int n,double d) {
+		data.set(n,d);
+	}
 }
