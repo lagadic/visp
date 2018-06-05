@@ -388,6 +388,9 @@ vpMatrix M(R);
   // inverse matrix A using the QR decomposition
   vpMatrix inverseByQR() const;
 
+  // inverse triangular matrix
+  vpMatrix inverseTriangular() const;
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByQRLapack() const;
@@ -464,6 +467,16 @@ vpMatrix M(R);
   void svdOpenCV(vpColVector &w, vpMatrix &V);
 #endif
 #endif
+  //@}
+
+  //-------------------------------------------------
+  // QR decomposition
+  //-------------------------------------------------
+
+  /** @name QR decomposition  */
+  //@{
+  int qr(vpMatrix &Q, vpMatrix &R, bool full = false) const;
+  int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false) const;
   //@}
 
   //-------------------------------------------------
