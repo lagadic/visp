@@ -57,7 +57,7 @@
 #include <visp3/vision/vpBasicKeyPoint.h>
 #include <visp3/vision/vpPose.h>
 #ifdef VISP_HAVE_MODULE_IO
-#include <visp3/io/vpImageIo.h>
+#  include <visp3/io/vpImageIo.h>
 #endif
 #include <visp3/core/vpConvert.h>
 #include <visp3/core/vpCylinder.h>
@@ -68,20 +68,25 @@
 // Require at least OpenCV >= 2.1.1
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 
-#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#  include <opencv2/calib3d/calib3d.hpp>
+#  include <opencv2/features2d/features2d.hpp>
+#  include <opencv2/imgproc/imgproc.hpp>
 
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
-#include <opencv2/xfeatures2d.hpp>
-#elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) &&                                   \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000)
-#include <opencv2/nonfree/nonfree.hpp>
-#endif
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
+#    include <opencv2/imgproc/imgproc_c.h>
+#    include <opencv2/imgproc.hpp>
+#  endif
 
-#ifdef VISP_HAVE_XML2
-#include <libxml/xmlwriter.h>
-#endif
+#  if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
+#    include <opencv2/xfeatures2d.hpp>
+#  elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && \
+     (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#    include <opencv2/nonfree/nonfree.hpp>
+#  endif
+
+#  ifdef VISP_HAVE_XML2
+#    include <libxml/xmlwriter.h>
+#  endif
 
 /*!
   \class vpKeyPoint

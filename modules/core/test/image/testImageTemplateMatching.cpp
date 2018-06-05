@@ -47,6 +47,10 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x040000)
+#  include <opencv2/imgproc.hpp>
+#endif
+
 // List of allowed command line options
 #define GETOPTARGS "cdi:th"
 
