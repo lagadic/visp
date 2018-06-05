@@ -148,3 +148,24 @@ JNIEXPORT jint JNICALL Java_org_visp_core_vpMatrix_n_1rows
 	vpMatrix* me = (vpMatrix*) self; //TODO: check for NULL
 	return me->getRows();
 }
+
+//
+// void vpMatrix::transpose(vpMatrix&)
+//
+
+JNIEXPORT void JNICALL Java_org_visp_core_vpMatrix_n_1transpose
+  (JNIEnv *, jclass, jlong self, jlong result){
+	vpMatrix* me = (vpMatrix*) self;
+	vpMatrix* other = (vpMatrix*) result;
+	me->transpose(*other);
+}
+
+// Java Method:    dump()
+JNIEXPORT jstring JNICALL Java_org_visp_core_vpMatrix_n_1dump
+  (JNIEnv *env, jclass, jlong address){
+		
+	vpMatrix* me = (vpMatrix*) address; //TODO: check for NULL
+	std::stringstream ss;
+	ss << *me;
+	return env->NewStringUTF(ss.str().c_str());
+}

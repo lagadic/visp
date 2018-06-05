@@ -10,6 +10,9 @@ if(APPLE_FRAMEWORK OR WINRT OR NOT PYTHON_DEFAULT_AVAILABLE OR NOT ANT_EXECUTABL
   __vp_module_turn_off(java)
 endif()
 
+# Java wrapping support for each module is specified in its <mod-name>/CMakeLists.txt file
+# Below we add those modules which need to be built(compile their C++ code) for the visp_java module
+# Understand that above 2 lines are totally different.
 set(the_description "The java bindings")
 vp_add_module(java BINDINGS visp_core visp_imgproc PRIVATE_REQUIRED visp_java_bindings_generator)
 

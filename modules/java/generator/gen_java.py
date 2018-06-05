@@ -1185,8 +1185,10 @@ if __name__ == "__main__":
 
     gen_dict_files = []
 
-    # INFO: I'm not adding modules manually. Each folder in modules/java/misc
-    # is treated as a module to be added. They are read from <buildPath>/modules/java_bindings_generator/gen_java.json
+    # INFO: I'm not adding modules manually. That info is read from <buildPath>/modules/java_bindings_generator/gen_java.json
+    # To add Java Wrapper for a module, find and change the line given below in <module>/CMakeLists.txt:
+    # vp_add_module(<mod-name> ....)   -->   vp_add_module(<mod-name> .... WRAP java)
+    # Also you need to add support for functions that have to implemented manually in misc/java/<mod-name> folder
     print("JAVA: Processing ViSP modules: %d" % len(config['modules']))
     for e in config['modules']:
 

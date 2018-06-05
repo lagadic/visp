@@ -1,11 +1,16 @@
 package org.visp.core;
 
-import java.nio.ByteBuffer;
-
-//import java.nio.ByteBuffer;
-
 // C++: class vpMatrix
 public class VpMatrix {
+
+/*
+Selected  "vpMatrix::pseudoInverse(vpMatrix&, double) const"
+Selected  "vpMatrix::pseudoInverseLapack(vpMatrix&, double) const"
+Selected  "vpMatrix::svdLapack(vpColVector&, vpMatrix&)"
+Selected  "vpMatrix::operator*(vpColVector const&) const"
+Selected  "vpMatrix::multMatrixVector(vpMatrix const&, vpColVector const&, vpColVector&)"
+Selected  "vpMatrix::blas_dgemv(char, int, int, double, double*, int, double*, int, double, double*, int)"
+*/
 
     public final long nativeObj;
 
@@ -49,6 +54,23 @@ public class VpMatrix {
     public long getNativeObjAddr() {
         return nativeObj;
     }
+
+	// C++: vpMatrix::transpose()
+	public VpMatrix transpose(){
+		VpMatrix res = new VpMatrix();
+		n_transpose(nativeObj, res.nativeObj);
+		return res;
+	}
+
+	// C++: vpMatrix::transpose(vpMatrix&)
+	public void transpose(VpMatrix res){
+		n_transpose(nativeObj, res.nativeObj);
+	}
+
+	// Prints current matrix
+    public String dump(){
+    	return n_dump(nativeObj);
+    }
     
     // C++: vpMatrix::vpMatrix()
     private static native long n_vpMatrix();
@@ -68,4 +90,9 @@ public class VpMatrix {
     // C++: int vpMatrix::rows()
     private static native int n_rows(long nativeObj);
 
+	// C++: vpMatrix::transpose(vpMatrix&)
+	private static native void n_transpose(long nativeObj, long address);
+	
+	// C++: String <<&(ostream ss)
+    private static native String n_dump(long nativeObj);
 }

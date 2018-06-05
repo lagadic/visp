@@ -243,7 +243,7 @@ if(USE_EIGEN3)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
 endif()
 
-vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES})
+vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} WRAP java)
 
 vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
 
