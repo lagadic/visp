@@ -26,6 +26,48 @@
             "suffix": "J",
             "j_import": "org.visp.core.VpMatrix"
         },
+		"vpArray2D": {
+            "j_type": "VpArray2D",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpArray2D<double>& %(n)s = *((vpArray2D<double>*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpArray2D"
+        },
+		"vpImage_char": {
+            "j_type": "VpImageUChar",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpImage<uchar>& %(n)s = *((vpImage<uchar>*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpImageUChar"
+        },
+		"vpImage_vpRGBa": {
+            "j_type": "VpImageRGBa",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpImage<vpRGBa>& %(n)s = *((vpImage<vpRGBa>*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpImageRGBa"
+        },
         "Moments": {
             "j_type": "Moments",
             "jn_args": [
@@ -74,8 +116,8 @@
             "jni_var": "Moments %(n)s(%(n)s_m00, %(n)s_m10, %(n)s_m01, %(n)s_m20, %(n)s_m11, %(n)s_m02, %(n)s_m30, %(n)s_m21, %(n)s_m12, %(n)s_m03)",
             "suffix": "DDDDDDDDDD"
         },
-        "Point": {
-            "j_type": "Point",
+        "vpPoint": {
+            "j_type": "VpPoint",
             "jn_args": [
                 [
                     "double",
@@ -87,11 +129,11 @@
                 ]
             ],
             "jni_type": "jdoubleArray",
-            "jni_var": "Point %(n)s((int)%(n)s_x, (int)%(n)s_y)",
+            "jni_var": "vpPoint %(n)s((int)%(n)s_x, (int)%(n)s_y)",
             "suffix": "DD",
-            "j_import": "org.visp.core.Point"
+            "j_import": "org.visp.core.VpPoint"
         },
-        "String": {
+        "string": {
             "j_type": "String",
             "jn_type": "String",
             "jni_name": "n_%(n)s",

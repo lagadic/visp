@@ -1,48 +1,40 @@
 package org.visp.core;
 
-// C++: class vpArray2D<Type>
-// Note that Java can handle generics, JNI cant
-// So better to have class as a member function parameter to support sort of generics like behavior
-// Refer https://stackoverflow.com/questions/2228275/java-generics-and-jni
+// C++: class vpArray2D<double>
 
-public class VpArray2D<T> {
+public class VpArray2D {
 
-	private final Class<T> type;
     public final long nativeObj;
 
-    public VpArray2D(Class<T> type, long addr){
-    	this.type = type;
+    public VpArray2D(long addr){
         if (addr == 0)
             throw new java.lang.UnsupportedOperationException("Native object address is NULL");
         nativeObj = addr;
     }
     
-    // C++: vpArray2D::vpArray2D<Type>()
-    public VpArray2D(Class<T> type) {
-    	this.type = type;
-    	nativeObj = n_VpArray2D(type.toString());
+    // C++: vpArray2D::vpArray2D<double>()
+    public VpArray2D() {
+    	nativeObj = n_VpArray2D();
     }
     
-    // C++: vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
-    public VpArray2D(Class<T> type, int r, int c, T val) {
-    	this.type = type;
-    	nativeObj = n_VpArray2D(type.toString(),r,c,String.valueOf(val));
+    // C++: vpArray2D<double>(unsigned int r, unsigned int c, Type val)
+    public VpArray2D(int r, int c, double val) {
+    	nativeObj = n_VpArray2D(r,c,val);
     }
     
     // C++: vpArray2D::vpArray2D(int rows, int cols)
-    public VpArray2D(Class<T> type, int rows, int cols) {
-    	this.type = type;
-    	nativeObj = n_VpArray2D(type.toString(), rows,cols);
+    public VpArray2D(int rows, int cols) {
+    	nativeObj = n_VpArray2D(rows,cols);
     }
     
     // C++: VpArray2D::getCols()
     public int cols() {
-        return n_cols(type.toString(), nativeObj);
+        return n_cols(nativeObj);
     }
 
     // C++: VpArray2D::getRows()
     public int rows() {
-        return n_rows(type.toString(), nativeObj);
+        return n_rows(nativeObj);
     }
 
     public long getNativeObjAddr() {
@@ -50,18 +42,18 @@ public class VpArray2D<T> {
     }
     
     // C++: vpArray2D::vpArray2D,Type>()
-    private static native long n_VpArray2D(final String type);
+    private static native long n_VpArray2D();
     
     // C++: vpArray2D::vpArray2D(int rows, int cols)
-    private static native long n_VpArray2D(final String type,  int rows, int cols);
+    private static native long n_VpArray2D( int rows, int cols);
     
-    // C++: vpArray2D::vpArray2D(int rows, int cols, Type value)
-    private static native long n_VpArray2D(final String type, int rows, int cols, String value);
+    // C++: vpArray2D::vpArray2D(int rows, int cols, double value)
+    private static native long n_VpArray2D(int rows, int cols, double value);
     
     // C++: int vpArray2D::cols()
-    private static native int n_cols(final String type, long nativeObj);
+    private static native int n_cols(long nativeObj);
 
     // C++: int vpArray2D::rows()
-    private static native int n_rows(final String type, long nativeObj);
+    private static native int n_rows(long nativeObj);
 
 }

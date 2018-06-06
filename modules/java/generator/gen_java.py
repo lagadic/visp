@@ -221,8 +221,8 @@ class ClassInfo(GeneralInfo):
                 self.imports.add("java.util.List")
                 self.imports.add("java.util.ArrayList")
                 self.imports.add("org.visp.utils.Converters")
-                if type_dict[ctype]["v_type"] in ("Mat", "vector_Mat"):
-                    self.imports.add("org.visp.core.Mat")
+                if type_dict[ctype]["v_type"] in ("VpMatrix", "vector_Mat"):
+                    self.imports.add("org.visp.core.VpMatrix")
 
     def getAllMethods(self):
         result = []
@@ -511,13 +511,17 @@ class JavaWrapperGenerator(object):
                 includes.append('#include "' + hdr + '"')
             else:
                 logging.info("Ignore header: %s", hdr)
-                
+
             # INFO: Now split each declaration in categories - class, const or function
             # INFO: Some functions .are to be ignored - either they can't exist in java or have to be implemtd manully
             for decl in decls:
                 logging.info("\n--- Incoming ---\n%s", pformat(decl[:5], 4)) # without docstring
                 name = decl[0]
-                if name.startswith("struct") or name.startswith("class"):
+
+                # ToDO ignore operator member functions
+                if decl[1] == 'operator':
+                    print("Skipped operator function: %s"%name)
+                elif name.startswith("struct") or name.startswith("class"):
                     self.add_class(decl)
                 elif name.startswith("const"):
                     self.add_const(decl)
@@ -530,7 +534,7 @@ class JavaWrapperGenerator(object):
         mkdir_p(package_path)
         for ci in self.classes.values():
             # INFO: Ignore classes that are manually. For open-cv it was Mat, for Visp it'll be vpMat and vpImage
-            if ci.name == "vpMatrix" or ci.name == "vpImage" :
+            if ci.name in ["vpMatrix","vpImage","vpArray2D"]:
                 continue
             ci.initCodeStreams(self.Module)
             self.gen_class(ci)
@@ -656,7 +660,7 @@ class JavaWrapperGenerator(object):
                         c_prologue.append( "Mat& %(n)s_mat = *((Mat*)%(n)s_mat_nativeObj)" % {"n" : a.name} + ";" )
                         if "I" in a.out or not a.out:
                             if type_dict[a.ctype]["v_type"] == "vector_Mat":
-                                j_prologue.append( "List<Mat> %(n)s_tmplm = new ArrayList<Mat>((%(n)s != null) ? %(n)s.size() : 0);" % {"n" : a.name } )
+                                j_prologue.append( "List<Mat> %(n)s_tmplm = new ArrayList<VpMatrix>((%(n)s != null) ? %(n)s.size() : 0);" % {"n" : a.name } )
                                 j_prologue.append( "Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s, %(n)s_tmplm);" % {"n" : a.name, "t" : a.ctype} )
                             else:
                                 if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
@@ -1140,8 +1144,8 @@ if __name__ == "__main__":
     # parse command line parameters
     import argparse
     arg_parser = argparse.ArgumentParser(description='ViSP Java Wrapper Generator')
-    arg_parser.add_argument('-p', '--parser', required=False, help='ViSP header parser')
-    arg_parser.add_argument('-c', '--config', required=False, help='ViSP modules config')
+    arg_parser.add_argument('-p', '--parser', required=True, help='ViSP header parser')
+    arg_parser.add_argument('-c', '--config', required=True, help='ViSP modules config')
 
     args=arg_parser.parse_args()
 
