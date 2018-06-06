@@ -145,7 +145,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
             work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
-            );
+    );
 
     if (info != 0) {
       std::cout << "dgeqrf_:Preparation:" << -info << "th element had an illegal value" << std::endl;
@@ -170,7 +170,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
             work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
-            );
+    );
 
     if (info != 0) {
       std::cout << "dgeqrf_:" << -info << "th element had an illegal value" << std::endl;
