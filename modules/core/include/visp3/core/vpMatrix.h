@@ -684,7 +684,7 @@ vpMatrix M(R);
   {
     return vpArray2D<double>::saveYAML(filename, M, header);
   }
-//@}
+  //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -740,7 +740,7 @@ vpMatrix M(R);
   vp_deprecated vpRowVector row(const unsigned int i);
   vp_deprecated vpColVector column(const unsigned int j);
 
-//@}
+  //@}
 #endif
 
 private:
