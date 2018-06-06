@@ -131,17 +131,17 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
             &colNum_, // The number of columns of the matrix A.  N >= 0.
             A.data,   /*On entry, the M-by-N matrix A.
-                                                            On exit, the elements on and above the diagonal of
-                                                         the array   contain the min(M,N)-by-N upper trapezoidal
-                                                         matrix R (R is   upper triangular if m >= n); the
-                                                         elements below the diagonal,   with the array TAU,
-                                                         represent the orthogonal matrix Q as a   product of
-                                                         min(m,n) elementary reflectors.
-                                                          */
+                            On exit, the elements on and above the diagonal of
+                         the array   contain the min(M,N)-by-N upper trapezoidal
+                         matrix R (R is   upper triangular if m >= n); the
+                         elements below the diagonal,   with the array TAU,
+                         represent the orthogonal matrix Q as a   product of
+                         min(m,n) elementary reflectors.
+                          */
             &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
             tau,      /*Dimension (min(M,N))
-                                                        The scalar factors of the elementary reflectors
-                                                      */
+                        The scalar factors of the elementary reflectors
+                      */
             work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
@@ -156,17 +156,17 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
             &colNum_, // The number of columns of the matrix A.  N >= 0.
             A.data,   /*On entry, the M-by-N matrix A.
-                                                            On exit, the elements on and above the diagonal of
-                                                         the array   contain the min(M,N)-by-N upper trapezoidal
-                                                         matrix R (R is   upper triangular if m >= n); the
-                                                         elements below the diagonal,   with the array TAU,
-                                                         represent the orthogonal matrix Q as a   product of
-                                                         min(m,n) elementary reflectors.
-                                                          */
+                            On exit, the elements on and above the diagonal of
+                         the array   contain the min(M,N)-by-N upper trapezoidal
+                         matrix R (R is   upper triangular if m >= n); the
+                         elements below the diagonal,   with the array TAU,
+                         represent the orthogonal matrix Q as a   product of
+                         min(m,n) elementary reflectors.
+                          */
             &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
             tau,      /*Dimension (min(M,N))
-                                                        The scalar factors of the elementary reflectors
-                                                      */
+                        The scalar factors of the elementary reflectors
+                      */
             work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
@@ -585,10 +585,10 @@ int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squ
   dgeqp3_(
         &m,        //The number of rows of the matrix A.  M >= 0.
         &na,        //The number of columns of the matrix A.  N >= 0.
-        qrdata,    /*On entry, the M-by-N matrix A.                                                                                                                                        */
+        qrdata,    /*On entry, the M-by-N matrix A.        */
         &m,      //The leading dimension of the array A.  LDA >= max(1,M).
         p,         // Dimension N
-        tau,        /*Dimension (min(M,N))                                                                                                                                        */
+        tau,        /*Dimension (min(M,N))        */
         work,       //Internal working array. dimension (3*N)
 
         &dimWork,
@@ -609,10 +609,10 @@ int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squ
   dgeqp3_(
         &m,        //The number of rows of the matrix A.  M >= 0.
         &na,        //The number of columns of the matrix A.  N >= 0.
-        qrdata,    /*On entry, the M-by-N matrix A.                                                                                                                                        */
+        qrdata,    /*On entry, the M-by-N matrix A.        */
         &m,      //The leading dimension of the array A.  LDA >= max(1,M).
         p,         // Dimension N
-        tau,        /*Dimension (min(M,N))                                                                                                                                        */
+        tau,        /*Dimension (min(M,N))        */
         work,       //Internal working array. dimension (3*N)
 
         &dimWork,
