@@ -223,6 +223,8 @@ protected:
   unsigned int m_projectionErrorDisplayThickness;
   //! Camera parameters used for projection error computation
   vpCameraParameters m_projectionErrorCam;
+  //! Mask used to disable tracking on a part of image
+  vpImage<bool> *m_mask = nullptr;
 
 public:
   vpMbTracker();
@@ -544,6 +546,8 @@ public:
   void setProjectionErrorMovingEdge(const vpMe &me);
 
   void setProjectionErrorKernelSize(const unsigned int &size);
+
+  virtual void setMask(vpImage<bool> &mask) { m_mask = &mask; }
 
   /*!
     Set the minimal error (previous / current estimation) to determine if

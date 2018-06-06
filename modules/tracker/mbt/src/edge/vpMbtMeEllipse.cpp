@@ -235,7 +235,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 */
-void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const vpImage<bool> *mask, const bool doNotTrack)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
@@ -313,7 +313,7 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTra
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 */
-void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
+void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
@@ -322,7 +322,7 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
 
   unsigned int n = numberOfSignal();
   if ((double)n < 0.9 * expecteddensity) {
-    sample(I);
+    sample(I, mask);
     vpMeTracker::track(I);
   }
 }
@@ -382,7 +382,7 @@ void vpMbtMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
 }
 
 void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                                  double mu02_p,
+                                  double mu02_p, const vpImage<bool> *mask,
                                   const bool doNotTrack)
 {
   iPc = ic;
@@ -408,7 +408,7 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
   ce = cos(e);
   se = sin(e);
 
-  sample(I, doNotTrack);
+  sample(I, mask, doNotTrack);
 
   if (!doNotTrack)
     vpMeTracker::initTracking(I);
@@ -436,7 +436,7 @@ void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 }
 
 void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p,
-                                      double mu11_p, double mu02_p)
+                                      double mu11_p, double mu02_p, const vpImage<bool> *mask)
 {
   iPc = ic;
   mu20 = mu20_p;
@@ -462,7 +462,7 @@ void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpI
   se = sin(e);
 
   suppressPoints();
-  reSample(I);
+  reSample(I, mask);
 
   // remet a jour l'angle delta pour chaque  point de la liste
   updateTheta();

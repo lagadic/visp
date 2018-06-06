@@ -3329,6 +3329,23 @@ void vpMbGenericTracker::setKltMaskBorder(const std::map<std::string, unsigned i
 #endif
 
 /*!
+  Set the visibility mask.
+
+  \param mask : visibility mask.
+*/
+void vpMbGenericTracker::setMask(vpImage<bool> &mask)
+{
+  vpMbTracker::setMask(mask);
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+    it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setMask(mask);
+  }
+}
+
+
+/*!
   Set the threshold for the minimum line length to be considered as visible in
   the LOD case.
 

@@ -303,7 +303,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack)
+bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask, const bool doNotTrack)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -402,7 +402,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         }
 
         try {
-          melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack);
+          melinePt->initTracking(I, ip1, ip2, rho, theta, mask, doNotTrack);
           meline.push_back(melinePt);
           nbFeature.push_back((unsigned int) melinePt->getMeList().size());
           nbFeatureTotal += nbFeature.back();
@@ -481,7 +481,7 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const v
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
   if (isvisible) {
     p1->changeFrame(cMo);
@@ -573,7 +573,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
               meline[i]->imax = (int)ip1.get_i() + marge;
             }
 
-            meline[i]->updateParameters(I, ip1, ip2, rho, theta);
+            meline[i]->updateParameters(I, ip1, ip2, rho, theta, mask);
             nbFeature[i] = (unsigned int)meline[i]->getMeList().size();
             nbFeatureTotal += nbFeature[i];
           }
@@ -612,7 +612,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
   for (size_t i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -623,7 +623,7 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const 
   meline.clear();
   nbFeatureTotal = 0;
 
-  if (!initMovingEdge(I, cMo, false))
+  if (!initMovingEdge(I, cMo, mask, false))
     Reinit = true;
 
   Reinit = false;

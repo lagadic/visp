@@ -93,7 +93,7 @@ vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
   \param doNoTrack : If true, ME are not tracked
 */
 void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                               double rho_, double theta_,
+                               double rho_, double theta_, const vpImage<bool> *mask,
                                const bool doNoTrack)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
@@ -118,7 +118,7 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
     normalizeAngle(delta);
     delta_1 = delta;
 
-    sample(I, doNoTrack);
+    sample(I, mask, doNoTrack);
     expecteddensity = (double)list.size();
 
     if (!doNoTrack)
@@ -130,13 +130,13 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
 }
 
 /*!
-  Construct a list of vpMeSite moving edges at a particular sampling
-  step between the two extremities of the line.
+Construct a list of vpMeSite moving edges at a particular sampling
+step between the two extremities of the line.
 
-  \param I : Image in which the line appears.
-  \param doNoTrack : If true, ME are not tracked.
+\param I : Image in which the line appears.
+\param doNoTrack : If true, ME are not tracked.
 */
-void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack)
+void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const vpImage<bool> *mask, const bool doNoTrack)
 {
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
@@ -145,7 +145,7 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack)
   // if (me->getSampleStep==0)
   if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
     throw(vpTrackingException(vpTrackingException::fatalError, "Function vpMbtMeLine::sample() called with "
-                                                               "moving-edges sample step = 0"));
+      "moving-edges sample step = 0"));
   }
 
   // i, j portions of the line_p
@@ -174,7 +174,7 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack)
   for (int i = 0; i <= vpMath::round(n_sample); i++) {
     // If point is in the image, add to the sample list
     if (!outOfImage(vpMath::round(is), vpMath::round(js), (int)(me->getRange() + me->getMaskSize() + 1), (int)rows,
-                    (int)cols)) {
+      (int)cols) && insideMask(mask, vpMath::round(is), vpMath::round(js))) {
       vpMeSite pix; //= list.value();
       pix.init((int)is, (int)js, delta, 0, sign);
 
@@ -475,14 +475,14 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
 
   \param I : Image in which the line appears.
 */
-void vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
+void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   unsigned int n = numberOfSignal();
 
   if ((double)n < 0.5 * expecteddensity && n > 0) {
     double delta_new = delta;
     delta = delta_1;
-    sample(I);
+    sample(I, mask);
     expecteddensity = (double)list.size();
     delta = delta_new;
     //  2. On appelle ce qui n'est pas specifique
@@ -504,7 +504,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
   \param ip1 : The first extremity of the line.
   \param ip2 : The second extremity of the line.
 */
-void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
+void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImage<bool> *mask)
 {
   size_t n = list.size();
 
@@ -516,7 +516,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &
     PExt[0].jfloat = (float)ip1.get_j();
     PExt[1].ifloat = (float)ip2.get_i();
     PExt[1].jfloat = (float)ip2.get_j();
-    sample(I);
+    sample(I, mask);
     expecteddensity = (double)list.size();
     delta = delta_new;
     vpMeTracker::track(I);
@@ -583,7 +583,7 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
   \param  theta_ : The \f$\theta\f$ parameter used in the line's polar
   equation.
 */
-void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_, double theta_)
+void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_, double theta_, const vpImage<bool> *mask)
 {
   this->rho = rho_;
   this->theta = theta_;
@@ -597,7 +597,7 @@ void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_,
   suppressPoints(I);
   setExtremities();
   // reechantillonage si necessaire
-  reSample(I);
+  reSample(I, mask);
 
   // remet a jour l'angle delta pour chaque  point de la liste
   updateDelta();
@@ -614,7 +614,7 @@ void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_,
   equation.
 */
 void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                                   double rho_, double theta_)
+                                   double rho_, double theta_, const vpImage<bool> *mask)
 {
   this->rho = rho_;
   this->theta = theta_;
@@ -628,7 +628,7 @@ void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, const vpImag
   suppressPoints(I);
   setExtremities();
   // reechantillonage si necessaire
-  reSample(I, ip1, ip2);
+  reSample(I, ip1, ip2, mask);
 
   // remet a jour l'angle delta pour chaque  point de la liste
   updateDelta();

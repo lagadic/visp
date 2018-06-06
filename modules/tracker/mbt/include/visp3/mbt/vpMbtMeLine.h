@@ -38,10 +38,10 @@
  *
  *****************************************************************************/
 
-/*!
- \file vpMbtMeLine.h
- \brief Implementation of a line used by the model-based tracker.
-*/
+ /*!
+  \file vpMbtMeLine.h
+  \brief Implementation of a line used by the model-based tracker.
+ */
 
 #ifndef vpMbtMeLine_HH
 #define vpMbtMeLine_HH
@@ -52,12 +52,12 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/*!
-  \class vpMbtMeLine
-  \brief Implementation of a line used by the model-based tracker.
-  \ingroup group_mbt_features
+ /*!
+   \class vpMbtMeLine
+   \brief Implementation of a line used by the model-based tracker.
+   \ingroup group_mbt_features
 
- */
+  */
 class VISP_EXPORT vpMbtMeLine : public vpMeTracker
 {
 private:
@@ -77,8 +77,8 @@ public:
   ~vpMbtMeLine();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
-                              const vpMatrix &SobelX, const vpMatrix &SobelY, const bool display,
-                              const unsigned int length, const unsigned int thickness);
+    const vpMatrix &SobelX, const vpMatrix &SobelY, const bool display,
+    const unsigned int length, const unsigned int thickness);
 
   void display(const vpImage<unsigned char> & /*I*/, vpColor /*col*/) { ; }
   void display(const vpImage<unsigned char> &I)
@@ -111,23 +111,23 @@ public:
   inline double get_c() const { return this->c; }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
-                    double theta, const bool doNoTrack);
+    double theta, const vpImage<bool> *mask, const bool doNoTrack);
 
   void track(const vpImage<unsigned char> &I);
 
-  void updateParameters(const vpImage<unsigned char> &I, double rho, double theta);
+  void updateParameters(const vpImage<unsigned char> &I, double rho, double theta, const vpImage<bool> *mask);
   void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
-                        double theta);
+    double theta, const vpImage<bool> *mask);
 
 private:
   void bubbleSortI();
   void bubbleSortJ();
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, const vpImage<bool> *mask, const bool doNotTrack = false);
   void seekExtremities(const vpImage<unsigned char> &I);
   void setExtremities();
   void suppressPoints(const vpImage<unsigned char> &I);
-  void reSample(const vpImage<unsigned char> &image);
-  void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2);
+  void reSample(const vpImage<unsigned char> &image, const vpImage<bool> *mask);
+  void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImage<bool> *mask);
   void updateDelta();
 };
 

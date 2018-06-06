@@ -128,6 +128,11 @@ unsigned int vpMeTracker::numberOfSignal()
 
 unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size(); }
 
+int vpMeTracker::insideMask(const vpImage<bool> *mask, int i, int j)
+{
+  return (mask == NULL || mask->getValue(i, j));
+}
+
 int vpMeTracker::outOfImage(int i, int j, int half, int rows, int cols)
 {
   return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) && (j < cols - (half + 2))));

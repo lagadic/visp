@@ -220,12 +220,12 @@ public:
   }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                    double mu02_p, const bool doNotTrack);
+                    double mu02_p, const vpImage<bool> *mask, const bool doNotTrack);
 
   void track(const vpImage<unsigned char> &Im);
 
   void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                        double mu02_p);
+                        double mu02_p, const vpImage<bool> *mask);
 
 protected:
   //! The coordinates of the ellipse center.
@@ -252,8 +252,8 @@ protected:
   double expecteddensity;
 
 private:
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
-  void reSample(const vpImage<unsigned char> &I);
+  virtual void sample(const vpImage<unsigned char> &image, const vpImage<bool> *mask, const bool doNotTrack=false);
+  void reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask);
   void updateTheta();
   void suppressPoints();
 };

@@ -180,7 +180,7 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param doNotTrack : If true, ME are not tracked.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack)
+bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask, const bool doNotTrack)
 {
   if (isvisible) {
     // Perspective projection
@@ -295,13 +295,13 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
       theta2 = M_PI / 2.0 - theta2;
 
     try {
-      meline1->initTracking(I, ip11, ip12, rho1, theta1, doNotTrack);
+      meline1->initTracking(I, ip11, ip12, rho1, theta1, mask, doNotTrack);
     } catch (...) {
       // vpTRACE("the line can't be initialized");
       return false;
     }
     try {
-      meline2->initTracking(I, ip21, ip22, rho2, theta2, doNotTrack);
+      meline2->initTracking(I, ip21, ip22, rho2, theta2, mask, doNotTrack);
     } catch (...) {
       // vpTRACE("the line can't be initialized");
       return false;
@@ -347,7 +347,7 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
   if (isvisible) {
     // Perspective projection
@@ -454,13 +454,13 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
 
     try {
       // meline1->updateParameters(I,rho1,theta1);
-      meline1->updateParameters(I, ip11, ip12, rho1, theta1);
+      meline1->updateParameters(I, ip11, ip12, rho1, theta1, mask);
     } catch (...) {
       Reinit = true;
     }
     try {
       // meline2->updateParameters(I,rho2,theta2);
-      meline2->updateParameters(I, ip21, ip22, rho2, theta2);
+      meline2->updateParameters(I, ip21, ip22, rho2, theta2, mask);
     } catch (...) {
       Reinit = true;
     }
@@ -481,7 +481,7 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
   \param I : the image.
   \param cMo : The pose of the camera.
 */
-void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
   if (meline1 != NULL)
     delete meline1;
@@ -491,7 +491,7 @@ void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, co
   meline1 = NULL;
   meline2 = NULL;
 
-  if (!initMovingEdge(I, cMo, false))
+  if (!initMovingEdge(I, cMo, mask, false))
     Reinit = true;
 
   Reinit = false;
