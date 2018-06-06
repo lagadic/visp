@@ -389,7 +389,7 @@ vpMatrix M(R);
   vpMatrix inverseByQR() const;
 
   // inverse triangular matrix
-  vpMatrix inverseTriangular() const;
+  vpMatrix inverseTriangular(bool upper = true) const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if defined(VISP_HAVE_LAPACK)
@@ -475,8 +475,10 @@ vpMatrix M(R);
 
   /** @name QR decomposition  */
   //@{
-  int qr(vpMatrix &Q, vpMatrix &R, bool full = false) const;
-  int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false) const;
+  int qr(vpMatrix &Q, vpMatrix &R, bool full = false, bool squareR = false, double tol = 1e-6) const;
+  int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false, bool squareR = false, double tol = 1e-6) const;
+  void solveByQR(const vpColVector &b, vpColVector &x) const;
+  vpColVector solveByQR(const vpColVector &b) const;
   //@}
 
   //-------------------------------------------------

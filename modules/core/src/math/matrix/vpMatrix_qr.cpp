@@ -131,17 +131,17 @@ vpMatrix vpMatrix::inverseByQRLapack() const
         dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
                 &colNum_, // The number of columns of the matrix A.  N >= 0.
                 A.data,   /*On entry, the M-by-N matrix A.
-                                            On exit, the elements on and above the diagonal of
-                                         the array   contain the min(M,N)-by-N upper trapezoidal
-                                         matrix R (R is   upper triangular if m >= n); the
-                                         elements below the diagonal,   with the array TAU,
-                                         represent the orthogonal matrix Q as a   product of
-                                         min(m,n) elementary reflectors.
-                                          */
+                                                    On exit, the elements on and above the diagonal of
+                                                 the array   contain the min(M,N)-by-N upper trapezoidal
+                                                 matrix R (R is   upper triangular if m >= n); the
+                                                 elements below the diagonal,   with the array TAU,
+                                                 represent the orthogonal matrix Q as a   product of
+                                                 min(m,n) elementary reflectors.
+                                                  */
                 &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
                 tau,      /*Dimension (min(M,N))
-                                        The scalar factors of the elementary reflectors
-                                      */
+                                                The scalar factors of the elementary reflectors
+                                              */
                 work,     // Internal working array. dimension (MAX(1,LWORK))
                 &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
                 &info     // status
@@ -156,17 +156,17 @@ vpMatrix vpMatrix::inverseByQRLapack() const
         dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
                 &colNum_, // The number of columns of the matrix A.  N >= 0.
                 A.data,   /*On entry, the M-by-N matrix A.
-                                            On exit, the elements on and above the diagonal of
-                                         the array   contain the min(M,N)-by-N upper trapezoidal
-                                         matrix R (R is   upper triangular if m >= n); the
-                                         elements below the diagonal,   with the array TAU,
-                                         represent the orthogonal matrix Q as a   product of
-                                         min(m,n) elementary reflectors.
-                                          */
+                                                    On exit, the elements on and above the diagonal of
+                                                 the array   contain the min(M,N)-by-N upper trapezoidal
+                                                 matrix R (R is   upper triangular if m >= n); the
+                                                 elements below the diagonal,   with the array TAU,
+                                                 represent the orthogonal matrix Q as a   product of
+                                                 min(m,n) elementary reflectors.
+                                                  */
                 &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
                 tau,      /*Dimension (min(M,N))
-                                        The scalar factors of the elementary reflectors
-                                      */
+                                                The scalar factors of the elementary reflectors
+                                              */
                 work,     // Internal working array. dimension (MAX(1,LWORK))
                 &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
                 &info     // status
@@ -281,21 +281,25 @@ vpMatrix vpMatrix::inverseByQR() const
 
 
 /*!
-  Compute the QR decomposition of a (m x n) matrix.
+  Compute the QR decomposition of a (m x n) matrix of rank r.
   Only available if Lapack 3rd party is installed. If Lapack is not installed
 we use a Lapack built-in version.
 
-  \param Q : orthogonal matrix (will be modified)
-  \param R : upper-triangular matrix (will be modified)
-  \param full : whether or not we want full decomposition
+  \param Q : orthogonal matrix (will be modified).
+  \param R : upper-triangular matrix (will be modified).
+  \param full : whether or not we want full decomposition.
+  \param squareR : will return only the square (min(m,n) x min(m,n)) part of R.
+  \param tol : tolerance to test the rank of R.
 
-  \return The rank of the matrix.
+  \return The rank r of the matrix.
 
   If full is false (default) then Q is (m x min(n,m)) and R is (min(n,m) x n).
   We then have this = QR.
 
   If full is true and m > n then Q is (m x m) and R is (n x n).
   In this case this = Q (R, 0)^T
+
+  If squareR is true and n > m then R is (m x m). If r = m then R is invertible.
 
   Here an example:
   \code
@@ -330,109 +334,133 @@ int main()
 
   \sa qrPivot()
 */
-int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full) const
+int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, double tol) const
 {
 #ifdef VISP_HAVE_LAPACK_C
     integer m = (integer) rowNum;     // also rows of Q
     integer n = (integer) colNum;     // also columns of R
     integer r = std::min(n,m);  // a priori non-null rows of R = rank of R
     integer q = r;              // columns of Q and rows of R
+    integer na = n;             // columns of A
 
     // cannot be full decomposition if m < n
     if(full && m > n)
+    {
         q = m;              // Q is square
+        na = m;             // A is square
+    }
 
-    // prepare matrices
-    Q.resize(m, q);
-    R.resize(r, n);
-
+    // prepare matrices and deal with r = 0
+    Q.resize(m,q);
+    if(squareR)
+        R.resize(r,r);
+    else
+        R.resize(r,n);
     if(r == 0)
         return 0;
 
-    integer lda = m;
-
     integer dimWork = -1;
-    std::vector<double> qrdata(lda*std::max(m,n)),
-            tau(std::min(n,m)),
-            work(1);
+    double * qrdata = new double[m*na];
+    double *tau = new double[std::min(m,q)];
+    double *work = new double[1];
     integer info;
 
     // copy this to qrdata in Lapack convention
     for(int i = 0; i < m; ++i)
     {
         for(int j = 0; j < n; ++j)
-            qrdata[i+lda*j] = data[j + n*i];
-        for(int j = n; j < q; ++j)
-            qrdata[i+lda*j] = 0;
+            qrdata[i+m*j] = data[j + n*i];
+        for(int j = n; j < na; ++j)
+            qrdata[i+m*j] = 0;
     }
 
     //   work = new double[1];
     //1) Extract householder reflections (useful to compute Q) and R
     dgeqrf_(
                 &m,        //The number of rows of the matrix A.  M >= 0.
-                &n,        //The number of columns of the matrix A.  N >= 0.
-                qrdata.data(),
-                &lda,
-                tau.data(),
-                work.data(),           //Internal working array. dimension (MAX(1,LWORK))
+                &na,        //The number of columns of the matrix A.  N >= 0.
+                qrdata,
+                &m,
+                tau,
+                work,           //Internal working array. dimension (MAX(1,LWORK))
                 &dimWork,       //The dimension of the array WORK.  LWORK >= max(1,N).
                 &info           //status
                 );
 
     if(info != 0){
         std::cout << "dgeqrf_:Preparation:" << -info << "th element had an illegal value" << std::endl;
+        delete[] qrdata;
+        delete[] work;
+        delete[] tau;
         throw vpMatrixException::badValue;
     }
-
-    dimWork = (unsigned int) (work[0]);
-    work.resize(dimWork);
+    dimWork = allocate_work(&work);
 
     dgeqrf_(
                 &m,        //The number of rows of the matrix A.  M >= 0.
-                &n,        //The number of columns of the matrix A.  N >= 0.
-                qrdata.data(),
-                &lda,            //The leading dimension of the array A.  LDA >= max(1,M).
-                tau.data(),
-                work.data(),           //Internal working array. dimension (MAX(1,LWORK))
+                &na,        //The number of columns of the matrix A.  N >= 0.
+                qrdata,
+                &m,            //The leading dimension of the array A.  LDA >= max(1,M).
+                tau,
+                work,           //Internal working array. dimension (MAX(1,LWORK))
                 &dimWork,       //The dimension of the array WORK.  LWORK >= max(1,N).
                 &info           //status
                 );
 
     if(info != 0){
         std::cout << "dgeqrf_:" << -info << "th element had an illegal value" << std::endl;
+        delete[] qrdata;
+        delete[] work;
+        delete[] tau;
         throw vpMatrixException::badValue;
     }
 
     // data now contains the R matrix in its upper triangular (in lapack convention)
-    // copy useful part of R from Q
-    for(int i=0;i<std::min(n,m);i++)
+
+    // copy useful part of R from Q and update rank
+    na = std::min(m,n);
+    if(squareR)
     {
-        for(int j=i;j<n;j++)
-            R[i][j] = qrdata[i+lda*j];
-        if(std::abs(qrdata[i+lda*i]) < 1e-6)
-            r--;
+        for(int i=0;i<na;i++)
+        {
+            for(int j=i;j<na;j++)
+                R[i][j] = qrdata[i+m*j];
+            if(std::abs(qrdata[i+m*i]) < tol)
+                r--;
+        }
+    }
+    else
+    {
+        for(int i=0;i<na;i++)
+        {
+            for(int j=i;j<n;j++)
+                R[i][j] = qrdata[i+m*j];
+            if(std::abs(qrdata[i+m*i]) < tol)
+                r--;
+        }
     }
 
     // extract Q
     dorgqr_(&m, // The number of rows of the matrix Q. M >= 0.
             &q, // The number of columns of the matrix Q. M >= N >= 0.
             &q,
-            qrdata.data(),
-            &lda,            //The leading dimension of the array A.  LDA >= max(1,M).
-            tau.data(),
-            work.data(),           //Internal working array. dimension (MAX(1,LWORK))
+            qrdata,
+            &m,            //The leading dimension of the array A.  LDA >= max(1,M).
+            tau,
+            work,           //Internal working array. dimension (MAX(1,LWORK))
             &dimWork,       //The dimension of the array WORK.  LWORK >= max(1,N).
             &info           //status
             );
 
     // write qrdata into Q
     for(int i = 0; i < m; ++i)
-    {
         for(int j = 0; j < q; ++j)
-            Q[i][j] = qrdata[i+lda*j];
-    }
-    return r;
+            Q[i][j] = qrdata[i+m*j];
 
+    delete[] qrdata;
+    delete[] work;
+    delete[] tau;
+    return r;
 #else
     throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
 #endif
@@ -440,22 +468,26 @@ int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full) const
 
 
 /*!
-  Compute the QR pivot decomposition of a (m x n) matrix.
+  Compute the QR pivot decomposition of a (m x n) matrix of rank r.
   Only available if Lapack 3rd party is installed. If Lapack is not installed
 we use a Lapack built-in version.
 
-  \param Q : orthogonal matrix (will be modified)
-  \param R : upper-triangular matrix (will be modified)
-  \param P : the (n x n) permutation matrix
-  \param full : whether or not we want full decomposition
+  \param Q : orthogonal matrix (will be modified).
+  \param R : upper-triangular matrix (will be modified).
+  \param P : the (n x n) permutation matrix.
+  \param full : whether or not we want full decomposition.
+  \param squareR : will return only the (r x r) part of R and the (r x n) part of P.
+  \param tol : tolerance to test the rank of R.
 
-  \return The rank of the matrix.
+  \return The rank r of the matrix.
 
   If full is false (default) then Q is (m x min(n,m)) and R is (min(n,m) x n).
   We then have this.P = Q.R.
 
   If full is true and m > n then Q is (m x m) and R is (n x n).
   In this case this.P = Q (R, 0)^T
+
+  If squareR is true then R is (r x r) invertible.
 
   Here an example:
   \code
@@ -497,31 +529,46 @@ int main()
 
   \sa qrPivot()
 */
-int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full) const
+int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
 {
 #ifdef VISP_HAVE_LAPACK_C
     integer m = (integer) rowNum;     // also rows of Q
     integer n = (integer) colNum;     // also columns of R
-    integer r = std::min(n,m);  // a priori non-null rows of R = rank of R
-    integer q = r;              // columns of Q and rows of R
+    integer r = std::min(n,m);             // a priori non-null rows of R = rank of R
+    integer q = r;                         // columns of Q and rows of R
+    integer na = n;
 
     // cannot be full decomposition if m < n
     if(full && m > n)
+    {
         q = m;              // Q is square
+        na = m;
+    }
 
-    // prepare matrices
+    // prepare Q and deal with r = 0
     Q.resize(m, q);
-    R.resize(r, n);
-
     if(r == 0)
+    {
+        if(squareR)
+        {
+            R.resize(0, 0);
+            P.resize(0, n);
+        }
+        else
+        {
+            R.resize(r, n);
+            P.resize(n, n);
+        }
         return 0;
+    }
 
-    integer lda = m;
     integer dimWork = -1;
-    std::vector<double> qrdata(lda*std::max(m,n)),
-            tau(std::min(n,m)),
-            work(1);
-    std::vector<integer> p(n, 0);
+    double* qrdata = new double[m*na];
+    double* tau = new double[std::min(q,m)];
+    double* work = new double[1];
+    integer* p = new integer[na];
+    for(int i = 0; i < na; ++i)
+        p[i] = 0;
 
     integer info;
 
@@ -529,82 +576,112 @@ int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full) const
     for(int i = 0; i < m; ++i)
     {
         for(int j = 0; j < n; ++j)
-            qrdata[i+lda*j] = data[j + n*i];
-        for(int j = n; j < q; ++j)
-            qrdata[i+lda*j] = 0;
+            qrdata[i+m*j] = data[j + n*i];
+        for(int j = n; j < na; ++j)
+            qrdata[i+m*j] = 0;
     }
 
     //1) Extract householder reflections (useful to compute Q) and R
     dgeqp3_(
                 &m,        //The number of rows of the matrix A.  M >= 0.
-                &n,        //The number of columns of the matrix A.  N >= 0.
-                qrdata.data(),    /*On entry, the M-by-N matrix A.                                                                                                                                        */
-                &lda,      //The leading dimension of the array A.  LDA >= max(1,M).
-                p.data(),         // Dimension N
-                tau.data(),        /*Dimension (min(M,N))                                                                                                                                        */
-                work.data(),       //Internal working array. dimension (3*N)
-
-                &dimWork,
-                &info       //status
-                );
-
-    dimWork = (unsigned int) (work[0]);
-    work.resize(dimWork);
-
-    dgeqp3_(
-                &m,        //The number of rows of the matrix A.  M >= 0.
-                &n,        //The number of columns of the matrix A.  N >= 0.
-                qrdata.data(),    /*On entry, the M-by-N matrix A.                                                                                                                                        */
-                &lda,      //The leading dimension of the array A.  LDA >= max(1,M).
-                p.data(),         // Dimension N
-                tau.data(),        /*Dimension (min(M,N))                                                                                                                                        */
-                work.data(),       //Internal working array. dimension (3*N)
+                &na,        //The number of columns of the matrix A.  N >= 0.
+                qrdata,    /*On entry, the M-by-N matrix A.                                                                                                                                        */
+                &m,      //The leading dimension of the array A.  LDA >= max(1,M).
+                p,         // Dimension N
+                tau,        /*Dimension (min(M,N))                                                                                                                                        */
+                work,       //Internal working array. dimension (3*N)
 
                 &dimWork,
                 &info       //status
                 );
 
     if(info != 0){
-        std::cout << "dgeqpf_:" << -info << " th element had an illegal value" << std::endl;
-
+        std::cout << "dgeqp3_:Preparation:" << -info << "th element had an illegal value" << std::endl;
+        delete[] qrdata;
+        delete[] work;
+        delete[] tau;
+        delete[] p;
         throw vpMatrixException::badValue;
     }
 
-    // write P
-    P.resize(n,n);
-    for(int i = 0; i < n; ++i)
-        P[i][p[i]-1] = 1;
+    dimWork = allocate_work(&work);
+
+    dgeqp3_(
+                &m,        //The number of rows of the matrix A.  M >= 0.
+                &na,        //The number of columns of the matrix A.  N >= 0.
+                qrdata,    /*On entry, the M-by-N matrix A.                                                                                                                                        */
+                &m,      //The leading dimension of the array A.  LDA >= max(1,M).
+                p,         // Dimension N
+                tau,        /*Dimension (min(M,N))                                                                                                                                        */
+                work,       //Internal working array. dimension (3*N)
+
+                &dimWork,
+                &info       //status
+                );
+
+    if(info != 0){
+        std::cout << "dgeqp3_:" << -info << " th element had an illegal value" << std::endl;
+        delete[] qrdata;
+        delete[] work;
+        delete[] tau;
+        delete[] p;
+        throw vpMatrixException::badValue;
+    }
 
 
     // data now contains the R matrix in its upper triangular (in lapack convention)
-    // copy useful part of R from Q
-    for(int i=0;i<std::min(n,m);i++)
-    {
-        for(int j=i;j<n;j++)
-            R[i][j] = qrdata[i+lda*j];
-        if(std::abs(qrdata[i+lda*i]) < 1e-6)
+    // get rank of R in r
+    na = std::min(n,m);
+    for(int i = 0; i < na; ++i)
+        if(std::abs(qrdata[i+m*i]) < tol)
             r--;
+
+    // write R
+    if(squareR) // R r x r
+    {
+        R.resize(r, r);
+        for(int i=0;i<r;i++)
+            for(int j=i;j<r;j++)
+                R[i][j] = qrdata[i+m*j];
+
+        // write P
+        P.resize(r,n);
+        for(int i = 0; i < r; ++i)
+            P[i][p[i]-1] = 1;
+    }
+    else        // R is min(m,n) x n of rank r
+    {
+        R.resize(na, n);
+        for(int i=0;i<na;i++)
+            for(int j=i;j<n;j++)
+                R[i][j] = qrdata[i+m*j];
+        // write P
+        P.resize(n,n);
+        for(int i = 0; i < n; ++i)
+            P[i][p[i]-1] = 1;
     }
 
     // extract Q
     dorgqr_(&m, // The number of rows of the matrix Q. M >= 0.
             &q, // The number of columns of the matrix Q. M >= N >= 0.
             &q,
-            qrdata.data(),
-            &lda,            //The leading dimension of the array A.  LDA >= max(1,M).
-            tau.data(),
-            work.data(),           //Internal working array. dimension (MAX(1,LWORK))
+            qrdata,
+            &m,            //The leading dimension of the array A.  LDA >= max(1,M).
+            tau,
+            work,           //Internal working array. dimension (MAX(1,LWORK))
             &dimWork,       //The dimension of the array WORK.  LWORK >= max(1,N).
             &info           //status
             );
 
     // write qrdata into Q
     for(int i = 0; i < m; ++i)
-    {
         for(int j = 0; j < q; ++j)
-            Q[i][j] = qrdata[i+lda*j];
-    }
+            Q[i][j] = qrdata[i+m*j];
 
+    delete[] qrdata;
+    delete[] work;
+    delete[] tau;
+    delete[] p;
     return r;
 #else
     throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
@@ -616,11 +693,13 @@ int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full) const
   Only available if Lapack 3rd party is installed. If Lapack is not installed
 we use a Lapack built-in version.
 
-  This function does not check is the matrix is actually triangular.
+  \param upper : if it is an upper triangular matrix
+
+  The function does not check if the matrix is actually upper or lower triangular.
 
   \return The inverse matrix
 */
-vpMatrix vpMatrix::inverseTriangular() const
+vpMatrix vpMatrix::inverseTriangular(bool upper) const
 {
 #ifdef VISP_HAVE_LAPACK
     if(rowNum != colNum || rowNum == 0)
@@ -632,7 +711,7 @@ vpMatrix vpMatrix::inverseTriangular() const
     integer info;
 
     // we just use the other (upper / lower) method from Lapack
-    if(rowNum > 1 && R[0][1] != 0)  // upper triangular
+    if(rowNum > 1 && upper)  // upper triangular
         dtrtri_((char *)"L", (char *)"N", &n, R.data, &n, &info);
     else
         dtrtri_((char *)"U", (char *)"N", &n, R.data, &n, &info);
@@ -653,6 +732,103 @@ vpMatrix vpMatrix::inverseTriangular() const
 #else
     throw(vpException::fatalError, "Cannot perform triangular inverse. Install Lapack 3rd party"));
 #endif
+}
+
+
+/*!
+  Solve a linear system $ A x = b $ using QR Decomposition.
+
+  Non destructive wrt. A and b.
+
+  \param b : Vector $ b $
+
+  \param x : Vector $ x $
+
+  Here an example:
+  \code
+    #include <visp3/core/vpColVector.h>
+    #include <visp3/core/vpMatrix.h>
+    int main()
+    {
+    vpMatrix A(3,3);
+    A[0][0] = 4.64;
+    A[0][1] = 0.288;
+    A[0][2] = -0.384;
+    A[1][0] = 0.288;
+    A[1][1] = 7.3296;
+    A[1][2] = 2.2272;
+    A[2][0] = -0.384;
+    A[2][1] = 2.2272;
+    A[2][2] = 6.0304;
+    vpColVector X(3), B(3);
+    B[0] = 1;
+    B[1] = 2;
+    B[2] = 3;
+    A.solveByQR(B, X);
+    // Obtained values of X
+    // X[0] = 0.2468;
+    // X[1] = 0.120782;
+    // X[2] = 0.468587;
+    std::cout << "X:\n" << X << std::endl;
+    }
+  \endcode
+
+  \sa qrPivot()
+*/
+void vpMatrix::solveByQR(const vpColVector &b, vpColVector &x) const
+{
+    vpMatrix Q, R, P;
+    int r = t().qrPivot(Q, R, P, false, true);
+    x = Q.extract(0, 0, colNum, r)
+            * R.inverseTriangular().t()
+            * P * b;
+}
+
+/*!
+  Solve a linear system $ A x = b $ using QR Decomposition.
+
+  Non destructive wrt. A and B.
+
+  \param b : Vector $ b $
+
+  \return Vector $ x $
+
+  Here an example:
+  \code
+    #include <visp3/core/vpColVector.h>
+    #include <visp3/core/vpMatrix.h>
+    int main()
+    {
+    vpMatrix A(3,3);
+    A[0][0] = 4.64;
+    A[0][1] = 0.288;
+    A[0][2] = -0.384;
+    A[1][0] = 0.288;
+    A[1][1] = 7.3296;
+    A[1][2] = 2.2272;
+    A[2][0] = -0.384;
+    A[2][1] = 2.2272;
+    A[2][2] = 6.0304;
+    vpColVector X(3), B(3);
+    B[0] = 1;
+    B[1] = 2;
+    B[2] = 3;
+    X = A.solveByQR(B);
+    // Obtained values of X
+    // X[0] = 0.2468;
+    // X[1] = 0.120782;
+    // X[2] = 0.468587;
+    std::cout << "X:\n" << X << std::endl;
+    }
+  \endcode
+
+  \sa qrPivot()
+*/
+vpColVector vpMatrix::solveByQR(const vpColVector &b) const
+{
+    vpColVector x(colNum);
+    solveByQR(b, x);
+    return x;
 }
 
 
