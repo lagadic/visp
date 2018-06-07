@@ -63,8 +63,8 @@ vpXmlParserRectOriented::~vpXmlParserRectOriented() {}
 
 /**
 * Reading method, called by vpXmlParser::parse().
-* @param doc a pointer representing the document
-* @param node : the root node of the document
+* @param doc : a pointer representing the document.
+* @param node : the root node of the document.
 */
 void vpXmlParserRectOriented::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
@@ -100,7 +100,7 @@ void vpXmlParserRectOriented::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 
 /**
 * Writing method, called by vpXmlParser::save().
-* @param node : the root node of the document
+* @param node : the root node of the document.
 */
 void vpXmlParserRectOriented::writeMainClass(xmlNodePtr node)
 {

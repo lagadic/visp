@@ -60,8 +60,37 @@
 
   \brief XML parser to load and save an oriented rectangle in a file.
 
+  The following example shows how to save an oriented rectangle in an xml file:
+  \code
+#include <visp3/core/vpRectOriented.h>
+#include <visp3/core/vpXmlParserRectOriented.h>
+int main()
+{
+  vpRectOriented rect(vpImagePoint(10, 15), 20, 12, 0.25);
+  vpXmlParserRectOriented parser;
+  parser.setRectangle(rect);
+  std::string filename = "myRectangle.xml";
+  parser.save(filename);
+  return 0;
+}
+  \endcode
+
+  The following example shows how to read an oriented rectangle from an xml file:
+  \code
+#include <visp3/core/vpRectOriented.h>
+#include <visp3/core/vpXmlParserRectOriented.h>
+int main()
+{
+  vpXmlParserRectOriented parser;
+  std::string filename = "myRectangle.xml";
+  parser.parse(filename);
+  vpRectOriented rect = parser.getRectangle();
+  return 0;
+}
+  \endcode
+
   \warning This class is only available if libxml2 is installed and detected by ViSP. Installation instructions are
-  provided herehttps://visp.inria.fr/3rd_xml2.
+  provided here https://visp.inria.fr/3rd_xml2.
 */
 
 class VISP_EXPORT vpXmlParserRectOriented : public vpXmlParser
