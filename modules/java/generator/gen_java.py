@@ -103,6 +103,17 @@ def mkdir_p(path):
         else:
             raise
 
+
+def camelCase(s):
+    '''
+        turns vpHomoMatrix to VpHomoMatrix
+    '''
+    if len(s) > 0:
+        return s[0].upper() + s[1:]
+    else:
+        return s
+
+
 T_JAVA_START_INHERITED = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_class_inherited.prolog'))
 T_JAVA_START_ORPHAN = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_class.prolog'))
 T_JAVA_START_MODULE = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_module.prolog'))
@@ -320,6 +331,15 @@ class FuncInfo(GeneralInfo):
         self.cname = self.name.replace(".", "::")
         self.jname = self.name
         self.isconstructor = self.name == self.classname
+
+        # TODO open-cv didn't add camel case support
+        # I'm adding
+        self.classname = camelCase(self.classname)
+        self.classpath = camelCase(self.classpath)
+        if self.isconstructor:
+            self.name = camelCase(self.name)
+            self.jname = camelCase(self.jname)
+
         if "[" in self.name:
             self.jname = "getelem"
         for m in decl[2]:
@@ -501,6 +521,12 @@ class JavaWrapperGenerator(object):
                 
             '''
             decls = parser.parse(hdr)
+
+            # TODO: Above parse function detects functions but not classes.
+            # SO I'm adding classes assuming that the file name is a class name
+            # Find the last occurence of / in path/to/class/myClass.h
+            # -2 for removing `.h`
+            self.add_class(["class " + camelCase(hdr[hdr.rfind('/')+1:-2]),'',[],[]])
 
             # INFO: List of all namespaces mentioned in the .hpp file. Like cv,ogl,cuda etc
             self.namespaces = parser.namespaces
@@ -792,10 +818,10 @@ class JavaWrapperGenerator(object):
                     ret_val = "nativeObj = "
                 ret = "return;"
             elif self.isWrapped(ret_type): # wrapped class
-                ret_val = type_dict[ret_type]["j_type"] + " retVal = new " + self.getClass(ret_type).jname + "("
+                ret_val = type_dict[ret_type]["j_type"] + " retVal = new " + camelCase(self.getClass(ret_type).jname) + "("
                 tail = ")"
             elif "jn_type" not in type_dict[ret_type]:
-                ret_val = type_dict[fi.ctype]["j_type"] + " retVal = new " + type_dict[ret_type]["j_type"] + "("
+                ret_val = type_dict[fi.ctype]["j_type"] + " retVal = new " + camelCase(type_dict[ret_type]["j_type"]) + "("
                 tail = ")"
 
             static = "static"

@@ -1,24 +1,8 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-import os, sys, re, string, io
+import sys, re, io
 
-# the list only for debugging. The real list, used in the real OpenCV build, is specified in CMakeLists.txt
-opencv_hdr_list = [
-    "../../core/include/opencv2/core.hpp",
-    "../../core/include/opencv2/core/ocl.hpp",
-    "../../flann/include/opencv2/flann/miniflann.hpp",
-    "../../ml/include/opencv2/ml.hpp",
-    "../../imgproc/include/opencv2/imgproc.hpp",
-    "../../calib3d/include/opencv2/calib3d.hpp",
-    "../../features2d/include/opencv2/features2d.hpp",
-    "../../video/include/opencv2/video/tracking.hpp",
-    "../../video/include/opencv2/video/background_segm.hpp",
-    "../../objdetect/include/opencv2/objdetect.hpp",
-    "../../imgcodecs/include/opencv2/imgcodecs.hpp",
-    "../../videoio/include/opencv2/videoio.hpp",
-    "../../highgui/include/opencv2/highgui.hpp",
-]
 
 """
 Each declaration is [funcname, return_value_type /* in C, not in Python */, <list_of_modifiers>, <list_of_arguments>, original_return_type, docstring],
@@ -391,9 +375,10 @@ class CppHeaderParser(object):
         [<func name>, <return value C-type>, <list of modifiers>, <list of arguments>, <original return type>, <docstring>] (see above)
         """
 
-        if self.wrap_mode:
-            if not (("VISP_EXPORT" in decl_str)):
-                return []
+        # TODO Lets see how many functions can I add if I remove EXPORT constrain
+        # if self.wrap_mode:
+        #     if not (("VISP_EXPORT" in decl_str)):
+        #         return []
 
         top = self.block_stack[-1]
         func_modlist = []
@@ -408,7 +393,7 @@ class CppHeaderParser(object):
         # INFO: Handle friend methods. open-cv didn't have any
         # INFO: Handle unsigned args/return type too. open-cv didn't have any
         # TODO: I'm removing `unsigned` keyword from function declaration
-        decl_str = self.batch_replace(decl_str, [("static inline", ""), ("inline", ""),
+        decl_str = self.batch_replace(decl_str, [("static inline", ""),("inline", ""),
                                                  ("VISP_EXPORT", ""), ("friend", "")
                                       ,("unsigned","")]).strip()
 
@@ -428,13 +413,7 @@ class CppHeaderParser(object):
             static_method = True
 
         args_begin = decl_str.find("(")
-        if decl_str.startswith("CVAPI"):
-            rtype_end = decl_str.find(")", args_begin + 1)
-            if rtype_end < 0:
-                print("Error at %d. no terminating ) in CVAPI() macro: %s" % (self.lineno, decl_str))
-                sys.exit(-1)
-            decl_str = decl_str[args_begin + 1:rtype_end] + " " + decl_str[rtype_end + 1:]
-            args_begin = decl_str.find("(")
+        # INFO: open-cv had some CV-API thing here. I guess VISP doesn't need such
         if args_begin < 0:
             print("Error at %d: no args in '%s'" % (self.lineno, decl_str))
             sys.exit(-1)
@@ -486,7 +465,10 @@ class CppHeaderParser(object):
                     # print rettype, funcname, modlist, argno
                     print("Error at %s:%d the function/method name is missing: '%s'" % (
                     self.hname, self.lineno, decl_start))
-                    sys.exit(-1)
+
+                    # TODO: Dont abort on an error. Just ignore and move
+                    # sys.exit(-1)
+                    return []
 
         if self.wrap_mode and (("::" in funcname) or funcname.startswith("~")):
             # if there is :: in function name (and this is in the header file),
@@ -933,15 +915,3 @@ class CppHeaderParser(object):
                     print("; ".join(a[3]))
                 else:
                     print()
-
-
-if __name__ == '__main__':
-    parser = CppHeaderParser()
-    decls = []
-    for hname in opencv_hdr_list:
-        decls += parser.parse(hname)
-    # for hname in sys.argv[1:]:
-    # decls += parser.parse(hname, wmode=False)
-    parser.print_decls(decls)
-    print(len(decls))
-    print("namespaces:", " ".join(sorted(parser.namespaces)))
