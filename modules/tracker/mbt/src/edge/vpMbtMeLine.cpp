@@ -90,6 +90,7 @@ vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
   \param ip2 : Coordinates of the second point.
   \param rho_ : The \f$\rho\f$ parameter
   \param theta_ : The \f$\theta\f$ parameter
+  \param mask: Mask image or NULL if not wanted.
   \param doNoTrack : If true, ME are not tracked
 */
 void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
@@ -130,11 +131,12 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
 }
 
 /*!
-Construct a list of vpMeSite moving edges at a particular sampling
-step between the two extremities of the line.
+  Construct a list of vpMeSite moving edges at a particular sampling
+  step between the two extremities of the line.
 
-\param I : Image in which the line appears.
-\param doNoTrack : If true, ME are not tracked.
+  \param I : Image in which the line appears.
+  \param mask: Mask image or NULL if not wanted.
+  \param doNoTrack : If true, ME are not tracked.
 */
 void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const vpImage<bool> *mask, const bool doNoTrack)
 {
@@ -145,7 +147,7 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const vpImage<bool> *m
   // if (me->getSampleStep==0)
   if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
     throw(vpTrackingException(vpTrackingException::fatalError, "Function vpMbtMeLine::sample() called with "
-      "moving-edges sample step = 0"));
+                                                               "moving-edges sample step = 0"));
   }
 
   // i, j portions of the line_p
@@ -503,6 +505,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImage<bool> 
   \param I : Image in which the line appears.
   \param ip1 : The first extremity of the line.
   \param ip2 : The second extremity of the line.
+  \param mask: Mask image or NULL if not wanted.
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImage<bool> *mask)
 {
@@ -582,6 +585,7 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
   \param  rho_ : The \f$\rho\f$ parameter used in the line's polar equation.
   \param  theta_ : The \f$\theta\f$ parameter used in the line's polar
   equation.
+  \param mask: Mask image or NULL if not wanted.
 */
 void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_, double theta_, const vpImage<bool> *mask)
 {
@@ -612,6 +616,7 @@ void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_,
   \param rho_ : The \f$\rho\f$ parameter used in the line's polar equation.
   \param theta_ : The \f$\theta\f$ parameter used in the line's polar
   equation.
+  \param mask: Mask image or NULL if not wanted.
 */
 void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                                    double rho_, double theta_, const vpImage<bool> *mask)

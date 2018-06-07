@@ -230,6 +230,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
   the points with the smallest and the biggest \f$ alpha \f$ angle.
 
   \param I : Image in which the ellipse appears.
+  \param mask: Mask image or NULL if not wanted.
   \param doNotTrack : If true, ME are not tracked.
 
   \exception vpTrackingException::initializationError : Moving edges not
@@ -309,6 +310,7 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const vpImage<bool>
   indicates the number of degrees between two points (vpMe::sample_step).
 
   \param I : Image in which the ellipse appears.
+  \param mask: Mask image or NULL if not wanted.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
