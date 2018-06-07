@@ -476,6 +476,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
   two points (vpMe::sample_step).
 
   \param I : Image in which the line appears.
+  \param mask: Mask image or NULL if not wanted.
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {

@@ -242,6 +242,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
   \param I : the image.
   \param cMo : The pose of the camera.
+  \param mask: Mask image or NULL if not wanted.
 */
 void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {

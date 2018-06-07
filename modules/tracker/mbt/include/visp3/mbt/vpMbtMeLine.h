@@ -38,10 +38,10 @@
  *
  *****************************************************************************/
 
- /*!
-  \file vpMbtMeLine.h
-  \brief Implementation of a line used by the model-based tracker.
- */
+/*!
+ \file vpMbtMeLine.h
+ \brief Implementation of a line used by the model-based tracker.
+*/
 
 #ifndef vpMbtMeLine_HH
 #define vpMbtMeLine_HH
