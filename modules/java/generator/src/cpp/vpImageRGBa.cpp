@@ -2,27 +2,27 @@
 #include <iostream>
 #include <cstring>
 #include <sstream>
-#include "VpImageRGBa.h"  // This include is native header file for current source file
+#include "common.h"
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
 
 // Java Method:    VpImageRGBa()
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__
-  (JNIEnv *env, jclass, jstring type){
+  (JNIEnv *, jclass){
 	return (jlong) new vpImage<vpRGBa>();
 }
 
 
 // Java Method:    VpImageRGBa(int r, int c)
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__II
-  (JNIEnv *env, jclass, jint r, jint c){
+  (JNIEnv *, jclass, jint r, jint c){
 	return (jlong) new vpImage<vpRGBa>(r,c);
 }
 
 // Java Method:    VpImageRGBa(int r, int c, byte val)
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__IICCCC
-  (JNIEnv *env, jclass, jint r, jint c, jchar R, jchar G, jchar B, jchar A){
+  (JNIEnv *, jclass, jint r, jint c, jchar R, jchar G, jchar B, jchar A){
 	vpRGBa val(R,G,B,A);
 	return (jlong) new vpImage<vpRGBa>(r,c,val);
 }
@@ -40,14 +40,14 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa___3BIIZ
 
 // Java Method:    getCols()
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageRGBa_n_1cols
-  (JNIEnv *env, jclass, jlong address){
+  (JNIEnv *, jclass, jlong address){
 	vpImage<vpRGBa>* me = (vpImage<vpRGBa>*) address; //TODO: check for NULL
 	return me->getCols();
 }
 
 // Java Method:    getRows()
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageRGBa_n_1rows
-  (JNIEnv *env, jclass, jlong address){
+  (JNIEnv *, jclass, jlong address){
 	vpImage<vpRGBa>* me = (vpImage<vpRGBa>*) address; //TODO: check for NULL
 	return me->getRows();
 }

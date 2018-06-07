@@ -62,7 +62,7 @@ if(USE_DIRECT3D)
   list(APPEND opt_libs ${DIRECT3D_LIBRARIES})
 endif()
 
-vp_add_module(gui visp_core)
+vp_add_module(gui visp_core WRAP java)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
