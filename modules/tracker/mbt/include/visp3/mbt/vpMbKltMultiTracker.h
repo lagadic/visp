@@ -60,11 +60,13 @@
 /*!
   \class vpMbKltMultiTracker
   \ingroup group_mbt_trackers
+  \warning This class is deprecated for user usage. You should rather use the high level
+  vpMbGenericTracker class.
   \warning This class is only available if OpenCV is installed, and used.
 
   \brief Model based stereo (or more) tracker using only KLT.
 
-  The \ref tutorial-tracking-mb-stereo is a good starting point to use this
+  The \ref tutorial-tracking-mb-stereo-deprecated is a good starting point to use this
   class.
 
   The tracker requires the knowledge of the 3D model that could be provided in

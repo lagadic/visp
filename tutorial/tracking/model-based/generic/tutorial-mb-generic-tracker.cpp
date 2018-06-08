@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   try {
     std::string opt_videoname = "teabox.mpg";
     std::string opt_modelname = "teabox";
-    int opt_tracker = 0;
+    int opt_tracker = 1;
 
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--video")

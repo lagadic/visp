@@ -5,7 +5,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoReader.h>
-#include <visp3/mbt/vpMbGenericTracker.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/vision/vpKeyPoint.h>
 
 int main(int argc, char **argv)
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
     display.init(I, 100, 100, "Model-based edge tracker");
 
-    vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER);
+    vpMbEdgeTracker tracker;
     bool usexml = false;
 #ifdef VISP_HAVE_XML2
     if (vpIoTools::checkFilename(objectname + ".xml")) {

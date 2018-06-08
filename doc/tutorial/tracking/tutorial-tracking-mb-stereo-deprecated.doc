@@ -17,7 +17,7 @@ Next section highlights the different versions of the markerless multi-view mode
 While the multi-view model-based edges tracker implemented in vpMbEdgeMultiTracker is appropriate to track texture-less objects (with visible edges), the multi-view model-based KLT tracker implemented in vpMbKltMultiTracker is suitable for textured objects. The multi-view model-based hybrid tracker implemented in vpMbEdgeKltMultiTracker is appropriate to track objects with texture and or with visible edges.
 
 These classes allow the tracking of the same object assuming two or more cameras:
-The main advantages of this configuration with respect to the mono-camera case (see \ref tutorial-tracking-mb) concern:
+The main advantages of this configuration with respect to the mono-camera case (see \ref tutorial-tracking-mb-deprecated) concern:
 - the possibility to extend the application field of view;
 - a more robust tracking as the configuration of the stereo rig allows to track the object under multiple viewpoints and thus with more visual features.
 
@@ -41,13 +41,13 @@ This other video shows the behavior of the hybrid tracking performed with vpMbEd
 \note The new introduced classes are not restricted to stereo configuration. They allow the usage of multiple cameras (see \ref mbdep_stereo_moving_cameras).
 
 Next sections will highlight how to easily adapt your code to use multiple cameras with the model-based tracker. As only the new methods dedicated to multiple views tracking will be presented, 
-you are highly recommended to follow \ref tutorial-tracking-mb in order to be familiar with the model-based tracking concepts, the different trackers that are available in ViSP (the edge tracker: vpMbEdgeTracker, the klt feature points tracker: vpMbKltTracker 
+you are highly recommended to follow \ref tutorial-tracking-mb-deprecated in order to be familiar with the model-based tracking concepts, the different trackers that are available in ViSP (the edge tracker: vpMbEdgeTracker, the klt feature points tracker: vpMbKltTracker 
 and the hybrid tracker: vpMbEdgeKltTracker) and with the configuration part.
 
 Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
 \code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/stereo
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/old/stereo-deprecated
 \endcode
 
 \section mbdep_stereo_started Getting started
@@ -136,7 +136,7 @@ The previous source code shows how to use a model-based tracking on stereo image
 
 \warning The xml2 library, used to load the configuration file, is required to build the tutorial example. OpenCV is also required and the KLT module has to be enabled to use the KLT functionality.
 
-Please refer to the tutorial \ref tutorial-tracking-mb in order to have the explanations about the configuration parameters (\ref mbdep_settings) and how to model an object in a ViSP compatible format (\ref mbdep_advanced_cao).
+Please refer to the tutorial \ref tutorial-tracking-mb-deprecated in order to have the explanations about the configuration parameters (\ref mbdep_settings) and how to model an object in a ViSP compatible format (\ref mbdep_advanced_cao).
 
 To test the three kind of trackers, only vpMbEdgeKltMultiTracker.h header is required as the others (vpMbEdgeMultiTracker.h and vpMbKltMultiTracker.h) are already included in the hybrid header class. 
 

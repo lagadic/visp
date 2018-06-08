@@ -5,12 +5,15 @@
 
 \section mbdep_intro Introduction
 
+\warning
+This tutorial can be considered obsolete since ViSP 3.1.0 version as we have introduced a generic tracker (vpMbGenericTracker) that can replace the vpMbEdgeTracker, vpMbKltTracker and vpMbEdgeKltTracker classes that are used in this tutorial. Thus we recommend rather to follow \ref tutorial-tracking-mb-generic.
+
 ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format. 
 
 To follow this tutorial depending on your interest you should be sure that ViSP was build with the following third-parties:
 - \c OpenCV: Useful if you want to investigate the KLT keypoint tracker implemented in vpMbKltTracker or its hybrid version vpMbEdgeKltTracker. We recommend to install \c OpenCV. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
 - \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mbdep_settings_xml.
-- \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recomend to istall it. \c Ogre \c 3D allows to enable \ref mbdep_settings_visibility_ogre.
+- \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mbdep_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mbdep_advanced_wrml  instead of the home-made \ref mbdep_advanced_cao.
 
 Next sections highlight how to use the differents versions of the markerless model-based trackers that are implemented in ViSP.
@@ -18,7 +21,7 @@ Next sections highlight how to use the differents versions of the markerless mod
 Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
 \code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/old/generic
 \endcode
 
 \section mbdep_started Getting started

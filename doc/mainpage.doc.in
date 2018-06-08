@@ -126,10 +126,11 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges.
-- \ref tutorial-tracking-mb-generic <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints on images acquired by a single camera.
+- \ref tutorial-tracking-mb-generic <br>This tutorial focuses on model-based trackers using either edges, or keypoints, or a combination of them as visual features on images acquired by a monocular color camera.
+- \ref tutorial-tracking-mb-generic-stereo <br>This tutorial focuses on model-based trackers using either edges, or keypoints, or a combination of them as visual features on images acquired by a stereo color camera.
+- \ref tutorial-tracking-mb-generic-rgbd <br>This tutorial focuses on generic model-based trackers combining moving edges and/or keypoints with depth visual features.
 - \ref tutorial-tracking-mb-deprecated <br>This deprecated tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
 - \ref tutorial-tracking-mb-stereo-deprecated <br>This deprecated tutorial focuses on model-based trackers with stereo cameras.
-- \ref tutorial-tracking-mb-generic-deprecated <br>This deprecated tutorial focuses on generic model-based trackers.
 - \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
 \subsection tuto_detection Detection
@@ -139,6 +140,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection.
 - \ref tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier.
 - \ref tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
+- \ref tutorial-detection-object-deprecated <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. We recommend to follow rather \ref tutorial-detection-object that uses vpMbGenericTracker class.
 - \ref tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
 
 \subsection tuto_computer_vision Computer vision
@@ -457,9 +459,21 @@ scheme, ...</p>
 /*!
   \ingroup module_mbt
   \defgroup group_mbt_trackers Trackers
-  Model-based trackers. Two group of classes may be used:
-  - the one that allows to track an object on a single image: vpMbGenericTracker (recommended), vpMbEdgeTracker, vpMbKltTracker, vpMbEdgeKltTracker;
-  - the one that allows to track an object seen in two (stereo) or more images: vpMbGenericTracker (recommended), vpMbEdgeMultiTracker, vpMbKltMultiTracker, vpMbEdgeKltMultiTracker.
+  These are the classes that allow markerless model-based tracking.
+
+  The only class that has to be used to design an application is the vpMbGenericTracker class. It allows:
+  - to track an object observed by a single, a stereo camera or more cameras, a RGB-D camera
+  - to consider moving-edges, keypoints or depth as visual features or a combination of these visual features.
+
+  The following classes that allow to track an object on a single image continue to be maintained but should no more be used since we provide a more generic class with vpMbGenericTracker:
+  - vpMbEdgeTracker
+  - vpMbKltTracker
+  - vpMbEdgeKltTracker
+
+ The following classes that allow to track an object seen in two (stereo) or more images are deprecated and should no more be used. Use rather the vpMbGenericTracker class that can also handle multiple cameras:
+  - vpMbEdgeMultiTracker
+  - vpMbKltMultiTracker
+  - vpMbEdgeKltMultiTracker.
 */
 /*!
   \ingroup module_mbt

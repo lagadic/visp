@@ -5,11 +5,11 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoReader.h>
-#include <visp3/mbt/vpMbGenericTracker.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/vision/vpKeyPoint.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
-void learnCube(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpKeyPoint &keypoint_learning, int id)
+void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyPoint &keypoint_learning, int id)
 {
   //! [Keypoints reference detection]
   std::vector<cv::KeyPoint> trainKeyPoints;
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
     vpHomogeneousMatrix cMo;
     vpCameraParameters cam;
 
-    vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER);
+    vpMbEdgeTracker tracker;
     bool usexml = false;
 #ifdef VISP_HAVE_XML2
     if (vpIoTools::checkFilename(objectname + ".xml")) {
