@@ -1409,7 +1409,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
       l->setVisible(true);
       l->updateTracked();
       if (l->meline.empty() && l->isTracked())
-        l->initMovingEdge(I, _cMo, m_mask, doNotTrack);
+        l->initMovingEdge(I, _cMo, doNotTrack, m_mask);
     } else {
       l->setVisible(false);
       for (size_t a = 0; a < l->meline.size(); a++) {
@@ -1444,7 +1444,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
       cy->setVisible(true);
       if (cy->meline1 == NULL || cy->meline2 == NULL) {
         if (cy->isTracked())
-          cy->initMovingEdge(I, _cMo, m_mask, doNotTrack);
+          cy->initMovingEdge(I, _cMo, doNotTrack, m_mask);
       }
     } else {
       cy->setVisible(false);
@@ -1477,7 +1477,7 @@ void vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHo
       ci->setVisible(true);
       if (ci->meEllipse == NULL) {
         if (ci->isTracked())
-          ci->initMovingEdge(I, _cMo, m_mask, doNotTrack);
+          ci->initMovingEdge(I, _cMo, doNotTrack, m_mask);
       }
     } else {
       ci->setVisible(false);
@@ -1503,7 +1503,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
       if (l->meline.empty()) {
-        l->initMovingEdge(I, cMo, m_mask, doNotTrack);
+        l->initMovingEdge(I, cMo, doNotTrack, m_mask);
       }
       l->trackMovingEdge(I, cMo);
     }
@@ -1514,7 +1514,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceCylinder *cy = *it;
     if (cy->isVisible() && cy->isTracked()) {
       if (cy->meline1 == NULL || cy->meline2 == NULL) {
-        cy->initMovingEdge(I, cMo, m_mask, doNotTrack);
+        cy->initMovingEdge(I, cMo, doNotTrack, m_mask);
       }
       cy->trackMovingEdge(I, cMo);
     }
@@ -1525,7 +1525,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceCircle *ci = *it;
     if (ci->isVisible() && ci->isTracked()) {
       if (ci->meEllipse == NULL) {
-        ci->initMovingEdge(I, cMo, m_mask, doNotTrack);
+        ci->initMovingEdge(I, cMo, doNotTrack, m_mask);
       }
       ci->trackMovingEdge(I, cMo);
     }

@@ -74,7 +74,7 @@ vpMbtDistanceKltPoints::~vpMbtDistanceKltPoints() {}
   points that are indeed in the face.
 
   \param _tracker : ViSP OpenCV KLT Tracker.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {

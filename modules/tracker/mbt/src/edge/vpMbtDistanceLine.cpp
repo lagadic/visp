@@ -300,11 +300,11 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
-  \param mask: Mask image or NULL if not wanted.
   \param doNotTrack : If true, ME are not tracked.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask, const bool doNotTrack)
+bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack, const vpImage<bool> *mask)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -403,7 +403,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         }
 
         try {
-          melinePt->initTracking(I, ip1, ip2, rho, theta, mask, doNotTrack);
+          melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack, mask);
           meline.push_back(melinePt);
           nbFeature.push_back((unsigned int) melinePt->getMeList().size());
           nbFeatureTotal += nbFeature.back();
@@ -481,7 +481,7 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const v
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
@@ -613,7 +613,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
@@ -626,7 +626,7 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const 
   meline.clear();
   nbFeatureTotal = 0;
 
-  if (!initMovingEdge(I, cMo, mask, false))
+  if (!initMovingEdge(I, cMo, false, mask))
     Reinit = true;
 
   Reinit = false;

@@ -141,11 +141,11 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
 
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
-  \param mask: Mask image or NULL if not wanted.
   \param doNotTrack : If true, ME are not tracked.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask, const bool doNotTrack)
+bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack, const vpImage<bool> *mask)
 {
   if (isvisible) {
     // Perspective projection
@@ -169,7 +169,7 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
       vpImagePoint ic;
       double mu20_p, mu11_p, mu02_p;
       vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
-      meEllipse->initTracking(I, ic, mu20_p, mu11_p, mu02_p, mask, doNotTrack);
+      meEllipse->initTracking(I, ic, mu20_p, mu11_p, mu02_p, doNotTrack, mask);
     } catch (...) {
       // vpTRACE("the circle can't be initialized");
       return false;
@@ -207,7 +207,7 @@ void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
@@ -242,7 +242,7 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
@@ -251,7 +251,7 @@ void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, cons
 
   meEllipse = NULL;
 
-  if (!initMovingEdge(I, cMo, mask, false))
+  if (!initMovingEdge(I, cMo, false, mask))
     Reinit = true;
 
   Reinit = false;

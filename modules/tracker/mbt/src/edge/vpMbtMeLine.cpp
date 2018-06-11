@@ -90,12 +90,12 @@ vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
   \param ip2 : Coordinates of the second point.
   \param rho_ : The \f$\rho\f$ parameter
   \param theta_ : The \f$\theta\f$ parameter
-  \param mask: Mask image or NULL if not wanted.
   \param doNoTrack : If true, ME are not tracked
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                               double rho_, double theta_, const vpImage<bool> *mask,
-                               const bool doNoTrack)
+                               double rho_, double theta_,
+                               const bool doNoTrack, const vpImage<bool> *mask)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
 
@@ -119,7 +119,7 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
     normalizeAngle(delta);
     delta_1 = delta;
 
-    sample(I, mask, doNoTrack);
+    sample(I, doNoTrack, mask);
     expecteddensity = (double)list.size();
 
     if (!doNoTrack)
@@ -135,10 +135,10 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   step between the two extremities of the line.
 
   \param I : Image in which the line appears.
-  \param mask: Mask image or NULL if not wanted.
   \param doNoTrack : If true, ME are not tracked.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const vpImage<bool> *mask, const bool doNoTrack)
+void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack, const vpImage<bool> *mask)
 {
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
@@ -476,7 +476,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
   two points (vpMe::sample_step).
 
   \param I : Image in which the line appears.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
@@ -485,7 +485,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImage<bool> 
   if ((double)n < 0.5 * expecteddensity && n > 0) {
     double delta_new = delta;
     delta = delta_1;
-    sample(I, mask);
+    sample(I, false, mask);
     expecteddensity = (double)list.size();
     delta = delta_new;
     //  2. On appelle ce qui n'est pas specifique
@@ -506,7 +506,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImage<bool> 
   \param I : Image in which the line appears.
   \param ip1 : The first extremity of the line.
   \param ip2 : The second extremity of the line.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImage<bool> *mask)
 {
@@ -520,7 +520,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &
     PExt[0].jfloat = (float)ip1.get_j();
     PExt[1].ifloat = (float)ip2.get_i();
     PExt[1].jfloat = (float)ip2.get_j();
-    sample(I, mask);
+    sample(I, false, mask);
     expecteddensity = (double)list.size();
     delta = delta_new;
     vpMeTracker::track(I);
@@ -586,7 +586,7 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
   \param  rho_ : The \f$\rho\f$ parameter used in the line's polar equation.
   \param  theta_ : The \f$\theta\f$ parameter used in the line's polar
   equation.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_, double theta_, const vpImage<bool> *mask)
 {
@@ -617,7 +617,7 @@ void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_,
   \param rho_ : The \f$\rho\f$ parameter used in the line's polar equation.
   \param theta_ : The \f$\theta\f$ parameter used in the line's polar
   equation.
-  \param mask: Mask image or NULL if not wanted.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
 void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                                    double rho_, double theta_, const vpImage<bool> *mask)

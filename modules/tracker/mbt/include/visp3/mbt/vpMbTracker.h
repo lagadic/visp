@@ -224,7 +224,7 @@ protected:
   //! Camera parameters used for projection error computation
   vpCameraParameters m_projectionErrorCam;
   //! Mask used to disable tracking on a part of image
-  vpImage<bool> *m_mask = nullptr;
+  vpImage<bool> *m_mask = NULL;
 
 public:
   vpMbTracker();

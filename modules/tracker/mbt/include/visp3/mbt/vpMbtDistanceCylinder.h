@@ -191,7 +191,7 @@ public:
 
   void initInteractionMatrixError();
 
-  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask, const bool doNotTrack);
+  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack, const vpImage<bool> *mask = NULL);
 
   /*!
    Return if the cylinder is used for tracking.
@@ -207,7 +207,7 @@ public:
   */
   inline bool isVisible() const { return isvisible; }
 
-  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask);
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask = NULL);
 
   /*!
    Set the camera paramters.
@@ -269,7 +269,7 @@ public:
 
   void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
-  void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask);
+  void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask = NULL);
 
 private:
   void project(const vpHomogeneousMatrix &cMo);
