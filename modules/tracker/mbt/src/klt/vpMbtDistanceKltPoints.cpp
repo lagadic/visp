@@ -74,8 +74,9 @@ vpMbtDistanceKltPoints::~vpMbtDistanceKltPoints() {}
   points that are indeed in the face.
 
   \param _tracker : ViSP OpenCV KLT Tracker.
+  \param mask: Mask image or NULL if not wanted.
 */
-void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker)
+void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {
   // extract ids of the points in the face
   nbPointsInit = 0;
@@ -93,14 +94,18 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker)
 
     bool add = false;
 
-    if (useScanLine) {
-      if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+    // Add points inside visibility mask only
+    if (mask == NULL || mask->getValue(y_tmp, x_tmp)) {
+      if (useScanLine) {
+        if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
           (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
           hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
-              polygon->getIndex())
+          polygon->getIndex())
+          add = true;
+      }
+      else if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
         add = true;
-    } else if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
-      add = true;
+      }
     }
 
     if (add) {

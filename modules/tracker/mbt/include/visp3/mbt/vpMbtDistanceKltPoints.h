@@ -185,7 +185,7 @@ public:
 
   inline bool hasEnoughPoints() const { return enoughPoints; }
 
-  void init(const vpKltOpencv &_tracker);
+  void init(const vpKltOpencv &_tracker, const vpImage<bool> *mask);
 
   /*!
    Return if the klt points are used for tracking.
