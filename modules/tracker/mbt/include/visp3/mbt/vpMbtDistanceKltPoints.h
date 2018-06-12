@@ -112,6 +112,7 @@ public:
 private:
   double compute_1_over_Z(const double x, const double y);
   void computeP_mu_t(const double x_in, const double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
+  int insideMask(const vpImage<bool> *mask, int i, int j);
   bool isTrackedFeature(const int id);
 
   // private:
@@ -137,7 +138,7 @@ public:
   vpMbtDistanceKltPoints();
   virtual ~vpMbtDistanceKltPoints();
 
-  unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker);
+  unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask = NULL);
   void computeHomography(const vpHomogeneousMatrix &_cTc0, vpHomography &cHc0);
   void computeInteractionMatrixAndResidu(vpColVector &_R, vpMatrix &_J);
 

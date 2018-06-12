@@ -95,7 +95,7 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
     bool add = false;
 
     // Add points inside visibility mask only
-    if (mask == NULL || mask->getValue(y_tmp, x_tmp)) {
+    if (insideMask(mask, y_tmp, x_tmp)) {
       if (useScanLine) {
         if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
           (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
@@ -147,8 +147,9 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
   \param _tracker : the KLT tracker
   \return the number of points that are tracked in this face and in this
   instanciation of the tracker
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv &_tracker)
+unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {
   long id;
   float x, y;
@@ -158,7 +159,7 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id)) {
+    if (isTrackedFeature((int)id) && insideMask(mask, y, x)) {
 #if TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
@@ -314,6 +315,20 @@ void vpMbtDistanceKltPoints::computeHomography(const vpHomogeneousMatrix &_cTc0,
   for (unsigned int i = 0; i < 3; i += 1) {
     dt += ctransc0[i] * (N_cur[i]);
   }
+}
+
+/*!
+  Test whether the pixel is inside the mask. Mask values that are set to true
+  are considered in the tracking.
+
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true
+  are considered in the tracking. To disable a pixel, set false.
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+*/
+int vpMbtDistanceKltPoints::insideMask(const vpImage<bool> *mask, int i, int j)
+{
+  return (mask == NULL || mask->getValue(i, j));
 }
 
 /*!

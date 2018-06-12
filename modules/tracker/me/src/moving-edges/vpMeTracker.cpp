@@ -128,6 +128,15 @@ unsigned int vpMeTracker::numberOfSignal()
 
 unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size(); }
 
+/*!
+  Test whether the pixel is inside the mask. Mask values that are set to true
+  are considered in the tracking.
+
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true
+  are considered in the tracking. To disable a pixel, set false.
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+*/
 int vpMeTracker::insideMask(const vpImage<bool> *mask, int i, int j)
 {
   return (mask == NULL || mask->getValue(i, j));
