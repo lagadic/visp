@@ -45,6 +45,37 @@
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbKltTracker.h>
 
+/*!
+  \class vpMbGenericTracker
+  \ingroup group_mbt_trackers
+  \brief Make the complete tracking of an object by using its CAD model.
+
+  The tracker requires the knowledge of the 3D model that could be provided in
+  a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
+  also use an xml file used to tune the behavior of the tracker and an init file
+  used to compute the pose at the very first image.
+
+  This class allows to track an object or a scene given its 3D model. A lot of
+  videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
+  \htmlonly
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/DDdIXja7YpE"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/M3XAxu9QC7Q"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/4FARYLYzNL8"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  \endhtmlonly
+
+  The \ref tutorial-tracking-mb-generic is a good starting point to use this
+  class. If you want to track an object with a stereo camera refer to
+  \ref tutorial-tracking-mb-generic-stereo. If you want rather use a RGB-D camera and exploit
+  the depth information, you may see \ref tutorial-tracking-mb-generic-rgbd.
+  There is also \ref tutorial-detection-object that shows how to initialize the tracker from
+  an initial pose provided by a detection algorithm.
+
+*/
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker
 {
 public:

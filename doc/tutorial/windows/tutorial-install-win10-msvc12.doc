@@ -107,7 +107,7 @@ C:\> setx REALSENSE_DIR "C:\workspace\librealsense-1.12.1\build-vc12"
 
 \warning Ogre3D installation from source code described in this section is reserved to expert users. 
 
-If you are interested in augmented reality (see vpAROgre), or if you want to enable advanced visibility computation during model-based tracking (see vpMbTracker::setOgreVisibilityTest() and \ref tutorial-tracking-mb) we recommend to install Ogre3D. You can check if a <a href="http://www.ogre3d.org/download/sdk">prebuild SDK</A> matches your Visual C++ version, and follow the <a href="http://www.ogre3d.org/tikiwiki/Installing+the+Ogre+SDK">SDK installation instructions</a>. You can also install the lastest release from source. Based on our experience, this is what we recommend. 
+If you are interested in augmented reality (see vpAROgre), or if you want to enable advanced visibility computation during model-based tracking (see vpMbTracker::setOgreVisibilityTest() and \ref tutorial-tracking-mb-generic) we recommend to install Ogre3D. You can check if a <a href="http://www.ogre3d.org/download/sdk">prebuild SDK</A> matches your Visual C++ version, and follow the <a href="http://www.ogre3d.org/tikiwiki/Installing+the+Ogre+SDK">SDK installation instructions</a>. You can also install the lastest release from source. Based on our experience, this is what we recommend.
 
 Ogre source code is hosted on <a href="https://bitbucket.org/sinbad/ogre">BitBucket</a>. On Ogre wiki you will find useful information to <a href="http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Building+Ogre">build and install Ogre from source</a>. Hereafter we give the main steps.
 

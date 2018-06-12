@@ -19,7 +19,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/object
 
 \subsection detection_object_preamble Preamble
 
-You are advised to read the following tutorials \ref tutorial-tracking-mb and \ref tutorial-matching if you are not aware of these concepts.
+You are advised to read the following tutorials \ref tutorial-tracking-mb-generic and \ref tutorial-matching if you are not aware of these concepts.
 
 \subsection detection_object_principle Principle of object detection using keypoints
 
@@ -112,7 +112,7 @@ In order to display the result, we use the tracker initialized at the estimated 
 \snippet tutorial-detection-object-mbt.cpp Tracker set pose
 \snippet tutorial-detection-object-mbt.cpp Display
 
-The pose of the detected object can then be used to initialize a tracker automatically rather then using a human initialization; see \ref tutorial-tracking-mb and \ref tutorial-tracking-tt.
+The pose of the detected object can then be used to initialize a tracker automatically rather then using a human initialization; see \ref tutorial-tracking-mb-generic and \ref tutorial-tracking-tt.
 
 \subsection detection_object_quick_explanation Quick explanation about some parameters used in the example
 

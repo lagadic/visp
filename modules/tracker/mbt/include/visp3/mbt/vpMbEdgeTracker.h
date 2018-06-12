@@ -90,10 +90,12 @@
   \class vpMbEdgeTracker
   \ingroup group_mbt_trackers
   \brief Make the complete tracking of an object by using its CAD model.
+  \warning This class is deprecated for user usage. You should rather use the high level
+  vpMbGenericTracker class.
 
   This class allows to track an object or a scene given its 3D model. A
   video can be found on YouTube \e https://www.youtube.com/watch?v=UK10KMMJFCI
-. The \ref tutorial-tracking-mb is also a good starting point to use this
+. The \ref tutorial-tracking-mb-deprecated is also a good starting point to use this
 class.
 
   The tracker requires the knowledge of the 3D model that could be provided in

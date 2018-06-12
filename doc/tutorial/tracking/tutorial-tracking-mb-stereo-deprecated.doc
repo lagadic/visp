@@ -1,9 +1,9 @@
 /**
 
-\page tutorial-tracking-mb-stereo Tutorial: Markerless model-based tracking with stereo cameras
+\page tutorial-tracking-mb-stereo-deprecated Tutorial: Markerless model-based tracking with stereo cameras (deprecated)
 \tableofcontents
 
-\section mb_stereo_intro Introduction
+\section mbdep_stereo_intro Introduction
 
 \warning
 This tutorial can be considered obsolete since ViSP 3.1.0 version as we have introduced a generic tracker (vpMbGenericTracker) that can replace the vpMbEdgeMultiTracker, vpMbKltMultiTracker and vpMbEdgeKltMultiTracker classes. The explanations about the multi-views model-based tracking remain valid though.
@@ -17,7 +17,7 @@ Next section highlights the different versions of the markerless multi-view mode
 While the multi-view model-based edges tracker implemented in vpMbEdgeMultiTracker is appropriate to track texture-less objects (with visible edges), the multi-view model-based KLT tracker implemented in vpMbKltMultiTracker is suitable for textured objects. The multi-view model-based hybrid tracker implemented in vpMbEdgeKltMultiTracker is appropriate to track objects with texture and or with visible edges.
 
 These classes allow the tracking of the same object assuming two or more cameras:
-The main advantages of this configuration with respect to the mono-camera case (see \ref tutorial-tracking-mb) concern:
+The main advantages of this configuration with respect to the mono-camera case (see \ref tutorial-tracking-mb-deprecated) concern:
 - the possibility to extend the application field of view;
 - a more robust tracking as the configuration of the stereo rig allows to track the object under multiple viewpoints and thus with more visual features.
 
@@ -38,21 +38,21 @@ This other video shows the behavior of the hybrid tracking performed with vpMbEd
 \endhtmlonly
 
 \note The cameras can move, but the tracking will be effective as long as the transformation matrix between the cameras and the reference camera is known and updated at each iteration.
-\note The new introduced classes are not restricted to stereo configuration. They allow the usage of multiple cameras (see \ref mb_stereo_moving_cameras).
+\note The new introduced classes are not restricted to stereo configuration. They allow the usage of multiple cameras (see \ref mbdep_stereo_moving_cameras).
 
 Next sections will highlight how to easily adapt your code to use multiple cameras with the model-based tracker. As only the new methods dedicated to multiple views tracking will be presented, 
-you are highly recommended to follow \ref tutorial-tracking-mb in order to be familiar with the model-based tracking concepts, the different trackers that are available in ViSP (the edge tracker: vpMbEdgeTracker, the klt feature points tracker: vpMbKltTracker 
+you are highly recommended to follow \ref tutorial-tracking-mb-deprecated in order to be familiar with the model-based tracking concepts, the different trackers that are available in ViSP (the edge tracker: vpMbEdgeTracker, the klt feature points tracker: vpMbKltTracker 
 and the hybrid tracker: vpMbEdgeKltTracker) and with the configuration part.
 
 Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
 \code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/stereo
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/old/stereo-deprecated
 \endcode
 
-\section mb_stereo_started Getting started
+\section mbdep_stereo_started Getting started
 
-\subsection mb_stereo_overview Overview
+\subsection mbdep_stereo_overview Overview
 
 The model-based trackers available for multiple views tracking rely on the same trackers than in the monocular case:
 - a vpMbEdgeMultiTracker similar to vpMbEdgeTracker which tracks moving-edges corresponding to the visible lines of the model projected in the image plane at the current pose (suitable for texture-less objects).
@@ -72,7 +72,7 @@ differences compared to vpMbEdgeKltTracker).
 As you will see after, the principal methods present in the parent class are accessible and used for single view tracking.
 Lot of new overridden methods have been introduced to deal with the different cameras configuration (single camera, stereo cameras and multiple cameras).
 
-\subsection mb_stereo_implementation_detail Implementation detail
+\subsection mbdep_stereo_implementation_detail Implementation detail
 
 Each tracker is stored in a map, the key corresponding to the name of the camera on which the tracker will process. By default, the camera names are set to:
 -  "Camera" when the tracker is constructed with one camera.
@@ -88,7 +88,7 @@ Thus, we have to know the transformation matrix between each camera and the refe
 For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the following information: 
 \f$ _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$.
 
-\subsection mb_stereo_interface_with_the_code Interfacing with the code
+\subsection mbdep_stereo_interface_with_the_code Interfacing with the code
 
 Each essential method used to initialize the tracker and process the tracking have three signatures in order to ease the call to the method and according to three working modes:
 -  tracking using one camera, the signature remains the same than the previous classes (vpMbEdgeTracker, vpMbKltTracker, vpMbEdgeKltTracker).
@@ -98,7 +98,7 @@ Each essential method used to initialize the tracker and process the tracking ha
 The following table sums up how to call the different methods based on the camera configuration for the main functions.
 
 <table>
-<caption id="mb_stereo_method_example_table">Example of the different method signatures.</caption>
+<caption id="mbdep_stereo_method_example_table">Example of the different method signatures.</caption>
 <tr><th>Method calling example:               <th>Monocular case                         <th>Stereo case                                               <th>Multiple cameras case                                 <th>Remarks
 <tr><td>Construct a model-based edge tracker: <td>vpMbEdgeMultiTracker tracker           <td>vpMbEdgeMultiTracker tracker(2)                           <td>vpMbEdgeMultiTracker tracker(5)                       <td>The default constructor corresponds to the monocular configuration.
 <tr><td>Load a configuration file:            <td>tracker.loadConfigFile("config.xml")   <td>tracker.loadConfigFile("config1.xml", "config2.xml")      <td>tracker.loadConfigFile(mapOfConfigFiles)              <td>Each tracker can have different parameters (intrinsic parameters, visibility angles, etc.).
@@ -114,7 +114,7 @@ The following table sums up how to call the different methods based on the camer
   
 \note As the trackers are stored in an alphabetic order internally, you have to match the method parameters with the correct tracker position in the map in the stereo cameras case.
 
-\subsection mb_stereo_example_code Example code
+\subsection mbdep_stereo_example_code Example code
 The following example comes from tutorial-mb-tracker-stereo.cpp and allows to track a tea box modeled in cao format using one of the three multi-view markerless trackers implemented in ViSP. In this example we consider a stereo configuration.
 
 Once built, to choose which tracker to use, run the binary with the following argument:
@@ -125,7 +125,7 @@ $ ./tutorial-mb-tracker-stereo --tracker <0=egde|1=klt|2=hybrid>
 The source code is the following:
 \include tutorial-mb-tracker-stereo.cpp
 
-\subsection mb_stereo_explanation_of_the_code Explanation of the code
+\subsection mbdep_stereo_explanation_of_the_code Explanation of the code
 
 The previous source code shows how to use a model-based tracking on stereo images using the standard procedure to configure the tracker:
 -  construct the tracker
@@ -136,7 +136,7 @@ The previous source code shows how to use a model-based tracking on stereo image
 
 \warning The xml2 library, used to load the configuration file, is required to build the tutorial example. OpenCV is also required and the KLT module has to be enabled to use the KLT functionality.
 
-Please refer to the tutorial \ref tutorial-tracking-mb in order to have the explanations about the configuration parameters (\ref mb_settings) and how to model an object in a ViSP compatible format (\ref mb_advanced_cao).
+Please refer to the tutorial \ref tutorial-tracking-mb-deprecated in order to have the explanations about the configuration parameters (\ref mbdep_settings) and how to model an object in a ViSP compatible format (\ref mbdep_advanced_cao).
 
 To test the three kind of trackers, only vpMbEdgeKltMultiTracker.h header is required as the others (vpMbEdgeMultiTracker.h and vpMbKltMultiTracker.h) are already included in the hybrid header class. 
 
@@ -201,9 +201,9 @@ Finally, do not forget to delete the pointers:
 
 \snippet tutorial-mb-tracker-stereo.cpp Cleanup
 
-\section mb_stereo_advanced Advanced
+\section mbdep_stereo_advanced Advanced
 
-\subsection mb_stereo_moving_cameras How to deal with moving cameras
+\subsection mbdep_stereo_moving_cameras How to deal with moving cameras
 
 The principle remains the same than with static cameras. You have to supply the camera transformation matrices to the tracker each time the cameras move and before calling the track method:
 \code
@@ -221,7 +221,7 @@ The following video shows the stereo hybrid model-based tracking based on object
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/IguBxf4VRUc" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
-\section mb_stereo_next Next tutorial
+\section mbdep_stereo_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-mb-generic.
 
 */
