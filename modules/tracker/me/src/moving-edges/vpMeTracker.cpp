@@ -228,12 +228,13 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
   Track moving-edges.
 
   \param I : Image.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 
 */
-void vpMeTracker::track(const vpImage<unsigned char> &I)
+void vpMeTracker::track(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
@@ -247,43 +248,51 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 
   vpImagePoint ip1, ip2;
   nGoodElement = 0;
-  //  int d =0;
+
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
+  std::list<vpMeSite>::iterator it = list.begin();
+  while (it != list.end()) {
     vpMeSite s = *it; // current reference pixel
 
-    //    d++ ;
     // If element hasn't been suppressed
     if (s.getState() == vpMeSite::NO_SUPPRESSION) {
 
       try {
-        //	vpERROR_TRACE("%d",d ) ;
-        //	vpERROR_TRACE("range %d",me->range) ;
         s.track(I, me, true);
       } catch (vpTrackingException) {
         vpERROR_TRACE("catch exception ");
         s.setState(vpMeSite::THRESHOLD);
       }
-
-      if (s.getState() != vpMeSite::THRESHOLD) {
-        nGoodElement++;
+      
+      if (insideMask(mask, s.i, s.j)) {
+        if (s.getState() != vpMeSite::THRESHOLD) {
+          nGoodElement++;
 
 #if (DEBUG_LEVEL2)
-        {
-          double a, b;
-          a = s.i_1 - s.i;
-          b = s.j_1 - s.j;
-          if (s.getState() == vpMeSite::NO_SUPPRESSION) {
-            ip1.set_i(s.i);
-            ip1.set_j(s.j);
-            ip2.set_i(s.i + a * 5);
-            ip2.set_j(s.j + b * 5);
-            vpDisplay::displayArrow(I, ip1, ip2, vpColor::green);
+          {
+            double a, b;
+            a = s.i_1 - s.i;
+            b = s.j_1 - s.j;
+            if (s.getState() == vpMeSite::NO_SUPPRESSION) {
+              ip1.set_i(s.i);
+              ip1.set_j(s.j);
+              ip2.set_i(s.i + a * 5);
+              ip2.set_j(s.j + b * 5);
+              vpDisplay::displayArrow(I, ip1, ip2, vpColor::black);
+            }
           }
-        }
 #endif
+        }
+        *it = s;
+        ++it;
       }
-      *it = s;
+      else {
+        // Site outside mask: it is no more tracked.
+        it = list.erase(it);
+      }
+    }
+    else {
+      ++it;
     }
   }
 }

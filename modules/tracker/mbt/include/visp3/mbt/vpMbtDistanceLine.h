@@ -249,7 +249,7 @@ public:
   */
   void setVisible(bool _isvisible) { isvisible = _isvisible; }
 
-  void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  void trackMovingEdge(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
 
   void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask = NULL);
 

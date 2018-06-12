@@ -123,7 +123,7 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
     expecteddensity = (double)list.size();
 
     if (!doNoTrack)
-      vpMeTracker::track(I);
+      vpMeTracker::track(I, mask);
   } catch (...) {
     throw; // throw the original exception
   }
@@ -523,7 +523,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &
     sample(I, false, mask);
     expecteddensity = (double)list.size();
     delta = delta_new;
-    vpMeTracker::track(I);
+    vpMeTracker::track(I, mask);
   }
 }
 
@@ -561,22 +561,22 @@ void vpMbtMeLine::updateDelta()
 }
 
 /*!
- Track the line in the image I.
+  Track the line in the image I.
 
- \param I : Image in which the line appears.
- */
-void vpMbtMeLine::track(const vpImage<unsigned char> &I)
+  \param I : Image in which the line appears.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+*/
+void vpMbtMeLine::track(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
-  //  2. On appelle ce qui n'est pas specifique
   try {
-    vpMeTracker::track(I);
+    vpMeTracker::track(I, mask);
+    if (mask != NULL) {
+      // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
+      expecteddensity = (double)list.size();
+    }
   } catch (...) {
     throw; // throw the original exception
   }
-
-  // supression des points rejetes par les ME
-  //  suppressPoints(I);
-  //  setExtremities();
 }
 
 /*!

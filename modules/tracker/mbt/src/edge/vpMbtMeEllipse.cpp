@@ -325,7 +325,7 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I, const vpImage<boo
   unsigned int n = numberOfSignal();
   if ((double)n < 0.9 * expecteddensity) {
     sample(I, false, mask);
-    vpMeTracker::track(I);
+    vpMeTracker::track(I, mask);
   }
 }
 
@@ -427,11 +427,12 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
   Track the ellipse in the image I.
 
   \param I : Image in which the ellipse appears.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
+void vpMbtMeEllipse::track(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   try {
-    vpMeTracker::track(I);
+    vpMeTracker::track(I, mask);
   } catch (const vpException &exception) {
     throw(exception);
   }

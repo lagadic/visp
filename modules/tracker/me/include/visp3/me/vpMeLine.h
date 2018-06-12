@@ -182,7 +182,7 @@ public:
 
   void display(const vpImage<unsigned char> &I, vpColor col);
 
-  void track(const vpImage<unsigned char> &Im);
+  void track(const vpImage<unsigned char> &Im, const vpImage<bool> *mask = NULL);
 
   virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
@@ -192,8 +192,8 @@ public:
   void seekExtremities(const vpImage<unsigned char> &I);
   void suppressPoints();
 
-  void initTracking(const vpImage<unsigned char> &I);
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2);
+  void initTracking(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImage<bool> *mask = NULL);
 
   void computeRhoTheta(const vpImage<unsigned char> &I);
   double getRho() const;

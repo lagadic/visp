@@ -428,36 +428,16 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
   Track the moving edges in the image.
 
   \param I : the image.
-  \param cMo : The pose of the camera.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
-
   if (isvisible) {
-    //     p1->changeFrame(cMo);
-    //     p2->changeFrame(cMo);
-    //
-    //     p1->projection();
-    //     p2->projection();
-    //
-    //     vpImagePoint ip1, ip2;
-    //
-    //     vpMeterPixelConversion::convertPoint(*cam,p1->get_x(),p1->get_y(),ip1);
-    //     vpMeterPixelConversion::convertPoint(*cam,p2->get_x(),p2->get_y(),ip2);
-    //
-    //     int marge = /*10*/5; //ou 5 normalement
-    //     if (ip1.get_j()<ip2.get_j()) { meline->jmin = ip1.get_j()-marge ;
-    //     meline->jmax = ip2.get_j()+marge ; } else{ meline->jmin =
-    //     ip2.get_j()-marge ; meline->jmax = ip1.get_j()+marge ; } if
-    //     (ip1.get_i()<ip2.get_i()) { meline->imin = ip1.get_i()-marge ;
-    //     meline->imax = ip2.get_i()+marge ; } else{ meline->imin =
-    //     ip2.get_i()-marge ; meline->imax = ip1.get_i()+marge ; }
-
     try {
       nbFeature.clear();
       nbFeatureTotal = 0;
       for (size_t i = 0; i < meline.size(); i++) {
-        meline[i]->track(I);
+        meline[i]->track(I, mask);
         nbFeature.push_back((unsigned int)meline[i]->getMeList().size());
         nbFeatureTotal += (unsigned int)meline[i]->getMeList().size();
       }

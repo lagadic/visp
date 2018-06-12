@@ -220,12 +220,13 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
   indicates the number of degrees between two points (vpMe::sample_step).
 
   \param I : Image in which the ellipse appears.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 
 */
-void vpMeEllipse::reSample(const vpImage<unsigned char> &I)
+void vpMeEllipse::reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   if (!me) {
     throw(vpException(vpException::fatalError, "Moving edges on ellipse tracking not initialized"));
@@ -235,7 +236,7 @@ void vpMeEllipse::reSample(const vpImage<unsigned char> &I)
   expecteddensity = (alpha2 - alpha1) / vpMath::rad((double)me->getSampleStep());
   if ((double)n < 0.5 * expecteddensity) {
     sample(I);
-    vpMeTracker::track(I);
+    vpMeTracker::track(I, mask);
   }
 }
 
@@ -649,8 +650,9 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
   \warning The points should be selected counter clockwise.
 
   \param I : Image in which the ellipse appears.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   const unsigned int n = 5;
   vpImagePoint iP[n];
@@ -667,7 +669,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
   iP1 = iP[0];
   iP2 = iP[n - 1];
 
-  initTracking(I, n, iP);
+  initTracking(I, n, iP, mask);
 }
 
 /*!
@@ -681,8 +683,9 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
   \param I : Image in which the ellipse appears.
   \param n : The number of points in the list.
   \param iP : A pointer to a list of points belonging to the ellipse edge.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP, const vpImage<bool> *mask)
 {
   vpMatrix A(n, 5);
   vpColVector b_(n);
@@ -718,7 +721,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned i
 
   vpMeTracker::initTracking(I);
 
-  track(I);
+  track(I, mask);
 
   vpMeTracker::display(I);
   vpDisplay::flush(I);
@@ -735,8 +738,9 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned i
   \param I : Image in which the ellipse appears.
   \param iP : A vector of points belonging to the ellipse edge used to
   initialize the tracking.
-*/
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP)
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+  */
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, const vpImage<bool> *mask)
 {
   unsigned int n = (unsigned int)(iP.size());
   vpMatrix A(n, 5);
@@ -773,14 +777,14 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vecto
 
   vpMeTracker::initTracking(I);
 
-  track(I);
+  track(I, mask);
 
   vpMeTracker::display(I);
   vpDisplay::flush(I);
 }
 
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double a_p, double b_p,
-                               double e_p, double low_alpha, double high_alpha)
+                               double e_p, double low_alpha, double high_alpha, const vpImage<bool> *mask)
 {
   iPc = ic;
   a = a_p;
@@ -800,7 +804,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
 
   vpMeTracker::initTracking(I);
 
-  track(I);
+  track(I, mask);
 
   vpMeTracker::display(I);
   vpDisplay::flush(I);
@@ -810,10 +814,11 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   Track the ellipse in the image I.
 
   \param I : Image in which the ellipse appears.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMeEllipse::track(const vpImage<unsigned char> &I)
+void vpMeEllipse::track(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
-  vpMeTracker::track(I);
+  vpMeTracker::track(I, mask);
 
   // Estimation des parametres de la droite aux moindres carre
   suppressPoints();
@@ -829,7 +834,7 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
   setExtremities();
 
   // reechantillonage si necessaire
-  reSample(I);
+  reSample(I, mask);
 
   // remet a jour l'angle delta pour chaque  point de la liste
 
@@ -924,7 +929,7 @@ void vpMeEllipse::computeAngle(int ip1, int jp1, int ip2, int jp2)
   computeAngle(ip1, jp1, a1, ip2, jp2, a2);
 }
 
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j, const vpImage<bool> *mask)
 {
   vpMatrix A(n, 5);
   vpColVector b_(n);
@@ -963,7 +968,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned i
     vpMeTracker::initTracking(I);
   }
 
-  track(I);
+  track(I, mask);
 
   vpMeTracker::display(I);
   vpDisplay::flush(I);

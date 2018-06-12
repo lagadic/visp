@@ -191,7 +191,7 @@ public:
   void initTracking(const vpImage<unsigned char> &I);
   void initTracking(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ptList);
 
-  void track(const vpImage<unsigned char> &Im);
+  void track(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
 
   virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);

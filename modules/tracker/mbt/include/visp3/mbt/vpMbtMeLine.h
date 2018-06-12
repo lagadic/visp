@@ -113,7 +113,7 @@ public:
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
                     double theta, const bool doNoTrack, const vpImage<bool> *mask = NULL);
 
-  void track(const vpImage<unsigned char> &I);
+  void track(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
 
   void updateParameters(const vpImage<unsigned char> &I, double rho, double theta, const vpImage<bool> *mask = NULL);
   void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,

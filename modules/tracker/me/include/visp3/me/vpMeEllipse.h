@@ -114,13 +114,13 @@ public:
     \return Expected number of moving edges to track along the ellipse.
    */
   int getExpectedDensity() { return (int)expecteddensity; }
-  void track(const vpImage<unsigned char> &Im);
+  void track(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
 
-  void initTracking(const vpImage<unsigned char> &I);
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP);
-  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
+  void initTracking(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP, const vpImage<bool> *mask = NULL);
+  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, const vpImage<bool> *mask = NULL);
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double a_p, double b_p, double e_p,
-                    double low_alpha, double high_alpha);
+                    double low_alpha, double high_alpha, const vpImage<bool> *mask = NULL);
   void display(const vpImage<unsigned char> &I, vpColor col);
   void display(const vpImage<unsigned char> &I)
   {
@@ -133,7 +133,7 @@ public:
     @name Deprecated functions
   */
   //@{
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j);
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j, const vpImage<bool> *mask = NULL);
 //@}
 #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
@@ -321,7 +321,7 @@ protected:
 private:
   void computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt);
   virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
-  void reSample(const vpImage<unsigned char> &I);
+  void reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
   void leastSquare();
   void updateTheta();
   void suppressPoints();

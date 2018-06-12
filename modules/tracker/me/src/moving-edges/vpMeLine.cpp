@@ -232,8 +232,9 @@ void vpMeLine::display(const vpImage<unsigned char> &I, vpColor col)
   from the line to track.
 
   \param I : Image in which the line appears.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMeLine::initTracking(const vpImage<unsigned char> &I)
+void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   vpImagePoint ip1, ip2;
 
@@ -249,7 +250,7 @@ void vpMeLine::initTracking(const vpImage<unsigned char> &I)
   vpDisplay::flush(I);
 
   try {
-    initTracking(I, ip1, ip2);
+    initTracking(I, ip1, ip2, mask);
   } catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
@@ -421,8 +422,9 @@ void vpMeLine::leastSquare()
   \param I : Image in which the line appears.
   \param ip1 : Coordinates of the first point.
   \param ip2 : Coordinates of the second point.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
+void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImage<bool> *mask)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
 
@@ -464,7 +466,7 @@ void vpMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint 
     }
     // Call track(I) to give the good sign to a and b and to initialise c
     // which can be used for the display
-    track(I);
+    track(I, mask);
   } catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
@@ -743,15 +745,16 @@ void vpMeLine::updateDelta()
   Track the line in the image I.
 
   \param I : Image in which the line appears.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMeLine::track(const vpImage<unsigned char> &I)
+void vpMeLine::track(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
 {
   vpCDEBUG(1) << "begin vpMeLine::track()" << std::endl;
 
   //  1. On fait ce qui concerne les droites (peut etre vide)
   {} //  2. On appelle ce qui n'est pas specifique
   {
-    vpMeTracker::track(I);
+    vpMeTracker::track(I, mask);
   }
 
   // 3. On revient aux droites

@@ -1505,7 +1505,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
       if (l->meline.empty()) {
         l->initMovingEdge(I, cMo, doNotTrack, m_mask);
       }
-      l->trackMovingEdge(I, cMo);
+      l->trackMovingEdge(I, m_mask);
     }
   }
 

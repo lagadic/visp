@@ -90,7 +90,7 @@ public:
   void initTracking(const vpImage<unsigned char> &I);
 
   //! Track sampled pixels.
-  void track(const vpImage<unsigned char> &I);
+  void track(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
 
   unsigned int numberOfSignal();
   unsigned int totalNumberOfSignal();
