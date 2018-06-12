@@ -1,0 +1,43 @@
+/**
+
+\page tutorial-install-java Tutorial: Installing ViSP for Java
+\tableofcontents
+
+\section java_intro Introduction
+
+This tutorial will help you to install ViSP for Java on your desktop.
+
+\section java Install Java JDK
+
+Download the latest Java JDK from the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website. Now you should be able to install the last Java JDK by opening the file just downloaded.
+
+\note If you download `jdk-10.0.1_linux-x64_bin.tar.gz` (case of linux), after extracting the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK. This could be done like:
+\code
+$ tar xvzf jdk-10.0.1_linux-x64_bin.tar.gz -C $HOME
+$ echo "export JAVA_HOME=$HOME/jdk-10.0.1" >> ~/.bashrc
+$ source ~/.bashrc
+\endcode
+
+\section java_linux Install ViSP under Linux
+
+As a prerequisite, download and install first [CMake](http://www.cmake.org/download/) and [Apache Ant](http://ant.apache.org/), if you don’t have any of these.
+
+- On Ubuntu/Debian you may run:
+\code
+$ sudo apt-get install cmake-curses-gui ant
+\endcode
+
+- On Fedora/CentOS you may run:
+\code
+$ sudo yum install cmake ant
+\endcode
+
+\section java_osx Install ViSP under macOS
+
+As a prerequisite, download and install first [CMake](http://www.cmake.org/download/) and [Apache Ant](http://ant.apache.org/), if you don’t have any of these.
+
+\code
+$ brew install cmake ant
+\endcode
+
+*/
