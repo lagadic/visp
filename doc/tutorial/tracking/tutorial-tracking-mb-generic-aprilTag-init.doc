@@ -1,0 +1,89 @@
+/**
+
+\page tutorial-tracking-mb-generic-aprillTag-init Tutorial: Markerless generic model-based tracking using aprilTag for initialization
+\tableofcontents
+
+\section mb_generic_aprilTag_intro Introduction
+
+ViSP allows the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (based on aprilTag detection in this tutorial) when a calibrated camera is used \cite Comport06b. The model tracked in this exaple is a cube made of cardboard (12.5 cm edges) with an aprilTag sticked on a face (find in <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">[this archive]</a> a set of tags you can use). Of course, you will need a webcam to run the tutorial on your computer.
+
+Here is an image of the cube we used in the lab: <br>
+\image html img-cube-aprilTag.jpg Model used for the tutorial 
+
+This tutorial focuses on vpMbGenericTracker class that was introduced in ViSP 3.1.0 and on vpDetectorAprilTag for initialization of the tracker.
+
+In this tutorial, we will show how to use vpMbGenericTracker class in order to track an object from images acquires by a monocular color camera using moving edges, and how to initialize it using vpDetectorAprilTag class.
+
+Note that the source code used in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic-aprilTag
+\endcode
+
+\subsection mb_generic_aprilTag_intro_3rd_parties Considered third-parties
+
+Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
+- \c OpenCV: Essential if you want to use the keypoints as visual features that are detected and tracked thanks to the KLT tracker.
+- \c libxml: This 3rd party is optional but recommended to read the camera settings from an xml file.
+
+\section mb_generic_aprilTag_started Getting started
+
+To start with the generic markerless model-based tracker we recommend to understand the tutorial-mb-generic-tracker.cpp source code that is given and explained below.  
+
+\subsection mb_generic_aprilTag_started_src Example source code
+The following example that comes from tutorial-mb-generic-tracker-aprilTag-init.cpp allows to track a cubic box with an aprilTag on a face using either moving edges or keypoints as visual features.
+
+\include tutorial-mb-generic-tracker-aprilTag-init.cpp
+
+\subsection mb_generic_aprilTag_started_exe Running the example using a live camera
+
+Once build, to see the options that are available in the previous source code, just run:
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --help
+Usage: ./tutorial-mb-generic-tracker-aprilTag-init [--input <camera input>] [--tag_size <tag_size in m>] [--quad_decimate <quad_decimate>] [--nthreads <nb>] [--intrinsic <intrinsic file>] [--camera_name <camera name>] [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, 4: BEST_RESIDUAL_VIRTUAL_VS)] [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)] [--display_off] [--cube_edge_size <cube_edge_size in m>]
+ [--texture]
+ [--help]
+\endcode
+By default, the following settings are used: <br>
+- Default camera, id=0. To specify another one, run:
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --input <camera_id>
+\endcode
+- The aprilTag size is 8cm by 8cm. To change the tag size, use: 
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --tag_size <tag_size in m>
+\endcode
+- The aprilTag detection of quads is 1.0 by default, you can chage it with: 
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --quad_decimate <quad_decimate>
+\endcode
+- The aprilTag default number of threads used is 1. To set another value, run: 
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --nthreads <nb>
+\endcode
+- The aprilTag default pose estimation method is vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS. To set another value, run: 
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --pose_method <method>
+\endcode
+- The aprilTag default tag family is 36h11. To set another value, run: 
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --tag_family <family>
+\endcode
+Note the id corresponding to each family : 0=TAG_36h11, 1=TAG_36h10, 2=TAG_36ARTOOLKIT, 3=TAG_25h9, 4=TAG_25h7, 5=TAG_16h5)
+- The default camera parameters used are: px=600, py=600, and principal point is set at image center. To specify your own parameters, you can provide for example a "camera.xml" parameters file with a camera named "myCam" in it, by running:
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --intrinsic camera.xml --camera_name myCam
+\endcode
+- The display is turned on by default, but you can disable it with: 
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --display_off
+\endcode
+- The default edge of the cube is 12.5 cm. To change that, run: 
+\code
+$ ./tutorial-mb-generic-tracker-aprilTag-init --cube_edge_size <cube_edge_size in m>
+\endcode
+
+\subsection mb_generic_aprilTag_result Expected result of the tutorial
+If the tag was sucessfully detected and the tracker correctly initialized, the output of the tutorial would look like this:
+\image html img-cube-aprilTag-tracking-result.png Cube tracking result
+*/
