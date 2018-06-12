@@ -1,0 +1,27 @@
+V1
+# 3D points
+8                    # Number of points (here 8 cube corners)
+ 0.000  0.000  0.000 # Point with index 0
+-0.042  0.000  0.000
+-0.042  0.042  0.000
+ 0.000  0.042  0.000
+ 0.000  0.000  0.042
+-0.042  0.000  0.042
+-0.042  0.042  0.042
+ 0.000  0.042  0.042 # point with index 7
+# 3D lines
+0                    # No 3D lines
+# 3D faces from lines
+0                    # No 3D faces from lines
+# 3D faces from points
+6                    # 6 faces to describe the cube
+4 0 4 5 1            # Face with index 0 defined by 3D point 0, 4, 5 and 1
+4 1 5 6 2
+4 6 7 3 2
+4 3 7 4 0
+4 0 1 2 3
+4 7 6 5 4            # Face with index 5
+# 3D cylinders
+0
+# 3D circle
+0                    # No 3D circle
