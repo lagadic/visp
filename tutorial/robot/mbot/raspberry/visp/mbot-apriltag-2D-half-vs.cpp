@@ -10,6 +10,7 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpUnicycle.h>
+#include <visp3/core/vpPolygon.h>
 
 int main(int argc, const char **argv)
 {
