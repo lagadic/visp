@@ -112,7 +112,7 @@ public:
 private:
   double compute_1_over_Z(const double x, const double y);
   void computeP_mu_t(const double x_in, const double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
-  int insideMask(const vpImage<bool> *mask, int i, int j);
+  int insideMask(const vpImage<bool> *mask, unsigned int i, unsigned int j);
   bool isTrackedFeature(const int id);
 
   // private:

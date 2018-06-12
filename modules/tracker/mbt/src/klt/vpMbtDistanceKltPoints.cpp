@@ -326,7 +326,7 @@ void vpMbtDistanceKltPoints::computeHomography(const vpHomogeneousMatrix &_cTc0,
   \param i : Sub-pixel coordinate along the rows.
   \param j : Sub-pixel coordinate along the columns.
 */
-int vpMbtDistanceKltPoints::insideMask(const vpImage<bool> *mask, int i, int j)
+int vpMbtDistanceKltPoints::insideMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
 {
   return (mask == NULL || mask->getValue(i, j));
 }

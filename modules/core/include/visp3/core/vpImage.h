@@ -218,6 +218,8 @@ public:
    */
   inline unsigned int getSize() const { return width * height; }
 
+  // Gets the value of a pixel at a location.
+  Type getValue(unsigned int i, unsigned int j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
@@ -1399,6 +1401,81 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
     for (int j = 1; j < w - 1; j += 2)
       res[i][j] = (Type)(0.25 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1] +
                                  (*this)[(i >> 1) + 1][j >> 1] + (*this)[(i >> 1) + 1][(j >> 1) + 1]));
+}
+
+/*!
+
+  Retrieves pixel value from an image containing values of type \e Type with
+  sub-pixel accuracy.
+
+  Gets the value of a sub-pixel with coordinates (i,j).
+
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+
+  \return Sub-pixel value.
+
+  \exception vpImageException::notInTheImage : If (i,j) is out
+  of the image.
+
+*/
+template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsigned int j) const
+{
+  if (i >= height || j >= width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
+  }
+
+  return (Type)row[i][j];
+}
+
+/*!
+
+  Retrieves pixel value from an image containing values of type \e Type with
+  sub-pixel accuracy.
+
+  Gets the value of a sub-pixel with coordinates (i,j).
+
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+
+  \return Sub-pixel value.
+
+  \exception vpImageException::notInTheImage : If (i,j) is out
+  of the image.
+
+*/
+template <> inline double vpImage<double>::getValue(unsigned int i, unsigned int j) const
+{
+  if (i >= height || j >= width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
+  }
+
+  return (double)row[i][j];
+}
+
+/*!
+
+  Retrieves pixel value from an image containing values of type \e Type with
+  sub-pixel accuracy.
+
+  Gets the value of a sub-pixel with coordinates (i,j).
+
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+
+  \return Sub-pixel value.
+
+  \exception vpImageException::notInTheImage : If (i,j) is out
+  of the image.
+
+*/
+template <> inline vpRGBa vpImage<vpRGBa>::getValue(unsigned int i, unsigned int j) const
+{
+  if (i >= height || j >= width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
+  }
+
+  return (vpRGBa)row[i][j];
 }
 
 /*!
