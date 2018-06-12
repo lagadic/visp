@@ -7,7 +7,7 @@
 
 Before following this tutorial, we suggest that you follow \ref tutorial-tracking-mb-generic to learn the bases of the tracker.
 
-This tutorial describes how to extand the generic model model-based tracker implemented in vpMbGenericTracker class using simultaneously multiple camera views acquired by a stereo camera. Our implementation doesn't limit the number of cameras observing the object to track or some parts of the object. It allows to track the object in the images viewed by a set of cameras while providing its 3D localization. Calibrated cameras (intrinsic and extrinsic between the reference and the other cameras) are required.
+This tutorial describes how to extend the generic model model-based tracker implemented in vpMbGenericTracker class using simultaneously multiple camera views acquired by a stereo camera. Our implementation doesn't limit the number of cameras observing the object to track or some parts of the object. It allows to track the object in the images viewed by a set of cameras while providing its 3D localization. Calibrated cameras (intrinsic and extrinsic between the reference and the other cameras) are required.
 
 The mbt ViSP module allows the tracking of a markerless object using the knowledge of its CAD model. Considered objects have to be modeled by segment, circle or cylinder primitives. The model of the object could be defined in vrml format (except for circles) or in cao (our own format).
 
@@ -49,7 +49,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-b
 
 \section mb_generic_stereo_started Getting started
 
-To start with the generic markerless model-based tracker using a stereo camera, we recommend to understand the tutorial-mb-generic-tracker-steroe.cpp source code that is given and explained below.  
+To start with the generic markerless model-based tracker using a stereo camera, we recommend to understand the tutorial-mb-generic-tracker-stereo.cpp source code that is given and explained below.  
 
 \subsection mb_generic_stereo_overview Overview
 
@@ -76,7 +76,7 @@ For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the fol
 The tutorial-mb-generic-tracker-stereo.cpp example uses the following data as input:
 - two video files; `teabox_left.mpg` and `teabox_right.mpg` that are the default videos and that could be changed using `--name` command line option. They need to be synchronized and correspond to the images acquired by a left and right camera.
 - two configuration files in xml format `teabox_left.xml` and `teabox_right.xml` that contain the tracker settings and camera parameters. See \ref mb_generic_settings_xml to know more about the content of these files. When using different cameras, since the intrinsic camera parameters differ the content of these `*.xml` may be different. There is also the possibility to set these parameters in the code without using an xml file; see \ref mb_generic_settings_ecm and \ref mb_generic_settings_klt.
-- two cad models that describes the object to track. In the example we use by default `teabox_right.cao` and `teabox_left.cao`. As this is the case here, the CAD models are generally the same when using a stereo configuration. See \ref mb_generic_model section to learn how the teabox is modelled and section \ref mb_generic_advanced_cao to learn how to model an other object.
+- two cad models that describes the object to track. In the example we use by default `teabox_right.cao` and `teabox_left.cao`. As this is the case here, the CAD models are generally the same when using a stereo configuration. See \ref mb_generic_model section to learn how the teabox is modeled and section \ref mb_generic_advanced_cao to learn how to model an other object.
 - two files with extension `*.init` that contain the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the left and right images on the corresponding 2D points. The default files are named `teabox_left.init` and `teabox_left.right`. In our case they have the same content, but depending on the point of view, sometime it could be useful that they differ to ensure that the 3D points are visible during initialization. The content of these files are detailed in \ref mb_generic_started_src_explained section.
 - two optional images with extension `*.ppm` that may help the user to remember the location of the corresponding 3D points specified in `*.init` file. By default we use `teabox_left.ppm` and `teabox_right.ppm`.
 - the transformation between the two cameras. Here we use `cRightMcLeft.txt` file that express the transformation between the right camera frame and the left camera frame. Using this transformation we can compute the 3D coordinates of a point in left camera frame in the right camera frame.

@@ -5,12 +5,12 @@
 
 \section mb_rgbd_intro Introduction
 
-This tutorial describes how to use the generic markerless model-based tracker implemented in vpMbGenericTracker with a RGB-D camera like the Intel RealSense devices (SR300 or D400 series). You are advised to have read the \ref tutorial-tracking-mb-generic to have an overview of the generic model-based tracker working on images acquired by a color camera that uses moving-edges and keypoints as visual features.
+This tutorial describes how to use the generic markerless model-based tracker implemented in vpMbGenericTracker with data acquired by a RGB-D camera like the Intel RealSense devices (SR300 or D400 series). You are advised to have read the \ref tutorial-tracking-mb-generic to have an overview of the generic model-based tracker working on images acquired by a color camera that uses moving-edges and keypoints as visual features. We suggest also to follow \ref tutorial-tracking-mb-generic-stereo to learn how to consider stereo cameras, since a RGB-D camera is in a sense a stereo camera, with the left camera providing the color image and the right the depth image.
 
 Note that all the material (source code, input video, CAD model or XML settings files) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
 \code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic-rgbd
 \endcode
 
 \subsection mb_rgbd_intro_features_overview Features overview
@@ -28,7 +28,7 @@ If you want to use a depth feature, we advise you to choose the dense depth feat
 Note also that combining the visual features can be a good way to improve the tracking robustness (e.g. a stereo tracker with moving edges + keypoints for the left camera and dense depth visual features for the right camera).
 
 The following video demonstrates the use of the generic tracker with a RGB-D sensor using the following features:
-- moving-edgee + keypoints features for the color camera
+- moving-edges + keypoints features for the color camera
 - depth normal features for the depth sensor
 
 \htmlonly
@@ -36,7 +36,7 @@ The following video demonstrates the use of the generic tracker with a RGB-D sen
 \endhtmlonly
 
 In this video, the same setup is used but with:
-- moving-edgee features for the color camera
+- moving-edges features for the color camera
 - dense depth features for the depth sensor
 
 \htmlonly
@@ -49,25 +49,13 @@ Note that all the material (source code and video) described in this tutorial is
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/stereo-generic
 \endcode
 
-\subsection mb_rgbd_features Features overview
-
-The basis type of features that can be used with the model-based tracker are:
-- moving-edges feature (line, face, cylinder and circle primitive) \cite Comport06b
-- KLT feature (face and cylinder primitives) \cite Pressigout:2007
-- depth normal feature (face primitives) (since ViSP 3.1.0)
-- dense depth feature (face primitives) (since ViSP 3.1.0)
-
-The moving-edges and KLT features require a RGB camera, more precisely these features operate on grayscale image. The depth normal and dense depth features require a depth map that can be obtained from a RGB-D camera for example.
-
-If you want to use a depth feature, we advise you to choose the dense depth features that is a much more robust method compared to the depth normal feature. Keep in mind also that Kinect-like sensors have a limited depth range (from ~0.8m to ~3.5m).
-
 \subsection mb_rgbd_intro_3rd_parties Considered third-parties
 
 Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
 - \c OpenCV: Essential if you want to use the keypoints as visual features that are detected and tracked thanks to the KLT tracker. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
 - \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mb_generic_settings_xml.
-- \c Point Cloud Library: This 3rd party is optional but could be used if your RGB-D sensor provides the depth data as a point cloud.
-- \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
+- \c Point Cloud Library: This 3rd party is optional but could be used if your RGB-D sensor provides the depth data as a point cloud. Notice that the source code explained in this tutorial doesn't run if you don't have a version of ViSP build with PCL as 3rd party. Note also that you don't need to install PCL if you don't want to consider depth as visual feature.
+- \c Ogre \c 3D: This 3rd party is optional and could be difficult to install on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mb_generic_advanced_wrml  instead of the home-made \ref mb_generic_advanced_cao.
 
 It is recommended to install an optimized BLAS library (for instance <a href="http://www.openblas.net/">OpenBLAS</a>) to get better performance with the dense depth feature approach which requires large matrix operations.
@@ -147,7 +135,7 @@ pointcloud[0] = coordinate;
 pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud;
 \endcode
 
-If you have only a depth map, a 2D array where each element is the distance in meter between the depth sensor frame to the object, you will need to compute the 3D coordinates using the depth sensor intrinsic parameters.
+If you have only a depth map, a 2D array where each element (u, v) is the distance Z in meter between the depth sensor frame to the object, you will need to compute the 3D coordinates using the depth sensor intrinsic parameters. We recall that u relates to the array columns, while v relates to the array rows. 
 For instance, without taking into account the distortion (see also vpPixelMeterConversion::convertPoint), the conversion is (u and v are the pixel coordinates, u0, v0, px, py are the intrinsic parameters):
 
 \f[
@@ -166,7 +154,7 @@ Here an example of a depth map:
 \subsection mb_rgbd_implementation_detail Implementation detail
 
 \note
-This section is similar to the \ref mbdep_stereo_implementation_detail section in \ref tutorial-tracking-mb-stereo-deprecated
+This section is similar to the \ref mb_generic_stereo_implementation_detail section in \ref tutorial-tracking-mb-generic-stereo.
 
 Each tracker is stored in a map, the key corresponding to the name of the camera on which the tracker will process. By default, the camera names are set to:
 -  "Camera" when the tracker is constructed with one camera.
@@ -243,152 +231,93 @@ tracker position in the map in the stereo cameras case.
 
 \section mb_rgbd_example Example code
 
-\subsection mb_rgbd_mono_example_code Monocular model-based tracking
-The following example comes from tutorial-mb-generic-tracker-stereo-mono.cpp and allows to track a tea box modeled in cao format.
+\subsection mb_rgbd_example_code Tracking a cube with RGB-D data
 
-Once built, to choose which tracker to use, run the binary with the following argument:
-\code
-$ ./tutorial-mb-generic-tracker-stereo-mono --name <video name> --tracker <0=egde|1=klt|2=hybrid>
-\endcode
-The config, model, init files should be named according to the video name: teabox.mpg / teabox.cao / teabox.xml / teabox.init
+We provide hereafter an example implemented in tutorial-mb-generic-tracker-rgbd.cpp that shows how to track a cube modeled in cao format using moving-eges, keypoints and dense depth as visual features. The input data (color image, depth map and point clould) were acquired by a RealSense RGB-D camera.
 
 \warning
-ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is needed if you want to use a configuration file, otherwise you will have to configure the tracker in the code.
+ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is needed if you want to use a configuration file, otherwise you will have to configure the tracker in the code. You need also the Point Cloud Library enabled.
 
-\note
-The command line:
+Once built, run the binary:
 \code
-$ ./tutorial-mb-generic-tracker-stereo-mono
+$ ./tutorial-mb-generic-tracker-rgbd
 \endcode
-will run the model-based edge tracker on the teabox sequence.
 
-The source code is the following:
-\include tutorial-mb-generic-tracker-stereo-mono.cpp
+After initialization by 4 user clicks, the tracker is running and produces the following output:
+\image html img-mbt-rgbd-cube.png
 
-\subsection mb_rgbd_mono_explanation_of_the_code Explanation of the code (monocular model-based tracking)
+The source code that is very similar to the one provided in \ref tutorial-tracking-mb-generic-stereo is the following:
+\include tutorial-mb-generic-tracker-rgbd.cpp
 
-The previous source code shows how to use the new vpMbGenericTracker class as a replacement of the classical classes. The procedure to configure the tracker remains the same:
--  construct the tracker
--  configure the tracker by loading a configuration file
--  load a 3D model
--  track on the current image
--  get the current pose and display the model in the image
+\subsection mb_rgbd_explanation_of_the_code Explanation of the code 
+
+The previous source code shows how to use the vpMbGenericTracker class using depth as visual feature. The procedure to configure the tracker remains the same:
+- construct the tracker enabling moving-edges, keypoints and depth as visual feature
+- configure the tracker by loading a configuration file (`cube.xml`) for the color camera and for the depth camera (`cube_depth.xml`). These files contain the camera intrinsic parameters associated to each sensor
+- load the transformation matrix (`depth_M_color.txt`) between the depth sensor and the color camera
+- load the `cube.init` file used to initialize the tracker by a user interaction that consists in clicking on 4 cube corners
+- load a 3D model for the color and for the depth camera. In our case they are the same (`cube.cao`)
+- start a while loop to process all the images from the sequence of data 
+  - track on the current images (color and depth)
+  - get the current pose and display the model in the image
 
 Please refer to the tutorial \ref tutorial-tracking-mb-generic in order to have explanations about the configuration parameters (\ref mb_generic_settings) and how to model an object in a ViSP compatible format (\ref mb_generic_advanced_cao).
 
-The required include is: 
+To use vpMbGenericTracker we include first the corresponding header: 
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Include
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Include
 
-We need a grayscale image for the tracking:
+Then we implemented the function `read_data()` to read the color images `color_image_%04d.jpg`, the depth map `depth_image_%04d.bin` and the point cloud `point_cloud_%04d.bin`.
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Image
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Read data function
+
+We need grayscale images for the tracking, one corresponding to the color image, the other for the depth image:
+
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Images
+
+We need also a point cloud container that will be updated from the depth map
+
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Point cloud
 
 To set the type of the tracker (the first parameter is the number of cameras, the second parameter is the type of the tracker(s)):
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Constructor
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Constructor
 
 To load the configuration file, we use:
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Load config file
-
-Otherwise you can parameter the tracker directly in the code:
-
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Set parameters
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Load config file
 
 To load the 3D object model, we use:
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Load cao
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Load cao
 
 We can also use the following setting that enables the display of the features used during the tracking:
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Set display features
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Set display features
 
-The initial pose is set by clicking on specific points in the image:
+We then set the map of transformations between our two sensors indicating that the color sensor frame is the reference frame. `depth_M_color` matrix is read from the input file `depth_M_color.txt`. 
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Init
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Map transformations
+
+We set also the map of images
+
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Map images
+
+The initial pose is set by clicking on specific points in the image after setting a map of `*.init` files (in our case `cube.init`:
+
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Map init
 
 The tracking is done by:
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Track
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Track
 
 To get the current camera pose:
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Get pose
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Get pose
 
-To display the model with the estimated pose:
+To display the model with the estimated pose and also the object frame:
 
-\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Display
-
-\subsection mb_rgbd_stereo_example_code Stereo model-based tracking
-The following example comes from tutorial-mb-generic-tracker-stereo.cpp and allows to track a tea box modeled in cao format using a stereo rig.
-
-Once built, to choose which tracker to use, run the binary with the following argument:
-\code
-$ ./tutorial-mb-generic-tracker-stereo --name <video name left> <video name right>] --tracker <0=egde|1=klt|2=hybrid> <0=egde|1=klt|2=hybrid>
-\endcode
-The config, model, init files should be named according to the video name: teabox_left.mpg / teabox_left.cao / teabox_left.xml / teabox_left.init, ...
-
-\warning
-ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is **required** in this tutorial code.
-
-\note
-The command line:
-\code
-$ ./tutorial-mb-generic-tracker-stereo
-\endcode
-will run the stereo model-based edge tracker on the stereo teabox sequence.
-
-\subsection mb_rgbd_stereo_explanation_of_the_code Explanation of the code (stereo model-based tracking)
-
-The procedure is almost identical to the monocular case.
-
-The include is:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Include
-
-Two images are needed:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Images
-
-To set the types of the tracker:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Constructor
-
-To load the configuration files, we use:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Load config file
-
-We have to set the transformation matrices between the cameras and the reference camera to be able to compute the control law in a reference camera frame. In the code we consider the left camera with the name "Camera1" as the reference camera.
-For the right camera with the name "Camera2" we have to set the transformation (\f$ ^{c_{right}}{\bf M}_{c_{left}} \f$). This transformation is read from cRightMcLeft.txt file. Since our left and right cameras are not moving, this transformation is constant and does not need to be updated in the tracking loop:
-
-\note For the reference camera, the camera transformation matrix has to be specified as an identity homogeneous matrix (no rotation, no translation). By default the vpHomogeneousMatrix constructor builds an identity matrix.
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Set camera transformation matrix
-
-To load the 3D object model, we use:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Load cao
-
-We can also use the following setting that enables the display of the features used during the tracking:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Set display features
-
-The initial poses are set by clicking on specific points in the image:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Init
-
-The tracking is done by:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Track
-
-To get the current camera poses:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Get pose
-
-To display the model with the estimated poses:
-
-\snippet tutorial-mb-generic-tracker-stereo.cpp Display
+\snippet tutorial-mb-generic-tracker-rgbd.cpp Display
 
 \section mb_rgbd_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-mb-CAO-editor.

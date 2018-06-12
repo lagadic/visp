@@ -1,4 +1,4 @@
-//! \example tutorial-detection-object-mbt2.cpp
+//! \example tutorial-detection-object-mbt2-deprecated.cpp
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>

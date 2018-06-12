@@ -32,7 +32,7 @@ Note also that combining the visual features (moving edges + keypoints) can be a
 Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
 - \c OpenCV: Essential if you want to use the keypoints as visual features that are detected and tracked thanks to the KLT tracker. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
 - \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mb_generic_settings_xml.
-- \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
+- \c Ogre \c 3D: This 3rd party is optional and could be difficult to install on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mb_generic_advanced_wrml  instead of the home-made \ref mb_generic_advanced_cao.
 
 \subsection mb_generic_input Input images data
@@ -60,7 +60,7 @@ To start with the generic markerless model-based tracker we recommend to underst
 
 The tutorial-mb-generic-tracker.cpp example uses the following data as input:
 - a video file; `teabox.mpg` is the default video.
-- a cad model that describes the object to track. In our case the file `teabox.cao` is the default one. See \ref mb_generic_model section to learn how the teabox is modelled and section \ref mb_generic_advanced_cao to learn how to model an other object.
+- a cad model that describes the object to track. In our case the file `teabox.cao` is the default one. See \ref mb_generic_model section to learn how the teabox is modeled and section \ref mb_generic_advanced_cao to learn how to model an other object.
 - a file with extension `*.init` that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named `teabox.init`. The content of this file is detailed in \ref mb_generic_started_src_explained section.
 - an optional image with extension "*.ppm" that may help the user to remember the location of the corresponding 3D points specified in `*.init` file.
 
@@ -71,7 +71,7 @@ The following example that comes from tutorial-mb-generic-tracker.cpp allows to 
 
 \include tutorial-mb-generic-tracker.cpp
 
-\note An extension of the previous getting started example is proposed in tutorial-mb-generic-tracker-full.cpp where advanced functionalities such as reading tracker settings from an XML file or visibility computation are implemented.
+\note An extension of the previous getting started example is proposed in tutorial-mb-generic-tracker-full.cpp where advanced functionality such as reading tracker settings from an XML file or visibility computation are implemented.
 
 \subsection mb_generic_started_exe Running the example
 
@@ -168,9 +168,9 @@ The user has to click in the image on four vertices with their 3D coordinates de
 
 \image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker. 
 
-Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the \c "*.init" file except the extension that sould be \c ".ppm". In our case it will be \c "teabox.ppm".
+Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the \c "*.init" file except the extension that should be \c ".ppm". In our case it will be \c "teabox.ppm".
 
-The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
+The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user initialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
 
 \includelineno teabox.init
 
@@ -398,7 +398,7 @@ With the previous parameters you can set:
 \note Most important parameters are \e min_distance and \e quality.
 
 \subsection mb_generic_settings_cam Camera settings
-Camera settings correspond to the intrinsic camera parameters without distorsion. If images are acquired by a camera that has a large field of view that introduce distorsion, images need to be undistorded before processed by the tracker. The camera parameters are then the one obtained on undistorded images.
+Camera settings correspond to the intrinsic camera parameters without distortion. If images are acquired by a camera that has a large field of view that introduce distortion, images need to be undistorded before processed by the tracker. The camera parameters are then the one obtained on undistorded images.
 
 Camera settings could be set from XML using \<camera\> tag as:
 \code
@@ -455,7 +455,7 @@ The Ogre3D visibility test approach is based on ray tracing. When this test is e
 
 When using the <b>classical version of the ogre visibility test</b> (which is the default behavior when activating this test), <b>only one ray</b> is used per polygon to test its visibility. As shown on the figure above, this only ray is sent from the camera to the center of gravity of the considered polygon. If the ray intersects another polygon before the considered one, it is set as non-visible. Intersections are computed <b>between the ray and the axis-aligned bounding-box (AABB)</b> of each polygon. In the figure above, the ray associated to the first polygon intersects first the AABB of the second polygon so it is considered as occluded. As a result, only the second polygon will be used during the tracking phase. This means that when using the edges, only the blue lines will be taken into account, and when using the keypoints, they will be detected only inside the second polygon (blue area).
 
-Additionnaly, it is also possible to use a statistical approach during the ray tracing phase in order to improve the visibility results.
+Additionally, it is also possible to use a statistical approach during the ray tracing phase in order to improve the visibility results.
 \code
   tracker->setNbRayCastingAttemptsForVisibility(4);
   tracker->setGoodNbRayCastingAttemptsRatio(0.70);
@@ -464,7 +464,7 @@ Additionnaly, it is also possible to use a statistical approach during the ray t
 
 Contrary to the classical version of this test, the <b>statistical approach uses multiple rays per polygons</b> (4 in the example above). Each ray is sent randomly toward the considered polygon. If a specified ratio of rays do not have intersected another polygon before the considered one, the polygon is set as visible. In the example above, three ray on four return the first polygon as visible. As the ratio of good matches is more than 70% (which corresponds to the chosen ratio in this example) the first polygon is considered as visible, as well as the second one. As a result, all visible blue lines will be taken into account during the tracking phase of the edges and the keypoints that are detected inside the green area will be also used. Unfortunately, this approach is a <b>polygon based approach</b> so the dashed blue lines, that are not visible, will also be used during the tracking phase. Plus, keypoints that are detected inside the overlapping area won't be well associated and can disturb the algorithm.
 
-\note Since ViSP 3.0.0 we have introduced vpMbTracker::setOgreShowConfigDialog() method that allows to open the Ogre configuration pannel which can be used to select the renderer. To enable this feature, use:
+\note Since ViSP 3.0.0 we have introduced vpMbTracker::setOgreShowConfigDialog() method that allows to open the Ogre configuration panel which can be used to select the renderer. To enable this feature, use:
 
 \code
   tracker->setOgreShowConfigDialog(true);
@@ -482,7 +482,7 @@ Even if this approach requires a bit <b>more computing power</b>, it is a <b>pix
 
 \subsection mb_generic_settings_clipping Clipping settings
 
-Additionally to the visibility test described above, it is also possible to use clipping. Firstly, the algorithm removes the faces that are not visibles, according to the visibility test used, then it will also remove the faces or parts of the faces that are out of the clipping planes. As illustrated in the following figure, different clipping planes can be enabled.  
+Additionally to the visibility test described above, it is also possible to use clipping. Firstly, the algorithm removes the faces that are not visible, according to the visibility test used, then it will also remove the faces or parts of the faces that are out of the clipping planes. As illustrated in the following figure, different clipping planes can be enabled.  
 
 \image html img-fov.png Camera field of view and clipping planes. 
 
@@ -530,7 +530,7 @@ It is also possible to enable them in the XML file. This is done with the follow
 
 Here for simplicity, the user just has the possibility to either activate all the FOV clipping planes or none of them (fov_clipping requires a boolean).
 
-\note When clipping parameters are not set in the XML file, nor in the code, clipping is not used. Usually clipping is not helpful when the oject to track is simple.  
+\note When clipping parameters are not set in the XML file, nor in the code, clipping is not used. Usually clipping is not helpful when the object to track is simple.  
 
 
 \section mb_generic_advanced Advanced
@@ -701,7 +701,7 @@ V1
 It could be useful to define a complex model instead of using one big model file with all the declaration with different sub-models, each one representing a specific part of the complex model in a specific model file.
 To create a hierarchical model, the first step is to define all the elementary parts and then regroup them.
 
-\image html img-plane-hierarchical-diagram.jpg Example of a possible hierarchical modelling of a plane.
+\image html img-plane-hierarchical-diagram.jpg Example of a possible hierarchical modeling of a plane.
 
 For example, if we want to have a model of a plane, we could represent as elementary parts the left and right wings, the tailplane (which is constituted of some other parts) and a cylinder for the plane fuselage.
 The following lines represent the top model of the plane.
@@ -876,7 +876,7 @@ vpMbEdgeTracker::setUseEdgeTracking("name of the face", boolean);
 
 If the boolean is set to False, the tracking of the edges of the faces that have the given name will be disable. If it is set to True (default behavior), it will be enable. 
 
-As for the edge tracking, the same functionnality is also available when using keypoints via:
+As for the edge tracking, the same functionality is also available when using keypoints via:
 
 \code
 vpMbKltTracker::setUseKltTracking("name of the face", boolean);
@@ -915,7 +915,7 @@ You should be able to obtain these kind of results:
 \endhtmlonly
 
 \section mb_generic_known_issues Known issues
-\subsection mb_generic_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility ckeck
+\subsection mb_generic_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility check
 
 If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win10-msvc12 :
 \code
@@ -935,7 +935,7 @@ C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg
 
-\subsection mb_generic_known_issues_tutorial_with_ogre Model-based trackers tutorials are not working with Ogre visibility ckeck
+\subsection mb_generic_known_issues_tutorial_with_ogre Model-based trackers tutorials are not working with Ogre visibility check
 
 This issue is similar to \ref mb_generic_known_issues_example_with_ogre. It may occur with tutorial-mb-edge-tracker.cpp, tutorial-mb-klt-tracker.cpp and tutorial-mb-hybrid-tracker.cpp. To make working the tutorials:
 
@@ -951,7 +951,7 @@ This issue is similar to \ref mb_generic_known_issues_example_with_ogre. It may 
 
 \section mb_generic_next Next tutorial
 
-You are now ready to see \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured. There is also \ref tutorial-tracking-mb-generic-stereo if you want to know how to extand the tracker to use a stereo camera or \ref tutorial-tracking-mb-generic-rgbd if you want to extend the tracking by using depth as visual features. There is also this other \ref tutorial-tracking-tt.
+You are now ready to see \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured. There is also \ref tutorial-tracking-mb-generic-stereo if you want to know how to extend the tracker to use a stereo camera or \ref tutorial-tracking-mb-generic-rgbd if you want to extend the tracking by using depth as visual features. There is also this other \ref tutorial-tracking-tt.
 
 
 */
