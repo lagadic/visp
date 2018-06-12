@@ -1091,7 +1091,6 @@ if(NOT IOS)
   include(cmake/VISPDetectPython.cmake)
 endif()
 
-
 # ----------------------------------------------------------------------------
 # Summary:
 # ----------------------------------------------------------------------------
@@ -1235,8 +1234,6 @@ if(BUILD_JAVA OR BUILD_visp_java)
   if(NOT ANDROID)
     status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE NO)
   endif()
-  status("    Java wrappers:" HAVE_visp_java                                                            THEN YES ELSE NO)
-  status("    Java tests:"    BUILD_TESTS AND visp_test_java_BINARY_DIR                                 THEN YES ELSE NO)
 endif()
 
 
@@ -1322,6 +1319,13 @@ status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use XML2:"                USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("")
+status("  Java: ")
+status("    Use ant:"                ANT_EXECUTABLE     THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})" ELSE "no")
+if(NOT ANDROID)
+  status("    Use JNI:"              JNI_INCLUDE_DIRS   THEN "${JNI_INCLUDE_DIRS}" ELSE "no")
+endif()
+status("    Java wrappers:"          VISP_HAVE_visp_java THEN "yes" ELSE "no")
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP       THEN "yes" ELSE "no")
