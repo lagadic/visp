@@ -202,6 +202,11 @@ else()
   set(VISP_DLLVERSION "")
 endif()
 
+# --- Python Support ---
+if(NOT IOS)
+  include(cmake/VISPDetectPython.cmake)
+endif()
+
 include_directories(${VISP_INCLUDE_DIR})
 
 #----------------------------------------------------------------------
@@ -1086,11 +1091,6 @@ elseif(NOT DEFINED VISP_VCSVERSION)
   set(VISP_VCSVERSION "unknown")
 endif()
 
-# --- Python Support ---
-if(NOT IOS)
-  include(cmake/VISPDetectPython.cmake)
-endif()
-
 # ----------------------------------------------------------------------------
 # Summary:
 # ----------------------------------------------------------------------------
@@ -1319,6 +1319,8 @@ status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use XML2:"                USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("")
+status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE NO)
 status("")
 status("  Java: ")
 status("    Use ant:"                ANT_EXECUTABLE     THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})" ELSE "no")
