@@ -28,14 +28,14 @@ void createCaoFile(double cubeEdgeSize)
   fileStream << "V1\n";
   fileStream << "# 3D Points\n";
   fileStream << "8                  # Number of points\n";
-  fileStream << cubeEdgeSize / 2 << "    " << cubeEdgeSize / 2 << "    " << 0 << "    # Point 0: (X, Y, Z)\n";
-  fileStream << cubeEdgeSize / 2 << "    " << -cubeEdgeSize / 2 << "    " << 0 << "    # Point 1\n";
-  fileStream << -cubeEdgeSize / 2 << "    " << -cubeEdgeSize / 2 << "    " << 0 << "    # Point 2\n";
-  fileStream << -cubeEdgeSize / 2 << "    " << cubeEdgeSize / 2 << "    " << 0 << "    # Point 3\n";
-  fileStream << -cubeEdgeSize / 2 << "    " << cubeEdgeSize / 2 << "    " << -cubeEdgeSize << "    # Point 4\n";
-  fileStream << -cubeEdgeSize / 2 << "    " << -cubeEdgeSize / 2 << "    " << -cubeEdgeSize << "    # Point 5\n";
-  fileStream << cubeEdgeSize / 2 << "    " << -cubeEdgeSize / 2 << "    " << -cubeEdgeSize << "    # Point 6\n";
-  fileStream << cubeEdgeSize / 2 << "    " << cubeEdgeSize / 2 << "    " << -cubeEdgeSize << "    # Point 7\n";
+  fileStream <<  cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << 0 << "    # Point 0: (X, Y, Z)\n";
+  fileStream <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << 0 << "    # Point 1\n";
+  fileStream << -cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << 0 << "    # Point 2\n";
+  fileStream << -cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << 0 << "    # Point 3\n";
+  fileStream << -cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 4\n";
+  fileStream << -cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 5\n";
+  fileStream <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 6\n";
+  fileStream <<  cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 7\n";
   fileStream << "# 3D Lines\n";
   fileStream << "0                  # Number of lines\n";
   fileStream << "# Faces from 3D lines\n";
@@ -226,11 +226,11 @@ int main(int argc, const char **argv)
     }
 
     // Prepare MBT
-    vpMbGenericTracker *tracker = new vpMbGenericTracker;
+    vpMbGenericTracker tracker;
     if (useTexture)
-      tracker->setTrackerType(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+      tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
     else
-      tracker->setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
+      tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
     // edges
     vpMe me;
     me.setMaskSize(5);
@@ -240,12 +240,12 @@ int main(int argc, const char **argv)
     me.setMu1(0.5);
     me.setMu2(0.5);
     me.setSampleStep(4);
-    tracker->setMovingEdge(me);
+    tracker.setMovingEdge(me);
     // camera calibration params
-    tracker->setCameraParameters(cam);
+    tracker.setCameraParameters(cam);
     // model definition
-    tracker->loadModel("cube.cao");
-    tracker->setDisplayFeatures(true);
+    tracker.loadModel("cube.cao");
+    tracker.setDisplayFeatures(true);
 
     bool run = true;
     vpHomogeneousMatrix cMapril;
@@ -263,7 +263,7 @@ int main(int argc, const char **argv)
 
       // then we init & run the mbt
       // build cube to camera transformation
-      tracker->initFromPose(I, cMapril);
+      tracker.initFromPose(I, cMapril);
 
       // Track model
       vpHomogeneousMatrix cMo;
@@ -279,19 +279,19 @@ int main(int argc, const char **argv)
         vpDisplay::display(I);
 
         // Track
-        tracker->track(I);
-        tracker->getPose(cMo);
+        tracker.track(I);
+        tracker.getPose(cMo);
 
         // Compute error
-        double projectionError = tracker->computeCurrentProjectionError(I, cMo, cam);
+        double projectionError = tracker.computeCurrentProjectionError(I, cMo, cam);
         if (projectionError > 30.0) {
           trackingActive = false;
           std::cout << "Tracking error too high (" << projectionError << "), exiting MBT.\n";
         }
 
         // Display
-        tracker->getCameraParameters(cam);
-        tracker->display(I, cMo, cam, vpColor::red, 2);
+        tracker.getCameraParameters(cam);
+        tracker.display(I, cMo, cam, vpColor::red, 2);
         vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
 
         vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
