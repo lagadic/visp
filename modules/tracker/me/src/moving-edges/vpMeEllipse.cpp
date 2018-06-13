@@ -142,12 +142,13 @@ vpMeEllipse::~vpMeEllipse()
 
   \param I : Image in which the ellipse appears.
   \param doNotTrack : Inherited parameter, not used.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 
 */
-void vpMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack, const vpImage<bool> *mask)
 {
   (void)doNotTrack;
   if (!me) {

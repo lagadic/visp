@@ -140,12 +140,13 @@ vpMeLine::~vpMeLine() { list.clear(); }
 
   \param I : Image in which the line appears.
   \param doNotTrack : Inherited parameter, not used.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 
 */
-void vpMeLine::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMeLine::sample(const vpImage<unsigned char> &I, const bool doNotTrack, const vpImage<bool> *mask)
 {
   (void)doNotTrack;
   if (!me) {

@@ -320,7 +320,7 @@ protected:
 
 private:
   void computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt);
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false, const vpImage<bool> *mask = NULL);
   void reSample(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
   void leastSquare();
   void updateTheta();
