@@ -21,7 +21,7 @@
 #   packages_path (variable): Output of found Python packages path
 #   numpy_include_dirs (variable): Output of found Python Numpy include dirs
 #   numpy_version (variable): Output of found Python Numpy version
-macro(find_python preferred_version min_version library_env include_dir_env
+function(find_python preferred_version min_version library_env include_dir_env
          found executable version_string version_major version_minor
          libs_found libs_version_string libraries library debug_libraries
          debug_library include_path include_dir include_dir2 packages_path
@@ -220,7 +220,7 @@ if(NOT ${found})
   set(${numpy_include_dirs} ${_numpy_include_dirs} CACHE PATH "Path to numpy headers")
   set(${numpy_version} "${_numpy_version}" CACHE INTERNAL "")
 endif()
-endmacro(find_python)
+endfunction(find_python)
 
 find_python(2.7 "${MIN_VER_PYTHON2}" PYTHON2_LIBRARY PYTHON2_INCLUDE_DIR
     PYTHON2INTERP_FOUND PYTHON2_EXECUTABLE PYTHON2_VERSION_STRING
@@ -237,7 +237,6 @@ find_python(3.4 "${MIN_VER_PYTHON3}" PYTHON3_LIBRARY PYTHON3_INCLUDE_DIR
     PYTHON3_DEBUG_LIBRARIES PYTHON3_LIBRARY_DEBUG PYTHON3_INCLUDE_PATH
     PYTHON3_INCLUDE_DIR PYTHON3_INCLUDE_DIR2 PYTHON3_PACKAGES_PATH
     PYTHON3_NUMPY_INCLUDE_DIRS PYTHON3_NUMPY_VERSION)
-
 
 if(PYTHON_DEFAULT_EXECUTABLE)
     set(PYTHON_DEFAULT_AVAILABLE "TRUE")
