@@ -88,6 +88,7 @@ int main(int argc, char **argv)
     trackerTypes[0] = opt_tracker1;
     trackerTypes[1] = opt_tracker2;
     vpMbGenericTracker tracker(trackerTypes);
+    //! [Constructor]
 
 #if !defined(VISP_HAVE_MODULE_KLT)
     if (opt_tracker >= 2) {
@@ -97,7 +98,6 @@ int main(int argc, char **argv)
       return EXIT_SUCCESS;
     }
 #endif
-    //! [Constructor]
 
     //! [Load config file]
     tracker.loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");

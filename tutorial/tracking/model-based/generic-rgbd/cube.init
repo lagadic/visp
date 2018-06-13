@@ -1,0 +1,7 @@
+# Define the coordinates of 3D points used to compute the pose
+# after the user click on their corresponding location in the image 
+4                    # We define 4 3D points
+ 0.000  0.000  0.000 # First 3D point
+ 0.000  0.000  0.042
+-0.042  0.000  0.042
+-0.042  0.042  0.042 # Last 3D point

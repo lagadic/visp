@@ -173,13 +173,13 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 int main(int argc, const char **argv)
 {
-  std::string appveyor_threading = "";
+  std::string use_threading = "true";
   try {
-    appveyor_threading = vpIoTools::getenv("APPVEYOR_THREADING");
+    use_threading = vpIoTools::getenv("APPVEYOR_THREADING");
   } catch (...) {
   }
 
-  if (appveyor_threading == "true") {
+  if (use_threading == "true") {
     try {
       bool opt_click_allowed = true;
       bool opt_display = true;

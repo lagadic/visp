@@ -49,6 +49,8 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/mbt/vpMbEdgeMultiTracker.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 /*!
   Basic constructor
 */
@@ -1240,12 +1242,14 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std:
   should have the same generic name as the init file (ie teabox.ppm). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
+  \param T : optional transformation matrix to transform
+  3D points expressed in the original object frame to the desired object frame.
 
   \exception vpException::ioError : The file specified in \e initFile doesn't
   exist.
 */
 void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile,
-                                     const bool displayHelp)
+                                     const bool displayHelp, const vpHomogeneousMatrix &T)
 {
   if (m_mapOfEdgeTrackers.empty()) {
     throw vpException(vpTrackingException::initializationError, "There is no camera !");
@@ -1255,7 +1259,7 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std:
     // Get the vpMbEdgeTracker object for the reference camera name
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(m_referenceCameraName);
     if (it != m_mapOfEdgeTrackers.end()) {
-      it->second->initClick(I, initFile, displayHelp);
+      it->second->initClick(I, initFile, displayHelp, T);
       it->second->getPose(cMo);
     } else {
       std::stringstream ss;
@@ -1849,12 +1853,15 @@ is not wrl or cao.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
 CAO model files which include other CAO model files.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, const bool verbose)
+void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, const bool verbose,
+                                     const vpHomogeneousMatrix &T)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
-    it->second->loadModel(modelFile, verbose);
+    it->second->loadModel(modelFile, verbose, T);
   }
 
   modelInitialised = true;
@@ -1866,11 +1873,15 @@ void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, const bool ve
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
-  model \param verbose : verbose option to print additional information when
+  model
+  \param verbose : verbose option to print additional information when
   loading CAO model files which include other CAO model files.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                       const vpHomogeneousMatrix &cMo_, const bool verbose)
+                                       const vpHomogeneousMatrix &cMo_, const bool verbose,
+                                       const vpHomogeneousMatrix &T)
 {
   if (m_mapOfEdgeTrackers.size() != 1) {
     std::stringstream ss;
@@ -1880,7 +1891,7 @@ void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I, const st
 
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   if (it_edge != m_mapOfEdgeTrackers.end()) {
-    it_edge->second->reInitModel(I, cad_name, cMo_, verbose);
+    it_edge->second->reInitModel(I, cad_name, cMo_, verbose, T);
 
     // Set reference pose
     it_edge->second->getPose(cMo);
@@ -3104,3 +3115,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
 
   cleanPyramid(m_mapOfPyramidalImages);
 }
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbEdgeMultiTracker.cpp.o) has no symbols
+void dummy_vpMbEdgeMultiTracker(){}
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

@@ -51,6 +51,8 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 #include <visp3/mbt/vpMbKltTracker.h>
@@ -58,11 +60,13 @@
 /*!
   \class vpMbKltMultiTracker
   \ingroup group_mbt_trackers
+  \warning This class is deprecated for user usage. You should rather use the high level
+  vpMbGenericTracker class.
   \warning This class is only available if OpenCV is installed, and used.
 
   \brief Model based stereo (or more) tracker using only KLT.
 
-  The \ref tutorial-tracking-mb-stereo is a good starting point to use this
+  The \ref tutorial-tracking-mb-stereo-deprecated is a good starting point to use this
   class.
 
   The tracker requires the knowledge of the 3D model that could be provided in
@@ -70,7 +74,7 @@
   may also use an xml file used to tune the behavior of the tracker and an
   init file used to compute the pose at the very first image.
 */
-class VISP_EXPORT vpMbKltMultiTracker : public vpMbKltTracker
+class VISP_EXPORT vp_deprecated vpMbKltMultiTracker : public vpMbKltTracker
 {
 protected:
   //! Map of camera transformation matrix between the current camera frame to
@@ -190,7 +194,8 @@ public:
   virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
                          const std::string &displayFile = "");
 
-  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false);
+  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false,
+                         const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                          const std::string &initFile1, const std::string &initFile2, const bool displayHelp = false,
@@ -222,10 +227,12 @@ public:
 
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles);
 
-  virtual void loadModel(const std::string &modelFile, const bool verbose = false);
+  virtual void loadModel(const std::string &modelFile, const bool verbose = false,
+                         const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false);
+                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
                            const vpHomogeneousMatrix &c2Mo, const bool verbose = false,
@@ -348,4 +355,5 @@ protected:
 };
 
 #endif // VISP_HAVE_OPENCV
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 #endif //__vpMbKltMultiTracker_h__

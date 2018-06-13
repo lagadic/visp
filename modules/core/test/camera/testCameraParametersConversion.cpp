@@ -55,6 +55,28 @@
 int main()
 {
   try {
+    {
+      vpCameraParameters cam1, cam2;
+      cam1.initPersProjWithDistortion(700.0, 700.0, 320.0, 240.0, 0.1, 0.1);
+      cam2.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+      if (cam1 == cam2) {
+        std::cerr << "Issue with vpCameraParameters comparison operator." << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      cam2 = cam1;
+      if (cam1 != cam2) {
+        std::cerr << "Issue with vpCameraParameters comparison operator." << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      cam2.computeFov(640u, 480u);
+      if (cam1 == cam2) {
+        std::cerr << "Issue with vpCameraParameters comparison operator." << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
     vpCameraParameters cam;
     double px, py, u0, v0;
     px = 1657.429131;
@@ -104,9 +126,9 @@ int main()
             "u1 - u2 = %.20f\n"
             "v1 - v2 = %.20f\n",
             u1 - u2, v1 - v2);
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

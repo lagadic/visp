@@ -529,6 +529,55 @@ int main(int argc, char *argv[])
             << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 #endif
 
+#ifdef VISP_HAVE_PCL
+  //Pointcloud acquisition using std::vector<vpColVector> + visualization
+  //See issue #355
+  ViewerWorker viewer_colvector2(false, mutex);
+  std::thread viewer_colvector_thread2(&ViewerWorker::run, &viewer_colvector2);
+  cancelled = false;
+
+  rs.close();
+  config.disable_all_streams();
+  config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 60);
+  config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 60);
+  config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 60);
+  rs.open(config);
+
+  time_vector.clear();
+  t_begin = vpTime::measureTimeMs();
+  while (vpTime::measureTimeMs() - t_begin < 10000) {
+    double t = vpTime::measureTimeMs();
+    rs.acquire(NULL, NULL, &pointcloud_colvector, NULL, NULL);
+
+    {
+      std::lock_guard<std::mutex> lock(mutex);
+      pointcloud->width = 640;
+      pointcloud->height = 480;
+      pointcloud->points.resize(pointcloud_colvector.size());
+      for (size_t i = 0; i < pointcloud_colvector.size(); i++) {
+        pointcloud->points[(size_t)i].x = pointcloud_colvector[i][0];
+        pointcloud->points[(size_t)i].y = pointcloud_colvector[i][1];
+        pointcloud->points[(size_t)i].z = pointcloud_colvector[i][2];
+      }
+
+      update_pointcloud = true;
+    }
+
+    time_vector.push_back(vpTime::measureTimeMs() - t);
+    vpTime::wait(t, 30.0);
+  }
+
+  {
+    std::lock_guard<std::mutex> lock(mutex);
+    cancelled = true;
+  }
+
+  viewer_colvector_thread2.join();
+
+  std::cout << "Acquisition4 - Mean time: " << vpMath::getMean(time_vector)
+            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+#endif
+
   return EXIT_SUCCESS;
 }
 

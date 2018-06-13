@@ -62,7 +62,9 @@ vpMbtXmlGenericParser::vpMbtXmlGenericParser(const vpParserType &type)
     m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
     m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2), m_depthNormalSamplingStepY(2),
     //<depth_dense>
-    m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2)
+    m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
+    //<projection_error>
+    m_projectionErrorMe(), m_projectionErrorKernelSize(2) //5x5
 {
   init();
 }
@@ -136,15 +138,11 @@ void vpMbtXmlGenericParser::init()
   nodeMap["sampling_step"] = depth_dense_sampling_step;
   nodeMap["step_X"] = depth_dense_sampling_step_X;
   nodeMap["step_Y"] = depth_dense_sampling_step_Y;
+  //<projection_error>
+  nodeMap["projection_error"] = projection_error;
+  nodeMap["sample_step"] = projection_error_sample_step;
+  nodeMap["kernel_size"] = projection_error_kernel_size;
 }
-
-/*!
-  Parse the file in parameters.
-  This method is deprecated, use parse() instead.
-
-  \param filename : File to parse.
-*/
-void vpMbtXmlGenericParser::parse(const std::string &filename) { vpXmlParser::parse(filename); }
 
 /*!
   Write info to file.
@@ -172,6 +170,7 @@ void vpMbtXmlGenericParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool lod_node = false;
   bool depth_normal_node = false;
   bool depth_dense_node = false;
+  bool projection_error_node = false;
 
   for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
@@ -179,18 +178,24 @@ void vpMbtXmlGenericParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
       if (iter_data != nodeMap.end()) {
         switch (iter_data->second) {
         case camera:
-          read_camera(doc, dataNode);
-          camera_node = true;
+          if (m_parserType != PROJECTION_ERROR_PARSER) {
+            read_camera(doc, dataNode);
+            camera_node = true;
+          }
           break;
 
         case face:
-          read_face(doc, dataNode);
-          face_node = true;
+          if (m_parserType != PROJECTION_ERROR_PARSER) {
+            read_face(doc, dataNode);
+            face_node = true;
+          }
           break;
 
         case lod:
-          read_lod(doc, dataNode);
-          lod_node = true;
+          if (m_parserType != PROJECTION_ERROR_PARSER) {
+            read_lod(doc, dataNode);
+            lod_node = true;
+          }
           break;
 
         case ecm:
@@ -226,6 +231,13 @@ void vpMbtXmlGenericParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
           }
           break;
 
+        case projection_error:
+          if (m_parserType == PROJECTION_ERROR_PARSER) {
+            read_projection_error(doc, dataNode);
+            projection_error_node = true;
+          }
+          break;
+
         default:
           break;
         }
@@ -233,61 +245,69 @@ void vpMbtXmlGenericParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
     }
   }
 
-  if (!camera_node) {
-    std::cout << "camera : u0 : " << m_cam.get_u0() << " (default)" << std::endl;
-    std::cout << "camera : v0 : " << m_cam.get_v0() << " (default)" << std::endl;
-    std::cout << "camera : px : " << m_cam.get_px() << " (default)" << std::endl;
-    std::cout << "camera : py : " << m_cam.get_py() << " (default)" << std::endl;
-  }
+  if (m_parserType == PROJECTION_ERROR_PARSER) {
+    if (!projection_error_node) {
+      std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)" << std::endl;
+      std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize*2+1 << "x"
+                << m_projectionErrorKernelSize*2+1 << " (default)" << std::endl;
+    }
+  } else {
+    if (!camera_node) {
+      std::cout << "camera : u0 : " << m_cam.get_u0() << " (default)" << std::endl;
+      std::cout << "camera : v0 : " << m_cam.get_v0() << " (default)" << std::endl;
+      std::cout << "camera : px : " << m_cam.get_px() << " (default)" << std::endl;
+      std::cout << "camera : py : " << m_cam.get_py() << " (default)" << std::endl;
+    }
 
-  if (!face_node) {
-    std::cout << "face : Angle Appear : " << m_angleAppear << " (default)" << std::endl;
-    std::cout << "face : Angle Disappear : " << m_angleDisappear << " (default)" << std::endl;
-  }
+    if (!face_node) {
+      std::cout << "face : Angle Appear : " << m_angleAppear << " (default)" << std::endl;
+      std::cout << "face : Angle Disappear : " << m_angleDisappear << " (default)" << std::endl;
+    }
 
-  if (!lod_node) {
-    std::cout << "lod : use lod : " << m_useLod << " (default)" << std::endl;
-    std::cout << "lod : min line length threshold : " << m_minLineLengthThreshold << " (default)" << std::endl;
-    std::cout << "lod : min polygon area threshold : " << m_minPolygonAreaThreshold << " (default)" << std::endl;
-  }
+    if (!lod_node) {
+      std::cout << "lod : use lod : " << m_useLod << " (default)" << std::endl;
+      std::cout << "lod : min line length threshold : " << m_minLineLengthThreshold << " (default)" << std::endl;
+      std::cout << "lod : min polygon area threshold : " << m_minPolygonAreaThreshold << " (default)" << std::endl;
+    }
 
-  if (!ecm_node && (m_parserType & EDGE_PARSER)) {
-    std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
-    std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
-    std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
-    std::cout << "ecm : contrast : threshold : " << m_ecm.getThreshold() << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu1 : " << m_ecm.getMu1() << " (default)" << std::endl;
-    std::cout << "ecm : contrast : mu2 : " << m_ecm.getMu2() << " (default)" << std::endl;
-    std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
-  }
+    if (!ecm_node && (m_parserType & EDGE_PARSER)) {
+      std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+      std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+      std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+      std::cout << "ecm : contrast : threshold : " << m_ecm.getThreshold() << " (default)" << std::endl;
+      std::cout << "ecm : contrast : mu1 : " << m_ecm.getMu1() << " (default)" << std::endl;
+      std::cout << "ecm : contrast : mu2 : " << m_ecm.getMu2() << " (default)" << std::endl;
+      std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
+    }
 
-  if (!klt_node && (m_parserType & KLT_PARSER)) {
-    std::cout << "klt : Mask Border : " << m_kltMaskBorder << " (default)" << std::endl;
-    std::cout << "klt : Max Features : " << m_kltMaxFeatures << " (default)" << std::endl;
-    std::cout << "klt : Windows Size : " << m_kltWinSize << " (default)" << std::endl;
-    std::cout << "klt : Quality : " << m_kltQualityValue << " (default)" << std::endl;
-    std::cout << "klt : Min Distance : " << m_kltMinDist << " (default)" << std::endl;
-    std::cout << "klt : Harris Parameter : " << m_kltHarrisParam << " (default)" << std::endl;
-    std::cout << "klt : Block Size : " << m_kltBlockSize << " (default)" << std::endl;
-    std::cout << "klt : Pyramid Levels : " << m_kltPyramidLevels << " (default)" << std::endl;
-  }
+    if (!klt_node && (m_parserType & KLT_PARSER)) {
+      std::cout << "klt : Mask Border : " << m_kltMaskBorder << " (default)" << std::endl;
+      std::cout << "klt : Max Features : " << m_kltMaxFeatures << " (default)" << std::endl;
+      std::cout << "klt : Windows Size : " << m_kltWinSize << " (default)" << std::endl;
+      std::cout << "klt : Quality : " << m_kltQualityValue << " (default)" << std::endl;
+      std::cout << "klt : Min Distance : " << m_kltMinDist << " (default)" << std::endl;
+      std::cout << "klt : Harris Parameter : " << m_kltHarrisParam << " (default)" << std::endl;
+      std::cout << "klt : Block Size : " << m_kltBlockSize << " (default)" << std::endl;
+      std::cout << "klt : Pyramid Levels : " << m_kltPyramidLevels << " (default)" << std::endl;
+    }
 
-  if (!depth_normal_node && (m_parserType & DEPTH_NORMAL_PARSER)) {
-    std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << " (default)"
-              << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
-              << " (default)" << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
-              << " (default)" << std::endl;
-    std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-              << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
-    std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)" << std::endl;
-    std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)" << std::endl;
-  }
+    if (!depth_normal_node && (m_parserType & DEPTH_NORMAL_PARSER)) {
+      std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << " (default)"
+                << std::endl;
+      std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
+                << " (default)" << std::endl;
+      std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
+                << " (default)" << std::endl;
+      std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
+                << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
+      std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)" << std::endl;
+      std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)" << std::endl;
+    }
 
-  if (!depth_dense_node && (m_parserType & DEPTH_DENSE_PARSER)) {
-    std::cout << "depth dense : sampling_step : step_X " << m_depthDenseSamplingStepX << " (default)" << std::endl;
-    std::cout << "depth dense : sampling_step : step_Y " << m_depthDenseSamplingStepY << " (default)" << std::endl;
+    if (!depth_dense_node && (m_parserType & DEPTH_DENSE_PARSER)) {
+      std::cout << "depth dense : sampling_step : step_X " << m_depthDenseSamplingStepX << " (default)" << std::endl;
+      std::cout << "depth dense : sampling_step : step_Y " << m_depthDenseSamplingStepY << " (default)" << std::endl;
+    }
   }
 }
 
@@ -1135,6 +1155,69 @@ void vpMbtXmlGenericParser::read_lod(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "lod : min polygon area threshold : " << m_minPolygonAreaThreshold << " (default)" << std::endl;
   else
     std::cout << "lod : min polygon area threshold : " << m_minPolygonAreaThreshold << std::endl;
+}
+
+void vpMbtXmlGenericParser::read_projection_error(xmlDocPtr doc, xmlNodePtr node)
+{
+  bool step_node = false;
+  bool kernel_size_node = false;
+
+  // current data values.
+  double d_stp = m_projectionErrorMe.getSampleStep();
+  std::string kernel_size_str;
+
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
+    if (dataNode->type == XML_ELEMENT_NODE) {
+      std::map<std::string, int>::const_iterator iter_data = nodeMap.find((char *)dataNode->name);
+      if (iter_data != nodeMap.end()) {
+        switch (iter_data->second) {
+        case projection_error_sample_step:
+          d_stp = xmlReadIntChild(doc, dataNode);
+          step_node = true;
+          break;
+
+        case projection_error_kernel_size:
+          kernel_size_str = xmlReadCharChild(doc, dataNode);
+          kernel_size_node = true;
+          break;
+
+        default:
+          break;
+        }
+      }
+    }
+  }
+
+  m_projectionErrorMe.setSampleStep(d_stp);
+
+  if (kernel_size_str == "3x3") {
+    m_projectionErrorKernelSize = 1;
+  } else if (kernel_size_str == "5x5") {
+    m_projectionErrorKernelSize = 2;
+  } else if (kernel_size_str == "7x7") {
+    m_projectionErrorKernelSize = 3;
+  } else if (kernel_size_str == "9x9") {
+    m_projectionErrorKernelSize = 4;
+  } else if (kernel_size_str == "11x11") {
+    m_projectionErrorKernelSize = 5;
+  } else if (kernel_size_str == "13x13") {
+    m_projectionErrorKernelSize = 6;
+  } else if (kernel_size_str == "15x15") {
+    m_projectionErrorKernelSize = 7;
+  } else {
+    std::cerr << "Unsupported kernel size." << std::endl;
+  }
+
+  if (!step_node)
+    std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)" << std::endl;
+  else
+    std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << std::endl;
+
+  if (!kernel_size_node)
+    std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize*2+1 << "x"
+              << m_projectionErrorKernelSize*2+1 << " (default)" << std::endl;
+  else
+    std::cout << "projection_error : kernel_size : " << kernel_size_str << std::endl;
 }
 
 /*!

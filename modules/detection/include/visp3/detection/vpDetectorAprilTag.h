@@ -185,6 +185,7 @@ public:
   };
 
   enum vpPoseEstimationMethod {
+    HOMOGRAPHY,              /*!< Pose from homography */
     HOMOGRAPHY_VIRTUAL_VS,   /*!< Non linear virtual visual servoing approach
                                 initialized by the homography approach */
     DEMENTHON_VIRTUAL_VS,    /*!< Non linear virtual visual servoing approach
@@ -245,6 +246,10 @@ private:
 inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpPoseEstimationMethod &method)
 {
   switch (method) {
+  case vpDetectorAprilTag::HOMOGRAPHY:
+    os << "HOMOGRAPHY";
+    break;
+
   case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
     os << "HOMOGRAPHY_VIRTUAL_VS";
     break;
@@ -262,6 +267,7 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpPo
     break;
 
   default:
+      os << "ERROR_UNKNOWN_POSE_METHOD!";
     break;
   }
 

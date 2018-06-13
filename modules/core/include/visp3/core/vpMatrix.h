@@ -212,6 +212,7 @@ vpMatrix M(R);
   // [ this A ]^T
   void stack(const vpMatrix &A);
   void stack(const vpRowVector &r);
+  void stack(const vpColVector &c);
   // Stacks columns of a matrix in a vector
   void stackColumns(vpColVector &out);
 
@@ -534,10 +535,12 @@ vpMatrix M(R);
   // Stack two matrices C = [ A B ]^T
   static vpMatrix stack(const vpMatrix &A, const vpMatrix &B);
   static vpMatrix stack(const vpMatrix &A, const vpRowVector &r);
+  static vpMatrix stack(const vpMatrix &A, const vpColVector &c);
 
   // Stack two matrices C = [ A B ]^T
   static void stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
   static void stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C);
+  static void stack(const vpMatrix &A, const vpColVector &c, vpMatrix &C);
   //@}
 
   //---------------------------------
@@ -571,6 +574,13 @@ vpMatrix M(R);
   // Compute Kronecker product matrix
   static vpMatrix kron(const vpMatrix &m1, const vpMatrix &m2);
   //@}
+
+  //-------------------------------------------------
+  // 2D Convolution Static Public Member Functions
+  //-------------------------------------------------
+  /** @name 2D Convolution with Static Public Member Functions  */
+  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode="full");
+  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode="full");
 
   //---------------------------------
   // Covariance computation Static Public Member Functions

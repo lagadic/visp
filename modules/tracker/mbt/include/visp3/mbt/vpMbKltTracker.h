@@ -64,19 +64,21 @@
 /*!
   \class vpMbKltTracker
   \ingroup group_mbt_trackers
+  \warning This class is deprecated for user usage. You should rather use the high level
+  vpMbGenericTracker class.
   \warning This class is only available if OpenCV is installed, and used.
 
   \brief Model based tracker using only KLT.
 
-  The \ref tutorial-tracking-mb is a good starting point to use this class.
+  The \ref tutorial-tracking-mb-deprecated is a good starting point to use this class.
 
   The tracker requires the knowledge of the 3D model that could be provided in
-a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
-also use an xml file used to tune the behavior of the tracker and an init file
-used to compute the pose at the very first image.
+  a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
+  also use an xml file used to tune the behavior of the tracker and an init file
+  used to compute the pose at the very first image.
 
   The following code shows the simplest way to use the tracker. The \ref
-tutorial-tracking-mb is also a good starting point to use this class.
+  tutorial-tracking-mb-deprecated is also a good starting point to use this class.
 
 \code
 #include <visp/vpCameraParameters.h>
@@ -347,12 +349,10 @@ public:
   virtual inline vpColVector getRobustWeights() const { return m_w_klt; }
 
   virtual void loadConfigFile(const std::string &configFile);
-  void loadConfigFile(const char *configFile);
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false);
-  void reInitModel(const vpImage<unsigned char> &I, const char *cad_name, const vpHomogeneousMatrix &cMo,
-                   const bool verbose = false);
+                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 
   void setCameraParameters(const vpCameraParameters &cam);

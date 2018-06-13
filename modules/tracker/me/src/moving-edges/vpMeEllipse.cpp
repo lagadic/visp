@@ -141,13 +141,15 @@ vpMeEllipse::~vpMeEllipse()
   the points with the smallest and the biggest \f$ alpha \f$ angle.
 
   \param I : Image in which the ellipse appears.
+  \param doNotTrack : Inherited parameter, not used.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 
 */
-void vpMeEllipse::sample(const vpImage<unsigned char> &I)
+void vpMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
 {
+  (void)doNotTrack;
   if (!me) {
     throw(vpException(vpException::fatalError, "Moving edges on ellipse tracking not initialized"));
   }

@@ -186,7 +186,7 @@ public:
   // Look for the minumum and the maximum value within the bitmap
   void getMinMaxValue(Type &min, Type &max) const;
   // Look for the minumum and the maximum value within the bitmap and get their location
-  void getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal=NULL, Type *maxVal=NULL) const;
+  void getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal = NULL, Type *maxVal = NULL) const;
 
   /*!
 
@@ -633,9 +633,9 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w, T
 {
   init(h, w);
 
-//  for (unsigned int i = 0; i < npixels; i++)
-//    bitmap[i] = value;
-  std::fill(bitmap, bitmap+npixels, value);
+  //  for (unsigned int i = 0; i < npixels; i++)
+  //    bitmap[i] = value;
+  std::fill(bitmap, bitmap + npixels, value);
 }
 
 /*!
@@ -1030,8 +1030,8 @@ template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max) c
   \sa getMinValue()
   \sa getMinMaxValue()
 */
-template <class Type> void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc,
-                                                       Type *minVal, Type *maxVal) const
+template <class Type>
+void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal, Type *maxVal) const
 {
   if (npixels == 0)
     throw(vpException(vpException::fatalError, "Cannot get location of minimum/maximum "
@@ -1410,6 +1410,8 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
   interpolation. If location is out of bounds, then return the value of the
   closest pixel.
 
+  See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
+
   \param i : Sub-pixel coordinate along the rows.
   \param j : Sub-pixel coordinate along the columns.
 
@@ -1459,6 +1461,8 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
   Gets the value of a sub-pixel with coordinates (i,j) with bilinear
   interpolation. If location is out of bounds, then return value of
   closest pixel.
+
+  See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
 
   \param i : Sub-pixel coordinate along the rows.
   \param j : Sub-pixel coordinate along the columns.
@@ -1548,6 +1552,8 @@ sub-pixel accuracy.
 Gets the value of a sub-pixel with coordinates (i,j) with bilinear
 interpolation. If location is out of bounds, then return the value of the
 closest pixel.
+
+See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
 
 \param ip : Sub-pixel coordinates of a point in the image.
 
@@ -1670,7 +1676,7 @@ template <class Type> inline double vpImage<Type>::getSum() const
     return 0.0;
 
   double res = 0.0;
-  for (unsigned int i = 0; i < height*width; ++i) {
+  for (unsigned int i = 0; i < height * width; ++i) {
     res += static_cast<double>(bitmap[i]);
   }
   return res;

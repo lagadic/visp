@@ -90,9 +90,11 @@ vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
   \param ip2 : Coordinates of the second point.
   \param rho_ : The \f$\rho\f$ parameter
   \param theta_ : The \f$\theta\f$ parameter
+  \param doNoTrack : If true, ME are not tracked
 */
 void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                               double rho_, double theta_)
+                               double rho_, double theta_,
+                               const bool doNoTrack)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
 
@@ -116,10 +118,11 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
     normalizeAngle(delta);
     delta_1 = delta;
 
-    sample(I);
+    sample(I, doNoTrack);
     expecteddensity = (double)list.size();
 
-    vpMeTracker::track(I);
+    if (!doNoTrack)
+      vpMeTracker::track(I);
   } catch (...) {
     throw; // throw the original exception
   }
@@ -131,8 +134,9 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   step between the two extremities of the line.
 
   \param I : Image in which the line appears.
+  \param doNoTrack : If true, ME are not tracked.
 */
-void vpMbtMeLine::sample(const vpImage<unsigned char> &I)
+void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack)
 {
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
@@ -174,7 +178,8 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I)
       vpMeSite pix; //= list.value();
       pix.init((int)is, (int)js, delta, 0, sign);
 
-      pix.track(I, me, false);
+      if (!doNoTrack)
+        pix.track(I, me, false);
 
       pix.setDisplay(selectDisplay);
 
@@ -336,9 +341,17 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   \param _I : Image in which the line appears.
   \param _sumErrorRad : sum of the error per feature.
   \param _nbFeatures : Number of features used to compute _sumErrorRad.
+  \param SobelX : Sobel kernel in X-direction.
+  \param SobelX : Sobel kernel in Y-direction.
+  \param display : If true, display gradient and model orientation.
+  \param length : Length of arrows used to show gradient and model orientation.
+  \param thickness : Thickness of arrows used to show gradient and model orientation.
 */
 void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
-                                         unsigned int &_nbFeatures)
+                                         unsigned int &_nbFeatures,
+                                         const vpMatrix &SobelX, const vpMatrix &SobelY,
+                                         const bool display, const unsigned int length,
+                                         const unsigned int thickness)
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;
@@ -355,97 +368,9 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
   vecLine[1] = sin(deltaNormalized);
   vecLine.normalize();
 
-  //  vpMatrix filterX(3,3);
-  //  filterX[0][0] = -1;
-  //  filterX[1][0] = -2;
-  //  filterX[2][0] = -1;
+  double offset = std::floor(SobelX.getRows() / 2.0f);
 
-  //  filterX[0][1] = 0;
-  //  filterX[1][1] = 0;
-  //  filterX[2][1] = 0;
-
-  //  filterX[0][2] = 1;
-  //  filterX[1][2] = 2;
-  //  filterX[2][2] = 1;
-
-  //  vpMatrix filterY(3,3);
-  //  filterY[0][0] = -1;
-  //  filterY[0][1] = -2;
-  //  filterY[0][2] = -1;
-
-  //  filterY[1][0] = 0;
-  //  filterY[1][1] = 0;
-  //  filterY[1][2] = 0;
-
-  //  filterY[2][0] = 1;
-  //  filterY[2][1] = 2;
-  //  filterY[2][2] = 1;
-
-  vpMatrix filterX(5, 5);
-  filterX[0][0] = -1;
-  filterX[1][0] = -4;
-  filterX[2][0] = -6;
-  filterX[3][0] = -4;
-  filterX[4][0] = -1;
-
-  filterX[0][1] = -2;
-  filterX[1][1] = -8;
-  filterX[2][1] = -12;
-  filterX[3][1] = -8;
-  filterX[4][1] = -2;
-
-  filterX[0][2] = 0;
-  filterX[1][2] = 0;
-  filterX[2][2] = 0;
-  filterX[3][2] = 0;
-  filterX[4][2] = 0;
-
-  filterX[0][3] = 2;
-  filterX[1][3] = 8;
-  filterX[2][3] = 12;
-  filterX[3][3] = 8;
-  filterX[4][3] = 2;
-
-  filterX[0][4] = 1;
-  filterX[1][4] = 4;
-  filterX[2][4] = 6;
-  filterX[3][4] = 4;
-  filterX[4][4] = 1;
-
-  vpMatrix filterY(5, 5);
-  filterY[0][0] = -1;
-  filterY[0][1] = -4;
-  filterY[0][2] = -6;
-  filterY[0][3] = -4;
-  filterY[0][4] = -1;
-
-  filterY[1][0] = -2;
-  filterY[1][1] = -8;
-  filterY[1][2] = -12;
-  filterY[1][3] = -8;
-  filterY[1][4] = -2;
-
-  filterY[2][0] = 0;
-  filterY[2][1] = 0;
-  filterY[2][2] = 0;
-  filterY[2][3] = 0;
-  filterY[2][4] = 0;
-
-  filterY[3][0] = 2;
-  filterY[3][1] = 8;
-  filterY[3][2] = 12;
-  filterY[3][3] = 8;
-  filterY[3][4] = 2;
-
-  filterY[4][0] = 1;
-  filterY[4][1] = 4;
-  filterY[4][2] = 6;
-  filterY[4][3] = 4;
-  filterY[4][4] = 1;
-
-  double offset = std::floor(filterX.getRows() / 2.0f);
-
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
     if (iter != 0 && iter + 1 != list.size()) {
       double gradientX = 0;
       double gradientY = 0;
@@ -453,9 +378,9 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
       double iSite = it->ifloat;
       double jSite = it->jfloat;
 
-      for (unsigned int i = 0; i < filterX.getRows(); i++) {
+      for (unsigned int i = 0; i < SobelX.getRows(); i++) {
         double iImg = iSite + (i - offset);
-        for (unsigned int j = 0; j < filterX.getCols(); j++) {
+        for (unsigned int j = 0; j < SobelX.getCols(); j++) {
           double jImg = jSite + (j - offset);
 
           if (iImg < 0)
@@ -468,13 +393,13 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
           if (jImg > _I.getWidth() - 1)
             jImg = _I.getWidth() - 1;
 
-          gradientX += filterX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+          gradientX += SobelX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
-      for (unsigned int i = 0; i < filterY.getRows(); i++) {
+      for (unsigned int i = 0; i < SobelY.getRows(); i++) {
         double iImg = iSite + (i - offset);
-        for (unsigned int j = 0; j < filterY.getCols(); j++) {
+        for (unsigned int j = 0; j < SobelY.getCols(); j++) {
           double jImg = jSite + (j - offset);
 
           if (iImg < 0)
@@ -487,7 +412,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
           if (jImg > _I.getWidth() - 1)
             jImg = _I.getWidth() - 1;
 
-          gradientY += filterY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+          gradientY += SobelY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
@@ -504,6 +429,21 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
 
       double angle1 = acos(vecLine * vecGrad);
       double angle2 = acos(vecLine * (-vecGrad));
+
+      if (display) {
+        vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(deltaNormalized)),
+                                (int)(it->get_j() + length*sin(deltaNormalized)), vpColor::blue,
+                                length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        if (angle1 < angle2) {
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle)),
+                                  (int)(it->get_j() + length*sin(angle)), vpColor::red,
+                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        } else {
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle+M_PI)),
+                                  (int)(it->get_j() + length*sin(angle+M_PI)), vpColor::red,
+                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        }
+      }
 
       //      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
       //      double angle2 = sqrt(vpMath::sqr(deltaNormalized-

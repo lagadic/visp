@@ -47,6 +47,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) &&                     \
     defined(VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
@@ -368,7 +370,7 @@ int main(int argc, const char **argv)
     opt_display = false;
 #endif
     if (opt_display) {
-#if (defined VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
       display1.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display1.init(I1, 100, 100, "Test tracking (Left)");
@@ -590,8 +592,10 @@ int main(int argc, const char **argv)
         std::cout << "Projection error: " << tracker.getProjectionError() << std::endl << std::endl;
       }
 
-      vpDisplay::flush(I1);
-      vpDisplay::flush(I2);
+      if (opt_display) {
+        vpDisplay::flush(I1);
+        vpDisplay::flush(I2);
+      }
     }
 
     std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;
@@ -622,7 +626,6 @@ int main(int argc, const char **argv)
 }
 
 #else
-
 int main()
 {
   std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run "
@@ -630,5 +633,11 @@ int main()
             << std::endl;
   return EXIT_SUCCESS;
 }
-
 #endif
+#else
+int main()
+{
+  std::cout << "Nothing to run, deprecated example." << std::endl;
+  return 0;
+}
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

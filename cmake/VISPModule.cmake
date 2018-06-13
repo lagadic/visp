@@ -739,7 +739,7 @@ macro(vp_create_global_module_header module)
   set(VISP_HEADER_CONTENT_CONFIGMAKE "#ifndef __${module}_h_\n#define __${module}_h_\n")
 
   # when core, include also vpConfig.h
-  if(__name MATCHES "core")
+  if(__name MATCHES "^core$")
     set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <visp3/${__name}/vpConfig.h>")
   endif()
 
@@ -764,8 +764,6 @@ macro(vp_create_global_module_header module)
     COMPONENT dev
   )
 
-  unset(__h_name_we)
-  unset(__h_name)
   unset(__module_header_dst)
 endmacro()
 
@@ -1049,6 +1047,21 @@ endmacro()
 #   vp_add_config_file(cmake/template/vpConfigMyModule.h.in)
 #   creates include/visp3/my_module/vpConfigMyModule.h
 macro(vp_add_config_file)
+
+  set(MODULE_NAME ${the_module})
+  if(MODULE_NAME MATCHES "^visp_")
+    string(REGEX REPLACE "^visp_" "" MODULE_NAME "${MODULE_NAME}")
+  endif()
+
+  # We need here to do the same job as in vp_create_global_module_header() macro
+  # in order to create include/visp3/${the module}.h file that contains the config file
+  # that has to be created
+  # begin part of vp_create_global_module_header() macro
+  set(__module_header_dst "${VISP_INCLUDE_DIR}/visp3/${the_module}.h")
+
+  set(__header_content "#ifndef __${the_module}_h_\n#define __${the_module}_h_\n")
+  # end of part of vp_create_global_module_header() macro
+
   foreach(d ${ARGN})
     # Removes first "/" if it exists
     string(FIND ${d} "/" FIRST_SEPARATOR_POS)
@@ -1082,13 +1095,13 @@ macro(vp_add_config_file)
       endif()
     endif()
 
-    set(MODULE_NAME ${the_module})
-    if(MODULE_NAME MATCHES "^visp_")
-      string(REGEX REPLACE "^visp_" "" MODULE_NAME "${MODULE_NAME}")
-    endif()
     configure_file("${VISP_MODULE_${the_module}_LOCATION}/${FILENAME_CONFIG}" "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
 
     vp_create_compat_headers("${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
+
+    # begin part of vp_create_global_module_header() macro
+    set(__header_content "${__header_content}\n#include <visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}>")
+    # end part of vp_create_global_module_header() macro
 
     install(FILES "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}"
       DESTINATION ${VISP_INC_INSTALL_PATH}/visp3/${MODULE_NAME}
@@ -1096,6 +1109,35 @@ macro(vp_add_config_file)
     )
 
   endforeach()
+
+  # begin part of vp_create_global_module_header() macro
+  # include the modules we depend on
+  if(VISP_MODULE_${the_module}_REQ_DEPS)
+    foreach(dep ${VISP_MODULE_${the_module}_REQ_DEPS})
+      vp_short_module_name(dep)
+    set(__header_content "${__header_content}\n#include <visp3/visp_${dep}.h>")
+    endforeach()
+  endif()
+
+  foreach(h ${VISP_MODULE_${the_module}_HEADERS})
+    string(REGEX REPLACE "^.*/include/visp3" "visp3" h "${h}")
+    set(__header_content "${__header_content}\n#include <${h}>")
+  endforeach()
+
+  set(__header_content "${__header_content}\n\n#endif\n")
+
+  set(VISP_HEADER_CONTENT_CONFIGMAKE ${__header_content})
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpHeader.h.in" ${__module_header_dst})
+
+#  install(FILES ${__module_header_dst}
+#    DESTINATION ${VISP_INC_INSTALL_PATH}/visp3
+#    COMPONENT dev
+#  )
+
+  unset(__module_header_dst)
+  unset(__header_content)
+  # end part of vp_create_global_module_header() macro
+
 endmacro()
 
 # This is a command to add a list of paths associated to the corresponding module

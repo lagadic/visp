@@ -315,7 +315,10 @@ You can now try to send a linear velocity of 5 cm/s during 4 sec to the robot us
 \section mbot_pi_vs Visual-servoing 
 \subsection mbot_pi_ibvs Image-based visual-servoing
 
-The next step is now to run the image-based visual servoing example implemented in mbot-apriltag-ibvs.cpp. If you build ViSP from source as explained in \ref tutorial-install-raspberry the corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp/`. 
+The next step is now to run the image-based visual servoing example implemented in mbot-apriltag-ibvs.cpp. In this example we use two image moments as visual features and especially
+the normalized gravity center along \f$ x \f$ axis implemented in vpFeatureMomentGravityCenterNormalized and the normalized area implemented in vpFeatureMomentAreaNormalized. The first one allows to control the orientation of the robot to maintain the target on a vertical line in the middle of the image, while the second feature allows to regulate the distance wrt the target. These features are interesting here since they don't require any 3D information to compute the error vector or the interaction matrix.
+
+If you build ViSP from source as explained in \ref tutorial-install-raspberry the corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp/`. 
 
     $ cd /home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp
     $ ./mbot-apriltag-ibvs
@@ -327,8 +330,9 @@ Since using this option could introduce a lag due to the network connection, we 
 
 \subsection mbot_pi_2Dhalf_vs 2D-half visual-servoing
 
-We provide also a 2D half visual servoing example implemented in mbot-apriltag-2D-half-vs.cpp. The corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp/`. This example uses two image moments as visual features and especially
-the normalized gravity center along \f$ x \f$ axis implemented in vpFeatureMomentGravityCenterNormalized and the normalized area implemented in vpFeatureMomentAreaNormalized. The first one allows to control the orientation of the robot to maintain the target on a vertical line in the middle of the image, while the second feature allows to regulate the distance wrt the target.
+We provide also a 2D half visual servoing example implemented in mbot-apriltag-2D-half-vs.cpp. This example uses a mix between 2D and 3D visual features and especially the 2D \f$ x \f$ coordinate of the target cog implemented in vpFeaturePoint and the depth feature implemented in vpFeatureDepth. The first one allows to control the orientation of the robot to maintain the target on a vertical line in the middle of the image, while the second feature allows to regulate the distance Z wrt the target.
+
+The corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp/`.
 
     $ cd /home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp
     $ ./mbot-apriltag-2D-half-vs
@@ -340,7 +344,9 @@ Since using this option could introduce a lag due to the network connection, we 
 
 \subsection mbot_pi_pbvs Position-based visual-servoing
 
-We provide also a position-based visual servoing example implemented in mbot-apriltag-pbvs.cpp. The corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp/`. This example uses a mix between 2D and 3D visual features and especially the 2D \f$ x \f$ coordinate of the target cog implemented in vpFeaturePoint and the depth feature implemented in vpFeatureDepth. The first one allows to control the orientation of the robot to maintain the target on a vertical line in the middle of the image, while the second feature allows to regulate the distance Z wrt the target.
+We provide also a position-based visual servoing example implemented in mbot-apriltag-pbvs.cpp. Here we use pure 3D visual features implemented in vpFeaturePoint3D and especially X and Z values obtained from the pose of the tag. 
+
+The corresponding binary is available in `/home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp/`. 
 
     $ cd /home/pi/visp-ws/visp-build/tutorial/robot/mbot/raspberry/visp
     $ ./mbot-apriltag-pbvs

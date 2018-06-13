@@ -894,23 +894,6 @@ void vpMbKltTracker::track(const vpImage<unsigned char> &I)
 }
 
 /*!
-  Load the xml configuration file. An example of such a file is provided in
-  loadConfigFile(const char*) documentation. From the configuration file
-  initialize the parameters corresponding to the objects: KLT, camera.
-
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
-  \param configFile : full name of the xml file.
-
-  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
-*/
-void vpMbKltTracker::loadConfigFile(const std::string &configFile)
-{
-  vpMbKltTracker::loadConfigFile(configFile.c_str());
-}
-
-/*!
   Load the xml configuration file.
   From the configuration file initialize the parameters corresponding to the
 objects: KLT, camera.
@@ -955,10 +938,13 @@ not found or wrong format for the data).
 </conf>
   \endcode
 
-  \sa loadConfigFile(const std::string&), vpXmlParser::cleanup()
+  \sa vpXmlParser::cleanup()
 */
-void vpMbKltTracker::loadConfigFile(const char *configFile)
+void vpMbKltTracker::loadConfigFile(const std::string &configFile)
 {
+  // Load projection error config
+  vpMbTracker::loadConfigFile(configFile);
+
 #ifdef VISP_HAVE_XML2
   vpMbtKltXmlParser xmlp;
 
@@ -975,9 +961,9 @@ void vpMbKltTracker::loadConfigFile(const char *configFile)
 
   try {
     std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
-    xmlp.parse(configFile);
+    xmlp.parse(configFile.c_str());
   } catch (...) {
-    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile);
+    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile.c_str());
     throw vpException(vpException::ioError, "problem to parse configuration file.");
   }
 
@@ -1021,7 +1007,7 @@ void vpMbKltTracker::loadConfigFile(const char *configFile)
   }
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile);
+  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
 #endif
 }
 
@@ -1279,26 +1265,15 @@ void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
-  model \param verbose : verbose option to print additional information when
+  model
+  \param verbose : verbose option to print additional information when
   loading CAO model files which include other CAO model files.
+  \param T : optional transformation matrix (currently only for .cao) to transform
+  3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                 const vpHomogeneousMatrix &cMo_, const bool verbose)
-{
-  reInitModel(I, cad_name.c_str(), cMo_, verbose);
-}
-
-/*!
-  Re-initialize the model used by the tracker.
-
-  \param I : The image containing the object to initialize.
-  \param cad_name : Path to the file containing the 3D model description.
-  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
-  model \param verbose : verbose option to print additional information when
-  loading CAO model files which include other CAO model files.
-*/
-void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const char *cad_name, const vpHomogeneousMatrix &cMo_,
-                                 const bool verbose)
+                                 const vpHomogeneousMatrix &cMo_, const bool verbose,
+                                 const vpHomogeneousMatrix &T)
 {
   this->cMo.eye();
 
@@ -1342,7 +1317,7 @@ void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const char *ca
 
   faces.reset();
 
-  loadModel(cad_name, verbose);
+  loadModel(cad_name, verbose, T);
   initFromPose(I, cMo_);
 }
 

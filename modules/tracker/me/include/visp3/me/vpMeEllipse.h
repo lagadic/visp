@@ -113,7 +113,7 @@ public:
   /*!
     \return Expected number of moving edges to track along the ellipse.
    */
-  int getExpectedDensity() { return (int)expecteddensity; };
+  int getExpectedDensity() { return (int)expecteddensity; }
   void track(const vpImage<unsigned char> &Im);
 
   void initTracking(const vpImage<unsigned char> &I);
@@ -320,7 +320,7 @@ protected:
 
 private:
   void computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt);
-  void sample(const vpImage<unsigned char> &image);
+  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
   void leastSquare();
   void updateTheta();
