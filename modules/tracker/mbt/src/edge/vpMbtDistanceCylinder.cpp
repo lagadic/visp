@@ -181,7 +181,7 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack, const vpImage<bool> *mask)
+bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack, vpImage<bool> *mask)
 {
   if (isvisible) {
     // Perspective projection
@@ -212,8 +212,10 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
 
     // Create the moving edges containers
     meline1 = new vpMbtMeLine;
+    meline1->setMask(*mask);
     meline1->setMe(me);
     meline2 = new vpMbtMeLine;
+    meline1->setMask(*mask);
     meline2->setMe(me);
 
     //    meline->setDisplay(vpMeSite::RANGE_RESULT);
@@ -296,13 +298,13 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
       theta2 = M_PI / 2.0 - theta2;
 
     try {
-      meline1->initTracking(I, ip11, ip12, rho1, theta1, doNotTrack, mask);
+      meline1->initTracking(I, ip11, ip12, rho1, theta1, doNotTrack);
     } catch (...) {
       // vpTRACE("the line can't be initialized");
       return false;
     }
     try {
-      meline2->initTracking(I, ip21, ip22, rho2, theta2, doNotTrack, mask);
+      meline2->initTracking(I, ip21, ip22, rho2, theta2, doNotTrack);
     } catch (...) {
       // vpTRACE("the line can't be initialized");
       return false;
@@ -347,9 +349,8 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
+void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (isvisible) {
     // Perspective projection
@@ -456,13 +457,13 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
 
     try {
       // meline1->updateParameters(I,rho1,theta1);
-      meline1->updateParameters(I, ip11, ip12, rho1, theta1, mask);
+      meline1->updateParameters(I, ip11, ip12, rho1, theta1);
     } catch (...) {
       Reinit = true;
     }
     try {
       // meline2->updateParameters(I,rho2,theta2);
-      meline2->updateParameters(I, ip21, ip22, rho2, theta2, mask);
+      meline2->updateParameters(I, ip21, ip22, rho2, theta2);
     } catch (...) {
       Reinit = true;
     }
@@ -484,7 +485,7 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
   \param cMo : The pose of the camera.
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
+void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, vpImage<bool> *mask)
 {
   if (meline1 != NULL)
     delete meline1;

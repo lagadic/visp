@@ -163,6 +163,8 @@ vpMbTracker::vpMbTracker()
 
   vpImageFilter::getSobelKernelX(m_SobelX.data, m_projectionErrorKernelSize);
   vpImageFilter::getSobelKernelY(m_SobelY.data, m_projectionErrorKernelSize);
+
+  m_mask = NULL;
 }
 
 /*!

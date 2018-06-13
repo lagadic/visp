@@ -111,23 +111,23 @@ public:
   inline double get_c() const { return this->c; }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
-                    double theta, const bool doNoTrack, const vpImage<bool> *mask = NULL);
+                    double theta, const bool doNoTrack);
 
-  void track(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
+  void track(const vpImage<unsigned char> &I);
 
-  void updateParameters(const vpImage<unsigned char> &I, double rho, double theta, const vpImage<bool> *mask = NULL);
+  void updateParameters(const vpImage<unsigned char> &I, double rho, double theta);
   void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
-                        double theta, const vpImage<bool> *mask = NULL);
+                        double theta);
 
 private:
   void bubbleSortI();
   void bubbleSortJ();
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack = false, const vpImage<bool> *mask = NULL);
+  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack = false);
   void seekExtremities(const vpImage<unsigned char> &I);
   void setExtremities();
   void suppressPoints(const vpImage<unsigned char> &I);
-  void reSample(const vpImage<unsigned char> &image, const vpImage<bool> *mask = NULL);
-  void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpImage<bool> *mask = NULL);
+  void reSample(const vpImage<unsigned char> &image);
+  void reSample(const vpImage<unsigned char> &image, const vpImagePoint &ip1, const vpImagePoint &ip2);
   void updateDelta();
 };
 

@@ -76,6 +76,8 @@ protected:
   vpMe *me;
   unsigned int init_range;
   int nGoodElement;
+  //! Mask used to disable tracking on a part of image
+  vpImage<bool> *m_mask;
 
 protected:
   vpMeSite::vpMeSiteDisplayType selectDisplay;
@@ -90,7 +92,7 @@ public:
   void initTracking(const vpImage<unsigned char> &I);
 
   //! Track sampled pixels.
-  void track(const vpImage<unsigned char> &I, const vpImage<bool> *mask = NULL);
+  void track(const vpImage<unsigned char> &I);
 
   unsigned int numberOfSignal();
   unsigned int totalNumberOfSignal();
@@ -111,7 +113,7 @@ public:
   void reset();
 
   //! Sample pixels at a given interval
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false, const vpImage<bool> *mask = NULL) = 0;
+  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false) = 0;
 
   /*!
     Set the initial range.
@@ -126,6 +128,13 @@ public:
     \return Value of init_range.
   */
   inline unsigned int getInitRange() { return init_range; }
+
+  /*!
+    Set the mask
+
+    \param mask : Mask.
+  */
+  virtual void setMask(vpImage<bool> &mask) { m_mask = &mask; }
 
   /*!
     Set the moving edges initialisation parameters

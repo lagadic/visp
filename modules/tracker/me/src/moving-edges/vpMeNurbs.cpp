@@ -968,12 +968,11 @@ void vpMeNurbs::supressNearPoints()
   Track the edge in the image I.
 
   \param I : Image in which the edge appears.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMeNurbs::track(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
+void vpMeNurbs::track(const vpImage<unsigned char> &I)
 {
   // Tracking des vpMeSites
-  vpMeTracker::track(I, mask);
+  vpMeTracker::track(I);
 
   // Suppress points which are too close to each other
   supressNearPoints();

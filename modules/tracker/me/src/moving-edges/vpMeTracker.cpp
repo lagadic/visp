@@ -57,6 +57,7 @@ void vpMeTracker::init()
   vpTracker::init();
   p.resize(2);
   selectDisplay = vpMeSite::NONE;
+  m_mask = NULL;
 }
 
 vpMeTracker::vpMeTracker()
@@ -237,13 +238,12 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
   Track moving-edges.
 
   \param I : Image.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 
 */
-void vpMeTracker::track(const vpImage<unsigned char> &I, const vpImage<bool> *mask)
+void vpMeTracker::track(const vpImage<unsigned char> &I)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
@@ -273,7 +273,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I, const vpImage<bool> *ma
         s.setState(vpMeSite::THRESHOLD);
       }
       
-      if (insideMask(mask, s.i, s.j)) {
+      if (insideMask(m_mask, s.i, s.j)) {
         if (s.getState() != vpMeSite::THRESHOLD) {
           nGoodElement++;
 

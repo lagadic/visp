@@ -1505,7 +1505,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
       if (l->meline.empty()) {
         l->initMovingEdge(I, cMo, doNotTrack, m_mask);
       }
-      l->trackMovingEdge(I, m_mask);
+      l->trackMovingEdge(I);
     }
   }
 
@@ -1544,7 +1544,7 @@ void vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
        ++it) {
     if ((*it)->isTracked()) {
       l = *it;
-      l->updateMovingEdge(I, cMo, m_mask);
+      l->updateMovingEdge(I, cMo);
       if (l->nbFeatureTotal == 0 && l->isVisible()) {
         l->Reinit = true;
       }
@@ -1556,7 +1556,7 @@ void vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
        it != cylinders[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       cy = *it;
-      cy->updateMovingEdge(I, cMo, m_mask);
+      cy->updateMovingEdge(I, cMo);
       if ((cy->nbFeaturel1 == 0 || cy->nbFeaturel2 == 0) && cy->isVisible()) {
         cy->Reinit = true;
       }
@@ -1568,7 +1568,7 @@ void vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
        it != circles[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       ci = *it;
-      ci->updateMovingEdge(I, cMo, m_mask);
+      ci->updateMovingEdge(I, cMo);
       if (ci->nbFeature == 0 && ci->isVisible()) {
         ci->Reinit = true;
       }
