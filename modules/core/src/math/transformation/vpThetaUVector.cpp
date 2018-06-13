@@ -153,28 +153,39 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
     data[2] = (R[1][0] - R[0][1]) / (2 * sinc);
   } else /* theta near PI */
   {
-    if ((R[0][0] - c) < std::numeric_limits<double>::epsilon())
-      data[0] = 0.;
+    double x = 0;
+    if ( (R[0][0]-c) > std::numeric_limits<double>::epsilon() )
+      x = sqrt((R[0][0]-c)/(1-c));
+
+    double y = 0;
+    if ( (R[1][1]-c) > std::numeric_limits<double>::epsilon() )
+      y = sqrt((R[1][1]-c)/(1-c));
+
+    double z = 0;
+    if ( (R[2][2]-c) > std::numeric_limits<double>::epsilon() )
+      z = sqrt((R[2][2]-c)/(1-c));
+
+    if(x > y && x > z)
+    {
+        if ((R[2][1]-R[1][2]) < 0) x = -x;
+        if(vpMath::sign(x)*vpMath::sign(y) != vpMath::sign(R[0][1]+R[1][0])) y = -y;
+        if(vpMath::sign(x)*vpMath::sign(z) != vpMath::sign(R[0][2]+R[2][0])) z = -z;
+    }
+    else if(y > z)
+    {
+        if((R[0][2]-R[2][0]) < 0) y = -y;
+        if(vpMath::sign(y)*vpMath::sign(x) != vpMath::sign(R[1][0]+R[0][1])) x = -x;
+        if(vpMath::sign(y)*vpMath::sign(z) != vpMath::sign(R[1][2]+R[2][1])) z = -z;
+    }
     else
-      data[0] = theta * (sqrt((R[0][0] - c) / (1 - c)));
-    if ((R[2][1] - R[1][2]) < 0)
-      data[0] = -data[0];
-
-    if ((R[1][1] - c) < std::numeric_limits<double>::epsilon())
-      data[1] = 0.;
-    else
-      data[1] = theta * (sqrt((R[1][1] - c) / (1 - c)));
-
-    if ((R[0][2] - R[2][0]) < 0)
-      data[1] = -data[1];
-
-    if ((R[2][2] - c) < std::numeric_limits<double>::epsilon())
-      data[2] = 0.;
-    else
-      data[2] = theta * (sqrt((R[2][2] - c) / (1 - c)));
-
-    if ((R[1][0] - R[0][1]) < 0)
-      data[2] = -data[2];
+    {
+        if((R[1][0]-R[0][1]) < 0) z = -z;
+        if(vpMath::sign(z)*vpMath::sign(x) != vpMath::sign(R[2][0]+R[0][2])) x = -x;
+        if(vpMath::sign(z)*vpMath::sign(y) != vpMath::sign(R[2][1]+R[1][2])) y = -y;
+    }
+    data[0] = theta*x;
+    data[1] = theta*y;
+    data[2] = theta*z;
   }
 
   return *this;
