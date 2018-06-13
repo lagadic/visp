@@ -3,11 +3,8 @@ if(VISP_INITIAL_PASS)
   add_subdirectory(generator)
 endif()
 
-# TODO: Add support for detecting python. VISPDetectPython.cmake ain't working. Will see later
-set(PYTHON_DEFAULT_AVAILABLE "True")
-
 if(APPLE_FRAMEWORK OR WINRT OR NOT PYTHON_DEFAULT_AVAILABLE OR NOT ANT_EXECUTABLE OR NOT (JNI_FOUND OR (ANDROID AND ANDROID_NATIVE_API_LEVEL GREATER 7)))
-  __vp_module_turn_off(java)
+  vp_module_disable(java)
 endif()
 
 # Java wrapping support for each module is specified in its <mod-name>/CMakeLists.txt file
