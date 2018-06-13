@@ -725,8 +725,6 @@ if(ANDROID)
     endif()
 endif()
 
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Output directory for applications")
-
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
@@ -991,12 +989,6 @@ if(BUILD_PACKAGE)
   include(cmake/CPackConfig.cmake)
 endif(BUILD_PACKAGE)
 
-# ----------------------------------------------------------------------------
-#  Path for build/platform -specific headers
-# ----------------------------------------------------------------------------
-vp_update(VISP_CONFIG_FILE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/" CACHE PATH "Where to create the platform-dependant cvconfig.h")
-vp_include_directories(${VISP_CONFIG_FILE_INCLUDE_DIR})
-
 #----------------------------------------------------------------------
 # Generate the package dependent visp-config shell script for projects which
 # are not using CMake:
@@ -1227,6 +1219,9 @@ if(WIN32)
 endif()
 
 # ========================== java ==========================
+status("")
+status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE NO)
+
 if(BUILD_JAVA OR BUILD_visp_java)
   status("")
   status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                                      ELSE "")
@@ -1319,15 +1314,6 @@ status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use XML2:"                USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
-status("")
-status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE NO)
-status("")
-status("  Java: ")
-status("    Use ant:"                ANT_EXECUTABLE     THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})" ELSE "no")
-if(NOT ANDROID)
-  status("    Use JNI:"              JNI_INCLUDE_DIRS   THEN "${JNI_INCLUDE_DIRS}" ELSE "no")
-endif()
-status("    Java wrappers:"          VISP_HAVE_visp_java THEN "yes" ELSE "no")
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP       THEN "yes" ELSE "no")
