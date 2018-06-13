@@ -6,7 +6,7 @@ find_package(VISP REQUIRED visp_core visp_sensor visp_gui visp_vision visp_mbt v
 
 # set the list of source files
 set(tutorial_cpp
-  tutorial-mb-generic-tracker-aprilTag-init.cpp
+  tutorial-mb-generic-tracker-apriltag-init.cpp
 )
 
 foreach(cpp ${tutorial_cpp})
