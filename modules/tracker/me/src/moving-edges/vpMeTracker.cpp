@@ -57,11 +57,10 @@ void vpMeTracker::init()
   vpTracker::init();
   p.resize(2);
   selectDisplay = vpMeSite::NONE;
-  m_mask = NULL;
 }
 
 vpMeTracker::vpMeTracker()
-  : list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+  : list(), me(NULL), init_range(1), m_mask(NULL), nGoodElement(0), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -71,7 +70,7 @@ vpMeTracker::vpMeTracker()
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
-  : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+  : vpTracker(meTracker), list(), me(NULL), init_range(1), m_mask(NULL), nGoodElement(0), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -138,7 +137,7 @@ unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size
   \param i : Sub-pixel coordinate along the rows.
   \param j : Sub-pixel coordinate along the columns.
 */
-int vpMeTracker::insideMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
+int vpMeTracker::inMask(const vpImage<bool> *mask, const unsigned int &i, const unsigned int &j)
 {
   return (mask == NULL || mask->getValue(i, j));
 }
@@ -273,7 +272,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
         s.setState(vpMeSite::THRESHOLD);
       }
       
-      if (insideMask(m_mask, s.i, s.j)) {
+      if (vpMeTracker::inMask(m_mask, s.i, s.j)) {
         if (s.getState() != vpMeSite::THRESHOLD) {
           nGoodElement++;
 

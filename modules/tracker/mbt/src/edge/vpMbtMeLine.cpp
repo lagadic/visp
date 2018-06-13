@@ -174,7 +174,7 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack)
   for (int i = 0; i <= vpMath::round(n_sample); i++) {
     // If point is in the image, add to the sample list
     if (!outOfImage(vpMath::round(is), vpMath::round(js), (int)(me->getRange() + me->getMaskSize() + 1), (int)rows,
-      (int)cols) && insideMask(m_mask, vpMath::round(is), vpMath::round(js))) {
+      (int)cols) && vpMeTracker::inMask(m_mask, vpMath::round(is), vpMath::round(js))) {
       vpMeSite pix; //= list.value();
       pix.init((int)is, (int)js, delta, 0, sign);
 

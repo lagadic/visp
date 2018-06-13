@@ -231,7 +231,6 @@ public:
   virtual ~vpMbTracker();
 
   /** @name Inherited functionalities from vpMbTracker */
-  //@{
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
                                                const vpCameraParameters &_cam);
 
@@ -718,11 +717,9 @@ public:
     \param I : The current image.
   */
   virtual void track(const vpImage<unsigned char> &I) = 0;
-  //@}
 
 protected:
   /** @name Protected Member Functions Inherited from vpMbTracker */
-  //@{
   void addPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
                   const bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
                   const double minLineLengthThreshold = 50.0);
@@ -875,7 +872,6 @@ protected:
   inline std::string &trim(std::string &s) const { return ltrim(rtrim(s)); }
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
-  //@}
 };
 
 #endif
