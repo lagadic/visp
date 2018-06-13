@@ -177,7 +177,7 @@ if(NOT ${found})
           execute_process(COMMAND "${_executable}" -c "import os; os.environ['DISTUTILS_USE_SDK']='1'; import numpy.distutils; print(os.pathsep.join(numpy.distutils.misc_util.get_numpy_include_dirs()))"
                           RESULT_VARIABLE _numpy_process
                           OUTPUT_VARIABLE _numpy_include_dirs
-                          OUTPUT_STRIP_TRAILING_WHITESPACE)
+                          OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_QUIET ERROR_QUIET)
 
           if(NOT _numpy_process EQUAL 0)
               unset(_numpy_include_dirs)
