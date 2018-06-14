@@ -951,7 +951,8 @@ This issue is similar to \ref mb_generic_known_issues_example_with_ogre. It may 
 
 \section mb_generic_next Next tutorial
 
-You are now ready to see \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured. There is also \ref tutorial-tracking-mb-generic-stereo if you want to know how to extend the tracker to use a stereo camera or \ref tutorial-tracking-mb-generic-rgbd if you want to extend the tracking by using depth as visual features. There is also this other \ref tutorial-tracking-tt.
+If you have a webcam, you are now ready to experiment the generic model-based tracker on a cube that has an AprilTag on one face following \ref tutorial-tracking-mb-generic-apriltag-init.
 
+There is also \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured. There is also \ref tutorial-tracking-mb-generic-stereo if you want to know how to extend the tracker to use a stereo camera or \ref tutorial-tracking-mb-generic-rgbd if you want to extend the tracking by using depth as visual features. There is also this other \ref tutorial-tracking-tt.
 
 */

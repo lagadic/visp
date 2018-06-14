@@ -1,4 +1,4 @@
-//! \example tutorial-mb-generic-tracker-aprilTag-init.cpp
+//! \example tutorial-mb-generic-tracker-apriltag-init.cpp
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -6,12 +6,8 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#ifdef VISP_HAVE_XML2
 #include <visp3/core/vpXmlParserCamera.h>
-#endif
-#ifdef VISP_HAVE_V4L2
 #include <visp3/sensor/vpV4l2Grabber.h>
-#endif
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpUniRand.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
@@ -19,7 +15,13 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/vision/vpCalibration.h>
 
-// creates a cube.cao file in your current directory
+typedef enum {
+  state_detection,
+  state_tracking,
+  state_quit
+} state_t;
+
+// Creates a cube.cao file in your current directory
 // cubeEdgeSize : size of cube edges in meters
 void createCaoFile(double cubeEdgeSize)
 {
@@ -55,53 +57,56 @@ void createCaoFile(double cubeEdgeSize)
   fileStream.close();
 }
 
-vpHomogeneousMatrix detectAprilTag(vpDetectorAprilTag::vpAprilTagFamily tagFamily, float quad_decimate,
-                                   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod, int nThreads,
-#if defined(VISP_HAVE_V4L2)
-                                   vpV4l2Grabber &g,
-#elif defined(VISP_HAVE_OPENCV)
-                                   cv::VideoCapture &cap,
-#endif
-                                   vpImage<unsigned char> &I, double tagSize, vpCameraParameters cam)
+state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &detector,
+                       double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
-
-  // Define aprilTag options
-  vpDetectorAprilTag detector(tagFamily);
-  detector.setAprilTagQuadDecimate(quad_decimate);
-  detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
-  detector.setAprilTagNbThreads(nThreads);
-
   std::vector<vpHomogeneousMatrix> cMo_vec;
-  cv::Mat frame;
 
-  bool runTagDetection = true;
-  while (runTagDetection) {
-#if defined(VISP_HAVE_V4L2)
-    g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
-    cap >> frame;
-    vpImageConvert::convert(frame, I);
-#endif
+  // Detection
+  bool ret = detector.detect(I, tagSize, cam, cMo_vec);
 
-    vpDisplay::display(I);
-
-    // detection
-    detector.detect(I, tagSize, cam, cMo_vec);
-
-    // Display camera pose
-    for (size_t i = 0; i < cMo_vec.size(); i++) {
-      vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
-    }
-
-    vpDisplay::displayText(I, 20, 20, "Waiting tag detection.", vpColor::red);
-    vpDisplay::flush(I);
-
-    if (detector.getNbObjects() > 0) { // if tag detected, we pick the first one
-      runTagDetection = false;
-    }
+  // Display camera pose
+  for (size_t i = 0; i < cMo_vec.size(); i++) {
+    vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
   }
-  std::cout << "AprilTag detected, camera to aprilTag transform :\n" << cMo_vec.at(0) << std::endl;
-  return cMo_vec.at(0);
+
+  vpDisplay::displayText(I, 40, 20, "State: waiting tag detection", vpColor::red);
+
+  if (ret && detector.getNbObjects() > 0) { // if tag detected, we pick the first one
+    cMo = cMo_vec[0];
+    return state_tracking;
+  }
+
+  return state_detection;
+}
+
+state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpHomogeneousMatrix &cMo)
+{
+  vpCameraParameters cam;
+  tracker.getCameraParameters(cam);
+
+  // Track the object
+  try {
+    tracker.track(I);
+  }
+  catch (...) {
+    return state_detection;
+  }
+
+  tracker.getPose(cMo);
+
+  // Detect tracking error
+  double projectionError = tracker.computeCurrentProjectionError(I, cMo, cam);
+  if (projectionError > 30.0) {
+    return state_detection;
+  }
+
+  // Display
+  tracker.display(I, cMo, cam, vpColor::red, 2);
+  vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
+  vpDisplay::displayText(I, 40, 20, "State: tracking in progress", vpColor::red);
+
+  return state_tracking;
 }
 
 int main(int argc, const char **argv)
@@ -112,15 +117,14 @@ int main(int argc, const char **argv)
   //! [Macro defined]
 
   int opt_device = 0;
-  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-  double tagSize = 0.08;
-  float quad_decimate = 1.0;
-  int nThreads = 1;
-  std::string intrinsic_file = "";
-  std::string camera_name = "";
-  double cubeEdgeSize = 0.125; // 12.5cm by default
-  bool useTexture = false;
+  vpDetectorAprilTag::vpAprilTagFamily opt_tag_family = vpDetectorAprilTag::TAG_36h11;
+  double opt_tag_size = 0.08;
+  float opt_quad_decimate = 1.0;
+  int opt_nthreads = 1;
+  std::string opt_intrinsic_file = "";
+  std::string opt_camera_name = "";
+  double opt_cube_size = 0.125; // 12.5cm by default
+  bool opt_use_texture = false;
 
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   bool display_off = true;
@@ -129,57 +133,48 @@ int main(int argc, const char **argv)
 #endif
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
-      poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
-      tagSize = atof(argv[i + 1]);
+    if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+      opt_tag_size = atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       opt_device = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
-      quad_decimate = (float)atof(argv[i + 1]);
+      opt_quad_decimate = (float)atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
-      nThreads = atoi(argv[i + 1]);
+      opt_nthreads = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      intrinsic_file = std::string(argv[i + 1]);
+      opt_intrinsic_file = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
-      camera_name = std::string(argv[i + 1]);
+      opt_camera_name = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
     } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
-      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--cube_edge_size" && i + 1 < argc) {
-      cubeEdgeSize = atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--texture" && i + 1 < argc) {
-      useTexture = true;
+      opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
+      opt_cube_size = atof(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--texture") {
+      opt_use_texture = true;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0] << " [--input <camera input>] [--tag_size <tag_size in m>]"
-                                           " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-                                           " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-                                           " [--pose_method <method> (0: HOMOGRAPHY, 1: "
-                                           "HOMOGRAPHY_VIRTUAL_VS,"
-                                           " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS,"
-                                           " 4: BEST_RESIDUAL_VIRTUAL_VS)]"
-                                           " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: "
-                                           "TAG_36ARTOOLKIT,"
-                                           " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]";
+      std::cout << "Usage: " << argv[0] << " [--input <camera input>] [--tag_size <size in m>]"
+                                           " [--quad_decimate <decimation>] [--nthreads <nb>]"
+                                           " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
+                                           " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
+                                           " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off]";
 #endif
-      std::cout << " [--cube_edge_size <cube_edge_size in m>]" << std::endl;
-      std::cout << " [--texture]" << std::endl;
-      std::cout << " [--help]" << std::endl;
+      std::cout << " [--cube_size <size in m>] [--texture] [--help]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
 
-  createCaoFile(cubeEdgeSize);
+  createCaoFile(opt_cube_size);
 
   vpCameraParameters cam;
   bool camIsInit = false;
 #ifdef VISP_HAVE_XML2
   vpXmlParserCamera parser;
-  if (!intrinsic_file.empty() && !camera_name.empty()) {
-    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+  if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
+    parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
     camIsInit = true;
   }
 #endif
@@ -187,15 +182,17 @@ int main(int argc, const char **argv)
   try {
     vpImage<unsigned char> I;
 
-//! [Construct grabber]
+    //! [Construct grabber]
 #if defined(VISP_HAVE_V4L2)
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
+    std::cout << "Use device " << device.str() << " (v4l2 grabber)" << std::endl;
     g.setDevice(device.str());
     g.setScale(1);
     g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
+    std::cout << "Use device " << opt_device << " (OpenCV grabber)" << std::endl;
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -209,9 +206,15 @@ int main(int argc, const char **argv)
       cam.initPersProjWithoutDistortion(600, 600, I.getWidth() / 2., I.getHeight() / 2.);
     }
 
-    std::cout << "cam:\n" << cam << std::endl;
-    std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
-    std::cout << "tagFamily: " << tagFamily << std::endl;
+    std::cout << "Cube size: " << opt_cube_size << std::endl;
+    std::cout << "AprilTag size: " << opt_tag_size << std::endl;
+    std::cout << "AprilTag family: " << opt_tag_family << std::endl;
+    std::cout << "Camera parameters:\n" << cam << std::endl;
+    std::cout << "Detection: " << std::endl;
+    std::cout << "  Quad decimate: " << opt_quad_decimate << std::endl;
+    std::cout << "  Threads number: " << opt_nthreads << std::endl;
+    std::cout << "Tracker: " << std::endl;
+    std::cout << "  Use texture: " << opt_use_texture << std::endl;
 
     // Construct display
     vpDisplay *d = NULL;
@@ -225,9 +228,14 @@ int main(int argc, const char **argv)
 #endif
     }
 
+    // Initialize AprilTag detector
+    vpDetectorAprilTag detector(opt_tag_family);
+    detector.setAprilTagQuadDecimate(opt_quad_decimate);
+    detector.setAprilTagNbThreads(opt_nthreads);
+
     // Prepare MBT
     vpMbGenericTracker tracker;
-    if (useTexture)
+    if (opt_use_texture)
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
     else
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
@@ -235,72 +243,70 @@ int main(int argc, const char **argv)
     vpMe me;
     me.setMaskSize(5);
     me.setMaskNumber(180);
-    me.setRange(8);
+    me.setRange(12);
     me.setThreshold(10000);
     me.setMu1(0.5);
     me.setMu2(0.5);
     me.setSampleStep(4);
     tracker.setMovingEdge(me);
+
+#ifdef VISP_HAVE_MODULE_KLT
+    if (opt_use_texture) {
+      vpKltOpencv klt_settings;
+      klt_settings.setMaxFeatures(300);
+      klt_settings.setWindowSize(5);
+      klt_settings.setQuality(0.015);
+      klt_settings.setMinDistance(8);
+      klt_settings.setHarrisFreeParameter(0.01);
+      klt_settings.setBlockSize(3);
+      klt_settings.setPyramidLevels(3);
+      tracker.setKltOpencv(klt_settings);
+      tracker.setKltMaskBorder(5);
+    }
+#endif
+
     // camera calibration params
     tracker.setCameraParameters(cam);
     // model definition
     tracker.loadModel("cube.cao");
     tracker.setDisplayFeatures(true);
+    tracker.setAngleAppear(vpMath::rad(70));
+    tracker.setAngleDisappear(vpMath::rad(80));
 
-    bool run = true;
-    vpHomogeneousMatrix cMapril;
+    vpHomogeneousMatrix cMo;
+    state_t state = state_detection;
+
     // wait for a tag detection
-    while (run) {
+    while (state != state_quit) {
 
-      // first we wait for an aprilTag detection
-      cMapril = detectAprilTag(tagFamily, quad_decimate, poseEstimationMethod, nThreads,
 #if defined(VISP_HAVE_V4L2)
-                               g,
+      g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-                               cap,
-#endif
-                               I, tagSize, cam);
-
-      // then we init & run the mbt
-      // build cube to camera transformation
-      tracker.initFromPose(I, cMapril);
-
-      // Track model
-      vpHomogeneousMatrix cMo;
-      bool trackingActive = true;
-      while (trackingActive) {
-#if defined(VISP_HAVE_V4L2)
-        g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
-        cap >> frame;
-        vpImageConvert::convert(frame, I);
+      cap >> frame;
+      vpImageConvert::convert(frame, I);
 #endif
 
-        vpDisplay::display(I);
+      vpDisplay::display(I);
 
-        // Track
-        tracker.track(I);
-        tracker.getPose(cMo);
+      if (state == state_detection) {
+        state = detectAprilTag(I, detector, opt_tag_size, cam, cMo);
 
-        // Compute error
-        double projectionError = tracker.computeCurrentProjectionError(I, cMo, cam);
-        if (projectionError > 30.0) {
-          trackingActive = false;
-          std::cout << "Tracking error too high (" << projectionError << "), exiting MBT.\n";
-        }
-
-        // Display
-        tracker.getCameraParameters(cam);
-        tracker.display(I, cMo, cam, vpColor::red, 2);
-        vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
-
-        vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
-        vpDisplay::flush(I);
-        if (vpDisplay::getClick(I, false)) { // exit
-          run = false;
-          trackingActive = false;
+        // Initialize the tracker with the result of the detection
+        if (state == state_tracking) {
+          tracker.initFromPose(I, cMo);
         }
       }
+
+      if (state == state_tracking) {
+        state = track(I, tracker, cMo);
+      }
+
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+      if (vpDisplay::getClick(I, false)) { // exit
+        state = state_quit;
+      }
+
+      vpDisplay::flush(I);
     }
 
     if (!display_off)

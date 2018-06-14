@@ -40,37 +40,46 @@ The following example that comes from tutorial-mb-generic-tracker-apriltag-init.
 Once build, to see the options that are available in the previous source code, just run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --help
-Usage: ./tutorial-mb-generic-tracker-apriltag-init [--input <camera input>] [--tag_size <tag_size in m>] [--quad_decimate <quad_decimate>] [--nthreads <nb>] [--intrinsic <intrinsic file>] [--camera_name <camera name>] [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, 4: BEST_RESIDUAL_VIRTUAL_VS)] [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)] [--display_off] [--cube_edge_size <cube_edge_size in m>]
- [--texture]
- [--help]
+Usage: ./tutorial-mb-generic-tracker-apriltag-init [--input <camera input>] [--tag_size <size in m>] [--quad_decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera_name <camera name>] [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display_off] [--cube_size <size in m>] [--texture] [--help]
 \endcode
+
+To test the tracker on a 12.5 by 12.5 cm square cure that has an AprilTag of size 8 by 8 cm, to enable moving-edges and keypoints as visual features run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-init --texture
+\endcode
+To test the tracker on a 12.5 by 12.5 cm square cure that has an AprilTag of size 8 by 8 cm, with only the moving-edges as visual features run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-init
+\endcode
+
+
 By default, the following settings are used: <br>
-- Default camera, id=0. To specify another one, run:
+- Default camera has id=0. To specify another one, run for example:
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-init --input <camera_id>
+$ ./tutorial-mb-generic-tracker-apriltag-init --input 1
 \endcode
-- The AprilTag size is 8cm by 8cm. To change the tag size, use: 
+- The default size of the cube is 0.125 meter square. To change to 0.20 meter square, run: 
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-init --tag_size <tag_size in m>
+$ ./tutorial-mb-generic-tracker-apriltag-init --cube_edge_size 0.20
 \endcode
-- The AprilTag detection of quads is 1.0 by default, you can chage it with: 
+- The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use: 
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-init --quad_decimate <quad_decimate>
+$ ./tutorial-mb-generic-tracker-apriltag-init --tag_size 0.10
 \endcode
-- The AprilTag default number of threads used is 1. To set another value, run: 
+- The AprilTag detection of quads is set to 1.0 by default. You can chage it to 2 to speed up the detection using: 
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-init --nthreads <nb>
+$ ./tutorial-mb-generic-tracker-apriltag-init --quad_decimate 2
 \endcode
-- The AprilTag default pose estimation method is vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS. To set another value, run: 
+- The AprilTag default number of threads used is 1. To increase the number of threads used during detection to 2, run: 
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-init --pose_method <method>
+$ ./tutorial-mb-generic-tracker-apriltag-init --nthreads 2
 \endcode
 - The AprilTag default tag family is 36h11. To set another value, run: 
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --tag_family <family>
 \endcode
 Note the id corresponding to each family : 0=TAG_36h11, 1=TAG_36h10, 2=TAG_36ARTOOLKIT, 3=TAG_25h9, 4=TAG_25h7, 5=TAG_16h5)
-- The default camera parameters used are: px=600, py=600, and principal point is set at image center. To specify your own parameters, you can provide for example a "camera.xml" parameters file with a camera named "myCam" in it, by running:
+- The default camera parameters used are: px=600, py=600, and principal point is set at image center. To specify your own parameters, you can provide for example a `camera.xml` parameters file with a camera named `myCam in it, by running:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --intrinsic camera.xml --camera_name myCam
 \endcode
@@ -78,12 +87,15 @@ $ ./tutorial-mb-generic-tracker-apriltag-init --intrinsic camera.xml --camera_na
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --display_off
 \endcode
-- The default edge of the cube is 12.5 cm. To change that, run: 
-\code
-$ ./tutorial-mb-generic-tracker-apriltag-init --cube_edge_size <cube_edge_size in m>
-\endcode
+
 
 \subsection mb_generic_apriltag_result Expected result of the tutorial
 If the tag was sucessfully detected and the tracker correctly initialized, the output of the tutorial would look like this:
 \image html img-cube-apriltag-tracking-result.png Cube tracking result
+
+\section mb_generic_apriltag_next Next tutorial
+
+You can followo \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured.
+
+There is also \ref tutorial-tracking-mb-generic-stereo if you want to know how to extend the tracker to use a stereo camera or \ref tutorial-tracking-mb-generic-rgbd if you want to extend the tracking by using depth as visual features. There is also this other \ref tutorial-tracking-tt.
 */
