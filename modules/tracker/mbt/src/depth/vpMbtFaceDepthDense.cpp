@@ -213,7 +213,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                          : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, j, i) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
+        if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
           totalPoints++;
 
           if (checkSSE2) {
@@ -336,7 +336,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                          : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, j, i) && point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           if (checkSSE2) {
