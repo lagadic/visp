@@ -95,6 +95,7 @@ public:
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
+                              , const vpImage<bool> *mask = NULL
   );
 #endif
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
@@ -104,6 +105,7 @@ public:
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
+                              , const vpImage<bool> *mask = NULL
   );
 
   void computeInteractionMatrixAndResidu(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &error);
