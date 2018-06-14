@@ -57,6 +57,7 @@
 
   This class allows to track an object or a scene given its 3D model. A lot of
   videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
+
   \htmlonly
   <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
   frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
