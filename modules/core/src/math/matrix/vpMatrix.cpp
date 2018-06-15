@@ -5255,10 +5255,22 @@ vpMatrix vpMatrix::stackMatrices(const vpMatrix &A, const vpRowVector &B) { retu
 void vpMatrix::stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &C) { vpMatrix::stack(A, B, C); }
 
 /*!
-  \deprecated This method is deprecated. You should use getRow().
+  \deprecated This method is deprecated. You should rather use getRow().
+  More precisely, the following code:
+  \code
+  vpMatrix L;
+  unsigned int row_index = ...;
+  ... = L.row(row_index);
+  \endcode
+  should be replaced with:
+  \code
+  ... = L.getRow(row_index - 1);
+  \endcode
 
-  Return the i-th row of the matrix.
-  \warning notice row(1) is the 0th row.
+  \warning Notice row(1) is the 0th row.
+  This function returns the i-th row of the matrix.
+  \param i : Index of the row to extract noting that row index start at 1 to get the first row.
+
 */
 vpRowVector vpMatrix::row(const unsigned int i)
 {
@@ -5270,11 +5282,21 @@ vpRowVector vpMatrix::row(const unsigned int i)
 }
 
 /*!
-  \deprecated This method is deprecated. You should use getCol().
+  \deprecated This method is deprecated. You should rather use getCol().
+  More precisely, the following code:
+  \code
+  vpMatrix L;
+  unsigned int column_index = ...;
+  ... = L.column(column_index);
+  \endcode
+  should be replaced with:
+  \code
+  ... = L.getCol(column_index - 1);
+  \endcode
 
-  Return the j-th columns of the matrix.
-  \warning notice column(1) is the 0-th column.
-  \param j : Index of the column to extract.
+  \warning Notice column(1) is the 0-th column.
+  This function returns the j-th columns of the matrix.
+  \param j : Index of the column to extract noting that column index start at 1 to get the first column.
 */
 vpColVector vpMatrix::column(const unsigned int j)
 {
