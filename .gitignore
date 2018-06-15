@@ -5,3 +5,5 @@ CMakeCache.txt
 CMakeLists.txt.user*
 *.pyc
 
+
+modules/java/\.idea/
