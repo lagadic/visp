@@ -1,4 +1,4 @@
-#include <jni.h>  // later add common.h
+#include <jni.h>
 #include "visp3/core/vpMatrix.h"
 
 extern "C" { 
