@@ -25,6 +25,10 @@ vp_add_library(${the_module} ${__type}
 )
 add_dependencies(${the_module} gen_visp_java_source)
 
+# TODO: Some strange error. VISP_JAVA_BINDINGS_DIR is null at this line of execution. I dont know why its happening 
+# Currently using a temporary workaround  
+set(VISP_JAVA_BINDINGS_DIR "${VISP_BINARY_DIR}/modules/java_bindings_generator") 
+ 
 vp_target_include_directories(${the_module} "${CMAKE_CURRENT_SOURCE_DIR}/../generator/src/cpp")
 vp_target_include_directories(${the_module} "${VISP_JAVA_BINDINGS_DIR}/gen/cpp")
 vp_target_include_modules(${the_module} ${VISP_MODULE_${the_module}_DEPS})
