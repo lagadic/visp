@@ -3,16 +3,6 @@ project(${the_module})
 glob_more_specific_sources(H "${CMAKE_CURRENT_SOURCE_DIR}/../generator/src" handwritten_h_sources)
 glob_more_specific_sources(CPP "${CMAKE_CURRENT_SOURCE_DIR}/../generator/src" handwritten_cpp_sources)
 
-# grab C++ files from misc/java
-foreach(m ${VISP_MODULES_BUILD})
-  if (";${VISP_MODULE_${m}_WRAPPERS};" MATCHES ";java;" AND HAVE_${m})
-    set(module_java_dir "${VISP_MODULE_${m}_LOCATION}/misc/java")
-    include_directories("${module_java_dir}/src/cpp")
-    file(GLOB _result "${module_java_dir}/src/cpp/*.h" "${module_java_dir}/src/cpp/*.hpp" "${module_java_dir}/src/cpp/*.cpp")
-    list(APPEND handwritten_cpp_sources ${_result})
-  endif()
-endforeach()
-
 set(__type MODULE)
 if(BUILD_FAT_JAVA_LIB)
   set(__type SHARED) # samples link to libvisp_java
