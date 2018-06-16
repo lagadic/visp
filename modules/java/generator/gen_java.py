@@ -1018,39 +1018,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
                 ci.jn_code.write( "\n".join(ManualFuncs[ci.name][func]["jn_code"]) )
                 ci.cpp_code.write( "\n".join(ManualFuncs[ci.name][func]["cpp_code"]) )
 
-        if ci.name != self.Module or ci.base:
-            # finalize()
-            ci.j_code.write(
-"""
-    @Override
-    protected void finalize() throws Throwable {
-        delete(nativeObj);
-    }
-""" )
-
-            ci.jn_code.write(
-"""
-    // native support for java finalize()
-    private static native void delete(long nativeObj);
-""" )
-
-            # native support for java finalize()
-            ci.cpp_code.write( \
-"""
-//
-//  native support for java finalize()
-//  static void %(cls)s::delete( __int64 self )
-//
-JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete(JNIEnv*, jclass, jlong);
-
-JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete
-  (JNIEnv*, jclass, jlong self)
-{
-    delete (%(cls)s*) self;
-}
-
-""" % {"module" : module.replace('_', '_1'), "cls" : self.smartWrap(ci, ci.fullName(isCPP=True)), "j_cls" : ci.jname.replace('_', '_1')}
-            )
+        # INFO: Removed support for java's delete function for now
 
     def getClass(self, classname):
         return self.classes[classname or self.Module]
