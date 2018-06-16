@@ -562,7 +562,6 @@ class JavaWrapperGenerator(object):
                     self.add_func(decl)
 
         logging.info("\n\n===== Generating... =====")
-        moduleCppCode = StringIO()
         package_path = os.path.join(output_java_path, module)
         mkdir_p(package_path)
         for ci in self.classes.values():
@@ -571,13 +570,18 @@ class JavaWrapperGenerator(object):
                 continue
             ci.initCodeStreams(self.Module)
             self.gen_class(ci)
+
+            # INFO: Generate <Class>.java file
             classJavaCode = ci.generateJavaCode(self.module, self.Module)
             self.save("%s/%s/%s.java" % (output_java_path, module, ci.jname), classJavaCode)
-            moduleCppCode.write(ci.generateCppCode())
+
+            # INFO: Generate <Class>.cpp JNI file
+            cpp_file = os.path.abspath(os.path.join(output_jni_path, ci.jname + ".cpp"))
+            self.cpp_files.append(cpp_file)
+            self.save(cpp_file, T_CPP_MODULE.substitute(m=module, M=module.upper(), code=ci.generateCppCode(),
+                                                        includes="\n".join(includes)))
             ci.cleanupCodeStreams()
-        cpp_file = os.path.abspath(os.path.join(output_jni_path, module + ".inl.hpp"))
-        self.cpp_files.append(cpp_file)
-        self.save(cpp_file, T_CPP_MODULE.substitute(m = module, M = module.upper(), code = moduleCppCode.getvalue(), includes = "\n".join(includes)))
+
         self.save(os.path.join(output_path, module+".txt"), self.makeReport())
 
     def makeReport(self):
