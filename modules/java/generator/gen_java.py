@@ -145,6 +145,12 @@ class GeneralInfo():
         name = name[name.find(" ")+1:].strip() # remove struct/class/const prefix
         spaceName = ""
         localName = name # <classes>.<name>
+
+        if name.count('.') == 1 and len(namespaces) == 1:
+            namespaces = list(namespaces)
+            pieces = name.split(".")
+            return namespaces[0], ".".join(namespaces[:-1]), camelCase(pieces[0]), pieces[1]
+
         for namespace in sorted(namespaces, key=len, reverse=True):
             if name.startswith(namespace + "."):
                 spaceName = namespace
