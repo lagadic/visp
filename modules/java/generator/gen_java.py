@@ -496,7 +496,8 @@ class JavaWrapperGenerator(object):
         # INFO: In open-cv 4, hdr_parser is imported to gen2.py which is imported to gen_java
         parser = hdr_parser.CppHeaderParser()
 
-        self.add_class( ['class ' + self.Module, '', [], []] ) # [ 'class/struct cname', ':bases', [modlist] [props] ]
+        # INFO: Donno why open-cv was adding module in list of classes
+        # self.add_class( ['class ' + self.Module, '', [], []] ) # [ 'class/struct cname', ':bases', [modlist] [props] ]
 
         # scan the headers and build more descriptive maps of classes, consts, functions
         includes = [];
