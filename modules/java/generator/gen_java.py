@@ -145,6 +145,12 @@ class GeneralInfo():
         name = name[name.find(" ")+1:].strip() # remove struct/class/const prefix
         spaceName = ""
         localName = name # <classes>.<name>
+
+        if name.count('.') == 1 and len(namespaces) == 1:
+            namespaces = list(namespaces)
+            pieces = name.split(".")
+            return namespaces[0], ".".join(namespaces[:-1]), camelCase(pieces[0]), pieces[1]
+
         for namespace in sorted(namespaces, key=len, reverse=True):
             if name.startswith(namespace + "."):
                 spaceName = namespace
@@ -490,7 +496,8 @@ class JavaWrapperGenerator(object):
         # INFO: In open-cv 4, hdr_parser is imported to gen2.py which is imported to gen_java
         parser = hdr_parser.CppHeaderParser()
 
-        self.add_class( ['class ' + self.Module, '', [], []] ) # [ 'class/struct cname', ':bases', [modlist] [props] ]
+        # INFO: Donno why open-cv was adding module in list of classes
+        # self.add_class( ['class ' + self.Module, '', [], []] ) # [ 'class/struct cname', ':bases', [modlist] [props] ]
 
         # scan the headers and build more descriptive maps of classes, consts, functions
         includes = [];
@@ -555,7 +562,6 @@ class JavaWrapperGenerator(object):
                     self.add_func(decl)
 
         logging.info("\n\n===== Generating... =====")
-        moduleCppCode = StringIO()
         package_path = os.path.join(output_java_path, module)
         mkdir_p(package_path)
         for ci in self.classes.values():
@@ -564,13 +570,18 @@ class JavaWrapperGenerator(object):
                 continue
             ci.initCodeStreams(self.Module)
             self.gen_class(ci)
+
+            # INFO: Generate <Class>.java file
             classJavaCode = ci.generateJavaCode(self.module, self.Module)
             self.save("%s/%s/%s.java" % (output_java_path, module, ci.jname), classJavaCode)
-            moduleCppCode.write(ci.generateCppCode())
+
+            # INFO: Generate <Class>.cpp JNI file
+            cpp_file = os.path.abspath(os.path.join(output_jni_path, ci.jname + ".cpp"))
+            self.cpp_files.append(cpp_file)
+            self.save(cpp_file, T_CPP_MODULE.substitute(m=module, M=module.upper(), code=ci.generateCppCode(),
+                                                        includes="\n".join(includes)))
             ci.cleanupCodeStreams()
-        cpp_file = os.path.abspath(os.path.join(output_jni_path, module + ".inl.hpp"))
-        self.cpp_files.append(cpp_file)
-        self.save(cpp_file, T_CPP_MODULE.substitute(m = module, M = module.upper(), code = moduleCppCode.getvalue(), includes = "\n".join(includes)))
+
         self.save(os.path.join(output_path, module+".txt"), self.makeReport())
 
     def makeReport(self):
@@ -944,18 +955,9 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname ($argst);
 JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
   ($args)
 {
-    static const char method_name[] = "$module::$fname()";
-    try {
-        LOGD("%s", method_name);
         $prologue
         $retval$cvname( $cvargs );
         $epilogue$ret
-    } catch(const std::exception &e) {
-        throwJavaException(env, &e, method_name);
-    } catch (...) {
-        throwJavaException(env, 0, method_name);
-    }
-    $default
 }
 
 
@@ -1027,39 +1029,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
                 ci.jn_code.write( "\n".join(ManualFuncs[ci.name][func]["jn_code"]) )
                 ci.cpp_code.write( "\n".join(ManualFuncs[ci.name][func]["cpp_code"]) )
 
-        if ci.name != self.Module or ci.base:
-            # finalize()
-            ci.j_code.write(
-"""
-    @Override
-    protected void finalize() throws Throwable {
-        delete(nativeObj);
-    }
-""" )
-
-            ci.jn_code.write(
-"""
-    // native support for java finalize()
-    private static native void delete(long nativeObj);
-""" )
-
-            # native support for java finalize()
-            ci.cpp_code.write( \
-"""
-//
-//  native support for java finalize()
-//  static void %(cls)s::delete( __int64 self )
-//
-JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete(JNIEnv*, jclass, jlong);
-
-JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete
-  (JNIEnv*, jclass, jlong self)
-{
-    delete (%(cls)s*) self;
-}
-
-""" % {"module" : module.replace('_', '_1'), "cls" : self.smartWrap(ci, ci.fullName(isCPP=True)), "j_cls" : ci.jname.replace('_', '_1')}
-            )
+        # INFO: Removed support for java's delete function for now
 
     def getClass(self, classname):
         return self.classes[classname or self.Module]

@@ -56,7 +56,7 @@ if(USE_PNG)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-vp_add_module(io visp_core WRAP java)
+vp_add_module(io visp_core)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})

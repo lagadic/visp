@@ -11,7 +11,7 @@ endif()
 # Below we add those modules which need to be built(compile their C++ code) for the visp_java module
 # Understand that above 2 lines are totally different.
 set(the_description "The java bindings")
-vp_add_module(java BINDINGS visp_core visp_imgproc PRIVATE_REQUIRED visp_java_bindings_generator)
+vp_add_module(java BINDINGS visp_core PRIVATE_REQUIRED visp_java_bindings_generator)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/common.cmake)
 
