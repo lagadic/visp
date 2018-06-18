@@ -5,14 +5,28 @@
 
 \section mb_generic_apriltag_intro Introduction
 
-ViSP allows the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (based on AprilTag detection in this tutorial) when a calibrated camera is used \cite Comport06b. The model tracked in this exaple is a cube made of cardboard (12.5 cm edges) with an AprilTag sticked on a face (find in <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">[this archive]</a> a set of tags you can use). Of course, you will need a webcam to run the tutorial on your computer.
+As stated in \ref tutorial-tracking-mb-generic ViSP allows the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization when a calibrated camera is used \cite Comport06b.
 
-Here is an image of the cube we used in the lab: <br>
-\image html img-cube-apriltag.jpg Model used for the tutorial 
+In this tutorial we will focus on the tracking of a cube observed by an USB camera and provide the \ref mb_generic_apriltag_started_src that allows to do a live tracking with your camera.
+
+To automaze generic model-based tracker initialization avoiding user click, we will use an AprilTag glued on a cube face. The pose of the tag is here used to initialize the tracker; see \ref tutorial-detection-apriltag.
+
+Thanks to a confidence indicator associated to the tracker we are able to detect tracking a failure and continue waiting for an AprilTag new detection to initialize again the tracker in an infinite loop.
+
+\subsection mb_generic_apriltag_intro_cube Build your own cube
+
+The object considered in this example is a cube made of cardboard with an AprilTag sticked on a face. The default length of one side of the cube is 12.5 cm, while the default AprilTag external black square is 8 cm large. As explained in \ref mb_generic_apriltag_started_exe you can build your own object with other sizes and set your cube and tag dimensions as command line parameters.
+
+To print your own tag, follow instructions given in \ref apriltag_detection_print. Of course, you will need a webcam to run the tutorial on your computer.
+
+Here is an image of the cube we used in the lab:
+\image html img-cube-apriltag.jpg Cube used for the tutorial
+
+\subsection mb_generic_apriltag_intro_classes Considered classes
 
 This tutorial focuses on vpMbGenericTracker class that was introduced in ViSP 3.1.0 and on vpDetectorAprilTag for initialization of the tracker.
 
-In this tutorial, we will show how to use vpMbGenericTracker class in order to track an object from images acquires by a monocular color camera using moving edges, and how to initialize it using vpDetectorAprilTag class.
+In this tutorial, we will show how to use vpMbGenericTracker class in order to track an object from images acquires by a monocular color camera using moving edges and keypoints as visual features, and how to initialize the tracker using vpDetectorAprilTag class.
 
 Note that the source code used in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -33,34 +47,60 @@ To start with the generic markerless model-based tracker we recommend to underst
 \subsection mb_generic_apriltag_started_src Example source code
 The following example that comes from tutorial-mb-generic-tracker-apriltag-init.cpp allows to track a cubic box with an AprilTag on a face using either moving edges or keypoints as visual features.
 
-\include tutorial-mb-generic-tracker-apriltag-init.cpp
+This example could be resumed with the following pseudo code:
+\code
+main()
+  cube_size, tag_size, detector_settings, tracker_settings = read_command_line_options()
+  create_cube_cad_model(cube_size, tag_size)
+  I = start_image_grabber()
+  detector = initialize_apriltag_detector(detector_settings)
+  tracker = initialize_tracker(cad_model, tracker_settings)
+  state = state_detection
+  while(state != state_quit)
+    I = acquire()
+    display(I);
+    if (state == state_detection)
+      state = detector.detect_tag(I)
+      if (state == state_tracking)
+        cMo = detector.get_pose()
+        tracker.set_pose(cMo)
+
+    if (state == state_tracking)
+      state = tracker.track(I)
+
+    if (state == state_tracking)
+      cMo = tracker.get_pose()
+      display(cMo, cad_model)
+      
+    if (display(mouse_click))
+      state = state_quit
+\endcode
 
 \subsection mb_generic_apriltag_started_exe Running the example using a live camera
 
 Once build, to see the options that are available in the previous source code, just run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --help
-Usage: ./tutorial-mb-generic-tracker-apriltag-init [--input <camera input>] [--tag_size <size in m>] [--quad_decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera_name <camera name>] [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display_off] [--cube_size <size in m>] [--texture] [--help]
+Usage: ./tutorial-mb-generic-tracker-apriltag-init [--input <camera id>] [--tag_size <size in m>] [--quad_decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera_name <camera name>] [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display_off] [--cube_size <size in m>] [--texture] [--help]
 \endcode
 
-To test the tracker on a 12.5 by 12.5 cm square cure that has an AprilTag of size 8 by 8 cm, to enable moving-edges and keypoints as visual features run:
+To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable moving-edges and keypoints as visual features run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --texture
 \endcode
-To test the tracker on a 12.5 by 12.5 cm square cure that has an AprilTag of size 8 by 8 cm, with only the moving-edges as visual features run:
+To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, with only the moving-edges as visual features run:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init
 \endcode
-
 
 By default, the following settings are used: <br>
 - Default camera has id=0. To specify another one, run for example:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --input 1
 \endcode
-- The default size of the cube is 0.125 meter square. To change to 0.20 meter square, run: 
+- The default size of the cube is 0.125 meter square. To use rather a 0.20 meter square, run: 
 \code
-$ ./tutorial-mb-generic-tracker-apriltag-init --cube_edge_size 0.20
+$ ./tutorial-mb-generic-tracker-apriltag-init --cube_size 0.20
 \endcode
 - The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use: 
 \code
@@ -79,23 +119,26 @@ $ ./tutorial-mb-generic-tracker-apriltag-init --nthreads 2
 $ ./tutorial-mb-generic-tracker-apriltag-init --tag_family <family>
 \endcode
 Note the id corresponding to each family : 0=TAG_36h11, 1=TAG_36h10, 2=TAG_36ARTOOLKIT, 3=TAG_25h9, 4=TAG_25h7, 5=TAG_16h5)
-- The default camera parameters used are: px=600, py=600, and principal point is set at image center. To specify your own parameters, you can provide for example a `camera.xml` parameters file with a camera named `myCam in it, by running:
+- The default camera parameters used are: px=600, py=600, and principal point is set at image center. To specify your own parameters, you can provide for example a `camera.xml` parameters file with a camera named `myCam` in it, by running:
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --intrinsic camera.xml --camera_name myCam
 \endcode
+See \ref tutorial-calibration-intrinsic to see how to generate `camera.xml` file by calibration your camera.
 - The display is turned on by default, but you can disable it with: 
 \code
 $ ./tutorial-mb-generic-tracker-apriltag-init --display_off
 \endcode
 
+\subsection mb_generic_apriltag_result Expected results of the tutorial
+If the tag was sucessfully detected and the tracker correctly initialized, running `$ ./tutorial-mb-generic-tracker-apriltag-init` the output of the tutorial would look like this:
+\image html img-cube-apriltag-tracking-result.png Cube tracking result using only moving edges
 
-\subsection mb_generic_apriltag_result Expected result of the tutorial
-If the tag was sucessfully detected and the tracker correctly initialized, the output of the tutorial would look like this:
-\image html img-cube-apriltag-tracking-result.png Cube tracking result
+Enabling keypoints as visual features leading to an hybrid model-base tracker scheme using `$ ./tutorial-mb-generic-tracker-apriltag-init --texture` the output of the tutorial would rather look like this:
+\image html img-cube-apriltag-tracking-result-hybrid.png Cube tracking result using moving edges and keypoints
 
 \section mb_generic_apriltag_next Next tutorial
 
-You can followo \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured.
+You can follow \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured.
 
 There is also \ref tutorial-tracking-mb-generic-stereo if you want to know how to extend the tracker to use a stereo camera or \ref tutorial-tracking-mb-generic-rgbd if you want to extend the tracking by using depth as visual features. There is also this other \ref tutorial-tracking-tt.
 */
