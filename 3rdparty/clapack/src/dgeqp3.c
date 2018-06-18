@@ -316,7 +316,7 @@ static integer c__2 = 2;
 
 
             topbmn = minmn - nx;
-/* L30: */
+ L30:
             if (j <= topbmn) {
 /* Computing MIN */
                 i__1 = nb, i__2 = topbmn - j + 1;
