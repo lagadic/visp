@@ -434,9 +434,9 @@ double vpMatrix::detByLULapack() const
   vpMatrix A = *this;
 
   dgetrf_(&dim, &dim, A.data, &lda, &ipiv[1], &info);
-  if (info) {
+  if (info < 0) {
     delete[] ipiv;
-    throw(vpException(vpException::fatalError, "Lapack LU decomposition failed; info=%d", info));
+    throw(vpException(vpException::fatalError, "Lapack LU decomposition failed; info=%d", -info));
   }
 
   double det = A[0][0];
