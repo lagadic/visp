@@ -475,8 +475,8 @@ vpMatrix M(R);
 
   /** @name QR decomposition  */
   //@{
-  int qr(vpMatrix &Q, vpMatrix &R, bool full = false, bool squareR = false, double tol = 1e-6) const;
-  int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false, bool squareR = false, double tol = 1e-6) const;
+  unsigned int qr(vpMatrix &Q, vpMatrix &R, bool full = false, bool squareR = false, double tol = 1e-6) const;
+  unsigned int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false, bool squareR = false, double tol = 1e-6) const;
   void solveByQR(const vpColVector &b, vpColVector &x) const;
   vpColVector solveByQR(const vpColVector &b) const;
   //@}

@@ -131,21 +131,21 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
             &colNum_, // The number of columns of the matrix A.  N >= 0.
             A.data,   /*On entry, the M-by-N matrix A.
-                            On exit, the elements on and above the diagonal of
-                         the array   contain the min(M,N)-by-N upper trapezoidal
-                         matrix R (R is   upper triangular if m >= n); the
-                         elements below the diagonal,   with the array TAU,
-                         represent the orthogonal matrix Q as a   product of
-                         min(m,n) elementary reflectors.
-                          */
+                                    On exit, the elements on and above the diagonal of
+                                 the array   contain the min(M,N)-by-N upper trapezoidal
+                                 matrix R (R is   upper triangular if m >= n); the
+                                 elements below the diagonal,   with the array TAU,
+                                 represent the orthogonal matrix Q as a   product of
+                                 min(m,n) elementary reflectors.
+                                  */
             &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
             tau,      /*Dimension (min(M,N))
-                        The scalar factors of the elementary reflectors
-                      */
+                                The scalar factors of the elementary reflectors
+                              */
             work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
-    );
+            );
 
     if (info != 0) {
       std::cout << "dgeqrf_:Preparation:" << -info << "th element had an illegal value" << std::endl;
@@ -156,21 +156,21 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
             &colNum_, // The number of columns of the matrix A.  N >= 0.
             A.data,   /*On entry, the M-by-N matrix A.
-                            On exit, the elements on and above the diagonal of
-                         the array   contain the min(M,N)-by-N upper trapezoidal
-                         matrix R (R is   upper triangular if m >= n); the
-                         elements below the diagonal,   with the array TAU,
-                         represent the orthogonal matrix Q as a   product of
-                         min(m,n) elementary reflectors.
-                          */
+                                    On exit, the elements on and above the diagonal of
+                                 the array   contain the min(M,N)-by-N upper trapezoidal
+                                 matrix R (R is   upper triangular if m >= n); the
+                                 elements below the diagonal,   with the array TAU,
+                                 represent the orthogonal matrix Q as a   product of
+                                 min(m,n) elementary reflectors.
+                                  */
             &lda,     // The leading dimension of the array A.  LDA >= max(1,M).
             tau,      /*Dimension (min(M,N))
-                        The scalar factors of the elementary reflectors
-                      */
+                                The scalar factors of the elementary reflectors
+                              */
             work,     // Internal working array. dimension (MAX(1,LWORK))
             &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
             &info     // status
-    );
+            );
 
     if (info != 0) {
       std::cout << "dgeqrf_:" << -info << "th element had an illegal value" << std::endl;
@@ -334,9 +334,9 @@ int main()
 
   \sa qrPivot()
 */
-int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, double tol) const
+unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, double tol) const
 {
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
   integer m = (integer) rowNum;     // also rows of Q
   integer n = (integer) colNum;     // also columns of R
   integer r = std::min(n,m);  // a priori non-null rows of R = rank of R
@@ -460,7 +460,7 @@ int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, double tol) 
   delete[] qrdata;
   delete[] work;
   delete[] tau;
-  return r;
+  return (unsigned int) r;
 #else
   throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
 #endif
@@ -529,9 +529,9 @@ int main()
 
   \sa qrPivot()
 */
-int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
+unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
 {
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
   integer m = (integer) rowNum;     // also rows of Q
   integer n = (integer) colNum;     // also columns of R
   integer r = std::min(n,m);             // a priori non-null rows of R = rank of R
@@ -682,7 +682,7 @@ int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squ
   delete[] work;
   delete[] tau;
   delete[] p;
-  return r;
+  return (unsigned int) r;
 #else
   throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
 #endif
@@ -736,13 +736,15 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
 
 /*!
-  Solve a linear system $ A x = b $ using QR Decomposition.
+  Solve a linear system Ax = b using QR Decomposition.
 
   Non destructive wrt. A and b.
 
-  \param b : Vector $ b $
+  \param b : Vector  b
+  \param x : Vector  x
 
-  \param x : Vector $ x $
+  \warning If Ax = b does not have a solution, this method does not return the least-square
+  minimizer. Use solveBySVD() to get this vector.
 
   Here an example:
   \code
@@ -750,26 +752,26 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
     #include <visp3/core/vpMatrix.h>
     int main()
     {
-    vpMatrix A(3,3);
-    A[0][0] = 4.64;
-    A[0][1] = 0.288;
-    A[0][2] = -0.384;
-    A[1][0] = 0.288;
-    A[1][1] = 7.3296;
-    A[1][2] = 2.2272;
-    A[2][0] = -0.384;
-    A[2][1] = 2.2272;
-    A[2][2] = 6.0304;
-    vpColVector X(3), B(3);
-    B[0] = 1;
-    B[1] = 2;
-    B[2] = 3;
-    A.solveByQR(B, X);
-    // Obtained values of X
-    // X[0] = 0.2468;
-    // X[1] = 0.120782;
-    // X[2] = 0.468587;
-    std::cout << "X:\n" << X << std::endl;
+      vpMatrix A(3,3);
+      A[0][0] = 4.64;
+      A[0][1] = 0.288;
+      A[0][2] = -0.384;
+      A[1][0] = 0.288;
+      A[1][1] = 7.3296;
+      A[1][2] = 2.2272;
+      A[2][0] = -0.384;
+      A[2][1] = 2.2272;
+      A[2][2] = 6.0304;
+      vpColVector X(3), B(3);
+      B[0] = 1;
+      B[1] = 2;
+      B[2] = 3;
+      A.solveByQR(B, X);
+      // Obtained values of X
+      // X[0] = 0.2468;
+      // X[1] = 0.120782;
+      // X[2] = 0.468587;
+      std::cout << "X:\n" << X << std::endl;
     }
   \endcode
 
@@ -778,20 +780,23 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 void vpMatrix::solveByQR(const vpColVector &b, vpColVector &x) const
 {
   vpMatrix Q, R, P;
-  int r = t().qrPivot(Q, R, P, false, true);
+  unsigned int r = t().qrPivot(Q, R, P, false, true);
   x = Q.extract(0, 0, colNum, r)
       * R.inverseTriangular().t()
       * P * b;
 }
 
 /*!
-  Solve a linear system $ A x = b $ using QR Decomposition.
+  Solve a linear system Ax = b using QR Decomposition.
 
   Non destructive wrt. A and B.
 
-  \param b : Vector $ b $
+  \param b : Vector b
 
-  \return Vector $ x $
+  \return Vector x
+
+  \warning If Ax = b does not have a solution, this method does not return the least-square
+  minimizer. Use solveBySVD() to get this vector.
 
   Here an example:
   \code
@@ -799,26 +804,26 @@ void vpMatrix::solveByQR(const vpColVector &b, vpColVector &x) const
     #include <visp3/core/vpMatrix.h>
     int main()
     {
-    vpMatrix A(3,3);
-    A[0][0] = 4.64;
-    A[0][1] = 0.288;
-    A[0][2] = -0.384;
-    A[1][0] = 0.288;
-    A[1][1] = 7.3296;
-    A[1][2] = 2.2272;
-    A[2][0] = -0.384;
-    A[2][1] = 2.2272;
-    A[2][2] = 6.0304;
-    vpColVector X(3), B(3);
-    B[0] = 1;
-    B[1] = 2;
-    B[2] = 3;
-    X = A.solveByQR(B);
-    // Obtained values of X
-    // X[0] = 0.2468;
-    // X[1] = 0.120782;
-    // X[2] = 0.468587;
-    std::cout << "X:\n" << X << std::endl;
+      vpMatrix A(3,3);
+      A[0][0] = 4.64;
+      A[0][1] = 0.288;
+      A[0][2] = -0.384;
+      A[1][0] = 0.288;
+      A[1][1] = 7.3296;
+      A[1][2] = 2.2272;
+      A[2][0] = -0.384;
+      A[2][1] = 2.2272;
+      A[2][2] = 6.0304;
+      vpColVector X(3), B(3);
+      B[0] = 1;
+      B[1] = 2;
+      B[2] = 3;
+      X = A.solveByQR(B);
+      // Obtained values of X
+      // X[0] = 0.2468;
+      // X[1] = 0.120782;
+      // X[2] = 0.468587;
+      std::cout << "X:\n" << X << std::endl;
     }
   \endcode
 
