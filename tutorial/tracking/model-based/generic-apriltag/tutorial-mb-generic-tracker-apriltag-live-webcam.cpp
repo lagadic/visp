@@ -8,12 +8,8 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpUniRand.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
-#include <visp3/vision/vpCalibration.h>
 
 typedef enum {
   state_detection,
@@ -80,7 +76,8 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
   return state_detection;
 }
 
-state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpHomogeneousMatrix &cMo)
+state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker,
+              double projection_error_threshold, vpHomogeneousMatrix &cMo)
 {
   vpCameraParameters cam;
   tracker.getCameraParameters(cam);
@@ -96,8 +93,8 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpHo
   tracker.getPose(cMo);
 
   // Detect tracking error
-  double projectionError = tracker.computeCurrentProjectionError(I, cMo, cam);
-  if (projectionError > 30.0) {
+  double projection_error = tracker.computeCurrentProjectionError(I, cMo, cam);
+  if (projection_error > projection_error_threshold) {
     return state_detection;
   }
 
@@ -124,7 +121,10 @@ int main(int argc, const char **argv)
   std::string opt_intrinsic_file = "";
   std::string opt_camera_name = "";
   double opt_cube_size = 0.125; // 12.5cm by default
+#ifdef VISP_HAVE_OPENCV
   bool opt_use_texture = false;
+#endif
+  double opt_projection_error_threshold = 40.;
 
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   bool display_off = true;
@@ -151,10 +151,14 @@ int main(int argc, const char **argv)
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
       opt_cube_size = atof(argv[i + 1]);
+#ifdef VISP_HAVE_OPENCV
     } else if (std::string(argv[i]) == "--texture") {
       opt_use_texture = true;
+#endif
+    } else if (std::string(argv[i]) == "--projection_error" && i + 1 < argc) {
+      opt_projection_error_threshold = atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0] << " [--input <camera id>] [--tag_size <size in m>]"
+      std::cout << "Usage: " << argv[0] << " [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>]"
                                            " [--quad_decimate <decimation>] [--nthreads <nb>]"
                                            " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
                                            " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
@@ -162,7 +166,7 @@ int main(int argc, const char **argv)
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off]";
 #endif
-      std::cout << " [--cube_size <size in m>] [--texture] [--help]" << std::endl;
+      std::cout << " [--texture] [--projection_error <30 - 100>] [--help]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -214,7 +218,14 @@ int main(int argc, const char **argv)
     std::cout << "  Quad decimate: " << opt_quad_decimate << std::endl;
     std::cout << "  Threads number: " << opt_nthreads << std::endl;
     std::cout << "Tracker: " << std::endl;
-    std::cout << "  Use texture: " << opt_use_texture << std::endl;
+    std::cout << "  Use edges  : 1"<< std::endl;
+    std::cout << "  Use texture: "
+#ifdef VISP_HAVE_OPENCV
+              << opt_use_texture << std::endl;
+#else
+              << " na" << std::endl;
+#endif
+    std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
     vpDisplay *d = NULL;
@@ -235,9 +246,11 @@ int main(int argc, const char **argv)
 
     // Prepare MBT
     vpMbGenericTracker tracker;
+#ifdef VISP_HAVE_OPENCV
     if (opt_use_texture)
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
     else
+#endif
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
     // edges
     vpMe me;
@@ -250,7 +263,7 @@ int main(int argc, const char **argv)
     me.setSampleStep(4);
     tracker.setMovingEdge(me);
 
-#ifdef VISP_HAVE_MODULE_KLT
+#ifdef VISP_HAVE_OPENCV
     if (opt_use_texture) {
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
@@ -298,7 +311,7 @@ int main(int argc, const char **argv)
       }
 
       if (state == state_tracking) {
-        state = track(I, tracker, cMo);
+        state = track(I, tracker, opt_projection_error_threshold, cMo);
       }
 
       vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);

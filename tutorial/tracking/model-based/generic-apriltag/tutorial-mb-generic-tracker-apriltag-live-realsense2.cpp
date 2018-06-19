@@ -8,12 +8,8 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/sensor/vpRealSense2.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpUniRand.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
-#include <visp3/vision/vpCalibration.h>
 
 typedef enum {
   state_detection,
@@ -80,7 +76,8 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
   return state_detection;
 }
 
-state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpHomogeneousMatrix &cMo)
+state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker,
+              double projection_error_threshold, vpHomogeneousMatrix &cMo)
 {
   vpCameraParameters cam;
   tracker.getCameraParameters(cam);
@@ -96,8 +93,8 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpHo
   tracker.getPose(cMo);
 
   // Detect tracking error
-  double projectionError = tracker.computeCurrentProjectionError(I, cMo, cam);
-  if (projectionError > 30.0) {
+  double projection_error = tracker.computeCurrentProjectionError(I, cMo, cam);
+  if (projection_error > projection_error_threshold) {
     return state_detection;
   }
 
@@ -105,6 +102,51 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpHo
   tracker.display(I, cMo, cam, vpColor::red, 2);
   vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
   vpDisplay::displayText(I, 40, 20, "State: tracking in progress", vpColor::red);
+
+  return state_tracking;
+}
+
+state_t track(std::map<std::string, const vpImage<unsigned char> *>mapOfImages,
+              #ifdef VISP_HAVE_PCL
+              std::map<std::string, pcl::PointCloud< pcl::PointXYZ >::ConstPtr>mapOfPointclouds,
+              #else
+              std::map<std::string, const std::vector<vpColVector> *>mapOfPointclouds,
+              std::map<std::string, unsigned int> mapOfWidths,
+              std::map<std::string, unsigned int> mapOfHeights,
+              #endif
+              const vpImage<unsigned char> &I_gray,
+              const vpImage<unsigned char> &I_depth,
+              const vpHomogeneousMatrix &depth_M_color,
+              vpMbGenericTracker &tracker,
+              double projection_error_threshold, vpHomogeneousMatrix &cMo)
+{
+  vpCameraParameters cam_color, cam_depth;
+  tracker.getCameraParameters(cam_color, cam_depth);
+
+  // Track the object
+  try {
+#ifdef VISP_HAVE_PCL
+    tracker.track(mapOfImages, mapOfPointclouds);
+#else
+    tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
+#endif
+  }
+  catch (...) {
+    return state_detection;
+  }
+
+  tracker.getPose(cMo);
+
+  // Detect tracking error
+  double projection_error = tracker.computeCurrentProjectionError(I_gray, cMo, cam_color);
+  if (projection_error > projection_error_threshold) {
+    return state_detection;
+  }
+
+  // Display
+  tracker.display(I_gray, I_depth, cMo, depth_M_color*cMo, cam_color, cam_depth, vpColor::red, 3);
+  vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
+  vpDisplay::displayFrame(I_depth, depth_M_color*cMo, cam_depth, 0.05, vpColor::none, 3);
 
   return state_tracking;
 }
@@ -122,7 +164,11 @@ int main(int argc, const char **argv)
   std::string opt_intrinsic_file = "";
   std::string opt_camera_name = "";
   double opt_cube_size = 0.125; // 12.5cm by default
+#ifdef VISP_HAVE_OPENCV
   bool opt_use_texture = false;
+#endif
+  bool opt_use_depth = false;
+  double opt_projection_error_threshold = 40.;
 
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   bool display_off = true;
@@ -147,10 +193,16 @@ int main(int argc, const char **argv)
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
       opt_cube_size = atof(argv[i + 1]);
+#ifdef VISP_HAVE_OPENCV
     } else if (std::string(argv[i]) == "--texture") {
       opt_use_texture = true;
+#endif
+    } else if (std::string(argv[i]) == "--depth") {
+      opt_use_depth = true;
+    } else if (std::string(argv[i]) == "--projection_error" && i + 1 < argc) {
+      opt_projection_error_threshold = atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0] << " [--tag_size <size in m>]"
+      std::cout << "Usage: " << argv[0] << " [--cube_size <size in m>] [--tag_size <size in m>]"
                                            " [--quad_decimate <decimation>] [--nthreads <nb>]"
                                            " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
                                            " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
@@ -158,7 +210,7 @@ int main(int argc, const char **argv)
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off]";
 #endif
-      std::cout << " [--cube_size <size in m>] [--texture] [--help]" << std::endl;
+      std::cout << " [--texture] [--depth] [--projection_error <30 - 100>] [--help]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -172,27 +224,55 @@ int main(int argc, const char **argv)
     int width = 640, height = 480, stream_fps = 30;
     config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, stream_fps);
     config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, stream_fps);
-    config.enable_stream(RS2_STREAM_INFRARED, width, height, RS2_FORMAT_Y8, stream_fps);
+    config.disable_stream(RS2_STREAM_INFRARED);
     realsense.open(config);
 
-    vpCameraParameters cam = realsense.getCameraParameters(RS2_STREAM_COLOR);
-    vpHomogeneousMatrix depth_M_color = realsense.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH);
+    vpCameraParameters cam_color, cam_depth;
+    vpHomogeneousMatrix depth_M_color;
+    cam_color = realsense.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+    if (opt_use_depth) {
+      cam_depth = realsense.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion);
+      depth_M_color = realsense.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH);
+    }
 
     vpImage<vpRGBa> I_color(height, width);
     vpImage<unsigned char> I_gray(height, width);
     vpImage<unsigned char> I_depth(height, width);
     vpImage<uint16_t> I_depth_raw(height, width);
-    vpImage<unsigned char> I_infrared(height, width);
+    std::map<std::string, vpHomogeneousMatrix> mapOfCameraTransformations;
+    std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
+    std::map<std::string, std::string> mapOfInitFiles;
+#ifdef VISP_HAVE_PCL
+    std::map<std::string, pcl::PointCloud< pcl::PointXYZ >::ConstPtr> mapOfPointclouds;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+#else
+    std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds;
+    std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
+    std::vector<vpColVector> pointcloud;
+#endif
+
+    std::map<std::string, vpHomogeneousMatrix> mapOfCameraPoses;
 
     std::cout << "Cube size: " << opt_cube_size << std::endl;
     std::cout << "AprilTag size: " << opt_tag_size << std::endl;
     std::cout << "AprilTag family: " << opt_tag_family << std::endl;
-    std::cout << "Camera parameters:\n" << cam << std::endl;
+    std::cout << "Camera parameters:" << std::endl;
+    std::cout << "  Color:\n" << cam_color << std::endl;
+    if (opt_use_depth)
+      std::cout << "  Depth:\n" << cam_depth << std::endl;
     std::cout << "Detection: " << std::endl;
     std::cout << "  Quad decimate: " << opt_quad_decimate << std::endl;
     std::cout << "  Threads number: " << opt_nthreads << std::endl;
     std::cout << "Tracker: " << std::endl;
-    std::cout << "  Use texture: " << opt_use_texture << std::endl;
+    std::cout << "  Use edges  : 1" << std::endl;
+    std::cout << "  Use texture: "
+#ifdef VISP_HAVE_OPENCV
+              << opt_use_texture << std::endl;
+#else
+              << " na" << std::endl;
+#endif
+    std::cout << "  Use depth  : " << opt_use_depth << std::endl;
+    std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
     vpDisplay *d_gray = NULL;
@@ -200,14 +280,17 @@ int main(int argc, const char **argv)
 
     if (!display_off) {
 #ifdef VISP_HAVE_X11
-      d_gray = new vpDisplayX(I_gray);
-      d_depth = new vpDisplayX(I_depth);
+      d_gray = new vpDisplayX(I_gray, 50, 50, "Color stream");
+      if (opt_use_depth)
+        d_depth = new vpDisplayX(I_depth, 80+I_gray.getWidth(), 50, "Depth stream");
 #elif defined(VISP_HAVE_GDI)
       d_gray = new vpDisplayGDI(I_gray);
-      d_depth = new vpDisplayGDI(I_depth);
+      if (opt_use_depth)
+        d_depth = new vpDisplayGDI(I_depth);
 #elif defined(VISP_HAVE_OPENCV)
       d_gray = new vpDisplayOpenCV(I_gray);
-      d_depth = new vpDisplayOpenCV(I_depth);
+      if (opt_use_depth)
+        d_depth = new vpDisplayOpenCV(I_depth);
 #endif
     }
 
@@ -217,11 +300,18 @@ int main(int argc, const char **argv)
     detector.setAprilTagNbThreads(opt_nthreads);
 
     // Prepare MBT
-    vpMbGenericTracker tracker;
+    std::vector<int> trackerTypes;
+#ifdef VISP_HAVE_OPENCV
     if (opt_use_texture)
-      tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+      trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
     else
-      tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
+#endif
+      trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER );
+
+    if (opt_use_depth)
+      trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
+
+    vpMbGenericTracker tracker(trackerTypes);
     // edges
     vpMe me;
     me.setMaskSize(5);
@@ -233,7 +323,7 @@ int main(int argc, const char **argv)
     me.setSampleStep(4);
     tracker.setMovingEdge(me);
 
-#ifdef VISP_HAVE_MODULE_KLT
+#ifdef VISP_HAVE_OPENCV
     if (opt_use_texture) {
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
@@ -248,51 +338,107 @@ int main(int argc, const char **argv)
     }
 #endif
 
-    // camera calibration params
-    tracker.setCameraParameters(cam);
-    // model definition
-    tracker.loadModel("cube.cao");
+    if (opt_use_depth) {
+      // camera calibration params
+      tracker.setCameraParameters(cam_color, cam_depth);
+      // model definition
+      tracker.loadModel("cube.cao", "cube.cao");
+      mapOfCameraTransformations["Camera2"] = depth_M_color;
+      tracker.setCameraTransformationMatrix(mapOfCameraTransformations);
+      tracker.setAngleAppear(vpMath::rad(70), vpMath::rad(70));
+      tracker.setAngleDisappear(vpMath::rad(80), vpMath::rad(80));
+    }
+    else {
+      // camera calibration params
+      tracker.setCameraParameters(cam_color);
+      // model definition
+      tracker.loadModel("cube.cao");
+      tracker.setAngleAppear(vpMath::rad(70));
+      tracker.setAngleDisappear(vpMath::rad(80));
+    }
     tracker.setDisplayFeatures(true);
-    tracker.setAngleAppear(vpMath::rad(70));
-    tracker.setAngleDisappear(vpMath::rad(80));
 
     vpHomogeneousMatrix cMo;
     state_t state = state_detection;
 
     // wait for a tag detection
     while (state != state_quit) {
-      realsense.acquire((unsigned char *) I_color.bitmap, (unsigned char *) I_depth_raw.bitmap, NULL, NULL);
-      vpImageConvert::convert(I_color, I_gray);
-      vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+      if (opt_use_depth) {
+#ifdef VISP_HAVE_PCL
+        realsense.acquire((unsigned char *) I_color.bitmap, (unsigned char *) I_depth_raw.bitmap, NULL, pointcloud, NULL);
+#else
+        realsense.acquire((unsigned char *) I_color.bitmap, (unsigned char *) I_depth_raw.bitmap, &pointcloud, NULL, NULL);
+#endif
+        vpImageConvert::convert(I_color, I_gray);
+        vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+        vpDisplay::display(I_gray);
+        vpDisplay::display(I_depth);
 
-      vpDisplay::display(I_gray);
-      vpDisplay::display(I_depth);
+        mapOfImages["Camera1"] = &I_gray;
+        mapOfImages["Camera2"] = &I_depth;
+#ifdef VISP_HAVE_PCL
+        mapOfPointclouds["Camera2"] = pointcloud;
+#else
+        mapOfPointclouds["Camera2"] = &pointcloud;
+        mapOfWidths["Camera2"] = width;
+        mapOfHeights["Camera2"] = height;
+#endif
+      }
+      else {
+        realsense.acquire(I_gray);
+        vpDisplay::display(I_gray);
+      }
 
       if (state == state_detection) {
-        state = detectAprilTag(I_gray, detector, opt_tag_size, cam, cMo);
+        state = detectAprilTag(I_gray, detector, opt_tag_size, cam_color, cMo);
 
         // Initialize the tracker with the result of the detection
         if (state == state_tracking) {
-          tracker.initFromPose(I_gray, cMo);
+          if (opt_use_depth) {
+            mapOfCameraPoses["Camera1"] = cMo;
+            mapOfCameraPoses["Camera2"] = depth_M_color * cMo;
+            tracker.initFromPose(mapOfImages, mapOfCameraPoses);
+          }
+          else {
+            tracker.initFromPose(I_gray, cMo);
+          }
         }
       }
 
       if (state == state_tracking) {
-        state = track(I_gray, tracker, cMo);
+        if (opt_use_depth) {
+#ifdef VISP_HAVE_PCL
+          state = track(mapOfImages, mapOfPointclouds,
+                        I_gray, I_depth, depth_M_color, tracker, opt_projection_error_threshold, cMo);
+#else
+          state = track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights,
+                        I_gray, I_depth, depth_M_color, tracker, opt_projection_error_threshold, cMo);
+#endif
+        }
+        else {
+          state = track(I_gray, tracker, opt_projection_error_threshold, cMo);
+        }
       }
 
       vpDisplay::displayText(I_gray, 20, 20, "Click to quit...", vpColor::red);
       if (vpDisplay::getClick(I_gray, false)) { // exit
         state = state_quit;
       }
-
       vpDisplay::flush(I_gray);
-      vpDisplay::flush(I_depth);
+
+      if (opt_use_depth) {
+        vpDisplay::displayText(I_depth, 20, 20, "Click to quit...", vpColor::red);
+        if (vpDisplay::getClick(I_depth, false)) { // exit
+          state = state_quit;
+        }
+        vpDisplay::flush(I_depth);
+      }
     }
 
     if (!display_off) {
       delete d_gray;
-      delete d_depth;
+      if (opt_use_depth)
+        delete d_depth;
     }
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
