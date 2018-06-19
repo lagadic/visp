@@ -164,7 +164,11 @@ int main(int argc, char *argv[])
   vpDisplay::flush(I_depth);
 
   //! [Constructor]
+#ifdef VISP_HAVE_OPENCV
   std::vector<int> trackerTypes = {vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER, vpMbGenericTracker::DEPTH_DENSE_TRACKER};
+#else
+  std::vector<int> trackerTypes = {vpMbGenericTracker::EDGE_TRACKER};
+#endif
   vpMbGenericTracker tracker(trackerTypes);
   //! [Constructor]
   //! [Load config file]
