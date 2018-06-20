@@ -41,12 +41,12 @@ vp_remap_files(deps)
 
 set(__modules_config "") # list of ViSP modules
 foreach(m ${VISP_JAVA_MODULES})
-  set(module_java_dir "${VISP_MODULE_${m}_LOCATION}/misc/java")
+  string(REGEX REPLACE "^visp_" "" m_ "${m}")
+  set(module_java_dir "${CMAKE_CURRENT_SOURCE_DIR}/../misc/${m_}")
   list(APPEND deps ${VISP_MODULE_${m}_HEADERS})
   file(GLOB_RECURSE misc_files "${module_java_dir}/*")
   list(APPEND deps ${misc_files})
 
-  string(REGEX REPLACE "^visp_" "" m_ "${m}")
   if(__modules_config)
     set(__modules_config "${__modules_config},\n")
   endif()
