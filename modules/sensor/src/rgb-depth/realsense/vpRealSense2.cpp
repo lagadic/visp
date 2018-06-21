@@ -129,9 +129,9 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   \param data_depth : Depth image buffer or NULL if not wanted.
   \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
   \param pointcloud : Point cloud (in PCL format and without texture
-  information) pointer or NULL if not wanted. \param data_infrared : Infrared
-  image buffer or NULL if not wanted. \param align_to : Align to a reference
-  stream or NULL if not wanted.
+  information) pointer or NULL if not wanted.
+  \param data_infrared : Infrared image buffer or NULL if not wanted.
+  \param align_to : Align to a reference stream or NULL if not wanted.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
@@ -175,9 +175,9 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   \param data_depth : Depth image buffer or NULL if not wanted.
   \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
   \param pointcloud : Point cloud (in PCL format and with texture information)
-  pointer or NULL if not wanted. \param data_infrared : Infrared image buffer
-  or NULL if not wanted. \param align_to : Align to a reference stream or NULL
-  if not wanted.
+  pointer or NULL if not wanted.
+  \param data_infrared : Infrared image buffer or NULL if not wanted.
+  \param align_to : Align to a reference stream or NULL if not wanted.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
@@ -231,9 +231,9 @@ void vpRealSense2::close() { m_pipe.stop(); }
 
 /*!
    Return the camera parameters corresponding to a specific stream. This
-   function has to be called after open(). \param stream : stream for which
-   camera intrinsic parameters are returned. \param type : Indicate if the
-   model should include distorsion parameters or not.
+   function has to be called after open().
+   \param stream : stream for which camera intrinsic parameters are returned.
+   \param type : Indicate if the model should include distorsion parameters or not.
 
    \sa getIntrinsics()
  */
@@ -261,8 +261,8 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
 
 /*!
    Get intrinsic parameters corresponding to the stream. This function has to
-   be called after open(). \param stream : stream for which the camera
-   intrinsic parameters are returned.
+   be called after open().
+   \param stream : stream for which the camera intrinsic parameters are returned.
 
    \sa getCameraParameters()
   */
@@ -288,6 +288,18 @@ void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color
   } else {
     throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
   }
+}
+
+/*!
+   Get intrinsic parameters corresponding to the stream. This function has to
+   be called after open().
+   \param stream : stream for which the camera intrinsic parameters are returned.
+
+   \sa getCameraParameters()
+  */
+float vpRealSense2::getDepthScale()
+{
+  return m_depthScale;
 }
 
 void vpRealSense2::getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey)
@@ -583,8 +595,8 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
 
 /*!
    Get the extrinsic transformation from one stream to another. This function
-   has to be called after open(). \param from, to : streams for which the
-   camera extrinsic parameters are returned.
+   has to be called after open().
+   \param from, to : streams for which the camera extrinsic parameters are returned.
   */
 vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, const rs2_stream &to) const
 {
