@@ -142,9 +142,9 @@ int main(int argc, const char **argv)
 {
   try {
     std::string outputFileName = "camera.xml";
-
     Settings s;
     const std::string inputSettingsFile = argc > 1 ? argv[1] : "default.cfg";
+
     if (!s.read(inputSettingsFile)) {
       std::cout << "Could not open the configuration file: \"" << inputSettingsFile << "\"" << std::endl;
       std::cout << std::endl << "Usage: " << argv[0] << " <configuration file>.cfg" << std::endl;
@@ -171,6 +171,16 @@ int main(int argc, const char **argv)
 #elif defined VISP_HAVE_OPENCV
     vpDisplayOpenCV d(I);
 #endif
+
+    vpCameraParameters cam;
+
+    // Initialize camera parameters
+    double px = cam.get_px();
+    double py = cam.get_px();
+    // Set (u0,v0) in the middle of the image
+    double u0 = I.getWidth() / 2;
+    double v0 = I.getHeight() / 2;
+    cam.initPersProjWithoutDistortion(px, py, u0, v0);
 
     std::vector<vpPoint> model;
     std::vector<vpCalibration> calibrator;
@@ -250,17 +260,9 @@ int main(int argc, const char **argv)
           calib.addPoint(model[i].get_oX(), model[i].get_oY(), model[i].get_oZ(), data[i]);
         }
         vpHomogeneousMatrix cMo;
-        vpCameraParameters cam;
-
-        // Set (u0,v0) in the middle of the image
-        double px = cam.get_px();
-        double py = cam.get_px();
-        double u0 = I.getWidth() / 2;
-        double v0 = I.getHeight() / 2;
-        cam.initPersProjWithoutDistortion(px, py, u0, v0);
 
         if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == 0) {
-          // std::cout << "camera parameters: " << cam << std::endl;
+          //std::cout << "camera parameters for frame " << frame_index << ": " << cam << std::endl;
           calibrator.push_back(calib);
         }
       }
@@ -311,11 +313,16 @@ int main(int argc, const char **argv)
     ss_additional_info << "<square_size>" << s.squareSize << "</square_size>";
 
     std::cout << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << std::endl;
-    vpCameraParameters cam;
     double error;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) == 0) {
       std::cout << cam << std::endl;
       std::cout << "Global reprojection error: " << error << std::endl;
+
+      if (cam.get_px() < 0 || cam.get_py() < 0 || cam.get_u0() < 0 || cam.get_v0() < 0) {
+        std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+        return EXIT_FAILURE;
+      }
+
       ss_additional_info << "<global_reprojection_error><without_distortion>" << error << "</without_distortion>";
 
 #ifdef VISP_HAVE_XML2
@@ -333,13 +340,21 @@ int main(int argc, const char **argv)
                   << std::endl;
       }
 #endif
-    } else
+    } else {
       std::cout << "Calibration without distortion failed." << std::endl;
+      return EXIT_FAILURE;
+    }
 
     std::cout << "\nCalibration with distortion in progress on " << calibrator.size() << " images..." << std::endl;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
         0) {
       std::cout << cam << std::endl;
+
+      if (cam.get_px() < 0 || cam.get_py() < 0 || cam.get_u0() < 0 || cam.get_v0() < 0) {
+        std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+        return EXIT_FAILURE;
+      }
+
       std::cout << "Global reprojection error: " << error << std::endl;
       ss_additional_info << "<with_distortion>" << error << "</with_distortion></global_reprojection_error>";
 
@@ -363,8 +378,10 @@ int main(int argc, const char **argv)
         std::cout << "Estimated pose on input data " << i << ": " << vpPoseVector(calibrator[i].cMo_dist).t()
                   << std::endl;
 
-    } else
+    } else {
       std::cout << "Calibration with distortion failed." << std::endl;
+      return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
