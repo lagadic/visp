@@ -243,7 +243,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition.
   Only available if Lapack 3rd party is installed. If Lapack is not installed
-we use a Lapack built-in version.
+  we use a Lapack built-in version.
 
   \return The inverse matrix.
 
@@ -283,7 +283,7 @@ vpMatrix vpMatrix::inverseByQR() const
 /*!
   Compute the QR decomposition of a (m x n) matrix of rank r.
   Only available if Lapack 3rd party is installed. If Lapack is not installed
-we use a Lapack built-in version.
+  we use a Lapack built-in version.
 
   \param Q : orthogonal matrix (will be modified).
   \param R : upper-triangular matrix (will be modified).
@@ -470,7 +470,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 /*!
   Compute the QR pivot decomposition of a (m x n) matrix of rank r.
   Only available if Lapack 3rd party is installed. If Lapack is not installed
-we use a Lapack built-in version.
+  we use a Lapack built-in version.
 
   \param Q : orthogonal matrix (will be modified).
   \param R : upper-triangular matrix (will be modified).
@@ -691,7 +691,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 /*!
   Compute the inverse of a full-rank n-by-n triangular matrix.
   Only available if Lapack 3rd party is installed. If Lapack is not installed
-we use a Lapack built-in version.
+  we use a Lapack built-in version.
 
   \param upper : if it is an upper triangular matrix
 
