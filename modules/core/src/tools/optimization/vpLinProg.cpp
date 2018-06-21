@@ -132,7 +132,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       A = IQQt.extract(0,0,n,n-m);
       if((A.t()*A).detByLU() == 0)
       {
-        // find n-m independent columns
+        // rank deficiency, manually find n-m independent columns
         unsigned int j0;
         for(j0 = 0; j0 < n; ++j0)
         {
@@ -183,7 +183,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
     A = IQQt.extract(0,0,n,n-r);
     if((A.t()*A).detByLU() == 0)
     {
-      // look for n-r independent columns
+      // rank deficiency, manually find n-r independent columns
       unsigned int j0;
       for(j0 = 0; j0 < n; ++j0)
       {
@@ -264,7 +264,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 
   if(allClose(A, x, b, tol))
   {
-    if(r < m)
+    if(r < m) // if r == m then (A,b) is not changed
     {
       A = R.extract(0, 0, r, n)*P;
       b = Q.extract(0, 0, m, r).transpose() * b;
@@ -274,6 +274,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   return false;
 }
 
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
 /*!
   Solves a Linear Program under various constraints
 
@@ -298,6 +299,8 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   \return True if the solution was found.
 
   Lower and upper bounds may be passed as a list of (index, bound) with C++11's braced initialization.
+
+  \warning This function is only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
 
   Here is an example:
 
@@ -381,31 +384,16 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   unsigned int s1 = 0, s2 = 0;
   for(unsigned int i = 0; i < n; ++i)
   {
+    const auto cmp = [&](const BoundedIndex &p){return p.first == i;};
     // look for lower bound
-    bool has_low = false;
-    for(unsigned int j = 0; j < l.size(); ++j)
-    {
-      if(l[j].first == i)
-      {
-        has_low = true;
-        break;
-      }
-    }
+    const bool has_low = find_if(l.begin(), l.end(), cmp) != l.end();
     // look for upper bound
-    bool has_up = false;
-    for(unsigned int j = 0; j < u.size(); ++j)
-    {
-      if(u[j].first == i)
-      {
-        has_up = true;
-        break;
-      }
-    }
+    const bool has_up = find_if(u.begin(), u.end(), cmp) != u.end();
     if(has_low == has_up)
     {
-      s1++;       // additional variable (double or unbounded variable)
+      s1++;       // additional variable (double-bounded or unbounded variable)
       if(has_low)
-        s2++;   // additional equality constraint (double bounded)
+        s2++;   // additional equality constraint (double-bounded)
     }
   }
 
@@ -436,14 +424,14 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   unsigned int k1 = 0, k2 = 0;
   for(unsigned int i = 0; i < n; ++i)
   {
+    // lambda to find a bound for this index
+    const auto cmp = [&](const BoundedIndex &p)
+    {return p.first == i;};
+
     // look for lower bound
-    std::vector<BoundedIndex>::iterator low, up;
-    for(low = l.begin(); low != l.end(); ++low)
-      if(low->first == i)
-        break;
-    for(up = u.begin(); up != u.end(); ++up)
-      if(up->first == i)
-        break;
+    const auto low = find_if(l.begin(), l.end(), cmp);
+    // look for upper bound
+    const auto up = find_if(u.begin(), u.end(), cmp);
 
     if(low == l.end())  // no lower bound
     {
@@ -520,6 +508,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   \param tol : tolerance to test the ranks
 
   \return True if the solution was found.
+
+  \warning This function is only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
 
   Here is an example:
 
@@ -656,7 +646,7 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
       null_rows.push_back(i);
   }
 
-  // add columns to B if make Ab non-null
+  // add columns to B only if make Ab non-null
   // start from the end as it makes vpQuadProg faster
   for(unsigned int j = n; j-- > 0; )
   {
@@ -776,4 +766,5 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     std::swap(B[k],N[j]);
   }
 
-}/**/
+}
+#endif

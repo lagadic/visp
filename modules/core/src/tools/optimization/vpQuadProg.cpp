@@ -40,6 +40,8 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpQuadProg.h>
 
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+
 using std::string;
 using std::vector;
 using std::cout;
@@ -713,3 +715,4 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   }
   return true;
 }
+#endif

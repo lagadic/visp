@@ -47,6 +47,11 @@
   Example of sequential calls to QP solver
 */
 
+#include <iostream>
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+
 #include <visp3/core/vpQuadProg.h>
 #include <visp3/core/vpTime.h>
 
@@ -125,5 +130,14 @@ int main ()
   cout << "No warm start: t = " << t_noWS << " ms (for 1 QP = " << t_noWS/total << " ms)" << endl;
 
   plot.wait();
+  return EXIT_SUCCESS;
 }
-
+#else
+int main()
+{
+  std::cout << "You did not build ViSP with C++11 compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CPP11=ON, and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif
