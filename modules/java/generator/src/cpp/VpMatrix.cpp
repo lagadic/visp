@@ -8,7 +8,7 @@ extern "C" {
 #endif
 #include <jni.h>
 
-} // extern "C"
+
 
 
 //
@@ -108,3 +108,5 @@ JNIEXPORT jstring JNICALL Java_org_visp_core_VpMatrix_n_1dump
   ss << *me;
   return env->NewStringUTF(ss.str().c_str());
 }
+
+} // extern "C"

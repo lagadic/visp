@@ -11,7 +11,6 @@ extern "C" {
 #endif
 #include <jni.h>
 
-} // extern "C"
 
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpColVector_VpColVector_10 (JNIEnv*, jclass, jint, jdouble);
 
@@ -605,3 +604,5 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpColVector_transpose_11
   vpRowVector _retval_ = me->transpose(  );
   return (jlong) new vpRowVector(_retval_);
 }
+
+} // extern "C"

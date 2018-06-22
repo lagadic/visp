@@ -11,7 +11,6 @@ extern "C" {
 #endif
 #include <jni.h>
 
-} // extern "C"
 
 // Java Method:    VpImageRGBa()
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__
@@ -65,3 +64,5 @@ JNIEXPORT jstring JNICALL Java_org_visp_core_VpImageRGBa_n_1dump
   ss << *me;
   return env->NewStringUTF(ss.str().c_str());
 }
+
+} // extern "C"

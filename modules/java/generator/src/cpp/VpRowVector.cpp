@@ -11,7 +11,6 @@ extern "C" {
 #endif
 #include <jni.h>
 
-} // extern "C"
 
 //
 //   vpRowVector(int n, double val)
@@ -482,3 +481,5 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpRowVector_stack_13
   vpRowVector _retval_ = vpRowVector::stack( A, B );
   return (jlong) new vpRowVector(_retval_);
 }
+
+} // extern "C"

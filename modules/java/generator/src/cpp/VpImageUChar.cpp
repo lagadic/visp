@@ -11,7 +11,6 @@ extern "C" {
 #endif
 #include <jni.h>
 
-} // extern "C"
 
 // Java Method:    VpImageUChar()
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar__
@@ -64,3 +63,5 @@ JNIEXPORT jstring JNICALL Java_org_visp_core_VpImageUChar_n_1dump
   ss << *me;
   return env->NewStringUTF(ss.str().c_str());
 }
+
+} // extern "C"
