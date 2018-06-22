@@ -54,6 +54,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #include <thread>
+#include <mutex>
 #endif
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000

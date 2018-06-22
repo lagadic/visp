@@ -14,6 +14,35 @@
 #include <pcl/common/common.h>
 #include <pcl/io/pcd_io.h>
 
+struct rs_intrinsics {
+  float ppx;       /**< Horizontal coordinate of the principal point of the image,
+                      as a pixel offset from the left edge */
+  float ppy;       /**< Vertical coordinate of the principal point of the image, as
+                      a pixel offset from the top edge */
+  float fx;        /**< Focal length of the image plane, as a multiple of pixel width
+                    */
+  float fy;        /**< Focal length of the image plane, as a multiple of pixel
+                      height */
+  float coeffs[5]; /**< Distortion coefficients */
+};
+
+void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, const float pixel[2], float depth) {
+  float x = (pixel[0] - intrin.ppx) / intrin.fx;
+  float y = (pixel[1] - intrin.ppy) / intrin.fy;
+
+  float r2 = x * x + y * y;
+  float f = 1 + intrin.coeffs[0] * r2 + intrin.coeffs[1] * r2 * r2 + intrin.coeffs[4] * r2 * r2 * r2;
+  float ux = x * f + 2 * intrin.coeffs[2] * x * y + intrin.coeffs[3] * (r2 + 2 * x * x);
+  float uy = y * f + 2 * intrin.coeffs[3] * x * y + intrin.coeffs[2] * (r2 + 2 * y * y);
+
+  x = ux;
+  y = uy;
+
+  point[0] = depth * x;
+  point[1] = depth * y;
+  point[2] = depth;
+}
+
 //! [Read data function]
 bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_color,
                vpImage<uint16_t> &I_depth_raw, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
@@ -38,67 +67,50 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   sprintf(buffer, ss.str().c_str(), cpt);
   std::string filename_depth = buffer;
 
-  std::ifstream file_depth(filename_depth.c_str(),  std::ios::in | std::ios::binary);
+  std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (!file_depth.is_open()) {
-    std::cerr << "Cannot read depth file: " << filename_depth << std::endl;
     return false;
   }
 
   unsigned int height = 0, width = 0;
-  file_depth.read( (char *)(&height), sizeof(height) );
-  file_depth.read( (char *)(&width), sizeof(width) );
+  vpIoTools::readBinaryValueLE(file_depth, height);
+  vpIoTools::readBinaryValueLE(file_depth, width);
 
   I_depth_raw.resize(height, width);
 
   uint16_t depth_value = 0;
   for (unsigned int i = 0; i < height; i++) {
     for (unsigned int j = 0; j < width; j++) {
-      file_depth.read( (char *)(&depth_value), sizeof(depth_value) );
+      vpIoTools::readBinaryValueLE(file_depth, depth_value);
       I_depth_raw[i][j] = depth_value;
     }
   }
 
-  // Read pointcloud
-  bool pointcloud_binary_format = true;
-  ss.str("");
-  ss << input_directory << "/point_cloud_%04d" << (pointcloud_binary_format ? ".bin" : ".pcd");
-  sprintf(buffer, ss.str().c_str(), cpt);
-  std::string filename_pointcloud = buffer;
+  // Transform pointcloud
+  pointcloud->width = width;
+  pointcloud->height = height;
+  pointcloud->reserve((size_t)width * height);
 
-  if (pointcloud_binary_format) {
-    std::ifstream file_pointcloud(filename_pointcloud.c_str(),  std::ios::in | std::ios::binary);
-    if (!file_pointcloud.is_open()) {
-      std::cerr << "Cannot read pointcloud file: " << filename_pointcloud << std::endl;
-      return false;
-    }
+  // Only for Creative SR300
+  const float depth_scale = 0.00100000005f;
+  rs_intrinsics depth_intrinsic;
+  depth_intrinsic.ppx = 320.503509521484f;
+  depth_intrinsic.ppy = 235.602951049805f;
+  depth_intrinsic.fx = 383.970001220703f;
+  depth_intrinsic.fy = 383.970001220703f;
+  depth_intrinsic.coeffs[0] = 0.0f;
+  depth_intrinsic.coeffs[1] = 0.0f;
+  depth_intrinsic.coeffs[2] = 0.0f;
+  depth_intrinsic.coeffs[3] = 0.0f;
+  depth_intrinsic.coeffs[4] = 0.0f;
 
-    uint32_t height = 0, width = 0;
-    bool is_dense = true;
-    file_pointcloud.read( (char *)(&height), sizeof(height) );
-    file_pointcloud.read( (char *)(&width), sizeof(width) );
-    file_pointcloud.read( (char *)(&is_dense), sizeof(is_dense) );
-
-    pointcloud->width = width;
-    pointcloud->height = height;
-    pointcloud->is_dense = is_dense;
-    pointcloud->resize((size_t) width*height);
-
-    float x = 0.0f, y = 0.0f, z = 0.0f;
-    for (uint32_t i = 0; i < height; i++) {
-      for (uint32_t j = 0; j < width; j++) {
-        file_pointcloud.read( (char *)(&x), sizeof(x) );
-        file_pointcloud.read( (char *)(&y), sizeof(y) );
-        file_pointcloud.read( (char *)(&z), sizeof(z) );
-
-        pointcloud->points[(size_t) (i*width + j)].x = x;
-        pointcloud->points[(size_t) (i*width + j)].y = y;
-        pointcloud->points[(size_t) (i*width + j)].z = z;
-      }
-    }
-  } else {
-    if (pcl::io::loadPCDFile<pcl::PointXYZ> (filename_pointcloud, *pointcloud) == -1) {
-      std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
-      return false;
+  for (unsigned int i = 0; i < height; i++) {
+    for (unsigned int j = 0; j < width; j++) {
+      float scaled_depth = I_depth_raw[i][j] * depth_scale;
+      float point[3];
+      float pixel[2] = {(float)j, (float)i};
+      rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
+      pointcloud->push_back(pcl::PointXYZ(point[0], point[1], point[2]));
     }
   }
 
@@ -130,8 +142,10 @@ int main(int argc, char *argv[])
     } else if (std::string(argv[i]) == "--disable_depth") {
       disable_depth = true;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: \n" << argv[0] << " --input_directory <data directory> --config_color <object.xml> --config_depth <object.xml> --model_color <object.cao> --model_depth <object.cao> --init_file <object.init> --disable_depth" << std::endl;
-      std::cout << "\nExample:\n" << argv[0] << " --config_color ../model/cube/cube.xml --config_depth ../model/cube/cube.xml --model_color ../model/cube/cube.cao --model_depth ../model/cube/cube.cao --init_file ../model/cube/cube.init\n" << std::endl;
+      std::cout << "Usage: \n" << argv[0] << " --input_directory <data directory> --config_color <object.xml> --config_depth <object.xml>"
+                                             " --model_color <object.cao> --model_depth <object.cao> --init_file <object.init> --disable_depth" << std::endl;
+      std::cout << "\nExample:\n" << argv[0] << " --config_color ../model/cube/cube.xml --config_depth ../model/cube/cube.xml"
+                                                " --model_color ../model/cube/cube.cao --model_depth ../model/cube/cube.cao --init_file ../model/cube/cube.init\n" << std::endl;
       return 0;
     }
   }

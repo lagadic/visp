@@ -305,6 +305,8 @@ public:
       const rs2_stream &stream,
       vpCameraParameters::vpCameraParametersProjType type = vpCameraParameters::perspectiveProjWithDistortion) const;
 
+  float getDepthScale();
+
   rs2_intrinsics getIntrinsics(const rs2_stream &stream) const;
 
   //! Get the value used when the pixel value (u, v) in the depth map is
