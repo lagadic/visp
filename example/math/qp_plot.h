@@ -63,11 +63,11 @@ vpColVector randV(int n)
 }
 
 #ifdef VISP_HAVE_DISPLAY
-class QPPlot
+class VISP_EXPORT QPlot
 {
 public:
-  ~QPPlot()  { delete P; }
-  QPPlot(int graphNum, int total, std::vector<std::string> legend)
+  ~QPlot()  { delete P; }
+  QPlot(int graphNum, int total, std::vector<std::string> legend)
   {
     P = new vpPlot(graphNum, 700, 700, 100, 200, "Resolution time");
 
@@ -97,7 +97,7 @@ public:
   vpPlot* P;
 };
 #else
-class QPPlot
+class VISP_EXPORT QPlot
 {
 public:
   QPPlot(int, int , std::vector<std::string> ) {}

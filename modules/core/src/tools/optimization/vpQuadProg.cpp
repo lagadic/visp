@@ -42,11 +42,6 @@
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 
-using std::string;
-using std::vector;
-using std::cout;
-using std::endl;
-
 /*!
 Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
 to the formulation used by this class \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
@@ -144,8 +139,6 @@ void vpQuadProg::fromCanonicalCost(const vpMatrix &/*H*/, const vpColVector &/*c
 #endif
 }
 
-
-
 /*!
   Saves internally the column reduction of the passed equality constraint:
 
@@ -166,14 +159,12 @@ bool vpQuadProg::setEqualityConstraint(const vpMatrix &A, const vpColVector &b, 
   if(A.getRows() == b.getRows() && vpLinProg::colReduction(Z, x1, false, tol))
     return true;
 
-  std::cout << "vpQuadProg::setEqualityConstraint: equality constraint infeasible" << endl;
+  std::cout << "vpQuadProg::setEqualityConstraint: equality constraint infeasible" << std::endl;
   return false;
 }
 
-
 /*!
   Solves a Quadratic Program under equality constraints.
-
 
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2 \\
@@ -332,7 +323,7 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r, vpMatrix A, 
 
   if(!solveByProjection(Q, r, A, b, x, tol))
   {
-    std::cout << "vpQuadProg::solveQPe: equality constraint infeasible" << endl;
+    std::cout << "vpQuadProg::solveQPe: equality constraint infeasible" << std::endl;
     return false;
   }
   return true;
@@ -402,7 +393,7 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r,
 
   if(!vpLinProg::colReduction(A, b, false, tol))
   {
-    std::cout << "vpQuadProg::solveQP: equality constraint infeasible" << endl;
+    std::cout << "vpQuadProg::solveQP: equality constraint infeasible" << std::endl;
     return false;
   }
 
@@ -416,10 +407,9 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r,
     x = b;
     return true;
   }
-  std::cout << "vpQuadProg::solveQP: inequality constraint infeasible" << endl;
+  std::cout << "vpQuadProg::solveQP: inequality constraint infeasible" << std::endl;
   return false;
 }
-
 
 /*!
   Solves a Quadratic Program under inequality constraints
@@ -488,11 +478,11 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
         x = x1;
         return true;
       }
-      std::cout << "vpQuadProg::solveQPi: inequality constraint infeasible" << endl;
+      std::cout << "vpQuadProg::solveQPi: inequality constraint infeasible" << std::endl;
       return false;
     }
     else
-      std::cout << "vpQuadProg::solveQPi: use_equality before setEqualityConstraint" << endl;
+      std::cout << "vpQuadProg::solveQPi: use_equality before setEqualityConstraint" << std::endl;
   }
 
   const unsigned int p = C.getRows();
@@ -584,7 +574,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
     // r-part should be 0
     if(!vpLinProg::allLesser(xc.extract(2*n+p, k), tol))
     {
-      std::cout << "vpQuadProg::solveQPi: inequality constraints not feasible" << endl;
+      std::cout << "vpQuadProg::solveQPi: inequality constraints not feasible" << std::endl;
       return false;
     }
 
@@ -638,7 +628,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
 
     if(!solveByProjection(Q, g, A, b, u, tol))
     {
-      cout << "vpQuadProg::solveQPi: QP seems infeasible, too many constraints activated\n";
+      std::cout << "vpQuadProg::solveQPi: QP seems infeasible, too many constraints activated\n";
       return false;
     }
 

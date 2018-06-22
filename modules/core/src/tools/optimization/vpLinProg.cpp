@@ -38,8 +38,6 @@
 
 #include <visp3/core/vpLinProg.h>
 
-using namespace std;
-
 /*!
   Reduces the search space induced by an equality constraint.
 
@@ -212,7 +210,6 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   return false;
 }
 
-
 /*!
   Reduces the number of equality constraints.
 
@@ -245,7 +242,7 @@ or \f$\mathbf{b} = \left[\begin{array}{c}0\\0\\1\end{array}\right]\f$ (not feasi
     // b[2] = 1;    // uncomment to make it unfeasible
 
     if(vpLinProg::rowReduction(A, b))
-      std::cout << A << endl; // A is now 2x4
+      std::cout << A << std::endl; // A is now 2x4
     else
       std::cout << "Ax = b not feasible\n";
   }
@@ -566,7 +563,7 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
          )
   {
     // min sum(z)
-    //  st A.x + D.z = D.b with diag(D) = sign(b)
+    //  st A.x + D.z =  with diag(D) = sign(b)
     // feasible = (0, |b|)
     // z should be minimized to 0 to get a feasible point for this simplex
     vpColVector cz(n+m);
@@ -595,7 +592,7 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     vpLinProg::simplex(cz, AD, b, x, tol);
     if(!allLesser(x.extract(n,m), tol))    // no feasible starting point found
     {
-      cout << "vpLinProg::simplex: constraints not feasible" << endl;
+      std::cout << "vpLinProg::simplex: constraints not feasible" << std::endl;
       x.resize(n);
       return false;
     }
@@ -607,7 +604,7 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
   // try to reduce number of rows to remove rank deficiency
   if(!rowReduction(A, b, tol))
   {
-    cout << "vpLinProg::simplex: equality constraint not feasible" << endl;
+    std::cout << "vpLinProg::simplex: equality constraint not feasible" << std::endl;
     return false;
   }
   m = A.getRows();
@@ -656,7 +653,6 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
       if(B.size() != m)
       {
         in_N = false;
-
         for(unsigned int i = 0; i < null_rows.size(); ++i)
         {
           in_N = true;
@@ -709,11 +705,10 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
   std::vector<std::pair<double, unsigned int>> a;
   a.reserve(n);
 
-  vpColVector R(n-m), db(m), dn(n-m);
+  vpColVector R(n-m), db(m);
 
   while(true)
   {
-
     Abi = Ab.inverseByQR();
     // find negative residual
     R  = cn - An.t()*Abi.t()*cb;
@@ -729,8 +724,7 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
       return true;
 
     // j will be added as a constraint, find the one to remove
-    dn[j] = 1;
-    db = -Abi * An * dn;
+    db = -Abi * An.getCol(j);
 
     if(allGreater(db, -tol))  // unbounded
       return true;
@@ -747,15 +741,12 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     const double alpha = amin->first;
     const unsigned int k = amin->second;
 
-
     // pivot between B[k] and N[j]
     // update x
     for(unsigned int i = 0; i < B.size(); ++i)
       x[B[i]] += alpha * db[i];
     // N part of x
     x[N[j]] = alpha;
-    // reset dn
-    dn[j] = 0;
 
     // update A and c
     std::swap(cb[k], cn[j]);
@@ -765,6 +756,5 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     // update B and N
     std::swap(B[k],N[j]);
   }
-
 }
 #endif

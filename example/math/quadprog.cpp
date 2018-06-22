@@ -91,7 +91,7 @@ int main ()
   double t, t_WS(0), t_noWS(0);
   const double eps = 1e-2;
 
-  QPPlot plot(1, total, {"time to solveQP", "warm start"});
+  QPlot plot(1, total, {"time to solveQP", "warm start"});
 
   for(int k = 0; k < total; ++k)
   {

@@ -173,6 +173,4 @@ protected:
   }
 #endif
 };
-
-
 #endif

@@ -94,7 +94,7 @@ int main ()
   double t, t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
   const double eps = 1e-2;
 
-  QPPlot plot(2, total, {"only equalities", "pre-solving", "equalities + inequalities", "pre-solving / warm start"});
+  QPlot plot(2, total, {"only equalities", "pre-solving", "equalities + inequalities", "pre-solving / warm start"});
 
   for(int k = 0; k < total; ++k)
   {

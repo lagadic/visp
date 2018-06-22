@@ -117,7 +117,6 @@ The type is compatible with C++11's braced initialization.
   */
   typedef std::pair<unsigned int, double> BoundedIndex;
 
-
   /** @name Solvers  */
   //@{
   static bool simplex(const vpColVector &c, vpMatrix A, vpColVector b,
@@ -125,8 +124,8 @@ The type is compatible with C++11's braced initialization.
 
   static bool solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
                       const vpMatrix &C, const vpColVector &d, vpColVector &x,
-                      std::vector<BoundedIndex> l = std::vector<BoundedIndex>(),
-                      std::vector<BoundedIndex> u = std::vector<BoundedIndex>(),
+                      std::vector<BoundedIndex> l = {},
+                      std::vector<BoundedIndex> u = {},
                       const double &tol = 1e-6);
 
   //@}
@@ -235,7 +234,4 @@ The type is compatible with C++11's braced initialization.
   }
   //@}
 };
-
-
-
 #endif // vpLinProgh
