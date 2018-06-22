@@ -2,16 +2,18 @@
 // This file is auto-generated. Please don't modify it!
 //
 
-#ifdef HAVE_VISP_$M
-
 #include <string>
 $includes
 using namespace std;
 
 extern "C" {
 
+#if !defined(__ppc__)
+// to suppress warning from jni.h on OS X
+#  define TARGET_RT_MAC_CFM 0
+#endif
+#include <jni.h>
+
 $code
 
 } // extern "C"
-
-#endif // HAVE_VISP_$M
