@@ -129,6 +129,7 @@ This page introduces the user to the way to track objects in images.
 - \subpage tutorial-tracking-mb-generic <br>This tutorial focuses on model-based trackers using either moving edges, or keypoints, or a combination of them as visual features on images acquired by a monocular color camera.
 - \subpage tutorial-tracking-mb-generic-stereo <br>This tutorial focuses on model-based trackers using either edges, or keypoints, or a combination of them as visual features on images acquired by a stereo color camera.
 - \subpage tutorial-tracking-mb-generic-rgbd <br>This tutorial focuses on generic model-based trackers combining moving edges and/or keypoints with depth visual features.
+- \subpage tutorial-tracking-mb-generic-apriltag-live <br>This tutorial is a simple use case. Using a webcam or an Intel RGB-D camera it shows how to test the generic model tracker on a cube that has an AprilTag glued on one face. The tag is here used to automate the tracker initialization.
 - \subpage tutorial-tracking-mb-deprecated <br>This deprecated tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
 - \subpage tutorial-tracking-mb-stereo-deprecated <br>This deprecated tutorial focuses on model-based trackers using stereo cameras.
 - \subpage tutorial-tracking-mb-CAO-editor <br>This tutorial presents the project done during the GSoC 2017: two Blender plugins to import/export .cao model file and a Qt-based .cao editor.

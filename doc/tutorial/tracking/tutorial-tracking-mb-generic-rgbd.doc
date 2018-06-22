@@ -320,6 +320,10 @@ To display the model with the estimated pose and also the object frame:
 \snippet tutorial-mb-generic-tracker-rgbd.cpp Display
 
 \section mb_rgbd_next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-mb-CAO-editor.
+
+If you have an Intel Realsense device, you are now ready to experiment the generic model-based tracker on a cube that has an AprilTag on one face following \ref tutorial-tracking-mb-generic-apriltag-live.
+
+
+You can also follow \ref tutorial-tracking-mb-CAO-editor.
 
 */
