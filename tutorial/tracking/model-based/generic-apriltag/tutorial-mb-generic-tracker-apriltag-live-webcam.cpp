@@ -1,4 +1,4 @@
-//! \example tutorial-mb-generic-tracker-apriltag-init.cpp
+//! \example tutorial-mb-generic-tracker-apriltag-live-webcam.cpp
 #include <fstream>
 #include <ios>
 #include <iostream>

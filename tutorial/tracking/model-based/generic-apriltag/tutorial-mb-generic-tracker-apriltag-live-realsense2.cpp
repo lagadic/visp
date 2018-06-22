@@ -1,4 +1,4 @@
-//! \example tutorial-mb-generic-tracker-apriltag-init.cpp
+//! \example tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp
 #include <fstream>
 #include <ios>
 #include <iostream>
@@ -161,8 +161,6 @@ int main(int argc, const char **argv)
   double opt_tag_size = 0.08;
   float opt_quad_decimate = 1.0;
   int opt_nthreads = 1;
-  std::string opt_intrinsic_file = "";
-  std::string opt_camera_name = "";
   double opt_cube_size = 0.125; // 12.5cm by default
 #ifdef VISP_HAVE_OPENCV
   bool opt_use_texture = false;
@@ -183,10 +181,6 @@ int main(int argc, const char **argv)
       opt_quad_decimate = (float)atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       opt_nthreads = atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      opt_intrinsic_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
-      opt_camera_name = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
     } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
@@ -204,7 +198,6 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0] << " [--cube_size <size in m>] [--tag_size <size in m>]"
                                            " [--quad_decimate <decimation>] [--nthreads <nb>]"
-                                           " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
                                            " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
                                            " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
@@ -316,7 +309,9 @@ int main(int argc, const char **argv)
     vpMe me;
     me.setMaskSize(5);
     me.setMaskNumber(180);
+    //! [Range]
     me.setRange(12);
+    //! [Range]
     me.setThreshold(10000);
     me.setMu1(0.5);
     me.setMu2(0.5);
