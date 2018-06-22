@@ -261,7 +261,7 @@ int main(int argc, const char **argv)
         }
         vpHomogeneousMatrix cMo;
 
-        if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == 0) {
+        if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == EXIT_SUCCESS) {
           //std::cout << "camera parameters for frame " << frame_index << ": " << cam << std::endl;
           calibrator.push_back(calib);
         }
@@ -314,15 +314,9 @@ int main(int argc, const char **argv)
 
     std::cout << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << std::endl;
     double error;
-    if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) == 0) {
+    if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) == EXIT_SUCCESS) {
       std::cout << cam << std::endl;
       std::cout << "Global reprojection error: " << error << std::endl;
-
-      if (cam.get_px() < 0 || cam.get_py() < 0 || cam.get_u0() < 0 || cam.get_v0() < 0) {
-        std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
-        return EXIT_FAILURE;
-      }
-
       ss_additional_info << "<global_reprojection_error><without_distortion>" << error << "</without_distortion>";
 
 #ifdef VISP_HAVE_XML2
@@ -347,14 +341,8 @@ int main(int argc, const char **argv)
 
     std::cout << "\nCalibration with distortion in progress on " << calibrator.size() << " images..." << std::endl;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
-        0) {
+        EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-
-      if (cam.get_px() < 0 || cam.get_py() < 0 || cam.get_u0() < 0 || cam.get_v0() < 0) {
-        std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
-        return EXIT_FAILURE;
-      }
-
       std::cout << "Global reprojection error: " << error << std::endl;
       ss_additional_info << "<with_distortion>" << error << "</with_distortion></global_reprojection_error>";
 
