@@ -113,6 +113,15 @@ def camelCase(s):
     else:
         return s
 
+def reverseCamelCase(s):
+    '''
+        turns VpHomoMatrix to vpHomoMatrix
+    '''
+    if len(s) > 0:
+        return s[0].lower() + s[1:]
+    else:
+        return s
+
 
 T_JAVA_START_INHERITED = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_class_inherited.prolog'))
 T_JAVA_START_ORPHAN = read_contents(os.path.join(SCRIPT_DIR, 'templates/java_class.prolog'))
@@ -866,7 +875,7 @@ class JavaWrapperGenerator(object):
 
 
             # cpp part:
-            # jni_func(..) { _retval_ = cv_func(..); return _retval_; }
+            # jni_func(..) { _retval_ = vp_func(..); return _retval_; }
             ret = "return _retval_;"
             default = "return 0;"
             if fi.ctype == "void":
@@ -875,7 +884,7 @@ class JavaWrapperGenerator(object):
             elif not fi.ctype: # c-tor
                 ret = "return (jlong) _retval_;"
             elif "v_type" in type_dict[fi.ctype]: # c-tor
-                if type_dict[fi.ctype]["v_type"] in ("Mat", "vector_Mat"):
+                if type_dict[fi.ctype]["v_type"] in ("vpMatrix", "vector_vpMatrix"):
                     ret = "return (jlong) _retval_;"
                 else: # returned as jobject
                     ret = "return _retval_;"
@@ -915,15 +924,15 @@ class JavaWrapperGenerator(object):
                     c_epilogue.append("jobject _retval_ = " + fi.ctype + "_to_List(env, _ret_val_vector_);")
             if len(fi.classname)>0:
                 if not fi.ctype: # c-tor
-                    retval = fi.fullClass(isCPP=True) + "* _retval_ = "
-                    cvname = "new " + fi.fullClass(isCPP=True)
+                    retval = reverseCamelCase(fi.fullClass(isCPP=True)) + "* _retval_ = "
+                    cvname = "new " + reverseCamelCase(fi.fullClass(isCPP=True))
                 elif fi.static:
                     cvname = fi.fullName(isCPP=True)
                 else:
                     cvname = ("me->" if  not self.isSmartClass(ci) else "(*me)->") + name
                     c_prologue.append(\
                         "%(cls)s* me = (%(cls)s*) self; //TODO: check for NULL" \
-                            % { "cls" : self.smartWrap(ci, fi.fullClass(isCPP=True))} \
+                            % { "cls" : reverseCamelCase(self.smartWrap(ci, fi.fullClass(isCPP=True)))} \
                     )
             cvargs = []
             for a in args:
