@@ -960,9 +960,18 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname ($argst);
 JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
   ($args)
 {
-        $prologue
-        $retval$cvname( $cvargs );
-        $epilogue$ret
+	static const char method_name[] = "$module::$fname()";
+  try {
+		LOGD("%s", method_name);
+    $prologue
+    $retval$cvname( $cvargs );
+    $epilogue$ret
+  } catch(const std::exception &e) {
+		throwJavaException(env, &e, method_name);
+  } catch (...) {
+		throwJavaException(env, 0, method_name);
+  }
+  $default
 }
 
 
