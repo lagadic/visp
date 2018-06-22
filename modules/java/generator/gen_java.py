@@ -570,27 +570,23 @@ class JavaWrapperGenerator(object):
                 else: # function
                     self.add_func(decl)
 
-        logging.info("\n\n===== Generating... =====")
+		logging.info("\n\n===== Generating... =====")
+        moduleCppCode = StringIO()
         package_path = os.path.join(output_java_path, module)
         mkdir_p(package_path)
         for ci in self.classes.values():
-            # INFO: Ignore classes that are manually. For open-cv it was Mat, for Visp it'll be vpMat and vpImage
-            if ci.name in ["vpMatrix","vpImage","vpArray2D"]:
+			# INFO: Ignore classes that are manually. For open-cv it was Mat, for Visp it'll be vpMat and vpImage
+            if ci.name in ["vpMatrix","vpImageUChar","vpImageRGBa","vpArray2D"]:
                 continue
             ci.initCodeStreams(self.Module)
             self.gen_class(ci)
-
-            # INFO: Generate <Class>.java file
             classJavaCode = ci.generateJavaCode(self.module, self.Module)
             self.save("%s/%s/%s.java" % (output_java_path, module, ci.jname), classJavaCode)
-
-            # INFO: Generate <Class>.cpp JNI file
-            cpp_file = os.path.abspath(os.path.join(output_jni_path, ci.jname + ".cpp"))
-            self.cpp_files.append(cpp_file)
-            self.save(cpp_file, T_CPP_MODULE.substitute(m=module, M=module.upper(), code=ci.generateCppCode(),
-                                                        includes="\n".join(includes)))
+            moduleCppCode.write(ci.generateCppCode())
             ci.cleanupCodeStreams()
-
+        cpp_file = os.path.abspath(os.path.join(output_jni_path, module + ".inl.hpp"))
+        self.cpp_files.append(cpp_file)
+        self.save(cpp_file, T_CPP_MODULE.substitute(m = module, M = module.upper(), code = moduleCppCode.getvalue(), includes = "\n".join(includes)))
         self.save(os.path.join(output_path, module+".txt"), self.makeReport())
 
     def makeReport(self):
