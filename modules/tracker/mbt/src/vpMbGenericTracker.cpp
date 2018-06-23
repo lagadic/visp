@@ -175,7 +175,17 @@ vpMbGenericTracker::~vpMbGenericTracker()
 }
 
 /*!
-  Compute projection error given an input image and camera pose.
+  Compute projection error given an input image and camera pose, parameters.
+  This projection error uses locations sampled exactly where the model is projected using the camera pose
+  and intrinsic parameters.
+  You may want to use \sa setProjectionErrorComputation \sa getProjectionError
+
+  to get a projection error computed at the ME locations after a call to track().
+  It works similarly to vpMbTracker::getProjectionError function:
+  <blockquote>
+  Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
+  The error is expressed in degree between 0 and 90.
+  </blockquote>
 
   \param I : Input grayscale image.
   \param _cMo : Camera pose.

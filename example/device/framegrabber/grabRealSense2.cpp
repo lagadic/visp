@@ -53,6 +53,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #include <thread>
+#include <mutex>
 
 namespace
 {

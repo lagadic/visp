@@ -351,7 +351,7 @@ void vpCalibration::computeStdDeviation(double &deviation, double &deviation_dis
   \param verbose : set at true if information about the residual at each loop
   of the algorithm is hoped.
 
-  \return 0 if the calibration computation succeed.
+  \return EXIT_SUCCESS if the calibration succeed, EXIT_FAILURE otherwise.
 */
 int vpCalibration::computeCalibration(vpCalibrationMethodType method, vpHomogeneousMatrix &cMo_est,
                                       vpCameraParameters &cam_est, bool verbose)
@@ -423,7 +423,13 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method, vpHomogene
     this->cam_dist = cam_est;
 
     this->cMo_dist = cMo_est;
-    return 0;
+
+    if (cam_est.get_px() < 0 || cam_est.get_py() < 0 || cam_est.get_u0() < 0 || cam_est.get_v0() < 0) {
+      std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
   } catch (...) {
     throw;
   }
@@ -437,10 +443,11 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method, vpHomogene
   \param table_cal : Vector of vpCalibration.
   \param cam_est : Estimated intrinsic camera parameters.
   \param globalReprojectionError : Global reprojection error or global
-  residual. \param verbose : Set at true if information about the residual at
+  residual.
+  \param verbose : Set at true if information about the residual at
   each loop of the algorithm is hoped.
 
-  \return 0 if the computation was managed succeed.
+  \return EXIT_SUCCESS if the calibration succeed, EXIT_FAILURE otherwise.
 */
 int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
                                            vpCameraParameters &cam_est, double &globalReprojectionError, bool verbose)
@@ -517,7 +524,13 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
       cam_est.printParameters();
       std::cout << std::endl;
     }
-    return 0;
+
+    if (cam_est.get_px() < 0 || cam_est.get_py() < 0 || cam_est.get_u0() < 0 || cam_est.get_v0() < 0) {
+      std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
   } catch (...) {
     throw;
   }

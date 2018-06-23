@@ -8,7 +8,7 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd.cpp)
 
-file(GLOB tutorial_data data/color_image_*.jpg data/depth_image_*.bin data/point_cloud_*.bin )
+file(GLOB tutorial_data data/color_image_*.jpg data/depth_image_*.bin)
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube_depth.xml")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube.xml")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube.cao")
