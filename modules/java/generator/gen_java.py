@@ -186,7 +186,7 @@ class GeneralInfo():
             return spaceName, "", ""  # error?!
 
     def fullName(self, isCPP=False):
-        result = ''.join([self.fullClass(), reverseCamelCase(self.name)])
+        result = ".".join([self.fullClass(), reverseCamelCase(self.name)])
         return result if not isCPP else result.replace(".", "::")
 
     def fullClass(self, isCPP=False):
@@ -954,7 +954,7 @@ class JavaWrapperGenerator(object):
                     retval = reverseCamelCase(fi.fullClass(isCPP=True)) + "* _retval_ = "
                     cvname = "new " + reverseCamelCase(fi.fullClass(isCPP=True))
                 elif fi.static:
-                    cvname = fi.fullName(isCPP=True)
+                    cvname = reverseCamelCase(fi.fullName(isCPP=True))
                 else:
                     cvname = ("me->" if not self.isSmartClass(ci) else "(*me)->") + name
                     c_prologue.append( \
@@ -1141,6 +1141,8 @@ JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete
         '''
         if self.isSmartClass(ci):
             return "Ptr<" + fullname + ">"
+        if fullname[0] == ':':   # some classes miss namespace. so they are named ::<class>. That :: should be removed
+            fullname = fullname[2:]
         return fullname
 
     '''
