@@ -55,6 +55,22 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1rows
   return me->getRows();
 }
 
+// Java Method:    getPixel(int i, int j)
+JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1getPixel
+(JNIEnv *env, jclass, jlong address, jint i, jint j){
+  vpImage<u_char>* me = (vpImage<u_char>*) address; //TODO: check for NULL
+  return (*me)(i,j);
+}
+
+// Java Method:    getPixels()
+JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageUChar_n_1getPixels
+(JNIEnv *env, jclass, jlong address){
+  vpImage<u_char>* me = (vpImage<u_char>*) address; //TODO: check for NULL
+	jbyteArray ret = env->NewByteArray(me->getNumberOfPixel());
+  env->SetByteArrayRegion (ret, 0, me->getNumberOfPixel(), (jbyte*) me->bitmap);
+  return ret;
+}
+
 // Java Method:    dump()
 JNIEXPORT jstring JNICALL Java_org_visp_core_VpImageUChar_n_1dump
 (JNIEnv *env, jclass, jlong address){

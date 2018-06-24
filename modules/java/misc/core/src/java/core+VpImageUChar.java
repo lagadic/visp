@@ -33,14 +33,24 @@ public class VpImageUChar {
     	nativeObj = n_VpImageUChar(array, height, width, copyData);
     }
     
-    // C++: VpImageUChar::getCols()
+    // C++: vpImage::vpImage<uchar>::getCols()
     public int cols() {
         return n_cols(nativeObj);
     }
 
-    // C++: VpImageUChar::getRows()
+    // C++: vpImage::vpImage<uchar>::getRows()
     public int rows() {
         return n_rows(nativeObj);
+    }
+
+    // C++: vpImage::vpImage<uchar>::operator()
+    public int getPixel(int i, int j) {
+        return n_getPixel(nativeObj, i, j);
+    }
+
+	// C++: vpImage:: Type *bitmap
+    public byte[] getPixels() {
+        return n_getPixels(nativeObj);
     }
 
     public long getNativeObjAddr() {
@@ -69,6 +79,12 @@ public class VpImageUChar {
 
     // C++: int vpImage::rows()
     private static native int n_rows(long nativeObj);
+
+    // C++: int vpImage::operator()
+    private static native int n_getPixel(long nativeObj, int i, int j);
+
+    // C++: int vpImage:: Type *bitmap
+    private static native byte[] n_getPixels(long nativeObj);
 
     // C++: String <<&(ostream ss)
     private static native String n_dump(long nativeObj);
