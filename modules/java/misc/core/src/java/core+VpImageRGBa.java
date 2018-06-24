@@ -27,20 +27,35 @@ public class VpImageRGBa {
     	nativeObj = n_VpImageRGBa(r,c,val.R,val.G,val.B,val.A);
     }
     
-    // C++: vpImage (Type *const array, int height, int width, bool copyData=false)
+    // C++: vpImage<vpRGBa>(Type *const array, int height, int width, bool copyData=false)
     // The byte array would be read from a stream
     public VpImageRGBa(byte[] array, int height, int width, boolean copyData) {
     	nativeObj = n_VpImageRGBa( array, height, width, copyData);
     }
     
-    // C++: VpImageRGBa::getCols()
+    // C++: vpImage<vpRGBa>::getCols()
     public int cols() {
         return n_cols(nativeObj);
     }
 
-    // C++: VpImageRGBa::getRows()
+    // C++: vpImage<vpRGBa>::getRows()
     public int rows() {
         return n_rows(nativeObj);
+    }
+
+    // C++: vpImage<vpRGBa>::operator()
+    public VpRGBa getPixel(int i, int j) {
+		byte res[] = n_getPixel(nativeObj, i, j);
+		VpRGBa val = new VpRGBa((char) (res[0] >= 0?res[0]:res[0]+256),
+								(char) (res[1] >= 0?res[1]:res[1]+256),
+								(char) (res[2] >= 0?res[2]:res[2]+256),
+								(char) (res[3] >= 0?res[3]:res[3]+256));
+		return val;
+    }
+
+	// C++: vpImage<vpRGBa>:: <vpRGBa> *bitmap
+    public byte[] getPixels() {
+        return n_getPixels(nativeObj);
     }
 
     public long getNativeObjAddr() {
@@ -69,6 +84,12 @@ public class VpImageRGBa {
 
     // C++: int vpImage::rows()
     private static native int n_rows(long nativeObj);
+
+    // C++: int vpImage<vpRGBa>::operator()
+    private static native byte[] n_getPixel(long nativeObj, int i, int j);
+
+    // C++: int vpImage<vpRGBa>:: Type *bitmap
+    private static native byte[] n_getPixels(long nativeObj);
 
     // C++: String <<&(ostream ss)
     private static native String n_dump(long nativeObj);
