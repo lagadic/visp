@@ -53,6 +53,7 @@ void createCaoFile(double cubeEdgeSize)
   fileStream.close();
 }
 
+#if defined(VISP_HAVE_APRILTAG)
 state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &detector,
                        double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
@@ -75,6 +76,7 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
 
   return state_detection;
 }
+#endif // #if defined(VISP_HAVE_APRILTAG)
 
 state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker,
               double projection_error_threshold, vpHomogeneousMatrix &cMo)
