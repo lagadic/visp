@@ -324,6 +324,11 @@ scheme, ...</p>
   \defgroup group_core_time Time management
   Time management.
 */
+/*!
+\ingroup group_core_tools
+\defgroup group_core_optim Optimization
+  Optimization solvers for Linear Programs (simplex) and Quadratic Programs (active sets).
+*/
 
 /*******************************************
  * Module io

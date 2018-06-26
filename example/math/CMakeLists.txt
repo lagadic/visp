@@ -45,6 +45,8 @@ find_package(VISP REQUIRED visp_core visp_io)
 set(example_cpp
   exponentialMap.cpp
   BSpline.cpp
+  quadprog_eq.cpp
+  quadprog.cpp
 )
 
 foreach(cpp ${example_cpp})
