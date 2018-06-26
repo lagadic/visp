@@ -430,6 +430,10 @@ void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 {
   try {
     vpMeTracker::track(I);
+    if (m_mask != NULL) {
+      // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
+      expecteddensity = (double)list.size();
+    }
   } catch (const vpException &exception) {
     throw(exception);
   }
