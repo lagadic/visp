@@ -933,7 +933,9 @@ endif(BUILD_PACKAGE)
 # Usage:
 #    visp-config --cflags ...
 #----------------------------------------------------------------------
-include(cmake/VISPGenerateConfigScript.cmake)
+if(NOT CMAKE_GENERATOR MATCHES "Xcode")
+  include(cmake/VISPGenerateConfigScript.cmake)
+endif()
 
 #----------------------------------------------------------------------
 # Propagation in sub dirs to build demo, example, test, tutorial
