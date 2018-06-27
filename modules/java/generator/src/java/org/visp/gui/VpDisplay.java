@@ -30,6 +30,24 @@ public class VpDisplay {
 		System.arraycopy(b, 0, targetPixels, 0, b.length);
 		return I;
 	}
+
+	public static Image toBufferedImage(VpImageRGBa image) {
+		int type = BufferedImage.TYPE_4BYTE_ABGR;
+		byte[] b = image.getPixels(); // get all the pixels
+		BufferedImage I = new BufferedImage(image.cols(), image.rows(), type);
+		final byte[] targetPixels = ((DataBufferByte) I.getRaster().getDataBuffer()).getData();
+
+		// Note that in c++, visp returns RGBA format
+		// While java accepts ABGR, exactly the opposite for each pixel
+		// That's why this strange allocation
+		for (int j = 0; j < targetPixels.length/4; j++) {
+			targetPixels[4*j] = b[4*j + 3];
+			targetPixels[4*j + 1] = b[4*j + 2];
+			targetPixels[4*j + 2] = b[4*j + 1];
+			targetPixels[4*j+3] = b[4*j];
+		}
+		return I;
+	}
 	
 	public void display(VpImageUChar imageUChar) {
 		ImageIcon image = new ImageIcon(toBufferedImage(imageUChar));
@@ -38,6 +56,17 @@ public class VpDisplay {
 		frame.pack(); // pack screen size to fit content
 		frame.setVisible(true);
 		frame.setFocusable(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	public void display(VpImageRGBa imageRGBa) {
+		ImageIcon image = new ImageIcon(toBufferedImage(imageRGBa));
+		JLabel imageLabel = new JLabel(image);
+		frame.add(imageLabel);
+		frame.pack(); // pack screen size to fit content
+		frame.setVisible(true);
+		frame.setFocusable(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public void setTitle(String title) {
