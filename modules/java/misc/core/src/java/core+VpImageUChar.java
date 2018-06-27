@@ -57,8 +57,8 @@ public class VpImageUChar {
         return nativeObj;
     }
     
-    // Prints current image
-    public String dump(){
+	@Override
+    public String toString(){
     	return n_dump(nativeObj);
     }
     

@@ -46,22 +46,22 @@ public class VpMatrix {
         return nativeObj; 
     } 
  
-  // C++: vpMatrix::transpose() 
-  public VpMatrix transpose(){ 
-    VpMatrix res = new VpMatrix(); 
-    n_transpose(nativeObj, res.nativeObj); 
-    return res; 
-  } 
+	// C++: vpMatrix::transpose() 
+	public VpMatrix transpose(){ 
+		VpMatrix res = new VpMatrix(); 
+		n_transpose(nativeObj, res.nativeObj); 
+		return res; 
+	} 
  
-  // C++: vpMatrix::transpose(vpMatrix&) 
-  public void transpose(VpMatrix res){ 
-    n_transpose(nativeObj, res.nativeObj); 
-  } 
+	// C++: vpMatrix::transpose(vpMatrix&) 
+	public void transpose(VpMatrix res){ 
+		n_transpose(nativeObj, res.nativeObj); 
+	} 
  
-  // Prints current matrix 
-    public String dump(){ 
-      return n_dump(nativeObj); 
-    } 
+	@Override
+    public String toString(){
+    	return n_dump(nativeObj);
+    }
      
     // C++: vpMatrix::vpMatrix() 
     private static native long n_vpMatrix(); 
@@ -81,10 +81,10 @@ public class VpMatrix {
     // C++: int vpMatrix::rows() 
     private static native int n_rows(long nativeObj); 
  
-  // C++: vpMatrix::transpose(vpMatrix&) 
-  private static native void n_transpose(long nativeObj, long address); 
+	// C++: vpMatrix::transpose(vpMatrix&) 
+	private static native void n_transpose(long nativeObj, long address); 
    
-  // C++: String <<&(ostream ss) 
+    // C++: String <<&(ostream ss) 
     private static native String n_dump(long nativeObj); 
 } 
 
