@@ -57,15 +57,31 @@
 
 #include "qp_plot.h"
 
-using namespace std;
-
-int main ()
+int main (int argc, char **argv)
 {
-  const int n = 20;    // x dim
-  const int m = 10;    // equality m < n
+  const int n = 20;   // x dim
+  const int m = 10;   // equality m < n
   const int p = 30;   // inequality
-  const int o = 16;    // cost function
+  const int o = 16;   // cost function
+  bool opt_display = true;
 
+  for (int i = 0; i < argc; i++) {
+    if (std::string(argv[i]) == "-d")
+      opt_display = false;
+    else if (std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0] << " [-d] [-h]" << std::endl;
+      std::cout << "\nOptions: \n"
+                   "  -d \n"
+                   "     Disable the image display. This can be useful \n"
+                   "     for automatic tests using crontab under Unix or \n"
+                   "     using the task manager under Windows.\n"
+                   "\n"
+                   "  -h\n"
+                   "     Print the help.\n"<< std::endl;
+
+      return EXIT_SUCCESS;
+    }
+  }
   std::srand((long) vpTime::measureTimeMs());
 
   vpMatrix A, Q, C;
@@ -91,7 +107,11 @@ int main ()
   double t, t_WS(0), t_noWS(0);
   const double eps = 1e-2;
 
-  QPlot plot(1, total, {"time to solveQP", "warm start"});
+#ifdef VISP_HAVE_DISPLAY
+  QPlot *plot = NULL;
+  if (opt_display)
+    plot = new QPlot(1, total, {"time to solveQP", "warm start"});
+#endif
 
   for(int k = 0; k < total; ++k)
   {
@@ -114,7 +134,10 @@ int main ()
     qp.solveQP(Q, r, A, b, C, d, x);
 
     t_noWS += vpTime::measureTimeMs() - t;
-    plot.plot(0,0,k,t);
+#ifdef VISP_HAVE_DISPLAY
+    if (opt_display)
+      plot->plot(0,0,k,t);
+#endif
 
     // with warm start
     x = 0;
@@ -122,14 +145,22 @@ int main ()
     qp_WS.solveQP(Q, r, A, b, C, d, x);
 
     t_WS += vpTime::measureTimeMs() - t;
-    plot.plot(0,1,k,t);
+#ifdef VISP_HAVE_DISPLAY
+    if (opt_display)
+      plot->plot(0, 1, k, t);
+#endif
   }
 
   std::cout.precision(3);
-  cout << "Warm start: t = " << t_WS << " ms (for 1 QP = " << t_WS/total << " ms)\n";
-  cout << "No warm start: t = " << t_noWS << " ms (for 1 QP = " << t_noWS/total << " ms)" << endl;
+  std::cout << "Warm start: t = " << t_WS << " ms (for 1 QP = " << t_WS/total << " ms)\n";
+  std::cout << "No warm start: t = " << t_noWS << " ms (for 1 QP = " << t_noWS/total << " ms)" << std::endl;
 
-  plot.wait();
+#ifdef VISP_HAVE_DISPLAY
+  if (opt_display) {
+    plot->wait();
+    delete plot;
+  }
+#endif
   return EXIT_SUCCESS;
 }
 #else
