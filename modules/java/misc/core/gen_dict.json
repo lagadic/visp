@@ -50,7 +50,7 @@
             ],
             "jn_type": "long",
             "jni_type": "jlong",
-            "jni_var": "vpImage<uchar>& %(n)s = *((vpImage<uchar>*)%(n)s_nativeObj)",
+            "jni_var": "vpImage<unsigned char>& %(n)s = *((vpImage<unsigned char>*)%(n)s_nativeObj)",
             "suffix": "J",
             "j_import": "org.visp.core.VpImageUChar"
         },
