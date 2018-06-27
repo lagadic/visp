@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import org.visp.core.VpImageUChar;
+import org.visp.core.VpImageRGBa;
 
 public class VpDisplay {
 	
