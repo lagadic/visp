@@ -2,7 +2,7 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+     Copyright (C) 2005 - 2018 by Inria. All rights reserved.
                       https://visp.inria.fr
 
 ViSP 3.2.0 (under development)
@@ -11,24 +11,38 @@ ViSP 3.2.0 (under development)
     . New vpRobotFranka class, examples and test showing how to use Panda robot
       from Franka Emika
     . In MBT:
-      - Improve the generic tracker
+      - Improve the generic tracker implemented in vpMbGenericTracker class
       - Add possibility to introduce a homogeneous transformation matrix
-        when loading model and init files in vpMbGenericTracker
-      - Add support of pgm, png, jpg image format for initClick helper.
-    . Add basic template matching algorithm in vpImageTools
-    . Improve vpRealsense2 the wrapper over librealsense 2.x
+        when loading model and init files useful to change the origin of the 3D cad model;
+        see vpMbGenericTracker::setCameraTransformationMatrix()
+      - Add support of pgm, png, jpg image format for initClick helper
+      - Introduce a new confidence indicator that is working with all the visual
+        features to detect tracking failures;
+        see vpMbGenericTracker::computeCurrentProjectionError()
+    . Add basic template matching algorithm in vpImageTools::templateMatching()
+    . Improve vpRealsense2 class that is the wrapper over librealsense 2.x
+    . QR matrix decomposition introduced in vpMatrix
+    . New solvers for Linear Programs and Quadratic Programs implemented in vpLinProg and
+      vpQuadProg classes
   - Tutorials
+    . New tutorial: Installation from source on a Jetson equipped with an Orbitty Carrier board
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
     . New tutorial: Using ViSP and Matlab
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-visp-matlab.html
-    . New tutorial: Installation from source on a Jetson equipped with an Orbitty
-      Carrier board
-      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
     . New tutorial: PBVS with Panda 7-dof robot from Franka Emika
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-franka-pbvs.html
     . New tutorial: Visual-servoing with mBot Ranger educational robot kit
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mbot-vs.html
     . New tutorial: Camera extrinsic calibration
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html
+    . New tutorial: Markerless generic model-based tracking using a color camera
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic.html
+    . New tutorial: Markerless generic model-based tracking using a stereo camera
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-stereo.html
+    . New tutorial: Markerless generic model-based tracking using a RGB-D camera
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd.html
+    . New tutorial: Markerless generic model-based tracking using AprilTag for initialization (use case)
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-apriltag-live.html
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
@@ -40,6 +54,11 @@ ViSP 3.2.0 (under development)
     . [#324] How to compile ViSP within Visual Studio 2013 on windows 7?
     . [#348] ViSP-third-party.txt is erased after make
     . [#355] Segmentation fault with vpRealSense2 acquire
+    . [#368] ViSP Contrib Module including non-existant vpConfig.h header
+    . [#371] Wrong conversion from vpRotationMatrix to vpThetaUVector for rotations around pi
+    . [#373] ViSP doesn't build with OpenCV 4.0.0
+    . [#382] Meaningless camera parameters when calibrating built-in auto-focusing camera
+    . [#389] CMake error with Xcode generator
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
