@@ -43,12 +43,6 @@ In this video, the same setup is used but with:
 <p align="center"><iframe width="640" height="360" src="https://www.youtube.com/embed/LFej9NF6F1A" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
-Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/stereo-generic
-\endcode
-
 \subsection mb_rgbd_intro_3rd_parties Considered third-parties
 
 Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
