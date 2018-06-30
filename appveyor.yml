@@ -53,6 +53,9 @@ install:
         7z x ${env:VISP_OPENCV_MINGW_FILE} -y -o"C:\projects\deps"
       }
 
+  # ant
+  - choco install ant
+
 cache:
   - opencv-3.3.0-MinGW-build-package.7z -> appveyor.yml
 
