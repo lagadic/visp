@@ -38,8 +38,8 @@ $ brew cask install java
 $ brew install cmake ant
 \endcode
 
-\section install_ubuntu_visp Install ViSP from source code
-\subsection install_ubuntu_ws Create a workspace
+\section install_java_visp Install ViSP from source code
+\subsection install_java_ws Create a workspace
 
 - First create a workspace in \c $HOME/visp-ws that will contain ViSP source, build and dataset.
 \code
@@ -47,7 +47,7 @@ $ export VISP_WS=$HOME/visp-ws
 $ mkdir -p $VISP_WS
 \endcode
 
-\subsection install_ubuntu_visp_get_source Getting ViSP source code
+\subsection install_java_visp_get_source Getting ViSP source code
 
 There are different ways to get ViSP source code:
 
@@ -73,7 +73,7 @@ $ git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in the directory \c $VISP_WS/visp. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like \c $VISP_WS/visp-x.y.z.
 
-\subsection install_ubuntu_visp_config Configuring ViSP from source
+\subsection install_java_visp_config Configuring ViSP from source
 
 - In the workspace, create first a directory named \c visp-build that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
 \code
@@ -92,7 +92,7 @@ $ ccmake ../visp
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-tutorial-java-ccmake.jpeg Snapshot of the ccmake \c ../visp command used to configure ViSP.
 
-\subsection install_ubuntu_visp_build Building ViSP libraries
+\subsection install_java_visp_build Building ViSP libraries
 
 - To build ViSP libraries on Linux, proceed with:
 \code
