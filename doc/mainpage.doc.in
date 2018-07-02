@@ -61,6 +61,10 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
 - \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detct an AprilTag marker on iOS devices. 
 
+\subsection tuto_java ViSP for Java
+
+- \ref tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
+
 \subsection tuto_install_sdk Installation from prebuild SDK
 
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt SDK from Ubuntu or Debian packages.

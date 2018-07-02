@@ -133,7 +133,7 @@ endif()
 
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCXX)
-    add_extra_compiler_option(-fPIC)
+    add_extra_compiler_option(-fPIC) # Is needed for ANDROID too.
   endif()
 endif()
 

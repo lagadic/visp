@@ -3,6 +3,8 @@ This page references all the tutorials.
 
 - \subpage tutorial_ios
 
+- \subpage tutorial_java
+
 - \subpage tutorial_install_pkg
 
 - \subpage tutorial_install_src
@@ -31,7 +33,7 @@ This page references all the tutorials.
 
 */
 
-/*! \page tutorial_ios ViSP iOS
+/*! \page tutorial_ios ViSP for iOS
 
 This page introduces the user to the way to exploit ViSP with iOS devices.
 
@@ -41,6 +43,13 @@ This page introduces the user to the way to exploit ViSP with iOS devices.
 - \subpage tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices. 
 - \subpage tutorial-detection-apriltag-ios <br>This tutorial shows how to do detct an AprilTag marker on iOS devices. 
 
+*/
+
+/*! \page tutorial_java ViSP for Java
+
+This page introduces the user to the way to exploit ViSP for Java.
+
+- \subpage tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
 */
 
 /*! \page tutorial_install_pkg Installation from packages

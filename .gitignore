@@ -5,3 +5,5 @@ CMakeCache.txt
 CMakeLists.txt.user*
 platforms/ios/build_framework.pyc
 *.bak
+*.pyc
+modules/java/\.idea/

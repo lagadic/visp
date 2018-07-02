@@ -54,6 +54,7 @@
 # VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS - private module deps that are not exposed in interface
 # VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS - private module deps that are not exposed in interface
 # VISP_MODULE_${the_module}_CHILDREN - list of submodules for compound modules (cmake >= 2.8.8)
+# VISP_MODULE_${the_module}_WRAPPERS - list of wrappers supporting this module
 # HAVE_${the_module} - for fast check of module availability
 
 # To control the setup of the module you could also set:
@@ -88,6 +89,7 @@ foreach(mod ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_D
   unset(VISP_MODULE_${mod}_PRIVATE_OPT_DEPS CACHE)
   unset(VISP_MODULE_${mod}_LINK_DEPS CACHE)
   unset(VISP_MODULE_${mod}_INC_DEPS CACHE)
+  unset(VISP_MODULE_${mod}_WRAPPERS CACHE)
 endforeach()
 
 # clean modules info which needs to be recalculated
@@ -114,6 +116,8 @@ macro(vp_add_dependencies full_modname)
       set(__depsvar VISP_MODULE_${full_modname}_PRIVATE_REQ_DEPS)
     elseif(d STREQUAL "PRIVATE_OPTIONAL")
       set(__depsvar VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS)
+    elseif(d STREQUAL "WRAP")
+      set(__depsvar VISP_MODULE_${full_modname}_WRAPPERS)
     else()
       list(APPEND ${__depsvar} "${d}")
     endif()
@@ -124,6 +128,7 @@ macro(vp_add_dependencies full_modname)
   vp_list_unique(VISP_MODULE_${full_modname}_OPT_DEPS)
   vp_list_unique(VISP_MODULE_${full_modname}_PRIVATE_REQ_DEPS)
   vp_list_unique(VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS)
+  vp_list_unique(VISP_MODULE_${full_modname}_WRAPPERS)
 
   set(VISP_MODULE_${full_modname}_REQ_DEPS ${VISP_MODULE_${full_modname}_REQ_DEPS}
     CACHE INTERNAL "Required dependencies of ${full_modname} module")
@@ -133,6 +138,8 @@ macro(vp_add_dependencies full_modname)
     CACHE INTERNAL "Required private dependencies of ${full_modname} module")
   set(VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS ${VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS}
     CACHE INTERNAL "Optional private dependencies of ${full_modname} module")
+  set(VISP_MODULE_${full_modname}_WRAPPERS ${VISP_MODULE_${full_modname}_WRAPPERS}
+    CACHE INTERNAL "List of wrappers supporting module ${full_modname}")
 endmacro()
 
 # declare new ViSP module in current folder
@@ -197,6 +204,11 @@ macro(vp_add_module _name)
       set(VISP_MODULES_DISABLED_USER ${VISP_MODULES_DISABLED_USER} "${the_module}" CACHE INTERNAL "List of ViSP modules explicitly disabled by user")
     endif()
 
+    # add reverse wrapper dependencies
+    foreach (wrapper ${VISP_MODULE_${the_module}_WRAPPERS})
+      vp_add_dependencies(visp_${wrapper} OPTIONAL ${the_module})
+    endforeach()
+
     # add submodules if any
     set(VISP_MODULE_${the_module}_CHILDREN "${VISP_MODULE_CHILDREN}" CACHE INTERNAL "List of ${the_module} submodules")
 
@@ -208,6 +220,27 @@ macro(vp_add_module _name)
       return() # extra protection from redefinition
     endif()
   endif()
+endmacro()
+
+# excludes module from current configuration
+macro(vp_module_disable_ module)
+  set(__modname ${module})
+  if(NOT __modname MATCHES "^visp_")
+    set(__modname visp_${module})
+  endif()
+  list(APPEND VISP_MODULES_DISABLED_FORCE "${__modname}")
+  set(HAVE_${__modname} OFF CACHE INTERNAL "Module ${__modname} can not be built in current configuration")
+  set(VISP_MODULE_${__modname}_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Location of ${__modname} module sources")
+  set(VISP_MODULES_DISABLED_FORCE "${VISP_MODULES_DISABLED_FORCE}" CACHE INTERNAL "List of ViSP modules which can not be build in current configuration")
+  if(BUILD_${__modname})
+    # touch variable controlling build of the module to suppress "unused variable" CMake warning
+  endif()
+  unset(__modname)
+endmacro()
+
+macro(vp_module_disable module)
+  vp_module_disable_(${module})
+  return() # leave the current folder
 endmacro()
 
 # remove visp_ prefix from name
@@ -773,7 +806,17 @@ macro(_vp_create_module)
     ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     RUNTIME_OUTPUT_DIRECTORY ${BINARY_OUTPUT_PATH}
+    # FS: Remove next line. Should be added only for shared libs. See below
+    #DEFINE_SYMBOL visp_EXPORTS
   )
+
+  if(BUILD_FAT_JAVA_LIB)  # force exports from static modules too
+    if(BUILD_SHARED_LIBS)
+      message(FATAL_ERROR "Assertion failed: BUILD_SHARED_LIBS=OFF must be off if BUILD_FAT_JAVA_LIB=ON")
+    endif()
+    target_compile_definitions(${the_module} PRIVATE visp_EXPORTS)
+  endif()
+
 
   set_property(TARGET ${the_module} APPEND PROPERTY
     INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS}

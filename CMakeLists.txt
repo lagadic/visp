@@ -42,7 +42,9 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
   if(WIN32)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
   endif()
-else()
+else(NOT CMAKE_TOOLCHAIN_FILE)
+  #Android: set output folder to ${CMAKE_BINARY_DIR}
+  set( LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_BINARY_DIR} CACHE PATH "root for library output, set this to change where android libs are compiled to" )
   # Crosscompiling
   set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
 endif()
@@ -141,6 +143,17 @@ else()
   set(VISP_INSTALL_BINARIES_PREFIX "")
 endif()
 
+if(ANDROID)
+  set(LIBRARY_OUTPUT_PATH             "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(3P_LIBRARY_OUTPUT_PATH    "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_3P_LIB_INSTALL_PATH  sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_CONFIG_INSTALL_PATH  sdk/native/jni)
+  vp_update(VISP_INCLUDE_INSTALL_PATH sdk/native/jni/include)
+  vp_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
+  vp_update(VISP_OTHER_INSTALL_PATH   sdk/etc)
+endif()
+
 # where to install the library and headers
 if(WIN32)
   set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR})
@@ -151,6 +164,10 @@ if(WIN32)
   endif()
   set(VISP_BIN_INSTALL_PATH    "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
   set(VISP_3P_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+  set(VISP_SAMPLES_SRC_INSTALL_PATH    samples/native)
+  set(VISP_JAR_INSTALL_PATH java)
+  set(VISP_OTHER_INSTALL_PATH   etc)
+  set(VISP_CONFIG_INSTALL_PATH  ".")
 else()
   # The location where includes and libraries will be installed
 
@@ -162,6 +179,9 @@ else()
   set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR})
   set(VISP_BIN_INSTALL_PATH     ${CMAKE_INSTALL_BINDIR})
   set(VISP_3P_LIB_INSTALL_PATH  share/ViSP/3rdparty/${VISP_LIB_INSTALL_PATH})
+  set(VISP_SAMPLES_SRC_INSTALL_PATH    share/ViSP/samples)
+  set(VISP_JAR_INSTALL_PATH share/ViSP/java)
+  set(VISP_OTHER_INSTALL_PATH   share/ViSP)
 endif()
 set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
@@ -180,6 +200,11 @@ if(WIN32)
 else()
   set(VISP_DEBUG_POSTFIX "")
   set(VISP_DLLVERSION "")
+endif()
+
+# --- Python Support ---
+if(NOT IOS)
+  include(cmake/VISPDetectPython.cmake)
 endif()
 
 include_directories(${VISP_INCLUDE_DIR})
@@ -209,6 +234,20 @@ set(CMAKE_SKIP_BUILD_RPATH  FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
+
+if(ANDROID)
+  vp_update(VISP_JNI_INSTALL_PATH "${VISP_LIB_INSTALL_PATH}")
+elseif(INSTALL_CREATE_DISTRIB)
+  vp_update(VISP_JNI_INSTALL_PATH "${VISP_JAR_INSTALL_PATH}/${VISP_ARCH}")
+else()
+  vp_update(VISP_JNI_INSTALL_PATH "${VISP_JAR_INSTALL_PATH}")
+endif()
+vp_update(VISP_JNI_BIN_INSTALL_PATH "${VISP_JNI_INSTALL_PATH}")
+
+if(NOT VISP_LIB_ARCHIVE_INSTALL_PATH)
+  set(VISP_LIB_ARCHIVE_INSTALL_PATH ${VISP_LIB_INSTALL_PATH})
+endif()
+
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
@@ -330,6 +369,10 @@ VP_OPTION(BUILD_EXAMPLES  "" "" "Build ViSP examples" "" ON)
 # Build examples as an option.
 VP_OPTION(BUILD_TESTS  "" "" "Build ViSP tests" "" ON)
 VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AND CMAKE_COMPILER_IS_GNUCXX AND CMAKE_BUILD_TYPE MATCHES "Debug"))
+
+# Build java as an option
+VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
+VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
 
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
@@ -507,7 +550,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF (USE_REALSENSE OR USE_REALSENSE2) AND NOT WINRT AND NOT IOS)
-VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
+VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW OR ANDROID) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
 VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
@@ -672,10 +715,30 @@ if(UNIX)
   endif()
 endif()
 
+#---------------------------------------------------------------------
+# Android support
+#---------------------------------------------------------------------
+if(ANDROID)
+    include(cmake/DetectAndroidSDK.cmake)
+    if(NOT ANDROID_NATIVE_API_LEVEL GREATER 23)
+      message(WARNING "ViSP requires Android SDK tools revision 24 or newer. Otherwise tests and samples will no be compiled.")
+    endif()
+endif()
+
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
 include(cmake/VISP3rdParty.cmake)
+
+# --- Java Support ---
+if(BUILD_JAVA)
+  if(ANDROID)
+    include(cmake/DetectAndroidSDK.cmake)
+  else()
+    include(cmake/VISPDetectApacheAnt.cmake)
+    find_package(JNI)
+  endif()
+endif()
 
 #-----------------------------------------------------------------------------
 # Add extra compilation flags
@@ -926,7 +989,6 @@ if(BUILD_PACKAGE)
   include(cmake/CPackConfig.cmake)
 endif(BUILD_PACKAGE)
 
-
 #----------------------------------------------------------------------
 # Generate the package dependent visp-config shell script for projects which
 # are not using CMake:
@@ -1157,6 +1219,20 @@ if(WIN32)
     status("    Building for version: " ${CMAKE_SYSTEM_VERSION})
   endif()
 endif()
+
+# ========================== java ==========================
+status("")
+status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE NO)
+
+if(BUILD_JAVA OR BUILD_visp_java)
+  status("")
+  status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                                      ELSE "")
+  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"                    ELSE NO)
+  if(NOT ANDROID)
+    status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE NO)
+  endif()
+endif()
+
 
 # ============================ Options ===========================
 status("")

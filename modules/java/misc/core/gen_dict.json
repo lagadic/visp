@@ -1,0 +1,170 @@
+{
+    "module_imports": [ "java.lang.String" ],
+    "class_ignore_list" : [
+        "vpClient",
+        "vpRequest",
+        "vpNetwork",
+        "vpServer",
+        "vpUDPClient",
+		"vpUDPServer",
+		"vpSerial",
+		"vpIoTools",
+		"vpCPUFeatures"
+    ],
+    "type_dict" : {
+        "vpMatrix": {
+            "j_type": "VpMatrix",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpMatrix& %(n)s = *((vpMatrix*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpMatrix"
+        },
+		"vpArray2D": {
+            "j_type": "VpArray2D",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpArray2D<double>& %(n)s = *((vpArray2D<double>*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpArray2D"
+        },
+		"vpImage_char": {
+            "j_type": "VpImageUChar",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpImage<unsigned char>& %(n)s = *((vpImage<unsigned char>*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpImageUChar"
+        },
+		"vpImage_vpRGBa": {
+            "j_type": "VpImageRGBa",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpImage<vpRGBa>& %(n)s = *((vpImage<vpRGBa>*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpImageRGBa"
+        },
+        "Moments": {
+            "j_type": "Moments",
+            "jn_args": [
+                [
+                    "double",
+                    ".m00"
+                ],
+                [
+                    "double",
+                    ".m10"
+                ],
+                [
+                    "double",
+                    ".m01"
+                ],
+                [
+                    "double",
+                    ".m20"
+                ],
+                [
+                    "double",
+                    ".m11"
+                ],
+                [
+                    "double",
+                    ".m02"
+                ],
+                [
+                    "double",
+                    ".m30"
+                ],
+                [
+                    "double",
+                    ".m21"
+                ],
+                [
+                    "double",
+                    ".m12"
+                ],
+                [
+                    "double",
+                    ".m03"
+                ]
+            ],
+            "jni_type": "jdoubleArray",
+            "jni_var": "Moments %(n)s(%(n)s_m00, %(n)s_m10, %(n)s_m01, %(n)s_m20, %(n)s_m11, %(n)s_m02, %(n)s_m30, %(n)s_m21, %(n)s_m12, %(n)s_m03)",
+            "suffix": "DDDDDDDDDD"
+        },
+        "vpPoint": {
+            "j_type": "VpPoint",
+            "jn_args": [
+                [
+                    "double",
+                    ".x"
+                ],
+                [
+                    "double",
+                    ".y"
+                ]
+            ],
+            "jni_type": "jdoubleArray",
+            "jni_var": "vpPoint %(n)s((int)%(n)s_x, (int)%(n)s_y)",
+            "suffix": "DD",
+            "j_import": "org.visp.core.VpPoint"
+        },
+        "string": {
+            "j_type": "String",
+            "jn_type": "String",
+            "jni_name": "n_%(n)s",
+            "jni_type": "jstring",
+            "jni_var": "const char* utf_%(n)s = env->GetStringUTFChars(%(n)s, 0); string n_%(n)s( utf_%(n)s ? utf_%(n)s : \"\" ); env->ReleaseStringUTFChars(%(n)s, utf_%(n)s)",
+            "suffix": "Ljava_lang_String_2",
+            "j_import": "java.lang.String"
+        },
+        "c_string": {
+            "j_type": "String",
+            "jn_type": "String",
+            "jni_name": "n_%(n)s.c_str()",
+            "jni_type": "jstring",
+            "jni_var": "const char* utf_%(n)s = env->GetStringUTFChars(%(n)s, 0); string n_%(n)s( utf_%(n)s ? utf_%(n)s : \"\" ); env->ReleaseStringUTFChars(%(n)s, utf_%(n)s)",
+            "suffix": "Ljava_lang_String_2",
+            "j_import": "java.lang.String"
+        },
+        "size_t": {
+            "j_type": "long",
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "suffix": "J"
+        },
+        "vector_vpMatrix": {
+            "j_type": "List<vpMatrix>",
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "std::vector<vpMatrix> %(n)s",
+            "suffix": "J",
+            "v_type": "vpMatrix",
+            "j_import": "org.visp.core.VpMatrix"
+        }
+    }
+}
