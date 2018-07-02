@@ -1,5 +1,8 @@
 package org.visp.gui;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -72,6 +75,58 @@ public class VpDisplay {
 	
 	public void setTitle(String title) {
 		frame.setTitle(title);
+	}
+	
+	public void displayLine(VpImageUChar imageUChar, int i1, int j1, int i2, int j2) {
+		displayLine(imageUChar,i1,j1,i2,j2,Color.RED,1); // default thickness 1. default color RED
+	}
+	
+	public void displayLine(VpImageUChar imageUChar, int i1, int j1, int i2, int j2, Color color) {
+		displayLine(imageUChar,i1,j1,i2,j2,color,1); // default thickness 1.
+	}
+
+	public void displayLine(VpImageUChar imageUChar, int i1, int j1, int i2, int j2,Color color,int thickness) {
+		BufferedImage in = (BufferedImage) toBufferedImage(imageUChar);
+
+		Graphics2D g = in.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawLine(i1, j1, i2, j2);
+
+		ImageIcon image = new ImageIcon(in);
+		JLabel imageLabel = new JLabel(image);
+		frame = new JFrame();
+		frame.add(imageLabel);
+		frame.pack(); // pack screen size to fit content
+		frame.setVisible(true);
+		frame.setFocusable(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public void displayLine(VpImageRGBa imageRGBa, int i1, int j1, int i2, int j2) {
+		displayLine(imageRGBa,i1,j1,i2,j2,Color.RED,1); // default thickness 1. default color RED
+	}
+	
+	public void displayLine(VpImageRGBa imageRGBa, int i1, int j1, int i2, int j2, Color color) {
+		displayLine(imageRGBa,i1,j1,i2,j2,color,1); // default thickness 1.
+	}
+
+	public void displayLine(VpImageRGBa imageRGBa, int i1, int j1, int i2, int j2,Color color,int thickness) {
+		BufferedImage in = (BufferedImage) toBufferedImage(imageRGBa);
+
+		Graphics2D g = in.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawLine(i1, j1, i2, j2);
+
+		ImageIcon image = new ImageIcon(in);
+		JLabel imageLabel = new JLabel(image);
+		frame = new JFrame();
+		frame.add(imageLabel);
+		frame.pack(); // pack screen size to fit content
+		frame.setVisible(true);
+		frame.setFocusable(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	/*
