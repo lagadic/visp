@@ -1,5 +1,6 @@
 package org.visp.gui;
 
+import java.lang.String;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -91,6 +92,17 @@ public class VpDisplay {
 		
 		g.drawLine((int) (x1 + m*w/(2*Math.sqrt(1+m*m))), (int) (y1 - w/(2*Math.sqrt(1+m*m))), i2, j2);
 		g.drawLine((int) (x1 - m*w/(2*Math.sqrt(1+m*m))), (int) (y1 + w/(2*Math.sqrt(1+m*m))), i2, j2);
+	}
+	
+	public void displayText(String text, int i, int j) {
+		displayText(text, i, j, Color.GREEN, 2); // default color green, default thickness 2 
+	}
+	
+	public void displayText(String text, int i, int j, Color color, int thickness) {
+		Graphics2D g = I.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawString(text, i, j);
 	}
 	
 	// Flushes the output buffer associated to image
