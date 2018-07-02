@@ -128,6 +128,50 @@ public class VpDisplay {
 		frame.setFocusable(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+
+	public void displayArrow(VpImageUChar imageUChar, int i1, int j1, int i2, int j2,Color color,int w, int h, int thickness) {
+		BufferedImage in = (BufferedImage) toBufferedImage(imageUChar);
+
+		Graphics2D g = in.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawLine(i1, j1, i2, j2);
+		double m = (j2-j1)*1.0/(i2-i1), x1 = i2 - h/Math.sqrt(1+m*m), y1 = j2 - h*m/Math.sqrt(1+m*m);
+		
+		g.drawLine((int) (x1 + m*w/(2*Math.sqrt(1+m*m))), (int) (y1 - w/(2*Math.sqrt(1+m*m))), i2, j2);
+		g.drawLine((int) (x1 - m*w/(2*Math.sqrt(1+m*m))), (int) (y1 + w/(2*Math.sqrt(1+m*m))), i2, j2);
+
+		ImageIcon image = new ImageIcon(in);
+		JLabel imageLabel = new JLabel(image);
+		frame = new JFrame();
+		frame.add(imageLabel);
+		frame.pack(); // pack screen size to fit content
+		frame.setVisible(true);
+		frame.setFocusable(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public void displayArrow(VpImageRGBa imageRGBa, int i1, int j1, int i2, int j2,Color color,int w, int h, int thickness) {
+		BufferedImage in = (BufferedImage) toBufferedImage(imageRGBa);
+
+		Graphics2D g = in.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawLine(i1, j1, i2, j2);
+		double m = (j2-j1)*1.0/(i2-i1), x1 = i2 - h/Math.sqrt(1+m*m), y1 = j2 - h*m/Math.sqrt(1+m*m);
+		
+		g.drawLine((int) (x1 + m*w/(2*Math.sqrt(1+m*m))), (int) (y1 - w/(2*Math.sqrt(1+m*m))), i2, j2);
+		g.drawLine((int) (x1 - m*w/(2*Math.sqrt(1+m*m))), (int) (y1 + w/(2*Math.sqrt(1+m*m))), i2, j2);
+
+		ImageIcon image = new ImageIcon(in);
+		JLabel imageLabel = new JLabel(image);
+		frame = new JFrame();
+		frame.add(imageLabel);
+		frame.pack(); // pack screen size to fit content
+		frame.setVisible(true);
+		frame.setFocusable(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
 	
 	/*
 	 * Exit on a mouse click
