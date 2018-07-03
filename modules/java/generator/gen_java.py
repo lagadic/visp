@@ -1072,7 +1072,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
                 ci.jn_code.write("\n".join(ManualFuncs[ci.name][func]["jn_code"]))
                 ci.cpp_code.write("\n".join(ManualFuncs[ci.name][func]["cpp_code"]))
 
-        if ci.name != self.Module or ci.base:
+        if ci.name != 'VpImgproc' and ci.name != self.Module or ci.base:
             # finalize()
             ci.j_code.write(
                 """
