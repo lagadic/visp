@@ -1,5 +1,9 @@
 package org.visp.gui;
 
+import java.lang.String;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,12 +22,14 @@ public class VpDisplay {
 	
 	// Java developers will find it easy to handle frames directly
 	public JFrame frame;
+	public BufferedImage I;
 	
 	public VpDisplay() {
 		frame = new JFrame();
+		I = null;
 	}
 	
-	public static Image toBufferedImage(VpImageUChar image) {
+	public static BufferedImage toBufferedImage(VpImageUChar image) {
 		int type = BufferedImage.TYPE_BYTE_GRAY;
 		byte[] b = image.getPixels(); // get all the pixels
 		BufferedImage I = new BufferedImage(image.cols(), image.rows(), type);
@@ -32,7 +38,7 @@ public class VpDisplay {
 		return I;
 	}
 
-	public static Image toBufferedImage(VpImageRGBa image) {
+	public static BufferedImage toBufferedImage(VpImageRGBa image) {
 		int type = BufferedImage.TYPE_4BYTE_ABGR;
 		byte[] b = image.getPixels(); // get all the pixels
 		BufferedImage I = new BufferedImage(image.cols(), image.rows(), type);
@@ -51,27 +57,65 @@ public class VpDisplay {
 	}
 	
 	public void display(VpImageUChar imageUChar) {
-		ImageIcon image = new ImageIcon(toBufferedImage(imageUChar));
-		JLabel imageLabel = new JLabel(image);
-		frame.add(imageLabel);
-		frame.pack(); // pack screen size to fit content
-		frame.setVisible(true);
-		frame.setFocusable(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		I = toBufferedImage(imageUChar);
 	}
 
 	public void display(VpImageRGBa imageRGBa) {
-		ImageIcon image = new ImageIcon(toBufferedImage(imageRGBa));
-		JLabel imageLabel = new JLabel(image);
-		frame.add(imageLabel);
-		frame.pack(); // pack screen size to fit content
-		frame.setVisible(true);
-		frame.setFocusable(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		I = toBufferedImage(imageRGBa);
 	}
 	
 	public void setTitle(String title) {
 		frame.setTitle(title);
+	}
+	
+	public void displayLine(int i1, int j1, int i2, int j2) {
+		displayLine(i1,j1,i2,j2,Color.RED,1); // default thickness 1. default color RED
+	}
+	
+	public void displayLine(int i1, int j1, int i2, int j2, Color color) {
+		displayLine(i1,j1,i2,j2,color,1); // default thickness 1.
+	}
+
+	public void displayLine(int i1, int j1, int i2, int j2,Color color,int thickness) {
+		Graphics2D g = I.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawLine(i1, j1, i2, j2);
+	}
+
+	public void displayArrow(int i1, int j1, int i2, int j2,Color color,int w, int h, int thickness) {
+		Graphics2D g = I.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawLine(i1, j1, i2, j2);
+		double m = (j2-j1)*1.0/(i2-i1), x1 = i2 - h/Math.sqrt(1+m*m), y1 = j2 - h*m/Math.sqrt(1+m*m);
+		
+		g.drawLine((int) (x1 + m*w/(2*Math.sqrt(1+m*m))), (int) (y1 - w/(2*Math.sqrt(1+m*m))), i2, j2);
+		g.drawLine((int) (x1 - m*w/(2*Math.sqrt(1+m*m))), (int) (y1 + w/(2*Math.sqrt(1+m*m))), i2, j2);
+	}
+	
+	public void displayText(String text, int i, int j) {
+		displayText(text, i, j, Color.GREEN, 2); // default color green, default thickness 2 
+	}
+	
+	public void displayText(String text, int i, int j, Color color, int thickness) {
+		Graphics2D g = I.createGraphics();
+		g.setStroke(new BasicStroke(thickness));
+		g.setColor(color);
+		g.drawString(text, i, j);
+	}
+	
+	// Flushes the output buffer associated to image
+	// It's necessary to use this function to see the results of any drawing
+	public void flush() {
+		ImageIcon image = new ImageIcon(I);
+		JLabel imageLabel = new JLabel(image);
+		frame = new JFrame();
+		frame.add(imageLabel);
+		frame.pack(); // pack screen size to fit content
+		frame.setVisible(true);
+		frame.setFocusable(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	/*
