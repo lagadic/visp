@@ -4,8 +4,8 @@ import org.visp.core.VpImagePoint;
 import org.visp.core.VpImageUChar;
 
 public class VpDirection {
-	int mDirectionType;
-	int m_dirx[], m_diry[];
+	public int mDirectionType;
+	public int m_dirx[], m_diry[];
 
 	public VpDirection() {
 		m_dirx = new int[8];
@@ -30,21 +30,21 @@ public class VpDirection {
 		m_diry[7] = -1;
 	}
 
-	VpDirection clockwise() {
+	public VpDirection clockwise() {
 		VpDirection direction = new VpDirection();
 		int directionSize = VpDirectionType.LAST_DIRECTION;
 		direction.mDirectionType = (mDirectionType + 1) % directionSize;
 		return direction;
 	}
 
-	VpDirection counterClockwise(){
+	public VpDirection counterClockwise(){
 		VpDirection direction = new VpDirection();
 		int directionSize = VpDirectionType.LAST_DIRECTION;
 		direction.mDirectionType = (mDirectionType - 1) % directionSize;
 		return direction;
 	}
 
-	VpImagePoint active(VpImageUChar I, VpImagePoint point){
+	public VpImagePoint active(VpImageUChar I, VpImagePoint point){
 	    int yy = (int)(point.i + m_diry[mDirectionType]);
 	    int xx = (int)(point.j + m_dirx[mDirectionType]);
 
