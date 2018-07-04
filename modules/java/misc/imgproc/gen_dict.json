@@ -1,6 +1,52 @@
 {
     "ManualFuncs" : {
         "VpImgproc" : {
+			"reconstruct" : {
+				"jn_code" : [
+					"\n// C++: static void reconstruct(vpImage_char marker, vpImage_char mask, vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+					"private static native void reconstruct_0(long marker_nativeObj, long mask_nativeObj, long I_nativeObj);"
+				]
+			},
+			"floodFill" : {
+				"j_code" : [
+				    "\n//",
+					"// manual port",
+					"// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+					"//\n",
+					"//javadoc: Vp::floodFill(I, seedPoint, oldValue, newValue)\n",
+					"public static void floodFill(VpImageUChar I, VpImagePoint seedPoint, char oldValue, char newValue)",
+					"{",
+					"    floodFill(I.nativeObj, seedPoint.i, seedPoint.j, oldValue, newValue);",
+					"}"
+				],
+				"jn_code" : [
+					"\n// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+					"private static native void floodFill(long I_nativeObj, double seedPoint_i, double seedPoint_j, char oldValue, char newValue);\n"
+				],
+				"cpp_code" : [
+					"\n//",
+					"// static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+					"//\n",
+					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_floodFill (JNIEnv*, jclass, jlong, jdouble, jdouble, jchar, jchar);",
+					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_floodFill",
+					"  (JNIEnv* env, jclass , jlong I_nativeObj, jdouble seedPoint_i, jdouble seedPoint_j, jchar oldValue, jchar newValue)",
+					"{",
+					"  static const char method_name[] = \"imgproc::floodFill()\";",
+					"  try {",
+					"   LOGD(\"%s\", method_name);",
+					"   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
+					"   vpImagePoint seedPoint((int)seedPoint_i, (int)seedPoint_j);",
+					"   vp::floodFill( I, seedPoint, (char)oldValue, (char)newValue, vpImageMorphology::CONNEXITY_4 );",
+					"   return;",
+					"  } catch(const std::exception &e) {",
+					"   throwJavaException(env, &e, method_name);",
+					"  } catch (...) {",
+					"   throwJavaException(env, 0, method_name);",
+					"  }",
+					"  return;",
+					"}" 
+				]
+			},
             "fillHoles" : {
 				"j_code" : [
 					"//",
@@ -11,7 +57,7 @@
 					"\n",
 					"public static void fillHoles(VpImageUChar I)",
 					"{",
-					"       fillHoles_0(I.nativeObj);",
+					"       fillHoles(I.nativeObj);",
 					"       return;",
 					"}",
 					"\n"
