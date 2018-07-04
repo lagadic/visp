@@ -1,5 +1,52 @@
 {
-		"type_dict" : {
+    "ManualFuncs" : {
+        "VpImgproc" : {
+            "fillHoles" : {
+				"j_code" : [
+					"//",
+					"// C++: static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+					"//",
+					"\n",
+					"//javadoc: Vp::fillHoles(I)",
+					"\n",
+					"public static void fillHoles(VpImageUChar I)",
+					"{",
+					"       fillHoles_0(I.nativeObj);",
+					"       return;",
+					"}",
+					"\n"
+				], 
+				"jn_code" : [
+					"// C++: static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+					"private static native void fillHoles_0(long I_nativeObj);\n"
+				], 
+				"cpp_code" : [
+					"\n\n//",
+					"// manual port",
+					"// static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+					"//",
+					"\n",
+					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_fillHoles (JNIEnv*, jclass, jlong);\n",
+					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_fillHoles",
+					"  (JNIEnv* env, jclass , jlong I_nativeObj)",
+					"{",
+					"  try {",
+					"   LOGD(\"imgproc::fillHoles_10()\");",
+					"   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
+					"   vp::fillHoles( I, vpImageMorphology::CONNEXITY_4 );",
+					"   return;",
+					"  } catch(const std::exception &e) {",
+					"   throwJavaException(env, &e, \"imgproc::fillHoles()\");",
+					"  } catch (...) {",
+					"   throwJavaException(env, 0, \"imgproc::fillHoles()\");",
+					"  }",
+					"  return;",
+					"}\n" 
+				] 
+			}
+		}
+	},	
+	"type_dict" : {
         "vpContour": {
             "j_type": "VpContour",
             "jn_args": [
@@ -14,5 +61,5 @@
             "suffix": "J",
             "j_import": "org.visp.core.VpContour"
         }
-		}
+	}
 }
