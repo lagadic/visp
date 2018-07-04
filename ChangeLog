@@ -13,11 +13,11 @@ ViSP 3.2.0 (under development)
     . In MBT:
       - Improve the generic tracker implemented in vpMbGenericTracker class
       - Add possibility to introduce a homogeneous transformation matrix
-        when loading model and init files useful to change the origin of the 3D cad model;
-        see vpMbGenericTracker::setCameraTransformationMatrix()
+        when loading model and init files, useful to change the origin of the 3D cad model;
+        see vpMbTracker::loadModel() and vpMbTracker::initClick()
       - Add support of pgm, png, jpg image format for initClick helper
       - Introduce a new confidence indicator that is working with all the visual
-        features to detect tracking failures;
+        features types to detect tracking failures;
         see vpMbGenericTracker::computeCurrentProjectionError()
     . Add basic template matching algorithm in vpImageTools::templateMatching()
     . Improve vpRealsense2 class that is the wrapper over librealsense 2.x
