@@ -380,6 +380,10 @@ class CppHeaderParser(object):
         #     if not (("VISP_EXPORT" in decl_str)):
         #         return []
 
+        static_method = False
+        if "VISP_EXPORT" in decl_str:
+            static_method = True
+
         top = self.block_stack[-1]
         func_modlist = []
 
@@ -406,7 +410,6 @@ class CppHeaderParser(object):
         const_method = 'const' in end_tokens
         pure_virtual_method = '=' in end_tokens and '0' in end_tokens
 
-        static_method = False
         context = top[0]
         if decl_str.startswith("static") and (context == "class" or context == "struct"):
             decl_str = decl_str[len("static"):].lstrip()

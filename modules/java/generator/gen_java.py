@@ -487,6 +487,11 @@ class JavaWrapperGenerator(object):
     def add_func(self, decl):
         fi = FuncInfo(decl, namespaces=self.namespaces)
         classname = fi.classname or self.Module
+
+        # Workaround for imgrpoc module
+        if classname == 'Vp' and self.Module == 'Imgproc':
+            classname = 'VpImgproc'
+
         if classname in class_ignore_list:
             logging.info('ignored: %s', fi)
         elif classname in ManualFuncs and fi.jname in ManualFuncs[classname]:
