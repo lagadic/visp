@@ -47,10 +47,9 @@
 				"j_code" : [
 				    "\n//",
 					"// manual port",
-					"// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"//\n",
+					"// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)\n",
 					"//javadoc: Vp::floodFill(I, seedPoint, oldValue, newValue)\n",
-					"public static void floodFill(VpImageUChar I, VpImagePoint seedPoint, char oldValue, char newValue)",
+					"public static void floodFill(VpImageUChar I, org.visp.core.VpImagePoint seedPoint, char oldValue, char newValue)",
 					"{",
 					"    floodFill(I.nativeObj, seedPoint.i, seedPoint.j, oldValue, newValue);",
 					"}"
@@ -115,7 +114,7 @@
 					"  try {",
 					"   LOGD(\"imgproc::fillHoles()\");",
 					"   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
-					"   vp::fillHoles( I, vpImageMorphology::CONNEXITY_4 );",
+					"   vp::fillHoles(I);",
 					"   return;",
 					"  } catch(const std::exception &e) {",
 					"   throwJavaException(env, &e, \"imgproc::fillHoles()\");",
