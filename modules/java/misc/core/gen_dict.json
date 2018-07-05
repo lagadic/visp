@@ -26,6 +26,20 @@
             "suffix": "J",
             "j_import": "org.visp.core.VpMatrix"
         },
+		"vpCameraParameters": {
+            "j_type": "VpCameraParameters",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpCameraParameters& %(n)s = *((vpCameraParameters*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpCameraParameters"
+        },
 		"vpArray2D": {
             "j_type": "VpArray2D",
             "jn_args": [
@@ -158,13 +172,87 @@
             "suffix": "J"
         },
         "vector_vpMatrix": {
-            "j_type": "List<vpMatrix>",
+            "j_type": "List<VpMatrix>",
             "jn_type": "long",
             "jni_type": "jlong",
             "jni_var": "std::vector<vpMatrix> %(n)s",
             "suffix": "J",
             "v_type": "vpMatrix",
             "j_import": "org.visp.core.VpMatrix"
+        },        
+		"vpContour": {
+            "j_type": "VpContour",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpContour& %(n)s = *((vpContour*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpContour"
+        },
+        "vpColVector": {
+            "j_type": "VpColVector",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpColVector& %(n)s = *((vpColVector*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpColVector"
+        },
+        "vector_vpColVector": {
+            "j_type": "List<VpColVector>",
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "std::vector<vpColVector> %(n)s",
+            "suffix": "J",
+            "v_type": "vpColVector",
+            "j_import": "org.visp.core.VpColVector"
+        }, 
+        "vpRowVector": {
+            "j_type": "VpRowVector",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpRowVector& %(n)s = *((vpRowVector*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpRowVector"
+        },
+        "vpHomogeneousMatrix": {
+            "j_type": "VpHomogeneousMatrix",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpHomogeneousMatrix& %(n)s = *((vpHomogeneousMatrix*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpHomogeneousMatrix"
+        },        
+		"vector_vpHomogeneousMatrix": {
+            "j_type": "List<VpHomogeneousMatrix>",
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "std::vector<vpHomogeneousMatrix> %(n)s",
+            "suffix": "J",
+            "v_type": "vpHomogeneousMatrix",
+            "j_import": "org.visp.core.VpHomogeneousMatrix"
         }
     }
 }
