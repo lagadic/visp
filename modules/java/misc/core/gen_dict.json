@@ -173,8 +173,8 @@
         },
         "vector_vpMatrix": {
             "j_type": "List<VpMatrix>",
-            "jn_type": "long",
-            "jni_type": "jlong",
+            "jn_type": "long[]",
+            "jni_type": "jlongArray",
             "jni_var": "std::vector<vpMatrix> %(n)s",
             "suffix": "J",
             "v_type": "vpMatrix",
@@ -210,8 +210,8 @@
         },
         "vector_vpColVector": {
             "j_type": "List<VpColVector>",
-            "jn_type": "long",
-            "jni_type": "jlong",
+            "jn_type": "long[]",
+            "jni_type": "jlongArray",
             "jni_var": "std::vector<vpColVector> %(n)s",
             "suffix": "J",
             "v_type": "vpColVector",
@@ -247,8 +247,8 @@
         },        
 		"vector_vpHomogeneousMatrix": {
             "j_type": "List<VpHomogeneousMatrix>",
-            "jn_type": "long",
-            "jni_type": "jlong",
+            "jn_type": "long[]",
+            "jni_type": "jlongArray",
             "jni_var": "std::vector<vpHomogeneousMatrix> %(n)s",
             "suffix": "J",
             "v_type": "vpHomogeneousMatrix",
