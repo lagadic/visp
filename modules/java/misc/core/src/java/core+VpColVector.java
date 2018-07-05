@@ -14,8 +14,13 @@ public class VpColVector {
 
 	public List<Double> data;
 
-    protected final long nativeObj;
-    protected VpColVector(long addr) { nativeObj = addr; }
+    public final long nativeObj;
+
+    public VpColVector(long addr){ 
+        if (addr == 0) 
+            throw new java.lang.UnsupportedOperationException("Native object address is NULL"); 
+        nativeObj = addr; 
+    } 
 
     public long getNativeObjAddr() { return nativeObj; }
 

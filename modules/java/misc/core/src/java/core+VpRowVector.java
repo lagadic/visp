@@ -12,8 +12,13 @@ import org.visp.core.VpMatrix;
 
 public class VpRowVector {
 
-    protected final long nativeObj;
-    protected VpRowVector(long addr) { nativeObj = addr; }
+    public final long nativeObj;
+
+    public VpRowVector(long addr){ 
+        if (addr == 0) 
+            throw new java.lang.UnsupportedOperationException("Native object address is NULL"); 
+        nativeObj = addr; 
+    } 
 
     public long getNativeObjAddr() { return nativeObj; }
 
