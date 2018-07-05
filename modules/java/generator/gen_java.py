@@ -719,28 +719,19 @@ class JavaWrapperGenerator(object):
                         if "I" in a.out or not a.out:
                             if type_dict[a.ctype]["v_type"] == "vector_Mat":
                                 j_prologue.append(
-                                    "List<Mat> %(n)s_tmplm = new ArrayList<VpMatrix>((%(n)s != null) ? %(n)s.size() : 0);" % {
+                                    "List<VpMatrix> %(n)s_tmplm = new ArrayList<VpMatrix>((%(n)s != null) ? %(n)s.size() : 0);" % {
                                         "n": a.name})
                                 j_prologue.append(
                                     "Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s, %(n)s_tmplm);" % {"n": a.name,
                                                                                                       "t": a.ctype})
                             else:
-                                if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
-                                    j_prologue.append(
-                                        "Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s);" % {"n": a.name, "t": a.ctype})
-                                else:
-                                    j_prologue.append("Mat %s_mat = %s;" % (a.name, a.name))
+                                j_prologue.append("Mat %(n)s_mat = Converters.%(t)s_to_Mat(%(n)s);" % {"n": a.name, "t": a.ctype})
                             c_prologue.append("Mat_to_%(t)s( %(n)s_mat, %(n)s );" % {"n": a.name, "t": a.ctype})
                         else:
-                            if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
-                                j_prologue.append("Mat %s_mat = new Mat();" % a.name)
-                            else:
-                                j_prologue.append("Mat %s_mat = %s;" % (a.name, a.name))
+                            j_prologue.append("Mat %s_mat = new Mat();" % a.name)
                         if "O" in a.out:
-                            if not type_dict[a.ctype]["j_type"].startswith("MatOf"):
-                                j_epilogue.append(
-                                    "Converters.Mat_to_%(t)s(%(n)s_mat, %(n)s);" % {"t": a.ctype, "n": a.name})
-                                j_epilogue.append("%s_mat.release();" % a.name)
+                            j_epilogue.append("Converters.Mat_to_%(t)s(%(n)s_mat, %(n)s);" % {"t": a.ctype, "n": a.name})
+                            j_epilogue.append("%s_mat.release();" % a.name)
                             c_epilogue.append("%(t)s_to_Mat( %(n)s, %(n)s_mat );" % {"n": a.name, "t": a.ctype})
                     else:  # pass as list
                         jn_args.append(ArgInfo([a.ctype, a.name, "", [], ""]))
@@ -842,14 +833,8 @@ class JavaWrapperGenerator(object):
             ret = "return retVal;"
             if "v_type" in type_dict[ret_type]:
                 j_type = type_dict[ret_type]["j_type"]
-                if type_dict[ret_type]["v_type"] in ("Mat", "vector_Mat"):
-                    tail = ")"
-                    if j_type.startswith('MatOf'):
-                        ret_val += j_type + ".fromNativeAddr("
-                    else:
-                        ret_val = "Mat retValMat = new Mat("
-                        j_prologue.append(j_type + ' retVal = new Array' + j_type + '();')
-                        j_epilogue.append('Converters.Mat_to_' + ret_type + '(retValMat, retVal);')
+                ret_val = "long[] addressList = "
+                j_epilogue.append(j_type + ' retVal = Converters.Array_to_' + ret_type + '(addressList);')
             elif ret_type.startswith("Ptr_"):
                 ret_val = type_dict[fi.ctype]["j_type"] + " retVal = " + type_dict[ret_type]["j_type"] + ".__fromPtr__("
                 tail = ")"
@@ -944,11 +929,7 @@ class JavaWrapperGenerator(object):
                 retval = "vp::" + retval
             elif "v_type" in type_dict[fi.ctype]:  # vector is returned
                 retval = type_dict[fi.ctype]['jni_var'] % {"n": '_ret_val_vector_'} + " = "
-                if type_dict[fi.ctype]["v_type"] in ("Mat", "vector_Mat"):
-                    c_epilogue.append("Mat* _retval_ = new Mat();")
-                    c_epilogue.append(fi.ctype + "_to_Mat(_ret_val_vector_, *_retval_);")
-                else:
-                    c_epilogue.append("jobject _retval_ = " + fi.ctype + "_to_List(env, _ret_val_vector_);")
+                c_epilogue.append("jlongArray _retval_ = " + fi.ctype + "_to_List(env, _ret_val_vector_);")
             if len(fi.classname) > 0:
                 if not fi.ctype:  # c-tor
                     retval = reverseCamelCase(fi.fullClass(isCPP=True)) + "* _retval_ = "
