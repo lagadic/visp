@@ -1,1 +1,2 @@
 include/visp3/core/vpCameraParameters.h 
+include/visp3/core/vpRotationVector.h 

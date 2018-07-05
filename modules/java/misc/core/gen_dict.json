@@ -11,6 +11,51 @@
 		"vpIoTools",
 		"vpCPUFeatures"
     ],
+	"ManualFuncs" : {
+		"VpRotationVector" : {
+			"t" : {
+        "j_code" : [
+              "//",
+              "// manual port",
+              "// C++:  vpRowVector t()",
+              "//\n",
+              "//javadoc: VpRotationVector::t()\n",
+              "public  VpRowVector t()",
+              "{",
+              "    VpRowVector rowVector = new VpRowVector();",
+              "    t_0(nativeObj, rowVector.nativeObj);",
+              "    return rowVector;",
+              "}"
+        ],
+        "jn_code" : [
+              "// C++:  vpRowVector t()",
+              "private static native void t_0(long nativeObj, long nativeObj2);"
+        ],
+				"cpp_code" : [
+					    "//",
+					    "//  vpRowVector t()",
+					    "//\n",
+					    "JNIEXPORT void JNICALL Java_org_visp_core_VpRotationVector_t_10 (JNIEnv*, jclass, jlong, jlong);\n",
+					    "JNIEXPORT void JNICALL Java_org_visp_core_VpRotationVector_t_10",
+					    "  (JNIEnv* env, jclass , jlong self, jlong other)",
+					    "{",
+					    "  static const char method_name[] = \"core::t_10()\";",
+					    "  try {",
+						  "  LOGD(\"%s\", method_name);",
+						  "  vpRotationVector* me = (vpRotationVector*) self; //TODO: check for NULL",
+						  "  vpRowVector *row = (vpRowVector*) other;",
+						  "  *row = me->t();",
+					    "  } catch(const std::exception &e) {",
+						  "  throwJavaException(env, &e, method_name);",
+					    "  } catch (...) {",
+						  "  throwJavaException(env, 0, method_name);",
+				      "  }",
+					    "  return;",
+					    "}" 
+				]
+			}
+		}
+	},
     "type_dict" : {
         "vpMatrix": {
             "j_type": "VpMatrix",
@@ -253,6 +298,20 @@
             "suffix": "J",
             "v_type": "vpHomogeneousMatrix",
             "j_import": "org.visp.core.VpHomogeneousMatrix"
+        },   
+	     "vpRotationVector": {
+            "j_type": "VpRotationVector",
+            "jn_args": [
+                [
+                    "__int64",
+                    ".nativeObj"
+                ]
+            ],
+            "jn_type": "long",
+            "jni_type": "jlong",
+            "jni_var": "vpRotationVector& %(n)s = *((vpRotationVector*)%(n)s_nativeObj)",
+            "suffix": "J",
+            "j_import": "org.visp.core.VpRotationVector"
         }
     }
 }
