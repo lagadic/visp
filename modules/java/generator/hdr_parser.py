@@ -394,7 +394,7 @@ class CppHeaderParser(object):
         # INFO: Handle unsigned args/return type too. open-cv didn't have any
         # TODO: I'm removing `unsigned` keyword from function declaration
         decl_str = self.batch_replace(decl_str, [("static inline", ""),("inline", ""),
-                                                 ("VISP_EXPORT", ""), ("friend", "")
+                                                 ("VISP_EXPORT", ""), ("friend", ""),('explicit','')
                                       ,("unsigned","")]).strip()
 
         if decl_str.strip().startswith('virtual'):
