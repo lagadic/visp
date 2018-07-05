@@ -1049,9 +1049,15 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
         # manual ports
         if ci.name in ManualFuncs:
             for func in ManualFuncs[ci.name].keys():
-                ci.j_code.write("\n".join(ManualFuncs[ci.name][func]["j_code"]))
-                ci.jn_code.write("\n".join(ManualFuncs[ci.name][func]["jn_code"]))
+                ci.j_code.write("\n\t")
+                ci.jn_code.write("\n\t")
+                ci.cpp_code.write("\n")
+                ci.j_code.write("\n\t".join(ManualFuncs[ci.name][func]["j_code"]))
+                ci.jn_code.write("\n\t".join(ManualFuncs[ci.name][func]["jn_code"]))
                 ci.cpp_code.write("\n".join(ManualFuncs[ci.name][func]["cpp_code"]))
+                ci.j_code.write("\n\t")
+                ci.jn_code.write("\n\t")
+                ci.cpp_code.write("\n")
 
         if ci.name != self.Module or ci.base:
             # finalize()
