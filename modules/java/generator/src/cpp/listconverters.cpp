@@ -15,3 +15,21 @@ jlongArray vector_vpColVector_to_List(JNIEnv* env, std::vector<vpColVector> V)
   
   return result;
 }
+
+std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv* env, jlongArray arr)
+{
+  std::vector<vpHomogeneousMatrix> V;
+  jlong *body = env->GetLongArrayElements(arr, 0);
+  int len = env->GetArrayLength(arr);
+  vpHomogeneousMatrix* temp;
+
+  for(unsigned int i=0;i<len;++i){
+    temp = (vpHomogeneousMatrix*) body[i]; 
+    V.push_back(*temp);
+  }
+
+  env->ReleaseLongArrayElements(arr, body, 0);
+  
+  return V;
+}
+
