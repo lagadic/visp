@@ -854,9 +854,9 @@ class JavaWrapperGenerator(object):
                 else:
                     ret_val = "nativeObj = "
                 ret = "return;"
-            elif self.isWrapped(ret_type):  # wrapped class
+            elif self.isWrapped(camelCase(ret_type)):  # wrapped class
                 ret_val = type_dict[ret_type]["j_type"] + " retVal = new " + camelCase(
-                    self.getClass(ret_type).jname) + "("
+                    self.getClass(camelCase(ret_type)).jname) + "("
                 tail = ")"
             elif "jn_type" not in type_dict[ret_type]:
                 ret_val = type_dict[fi.ctype]["j_type"] + " retVal = new " + camelCase(
@@ -909,12 +909,12 @@ class JavaWrapperGenerator(object):
             elif fi.ctype == "String":
                 ret = "return env->NewStringUTF(_retval_.c_str());"
                 default = 'return env->NewStringUTF("");'
-            elif self.isWrapped(fi.ctype):  # wrapped class:
-                ret = "return (jlong) new %s(_retval_);" % self.fullTypeName(fi.ctype)
+            elif self.isWrapped(camelCase(fi.ctype)):  # wrapped class:
+                ret = "return (jlong) new %s(_retval_);" % self.fullTypeName(camelCase(fi.ctype))
             elif fi.ctype.startswith('Ptr_'):
                 c_prologue.append("typedef Ptr<%s> %s;" % (self.fullTypeName(fi.ctype[4:]), fi.ctype))
                 ret = "return (jlong)(new %(ctype)s(_retval_));" % {'ctype': fi.ctype}
-            elif self.isWrapped(ret_type):  # pointer to wrapped class:
+            elif self.isWrapped(camelCase(ret_type)):  # pointer to wrapped class:
                 ret = "return (jlong) _retval_;"
             elif type_dict[fi.ctype]["jni_type"] == "jdoubleArray":
                 ret = "return _da_retval_;"
