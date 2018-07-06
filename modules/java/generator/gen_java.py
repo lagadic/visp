@@ -400,7 +400,7 @@ class JavaWrapperGenerator(object):
 
     def clear(self):
         self.namespaces = set(["vp"])
-        self.classes = {"vpMatrix": ClassInfo(['class vpMatrix', '', [], []], self.namespaces)}
+        self.classes = {"VpMatrix": ClassInfo(['class VpMatrix', '', [], []], self.namespaces)}
         self.module = ""
         self.Module = ""
         self.ported_func_list = []
