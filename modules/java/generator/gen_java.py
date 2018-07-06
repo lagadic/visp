@@ -742,11 +742,15 @@ class JavaWrapperGenerator(object):
                     else:  # pass as list
                         jn_args.append(ArgInfo([a.ctype, a.name, "", [], ""]))
                         jni_args.append(ArgInfo([a.ctype, "%s_list" % a.name, "", [], ""]))
-                        c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n": a.name} + ";")
+                        ci.addImports(a.ctype)
+                        j_prologue.append("long[] "+a.name+" = Converters."+a.ctype+"_to_Array("+a.name+"_list_arr);")
+                        a.name += '_list'
+                        c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n": a.name} + "_arr;")
                         if "I" in a.out or not a.out:
-                            c_prologue.append("%(n)s = List_to_%(t)s(env, %(n)s_list);" % {"n": a.name, "t": a.ctype})
+                            c_prologue.append("%(n)s_arr = List_to_%(t)s(env, %(n)s);" % {"n": a.name, "t": a.ctype})
                         if "O" in a.out:
                             c_epilogue.append("Copy_%s_to_List(env,%s,%s_list);" % (a.ctype, a.name, a.name))
+                        a.name += '_arr'
                 else:
                     fields = type_dict[a.ctype].get("jn_args", ((a.ctype, ""),))
                     if "I" in a.out or not a.out or self.isWrapped(a.ctype):  # input arg, pass by primitive fields
