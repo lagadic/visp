@@ -270,7 +270,8 @@ class ClassInfo(GeneralInfo):
         return result
 
     def addMethod(self, fi):
-        self.methods.append(fi)
+        if fi not in self.methods: # Dont add duplicates
+            self.methods.append(fi)
 
     def getConst(self, name):
         for cand in self.consts + self.private_consts:
@@ -353,6 +354,8 @@ class ArgInfo():
                                                                  p=" *" if self.pointer else "",
                                                                  name=self.name,
                                                                  defval=self.defval)
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
 
 class FuncInfo(GeneralInfo):
@@ -391,6 +394,9 @@ class FuncInfo(GeneralInfo):
 
     def __lt__(self, other):
         return self.__repr__() < other.__repr__()
+
+    def __eq__(self, other):
+        return self.cname == other.cname and len(self.args) == len(other.args) and self.args == other.args
 
 
 class JavaWrapperGenerator(object):
