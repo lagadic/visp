@@ -1,0 +1,122 @@
+{
+  "ManualFuncs" : {
+    "VpDetectorAprilTag" : {
+		  "getPoseEstimationMethod" : {
+			  "j_code" : [
+				  "//",
+				  "// manual port",
+				  "// C++: vpPoseEstimationMethod getPoseEstimationMethod()",
+				  "//",
+				  "//javadoc: VpDetectorAprilTag::getPoseEstimationMethod()\n",
+				  "public int getPoseEstimationMethod()",
+				  "{",
+				  "   return getPoseEstimationMethod(nativeObj);",
+				  "}"
+			  ],
+			  "jn_code" : [
+				  "// C++: vpPoseEstimationMethod getPoseEstimationMethod()",
+				  "private static native int getPoseEstimationMethod(long address);"
+			  ],
+			  "cpp_code" : [
+				  "//",
+				  "// manual port",
+				  "// int getPoseEstimationMethod()",
+				  "//\n",
+				  "JNIEXPORT jint JNICALL Java_org_visp_detection_VpDetectorAprilTag_getPoseEstimationMethod (JNIEnv*, jclass, jlong);\n",
+				  "JNIEXPORT jint JNICALL Java_org_visp_detection_VpDetectorAprilTag_getPoseEstimationMethod",
+				  "  (JNIEnv* env, jclass , jlong address)",
+				  "{",
+				  "  static const char method_name[] = \"detection::getPoseEstimationMethod()\";",
+				  "  try {",
+				  "   LOGD(\"%s\", method_name);",
+				  "   vpDetectorAprilTag *tag = (vpDetectorAprilTag*) address;",
+				  "   return (int) tag->getPoseEstimationMethod();",
+				  "  } catch(const std::exception &e) {",
+				  "   throwJavaException(env, &e, method_name);",
+				  "  } catch (...) {",
+				  "   throwJavaException(env, 0, method_name);",
+				  "  }",
+				  "  return 0;",
+				  "}"  
+			  ]
+		  },
+		  "setAprilTagPoseEstimationMethod" : {
+			  "j_code" : [
+				  "//",
+				  "// manual port",
+				  "// C++: void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod)",
+				  "//",
+				  "//javadoc: VpDetectorAprilTag::setAprilTagPoseEstimationMethod(int vpPoseEstimationMethod)\n",
+				  "public void setAprilTagPoseEstimationMethod(int vpPoseEstimationMethod)",
+				  "{",
+				  "   setAprilTagPoseEstimationMethod(nativeObj,vpPoseEstimationMethod);",
+				  "}"
+			  ],
+			  "jn_code" : [
+				  "// C++: void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod)",
+				  "private static native void setAprilTagPoseEstimationMethod(long address, int value);"
+			  ],
+			  "cpp_code" : [
+				  "//",
+				  "// manual port",
+				  "// void setAprilTagPoseEstimationMethod(int vpPoseEstimationMethod)",
+				  "//\n",
+				  "JNIEXPORT void JNICALL Java_org_visp_detection_VpDetectorAprilTag_setAprilTagPoseEstimationMethod (JNIEnv*, jclass, jlong, jint);\n",
+				  "JNIEXPORT void JNICALL Java_org_visp_detection_VpDetectorAprilTag_setAprilTagPoseEstimationMethod",
+				  "  (JNIEnv* env, jclass , jlong address, jint value)",
+				  "{",
+				  "  static const char method_name[] = \"detection::setAprilTagPoseEstimationMethod()\";",
+				  "  try {",
+				  "   LOGD(\"%s\", method_name);",
+				  "   vpDetectorAprilTag *tag = (vpDetectorAprilTag*) address;",
+				  "   tag->setAprilTagPoseEstimationMethod(vpDetectorAprilTag::vpPoseEstimationMethod(value));",
+				  "  } catch(const std::exception &e) {",
+				  "   throwJavaException(env, &e, method_name);",
+				  "  } catch (...) {",
+				  "   throwJavaException(env, 0, method_name);",
+				  "  }",
+				  "  return;",
+				  "}"  
+			  ]
+		  },
+      "VpDetectorAprilTag" : {
+        "j_code" : [ 
+          "//",
+          "// C++:   vpDetectorAprilTag(vpAprilTagFamily tagFamily = TAG_36h11, vpPoseEstimationMethod poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS)",
+          "//\n",
+          "//javadoc: VpDetectorAprilTag::VpDetectorAprilTag()\n",
+          "public   VpDetectorAprilTag()",
+          "{\n",
+          "    nativeObj = VpDetectorAprilTag_0();\n",
+          "    return;",
+          "}"
+        ],
+        "jn_code" : [
+          "// C++:   vpDetectorAprilTag(vpAprilTagFamily tagFamily = TAG_36h11, vpPoseEstimationMethod poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS)",
+          "private static native long VpDetectorAprilTag_0();"
+        ],
+        "cpp_code" : [
+          "//",
+          "//   vpDetectorAprilTag(vpAprilTagFamily tagFamily = TAG_36h11, vpPoseEstimationMethod poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS)",
+          "//\n\n",
+          "JNIEXPORT jlong JNICALL Java_org_visp_detection_VpDetectorAprilTag_VpDetectorAprilTag_10 (JNIEnv*, jclass);\n",
+          "JNIEXPORT jlong JNICALL Java_org_visp_detection_VpDetectorAprilTag_VpDetectorAprilTag_10",
+          "  (JNIEnv* env, jclass )",
+          "{",
+          "  static const char method_name[] = \"detection::VpDetectorAprilTag_10()\";",
+          "  try {",
+          "    LOGD(\"%s\", method_name);\n",
+          "    vpDetectorAprilTag* _retval_ = new vpDetectorAprilTag(vpDetectorAprilTag::vpAprilTagFamily::TAG_36h11, vpDetectorAprilTag::vpPoseEstimationMethod::HOMOGRAPHY_VIRTUAL_VS );",
+          "    return (jlong) _retval_;",
+          "  } catch(const std::exception &e) {",
+          "    throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "    throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}" 
+        ]
+      }
+	  }
+	}
+}
