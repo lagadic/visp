@@ -9,8 +9,8 @@ $docs
 $annotation
 public class $jname {
 
-    protected final long nativeObj;
-    protected $jname(long addr) { nativeObj = addr; }
+    public final long nativeObj;
+    public $jname(long addr) { nativeObj = addr; }
 
     public long getNativeObjAddr() { return nativeObj; }
 
