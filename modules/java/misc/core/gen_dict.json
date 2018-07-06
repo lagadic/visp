@@ -12,6 +12,11 @@
 		"vpCPUFeatures"
     ],
 	"ManualFuncs" : {
+    "VpColVector" : {
+      "insert" : {
+        "j_code" : [""], "cpp_code" : [""], "jn_code" : [""]
+      } 
+    },
 		"VpRotationVector" : {
 			"t" : {
         "j_code" : [
