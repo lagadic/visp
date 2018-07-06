@@ -355,7 +355,7 @@ class ArgInfo():
                                                                  name=self.name,
                                                                  defval=self.defval)
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        return self.ctype == other.ctype
 
 
 class FuncInfo(GeneralInfo):
@@ -406,7 +406,7 @@ class JavaWrapperGenerator(object):
 
     def clear(self):
         self.namespaces = set(["vp"])
-        self.classes = {"VpMatrix": ClassInfo(['class VpMatrix', '', [], []], self.namespaces)}
+        self.classes = {}
         self.module = ""
         self.Module = ""
         self.ported_func_list = []
