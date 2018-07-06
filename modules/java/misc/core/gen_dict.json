@@ -13,9 +13,20 @@
     ],
 	"ManualFuncs" : {
     "VpColVector" : {
-      "insert" : {
-        "j_code" : [""], "cpp_code" : [""], "jn_code" : [""]
-      } 
+      "insert" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]} 
+    },
+    "VpMatrix" : {
+      "det" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+
+      "detByLUGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "svdGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "pseudoInverseGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "inverseByLUGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+
+      "detByLUOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "inverseByOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "svdOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "inverseByCholeskyOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]}
     }
 	},
     "type_dict" : {
