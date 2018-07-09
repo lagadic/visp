@@ -38,13 +38,23 @@ set (CMAKE_C_OSX_CURRENT_VERSION_FLAG "-current_version ")
 set (CMAKE_CXX_OSX_COMPATIBILITY_VERSION_FLAG "${CMAKE_C_OSX_COMPATIBILITY_VERSION_FLAG}")
 set (CMAKE_CXX_OSX_CURRENT_VERSION_FLAG "${CMAKE_C_OSX_CURRENT_VERSION_FLAG}")
 
+# Additional flags for dynamic framework
+if (APPLE_FRAMEWORK AND BUILD_SHARED_LIBS)
+  set (CMAKE_MODULE_LINKER_FLAGS "-rpath @executable_path/Frameworks -rpath @loader_path/Frameworks")
+  set (CMAKE_SHARED_LINKER_FLAGS "-rpath @executable_path/Frameworks -rpath @loader_path/Frameworks")
+  set (CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG 1)
+  set (CMAKE_INSTALL_NAME_DIR "@rpath")
+endif()
+
 # Hidden visibilty is required for cxx on iOS
 set (no_warn "-Wno-unused-function -Wno-overloaded-virtual")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${no_warn}")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden ${no_warn}")
-set (CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -fvisibility=hidden -fvisibility-inlines-hidden ${no_warn}")
 
-set (CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -fomit-frame-pointer -ffast-math")
+set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -ffast-math")
+if(NOT IOS_ARCH STREQUAL "armv7" AND NOT IOS_ARCH STREQUAL "armv7s")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fomit-frame-pointer")
+endif()
 
 if (HAVE_FLAG_SEARCH_PATHS_FIRST)
     set (CMAKE_C_LINK_FLAGS "-Wl,-search_paths_first ${CMAKE_C_LINK_FLAGS}")
@@ -56,7 +66,7 @@ set (CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "-dynamiclib -headerpad_max_install_nam
 set (CMAKE_SHARED_MODULE_CREATE_C_FLAGS "-bundle -headerpad_max_install_names")
 set (CMAKE_SHARED_MODULE_LOADER_C_FLAG "-Wl,-bundle_loader,")
 set (CMAKE_SHARED_MODULE_LOADER_CXX_FLAG "-Wl,-bundle_loader,")
-set (CMAKE_FIND_LIBRARY_SUFFIXES ".dylib" ".so" ".a" ".tbd")
+set (CMAKE_FIND_LIBRARY_SUFFIXES ".dylib" ".so" ".a" ".tbd") # tbd to detect pthread and libxml2
 
 # hack: if a new cmake (which uses CMAKE_INSTALL_NAME_TOOL) runs on an old build tree
 # (where install_name_tool was hardcoded) and where CMAKE_INSTALL_NAME_TOOL isn't in the cache
@@ -81,25 +91,37 @@ elseif(IPHONESIMULATOR)
   set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONESIMULATOR_SDK_PLATFORM_PATH}/Developer")
 endif()
 
-# Set the sysroot default to the most recent SDK
-set (CMAKE_OSX_SYSROOT ${_CMAKE_IOS_SDK_ROOT} CACHE PATH "Sysroot used for iOS support")
+# Set CMAKE_FRAMEWORK_PATH to find opencv2.framework
+set(CMAKE_FRAMEWORK_PATH ${_CMAKE_IOS_DEVELOPER_ROOT}/Library/Frameworks)
 
-# set the architecture for iOS - this env var sets armv6,armv7 and appears to be XCode's standard.
-# The other found is ARCHS_UNIVERSAL_IPHONE_OS but that is armv7 only
-set (CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_32_BIT)" CACHE string  "Build architecture for iOS")
+# Find installed iOS SDKs
+file (GLOB _CMAKE_IOS_SDKS "${_CMAKE_IOS_DEVELOPER_ROOT}/SDKs/*")
 
-# Set the default based on this file and not the environment variable
-set (CMAKE_FIND_ROOT_PATH ${_CMAKE_IOS_DEVELOPER_ROOT} ${_CMAKE_IOS_SDK_ROOT} CACHE string  "iOS library search path root")
+# Find and use the most recent iOS sdk
+if (_CMAKE_IOS_SDKS)
+    list (SORT _CMAKE_IOS_SDKS)
+    list (REVERSE _CMAKE_IOS_SDKS)
+    list (GET _CMAKE_IOS_SDKS 0 _CMAKE_IOS_SDK_ROOT)
 
-# default to searching for frameworks first
-set (CMAKE_FIND_FRAMEWORK FIRST)
+    # Set the sysroot default to the most recent SDK
+    set (CMAKE_OSX_SYSROOT ${_CMAKE_IOS_SDK_ROOT} CACHE PATH "Sysroot used for iOS support")
 
-# set up the default search directories for frameworks
-set (CMAKE_SYSTEM_FRAMEWORK_PATH
-  ${_CMAKE_IOS_SDK_ROOT}/System/Library/Frameworks
-  ${_CMAKE_IOS_SDK_ROOT}/System/Library/PrivateFrameworks
-  ${_CMAKE_IOS_DEVELOPER_ROOT}/Library/Frameworks
-)
+    # set the architecture for iOS - this env var sets armv6,armv7 and appears to be XCode's standard. The other found is ARCHS_UNIVERSAL_IPHONE_OS but that is armv7 only
+    set (CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_32_BIT)" CACHE string  "Build architecture for iOS")
+
+    # Set the default based on this file and not the environment variable
+    set (CMAKE_FIND_ROOT_PATH ${_CMAKE_IOS_DEVELOPER_ROOT} ${_CMAKE_IOS_SDK_ROOT} CACHE string  "iOS library search path root")
+
+    # default to searching for frameworks first
+    set (CMAKE_FIND_FRAMEWORK FIRST)
+
+    # set up the default search directories for frameworks
+    set (CMAKE_SYSTEM_FRAMEWORK_PATH
+        ${_CMAKE_IOS_SDK_ROOT}/System/Library/Frameworks
+        ${_CMAKE_IOS_SDK_ROOT}/System/Library/PrivateFrameworks
+        ${_CMAKE_IOS_SDK_ROOT}/Developer/Library/Frameworks
+    )
+endif (_CMAKE_IOS_SDKS)
 
 if ("${CMAKE_BACKWARDS_COMPATIBILITY}" MATCHES "^1\\.[0-6]$")
   set (CMAKE_SHARED_MODULE_CREATE_C_FLAGS "${CMAKE_SHARED_MODULE_CREATE_C_FLAGS} -flat_namespace -undefined suppress")
@@ -142,7 +164,6 @@ set (CMAKE_C_CREATE_MACOSX_FRAMEWORK
     "<CMAKE_C_COMPILER> <LANGUAGE_COMPILE_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS> <LINK_FLAGS> -o <TARGET> -install_name <TARGET_INSTALLNAME_DIR><TARGET_SONAME> <OBJECTS> <LINK_LIBRARIES>")
 set (CMAKE_CXX_CREATE_MACOSX_FRAMEWORK
     "<CMAKE_CXX_COMPILER> <LANGUAGE_COMPILE_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <LINK_FLAGS> -o <TARGET> -install_name <TARGET_INSTALLNAME_DIR><TARGET_SONAME> <OBJECTS> <LINK_LIBRARIES>")
-
 
 # Add the install directory of the running cmake to the search directories
 # CMAKE_ROOT is CMAKE_INSTALL_PREFIX/share/cmake, so we need to go two levels up
