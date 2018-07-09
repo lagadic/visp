@@ -33,3 +33,17 @@ std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv* env,
   return V;
 }
 
+jlongArray vector_vpHomogeneousMatrix_to_List(JNIEnv* env, std::vector<vpHomogeneousMatrix> V)
+{
+  jlongArray result;
+  result = env->NewLongArray(V.size());  
+  jlong *body = env->GetLongArrayElements(result, 0);
+
+  for(unsigned int i=0;i<V.size();++i)
+    body[i] = reinterpret_cast<long>(&V[i]);
+
+  env->ReleaseLongArrayElements(result, body, 0);
+  
+  return result;
+}
+
