@@ -915,7 +915,7 @@ class JavaWrapperGenerator(object):
                 ret = "return env->NewStringUTF(_retval_.c_str());"
                 default = 'return env->NewStringUTF("");'
             elif self.isWrapped(camelCase(fi.ctype)):  # wrapped class:
-                ret = "return (jlong) new %s(_retval_);" % self.fullTypeName(camelCase(fi.ctype))
+                ret = "return (jlong) new %s(_retval_);" % self.smartWrap(ci, self.fullTypeName(camelCase(fi.ctype)))
             elif fi.ctype.startswith('Ptr_'):
                 c_prologue.append("typedef Ptr<%s> %s;" % (self.fullTypeName(fi.ctype[4:]), fi.ctype))
                 ret = "return (jlong)(new %(ctype)s(_retval_));" % {'ctype': fi.ctype}
@@ -1097,7 +1097,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
 JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString(JNIEnv*, jclass, jlong);
 
 JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
-  (JNIEnv*, jclass, jlong self)
+  (JNIEnv* env, jclass, jlong self)
 {
   %(cls)s* me = (%(cls)s*) self; //TODO: check for NULL
   std::stringstream ss;
