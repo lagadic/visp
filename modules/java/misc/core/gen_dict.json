@@ -26,7 +26,13 @@
       "detByLUOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
       "inverseByOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
       "svdOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-      "inverseByCholeskyOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]}
+      "inverseByCholeskyOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+
+      "detByLUEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "inverseByLUEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "inverseByEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "svdEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
+      "pseudoInverseEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]}
     }
 	},
     "type_dict" : {
