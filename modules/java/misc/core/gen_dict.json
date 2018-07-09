@@ -1,4 +1,12 @@
 {
+	"ToStringSupport" : [
+    "VpMatrix",
+    "VpColVector",
+    "VpRowVector",
+    "VpCameraParameters",
+    "VpHomogeneousMatrix",
+    "VpRotationVector"
+	],
     "module_imports": [ "java.lang.String" ],
     "class_ignore_list" : [
       "vpClient",

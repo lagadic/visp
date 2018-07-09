@@ -81,6 +81,7 @@ type_dict = {
 
 # { class : { func : {j_code, jn_code, cpp_code} } }
 ManualFuncs = {}
+ToStringSupport = []
 
 # { class : { func : { arg_name : {"ctype" : ctype, "attrib" : [attrib]} } } }
 func_arg_fix = {}
@@ -1069,7 +1070,47 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
                 ci.jn_code.write("\n\t")
                 ci.cpp_code.write("\n")
 
+        # Add only classes that support << operator
+        if ci.name in ToStringSupport:
+            # toString
+            ci.j_code.write(
+                """
+    @Override
+    public String toString(){
+        return toString(nativeObj);
+    }
+                """)
+
+            ci.jn_code.write(
+                """
+    // native support for java toString()
+    private static native String toString(long nativeObj);
+                """)
+
+            # native support for java toString()
+            ci.cpp_code.write("""
+//
+//  native support for java toString()
+//  static String %(cls)s::toString()
+//
+
+JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString(JNIEnv*, jclass, jlong);
+
+JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
+  (JNIEnv*, jclass, jlong self)
+{
+  %(cls)s* me = (%(cls)s*) self; //TODO: check for NULL
+  std::stringstream ss;
+  ss << *me;
+  return env->NewStringUTF(ss.str().c_str());
+}
+
+                """ % {"module": module.replace('_', '_1'), "cls": self.smartWrap(ci, ci.fullName(isCPP=True)),
+                       "j_cls": ci.jname.replace('_', '_1')}
+            )
+
         if ci.name != self.Module or ci.base:
+
             # finalize()
             ci.j_code.write(
                 """
@@ -1335,6 +1376,7 @@ if __name__ == "__main__":
             missing_consts.update(gen_type_dict.get("missing_consts", {}))
             type_dict.update(gen_type_dict.get("type_dict", {}))
             ManualFuncs.update(gen_type_dict.get("ManualFuncs", {}))
+            ToStringSupport += gen_type_dict.get("ToStringSupport", [])
             func_arg_fix.update(gen_type_dict.get("func_arg_fix", {}))
             if 'module_j_code' in gen_type_dict:
                 module_j_code = read_contents(
