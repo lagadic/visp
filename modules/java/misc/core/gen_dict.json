@@ -5,7 +5,8 @@
     "VpRowVector",
     "VpCameraParameters",
     "VpHomogeneousMatrix",
-    "VpRotationVector"
+    "VpRotationVector",
+    "VpPoint"
 	],
     "module_imports": [ "java.lang.String" ],
     "class_ignore_list" : [
@@ -22,6 +23,47 @@
 	"ManualFuncs" : {
     "VpColVector" : {
       "insert" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]} 
+    },
+    "VpPoint" : {
+      "getWorldCoordinates" : {    
+        "j_code" : [
+          "//",
+          "// C++:  vpColVector getWorldCoordinates()",
+          "//\n",
+          "//javadoc: VpPoint::getWorldCoordinates()\n",
+          "public  VpColVector getWorldCoordinates()",
+          "{",
+          "    VpColVector retVal = new VpColVector(getWorldCoordinates_2(nativeObj));",
+          "    return retVal;",
+          "}"
+        ],
+        "cpp_code" : [
+          "//",
+          "//  vpColVector getWorldCoordinates()",
+          "//\n\n",
+          "JNIEXPORT jlong JNICALL Java_org_visp_core_VpPoint_getWorldCoordinates_12 (JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT jlong JNICALL Java_org_visp_core_VpPoint_getWorldCoordinates_12",
+          "  (JNIEnv* env, jclass , jlong self)",
+          "{",
+          "  static const char method_name[] = \"core::getWorldCoordinates_12()\";",
+          "  try {",
+          "    LOGD(\"%s\", method_name);",
+          "    vpPoint* me = (vpPoint*) self; //TODO: check for NULL",
+          "    vpColVector _retval_ = me->getWorldCoordinates(  );",
+          "    return (jlong) new vpColVector(_retval_);",
+          "  } catch(const std::exception &e) {",
+          "    throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "    throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"  
+        ],
+        "jn_code" : [
+          "// C++:  vpColVector getWorldCoordinates()",
+          "private static native long getWorldCoordinates_2(long nativeObj);"
+        ]
+      }
     },
     "VpMatrix" : {
       "det" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
@@ -161,23 +203,6 @@
             "jni_type": "jdoubleArray",
             "jni_var": "Moments %(n)s(%(n)s_m00, %(n)s_m10, %(n)s_m01, %(n)s_m20, %(n)s_m11, %(n)s_m02, %(n)s_m30, %(n)s_m21, %(n)s_m12, %(n)s_m03)",
             "suffix": "DDDDDDDDDD"
-        },
-        "vpPoint": {
-            "j_type": "VpPoint",
-            "jn_args": [
-                [
-                    "double",
-                    ".x"
-                ],
-                [
-                    "double",
-                    ".y"
-                ]
-            ],
-            "jni_type": "jdoubleArray",
-            "jni_var": "vpPoint %(n)s((int)%(n)s_x, (int)%(n)s_y)",
-            "suffix": "DD",
-            "j_import": "org.visp.core.VpPoint"
         },
         "string": {
             "j_type": "String",
