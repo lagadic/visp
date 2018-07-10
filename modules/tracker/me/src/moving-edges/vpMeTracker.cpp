@@ -60,7 +60,7 @@ void vpMeTracker::init()
 }
 
 vpMeTracker::vpMeTracker()
-  : list(), me(NULL), init_range(1), m_mask(NULL), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+  : list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -70,7 +70,7 @@ vpMeTracker::vpMeTracker()
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
-  : vpTracker(meTracker), list(), me(NULL), init_range(1), m_mask(NULL), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+  : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -134,16 +134,16 @@ unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size
 
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true
   are considered in the tracking. To disable a pixel, set false.
-  \param i : Sub-pixel coordinate along the rows.
-  \param j : Sub-pixel coordinate along the columns.
+  \param i : Pixel coordinate along the rows.
+  \param j : Pixel coordinate along the columns.
 */
-int vpMeTracker::inMask(const vpImage<bool> *mask, const unsigned int &i, const unsigned int &j)
+bool vpMeTracker::inMask(const vpImage<bool> *mask, const unsigned int i, const unsigned int j)
 {
   try {
     return (mask == NULL || mask->getValue(i, j));
   }
-  catch (vpException &e) {
-    return 0;
+  catch (vpException &) {
+    return false;
   }
 }
 
@@ -259,7 +259,6 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
     throw(vpTrackingException(vpTrackingException::notEnoughPointError, "too few pixel to track"));
   }
 
-  vpImagePoint ip1, ip2;
   nGoodElement = 0;
 
   // Loop through list of sites to track

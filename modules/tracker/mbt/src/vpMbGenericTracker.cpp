@@ -3333,7 +3333,7 @@ void vpMbGenericTracker::setKltMaskBorder(const std::map<std::string, unsigned i
 
   \param mask : visibility mask.
 */
-void vpMbGenericTracker::setMask(vpImage<bool> &mask)
+void vpMbGenericTracker::setMask(const vpImage<bool> &mask)
 {
   vpMbTracker::setMask(mask);
 

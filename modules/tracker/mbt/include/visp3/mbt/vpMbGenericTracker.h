@@ -283,7 +283,7 @@ public:
 
   virtual void setLod(const bool useLod, const std::string &name = "");
 
-  virtual void setMask(vpImage<bool> &mask);
+  virtual void setMask(const vpImage<bool> &mask);
 
   virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
   virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name = "");

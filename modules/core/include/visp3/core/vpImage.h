@@ -1404,16 +1404,14 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 }
 
 /*!
-
-  Retrieves pixel value from an image containing values of type \e Type with
-  sub-pixel accuracy.
+  Retrieves pixel value from an image containing values of type \e Type
 
   Gets the value of a sub-pixel with coordinates (i,j).
 
-  \param i : Sub-pixel coordinate along the rows.
-  \param j : Sub-pixel coordinate along the columns.
+  \param i : Pixel coordinate along the rows.
+  \param j : Pixel coordinate along the columns.
 
-  \return Sub-pixel value.
+  \return Pixel value.
 
   \exception vpImageException::notInTheImage : If (i,j) is out
   of the image.
@@ -1425,57 +1423,7 @@ template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsign
     throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
   }
 
-  return (Type)row[i][j];
-}
-
-/*!
-
-  Retrieves pixel value from an image containing values of type \e Type with
-  sub-pixel accuracy.
-
-  Gets the value of a sub-pixel with coordinates (i,j).
-
-  \param i : Sub-pixel coordinate along the rows.
-  \param j : Sub-pixel coordinate along the columns.
-
-  \return Sub-pixel value.
-
-  \exception vpImageException::notInTheImage : If (i,j) is out
-  of the image.
-
-*/
-template <> inline double vpImage<double>::getValue(unsigned int i, unsigned int j) const
-{
-  if (i >= height || j >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
-  }
-
-  return (double)row[i][j];
-}
-
-/*!
-
-  Retrieves pixel value from an image containing values of type \e Type with
-  sub-pixel accuracy.
-
-  Gets the value of a sub-pixel with coordinates (i,j).
-
-  \param i : Sub-pixel coordinate along the rows.
-  \param j : Sub-pixel coordinate along the columns.
-
-  \return Sub-pixel value.
-
-  \exception vpImageException::notInTheImage : If (i,j) is out
-  of the image.
-
-*/
-template <> inline vpRGBa vpImage<vpRGBa>::getValue(unsigned int i, unsigned int j) const
-{
-  if (i >= height || j >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
-  }
-
-  return (vpRGBa)row[i][j];
+  return row[i][j];
 }
 
 /*!

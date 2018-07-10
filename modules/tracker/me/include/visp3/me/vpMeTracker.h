@@ -105,7 +105,7 @@ public:
 
   vpMeTracker &operator=(vpMeTracker &f);
 
-  static int inMask(const vpImage<bool> *mask, const unsigned int &i, const unsigned int &j);
+  static bool inMask(const vpImage<bool> *mask, const unsigned int i, const unsigned int j);
 
   int outOfImage(int i, int j, int half, int row, int cols);
   int outOfImage(const vpImagePoint &iP, int half, int rows, int cols);

@@ -224,7 +224,7 @@ protected:
   //! Camera parameters used for projection error computation
   vpCameraParameters m_projectionErrorCam;
   //! Mask used to disable tracking on a part of image
-  vpImage<bool> *m_mask;
+  const vpImage<bool> *m_mask;
 
 public:
   vpMbTracker();
@@ -546,7 +546,7 @@ public:
 
   void setProjectionErrorKernelSize(const unsigned int &size);
 
-  virtual void setMask(vpImage<bool> &mask) { m_mask = &mask; }
+  virtual void setMask(const vpImage<bool> &mask) { m_mask = &mask; }
 
   /*!
     Set the minimal error (previous / current estimation) to determine if

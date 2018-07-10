@@ -146,12 +146,12 @@ vpMbTracker::vpMbTracker()
     useOgre(false), ogreShowConfigDialog(false), useScanLine(false), nbPoints(0), nbLines(0), nbPolygonLines(0),
     nbPolygonPoints(0), nbCylinders(0), nbCircles(0), useLodGeneral(false), applyLodSettingInConfig(false),
     minLineLengthThresholdGeneral(50.0), minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames(),
-    m_computeInteraction(true), m_lambda(1.0), m_mask(NULL), m_maxIter(30), m_stopCriteriaEpsilon(1e-8), m_initialMu(0.01),
+    m_computeInteraction(true), m_lambda(1.0), m_maxIter(30), m_stopCriteriaEpsilon(1e-8), m_initialMu(0.01),
     m_projectionErrorLines(), m_projectionErrorCylinders(), m_projectionErrorCircles(),
     m_projectionErrorFaces(), m_projectionErrorOgreShowConfigDialog(false),
     m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5,5), m_SobelY(5,5),
     m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20), m_projectionErrorDisplayThickness(1),
-    m_projectionErrorCam()
+    m_projectionErrorCam(), m_mask(NULL)
 {
   oJo.eye();
   // Map used to parse additional information in CAO model files,

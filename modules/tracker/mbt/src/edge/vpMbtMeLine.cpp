@@ -482,7 +482,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
   if ((double)n < 0.5 * expecteddensity && n > 0) {
     double delta_new = delta;
     delta = delta_1;
-    sample(I, false);
+    sample(I);
     expecteddensity = (double)list.size();
     delta = delta_new;
     //  2. On appelle ce qui n'est pas specifique
@@ -516,7 +516,7 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &
     PExt[0].jfloat = (float)ip1.get_j();
     PExt[1].ifloat = (float)ip2.get_i();
     PExt[1].jfloat = (float)ip2.get_j();
-    sample(I, false);
+    sample(I);
     expecteddensity = (double)list.size();
     delta = delta_new;
     vpMeTracker::track(I);

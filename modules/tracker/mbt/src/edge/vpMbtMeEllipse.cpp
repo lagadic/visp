@@ -322,7 +322,7 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
 
   unsigned int n = numberOfSignal();
   if ((double)n < 0.9 * expecteddensity) {
-    sample(I, false);
+    sample(I);
     vpMeTracker::track(I);
   }
 }
