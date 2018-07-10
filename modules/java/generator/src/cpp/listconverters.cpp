@@ -9,7 +9,7 @@ jlongArray vector_vpColVector_to_List(JNIEnv* env, std::vector<vpColVector> V)
   jlong *body = env->GetLongArrayElements(result, 0);
 
   for(unsigned int i=0;i<V.size();++i)
-    body[i] = reinterpret_cast<long>(&V[i]);
+    body[i] = (long) new vpColVector(V[i]);
 
   env->ReleaseLongArrayElements(result, body, 0);
   
@@ -40,7 +40,7 @@ jlongArray vector_vpHomogeneousMatrix_to_List(JNIEnv* env, std::vector<vpHomogen
   jlong *body = env->GetLongArrayElements(result, 0);
 
   for(unsigned int i=0;i<V.size();++i)
-    body[i] = reinterpret_cast<long>(&V[i]);
+    body[i] = (long) new vpHomogeneousMatrix(V[i]);
 
   env->ReleaseLongArrayElements(result, body, 0);
   
