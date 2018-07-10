@@ -171,6 +171,23 @@
             "suffix": "DD",
             "j_import": "org.visp.core.VpPoint"
         },
+        "vpImagePoint": {
+            "j_type": "VpImagePoint",
+            "jn_args": [
+                [
+                    "double",
+                    ".i"
+                ],
+                [
+                    "double",
+                    ".j"
+                ]
+            ],
+            "jni_type": "jdoubleArray",
+            "jni_var": "vpImagePoint %(n)s((int)%(n)s_i, (int)%(n)s_j)",
+            "suffix": "DD",
+            "j_import": "org.visp.core.VpImagePoint"
+        },
         "string": {
             "j_type": "String",
             "jn_type": "String",
