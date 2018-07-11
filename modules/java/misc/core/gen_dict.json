@@ -308,6 +308,30 @@
             "jni_var": "vpRotationVector& %(n)s = *((vpRotationVector*)%(n)s_nativeObj)",
             "suffix": "J",
             "j_import": "org.visp.core.VpRotationVector"
+        },
+        "vector_double": {
+            "j_type": "double[]",
+            "jn_type": "double[]",
+            "jni_type": "jdoubleArray",
+            "jni_var": "std::vector<double> %(n)s",
+            "suffix": "[D",
+            "v_type": "double"
+        },
+        "vector_float": {
+            "j_type": "float[]",
+            "jn_type": "float[]",
+            "jni_type": "jfloatArray",
+            "jni_var": "std::vector<float> %(n)s",
+            "suffix": "[F",
+            "v_type": "float"
+        },
+        "vector_int": {
+            "j_type": "int[]",
+            "jn_type": "int[]",
+            "jni_type": "jintArray",
+            "jni_var": "std::vector<int> %(n)s",
+            "suffix": "[I",
+            "v_type": "int"
         }
     }
 }
