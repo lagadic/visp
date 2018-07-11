@@ -1114,7 +1114,7 @@ JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
                        "j_cls": ci.jname.replace('_', '_1')}
             )
                   
-        if ci.name != 'VpImgproc' and ci.name != self.Module or ci.base
+        if ci.name != 'VpImgproc' and ci.name != self.Module or ci.base:
             # finalize()
             ci.j_code.write(
                 """
