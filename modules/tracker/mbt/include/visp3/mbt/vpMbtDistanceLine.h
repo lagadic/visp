@@ -185,7 +185,8 @@ public:
 
   void initInteractionMatrixError();
 
-  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack);
+  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+                      const vpImage<bool> *mask = NULL);
 
   /*!
    Return if the line is used for tracking.
@@ -201,7 +202,8 @@ public:
   */
   inline bool isVisible() const { return isvisible; }
 
-  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                        const vpImage<bool> *mask = NULL);
 
   /*!
    Set the camera paramters.
@@ -249,7 +251,7 @@ public:
   */
   void setVisible(bool _isvisible) { isvisible = _isvisible; }
 
-  void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  void trackMovingEdge(const vpImage<unsigned char> &I);
 
   void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 

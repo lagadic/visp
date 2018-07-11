@@ -151,7 +151,7 @@ vpMbTracker::vpMbTracker()
     m_projectionErrorFaces(), m_projectionErrorOgreShowConfigDialog(false),
     m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5,5), m_SobelY(5,5),
     m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20), m_projectionErrorDisplayThickness(1),
-    m_projectionErrorCam()
+    m_projectionErrorCam(), m_mask(NULL)
 {
   oJo.eye();
   // Map used to parse additional information in CAO model files,
@@ -3259,7 +3259,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
       l->setVisible(true);
       l->updateTracked();
       if (l->meline.empty() && l->isTracked())
-        l->initMovingEdge(I, _cMo, doNotTrack);
+        l->initMovingEdge(I, _cMo, doNotTrack, m_mask);
     } else {
       l->setVisible(false);
       for (size_t a = 0; a < l->meline.size(); a++) {
@@ -3293,7 +3293,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
       cy->setVisible(true);
       if (cy->meline1 == NULL || cy->meline2 == NULL) {
         if (cy->isTracked())
-          cy->initMovingEdge(I, _cMo, doNotTrack);
+          cy->initMovingEdge(I, _cMo, doNotTrack, m_mask);
       }
     } else {
       cy->setVisible(false);
@@ -3326,7 +3326,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
       ci->setVisible(true);
       if (ci->meEllipse == NULL) {
         if (ci->isTracked())
-          ci->initMovingEdge(I, _cMo, doNotTrack);
+          ci->initMovingEdge(I, _cMo, doNotTrack, m_mask);
       }
     } else {
       ci->setVisible(false);
@@ -3404,3 +3404,4 @@ void vpMbTracker::setProjectionErrorKernelSize(const unsigned int &size)
   m_SobelY.resize(size*2+1, size*2+1, false, false);
   vpImageFilter::getSobelKernelY(m_SobelY.data, size);
 }
+

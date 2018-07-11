@@ -565,6 +565,7 @@ void vpMbDepthNormalTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointX
                                        ,
                                        m_debugImage_depthNormal, roiPts_vec_
 #endif
+                                       , m_mask
                                        )) {
         m_depthNormalListOfDesiredFeatures.push_back(desired_features);
         m_depthNormalListOfActiveFaces.push_back(face);
@@ -628,6 +629,7 @@ void vpMbDepthNormalTracker::segmentPointCloud(const std::vector<vpColVector> &p
                                        ,
                                        m_debugImage_depthNormal, roiPts_vec_
 #endif
+                                       , m_mask
                                        )) {
         m_depthNormalListOfDesiredFeatures.push_back(desired_features);
         m_depthNormalListOfActiveFaces.push_back(face);
