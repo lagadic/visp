@@ -494,6 +494,11 @@ class JavaWrapperGenerator(object):
     def add_func(self, decl):
         fi = FuncInfo(decl, namespaces=self.namespaces)
         classname = fi.classname or self.Module
+
+        # Workaround for imgrpoc module
+        if classname == 'Vp' and self.Module == 'Imgproc':
+            classname = 'VpImgproc'
+
         if classname in class_ignore_list:
             logging.info('ignored: %s', fi)
         elif classname in ManualFuncs and fi.jname in ManualFuncs[classname]:
@@ -1108,9 +1113,8 @@ JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
                 """ % {"module": module.replace('_', '_1'), "cls": self.smartWrap(ci, ci.fullName(isCPP=True)),
                        "j_cls": ci.jname.replace('_', '_1')}
             )
-
-        if ci.name != self.Module or ci.base:
-
+                  
+        if ci.name != 'VpImgproc' and ci.name != self.Module or ci.base
             # finalize()
             ci.j_code.write(
                 """
