@@ -608,6 +608,23 @@ macro(vp_target_include_modules target)
   vp_list_unique(VISP_MODULE_${the_module}_INC_DEPS)
 endmacro()
 
+# setup include paths for the list of passed modules and recursively add dependent modules
+macro(vp_target_include_modules_recurse target)
+  foreach(d ${ARGN})
+    if(d MATCHES "^visp_" AND HAVE_${d})
+			if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
+				vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
+      endif()
+			if(VISP_MODULE_${d}_DEPS)
+				vp_target_include_modules(${target} ${VISP_MODULE_${d}_DEPS})
+      endif()
+    elseif(EXISTS "${d}")
+      vp_target_include_directories(${target} "${d}")
+    endif()
+  endforeach()
+endmacro()
+
+
 # setup include path for ViSP headers for specified module
 # vp_module_include_directories(<extra include directories/extra include modules>)
 macro(vp_module_include_directories)
