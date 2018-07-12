@@ -266,6 +266,8 @@ int workerpool_get_nprocs()
 {
 #ifdef _MSC_VER
   int nproc = 1;
+#elif ANDROID
+  int nproc = 1;
 #else
     FILE * f = fopen("/proc/cpuinfo", "r");
     size_t n = 0;
