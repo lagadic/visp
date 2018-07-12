@@ -373,6 +373,8 @@ VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AN
 # Build java as an option
 VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
 VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
+VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
+VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
 
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
@@ -716,16 +718,6 @@ if(UNIX)
   endif()
 endif()
 
-#---------------------------------------------------------------------
-# Android support
-#---------------------------------------------------------------------
-if(ANDROID)
-    include(cmake/DetectAndroidSDK.cmake)
-    if(NOT ANDROID_NATIVE_API_LEVEL GREATER 23)
-      message(WARNING "ViSP requires Android SDK tools revision 24 or newer. Otherwise tests and samples will no be compiled.")
-    endif()
-endif()
-
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
@@ -739,6 +731,12 @@ if(BUILD_JAVA)
     include(cmake/VISPDetectApacheAnt.cmake)
     find_package(JNI)
   endif()
+endif()
+
+if(ANDROID AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND (ANT_VERSION VERSION_GREATER 1.7) AND (ANDROID_TOOLS_Pkg_Revision GREATER 13))
+  SET(CAN_BUILD_ANDROID_PROJECTS TRUE)
+else()
+  SET(CAN_BUILD_ANDROID_PROJECTS FALSE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1209,6 +1207,44 @@ status("    To be built:"            VISP_MODULES_BUILD          THEN ${VISP_MOD
 status("    Disabled:"               VISP_MODULES_DISABLED_USER  THEN ${VISP_MODULES_DISABLED_USER_ST}  ELSE "-")
 status("    Disabled by dependency:" VISP_MODULES_DISABLED_AUTO  THEN ${VISP_MODULES_DISABLED_AUTO_ST}  ELSE "-")
 status("    Unavailable:"            VISP_MODULES_DISABLED_FORCE THEN ${VISP_MODULES_DISABLED_FORCE_ST} ELSE "-")
+
+# ========================== Android details ==========================
+if(ANDROID)
+  status("")
+  if(DEFINED ANDROID_NDK_REVISION)
+    set(__msg "${ANDROID_NDK} (ver ${ANDROID_NDK_REVISION})")
+  else()
+    set(__msg "location: ${ANDROID_NDK}")
+  endif()
+  status("  Android NDK: " ${__msg})
+  status("    Android ABI:" ${ANDROID_ABI})
+  if(BUILD_WITH_STANDALONE_TOOLCHAIN)
+    status("    NDK toolchain:" "standalone: ${ANDROID_STANDALONE_TOOLCHAIN}")
+  elseif(BUILD_WITH_ANDROID_NDK OR DEFINED ANDROID_TOOLCHAIN_NAME)
+    status("    NDK toolchain:" "${ANDROID_TOOLCHAIN_NAME}")
+  endif()
+  status("    STL type:" ${ANDROID_STL})
+  status("    Native API level:" ${ANDROID_NATIVE_API_LEVEL})
+
+  if(BUILD_ANDROID_PROJECTS)
+    status("  Android SDK: " "${ANDROID_SDK} (tools: ${ANDROID_SDK_TOOLS_VERSION} build tools: ${ANDROID_SDK_BUILD_TOOLS_VERSION})")
+    if(ANDROID_EXECUTABLE)
+      status("    android tool:"  "${ANDROID_EXECUTABLE}")
+    endif()
+  else()
+    status("  Android SDK: " "not used, projects are not built")
+  endif()
+  if(DEFINED ANDROID_SDK_COMPATIBLE_TARGET)
+    status("    SDK target:" "${ANDROID_SDK_COMPATIBLE_TARGET}")
+  endif()
+  if(DEFINED ANDROID_PROJECTS_BUILD_TYPE)
+    if(ANDROID_PROJECTS_BUILD_TYPE STREQUAL "ANT")
+      status("    Projects build scripts:" "Ant/Eclipse compatible")
+    elseif(ANDROID_PROJECTS_BUILD_TYPE STREQUAL "ANT")
+      status("    Projects build scripts:" "Gradle")
+    endif()
+  endif()
+endif()
 
 # ================== Windows RT features ==================
 if(WIN32)
