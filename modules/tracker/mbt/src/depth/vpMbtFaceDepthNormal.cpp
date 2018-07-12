@@ -157,6 +157,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
                                                   vpImage<unsigned char> &debugImage,
                                                   std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
+                                                  , const vpImage<bool> *mask
 )
 {
   m_faceActivated = false;
@@ -218,7 +219,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   double x = 0.0, y = 0.0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if (pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0 &&
+      if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0 &&
           (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
@@ -316,6 +317,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
                                                   vpImage<unsigned char> &debugImage,
                                                   std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
+                                                  , const vpImage<bool> *mask
 )
 {
   m_faceActivated = false;
@@ -372,7 +374,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   double x = 0.0, y = 0.0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if (point_cloud[i * width + j][2] > 0 &&
+      if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
           (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())

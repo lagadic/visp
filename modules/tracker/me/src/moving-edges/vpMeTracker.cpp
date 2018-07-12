@@ -60,7 +60,7 @@ void vpMeTracker::init()
 }
 
 vpMeTracker::vpMeTracker()
-  : list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+  : list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -70,7 +70,7 @@ vpMeTracker::vpMeTracker()
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
-  : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+  : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     ,
     query_range(0), display_point(false)
@@ -127,6 +127,25 @@ unsigned int vpMeTracker::numberOfSignal()
 }
 
 unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size(); }
+
+/*!
+  Test whether the pixel is inside the mask. Mask values that are set to true
+  are considered in the tracking.
+
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true
+  are considered in the tracking. To disable a pixel, set false.
+  \param i : Pixel coordinate along the rows.
+  \param j : Pixel coordinate along the columns.
+*/
+bool vpMeTracker::inMask(const vpImage<bool> *mask, const unsigned int i, const unsigned int j)
+{
+  try {
+    return (mask == NULL || mask->getValue(i, j));
+  }
+  catch (vpException &) {
+    return false;
+  }
+}
 
 int vpMeTracker::outOfImage(int i, int j, int half, int rows, int cols)
 {
@@ -240,45 +259,52 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
     throw(vpTrackingException(vpTrackingException::notEnoughPointError, "too few pixel to track"));
   }
 
-  vpImagePoint ip1, ip2;
   nGoodElement = 0;
-  //  int d =0;
+
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
+  std::list<vpMeSite>::iterator it = list.begin();
+  while (it != list.end()) {
     vpMeSite s = *it; // current reference pixel
 
-    //    d++ ;
     // If element hasn't been suppressed
     if (s.getState() == vpMeSite::NO_SUPPRESSION) {
 
       try {
-        //	vpERROR_TRACE("%d",d ) ;
-        //	vpERROR_TRACE("range %d",me->range) ;
         s.track(I, me, true);
       } catch (vpTrackingException) {
         vpERROR_TRACE("catch exception ");
         s.setState(vpMeSite::THRESHOLD);
       }
-
-      if (s.getState() != vpMeSite::THRESHOLD) {
-        nGoodElement++;
+      
+      if (vpMeTracker::inMask(m_mask, s.i, s.j)) {
+        if (s.getState() != vpMeSite::THRESHOLD) {
+          nGoodElement++;
 
 #if (DEBUG_LEVEL2)
-        {
-          double a, b;
-          a = s.i_1 - s.i;
-          b = s.j_1 - s.j;
-          if (s.getState() == vpMeSite::NO_SUPPRESSION) {
-            ip1.set_i(s.i);
-            ip1.set_j(s.j);
-            ip2.set_i(s.i + a * 5);
-            ip2.set_j(s.j + b * 5);
-            vpDisplay::displayArrow(I, ip1, ip2, vpColor::green);
+          {
+            double a, b;
+            a = s.i_1 - s.i;
+            b = s.j_1 - s.j;
+            if (s.getState() == vpMeSite::NO_SUPPRESSION) {
+              ip1.set_i(s.i);
+              ip1.set_j(s.j);
+              ip2.set_i(s.i + a * 5);
+              ip2.set_j(s.j + b * 5);
+              vpDisplay::displayArrow(I, ip1, ip2, vpColor::black);
+            }
           }
-        }
 #endif
+        }
+        *it = s;
+        ++it;
       }
-      *it = s;
+      else {
+        // Site outside mask: it is no more tracked.
+        it = list.erase(it);
+      }
+    }
+    else {
+      ++it;
     }
   }
 }

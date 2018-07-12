@@ -557,6 +557,7 @@ void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXY
                                        ,
                                        m_debugImage_depthDense, roiPts_vec_
 #endif
+                                       , m_mask
                                        )) {
         m_depthDenseListOfActiveFaces.push_back(*it);
 
@@ -615,6 +616,7 @@ void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &po
                                        ,
                                        m_debugImage_depthDense, roiPts_vec_
 #endif
+                                       , m_mask
                                        )) {
         m_depthDenseListOfActiveFaces.push_back(*it);
 

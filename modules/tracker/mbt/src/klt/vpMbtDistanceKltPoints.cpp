@@ -39,6 +39,7 @@
 
 #include <visp3/core/vpPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
+#include <visp3/me/vpMeTracker.h>
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
@@ -74,8 +75,9 @@ vpMbtDistanceKltPoints::~vpMbtDistanceKltPoints() {}
   points that are indeed in the face.
 
   \param _tracker : ViSP OpenCV KLT Tracker.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker)
+void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {
   // extract ids of the points in the face
   nbPointsInit = 0;
@@ -93,14 +95,18 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker)
 
     bool add = false;
 
-    if (useScanLine) {
-      if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+    // Add points inside visibility mask only
+    if (vpMeTracker::inMask(mask, y_tmp, x_tmp)) {
+      if (useScanLine) {
+        if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
           (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
           hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
-              polygon->getIndex())
+          polygon->getIndex())
+          add = true;
+      }
+      else if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
         add = true;
-    } else if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
-      add = true;
+      }
     }
 
     if (add) {
@@ -142,8 +148,9 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker)
   \param _tracker : the KLT tracker
   \return the number of points that are tracked in this face and in this
   instanciation of the tracker
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv &_tracker)
+unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {
   long id;
   float x, y;
@@ -153,7 +160,7 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id)) {
+    if (isTrackedFeature((int)id) && vpMeTracker::inMask(mask, y, x)) {
 #if TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;

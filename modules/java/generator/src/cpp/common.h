@@ -17,6 +17,7 @@ extern "C" {
 } // extern "C"
 
 #include "visp_java.hpp"
+#include "listconverters.hpp"
 
 #ifdef _MSC_VER
 #  pragma warning(disable:4800 4244)

@@ -122,7 +122,7 @@ public:
 private:
   void bubbleSortI();
   void bubbleSortJ();
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack = false);
   void seekExtremities(const vpImage<unsigned char> &I);
   void setExtremities();
   void suppressPoints(const vpImage<unsigned char> &I);

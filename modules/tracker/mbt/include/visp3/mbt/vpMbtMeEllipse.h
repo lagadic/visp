@@ -222,7 +222,7 @@ public:
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
                     double mu02_p, const bool doNotTrack);
 
-  void track(const vpImage<unsigned char> &Im);
+  void track(const vpImage<unsigned char> &I);
 
   void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
                         double mu02_p);

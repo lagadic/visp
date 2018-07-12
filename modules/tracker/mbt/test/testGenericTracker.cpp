@@ -55,7 +55,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS "i:dclt:e:Dh"
+#define GETOPTARGS "i:dclt:e:Dmh"
 
 namespace
 {
@@ -66,7 +66,7 @@ namespace
     \n\
     SYNOPSIS\n\
       %s [-i <test image path>] [-c] [-d] [-h] [-l] \n\
-     [-t <tracker type>] [-e <last frame index>] [-D]\n", name);
+     [-t <tracker type>] [-e <last frame index>] [-D] [-m]\n", name);
 
     fprintf(stdout, "\n\
     OPTIONS:                                               \n\
@@ -97,6 +97,9 @@ namespace
       -D \n\
          Use depth.\n\
     \n\
+      -m \n\
+         Set a tracking mask.\n\
+    \n\
       -h \n\
          Print the help.\n\n");
 
@@ -105,7 +108,7 @@ namespace
   }
 
   bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
-                  bool &useScanline, int &trackerType, int &lastFrame, bool &use_depth)
+                  bool &useScanline, int &trackerType, int &lastFrame, bool &use_depth, bool &use_mask)
   {
     const char *optarg_;
     int c;
@@ -132,6 +135,9 @@ namespace
         break;
       case 'D':
         use_depth = true;
+        break;
+      case 'm':
+        use_mask = true;
         break;
       case 'h':
         usage(argv[0], NULL);
@@ -231,6 +237,7 @@ int main(int argc, const char *argv[])
     int opt_lastFrame = -1;
 #endif
     bool use_depth = false;
+    bool use_mask = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -238,13 +245,15 @@ int main(int argc, const char *argv[])
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display,
-                    useScanline, trackerType_image, opt_lastFrame, use_depth)) {
+                    useScanline, trackerType_image, opt_lastFrame, use_depth,
+                    use_mask)) {
       return EXIT_FAILURE;
     }
 
     std::cout << "trackerType_image: " << trackerType_image << std::endl;
     std::cout << "useScanline: " << useScanline << std::endl;
     std::cout << "use_depth: " << use_depth << std::endl;
+    std::cout << "use_mask: " << use_mask << std::endl;
 #ifdef VISP_HAVE_COIN3D
     std::cout << "COIN3D available." << std::endl;
 #endif
@@ -415,6 +424,19 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
+    vpImage<bool> mask(I.getHeight(), I.getWidth());
+    const double roi_step = 7.0;
+    const double roi_step2 = 6.0;
+    if (use_mask) {
+      mask = false;
+      for (unsigned int i = (unsigned int) (I.getRows()/roi_step); i < (unsigned int) (I.getRows()*roi_step2/roi_step); i++) {
+        for (unsigned int j = (unsigned int) (I.getCols()/roi_step); j < (unsigned int) (I.getCols()*roi_step2/roi_step); j++) {
+          mask[i][j] = true;
+        }
+      }
+      tracker.setMask(mask);
+    }
+
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
     if (opt_display) {
 #ifdef VISP_HAVE_DISPLAY
@@ -489,13 +511,20 @@ int main(int argc, const char *argv[])
       double t_err2 = sqrt(t_err.sumSquare()), tu_err2 = vpMath::deg(sqrt(tu_err.sumSquare()));
       vec_err_t.push_back( t_err2 );
       vec_err_tu.push_back( tu_err2 );
-      if ( t_err2 > t_thresh || tu_err2 > tu_thresh ) {
+      if ( !use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh) ) { //no accuracy test with mask
         std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << " ; tu_thresh = " << tu_thresh << ")!" << std::endl;
         std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
         return EXIT_FAILURE;
       }
 
       if (opt_display) {
+        if (use_mask) {
+          vpRect roi(vpImagePoint(I.getRows()/roi_step, I.getCols()/roi_step),
+                     vpImagePoint(I.getRows()*roi_step2/roi_step, I.getCols()*roi_step2/roi_step));
+          vpDisplay::displayRectangle(I, roi, vpColor::yellow);
+          vpDisplay::displayRectangle(I_depth, roi, vpColor::yellow);
+        }
+
         vpDisplay::flush(I);
         vpDisplay::flush(I_depth);
       }

@@ -178,9 +178,11 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack)
+bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+                                           const vpImage<bool> *mask)
 {
   if (isvisible) {
     // Perspective projection
@@ -211,8 +213,10 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
 
     // Create the moving edges containers
     meline1 = new vpMbtMeLine;
+    meline1->setMask(*mask);
     meline1->setMe(me);
     meline2 = new vpMbtMeLine;
+    meline1->setMask(*mask);
     meline2->setMe(me);
 
     //    meline->setDisplay(vpMeSite::RANGE_RESULT);
@@ -480,8 +484,10 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
 
   \param I : the image.
   \param cMo : The pose of the camera.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                             const vpImage<bool> *mask)
 {
   if (meline1 != NULL)
     delete meline1;
@@ -491,7 +497,7 @@ void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, co
   meline1 = NULL;
   meline2 = NULL;
 
-  if (!initMovingEdge(I, cMo, false))
+  if (!initMovingEdge(I, cMo, false, mask))
     Reinit = true;
 
   Reinit = false;

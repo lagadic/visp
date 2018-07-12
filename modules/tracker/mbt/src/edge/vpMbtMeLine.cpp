@@ -174,7 +174,7 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack)
   for (int i = 0; i <= vpMath::round(n_sample); i++) {
     // If point is in the image, add to the sample list
     if (!outOfImage(vpMath::round(is), vpMath::round(js), (int)(me->getRange() + me->getMaskSize() + 1), (int)rows,
-                    (int)cols)) {
+      (int)cols) && vpMeTracker::inMask(m_mask, vpMath::round(is), vpMath::round(js))) {
       vpMeSite pix; //= list.value();
       pix.init((int)is, (int)js, delta, 0, sign);
 
@@ -557,22 +557,21 @@ void vpMbtMeLine::updateDelta()
 }
 
 /*!
- Track the line in the image I.
+  Track the line in the image I.
 
- \param I : Image in which the line appears.
- */
+  \param I : Image in which the line appears.
+*/
 void vpMbtMeLine::track(const vpImage<unsigned char> &I)
 {
-  //  2. On appelle ce qui n'est pas specifique
   try {
     vpMeTracker::track(I);
+    if (m_mask != NULL) {
+      // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
+      expecteddensity = (double)list.size();
+    }
   } catch (...) {
     throw; // throw the original exception
   }
-
-  // supression des points rejetes par les ME
-  //  suppressPoints(I);
-  //  setExtremities();
 }
 
 /*!

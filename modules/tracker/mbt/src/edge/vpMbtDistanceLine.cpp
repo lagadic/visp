@@ -301,9 +301,11 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack)
+bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+                                       const vpImage<bool> *mask)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -334,23 +336,8 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
       }
 
       if (linesLst.size() == 0) {
-        //        isvisible = false;
         return false;
       }
-
-      // To have the exact same pose values as the old version (angle or ogre
-      // visibility test only), points should be reorganised when using
-      // scanline algorithm.
-      //      if(sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() -
-      //      linesLst[0].first.get_X())) >
-      //      sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() -
-      //      linesLst[0].second.get_X())))
-      //      {
-      //          std::vector<std::pair<vpPoint, vpPoint> > linesLstTmp;
-      //          for(int i = linesLst.size()-1 ; i >= 0 ; i--)
-      //            linesLstTmp.push_back(std::make_pair(linesLst[i].second,linesLst[i].first));
-      //          linesLst = linesLstTmp;
-      //      }
 
       line->changeFrame(cMo);
       line->projection();
@@ -380,9 +367,9 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         vpMeterPixelConversion::convertPoint(cam, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
         vpMbtMeLine *melinePt = new vpMbtMeLine;
+        melinePt->setMask(*mask);
         melinePt->setMe(me);
 
-        //    meline[i]->setDisplay(vpMeSite::RANGE_RESULT);
         melinePt->setInitRange(0);
 
         int marge = /*10*/ 5; // ou 5 normalement
@@ -407,7 +394,6 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
           nbFeature.push_back((unsigned int) melinePt->getMeList().size());
           nbFeatureTotal += nbFeature.back();
         } catch (...) {
-          // vpTRACE("the line can't be initialized");
           delete melinePt;
           isvisible = false;
           return false;
@@ -415,11 +401,9 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
       }
     } else {
       isvisible = false;
-      //      return false;
     }
   }
 
-  //	trackMovingEdge(I,cMo);
   return true;
 }
 
@@ -427,31 +411,10 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
   Track the moving edges in the image.
 
   \param I : the image.
-  \param cMo : The pose of the camera.
 */
-void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
+void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
 {
-
   if (isvisible) {
-    //     p1->changeFrame(cMo);
-    //     p2->changeFrame(cMo);
-    //
-    //     p1->projection();
-    //     p2->projection();
-    //
-    //     vpImagePoint ip1, ip2;
-    //
-    //     vpMeterPixelConversion::convertPoint(*cam,p1->get_x(),p1->get_y(),ip1);
-    //     vpMeterPixelConversion::convertPoint(*cam,p2->get_x(),p2->get_y(),ip2);
-    //
-    //     int marge = /*10*/5; //ou 5 normalement
-    //     if (ip1.get_j()<ip2.get_j()) { meline->jmin = ip1.get_j()-marge ;
-    //     meline->jmax = ip2.get_j()+marge ; } else{ meline->jmin =
-    //     ip2.get_j()-marge ; meline->jmax = ip1.get_j()+marge ; } if
-    //     (ip1.get_i()<ip2.get_i()) { meline->imin = ip1.get_i()-marge ;
-    //     meline->imax = ip2.get_i()+marge ; } else{ meline->imin =
-    //     ip2.get_i()-marge ; meline->imax = ip1.get_i()+marge ; }
-
     try {
       nbFeature.clear();
       nbFeatureTotal = 0;
@@ -514,21 +477,6 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         isvisible = false;
         Reinit = true;
       } else {
-
-        // To have the exact same pose values as the old version (angle or
-        // ogre visibility test only), points should be reorganised when using
-        // scanline algorithm.
-        //        if(sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() -
-        //        linesLst[0].first.get_X())) >
-        //        sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() -
-        //        linesLst[0].second.get_X())))
-        //        {
-        //            std::vector<std::pair<vpPoint, vpPoint> > linesLstTmp;
-        //            for(int i = linesLst.size()-1 ; i >= 0 ; i--)
-        //              linesLstTmp.push_back(std::make_pair(linesLst[i].second,linesLst[i].first));
-        //            linesLst = linesLstTmp;
-        //        }
-
         line->changeFrame(cMo);
         line->projection();
         double rho, theta;
@@ -611,8 +559,9 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
   \param I : the image.
   \param cMo : The pose of the camera.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
 */
-void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
 {
   for (size_t i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -623,7 +572,7 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const 
   meline.clear();
   nbFeatureTotal = 0;
 
-  if (!initMovingEdge(I, cMo, false))
+  if (!initMovingEdge(I, cMo, false, mask))
     Reinit = true;
 
   Reinit = false;

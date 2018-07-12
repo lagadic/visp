@@ -55,7 +55,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS "i:dcle:h"
+#define GETOPTARGS "i:dcle:mh"
 
 namespace
 {
@@ -66,7 +66,7 @@ namespace
     \n\
     SYNOPSIS\n\
       %s [-i <test image path>] [-c] [-d] [-h] [-l] \n\
-     [-e <last frame index>]\n", name);
+     [-e <last frame index>] [-m]\n", name);
 
     fprintf(stdout, "\n\
     OPTIONS:                                               \n\
@@ -91,6 +91,9 @@ namespace
       -e <last frame index>\n\
          Specify the index of the last frame. Once reached, the tracking is stopped.\n\
     \n\
+      -m \n\
+         Set a tracking mask.\n\
+    \n\
       -h \n\
          Print the help.\n\n");
 
@@ -99,7 +102,7 @@ namespace
   }
 
   bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
-                  bool &useScanline, int &lastFrame)
+                  bool &useScanline, int &lastFrame, bool &use_mask)
   {
     const char *optarg_;
     int c;
@@ -120,6 +123,9 @@ namespace
         break;
       case 'e':
         lastFrame = atoi(optarg_);
+        break;
+      case 'm':
+        use_mask = true;
         break;
       case 'h':
         usage(argv[0], NULL);
@@ -217,6 +223,7 @@ int main(int argc, const char *argv[])
 #else
     int opt_lastFrame = -1;
 #endif
+    bool use_mask = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -224,11 +231,12 @@ int main(int argc, const char *argv[])
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display,
-                    useScanline, opt_lastFrame)) {
+                    useScanline, opt_lastFrame, use_mask)) {
       return EXIT_FAILURE;
     }
 
     std::cout << "useScanline: " << useScanline << std::endl;
+    std::cout << "use_mask: " << use_mask << std::endl;
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
@@ -320,6 +328,19 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
+    vpImage<bool> mask(I.getHeight(), I.getWidth());
+    const double roi_step = 7.0;
+    const double roi_step2 = 6.0;
+    if (use_mask) {
+      mask = false;
+      for (unsigned int i = (unsigned int) (I.getRows()/roi_step); i < (unsigned int) (I.getRows()*roi_step2/roi_step); i++) {
+        for (unsigned int j = (unsigned int) (I.getCols()/roi_step); j < (unsigned int) (I.getCols()*roi_step2/roi_step); j++) {
+          mask[i][j] = true;
+        }
+      }
+      tracker.setMask(mask);
+    }
+
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
     if (opt_display) {
 #ifdef VISP_HAVE_DISPLAY
@@ -386,13 +407,19 @@ int main(int argc, const char *argv[])
       vec_err_tu.push_back( tu_err2 );
       const double t_thresh = useScanline ? 0.003 : 0.002;
       const double tu_thresh = useScanline ? 0.5 : 0.4;
-      if ( t_err2 > t_thresh || tu_err2 > tu_thresh ) {
+      if ( !use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh) ) { //no accuracy test with mask
         std::cerr << "Pose estimated exceeds the threshold (t_thresh = 0.003, tu_thresh = 0.5)!" << std::endl;
         std::cout << "t_err: " << sqrt(t_err.sumSquare()) << " ; tu_err: " << vpMath::deg(sqrt(tu_err.sumSquare())) << std::endl;
         return EXIT_FAILURE;
       }
 
       if (opt_display) {
+        if (use_mask) {
+          vpRect roi(vpImagePoint(I.getRows()/roi_step, I.getCols()/roi_step),
+                     vpImagePoint(I.getRows()*roi_step2/roi_step, I.getCols()*roi_step2/roi_step));
+          vpDisplay::displayRectangle(I_depth, roi, vpColor::yellow);
+        }
+
         vpDisplay::flush(I);
         vpDisplay::flush(I_depth);
       }
