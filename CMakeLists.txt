@@ -734,7 +734,7 @@ include(cmake/VISP3rdParty.cmake)
 # --- Java Support ---
 if(BUILD_JAVA)
   if(ANDROID)
-    include(cmake/DetectAndroidSDK.cmake)
+    include(cmake/android/ViSPDetectAndroidSDK.cmake)
   else()
     include(cmake/VISPDetectApacheAnt.cmake)
     find_package(JNI)
