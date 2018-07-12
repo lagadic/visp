@@ -9,11 +9,11 @@ if(DEFINED ANDROID_NDK_REVISION AND ANDROID_NDK_REVISION MATCHES "(1[56])([0-9]+
 endif()
 
 # https://developer.android.com/studio/command-line/variables.html
-ocv_check_environment_variables(ANDROID_SDK_ROOT ANDROID_HOME ANDROID_SDK)
+vp_check_environment_variables(ANDROID_SDK_ROOT ANDROID_HOME ANDROID_SDK)
 
 set(__msg_BUILD_ANDROID_PROJECTS "Use BUILD_ANDROID_PROJECTS=OFF to prepare Android project files without building them")
 
-macro(ocv_detect_android_sdk)
+macro(vp_detect_android_sdk)
   if(NOT DEFINED ANDROID_SDK)
     if(DEFINED ANDROID_SDK AND EXISTS "${ANDROID_SDK}")
       set(ANDROID_SDK "${ANDROID_SDK}" CACHE INTERNAL "Android SDK path")
@@ -34,7 +34,7 @@ macro(ocv_detect_android_sdk)
   endif()
 endmacro()
 
-macro(ocv_detect_android_sdk_tools)
+macro(vp_detect_android_sdk_tools)
   # https://developer.android.com/studio/releases/sdk-tools.html
   if(NOT DEFINED ANDROID_SDK_TOOLS)
     if(DEFINED ANDROID_SDK AND EXISTS "${ANDROID_SDK}/tools")
@@ -49,7 +49,7 @@ macro(ocv_detect_android_sdk_tools)
   endif()
 
   if(NOT DEFINED ANDROID_SDK_TOOLS_VERSION)
-    ocv_parse_properties_file("${ANDROID_SDK_TOOLS}/source.properties"
+    vp_parse_properties_file("${ANDROID_SDK_TOOLS}/source.properties"
         ANDROID_TOOLS CACHE Pkg_Revision
         MSG_PREFIX "Android SDK Tools: "
     )
@@ -71,9 +71,9 @@ macro(ocv_detect_android_sdk_tools)
     set(ANDROID_TOOLS_Pkg_Revision "${ANDROID_SDK_TOOLS_VERSION}" CACHE INTERNAL "Android SDK Tools version (deprecated)")
   endif()
   set(ANDROID_SDK_TOOLS_PATH "${ANDROID_SDK_TOOLS}" CACHE INTERNAL "Android SDK Tools path (deprecated)")
-endmacro()  # ocv_detect_android_sdk_tools
+endmacro()  # vp_detect_android_sdk_tools
 
-macro(ocv_detect_android_sdk_build_tools)
+macro(vp_detect_android_sdk_build_tools)
   # https://developer.android.com/studio/releases/build-tools.html
   if(NOT DEFINED ANDROID_SDK_BUILD_TOOLS_VERSION)
     if(NOT DEFINED ANDROID_SDK_BUILD_TOOLS)
@@ -105,8 +105,8 @@ macro(ocv_detect_android_sdk_build_tools)
           set(__versions "")
           foreach(d ${__dirlist})
             if(EXISTS "${__search_dir}/${d}/source.properties")
-              ocv_clear_vars(ANDROID_BUILD_TOOLS_Pkg_Revision)
-              ocv_parse_properties_file("${__search_dir}/${d}/source.properties"
+              vp_clear_vars(ANDROID_BUILD_TOOLS_Pkg_Revision)
+              vp_parse_properties_file("${__search_dir}/${d}/source.properties"
                   ANDROID_BUILD_TOOLS
                   MSG_PREFIX "Android SDK Tools: "
               )
@@ -132,7 +132,7 @@ macro(ocv_detect_android_sdk_build_tools)
         endif()
       endif()
     else()
-      ocv_parse_properties_file("${ANDROID_SDK_BUILD_TOOLS}/source.properties"
+      vp_parse_properties_file("${ANDROID_SDK_BUILD_TOOLS}/source.properties"
           ANDROID_BUILD_TOOLS
           MSG_PREFIX "Android SDK Tools: "
       )
@@ -146,13 +146,13 @@ macro(ocv_detect_android_sdk_build_tools)
       endif()
     endif()  # ANDROID_SDK_BUILD_TOOLS
   endif()  # ANDROID_SDK_BUILD_TOOLS_VERSION
-endmacro()  # ocv_detect_android_sdk_build_tools
+endmacro()  # vp_detect_android_sdk_build_tools
 
 
 if(BUILD_ANDROID_PROJECTS)
-  ocv_detect_android_sdk()
-  ocv_detect_android_sdk_tools()
-  ocv_detect_android_sdk_build_tools()
+  vp_detect_android_sdk()
+  vp_detect_android_sdk_tools()
+  vp_detect_android_sdk_build_tools()
 
   if(ANDROID_SDK_TOOLS_VERSION VERSION_LESS 14)
     message(FATAL_ERROR "Android SDK Tools: ViSP requires Android SDK Tools revision 14 or newer.\n"
@@ -168,7 +168,7 @@ if(BUILD_ANDROID_PROJECTS)
       vp_update(ANDROID_PROJECTS_SUPPORT_GRADLE ON)
     endif()
   else()
-    include(${CMAKE_CURRENT_LIST_DIR}/../OpenCVDetectApacheAnt.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/../VISPDetectApacheAnt.cmake)
     if(ANT_EXECUTABLE AND NOT ANT_VERSION VERSION_LESS 1.7)
       message(STATUS "Android SDK Tools: Ant (Eclipse) builds are supported")
       vp_update(ANDROID_PROJECTS_SUPPORT_ANT ON)

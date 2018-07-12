@@ -119,9 +119,9 @@ macro(add_android_project target path)
 
   # check native dependencies
   if(android_proj_IGNORE_JAVA)
-    ocv_check_dependencies(${android_proj_NATIVE_DEPS})
+    vp_check_dependencies(${android_proj_NATIVE_DEPS})
   else()
-    ocv_check_dependencies(${android_proj_NATIVE_DEPS} visp_java)
+    vp_check_dependencies(${android_proj_NATIVE_DEPS} visp_java)
   endif()
 
   if(EXISTS "${path}/jni/Android.mk" )
@@ -129,12 +129,12 @@ macro(add_android_project target path)
     file(STRINGS "${path}/jni/Android.mk" NATIVE_APP_GLUE REGEX ".*(call import-module,android/native_app_glue)" )
     if(NATIVE_APP_GLUE)
       if(ANDROID_NATIVE_API_LEVEL LESS 9 OR NOT EXISTS "${ANDROID_NDK}/sources/android/native_app_glue")
-        set(OCV_DEPENDENCIES_FOUND FALSE)
+        set(VP_DEPENDENCIES_FOUND FALSE)
       endif()
     endif()
   endif()
 
-  if(OCV_DEPENDENCIES_FOUND AND android_proj_sdk_target AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND ANDROID_TOOLS_Pkg_Revision GREATER 13 AND EXISTS "${path}/${ANDROID_MANIFEST_FILE}")
+  if(VP_DEPENDENCIES_FOUND AND android_proj_sdk_target AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND ANDROID_TOOLS_Pkg_Revision GREATER 13 AND EXISTS "${path}/${ANDROID_MANIFEST_FILE}")
 
     project(${target})
     set(android_proj_bin_dir "${CMAKE_CURRENT_BINARY_DIR}/.build")
@@ -192,7 +192,7 @@ macro(add_android_project target path)
         endif()
 
         add_library(${JNI_LIB_NAME} SHARED ${android_proj_jni_files})
-        ocv_target_include_modules_recurse(${JNI_LIB_NAME} ${android_proj_NATIVE_DEPS})
+        vp_target_include_modules_recurse(${JNI_LIB_NAME} ${android_proj_NATIVE_DEPS})
         vp_target_include_directories(${JNI_LIB_NAME} "${path}/jni")
         vp_target_link_libraries(${JNI_LIB_NAME} LINK_PRIVATE ${VISP_LINKER_LIBS} ${android_proj_NATIVE_DEPS})
 
@@ -211,7 +211,7 @@ macro(add_android_project target path)
     if(android_proj_IGNORE_JAVA)
       set(android_proj_extra_deps "")
     else()
-      list(APPEND android_proj_extra_deps opencv_java_android)
+      list(APPEND android_proj_extra_deps visp_java_android)
     endif()
 
     set(_native_deps "")
@@ -254,7 +254,7 @@ macro(add_android_project target path)
     endif()
     set(__android_project_chain ${target} CACHE INTERNAL "auxiliary variable used for Android progects chaining")
 
-    # put the final .apk to the OpenCV's bin folder
+    # put the final .apk to the ViSP's bin folder
     add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${android_proj_bin_dir}/bin/${target}-debug.apk" "${VISP_BINARY_DIR}/bin/${target}.apk")
     if(INSTALL_ANDROID_EXAMPLES AND "${target}" MATCHES "^example-")
       get_filename_component(sample_dir "${path}" NAME)
