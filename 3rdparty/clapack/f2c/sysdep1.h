@@ -10,7 +10,11 @@
 
 #ifdef __linux__
 #define USE_LARGEFILE
+#ifdef ANDROID
+#define OFF_T off64_t
+#else
 #define OFF_T __off64_t
+#endif
 #endif
 
 #ifdef _AIX43
