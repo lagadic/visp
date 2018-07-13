@@ -636,6 +636,19 @@ vpColVector &vpColVector::operator=(double x)
   return *this;
 }
 
+/*!
+ * Converts the vpColVector to a std::vector.
+ * \return The corresponding std::vector<double>.
+ */
+std::vector<double> vpColVector::toStdVector()
+{
+  std::vector<double> v(this->size());
+
+  for (unsigned int i = 0; i < this->size(); i++)
+    v[i] = data[i];
+  return v;
+}
+
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {

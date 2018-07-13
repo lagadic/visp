@@ -72,6 +72,24 @@ bool test(const std::string &s, const vpArray2D<double> &v, const std::vector<do
   return true;
 }
 
+bool test(const std::string &s, const vpArray2D<double> &v, const vpColVector &bench)
+{
+  std::cout << "** Test " << ++cpt << std::endl;
+  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v << "]" << std::endl;
+  if (bench.size() != v.size()) {
+    std::cout << "Test fails: bad size wrt bench" << std::endl;
+    return false;
+  }
+  for (unsigned int i = 0; i < v.size(); i++) {
+    if (std::fabs(v.data[i] - bench[i]) > std::fabs(v.data[i]) * std::numeric_limits<double>::epsilon()) {
+      std::cout << "Test fails: bad content" << std::endl;
+      return false;
+    }
+  }
+
+  return true;
+}
+
 bool test(const std::string &s, const vpRotationVector &v, const double &bench)
 {
   std::cout << "** Test " << ++cpt << std::endl;
@@ -92,7 +110,17 @@ int main()
     {
       vpThetaUVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
+      vpColVector bench3(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      bench1.clear();
+      bench1 = r1.toStdVector();
+      if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      r1.buildFrom(bench3);
+      if (test("r1", r1, bench3) == false)
         return EXIT_FAILURE;
 
       vpThetaUVector r2 = r1;
@@ -127,7 +155,17 @@ int main()
     {
       vpRxyzVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
+      vpColVector bench3(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      bench1.clear();
+      bench1 = r1.toStdVector();
+      if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      r1.buildFrom(bench3);
+      if (test("r1", r1, bench3) == false)
         return EXIT_FAILURE;
 
       vpRxyzVector r2 = r1;
@@ -162,7 +200,17 @@ int main()
     {
       vpRzyxVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
+      vpColVector bench3(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      bench1.clear();
+      bench1 = r1.toStdVector();
+      if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      r1.buildFrom(bench3);
+      if (test("r1", r1, bench3) == false)
         return EXIT_FAILURE;
 
       vpRzyxVector r2 = r1;
@@ -197,7 +245,17 @@ int main()
     {
       vpRzyzVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
+      vpColVector bench3(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      bench1.clear();
+      bench1 = r1.toStdVector();
+      if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      r1.buildFrom(bench3);
+      if (test("r1", r1, bench3) == false)
         return EXIT_FAILURE;
 
       vpRzyzVector r2 = r1;
@@ -232,7 +290,17 @@ int main()
     {
       vpQuaternionVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(4, vpMath::rad(10));
+      vpColVector bench3(4, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      bench1.clear();
+      bench1 = r1.toStdVector();
+      if (test("r1", r1, bench1) == false)
+        return EXIT_FAILURE;
+
+      r1.buildFrom(bench3);
+      if (test("r1", r1, bench3) == false)
         return EXIT_FAILURE;
 
       vpQuaternionVector r2 = r1;

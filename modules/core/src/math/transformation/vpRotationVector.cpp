@@ -64,6 +64,19 @@ vpRowVector vpRotationVector::t() const
 }
 
 /*!
+ * Converts the vpRotationVector to a std::vector.
+ * \return The corresponding std::vector<double>.
+ */
+std::vector<double> vpRotationVector::toStdVector()
+{
+  std::vector<double> v(this->size());
+
+  for (unsigned int i = 0; i < this->size(); i++)
+    v[i] = data[i];
+  return v;
+}
+
+/*!
   Operator that allows to multiply each element of a rotation vector by a
   scalar.
 

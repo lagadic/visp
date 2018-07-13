@@ -88,6 +88,7 @@ public:
   explicit vpQuaternionVector(const vpRotationMatrix &R);
   explicit vpQuaternionVector(const vpThetaUVector &tu);
   explicit vpQuaternionVector(const vpColVector &q);
+  explicit vpQuaternionVector(const std::vector<double> &q);
 
   //! Destructor.
   virtual ~vpQuaternionVector(){};
@@ -95,6 +96,8 @@ public:
   vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
   vpQuaternionVector buildFrom(const vpRotationMatrix &R);
   vpQuaternionVector buildFrom(const vpThetaUVector &tu);
+  vpQuaternionVector buildFrom(const vpColVector &q);
+  vpQuaternionVector buildFrom(const std::vector<double> &q);
   void set(const double x, const double y, const double z, const double w);
 
   double x() const;
