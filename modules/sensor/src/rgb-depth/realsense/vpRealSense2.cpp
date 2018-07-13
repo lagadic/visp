@@ -291,11 +291,8 @@ void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color
 }
 
 /*!
-   Get intrinsic parameters corresponding to the stream. This function has to
-   be called after open().
-   \param stream : stream for which the camera intrinsic parameters are returned.
-
-   \sa getCameraParameters()
+   Get depth scale value used to convert all the uint16_t values contained in a depth
+   frame into a distance in meter.
   */
 float vpRealSense2::getDepthScale()
 {
