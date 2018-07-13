@@ -1,0 +1,99 @@
+/**
+
+\page tutorial-java-started Tutorial: First java application with ViSP
+\tableofcontents
+
+\section java_started_intro Introduction
+
+We assume that you have already followed the previous tutorial \ref tutorial-install-java.
+
+This tutorial will guide you through the creation of a simple Java console application using ViSP library in Eclipse.
+
+\section java_started_create_project Create a new project
+
+Open Eclipse and create a new Java project; open the `"File"` menu, go to `"New"` and click on `"Java Project"`.
+
+\image html img-tutorial-java-eclipse-create-new-project.png
+
+In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`) and click on `"Finish"`.
+
+\image html img-tutorial-java-eclipse-java-started.png
+
+In the "New module-info.java" dialog that may appear, press `"Don't Create"` button.
+
+\image html img-tutorial-java-eclipse-dont-create.png
+
+\section java_started_user_lib Add a user library
+
+If you followed the previous tutorial (\ref tutorial-install-java), you should already have ViSP library set in your workspace’s user libraries; if not please check out the previous tutorial. Now you should be ready to add the library to your project. Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path --> Add Libraries..."`.
+
+\image html img-tutorial-java-eclipse-add-libraries.png
+
+Select `"User Libraries"` and click on `"Next"`:
+
+\image html img-tutorial-java-eclipse-add-libraries2.png
+
+Check the checkbox of the ViSP library and click `"Finish"`.
+
+\image html img-tutorial-java-eclipse-add-libraries3.png
+
+\section java_started_simple_app Create a simple application
+
+Now add a new Class to your project by right-clicking on your project’s folder and go to `"New --> Class"`. 
+
+\image html img-tutorial-java-eclipse-new-class.png
+
+Write a name of your choice for both the package and the class then click on `"Finish"`.
+
+\image html img-tutorial-java-eclipse-new-class2.png
+
+Now we are ready to write the code of our first application. Let’s start by importing the main classes part of `core` module (vpCameraParameters, vpColVector, vpImage, vpMatrix, vpRGBa). Then we load `visp_java` library. After we continue defining the `main()` method that shows how to manipulate ViSP classes in Java.
+
+The code of the Main class is the following:
+\code
+import org.visp.core.VpCameraParameters;
+import org.visp.core.VpColVector;
+import org.visp.core.VpImageRGBa;
+import org.visp.core.VpImageUChar;
+import org.visp.core.VpMatrix;
+import org.visp.core.VpRGBa;
+
+public class Main {
+  static {
+    System.loadLibrary("visp_java320");
+  }
+
+  public static void main(String[] args) {
+    // VpMatrix
+    VpMatrix vp = new VpMatrix(2,3,1.5);
+    System.out.println(vp.getCol(0));
+    System.out.println(vp.transpose());
+                
+    // VpColVector
+    VpColVector vpColVector = new VpColVector(10,1.5);
+    System.out.println(vpColVector.infinityNorm());
+                
+    // VpImageUChar
+    VpImageUChar imageUChar = new VpImageUChar(2, 4, (byte)220);
+    System.out.println(imageUChar);
+                
+    // VpImageRGBa
+    VpImageRGBa colorImage = new VpImageRGBa(3, 5, new VpRGBa((char)255,(char)0,(char)0,(char)255));
+    System.out.println(colorImage);
+                
+    // VpCameraParameters
+    VpCameraParameters vpCameraParameters = new VpCameraParameters(1.0, 1.0, 1.0, 1.0);
+    System.out.println(vpCameraParameters.get_K());
+  }
+}
+\endcode
+
+After a copy/paste you should have something similar to:
+
+\image html img-tutorial-java-eclipse-started-code.png
+
+We can now try to build and run our application by clicking on the `"Run"` button. You should have the following output:
+
+\image html img-tutorial-java-eclipse-started-console.png
+
+*/
