@@ -114,15 +114,22 @@ Download the latest Eclipse version at the [Eclipse Download page](https://www.e
 
 \subsection create_user_library Creating a user library
 
-Open Eclipse and select a workspace of your choice. Create a User Library, ready to be used on all your next projects: go to ``` Window > Preferences ```
+Open Eclipse and select a workspace of your choice. Create a User Library, ready to be used on all your next projects: go to `"Window > Preferences"` menu:
 
-\image html img-tutorial-java-eclipse1.png Open Preferences Window in Eclipse
+\image html img-tutorial-java-eclipse1.png Open Preferences panel in Eclipse
 
-From the menu navigate under ``` Java > Build Path > User Libraries ``` and choose <b>New</b>. Enter a name for the library (e.g visp) and select the newly created user library.
+In the Preferences panel navigate under `"Java > Build Path > User Libraries"` and choose <b>New</b>. Enter a name for the library (e.g visp) and select the newly created user library.
 
 \image html img-tutorial-java-eclipse2.png Create a new User Library
 
-Choose ``` Add External JARs ```, browse to select <b>visp-3xx.jar</b> from your computer. After adding the jar, select Native library location and press ``` Edit > Select External Folder ``` and browse to select the folder containing the ViSP libraries (recall $VISP-WS/visp_build/; the libraries will have the extension of <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows).
+Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-3yz.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, then press `"External Folder"` and finaly browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows).
 
 \image html img-tutorial-java-eclipse3.png Add jar and native libraries to User Library
+
+Once done, press `"Apply and Close"` button.
+
+\section java_install_next Next tutorial
+
+You are now ready to follow \ref tutorial-java-started.
+
 */
