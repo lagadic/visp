@@ -90,17 +90,23 @@ endif()
 
 cmake_minimum_required(VERSION 2.8.12.2)
 
+if(POLICY CMP0020)
+  cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+endif()
 if(POLICY CMP0022)
   cmake_policy(SET CMP0022 NEW) # Due to sensor ATIDAQ_LIBRARIES
 endif()
 if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW) # For UsTK: VTK and Qt5
 endif()
-if(POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
-endif()
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW) # To turn off a warning in native FindOpenMP with cmake 3.9.2
+endif()
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW) # To use legacy GL library with FindOpenGL and cmake 3.12.0
+endif()
+if(POLICY CMP0075)
+  cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")

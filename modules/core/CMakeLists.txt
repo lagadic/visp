@@ -67,7 +67,7 @@ if(USE_OPENCV)
     if(POLICY CMP0045)
       # Fix Error on non-existent target in get_target_property for 3rd party location extraction
       cmake_policy(PUSH)
-      cmake_policy(SET CMP0045 OLD)
+      cmake_policy(SET CMP0045 NEW)
     endif()
 
     foreach(component_ ${OpenCV_LIB_COMPONENTS})
