@@ -69,7 +69,7 @@ if(WITH_APRILTAG)
   endif()
 endif()
 
-vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES})
+vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES} WRAP java)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
