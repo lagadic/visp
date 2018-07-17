@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.visp.BuildConfig;
 import org.visp.R;
-import org.visp.core.Mat;
-import org.visp.core.Size;
+import org.visp.core.VpMatrix;
+import org.visp.core.VpImageRGBa;
+import org.visp.core.VpImageUChar;
+
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -133,7 +135,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
          * The returned values - is a modified frame which needs to be displayed on the screen.
          * TODO: pass the parameters specifying the format of the frame (BPP, YUV or RGB and etc)
          */
-        public Mat onCameraFrame(CvCameraViewFrame inputFrame);
+        public VpMatrix onCameraFrame(VpCameraViewFrame inputFrame);
     };
 
     protected class CvCameraViewListenerAdapter implements CvCameraViewListener2  {
@@ -149,8 +151,8 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             mOldStyleListener.onCameraViewStopped();
         }
 
-        public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-             Mat result = null;
+        public VpMatrix onCameraFrame(VpCameraViewFrame inputFrame) {
+             VpMatrix result = null;
              switch (mPreviewFormat) {
                 case RGBA:
                     result = mOldStyleListener.onCameraFrame(inputFrame.rgba());
@@ -177,17 +179,17 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * This class interface is abstract representation of single frame from camera for onCameraFrame callback
      * Attention: Do not use objects, that represents this interface out of onCameraFrame callback!
      */
-    public interface CvCameraViewFrame {
+    public interface VpCameraViewFrame {
 
         /**
-         * This method returns RGBA Mat with frame
+         * This method returns RGBA VpImageRGBa with frame
          */
-        public Mat rgba();
+        public VpImageRGBa rgba();
 
         /**
-         * This method returns single channel gray scale Mat with frame
+         * This method returns single channel gray scale VpImageUChar with frame
          */
-        public Mat gray();
+        public VpImageUChar gray();
     };
 
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
@@ -385,8 +387,8 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * then displayed on the screen.
      * @param frame - the current frame to be delivered
      */
-    protected void deliverAndDrawFrame(CvCameraViewFrame frame) {
-        Mat modified;
+    protected void deliverAndDrawFrame(VpCameraViewFrame frame) {
+        VpMatrix modified;
 
         if (mListener != null) {
             modified = mListener.onCameraFrame(frame);

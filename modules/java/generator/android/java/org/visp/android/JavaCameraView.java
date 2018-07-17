@@ -13,8 +13,8 @@ import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 
 import org.visp.BuildConfig;
-import org.visp.core.CvType;
-import org.visp.core.Mat;
+import org.visp.core.VpImageRGBa;
+import org.visp.core.VpImageUChar;
 import org.visp.core.Size;
 import org.visp.imgproc.Imgproc;
 
@@ -310,14 +310,14 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
             mCamera.addCallbackBuffer(mBuffer);
     }
 
-    private class JavaCameraFrame implements CvCameraViewFrame {
+    private class JavaCameraFrame implements VpCameraViewFrame {
         @Override
-        public Mat gray() {
+        public VpImageUChar gray() {
             return mYuvFrameData.submat(0, mHeight, 0, mWidth);
         }
 
         @Override
-        public Mat rgba() {
+        public VpImageRGBa rgba() {
             if (mPreviewFormat == ImageFormat.NV21)
                 Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21, 4);
             else if (mPreviewFormat == ImageFormat.YV12)

@@ -322,7 +322,7 @@ public class JavaCamera2View extends CameraBridgeViewBase {
         return true;
     }
 
-    private class JavaCamera2Frame implements CvCameraViewFrame {
+    private class JavaCamera2Frame implements VpCameraViewFrame {
         @Override
         public Mat gray() {
             return mYuvFrameData.submat(0, mHeight, 0, mWidth);
