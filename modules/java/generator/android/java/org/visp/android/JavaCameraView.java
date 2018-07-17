@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 
-import org.visp.BuildConfig;
 import org.visp.core.VpImageRGBa;
 import org.visp.core.VpImageUChar;
 import org.visp.core.Size;

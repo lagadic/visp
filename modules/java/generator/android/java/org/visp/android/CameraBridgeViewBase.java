@@ -2,7 +2,6 @@ package org.visp.android;
 
 import java.util.List;
 
-import org.visp.BuildConfig;
 import org.visp.R;
 import org.visp.core.VpMatrix;
 import org.visp.core.VpImageRGBa;
@@ -412,8 +411,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                if (BuildConfig.DEBUG)
-                    Log.d(TAG, "mStretch value: " + mScale);
+				Log.d(TAG, "mStretch value: " + mScale);
 
                 if (mScale != 0) {
                     canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
