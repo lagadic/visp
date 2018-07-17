@@ -66,11 +66,11 @@ class vpColVector;
 
   The vpRotationVector class is derived from vpArray2D<double>.
   The vpRotationVector class is also the base class of specific rotations
-vectors such as vpThetaUVector, vpRxyzVector, vpRzyxVector, vpRzyzVector and
-vpQuaternionVector.
+  vectors such as vpThetaUVector, vpRxyzVector, vpRzyxVector, vpRzyzVector and
+  vpQuaternionVector.
 
   The code below shows how this class can be used to manipulate a
-vpRxyzVector.
+  vpRxyzVector.
 
   \code
 #include <iostream>
@@ -148,6 +148,8 @@ public:
 
   // Transpose of the rotation vector.
   vpRowVector t() const;
+
+  std::vector<double> toStdVector();
 
   //@}
 };

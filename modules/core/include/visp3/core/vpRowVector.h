@@ -241,6 +241,7 @@ public:
   double sum() const;
   double sumSquare() const;
   vpColVector t() const;
+  std::vector<double> toStdVector();
   vpColVector transpose() const;
   void transpose(vpColVector &v) const;
 

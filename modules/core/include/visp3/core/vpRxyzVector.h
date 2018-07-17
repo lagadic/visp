@@ -166,6 +166,7 @@ public:
   // initialize a Rxyz vector from a ThetaU vector
   explicit vpRxyzVector(const vpThetaUVector &tu);
   explicit vpRxyzVector(const vpColVector &rxyz);
+  explicit vpRxyzVector(const std::vector<double> &rxyz);
 
   //! Destructor.
   virtual ~vpRxyzVector(){};
@@ -175,6 +176,8 @@ public:
 
   // convert a ThetaU vector into a Rxyz vector
   vpRxyzVector buildFrom(const vpThetaUVector &tu);
+  vpRxyzVector buildFrom(const vpColVector &rxyz);
+  vpRxyzVector buildFrom(const std::vector<double> &rxyz);
 
   void buildFrom(const double phi, const double theta, const double psi);
 
