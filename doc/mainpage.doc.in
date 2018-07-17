@@ -64,6 +64,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 \subsection tuto_java ViSP for Java
 
 - \ref tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
+- \ref tutorial-java-started <br>This tutorial explains how to create a Java application that uses some functionalities from ViSP core module.
 
 \subsection tuto_install_sdk Installation from prebuild SDK
 
