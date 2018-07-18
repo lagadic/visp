@@ -312,37 +312,41 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     private class JavaCameraFrame implements VpCameraViewFrame {
         @Override
         public VpImageUChar gray() {
-            return mYuvFrameData.submat(0, mHeight, 0, mWidth);
+			      if (gray == null)
+				      gray = new VpImageUChar(data,w,h,true);
+            return gray;
         }
 
         @Override
         public VpImageRGBa rgba() {
-            if (mPreviewFormat == ImageFormat.NV21)
-                Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21, 4);
-            else if (mPreviewFormat == ImageFormat.YV12)
-                Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGB_I420, 4);  // COLOR_YUV2RGBA_YV12 produces inverted colors
-            else
-                throw new IllegalArgumentException("Preview Format can be NV21 or YV12");
+			      if (rgba == null){
+		            if (mPreviewFormat == ImageFormat.NV21)
+		                rgba = new VpImageRGBa(data, w, h,true);
+		            //else if (mPreviewFormat == ImageFormat.YV12) .Dropping this format for now
+		            //    Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGB_I420, 4);  // COLOR_YUV2RGBA_YV12 produces inverted colors
+		            else
+		                throw new IllegalArgumentException("Preview Format can be NV21");
+			      }
 
-            return mRgba;
+            return rgba;
         }
 
-        public JavaCameraFrame(Mat Yuv420sp, int width, int height) {
+        public JavaCameraFrame(byte[] data, int width, int height) {
             super();
-            mWidth = width;
-            mHeight = height;
-            mYuvFrameData = Yuv420sp;
-            mRgba = new Mat();
+            this.data = data;
+            rgba = null;
+            gray = null;
         }
 
         public void release() {
-            mRgba.release();
+			      // open-cv had release() method here. Check whether we need to
         }
 
-        private Mat mYuvFrameData;
-        private Mat mRgba;
-        private int mWidth;
-        private int mHeight;
+        private byte[] data;
+		    private int w;
+		    private int h;
+		    private VpImageUChar gray;
+        private VpImageRGBa rgba;
     };
 
     private class CameraWorker implements Runnable {
