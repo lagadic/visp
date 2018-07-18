@@ -133,8 +133,11 @@
 // Defined if Clipper is build and available.
 #cmakedefine VISP_HAVE_CLIPPER
 
-// Defined if April Tag is build and available.
+// Defined if AprilTag is build and available.
 #cmakedefine VISP_HAVE_APRILTAG
+
+// Defined if cpp-base64 is build and available.
+#cmakedefine VISP_HAVE_CPPBASE64
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11

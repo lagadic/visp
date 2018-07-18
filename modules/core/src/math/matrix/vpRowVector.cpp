@@ -661,7 +661,7 @@ void vpRowVector::insert(unsigned int i, const vpRowVector &v)
  * Converts the vpRowVector to a std::vector.
  * \return The corresponding std::vector<double>.
  */
-std::vector<double> vpRowVector::toStdVector()
+std::vector<double> vpRowVector::toStdVector() const
 {
   std::vector<double> v(this->size());
 

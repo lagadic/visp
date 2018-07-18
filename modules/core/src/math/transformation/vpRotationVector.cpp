@@ -67,7 +67,7 @@ vpRowVector vpRotationVector::t() const
  * Converts the vpRotationVector to a std::vector.
  * \return The corresponding std::vector<double>.
  */
-std::vector<double> vpRotationVector::toStdVector()
+std::vector<double> vpRotationVector::toStdVector() const
 {
   std::vector<double> v(this->size());
 

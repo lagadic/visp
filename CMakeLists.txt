@@ -556,6 +556,7 @@ VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"
 VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
+VP_OPTION(WITH_CPPBASE64  ""           ""    "Build cpp-base64 as built-in library" "" ON)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
 
 # Find IsNaN (should be after USE_CPP11)
@@ -829,6 +830,7 @@ VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
 VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
+VP_SET(VISP_HAVE_CPPBASE64   TRUE IF (BUILD_MODULE_visp_robot AND WITH_CPPBASE64))
 
 VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -1315,8 +1317,9 @@ status("    Use dmtx:"                USE_DMTX         THEN "yes (ver ${DMTX_VER
 status("    Use AprilTag (built-in):" WITH_APRILTAG    THEN "yes (ver ${APRILTAG_VERSION})" ELSE "no")
 status("")
 status("  Misc: ")
-status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
-status("    Use XML2:"                USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("    Use Clipper (built-in):"    WITH_CLIPPER   THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
+status("    Use cpp-base64 (built-in):" WITH_CPPBASE64 THEN "yes (ver ${CPPBASE64_VERSION})" ELSE "no")
+status("    Use XML2:"                  USE_XML2       THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP       THEN "yes" ELSE "no")
