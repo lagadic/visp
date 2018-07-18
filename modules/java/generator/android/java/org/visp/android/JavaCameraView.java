@@ -14,8 +14,7 @@ import android.view.ViewGroup.LayoutParams;
 
 import org.visp.core.VpImageRGBa;
 import org.visp.core.VpImageUChar;
-import org.visp.core.Size;
-import org.visp.imgproc.Imgproc;
+import org.visp.core.VpMatrix;
 
 /**
  * This class is an implementation of the Bridge View between ViSP and Java Camera.
@@ -32,7 +31,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     private static final String TAG = "JavaCameraView";
 
     private byte mBuffer[];
-    private Mat[] mFrameChain;
+    private byte[][] mFrameChain;
     private int mChainIdx = 0;
     private Thread mThread;
     private boolean mStopThread;
@@ -143,7 +142,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
                 if (sizes != null) {
                     /* Select the size that fits surface considering maximum size allowed */
-                    Size frameSize = calculateCameraFrameSize(sizes, new JavaCameraSizeAccessor(), width, height);
+                    int[] frameSize = calculateCameraFrameSize(sizes, new JavaCameraSizeAccessor(), width, height);
 
                     /* Image format NV21 causes issues in the Android emulators */
                     if (Build.FINGERPRINT.startsWith("generic")
@@ -194,9 +193,9 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     mCamera.addCallbackBuffer(mBuffer);
                     mCamera.setPreviewCallbackWithBuffer(this);
 
-                    mFrameChain = new Mat[2];
-                    mFrameChain[0] = new Mat(mFrameHeight + (mFrameHeight/2), mFrameWidth, CvType.CV_8UC1);
-                    mFrameChain[1] = new Mat(mFrameHeight + (mFrameHeight/2), mFrameWidth, CvType.CV_8UC1);
+                    mFrameChain = new byte[2][];
+                    mFrameChain[0] = new byte[(mFrameHeight + (mFrameHeight/2))*mFrameWidth];
+                    mFrameChain[1] = new byte[(mFrameHeight + (mFrameHeight/2))*mFrameWidth];
 
                     AllocateCache();
 
@@ -234,14 +233,6 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                 mCamera.release();
             }
             mCamera = null;
-            if (mFrameChain != null) {
-                mFrameChain[0].release();
-                mFrameChain[1].release();
-            }
-            if (mCameraFrame != null) {
-                mCameraFrame[0].release();
-                mCameraFrame[1].release();
-            }
         }
     }
 
@@ -298,10 +289,11 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
     @Override
     public void onPreviewFrame(byte[] frame, Camera arg1) {
-        if (BuildConfig.DEBUG)
+		// TODO: This should happen only in debug mode. Will do it later when the SDK is complete
+        if (true)
             Log.d(TAG, "Preview Frame received. Frame size: " + frame.length);
         synchronized (this) {
-            mFrameChain[mChainIdx].put(0, 0, frame);
+            mFrameChain[mChainIdx] = frame;
             mCameraFrameReady = true;
             this.notify();
         }
@@ -372,7 +364,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                 }
 
                 if (!mStopThread && hasFrame) {
-                    if (!mFrameChain[1 - mChainIdx].empty())
+                    if (mFrameChain[1 - mChainIdx].length > 0)
                         deliverAndDrawFrame(mCameraFrame[1 - mChainIdx]);
                 }
             } while (!mStopThread);
