@@ -3,10 +3,7 @@ package org.visp.android;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import org.visp.core.VpException;
-import org.visp.core.CvType;
-import org.visp.core.Mat;
-import org.visp.imgcodecs.Imgcodecs;
+import org.visp.core.VpImageUChar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,36 +38,25 @@ public class Utils {
             return resFile.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new VpException("Failed to export resource " + resName
+            throw new Exception("Failed to export resource " + resName
                     + ". Exception thrown: " + e);
         }
     }
 
-    public static Mat loadResource(Context context, int resourceId) throws IOException
-    {
-        return loadResource(context, resourceId, -1);
-    }
-
-    public static Mat loadResource(Context context, int resourceId, int flags) throws IOException
+    public static VpImageUChar loadResource(Context context, int resourceId) throws IOException
     {
         InputStream is = context.getResources().openRawResource(resourceId);
         ByteArrayOutputStream os = new ByteArrayOutputStream(is.available());
 
         byte[] buffer = new byte[4096];
         int bytesRead;
-        while ((bytesRead = is.read(buffer)) != -1) {
+        while ((bytesRead = is.read(buffer)) != -1)
             os.write(buffer, 0, bytesRead);
-        }
         is.close();
 
-        Mat encoded = new Mat(1, os.size(), CvType.CV_8U);
-        encoded.put(0, 0, os.toByteArray());
+        VpImageUChar encoded = new VpImageUChar(os.toByteArray(), 1, os.size(), true);
         os.close();
-
-        Mat decoded = Imgcodecs.imdecode(encoded, flags);
-        encoded.release();
-
-        return decoded;
+        return encoded;
     }
 
     /**
