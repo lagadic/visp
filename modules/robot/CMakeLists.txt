@@ -64,7 +64,7 @@ if(USE_VIRTUOSE)
     # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file
     # VirtuoseAPI.h(280): warning C4312: 'type cast': conversion from 'int' to 'char *' of greater size
     # VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
-	if(BUILD_SHARED_LIBS)
+  if(BUILD_SHARED_LIBS)
       vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd4312)
@@ -72,9 +72,9 @@ if(USE_VIRTUOSE)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseWithGlove.cpp /wd4312)
-	else()
-	  vp_warnings_disable(CMAKE_CXX_FLAGS /wd4312)
-	endif()
+  else()
+    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4312)
+  endif()
   endif()
 endif()
 
@@ -145,8 +145,16 @@ if(USE_COIN3D)
   list(APPEND opt_libs ${COIN3D_LIBRARIES})
 endif()
 
-vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor)
+if(WITH_CPPBASE64)
+  # cpp-base64 is private
+  include_directories(${CPPBASE64_INCLUDE_DIRS})
+endif()
+
+vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${CPPBASE64_LIBRARIES})
 vp_glob_module_sources()
+
+# To allow vpVisaSocketAdapter class to work with and without ViSP
+add_definitions(-DHAVE_VISP)
 
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpKeyword.cpp -Wno-sign-conversion)
 
@@ -185,7 +193,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH virtuose servo-franka
+  CTEST_EXCLUDE_PATH virtuose servo-franka visa-simulator
   CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp )
 
 if(USE_VIRTUOSE)

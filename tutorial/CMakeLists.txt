@@ -60,3 +60,4 @@ visp_add_subdirectory(tracking/model-based/old/stereo-deprecated REQUIRED_DEPS v
 visp_add_subdirectory(tracking/template-tracker            REQUIRED_DEPS visp_core visp_tt visp_io visp_gui)
 visp_add_subdirectory(tracking/moving-edges                REQUIRED_DEPS visp_core visp_me visp_io visp_gui visp_sensor)
 visp_add_subdirectory(visual-servo/ibvs                    REQUIRED_DEPS visp_core visp_robot visp_vs visp_blob visp_vision visp_io visp_gui visp_ar)
+visp_add_subdirectory(visual-servo/visa                    REQUIRED_DEPS visp_core visp_robot visp_vs visp_blob visp_vision visp_io visp_gui)
