@@ -96,7 +96,7 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
     bool add = false;
 
     // Add points inside visibility mask only
-    if (vpMeTracker::inMask(mask, y_tmp, x_tmp)) {
+    if (vpMeTracker::inMask(mask, (unsigned int) y_tmp, (unsigned int) x_tmp)) {
       if (useScanLine) {
         if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
           (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
@@ -160,7 +160,7 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id) && vpMeTracker::inMask(mask, y, x)) {
+    if (isTrackedFeature((int)id) && vpMeTracker::inMask(mask, (unsigned int) y, (unsigned int) x)) {
 #if TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
