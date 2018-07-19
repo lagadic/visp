@@ -1,5 +1,5 @@
 {
-	"ToStringSupport" : [
+  "ToStringSupport": [
     "VpMatrix",
     "VpColVector",
     "VpRowVector",
@@ -7,24 +7,25 @@
     "VpHomogeneousMatrix",
     "VpRotationVector",
     "VpPoint"
-	],
-    "module_imports": [ "java.lang.String" ],
-    "class_ignore_list" : [
-      "vpClient",
-      "vpRequest",
-      "vpNetwork",
-      "vpServer",
-      "vpUDPClient",
-		  "vpUDPServer",
-		  "vpSerial",
-		  "vpIoTools",
-		  "vpCPUFeatures"
-    ],
-
-  "ManualFuncs" : {
-      "VpPoint" : {
-      "getWorldCoordinates" : {    
-        "j_code" : [
+  ],
+  "module_imports": [
+    "java.lang.String"
+  ],
+  "class_ignore_list": [
+    "vpClient",
+    "vpRequest",
+    "vpNetwork",
+    "vpServer",
+    "vpUDPClient",
+    "vpUDPServer",
+    "vpSerial",
+    "vpIoTools",
+    "vpCPUFeatures"
+  ],
+  "ManualFuncs": {
+    "VpPoint": {
+      "getWorldCoordinates": {
+        "j_code": [
           "//",
           "// C++:  vpColVector getWorldCoordinates()",
           "//\n",
@@ -35,7 +36,7 @@
           "    return retVal;",
           "}"
         ],
-        "cpp_code" : [
+        "cpp_code": [
           "//",
           "//  vpColVector getWorldCoordinates()",
           "//\n\n",
@@ -55,307 +56,484 @@
           "    throwJavaException(env, 0, method_name);",
           "  }",
           "  return 0;",
-          "}"  
+          "}"
         ],
-        "jn_code" : [
+        "jn_code": [
           "// C++:  vpColVector getWorldCoordinates()",
           "private static native long getWorldCoordinates_2(long nativeObj);"
         ]
       },
-      "VpColVector" : {
-        "insert" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "toStdVector" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]}
-      },
-      "VpRowVector" : {
-        "toStdVector" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]}
-     	},
-      "VpRotationVector" : {
-        "toStdVector" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]}
-     	},
-      "VpMatrix" : {
-        "det" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-
-
-        "detByLUGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "svdGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "pseudoInverseGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "inverseByLUGsl" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-
-        "detByLUOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "inverseByOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "svdOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "inverseByCholeskyOpenCV" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-
-        "detByLUEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "inverseByLUEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "inverseByEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "svdEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]},
-        "pseudoInverseEigen3" : {"j_code" : [""], "cpp_code" : [""], "jn_code" : [""]}
-      }
-	  },
-    "type_dict" : {
-        "vpMatrix": {
-            "j_type": "VpMatrix",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpMatrix& %(n)s = *((vpMatrix*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpMatrix"
+      "VpColVector": {
+        "insert": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
         },
-		"vpCameraParameters": {
-            "j_type": "VpCameraParameters",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpCameraParameters& %(n)s = *((vpCameraParameters*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpCameraParameters"
-        },
-		"vpArray2D": {
-            "j_type": "VpArray2D",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpArray2D<double>& %(n)s = *((vpArray2D<double>*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpArray2D"
-        },
-		"vpImage_char": {
-            "j_type": "VpImageUChar",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpImage<unsigned char>& %(n)s = *((vpImage<unsigned char>*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpImageUChar"
-        },
-		"vpImage_vpRGBa": {
-            "j_type": "VpImageRGBa",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpImage<vpRGBa>& %(n)s = *((vpImage<vpRGBa>*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpImageRGBa"
-        },
-        "Moments": {
-            "j_type": "Moments",
-            "jn_args": [
-                [
-                    "double",
-                    ".m00"
-                ],
-                [
-                    "double",
-                    ".m10"
-                ],
-                [
-                    "double",
-                    ".m01"
-                ],
-                [
-                    "double",
-                    ".m20"
-                ],
-                [
-                    "double",
-                    ".m11"
-                ],
-                [
-                    "double",
-                    ".m02"
-                ],
-                [
-                    "double",
-                    ".m30"
-                ],
-                [
-                    "double",
-                    ".m21"
-                ],
-                [
-                    "double",
-                    ".m12"
-                ],
-                [
-                    "double",
-                    ".m03"
-                ]
-            ],
-            "jni_type": "jdoubleArray",
-            "jni_var": "Moments %(n)s(%(n)s_m00, %(n)s_m10, %(n)s_m01, %(n)s_m20, %(n)s_m11, %(n)s_m02, %(n)s_m30, %(n)s_m21, %(n)s_m12, %(n)s_m03)",
-            "suffix": "DDDDDDDDDD"
-        },
-        "string": {
-            "j_type": "String",
-            "jn_type": "String",
-            "jni_name": "n_%(n)s",
-            "jni_type": "jstring",
-            "jni_var": "const char* utf_%(n)s = env->GetStringUTFChars(%(n)s, 0); string n_%(n)s( utf_%(n)s ? utf_%(n)s : \"\" ); env->ReleaseStringUTFChars(%(n)s, utf_%(n)s)",
-            "suffix": "Ljava_lang_String_2",
-            "j_import": "java.lang.String"
-        },
-        "c_string": {
-            "j_type": "String",
-            "jn_type": "String",
-            "jni_name": "n_%(n)s.c_str()",
-            "jni_type": "jstring",
-            "jni_var": "const char* utf_%(n)s = env->GetStringUTFChars(%(n)s, 0); string n_%(n)s( utf_%(n)s ? utf_%(n)s : \"\" ); env->ReleaseStringUTFChars(%(n)s, utf_%(n)s)",
-            "suffix": "Ljava_lang_String_2",
-            "j_import": "java.lang.String"
-        },
-        "size_t": {
-            "j_type": "long",
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "suffix": "J"
-        },
-        "vector_vpMatrix": {
-            "j_type": "List<VpMatrix>",
-            "jn_type": "long[]",
-            "jni_type": "jlongArray",
-            "jni_var": "std::vector<vpMatrix> %(n)s",
-            "suffix": "J",
-            "v_type": "vpMatrix",
-            "j_import": "org.visp.core.VpMatrix"
-        },        
-		"vpContour": {
-            "j_type": "VpContour",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpContour& %(n)s = *((vpContour*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpContour"
-        },
-        "vpColVector": {
-            "j_type": "VpColVector",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpColVector& %(n)s = *((vpColVector*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpColVector"
-        },
-        "vector_vpColVector": {
-            "j_type": "List<VpColVector>",
-            "jn_type": "long[]",
-            "jni_type": "jlongArray",
-            "jni_var": "std::vector<vpColVector> %(n)s",
-            "suffix": "J",
-            "v_type": "vpColVector",
-            "j_import": "org.visp.core.VpColVector"
-        }, 
-        "vpRowVector": {
-            "j_type": "VpRowVector",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpRowVector& %(n)s = *((vpRowVector*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpRowVector"
-        },
-        "vpHomogeneousMatrix": {
-            "j_type": "VpHomogeneousMatrix",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpHomogeneousMatrix& %(n)s = *((vpHomogeneousMatrix*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpHomogeneousMatrix"
-        },        
-		"vector_vpHomogeneousMatrix": {
-            "j_type": "List<VpHomogeneousMatrix>",
-            "jn_type": "long[]",
-            "jni_type": "jlongArray",
-            "jni_var": "std::vector<vpHomogeneousMatrix> %(n)s",
-            "suffix": "J",
-            "v_type": "vpHomogeneousMatrix",
-            "j_import": "org.visp.core.VpHomogeneousMatrix"
-        },   
-	     "vpRotationVector": {
-            "j_type": "VpRotationVector",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpRotationVector& %(n)s = *((vpRotationVector*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpRotationVector"
-        },
-        "vector_double": {
-            "j_type": "double[]",
-            "jn_type": "double[]",
-            "jni_type": "jdoubleArray",
-            "jni_var": "std::vector<double> %(n)s",
-            "suffix": "[D",
-            "v_type": "double"
-        },
-        "vector_float": {
-            "j_type": "float[]",
-            "jn_type": "float[]",
-            "jni_type": "jfloatArray",
-            "jni_var": "std::vector<float> %(n)s",
-            "suffix": "[F",
-            "v_type": "float"
-        },
-        "vector_int": {
-            "j_type": "int[]",
-            "jn_type": "int[]",
-            "jni_type": "jintArray",
-            "jni_var": "std::vector<int> %(n)s",
-            "suffix": "[I",
-            "v_type": "int"
+        "toStdVector": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
         }
+      },
+      "VpRowVector": {
+        "toStdVector": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        }
+      },
+      "VpRotationVector": {
+        "toStdVector": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        }
+      },
+      "VpMatrix": {
+        "det": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "detByLUGsl": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "svdGsl": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "pseudoInverseGsl": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "inverseByLUGsl": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "detByLUOpenCV": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "inverseByOpenCV": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "svdOpenCV": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "inverseByCholeskyOpenCV": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "detByLUEigen3": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "inverseByLUEigen3": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "inverseByEigen3": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "svdEigen3": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        },
+        "pseudoInverseEigen3": {
+          "j_code": [
+            ""
+          ],
+          "cpp_code": [
+            ""
+          ],
+          "jn_code": [
+            ""
+          ]
+        }
+      }
+    },
+    "type_dict": {
+      "vpMatrix": {
+        "j_type": "VpMatrix",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpMatrix& %(n)s = *((vpMatrix*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpMatrix"
+      },
+      "vpCameraParameters": {
+        "j_type": "VpCameraParameters",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpCameraParameters& %(n)s = *((vpCameraParameters*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpCameraParameters"
+      },
+      "vpArray2D": {
+        "j_type": "VpArray2D",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpArray2D<double>& %(n)s = *((vpArray2D<double>*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpArray2D"
+      },
+      "vpImage_char": {
+        "j_type": "VpImageUChar",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpImage<unsigned char>& %(n)s = *((vpImage<unsigned char>*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpImageUChar"
+      },
+      "vpImage_vpRGBa": {
+        "j_type": "VpImageRGBa",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpImage<vpRGBa>& %(n)s = *((vpImage<vpRGBa>*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpImageRGBa"
+      },
+      "Moments": {
+        "j_type": "Moments",
+        "jn_args": [
+          [
+            "double",
+            ".m00"
+          ],
+          [
+            "double",
+            ".m10"
+          ],
+          [
+            "double",
+            ".m01"
+          ],
+          [
+            "double",
+            ".m20"
+          ],
+          [
+            "double",
+            ".m11"
+          ],
+          [
+            "double",
+            ".m02"
+          ],
+          [
+            "double",
+            ".m30"
+          ],
+          [
+            "double",
+            ".m21"
+          ],
+          [
+            "double",
+            ".m12"
+          ],
+          [
+            "double",
+            ".m03"
+          ]
+        ],
+        "jni_type": "jdoubleArray",
+        "jni_var": "Moments %(n)s(%(n)s_m00, %(n)s_m10, %(n)s_m01, %(n)s_m20, %(n)s_m11, %(n)s_m02, %(n)s_m30, %(n)s_m21, %(n)s_m12, %(n)s_m03)",
+        "suffix": "DDDDDDDDDD"
+      },
+      "string": {
+        "j_type": "String",
+        "jn_type": "String",
+        "jni_name": "n_%(n)s",
+        "jni_type": "jstring",
+        "jni_var": "const char* utf_%(n)s = env->GetStringUTFChars(%(n)s, 0); string n_%(n)s( utf_%(n)s ? utf_%(n)s : \"\" ); env->ReleaseStringUTFChars(%(n)s, utf_%(n)s)",
+        "suffix": "Ljava_lang_String_2",
+        "j_import": "java.lang.String"
+      },
+      "c_string": {
+        "j_type": "String",
+        "jn_type": "String",
+        "jni_name": "n_%(n)s.c_str()",
+        "jni_type": "jstring",
+        "jni_var": "const char* utf_%(n)s = env->GetStringUTFChars(%(n)s, 0); string n_%(n)s( utf_%(n)s ? utf_%(n)s : \"\" ); env->ReleaseStringUTFChars(%(n)s, utf_%(n)s)",
+        "suffix": "Ljava_lang_String_2",
+        "j_import": "java.lang.String"
+      },
+      "size_t": {
+        "j_type": "long",
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "suffix": "J"
+      },
+      "vector_vpMatrix": {
+        "j_type": "List<VpMatrix>",
+        "jn_type": "long[]",
+        "jni_type": "jlongArray",
+        "jni_var": "std::vector<vpMatrix> %(n)s",
+        "suffix": "J",
+        "v_type": "vpMatrix",
+        "j_import": "org.visp.core.VpMatrix"
+      },
+      "vpContour": {
+        "j_type": "VpContour",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpContour& %(n)s = *((vpContour*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpContour"
+      },
+      "vpColVector": {
+        "j_type": "VpColVector",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpColVector& %(n)s = *((vpColVector*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpColVector"
+      },
+      "vector_vpColVector": {
+        "j_type": "List<VpColVector>",
+        "jn_type": "long[]",
+        "jni_type": "jlongArray",
+        "jni_var": "std::vector<vpColVector> %(n)s",
+        "suffix": "J",
+        "v_type": "vpColVector",
+        "j_import": "org.visp.core.VpColVector"
+      },
+      "vpRowVector": {
+        "j_type": "VpRowVector",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpRowVector& %(n)s = *((vpRowVector*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpRowVector"
+      },
+      "vpHomogeneousMatrix": {
+        "j_type": "VpHomogeneousMatrix",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpHomogeneousMatrix& %(n)s = *((vpHomogeneousMatrix*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpHomogeneousMatrix"
+      },
+      "vector_vpHomogeneousMatrix": {
+        "j_type": "List<VpHomogeneousMatrix>",
+        "jn_type": "long[]",
+        "jni_type": "jlongArray",
+        "jni_var": "std::vector<vpHomogeneousMatrix> %(n)s",
+        "suffix": "J",
+        "v_type": "vpHomogeneousMatrix",
+        "j_import": "org.visp.core.VpHomogeneousMatrix"
+      },
+      "vpRotationVector": {
+        "j_type": "VpRotationVector",
+        "jn_args": [
+          [
+            "__int64",
+            ".nativeObj"
+          ]
+        ],
+        "jn_type": "long",
+        "jni_type": "jlong",
+        "jni_var": "vpRotationVector& %(n)s = *((vpRotationVector*)%(n)s_nativeObj)",
+        "suffix": "J",
+        "j_import": "org.visp.core.VpRotationVector"
+      },
+      "vector_double": {
+        "j_type": "double[]",
+        "jn_type": "double[]",
+        "jni_type": "jdoubleArray",
+        "jni_var": "std::vector<double> %(n)s",
+        "suffix": "[D",
+        "v_type": "double"
+      },
+      "vector_float": {
+        "j_type": "float[]",
+        "jn_type": "float[]",
+        "jni_type": "jfloatArray",
+        "jni_var": "std::vector<float> %(n)s",
+        "suffix": "[F",
+        "v_type": "float"
+      },
+      "vector_int": {
+        "j_type": "int[]",
+        "jn_type": "int[]",
+        "jni_type": "jintArray",
+        "jni_var": "std::vector<int> %(n)s",
+        "suffix": "[I",
+        "v_type": "int"
+      }
     }
+  }
 }
