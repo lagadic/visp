@@ -223,13 +223,14 @@ protected:
   unsigned int m_projectionErrorDisplayThickness;
   //! Camera parameters used for projection error computation
   vpCameraParameters m_projectionErrorCam;
+  //! Mask used to disable tracking on a part of image
+  const vpImage<bool> *m_mask;
 
 public:
   vpMbTracker();
   virtual ~vpMbTracker();
 
   /** @name Inherited functionalities from vpMbTracker */
-  //@{
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
                                                const vpCameraParameters &_cam);
 
@@ -545,6 +546,8 @@ public:
 
   void setProjectionErrorKernelSize(const unsigned int &size);
 
+  virtual void setMask(const vpImage<bool> &mask) { m_mask = &mask; }
+
   /*!
     Set the minimal error (previous / current estimation) to determine if
     there is convergence or not.
@@ -714,11 +717,9 @@ public:
     \param I : The current image.
   */
   virtual void track(const vpImage<unsigned char> &I) = 0;
-  //@}
 
 protected:
   /** @name Protected Member Functions Inherited from vpMbTracker */
-  //@{
   void addPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
                   const bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
                   const double minLineLengthThreshold = 50.0);
@@ -871,7 +872,6 @@ protected:
   inline std::string &trim(std::string &s) const { return ltrim(rtrim(s)); }
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
-  //@}
 };
 
 #endif

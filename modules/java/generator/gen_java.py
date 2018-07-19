@@ -706,7 +706,7 @@ class JavaWrapperGenerator(object):
             j_epilogue = []
             c_prologue = []
             c_epilogue = []
-            if type_dict[fi.ctype]["jni_type"] == "jdoubleArray":
+            if type_dict[fi.ctype]["jni_type"] == "jdoubleArray" and type_dict[fi.ctype]["suffix"] != "[D":
                 fields = type_dict[fi.ctype]["jn_args"]
                 c_epilogue.append( \
                     ("jdoubleArray _da_retval_ = env->NewDoubleArray(%(cnt)i);  " +

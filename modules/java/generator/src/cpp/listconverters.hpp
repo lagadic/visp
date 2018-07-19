@@ -9,4 +9,10 @@ jlongArray vector_vpColVector_to_List(JNIEnv* env, std::vector<vpColVector>);
 std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv* env, jlongArray arr);
 jlongArray vector_vpHomogeneousMatrix_to_List(JNIEnv* env, std::vector<vpHomogeneousMatrix>);
 
+std::vector<int> List_to_vector_int(JNIEnv* env, jintArray arr);
+
+std::vector<float> List_to_vector_float(JNIEnv* env, jfloatArray arr);
+
+std::vector<double> List_to_vector_double(JNIEnv* env, jdoubleArray arr);
+
 #endif	/* LISTCONVERTERS_HPP */

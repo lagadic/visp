@@ -146,6 +146,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                                                  vpImage<unsigned char> &debugImage,
                                                  std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
+                                                 , const vpImage<bool> *mask
 )
 {
   unsigned int width = point_cloud->width, height = point_cloud->height;
@@ -212,7 +213,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                          : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
+        if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
           totalPoints++;
 
           if (checkSSE2) {
@@ -273,6 +274,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                                                  vpImage<unsigned char> &debugImage,
                                                  std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
+                                                 , const vpImage<bool> *mask
 )
 {
   m_pointCloudFace.clear();
@@ -334,7 +336,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                          : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           if (checkSSE2) {

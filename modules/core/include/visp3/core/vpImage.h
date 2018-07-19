@@ -218,6 +218,8 @@ public:
    */
   inline unsigned int getSize() const { return width * height; }
 
+  // Gets the value of a pixel at a location.
+  Type getValue(unsigned int i, unsigned int j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
@@ -1399,6 +1401,29 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
     for (int j = 1; j < w - 1; j += 2)
       res[i][j] = (Type)(0.25 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1] +
                                  (*this)[(i >> 1) + 1][j >> 1] + (*this)[(i >> 1) + 1][(j >> 1) + 1]));
+}
+
+/*!
+  Retrieves pixel value from an image containing values of type \e Type
+
+  Gets the value of a sub-pixel with coordinates (i,j).
+
+  \param i : Pixel coordinate along the rows.
+  \param j : Pixel coordinate along the columns.
+
+  \return Pixel value.
+
+  \exception vpImageException::notInTheImage : If (i,j) is out
+  of the image.
+
+*/
+template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsigned int j) const
+{
+  if (i >= height || j >= width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
+  }
+
+  return row[i][j];
 }
 
 /*!

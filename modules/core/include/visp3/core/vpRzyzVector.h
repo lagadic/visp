@@ -69,7 +69,7 @@ class vpThetaUVector;
   around the \f$z\f$, \f$y\f$ and \f$z\f$ axis.
 
   \f[R_{zyz}(\varphi,\theta,\psi) = R_z(\varphi) \; R_y(\theta) \;
-R_z(\psi)\f]
+  R_z(\psi)\f]
 
   with
 
@@ -103,9 +103,9 @@ R_z(\psi)\f]
   R_{zyz}(\varphi,\theta,\psi) = \left(
   \begin{array}{ccc}
   \cos\varphi \cos\theta \cos\psi - \sin\varphi\sin\psi & -\cos\varphi
-\cos\theta \sin\psi -\sin\varphi\cos\psi & \cos\varphi \sin\theta \\
+  \cos\theta \sin\psi -\sin\varphi\cos\psi & \cos\varphi \sin\theta \\
   \sin\varphi \cos\theta \cos\psi + \cos\varphi\sin\psi & -\sin\varphi
-\cos\theta \sin\psi +\cos\varphi\cos\psi & \sin\varphi \sin\theta \\
+  \cos\theta \sin\psi +\cos\varphi\cos\psi & \sin\varphi \sin\theta \\
   -\sin\theta \cos\psi & \sin\theta \sin\psi & \cos\theta
   \end{array}
   \right)
@@ -165,6 +165,7 @@ public:
 
   vpRzyzVector(const double phi, const double theta, const double psi);
   explicit vpRzyzVector(const vpColVector &rzyz);
+  explicit vpRzyzVector(const std::vector<double> &rzyz);
 
   //! Destructor.
   virtual ~vpRzyzVector(){};
@@ -174,6 +175,8 @@ public:
 
   // convert a ThetaU vector into a Rzyz vector
   vpRzyzVector buildFrom(const vpThetaUVector &R);
+  vpRzyzVector buildFrom(const vpColVector &rxyz);
+  vpRzyzVector buildFrom(const std::vector<double> &rxyz);
 
   void buildFrom(const double phi, const double theta, const double psi);
 

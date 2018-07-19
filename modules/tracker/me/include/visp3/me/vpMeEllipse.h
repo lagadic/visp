@@ -114,7 +114,7 @@ public:
     \return Expected number of moving edges to track along the ellipse.
    */
   int getExpectedDensity() { return (int)expecteddensity; }
-  void track(const vpImage<unsigned char> &Im);
+  void track(const vpImage<unsigned char> &I);
 
   void initTracking(const vpImage<unsigned char> &I);
   void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP);

@@ -165,9 +165,10 @@ public:
   // constructor initialize a Theta U vector from a RxyzVector
   explicit vpThetaUVector(const vpRxyzVector &rxyz);
   explicit vpThetaUVector(const vpQuaternionVector &q);
+  explicit vpThetaUVector(const vpColVector &tu);
+  explicit vpThetaUVector(const std::vector<double> &tu);
 
   vpThetaUVector(const double tux, const double tuy, const double tuz);
-  explicit vpThetaUVector(const vpColVector &tu);
   //! Destructor.
   virtual ~vpThetaUVector(){};
 
@@ -184,6 +185,8 @@ public:
   // convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &xyz);
   vpThetaUVector buildFrom(const vpQuaternionVector &q);
+  vpThetaUVector buildFrom(const vpColVector &tu);
+  vpThetaUVector buildFrom(const std::vector<double> &tu);
 
   void buildFrom(const double tux, const double tuy, const double tuz);
 

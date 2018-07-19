@@ -220,7 +220,7 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     kltpoly = *it;
     if (kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2) {
-      kltpoly->init(tracker);
+      kltpoly->init(tracker, m_mask);
     }
   }
 
@@ -587,7 +587,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneou
       kltpoly = *it;
       if (kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2) {
         kltpoly->polygon->computePolygonClipped(cam);
-        kltpoly->init(tracker);
+        kltpoly->init(tracker, m_mask);
       }
     }
 
@@ -645,7 +645,7 @@ void vpMbKltTracker::preTracking(const vpImage<unsigned char> &I)
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
     if (kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2) {
-      kltpoly->computeNbDetectedCurrent(tracker);
+      kltpoly->computeNbDetectedCurrent(tracker, m_mask);
       //       faces[i]->ransac();
       if (kltpoly->hasEnoughPoints()) {
         m_nbInfos += kltpoly->getCurrentNumberPoints();
