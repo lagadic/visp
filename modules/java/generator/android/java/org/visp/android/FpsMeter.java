@@ -21,7 +21,7 @@ public class FpsMeter {
     int                         mWidth = 0;
     int                         mHeight = 0;
 
-    public void init(int tickFreq, int tickCount) {
+    public void init(int tickFreq, long tickCount) {
         mFramesCouner = 0;
         mFrequency = tickFreq;
         mprevFrameTime = tickCount;
@@ -32,7 +32,7 @@ public class FpsMeter {
         mPaint.setTextSize(20);
     }
 
-    public void measure(int tickFreq, int tickCount) {
+    public void measure(int tickFreq, long tickCount) {
         if (!mIsInitialized) {
             init(tickFreq,tickCount);
             mIsInitialized = true;

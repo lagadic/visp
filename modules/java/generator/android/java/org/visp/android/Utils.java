@@ -2,6 +2,7 @@ package org.visp.android;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.visp.core.VpImageUChar;
 import org.visp.core.VpImageRGBa;
@@ -39,9 +40,9 @@ public class Utils {
             return resFile.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception("Failed to export resource " + resName
-                    + ". Exception thrown: " + e);
+            Log.e("VISP::Utils.java","Failed to export resource " + resName + ". Exception thrown: " + e);
         }
+				return null;
     }
 
     public static VpImageUChar loadResource(Context context, int resourceId) throws IOException
