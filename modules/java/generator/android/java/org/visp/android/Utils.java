@@ -96,11 +96,11 @@ public class Utils {
         vpImageRGBaToBitmap(image.nativeObj, bmp);
     }
 
-    private static native void bitmapToVpImageUChar(Bitmap b, long m_addr);
+    public static native void bitmapToVpImageUChar(Bitmap b, long m_addr);
 
-    private static native void vpImageUCharToBitmap(long m_addr, Bitmap b);
+    public static native void vpImageUCharToBitmap(long m_addr, Bitmap b);
 
-    private static native void bitmapToVpImageRGBa(Bitmap b, long m_addr);
+    public static native void bitmapToVpImageRGBa(Bitmap b, long m_addr);
 
-    private static native void vpImageRGBaToBitmap(long m_addr, Bitmap b);
+    public static native void vpImageRGBaToBitmap(long m_addr, Bitmap b);
 }
