@@ -705,4 +705,6 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   }
   return true;
 }
+#else
+void dummy_vpQuadProg(){};
 #endif
