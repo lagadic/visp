@@ -961,6 +961,14 @@ public:
   }
 
   /*!
+    Set filter flag for RANSAC pose estimation.
+  */
+  inline void setRansacFilterFlag(const vpPose::RANSAC_FILTER_FLAGS &flag)
+  {
+    m_ransacFilterFlag = flag;
+  }
+
+  /*!
     Set the maximum number of iterations for the Ransac pose estimation
     method.
 
@@ -973,6 +981,27 @@ public:
     } else {
       throw vpException(vpException::badValue, "The number of iterations must be greater than zero.");
     }
+  }
+
+  /*!
+    Use or not the multithreaded version.
+
+    \note Need C++11
+  */
+  inline void setRansacParallel(const bool parallel)
+  {
+    m_ransacParallel = parallel;
+  }
+
+  /*!
+    Set the number of threads to use if multithreaded RANSAC pose.
+
+    \param nthreads : Number of threads, if 0 the number of CPU threads will be determined
+    \sa setRansacParallel
+  */
+  inline void setRansacParallelNbThreads(const unsigned int nthreads)
+  {
+    m_ransacParallelNbThreads = nthreads;
   }
 
   /*!
@@ -1174,10 +1203,16 @@ private:
   //! Percentage value to determine the number of inliers for the Ransac
   //! method.
   double m_ransacConsensusPercentage;
+  //!Filtering flag for RANSAC and degenerate configuration check
+  vpPose::RANSAC_FILTER_FLAGS m_ransacFilterFlag;
   //! List of inliers.
   std::vector<vpImagePoint> m_ransacInliers;
   //! List of outliers.
   std::vector<vpImagePoint> m_ransacOutliers;
+  //! If true, use parallel RANSAC
+  bool m_ransacParallel;
+  //! Number of threads (if 0, try to determine the number of CPU threads)
+  unsigned int m_ransacParallelNbThreads;
   //! Maximum reprojection error (in pixel for the OpenCV method) to decide if
   //! a point is an inlier or not.
   double m_ransacReprojectionError;
