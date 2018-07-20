@@ -178,8 +178,8 @@ endmacro()
 # assert macro
 # Note: it doesn't support lists in arguments
 # Usage samples:
-#   ocv_assert(MyLib_FOUND)
-#   ocv_assert(DEFINED MyLib_INCLUDE_DIRS)
+#   vp_assert(MyLib_FOUND)
+#   vp_assert(DEFINED MyLib_INCLUDE_DIRS)
 macro(vp_assert)
   if(NOT (${ARGN}))
     string(REPLACE ";" " " __assert_msg "${ARGN}")
