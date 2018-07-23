@@ -79,7 +79,7 @@ void vpPose::init()
   ransacInlierIndex.clear();
   ransacThreshold = 0.0001;
   distanceToPlaneForCoplanarityTest = 0.001;
-  ransacFlags = PREFILTER_DUPLICATE_POINTS;
+  ransacFlag = NO_FILTER;
   listOfPoints.clear();
   useParallelRansac = false;
   nbParallelRansacThreads = 0;
@@ -94,9 +94,9 @@ void vpPose::init()
 vpPose::vpPose()
   : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
-    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS), listOfPoints(),
+    distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(),
     useParallelRansac(false),
-    nbParallelRansacThreads(0), // 0 means that OpenMP is used to get the number of CPU threads
+    nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
     vvsEpsilon(1e-8)
 {
 }

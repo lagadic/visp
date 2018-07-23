@@ -61,6 +61,9 @@
 #include <list>
 #include <math.h>
 #include <vector>
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#include <atomic>
+#endif
 
 /*!
   \class vpPose
@@ -72,8 +75,7 @@
   \note It is also possible to estimate a pose from other features using
   vpPoseFeatures class.
 
-  To see how to use this class you can follow the \ref
-  tutorial-pose-estimation.
+  To see how to use this class you can follow the \ref tutorial-pose-estimation.
 */
 
 class VISP_EXPORT vpPose
@@ -100,15 +102,10 @@ public:
                              initialized by Lagrange approach */
   } vpPoseMethodType;
 
-  enum FILTERING_RANSAC_FLAGS {
-    PREFILTER_DUPLICATE_POINTS = 0x1,        /*!< Remove duplicate points before the RANSAC. */
-    PREFILTER_ALMOST_DUPLICATE_POINTS = 0x2, /*!< Remove almost duplicate
-                                                points (up to a tolerance)
-                                                before the RANSAC. */
-    PREFILTER_DEGENERATE_POINTS = 0x4,       /*!< Remove degenerate points (same 3D
-                                                or 2D coordinates) before the
-                                                RANSAC. */
-    CHECK_DEGENERATE_POINTS = 0x8            /*!< Check for degenerate points during the RANSAC. */
+  enum RANSAC_FILTER_FLAGS {
+    NO_FILTER,
+    PREFILTER_DEGENERATE_POINTS, /*!< Remove degenerate points (same 3D or 2D coordinates) before the RANSAC. */
+    CHECK_DEGENERATE_POINTS      /*!< Check for degenerate points during the RANSAC. */
   };
 
   unsigned int npt;         //!< Number of point used in pose computation
@@ -142,8 +139,8 @@ private:
   //! Minimal distance point to plane to consider if the point belongs or not
   //! to the plane
   double distanceToPlaneForCoplanarityTest;
-  //! RANSAC flags to remove or not degenerate points
-  int ransacFlags;
+  //! RANSAC flag to remove or not degenerate points
+  RANSAC_FILTER_FLAGS ransacFlag;
   //! List of points used for the RANSAC (std::vector is contiguous whereas
   //! std::list is a linked list)
   std::vector<vpPoint> listOfPoints;
@@ -162,20 +159,20 @@ private:
     RansacFunctor(const vpHomogeneousMatrix &cMo_, const unsigned int ransacNbInlierConsensus_,
                   const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
                   const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
-                  bool (*func_)(vpHomogeneousMatrix *))
-      : m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
+                  bool (*func_)(vpHomogeneousMatrix *)
+              #ifdef VISP_HAVE_CPP11_COMPATIBILITY
+                  , std::atomic<bool> &abort
+              #endif
+                  )
+      :
+    #ifdef VISP_HAVE_CPP11_COMPATIBILITY
+        m_abort(abort),
+    #endif
+        m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
         m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
         m_ransacThreshold(ransacThreshold_)
-    {
-    }
-
-    RansacFunctor()
-      : m_best_consensus(), m_checkDegeneratePoints(false), m_cMo(), m_foundSolution(false), m_func(NULL),
-        m_initial_seed(0), m_listOfUniquePoints(), m_nbInliers(0), m_ransacMaxTrials(), m_ransacNbInlierConsensus(),
-        m_ransacThreshold()
-    {
-    }
+    { }
 
     void operator()() { m_foundSolution = poseRansacImpl(); }
 
@@ -189,6 +186,9 @@ private:
     unsigned int getNbInliers() const { return m_nbInliers; }
 
   private:
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+    std::atomic<bool> &m_abort;
+#endif
     std::vector<unsigned int> m_best_consensus;
     bool m_checkDegeneratePoints;
     vpHomogeneousMatrix m_cMo;
@@ -203,10 +203,6 @@ private:
 
     bool poseRansacImpl();
   };
-
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-  static vpThread::Return poseRansacImplThread(vpThread::Args arg);
-#endif
 
 protected:
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo);
@@ -290,13 +286,17 @@ public:
   }
 
   /*!
-    Set RANSAC filtering flags.
+    Set RANSAC filter flag.
 
-    \param flags : Flags to use, e.g. \e
-    setRansacFilterFlags(PREFILTER_DUPLICATE_POINTS +
-    CHECK_DEGENERATE_POINTS). \sa FILTERING_RANSAC_FLAGS
+    \param flag : RANSAC flag to use to prefilter or perform degenerate configuration check.
+    \sa RANSAC_FILTER_FLAGS
+    \warning Prefilter degenerate points consists to not add subsequent degenerate points. This means that
+    it is possible to discard a valid point and keep an invalid point if the invalid point
+    is added first. It is faster to prefilter for duplicate points instead of checking for degenerate
+    configuration at each time.
+    \note By default the flag is set to NO_FILTER.
   */
-  inline void setRansacFilterFlags(const int flags) { ransacFlags = flags; }
+  inline void setRansacFilterFlag(const RANSAC_FILTER_FLAGS &flag) { ransacFlag = flag; }
 
   /*!
     Get the number of threads for the parallel RANSAC implementation.
@@ -310,21 +310,22 @@ public:
 
     \note You have to enable the parallel version with setUseParallelRansac().
     If the number of threads is 0, the number of threads to use is
-    automatically determined with OpenMP. \sa setUseParallelRansac
+    automatically determined with C++11.
+    \sa setUseParallelRansac
   */
   inline void setNbParallelRansacThreads(const int nb) { nbParallelRansacThreads = nb; }
 
   /*!
-    \return True if the parallel RANSAC version should be used.
+    \return True if the parallel RANSAC version should be used (depends also to C++11 availability).
 
     \sa setUseParallelRansac
   */
   inline bool getUseParallelRansac() const { return useParallelRansac; }
 
   /*!
-    Set if parallel RANSAC version should be used or not.
+    Set if parallel RANSAC version should be used or not (only if C++11).
 
-    \note Need Pthread.
+    \note Need C++11.
   */
   inline void setUseParallelRansac(const bool use) { useParallelRansac = use; }
 
@@ -352,7 +353,7 @@ public:
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials = 10000);
+                        const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0);
 };
 
 #endif
