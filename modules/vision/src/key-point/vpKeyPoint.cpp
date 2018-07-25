@@ -51,13 +51,6 @@
 namespace
 {
 // Specific Type transformation functions
-///*!
-//   Convert a list of cv::DMatch to a cv::DMatch (extract the first
-//   cv::DMatch, the nearest neighbor).
-//
-//   \param knnMatches : List of cv::DMatch.
-//   \return The nearest neighbor.
-// */
 inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches)
 {
   if (knnMatches.size() > 0) {
@@ -67,26 +60,11 @@ inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches)
   return cv::DMatch();
 }
 
-///*!
-//   Convert a cv::DMatch to an index (extract the train index).
-//
-//   \param match : Point to convert in ViSP type.
-//   \return The train index.
-// */
 inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair)
 {
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
 
-// Keep this function to know how to detect big endian with code
-// bool isBigEndian() {
-//  union {
-//    uint32_t i;
-//    char c[4];
-//  } bint = { 0x01020304 };
-//
-//  return bint.c[0] == 1;
-//}
 }
 
 /*!
@@ -107,7 +85,8 @@ vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatur
     m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
     m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
     m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(), m_ransacOutliers(),
+    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
     m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
@@ -142,7 +121,8 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
     m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
     m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(), m_ransacOutliers(),
+    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
     m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
@@ -177,9 +157,9 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_matcher(), m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0),
     m_matchingRatioThreshold(0.85), m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200),
     m_nbRansacMinInlierCount(100), m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(),
-    m_queryFilteredKeyPoints(), m_queryKeyPoints(), m_ransacConsensusPercentage(20.0), m_ransacInliers(),
-    m_ransacOutliers(), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01), m_trainDescriptors(),
-    m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
+    m_queryFilteredKeyPoints(), m_queryKeyPoints(), m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(),
+    m_ransacOutliers(), m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
+    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
@@ -957,6 +937,9 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
         (unsigned int)(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
   }
 
+  pose.setRansacFilterFlag(m_ransacFilterFlag);
+  pose.setUseParallelRansac(m_ransacParallel);
+  pose.setNbParallelRansacThreads(m_ransacParallelNbThreads);
   pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
   pose.setRansacThreshold(m_ransacThreshold);
   pose.setRansacMaxTrials(m_nbRansacIterations);
@@ -3601,8 +3584,11 @@ void vpKeyPoint::reset()
   m_queryFilteredKeyPoints.clear();
   m_queryKeyPoints.clear();
   m_ransacConsensusPercentage = 20.0;
+  m_ransacFilterFlag = vpPose::NO_FILTER;
   m_ransacInliers.clear();
   m_ransacOutliers.clear();
+  m_ransacParallel = true;
+  m_ransacParallelNbThreads = 0;
   m_ransacReprojectionError = 6.0;
   m_ransacThreshold = 0.01;
   m_trainDescriptors = cv::Mat();
