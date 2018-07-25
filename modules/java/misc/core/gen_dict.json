@@ -62,7 +62,8 @@
           "// C++:  vpColVector getWorldCoordinates()",
           "private static native long getWorldCoordinates_2(long nativeObj);"
         ]
-      },
+      }
+    },
       "VpColVector": {
         "insert": {
           "j_code": [
@@ -536,4 +537,3 @@
       }
     }
   }
-}
