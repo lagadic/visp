@@ -81,6 +81,7 @@ type_dict = {
 
 # { class : { func : {j_code, jn_code, cpp_code} } }
 ManualFuncs = {}
+ToStringSupport = []
 
 # { class : { func : { arg_name : {"ctype" : ctype, "attrib" : [attrib]} } } }
 func_arg_fix = {}
@@ -747,11 +748,15 @@ class JavaWrapperGenerator(object):
                     else:  # pass as list
                         jn_args.append(ArgInfo([a.ctype, a.name, "", [], ""]))
                         jni_args.append(ArgInfo([a.ctype, "%s_list" % a.name, "", [], ""]))
-                        c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n": a.name} + ";")
+                        ci.addImports(a.ctype)
+                        j_prologue.append("long[] "+a.name+" = Converters."+a.ctype+"_to_Array("+a.name+"_list_arr);")
+                        a.name += '_list'
+                        c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n": a.name} + "_arr;")
                         if "I" in a.out or not a.out:
-                            c_prologue.append("%(n)s = List_to_%(t)s(env, %(n)s_list);" % {"n": a.name, "t": a.ctype})
+                            c_prologue.append("%(n)s_arr = List_to_%(t)s(env, %(n)s);" % {"n": a.name, "t": a.ctype})
                         if "O" in a.out:
                             c_epilogue.append("Copy_%s_to_List(env,%s,%s_list);" % (a.ctype, a.name, a.name))
+                        a.name += '_arr'
                 else:
                     fields = type_dict[a.ctype].get("jn_args", ((a.ctype, ""),))
                     if "I" in a.out or not a.out or self.isWrapped(a.ctype):  # input arg, pass by primitive fields
@@ -915,7 +920,7 @@ class JavaWrapperGenerator(object):
                 ret = "return env->NewStringUTF(_retval_.c_str());"
                 default = 'return env->NewStringUTF("");'
             elif self.isWrapped(camelCase(fi.ctype)):  # wrapped class:
-                ret = "return (jlong) new %s(_retval_);" % self.fullTypeName(camelCase(fi.ctype))
+                ret = "return (jlong) new %s(_retval_);" % self.smartWrap(ci, self.fullTypeName(camelCase(fi.ctype)))
             elif fi.ctype.startswith('Ptr_'):
                 c_prologue.append("typedef Ptr<%s> %s;" % (self.fullTypeName(fi.ctype[4:]), fi.ctype))
                 ret = "return (jlong)(new %(ctype)s(_retval_));" % {'ctype': fi.ctype}
@@ -1070,6 +1075,45 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
                 ci.jn_code.write("\n\t")
                 ci.cpp_code.write("\n")
 
+        # Add only classes that support << operator
+        if ci.name in ToStringSupport:
+            # toString
+            ci.j_code.write(
+                """
+    @Override
+    public String toString(){
+        return toString(nativeObj);
+    }
+                """)
+
+            ci.jn_code.write(
+                """
+    // native support for java toString()
+    private static native String toString(long nativeObj);
+                """)
+
+            # native support for java toString()
+            ci.cpp_code.write("""
+//
+//  native support for java toString()
+//  static String %(cls)s::toString()
+//
+
+JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString(JNIEnv*, jclass, jlong);
+
+JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
+  (JNIEnv* env, jclass, jlong self)
+{
+  %(cls)s* me = (%(cls)s*) self; //TODO: check for NULL
+  std::stringstream ss;
+  ss << *me;
+  return env->NewStringUTF(ss.str().c_str());
+}
+
+                """ % {"module": module.replace('_', '_1'), "cls": self.smartWrap(ci, ci.fullName(isCPP=True)),
+                       "j_cls": ci.jname.replace('_', '_1')}
+            )
+                  
         if ci.name != 'VpImgproc' and ci.name != self.Module or ci.base:
             # finalize()
             ci.j_code.write(
@@ -1336,6 +1380,7 @@ if __name__ == "__main__":
             missing_consts.update(gen_type_dict.get("missing_consts", {}))
             type_dict.update(gen_type_dict.get("type_dict", {}))
             ManualFuncs.update(gen_type_dict.get("ManualFuncs", {}))
+            ToStringSupport += gen_type_dict.get("ToStringSupport", [])
             func_arg_fix.update(gen_type_dict.get("func_arg_fix", {}))
             if 'module_j_code' in gen_type_dict:
                 module_j_code = read_contents(
