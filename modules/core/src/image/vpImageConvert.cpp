@@ -622,10 +622,13 @@ flip) method, only cv::Mat with a depth equal to 8 and a channel between 1 and
 3 are converted.
 
   If the input image is of type CV_8UC1 or CV_8UC3, the alpha channel is set
-to vpRGBa::alpha_default.
+to vpRGBa::alpha_default, or 0 in certain case (see the warning below).
 
   \warning This function is only available if OpenCV (version 2.1.0 or
 greater) was detected during the configuration step.
+
+  \warning If ViSP is built with SSSE3 flag and the CPU supports this intrinsics set,
+  alpha channel will be set to 0, otherwise it will be set to vpRGBa::alpha_default (255).
 
   \param src : Source image in OpenCV format.
   \param dest : Destination image in ViSP format.
@@ -673,18 +676,73 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bo
       }
   } else if (src.type() == CV_8UC3) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
-    vpRGBa rgbaVal;
-    rgbaVal.A = vpRGBa::alpha_default;
-    for (unsigned int i = 0; i < dest.getRows(); ++i) {
-      for (unsigned int j = 0; j < dest.getCols(); ++j) {
-        cv::Vec3b tmp = src.at<cv::Vec3b>((int)i, (int)j);
-        rgbaVal.R = tmp[2];
-        rgbaVal.G = tmp[1];
-        rgbaVal.B = tmp[0];
-        if (flip) {
-          dest[dest.getRows() - i - 1][j] = rgbaVal;
-        } else {
-          dest[i][j] = rgbaVal;
+
+    bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
+  #if !VISP_HAVE_SSSE3
+    checkSSSE3 = false;
+  #endif
+
+    if (checkSSSE3 && src.isContinuous() && !flip) {
+#if VISP_HAVE_SSSE3
+      int i = 0;
+      int size = src.rows*src.cols;
+      const uchar* bgr = src.ptr<uchar>();
+      unsigned char* rgba = (unsigned char*) dest.bitmap;
+
+      if (size >= 16) {
+        // Mask to reorder BGR to RGBa
+        const __m128i mask_1 = _mm_set_epi8(-1, 9, 10, 11, -1, 6, 7, 8, -1, 3, 4, 5, -1, 0, 1, 2);
+        const __m128i mask_2 = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, 15, -1, -1, -1, 12, 13, 14);
+        const __m128i mask_3 = _mm_set_epi8(-1, 5, 6, 7, -1, 2, 3, 4, -1, -1, 0, 1, -1, -1, -1, -1);
+        const __m128i mask_4 = _mm_set_epi8(-1, -1, -1, -1, -1, 14, 15, -1, -1, 11, 12, 13, -1, 8, 9, 10);
+        const __m128i mask_5 = _mm_set_epi8(-1, 1, 2, 3, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1);
+        const __m128i mask_6 = _mm_set_epi8(-1, 13, 14, 15, -1, 10, 11, 12, -1, 7, 8, 9, -1, 4, 5, 6);
+
+        __m128i res[4];
+        for (; i <= size - 16; i += 16) {
+          // Process 16 BGR color pixels
+          const __m128i data1 = _mm_loadu_si128((const __m128i *)bgr);
+          const __m128i data2 = _mm_loadu_si128((const __m128i *)(bgr + 16));
+          const __m128i data3 = _mm_loadu_si128((const __m128i *)(bgr + 32));
+
+          res[0] = _mm_shuffle_epi8(data1, mask_1);
+          res[1] = _mm_or_si128(_mm_shuffle_epi8(data1, mask_2), _mm_shuffle_epi8(data2, mask_3));
+          res[2] = _mm_or_si128(_mm_shuffle_epi8(data2, mask_4), _mm_shuffle_epi8(data3, mask_5));
+          res[3] = _mm_shuffle_epi8(data3, mask_6);
+
+          _mm_storeu_si128((__m128i *)rgba, res[0]);
+          _mm_storeu_si128((__m128i *)(rgba+16), res[1]);
+          _mm_storeu_si128((__m128i *)(rgba+32), res[2]);
+          _mm_storeu_si128((__m128i *)(rgba+48), res[3]);
+
+          bgr += 48;
+          rgba += 64;
+        }
+      }
+
+      for (; i < size; i++) {
+        *rgba = *(bgr+2); rgba++;
+        *rgba = *(bgr+1); rgba++;
+        *rgba = *(bgr); rgba++;
+        *rgba = 0; rgba++;
+
+        bgr += 3;
+      }
+#endif
+    } else {
+      vpRGBa rgbaVal;
+      rgbaVal.A = vpRGBa::alpha_default;
+      for (unsigned int i = 0; i < dest.getRows(); ++i) {
+        for (unsigned int j = 0; j < dest.getCols(); ++j) {
+          cv::Vec3b tmp = src.at<cv::Vec3b>((int)i, (int)j);
+          rgbaVal.R = tmp[2];
+          rgbaVal.G = tmp[1];
+          rgbaVal.B = tmp[0];
+          if (flip) {
+            dest[dest.getRows() - i - 1][j] = rgbaVal;
+          } else {
+            dest[i][j] = rgbaVal;
+          }
         }
       }
     }
