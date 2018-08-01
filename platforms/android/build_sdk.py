@@ -160,8 +160,8 @@ class Builder:
             CMAKE_TOOLCHAIN_FILE=self.get_toolchain_file(),
             BUILD_EXAMPLES="OFF",
             BUILD_TESTS="OFF",
-			BUILD_TUTORIALS="OFF",
-			BUILD_DEMOS="OFF",
+			      BUILD_TUTORIALS="OFF",
+			      BUILD_DEMOS="OFF",
             BUILD_ANDROID_EXAMPLES="ON",
             INSTALL_ANDROID_EXAMPLES="ON",
         )
@@ -184,8 +184,13 @@ class Builder:
         cmd = ["cmake", "-GNinja"]
         cmake_vars = dict(
             CMAKE_TOOLCHAIN_FILE=self.get_toolchain_file(),
-            WITH_OPENCL="OFF",
-            WITH_IPP="OFF",
+            # TODO I guess these flags are futile
+            #WITH_OPENCL="OFF",
+            #WITH_IPP="OFF",
+            BUILD_EXAMPLES="OFF",
+            BUILD_TESTS="OFF",
+			      BUILD_TUTORIALS="OFF",
+			      BUILD_DEMOS="OFF",
             BUILD_ANDROID_SERVICE = 'ON'
         )
         cmake_vars.update(abi.cmake_vars)
