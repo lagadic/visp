@@ -98,6 +98,7 @@ def copytree_smart(src, dst):
 
 class ABI:
     def __init__(self, platform_id, name, toolchain, ndk_api_level = None, cmake_vars = dict()):
+        # TODO Cmake build says android platform not used. Check whether it can be removed safely?
         self.platform_id = platform_id # platform code to add to apk version (for cmake)
         self.name = name # general name (official Android ABI identifier)
         self.toolchain = toolchain # toolchain identifier (for cmake)
@@ -105,7 +106,7 @@ class ABI:
             ANDROID_STL="gnustl_static",
             ANDROID_ABI=self.name,
             ANDROID_TOOLCHAIN_NAME=toolchain,
-            ANDROID_PLATFORM_ID=platform_id,
+            # ANDROID_PLATFORM_ID=platform_id,
         )
         if ndk_api_level:
             self.cmake_vars['ANDROID_NATIVE_API_LEVEL'] = ndk_api_level
