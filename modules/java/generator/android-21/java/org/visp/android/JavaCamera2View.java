@@ -22,9 +22,8 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.ViewGroup.LayoutParams;
 
-import org.visp.core.CvType;
-import org.visp.core.Mat;
-import org.visp.imgproc.Imgproc;
+import org.visp.core.VpImageRGBa;
+import org.visp.core.VpImageUChar;
 
 /**
  * This class is an implementation of the Bridge View between ViSP and Java Camera.
@@ -180,8 +179,10 @@ public class JavaCamera2View extends CameraBridgeViewBase {
 
                     ByteBuffer y_plane = planes[0].getBuffer();
                     ByteBuffer uv_plane = planes[1].getBuffer();
-                    Mat y_mat = new Mat(h, w, CvType.CV_8UC1, y_plane);
-                    Mat uv_mat = new Mat(h / 2, w / 2, CvType.CV_8UC2, uv_plane);
+                    byte[] y_mat = new byte[h*w]; // TODO Try y_plane.remaining() if h*w fails
+                    byte[] uv_mat = new byte[h*w/4];
+                    y_plane.get(y_mat);
+                    uv_plane.get(uv_mat);
                     JavaCamera2Frame tempFrame = new JavaCamera2Frame(y_mat, uv_mat, w, h);
                     deliverAndDrawFrame(tempFrame);
                     tempFrame.release();
@@ -324,51 +325,59 @@ public class JavaCamera2View extends CameraBridgeViewBase {
 
     private class JavaCamera2Frame implements VpCameraViewFrame {
         @Override
-        public Mat gray() {
-            return mYuvFrameData.submat(0, mHeight, 0, mWidth);
+        public VpImageUChar gray() {
+			      if (gray == null)
+				      gray = new VpImageUChar(mYuvFrameData,w,h,true);
+            return gray;
         }
 
         @Override
-        public Mat rgba() {
-            if (mPreviewFormat == ImageFormat.NV21)
-                Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21, 4);
-            else if (mPreviewFormat == ImageFormat.YV12)
-                Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGB_I420, 4); // COLOR_YUV2RGBA_YV12 produces inverted colors
-            else if (mPreviewFormat == ImageFormat.YUV_420_888) {
-                assert (mUVFrameData != null);
-                Imgproc.cvtColorTwoPlane(mYuvFrameData, mUVFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21);
-            } else
-                throw new IllegalArgumentException("Preview Format can be NV21 or YV12");
+        public VpImageRGBa rgba() {
+            if (rgba == null){
+                if (mPreviewFormat == ImageFormat.NV21)
+                    rgba = new VpImageRGBa(mYuvFrameData, w, h,true);
+                //else if (mPreviewFormat == ImageFormat.YV12)
+                //    Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGB_I420, 4); // COLOR_YUV2RGBA_YV12 produces inverted colors
+                //else if (mPreviewFormat == ImageFormat.YUV_420_888) {
+                //    assert (mUVFrameData != null);
+                //    Imgproc.cvtColorTwoPlane(mYuvFrameData, mUVFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21); }
+                // TODO Droppping all other formats for now
+                else
+                    throw new IllegalArgumentException("Preview Format can be NV21 only for now"); // Preview Format can be NV21 or YV12
+            }
 
-            return mRgba;
+            return rgba;
         }
 
-        public JavaCamera2Frame(Mat Yuv420sp, int width, int height) {
+        public JavaCamera2Frame(byte[] Yuv420sp, int width, int height) {
             super();
-            mWidth = width;
-            mHeight = height;
+            w = width;
+            h = height;
             mYuvFrameData = Yuv420sp;
             mUVFrameData = null;
-            mRgba = new Mat();
+            rgba = null;
+            gray = null;
         }
 
-        public JavaCamera2Frame(Mat Y, Mat UV, int width, int height) {
+        public JavaCamera2Frame(byte[] Y, byte[] UV, int width, int height) {
             super();
-            mWidth = width;
-            mHeight = height;
+            w = width;
+            h = height;
             mYuvFrameData = Y;
             mUVFrameData = UV;
-            mRgba = new Mat();
+            rgba = null;
+            gray = null;
         }
 
         public void release() {
-            mRgba.release();
+			      // TODO openc-v had release() method here. Check whether we need to
         }
 
-        private Mat mYuvFrameData;
-        private Mat mUVFrameData;
-        private Mat mRgba;
-        private int mWidth;
-        private int mHeight;
+        private byte[] mYuvFrameData;
+        private byte[] mUVFrameData;
+		    private VpImageUChar gray;
+        private VpImageRGBa rgba;
+        private int w;
+        private int h;
     };
 }

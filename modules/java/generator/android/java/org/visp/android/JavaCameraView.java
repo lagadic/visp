@@ -14,7 +14,6 @@ import android.view.ViewGroup.LayoutParams;
 
 import org.visp.core.VpImageRGBa;
 import org.visp.core.VpImageUChar;
-import org.visp.core.VpMatrix;
 
 /**
  * This class is an implementation of the Bridge View between ViSP and Java Camera.
