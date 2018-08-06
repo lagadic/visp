@@ -272,6 +272,8 @@ class Builder:
             else:
                 shutil.move(f, dst)
 
+# TODO Remove samples for now. Add them later
+'''
         # Clean samples
         path = os.path.join(self.resultdest, "samples")
         for item in os.listdir(path):
@@ -279,6 +281,7 @@ class Builder:
             if os.path.isdir(item):
                 for name in ["build.xml", "local.properties", "proguard-project.txt"]:
                     rm_one(os.path.join(item, name))
+'''
 
 
 #===================================================================================================
