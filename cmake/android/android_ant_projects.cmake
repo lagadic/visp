@@ -236,7 +236,7 @@ macro(add_android_project target path)
 
     add_custom_command(
         OUTPUT "${android_proj_bin_dir}/bin/${target}-debug.apk"
-        COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.6 -Djava.source=1.6
+        COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.7 -Djava.source=1.7
         COMMAND ${CMAKE_COMMAND} -E touch "${android_proj_bin_dir}/bin/${target}-debug.apk" # needed because ant does not update the timestamp of updated apk
         WORKING_DIRECTORY "${android_proj_bin_dir}"
         DEPENDS ${android_proj_extra_deps} ${android_proj_file_deps} ${JNI_LIB_NAME}
