@@ -144,6 +144,12 @@ else()
 endif()
 
 if(ANDROID)
+  # set binary path
+  vp_update(VISP_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}bin/${ANDROID_NDK_ABI_NAME}")
+  
+  # set samples path
+  vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
+
   set(LIBRARY_OUTPUT_PATH             "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
   vp_update(3P_LIBRARY_OUTPUT_PATH    "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
   vp_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
@@ -944,6 +950,15 @@ if(USE_ARIA AND UNIX)
 elseif(USE_ARIA AND NOT UNIX)
   set(VISP_HAVE_PIONEER TRUE) # for header vpConfig.h
 endif()
+
+# examples
+if(BUILD_ANDROID_EXAMPLES)
+  add_subdirectory(samples)
+endif()
+
+if(ANDROID) 
+  add_subdirectory(platforms/android/service) 
+endif() 
 
 # ----------------------------------------------------------------------------
 # Finalization: generate configuration-based files
