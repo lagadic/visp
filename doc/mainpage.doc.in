@@ -8,7 +8,8 @@
 
 <p>ViSP \cite Marchand05b is a modular C++ library that allows fast development of visual
 servoing applications. ViSP is developed and maintained by the Inria
-<a href="http://team.inria.fr/lagadic" target="_parent">Lagadic</a> team located at <a
+<a href="https://team.inria.fr/rainbow/" target="_parent">Rainbow</a>
+(former <a href="http://team.inria.fr/lagadic" target="_parent">Lagadic</a>) team located at <a
 href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</p>
 
 <p>ViSP official site is <a href="https://visp.inria.fr" target="_parent">https://visp.inria.fr</a></p>
@@ -177,6 +178,34 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 in one thread and display these images in an other thread.
 
 @VISP_MAINPAGE_EXTENSION@
+
+\section Citing_ViSP Citing ViSP
+
+Please cite ViSP in your publications if it helps your research:
+```
+@article{Marchand05b,
+   Author = {Marchand, E. and Spindler, F. and Chaumette, F.},
+   Title = {ViSP for visual servoing: a generic software platform with a wide class of robot control skills},
+   Journal = {IEEE Robotics and Automation Magazine},
+   Volume = {12},
+   Number = {4},
+   Pages = {40--52},
+   Publisher = {IEEE},
+   Month = {December},
+   Year = {2005}
+}
+```
+To cite the generic model-based tracker:
+```
+@InProceedings{Trinh18a,
+   Author = {Trinh, S. and Spindler, F. and Marchand, E. and Chaumette, F.},
+   Title = {A modular framework for model-based visual tracking using edge, texture and depth features},
+   BookTitle = {{IEEE/RSJ Int. Conf. on Intelligent Robots and Systems, IROS'18}},
+   Address = {Madrid, Spain},
+   Month = {October},
+   Year = {2018}
+}
+```
 
 \section Examples_sec Using ViSP
 
