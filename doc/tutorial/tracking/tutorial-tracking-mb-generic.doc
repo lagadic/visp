@@ -5,7 +5,7 @@
 
 \section mb_generic_intro Introduction
 
-ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format (a home-made format).
+ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b, \cite Trinh18a. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format (a home-made format).
 
 This tutorial focuses on vpMbGenericTracker class that was introduced in ViSP 3.1.0. This class brings a generic way to consider different kind of visual features used as measures by the model-based tracker and allows also to consider either a single camera or multiple cameras observing the object to track. This class replaces advantageously the usage of the following classes vpMbEdgeTracker, vpMbKltTracker or the one mixing edges and keypoints vpMbEdgeKltTracker that will continue to exist in ViSP but that we don't recommend to use, since switching from one class to an other may be laborious. If for one reason or another you still want to use these classes, we invite you to follow \ref tutorial-tracking-mb-deprecated.
 

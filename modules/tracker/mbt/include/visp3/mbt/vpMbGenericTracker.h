@@ -48,15 +48,15 @@
 /*!
   \class vpMbGenericTracker
   \ingroup group_mbt_trackers
-  \brief Make the complete tracking of an object by using its CAD model.
+  \brief Real-time 6D object pose tracking using its CAD model.
 
   The tracker requires the knowledge of the 3D model that could be provided in
   a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
   also use an xml file used to tune the behavior of the tracker and an init file
   used to compute the pose at the very first image.
 
-  This class allows to track an object or a scene given its 3D model. A lot of
-  videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
+  This class allows tracking an object or a scene given its 3D model. More information in \cite Trinh18a.
+  A lot of videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
 
   \htmlonly
   <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"

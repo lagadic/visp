@@ -5,7 +5,7 @@
 
 \section mb_generic_apriltag_intro Introduction
 
-As stated in \ref tutorial-tracking-mb-generic ViSP allows the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization when a calibrated camera is used \cite Comport06b.
+As stated in \ref tutorial-tracking-mb-generic ViSP allows the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization when a calibrated camera is used \cite Comport06b, \cite Trinh18a.
 
 In this tutorial we will experiment live tracking of a cube observed by an USB camera (webcam) or an Intel Realsense RGB-D camera (SR300 or D400 series).
 
