@@ -885,13 +885,7 @@ int main()
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 {
   cv::Mat vpToMat((int)src.getRows(), (int)src.getCols(), CV_8UC4, (void *)src.bitmap);
-
-  dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC3);
-  cv::Mat alpha((int)src.getRows(), (int)src.getCols(), CV_8UC1);
-
-  cv::Mat out[] = {dest, alpha};
-  int from_to[] = {0, 2, 1, 1, 2, 0, 3, 3};
-  cv::mixChannels(&vpToMat, 1, out, 2, from_to, 4);
+  cv::cvtColor(vpToMat, dest, cv::COLOR_RGBA2BGR);
 }
 
 /*!
