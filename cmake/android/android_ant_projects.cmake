@@ -40,7 +40,7 @@ else()
   message(FATAL_ERROR "Android: List of installed Android targets is empty")
 endif()
 
-# finds minimal installed SDK target compatible with provided names or API levels
+# finds minimal installed SDK target >=21 compatible with provided names or API levels
 # usage:
 #   get_compatible_android_api_level(VARIABLE [level1] [level2] ...)
 macro(android_get_compatible_target VAR)
@@ -60,6 +60,7 @@ macro(android_get_compatible_target VAR)
     #search for compatible levels
     foreach(lvl ${ANDROID_SDK_TARGETS})
       string(REGEX MATCH "[0-9]+$" __level "${lvl}")
+      if (__level GREATER 20) # Make sure to accept only API >= 21
       if(__level EQUAL __lvl)
         #look for exact match
         foreach(usrlvl ${ARGN})
@@ -79,8 +80,8 @@ macro(android_get_compatible_target VAR)
         endif()
         break()
       endif()
+      endif()
     endforeach()
-
     unset(__lvl)
     unset(__level)
   endif()
