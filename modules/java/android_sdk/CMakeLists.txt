@@ -14,6 +14,10 @@ file(MAKE_DIRECTORY "${VISP_JAVA_DIR}/bin")
 set(java_src_dir "${VISP_JAVA_DIR}/src")
 file(MAKE_DIRECTORY "${java_src_dir}")
 
+# TODO: Some strange error. VISP_JAVA_BINDINGS_DIR is null at this line of execution. I dont know why its happening
+# Currently using a temporary workaround
+set(VISP_JAVA_BINDINGS_DIR "${VISP_BINARY_DIR}/modules/java_bindings_generator")
+
 vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/java" "${java_src_dir}")
 vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/android/java" "${java_src_dir}")
 
@@ -74,7 +78,7 @@ set(JAR_FILE "${VISP_BINARY_DIR}/bin/classes.jar")
 # normally we should do this after a native part, but for a library project we can build the java part first
 add_custom_command(
     OUTPUT "${JAR_FILE}" "${VISP_DEPHELPER}/${the_module}_android"
-    COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.6 -Djava.source=1.6
+    COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.7 -Djava.source=1.7
     COMMAND ${CMAKE_COMMAND} -E touch "${VISP_DEPHELPER}/${the_module}_android"
     WORKING_DIRECTORY "${VISP_JAVA_DIR}"
     DEPENDS ${depends}

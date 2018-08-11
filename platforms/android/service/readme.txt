@@ -13,10 +13,7 @@ Example: VISP_3.4.0-dev_Manager_3.40_armeabi-v7a.apk
 
 Use the list of platforms below to determine proper VISP Manager package for your device:
 
-- armeabi (ARMv5, ARMv6)
 - armeabi-v7a (ARMv7-A + NEON)
 - arm64-v8a
-- mips
-- mips64
 - x86
 - x86_64

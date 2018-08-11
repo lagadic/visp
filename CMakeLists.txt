@@ -144,6 +144,12 @@ else()
 endif()
 
 if(ANDROID)
+  # set binary path
+  vp_update(VISP_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}bin/${ANDROID_NDK_ABI_NAME}")
+  
+  # set samples path
+  vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
+
   set(LIBRARY_OUTPUT_PATH             "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
   vp_update(3P_LIBRARY_OUTPUT_PATH    "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
   vp_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
@@ -363,7 +369,7 @@ VP_CHECK_FUNCTION_EXISTS(inet_ntop "${VISP_LINKER_LIBS}")
 #--------------------------------------------------------------------
 
 # Choose static or shared libraries.
-VP_OPTION(BUILD_SHARED_LIBS  "" "" "Build ViSP shared libraries (.dll/.so) instead of static ones (.lib/.a)" "" NOT APPLE_FRAMEWORK)
+VP_OPTION(BUILD_SHARED_LIBS  "" "" "Build ViSP shared libraries (.dll/.so) instead of static ones (.lib/.a)" "" NOT (ANDROID OR APPLE_FRAMEWORK))
 # Build examples as an option.
 VP_OPTION(BUILD_EXAMPLES  "" "" "Build ViSP examples" "" ON)
 # Build examples as an option.
@@ -373,6 +379,9 @@ VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AN
 # Build java as an option
 VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
 VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
+VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
+VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
+VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
@@ -528,7 +537,11 @@ VP_OPTION(USE_SOWIN       SOWIN       ""    "Include Coin/SoWin support"   "" OF
 VP_OPTION(USE_SOQT        SOQT        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
+if (ANDROID)
+  VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON)
+else()
+  VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
+endif()
 VP_OPTION(USE_XML2        XML2        ""    "Include xml support"          "" ON IF NOT WINRT)
 if(CMAKE_TOOLCHAIN_FILE)
   # Find opencv2.framework for ios and naoqi
@@ -551,7 +564,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF (USE_REALSENSE OR USE_REALSENSE2) AND NOT WINRT AND NOT IOS)
-VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW OR ANDROID) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
+VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
 VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
@@ -716,16 +729,6 @@ if(UNIX)
   endif()
 endif()
 
-#---------------------------------------------------------------------
-# Android support
-#---------------------------------------------------------------------
-if(ANDROID)
-    include(cmake/DetectAndroidSDK.cmake)
-    if(NOT ANDROID_NATIVE_API_LEVEL GREATER 23)
-      message(WARNING "ViSP requires Android SDK tools revision 24 or newer. Otherwise tests and samples will no be compiled.")
-    endif()
-endif()
-
 #----------------------------------------------------------------------
 # Add 3rd-party libraries
 #----------------------------------------------------------------------
@@ -734,11 +737,17 @@ include(cmake/VISP3rdParty.cmake)
 # --- Java Support ---
 if(BUILD_JAVA)
   if(ANDROID)
-    include(cmake/DetectAndroidSDK.cmake)
+    include(cmake/android/ViSPDetectAndroidSDK.cmake)
   else()
     include(cmake/VISPDetectApacheAnt.cmake)
     find_package(JNI)
   endif()
+endif()
+
+if(ANDROID AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND (ANT_VERSION VERSION_GREATER 1.7) AND (ANDROID_TOOLS_Pkg_Revision GREATER 13))
+  SET(CAN_BUILD_ANDROID_PROJECTS TRUE)
+else()
+  SET(CAN_BUILD_ANDROID_PROJECTS FALSE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -941,6 +950,15 @@ if(USE_ARIA AND UNIX)
 elseif(USE_ARIA AND NOT UNIX)
   set(VISP_HAVE_PIONEER TRUE) # for header vpConfig.h
 endif()
+
+# examples
+if(BUILD_ANDROID_EXAMPLES)
+  add_subdirectory(samples)
+endif()
+
+if(ANDROID) 
+  add_subdirectory(platforms/android/service) 
+endif() 
 
 # ----------------------------------------------------------------------------
 # Finalization: generate configuration-based files
@@ -1209,6 +1227,44 @@ status("    To be built:"            VISP_MODULES_BUILD          THEN ${VISP_MOD
 status("    Disabled:"               VISP_MODULES_DISABLED_USER  THEN ${VISP_MODULES_DISABLED_USER_ST}  ELSE "-")
 status("    Disabled by dependency:" VISP_MODULES_DISABLED_AUTO  THEN ${VISP_MODULES_DISABLED_AUTO_ST}  ELSE "-")
 status("    Unavailable:"            VISP_MODULES_DISABLED_FORCE THEN ${VISP_MODULES_DISABLED_FORCE_ST} ELSE "-")
+
+# ========================== Android details ==========================
+if(ANDROID)
+  status("")
+  if(DEFINED ANDROID_NDK_REVISION)
+    set(__msg "${ANDROID_NDK} (ver ${ANDROID_NDK_REVISION})")
+  else()
+    set(__msg "location: ${ANDROID_NDK}")
+  endif()
+  status("  Android NDK: " ${__msg})
+  status("    Android ABI:" ${ANDROID_ABI})
+  if(BUILD_WITH_STANDALONE_TOOLCHAIN)
+    status("    NDK toolchain:" "standalone: ${ANDROID_STANDALONE_TOOLCHAIN}")
+  elseif(BUILD_WITH_ANDROID_NDK OR DEFINED ANDROID_TOOLCHAIN_NAME)
+    status("    NDK toolchain:" "${ANDROID_TOOLCHAIN_NAME}")
+  endif()
+  status("    STL type:" ${ANDROID_STL})
+  status("    Native API level:" ${ANDROID_NATIVE_API_LEVEL})
+
+  if(BUILD_ANDROID_PROJECTS)
+    status("  Android SDK: " "${ANDROID_SDK} (tools: ${ANDROID_SDK_TOOLS_VERSION} build tools: ${ANDROID_SDK_BUILD_TOOLS_VERSION})")
+    if(ANDROID_EXECUTABLE)
+      status("    android tool:"  "${ANDROID_EXECUTABLE}")
+    endif()
+  else()
+    status("  Android SDK: " "not used, projects are not built")
+  endif()
+  if(DEFINED ANDROID_SDK_COMPATIBLE_TARGET)
+    status("    SDK target:" "${ANDROID_SDK_COMPATIBLE_TARGET}")
+  endif()
+  if(DEFINED ANDROID_PROJECTS_BUILD_TYPE)
+    if(ANDROID_PROJECTS_BUILD_TYPE STREQUAL "ANT")
+      status("    Projects build scripts:" "Ant/Eclipse compatible")
+    elseif(ANDROID_PROJECTS_BUILD_TYPE STREQUAL "ANT")
+      status("    Projects build scripts:" "Gradle")
+    endif()
+  endif()
+endif()
 
 # ================== Windows RT features ==================
 if(WIN32)

@@ -88,7 +88,8 @@ public class VISPEngineService extends Service {
 
     public void onCreate() {
         Log.d(TAG, "Service starting");
-        for (Field field : R.xml.class.getDeclaredFields()) {
+  // TODO Was giving a bug at build time. Find out why
+  /*      for (Field field : 	R.xml.class.getDeclaredFields()) { // Build error here means that all config.xml files are missing (configuration problem)
             Log.d(TAG, "Found config: " + field.getName());
             final LibVariant lib = new LibVariant();
             try {
@@ -106,7 +107,7 @@ public class VISPEngineService extends Service {
                 variants.add(lib);
             Log.d(TAG, "Added config: " + lib.version);
             }
-        }
+        }*/
         super.onCreate();
         mEngineInterface = new VISPEngineInterface.Stub() {
 

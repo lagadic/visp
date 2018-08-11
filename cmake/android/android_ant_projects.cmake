@@ -40,7 +40,7 @@ else()
   message(FATAL_ERROR "Android: List of installed Android targets is empty")
 endif()
 
-# finds minimal installed SDK target compatible with provided names or API levels
+# finds minimal installed SDK target >=21 compatible with provided names or API levels
 # usage:
 #   get_compatible_android_api_level(VARIABLE [level1] [level2] ...)
 macro(android_get_compatible_target VAR)
@@ -60,6 +60,7 @@ macro(android_get_compatible_target VAR)
     #search for compatible levels
     foreach(lvl ${ANDROID_SDK_TARGETS})
       string(REGEX MATCH "[0-9]+$" __level "${lvl}")
+      if (__level GREATER 20) # Make sure to accept only API >= 21
       if(__level EQUAL __lvl)
         #look for exact match
         foreach(usrlvl ${ARGN})
@@ -79,8 +80,8 @@ macro(android_get_compatible_target VAR)
         endif()
         break()
       endif()
+      endif()
     endforeach()
-
     unset(__lvl)
     unset(__level)
   endif()
@@ -129,12 +130,12 @@ macro(add_android_project target path)
     file(STRINGS "${path}/jni/Android.mk" NATIVE_APP_GLUE REGEX ".*(call import-module,android/native_app_glue)" )
     if(NATIVE_APP_GLUE)
       if(ANDROID_NATIVE_API_LEVEL LESS 9 OR NOT EXISTS "${ANDROID_NDK}/sources/android/native_app_glue")
-        set(VISP_DEPENDENCIES_FOUND FALSE)
+        set(VP_DEPENDENCIES_FOUND FALSE)
       endif()
     endif()
   endif()
 
-  if(VISP_DEPENDENCIES_FOUND AND android_proj_sdk_target AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND ANDROID_TOOLS_Pkg_Revision GREATER 13 AND EXISTS "${path}/${ANDROID_MANIFEST_FILE}")
+  if(VP_DEPENDENCIES_FOUND AND android_proj_sdk_target AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND ANDROID_TOOLS_Pkg_Revision GREATER 13 AND EXISTS "${path}/${ANDROID_MANIFEST_FILE}")
 
     project(${target})
     set(android_proj_bin_dir "${CMAKE_CURRENT_BINARY_DIR}/.build")
@@ -236,7 +237,7 @@ macro(add_android_project target path)
 
     add_custom_command(
         OUTPUT "${android_proj_bin_dir}/bin/${target}-debug.apk"
-        COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.6 -Djava.source=1.6
+        COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.7 -Djava.source=1.7
         COMMAND ${CMAKE_COMMAND} -E touch "${android_proj_bin_dir}/bin/${target}-debug.apk" # needed because ant does not update the timestamp of updated apk
         WORKING_DIRECTORY "${android_proj_bin_dir}"
         DEPENDS ${android_proj_extra_deps} ${android_proj_file_deps} ${JNI_LIB_NAME}
