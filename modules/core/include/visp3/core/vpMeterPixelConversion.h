@@ -48,6 +48,7 @@
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpCircle.h>
+#include <visp3/core/vpSphere.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
@@ -66,16 +67,17 @@
 class VISP_EXPORT vpMeterPixelConversion
 {
 public:
+  static void convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center,
+                             double &mu20_p, double &mu11_p, double &mu02_p);
   static void convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center,
                              double &mu20_p, double &mu11_p, double &mu02_p);
-
   static void convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m, double &rho_p,
                           double &theta_p);
 
   /*!
 
     \brief Point coordinates conversion from normalized coordinates
-    \f$(x,y)\f$ in meter to pixel coordinates \f$(u,v)\f$.
+    \f$(x,y)\f$ in meter in the image plane to pixel coordinates \f$(u,v)\f$ in the image.
 
     The used formula depends on the projection model of the camera. To
     know the currently used projection model use
@@ -110,7 +112,7 @@ public:
   /*!
 
     \brief Point coordinates conversion from normalized coordinates
-    \f$(x,y)\f$ in meter to pixel coordinates.
+    \f$(x,y)\f$ in meter in the image plane to pixel coordinates in the image.
 
     The used formula depends on the projection model of the camera. To
     know the currently used projection model use
