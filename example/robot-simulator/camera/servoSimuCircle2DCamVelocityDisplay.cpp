@@ -117,7 +117,7 @@ OPTIONS:                                               Default\n\
 
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -171,7 +171,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return(EXIT_FAILURE);
     }
 
     vpImage<unsigned char> I(512, 512, 0);
@@ -188,26 +188,19 @@ int main(int argc, const char **argv)
 #endif
 
     if (opt_display) {
-      try {
-        // Display size is automatically defined by the image (I) size
-        display.init(I, 100, 100, "Camera view...");
-        // Display the image
-        // The image class has a member that specify a pointer toward
-        // the display that has been initialized in the display declaration
-        // therefore is is no longuer necessary to make a reference to the
-        // display variable.
-        vpDisplay::display(I);
-        vpDisplay::flush(I);
-      } catch (...) {
-        vpERROR_TRACE("Error while displaying the image");
-        exit(-1);
-      }
+      // Display size is automatically defined by the image (I) size
+      display.init(I, 100, 100, "Camera view...");
+      // Display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
     }
 
-    double px, py;
-    px = py = 600;
-    double u0, v0;
-    u0 = v0 = 256;
+    double px = 600, py = 600;
+    double u0 = I.getWidth()/2., v0 = I.getHeight() / 2.;
 
     vpCameraParameters cam(px, py, u0, v0);
 

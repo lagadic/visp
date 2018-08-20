@@ -67,17 +67,18 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
 }
 
 /*!
-  Converts an ellipse with parameters expressed in meter in the image
-  plane in parameters expressed in the image in pixels.
+  Noting that the perspective projection of a 3D circle is usually an ellipse, using the camera intrinsic parameters converts the
+  parameters of the 3D circle expressed in the image plane (these parameters are obtained after perspective projection
+  of the 3D circle) in the image with values in pixels.
 
-  The ellipse is here represented by its parameters \f$x_c,y_c,\mu_{20},
-  \mu_{11}, \mu_{02}\f$.
+  The ellipse resulting from the perspective projection is here represented by its parameters \f$x_c, y_c, \mu_{20},
+  \mu_{11}, \mu_{02}\f$ corresponding to its center coordinates in pixel and the centered moments.
 
   \param cam [in]: Intrinsic camera parameters.
-  \param circle [in]: 3D circle with parameters circle.p[] expressed in meters
-  in the image plane. \param center [out]: Center of the corresponding ellipse
-  in the image with coordinates expressed in pixels. \param
-  mu20_p,mu11_p,mu02_p [out]: Centered moments expressed in pixels.
+  \param circle [in]: 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
+  in the image plane. These parameters are internaly updated after perspective projection of the sphere.
+  \param center [out]: Center of the corresponding ellipse in the image with coordinates expressed in pixels.
+  \param mu20_p, mu11_p, mu02_p [out]: Centered moments expressed in pixels.
 
   The following code shows how to use this function:
   \code
@@ -98,6 +99,47 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   double mu20_m = circle.p[2];
   double mu11_m = circle.p[3];
   double mu02_m = circle.p[4];
+
+  // Convert from meter to pixels
+  vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center);
+  mu20_p = mu20_m * vpMath::sqr(cam.get_px());
+  mu11_p = mu11_m * cam.get_px() * cam.get_py();
+  mu02_p = mu02_m * vpMath::sqr(cam.get_py());
+}
+
+/*!
+  Noting that the perspective projection of a 3D sphere is usually an ellipse, using the camera intrinsic parameters converts the
+  parameters of the 3D sphere expressed in the image plane (these parameters are obtained after perspective projection
+  of the 3D sphere) in the image with values in pixels.
+
+  The ellipse resulting from the perspective projection is here represented by its parameters \f$x_c,y_c,\mu_{20},
+  \mu_{11}, \mu_{02}\f$ corresponding to its center coordinates in pixel and the centered moments.
+
+  \param cam [in]: Intrinsic camera parameters.
+  \param sphere [in]: 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
+  in the image plane. These parameters are internaly updated after perspective projection of the sphere.
+  \param center [out]: Center of the corresponding ellipse in the image with coordinates expressed in pixels.
+  \param mu20_p, mu11_p, mu02_p [out]: Centered moments expressed in pixels.
+
+  The following code shows how to use this function:
+  \code
+  vpSphere sphere;
+  double mu20_p, mu11_p, mu02_p;
+  sphere.changeFrame(cMo);
+  sphere.projection();
+  vpMeterPixelConversion::convertEllipse(cam, sphere, center_p, mu20_p, mu11_p, mu02_p);
+  vpDisplay::displayEllipse(I, center_p, mu20_p, mu11_p, mu02_p);
+  \endcode
+ */
+void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center,
+                                            double &mu20_p, double &mu11_p, double &mu02_p)
+{
+  // Get the parameters of the ellipse in the image plane
+  double xc_m = sphere.p[0];
+  double yc_m = sphere.p[1];
+  double mu20_m = sphere.p[2];
+  double mu11_m = sphere.p[3];
+  double mu02_m = sphere.p[4];
 
   // Convert from meter to pixels
   vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center);
