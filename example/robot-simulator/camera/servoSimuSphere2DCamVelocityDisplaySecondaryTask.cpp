@@ -180,8 +180,10 @@ int main(int argc, const char **argv)
 #endif
 
     if (opt_display) {
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
       // Display size is automatically defined by the image (I) size
       display.init(I, 100, 100, "Camera view...");
+#endif
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
