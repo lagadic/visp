@@ -146,7 +146,7 @@ endif()
 if(ANDROID)
   # set binary path
   vp_update(VISP_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}bin/${ANDROID_NDK_ABI_NAME}")
-  
+
   # set samples path
   vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
 
@@ -722,7 +722,7 @@ if(UNIX)
     )
     install(FILES
       ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
+      DESTINATION man/man1
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT dev
     )
@@ -956,9 +956,9 @@ if(BUILD_ANDROID_EXAMPLES)
   add_subdirectory(samples)
 endif()
 
-if(ANDROID) 
-  add_subdirectory(platforms/android/service) 
-endif() 
+if(ANDROID)
+  add_subdirectory(platforms/android/service)
+endif()
 
 # ----------------------------------------------------------------------------
 # Finalization: generate configuration-based files
