@@ -83,13 +83,13 @@ int main()
     I = 255; // I is a white image
 
     // create a display window
-#ifdef VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif VISP_HAVE_OPENCV
+#elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV display;
-#elif VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
 #else
   std::cout << "Please install X11, GDI, OpenCV or GTK to see the result of this example" << std::endl;
