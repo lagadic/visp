@@ -191,6 +191,13 @@ else()
 endif()
 set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
+# where to install the data
+if (UNIX)
+  set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+else()
+  set(VISP_INSTALL_DATAROOTDIR "")
+endif()
+
 # the include directory we depend on for the build
 set(VISP_INCLUDE_DIR ${VISP_BINARY_DIR}/${VISP_INC_INSTALL_PATH})
 set(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
