@@ -398,7 +398,11 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
   \param useOptimized : Use SSE if true and available.
 */
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
+#if VISP_HAVE_SSE2
                                            const bool useOptimized)
+#else
+                                           const bool)
+#endif
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw vpException(vpException::dimensionError, "Error: in vpImageTools::normalizedCorrelation(): "
