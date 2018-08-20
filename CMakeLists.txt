@@ -146,7 +146,7 @@ endif()
 if(ANDROID)
   # set binary path
   vp_update(VISP_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}bin/${ANDROID_NDK_ABI_NAME}")
-  
+
   # set samples path
   vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
 
@@ -160,34 +160,42 @@ if(ANDROID)
   vp_update(VISP_OTHER_INSTALL_PATH   sdk/etc)
 endif()
 
+# where to install the data (share for linux)
+if (UNIX)
+  # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+  set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp")
+else()
+  set(VISP_INSTALL_DATAROOTDIR "")
+endif()
+
 # where to install the library and headers
 if(WIN32)
-  set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR})
+  set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR})
   if(VISP_STATIC)
-    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+    set(VISP_LIB_INSTALL_PATH       "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
   else()
-    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
+    set(VISP_LIB_INSTALL_PATH       "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
   endif()
-  set(VISP_BIN_INSTALL_PATH    "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
-  set(VISP_3P_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
-  set(VISP_SAMPLES_SRC_INSTALL_PATH    samples/native)
-  set(VISP_JAR_INSTALL_PATH java)
-  set(VISP_OTHER_INSTALL_PATH   etc)
-  set(VISP_CONFIG_INSTALL_PATH  ".")
+  set(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
+  set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+  set(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
+  set(VISP_JAR_INSTALL_PATH         java)
+  set(VISP_OTHER_INSTALL_PATH       etc)
+  set(VISP_CONFIG_INSTALL_PATH      ".")
 else()
   # The location where includes and libraries will be installed
 
   # The 2 following commented lines should be used to enable multi-arch support.
   # Since catkin doesn't support multi-arch we keep these 2 lines commented for the moment.
-  # set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-  # set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-  set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR})
-  set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR})
-  set(VISP_BIN_INSTALL_PATH     ${CMAKE_INSTALL_BINDIR})
-  set(VISP_3P_LIB_INSTALL_PATH  share/ViSP/3rdparty/${VISP_LIB_INSTALL_PATH})
-  set(VISP_SAMPLES_SRC_INSTALL_PATH    share/ViSP/samples)
-  set(VISP_JAR_INSTALL_PATH share/ViSP/java)
-  set(VISP_OTHER_INSTALL_PATH   share/ViSP)
+  # set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
+  # set(VISP_LIB_INSTALL_PATH         ${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
+  set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
+  set(VISP_LIB_INSTALL_PATH         "${CMAKE_INSTALL_LIBDIR}")
+  set(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
+  set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_DATAROOTDIR}/3rdparty/${VISP_LIB_INSTALL_PATH}")
+  set(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
+  set(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
+  set(VISP_OTHER_INSTALL_PATH       "${VISP_INSTALL_DATAROOTDIR}")
 endif()
 set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
@@ -722,7 +730,7 @@ if(UNIX)
     )
     install(FILES
       ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
+      DESTINATION man/man1
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT dev
     )
@@ -956,9 +964,9 @@ if(BUILD_ANDROID_EXAMPLES)
   add_subdirectory(samples)
 endif()
 
-if(ANDROID) 
-  add_subdirectory(platforms/android/service) 
-endif() 
+if(ANDROID)
+  add_subdirectory(platforms/android/service)
+endif()
 
 # ----------------------------------------------------------------------------
 # Finalization: generate configuration-based files

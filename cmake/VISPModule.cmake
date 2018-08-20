@@ -612,11 +612,11 @@ endmacro()
 macro(vp_target_include_modules_recurse target)
   foreach(d ${ARGN})
     if(d MATCHES "^visp_" AND HAVE_${d})
-			if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
-				vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
+      if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
+        vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
       endif()
-			if(VISP_MODULE_${d}_DEPS)
-				vp_target_include_modules(${target} ${VISP_MODULE_${d}_DEPS})
+      if(VISP_MODULE_${d}_DEPS)
+        vp_target_include_modules(${target} ${VISP_MODULE_${d}_DEPS})
       endif()
     elseif(EXISTS "${d}")
       vp_target_include_directories(${target} "${d}")
@@ -709,11 +709,7 @@ macro(vp_glob_module_copy_data src dst)
     )
 
     # install
-    if(UNIX)
-      set(__install_dst "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/${dst}")
-    else()
-      set(__install_dst "${dst}")
-    endif()
+    set(__install_dst "${VISP_INSTALL_DATAROOTDIR}/${dst}")
 
     install(FILES ${__d}
        DESTINATION "${__install_dst}"
