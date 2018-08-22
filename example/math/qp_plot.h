@@ -97,7 +97,7 @@ public:
   vpPlot* P;
 };
 #else
-class VISP_EXPORT QPlot
+class VISP_EXPORT QPPlot
 {
 public:
   QPPlot(int, int , std::vector<std::string> ) {}
