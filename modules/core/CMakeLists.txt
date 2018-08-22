@@ -64,11 +64,6 @@ if(USE_OPENCV)
     # ReleaseWithDebugInfo was requested to detect libopencv-devel under Fedora 20
     # RelWithDebugInfo was requested to detect ros-hydro-opencv2 2.4.9 under Ubuntu 12.04 LTS with ROS hydro
     set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
-    if(POLICY CMP0045)
-      # Fix Error on non-existent target in get_target_property for 3rd party location extraction
-      cmake_policy(PUSH)
-      cmake_policy(SET CMP0045 NEW)
-    endif()
 
     foreach(component_ ${OpenCV_LIB_COMPONENTS})
       foreach(imp_config_ ${config_})
@@ -94,7 +89,7 @@ if(USE_OPENCV)
           list(APPEND opt_libs "${component_property_${imp_config_}_}")
         endif()
 
-        if(component_property_3rdparty_${imp_config_}_)
+        if(EXISTS "${component_property_3rdparty_${imp_config_}_}")
           foreach(3rdparty_ ${component_property_3rdparty_${imp_config_}_})
             #message("3rdparty_ ${3rdparty_}")
             list(FIND OpenCV_LIB_COMPONENTS ${3rdparty_} 3rdparty_is_opencv_component_)
@@ -132,10 +127,6 @@ if(USE_OPENCV)
       endforeach()
     endforeach()
 
-    if(POLICY CMP0045)
-      # Fix Error on non-existent target in get_target_property for 3rd party location extraction
-      cmake_policy(POP)
-    endif()
   elseif(APPLE_FRAMEWORK)
     # Add opencv framework
     list(APPEND opt_libs ${OpenCV_LIBRARIES})    # see FindMyOpenCV.cmake
