@@ -251,146 +251,235 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 \brief  Compute the pose of a planar object using Lagrange approach.
 
 \param cMo : Estimated pose. No initialisation is requested to estimate cMo.
-\param coplanar_plane_type : Type of coplanar plane:
-   1: if plane x=cst
-   2: if plane y=cst
-   3: if plane z=cst
-   0: any other plane
 */
+
 void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type)
 {
+/* FC : coplanar_plane_type à supprimer des arguments */
 
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::PoseLagrange(...) " << std::endl;
 #endif
   try {
-    double s;
-    unsigned int i;
+    // determination of the plane equation a X + b Y + c Z + d = 0
+    // FC : long copy/paste from vpPose::coplanar. To be improved...
+  vpPoint P1, P2, P3;
+  double x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0, z1 = 0, z2 = 0, z3 = 0;
 
+  // FC : useless
+  // std::list<vpPoint>::const_iterator it = listP.begin();
+
+  // Get three 3D points that are not collinear and that are not at origin
+  // FC : I think one point could be at origin (to be checked)
+
+  bool degenerate = true;
+  bool not_on_origin = true;
+  std::list<vpPoint>::const_iterator it_tmp;
+
+  std::list<vpPoint>::const_iterator it_i, it_j, it_k;
+  for (it_i = listP.begin(); it_i != listP.end(); ++it_i) {
+    if (degenerate == false) {
+      // std::cout << "Found a non degenerate configuration" << std::endl;
+      break;
+    }
+    P1 = *it_i;
+    // Test if point is on origin
+    if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
+      not_on_origin = false;
+    } else {
+      not_on_origin = true;
+    }
+    if (not_on_origin) {
+      it_tmp = it_i;
+      ++it_tmp; // j = i+1
+      for (it_j = it_tmp; it_j != listP.end(); ++it_j) {
+        if (degenerate == false) {
+          // std::cout << "Found a non degenerate configuration" << std::endl;
+          break;
+        }
+        P2 = *it_j;
+        if ((std::fabs(P2.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(P2.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
+            (std::fabs(P2.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
+          not_on_origin = false;
+        } else {
+          not_on_origin = true;
+        }
+        if (not_on_origin) {
+          it_tmp = it_j;
+          ++it_tmp; // k = j+1
+          for (it_k = it_tmp; it_k != listP.end(); ++it_k) {
+            P3 = *it_k;
+            if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
+                (std::fabs(P3.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
+                (std::fabs(P3.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
+              not_on_origin = false;
+            } else {
+              not_on_origin = true;
+            }
+            if (not_on_origin) {
+              x1 = P1.get_oX();
+              x2 = P2.get_oX();
+              x3 = P3.get_oX();
+
+              y1 = P1.get_oY();
+              y2 = P2.get_oY();
+              y3 = P3.get_oY();
+
+              z1 = P1.get_oZ();
+              z2 = P2.get_oZ();
+              z3 = P3.get_oZ();
+
+              vpColVector a_b(3), b_c(3), cross_prod;
+              a_b[0] = x1 - x2;
+              a_b[1] = y1 - y2;
+              a_b[2] = z1 - z2;
+              b_c[0] = x2 - x3;
+              b_c[1] = y2 - y3;
+              b_c[2] = z2 - z3;
+
+              cross_prod = vpColVector::crossProd(a_b, b_c);
+              if (cross_prod.sumSquare() <= std::numeric_limits<double>::epsilon())
+                degenerate = true; // points are collinear
+              else
+                degenerate = false;
+            }
+            if (degenerate == false)
+              break;
+          }
+        }
+      }
+    }
+  }
+  double a = y1 * z2 - y1 * z3 - y2 * z1 + y2 * z3 + y3 * z1 - y3 * z2;
+  double b = -x1 * z2 + x1 * z3 + x2 * z1 - x2 * z3 - x3 * z1 + x3 * z2;
+  double c = x1 * y2 - x1 * y3 - x2 * y1 + x2 * y3 + x3 * y1 - x3 * y2;
+  double d = -x1 * y2 * z3 + x1 * y3 * z2 + x2 * y1 * z3 - x2 * y3 * z1 - x3 * y1 * z2 + x3 * y2 * z1;
+
+  if (c < 0.0){  // imposing c >= 0
+    a = -a;
+    b = -b;
+    c = -c;
+    d = -d;
+  }
+  // to have (a,b,c) as a unit vector if it was not the case
+  double n = 1.0/sqrt(a*a+ b*b + c*c);  // Not possible to have a NaN...
+  a *= n;
+  b *= n;  
+  c *= n;
+  d *= n;
+  // printf("a = %lf, b = %lf, c = %lf, d = %lf\n",a,b,c,d);
+    // transformation to have object plane with equation Z = 0
+    vpColVector r1(3), r2(3), r3(3);
+
+    r3[0] = a;
+    r3[1] = b;
+    r3[2] = c;
+    // build r1 as a unit vector orthogonal to r3 
+    double n1 = sqrt(1.0-a*a);
+    double n2 = sqrt(1.0-b*b);
+    if (n1 >= n2){
+      r1[0] = n1;
+      r1[1] = -a*b/n1;
+      r1[2] = -a*c/n1;
+    }
+    else{
+      r1[0] = -a*b/n2;
+      r1[1] = n2;
+      r1[2] = -b*c/n2;
+    }
+    // double norm = r1[0]*r1[0] + r1[1]*r1[1] + r1[2]*r1[2];
+    // double crossprod = r1[0]*r3[0] + r1[1]*r3[1] + r1[2]*r3[2];
+    // printf("r1 norm = 1 ?  %lf, r1^T r3 = 0 ?  %lf\n",norm, crossprod);
+    // r2 unit vector orthogonal to r3 and r1 
+    r2 = vpColVector::crossProd(r3, r1);
+
+    vpHomogeneousMatrix fMo;
+    for (unsigned int i=0;i<3;i++){
+      fMo[0][i] = r1[i];
+      fMo[1][i] = r2[i];
+      fMo[2][i] = r3[i];
+    }
+    fMo[0][3] = fMo[1][3] = 0.0;
+    fMo[2][3] = d;
+
+    // std::cout << "fMo : "  << std::endl << fMo  << std::endl; 
+    // Build and solve the system
     unsigned int k = 0;
     unsigned int nl = npt * 2;
 
-    vpMatrix a(nl, 3);
-    vpMatrix b(nl, 6);
+    vpMatrix A(nl, 3);
+    vpMatrix B(nl, 6);
     vpPoint P;
-    i = 0;
-
-    if (coplanar_plane_type == 1) { // plane ax=d
-      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
-        P = *it;
-        a[k][0] = -P.get_oY();
-        a[k][1] = 0.0;
-        a[k][2] = P.get_oY() * P.get_x();
-
-        a[k + 1][0] = 0.0;
-        a[k + 1][1] = -P.get_oY();
-        a[k + 1][2] = P.get_oY() * P.get_y();
-
-        b[k][0] = -P.get_oZ();
-        b[k][1] = 0.0;
-        b[k][2] = P.get_oZ() * P.get_x();
-        b[k][3] = -1.0;
-        b[k][4] = 0.0;
-        b[k][5] = P.get_x();
-
-        b[k + 1][0] = 0.0;
-        b[k + 1][1] = -P.get_oZ();
-        b[k + 1][2] = P.get_oZ() * P.get_y();
-        b[k + 1][3] = 0.0;
-        b[k + 1][4] = -1.0;
-        b[k + 1][5] = P.get_y();
-
-        k += 2;
-      }
-
-    } else if (coplanar_plane_type == 2) { // plane by=d
-      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
-        P = *it;
-        a[k][0] = -P.get_oX();
-        a[k][1] = 0.0;
-        a[k][2] = P.get_oX() * P.get_x();
-
-        a[k + 1][0] = 0.0;
-        a[k + 1][1] = -P.get_oX();
-        a[k + 1][2] = P.get_oX() * P.get_y();
-
-        b[k][0] = -P.get_oZ();
-        b[k][1] = 0.0;
-        b[k][2] = P.get_oZ() * P.get_x();
-        b[k][3] = -1.0;
-        b[k][4] = 0.0;
-        b[k][5] = P.get_x();
-
-        b[k + 1][0] = 0.0;
-        b[k + 1][1] = -P.get_oZ();
-        b[k + 1][2] = P.get_oZ() * P.get_y();
-        b[k + 1][3] = 0.0;
-        b[k + 1][4] = -1.0;
-        b[k + 1][5] = P.get_y();
-
-        k += 2;
-      }
-
-    } else { // plane cz=d or any other
 
       for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
         P = *it;
-        a[k][0] = -P.get_oX();
-        a[k][1] = 0.0;
-        a[k][2] = P.get_oX() * P.get_x();
 
-        a[k + 1][0] = 0.0;
-        a[k + 1][1] = -P.get_oX();
-        a[k + 1][2] = P.get_oX() * P.get_y();
+	// Transform each point in plane Z = 0
+	vpColVector Xf, X(4);
+	X[0] = P.get_oX();
+	X[1] = P.get_oY();
+	X[2] = P.get_oZ();
+	X[3] = 1.0;
+	Xf = fMo * X;
+	// printf("Z = 0 = %lf\n",Xf[2]);
+	// build the system
+        A[k][0] = -Xf[0];
+        A[k][1] = 0.0;
+        A[k][2] = Xf[0] * P.get_x();
 
-        b[k][0] = -P.get_oY();
-        b[k][1] = 0.0;
-        b[k][2] = P.get_oY() * P.get_x();
-        b[k][3] = -1.0;
-        b[k][4] = 0.0;
-        b[k][5] = P.get_x();
+        A[k + 1][0] = 0.0;
+        A[k + 1][1] = -Xf[0];
+        A[k + 1][2] = Xf[0] * P.get_y();
 
-        b[k + 1][0] = 0.0;
-        b[k + 1][1] = -P.get_oY();
-        b[k + 1][2] = P.get_oY() * P.get_y();
-        b[k + 1][3] = 0.0;
-        b[k + 1][4] = -1.0;
-        b[k + 1][5] = P.get_y();
+        B[k][0] = -Xf[1];
+        B[k][1] = 0.0;
+        B[k][2] = Xf[1] * P.get_x();
+        B[k][3] = -1.0;
+        B[k][4] = 0.0;
+        B[k][5] = P.get_x();
+
+        B[k + 1][0] = 0.0;
+        B[k + 1][1] = -Xf[1];
+        B[k + 1][2] = Xf[1] * P.get_y();
+        B[k + 1][3] = 0.0;
+        B[k + 1][4] = -1.0;
+        B[k + 1][5] = P.get_y();
 
         k += 2;
       }
-    }
     vpColVector X1(3);
     vpColVector X2(6);
 
 #if (DEBUG_LEVEL2)
     {
-      std::cout << "a " << a << std::endl;
-      std::cout << "b " << b << std::endl;
+      std::cout << "A " << std::endl << A << std::endl;
+      std::cout << "B " << std::endl << B << std::endl;
     }
 #endif
 
-    lagrange(a, b, X1, X2);
+    lagrange(A, B, X1, X2);
 
 #if (DEBUG_LEVEL2)
     {
-      std::cout << "ax1+bx2 (devrait etre 0) " << (a * X1 + b * X2).t() << std::endl;
-      std::cout << "norme X1 " << X1.sumSquare() << std::endl;
-      ;
+      std::cout << "A X1+B X2 (should be 0): " << (A * X1 + B * X2).t() << std::endl;
+      std::cout << " X1 norm: " << X1.sumSquare() << std::endl;
     }
 #endif
 
-    if (X2[5] < 0.0) { /* car Zo > 0	*/
-      for (i = 0; i < 3; i++)
+    if (X2[5] < 0.0) { /* to obtain Zo > 0	*/
+      for (unsigned int i = 0; i < 3; i++)
         X1[i] = -X1[i];
-      for (i = 0; i < 6; i++)
+      for (unsigned int i = 0; i < 6; i++)
         X2[i] = -X2[i];
     }
-    s = 0.0;
-    for (i = 0; i < 3; i++) {
+    double s = 0.0;
+    for (unsigned int i = 0; i < 3; i++) {
       s += (X1[i] * X2[i]);
     }
-    for (i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < 3; i++) {
       X2[i] -= (s * X1[i]);
     } /* X1^T X2 = 0	*/
 
@@ -413,11 +502,11 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane
     }
 
     s = 1.0 / sqrt(s);
-    for (i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < 3; i++) {
       X2[i] *= s;
     } /* X2^T X2 = 1	*/
 
-    calculTranslation(a, b, nl, 3, 3, X1, X2);
+    calculTranslation(A, B, nl, 3, 3, X1, X2);
 
     // if (err != OK)
     {
@@ -425,39 +514,21 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane
       // PrintError(err) ;
       //    return err ;
     }
-
-    if (coplanar_plane_type == 1) { // plane ax=d
-      cMo[0][0] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
-      cMo[1][0] = (X1[2] * X2[0]) - (X1[0] * X2[2]);
-      cMo[2][0] = (X1[0] * X2[1]) - (X1[1] * X2[0]);
-
-      for (i = 0; i < 3; i++) { /* calcul de la matrice de passage	*/
-        cMo[i][1] = X1[i];
-        cMo[i][2] = X2[i];
-        cMo[i][3] = X2[i + 3];
-      }
-
-    } else if (coplanar_plane_type == 2) { // plane by=d
-      cMo[0][1] = (X1[2] * X2[1]) - (X1[1] * X2[2]);
-      cMo[1][1] = (X1[0] * X2[2]) - (X1[2] * X2[0]);
-      cMo[2][1] = (X1[1] * X2[0]) - (X1[0] * X2[1]);
-
-      for (i = 0; i < 3; i++) { /* calcul de la matrice de passage	*/
-        cMo[i][0] = X1[i];
-        cMo[i][2] = X2[i];
-        cMo[i][3] = X2[i + 3];
-      }
-    } else { // plane cz=d or any other
-      cMo[0][2] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
-      cMo[1][2] = (X1[2] * X2[0]) - (X1[0] * X2[2]);
-      cMo[2][2] = (X1[0] * X2[1]) - (X1[1] * X2[0]);
-
-      for (i = 0; i < 3; i++) { /* calcul de la matrice de passage	*/
-        cMo[i][0] = X1[i];
-        cMo[i][1] = X2[i];
-        cMo[i][3] = X2[i + 3];
-      }
+    vpHomogeneousMatrix cMf;
+    /* X1 x X2 */
+    cMf[0][2] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
+    cMf[1][2] = (X1[2] * X2[0]) - (X1[0] * X2[2]);
+    cMf[2][2] = (X1[0] * X2[1]) - (X1[1] * X2[0]);
+    /* calcul de la matrice de passage	*/
+    for (unsigned int i = 0; i < 3; i++) { 
+      cMf[i][0] = X1[i];
+      cMf[i][1] = X2[i];
+      cMf[i][3] = X2[i + 3];
     }
+std::cout << "cMf : "  << std::endl << cMf  << std::endl; 
+
+    // Apply the transform to go back to object frame
+    cMo = cMf * fMo;
   } catch (...) {
     throw; // throw the original exception
   }
@@ -480,6 +551,10 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     unsigned int k = 0;
     unsigned int nl = npt * 2;
+
+    /* FC : ici printf, mais ce serait mieux de retourner une erreur, mais 
+            void, ou une exception (il y en a une dans vpComputePose) */
+    if (npt < 6) printf (" Lagrange, non planar case, insufficient number of points %d < 6\n",npt);
 
     vpMatrix a(nl, 3);
     vpMatrix b(nl, 9);
