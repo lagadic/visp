@@ -3,6 +3,54 @@
 \page tutorial-android-getting-started Tutorial: Creating a simple Android App with ViSP
 \tableofcontents
 
-This page needs to be completed.
+\section android-getting-started Getting Started 
+In this tutorial, we'll create an Android app demonstrating AprilTag detection using the ViSP SDK. We assume that you've already created the SDK using this tutorial: \ref tutorial-create-android-sdk.
+
+This tutorial assumes you have the following software installed and configured:
+- <a href="https://developer.android.com/studio">Android Studio</a> 
+- <a href="https://developer.android.com/studio/run/emulator">Android Emulator</a> - If you want to test your apps on an emulator first 
+
+\section create-a-project Create an Android Project
+If you're new to app development using Android Studio, we'll recommend <a href="https://developer.android.com/training/basics/firstapp/">this tutorial</a> for getting acquainted to it.
+Following <a href="https://developer.android.com/training/basics/firstapp/creating-project">this tutorial</a> create an Android Project with an `Empty Activity`. Make sure to keep minSdkVersion >= 21, since the SDK is not compatible with older versions. You're app's `build.gradle` file should look like:
+\code
+android {
+    compileSdkVersion ...
+    defaultConfig {
+        applicationId "example.myapplication"
+        minSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+	...
+    }
+\encode
+
+\section import-the-sdk Importing ViSP SDK 
+In Android Studio, head to `File` -> `New` -> `Import Module` option.
+\image Importing-New-Module tut-getting-started-import-module.png
+
+Head over to the directory where you've installed the SDK. Select `sdk` -> `java` folder and name the module.
+\image Visp-Module-Path tut-getting-started-module-path.png
+
+This only imports the Java code. You need to copy the libraries too(`.so` files in linux, `.dll` in windows and `.dylib` in mac). Create a folder named jniLibs in `app/src/main` folder. Then depending upon your emulator/device architecture(mostly `x86` or `x86_64`), create a folder inside `jniLibs` and copy those libraries into your project.
+\image Copy-Libraries tut-getting-started-copy-libs.png
+
+\section begin-camera-preview Begin Camera Preview
+Before you begin scanning, you need to ask user for Camera Permissions. Firstly in your manifest file, you need to include
+\code
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="...">
+	
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <application ...>
+        ...
+    </application>
+</manifest>
+\endcode
 
 */
