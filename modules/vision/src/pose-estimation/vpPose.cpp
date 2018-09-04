@@ -407,7 +407,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     int coplanar_plane_type;
     bool plan = coplanar(coplanar_plane_type);
 
-    if (plan == true && coplanar_plane_type > 0) // only plane oX=d, oY=d or oZ=d
+    if (plan == true)
     {
 
       if (coplanar_plane_type == 4) {
@@ -415,9 +415,9 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
         vpERROR_TRACE("(points are collinear)");
         throw(vpPoseException(vpPoseException::notEnoughPointError, "Points are collinear "));
       }
-      if (npt < 4) {
+      if (npt < 6) {
         vpERROR_TRACE("Lagrange method cannot be used in that case ");
-        vpERROR_TRACE("(at least 4 points are required)");
+        vpERROR_TRACE("(at least 6 points are required)");
         vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
         throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
       }
