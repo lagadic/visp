@@ -56,7 +56,7 @@
 int main()
 {
   try {
-    // We want to calibrate the hand to eye extrinsic camera parameters from 6
+    // We want to calibrate the hand-eye extrinsic camera parameters from 6
     // couple of poses: cMo and wMe
     const unsigned int N = 6;
     // Input: six couple of poses used as input in the calibration proces
@@ -77,7 +77,7 @@ int main()
     erc[2] = vpMath::rad(25);  // 25 deg
 
     eMc.buildFrom(etc, erc);
-    std::cout << "Simulated hand to eye transformation: eMc " << std::endl;
+    std::cout << "Simulated hand-eye transformation: eMc " << std::endl;
     std::cout << eMc << std::endl;
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
               << std::endl;
@@ -90,11 +90,11 @@ int main()
         cMo[0].buildFrom(0, 0, 0.5, 0, 0, 0); // z=0.5 m
         wMe[0].buildFrom(0, 0, 0, 0, 0, 0);   // Id
       } else if (i == 1)
-        v_c[3] = M_PI / 8;
+        v_c[3] = M_PI/8 ;
       else if (i == 2)
-        v_c[4] = M_PI / 8;
+        v_c[4] = M_PI/8 ; 
       else if (i == 3)
-        v_c[5] = M_PI / 10;
+	v_c[5] = M_PI/10 ; 
       else if (i == 4)
         v_c[0] = 0.5;
       else if (i == 5)
@@ -111,7 +111,8 @@ int main()
       }
     }
 
-    if (0) {
+    //    if (1) {
+    if (1) {
       for (unsigned int i = 0; i < N; i++) {
         vpHomogeneousMatrix wMo;
         wMo = wMe[i] * eMc * cMo[i];
@@ -133,7 +134,7 @@ int main()
     // transformations
     vpCalibration::calibrationTsai(cMo, wMe, eMc);
 
-    std::cout << std::endl << "Output: hand to eye calibration result: eMc estimated " << std::endl;
+    std::cout << std::endl << "Output: hand-eye calibration result: eMc estimated " << std::endl;
     std::cout << eMc << std::endl;
     eMc.extract(erc);
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
