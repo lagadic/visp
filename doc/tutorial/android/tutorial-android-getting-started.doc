@@ -23,19 +23,19 @@ android {
         versionName "1.0"
 	...
     }
-\encode
+\endcode
 
 \section import-the-sdk Importing ViSP SDK 
 In Android Studio, head to `File` -> `New` -> `Import Module` option.
-\image Importing-New-Module tut-getting-started-import-module.png
+\image html tut-getting-started-import-module.png
 
 Head over to the directory where you've installed the SDK. Select `sdk` -> `java` folder and name the module.
-\image Visp-Module-Path tut-getting-started-module-path.png
+\image html tut-getting-started-module-path.png
 
-This only imports the Java code. You need to copy the libraries too(`.so` files in linux, `.dll` in windows and `.dylib` in mac). Create a folder named jniLibs in `app/src/main` folder. Then depending upon your emulator/device architecture(mostly `x86` or `x86_64`), create a folder inside `jniLibs` and copy those libraries into your project.
-\image Copy-Libraries tut-getting-started-copy-libs.png
+This only imports the Java code. You need to copy the libraries too (`.so` files in linux, `.dll` in windows and `.dylib` in mac). Create a folder named jniLibs in `app/src/main` folder. Then depending upon your emulator/device architecture (mostly `x86` or `x86_64`), create a folder inside `jniLibs` and copy those libraries into your project.
+\image html tut-getting-started-copy-libs.png
 
-Then in your `MainActivity.java`, you need to load Visp libraries
+Then in your `MainActivity.java`, you need to load ViSP libraries
 \code
 public class MainActivity{
 
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 }
 \endcode
 
-\section begin-camera-preview Starting Camera Preview
+\section start-camera-preview Starting Camera Preview
 Now create a new activity `CameraPreview.java`. This will call the camera API. The incident image is recieved as a byte array which can be easily manipulated for our purposes. We can render the resultant image as Java Bitmap in an `ImageView` element. In brief,
 \code
 public class CameraPreviewActivity extends AppCompatActivity {
@@ -200,7 +200,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 }
 \endcode
 
-Note that the detector works on grayscale images. The camera API returns values for all pixels(R,G,B,A). Depending on the image format rendered in Android, we can convert those color values into grayscale. <a href="https://developer.android.com/reference/android/graphics/ImageFormat">Refer this</a> page, for a complete list of formats.
+Note that the detector works on grayscale images. The camera API returns values for all pixels (R,G,B,A). Depending on the image format rendered in Android, we can convert those color values into grayscale. <a href="https://developer.android.com/reference/android/graphics/ImageFormat">Refer this</a> page, for a complete list of formats.
 Most commonly used format is `NV21`. In it, the first few bytes are grayscale values of the image and rest are used to compute the color image. So AprilTag detector process only first `width*height` bytes of the image as `VpImageUChar`.
 
 Also, we're detecting tags every 50 milli-seconds. This is simple but efficient since actual tag dectection time will vary according to the image and should be an asynchronous task. 
