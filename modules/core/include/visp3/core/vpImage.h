@@ -317,7 +317,7 @@ public:
   vpImage<Type> &operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
   bool operator!=(const vpImage<Type> &I);
-  friend std::ostream &operator<<<>(std::ostream &s, const vpImage<Type> &I);
+  friend std::ostream &operator<< <>(std::ostream &s, const vpImage<Type> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<char> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
