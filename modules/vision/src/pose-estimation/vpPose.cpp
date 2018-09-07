@@ -359,7 +359,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
   - vpPose::RANSAC: Robust Ransac aproach (does't need an initialization)
 
 */
-bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *))
+bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
   if (npt < 4) {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);

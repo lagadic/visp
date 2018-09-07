@@ -369,14 +369,14 @@ public:
 
   bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
                    const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
-                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL);
+                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
-                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL);
+                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
                    std::vector<unsigned int> &inlierIndex, double &elapsedTime,
-                   bool (*func)(vpHomogeneousMatrix *) = NULL);
+                   bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   void createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsigned char> &ICurrent,
                            vpImage<unsigned char> &IMatching);
@@ -680,9 +680,9 @@ public:
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  bool (*func)(vpHomogeneousMatrix *) = NULL, const vpRect &rectangle = vpRect());
+                  bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL,
+                  double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL,
                   const vpRect &rectangle = vpRect());
 
   bool matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
@@ -692,7 +692,7 @@ public:
 
   bool matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                            double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                           bool (*func)(vpHomogeneousMatrix *) = NULL, const vpRect &rectangle = vpRect());
+                           bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
 
   void reset();
 

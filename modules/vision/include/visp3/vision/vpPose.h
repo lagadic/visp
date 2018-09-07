@@ -159,7 +159,7 @@ private:
     RansacFunctor(const vpHomogeneousMatrix &cMo_, const unsigned int ransacNbInlierConsensus_,
                   const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
                   const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
-                  bool (*func_)(vpHomogeneousMatrix *)
+                  bool (*func_)(const vpHomogeneousMatrix &)
               #ifdef VISP_HAVE_CPP11_COMPATIBILITY
                   , std::atomic<bool> &abort
               #endif
@@ -193,7 +193,7 @@ private:
     bool m_checkDegeneratePoints;
     vpHomogeneousMatrix m_cMo;
     bool m_foundSolution;
-    bool (*m_func)(vpHomogeneousMatrix *);
+    bool (*m_func)(const vpHomogeneousMatrix &);
     unsigned int m_initial_seed;
     std::vector<vpPoint> m_listOfUniquePoints;
     unsigned int m_nbInliers;
@@ -217,7 +217,7 @@ public:
   void addPoints(const std::vector<vpPoint> &lP);
   void clearPoint();
 
-  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *) = NULL);
+  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
   bool coplanar(int &coplanar_plane_type);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
@@ -228,7 +228,7 @@ public:
   void poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type = 0);
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo);
   void poseLowe(vpHomogeneousMatrix &cMo);
-  bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *) = NULL);
+  bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
   void poseVirtualVSrobust(vpHomogeneousMatrix &cMo);
   void poseVirtualVS(vpHomogeneousMatrix &cMo);
   void printPoint();
@@ -353,7 +353,8 @@ public:
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0);
+                        const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
+                        bool (*func)(const vpHomogeneousMatrix &)=NULL);
 };
 
 #endif
