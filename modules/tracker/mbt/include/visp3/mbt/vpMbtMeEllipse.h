@@ -153,7 +153,9 @@ public:
   vpMbtMeEllipse(const vpMbtMeEllipse &meellipse);
   virtual ~vpMbtMeEllipse();
 
-  void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures);
+  void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
+                              const vpMatrix &SobelX, const vpMatrix &SobelY, const bool display,
+                              const unsigned int length, const unsigned int thickness);
 
   void display(const vpImage<unsigned char> &I, vpColor col);
   void display(const vpImage<unsigned char> &I)
@@ -218,9 +220,9 @@ public:
   }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                    double mu02_p);
+                    double mu02_p, const bool doNotTrack);
 
-  void track(const vpImage<unsigned char> &Im);
+  void track(const vpImage<unsigned char> &I);
 
   void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
                         double mu02_p);
@@ -250,7 +252,7 @@ protected:
   double expecteddensity;
 
 private:
-  void sample(const vpImage<unsigned char> &image);
+  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
   void updateTheta();
   void suppressPoints();

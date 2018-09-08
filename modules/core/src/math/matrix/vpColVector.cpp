@@ -636,6 +636,19 @@ vpColVector &vpColVector::operator=(double x)
   return *this;
 }
 
+/*!
+ * Converts the vpColVector to a std::vector.
+ * \return The corresponding std::vector<double>.
+ */
+std::vector<double> vpColVector::toStdVector()
+{
+  std::vector<double> v(this->size());
+
+  for (unsigned int i = 0; i < this->size(); i++)
+    v[i] = data[i];
+  return v;
+}
+
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
@@ -659,6 +672,23 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
   return *this;
 }
 #endif
+
+bool vpColVector::operator==(const vpColVector &v) const {
+  if (rowNum != v.rowNum ||
+      colNum != v.colNum /* should not happen */)
+    return false;
+
+  for (unsigned int i = 0; i < rowNum; i++) {
+    if (!vpMath::equal(data[i], v.data[i], std::numeric_limits<double>::epsilon()))
+      return false;
+  }
+
+  return true;
+}
+
+bool vpColVector::operator!=(const vpColVector &v) const {
+  return !(*this == v);
+}
 
 /*!
   Transpose the column vector. The resulting vector becomes a row vector.
@@ -881,7 +911,7 @@ vpColVector vpColVector::sort(const vpColVector &v)
   \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
 
 */
-void vpColVector::stack(const double &d)
+void vpColVector::stack(double d)
 {
   this->resize(rowNum + 1, false);
   (*this)[rowNum - 1] = d;

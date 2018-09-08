@@ -1,0 +1,282 @@
+/**
+
+\page tutorial-tracking-mb-generic-apriltag-live Tutorial: Markerless generic model-based tracking using AprilTag for initialization (use case)
+\tableofcontents
+
+\section mb_generic_apriltag_intro Introduction
+
+As stated in \ref tutorial-tracking-mb-generic ViSP allows the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization when a calibrated camera is used \cite Comport06b, \cite Trinh18a.
+
+In this tutorial we will experiment live tracking of a cube observed by an USB camera (webcam) or an Intel Realsense RGB-D camera (SR300 or D400 series).
+
+To automate generic model-based tracker initialization avoiding user click, we use here an AprilTag glued on a cube face. The pose of the tag is used to initialize the tracker; see \ref tutorial-detection-apriltag.
+
+Thanks to a confidence indicator associated to the tracker we are able to detect a tracking failure and continue waiting for an AprilTag new detection to initialize again the tracker in an infinite loop.
+
+\section mb_generic_apriltag_started Getting started
+
+\subsection mb_generic_apriltag_started_cube Build your own cube
+
+The object considered in this tutorial is a cube made of cardboard with an AprilTag sticked on a face. The default length of one side of the cube is 12.5 cm, while the default AprilTag external black square is 8 cm large. As explained in \ref mb_generic_apriltag_webcam and in \ref mb_generic_apriltag_realsense you can build your own object with other sizes and set your cube and tag dimensions as command line parameters.
+
+To print your own tag, follow instructions given in \ref apriltag_detection_print. Of course, you will need a webcam to run the tutorial on your computer.
+
+Here is an image of the cube we built:
+\image html img-cube-apriltag.jpg Cube used for the tutorial
+
+\subsection mb_generic_apriltag_started_classes Considered classes
+
+This tutorial focuses on vpMbGenericTracker class that was introduced in ViSP 3.1.0 and on vpDetectorAprilTag for initialization of the tracker.
+
+In this tutorial, we will show how to use vpMbGenericTracker class in order to track an object from images acquires by a monocular color camera using moving edges and keypoints as visual features, and how to initialize the tracker using vpDetectorAprilTag class.
+
+Note that the source code used in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic-apriltag
+\endcode
+
+\subsection mb_generic_apriltag_started_3rd_parties Considered third-parties
+
+Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
+- \c OpenCV: Essential if you want to acquire images on non Linux platforms (Windows, OSX) and use the keypoints as visual features that are detected and tracked thanks to the KLT tracker.
+- \c libxml: This 3rd party is optional but recommended to read the camera settings from an xml file.
+
+\subsection mb_generic_apriltag_started_pseudo_code Pseudo code
+
+The algorithm that is implemented in order to detect the cube location and use this location to initialize the model-based tracker is the following:
+
+\code
+main()
+  cube_size, tag_size, detector_settings, tracker_settings = read_command_line_options()
+  create_cube_cad_model(cube_size, tag_size)
+  I = start_image_grabber()
+  detector = initialize_apriltag_detector(detector_settings)
+  tracker = initialize_tracker(cad_model, tracker_settings)
+  state = state_detection
+  while(state != state_quit)
+    I = acquire()
+    display(I);
+    if (state == state_detection)
+      state = detector.detect_tag(I)
+      if (state == state_tracking)
+        cMo = detector.get_pose()
+        tracker.set_pose(cMo)
+
+    if (state == state_tracking)
+      state = tracker.track(I)
+
+    if (state == state_tracking)
+      cMo = tracker.get_pose()
+      display(cMo, cad_model)
+      
+    if (display(mouse_click))
+      state = state_quit
+\endcode
+
+If you have an USB camera, this algorithm is implemented in tutorial-mb-generic-tracker-apriltag-live-webcam.cpp.
+If you have rather an Intel Realsense RGB-D camera, this algorithm is implemented in tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp
+
+\section mb_generic_apriltag_webcam Using an USB camera
+
+If you have an USB camera like a webcam or a laptop camera, you can try to track your cube using tutorial-mb-generic-tracker-apriltag-live-webcam.cpp source code that is part of ViSP. This example allows to track a cubic box with an AprilTag on a face using either moving edges or keypoints as visual features. This example is an extension of the one explained in \ref tutorial-tracking-mb-generic. To grab images from an USB camera we use either Video 4 Linux driver thanks to vpV4l2Grabber class (a wrapper over libv4l), or OpenCV VideoCapture class if vpV4l2Grabber is not available (on Windows or OSX for example). To install libv4l third-party, follow \ref install_ubuntu_3rdparty_recommended. To install OpenCV, depending on your platform follow one of the tutorials given in \ref tutorial_install_src.
+
+\subsection mb_generic_apriltag_webcam_usage Binary usage
+Once build, to see the options that are available, just run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --help
+Usage: ./tutorial-mb-generic-tracker-apriltag-live-webcam [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>] [--quad_decimate <decimation>] [--nthreads <nb>] [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>] [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display_off] [--texture] [--projection_error <30 - 100>] [--help]
+\endcode
+
+To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable moving-edges and keypoints as visual features run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --texture
+\endcode
+To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, with only the moving-edges as visual features run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam
+\endcode
+
+By default, the following settings are used: <br>
+- Default camera has id=0. To specify another one, run for example:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --input 1
+\endcode
+- The default size of the cube is 0.125 meter large. To use rather a 0.20 meter large cube, run: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --cube_size 0.20
+\endcode
+- The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --tag_size 0.10
+\endcode
+- The AprilTag detection of quads is set to 1.0 by default. You can change it to 2 to speed up the detection using: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --quad_decimate 2
+\endcode
+- The AprilTag default number of threads used is 1. To increase the number of threads used during detection to 2, run: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --nthreads 2
+\endcode
+- The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id (0 to 5): 0=TAG_36h11, 1=TAG_36h10, 2=TAG_36ARTOOLKIT, 3=TAG_25h9, 4=TAG_25h7, 5=TAG_16h5). To use tag family 36h10, run: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --tag_family 1
+\endcode
+- The default camera parameters used are: px=600, py=600, and principal point is set at image center. To specify your own parameters, you can provide for example a `camera.xml` parameters file with a camera named `myCam` in it, by running:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --intrinsic camera.xml --camera_name myCam
+\endcode
+See \ref tutorial-calibration-intrinsic to see how to generate `camera.xml` file by calibration your camera.
+- The display is turned on by default, but you can disable it with: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --display_off
+\endcode
+- Tracking failure detection is achieved thresholding the projection error indicator provided by the tracker. The default value of this threshold is set to 40 degrees. To decrease this threshold to 30 degrees (meaning that we accept less projection error and thus trigger a new AprilTag detection more often) you may run:   
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --projection_error 30
+\endcode
+
+\subsection mb_generic_apriltag_webcam_result Expected results
+
+- <b>Tracking using only edges:</b>
+Running `$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2` you should be able to get results similar to these:
+
+\htmlonly
+<br>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NUJDLWvCokg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><br>
+<b>Cube tracking result with an USB camera using only moving edges</b>
+</p>
+\endhtmlonly
+
+- <b>Tracking using and hybrid scheme with edges and keypoints:</b>
+Enabling keypoints as visual features will lead to an hybrid model-based tracking scheme using `$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --texture`. The corresponding results would rather look like these:
+
+\htmlonly
+<br>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/W98ByJnAN44" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<br>
+<b>Cube tracking result with an USB camera using moving edges and keypoints</b>
+</p>
+\endhtmlonly
+
+\section mb_generic_apriltag_realsense Using an Intel Realsense camera
+
+If you have an Intel Realsense RDB-D camera like an SR300 or a D435, you can try to track your cube using tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp source code that is part of ViSP. This example allows to track a cubic box with an AprilTag on a face using either moving edges, keypoints or depth as visual features. This example is an extension of the one explained in \ref tutorial-tracking-mb-generic-rgbd. To grab images from an Intel RealSense device we use vpRealSense2 class. This class needs librealsense 2.x third-party which installation instructions are provided in the tutorials available from \ref tutorial_install_src.
+
+\subsection mb_generic_apriltag_realsense_usage Binary usage
+Once build, to see the options that are available, just run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --help
+Usage: ./tutorial-mb-generic-tracker-apriltag-live-realsense2 [--cube_size <size in m>] [--tag_size <size in m>] [--quad_decimate <decimation>] [--nthreads <nb>] [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,  3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>] [--display_off] [--texture] [--depth] [--projection_error <30 - 100>] [--help]
+\endcode
+
+To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable moving-edges, keypoints and depth as visual features run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --texture --depth
+\endcode
+To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, and enable only moving-edges and keypoints as visual features run:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --texture
+\endcode
+To test the tracker on a 12.5 cm wide cube that has an AprilTag of size 8 by 8 cm, using only the moving-edges as visual features run rather:
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2
+\endcode
+
+By default, the following settings are used: <br>
+- Default size of the cube is 0.125 meter large. To use rather a 0.20 meter large cube, run: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --cube_size 0.20
+\endcode
+- The AprilTag size is 0.08 by 0.08 meters. To change the tag size to let say 0.10 meter square, use: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --tag_size 0.10
+\endcode
+- The AprilTag detection of quads is set to 1.0 by default. You can change it to 2 to speed up the detection using: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --quad_decimate 2
+\endcode
+- The AprilTag default number of threads used is 1. To increase the number of threads used during detection to 2, run: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --nthreads 2
+\endcode
+- The AprilTag default tag family is 36h11. It is possible to use other tags specifying the tag id (0 to 5): 0=TAG_36h11, 1=TAG_36h10, 2=TAG_36ARTOOLKIT, 3=TAG_25h9, 4=TAG_25h7, 5=TAG_16h5). To use tag family 36h10, run: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --tag_family 1
+\endcode
+- The display is turned on by default, but you can disable it with: 
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --display_off
+\endcode
+- Tracking failure detection is achieved thresholding the projection error indicator provided by the tracker. The default value of this threshold is set to 40 degrees. To decrease this threshold to 30 degrees (meaning that we accept less projection error and thus trigger a new AprilTag detection more often) you may run:   
+\code
+$ ./tutorial-mb-generic-tracker-apriltag-live-webcam --projection_error 30
+\endcode
+
+\subsection mb_generic_apriltag_realsense_result Expected results
+
+- <b>Tracking using only edges:</b>
+Running `$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2` you should be able to get results similar to these:
+
+\htmlonly
+<br>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NUJDLWvCokg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><br>
+<b>Cube tracking result with an Intel Realsense camera using only moving edges</b>
+</p>
+\endhtmlonly
+
+- <b>Tracking using and hybrid scheme with edges and keypoints:</b>
+Enabling keypoints as visual features will lead to an hybrid model-based tracking scheme using `$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --texture`. The corresponding results would rather look like these:
+
+\htmlonly
+<br>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/W98ByJnAN44" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<br>
+<b>Cube tracking result with an Intel Realsense camera using moving edges and keypoints</b>
+</p>
+\endhtmlonly
+
+- <b>Tracking using and hybrid scheme with edges, keypoints and depth:</b>
+Enabling keypoints and depth as visual features will lead to an other hybrid model-based tracking scheme using `$ ./tutorial-mb-generic-tracker-apriltag-live-realsense2 --texture --depth`. The corresponding results would rather look like these:
+
+\htmlonly
+<br>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/oKUZFcbSuYU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<br>
+<b>Cube tracking result with an Intel Realsense camera using moving edges, keypoints and depth</b>
+</p>
+\endhtmlonly
+
+\section mb_generic_apriltag_conclusion Conclusion
+
+Playing with the above binaries you will see that:
+- using an RGB-D camera and thus depth as visual features makes the tracker more robust
+- using an USB camera and enabling keypoints shows also that the tracker is also more robust than just using moving-edges as visual features
+
+Some recommendations:
+- if possible use rather a textured object of exploit hybrid tracker performance using keypoints as visual features
+- depending on the camera frame rate and thus the displacement of the object between two successive images adapt the range parameter to be sure its value is a little bit larger than the effective displacement in pixels (see \ref mb_generic_settings_ecm). This could be achieved modifying in tutorial-mb-generic-tracker-apriltag-live-webcam.cpp or in tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp the line:
+\snippet tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp Range
+setting for example 15 pixels as range (instead of 12).
+
+Hereafter, you have the tracking result using a textured cube (we just glue images over the cube faces):
+\htmlonly
+<br>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pr27-OZEzPs" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<br>
+<b>Textured cube tracking result with an Intel Realsense camera using moving edges, keypoints and depth</b>
+</p>
+\endhtmlonly
+
+\section mb_generic_apriltag_next Next tutorial
+
+You can follow \ref tutorial-detection-object to learn how to initialize the tracker without user click, by learning the object to track using keypoints when the object is textured.
+
+There is also \ref tutorial-tracking-mb-generic-stereo if you want to know how to extend the tracker to use a stereo camera. There is also this other \ref tutorial-tracking-tt.
+*/

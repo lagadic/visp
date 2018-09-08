@@ -105,7 +105,10 @@ int main()
 #elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV disp;
 #endif
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
     disp.init(I, 100, 100, "Simulation display");
+#endif
 
     ////////////////////////////////////////
     // Desired visual features initialization

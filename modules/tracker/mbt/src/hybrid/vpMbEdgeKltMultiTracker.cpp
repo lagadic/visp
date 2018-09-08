@@ -45,6 +45,8 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 #include <visp3/core/vpTrackingException.h>
@@ -2202,5 +2204,10 @@ void vpMbEdgeKltMultiTracker::trackMovingEdges(std::map<std::string, const vpIma
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning:
 // libvisp_mbt.a(dummy_vpMbEdgeKltMultiTracker.cpp.o) has no symbols
-void dummy_vpMbEdgeKltMultiTracker(){};
+void dummy_vpMbEdgeKltMultiTracker(){}
 #endif // VISP_HAVE_OPENCV
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning:
+// libvisp_mbt.a(dummy_vpMbEdgeKltMultiTracker.cpp.o) has no symbols
+void dummy_vpMbEdgeKltMultiTracker(){}
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

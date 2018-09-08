@@ -49,6 +49,8 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/mbt/vpMbEdgeMultiTracker.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 /*!
   Basic constructor
 */
@@ -3113,3 +3115,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
 
   cleanPyramid(m_mapOfPyramidalImages);
 }
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbEdgeMultiTracker.cpp.o) has no symbols
+void dummy_vpMbEdgeMultiTracker(){}
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

@@ -1,0 +1,135 @@
+/**
+
+\page tutorial-install-java Tutorial: Installing ViSP for Java
+\tableofcontents
+
+\section java_intro Introduction
+
+This tutorial will help you to install ViSP for Java on your desktop.
+
+\section java Install Java JDK
+
+Download the latest Java JDK from the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website. Now you should be able to install the last Java JDK by opening the file just downloaded.
+
+\note If you download `jdk-10.0.1_linux-x64_bin.tar.gz` (case of linux), after extracting the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK. This could be done like:
+\code
+$ tar xvzf jdk-10.0.1_linux-x64_bin.tar.gz -C $HOME
+$ echo "export JAVA_HOME=$HOME/jdk-10.0.1" >> ~/.bashrc
+$ source ~/.bashrc
+\endcode
+
+\section java_linux Install Prerequisites
+
+As a prerequisite, download and install first [CMake](http://www.cmake.org/download/) and [Apache Ant](http://ant.apache.org/), if you don’t have any of these.
+
+- On Ubuntu/Debian you may run:
+\code
+$ sudo apt-get install cmake-curses-gui ant
+\endcode
+
+- On Fedora/CentOS you may run:
+\code
+$ sudo yum install gcc-c++ cmake ant 
+\endcode
+
+- On MacOS/OSX you may run:
+\code
+$ brew cask install java
+$ brew install cmake ant
+\endcode
+
+\section install_java_visp Install ViSP from source code
+\subsection install_java_ws Create a workspace
+
+- First create a workspace in \c $HOME/visp-ws that will contain ViSP source, build and dataset.
+\code
+$ export VISP_WS=$HOME/visp-ws
+$ mkdir -p $VISP_WS
+\endcode
+
+\subsection install_java_visp_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code:
+
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+\code
+$ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
+\endcode
+or
+\code
+$ unzip visp-x.y.z.zip -d $VISP_WS
+\endcode
+
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+\code
+$ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
+\endcode
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
+\code
+$ cd $VISP_WS
+$ git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in the directory \c $VISP_WS/visp. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like \c $VISP_WS/visp-x.y.z.
+
+\subsection install_java_visp_config Configuring ViSP from source
+
+- In the workspace, create first a directory named \c visp-build that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
+\code
+$ mkdir $VISP_WS/visp-build
+\endcode
+
+- Enter the \c visp-build folder and configure the build:
+\code
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+\endcode
+A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
+\code
+$ ccmake ../visp
+\endcode
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
+\image html img-tutorial-java-ccmake.jpeg Snapshot of the ccmake \c ../visp command used to configure ViSP.
+
+\subsection install_java_visp_build Building ViSP libraries
+
+- To build ViSP libraries on Linux, proceed with:
+\code
+$ cd $VISP_WS/visp-build
+$ make -j$(nproc)
+\endcode
+
+- To build ViSP libraries on MacOS/OSX, proceed with:
+\code
+$ cd $VISP_WS/visp-build
+$ make -j$(sysctl -n hw.ncpu)
+\endcode
+
+\section set_up_visp_java_eclipse Setting Up ViSP Java in Eclipse
+
+\subsection install_eclipse Install the latest Eclipse version
+
+Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/) choosing the <b> Eclipse IDE for Java Developers </b> version. You don’t need to install anything. Extract the downloaded compressed file and put the resulting folder wherever you want to.  
+
+\subsection create_user_library Creating a user library
+
+Open Eclipse and select a workspace of your choice. Create a User Library, ready to be used on all your next projects: go to `"Window > Preferences"` menu:
+
+\image html img-tutorial-java-eclipse1.jpeg Open Preferences panel in Eclipse
+
+In the Preferences panel navigate under `"Java > Build Path > User Libraries"` and choose <b>New</b>. Enter a name for the library (e.g visp) and select the newly created user library.
+
+\image html img-tutorial-java-eclipse2.jpeg Create a new User Library
+
+Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-3yz.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, then press `"External Folder"` and finaly browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows).
+
+\image html img-tutorial-java-eclipse3.jpeg Add jar and native libraries to User Library
+
+Once done, press `"Apply and Close"` button.
+
+\section java_install_next Next tutorial
+
+You are now ready to follow \ref tutorial-java-started.
+
+*/

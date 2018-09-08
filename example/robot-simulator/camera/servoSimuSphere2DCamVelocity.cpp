@@ -198,7 +198,7 @@ int main(int argc, const char **argv)
 
     unsigned int iter = 0;
     // loop
-    while (iter++ < 500) {
+    while (iter++ < 200) {
       std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 

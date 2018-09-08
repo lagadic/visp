@@ -72,8 +72,6 @@ public:
   vpMbtEdgeKltXmlParser();
   virtual ~vpMbtEdgeKltXmlParser();
 
-  void parse(const char *filename);
-
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
 
   void writeMainClass(xmlNodePtr node);

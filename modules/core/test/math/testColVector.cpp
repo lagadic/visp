@@ -114,8 +114,23 @@ double getRandomValues(const double min, const double max)
 
 int main()
 {
-  int err = 1;
-
+  {
+    vpColVector v1(7, 0.1), v2;
+    if (v1 == v2) {
+      std::cerr << "Issue with vpColVector comparison operator." << std::endl;
+      return EXIT_FAILURE;
+    }
+    v2 = v1;
+    if (v1 != v2) {
+      std::cerr << "Issue with vpColVector comparison operator." << std::endl;
+      return EXIT_FAILURE;
+    }
+    v2[3] = 0.2;
+    if (v1 == v2) {
+      std::cerr << "Issue with vpColVector comparison operator." << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
   {
     vpColVector v;
 
@@ -123,16 +138,16 @@ int main()
     v = 3;
     std::vector<double> bench1(4, 3);
     if (test("v", v, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
     std::vector<double> bench2(4, 3. / 6);
     v.normalize();
     if (test("v", v, bench2) == false)
-      return err;
+      return EXIT_FAILURE;
 
     v.resize(5, 1, true);
     std::vector<double> bench3(5, 0);
     if (test("v", v, bench3) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -143,7 +158,7 @@ int main()
       bench1[i] = (double)i;
     }
     if (test("v", v, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
 
     vpColVector w;
     w.init(v, 0, 2);
@@ -151,7 +166,7 @@ int main()
     bench2.push_back(0);
     bench2.push_back(1);
     if (test("w", w, bench2) == false)
-      return err;
+      return EXIT_FAILURE;
 
     std::vector<double> bench3;
     bench3.push_back(1);
@@ -164,7 +179,7 @@ int main()
 
     vpColVector r2 = r1.extract(1, 3);
     if (test("r2", r2, bench3) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -175,20 +190,20 @@ int main()
       bench[i] = i;
     }
     if (test("M", M, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     vpColVector v;
     v = M;
     if (test("v", v, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     vpColVector w(M);
     if (test("w", w, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     vpColVector z1(bench);
     if (test("z1", z1, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     vpColVector z2 = bench;
     if (test("z2", z2, bench) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -205,11 +220,11 @@ int main()
     // v is unchanged
     // w is now equal to : [3 6 9]
     if (test("w", w, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
 
     vpColVector x(w);
     if (test("x", x, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
 
     std::vector<float> bench2;
     bench2.push_back(3);
@@ -217,10 +232,10 @@ int main()
     bench2.push_back(9);
     vpColVector y1(bench2);
     if (test("y1", y1, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
     vpColVector y2 = bench2;
     if (test("y2", y2, bench1) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -229,21 +244,21 @@ int main()
     std::vector<double> bench(3, -1);
     // v contains [-1 -1 -1]
     if (test("r2", r2, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     r2.stack(-2);
     bench.push_back(-2);
     if (test("r2", r2, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     vpColVector r3 = vpColVector::stack(r1, r2);
     std::vector<double> bench3(7, 1);
     bench3[3] = bench3[4] = bench3[5] = -1;
     bench3[6] = -2;
     if (test("r3", r3, bench3) == false)
-      return err;
+      return EXIT_FAILURE;
 
     r1.stack(r2);
     if (test("r1", r1, bench3) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -256,10 +271,10 @@ int main()
     std::cout << "test r: " << r << std::endl;
     std::vector<double> bench(3, 6);
     if (test("r", r, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     r1 += r2;
     if (test("r1", r1, bench) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -268,10 +283,10 @@ int main()
     vpColVector r = r1 - r2;
     std::vector<double> bench(3, -2);
     if (test("r", r, bench) == false)
-      return err;
+      return EXIT_FAILURE;
     r1 -= r2;
     if (test("r1", r1, bench) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -281,7 +296,7 @@ int main()
     r = 5;
     std::vector<double> bench(5, 5);
     if (test("r", r, bench) == false)
-      return err;
+      return EXIT_FAILURE;
   }
 
   {
@@ -303,28 +318,28 @@ int main()
     double res = vpColVector::mean(r);
     if (!vpMath::equal(res, 6.2386, 0.001)) {
       std::cout << "Test fails: bad mean " << res << std::endl;
-      return err;
+      return EXIT_FAILURE;
     }
 
     std::cout << "** Test stdev" << std::endl;
     res = vpColVector::stdev(r);
     if (!vpMath::equal(res, 3.2810, 0.001)) {
       std::cout << "Test fails: bad stdev " << res << std::endl;
-      return err;
+      return EXIT_FAILURE;
     }
 
     std::cout << "** Test stdev(bessel)" << std::endl;
     res = vpColVector::stdev(r, true);
     if (!vpMath::equal(res, 3.4585, 0.001)) {
       std::cout << "Test fails: bad stdev(bessel) " << res << std::endl;
-      return err;
+      return EXIT_FAILURE;
     }
 
     std::cout << "** Test median" << std::endl;
     res = vpColVector::median(r);
     if (!vpMath::equal(res, 7.2354, 0.001)) {
       std::cout << "Test fails: bad median " << res << std::endl;
-      return err;
+      return EXIT_FAILURE;
     }
 
     // Test median with odd number of elements
@@ -333,7 +348,7 @@ int main()
     res = vpColVector::median(r);
     if (!vpMath::equal(res, 6.3236, 0.001)) {
       std::cout << "Test fails: bad median (odd) " << res << std::endl;
-      return err;
+      return EXIT_FAILURE;
     }
     std::cout << "r: [" << r << "]^T" << std::endl;
     r.print(std::cout, 8, "r");
@@ -466,6 +481,21 @@ int main()
     std::cout << "v3: " << v3.t() << std::endl;
   }
 
+  {
+    std::cout << "** Test conversion to/from std::vector" << std::endl;
+    std::vector<double> std_vector(5);
+    for (size_t i = 0; i < std_vector.size(); i++) {
+      std_vector[i] = (double) i;
+    }
+    vpColVector v(std_vector);
+    if (test("v", v, std_vector) == false)
+      return EXIT_FAILURE;
+
+    std_vector.clear();
+    std_vector = v.toStdVector();
+    if (test("v", v, std_vector) == false)
+      return EXIT_FAILURE;
+  }
   std::cout << "\nAll tests succeed" << std::endl;
   return EXIT_SUCCESS;
 }

@@ -43,6 +43,7 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_core visp_sensor visp_io visp_gui)
 
 set(example_cpp
+  getRealSense2Info.cpp
   grab1394Two.cpp
   grab1394CMU.cpp
   grabDisk.cpp

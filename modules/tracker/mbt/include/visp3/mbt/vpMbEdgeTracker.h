@@ -90,10 +90,12 @@
   \class vpMbEdgeTracker
   \ingroup group_mbt_trackers
   \brief Make the complete tracking of an object by using its CAD model.
+  \warning This class is deprecated for user usage. You should rather use the high level
+  vpMbGenericTracker class.
 
   This class allows to track an object or a scene given its 3D model. A
   video can be found on YouTube \e https://www.youtube.com/watch?v=UK10KMMJFCI
-. The \ref tutorial-tracking-mb is also a good starting point to use this
+. The \ref tutorial-tracking-mb-deprecated is also a good starting point to use this
 class.
 
   The tracker requires the knowledge of the 3D model that could be provided in
@@ -395,6 +397,7 @@ public:
   virtual inline vpColVector getRobustWeights() const { return m_w_edge; }
 
   void loadConfigFile(const std::string &configFile);
+
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
                            const vpHomogeneousMatrix &cMo_, const bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
@@ -496,7 +499,6 @@ public:
 protected:
   /** @name Protected Member Functions Inherited from vpMbEdgeTracker */
   //@{
-  bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1,
                  const std::string &name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string &name = "");

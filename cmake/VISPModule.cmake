@@ -54,6 +54,7 @@
 # VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS - private module deps that are not exposed in interface
 # VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS - private module deps that are not exposed in interface
 # VISP_MODULE_${the_module}_CHILDREN - list of submodules for compound modules (cmake >= 2.8.8)
+# VISP_MODULE_${the_module}_WRAPPERS - list of wrappers supporting this module
 # HAVE_${the_module} - for fast check of module availability
 
 # To control the setup of the module you could also set:
@@ -88,6 +89,7 @@ foreach(mod ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_D
   unset(VISP_MODULE_${mod}_PRIVATE_OPT_DEPS CACHE)
   unset(VISP_MODULE_${mod}_LINK_DEPS CACHE)
   unset(VISP_MODULE_${mod}_INC_DEPS CACHE)
+  unset(VISP_MODULE_${mod}_WRAPPERS CACHE)
 endforeach()
 
 # clean modules info which needs to be recalculated
@@ -114,6 +116,8 @@ macro(vp_add_dependencies full_modname)
       set(__depsvar VISP_MODULE_${full_modname}_PRIVATE_REQ_DEPS)
     elseif(d STREQUAL "PRIVATE_OPTIONAL")
       set(__depsvar VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS)
+    elseif(d STREQUAL "WRAP")
+      set(__depsvar VISP_MODULE_${full_modname}_WRAPPERS)
     else()
       list(APPEND ${__depsvar} "${d}")
     endif()
@@ -124,6 +128,7 @@ macro(vp_add_dependencies full_modname)
   vp_list_unique(VISP_MODULE_${full_modname}_OPT_DEPS)
   vp_list_unique(VISP_MODULE_${full_modname}_PRIVATE_REQ_DEPS)
   vp_list_unique(VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS)
+  vp_list_unique(VISP_MODULE_${full_modname}_WRAPPERS)
 
   set(VISP_MODULE_${full_modname}_REQ_DEPS ${VISP_MODULE_${full_modname}_REQ_DEPS}
     CACHE INTERNAL "Required dependencies of ${full_modname} module")
@@ -133,6 +138,8 @@ macro(vp_add_dependencies full_modname)
     CACHE INTERNAL "Required private dependencies of ${full_modname} module")
   set(VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS ${VISP_MODULE_${full_modname}_PRIVATE_OPT_DEPS}
     CACHE INTERNAL "Optional private dependencies of ${full_modname} module")
+  set(VISP_MODULE_${full_modname}_WRAPPERS ${VISP_MODULE_${full_modname}_WRAPPERS}
+    CACHE INTERNAL "List of wrappers supporting module ${full_modname}")
 endmacro()
 
 # declare new ViSP module in current folder
@@ -197,6 +204,11 @@ macro(vp_add_module _name)
       set(VISP_MODULES_DISABLED_USER ${VISP_MODULES_DISABLED_USER} "${the_module}" CACHE INTERNAL "List of ViSP modules explicitly disabled by user")
     endif()
 
+    # add reverse wrapper dependencies
+    foreach (wrapper ${VISP_MODULE_${the_module}_WRAPPERS})
+      vp_add_dependencies(visp_${wrapper} OPTIONAL ${the_module})
+    endforeach()
+
     # add submodules if any
     set(VISP_MODULE_${the_module}_CHILDREN "${VISP_MODULE_CHILDREN}" CACHE INTERNAL "List of ${the_module} submodules")
 
@@ -208,6 +220,27 @@ macro(vp_add_module _name)
       return() # extra protection from redefinition
     endif()
   endif()
+endmacro()
+
+# excludes module from current configuration
+macro(vp_module_disable_ module)
+  set(__modname ${module})
+  if(NOT __modname MATCHES "^visp_")
+    set(__modname visp_${module})
+  endif()
+  list(APPEND VISP_MODULES_DISABLED_FORCE "${__modname}")
+  set(HAVE_${__modname} OFF CACHE INTERNAL "Module ${__modname} can not be built in current configuration")
+  set(VISP_MODULE_${__modname}_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Location of ${__modname} module sources")
+  set(VISP_MODULES_DISABLED_FORCE "${VISP_MODULES_DISABLED_FORCE}" CACHE INTERNAL "List of ViSP modules which can not be build in current configuration")
+  if(BUILD_${__modname})
+    # touch variable controlling build of the module to suppress "unused variable" CMake warning
+  endif()
+  unset(__modname)
+endmacro()
+
+macro(vp_module_disable module)
+  vp_module_disable_(${module})
+  return() # leave the current folder
 endmacro()
 
 # remove visp_ prefix from name
@@ -575,6 +608,23 @@ macro(vp_target_include_modules target)
   vp_list_unique(VISP_MODULE_${the_module}_INC_DEPS)
 endmacro()
 
+# setup include paths for the list of passed modules and recursively add dependent modules
+macro(vp_target_include_modules_recurse target)
+  foreach(d ${ARGN})
+    if(d MATCHES "^visp_" AND HAVE_${d})
+      if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
+        vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
+      endif()
+      if(VISP_MODULE_${d}_DEPS)
+        vp_target_include_modules(${target} ${VISP_MODULE_${d}_DEPS})
+      endif()
+    elseif(EXISTS "${d}")
+      vp_target_include_directories(${target} "${d}")
+    endif()
+  endforeach()
+endmacro()
+
+
 # setup include path for ViSP headers for specified module
 # vp_module_include_directories(<extra include directories/extra include modules>)
 macro(vp_module_include_directories)
@@ -659,11 +709,7 @@ macro(vp_glob_module_copy_data src dst)
     )
 
     # install
-    if(UNIX)
-      set(__install_dst "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/${dst}")
-    else()
-      set(__install_dst "${dst}")
-    endif()
+    set(__install_dst "${VISP_INSTALL_DATAROOTDIR}/${dst}")
 
     install(FILES ${__d}
        DESTINATION "${__install_dst}"
@@ -706,7 +752,7 @@ macro(vp_create_global_module_header module)
   set(VISP_HEADER_CONTENT_CONFIGMAKE "#ifndef __${module}_h_\n#define __${module}_h_\n")
 
   # when core, include also vpConfig.h
-  if(__name MATCHES "core")
+  if(__name MATCHES "^core$")
     set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <visp3/${__name}/vpConfig.h>")
   endif()
 
@@ -731,8 +777,6 @@ macro(vp_create_global_module_header module)
     COMPONENT dev
   )
 
-  unset(__h_name_we)
-  unset(__h_name)
   unset(__module_header_dst)
 endmacro()
 
@@ -775,7 +819,17 @@ macro(_vp_create_module)
     ARCHIVE_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_PATH}
     RUNTIME_OUTPUT_DIRECTORY ${BINARY_OUTPUT_PATH}
+    # FS: Remove next line. Should be added only for shared libs. See below
+    #DEFINE_SYMBOL visp_EXPORTS
   )
+
+  if(BUILD_FAT_JAVA_LIB)  # force exports from static modules too
+    if(BUILD_SHARED_LIBS)
+      message(FATAL_ERROR "Assertion failed: BUILD_SHARED_LIBS=OFF must be off if BUILD_FAT_JAVA_LIB=ON")
+    endif()
+    target_compile_definitions(${the_module} PRIVATE visp_EXPORTS)
+  endif()
+
 
   set_property(TARGET ${the_module} APPEND PROPERTY
     INTERFACE_INCLUDE_DIRECTORIES ${VISP_MODULE_${the_module}_INC_DEPS}
@@ -1006,6 +1060,21 @@ endmacro()
 #   vp_add_config_file(cmake/template/vpConfigMyModule.h.in)
 #   creates include/visp3/my_module/vpConfigMyModule.h
 macro(vp_add_config_file)
+
+  set(MODULE_NAME ${the_module})
+  if(MODULE_NAME MATCHES "^visp_")
+    string(REGEX REPLACE "^visp_" "" MODULE_NAME "${MODULE_NAME}")
+  endif()
+
+  # We need here to do the same job as in vp_create_global_module_header() macro
+  # in order to create include/visp3/${the module}.h file that contains the config file
+  # that has to be created
+  # begin part of vp_create_global_module_header() macro
+  set(__module_header_dst "${VISP_INCLUDE_DIR}/visp3/${the_module}.h")
+
+  set(__header_content "#ifndef __${the_module}_h_\n#define __${the_module}_h_\n")
+  # end of part of vp_create_global_module_header() macro
+
   foreach(d ${ARGN})
     # Removes first "/" if it exists
     string(FIND ${d} "/" FIRST_SEPARATOR_POS)
@@ -1039,13 +1108,13 @@ macro(vp_add_config_file)
       endif()
     endif()
 
-    set(MODULE_NAME ${the_module})
-    if(MODULE_NAME MATCHES "^visp_")
-      string(REGEX REPLACE "^visp_" "" MODULE_NAME "${MODULE_NAME}")
-    endif()
     configure_file("${VISP_MODULE_${the_module}_LOCATION}/${FILENAME_CONFIG}" "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
 
     vp_create_compat_headers("${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
+
+    # begin part of vp_create_global_module_header() macro
+    set(__header_content "${__header_content}\n#include <visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}>")
+    # end part of vp_create_global_module_header() macro
 
     install(FILES "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}"
       DESTINATION ${VISP_INC_INSTALL_PATH}/visp3/${MODULE_NAME}
@@ -1053,6 +1122,35 @@ macro(vp_add_config_file)
     )
 
   endforeach()
+
+  # begin part of vp_create_global_module_header() macro
+  # include the modules we depend on
+  if(VISP_MODULE_${the_module}_REQ_DEPS)
+    foreach(dep ${VISP_MODULE_${the_module}_REQ_DEPS})
+      vp_short_module_name(dep)
+    set(__header_content "${__header_content}\n#include <visp3/visp_${dep}.h>")
+    endforeach()
+  endif()
+
+  foreach(h ${VISP_MODULE_${the_module}_HEADERS})
+    string(REGEX REPLACE "^.*/include/visp3" "visp3" h "${h}")
+    set(__header_content "${__header_content}\n#include <${h}>")
+  endforeach()
+
+  set(__header_content "${__header_content}\n\n#endif\n")
+
+  set(VISP_HEADER_CONTENT_CONFIGMAKE ${__header_content})
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpHeader.h.in" ${__module_header_dst})
+
+#  install(FILES ${__module_header_dst}
+#    DESTINATION ${VISP_INC_INSTALL_PATH}/visp3
+#    COMPONENT dev
+#  )
+
+  unset(__module_header_dst)
+  unset(__header_content)
+  # end part of vp_create_global_module_header() macro
+
 endmacro()
 
 # This is a command to add a list of paths associated to the corresponding module

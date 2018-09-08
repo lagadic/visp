@@ -388,6 +388,9 @@ vpMatrix M(R);
   // inverse matrix A using the QR decomposition
   vpMatrix inverseByQR() const;
 
+  // inverse triangular matrix
+  vpMatrix inverseTriangular(bool upper = true) const;
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByQRLapack() const;
@@ -464,6 +467,18 @@ vpMatrix M(R);
   void svdOpenCV(vpColVector &w, vpMatrix &V);
 #endif
 #endif
+  //@}
+
+  //-------------------------------------------------
+  // QR decomposition
+  //-------------------------------------------------
+
+  /** @name QR decomposition  */
+  //@{
+  unsigned int qr(vpMatrix &Q, vpMatrix &R, bool full = false, bool squareR = false, double tol = 1e-6) const;
+  unsigned int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false, bool squareR = false, double tol = 1e-6) const;
+  void solveByQR(const vpColVector &b, vpColVector &x) const;
+  vpColVector solveByQR(const vpColVector &b) const;
   //@}
 
   //-------------------------------------------------
@@ -575,6 +590,13 @@ vpMatrix M(R);
   static vpMatrix kron(const vpMatrix &m1, const vpMatrix &m2);
   //@}
 
+  //-------------------------------------------------
+  // 2D Convolution Static Public Member Functions
+  //-------------------------------------------------
+  /** @name 2D Convolution with Static Public Member Functions  */
+  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode="full");
+  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode="full");
+
   //---------------------------------
   // Covariance computation Static Public Member Functions
   //---------------------------------
@@ -662,7 +684,7 @@ vpMatrix M(R);
   {
     return vpArray2D<double>::saveYAML(filename, M, header);
   }
-//@}
+  //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -718,7 +740,7 @@ vpMatrix M(R);
   vp_deprecated vpRowVector row(const unsigned int i);
   vp_deprecated vpColVector column(const unsigned int j);
 
-//@}
+  //@}
 #endif
 
 private:

@@ -10,7 +10,11 @@
 
 #ifdef __linux__
 #define USE_LARGEFILE
+#ifdef ANDROID
+#define OFF_T off64_t
+#else
 #define OFF_T __off64_t
+#endif
 #endif
 
 #ifdef _AIX43
@@ -46,11 +50,17 @@
 #define FOPEN fopen64
 #define FREOPEN freopen64
 #define FSEEK fseeko64
+#if defined(__i386__) || defined(__ARM_ARCH_7A__)  // For x86 or armeabi-v7a architectures
+#define FSTAT fstat
+#define STAT_ST stat
+#define STAT stat
+#else
 #define FSTAT fstat64
-#define FTELL ftello64
-#define FTRUNCATE ftruncate64
 #define STAT stat64
 #define STAT_ST stat64
+#endif
+#define FTELL ftello64
+#define FTRUNCATE ftruncate64
 #endif /*USE_LARGEFILE*/
 #endif /*NO_LONG_LONG*/
 

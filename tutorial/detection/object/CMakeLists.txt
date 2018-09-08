@@ -8,6 +8,8 @@ find_package(VISP REQUIRED visp_core visp_vision visp_mbt visp_io visp_gui)
 set(tutorial_cpp
   tutorial-detection-object-mbt.cpp
   tutorial-detection-object-mbt2.cpp
+  tutorial-detection-object-mbt-deprecated.cpp
+  tutorial-detection-object-mbt2-deprecated.cpp
 )
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/detection-config.xml")

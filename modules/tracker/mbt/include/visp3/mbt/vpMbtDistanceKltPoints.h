@@ -137,7 +137,7 @@ public:
   vpMbtDistanceKltPoints();
   virtual ~vpMbtDistanceKltPoints();
 
-  unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker);
+  unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask = NULL);
   void computeHomography(const vpHomogeneousMatrix &_cTc0, vpHomography &cHc0);
   void computeInteractionMatrixAndResidu(vpColVector &_R, vpMatrix &_J);
 
@@ -185,7 +185,7 @@ public:
 
   inline bool hasEnoughPoints() const { return enoughPoints; }
 
-  void init(const vpKltOpencv &_tracker);
+  void init(const vpKltOpencv &_tracker, const vpImage<bool> *mask = NULL);
 
   /*!
    Return if the klt points are used for tracking.

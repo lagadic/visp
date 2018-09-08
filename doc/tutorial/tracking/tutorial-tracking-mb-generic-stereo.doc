@@ -1,0 +1,189 @@
+/**
+
+\page tutorial-tracking-mb-generic-stereo Tutorial: Markerless generic model-based tracking using a stereo camera
+\tableofcontents
+
+\section mb_generic_stereo_intro Introduction
+
+Before following this tutorial, we suggest that you follow \ref tutorial-tracking-mb-generic to learn the bases of the tracker.
+
+This tutorial describes how to extend the generic model model-based tracker implemented in vpMbGenericTracker class using simultaneously multiple camera views acquired by a stereo camera. Our implementation doesn't limit the number of cameras observing the object to track or some parts of the object. It allows to track the object in the images viewed by a set of cameras while providing its 3D localization. Calibrated cameras (intrinsic and extrinsic between the reference and the other cameras) are required.
+
+The mbt ViSP module allows the tracking of a markerless object using the knowledge of its CAD model. Considered objects have to be modeled by segment, circle or cylinder primitives. The model of the object could be defined in vrml format (except for circles) or in cao (our own format).
+
+The visual features that could be considered by multiple cameras are the moving-edges, the keypoints (KLT features) of a combination of them in a hybrid scheme when the object is textured and has visible edges (see \ref mb_generic_intro_features_overview). They are the same than the one used for a single camera.
+
+
+The vpMbGenericTracker class allow the tracking of the same object assuming two or more cameras:
+The main advantages of this configuration with respect to the monocular camera case (see \ref tutorial-tracking-mb-generic) concern:
+- the possibility to extend the application field of view;
+- a more robust tracking as the configuration of the stereo rig allows to track the object under multiple viewpoints and thus with more visual features.
+
+In order to achieve this, the following information are required:
+- the intrinsic parameters of each camera obtained after calibration (see \ref tutorial-calibration-intrinsic);
+- the transformation matrix between each camera and a reference camera: \f$ ^{c_{current}}{\bf M}_{c_{reference}} \f$ (see \ref tutorial-calibration-extrinsic).
+
+In the following sections, we consider the tracking of a tea box modeled in cao format. A stereo camera sees this object. The following video shows the tracking performed with vpMbGenericTracker. In this example, the fixed cameras located on the Romeo Humanoid robot head captured the images.
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/aWXvvkeytp0" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+This other video shows the behavior of the hybrid tracking using moving-edges and keypoints as visual features.
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/0poP7gONdMc" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+\note The cameras can move, but the tracking will be effective as long as the transformation matrix between the cameras and the reference camera is known and updated at each iteration (see \ref mb_generic_stereo_moving_cameras).
+\note The vpMbGenericTracker class is not restricted to stereo configuration. It allows also the usage of multiple cameras (3 or more cameras).
+
+Next sections will highlight how to easily adapt your code to use multiple cameras with the generic model-based tracker. As only the new methods dedicated to multiple views tracking will be presented, 
+you are highly recommended to follow \ref tutorial-tracking-mb-generic in order to be familiar with the generic model-based tracking concepts and with the configuration part.
+
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic-stereo
+\endcode
+
+\section mb_generic_stereo_started Getting started
+
+To start with the generic markerless model-based tracker using a stereo camera, we recommend to understand the tutorial-mb-generic-tracker-stereo.cpp source code that is given and explained below.  
+
+\subsection mb_generic_stereo_overview Overview
+
+The generic model-based tracker available for multiple views tracking rely on the same tracker than in the monocular case. Our implementation in vpMbGenericTracker class permits to easily extend the usage of the model-based tracker to multiple cameras with the guarantee to preserve the same behavior compared to the tracking in the monocular configuration.
+
+\subsection mb_generic_stereo_implementation_detail Implementation detail
+
+Each tracker is stored in a map, the key corresponding to the name of the camera on which the tracker will process. By default, the camera names are set to:
+-  "Camera" when the tracker is constructed with one camera.
+-  "Camera1" to "CameraN" when the tracker is constructed with N cameras.
+-  The default reference camera will be "Camera1" in the multiple cameras case.
+
+\image html img-multi-cameras-config.png Default name convention and reference camera ("Camera1").
+
+To deal with multiple cameras, in the virtual visual servoing control law we concatenate all the interaction matrices and residual vectors and transform them in a single reference camera frame to compute
+the reference camera velocity.
+Thus, we have to know the transformation matrix between each camera and the reference camera.
+
+For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the following information: 
+\f$ _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$.
+
+\subsection mb_generic_stereo_started_input Example input/output data
+
+The tutorial-mb-generic-tracker-stereo.cpp example uses the following data as input:
+- two video files; `teabox_left.mpg` and `teabox_right.mpg` that are the default videos and that could be changed using `--name` command line option. They need to be synchronized and correspond to the images acquired by a left and right camera.
+- two configuration files in xml format `teabox_left.xml` and `teabox_right.xml` that contain the tracker settings and camera parameters. See \ref mb_generic_settings_xml to know more about the content of these files. When using different cameras, since the intrinsic camera parameters differ the content of these `*.xml` may be different. There is also the possibility to set these parameters in the code without using an xml file; see \ref mb_generic_settings_ecm and \ref mb_generic_settings_klt.
+- two cad models that describes the object to track. In the example we use by default `teabox_right.cao` and `teabox_left.cao`. As this is the case here, the CAD models are generally the same when using a stereo configuration. See \ref mb_generic_model section to learn how the teabox is modeled and section \ref mb_generic_advanced_cao to learn how to model an other object.
+- two files with extension `*.init` that contain the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the left and right images on the corresponding 2D points. The default files are named `teabox_left.init` and `teabox_left.right`. In our case they have the same content, but depending on the point of view, sometime it could be useful that they differ to ensure that the 3D points are visible during initialization. The content of these files are detailed in \ref mb_generic_started_src_explained section.
+- two optional images with extension `*.ppm` that may help the user to remember the location of the corresponding 3D points specified in `*.init` file. By default we use `teabox_left.ppm` and `teabox_right.ppm`.
+- the transformation between the two cameras. Here we use `cRightMcLeft.txt` file that express the transformation between the right camera frame and the left camera frame. Using this transformation we can compute the 3D coordinates of a point in left camera frame in the right camera frame.
+
+As an output the tracker provides the two poses \f$^c {\bf M}_o \f$ corresponding to a 4 by 4 matrix that corresponds to the geometric transformation between the frame attached to the object (in our case the tea box) and the frame attached to the the left camera and the one attached to the right camera. The poses are returned as a vpHomogeneousMatrix container. 
+
+\subsection mb_generic_stereo_example_code Example code
+The following example comes from tutorial-mb-generic-tracker-stereo.cpp and allows to track a tea box modeled in cao format. In this example we consider a stereo configuration with images from a left camera and images from a right camera.
+
+Once built, to choose which tracker to use on each camera, run the binary with the following argument:
+\code
+$ ./tutorial-mb-generic-tracker-stereo --tracker <1=egde|2=klt|3=hybrid> <1=egde|2=klt|3=hybrid>
+\endcode
+
+For example, to use moving edges features on images acquired by the left camera and an hybrid scheme on images acquired by the right camera, run:
+\code
+$ ./tutorial-mb-generic-tracker-stereo --tracker 1 2
+\endcode
+
+The source code is the following:
+\include tutorial-mb-generic-tracker-stereo.cpp
+
+\subsection mb_generic_stereo_explanation_of_the_code Explanation of the code
+
+The previous source code shows how to use a model-based tracking on stereo images using the standard procedure to configure the tracker:
+- construct the tracker. Only one tracker is used even if we consider multiple views.
+- initialize the tracker by loading the configuration files (`*.xml` and `*.init`) for each camera view
+- load a 3D model (`*.cao`) for each camera view
+- start a while loop
+  - acquire left and right images
+  - process the tracking
+  - get the pose and display the model in the images
+
+\warning The libxml2 library, used to load the configuration files (`*.xml`), is required to run the tutorial example. OpenCV is also required and the KLT module has to be enabled to use the KLT functionality. See \ref mb_generic_intro_3rd_parties. If libxml is not available, there is also the possibility to set the tracker settings modifying the code; see \ref mb_generic_settings_ecm and \ref mb_generic_settings_klt.
+
+\note Please refer to the tutorial \ref tutorial-tracking-mb-generic in order to have the explanations about the configuration parameters (\ref mb_generic_settings) and how to model an object in a ViSP compatible format (\ref mb_generic_advanced_cao).
+
+Below we give an explanation of the source code.
+
+First the vpMbGenericTracker header is included:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Include
+
+We declare two images for the left and right camera views.
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Images
+
+To construct a stereo tracker, we have to specify for each tracker which are the features to be considered as argument given to the tracker constructors. That is why whe create a vector of size 2 that contains the required vpMbGenericTracker::vpTrackerType:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Constructor
+
+All the configuration parameters for the tracker are stored in xml configuration files. To load the different files that contain also the the intrinsic camera parameters, we use:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Load config file
+
+To load the 3D object model, we use:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Load cao
+
+We can also use the following setting that enables the display of the features used during the tracking:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Set display features
+
+We have to set the transformation matrices between the cameras and the reference camera to be able to compute the control law in a reference camera frame. In the code we consider the left camera with the name "Camera1" as the reference camera. For the right camera with the name "Camera2" we have to set the transformation (\f$ ^{c_{right}}{\bf M}_{c_{left}} \f$).
+This transformation is read from `cRightMcLeft.txt` file. Since our left and right cameras are not moving, this transformation is constant and has not to be updated in the tracking loop:
+
+\note For the reference camera, the camera transformation matrix has to be specified as an identity homogeneous matrix (no rotation, no translation). By default the vpHomogeneousMatrix constructor builds an identity matrix.
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Set camera transformation matrix
+
+The initial pose is set by clicking on specific points in the image:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Init
+
+The tracking is done by:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Track
+
+The poses for each camera are retrieved with:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Get pose
+
+To display the model with the estimated pose, we use:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Display
+
+\section mb_generic_stereo_advanced Advanced
+
+\subsection mb_generic_stereo_moving_cameras How to deal with moving cameras
+
+The principle remains the same than with static cameras. You have to supply the camera transformation matrices to the tracker each time the cameras move and before calling the track method:
+\code
+mapOfCamTrans["Camera1"] = vpHomogeneousMatrix(); //The Camera1 is the reference camera.
+mapOfCamTrans["Camera2"] = get_c2Mc1(); //Get the new transformation between the two cameras.
+tracker.setCameraTransformationMatrix(mapOfCamTrans);
+tracker.track(mapOfImg);
+\endcode
+
+This information can be available through the robot kinematics or using different kind of sensors.
+
+The following video shows the stereo hybrid model-based tracking based on object edges and KLT features located on visible faces. The result of the tracking is then used to servo the Romeo humanoid robot eyes to gaze toward the object. The images were captured by cameras located in the Romeo eyes.
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/IguBxf4VRUc" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+\section mb_generic_stereo_next Next tutorial
+You are now ready to see the next \ref tutorial-tracking-mb-generic.
+
+*/

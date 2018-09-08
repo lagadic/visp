@@ -49,6 +49,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpDebug.h>
@@ -608,11 +610,16 @@ int main(int argc, const char **argv)
 }
 
 #else
-
 int main()
 {
   std::cout << "visp_mbt module is required to run this example." << std::endl;
   return EXIT_SUCCESS;
 }
-
 #endif
+#else
+int main()
+{
+  std::cout << "Nothing to run, deprecated example." << std::endl;
+  return 0;
+}
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

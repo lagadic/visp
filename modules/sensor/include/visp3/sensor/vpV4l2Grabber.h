@@ -50,8 +50,6 @@
 #ifdef VISP_HAVE_V4L2
 
 #include <libv4l2.h> // Video For Linux Two interface
-#include <linux/kernel.h>
-#include <linux/types.h>
 #include <linux/videodev2.h> // Video For Linux Two interface
 
 #include <visp3/core/vpFrameGrabber.h>

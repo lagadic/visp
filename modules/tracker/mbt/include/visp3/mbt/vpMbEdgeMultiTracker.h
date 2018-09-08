@@ -46,19 +46,25 @@
 #ifndef __vpMbEdgeMultiTracker_h__
 #define __vpMbEdgeMultiTracker_h__
 
+#include <visp3/core/vpConfig.h>
+
 #include <iostream>
 #include <vector>
 
 #include <visp3/mbt/vpMbEdgeTracker.h>
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!
   \class vpMbEdgeMultiTracker
   \ingroup group_mbt_trackers
   \brief Make the complete stereo (or more) tracking of an object by using its
   CAD model.
+  \warning This class is deprecated for user usage. You should rather use the high level
+  vpMbGenericTracker class.
 
   This class allows to track an object or a scene given its 3D model.
-  The \ref tutorial-tracking-mb-stereo is also a good starting point to use
+  The \ref tutorial-tracking-mb-stereo-deprecated is also a good starting point to use
   this class.
 
   The tracker requires the knowledge of the 3D model that could be provided in
@@ -66,7 +72,7 @@
   may also use an xml file used to tune the behavior of the tracker and an
   init file used to compute the pose at the very first image.
 */
-class VISP_EXPORT vpMbEdgeMultiTracker : public vpMbEdgeTracker
+class VISP_EXPORT vp_deprecated vpMbEdgeMultiTracker : public vpMbEdgeTracker
 {
 protected:
   //! Map of camera transformation matrix between the current camera frame to
@@ -376,4 +382,5 @@ protected:
   //@}
 };
 
-#endif
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#endif //__vpMbEdgeMultiTracker_h__

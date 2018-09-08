@@ -658,6 +658,19 @@ void vpRowVector::insert(unsigned int i, const vpRowVector &v)
 }
 
 /*!
+ * Converts the vpRowVector to a std::vector.
+ * \return The corresponding std::vector<double>.
+ */
+std::vector<double> vpRowVector::toStdVector()
+{
+  std::vector<double> v(this->size());
+
+  for (unsigned int i = 0; i < this->size(); i++)
+    v[i] = data[i];
+  return v;
+}
+
+/*!
   Stack row vector with a new element at the end of the vector.
 
   \param d : Element to stack to the existing one.
@@ -673,7 +686,7 @@ void vpRowVector::insert(unsigned int i, const vpRowVector &v)
   \sa stack(const vpRowVector &, const vpRowVector &, vpRowVector &)
 
 */
-void vpRowVector::stack(const double &d)
+void vpRowVector::stack(double d)
 {
   this->resize(colNum + 1, false);
   (*this)[colNum - 1] = d;

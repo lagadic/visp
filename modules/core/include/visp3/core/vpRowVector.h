@@ -235,12 +235,13 @@ public:
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
   }
 
-  void stack(const double &d);
+  void stack(double d);
   void stack(const vpRowVector &v);
 
   double sum() const;
   double sumSquare() const;
   vpColVector t() const;
+  std::vector<double> toStdVector();
   vpColVector transpose() const;
   void transpose(vpColVector &v) const;
 

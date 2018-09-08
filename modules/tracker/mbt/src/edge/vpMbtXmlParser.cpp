@@ -82,18 +82,6 @@ void vpMbtXmlParser::init()
 }
 
 /*!
-  Parse the file in parameters.
-  This method is deprecated, use parse() instead.
-
-  \param filename : File to parse.
-*/
-void vpMbtXmlParser::parse(const char *filename)
-{
-  std::string file = filename;
-  vpXmlParser::parse(file);
-}
-
-/*!
   Write info to file.
 
   \warning Useless, so not yet implemented => Throw exception.

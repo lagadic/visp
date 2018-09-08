@@ -23,10 +23,12 @@ Script will create <outputdir> if it's missing, and a few subdirectories:
 
 The script does not recompile the library from scratch each time.
 However, visp3.framework directory is erased and recreated on each run.
+
+Adding --dynamic parameter will build visp3.framework as App Store dynamic framework. Only iOS 8+ versions are supported.
 """
 
 from __future__ import print_function
-import glob, re, os, os.path, shutil, string, sys, argparse, traceback
+import glob, re, os, os.path, shutil, string, sys, argparse, traceback, multiprocessing
 from subprocess import check_call, check_output, CalledProcessError
 
 def execute(cmd, cwd = None):
@@ -43,7 +45,7 @@ def getXCodeMajor():
     return 0
 
 class Builder:
-    def __init__(self, visp, contrib, targets):
+    def __init__(self, visp, contrib, dynamic, bitcodedisabled, exclude, targets):
         self.visp = os.path.abspath(visp)
         self.contrib = None
         if contrib:
@@ -52,10 +54,18 @@ class Builder:
                 self.contrib = os.path.abspath(modpath)
             else:
                 print("Note: contrib repository is bad - modules subfolder not found", file=sys.stderr)
+        self.dynamic = dynamic
+        self.bitcodedisabled = bitcodedisabled
+        self.exclude = exclude
         self.targets = targets
 
     def getBD(self, parent, t):
-        res = os.path.join(parent, '%s-%s' % t)
+
+        if len(t[0]) == 1:
+            res = os.path.join(parent, 'build-%s-%s' % (t[0][0].lower(), t[1].lower()))
+        else:
+            res = os.path.join(parent, 'build-%s' % t[1].lower())
+
         if not os.path.isdir(res):
             os.makedirs(res)
         return os.path.abspath(res)
@@ -69,19 +79,34 @@ class Builder:
 
         xcode_ver = getXCodeMajor()
 
-        for t in self.targets:
+        if self.dynamic:
+            alltargets = self.targets
+        else:
+            # if we are building a static library, we must build each architecture separately
+            alltargets = []
+
+            for t in self.targets:
+                for at in t[0]:
+                    current = ( [at], t[1] )
+
+                    alltargets.append(current)
+
+        for t in alltargets:
             mainBD = self.getBD(mainWD, t)
             dirs.append(mainBD)
+
             cmake_flags = []
             if self.contrib:
                 cmake_flags.append("-DVISP_CONTRIB_MODULES_PATH=%s" % self.contrib)
-            if xcode_ver >= 7 and t[1] == 'iPhoneOS':
+            if xcode_ver >= 7 and t[1] == 'iPhoneOS' and self.bitcodedisabled == False:
                 cmake_flags.append("-DCMAKE_C_FLAGS=-fembed-bitcode -Wno-implicit-function-declaration -Wno-logical-op-parentheses -Wno-unused-variable -Wno-parentheses -Wno-sometimes-uninitialized -Wno-unused-parameter -Wno-shorten-64-to-32")
                 cmake_flags.append("-DCMAKE_CXX_FLAGS=-fembed-bitcode")
             else:
                 cmake_flags.append("-DCMAKE_C_FLAGS=-Wno-implicit-function-declaration -Wno-logical-op-parentheses -Wno-unused-variable -Wno-parentheses -Wno-sometimes-uninitialized -Wno-unused-parameter -Wno-shorten-64-to-32")
             self.buildOne(t[0], t[1], mainBD, cmake_flags)
-            self.mergeLibs(mainBD)
+
+            if self.dynamic == False:
+                self.mergeLibs(mainBD)
         self.makeFramework(outdir, dirs)
 
     def build(self, outdir):
@@ -95,8 +120,7 @@ class Builder:
             sys.exit(1)
 
     def getToolchain(self, arch, target):
-        toolchain = os.path.join(self.visp, "platforms", "ios", "cmake", "Toolchains", "Toolchain-%s_Xcode.cmake" % target)
-        return toolchain
+        return None
 
     def getCMakeArgs(self, arch, target):
         args = [
@@ -109,19 +133,46 @@ class Builder:
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_TESTS=OFF",
             "-DBUILD_TUTORIALS=OFF",
-         ]
+        ] + ([
+            "-DBUILD_SHARED_LIBS=ON",
+            "-DCMAKE_MACOSX_BUNDLE=ON",
+            "-DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO",
+        ] if self.dynamic else [])
+
         return args
 
-    def getBuildCommand(self, arch, target):
+    def getBuildCommand(self, archs, target):
+
         buildcmd = [
             "xcodebuild",
-            "IPHONEOS_DEPLOYMENT_TARGET=6.0",
-            "ARCHS=%s" % arch,
-            "-sdk", target.lower(),
-            "-configuration", "Release",
-            "-parallelizeTargets",
-            "-jobs", "4"
         ]
+
+        if self.dynamic:
+            buildcmd += [
+                "IPHONEOS_DEPLOYMENT_TARGET=8.0",
+                "ONLY_ACTIVE_ARCH=NO",
+            ]
+
+            if not self.bitcodedisabled:
+                buildcmd.append("BITCODE_GENERATION_MODE=bitcode")
+
+            for arch in archs:
+                buildcmd.append("-arch")
+                buildcmd.append(arch.lower())
+        else:
+            arch = ";".join(archs)
+            buildcmd += [
+                "IPHONEOS_DEPLOYMENT_TARGET=6.0",
+                "ARCHS=%s" % arch,
+            ]
+
+        buildcmd += [
+                "-sdk", target.lower(),
+                "-configuration", "Release",
+                "-parallelizeTargets",
+                "-jobs", str(multiprocessing.cpu_count()),
+            ] + (["-target","ALL_BUILD"] if self.dynamic else [])
+
         return buildcmd
 
     def getInfoPlist(self, builddirs):
@@ -132,11 +183,12 @@ class Builder:
         toolchain = self.getToolchain(arch, target)
         cmakecmd = self.getCMakeArgs(arch, target) + \
             (["-DCMAKE_TOOLCHAIN_FILE=%s" % toolchain] if toolchain is not None else [])
-        if arch.startswith("armv") or arch.startswith("arm64"):
+        if target.lower().startswith("iphoneos"):
             cmakecmd.append("-DENABLE_NEON=ON")
         cmakecmd.append(self.visp)
         cmakecmd.extend(cmakeargs)
         execute(cmakecmd, cwd = builddir)
+
         # Clean and build
         clean_dir = os.path.join(builddir, "install")
         if os.path.isdir(clean_dir):
@@ -154,7 +206,6 @@ class Builder:
 
     def makeFramework(self, outdir, builddirs):
         name = "visp3"
-        libname = "libvisp_merged.a"
 
         # set the current dir to the dst root
         framework_dir = os.path.join(outdir, "%s.framework" % name)
@@ -162,7 +213,12 @@ class Builder:
             shutil.rmtree(framework_dir)
         os.makedirs(framework_dir)
 
-        dstdir = os.path.join(framework_dir, "Versions", "A")
+        if self.dynamic:
+            dstdir = framework_dir
+            libname = "visp3.framework/visp3"
+        else:
+            dstdir = os.path.join(framework_dir, "Versions", "A")
+            libname = "libvisp_merged.a"
 
         # copy headers from one of build folders
         shutil.copytree(os.path.join(builddirs[0], "install", "include", "visp3"), os.path.join(dstdir, "Headers"))
@@ -175,22 +231,42 @@ class Builder:
         print("Creating universal library from:\n\t%s" % "\n\t".join(libs), file=sys.stderr)
         execute(lipocmd)
 
-        # copy Info.plist
-        resdir = os.path.join(dstdir, "Resources")
-        os.makedirs(resdir)
-        shutil.copyfile(self.getInfoPlist(builddirs), os.path.join(resdir, "Info.plist"))
+        # dynamic framework has different structure, just copy the Plist directly
+        if self.dynamic:
+            resdir = dstdir
+            shutil.copyfile(self.getInfoPlist(builddirs), os.path.join(resdir, "Info.plist"))
+        else:
+            # copy Info.plist
+            resdir = os.path.join(dstdir, "Resources")
+            os.makedirs(resdir)
+            shutil.copyfile(self.getInfoPlist(builddirs), os.path.join(resdir, "Info.plist"))
 
-        # make symbolic links
-        links = [
-            (["A"], ["Versions", "Current"]),
-            (["Versions", "Current", "Headers"], ["Headers"]),
-            (["Versions", "Current", "Resources"], ["Resources"]),
-            (["Versions", "Current", name], [name])
+            # make symbolic links
+            links = [
+                (["A"], ["Versions", "Current"]),
+                (["Versions", "Current", "Headers"], ["Headers"]),
+                (["Versions", "Current", "Resources"], ["Resources"]),
+                (["Versions", "Current", name], [name])
+            ]
+            for l in links:
+                s = os.path.join(*l[0])
+                d = os.path.join(framework_dir, *l[1])
+                os.symlink(s, d)
+
+class iOSBuilder(Builder):
+
+    def getToolchain(self, arch, target):
+        toolchain = os.path.join(self.visp, "platforms", "ios", "cmake", "Toolchains", "Toolchain-%s_Xcode.cmake" % target)
+        return toolchain
+
+    def getCMakeArgs(self, arch, target):
+        arch = ";".join(arch)
+
+        args = Builder.getCMakeArgs(self, arch, target)
+        args = args + [
+            '-DIOS_ARCH=%s' % arch
         ]
-        for l in links:
-            s = os.path.join(*l[0])
-            d = os.path.join(framework_dir, *l[1])
-            os.symlink(s, d)
+        return args
 
 if __name__ == "__main__":
     folder = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), "../.."))
@@ -198,14 +274,17 @@ if __name__ == "__main__":
     parser.add_argument('out', metavar='OUTDIR', help='folder to put built framework')
     parser.add_argument('--visp', metavar='DIR', default=folder, help='folder with visp repository (default is "../.." relative to script location)')
     parser.add_argument('--contrib', metavar='DIR', default=None, help='folder with visp_contrib repository (default is "None" - build only main framework)')
+    parser.add_argument('--without', metavar='MODULE', default=[], action='append', help='ViSP modules to exclude from the framework')
+    parser.add_argument('--dynamic', default=False, action='store_true', help='build dynamic framework (default is "False" - builds static framework)')
+    parser.add_argument('--disable-bitcode', default=False, dest='bitcodedisabled', action='store_true', help='disable bitcode (enabled by default)')
     args = parser.parse_args()
 
-    b = Builder(args.visp, args.contrib,
+    b = iOSBuilder(args.visp, args.contrib, args.dynamic, args.bitcodedisabled, args.without,
         [
-            ("armv7", "iPhoneOS"),
-            ("armv7s", "iPhoneOS"),
-            ("arm64", "iPhoneOS"),
-            ("i386", "iPhoneSimulator"),
-            ("x86_64", "iPhoneSimulator"),
+            (["armv7s", "arm64"], "iPhoneOS"),
+        ] if os.environ.get('BUILD_PRECOMMIT', None) else
+        [
+            (["armv7", "armv7s", "arm64"], "iPhoneOS"),
+            (["i386", "x86_64"], "iPhoneSimulator"),
         ])
     b.build(args.out)

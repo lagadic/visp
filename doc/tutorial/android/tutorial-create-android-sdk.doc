@@ -1,0 +1,54 @@
+/**
+
+\page tutorial-create-android-sdk Tutorial: Building ViSP SDK for Android
+\tableofcontents
+
+\section android-sdk-getting-started Getting Started
+This tutorial is designed to help you build ViSP Android SDK which can be used to create Android Apps supporting ViSP Java functionalities.
+
+This tutorial assumes you have the following software installed and configured:
+- <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java Development Kit (JDK)</a>
+- <a href="https://developer.android.com/studio/">Android SDK and NDK</a>
+- <a href="https://www.python.org/downloads/">Python Interpreter(prefer versions 2.7 or 3.6)</a>
+- <a href="https://ant.apache.org/bindownload.cgi">Apache Ant</a>
+- <a href="https://cmake.org/download/">CMake</a>
+- <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
+
+Optionally, you can install some software for a faster build or build with a GUI
+- <a href="https://ccache.samba.org/">ccache</a>
+- <a href="https://cmake.org/runningcmake/">CMake GUI</a>
+
+\section fetch-the-code Fetch the source code
+
+All the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded <a href="https://visp.inria.fr/download/">here</a> or from the <a href="https://github.com/lagadic/visp">github repository</a>. Note that the scripts for building the SDK are included in the source code.
+
+\section build-android-sdk Build the Android SDK
+
+Open the directory having ViSP source code. Head to `visp/platforms/android` directory in it. Open terminal or command line in that folder and enter
+\code
+$ python build_sdk.py --config ndk.config.py --sdk_path <path-to-Android-Sdk> --ndk_path <path-to-Android-Sdk>/ndk-bundle <installation-directory> <visp-source-code-directory>
+\endcode
+
+For example, on a system the command might look like
+\code
+$ python build_sdk.py --config ndk.config.py --sdk_path /home/user/Android/Sdk --ndk_path /home/user/Android/Sdk/ndk-bundle /home/user/visp-sdk-build /home/user/Projects/visp
+\endcode
+
+Above command will build SDK for multiple Android architectures. If you're aware on what Android architecture you'll be working on(refer <a href="https://android.gadgethacks.com/how-to/android-basics-see-what-kind-processor-you-have-arm-arm64-x86-0168051/">here</a>), say `x86_64`, you can do a minimal build by changing contents of `ndk.config.py` file
+\code
+ABIs = [
+    ABI("5", "x86_64",      "x86_64-4.9")
+]
+\endcode
+This will speed up the installation process.
+
+If you're experiencing problems with `ccache`, you can try a build without it
+\code
+$ python build_sdk.py --no-ccache --config ndk.config.py --sdk_path /home/user/Android/Sdk --ndk_path /home/user/Android/Sdk/ndk-bundle /home/user/visp-sdk-build /home/user/Projects/visp
+\endcode
+
+\section android_install_next Next tutorial
+
+You are now ready to follow \ref tutorial-android-getting-started where you'll be creating a sample Android App using ViSP SDK.
+
+*/

@@ -25,6 +25,7 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install tesseract; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then export OpenCV_DIR=/usr/local/opt/opencv; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install libxml2 libdc1394 gsl; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install ant; fi"
   
   # Get libs for Linux
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get update -qq; fi"
@@ -39,6 +40,7 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libavcodec-dev libbz2-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libogre-1.9-dev libois-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq ant; fi"
 
 before_script:
   - mkdir build
@@ -49,7 +51,7 @@ before_script:
 
 script: 
   - make
-  - ctest
+  - ctest --output-on-failure
 
 notifications:
   email:

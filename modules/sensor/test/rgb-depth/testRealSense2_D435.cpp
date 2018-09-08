@@ -54,6 +54,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #include <thread>
+#include <mutex>
 #endif
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
@@ -223,13 +224,18 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
 int main(int argc, char *argv[])
 {
+#ifdef VISP_HAVE_PCL
   bool pcl_color = false;
+#endif
   bool show_info = false;
 
   for (int i = 1; i < argc; i++) {
+#ifdef VISP_HAVE_PCL
     if (std::string(argv[i]) == "--pcl_color") {
       pcl_color = true;
-    } else if (std::string(argv[i]) == "--show_info") {
+    } else
+#endif
+    if (std::string(argv[i]) == "--show_info") {
       show_info = true;
     }
   }

@@ -56,21 +56,26 @@
 #include <visp3/core/vpRGBa.h>
 
 #ifdef VISP_HAVE_OPENCV
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
+#  include <opencv2/imgproc/types_c.h>
+#  include <opencv2/imgproc.hpp>
+#  include <opencv2/imgcodecs.hpp>
+#  include <opencv2/highgui.hpp>
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
+#  include <opencv2/core/core.hpp>
+#  include <opencv2/highgui/highgui.hpp>
+#  include <opencv2/imgproc/imgproc.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020408) // Require opencv >= 2.4.8
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#  include <opencv2/core/core.hpp>
+#  include <opencv2/highgui/highgui.hpp>
+#  include <opencv2/imgproc/imgproc.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/highgui/highgui_c.h>
-#include <opencv2/legacy/legacy.hpp>
+#  include <opencv2/core/core.hpp>
+#  include <opencv2/highgui/highgui.hpp>
+#  include <opencv2/highgui/highgui_c.h>
+#  include <opencv2/legacy/legacy.hpp>
 #else
-#include <highgui.h>
+#  include <highgui.h>
 #endif
 #endif
 

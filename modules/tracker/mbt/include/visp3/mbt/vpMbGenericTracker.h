@@ -45,6 +45,38 @@
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbKltTracker.h>
 
+/*!
+  \class vpMbGenericTracker
+  \ingroup group_mbt_trackers
+  \brief Real-time 6D object pose tracking using its CAD model.
+
+  The tracker requires the knowledge of the 3D model that could be provided in
+  a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
+  also use an xml file used to tune the behavior of the tracker and an init file
+  used to compute the pose at the very first image.
+
+  This class allows tracking an object or a scene given its 3D model. More information in \cite Trinh18a.
+  A lot of videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
+
+  \htmlonly
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/DDdIXja7YpE"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/M3XAxu9QC7Q"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <iframe width="280" height="160" src="https://www.youtube.com/embed/4FARYLYzNL8"
+  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  \endhtmlonly
+
+  The \ref tutorial-tracking-mb-generic is a good starting point to use this
+  class. If you want to track an object with a stereo camera refer to
+  \ref tutorial-tracking-mb-generic-stereo. If you want rather use a RGB-D camera and exploit
+  the depth information, you may see \ref tutorial-tracking-mb-generic-rgbd.
+  There is also \ref tutorial-detection-object that shows how to initialize the tracker from
+  an initial pose provided by a detection algorithm.
+
+*/
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker
 {
 public:
@@ -63,6 +95,9 @@ public:
   vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes);
 
   virtual ~vpMbGenericTracker();
+
+  virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
+                                               const vpCameraParameters &_cam);
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
@@ -280,6 +315,8 @@ public:
 
   virtual void setLod(const bool useLod, const std::string &name = "");
 
+  virtual void setMask(const vpImage<bool> &mask);
+
   virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
   virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name = "");
 
@@ -303,6 +340,10 @@ public:
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
   virtual void setProjectionErrorComputation(const bool &flag);
+
+  virtual void setProjectionErrorDisplay(const bool display);
+  virtual void setProjectionErrorDisplayArrowLength(const unsigned int length);
+  virtual void setProjectionErrorDisplayArrowThickness(const unsigned int thickness);
 
   virtual void setReferenceCameraName(const std::string &referenceCameraName);
 
