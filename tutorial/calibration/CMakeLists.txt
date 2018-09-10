@@ -7,7 +7,7 @@ find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui)
 set(tutorial_cpp
   tutorial-chessboard-pose.cpp
   tutorial-franka-acquire-calib-data.cpp
-  tutorial-tsai.cpp
+  tutorial-hand-eye.cpp
 )
 
 foreach(cpp ${tutorial_cpp})

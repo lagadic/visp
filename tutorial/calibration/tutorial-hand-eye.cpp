@@ -1,4 +1,4 @@
-//! \example tutorial-tsai.cpp
+//! \example tutorial-hand-eye.cpp
 //!
 #include <visp3/vision/vpCalibration.h>
 
