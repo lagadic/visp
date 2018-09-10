@@ -554,12 +554,14 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneous
   \param angleAppears : Angle used to test the appearance of a face
   \param angleDisappears : Angle used to test the disappearance of a face
   \param changed : True if a face appeared, disappeared or too many points
-  have been lost. False otherwise \param useOgre : True if a Ogre is used to
-  test the visibility, False otherwise. \param not_used : Unused parameter.
+  have been lost. False otherwise
+  \param useOgre : True if a Ogre is used to test the visibility, False otherwise.
+  \param not_used : Unused parameter.
   \param I : Image used to test if a face is entirely projected in the image.
   \param cam : Camera parameters.
   \param cameraPos : Position of the camera. Used only when Ogre is used as
-  3rd party. \param index : Index of the face to consider.
+  3rd party.
+  \param index : Index of the face to consider.
 
   \return Return true if the face is visible.
 */
