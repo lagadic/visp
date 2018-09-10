@@ -43,7 +43,7 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_core visp_vision visp_gui visp_io)
 
 set(example_cpp
-  camera_calibration.cpp
+  calibrate-camera.cpp
   calibrate-hand-eye.cpp
 )
 
@@ -76,5 +76,5 @@ list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.png" )
 
 # Copy the data files to the same location than the target
 foreach(data ${data2copy})
-  visp_copy_data(camera_calibration.cpp ${data})
+  visp_copy_data(calibrate-camera.cpp ${data})
 endforeach()
