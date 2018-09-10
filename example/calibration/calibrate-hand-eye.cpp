@@ -37,9 +37,10 @@
  *****************************************************************************/
 
 /*!
-  \example calibrateTsai.cpp
-  \brief Example of Tsai calibration to estimate extrinsic camera parameters,
-  ie hand-eye homogeneous transformation.
+  \example calibrate-hand-eye.cpp
+  \brief Example of hand-eye calibration to estimate extrinsic camera parameters,
+  ie hand-eye homogeneous transformation corresponding to the transformation between
+  the robot end-effector and the camera.
 
 */
 #include <iomanip>
