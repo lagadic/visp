@@ -139,6 +139,9 @@ public:
   // transpose
   vpRotationMatrix t() const;
 
+  static vpRotationMatrix mean(const std::vector<vpHomogeneousMatrix> &vec_M);
+  static vpRotationMatrix mean(const std::vector<vpRotationMatrix> &vec_R);
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions

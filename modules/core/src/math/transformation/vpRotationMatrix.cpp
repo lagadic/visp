@@ -701,6 +701,79 @@ vpColVector vpRotationMatrix::getCol(const unsigned int j) const
   return c;
 }
 
+/*!
+  Compute the Euclidean mean of the rotation matrices extracted from a vector of homogeneous matrices following Moakher's method (SIAM 2002).
+
+  \param[in] vec_M : Set of homogeneous matrices.
+  \return The Euclidian mean of the rotation matrices.
+
+  \sa vpTranslationVector::mean()
+ */
+vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &vec_M)
+{
+  vpMatrix meanR(3, 3);
+  vpRotationMatrix R;
+  for (size_t i = 0; i < vec_M.size(); i++) {
+    R = vec_M[i].getRotationMatrix();
+    meanR += (vpMatrix) R;
+  }
+  meanR /= vec_M.size();
+
+  // Euclidean mean of the rotation matrix following Moakher's method (SIAM 2002)
+  vpMatrix M, U, V;
+  vpColVector sv;
+  meanR.pseudoInverse(M, sv, 1e-6, U, V);
+  double det = sv[0]*sv[1]*sv[2];
+  if (det > 0) {
+    meanR = U * V.t();
+  }
+  else {
+    vpMatrix D(3,3);
+    D = 0.0;
+    D[0][0] = D[1][1] = 1.0; D[2][2] = -1;
+    meanR = U * D * V.t();
+  }
+
+  R = meanR;
+  return R;
+}
+
+/*!
+  Compute the Euclidean mean of the rotation matrices following Moakher's method (SIAM 2002).
+
+  \param[in] vec_R : Set of rotation matrices.
+  \return The Euclidian mean of the rotation matrices.
+
+  \sa vpTranslationVector::mean()
+ */
+vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec_R)
+{
+  vpMatrix meanR(3, 3);
+  vpRotationMatrix R;
+  for (size_t i = 0; i < vec_R.size(); i++) {
+    meanR += (vpMatrix) vec_R[i];
+  }
+  meanR /= vec_R.size();
+
+  // Euclidean mean of the rotation matrix following Moakher's method (SIAM 2002)
+  vpMatrix M, U, V;
+  vpColVector sv;
+  meanR.pseudoInverse(M, sv, 1e-6, U, V);
+  double det = sv[0]*sv[1]*sv[2];
+  if (det > 0) {
+    meanR = U * V.t();
+  }
+  else {
+    vpMatrix D(3,3);
+    D = 0.0;
+    D[0][0] = D[1][1] = 1.0; D[2][2] = -1;
+    meanR = U * D * V.t();
+  }
+
+  R = meanR;
+  return R;
+}
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!

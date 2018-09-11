@@ -646,3 +646,43 @@ double vpTranslationVector::sumSquare() const
 
   return sum_square;
 }
+
+/*!
+  Compute the Euclidean mean of the translation vector extracted from a vector of homogeneous matrices.
+
+  \param[in] vec_M : Set of homogeneous matrices.
+  \return The Euclidian mean of the translation vectors.
+
+  \sa vpRotationMatrix::mean()
+ */
+vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMatrix> &vec_M)
+{
+  vpColVector meanT(3);
+  for (size_t i = 0; i < vec_M.size(); i++) {
+    meanT += (vpColVector) vec_M[i].getTranslationVector();
+  }
+  meanT /= vec_M.size();
+
+  vpTranslationVector t(meanT);
+  return t;
+}
+
+/*!
+  Compute the Euclidean mean of a vector of translation vector.
+
+  \param[in] vec_t : Set of translation vectors.
+  \return The Euclidian mean of the translation vectors.
+
+  \sa vpRotationMatrix::mean()
+ */
+vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVector> &vec_t)
+{
+  vpColVector meanT(3);
+  for (size_t i = 0; i < vec_t.size(); i++) {
+    meanT += (vpColVector) vec_t[i];
+  }
+  meanT /= vec_t.size();
+
+  vpTranslationVector t(meanT);
+  return t;
+}

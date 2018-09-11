@@ -158,6 +158,8 @@ public:
   vpRowVector t() const;
 
   static vpTranslationVector cross(const vpTranslationVector &a, const vpTranslationVector &b);
+  static vpTranslationVector mean(const std::vector<vpHomogeneousMatrix> &vec_M);
+  static vpTranslationVector mean(const std::vector<vpTranslationVector> &vec_t);
   static vpMatrix skew(const vpTranslationVector &tv);
   static void skew(const vpTranslationVector &tv, vpMatrix &M);
 };
