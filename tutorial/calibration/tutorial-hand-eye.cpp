@@ -1,5 +1,4 @@
 //! \example tutorial-hand-eye.cpp
-//!
 #include <visp3/vision/vpCalibration.h>
 
 int main(int argc, char *argv[])
@@ -23,7 +22,6 @@ int main(int argc, char *argv[])
   std::vector<vpHomogeneousMatrix> wMe(ndata);
   vpHomogeneousMatrix eMc;
 
-  /* FC il faudrait vérifier que les données existent et ont du sens */
   for (unsigned int i = 1; i <= ndata; i++) {
     std::ostringstream ss_fPe, ss_cPo;
     ss_fPe << "pose_fPe_" << i << ".yaml";
@@ -31,11 +29,17 @@ int main(int argc, char *argv[])
     std::cout << "Use fPe=" << ss_fPe.str() << ", cPo=" << ss_cPo.str() << std::endl;
 
     vpPoseVector wPe;
-    wPe.loadYAML(ss_fPe.str(), wPe);
+    if (wPe.loadYAML(ss_fPe.str(), wPe) == false) {
+      std::cout << "Unable to read data from: " << ss_fPe.str() << std::endl;
+      return EXIT_FAILURE;
+    }
     wMe[i - 1] = vpHomogeneousMatrix(wPe);
 
     vpPoseVector cPo;
-    cPo.loadYAML(ss_cPo.str(), cPo);
+    if (cPo.loadYAML(ss_cPo.str(), cPo)  == false) {
+      std::cout << "Unable to read data from: " << ss_cPo.str() << std::endl;
+      return EXIT_FAILURE;
+    }
     cMo[i-1] = vpHomogeneousMatrix(cPo);
   }
 

@@ -10,6 +10,8 @@ set(tutorial_cpp
   tutorial-hand-eye.cpp
 )
 
+file(GLOB tutorial_data "*.yaml")
+
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)
@@ -21,3 +23,7 @@ if(VISP_HAVE_REALSENSE2)
     visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
 
+# Copy the data files to the same location than the target
+foreach(data ${tutorial_data})
+  visp_copy_data(tutorial-hand-eye.cpp ${data})
+endforeach()
