@@ -80,6 +80,7 @@ public:
   explicit vpRotationMatrix(const vpRxyzVector &r);
   explicit vpRotationMatrix(const vpRzyxVector &r);
   explicit vpRotationMatrix(const vpQuaternionVector &q);
+  explicit vpRotationMatrix(const vpMatrix &R);
   vpRotationMatrix(const double tux, const double tuy, const double tuz);
   /*!
     Destructor.

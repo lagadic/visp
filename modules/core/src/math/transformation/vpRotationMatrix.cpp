@@ -363,6 +363,11 @@ vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>
 vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(3, 3) { buildFrom(Rzyx); }
 
 /*!
+  Construct a 3-by-3 rotation matrix from a matrix that contains values corresponding to a rotation matrix.
+*/
+vpRotationMatrix::vpRotationMatrix(const vpMatrix &R) : vpArray2D<double>(3, 3) { *this = R; }
+
+/*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
