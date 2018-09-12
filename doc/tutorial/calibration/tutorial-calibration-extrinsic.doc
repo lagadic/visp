@@ -125,14 +125,14 @@ The source code corresponding to the binary is available in tutorial-chessboard-
 
 The final step 3. consists now to estimate the \f$^c{\bf M}_o\f$ transformation from the couples of \f$^f{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
 
-Complete the calibration running `tutorial-hand-eye` binary with the number of poses to consider:
+Complete the calibration running `tutorial-hand-eye-calibration` binary with the number of poses to consider:
 
-    $ ./tutorial-hand-eye --ndata <number of images or robot poses>
+    $ ./tutorial-hand-eye-calibration --ndata <number of images or robot poses>
 
 It produces as output the end-effector to camera frame transformation in `eMc.yaml` and `eMc.txt` files.
 
 \code
-$ ./tutorial-hand-eye --ndata 8
+$ ./tutorial-hand-eye-calibration --ndata 8
 Use fPe=pose_fPe_1.yaml, cPo=pose_cPo_1.yaml
 Use fPe=pose_fPe_2.yaml, cPo=pose_cPo_2.yaml
 Use fPe=pose_fPe_3.yaml, cPo=pose_cPo_3.yaml
@@ -165,7 +165,7 @@ data:
   - [1.57397]
 \endcode
 
-The source code corresponding to the binary is available in tutorial-hand-eye.cpp.
+The source code corresponding to the binary is available in tutorial-hand-eye-calibration.cpp.
 
 \section calib_ext_next Next tutorial
 

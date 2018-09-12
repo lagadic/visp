@@ -7,7 +7,7 @@ find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui)
 set(tutorial_cpp
   tutorial-chessboard-pose.cpp
   tutorial-franka-acquire-calib-data.cpp
-  tutorial-hand-eye.cpp
+  tutorial-hand-eye-calibration.cpp
 )
 
 file(GLOB tutorial_data "*.yaml")
@@ -25,5 +25,5 @@ endif()
 
 # Copy the data files to the same location than the target
 foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-hand-eye.cpp ${data})
+  visp_copy_data(tutorial-hand-eye-calibration.cpp ${data})
 endforeach()
