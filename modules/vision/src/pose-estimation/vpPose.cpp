@@ -362,8 +362,8 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *))
 {
   if (npt < 4) {
-    vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-    throw(vpPoseException(vpPoseException::notEnoughPointError, "No enough point "));
+    throw(vpPoseException(vpPoseException::notEnoughPointError,
+                          "Not enough point (%d) to compute the pose  ", npt));
   }
 
   switch (method) {
@@ -371,33 +371,19 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case DEMENTHON_VIRTUAL_VS:
   case DEMENTHON_LOWE: {
     if (npt < 4) {
-      vpERROR_TRACE("Dementhon method cannot be used in that case ");
-      vpERROR_TRACE("(at least 4 points are required)");
-      vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-      throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+                            "Dementhon method cannot be used in that case "
+                            "(at least 4 points are required)"
+                            "Not enough point (%d) to compute the pose  ", npt));
     }
 
     // test si les point 3D sont coplanaires
     int coplanar_plane_type = 0;
     bool plan = coplanar(coplanar_plane_type);
     if (plan == true) {
-      // std::cout << "Plan" << std::endl;
-      try {
-        poseDementhonPlan(cMo);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
-      // std::cout << "Fin Plan" << std::endl;
+      poseDementhonPlan(cMo);
     } else {
-      // std::cout << "No Plan" << std::endl;
-      try {
-        poseDementhonNonPlan(cMo);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
-      // std::cout << "Fin No Plan" << std::endl;
+      poseDementhonNonPlan(cMo);
     }
   } break;
   case LAGRANGE:
@@ -411,50 +397,35 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     {
 
       if (coplanar_plane_type == 4) {
-        vpERROR_TRACE("Lagrange method cannot be used in that case ");
-        vpERROR_TRACE("(points are collinear)");
-        throw(vpPoseException(vpPoseException::notEnoughPointError, "Points are collinear "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError,
+                              "Lagrange method cannot be used in that case "
+                              "(points are collinear)"));
       }
       if (npt < 6) {
-        vpERROR_TRACE("Lagrange method cannot be used in that case ");
-        vpERROR_TRACE("(at least 6 points are required)");
-        vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-        throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError,
+                              "Lagrange method cannot be used in that case "
+                              "(at least 6 points are required)"
+                              "Not enough point (%d) to compute the pose  ", npt));
       }
-      try {
-        poseLagrangePlan(cMo, coplanar_plane_type);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
+      poseLagrangePlan(cMo);
     } else {
       if (npt < 4) {
-        vpERROR_TRACE("Lagrange method cannot be used in that case ");
-        vpERROR_TRACE("(at least 4 points are required)");
-        vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-        throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError,
+                              "Lagrange method cannot be used in that case "
+                              "(at least 4 points are required)"
+                              "Not enough point (%d) to compute the pose  ", npt));
       }
-      try {
-        poseLagrangeNonPlan(cMo);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
+      poseLagrangeNonPlan(cMo);
     }
   } break;
   case RANSAC:
     if (npt < 4) {
-      vpERROR_TRACE("Ransac method cannot be used in that case ");
-      vpERROR_TRACE("(at least 4 points are required)");
-      vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-      throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+                            "Ransac method cannot be used in that case "
+                            "(at least 4 points are required)"
+                            "Not enough point (%d) to compute the pose  ", npt));
     }
-    try {
       return poseRansac(cMo, func);
-    } catch (...) {
-      //      vpERROR_TRACE(" ") ;
-      throw;
-    }
     break;
   case LOWE:
   case VIRTUAL_VS:
@@ -469,22 +440,12 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case VIRTUAL_VS:
   case LAGRANGE_VIRTUAL_VS:
   case DEMENTHON_VIRTUAL_VS: {
-    try {
-      poseVirtualVS(cMo);
-    } catch (...) {
-      //        vpERROR_TRACE(" ") ;
-      throw;
-    }
+    poseVirtualVS(cMo);
   } break;
   case LOWE:
   case LAGRANGE_LOWE:
   case DEMENTHON_LOWE: {
-    try {
-      poseLowe(cMo);
-    } catch (...) {
-      //        vpERROR_TRACE(" ") ;
-      throw;
-    }
+    poseLowe(cMo);
   } break;
   }
 

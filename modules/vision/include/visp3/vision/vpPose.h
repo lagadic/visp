@@ -225,7 +225,7 @@ public:
   void init();
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
-  void poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type = 0);
+  void poseLagrangePlan(vpHomogeneousMatrix &cMo);
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo);
   void poseLowe(vpHomogeneousMatrix &cMo);
   bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *) = NULL);
