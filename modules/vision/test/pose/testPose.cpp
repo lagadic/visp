@@ -75,9 +75,9 @@ void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend)
             << "ty  = " << cpo[1] << "\n "
             << "tz  = " << cpo[2] << "\n "
             << "tux = vpMath::rad(" << vpMath::deg(cpo[3]) << ")\n "
-            << "tuy = vpMath::rad(" << vpMath::deg(cpo[4]) << ")\n "
-            << "tuz = vpMath::rad(" << vpMath::deg(cpo[5]) << ")\n"
-            << std::endl;
+                                                           << "tuy = vpMath::rad(" << vpMath::deg(cpo[4]) << ")\n "
+                                                                                                          << "tuz = vpMath::rad(" << vpMath::deg(cpo[5]) << ")\n"
+                                                                                                                                                         << std::endl;
 }
 
 // test if pose is well estimated
@@ -115,96 +115,200 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
 int main()
 {
   try {
-    vpPoint P[5]; //  Point to be tracked
-    vpPose pose;
-    pose.clearPoint();
-
-    P[0].setWorldCoordinates(-L, -L, 0);
-    P[1].setWorldCoordinates(L, -L, 0);
-    P[2].setWorldCoordinates(L, L, 0);
-    P[3].setWorldCoordinates(-2 * L, 3 * L, 0);
-    P[4].setWorldCoordinates(-L, L, 0.01);
-
-    int test_fail = 0, fail = 0;
+    int test_planar_fail = 0, test_non_planar_fail = 0, fail = 0;
     vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
     vpHomogeneousMatrix cMo_ref(cpo_ref);
     vpHomogeneousMatrix cMo; // will contain the estimated pose
 
-    for (int i = 0; i < 5; i++) {
-      P[i].project(cMo_ref);
-      // P[i].print();
-      pose.addPoint(P[i]); // and added to the pose computation class
+    {
+      //
+      // Test planar case with 4 points
+      //
+      std::cout << "Start test considering planar case with 4 points..." << std::endl;
+      std::cout << "===================================================" << std::endl;
+
+      vpPoint P[4]; //  Point to be tracked
+      double Z = 0; // FS: Dementhon estimation is not good when Z=0.3
+
+      P[0].setWorldCoordinates(-L, -L, Z);
+      P[1].setWorldCoordinates(L, -L, Z);
+      P[2].setWorldCoordinates(L, L, Z);
+//      P[3].setWorldCoordinates(-2 * L, 3 * L, Z);
+      P[3].setWorldCoordinates(-L, L, Z);
+
+//      double Y = 0.3;
+//      P[0].setWorldCoordinates(-L, Y, -L);
+//      P[1].setWorldCoordinates(L, Y, -L);
+//      P[2].setWorldCoordinates(L, Y, L);
+//      P[3].setWorldCoordinates(-2 * L, Y, 3 * L);
+
+      vpPose pose;
+
+      for (int i = 0; i < 4; i++) {
+        P[i].project(cMo_ref);
+        // P[i].print();
+        pose.addPoint(P[i]); // and added to the pose computation class
+      }
+
+      // Let's go ...
+      print_pose(cMo_ref, std::string("Reference pose"));
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Lagrange"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange");
+      test_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Dementhon"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
+      test_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.setRansacNbInliersToReachConsensus(4);
+      pose.setRansacThreshold(0.01);
+      pose.computePose(vpPose::RANSAC, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Ransac"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Ransac");
+      test_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE_LOWE, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Lagrange than Lowe"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than Lowe");
+      test_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Dementhon than Lowe"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than Lowe");
+      test_planar_fail |= fail;
+
+      // Now Virtual Visual servoing
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by VVS");
+      test_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Dementhon than by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than by VVS");
+      test_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Lagrange than by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than by VVS");
+      test_planar_fail |= fail;
     }
 
-    // Let's go ...
-    print_pose(cMo_ref,
-               std::string("Reference pose")); // print the reference pose
+    {
+      //
+      // Test non-planar case with 6 points (at least 6 points for Lagrange non planar)
+      //
+      std::cout << "\nStart test considering non-planar case with 6 points..." << std::endl;
+      std::cout << "=======================================================" << std::endl;
 
-    std::cout << "-------------------------------------------------" << std::endl;
-    pose.computePose(vpPose::LAGRANGE, cMo);
+      vpPoint P[6]; //  Point to be tracked
+      P[0].setWorldCoordinates(-L, -L, 0);
+      P[1].setWorldCoordinates(L, -L, 0);
+      P[2].setWorldCoordinates(L, L, 0);
+      P[3].setWorldCoordinates(-2 * L, 3 * L, 0);
+      P[4].setWorldCoordinates(-L, L, 0.01);
+      P[5].setWorldCoordinates(-4*L, L/2., 0.03);
 
-    print_pose(cMo, std::string("Pose estimated by Lagrange"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange");
-    test_fail |= fail;
+      vpPose pose;
 
-    std::cout << "--------------------------------------------------" << std::endl;
-    pose.computePose(vpPose::DEMENTHON, cMo);
+      for (int i = 0; i < 6; i++) {
+        P[i].project(cMo_ref);
+        // P[i].print();
+        pose.addPoint(P[i]); // and added to the pose computation class
+      }
 
-    print_pose(cMo, std::string("Pose estimated by Dementhon"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
-    test_fail |= fail;
+      // Let's go ...
+      print_pose(cMo_ref, std::string("Reference pose"));
 
-    std::cout << "--------------------------------------------------" << std::endl;
-    pose.setRansacNbInliersToReachConsensus(4);
-    pose.setRansacThreshold(0.01);
-    pose.computePose(vpPose::RANSAC, cMo);
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE, cMo);
 
-    print_pose(cMo, std::string("Pose estimated by Ransac"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by Ransac");
-    test_fail |= fail;
+      print_pose(cMo, std::string("Pose estimated by Lagrange"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange");
+      test_non_planar_fail |= fail;
 
-    std::cout << "--------------------------------------------------" << std::endl;
-    pose.computePose(vpPose::LAGRANGE_LOWE, cMo);
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON, cMo);
 
-    print_pose(cMo, std::string("Pose estimated by Lagrange than Lowe"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than Lowe");
-    test_fail |= fail;
+      print_pose(cMo, std::string("Pose estimated by Dementhon"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
+      test_non_planar_fail |= fail;
 
-    std::cout << "--------------------------------------------------" << std::endl;
-    pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.setRansacNbInliersToReachConsensus(4);
+      pose.setRansacThreshold(0.01);
+      pose.computePose(vpPose::RANSAC, cMo);
 
-    print_pose(cMo, std::string("Pose estimated by Dementhon than Lowe"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than Lowe");
-    test_fail |= fail;
+      print_pose(cMo, std::string("Pose estimated by Ransac"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Ransac");
+      test_non_planar_fail |= fail;
 
-    // Now Virtual Visual servoing
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE_LOWE, cMo);
 
-    std::cout << "--------------------------------------------------" << std::endl;
-    pose.computePose(vpPose::VIRTUAL_VS, cMo);
+      print_pose(cMo, std::string("Pose estimated by Lagrange than Lowe"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than Lowe");
+      test_non_planar_fail |= fail;
 
-    print_pose(cMo, std::string("Pose estimated by VVS"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by VVS");
-    test_fail |= fail;
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
 
-    std::cout << "-------------------------------------------------" << std::endl;
-    pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
+      print_pose(cMo, std::string("Pose estimated by Dementhon than Lowe"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than Lowe");
+      test_non_planar_fail |= fail;
 
-    print_pose(cMo, std::string("Pose estimated by Dementhon than by VVS"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than by VVS");
-    test_fail |= fail;
+      // Now Virtual Visual servoing
 
-    std::cout << "-------------------------------------------------" << std::endl;
-    pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo);
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-    print_pose(cMo, std::string("Pose estimated by Lagrange than by VVS"));
-    fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than by VVS");
-    test_fail |= fail;
+      print_pose(cMo, std::string("Pose estimated by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by VVS");
+      test_non_planar_fail |= fail;
 
-    std::cout << "\nGlobal pose estimation test " << (test_fail ? "fail" : "is ok") << std::endl;
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
 
-    return test_fail;
+      print_pose(cMo, std::string("Pose estimated by Dementhon than by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than by VVS");
+      test_non_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Lagrange than by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than by VVS");
+      test_non_planar_fail |= fail;
+    }
+
+    std::cout << "=======================================================" << std::endl;
+    std::cout << "Pose estimation test from planar points: " << (test_planar_fail ? "fail" : "is ok") << std::endl;
+    std::cout << "Pose estimation test from non-planar points: " << (test_non_planar_fail ? "fail" : "is ok") << std::endl;
+    std::cout << "Global pose estimation test: " << ((test_planar_fail | test_non_planar_fail)  ? "fail" : "is ok") << std::endl;
+
+    return ((test_planar_fail | test_non_planar_fail)  ? EXIT_FAILURE : EXIT_SUCCESS);
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
