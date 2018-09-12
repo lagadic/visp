@@ -401,18 +401,18 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
                               "Lagrange method cannot be used in that case "
                               "(points are collinear)"));
       }
-      if (npt < 6) {
+      if (npt < 4) {
         throw(vpPoseException(vpPoseException::notEnoughPointError,
                               "Lagrange method cannot be used in that case "
-                              "(at least 6 points are required)"
+                              "(at least 4 points are required). "
                               "Not enough point (%d) to compute the pose  ", npt));
       }
       poseLagrangePlan(cMo);
     } else {
-      if (npt < 4) {
+      if (npt < 6) {
         throw(vpPoseException(vpPoseException::notEnoughPointError,
                               "Lagrange method cannot be used in that case "
-                              "(at least 4 points are required)"
+                              "(at least 6 points are required when 3D points are non coplanar). "
                               "Not enough point (%d) to compute the pose  ", npt));
       }
       poseLagrangeNonPlan(cMo);
@@ -422,7 +422,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     if (npt < 4) {
       throw(vpPoseException(vpPoseException::notEnoughPointError,
                             "Ransac method cannot be used in that case "
-                            "(at least 4 points are required)"
+                            "(at least 4 points are required). "
                             "Not enough point (%d) to compute the pose  ", npt));
     }
       return poseRansac(cMo, func);
