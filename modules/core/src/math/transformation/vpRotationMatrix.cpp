@@ -99,7 +99,7 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
   \param M : Input matrix.
 
   \code
-  vpMatrix M;
+  vpMatrix M(3, 3);
   M.eye()
   vpRotationMatrix R = M;
   \endcode
