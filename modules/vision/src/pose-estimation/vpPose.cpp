@@ -68,7 +68,7 @@ void vpPose::init()
   npt = 0;
   listP.clear();
   residual = 0;
-  lambda = 0.25;
+  lambda = 1.;
   vvsIterMax = 200;
   c3d.clear();
   computeCovariance = false;
