@@ -119,8 +119,18 @@ public:
   // = operator
   vpCalibration &operator=(const vpCalibration &twinCalibration);
 
-  static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                              vpHomogeneousMatrix &eMc);
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
+                                            const std::vector<vpHomogeneousMatrix> &rMe,
+                                            vpHomogeneousMatrix &eMc);
+  vp_deprecated static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
+                                                  vpHomogeneousMatrix &eMc_dist);
+  //@}
+  #endif
 
   //! Suppress all the point in the array of point
   int clearPoint();
@@ -131,8 +141,6 @@ public:
   static int computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
                                      vpCameraParameters &cam, double &globalReprojectionError, bool verbose = false);
 
-  static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
-                                    vpHomogeneousMatrix &eMc_dist);  
   double computeStdDeviation(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera);
   double computeStdDeviation_dist(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
   int displayData(vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1,
@@ -176,18 +184,6 @@ private:
                                           bool verbose = false);
   static void calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal, vpCameraParameters &cam,
                                           double &globalReprojectionError, bool verbose = false);
-  /* ajout FC  */
-  static void HandEyeCalibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,vpHomogeneousMatrix &eMc);
-  static int HandEyeCalibrationRotationTsai(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,vpRotationMatrix &eRc);
-  static int OldHandEyeCalibrationRotationTsai(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,vpRotationMatrix &eRc);
-  static int HandEyeCalibrationRotationProcrustes(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,vpRotationMatrix &eRc);  
-  static int HandEyeCalibrationTranslation(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-					vpRotationMatrix &eRc, vpTranslationVector &eTc);
-  static int OldHandEyeCalibrationTranslation(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-					vpRotationMatrix &eRc, vpTranslationVector &eTc);
-  static double HandEyeCalibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc, vpColVector &errVVS);
-  static int HandEyeCalibrationVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,vpHomogeneousMatrix &eMc);
-  /* fin ajout FC  */
 
 private:
   unsigned int npt; //!< number of points used in calibration computation

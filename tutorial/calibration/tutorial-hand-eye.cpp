@@ -1,5 +1,5 @@
 //! \example tutorial-hand-eye.cpp
-#include <visp3/vision/vpCalibration.h>
+#include <visp3/vision/vpHandEyeCalibration.h>
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     cMo[i-1] = vpHomogeneousMatrix(cPo);
   }
 
-  vpCalibration::calibrationTsai(cMo, wMe, eMc);
+  vpHandEyeCalibration::calibrate(cMo, wMe, eMc);
 
   // save eMc
   std::ofstream file_eMc("eMc.txt");
