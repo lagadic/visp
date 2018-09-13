@@ -72,6 +72,13 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-create-android-sdk <br>In this tutorial you will learn how to build ViSP Android SDK to be used in an Android app.
 - \ref tutorial-android-getting-started <br>This tutorial explains how to create a simple Android application that uses some functionalities from ViSP core module.
 
+\subsection tuto_unity ViSP for Unity
+
+- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Developement of an interface and demo between ViSP and Unity engine.</a><br>This is the link to a project achieved during GSoC 2018 that shows how to use ViSP in Unity engine to achieve AR.
+- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction.</a><br>This is a brief introduction that explains the interaction between ViSP and Unity engine.
+- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-DLL">Generating a DLL for Unity</a>.<br>This page explains how to generate DLLs for your Unity project.
+- <a href="https://github.com/lagadic/visp_unity/wiki/Running-in-Unity">Unity demo based on ViSP</a>.<br>This page shows how to track an AprilTag for an AR application and how to track an object using the generic model-based tracker implemented in VISP.
+
 \subsection tuto_install_sdk Installation from prebuild SDK
 
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt SDK from Ubuntu or Debian packages.
