@@ -699,7 +699,10 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bo
         const __m128i mask_6 = _mm_set_epi8(-1, 13, 14, 15, -1, 10, 11, 12, -1, 7, 8, 9, -1, 4, 5, 6);
 
         __m128i res[4];
-        for (; i <= size - 16; i += 16) {
+        int size_vec = size - 16;
+        // Note: size_vec introduced to avoid warning: assuming signed overflow does not occur
+        // when simplifying range test [-Wstrict-overflow]
+        for (; i <= size_vec; i += 16) {
           // Process 16 BGR color pixels
           const __m128i data1 = _mm_loadu_si128((const __m128i *)bgr);
           const __m128i data2 = _mm_loadu_si128((const __m128i *)(bgr + 16));
