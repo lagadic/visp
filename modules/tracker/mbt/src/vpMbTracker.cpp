@@ -165,10 +165,32 @@ vpMbTracker::vpMbTracker()
   vpImageFilter::getSobelKernelY(m_SobelY.data, m_projectionErrorKernelSize);
 }
 
-/*!
-  Basic destructor that doest nothing.
-*/
-vpMbTracker::~vpMbTracker() {}
+vpMbTracker::~vpMbTracker() {
+  vpMbtDistanceLine *l;
+  vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
+
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end(); ++it) {
+    l = *it;
+    if (l != NULL)
+      delete l;
+    l = NULL;
+  }
+
+  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin(); it != m_projectionErrorCylinders.end(); ++it) {
+    cy = *it;
+    if (cy != NULL)
+      delete cy;
+    cy = NULL;
+  }
+
+  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin(); it != m_projectionErrorCircles.end(); ++it) {
+    ci = *it;
+    if (ci != NULL)
+      delete ci;
+    ci = NULL;
+  }
+}
 
 #ifdef VISP_HAVE_MODULE_GUI
 /*!
