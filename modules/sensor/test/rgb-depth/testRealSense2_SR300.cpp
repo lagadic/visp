@@ -514,7 +514,7 @@ int main(int argc, char *argv[])
 
     auto data = pipe.wait_for_frames();
     frame_to_mat(data.get_color_frame(), mat_color);
-    frame_to_mat(color_map(data.get_depth_frame()), mat_depth);
+    frame_to_mat(data.get_depth_frame().apply_filter(color_map), mat_depth);
     frame_to_mat(data.first(RS2_STREAM_INFRARED), mat_infrared);
 
     cv::imshow("OpenCV color", mat_color);
