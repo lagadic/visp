@@ -462,7 +462,12 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   delete[] tau;
   return (unsigned int) r;
 #else
-  throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
+  (void)Q;
+  (void)R;
+  (void)full;
+  (void)squareR;
+  (void)tol;
+  throw(vpException(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
 #endif
 }
 
@@ -684,7 +689,13 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   delete[] p;
   return (unsigned int) r;
 #else
-  throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
+  (void)Q;
+  (void)R;
+  (void)P;
+  (void)full;
+  (void)squareR;
+  (void)tol;
+  throw(vpException(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
 #endif
 }
 
@@ -730,7 +741,8 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
   }
   return R;
 #else
-  throw(vpException::fatalError, "Cannot perform triangular inverse. Install Lapack 3rd party"));
+  (void)upper;
+  throw(vpException(vpException::fatalError, "Cannot perform triangular inverse. Install Lapack 3rd party"));
 #endif
 }
 
