@@ -513,7 +513,11 @@ int main(int argc, char *argv[])
 
     auto data = pipe.wait_for_frames();
     frame_to_mat(data.get_color_frame(), mat_color);
+#if (RS2_API_VERSION >= ((2 * 10000) + (16 * 100) + 0))
     frame_to_mat(data.get_depth_frame().apply_filter(color_map), mat_depth);
+#else
+    frame_to_mat(color_map(data.get_depth_frame()), mat_depth);
+#endif
     frame_to_mat(data.get_infrared_frame(1), mat_infrared1);
     frame_to_mat(data.get_infrared_frame(2), mat_infrared2);
 
