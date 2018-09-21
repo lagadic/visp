@@ -84,8 +84,7 @@ public:
   //! Methods that could be used to estimate the pose from points.
   typedef enum {
     LAGRANGE,             /*!< Linear Lagrange approach (does't need an initialization) */
-    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization)
-                           */
+    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization) */
     LOWE,                 /*!< Lowe aproach based on a Levenberg Marquartd non linear
                              minimization scheme that needs an initialization from Lagrange or
                              Dementhon aproach */
@@ -209,7 +208,6 @@ protected:
 
   // method used in poseDementhonPlan()
   int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo);
-
 public:
   vpPose();
   virtual ~vpPose();
