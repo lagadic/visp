@@ -256,7 +256,7 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 {
 #if (DEBUG_LEVEL1)
-  std::cout << "begin vpPose::PoseLagrange(...) " << std::endl;
+  std::cout << "begin vpPose::PoseLagrangePlan(...) " << std::endl;
 #endif
   // determination of the plane equation a X + b Y + c Z + d = 0
   // FC : long copy/paste from vpPose::coplanar. To be improved...
@@ -525,7 +525,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
   cMo = cMf * fMo;
 
 #if (DEBUG_LEVEL1)
-  std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl;
+  std::cout << "end vpCalculPose::PoseLagrangePlan(...) " << std::endl;
 #endif
   //  return(OK);
 }
@@ -534,7 +534,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 {
 
 #if (DEBUG_LEVEL1)
-  std::cout << "begin CPose::PoseLagrange(...) " << std::endl;
+  std::cout << "begin CPose::PoseLagrangeNonPlan(...) " << std::endl;
 #endif
   try {
     double s;
@@ -670,7 +670,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
   }
 
 #if (DEBUG_LEVEL1)
-  std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl;
+  std::cout << "end vpCalculPose::PoseLagrangeNonPlan(...) " << std::endl;
 #endif
 }
 
