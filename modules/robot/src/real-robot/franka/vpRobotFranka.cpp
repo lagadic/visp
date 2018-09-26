@@ -53,9 +53,9 @@
 
 */
 vpRobotFranka::vpRobotFranka()
-  : vpRobot(), m_handler(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
     m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_dq_des(), m_eMc(), m_log_folder()
+    m_mutex(), m_dq_des(), m_eMc(), m_log_folder(), m_franka_address()
 {
   init();
 }
@@ -67,9 +67,9 @@ vpRobotFranka::vpRobotFranka()
  * be set when required. Setting realtime_config to kIgnore disables this behavior.
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
-  : vpRobot(), m_handler(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
     m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_dq_des(), m_v_cart_des(), m_eMc(),m_log_folder()
+    m_mutex(), m_dq_des(), m_v_cart_des(), m_eMc(),m_log_folder(), m_franka_address()
 {
   init();
   connect(franka_address, realtime_config);
@@ -99,6 +99,12 @@ vpRobotFranka::~vpRobotFranka()
 
   if (m_handler)
     delete m_handler;
+
+  if (m_gripper) {
+    std::cout << "Grasped object, will release it now." << std::endl;
+    m_gripper->stop();
+    delete m_gripper;
+  }
 }
 
 /*!
@@ -116,6 +122,7 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
   if (m_handler)
     delete m_handler;
 
+  m_franka_address = franka_address;
   m_handler = new franka::Robot(franka_address, realtime_config);
 
   std::array<double, 7> lower_torque_thresholds_nominal{
@@ -666,6 +673,327 @@ void vpRobotFranka::set_eMc(const vpHomogeneousMatrix &eMc)
   m_eMc = eMc;
 }
 
+/*!
+
+  Moves the robot to the joint position specified in the filename. The
+  positioning velocity is set to 10% of the robot maximal velocity.
+
+  \param filename : File containing a joint position to reach.
+  \param velocity_percentage : Velocity percentage. Values in range [1, 100].
+
+*/
+void vpRobotFranka::move(const std::string &filename, double velocity_percentage)
+{
+  vpColVector q;
+
+  this->readPosFile(filename, q);
+  this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
+  this->setPositioningVelocity(velocity_percentage);
+  this->setPosition(vpRobot::JOINT_STATE, q);
+}
+
+/*!
+
+  Read joint positions in a specific Franka position file.
+
+  This position file has to start with a header. The seven joint positions
+  are given after the "R:" keyword and are expressed in degres to be more
+  representative for the user. Theses values are then converted in
+  radians in \e q. The character "#" starting a line indicates a
+  comment.
+
+  A typical content of such a file is given below:
+
+  \code
+#PANDA - Joint position file
+#
+# R: q1 q2 q3 q4 q5 q6 q7
+# with joint positions q1 to q7 expressed in degrees
+#
+
+R: 0.1 0.3 -0.25 -80.5 80 0 0
+  \endcode
+
+  \param[in] filename : Name of the position file to read.
+
+  \param[out] q : 7-dim joint positions: q1 q2 q3 q4 q5 q6 q7 with values expressed in radians.
+
+  \return true if the positions were successfully readen in the file. false, if
+  an error occurs.
+
+  The code below shows how to read a position from a file and move the robot to
+  this position.
+  \code
+vpRobotFranka robot;
+vpColVector q;        // Joint position
+robot.readPosFile("myposition.pos", q); // Set the joint position from the file
+robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+
+robot.setPositioningVelocity(5); // Positioning velocity set to 5%
+robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
+  \endcode
+
+  \sa savePosFile(), move()
+*/
+
+bool vpRobotFranka::readPosFile(const std::string &filename, vpColVector &q)
+{
+  std::ifstream fd(filename.c_str(), std::ios::in);
+
+  if (!fd.is_open()) {
+    return false;
+  }
+
+  std::string line;
+  std::string key("R:");
+  std::string id("#PANDA - Joint position file");
+  bool pos_found = false;
+  int lineNum = 0;
+  size_t njoints = 7;
+
+  q.resize(njoints);
+
+  while (std::getline(fd, line)) {
+    lineNum++;
+    if (lineNum == 1) {
+      if (!(line.compare(0, id.size(), id) == 0)) { // check if Afma6 position file
+        std::cout << "Error: this position file " << filename << " is not for Afma6 robot" << std::endl;
+        return false;
+      }
+    }
+    if ((line.compare(0, 1, "#") == 0)) { // skip comment
+      continue;
+    }
+    if ((line.compare(0, key.size(), key) == 0)) { // decode position
+      // check if there are at least njoint values in the line
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
+      if (chain.size() < njoints + 1) // try to split with tab separator
+        chain = vpIoTools::splitChain(line, std::string("\t"));
+      if (chain.size() < njoints + 1)
+        continue;
+
+      std::istringstream ss(line);
+      std::string key_;
+      ss >> key_;
+      for (unsigned int i = 0; i < njoints; i++)
+        ss >> q[i];
+      pos_found = true;
+      break;
+    }
+  }
+
+  // converts rotations from degrees into radians
+  for (unsigned int i = 0; i < njoints; i++) {
+    q[i] = vpMath::rad(q[i]);
+  }
+
+  fd.close();
+
+  if (!pos_found) {
+    std::cout << "Error: unable to find a position for Panda robot in " << filename << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+/*!
+
+  Save joint positions in a specific Panda position file.
+
+  This position file starts with a header on the first line. After
+  convertion of the rotations in degrees, the joint position \e q is
+  written on a line starting with the keyword "R: ". See readPosFile()
+  documentation for an example of such a file.
+
+  \param filename : Name of the position file to create.
+
+  \param q : Joint positions vector to save in the
+  filename with values expressed in radians.
+
+  \warning The joint rotations written in the file are converted
+  in degrees to be more representative for the user.
+
+  \return true if the positions were successfully saved in the file. false, if
+  an error occurs.
+
+  \sa readPosFile()
+*/
+bool vpRobotFranka::savePosFile(const std::string &filename, const vpColVector &q)
+{
+
+  FILE *fd;
+  fd = fopen(filename.c_str(), "w");
+  if (fd == NULL)
+    return false;
+
+  fprintf(fd,
+        "#PANDA - Joint position file\n"
+        "#\n"
+        "# R: q1 q2 q3 q4 q5 q6 q7\n"
+        "# with joint positions q1 to q7 expressed in degrees\n"
+        "#\n");
+
+  // Save positions in mm and deg
+  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf %lf\n",  vpMath::deg(q[0]), vpMath::deg(q[1]), vpMath::deg(q[2]),
+      vpMath::deg(q[3]), vpMath::deg(q[4]), vpMath::deg(q[5]), vpMath::deg(q[6]));
+
+  fclose(fd);
+  return (true);
+}
+
+/*!
+
+  Stop the robot when it is controlled in velocity and set the robot state to vpRobot::STATE_STOP.
+
+  \exception vpRobotException::lowLevelError : If the low level
+  controller returns an error during robot stopping.
+*/
+void vpRobotFranka::stopMotion()
+{
+  if (getRobotState() == vpRobot::STATE_VELOCITY_CONTROL) {
+    vpColVector q(7, 0);
+    setVelocity(vpRobot::JOINT_STATE, q);
+  }
+  setRobotState(vpRobot::STATE_STOP);
+}
+
+/*!
+
+  Performing a gripper homing.
+
+  \sa gripperGrasp(), gripperMove(), gripperRelease()
+*/
+void vpRobotFranka::gripperHoming()
+{
+  if (m_franka_address.empty()) {
+    throw (vpException(vpException::fatalError, "Cannot perform franka gripper homing without ip address"));
+  }
+  if (m_gripper == NULL)
+    m_gripper = new franka::Gripper(m_franka_address);
+
+  m_gripper->homing();
+}
+
+/*!
+
+  Moves the gripper fingers to a specified width.
+  @param[in] width : Intended opening width. [m]
+
+  \return EXIT_SUCCESS if the success, EXIT_FAILURE otherwise.
+
+  \sa gripperHoming(), gripperGrasp(), gripperRelease()
+*/
+int vpRobotFranka::gripperMove(double width)
+{
+  if (m_franka_address.empty()) {
+    throw (vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
+  }
+  if (m_gripper == NULL)
+    m_gripper = new franka::Gripper(m_franka_address);
+
+  // Check for the maximum grasping width.
+  franka::GripperState gripper_state = m_gripper->readOnce();
+
+  if (gripper_state.max_width < width) {
+    std::cout << "Finger width request is too large for the current fingers on the gripper."
+              << "Maximum possible width is " << gripper_state.max_width << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  m_gripper->move(width, 0.1);
+  return EXIT_SUCCESS;
+}
+
+/*!
+
+  Closes the gripper.
+
+  \return EXIT_SUCCESS if the success, EXIT_FAILURE otherwise.
+
+  \sa gripperHoming(), gripperGrasp(), gripperRelease(), gripperOpen()
+*/
+int vpRobotFranka::gripperClose()
+{
+  return gripperMove(0);
+}
+
+/*!
+
+  Closes the gripper.
+
+  \return EXIT_SUCCESS if the success, EXIT_FAILURE otherwise.
+
+  \sa gripperHoming(), gripperGrasp(), gripperRelease(), gripperOpen()
+*/
+int vpRobotFranka::gripperOpen()
+{
+  if (m_franka_address.empty()) {
+    throw (vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
+  }
+  if (m_gripper == NULL)
+    m_gripper = new franka::Gripper(m_franka_address);
+
+  // Check for the maximum grasping width.
+  franka::GripperState gripper_state = m_gripper->readOnce();
+
+  m_gripper->move(gripper_state.max_width, 0.1);
+  return EXIT_SUCCESS;
+}
+
+/*!
+
+  Release an object that is grasped.
+
+  \sa gripperHoming(), gripperMove(), gripperRelease()
+*/
+void vpRobotFranka::gripperRelease()
+{
+  if (m_franka_address.empty()) {
+    throw (vpException(vpException::fatalError, "Cannot release franka gripper without ip address"));
+  }
+  if (m_gripper == NULL)
+    m_gripper = new franka::Gripper(m_franka_address);
+
+  m_gripper->stop();
+}
+
+/*!
+
+  Grasp an object that has a given width.
+
+  An object is considered grasped if the distance \e d between the gripper fingers satisfies
+  \e grasping_width - 0.005 < d < \e grasping_width + 0.005.
+
+  \param[in] grasping_width : Size of the object to grasp. [m]
+  \param[in] force : Grasping force. [N]
+
+  \return EXIT_SUCCESS if grasping succeed, EXIT_FAILURE otherwise.
+
+  \sa gripperHoming(), gripperOpen(), gripperRelease()
+*/
+int vpRobotFranka::gripperGrasp(double grasping_width, double force)
+{
+  if (m_gripper == NULL)
+    m_gripper = new franka::Gripper(m_franka_address);
+
+  // Check for the maximum grasping width.
+  franka::GripperState gripper_state = m_gripper->readOnce();
+  std::cout << "Gripper max witdh: " << gripper_state.max_width << std::endl;
+  if (gripper_state.max_width < grasping_width) {
+    std::cout << "Object is too large for the current fingers on the gripper."
+              << "Maximum possible width is " << gripper_state.max_width << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Grasp the object.
+  if (!m_gripper->grasp(grasping_width, 0.1, 60)) {
+    std::cout << "Failed to grasp object." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_robot.a(vpRobotFranka.cpp.o) has
