@@ -43,6 +43,9 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui visp_vs visp_visual_features visp_detection)
 
 set(example_cpp
+  frankaGripper.cpp
+  frankaMoveToPosition.cpp
+  frankaSavePosition.cpp
   servoFrankaPBVS.cpp
 )
 
