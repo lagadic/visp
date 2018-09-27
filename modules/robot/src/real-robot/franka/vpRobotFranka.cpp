@@ -987,7 +987,7 @@ int vpRobotFranka::gripperGrasp(double grasping_width, double force)
   }
 
   // Grasp the object.
-  if (!m_gripper->grasp(grasping_width, 0.1, 60)) {
+  if (!m_gripper->grasp(grasping_width, 0.1, force)) {
     std::cout << "Failed to grasp object." << std::endl;
     return EXIT_FAILURE;
   }
