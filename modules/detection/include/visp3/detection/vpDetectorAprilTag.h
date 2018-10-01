@@ -48,24 +48,23 @@
   \class vpDetectorAprilTag
   \ingroup group_detection_tag
   Base class for AprilTag detector. This class is a wrapper over <a
-href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
-is no need to download and install AprilTag from source code or existing
-pre-built packages since the source code is embedded in ViSP. Reference papers
-are <I> AprilTag: A robust and flexible visual fiducial system </I>
-(\cite olson2011tags) and <I> AprilTag 2: Efficient and robust fiducial
-detection
-</I> (\cite wang2016iros).
+  href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>. There
+  is no need to download and install AprilTag from source code or existing
+  pre-built packages since the source code is embedded in ViSP. Reference papers
+  are <I> AprilTag: A robust and flexible visual fiducial system </I>
+  (\cite olson2011tags) and <I> AprilTag 2: Efficient and robust fiducial
+  detection</I> (\cite wang2016iros).
 
   The detect() function allows to detect multiple tags in an image. Once
-detected, for each tag it is possible to retrieve the location of the corners
-using getPolygon(), the encoded message using getMessage(), the bounding box
-using getBBox() and the center of gravity using getCog().
+  detected, for each tag it is possible to retrieve the location of the corners
+  using getPolygon(), the encoded message using getMessage(), the bounding box
+  using getBBox() and the center of gravity using getCog().
 
-  If camera parameters and the size of the tag are provided, thanks to
-  detect(const vpImage<unsigned char> &, const double, const
-vpCameraParameters &, std::vector<vpHomogeneousMatrix> &) this class allows
-also to estimate the 3D pose of the tag in terms of position and orientation
-wrt the camera.
+  If camera parameters and the size of the tag are provided, you can also estimate
+  the 3D pose of the tag in terms of position and orientation wrt the camera considering 2 cases:
+  - 1. If all the tags have the same size use
+  detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &)
+  - 2. If tag sizes differ, use rather getPose()
 
   The following sample code shows how to use this class to detect the location
 of 36h11 AprilTag patterns in an image.
@@ -112,7 +111,7 @@ Tag code 1:
   \endcode
 
   This other example shows how to estimate the 3D pose of 36h11 AprilTag
-patterns.
+patterns considering that all the tags have the same size (in our example 0.053 m).
 \code
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/io/vpImageIo.h>
@@ -155,6 +154,57 @@ Tag number 1:
   Message: "36h11 id: 1"
   Pose: 0.08951250829 0.02243780207  0.306540622  1.998073197  2.061488008  -0.8699567948
   Tag Id: 1
+\endcode
+
+  In this other example we estimate the 3D pose of 36h11 AprilTag
+  patterns considering that tag 36h11 with id 0 (in that case the tag message is "36h11 id: 0")
+  has a size of 0.040 m, while all the others have a size of 0.053m.
+\code
+#include <visp3/detection/vpDetectorAprilTag.h>
+#include <visp3/io/vpImageIo.h>
+
+int main()
+{
+#ifdef VISP_HAVE_APRILTAG
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, "image-tag36h11.pgm");
+
+  vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
+  vpHomogeneousMatrix cMo;
+  vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
+  double tagSize_id_0 = 0.04;
+  double tagSize_id_others = 0.053;
+
+  bool status = detector.detect(I);
+  if (status) {
+    for(size_t i=0; i < detector.getNbObjects(); i++) {
+      std::cout << "Tag code " << i << ":" << std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
+      if (detector.getMessage(i) == std::string("36h11 id: 0")) {
+        if (! detector.getPose(i, tagSize_id_0, cam, cMo)) {
+          std::cout << "Unable to get tag index " << i << " pose!" << std::endl;
+        }
+      }
+      else {
+        if (! detector.getPose(i, tagSize_id_others, cam, cMo)) {
+          std::cout << "Unable to get tag index " << i << " pose!" << std::endl;
+        }
+      }
+      std::cout << "  Pose: " << vpPoseVector(cMo).t() << std::endl;
+    }
+  }
+#endif
+}
+\endcode
+  With respect to the previous example, this example may now produce a different pose for tag with id 0:
+  \code
+Tag code 0:
+  Message: "36h11 id: 0"
+  Pose: 0.07660838403  -0.03954005455  0.2678518706  1.991474322  2.04143538  -0.9412360063
+Tag code 1:
+  Message: "36h11 id: 1"
+  Pose: 0.08951250829  0.02243780207  0.306540622  1.998073197  2.061488008  -0.8699567948
 \endcode
 
   Other examples are also provided in tutorial-apriltag-detector.cpp and
@@ -204,6 +254,8 @@ public:
   bool detect(const vpImage<unsigned char> &I);
   bool detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec);
+
+  bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
 
   /*!
     Return the pose estimation method.
