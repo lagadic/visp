@@ -1716,7 +1716,7 @@ void vpRobotViper650::setVelocity(const vpRobot::vpControlFrameType frame, const
   }
   case vpRobot::REFERENCE_FRAME: {
     // Send velocities in m/s and rad/s
-    std::cout << "Vitesse ref appliquee: " << vel_sat.t();
+    //std::cout << "Vitesse ref appliquee: " << vel_sat.t();
     Try(PrimitiveMOVESPEED_CART_Viper650(vel_sat.data, REPFIX_VIPER650));
     break;
   }
