@@ -124,29 +124,22 @@ int main()
       //
       // Test planar case with 4 points
       //
-      
+
       std::cout << "Start test considering planar case with 4 points..." << std::endl;
       std::cout << "===================================================" << std::endl;
 
       //vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
-     vpPoseVector cpo_ref = vpPoseVector(-0.01, -0.02, 0.3, vpMath::rad(20),  vpMath::rad(-20), vpMath::rad(10));
-    vpHomogeneousMatrix cMo_ref(cpo_ref);
-      
+      vpPoseVector cpo_ref = vpPoseVector(-0.01, -0.02, 0.3, vpMath::rad(20),  vpMath::rad(-20), vpMath::rad(10));
+      vpHomogeneousMatrix cMo_ref(cpo_ref);
+
       int npt = 4;
       vpPoint P[npt]; //  Point to be tracked
       double Z = 0.05; // FS: Dementhon estimation is not good when Z=0.3
 
-      //     P[0].setWorldCoordinates(0, 0, Z);
       P[0].setWorldCoordinates(-L, -L, Z);
-      P[1].setWorldCoordinates(L, -L, Z);
-      P[2].setWorldCoordinates(L, L, Z);
-      P[3].setWorldCoordinates(-L, L, Z);
-
-//      double Y = 0.3;
-//      P[0].setWorldCoordinates(-L, Y, -L);
-//      P[1].setWorldCoordinates(L, Y, -L);
-//      P[2].setWorldCoordinates(L, Y, L);
-//      P[3].setWorldCoordinates(-2 * L, Y, 3 * L);
+      P[1].setWorldCoordinates( L, -L, Z);
+      P[2].setWorldCoordinates( L,  L, Z);
+      P[3].setWorldCoordinates(-L,  L, Z);
 
       vpPose pose;
 
@@ -157,7 +150,7 @@ int main()
       }
 
       // Let's go ...
-      
+
       print_pose(cMo_ref, std::string("Reference pose"));
 
       std::cout << "-------------------------------------------------" << std::endl;
@@ -167,15 +160,15 @@ int main()
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange");
       test_planar_fail |= fail;
 
-     std::cout << "--------------------------------------------------" << std::endl;
+      std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
       test_planar_fail |= fail;
-      
+
       std::cout << "--------------------------------------------------" << std::endl;
-      
+
       pose.setRansacNbInliersToReachConsensus(4);
       pose.setRansacThreshold(0.01);
       pose.computePose(vpPose::RANSAC, cMo);
@@ -199,7 +192,6 @@ int main()
       test_planar_fail |= fail;
 
       // Now Virtual Visual servoing
-
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
@@ -220,32 +212,30 @@ int main()
       print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange then by VVS");
       test_planar_fail |= fail;
-      
+
     }
-    
+
     {
       //
       // Test non-planar case with 6 points (at least 6 points for Lagrange non planar)
       //
-      
+
       std::cout << "\nStart test considering non-planar case with 6 points..." << std::endl;
       std::cout << "=======================================================" << std::endl;
 
-      // vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(10), 0, vpMath::rad(5));  
-     vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
-    vpHomogeneousMatrix cMo_ref(cpo_ref);
+      vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
+      vpHomogeneousMatrix cMo_ref(cpo_ref);
 
       int npt = 6;
       vpPoint P[npt]; //  Point to be tracked
-      P[0].setWorldCoordinates(-L, -L, 0); // Lagrange not accurate...
-      P[0].setWorldCoordinates(-L, -L, -0.02);
-      P[1].setWorldCoordinates(L, -L, 0);
-      P[2].setWorldCoordinates(L, L, 0);
-      P[3].setWorldCoordinates(-2 * L, 3 * L, 0);
-      P[4].setWorldCoordinates(-L, L, 0.01);
-      P[5].setWorldCoordinates(L, L/2., 0.03);     
-      //P[5].setWorldCoordinates(-4*L, L/2., 0.03); // Pb with Dementon...
-      
+      P[0].setWorldCoordinates(-L, -L,    0); // Lagrange not accurate...
+      P[0].setWorldCoordinates(-L, -L,   -0.02);
+      P[1].setWorldCoordinates( L, -L,    0);
+      P[2].setWorldCoordinates( L,  L,    0);
+      P[3].setWorldCoordinates(-2 * L,    3 * L, 0);
+      P[4].setWorldCoordinates(-L,  L,    0.01);
+      P[5].setWorldCoordinates( L,  L/2., 0.03);
+
       vpPose pose;
 
       for (int i = 0; i < npt; i++) {
@@ -270,9 +260,8 @@ int main()
       print_pose(cMo, std::string("Pose estimated by Dementhon"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
       test_non_planar_fail |= fail;
-      
+
       std::cout << "--------------------------------------------------" << std::endl;
-      
       pose.setRansacNbInliersToReachConsensus(4);
       pose.setRansacThreshold(0.01);
       pose.computePose(vpPose::RANSAC, cMo);
@@ -317,33 +306,31 @@ int main()
       print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange then by VVS");
       test_non_planar_fail |= fail;
-       
     }
-    
-      //
-      // Test non-planar case with 4 points (Lagrange can not be used)
-      //
-    
-      std::cout << "\nStart test considering non-planar case with 4 points..." << std::endl;
-      std::cout << "=======================================================" << std::endl;
 
-      {
-      
+    //
+    // Test non-planar case with 4 points (Lagrange can not be used)
+    //
+
+    std::cout << "\nStart test considering non-planar case with 4 points..." << std::endl;
+    std::cout << "=======================================================" << std::endl;
+
+    {
       int npt = 4;
       vpPoint P[npt]; //  Point to be tracked
-      P[0].setWorldCoordinates(-L2, -L2, 0);
-      P[1].setWorldCoordinates(L2, -L2, 0.2);
-      P[2].setWorldCoordinates(L2, L2, -0.1);
-      P[3].setWorldCoordinates(-L2, L2, 0);
+      P[0].setWorldCoordinates(-L2, -L2,  0);
+      P[1].setWorldCoordinates( L2, -L2,  0.2);
+      P[2].setWorldCoordinates( L2,  L2, -0.1);
+      P[3].setWorldCoordinates(-L2,  L2,  0);
 
       vpPose pose;
 
-    vpPoseVector cpo_ref = vpPoseVector(-0.1, -0.2, 0.8, vpMath::rad(10), vpMath::rad(-10), vpMath::rad(25));
-    vpHomogeneousMatrix cMo_ref(cpo_ref);
+      vpPoseVector cpo_ref = vpPoseVector(-0.1, -0.2, 0.8, vpMath::rad(10), vpMath::rad(-10), vpMath::rad(25));
+      vpHomogeneousMatrix cMo_ref(cpo_ref);
 
       for (int i = 0; i < npt; i++) {
         P[i].project(cMo_ref);
-	//  P[i].print(); printf("\n");
+        //  P[i].print(); printf("\n");
         pose.addPoint(P[i]); // and added to the pose computation class
       }
 
@@ -355,10 +342,9 @@ int main()
 
       print_pose(cMo, std::string("Pose estimated by Dementhon"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
-      test_non_planar_fail |= fail;      
-      
+      test_non_planar_fail |= fail;
+
       std::cout << "--------------------------------------------------" << std::endl;
-      
       pose.setRansacNbInliersToReachConsensus(4);
       pose.setRansacThreshold(0.01);
       pose.computePose(vpPose::RANSAC, cMo);
@@ -375,7 +361,6 @@ int main()
       test_non_planar_fail |= fail;
 
       // Now Virtual Visual servoing
-
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
@@ -391,9 +376,8 @@ int main()
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
-          
     }
-    
+
     std::cout << "=======================================================" << std::endl;
     std::cout << "Pose estimation test from planar points: " << (test_planar_fail ? "fail" : "is ok") << std::endl;
     std::cout << "Pose estimation test from non-planar points: " << (test_non_planar_fail ? "fail" : "is ok") << std::endl;
