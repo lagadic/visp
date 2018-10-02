@@ -543,7 +543,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   \param cMo : the matrix that defines the pose to be tested.
 
-  \return the value of the mean of squared residuals in meter^2.
+  \return the value of the square root of the mean of squared residuals in meter^2.
 */
 double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 {
