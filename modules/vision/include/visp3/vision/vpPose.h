@@ -205,6 +205,7 @@ protected:
 
   // method used in poseDementhonPlan()
   int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo);
+
 public:
   vpPose();
   virtual ~vpPose();

@@ -171,7 +171,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     throw(vpException(vpException::fatalError, "End of Dementhon since z < 0 for both solutions at the beginning"));
   }
   int cpt = 0;
-  double res = sqrt(computeResidualDementhon(cMo) / npt);
+  double res = computeResidualDementhon(cMo);
   double res_old = 2.0*res;
 
   // In his paper, Dementhon suggests to use the difference
@@ -194,7 +194,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     J4 = Ap * yprim;
 
     calculSolutionDementhon(I4, J4, cMo);
-    res = sqrt(computeResidualDementhon(cMo) / npt);
+    res = computeResidualDementhon(cMo);
     for (unsigned int i = 0; i < npt; i++) {
       double z;
       z = cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ() + cMo[2][3];
@@ -315,7 +315,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
   }
 
   unsigned int cpt = 0;
-  double res_min = sqrt(computeResidualDementhon(cMo)/npt);
+  double res_min = computeResidualDementhon(cMo);
   double res_old = 2.0*res_min;
 
   /* FC modif SEUIL_RESIDUAL 0.01 a 0.001 */
@@ -360,15 +360,15 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
     }
     if ((erreur1 == 0) && (erreur2 == -1)) {
       cMo = cMo1;
-      res_min = sqrt(computeResidualDementhon(cMo)/npt);
+      res_min = computeResidualDementhon(cMo);
     }
     if ((erreur1 == -1) && (erreur2 == 0)) {
       cMo = cMo2;
-      res_min = sqrt(computeResidualDementhon(cMo)/npt);
+      res_min = computeResidualDementhon(cMo);
     }
     if ((erreur1 == 0) && (erreur2 == 0)) {
-      double res1 = sqrt(computeResidualDementhon(cMo1)/npt);
-      double res2 = sqrt(computeResidualDementhon(cMo2)/npt);
+      double res1 = computeResidualDementhon(cMo1);
+      double res2 = computeResidualDementhon(cMo2);
       if (res1 <= res2) {
         res_min = res1;
         cMo = cMo1;
@@ -380,7 +380,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
 
 #if (DEBUG_LEVEL3)
     if (erreur1 == 0) {
-      double s = sqrt(computeResidualDementhon(cMo1)/npt);
+      double s = computeResidualDementhon(cMo1);
       vpThetaUVector erc;
       cMo1.extract(erc);
       std::cout  << "it = " << cpt << " cMo1 : residu: " << s << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
@@ -388,7 +388,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
     else std::cout  << "Pb z < 0 with cMo1" << std::endl;
 
     if (erreur2 == 0) {
-      double s = sqrt(computeResidualDementhon(cMo2)/npt);
+      double s = computeResidualDementhon(cMo2);
       vpThetaUVector erc;
       cMo2.extract(erc);
       std::cout << "it = " << cpt << " cMo2 : residu: " << s << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
@@ -492,11 +492,11 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   calculTwoSolutionsDementhonPlan(I04,J04,U,cMo1,cMo2);
 
 #if DEBUG_LEVEL3
-  double res = sqrt(computeResidualDementhon(cMo1)/npt);
+  double res = computeResidualDementhon(cMo1);
   vpThetaUVector erc;
   cMo1.extract(erc);
   std::cout << "cMo Start Tree 1 : res " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
-  res = sqrt(computeResidualDementhon(cMo2)/npt);
+  res = computeResidualDementhon(cMo2);
   cMo2.extract(erc);
   std::cout << "cMo Start Tree 2 : res " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
 #endif
@@ -537,25 +537,22 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 #endif
 }
 
-
-
-
 /*!
-\brief Compute and return the sum of squared residuals in meter^2 for the pose matrix 'cMo'.
+  \brief Compute and return the residual corresponding to the square root of the mean of squared residuals
+  in meter^2 for the pose matrix \e cMo.
 
-\param cMo : the matrix that defines the pose to be tested.
+  \param cMo : the matrix that defines the pose to be tested.
 
-\return the value of the sum of squared residuals in meter^2
+  \return the value of the mean of squared residuals in meter^2.
 */
 double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 {
-  double residual_ = 0;
+  double squared_error = 0;
 
   // Be careful: since c3d has been translated so that point0 is at the cdg,
   // cMo here corresponds to object frame at that point, i.e, only the one used
   // internally to Dementhon's method
 
-  residual_ = 0;
   for (unsigned int i = 0; i < npt; i++) {
 
     double X = c3d[i].get_oX() * cMo[0][0] + c3d[i].get_oY() * cMo[0][1] + c3d[i].get_oZ() * cMo[0][2] + cMo[0][3];
@@ -565,9 +562,9 @@ double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
     double x = X / Z;
     double y = Y / Z;
 
-    residual_ += vpMath::sqr(x - c3d[i].get_x()) + vpMath::sqr(y - c3d[i].get_y());
+    squared_error += vpMath::sqr(x - c3d[i].get_x()) + vpMath::sqr(y - c3d[i].get_y());
   }
-  return residual_;
+  return sqrt(squared_error / npt);
 }
 
 #undef EPS_DEM
