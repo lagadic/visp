@@ -80,6 +80,7 @@ public:
   explicit vpRotationMatrix(const vpRxyzVector &r);
   explicit vpRotationMatrix(const vpRzyxVector &r);
   explicit vpRotationMatrix(const vpQuaternionVector &q);
+  explicit vpRotationMatrix(const vpMatrix &R);
   vpRotationMatrix(const double tux, const double tuy, const double tuz);
   /*!
     Destructor.
@@ -137,6 +138,9 @@ public:
 
   // transpose
   vpRotationMatrix t() const;
+
+  static vpRotationMatrix mean(const std::vector<vpHomogeneousMatrix> &vec_M);
+  static vpRotationMatrix mean(const std::vector<vpRotationMatrix> &vec_R);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

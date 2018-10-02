@@ -1,6 +1,5 @@
-//! \example tutorial-tsai.cpp
-//!
-#include <visp3/vision/vpCalibration.h>
+//! \example tutorial-hand-eye.cpp
+#include <visp3/vision/vpHandEyeCalibration.h>
 
 int main(int argc, char *argv[])
 {
@@ -9,7 +8,7 @@ int main(int argc, char *argv[])
     if (std::string(argv[i]) == "--ndata" && i+1 < argc) {
       ndata = atoi(argv[i+1]);
     } else if (std::string(argv[i]) == "--help") {
-      std::cout << argv[0] << " [-ndata <number of data to process>] "
+      std::cout << argv[0] << " [--ndata <number of data to process>] "
                               "[--help]" << std::endl;
       return EXIT_SUCCESS;
     }
@@ -30,15 +29,21 @@ int main(int argc, char *argv[])
     std::cout << "Use fPe=" << ss_fPe.str() << ", cPo=" << ss_cPo.str() << std::endl;
 
     vpPoseVector wPe;
-    wPe.loadYAML(ss_fPe.str(), wPe);
+    if (wPe.loadYAML(ss_fPe.str(), wPe) == false) {
+      std::cout << "Unable to read data from: " << ss_fPe.str() << std::endl;
+      return EXIT_FAILURE;
+    }
     wMe[i - 1] = vpHomogeneousMatrix(wPe);
 
     vpPoseVector cPo;
-    cPo.loadYAML(ss_cPo.str(), cPo);
+    if (cPo.loadYAML(ss_cPo.str(), cPo)  == false) {
+      std::cout << "Unable to read data from: " << ss_cPo.str() << std::endl;
+      return EXIT_FAILURE;
+    }
     cMo[i-1] = vpHomogeneousMatrix(cPo);
   }
 
-  vpCalibration::calibrationTsai(cMo, wMe, eMc);
+  vpHandEyeCalibration::calibrate(cMo, wMe, eMc);
 
   // save eMc
   std::ofstream file_eMc("eMc.txt");
@@ -48,8 +53,10 @@ int main(int argc, char *argv[])
   std::cout << "\nSave eMc.yaml" << std::endl;
   pose_vec.saveYAML("eMc.yaml", pose_vec);
 
-  std::cout << "\nOutput: hand to eye calibration result: eMc estimated " << std::endl;
+  std::cout << "\nOutput: Hand-eye calibration result: eMc estimated " << std::endl;
   std::cout << eMc << std::endl;
+  vpThetaUVector ePc(eMc);
+  std::cout << "theta U (deg): " << vpMath::deg(ePc[0]) << " " << vpMath::deg(ePc[1]) << " " << vpMath::deg(ePc[2]) << std::endl;
 
   return EXIT_SUCCESS;
 }

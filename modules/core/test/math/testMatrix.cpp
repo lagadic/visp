@@ -267,6 +267,20 @@ int main(int argc, char *argv[])
       }
     }
     {
+      // Test vpRotationMatrix construction
+      std::vector<double> bench(9, 0);
+      bench[2] = bench[4] = bench[6] = 1.;
+      vpMatrix M(3, 3);
+      M[2][0] = M[1][1] = M[0][2] = 1.;
+      vpRotationMatrix R1(M);
+      if (test("R1", R1, bench) == false)
+        return EXIT_FAILURE;
+      vpRotationMatrix R2;
+      R2 = M;
+      if (test("R2", R2, bench) == false)
+        return EXIT_FAILURE;
+    }
+    {
       vpColVector c(6, 1);
       vpRowVector r(6, 1);
       std::vector<double> bench(6, 1);

@@ -45,8 +45,11 @@
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 
-#undef MAX
-#undef MIN
+#define DEBUG_LEVEL1 0
+#define DEBUG_LEVEL2 0
+
+#undef MAX   /* FC unused anywhere */
+#undef MIN   /* FC unused anywhere */
 
 void vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &cMo_est)
 {
@@ -1051,201 +1054,6 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
   std::cout.flags(original_flags);
 }
 
-/*!
-  \brief calibration method of effector-camera from R. Tsai and R. Lorenz
-  \cite Tsai89a.
-
-  Compute extrinsic camera parameters : the constant transformation from
-  the effector to the camera coordinates (eMc).
-
-  \param cMo : vector of homogeneous matrices representing the transformation
-  between the camera and the scene (input)
-  \param rMe : vector of homogeneous matrices representing the transformation
-  between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param eMc : homogeneous matrix representing the transformation
-  between the effector and the camera (output)
-*/
-void vpCalibration::calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
-                                    const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
-{
-
-  vpColVector x;
-  unsigned int nbPose = (unsigned int)cMo.size();
-  if (cMo.size() != rMe.size())
-    throw vpCalibrationException(vpCalibrationException::dimensionError, "cMo and rMe have different sizes");
-  {
-    vpMatrix A;
-    vpColVector B;
-    unsigned int k = 0;
-    // for all couples ij
-    for (unsigned int i = 0; i < nbPose; i++) {
-      vpRotationMatrix rRei, ciRo;
-      rMe[i].extract(rRei);
-      cMo[i].extract(ciRo);
-      // std::cout << "rMei: " << std::endl << rMe[i] << std::endl;
-
-      for (unsigned int j = 0; j < nbPose; j++) {
-        if (j > i) // we don't use two times same couples...
-        {
-          vpRotationMatrix rRej, cjRo;
-          rMe[j].extract(rRej);
-          cMo[j].extract(cjRo);
-          // std::cout << "rMej: " << std::endl << rMe[j] << std::endl;
-
-          vpRotationMatrix rReij = rRej.t() * rRei;
-
-          vpRotationMatrix cijRo = cjRo * ciRo.t();
-
-          vpThetaUVector rPeij(rReij);
-
-          double theta = sqrt(rPeij[0] * rPeij[0] + rPeij[1] * rPeij[1] + rPeij[2] * rPeij[2]);
-
-          for (unsigned int m = 0; m < 3; m++)
-            rPeij[m] = rPeij[m] * vpMath::sinc(theta / 2);
-
-          vpThetaUVector cijPo(cijRo);
-          theta = sqrt(cijPo[0] * cijPo[0] + cijPo[1] * cijPo[1] + cijPo[2] * cijPo[2]);
-          for (unsigned int m = 0; m < 3; m++)
-            cijPo[m] = cijPo[m] * vpMath::sinc(theta / 2);
-
-          vpMatrix As;
-          vpColVector b(3);
-
-          As = vpColVector::skew(vpColVector(rPeij) + vpColVector(cijPo));
-
-          b = (vpColVector)cijPo - (vpColVector)rPeij; // A.40
-
-          if (k == 0) {
-            A = As;
-            B = b;
-          } else {
-            A = vpMatrix::stack(A, As);
-            B = vpColVector::stack(B, b);
-          }
-          k++;
-        }
-      }
-    }
-
-    // the linear system is defined
-    // x = AtA^-1AtB is solved
-    vpMatrix AtA = A.AtA();
-
-    vpMatrix Ap;
-    AtA.pseudoInverse(Ap, 1e-6); // rank 3
-    x = Ap * A.t() * B;
-
-    //     {
-    //       // Residual
-    //       vpColVector residual;
-    //       residual = A*x-B;
-    //       std::cout << "Residual: " << std::endl << residual << std::endl;
-
-    //       double res = 0;
-    //       for (int i=0; i < residual.getRows(); i++)
-    // 	res += residual[i]*residual[i];
-    //       res = sqrt(res/residual.getRows());
-    //       printf("Mean residual = %lf\n",res);
-    //     }
-
-    // extraction of theta and U
-    double theta;
-    double d = x.sumSquare();
-    for (unsigned int i = 0; i < 3; i++)
-      x[i] = 2 * x[i] / sqrt(1 + d);
-    theta = sqrt(x.sumSquare()) / 2;
-    theta = 2 * asin(theta);
-    // if (theta !=0)
-    if (std::fabs(theta) > std::numeric_limits<double>::epsilon()) {
-      for (unsigned int i = 0; i < 3; i++)
-        x[i] *= theta / (2 * sin(theta / 2));
-    } else
-      x = 0;
-  }
-
-  // Building of the rotation matrix eRc
-  vpThetaUVector xP(x[0], x[1], x[2]);
-  vpRotationMatrix eRc(xP);
-
-  {
-    vpMatrix A;
-    vpColVector B;
-    // Building of the system for the translation estimation
-    // for all couples ij
-    vpRotationMatrix I3;
-    I3.eye();
-    int k = 0;
-    for (unsigned int i = 0; i < nbPose; i++) {
-      vpRotationMatrix rRei, ciRo;
-      vpTranslationVector rTei, ciTo;
-      rMe[i].extract(rRei);
-      cMo[i].extract(ciRo);
-      rMe[i].extract(rTei);
-      cMo[i].extract(ciTo);
-
-      for (unsigned int j = 0; j < nbPose; j++) {
-        if (j > i) // we don't use two times same couples...
-        {
-
-          vpRotationMatrix rRej, cjRo;
-          rMe[j].extract(rRej);
-          cMo[j].extract(cjRo);
-
-          vpTranslationVector rTej, cjTo;
-          rMe[j].extract(rTej);
-          cMo[j].extract(cjTo);
-
-          vpRotationMatrix rReij = rRej.t() * rRei;
-
-          vpTranslationVector rTeij = rTej + (-rTei);
-
-          rTeij = rRej.t() * rTeij;
-
-          vpMatrix a = vpMatrix(rReij) - vpMatrix(I3);
-
-          vpTranslationVector b;
-          b = eRc * cjTo - rReij * eRc * ciTo + rTeij;
-
-          if (k == 0) {
-            A = a;
-            B = b;
-          } else {
-            A = vpMatrix::stack(A, a);
-            B = vpColVector::stack(B, b);
-          }
-          k++;
-        }
-      }
-    }
-
-    // the linear system is solved
-    // x = AtA^-1AtB is solved
-    vpMatrix AtA = A.AtA();
-    vpMatrix Ap;
-    vpColVector AeTc;
-    AtA.pseudoInverse(Ap, 1e-6);
-    AeTc = Ap * A.t() * B;
-
-    //     {
-    //       // residual
-    //       vpColVector residual;
-    //       residual = A*AeTc-B;
-    //       std::cout << "Residual: " << std::endl << residual << std::endl;
-    //       double res = 0;
-    //       for (int i=0; i < residual.getRows(); i++)
-    // 	res += residual[i]*residual[i];
-    //       res = sqrt(res/residual.getRows());
-    //       printf("mean residual = %lf\n",res);
-    //     }
-
-    vpTranslationVector eTc(AeTc[0], AeTc[1], AeTc[2]);
-
-    eMc.insert(eTc);
-    eMc.insert(eRc);
-  }
-}
-
 void vpCalibration::calibVVSMulti(unsigned int nbPose, vpCalibration table_cal[], vpCameraParameters &cam_est,
                                   bool verbose)
 {
@@ -1708,3 +1516,73 @@ void vpCalibration::calibVVSWithDistortionMulti(unsigned int nbPose, vpCalibrati
   // Restore ostream format
   std::cout.flags(original_flags);
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+#include <visp3/vision/vpHandEyeCalibration.h>
+
+/*!
+  \deprecated This function is deprecated. You should rather use vpHandEyeCalibration::calibrate().
+
+  Compute extrinsic camera parameters : the constant transformation from
+  the effector to the camera frames (eMc).
+
+  \param cMo : vector of homogeneous matrices representing the transformation
+  between the camera and the scene (input)
+  \param rMe : vector of homogeneous matrices representing the transformation
+  between the effector (where the camera is fixed) and the reference
+  coordinates (base of the manipulator) (input). Must be the same size as cMo.
+  \param eMc : homogeneous matrix representing the transformation
+  between the effector and the camera (output)
+*/
+void vpCalibration::calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
+                                    const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
+{
+  vpHandEyeCalibration::calibrate(cMo, rMe, eMc);
+}
+
+/*!
+  \deprecated This function is deprecated. You should rather use vpHandEyeCalibration::calibrate().
+
+  Compute extrinsic camera parameters : the constant transformation from
+  the end-effector to the camera frame \f${^e}{\bf M}_c\f$ considering the
+  camera model with or without distortion.
+
+  \param[in] table_cal : Vector of vpCalibration that contains for each index
+  a couple of \f${^r}{\bf M}_e\f$ (world to end-effector) and \f${^c}{\bf
+  M}_o\f$ (camera to object) transformations.
+  \param[out] eMc : Estimated pose of the camera in relation to the end-effector considering
+  the camera model without distortion.
+  \param[out] eMc_dist : Estimated pose of the camera in relation to the end-effector
+  considering the model with distortion.
+  \return 0 if the computation managed, -1 if less than three poses are provides as
+  input.
+*/
+int vpCalibration::computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
+                                          vpHomogeneousMatrix &eMc_dist)
+{
+  unsigned int nbPose = (unsigned int)table_cal.size();
+  if (nbPose > 2) {
+    std::vector<vpHomogeneousMatrix> table_cMo(nbPose);
+    std::vector<vpHomogeneousMatrix> table_cMo_dist(nbPose);
+    std::vector<vpHomogeneousMatrix> table_rMe(nbPose);
+
+    for (unsigned int i = 0; i < nbPose; i++) {
+      table_cMo[i] = table_cal[i].cMo;
+      table_cMo_dist[i] = table_cal[i].cMo_dist;
+      table_rMe[i] = table_cal[i].rMe;
+    }
+    vpHandEyeCalibration::calibrate(table_cMo, table_rMe, eMc);
+    vpHandEyeCalibration::calibrate(table_cMo_dist, table_rMe, eMc_dist);
+
+    return 0;
+  } else {
+    throw (vpException(vpException::dimensionError, "At least 3 images are needed to compute hand-eye calibration !\n"));
+  }
+}
+
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+
+#undef DEBUG_LEVEL1
+#undef DEBUG_LEVEL2

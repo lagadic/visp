@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Tsai calibration example to estimate hand to eye transformation.
+ * Hand-eye calibration example to estimate hand to eye transformation.
  *
  * Authors:
  * Fabien Spindler
@@ -37,9 +37,10 @@
  *****************************************************************************/
 
 /*!
-  \example calibrateTsai.cpp
-  \brief Example of Tsai calibration to estimate extrinsic camera parameters,
-  ie hand-eye homogeneous transformation.
+  \example calibrate-hand-eye.cpp
+  \brief Example of hand-eye calibration to estimate extrinsic camera parameters,
+  ie hand-eye homogeneous transformation corresponding to the transformation between
+  the robot end-effector and the camera.
 
 */
 #include <iomanip>
@@ -51,19 +52,19 @@
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/vision/vpCalibration.h>
+#include <visp3/vision/vpHandEyeCalibration.h>
 
 int main()
 {
   try {
-    // We want to calibrate the hand to eye extrinsic camera parameters from 6
+    // We want to calibrate the hand-eye extrinsic camera parameters from 6
     // couple of poses: cMo and wMe
     const unsigned int N = 6;
     // Input: six couple of poses used as input in the calibration proces
     std::vector<vpHomogeneousMatrix> cMo(N); // eye (camera) to object
-                                             // transformation. The object
-                                             // frame is attached to the
-                                             // calibrartion grid
+    // transformation. The object
+    // frame is attached to the
+    // calibrartion grid
     std::vector<vpHomogeneousMatrix> wMe(N); // world to hand (end-effector) transformation
     // Output: Result of the calibration
     vpHomogeneousMatrix eMc; // hand (end-effector) to eye (camera) transformation
@@ -77,10 +78,10 @@ int main()
     erc[2] = vpMath::rad(25);  // 25 deg
 
     eMc.buildFrom(etc, erc);
-    std::cout << "Simulated hand to eye transformation: eMc " << std::endl;
+    std::cout << "Simulated hand-eye transformation: eMc " << std::endl;
     std::cout << eMc << std::endl;
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
-              << std::endl;
+        << std::endl;
 
     vpColVector v_c(6); // camera velocity used to produce 6 simulated poses
     for (unsigned int i = 0; i < N; i++) {
@@ -90,11 +91,11 @@ int main()
         cMo[0].buildFrom(0, 0, 0.5, 0, 0, 0); // z=0.5 m
         wMe[0].buildFrom(0, 0, 0, 0, 0, 0);   // Id
       } else if (i == 1)
-        v_c[3] = M_PI / 8;
+        v_c[3] = M_PI/8 ;
       else if (i == 2)
-        v_c[4] = M_PI / 8;
+        v_c[4] = M_PI/8 ;
       else if (i == 3)
-        v_c[5] = M_PI / 10;
+        v_c[5] = M_PI/10 ;
       else if (i == 4)
         v_c[0] = 0.5;
       else if (i == 5)
@@ -102,8 +103,8 @@ int main()
 
       vpHomogeneousMatrix cMc;             // camera displacement
       cMc = vpExponentialMap::direct(v_c); // Compute the camera displacement
-                                           // due to the velocity applied to
-                                           // the camera
+      // due to the velocity applied to
+      // the camera
       if (i > 0) {
         // From the camera displacement cMc, compute the wMe and cMo matrices
         cMo[i] = cMc.inverse() * cMo[i - 1];
@@ -111,7 +112,8 @@ int main()
       }
     }
 
-    if (0) {
+    //    if (1) {
+    if (1) {
       for (unsigned int i = 0; i < N; i++) {
         vpHomogeneousMatrix wMo;
         wMo = wMe[i] * eMc * cMo[i];
@@ -131,13 +133,13 @@ int main()
     // - cMo[6]: camera to object poses as six homogeneous transformations
     // - wMe[6]: world to hand (end-effector) poses as six homogeneous
     // transformations
-    vpCalibration::calibrationTsai(cMo, wMe, eMc);
+    vpHandEyeCalibration::calibrate(cMo, wMe, eMc);
 
-    std::cout << std::endl << "Output: hand to eye calibration result: eMc estimated " << std::endl;
+    std::cout << std::endl << "Output: hand-eye calibration result: eMc estimated " << std::endl;
     std::cout << eMc << std::endl;
     eMc.extract(erc);
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
-              << std::endl;
+        << std::endl;
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

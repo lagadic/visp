@@ -41,13 +41,10 @@
 /*!
   \file vpPose.h
   \brief Tools for pose computation (pose from point only).
-
-  \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
-  \date   April, 6 1999 (first issue)
 */
 
-#ifndef vpPOSE_HH
-#define vpPOSE_HH
+#ifndef __vpPose_h_
+#define __vpPose_h_
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
@@ -84,8 +81,7 @@ public:
   //! Methods that could be used to estimate the pose from points.
   typedef enum {
     LAGRANGE,             /*!< Linear Lagrange approach (does't need an initialization) */
-    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization)
-                           */
+    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization) */
     LOWE,                 /*!< Lowe aproach based on a Levenberg Marquartd non linear
                              minimization scheme that needs an initialization from Lagrange or
                              Dementhon aproach */
@@ -225,7 +221,7 @@ public:
   void init();
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
-  void poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type = 0);
+  void poseLagrangePlan(vpHomogeneousMatrix &cMo);
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo);
   void poseLowe(vpHomogeneousMatrix &cMo);
   bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
@@ -358,9 +354,3 @@ public:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

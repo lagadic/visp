@@ -175,6 +175,8 @@ public:
     throw(vpException(vpException::fatalError, "Cannot resize an homogeneous matrix"));
   };
 
+  static vpHomogeneousMatrix mean(const std::vector<vpHomogeneousMatrix> &vec_M);
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -194,9 +196,3 @@ public:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

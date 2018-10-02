@@ -51,7 +51,7 @@ All the material (source code and images) described in this tutorial is part of 
 $ svn export https://github.com/lagadic/visp.git/trunk/example/calibration
 \endcode
 
-The calibration tool is available in \c camera_calibration.cpp located in \c example/calibration folder.
+The calibration tool is available in \c calibrate_camera.cpp located in \c example/calibration folder.
 
 We will not describe in detail the source, but just mention that:
 - the image processing is performed using OpenCV;
@@ -85,11 +85,11 @@ Input: chessboard-%02d.png
 Tempo: 1
 \endcode
 
-\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c camera_calibration binary. 
+\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary. 
 
 To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
 \code
-./camera_calibration default-chessboard.cfg
+./calibrate-camera default-chessboard.cfg
 \endcode
 
 This command will produce the following output:
@@ -159,11 +159,11 @@ Input: circles-%02d.pgm
 Tempo: 1
 \endcode
 
-\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c camera_calibration binary. 
+\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary. 
 
 To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
 \code
-./camera_calibration circles-grid.cfg
+./calibrate-camera circles-grid.cfg
 \endcode
 
 This command will produce the following output:

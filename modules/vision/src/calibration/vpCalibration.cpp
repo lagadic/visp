@@ -537,51 +537,6 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
 }
 
 /*!
-  \brief Compute the multi-image calibration of effector-camera from R. Tsai
-  and R. Lenz \cite Tsai89a.
-
-  Compute extrinsic camera parameters : the constant transformation from
-  the end-effector to the camera frame \f${^e}{\bf M}_c\f$ considering the
-  camera model with or without distortion.
-
-  \param[in] table_cal : Vector of vpCalibration that contains for each index
-  a couple of \f${^r}{\bf M}_e\f$ (world to end-effector) and \f${^c}{\bf
-  M}_o\f$ (camera to object) transformations. \param[out] eMc : Estimated pose
-  of the camera in relation to the end-effector considering the camera model
-  without distortion. \param[out] eMc_dist : Estimated pose of the camera in
-  relation to the end-effector considering the model with distortion. \return
-  0 if the computation managed, -1 if less than three poses are provides as
-  input.
-*/
-int vpCalibration::computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
-                                          vpHomogeneousMatrix &eMc_dist)
-{
-  try {
-    unsigned int nbPose = (unsigned int)table_cal.size();
-    if (nbPose > 2) {
-      std::vector<vpHomogeneousMatrix> table_cMo(nbPose);
-      std::vector<vpHomogeneousMatrix> table_cMo_dist(nbPose);
-      std::vector<vpHomogeneousMatrix> table_rMe(nbPose);
-
-      for (unsigned int i = 0; i < nbPose; i++) {
-        table_cMo[i] = table_cal[i].cMo;
-        table_cMo_dist[i] = table_cal[i].cMo_dist;
-        table_rMe[i] = table_cal[i].rMe;
-      }
-      calibrationTsai(table_cMo, table_rMe, eMc);
-      calibrationTsai(table_cMo_dist, table_rMe, eMc_dist);
-
-      return 0;
-    } else {
-      vpERROR_TRACE("Three images are needed to compute Tsai calibration !\n");
-      return -1;
-    }
-  } catch (...) {
-    throw;
-  }
-}
-
-/*!
   Write data into a file.
 
   data are organized as follow oX oY oZ u v
