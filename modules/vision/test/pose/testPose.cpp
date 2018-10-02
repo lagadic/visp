@@ -132,7 +132,7 @@ int main()
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
       int npt = 4;
-      vpPoint P[npt]; //  Point to be tracked
+      std::vector<vpPoint> P(npt); //  Point to be tracked
       double Z = 0.05; // FS: Dementhon estimation is not good when Z=0.3
 
       P[0].setWorldCoordinates(-L, -L, Z);
@@ -226,7 +226,7 @@ int main()
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
       int npt = 6;
-      vpPoint P[npt]; //  Point to be tracked
+      std::vector<vpPoint> P(npt); //  Point to be tracked
       P[0].setWorldCoordinates(-L, -L,    0); // Lagrange not accurate...
       P[0].setWorldCoordinates(-L, -L,   -0.02);
       P[1].setWorldCoordinates( L, -L,    0);
@@ -316,7 +316,7 @@ int main()
 
     {
       int npt = 4;
-      vpPoint P[npt]; //  Point to be tracked
+      std::vector<vpPoint> P(npt); //  Point to be tracked
       P[0].setWorldCoordinates(-L2, -L2,  0);
       P[1].setWorldCoordinates( L2, -L2,  0.2);
       P[2].setWorldCoordinates( L2,  L2, -0.1);
