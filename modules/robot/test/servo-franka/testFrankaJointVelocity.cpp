@@ -82,6 +82,7 @@ int main(int argc, char **argv)
     q[5] = M_PI_2;
     q[6] = M_PI_4;
     std::cout << "Move to joint position: " << q.t() << std::endl;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
     robot.setPosition(vpRobot::JOINT_STATE, q);
 
     /*
@@ -100,6 +101,10 @@ int main(int argc, char **argv)
 
       vpTime::wait(10);
     } while (vpTime::measureTimeSecond() - t0 < delta_t);
+
+    robot.setRobotState(vpRobot::STATE_STOP);
+    vpTime::wait(100);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     dq_d[4] = -dq_d[4];
     dq_d[6] = -dq_d[6];
