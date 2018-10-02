@@ -97,8 +97,6 @@ int main(int argc, char **argv)
   }
   catch(const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
-    std::cout << "Stop the robot " << std::endl;
-    robot.setRobotState(vpRobot::STATE_STOP);
     return EXIT_FAILURE;
   }
   catch(const franka::NetworkException &e) {
