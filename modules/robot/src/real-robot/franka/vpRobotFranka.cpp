@@ -53,7 +53,7 @@
 
 */
 vpRobotFranka::vpRobotFranka()
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
     m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
     m_mutex(), m_dq_des(), m_eMc(), m_log_folder(), m_franka_address()
 {
@@ -67,7 +67,7 @@ vpRobotFranka::vpRobotFranka()
  * be set when required. Setting realtime_config to kIgnore disables this behavior.
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
     m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
     m_mutex(), m_dq_des(), m_v_cart_des(), m_eMc(),m_log_folder(), m_franka_address()
 {
@@ -104,6 +104,10 @@ vpRobotFranka::~vpRobotFranka()
     std::cout << "Grasped object, will release it now." << std::endl;
     m_gripper->stop();
     delete m_gripper;
+  }
+
+  if (m_model) {
+    delete m_model;
   }
 }
 
@@ -147,6 +151,10 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
   m_handler->setCartesianImpedance({{3000, 3000, 3000, 300, 300, 300}});
 //  m_handler->setFilters(100, 100, 100, 100, 100);
   m_handler->setFilters(10, 10, 10, 10, 10);
+  if (m_model) {
+    delete m_model;
+  }
+  m_model = new franka::Model(m_handler->loadModel());
 }
 
 /*!
@@ -219,15 +227,13 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
     throw(vpException(vpException::fatalError, "Joint position is not a %d-dim vector", q.size()));
   }
 
-  franka::Model model = m_handler->loadModel(); // TODO see if this function cost time
-
   std::array< double, 7 > q_array;
   for (size_t i = 0; i < (size_t)nDof; i++)
     q_array[i] = q[i];
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  std::array<double, 16> pose_array = model.pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
+  std::array<double, 16> pose_array = m_model->pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
   vpHomogeneousMatrix fMe;
   for (unsigned int i=0; i< 4; i++) {
     for (unsigned int j=0; j< 4; j++) {
@@ -311,9 +317,7 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe)
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  franka::Model model = m_handler->loadModel();
-
-  std::array<double, 42> jacobian = model.bodyJacobian(franka::Frame::kEndEffector, robot_state); // column-major
+  std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, robot_state); // column-major
   eJe.resize(6, 7); // row-major
   for (size_t i = 0; i < 6; i ++) {
     for (size_t j = 0; j < 7; j ++) {
@@ -337,9 +341,7 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe)
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  franka::Model model = m_handler->loadModel(); // TODO see if this function cost time
-
-  std::array<double, 42> jacobian = model.zeroJacobian(franka::Frame::kEndEffector, robot_state); // column-major
+  std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, robot_state); // column-major
   fJe.resize(6, 7); // row-major
   for (size_t i = 0; i < 6; i ++) {
     for (size_t j = 0; j < 7; j ++) {
@@ -437,12 +439,11 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
     // Start primitive STOP only if the current state is Velocity
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       // Stop the robot
-//      std::cout << "DBG: ask to stop the thread setting m_controlThreadStopAsked = false" << std::endl;
       m_controlThreadStopAsked = true;
       if(m_controlThread.joinable()) {
-//        std::cout << "DBG: Stop joint vel thread to stop the robot" << std::endl;
         m_controlThread.join();
-//        std::cout << "DBG: control thread joined" << std::endl;
+        m_controlThreadStopAsked = false;
+        m_controlThreadIsRunning = false;
       }
     }
     break;
@@ -451,12 +452,11 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to position control.\n";
       // Stop the robot
-//      std::cout << "DBG: ask to stop the thread setting m_controlThreadStopAsked = false" << std::endl;
       m_controlThreadStopAsked = true;
       if(m_controlThread.joinable()) {
-//        std::cout << "DBG: Stop joint vel thread to swith to position control" << std::endl;
         m_controlThread.join();
-//        std::cout << "DBG: control thread joined" << std::endl;
+        m_controlThreadStopAsked = false;
+        m_controlThreadIsRunning = false;
       }
     }
     break;
@@ -465,8 +465,6 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
     if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
       std::cout << "Change the control mode from stop to velocity control.\n";
     }
-//    std::cout << "DBG: Start joint vel thread" << std::endl;
-
     break;
   }
   default:
@@ -600,7 +598,6 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
   franka::RobotState robot_state;
 
   if (! m_controlThreadIsRunning) {
-//    std::cout << "DBG: get robot state using readOnce()" << std::endl;
     robot_state = m_handler->readOnce();
 
     std::lock_guard<std::mutex> lock(m_mutex);
