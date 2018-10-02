@@ -849,7 +849,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
   eMc.eye();
   resPos = vpHandEyeCalibration::calibrationErrVVS(cMo, rMe, eMc, errVVS);
   double vmin = resPos;  // will serve to determine the best method
+#if DEBUG_LEVEL1
   int He_method = HE_I;  // will serve to know which is the best method
+#endif
   vpHomogeneousMatrix eMcMin = eMc;  // best initial estimation for VSS
   // Method using Old Tsai implementation
   int err = -1;
@@ -874,7 +876,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       {
         vmin = resPos;
         eMcMin = eMc;
+#if DEBUG_LEVEL1
         He_method = HE_TSAI_OROT;
+#endif
       }
     }
     err = vpHandEyeCalibration::calibrationTranslation(cMo, rMe, eRc, eTc);
@@ -893,7 +897,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       {
         vmin = resPos;
         eMcMin = eMc;
+#if DEBUG_LEVEL1
         He_method = HE_TSAI_ORNT;
+#endif
       }
     }
   }
@@ -919,7 +925,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       {
         vmin = resPos;
         eMcMin = eMc;
+#if DEBUG_LEVEL1
         He_method = HE_TSAI_NROT;
+#endif
       }
     }
     err = vpHandEyeCalibration::calibrationTranslation(cMo, rMe, eRc, eTc);
@@ -938,7 +946,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       {
         vmin = resPos;
         eMcMin = eMc;
+#if DEBUG_LEVEL1
         He_method = HE_TSAI_NRNT;
+#endif
       }
     }
   }
@@ -964,7 +974,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       {
         vmin = resPos;
         eMcMin = eMc;
+#if DEBUG_LEVEL1
         He_method = HE_PROCRUSTES_OT;
+#endif
       }
     }
     err = vpHandEyeCalibration::calibrationTranslation(cMo, rMe, eRc, eTc);
@@ -983,7 +995,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       {
         vmin = resPos;
         eMcMin = eMc;
+#if DEBUG_LEVEL1
         He_method = HE_PROCRUSTES_NT;
+#endif
       }
     }
   }
