@@ -41,13 +41,10 @@
 /*!
   \file vpPose.h
   \brief Tools for pose computation (pose from point only).
-
-  \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
-  \date   April, 6 1999 (first issue)
 */
 
-#ifndef vpPOSE_HH
-#define vpPOSE_HH
+#ifndef __vpPose_h_
+#define __vpPose_h_
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
@@ -355,9 +352,3 @@ public:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
