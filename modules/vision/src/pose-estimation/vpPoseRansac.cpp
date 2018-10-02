@@ -244,7 +244,6 @@ bool vpPose::RansacFunctor::poseRansacImpl()
         r = r_dementhon;
         cMo_tmp = cMo_dementhon;
       }
-      r = sqrt(r) / (double)nbMinRandom;
 
       // Filter the pose using some criterion (orientation angles,
       // translations, etc.)
