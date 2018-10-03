@@ -20,7 +20,7 @@ foreach(cpp ${tutorial_cpp})
 endforeach()
 
 if(VISP_HAVE_REALSENSE2)
-    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter)
+    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter -Wno-overloaded-virtual)
 endif()
 
 # Copy the data files to the same location than the target
