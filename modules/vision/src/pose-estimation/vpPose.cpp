@@ -313,12 +313,12 @@ bool vpPose::coplanar(int &coplanar_plane_type)
 }
 
 /*!
-  \brief Compute and return the square root of the mean sum of squared residuals expressed in meter^2 for
+  \brief Compute and return the sum of squared residuals expressed in meter^2 for
   the pose matrix \e cMo.
 
   \param cMo : Input pose. The matrix that defines the pose to be tested.
 
-  \return The value of the square root of the mean sum of squared residuals in meter^2.
+  \return The value of the sum of squared residuals in meter^2.
 
 */
 double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
@@ -334,7 +334,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 
     squared_error += vpMath::sqr(x - P.get_x()) + vpMath::sqr(y - P.get_y());
   }
-  return (sqrt(squared_error / listP.size()));
+  return (squared_error);
 }
 
 /*!

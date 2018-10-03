@@ -105,6 +105,7 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
     std::cout << "Not enough point" << std::endl;
     return fail;
   }
+  r = sqrt(r / pose.listP.size());
   // std::cout << "Residual on each point (meter): " << r << std::endl;
   fail = (r > 0.001) ? 1 : 0;
   std::cout << "Based on 2D residual (" << r << ") " << legend << " is " << (fail ? "badly" : "well") << " estimated"
