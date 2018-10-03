@@ -212,6 +212,97 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
 }
 
 /*!
+ * Get robot force torque.
+ * \param[in] frame : Type of forces and torques to retrieve. Admissible values are:
+ * - vpRobot::JOINT_STATE to get the 7-dim measured link-side joint torque sensor signals. Unit: \f$[Nm]\f$.
+ * - vpRobot::END_EFFECTOR_FRAME to retrieve the external wrench (force, torque) acting on stiffness frame, expressed relative to the stiffness
+ *   frame. Unit: \f$[N,N,N,Nm,Nm,Nm]\f$.
+ * - vpRobot::CAMERA_FRAME or more generally a tool frame vpRobot::TOOL_FRAME to retrieve the external wrench (force, torque) applied on the tool frame.
+ *   Unit: \f$[N,N,N,Nm,Nm,Nm]\f$.
+ * \param[out] force : Measured forced and torques.
+ *
+ * If you want to get a cartesian position, use rather
+ * getPosition(const vpRobot::vpControlFrameType, vpPoseVector &)
+ */
+void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpColVector &force)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+  }
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  switch(frame) {
+  case JOINT_STATE: {
+    force.resize((unsigned int)nDof);
+    for (int i=0; i < nDof; i++)
+      force[i] = robot_state.tau_J[i];
+
+    break;
+  }
+  case END_EFFECTOR_FRAME: {
+    force.resize(6);
+    for (int i=0; i < nDof; i++)
+      force[i] = robot_state.K_F_ext_hat_K[i];
+    break;
+  }
+  case TOOL_FRAME: {
+    // end-effector frame
+    vpColVector eFe(6);
+    for (int i=0; i < nDof; i++)
+      eFe[i] = robot_state.K_F_ext_hat_K[i];
+
+    // Transform in tool frame
+    vpHomogeneousMatrix cMe = get_eMc().inverse();
+    vpForceTwistMatrix cWe( cMe  );
+    force = cWe * eFe;
+    break;
+  }
+  default: {
+    throw(vpException(vpException::fatalError, "Cannot get Franka cartesian position: wrong method"));
+  }
+  }
+}
+
+/*!
+ * Get robot velocity.
+ * \param[in] frame : Type of velocity to retrieve. Admissible values are:
+ * - vpRobot::JOINT_STATE to get the 7 joint positions.
+ * - vpRobot::END_EFFECTOR_FRAME to retrieve the cartesian velocity of the end-effector frame wrt the robot base frame.
+ * - vpRobot::CAMERA_FRAME to retrieve the cartesian velocity of the camera frame (or more generally a tool frame
+ *   vpRobot::TOOL_FRAME) wrt the robot base frame.
+ * \param[out] d_position : Robot velocity. When joints velocity is asked this vector is 7-dim. Otherwise for a cartesian
+ * velocity this vector is 6-dim. Its content is similar to a vpPoseVector, with first the 3 tranlations in meter
+ * and then the 3 orientations in radian as a \f$\theta {\bf u}\f$ vector (see vpThetaUVector).
+ *
+ * \warning For the moment, cartesian velocities measurement in vpRobot::END_EFFECTOR_FRAME, vpRobot::CAMERA_FRAME, vpRobot::TOOL_FRAME
+ * are not implemented.
+ */
+void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &d_position)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot velocity: robot is not connected"));
+  }
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  switch(frame) {
+
+  case JOINT_STATE: {
+    d_position.resize((unsigned int)nDof);
+    for (int i=0; i < nDof; i++) {
+      d_position[i]=robot_state.dq[i];
+    }
+    break;
+  }
+
+  default: {
+    throw(vpException(vpException::fatalError, "Cannot get Franka cartesian velocity: not implemented"));
+  }
+  }
+}
+
+/*!
  * Given the joint position of the robot, computes the forward kinematics (direct geometric model) as an
  * homogeneous matrix \f${^f}{\bf M}_e\f$ that gives the position of the end-effector in the robot base frame.
  *

@@ -282,6 +282,8 @@ public:
   void get_eJe(vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
 
+  void getForceTorque(const vpRobot::vpControlFrameType frame, vpColVector &force);
+
   /*!
    * Get gripper handler to access native libfranka functions.
    *
@@ -313,6 +315,8 @@ public:
 
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose);
+
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &d_position);
 
   void move(const std::string &filename, double velocity_percentage=10.);
 
