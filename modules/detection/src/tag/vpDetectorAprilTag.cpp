@@ -205,7 +205,7 @@ public:
       throw(vpException(vpException::fatalError, "Cannot get tag index=%d pose: detection empty", tagIndex));
     }
     apriltag_detection_t *det;
-    zarray_get(m_detections, tagIndex, &det);
+    zarray_get(m_detections, static_cast<int>(tagIndex), &det);
 
     int nb_detections = zarray_size(m_detections);
     if (tagIndex >= (size_t)nb_detections) {

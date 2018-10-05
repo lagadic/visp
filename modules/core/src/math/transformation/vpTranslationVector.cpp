@@ -661,7 +661,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMat
   for (size_t i = 0; i < vec_M.size(); i++) {
     meanT += (vpColVector) vec_M[i].getTranslationVector();
   }
-  meanT /= vec_M.size();
+  meanT /= static_cast<double>(vec_M.size());
 
   vpTranslationVector t(meanT);
   return t;
@@ -681,7 +681,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVec
   for (size_t i = 0; i < vec_t.size(); i++) {
     meanT += (vpColVector) vec_t[i];
   }
-  meanT /= vec_t.size();
+  meanT /= static_cast<double>(vec_t.size());
 
   vpTranslationVector t(meanT);
   return t;

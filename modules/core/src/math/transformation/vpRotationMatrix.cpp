@@ -717,7 +717,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
     R = vec_M[i].getRotationMatrix();
     meanR += (vpMatrix) R;
   }
-  meanR /= vec_M.size();
+  meanR /= static_cast<double>(vec_M.size());
 
   // Euclidean mean of the rotation matrix following Moakher's method (SIAM 2002)
   vpMatrix M, U, V;
@@ -753,7 +753,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
   for (size_t i = 0; i < vec_R.size(); i++) {
     meanR += (vpMatrix) vec_R[i];
   }
-  meanR /= vec_R.size();
+  meanR /= static_cast<double>(vec_R.size());
 
   // Euclidean mean of the rotation matrix following Moakher's method (SIAM 2002)
   vpMatrix M, U, V;

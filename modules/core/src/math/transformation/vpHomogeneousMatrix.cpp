@@ -870,8 +870,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
     meanR += (vpMatrix) R;
     meanT += (vpColVector) vec_M[i].getTranslationVector();
   }
-  meanR /= vec_M.size();
-  meanT /= vec_M.size();
+  meanR /= static_cast<double>(vec_M.size());
+  meanT /= static_cast<double>(vec_M.size());
 
   // Euclidean mean of the rotation matrix following Moakher's method (SIAM 2002)
   vpMatrix M, U, V;
