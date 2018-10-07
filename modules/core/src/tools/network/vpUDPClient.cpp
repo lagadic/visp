@@ -174,8 +174,8 @@ int vpUDPClient::receive(std::string &msg, const int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_serverAddress,
-                          (socklen_t *)&m_serverLength);
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_serverAddress,
+                                           (socklen_t *)&m_serverLength));
     if (length <= 0) {
       return length < 0 ? -1 : 0;
     }
@@ -222,8 +222,8 @@ int vpUDPClient::send(const std::string &msg)
 
 /* send the message to the server */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  return sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress,
-                m_serverLength);
+  return static_cast<int>(sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress,
+                                 m_serverLength));
 #else
   return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_serverAddress,
                 m_serverLength);
