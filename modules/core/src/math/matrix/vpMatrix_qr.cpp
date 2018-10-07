@@ -36,6 +36,8 @@
  *
  *****************************************************************************/
 
+#include <cmath>     // For std::abs() on iOS
+#include <cstdlib>   // For std::abs() on iOS
 #include <algorithm> // for (std::min) and (std::max)
 #include <visp3/core/vpConfig.h>
 
@@ -351,11 +353,11 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   }
 
   // prepare matrices and deal with r = 0
-  Q.resize(m,q);
+  Q.resize(static_cast<unsigned int>(m), static_cast<unsigned int>(q));
   if(squareR)
-    R.resize(r,r);
+    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
   else
-    R.resize(r,n);
+    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
   if(r == 0)
     return 0;
 
@@ -366,11 +368,11 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   integer info;
 
   // copy this to qrdata in Lapack convention
-  for(int i = 0; i < m; ++i)
+  for(integer i = 0; i < m; ++i)
   {
-    for(int j = 0; j < n; ++j)
+    for(integer j = 0; j < n; ++j)
       qrdata[i+m*j] = data[j + n*i];
-    for(int j = n; j < na; ++j)
+    for(integer j = n; j < na; ++j)
       qrdata[i+m*j] = 0;
   }
 
@@ -551,18 +553,18 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   }
 
   // prepare Q and deal with r = 0
-  Q.resize(m, q);
+  Q.resize(static_cast<unsigned int>(m), static_cast<unsigned int>(q));
   if(r == 0)
   {
     if(squareR)
     {
       R.resize(0, 0);
-      P.resize(0, n);
+      P.resize(0, static_cast<unsigned int>(n));
     }
     else
     {
-      R.resize(r, n);
-      P.resize(n, n);
+      R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
+      P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
     }
     return 0;
   }
@@ -578,11 +580,11 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   integer info;
 
   // copy this to qrdata in Lapack convention
-  for(int i = 0; i < m; ++i)
+  for(integer i = 0; i < m; ++i)
   {
-    for(int j = 0; j < n; ++j)
+    for(integer j = 0; j < n; ++j)
       qrdata[i+m*j] = data[j + n*i];
-    for(int j = n; j < na; ++j)
+    for(integer j = n; j < na; ++j)
       qrdata[i+m*j] = 0;
   }
 
@@ -644,24 +646,24 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   // write R
   if(squareR) // R r x r
   {
-    R.resize(r, r);
+    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
     for(int i=0;i<r;i++)
       for(int j=i;j<r;j++)
         R[i][j] = qrdata[i+m*j];
 
     // write P
-    P.resize(r,n);
+    P.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
     for(int i = 0; i < r; ++i)
       P[i][p[i]-1] = 1;
   }
   else        // R is min(m,n) x n of rank r
   {
-    R.resize(na, n);
+    R.resize(static_cast<unsigned int>(na), static_cast<unsigned int>(n));
     for(int i=0;i<na;i++)
       for(int j=i;j<n;j++)
         R[i][j] = qrdata[i+m*j];
     // write P
-    P.resize(n,n);
+    P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
     for(int i = 0; i < n; ++i)
       P[i][p[i]-1] = 1;
   }
