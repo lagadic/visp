@@ -253,6 +253,7 @@ static inline size_t zarray_copy_data(const zarray_t *za, void *buffer, size_t b
     assert(buffer != NULL);
     assert(buffer_bytes >= za->el_sz * za->size);
     memcpy(buffer, za->data, za->el_sz * za->size);
+    (void)buffer_bytes; // To avoid a warning on iOS
     return za->el_sz * za->size;
 }
 

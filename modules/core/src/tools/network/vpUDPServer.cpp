@@ -222,8 +222,8 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, const int time
   if (retval > 0) {
 /* recvfrom: receive a UDP datagram from a client */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-    int length = recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_clientAddress,
-                          (socklen_t *)&m_clientLength);
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_clientAddress,
+                                           (socklen_t *)&m_clientLength));
 #else
     int length =
         recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_clientAddress, &m_clientLength);
@@ -315,8 +315,8 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, const
 
 /* send the message to the client */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  return sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress,
-                m_clientLength);
+  return static_cast<int>(sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress,
+                                 m_clientLength));
 #else
   return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_clientAddress,
                 m_clientLength);

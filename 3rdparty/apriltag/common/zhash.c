@@ -86,7 +86,7 @@ zhash_t *zhash_create_capacity(size_t keysz, size_t valuesz,
     zh->equals = equals;
     zh->nentries = nentries;
 
-    zh->entrysz = 1 + zh->keysz + zh->valuesz;
+    zh->entrysz = static_cast<int>(1 + zh->keysz + zh->valuesz);
 
     zh->entries = (char *)calloc(zh->nentries, zh->entrysz);
     zh->nentries = nentries;

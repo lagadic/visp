@@ -126,7 +126,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_extra_compiler_option(-mno-ssse3)
   endif()
 
-  if(X86)
+  if(X86 AND NOT IOS)
     add_extra_compiler_option(-ffloat-store)
   endif()
 endif()
