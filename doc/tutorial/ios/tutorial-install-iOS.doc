@@ -29,7 +29,7 @@ $ mv ~/Downloads/opencv2.framework ~/framework/ios/
 \endcode
 or if the download was either performed with Firefox, do the following
 \code
-$ unzip ~/Downloads/opencv-3.3.0-ios-framework.zip -d ~/framework/ios
+$ unzip ~/Downloads/opencv-3.4.1-ios-framework.zip -d ~/framework/ios
 \endcode
 - Add \c opencv2.framework to iPhoneOS existing frameworks
 \code
