@@ -14,3 +14,5 @@ foreach(cpp ${tutorial_cpp})
     visp_add_dependency(${cpp} "tutorials")
   endif()
 endforeach()
+
+vp_set_source_file_compile_flag(tutorial-flood-fill.cpp -Wno-strict-overflow)

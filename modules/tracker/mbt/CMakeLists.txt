@@ -233,6 +233,9 @@ if(MSVC)
   endif()
 endif()
 
+vp_set_source_file_compile_flag(src/vpMbTracker.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/klt/vpMbKltTracker.cpp -Wno-strict-overflow)
+
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 

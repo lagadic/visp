@@ -41,3 +41,6 @@ vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
 vp_add_tests(DEPENDS_ON visp_io visp_gui)
+
+vp_set_source_file_compile_flag(src/moving-edges/vpMeSite.cpp -Wno-strict-overflow)
+

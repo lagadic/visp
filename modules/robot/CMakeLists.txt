@@ -64,7 +64,7 @@ if(USE_VIRTUOSE)
     # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file
     # VirtuoseAPI.h(280): warning C4312: 'type cast': conversion from 'int' to 'char *' of greater size
     # VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
-	if(BUILD_SHARED_LIBS)
+  if(BUILD_SHARED_LIBS)
       vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd4312)
@@ -72,9 +72,9 @@ if(USE_VIRTUOSE)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseWithGlove.cpp /wd4312)
-	else()
-	  vp_warnings_disable(CMAKE_CXX_FLAGS /wd4312)
-	endif()
+  else()
+    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4312)
+  endif()
   endif()
 endif()
 
@@ -175,6 +175,15 @@ if(USE_COIN3D)
     vp_set_source_file_compile_flag(src/real-robot/viper/vpRobotViper850.cpp -Wno-unused-parameter)
   endif()
 endif()
+
+vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpWireFrameSimulator.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpClipping.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpBoundio.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpCoreDisplay.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpLex.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpBound.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpArit.cpp -Wno-strict-overflow)
 
 # copy robot and wireframe simulator data
 vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd"      data/robot-simulator)

@@ -41,3 +41,5 @@ vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
 vp_add_tests()
+
+vp_set_source_file_compile_flag(src/vpKltOpencv.cpp -Wno-strict-overflow)

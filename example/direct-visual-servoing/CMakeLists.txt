@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP configuration file. 
+# ViSP configuration file.
 #
 # Authors:
 # Fabien Spindler
@@ -52,5 +52,7 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
+
+vp_set_source_file_compile_flag(photometricVisualServoing.cpp -Wno-strict-overflow)
 
 add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})

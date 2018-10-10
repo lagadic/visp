@@ -67,3 +67,6 @@ vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(DEPENDS_ON visp_io)
+
+vp_set_source_file_compile_flag(src/display/vpDisplayX.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/display/vpDisplayOpenCV.cpp -Wno-strict-overflow)
