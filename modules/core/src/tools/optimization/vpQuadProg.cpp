@@ -190,7 +190,7 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
     if(!vpLinProg::colReduction(A, b, false, tol))
       return false;
 
-    if(A.getCols())
+    if(A.getCols() && (Q*A).infinityNorm() > tol)
       x = b + A*(Q*A).solveBySVD(r - Q*b);
     else
       x = b;
@@ -520,7 +520,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
       A[i][j] = C[active[i]][j];
     b[i] = d[active[i]];
   }
-  solveByProjection(Q, r, A, b, x, tol);
+  if(!solveByProjection(Q, r, A, b, x, tol))
+    x.resize(n);
 
   // or from simplex if we really have no clue
   if(!vpLinProg::allLesser(C, x, d, tol))
@@ -705,6 +706,4 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   }
   return true;
 }
-#else
-void dummy_vpQuadProg(){};
 #endif
