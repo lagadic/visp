@@ -128,7 +128,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         IQQt[j][j] += 1;
       // most of the time the first n-m columns are just fine
       A = IQQt.extract(0,0,n,n-m);
-      if((A.t()*A).detByLUEigen3() < tol)
+      if((A.t()*A).detByLU() < tol)
       {
         // rank deficiency, manually find n-m independent columns
         unsigned int j0;
@@ -148,7 +148,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
           if (!vpLinProg::allZero(IQQt.getCol(j)))
           {
             A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-            if((A.t()*A).detByLUEigen3() < tol)
+            if((A.t()*A).detByLU() < tol)
               A.resize(n,A.getCols()-1, false);
           }
           j++;
@@ -179,7 +179,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       IQQt[j][j] += 1;
     // most of the time the first n-r columns are just fine
     A = IQQt.extract(0,0,n,n-r);
-    if((A.t()*A).detByLUEigen3() < tol)
+    if((A.t()*A).detByLU() < tol)
     {
       // rank deficiency, manually find n-r independent columns
       unsigned int j0;
@@ -199,7 +199,7 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         if(!vpLinProg::allZero(IQQt.getCol(j)))
         {
           A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-          if((A.t()*A).detByLUEigen3() < tol)
+          if((A.t()*A).detByLU() < tol)
             A.resize(n,A.getCols()-1, false);
         }
         j++;
