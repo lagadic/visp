@@ -417,10 +417,22 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
       vpDisplay::display(I);
 
       vpHomogeneousMatrix cMo1, cMo2;
-      pose.computePose(vpPose::LAGRANGE, cMo1);
-      double d1 = pose.computeResidual(cMo1);
-      pose.computePose(vpPose::DEMENTHON, cMo2);
-      double d2 = pose.computeResidual(cMo2);
+      double d1, d2;
+      d1 = d2 = std::numeric_limits<double>::max();
+      try {
+        pose.computePose(vpPose::LAGRANGE, cMo1);
+        d1 = pose.computeResidual(cMo1);
+      }
+      catch(...) {
+        // Lagrange non-planar cannot work with less than 6 points
+      }
+      try {
+        pose.computePose(vpPose::DEMENTHON, cMo2);
+        d2 = pose.computeResidual(cMo2);
+      }
+      catch(...) {
+        // Should not occur
+      }
 
       if (d1 < d2) {
         cMo = cMo1;
@@ -540,10 +552,22 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<v
     vpDisplay::flush(I);
 
     vpHomogeneousMatrix cMo1, cMo2;
-    pose.computePose(vpPose::LAGRANGE, cMo1);
-    double d1 = pose.computeResidual(cMo1);
-    pose.computePose(vpPose::DEMENTHON, cMo2);
-    double d2 = pose.computeResidual(cMo2);
+    double d1, d2;
+    d1 = d2 = std::numeric_limits<double>::max();
+    try {
+      pose.computePose(vpPose::LAGRANGE, cMo1);
+      d1 = pose.computeResidual(cMo1);
+    }
+    catch(...) {
+      // Lagrange non-planar cannot work with less than 6 points
+    }
+    try {
+      pose.computePose(vpPose::DEMENTHON, cMo2);
+      d2 = pose.computeResidual(cMo2);
+    }
+    catch(...) {
+      // Should not occur
+    }
 
     if (d1 < d2) {
       cMo = cMo1;
@@ -717,10 +741,22 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
   finit.close();
 
   vpHomogeneousMatrix cMo1, cMo2;
-  pose.computePose(vpPose::LAGRANGE, cMo1);
-  double d1 = pose.computeResidual(cMo1);
-  pose.computePose(vpPose::DEMENTHON, cMo2);
-  double d2 = pose.computeResidual(cMo2);
+  double d1, d2;
+  d1 = d2 = std::numeric_limits<double>::max();
+  try {
+    pose.computePose(vpPose::LAGRANGE, cMo1);
+    d1 = pose.computeResidual(cMo1);
+  }
+  catch(...) {
+    // Lagrange non-planar cannot work with less than 6 points
+  }
+  try {
+    pose.computePose(vpPose::DEMENTHON, cMo2);
+    d2 = pose.computeResidual(cMo2);
+  }
+  catch(...) {
+    // Should not occur
+  }
 
   if (d1 < d2)
     cMo = cMo1;
@@ -763,10 +799,22 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vec
   }
 
   vpHomogeneousMatrix cMo1, cMo2;
-  pose.computePose(vpPose::LAGRANGE, cMo1);
-  double d1 = pose.computeResidual(cMo1);
-  pose.computePose(vpPose::DEMENTHON, cMo2);
-  double d2 = pose.computeResidual(cMo2);
+  double d1, d2;
+  d1 = d2 = std::numeric_limits<double>::max();
+  try {
+    pose.computePose(vpPose::LAGRANGE, cMo1);
+    d1 = pose.computeResidual(cMo1);
+  }
+  catch(...) {
+    // Lagrange non-planar cannot work with less than 6 points
+  }
+  try {
+    pose.computePose(vpPose::DEMENTHON, cMo2);
+    d2 = pose.computeResidual(cMo2);
+  }
+  catch(...) {
+    // Should not occur
+  }
 
   if (d1 < d2)
     cMo = cMo1;
