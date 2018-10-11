@@ -190,7 +190,7 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
     if(!vpLinProg::colReduction(A, b, false, tol))
       return false;
 
-    if(A.getCols())
+    if(A.getCols() && (Q*A).infinityNorm() > tol)
       x = b + A*(Q*A).solveBySVD(r - Q*b);
     else
       x = b;
@@ -252,7 +252,7 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
   \sa setEqualityConstraint(), solveQPe()
 */
 bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
-                           vpColVector &x) const
+                           vpColVector &x, const double &tol) const
 {
   const unsigned int n = Q.getCols();
   if(Q.getRows() != r.getRows() ||
@@ -265,7 +265,12 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
     throw vpMatrixException::dimensionError;
   }
   if(Z.getCols())
-    x = x1 + Z*(Q*Z).solveBySVD(r - Q*x1);
+  {
+    if((Q*Z).infinityNorm() > tol)
+      x = x1 + Z*(Q*Z).solveBySVD(r - Q*x1);
+    else
+      x = x1;
+  }
   else
     x = Q.solveBySVD(r);
   return true;
@@ -520,7 +525,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
       A[i][j] = C[active[i]][j];
     b[i] = d[active[i]];
   }
-  solveByProjection(Q, r, A, b, x, tol);
+  if(!solveByProjection(Q, r, A, b, x, tol))
+    x.resize(n);
 
   // or from simplex if we really have no clue
   if(!vpLinProg::allLesser(C, x, d, tol))
@@ -548,7 +554,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
     vpColVector xc(2*n+p+k);
 
     vpMatrix A_lp(p, 2*n+p+k);
-    int l = 0;
+    unsigned int l = 0;
     for(unsigned int i = 0; i < p; ++i)
     {
       // copy [C -C] part
@@ -703,7 +709,6 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
       g -= alpha*Q*u;
     }
   }
-  return true;
 }
 #else
 void dummy_vpQuadProg(){};

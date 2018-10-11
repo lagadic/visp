@@ -77,7 +77,7 @@ public:
   /** @name Instanciated solvers  */
   //@{
   bool solveQPe(const vpMatrix &Q, const vpColVector &r,
-                vpColVector &x) const;
+                vpColVector &x, const double &tol = 1e-6) const;
 
   bool solveQPi(const vpMatrix &Q, const vpColVector &r,
                 const vpMatrix &C, const vpColVector &d,
