@@ -425,6 +425,9 @@ double vpMatrix::detByLULapack() const
     throw(vpException(vpException::fatalError, "Cannot compute matrix determinant of a non square matrix (%ux%u)",
                       rowNum, colNum));
   }
+  
+  if(rowNum == 1)
+    return data[0];
 
   integer dim = (integer)rowNum;
   integer lda = dim;
