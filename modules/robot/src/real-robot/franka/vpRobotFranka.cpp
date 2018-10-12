@@ -303,6 +303,73 @@ void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVe
 }
 
 /*!
+ * Get the Coriolis force vector (state-space equation) calculated from the current robot state: \f$ c= C \times
+ * dq\f$, in \f$[Nm]\f$.
+ * \param[out] coriolis : Coriolis force vector.
+ */
+void vpRobotFranka::getCoriolis(vpColVector &coriolis)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+  }
+
+  std::array<double, 7> coriolis_;
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  coriolis_ = m_model->coriolis(robot_state);
+
+  for (int i=0; i < nDof; i++) {
+    coriolis[i] = coriolis_[i];
+  }
+}
+
+/*!
+ * Get the gravity vector calculated form the current robot state. Unit: \f$[Nm]\f$.
+ * \param[out] gravity : Gravity vector
+ */
+void vpRobotFranka::getGravity(vpColVector &gravity)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+  }
+
+  std::array<double, 7> gravity_;
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  gravity_ = m_model->gravity(robot_state);
+
+  for (int i=0; i < nDof; i++) {
+    gravity[i] = gravity_[i];
+  }
+}
+
+/*!
+ * Get the 7x7 mass matrix. Unit: \f$[kg \times m^2]\f$.
+ * \param[out] mass : 7x7 mass matrix, row-major.
+ */
+void vpRobotFranka::getMass(vpMatrix &mass)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+  }
+
+  std::array<double, 49> mass_;
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  mass_ = m_model->mass(robot_state); // column-major
+
+  mass.resize(7, 7); // row-major
+  for (size_t i = 0; i < 7; i ++) {
+    for (size_t j = 0; j < 7; j ++) {
+      mass[i][j] = mass_[j*7 + i];
+    }
+  }
+}
+
+/*!
  * Given the joint position of the robot, computes the forward kinematics (direct geometric model) as an
  * homogeneous matrix \f${^f}{\bf M}_e\f$ that gives the position of the end-effector in the robot base frame.
  *

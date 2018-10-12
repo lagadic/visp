@@ -265,13 +265,6 @@ public:
 
   virtual ~vpRobotFranka();
 
-  int gripperClose();
-  int gripperGrasp(double grasping_width, double force=60.);
-  void gripperHoming();
-  int gripperMove(double width);
-  int gripperOpen();
-  void gripperRelease();
-
   void connect(const std::string &franka_address,
                franka::RealtimeConfig realtime_config = franka::RealtimeConfig::kEnforce);
 
@@ -282,7 +275,10 @@ public:
   void get_eJe(vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
 
+  void getCoriolis(vpColVector &coriolis);
   void getForceTorque(const vpRobot::vpControlFrameType frame, vpColVector &force);
+
+  void getGravity(vpColVector &gravity);
 
   /*!
    * Get gripper handler to access native libfranka functions.
@@ -296,6 +292,7 @@ public:
 
     return m_gripper;
   }
+
 
   /*!
    * Get robot handler to access native libfranka functions.
@@ -313,10 +310,19 @@ public:
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
 
+  void getMass(vpMatrix &mass);
+
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose);
 
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &d_position);
+
+  int gripperClose();
+  int gripperGrasp(double grasping_width, double force=60.);
+  void gripperHoming();
+  int gripperMove(double width);
+  int gripperOpen();
+  void gripperRelease();
 
   void move(const std::string &filename, double velocity_percentage=10.);
 
