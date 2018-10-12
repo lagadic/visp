@@ -99,6 +99,19 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   const unsigned int m = A.getRows();
   const unsigned int n = A.getCols();
 
+  // degeneracy if A is actually null
+  if(A.infinityNorm() < tol)
+  {
+    if(b.infinityNorm() < tol)
+    {
+      b.resize(n);
+      A.eye(n);
+      return true;
+    }
+    else
+      return false;
+  }
+
   // try with standard QR
   vpMatrix Q, R;
   unsigned int r;
