@@ -273,7 +273,9 @@ public:
   vpHomogeneousMatrix get_eMc() const;
 
   void get_eJe(vpMatrix &eJe);
+  void get_eJe(const vpColVector &q, vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
+  void get_fJe(const vpColVector &q, vpMatrix &fJe);
 
   void getCoriolis(vpColVector &coriolis);
   void getForceTorque(const vpRobot::vpControlFrameType frame, vpColVector &force);
