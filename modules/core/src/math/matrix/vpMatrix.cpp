@@ -3708,10 +3708,11 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 /*!
   Extract a column vector from a matrix.
   \warning All the indexes start from 0 in this function.
-  \param j : Index of the column to extract. If col=0, the first column is
-extracted. \param i_begin : Index of the row that gives the location of the
-first element of the column vector to extract. \param column_size : Size of
-the column vector to extract. \return The extracted column vector.
+  \param j : Index of the column to extract. If col=0, the first column is extracted.
+  \param i_begin : Index of the row that gives the location of the first element
+  of the column vector to extract.
+  \param column_size : Size of the column vector to extract.
+  \return The extracted column vector.
 
   The following example shows how to use this function:
   \code
@@ -3748,7 +3749,7 @@ column vector:
 vpColVector vpMatrix::getCol(const unsigned int j, const unsigned int i_begin, const unsigned int column_size) const
 {
   if (i_begin + column_size > getRows() || j >= getCols())
-    throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the matrix"));
+    throw(vpException(vpException::dimensionError, "Unable to extract column %u from the %ux%u matrix", j, getRows(), getCols()));
   vpColVector c(column_size);
   for (unsigned int i = 0; i < column_size; i++)
     c[i] = (*this)[i_begin + i][j];
@@ -3758,8 +3759,8 @@ vpColVector vpMatrix::getCol(const unsigned int j, const unsigned int i_begin, c
 /*!
   Extract a column vector from a matrix.
   \warning All the indexes start from 0 in this function.
-  \param j : Index of the column to extract. If j=0, the first column is
-extracted. \return The extracted column vector.
+  \param j : Index of the column to extract. If j=0, the first column is extracted.
+  \return The extracted column vector.
 
   The following example shows how to use this function:
   \code
@@ -3797,7 +3798,7 @@ column vector:
 vpColVector vpMatrix::getCol(const unsigned int j) const
 {
   if (j >= getCols())
-    throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the matrix"));
+    throw(vpException(vpException::dimensionError, "Unable to extract column %u from the %ux%u matrix", j, getRows(), getCols()));
   unsigned int nb_rows = getRows();
   vpColVector c(nb_rows);
   for (unsigned int i = 0; i < nb_rows; i++)
