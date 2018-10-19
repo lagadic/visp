@@ -88,16 +88,16 @@ elseif(WIN32)
   endif()
 
   find_library(PYLON_BASE_LIBRARY
-    NAMES PylonBase_MD_VC120_v5_0.lib
+    NAMES PylonBase_v5_1.lib PylonBase_MD_VC120_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_GCBASE_LIBRARY
-    NAMES GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib
+    NAMES GCBase_MD_VC141_v3_1_Basler_pylon_v5_1.lib GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_GENAPI_LIBRARY
-    NAMES GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib
+    NAMES GenApi_MD_VC141_v3_1_Basler_pylon_v5_1.lib GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_UTILITY_LIBRARY
-    NAMES PylonUtility_MD_VC120_v5_0.lib
+    NAMES PylonUtility_v5_1.lib PylonUtility_MD_VC120_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
 
   if(PYLON_INCLUDE_DIR)
