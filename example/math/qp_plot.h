@@ -63,7 +63,7 @@ vpColVector randV(int n)
 }
 
 #ifdef VISP_HAVE_DISPLAY
-class VISP_EXPORT QPlot
+class QPlot
 {
 public:
   ~QPlot()  { delete P; }
