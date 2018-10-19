@@ -178,8 +178,8 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
   }
 
   franka::RobotState robot_state = getRobotInternalState();
-  vpColVector q(nDof);
-  for (int i=0; i < nDof; i++)
+  vpColVector q(7);
+  for (int i=0; i < 7; i++)
     q[i] = robot_state.q_d[i];
 
   switch(frame) {
@@ -234,22 +234,22 @@ void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpCo
 
   switch(frame) {
   case JOINT_STATE: {
-    force.resize((unsigned int)nDof);
-    for (int i=0; i < nDof; i++)
+    force.resize(7);
+    for (int i=0; i < 7; i++)
       force[i] = robot_state.tau_J[i];
 
     break;
   }
   case END_EFFECTOR_FRAME: {
     force.resize(6);
-    for (int i=0; i < nDof; i++)
+    for (int i=0; i < 7; i++)
       force[i] = robot_state.K_F_ext_hat_K[i];
     break;
   }
   case TOOL_FRAME: {
     // end-effector frame
     vpColVector eFe(6);
-    for (int i=0; i < nDof; i++)
+    for (int i=0; i < 7; i++)
       eFe[i] = robot_state.K_F_ext_hat_K[i];
 
     // Transform in tool frame
@@ -289,8 +289,8 @@ void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVe
   switch(frame) {
 
   case JOINT_STATE: {
-    d_position.resize((unsigned int)nDof);
-    for (int i=0; i < nDof; i++) {
+    d_position.resize(7);
+    for (int i=0; i < 7; i++) {
       d_position[i]=robot_state.dq[i];
     }
     break;
@@ -299,6 +299,75 @@ void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVe
   default: {
     throw(vpException(vpException::fatalError, "Cannot get Franka cartesian velocity: not implemented"));
   }
+  }
+}
+
+/*!
+ * Get the Coriolis force vector (state-space equation) calculated from the current robot state: \f$ c= C \times
+ * dq\f$, in \f$[Nm]\f$.
+ * \param[out] coriolis : Coriolis force vector.
+ */
+void vpRobotFranka::getCoriolis(vpColVector &coriolis)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+  }
+
+  std::array<double, 7> coriolis_;
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  coriolis_ = m_model->coriolis(robot_state);
+
+  coriolis.resize(7);
+  for (int i=0; i < 7; i++) {
+    coriolis[i] = coriolis_[i];
+  }
+}
+
+/*!
+ * Get the gravity vector calculated form the current robot state. Unit: \f$[Nm]\f$.
+ * \param[out] gravity : Gravity vector
+ */
+void vpRobotFranka::getGravity(vpColVector &gravity)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+  }
+
+  std::array<double, 7> gravity_;
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  gravity_ = m_model->gravity(robot_state);
+
+  gravity.resize(7);
+  for (int i=0; i < 7; i++) {
+    gravity[i] = gravity_[i];
+  }
+}
+
+/*!
+ * Get the 7x7 mass matrix. Unit: \f$[kg \times m^2]\f$.
+ * \param[out] mass : 7x7 mass matrix, row-major.
+ */
+void vpRobotFranka::getMass(vpMatrix &mass)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+  }
+
+  std::array<double, 49> mass_;
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  mass_ = m_model->mass(robot_state); // column-major
+
+  mass.resize(7, 7); // row-major
+  for (size_t i = 0; i < 7; i ++) {
+    for (size_t j = 0; j < 7; j ++) {
+      mass[i][j] = mass_[j*7 + i];
+    }
   }
 }
 
@@ -314,12 +383,12 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
   if (!m_handler) {
     throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
   }
-  if (q.size() != (unsigned int)nDof) {
-    throw(vpException(vpException::fatalError, "Joint position is not a %d-dim vector", q.size()));
+  if (q.size() != 7) {
+    throw(vpException(vpException::fatalError, "Joint position vector [%u] is not a 7-dim vector", q.size()));
   }
 
   std::array< double, 7 > q_array;
-  for (size_t i = 0; i < (size_t)nDof; i++)
+  for (size_t i = 0; i < 7; i++)
     q_array[i] = q[i];
 
   franka::RobotState robot_state = getRobotInternalState();
@@ -397,13 +466,14 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 }
 
 /*!
- * Gets the Jacobian represented as a 6x7 matrix in row-major format and computed from the robot current joint position.
+ * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in row-major
+ * format and computed from the robot current joint position.
  * \param[out] eJe : Body Jacobian expressed in the end-effector frame.
  */
 void vpRobotFranka::get_eJe(vpMatrix &eJe)
 {
   if (!m_handler) {
-    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot eJe jacobian: robot is not connected"));
   }
 
   franka::RobotState robot_state = getRobotInternalState();
@@ -420,19 +490,79 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe)
 }
 
 /*!
- * Gets the Jacobian relative to the base frame represented as a 6x7 matrix in row-major format and computed
+ * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in row-major
+ * format and computed from the robot current joint position.
+ * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
+ * \param[out] eJe : Body Jacobian expressed in the end-effector frame.
+ */
+void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot eJe jacobian: robot is not connected"));
+  }
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  std::array< double, 7 > q_array;
+  for (size_t i = 0; i < 7; i++)
+    q_array[i] = q[i];
+
+  std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K); // column-major
+  eJe.resize(6, 7); // row-major
+  for (size_t i = 0; i < 6; i ++) {
+    for (size_t j = 0; j < 7; j ++) {
+      eJe[i][j] = jacobian[j*6 + i];
+    }
+  }
+  // TODO check from vpRobot fJe and fJeAvailable
+
+}
+
+/*!
+ * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major format and computed
  * from the robot current joint position.
  * \param[out] fJe : Zero Jacobian expressed in the base frame.
  */
 void vpRobotFranka::get_fJe(vpMatrix &fJe)
 {
   if (!m_handler) {
-    throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot fJe jacobian: robot is not connected"));
   }
 
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, robot_state); // column-major
+  fJe.resize(6, 7); // row-major
+  for (size_t i = 0; i < 6; i ++) {
+    for (size_t j = 0; j < 7; j ++) {
+      fJe[i][j] = jacobian[j*6 + i];
+    }
+  }
+  // TODO check from vpRobot fJe and fJeAvailable
+}
+
+/*!
+ * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major format and computed
+ * from the robot joint position given as input.
+ * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
+ * \param[out] fJe : Zero Jacobian expressed in the base frame.
+ */
+void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe)
+{
+  if (!m_handler) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot fJe jacobian: robot is not connected"));
+  }
+  if (q.size() != 7) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka robot fJe jacobian with an input joint position vector [%u] that is not a 7-dim vector", q.size()));
+  }
+
+  franka::RobotState robot_state = getRobotInternalState();
+
+  std::array< double, 7 > q_array;
+  for (size_t i = 0; i < 7; i++)
+    q_array[i] = q[i];
+
+  std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K); // column-major
   fJe.resize(6, 7); // row-major
   for (size_t i = 0; i < 6; i ++) {
     for (size_t j = 0; j < 7; j ++) {
@@ -629,12 +759,12 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   switch (frame) {
   // Saturation in joint space
   case JOINT_STATE: {
-    if (vel.size() != (unsigned int)nDof) {
+    if (vel.size() != 7) {
       throw vpRobotException(vpRobotException::wrongStateError,
                              "Joint velocity vector (%d) is not of size 7", vel.size());
     }
 
-    vpColVector vel_max(nDof, getMaxRotationVelocity());
+    vpColVector vel_max(7, getMaxRotationVelocity());
 
     vpColVector vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
 
