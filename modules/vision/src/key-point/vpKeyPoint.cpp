@@ -1920,9 +1920,11 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 
   bool detectorInitialized = false;
   if (!usePyramid) {
-    detectorInitialized = (m_detectors[detectorNameTmp] != NULL);
+    //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
+    detectorInitialized = !!m_detectors[detectorNameTmp];
   } else {
-    detectorInitialized = (m_detectors[detectorName] != NULL);
+    //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
+    detectorInitialized = !!m_detectors[detectorName];
   }
 
   if (!detectorInitialized) {
@@ -2069,7 +2071,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
   }
 #endif
 
-  if (m_extractors[extractorName] == NULL) {
+  if (!m_extractors[extractorName]) { //if null
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: " << extractorName
            << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
@@ -2216,7 +2218,7 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
   }
 #endif
 
-  if (m_matcher == NULL) {
+  if (!m_matcher) { //if null
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the matcher: " << matcherName
            << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
