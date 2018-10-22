@@ -121,7 +121,7 @@ int main()
     filename = outputpath + "/imagetest2.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
-  } catch (const GenericException &e) {
+  } catch (const vpException &e) {
     vpCERROR << e.what() << std::endl;
   } catch (const std::exception &e) {
     vpCERROR << e.what() << std::endl;
