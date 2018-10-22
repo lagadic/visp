@@ -1921,10 +1921,10 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   bool detectorInitialized = false;
   if (!usePyramid) {
     //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
-    detectorInitialized = !!m_detectors[detectorNameTmp];
+    detectorInitialized = !m_detectors[detectorNameTmp].empty();
   } else {
     //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
-    detectorInitialized = !!m_detectors[detectorName];
+    detectorInitialized = !m_detectors[detectorName].empty();
   }
 
   if (!detectorInitialized) {
