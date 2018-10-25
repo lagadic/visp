@@ -383,11 +383,15 @@
 // other interaction matrices
 #cmakedefine VISP_MOMENTS_COMBINE_MATRICES
 
-//Defined if we want to use openmp
+// Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
-//Defined if we want to use c++ 11
-#cmakedefine VISP_HAVE_CPP11_COMPATIBILITY
+// Defined if we want to use c++ 11
+#cmakedefine VISP_HAVE_CXX11
+#ifdef VISP_HAVE_CXX11
+// Define VISP_HAVE_CPP11_COMPATIBILITY to keep compat with previous releases
+#  define VISP_HAVE_CPP11_COMPATIBILITY
+#endif
 
 // Defined if isnan macro is available
 #cmakedefine VISP_HAVE_FUNC_ISNAN

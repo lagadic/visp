@@ -72,9 +72,9 @@ if(NOT DEFINED CMAKE_HELPER_SCRIPT)
     list(APPEND _cxx_flags "-fprofile-arcs")
   endif()
 
-  # Propagate cxx11 compiler option if enabled during ViSP build
-  if(VISP_HAVE_CPP11_COMPATIBILITY)
-    list(APPEND _cxx_flags ${CPP11_CXX_FLAGS})
+  # Propagate C++11 compiler option if enabled during ViSP build
+  if(CXX11_FOUND AND CXX11_CXX_FLAGS)
+    list(APPEND _cxx_flags ${CXX11_CXX_FLAGS})
   endif()
   # Propagate openmp compiler option if enabled during ViSP build
   set(VISP_OPENMP_SUPPORT "no")

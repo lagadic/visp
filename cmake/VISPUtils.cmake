@@ -829,7 +829,9 @@ set(VP_COMPILER_FAIL_REGEX
 macro(vp_check_compiler_flag LANG FLAG RESULT)
   set(_fname "${ARGN}")
   if(NOT DEFINED ${RESULT})
-    if("_${LANG}_" MATCHES "_CXX_")
+    if(_fname)
+      # nothing
+    elseif("_${LANG}_" MATCHES "_CXX_")
       set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx")
       #if("${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror " OR "${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror=unknown-pragmas ")
         file(WRITE "${_fname}" "int main() { return 0; }\n")

@@ -40,8 +40,9 @@ include(CheckCXXSourceCompiles)
 
 macro(check_math_expr _expr _var)
     unset(${_var} CACHE)
-    if(USE_CPP11)
-      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
+    # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
+    if(USE_CXX11 AND CXX11_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
     endif()
     check_cxx_source_compiles("
 #include <cmath>

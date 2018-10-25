@@ -97,8 +97,8 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
-if(USE_CPP11)
-  add_extra_compiler_option("${CPP11_CXX_FLAGS}")
+if(USE_CXX11 AND CXX11_CXX_FLAGS)
+  add_extra_compiler_option("${CXX11_CXX_FLAGS}")
 endif()
 
 if(BUILD_COVERAGE)

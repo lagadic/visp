@@ -197,7 +197,8 @@ set(VISP_HAVE_CMU1394        "@VISP_HAVE_CMU1394@")
 set(VISP_HAVE_COIN3D         "@VISP_HAVE_COIN3D@")
 set(VISP_HAVE_COIN3D_AND_GUI "@VISP_HAVE_COIN3D_AND_GUI@")
 set(VISP_HAVE_COMEDI         "@VISP_HAVE_COMEDI@")
-set(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CPP11_COMPATIBILITY@")
+set(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CXX11Y@") # to keep compat with previous releases
+set(VISP_HAVE_CXX11          "@VISP_HAVE_CXX11@")
 set(VISP_HAVE_D3D9           "@VISP_HAVE_D3D9@")
 set(VISP_HAVE_DC1394         "@VISP_HAVE_DC1394@")
 set(VISP_HAVE_DIRECTSHOW     "@VISP_HAVE_DIRECTSHOW@")
@@ -265,10 +266,10 @@ set(VISP_COMPILER_FAIL_REGEX
   )
 
 #----------------------------------------------------------------------
-# Propagate cxx11 compiler option if enabled during ViSP build
+# Propagate C++11 compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
-if(VISP_HAVE_CPP11_COMPATIBILITY)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} @CPP11_CXX_FLAGS@")
+if(CXX11_FOUND AND CXX11_CXX_FLAGS)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} @CXX11_CXX_FLAGS@")
 endif()
 #----------------------------------------------------------------------
 # Propagate openmp compiler option if enabled during ViSP build
