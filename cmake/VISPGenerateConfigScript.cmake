@@ -73,7 +73,7 @@ if(NOT DEFINED CMAKE_HELPER_SCRIPT)
   endif()
 
   # Propagate C++11 compiler option if enabled during ViSP build
-  if(CXX11_FOUND AND CXX11_CXX_FLAGS)
+  if(USE_CXX11 AND CXX11_CXX_FLAGS)
     list(APPEND _cxx_flags ${CXX11_CXX_FLAGS})
   endif()
   # Propagate openmp compiler option if enabled during ViSP build

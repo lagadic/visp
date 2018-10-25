@@ -268,8 +268,16 @@ set(VISP_COMPILER_FAIL_REGEX
 #----------------------------------------------------------------------
 # Propagate C++11 compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
-if(CXX11_FOUND AND CXX11_CXX_FLAGS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} @CXX11_CXX_FLAGS@")
+if(VISP_HAVE_CXX11)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
+  if(NOT CMAKE_CXX11_COMPILE_FEATURES)
+    set(CXX11_CXX_FLAGS @CXX11_CXX_FLAGS@)
+    if(CXX11_CXX_FLAGS)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_CXX_FLAGS}")
+    endif()
+  endif()
 endif()
 #----------------------------------------------------------------------
 # Propagate openmp compiler option if enabled during ViSP build
