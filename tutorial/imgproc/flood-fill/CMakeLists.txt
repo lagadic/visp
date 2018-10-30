@@ -15,4 +15,4 @@ foreach(cpp ${tutorial_cpp})
   endif()
 endforeach()
 
-vp_set_source_file_compile_flag(tutorial-flood-fill.cpp -Wno-strict-overflow)
+visp_set_source_file_compile_flag(tutorial-flood-fill.cpp -Wno-strict-overflow)
