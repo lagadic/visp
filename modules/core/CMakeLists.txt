@@ -43,7 +43,7 @@ set(opt_incs "")
 set(opt_libs "")
 
 # OpenCV
-if(USE_OPENCV)
+if(USE_OPENCV)  
   # On win32 since OpenCV 2.4.7 and on OSX with OpenCV 2.4.10 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.
   # Using OpenCV_LIBS works to build visp library, examples, demos and test thanks to the components,
   # but not tutorials that are stand alone Cmake project that use ViSP as a 3rd party.
@@ -61,6 +61,16 @@ if(USE_OPENCV)
   #message("OpenCV_LIBS: ${OpenCV_LIBS}")
   #if(WIN32 AND OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
   if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
+
+    if(OpenCV_VERSION VERSION_GREATER 4.0.0 OR OpenCV_VERSION VERSION_EQUAL 4.0.0)
+      # if C++11 option is OFF, force to ON
+      if(NOT USE_CXX11 AND CXX11_FOUND)
+        message(WARNING "OpenCV ${OpenCV_VERSION} 3rd party was detected and needs cxx11 compiler flags that are turned off. Thus to enable OpenCV usage we turn USE_CXX11=ON.")
+        unset(USE_CXX11)
+        set(USE_CXX11 ON CACHE BOOL "Enable c++11 support" FORCE)
+      endif()
+    endif()
+
     # ReleaseWithDebugInfo was requested to detect libopencv-devel under Fedora 20
     # RelWithDebugInfo was requested to detect ros-hydro-opencv2 2.4.9 under Ubuntu 12.04 LTS with ROS hydro
     set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")

@@ -375,7 +375,7 @@ if(WIN32 AND NOT CYGWIN)
   mark_as_advanced(HAVE_LIBWS2_32)
 endif()
 
-# Should be before USE_CPP11
+# Should be before USE_CXX11
 VP_CHECK_FUNCTION_EXISTS(inet_ntop "${VISP_LINKER_LIBS}")
 
 #--------------------------------------------------------------------
@@ -522,31 +522,32 @@ VP_OPTION(USE_LIBFREENECT LIBFREENECT ""    "Include libfreenect support"      "
 VP_OPTION(USE_LIBUSB_1    LIBUSB_1    ""    "Include libusb-1 support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_REALSENSE   RealSense   ""    "Include RealSense SDK support"    "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_REALSENSE2  RealSense2  ""    "Include RealSense2 SDK support"   "" ON IF NOT WINRT AND NOT IOS)
-if(USE_REALSENSE OR USE_REALSENSE2 OR USE_FRANKA)
-  VP_OPTION(USE_CPP11       CPP11     ""    "Include c++11 support"            "" ON)
-  # if option is OFF, force to ON
-  if(NOT USE_CPP11 AND CPP11_FOUND)
-    if(USE_REALSENSE)
-      message(WARNING "Realsense 3rd party was detected but turned OFF since USE_CPP11 is OFF. Realsense 3rd party needs cxx11 compiler flags. Thus to enable Realsense usage you have to turn USE_REALSENSE=ON and USE_CPP11=ON.")
-    endif()
-    unset(USE_REALSENSE)
-    set(USE_REALSENSE OFF CACHE BOOL "Include RealSense SDK support" FORCE)
-
-    if(USE_REALSENSE2)
-      message(WARNING "Realsense2 3rd party was detected but turned OFF since USE_CPP11 is OFF. Realsense2 3rd party needs cxx11 compiler flags. Thus to enable Realsense2 usage you have to turn USE_REALSENSE2=ON and USE_CPP11=ON.")
-    endif()
-    unset(USE_REALSENSE2)
-    set(USE_REALSENSE2 OFF CACHE BOOL "Include RealSense2 SDK support" FORCE)
-
-    if(USE_FRANKA)
-      message(WARNING "libfranka 3rd party was detected but turned OFF since USE_CPP11 is OFF. libfranka 3rd party needs cxx11 compiler flags. Thus to enable libfranka usage you have to turn USE_FRANKA=ON and USE_CPP11=ON.")
-    endif()
-    unset(USE_FRANKA)
-    set(USE_FRANKA OFF CACHE BOOL "Include libfranka support" FORCE)
+VP_OPTION(USE_CXX11       CXX11     ""    "Enable c++11 support"            "" ON)
+# if C++11 option is OFF, force to ON
+if(NOT USE_CXX11 AND CXX11_FOUND)
+  if(USE_REALSENSE)
+     message(WARNING "librealsense 3rd party was detected and needs cxx11 compiler flags that are turned off. Thus to enable librealsense usage we turn USE_CXX11=ON.")
+     unset(USE_CXX11)
+     set(USE_CXX11 ON CACHE BOOL "Enable c++11 support" FORCE)
   endif()
-else()
-  VP_OPTION(USE_CPP11     CPP11       ""    "Include c++11 support"        "" OFF)
 endif()
+
+if(NOT USE_CXX11 AND CXX11_FOUND)
+  if(USE_REALSENSE2)
+     message(WARNING "librealsense2 3rd party was detected and needs cxx11 compiler flags that are turned off. Thus to enable librealsense2 usage we turn USE_CXX11=ON.")
+     unset(USE_CXX11)
+     set(USE_CXX11 ON CACHE BOOL "Enable c++11 support" FORCE)
+  endif()
+endif()
+
+if(NOT USE_CXX11 AND CXX11_FOUND)
+  if(USE_FRANKA)
+     message(WARNING "libfranka 3rd party was detected and needs cxx11 compiler flags that are turned off. Thus to enable libfranka usage we turn USE_CXX11=ON.")
+     unset(USE_CXX11)
+     set(USE_CXX11 ON CACHE BOOL "Enable c++11 support" FORCE)
+  endif()
+endif()
+
 VP_OPTION(USE_SOWIN       SOWIN       ""    "Include Coin/SoWin support"   "" OFF IF (WIN32 AND USE_COIN3D) AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_SOQT        SOQT        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
@@ -585,11 +586,11 @@ VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
 
-# Find IsNaN (should be after USE_CPP11)
+# Find IsNaN (should be after USE_CXX11)
 VP_CHECK_PACKAGE(IsNaN)
-# Find IsInf (should be after USE_CPP11)
+# Find IsInf (should be after USE_CXX11)
 VP_CHECK_PACKAGE(IsInf)
-# Find Round (should be after USE_CPP11)
+# Find Round (should be after USE_CXX11)
 VP_CHECK_PACKAGE(Round)
 # Find Erfc
 VP_CHECK_PACKAGE(Erfc)
@@ -952,7 +953,7 @@ VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for
 VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # for header vpConfig.h
 VP_SET(VISP_USE_MSVC TRUE IF MSVC) # for header vpConfig.h
 # Hack for msvc12 (Visual 2013) where C++11 implementation is incomplete
-VP_SET(VISP_HAVE_CPP11_COMPATIBILITY TRUE IF USE_CPP11 OR (MSVC_VERSION EQUAL 1800)) # for header vpConfig.h
+VP_SET(VISP_HAVE_CXX11 TRUE IF USE_CXX11 OR (MSVC_VERSION EQUAL 1800)) # for header vpConfig.h
 
 VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)) # for header vpConfig.h
 
@@ -1392,7 +1393,7 @@ status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP       THEN "yes" ELSE "no")
 status("    Use pthread:"            USE_PTHREAD      THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD     THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
-status("    Use cxx11:"              USE_CPP11        THEN "yes" ELSE "no")
+status("    Use cxx11:"              USE_CXX11        THEN "yes" ELSE "no")
 
 # ========================== documentation ==========================
 status("")

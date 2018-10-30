@@ -42,8 +42,9 @@ include(CheckCXXSourceCompiles)
 
 macro(check_math_expr _expr _var)
     unset(${_var} CACHE)
-    if(USE_CPP11)
-      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
+    # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
+    if(USE_CXX11 AND CXX11_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
     endif()
     check_cxx_source_compiles("
 #include <cmath>
@@ -61,10 +62,11 @@ check_math_expr("std::isinf(1.0)"   HAVE_FUNC_STD_ISINF)
 
 if(HAVE_FLOAT_H)
     unset(HAVE_FUNC__FINITE CACHE)
-    if(USE_CPP11)
-      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
-    endif()
     # The version that should work with MSVC
+    # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
+    if(USE_CXX11 AND CXX11_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
+    endif()
     check_cxx_source_compiles("
 #include <float.h>
 int main(int argc, char ** argv)

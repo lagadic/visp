@@ -31,39 +31,24 @@
 # Description:
 # Try to find C++11 flags.
 #
-# CPP11_FOUND - true if C++11 support is detected
-# CPP11_CXX_FLAGS - flags to add to the CXX compiler for C++11 support
+# CXX11_FOUND - true if C++11 support is detected
+# CXX11_CXX_FLAGS - flags to add to the CXX compiler for C++11 support
 #
 # Authors:
 # Fabien Spindler
 
-include(CheckCXXCompilerFlag)
-include(FindPackageHandleStandardArgs)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
+set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
+if(CMAKE_CXX11_COMPILE_FEATURES)
+  set(CXX11_STANDARD_FOUND ON)
+endif()
 
-set(CPP11_CXX_FLAG_CANDIDATES
-  "-std=c++11"
-  "-std=gnu++11"
-)
+vp_check_compiler_flag(CXX "-std=c++11" HAVE_STD_CXX11_FLAG "${VISP_SOURCE_DIR}/cmake/checks/cxx11.cpp")
+if(HAVE_STD_CXX11_FLAG)
+  set(CXX11_CXX_FLAGS "-std=c++11" CACHE STRING "C++ compiler flags for C++11 support")
+endif()
 
-# check CXX c++11 compiler flag
-foreach(FLAG ${CPP11_CXX_FLAG_CANDIDATES})
-  set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
-  set(CMAKE_REQUIRED_FLAGS "${FLAG}")
-  unset(CPP11_FLAG_DETECTED CACHE)
-  message(STATUS "Try C++11 flag = [${FLAG}]")
-  CHECK_CXX_COMPILER_FLAG(${FLAG} CPP11_FLAG_DETECTED)
-  set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
-  if(CPP11_FLAG_DETECTED)
-    set(CPP11_CXX_FLAGS_INTERNAL "${FLAG}")
-    break()
-  endif() 
-endforeach()
-
-set(CPP11_CXX_FLAGS "${CPP11_CXX_FLAGS_INTERNAL}"
-  CACHE STRING "C++ compiler flags for C++11 support")
-# handle the standard arguments for find_package
-find_package_handle_standard_args(CPP11 DEFAULT_MSG CPP11_CXX_FLAGS )
-
-mark_as_advanced(
-  CPP11_CXX_FLAGS
-)
+if(CXX11_STANDARD_FOUND OR CXX11_CXX_FLAGS)
+  set(CXX11_FOUND ON)
+endif()
