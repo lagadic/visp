@@ -517,8 +517,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   }
 
   // warm start from previous active set
-  A.resize(active.size(), n);
-  b.resize(active.size());
+  A.resize((unsigned int)active.size(), n);
+  b.resize((unsigned int)active.size());
   for(unsigned int i = 0; i < active.size(); ++i)
   {
     for(unsigned int j = 0; j < n; ++j)
@@ -621,8 +621,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   // solve at one iteration
   while (true)
   {
-    A.resize(active.size(), n);
-    b.resize(active.size());
+    A.resize((unsigned int)active.size(), n);
+    b.resize((unsigned int)active.size());
     for(unsigned int i = 0; i < active.size(); ++i)
     {
       for(unsigned int j = 0; j < n; ++j)
@@ -642,7 +642,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
     if(vpLinProg::allZero(u, tol))
     {
       // compute multipliers if any
-      unsigned int ineqInd = active.size();
+      unsigned int ineqInd = (unsigned int)active.size();
       if(active.size())
       {
         mu = -Ap.transpose() * Q.transpose() * (Q*u - g);

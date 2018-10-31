@@ -30,8 +30,12 @@ if(VISP_HAVE_PYLON)
   visp_set_source_file_compile_flag(tutorial-grabber-basler-pylon.cpp -Wno-unknown-pragmas -Wno-overloaded-virtual -Wno-unused-parameter)
 endif()
 if(VISP_HAVE_REALSENSE)
-  # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
-  visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp -Wno-pessimizing-move -Wno-unused-parameter)
+  if(UNIX)
+    # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
+    visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp -Wno-pessimizing-move -Wno-unused-parameter)
+  else()
+    visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp /wd4244)
+  endif()
 endif()
 
 foreach(cpp ${tutorial_cpp})
