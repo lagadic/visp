@@ -65,11 +65,17 @@ if(VISP_HAVE_FLYCAPTURE)
 endif()
 
 if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
-  # Add specific build flag to turn off warnings coming from PCL 3rd party
-  visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
-  visp_set_source_file_compile_flag(grabRealSense2.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
-  visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
-  visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter)
+  if(UNIX)
+    # Add specific build flag to turn off warnings coming from PCL 3rd party
+    visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move)
+    visp_set_source_file_compile_flag(grabRealSense2.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
+    visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
+    visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter)
+  else()
+    visp_set_source_file_compile_flag(getRealSense2Info.cpp /wd4244)
+    visp_set_source_file_compile_flag(grabRealSense2.cpp /wd4244)
+    visp_set_source_file_compile_flag(saveRealSenseData.cpp /wd4244)
+  endif()
 endif()
 
 foreach(cpp ${example_cpp})

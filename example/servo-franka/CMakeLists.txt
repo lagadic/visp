@@ -57,6 +57,10 @@ foreach(cpp ${example_cpp})
 endforeach()
 
 if(USE_REALSENSE2)
-  # Add specific build flag to turn off warnings coming from PCL 3rd party
-  vp_set_source_file_compile_flag(servoFrankaPBVS.cpp -Wno-unused-function -Wno-reorder -Wno-sign-compare -Wno-overloaded-virtual)
+  if(UNIX)
+    # Add specific build flag to turn off warnings coming from PCL 3rd party
+    vp_set_source_file_compile_flag(servoFrankaPBVS.cpp -Wno-unused-function -Wno-reorder -Wno-sign-compare -Wno-overloaded-virtual)
+  else()
+    visp_set_source_file_compile_flag(servoFrankaPBVS.cpp /wd4244)
+  endif()
 endif()
