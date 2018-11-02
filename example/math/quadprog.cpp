@@ -63,19 +63,26 @@ int main (int argc, char **argv)
   const int m = 10;   // equality m < n
   const int p = 30;   // inequality
   const int o = 16;   // cost function
+#ifdef VISP_HAVE_DISPLAY
   bool opt_display = true;
+#endif
 
   for (int i = 0; i < argc; i++) {
+#ifdef VISP_HAVE_DISPLAY
     if (std::string(argv[i]) == "-d")
       opt_display = false;
-    else if (std::string(argv[i]) == "-h") {
+    else
+#endif
+    if (std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [-d] [-h]" << std::endl;
       std::cout << "\nOptions: \n"
+#ifdef VISP_HAVE_DISPLAY
                    "  -d \n"
                    "     Disable the image display. This can be useful \n"
                    "     for automatic tests using crontab under Unix or \n"
                    "     using the task manager under Windows.\n"
                    "\n"
+#endif
                    "  -h\n"
                    "     Print the help.\n"<< std::endl;
 

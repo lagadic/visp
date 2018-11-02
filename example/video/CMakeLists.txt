@@ -58,4 +58,4 @@ foreach(cpp ${example_cpp})
   add_test(${target} ${target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
 endforeach()
 
-vp_set_source_file_compile_flag(imageSequenceReader.cpp -Wno-strict-overflow)
+visp_set_source_file_compile_flag(imageSequenceReader.cpp -Wno-strict-overflow)

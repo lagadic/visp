@@ -53,6 +53,6 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
-vp_set_source_file_compile_flag(photometricVisualServoing.cpp -Wno-strict-overflow)
+visp_set_source_file_compile_flag(photometricVisualServoing.cpp -Wno-strict-overflow)
 
 add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})

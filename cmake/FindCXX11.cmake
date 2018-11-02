@@ -47,6 +47,7 @@ endif()
 vp_check_compiler_flag(CXX "-std=c++11" HAVE_STD_CXX11_FLAG "${VISP_SOURCE_DIR}/cmake/checks/cxx11.cpp")
 if(HAVE_STD_CXX11_FLAG)
   set(CXX11_CXX_FLAGS "-std=c++11" CACHE STRING "C++ compiler flags for C++11 support")
+  mark_as_advanced(CXX11_CXX_FLAGS)
 endif()
 
 if(CXX11_STANDARD_FOUND OR CXX11_CXX_FLAGS)
