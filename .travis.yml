@@ -4,6 +4,8 @@ os:
   - linux
   - osx
 
+#osx_image: xcode10.1
+
 env:
   - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}
   
@@ -21,6 +23,21 @@ before_install:
   # Get libs for OSX
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then /usr/bin/yes | pip2 uninstall numpy; fi"
+  # Issue during opencv installation
+  # ==> Pouring gcc-8.2.0.high_sierra.bottle.1.tar.gz
+  # Error: The `brew link` step did not complete successfully
+  # The formula built, but is not symlinked into /usr/local
+  # Could not symlink include/c++
+  # Target /usr/local/include/c++
+  # already exists. You may want to remove it:
+  # rm '/usr/local/include/c++'
+  # To force the link and overwrite all conflicting files:
+  # brew link --overwrite gcc
+  # Work around before caling brew install opencv
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install gcc || brew link --overwrite gcc; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew upgrade; fi"
+  # end work around
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install tesseract; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then export OpenCV_DIR=/usr/local/opt/opencv; fi"
