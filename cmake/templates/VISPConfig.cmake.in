@@ -449,7 +449,6 @@ endmacro()
 # test if a compiler flag is supported
 macro(visp_check_compiler_flag LANG FLAG RESULT)
   set(_fname "${ARGN}")
-  message("RESULT: ${RESULT}")
   if(NOT DEFINED ${RESULT})
     if(_fname)
       # nothing
