@@ -145,6 +145,7 @@ int main(int argc, char **argv)
 
     vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
     vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+    //vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
     vpDetectorAprilTag detector(tagFamily);
     detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
     detector.setDisplayTag(display_tag);
@@ -159,7 +160,7 @@ int main(int argc, char **argv)
     cdMo[2][0] = 0; cdMo[2][1] =  0; cdMo[2][2] = -1;
     cdMo[0][3] = 0;
     cdMo[1][3] = 0;
-    cdMo[2][3] = 0.3; // 50 cm along camera z axis
+    cdMo[2][3] = 0.3; // 30 cm along camera z axis
 
     cdMc = cdMo * cMo.inverse();
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
