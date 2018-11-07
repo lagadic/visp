@@ -2101,7 +2101,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_OIS \
                          VISP_HAVE_OPENCV \
                          VISP_HAVE_OPENCV_NONFREE \
-                         VISP_HAVE_OPENCV_VERSION=0x020408 \
+                         VISP_HAVE_OPENCV_VERSION=0x030403 \
                          VISP_HAVE_OPENGL \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_PCL \

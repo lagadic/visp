@@ -182,6 +182,7 @@ This page introduces the user to the way to detect features or objects in images
 - \subpage tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
 - \subpage tutorial-detection-object-deprecated <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. We recommend to follow rather \ref tutorial-detection-object that uses vpMbGenericTracker class.
 - \subpage tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
+- \subpage tutorial-detection-dnn <br>This tutorial shows how to do deep learning object detection.
 
 */
 

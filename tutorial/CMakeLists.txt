@@ -30,6 +30,7 @@ visp_add_subdirectory(calibration                          REQUIRED_DEPS visp_co
 visp_add_subdirectory(computer-vision                      REQUIRED_DEPS visp_core visp_blob visp_vision visp_io visp_gui)
 visp_add_subdirectory(grabber                              REQUIRED_DEPS visp_core visp_sensor visp_io visp_gui)
 visp_add_subdirectory(detection/barcode                    REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
+visp_add_subdirectory(detection/dnn                        REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
 visp_add_subdirectory(detection/face                       REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
 visp_add_subdirectory(detection/matching                   REQUIRED_DEPS visp_core visp_vision visp_io visp_gui)
 visp_add_subdirectory(detection/object                     REQUIRED_DEPS visp_core visp_vision visp_mbt visp_io visp_gui)

@@ -97,7 +97,7 @@ public:
   /*!
     Default destructor.
    */
-  virtual ~vpDetectorFace(){};
+  virtual ~vpDetectorFace(){}
 
   bool detect(const vpImage<unsigned char> &I);
   bool detect(const cv::Mat &frame_gray);
