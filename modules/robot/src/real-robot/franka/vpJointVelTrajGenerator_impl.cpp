@@ -294,13 +294,15 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   switch (frame) {
   case vpRobot::JOINT_STATE: {
     int nbAttempts = 10;
-    for (int attempt = 1; attempt <= nbAttempts; ++attempt) {
+    for (int attempt = 1; attempt <= nbAttempts; attempt++) {
       try {
         robot->control(joint_velocity_callback);
         break;
       } catch (const franka::ControlException &e) {
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
         robot->automaticErrorRecovery();
+        if (attempt == nbAttempts)
+          throw e;
       }
     }
     break;
@@ -309,13 +311,15 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::END_EFFECTOR_FRAME: {
     int nbAttempts = 10;
-    for (int attempt = 1; attempt <= nbAttempts; ++attempt) {
+    for (int attempt = 1; attempt <= nbAttempts; attempt++) {
       try {
         robot->control(cartesian_velocity_callback);
         break;
       } catch (const franka::ControlException &e) {
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
         robot->automaticErrorRecovery();
+        if (attempt == nbAttempts)
+          throw e;
       }
     }
     break;
