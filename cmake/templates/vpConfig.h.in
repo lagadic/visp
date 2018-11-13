@@ -354,8 +354,14 @@
 #cmakedefine VISP_HAVE_VIPER850_DATA
 #define VISP_VIPER850_DATA_PATH "${VISP_VIPER850_DATA_PATH}"
 
-// Defined if Franka Emika robot available.
+// Defined if libfranka from Franka Emika available to control Panda robot.
 #cmakedefine VISP_HAVE_FRANKA
+
+// libfranka version in hexadecimal (for example 0.5.0 gives 0x000500).
+#ifdef VISP_HAVE_FRANKA
+#  define VISP_HAVE_FRANKA_VERSION ${VISP_HAVE_FRANKA_VERSION}
+#endif
+
 
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.

@@ -153,6 +153,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     q_prev = state.q_d;
 
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
     // state.q_d contains the last joint velocity command received by the robot.
     // In case of packet loss due to bad connection or due to a slow control loop
     // not reaching the 1kHz rate, even if your desired velocity trajectory
@@ -161,10 +162,11 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     // by the robot will prevent from getting discontinuity errors.
     // Note that if the robot does not receive a command it will try to extrapolate
     // the desired behavior assuming a constant acceleration model
-//    return limitRate(ddq_max, velocities.dq, state.dq_d);
-
-    // With libfranka 0.5.0 franka::control enables limit_rate by default
+    return limitRate(ddq_max, velocities.dq, state.dq_d);
+#else
+    // With libfranka 0.5.0 franka::control() enables limit_rate by default
     return velocities;
+#endif
   };
 
   auto cartesian_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des,  &log_dq_cmd, &log_v_des, &time, &model, &q_prev, &v_cart_des, &stop, &robot_state, &mutex]
@@ -277,6 +279,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     q_prev = state.q_d;
 
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
     // state.q_d contains the last joint velocity command received by the robot.
     // In case of packet loss due to bad connection or due to a slow control loop
     // not reaching the 1kHz rate, even if your desired velocity trajectory
@@ -285,10 +288,11 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     // by the robot will prevent from getting discontinuity errors.
     // Note that if the robot does not receive a command it will try to extrapolate
     // the desired behavior assuming a constant acceleration model
-//    return limitRate(ddq_max, velocities.dq, state.dq_d);
-
+    return limitRate(ddq_max, velocities.dq, state.dq_d);
+#else
     // With libfranka 0.5.0 franka::control enables limit_rate by default
     return velocities;
+#endif
   };
 
   switch (frame) {
