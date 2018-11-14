@@ -40,7 +40,7 @@
 
 vpDetectorDNN::vpDetectorDNN() : m_blob(), m_boxes(), m_classIds(), m_confidences(),
     m_confidenceThreshold(0.5), m_I_color(), m_img(), m_inputSize(300,300), m_mean(127.5, 127.5, 127.5),
-    m_net(), m_nmsThreshold(0.4), m_outNames(), m_outs(), m_scaleFactor(2.0/255.0), m_swapRB(true) {}
+    m_net(), m_nmsThreshold(0.4f), m_outNames(), m_outs(), m_scaleFactor(2.0/255.0), m_swapRB(true) {}
 
 vpDetectorDNN::~vpDetectorDNN() {}
 

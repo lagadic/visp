@@ -44,9 +44,9 @@ int main(int argc, const char *argv[])
       } else if (std::string(argv[i]) == "--swapRB") {
         swapRB = true;
       } else if (std::string(argv[i]) == "--confThresh" && i+1 < argc) {
-        confThresh = atof(argv[i+1]);
+        confThresh = (float)atof(argv[i+1]);
       } else if (std::string(argv[i]) == "--nmsThresh" && i+1 < argc) {
-        nmsThresh = atof(argv[i+1]);
+        nmsThresh = (float)atof(argv[i+1]);
       } else if (std::string(argv[i]) == "--labels" && i+1 < argc) {
         labelFile = std::string(argv[i+1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
@@ -144,7 +144,7 @@ int main(int argc, const char *argv[])
           oss << labels[classIds[i]];
         oss << " - conf: " << confidences[i];
 
-        vpDisplay::displayText(I, boundingBoxes[i].getTop()-10, boundingBoxes[i].getLeft()+10,
+        vpDisplay::displayText(I, (int)boundingBoxes[i].getTop()-10, (int)boundingBoxes[i].getLeft()+10,
                                oss.str(), vpColor::red);
       }
       std::ostringstream oss;
