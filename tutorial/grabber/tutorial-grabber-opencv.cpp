@@ -1,28 +1,63 @@
 /*! \example tutorial-grabber-opencv.cpp */
 #include <stdlib.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpImageIo.h>
 
 // usage: binary <device name>
 // device name: 0 is the default to dial with the first camera,
 // 1 to dial with a second camera attached to the computer
 int main(int argc, char **argv)
 {
-  int device = 0;
-  if (argc > 1)
-    device = atoi(argv[1]);
-  std::cout << "Use device: " << device << std::endl;
+  int opt_device = 0;
+  std::string opt_seqname;
+  int opt_record_mode = 0;
+
+  for (int i = 0; i < argc; i++) {
+    if (std::string(argv[i]) == "--device")
+      opt_device = std::atoi(argv[i + 1]);
+    else if (std::string(argv[i]) == "--seqname")
+      opt_seqname = std::string(argv[i + 1]);
+    else if (std::string(argv[i]) == "--record")
+      opt_record_mode = std::atoi(argv[i + 1]);
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0]
+                << " [--seqname <sequence name>] [--record <0: continuous (default) | 1: single shot>] "
+                   "[--help] [-h]\n"
+                << "\nExample to visualize images:\n"
+                << "  " << argv[0] << "\n"
+                << "\nExamples to record a sequence:\n"
+                << "  " << argv[0] << " --seqname I%04d.png \n"
+                << "  " << argv[0] << " --seqname folder/I%04d.png --record 0\n"
+                << "\nExamples to record single shot images:\n"
+                << "  " << argv[0] << " --seqname I%04d.png --record 1\n"
+                << "  " << argv[0] << " --seqname folder/I%04d.png --record 1\n"
+                << std::endl;
+      return 0;
+    }
+  }
+
+  std::cout << "Use device: " << opt_device << std::endl;
+  std::cout << "Recording: " << (opt_seqname.empty() ? "disabled" : "enabled") << std::endl;
+
+  std::string text_record_mode = std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
+
+  if (! opt_seqname.empty()) {
+    std::cout << text_record_mode << std::endl;
+    std::cout << "Record name: " << opt_seqname << std::endl;
+  }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   try {
-    cv::VideoCapture cap(device); // open the default camera
+    cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {        // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return -1;
     }
     cv::Mat frame;
     int i = 0;
-    while ((i++ < 100) && !cap.read(frame)) {
+    while ((i++ < 20) && !cap.read(frame)) {
     }; // warm up camera by skiping unread frames
 
     std::cout << "Image size: " << frame.rows << " " << frame.cols << std::endl;
@@ -33,14 +68,77 @@ int main(int argc, char **argv)
 
     vpDisplayOpenCV d(I);
 
+    unsigned int counter = 1;
+    bool start_record = false;
     for (;;) {
       cap >> frame; // get a new frame from camera
       // Convert the image in ViSP format and display it
       vpImageConvert::convert(frame, I);
+
       vpDisplay::display(I);
+      if (! opt_seqname.empty()) {
+        if (! opt_record_mode) { // continuous
+          if (start_record) {
+            vpDisplay::displayText(I, 10, 10, "Left  click: stop recording", vpColor::red);
+          }
+          else {
+            vpDisplay::displayText(I, 10, 10, "Left  click: start recording", vpColor::red);
+          }
+        }
+        else {
+          vpDisplay::displayText(I, 10, 10, "Left  click: record image", vpColor::red);
+        }
+        vpDisplay::displayText(I, 30, 10, "Right click to quit", vpColor::red);
+      }
+      else {
+        vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
+      }
+
+      if (! opt_seqname.empty()) {
+        vpDisplay::displayText(I, 50, 10, text_record_mode, vpColor::red);
+      }
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, false)) {
+        if (! opt_seqname.empty()) { // Recording requested
+          if (button == vpMouseButton::button1) { // enable/disable recording
+            start_record = !start_record;
+          }
+          else if (button == vpMouseButton::button3) { // quit
+            break;
+          }
+        }
+        else { // any button to quit
+          break;
+        }
+      }
+      if (start_record) {
+        char filename[FILENAME_MAX];
+        sprintf(filename, opt_seqname.c_str(), counter);
+        {
+          // check if parent folder exists. Create otherwise
+          static bool parent_exists = false;
+          if (! parent_exists) {
+            std::string parent = vpIoTools::getParent(filename);
+            if (! parent.empty()) {
+              if (! vpIoTools::checkDirectory(parent)) {
+                vpIoTools::makeDirectory(parent);
+              }
+            }
+            parent_exists = true;
+          }
+        }
+
+        counter ++;
+        std::string text = std::string("Save: ") + std::string(filename);
+        vpDisplay::displayText(I, 70, 10, text, vpColor::red);
+        std::cout << text << std::endl;
+        vpImageIo::write(I, filename);
+        if (opt_record_mode == 1) { // single shot mode
+          start_record = false;
+        }
+      }
+
       vpDisplay::flush(I);
-      if (vpDisplay::getClick(I, false)) // a click to exit
-        break;
     }
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
