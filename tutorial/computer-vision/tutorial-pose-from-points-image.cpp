@@ -7,32 +7,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/vision/vpPose.h>
 
-void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot, const vpCameraParameters &cam, bool init,
-                 vpHomogeneousMatrix &cMo)
-{
-  vpPose pose;
-  double x = 0, y = 0;
-  for (unsigned int i = 0; i < point.size(); i++) {
-    vpPixelMeterConversion::convertPoint(cam, dot[i].getCog(), x, y);
-    point[i].set_x(x);
-    point[i].set_y(y);
-    pose.addPoint(point[i]);
-  }
-
-  if (init == true) {
-    vpHomogeneousMatrix cMo_dem;
-    vpHomogeneousMatrix cMo_lag;
-    pose.computePose(vpPose::DEMENTHON, cMo_dem);
-    pose.computePose(vpPose::LAGRANGE, cMo_lag);
-    double residual_dem = pose.computeResidual(cMo_dem);
-    double residual_lag = pose.computeResidual(cMo_lag);
-    if (residual_dem < residual_lag)
-      cMo = cMo_dem;
-    else
-      cMo = cMo_lag;
-  }
-  pose.computePose(vpPose::VIRTUAL_VS, cMo);
-}
+#include "pose_helper.h"
 
 int main()
 {
