@@ -39,7 +39,7 @@ if(VISP_HAVE_REALSENSE)
 endif()
 
 foreach(cpp ${tutorial_cpp})
-  visp_add_target(${cpp})
+  visp_add_target(${cpp} record_helper.cpp record_helper.h)
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "tutorials")
   endif()
