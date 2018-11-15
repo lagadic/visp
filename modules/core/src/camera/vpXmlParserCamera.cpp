@@ -133,7 +133,7 @@ vpXmlParserCamera &vpXmlParserCamera::operator=(const vpXmlParserCamera &twinPar
   \param im_height : image height on which camera calibration was performed.
   Set as 0 if not ambiguous.
 
-  \return error code.
+  \return vpXmlParserCamera::SEQUENCE_OK if success and vpXmlParserCamera::SEQUENCE_ERROR otherwise.
 */
 int vpXmlParserCamera::parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
                              const vpCameraParameters::vpCameraParametersProjType &projModel,
@@ -308,7 +308,7 @@ int vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &fi
   \param subsampl_height : subsampling of the image height sent by the camera.
     Set as 0 if not ambiguous.
 
-  \return error code.
+  \return vpXmlParserCamera::SEQUENCE_OK if success and vpXmlParserCamera::SEQUENCE_ERROR otherwise.
  */
 int vpXmlParserCamera::read(xmlDocPtr doc, xmlNodePtr node, const std::string &cam_name,
                             const vpCameraParameters::vpCameraParametersProjType &projModel,
