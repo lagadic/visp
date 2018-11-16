@@ -1,4 +1,4 @@
-//! \example tutorial-hand-eye.cpp
+//! \example tutorial-hand-eye-calibration.cpp
 #include <visp3/vision/vpHandEyeCalibration.h>
 
 int main(int argc, char *argv[])
