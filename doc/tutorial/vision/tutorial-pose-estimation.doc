@@ -81,8 +81,8 @@ We also introduce a 40 milliseconds sleep to slow down the loop and relax the CP
 We provide also an other example in tutorial-pose-from-points-live.cpp that works on live images acquired by a camera. Compared to the previous example, we replace the single image reader by one of the frame grabber available in ViSP (see \ref tutorial-grabber).
 
 <b>1. Download and print, a square made of 4 blobs</b>
-- 4 black blobs on a white background defining a 0.15 meter width square [<a href="http://visp-doc.inria.fr/download/square-blob/black-blob-0.15m.pdf" target="_blank">black-blob-0.15m.pdf</a>] (recommended);
-- 4 white blobs on a black background defining a 0.15 meter width square [<a href="http://visp-doc.inria.fr/download/square-blob/white-blob-0.15m.pdf" target="_blank">white-blob-0.15m.pdf</a>].
+- 4 black blobs on a white background defining a 0.1 meter width square [<a href="http://visp-doc.inria.fr/download/square-blob/square-10cm-black.pdf" target="_blank">square-10cm-black.pdf</a>] (recommended);
+- 4 white blobs on a black background defining a 0.1 meter width square [<a href="http://visp-doc.inria.fr/download/square-blob/square-10cm-white.pdf" target="_blank">square-10cm-white.pdf</a>].
 
 <b>2. Run the corresponding binary</b>
 
@@ -93,17 +93,17 @@ To get the usage of the binary run:
 
 Have a trial adapting the size of your square:
 \code
-./tutorial-pose-from-points-live --square_width 0.15
+./tutorial-pose-from-points-live --square_width 0.1
 \endcode
 
 If your camera is calibrated (see \ref tutorial-calibration-intrinsic), you may use your own camera parameters with something similar to:
 \code
-./tutorial-pose-from-points-live --square_width 0.15 --intrinsic camera.xml --camera_name Camera
+./tutorial-pose-from-points-live --square_width 0.1 --intrinsic camera.xml --camera_name Camera
 \endcode
 
 If you get the following error:
 \code
-$ ./tutorial-pose-from-points-live --square_width 0.15
+$ ./tutorial-pose-from-points-live --square_width 0.1
 Catch an exception: No cameras found
 \endcode
 
