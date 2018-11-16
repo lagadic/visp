@@ -102,5 +102,9 @@ int main(int argc, char **argv)
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
+#else
+  (void) argc;
+  (void) argv;
+  std::cout << "Install Flycapture SDK, configure and build ViSP again to use this example" << std::endl;
 #endif
 }
