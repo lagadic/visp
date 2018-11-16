@@ -97,6 +97,8 @@ int main(int argc, char **argv)
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
+  (void) argc;
+  (void) argv;
   std::cout << "Install librealsense, configure and build ViSP again to use this example" << std::endl;
 #endif
 }

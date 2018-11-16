@@ -98,7 +98,8 @@ int main(int argc, const char *argv[])
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
-  (void)argc;
-  (void)argv;
+  (void) argc;
+  (void) argv;
+  std::cout << "Install Video 4 Linux 2 (v4l2), configure and build ViSP again to use this example" << std::endl;
 #endif
 }
