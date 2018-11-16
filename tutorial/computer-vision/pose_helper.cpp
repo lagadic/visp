@@ -4,8 +4,9 @@
 
 #include "pose_helper.h"
 
-void computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &ip, const vpCameraParameters &cam,
-                 bool init, vpHomogeneousMatrix &cMo)
+//! [Compute pose]
+void computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &ip,
+                 const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo)
 {
   vpPose pose;
   double x = 0, y = 0;
@@ -30,37 +31,12 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &i
   }
   pose.computePose(vpPose::VIRTUAL_VS, cMo);
 }
-
-void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot, const vpCameraParameters &cam, bool init,
-                 vpHomogeneousMatrix &cMo)
-{
-  vpPose pose;
-  double x = 0, y = 0;
-  for (unsigned int i = 0; i < point.size(); i++) {
-    vpPixelMeterConversion::convertPoint(cam, dot[i].getCog(), x, y);
-    point[i].set_x(x);
-    point[i].set_y(y);
-    pose.addPoint(point[i]);
-  }
-
-  if (init == true) {
-    vpHomogeneousMatrix cMo_dem;
-    vpHomogeneousMatrix cMo_lag;
-    pose.computePose(vpPose::DEMENTHON, cMo_dem);
-    pose.computePose(vpPose::LAGRANGE, cMo_lag);
-    double residual_dem = pose.computeResidual(cMo_dem);
-    double residual_lag = pose.computeResidual(cMo_lag);
-    if (residual_dem < residual_lag)
-      cMo = cMo_dem;
-    else
-      cMo = cMo_lag;
-  }
-  pose.computePose(vpPose::VIRTUAL_VS, cMo);
-}
+//! [Compute pose]
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
+std::vector<vpImagePoint> track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 {
+  std::vector<vpImagePoint> ip(dot.size());
   if (init) {
     vpDisplay::flush(I);
     for (unsigned int i = 0; i < dot.size(); i++) {
@@ -79,6 +55,10 @@ void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
       dot[i].track(I);
     }
   }
+  for (unsigned int i = 0; i < dot.size(); i++) {
+    ip[i] = dot[i].getCog();
+  }
+  return ip;
 }
 #endif
 
