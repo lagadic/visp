@@ -3,7 +3,7 @@
 \page tutorial-install-fedora Tutorial: Installation from source for Linux Fedora
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21 and Fedora 26 (64 bit) distribution, but should work with any other distribution as well. 
+In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21, Fedora 26 (64 bit), Fedora 28 (64 bits) and Fedora 29 (64 bits) distributions, but should work with any other distribution as well. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -11,9 +11,9 @@ In this tutorial you will learn how to install ViSP from source on Linux Fedora.
 
 Prior to build and install ViSP from source, you may install GNU g++ compiler and CMake.
 
-- gcc 4.4.x or later. This can be istalled with:
+- gcc 4.4.x or later and make. This can be istalled with:
 \code
-$ su -c "dnf install gcc-c++"
+$ su -c "dnf install gcc-c++ make"
 \endcode
 - CMake 2.8.12.2 or higher that could be installed with:
 \code

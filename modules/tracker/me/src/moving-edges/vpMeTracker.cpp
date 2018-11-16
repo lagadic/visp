@@ -271,8 +271,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 
       try {
         s.track(I, me, true);
-      } catch (vpTrackingException) {
-        vpERROR_TRACE("catch exception ");
+      } catch (...) {
         s.setState(vpMeSite::THRESHOLD);
       }
       
