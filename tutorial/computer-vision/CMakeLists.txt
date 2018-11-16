@@ -7,14 +7,14 @@ find_package(VISP REQUIRED visp_core visp_blob visp_vision visp_io visp_gui visp
 set(tutorial_cpp
   tutorial-homography-from-points.cpp
   tutorial-pose-from-points-image.cpp
-  tutorial-pose-from-points-tracking.cpp
+  tutorial-pose-from-points-live.cpp
   tutorial-pose-from-qrcode-image.cpp)
 
 set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/square.pgm")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/bar-code.pgm")
 
 foreach(cpp ${tutorial_cpp})
-  visp_add_target(${cpp})
+  visp_add_target(${cpp} pose_helper.h pose_helper.cpp)
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "tutorials")
   endif()

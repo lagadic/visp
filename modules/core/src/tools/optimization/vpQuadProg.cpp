@@ -206,10 +206,11 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2 \\
                & \text{s.t.}& \mathbf{A}\mathbf{x} = \mathbf{b}\end{array}
-\f$
+  \f$
   \param Q : cost matrix (dimension c x n)
   \param r : cost vector (dimension c)
   \param x : solution (dimension n)
+  \param tol : Tolerance.
 
   \return True if the solution was found.
 
