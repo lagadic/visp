@@ -138,7 +138,7 @@ int main(int argc, char **argv)
             std::stringstream ss;
             ss << "Translation: " << pose.getTranslationVector().t() << " [m]";
             vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
-            std::stringstream().swap(ss); // erase ss
+            ss.str(""); // erase ss
             vpColVector tu_deg(pose.getThetaUVector());
             tu_deg.rad2deg();
             ss << "Rotation tu: " << tu_deg.t() << " [deg]";
