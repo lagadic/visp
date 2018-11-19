@@ -60,7 +60,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
-- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detct an AprilTag marker on iOS devices. 
+- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker on iOS devices. 
 
 \subsection tuto_java ViSP for Java
 
@@ -161,6 +161,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
 - \ref tutorial-detection-object-deprecated <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. We recommend to follow rather \ref tutorial-detection-object that uses vpMbGenericTracker class.
 - \ref tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
+- \ref tutorial-detection-dnn <br>This tutorial shows how to do deep learning object detection.
 
 \subsection tuto_computer_vision Computer vision
 
