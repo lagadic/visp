@@ -742,7 +742,7 @@ void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned
     }
 
     // Copy the image data
-    memcpy(bitmap, array, (size_t)(npixels * sizeof(Type)));
+    memcpy(static_cast<void*>(bitmap), static_cast<void*>(array), (size_t)(npixels * sizeof(Type)));
   } else {
     // Copy the address of the array in the bitmap
     bitmap = array;
@@ -926,7 +926,7 @@ template <class Type>
 vpImage<Type>::vpImage(const vpImage<Type> &I) : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
   resize(I.getHeight(), I.getWidth());
-  memcpy(bitmap, I.bitmap, I.npixels * sizeof(Type));
+  memcpy(static_cast<void*>(bitmap), static_cast<void*>(I.bitmap), I.npixels * sizeof(Type));
 }
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
@@ -1228,7 +1228,7 @@ template <class Type> void vpImage<Type>::insert(const vpImage<Type> &src, const
     Type *srcBitmap = src.bitmap + ((src_ibegin + i) * src_w + src_jbegin);
     Type *destBitmap = this->bitmap + ((dest_ibegin + i) * dest_w + dest_jbegin);
 
-    memcpy(destBitmap, srcBitmap, (size_t)wsize * sizeof(Type));
+    memcpy(static_cast<void*>(destBitmap), static_cast<void*>(srcBitmap), (size_t)wsize * sizeof(Type));
   }
 }
 
