@@ -74,9 +74,14 @@ int main(int argc, char **argv)
     robot.connect(robot_ip);
     robot.setLogFolder(log_folder);
 
+    std::cout << "WARNING: This example will move the robot! "
+              << "Please make sure to have the user stop button at hand!" << std::endl
+              << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
+
     /*
-       * Move to a safe position
-       */
+     * Move to a safe position
+     */
     vpColVector q(7, 0);
     q[3] = -M_PI_2;
     q[5] = M_PI_2;
@@ -86,8 +91,8 @@ int main(int argc, char **argv)
     robot.setPosition(vpRobot::JOINT_STATE, q);
 
     /*
-       * Move in joint velocity
-       */
+     * Move in joint velocity
+     */
     vpColVector dq_d(7, 0);
     dq_d[4] = vpMath::rad(-20.);
     dq_d[6] = vpMath::rad(20.);

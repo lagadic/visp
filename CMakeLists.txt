@@ -930,6 +930,11 @@ if(USE_PCL)
   include(cmake/PCLTools.cmake)
 endif()
 
+# check libfranka and set version
+if(USE_FRANKA)
+  set(VISP_HAVE_FRANKA_VERSION "(${Franka_VERSION_MAJOR}<<16 | ${Franka_VERSION_MINOR}<<8 | ${Franka_VERSION_PATCH})") # for vpConfig.h
+endif()
+
 # Find isnan macro (C-style)
 VP_SET(VISP_HAVE_FUNC_ISNAN TRUE IF HAVE_FUNC_ISNAN) # for header vpConfig.h
 # Find std::isnan function (cmath)
@@ -1351,7 +1356,7 @@ status("")
 status("  Real robots: ")
 status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")
 status("    Use Afma6:"              USE_AFMA6        THEN "yes" ELSE "no")
-status("    Use Franka:"             USE_FRANKA       THEN "yes" ELSE "no")
+status("    Use Franka:"             USE_FRANKA       THEN "yes (ver ${Franka_VERSION})" ELSE "no")
 status("    Use Viper650:"           USE_VIPER850     THEN "yes" ELSE "no")
 status("    Use Viper850:"           USE_VIPER850     THEN "yes" ELSE "no")
 status("    Use aria (Pioneer):"     USE_ARIA         THEN "yes" ELSE "no")

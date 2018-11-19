@@ -131,7 +131,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (stop) {
       unsigned int nb_joint_stop = 0;
       static int cpt_dbg = 0;
-      const double q_eps = (1.0/100000.);
+      const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
@@ -153,6 +153,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     q_prev = state.q_d;
 
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
     // state.q_d contains the last joint velocity command received by the robot.
     // In case of packet loss due to bad connection or due to a slow control loop
     // not reaching the 1kHz rate, even if your desired velocity trajectory
@@ -162,6 +163,10 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     // Note that if the robot does not receive a command it will try to extrapolate
     // the desired behavior assuming a constant acceleration model
     return limitRate(ddq_max, velocities.dq, state.dq_d);
+#else
+    // With libfranka 0.5.0 franka::control() enables limit_rate by default
+    return velocities;
+#endif
   };
 
   auto cartesian_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des,  &log_dq_cmd, &log_v_des, &time, &model, &q_prev, &v_cart_des, &stop, &robot_state, &mutex]
@@ -252,7 +257,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (stop) {
       unsigned int nb_joint_stop = 0;
       static int cpt_dbg = 0;
-      const double q_eps = (1.0/100000.);
+      const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
@@ -274,6 +279,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     q_prev = state.q_d;
 
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
     // state.q_d contains the last joint velocity command received by the robot.
     // In case of packet loss due to bad connection or due to a slow control loop
     // not reaching the 1kHz rate, even if your desired velocity trajectory
@@ -283,17 +289,52 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     // Note that if the robot does not receive a command it will try to extrapolate
     // the desired behavior assuming a constant acceleration model
     return limitRate(ddq_max, velocities.dq, state.dq_d);
+#else
+    // With libfranka 0.5.0 franka::control enables limit_rate by default
+    return velocities;
+#endif
   };
 
+  double cutoff_frequency = 10;
   switch (frame) {
   case vpRobot::JOINT_STATE: {
-    robot->control(joint_velocity_callback);
+    int nbAttempts = 10;
+    for (int attempt = 1; attempt <= nbAttempts; attempt++) {
+      try {
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
+        robot->control(joint_velocity_callback);
+#else
+        robot->control(joint_velocity_callback, franka::ControllerMode::kJointImpedance, true, cutoff_frequency);
+#endif
+        break;
+      } catch (const franka::ControlException &e) {
+        std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
+        robot->automaticErrorRecovery();
+        if (attempt == nbAttempts)
+          throw e;
+      }
+    }
     break;
   }
   case vpRobot::CAMERA_FRAME:
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::END_EFFECTOR_FRAME: {
-    robot->control(cartesian_velocity_callback);
+    int nbAttempts = 10;
+    for (int attempt = 1; attempt <= nbAttempts; attempt++) {
+      try {
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
+        robot->control(cartesian_velocity_callback);
+#else
+        robot->control(cartesian_velocity_callback, franka::ControllerMode::kJointImpedance, true, cutoff_frequency);
+#endif
+        break;
+      } catch (const franka::ControlException &e) {
+        std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
+        robot->automaticErrorRecovery();
+        if (attempt == nbAttempts)
+          throw e;
+      }
+    }
     break;
   }
   case vpRobot::MIXT_FRAME: {
