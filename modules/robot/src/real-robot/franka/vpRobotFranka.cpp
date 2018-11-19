@@ -149,8 +149,12 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
 
   m_handler->setJointImpedance({{3000, 3000, 3000, 2500, 2500, 2000, 2000}});
   m_handler->setCartesianImpedance({{3000, 3000, 3000, 300, 300, 300}});
-//  m_handler->setFilters(100, 100, 100, 100, 100);
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
+  //  m_handler->setFilters(100, 100, 100, 100, 100);
   m_handler->setFilters(10, 10, 10, 10, 10);
+#else
+  // use franka::lowpassFilter() instead throw Franka::robot::control() with cutoff_frequency parameter
+#endif
   if (m_model) {
     delete m_model;
   }

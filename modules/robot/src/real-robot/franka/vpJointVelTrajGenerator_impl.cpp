@@ -131,7 +131,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (stop) {
       unsigned int nb_joint_stop = 0;
       static int cpt_dbg = 0;
-      const double q_eps = (1.0/100000.);
+      const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
@@ -257,7 +257,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (stop) {
       unsigned int nb_joint_stop = 0;
       static int cpt_dbg = 0;
-      const double q_eps = (1.0/100000.);
+      const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
@@ -295,12 +295,17 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 #endif
   };
 
+  double cutoff_frequency = 10;
   switch (frame) {
   case vpRobot::JOINT_STATE: {
     int nbAttempts = 10;
     for (int attempt = 1; attempt <= nbAttempts; attempt++) {
       try {
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
         robot->control(joint_velocity_callback);
+#else
+        robot->control(joint_velocity_callback, franka::ControllerMode::kJointImpedance, true, cutoff_frequency);
+#endif
         break;
       } catch (const franka::ControlException &e) {
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
@@ -317,7 +322,11 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     int nbAttempts = 10;
     for (int attempt = 1; attempt <= nbAttempts; attempt++) {
       try {
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
         robot->control(cartesian_velocity_callback);
+#else
+        robot->control(cartesian_velocity_callback, franka::ControllerMode::kJointImpedance, true, cutoff_frequency);
+#endif
         break;
       } catch (const franka::ControlException &e) {
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
