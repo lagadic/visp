@@ -171,5 +171,13 @@ int main(int argc, char **argv)
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
+#elif (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+  (void) argc;
+  (void) argv;
+  std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV), configure and build ViSP again to use this example" << std::endl;
+#else
+  (void) argc;
+  (void) argv;
+  std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to use this example" << std::endl;
 #endif
 }
