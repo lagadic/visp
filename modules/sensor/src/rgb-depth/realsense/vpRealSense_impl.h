@@ -91,6 +91,7 @@ void vp_rs_get_native_frame_data_impl(const rs::device *m_device,
     // 8 bits
     case rs::format::raw8:
       std::cout << "Stream: raw8 not tested!" << std::endl;
+      /* FALLTHRU */
     case rs::format::y8:
       memcpy(data, (unsigned char *)m_device->get_frame_data(stream), size);
       break;

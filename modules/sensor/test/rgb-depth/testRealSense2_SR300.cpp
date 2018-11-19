@@ -212,7 +212,7 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
   const int size = w * h;
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
-    memcpy(img.ptr<cv::Vec3b>(), f.get_data(), size * 3);
+    memcpy(static_cast<void*>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
   } else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
     cv::Mat tmp(h, w, CV_8UC3, (void *)f.get_data(), cv::Mat::AUTO_STEP);
     cv::cvtColor(tmp, img, cv::COLOR_RGB2BGR);
