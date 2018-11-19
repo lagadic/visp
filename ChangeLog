@@ -6,7 +6,14 @@
                       https://visp.inria.fr
 
 ViSP 3.2.0 (under development)
+  - Contributors:
+    . This release was possible thanks to contributions from Fabien Spindler,
+      Souriya Trinh, Olivier Kermorgant, Mathieu Simon, Francois Chaumette,
+      Marc Pouliquen, Jason Chevrie, Yasutomo Shirahama
+    . Google Summer of Code 2018: Akshay Sharma that ported ViSP to Java and Android,
+      and Utkarsh Tripathi that developped the wrapper between ViSP and Unity.
   - New features
+    . Turn cxx11 on by default
     . Introduce vpSerial class to handle serial communication
     . New vpRobotFranka class, examples and test showing how to use Panda robot
       from Franka Emika
@@ -24,6 +31,14 @@ ViSP 3.2.0 (under development)
     . QR matrix decomposition introduced in vpMatrix
     . New solvers for Linear Programs and Quadratic Programs implemented in vpLinProg and
       vpQuadProg classes
+    . Add vpDetectorDNN wrapper for deep learning object detection. The idea is to have a
+      small wrapper over the OpenCV DNN module as much as possible light and simple.
+      vpDetectorDNN is specialized to handle object detection tasks and provide a "convenient"
+      way to have the detection bounding boxes.
+    . Improve eye to hand calibration
+    . Improve PnP pose estimation
+    . Compat with OpenCV 4
+    . Compat with Fedora 29
   - Tutorials
     . New tutorial: Installation from source on a Jetson equipped with an Orbitty Carrier board
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
@@ -43,6 +58,24 @@ ViSP 3.2.0 (under development)
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd.html
     . New tutorial: Markerless generic model-based tracking using AprilTag for initialization (use case)
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-apriltag-live.html
+    . New tutorial: Developement of an interface and demo between ViSP and Unity engine
+      https://github.com/lagadic/visp_unity/blob/master/README.md
+    . New tutorial: ViSP for Unity introduction
+      https://github.com/lagadic/visp_unity/wiki
+    . New tutorial: Generating a DLL for Unity
+      https://github.com/lagadic/visp_unity/wiki/Generating-DLL
+    . New tutorial: Unity demo based on ViSP
+      https://github.com/lagadic/visp_unity/wiki/Running-in-Unity
+    . New tutorial: Installing ViSP for Java
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-java.html
+    . New tutorial: First java application with ViSP
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-java-started.html
+    . New tutorial: Building ViSP SDK for Android
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-create-android-sdk.html
+    . New tutorial: Creating a simple Android App with ViSP
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-android-getting-started.html
+    . New tutorial: Deep learning object detection
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html      
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
@@ -59,6 +92,14 @@ ViSP 3.2.0 (under development)
     . [#373] ViSP doesn't build with OpenCV 4.0.0
     . [#382] Meaningless camera parameters when calibrating built-in auto-focusing camera
     . [#389] CMake error with Xcode generator
+    . [#391] Tutorial command error
+    . [#400] vpCircle::display() didn't work as expected
+    . [#422] Two #include lines, <linux/kernel.h> and <linux/types.h>, aren't needed for V4L
+    . [#423] Man page location should be man/man1
+    . [#424] Please have one cmake variablefor DATADIR
+    . [#425] Please remove the 'register' specifier everywhere: it is deprecated and incompatible with C++17
+    . [#442] Unable to build ios framework
+    . [#453] CMake error when building tutorials and examples with ViSP from installation folder
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
