@@ -69,9 +69,14 @@ int main(int argc, char **argv)
     vpRobotFranka robot;
     robot.connect(robot_ip);
 
+    std::cout << "WARNING: This example will move the robot! "
+              << "Please make sure to have the user stop button at hand!" << std::endl
+              << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
+
     /*
-       * Move to a safe position
-       */
+     * Move to a safe position
+     */
     vpColVector q(7, 0);
     q[3] = -M_PI_2;
     q[5] = M_PI_2;
@@ -81,8 +86,8 @@ int main(int argc, char **argv)
     robot.setPosition(vpRobot::JOINT_STATE, q);
 
     /*
-       * Move in cartesian velocity
-       */
+     * Move in cartesian velocity
+     */
     double t0 = vpTime::measureTimeSecond();
     double delta_t = 4.0; // Time in second
     vpColVector qdot;

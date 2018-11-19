@@ -69,6 +69,11 @@ int main(int argc, char **argv)
     vpRobotFranka robot;
     robot.connect(robot_ip);
 
+    std::cout << "WARNING: This example will move the robot! "
+              << "Please make sure to have the user stop button at hand!" << std::endl
+              << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
+
     /*
      * Move to a safe position
      */
