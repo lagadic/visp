@@ -630,7 +630,19 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
     }
 
     vpJointPosTrajGenerator joint_pos_traj_generator(speed_factor, q_goal);
-    m_handler->control(joint_pos_traj_generator);
+
+    int nbAttempts = 10;
+    for (int attempt = 1; attempt <= nbAttempts; attempt++) {
+      try {
+        m_handler->control(joint_pos_traj_generator);
+        break;
+      } catch (const franka::ControlException &e) {
+        std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
+        m_handler->automaticErrorRecovery();
+        if (attempt == nbAttempts)
+          throw e;
+      }
+    }
   }
   else {
     throw (vpException(vpRobotException::functionNotImplementedError,
