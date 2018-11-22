@@ -4,6 +4,8 @@
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
 #endif
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -17,17 +19,20 @@
 //#undef VISP_HAVE_V4L2
 //#undef VISP_HAVE_DC1394
 //#undef VISP_HAVE_CMU1394
+//#undef VISP_HAVE_FLYCAPTURE
+//#undef VISP_HAVE_REALSENSE2
 //#undef VISP_HAVE_OPENCV
 //! [Undef grabber]
 
 int main(int argc, char **argv)
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
   try {
     std::string opt_intrinsic_file; // xml file obtained from camera calibration
     std::string opt_camera_name;    // corresponding camera name in the xml calibration file
     double opt_square_width = 0.12;
+    int opt_device = 0;             // For OpenCV and V4l2 grabber to set the camera device
 
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
@@ -36,9 +41,13 @@ int main(int argc, char **argv)
         opt_camera_name = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
         opt_camera_name = std::string(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--input_device" && i + 1 < argc) {
+        opt_device = atoi(argv[i + 1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--intrinsic <xml calibration file>] [--camera_name <camera name in xml calibration file>]"
+                  << " [--input_device <camera device> (default: 0)]"
+                  << " [--intrinsic <xml calibration file> (default: empty)]"
+                     " [--camera_name <camera name in xml calibration file> (default: empty)]"
                      " [--square_width <square width in meter (default: 0.12)] [--help] [-h]\n"
                   << "\nExample using default camera parameters and square size:\n"
                   << "  " << argv[0] << "\n"
@@ -51,31 +60,8 @@ int main(int argc, char **argv)
 
     vpImage<unsigned char> I;
 
-    //! [Grabber]
-#if defined(VISP_HAVE_V4L2)
-    vpV4l2Grabber g;
-    g.setScale(1);
-    g.open(I);
-#elif defined(VISP_HAVE_DC1394)
-    vp1394TwoGrabber g;
-    g.open(I);
-#elif defined(VISP_HAVE_CMU1394)
-    vp1394CMUGrabber g;
-    g.open(I);
-#elif defined(VISP_HAVE_OPENCV)
-    cv::VideoCapture g(0); // open the default camera
-    if (!g.isOpened()) {   // check if we succeeded
-      std::cout << "Failed to open the camera" << std::endl;
-      return -1;
-    }
-    cv::Mat frame;
-    g >> frame; // get a new frame from camera
-    vpImageConvert::convert(frame, I);
-#endif
-    //! [Grabber]
-
     // Parameters of our camera
-    vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2);
+    vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
 #ifdef VISP_HAVE_XML2
     vpXmlParserCamera parser;
     if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
@@ -88,6 +74,53 @@ int main(int argc, char **argv)
       }
     }
 #endif
+
+    //! [Grabber]
+#if defined(VISP_HAVE_V4L2)
+    std::cout << "Use Video 4 Linux grabber" << std::endl;
+    vpV4l2Grabber g;
+    std::ostringstream device;
+    device << "/dev/video" << opt_device;
+    g.setDevice(device.str());
+    g.setScale(1);
+    g.open(I);
+#elif defined(VISP_HAVE_DC1394)
+    std::cout << "Use DC1394 grabber" << std::endl;
+    vp1394TwoGrabber g;
+    g.open(I);
+#elif defined(VISP_HAVE_CMU1394)
+    std::cout << "Use CMU1394 grabber" << std::endl;
+    vp1394CMUGrabber g;
+    g.open(I);
+#elif defined(VISP_HAVE_FLYCAPTURE)
+    std::cout << "Use FlyCapture grabber" << std::endl;
+    vpFlyCaptureGrabber g;
+    g.open(I);
+#elif defined(VISP_HAVE_REALSENSE2)
+    std::cout << "Use Realsense 2 grabber" << std::endl;
+    vpRealSense2 g;
+    rs2::config config;
+    config.disable_stream(RS2_STREAM_DEPTH);
+    config.disable_stream(RS2_STREAM_INFRARED);
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    g.open(config);
+    g.acquire(I);
+
+    std::cout << "Read camera parameters from Realsense device" << std::endl;
+    cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+#elif defined(VISP_HAVE_OPENCV)
+    std::cout << "Use OpenCV grabber" << std::endl;
+    cv::VideoCapture g(opt_device); // Open the default camera
+    if (!g.isOpened()) {            // Check if we succeeded
+      std::cout << "Failed to open the camera" << std::endl;
+      return -1;
+    }
+    cv::Mat frame;
+    g >> frame; // get a new frame from camera
+    vpImageConvert::convert(frame, I);
+#endif
+    //! [Grabber]
+
     std::cout << "Square width  : " << opt_square_width << std::endl;
     std::cout << cam << std::endl;
 
@@ -117,13 +150,12 @@ int main(int argc, char **argv)
 
     while (! quit) {
       // Image Acquisition
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
-
       vpDisplay::display(I);
       if (apply_cv) {
         try {
@@ -174,7 +206,7 @@ int main(int argc, char **argv)
 #elif (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   (void) argc;
   (void) argv;
-  std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV), configure and build ViSP again to use this example" << std::endl;
+  std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, Realsense2), configure and build ViSP again to use this example" << std::endl;
 #else
   (void) argc;
   (void) argv;
