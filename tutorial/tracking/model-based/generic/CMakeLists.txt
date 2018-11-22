@@ -7,6 +7,7 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 # set the list of source files
 set(tutorial_cpp
   tutorial-mb-generic-tracker.cpp
+  tutorial-mb-generic-tracker-live.cpp
   tutorial-mb-generic-tracker-full.cpp
 )
 
