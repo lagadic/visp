@@ -1,25 +1,37 @@
 //! \example tutorial-apriltag-detector-live.cpp
+#include <visp3/core/vpConfig.h>
+#ifdef VISP_HAVE_MODULE_SENSOR
+#include <visp3/sensor/vpV4l2Grabber.h>
+#include <visp3/sensor/vp1394CMUGrabber.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpRealSense2.h>
+#endif
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#ifdef VISP_HAVE_XML2
 #include <visp3/core/vpXmlParserCamera.h>
-#endif
-#ifdef VISP_HAVE_V4L2
-#include <visp3/sensor/vpV4l2Grabber.h>
-#endif
-#include <visp3/io/vpImageIo.h>
+
+//! [Undef grabber]
+//#undef VISP_HAVE_V4L2
+//#undef VISP_HAVE_DC1394
+//#undef VISP_HAVE_CMU1394
+//#undef VISP_HAVE_FLYCAPTURE
+//#undef VISP_HAVE_REALSENSE2
+//#undef VISP_HAVE_OPENCV
+//! [Undef grabber]
 
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_APRILTAG) &&                                 \
+  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
   //! [Macro defined]
 
-  int opt_device = 0;
+  int opt_device = 0;             // For OpenCV and V4l2 grabber to set the camera device
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double tagSize = 0.053;
@@ -33,9 +45,12 @@ int main(int argc, const char **argv)
 
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   bool display_off = true;
+  std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to dislay images..." << std::endl;
 #else
   bool display_off = false;
 #endif
+
+  vpImage<unsigned char> I;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
@@ -64,16 +79,17 @@ int main(int argc, const char **argv)
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-                << " [--input <camera input>] [--tag_size <tag_size in m>]"
-                   " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-                   " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-                   " [--pose_method <method> (0: HOMOGRAPHY, 1: "
-                   "HOMOGRAPHY_VIRTUAL_VS,"
-                   " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS,"
-                   " 4: BEST_RESIDUAL_VIRTUAL_VS)]"
-                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: "
-                   "TAG_36ARTOOLKIT,"
-                   " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
+                << " [--input_device <camera device> (default: 0)]"
+                << " [--tag_size <tag_size in m> (default: 0.053)]"
+                   " [--quad_decimate <quad_decimate> (default: 1)]"
+                   " [--nthreads <nb> (default: 1)]"
+                   " [--intrinsic <intrinsic file> (default: empty)]"
+                   " [--camera_name <camera name>]  (default: empty)"
+                   " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
+                   " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
+                   " 4: BEST_RESIDUAL_VIRTUAL_VS) (default: 0)]"
+                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
+                   " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5) (default: 0)]"
                    " [--display_tag]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off] [--color <color id>] [--thickness <line thickness>]";
@@ -83,39 +99,64 @@ int main(int argc, const char **argv)
     }
   }
 
-  vpCameraParameters cam;
-  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
-#ifdef VISP_HAVE_XML2
-  vpXmlParserCamera parser;
-  if (!intrinsic_file.empty() && !camera_name.empty())
-    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
-#endif
-  std::cout << "cam:\n" << cam << std::endl;
-  std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
-  std::cout << "tagFamily: " << tagFamily << std::endl;
-
   try {
-    vpImage<unsigned char> I;
+    vpCameraParameters cam;
+    cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
+#ifdef VISP_HAVE_XML2
+    vpXmlParserCamera parser;
+    if (!intrinsic_file.empty() && !camera_name.empty())
+      parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+#endif
 
-//! [Construct grabber]
+    //! [Construct grabber]
 #if defined(VISP_HAVE_V4L2)
+    std::cout << "Use Video 4 Linux grabber" << std::endl;
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
     g.setDevice(device.str());
     g.setScale(1);
+    g.open(I);
+#elif defined(VISP_HAVE_DC1394)
+    std::cout << "Use DC1394 grabber" << std::endl;
+    vp1394TwoGrabber g;
+    g.open(I);
+#elif defined(VISP_HAVE_CMU1394)
+    std::cout << "Use CMU1394 grabber" << std::endl;
+    vp1394CMUGrabber g;
+    g.open(I);
+#elif defined(VISP_HAVE_FLYCAPTURE)
+    std::cout << "Use FlyCapture grabber" << std::endl;
+    vpFlyCaptureGrabber g;
+    g.open(I);
+#elif defined(VISP_HAVE_REALSENSE2)
+    std::cout << "Use Realsense 2 grabber" << std::endl;
+    vpRealSense2 g;
+    rs2::config config;
+    config.disable_stream(RS2_STREAM_DEPTH);
+    config.disable_stream(RS2_STREAM_INFRARED);
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    g.open(config);
     g.acquire(I);
+
+    std::cout << "Read camera parameters from Realsense device" << std::endl;
+    cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
 #elif defined(VISP_HAVE_OPENCV)
-    cv::VideoCapture cap(opt_device); // open the default camera
-    if (!cap.isOpened()) {            // check if we succeeded
+    std::cout << "Use OpenCV grabber" << std::endl;
+    cv::VideoCapture g(opt_device); // Open the default camera
+    if (!g.isOpened()) {            // Check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return EXIT_FAILURE;
+      return -1;
     }
     cv::Mat frame;
-    cap >> frame; // get a new frame from camera
+    g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
-//! [Construct grabber]
+    //! [Construct grabber]
+
+    std::cout << "cam:\n" << cam << std::endl;
+    std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
+    std::cout << "tagFamily: " << tagFamily << std::endl;
 
     vpDisplay *d = NULL;
     if (! display_off) {
@@ -141,11 +182,11 @@ int main(int argc, const char **argv)
 
     std::vector<double> time_vec;
     for (;;) {
-//! [Acquisition]
-#if defined(VISP_HAVE_V4L2)
+      //! [Acquisition]
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-      cap >> frame; // get a new frame from camera
+      g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
       //! [Acquisition]
@@ -193,12 +234,10 @@ int main(int argc, const char **argv)
   (void)argc;
   (void)argv;
 #ifndef VISP_HAVE_APRILTAG
-  std::cout << "ViSP is not build with Apriltag support" << std::endl;
+  std::cout << "Enable Apriltag support, configure and build ViSP to run this tutorial" << std::endl;
+#else
+  std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, Realsense2), configure and build ViSP again to use this example" << std::endl;
 #endif
-#if !(defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV))
-  std::cout << "ViSP is not build with v4l2 or OpenCV support" << std::endl;
-#endif
-  std::cout << "Install missing 3rd parties, configure and build ViSP to run this tutorial" << std::endl;
 #endif
   return EXIT_SUCCESS;
 }
