@@ -516,6 +516,7 @@ VP_OPTION(USE_LAPACK      LAPACK_C    ""    "Include lapack support"           "
 VP_OPTION(USE_GSL         GSL         ""    "Include gsl support"              "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COIN3D      "Coin3D;MyCoin3D" "" "Include coin3d support"        "" ON IF OPENGL_FOUND AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"             "YARP_DIR" ON IF NOT WINRT AND NOT IOS)
+set(Boost_USE_MULTITHREADED OFF) # Set to OFF to use the non-multithreaded libraries ('mt' tag) coming with Ogre3D. Default is ON.
 VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre support"             "OGRE_DIR" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_OIS         OIS         QUIET "Include Ogre/ois support"         "OIS_DIR"  ON IF USE_OGRE AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_LIBFREENECT LIBFREENECT ""    "Include libfreenect support"      "" ON IF NOT WINRT AND NOT IOS)
