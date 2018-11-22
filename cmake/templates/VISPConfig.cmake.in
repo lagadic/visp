@@ -287,10 +287,10 @@ if(VISP_HAVE_OPENMP)
 endif()
 
 #----------------------------------------------------------------------
-# Propagate c++14 option requested with libfranka
+# Propagate c++11 option requested with libfranka
 #----------------------------------------------------------------------
 if(VISP_HAVE_FRANKA)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
