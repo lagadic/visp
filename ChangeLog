@@ -100,6 +100,7 @@ ViSP 3.2.0 (under development)
     . [#425] Please remove the 'register' specifier everywhere: it is deprecated and incompatible with C++17
     . [#442] Unable to build ios framework
     . [#453] CMake error when building tutorials and examples with ViSP from installation folder
+    . [#466] Build error with libboost_thread-mt.a
 
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
