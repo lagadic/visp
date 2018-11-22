@@ -295,7 +295,9 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 #endif
   };
 
+#if !(VISP_HAVE_FRANKA_VERSION < 0x000500)
   double cutoff_frequency = 10;
+#endif
   switch (frame) {
   case vpRobot::JOINT_STATE: {
     int nbAttempts = 10;
