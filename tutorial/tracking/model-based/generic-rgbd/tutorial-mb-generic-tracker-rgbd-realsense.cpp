@@ -2,11 +2,13 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_REALSENSE2
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/vision/vpKeyPoint.h>
@@ -147,7 +149,13 @@ int main(int argc, char *argv[])
 
   unsigned int _posx = 100, _posy = 50, _posdx = 10;
 
+#ifdef VISP_HAVE_X11
   vpDisplayX d1, d2;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d1, d2;
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV d1, d2;
+#endif
   if (use_edges || use_klt)
     d1.init(I_gray, _posx, _posy, "Color stream");
   if (use_depth)
@@ -365,14 +373,12 @@ int main(int argc, char *argv[])
         }
       }
 
-      // Check tracking errors. Projection error works only for edges
-      if (use_edges) {
-        double proj_error = tracker.getProjectionError();
-        if (auto_init && proj_error > proj_error_threshold) {
-          std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
-          run_auto_init = true;
-          tracking_failed = true;
-        }
+      // Check tracking errors
+      double proj_error = tracker.getProjectionError();
+      if (auto_init && proj_error > proj_error_threshold) {
+        std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
+        run_auto_init = true;
+        tracking_failed = true;
       }
 
       // Display tracking results
@@ -484,9 +490,14 @@ int main(int argc, char *argv[])
 
   return EXIT_SUCCESS;
 }
+#elif defined(VISP_HAVE_REALSENSE2)
+int main() {
+  std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to use this example" << std::endl;
+  return 0;
+}
 #else
 int main() {
-  std::cout << "This program needs libRealSense2." << std::endl;
+  std::cout << "Install librealsense2 3rd party, configure and build ViSP again to use this example" << std::endl;
   return 0;
 }
 #endif
