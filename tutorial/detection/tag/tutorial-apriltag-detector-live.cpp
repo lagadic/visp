@@ -27,8 +27,9 @@
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) &&                                 \
-  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
+#if defined(VISP_HAVE_APRILTAG) && \
+  (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100) || \
+  defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
   //! [Macro defined]
 
   int opt_device = 0;             // For OpenCV and V4l2 grabber to set the camera device
@@ -118,18 +119,22 @@ int main(int argc, const char **argv)
     g.setScale(1);
     g.open(I);
 #elif defined(VISP_HAVE_DC1394)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use DC1394 grabber" << std::endl;
     vp1394TwoGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_CMU1394)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use CMU1394 grabber" << std::endl;
     vp1394CMUGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_FLYCAPTURE)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use FlyCapture grabber" << std::endl;
     vpFlyCaptureGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_REALSENSE2)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use Realsense 2 grabber" << std::endl;
     vpRealSense2 g;
     rs2::config config;

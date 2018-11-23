@@ -83,18 +83,22 @@ int main(int argc, char **argv)
     g.setScale(1);
     g.open(I);
 #elif defined(VISP_HAVE_DC1394)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use DC1394 grabber" << std::endl;
     vp1394TwoGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_CMU1394)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use CMU1394 grabber" << std::endl;
     vp1394CMUGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_FLYCAPTURE)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use FlyCapture grabber" << std::endl;
     vpFlyCaptureGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_REALSENSE2)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use Realsense 2 grabber" << std::endl;
     vpRealSense2 g;
     rs2::config config;
