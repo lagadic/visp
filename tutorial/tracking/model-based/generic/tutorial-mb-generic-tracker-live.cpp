@@ -87,10 +87,10 @@ int main(int argc, char **argv)
 
     //! [Grabber]
 #if defined(VISP_HAVE_V4L2)
-    std::cout << "Use Video 4 Linux grabber" << std::endl;
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
+    std::cout << "Use Video 4 Linux grabber on device " << device.str() << std::endl;
     g.setDevice(device.str());
     g.setScale(1);
     g.open(I);
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
 #elif defined(VISP_HAVE_OPENCV)
-    std::cout << "Use OpenCV grabber" << std::endl;
+    std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -209,6 +209,7 @@ int main(int argc, char **argv)
     //! [Set display]
 
     while (tracker_state != StateEnd) {
+      double t_begin = vpTime::measureTimeMs();
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
@@ -237,9 +238,13 @@ int main(int argc, char **argv)
           //! [Track]
 
           double projection_error = tracker.getProjectionError();
-          std::cout << "Projection error: " << projection_error << std::endl;
+          {
+            std::stringstream ss;
+            ss << "Projection error: " << std::setprecision(3) << projection_error << std::endl;
+            vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::green);
+          }
           if (projection_error > opt_max_projection_error) {
-            std::cout << "Lost tracking: reprojection error > " << opt_max_projection_error << std::endl;
+            std::cout << "Lost tracking: reprojection error " << projection_error << "> " << opt_max_projection_error << std::endl;
             tracker_state = StateWait;
           }
           else {
@@ -248,9 +253,19 @@ int main(int argc, char **argv)
             //! [Get pose]
             //! [Display]
             tracker.getCameraParameters(cam);
-            tracker.display(I, cMo, cam, vpColor::red, 2, true);
+            tracker.display(I, cMo, cam, vpColor::green, 2, true);
             //! [Display]
             vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
+
+            { // Display estimated pose in [m] and [deg]
+              vpPoseVector pose(cMo);
+              std::stringstream ss;
+              ss << "Translation: " << std::setprecision(5) << pose[0] << " " << pose[1] << " " << pose[2] << " [m]";
+              vpDisplay::displayText(I, 80, 20, ss.str(), vpColor::green);
+              ss.str(""); // erase ss
+              ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " " << vpMath::deg(pose[5]) << " [deg]";
+              vpDisplay::displayText(I, 100, 20, ss.str(), vpColor::green);
+            }
           }
         }
         catch(...) {
@@ -259,8 +274,15 @@ int main(int argc, char **argv)
         }
       }
 
-      vpDisplay::displayText(I, 20, 10, "Left  click: init/reinit tracker", vpColor::red);
-      vpDisplay::displayText(I, 40, 10, "Right click: quit", vpColor::red);
+      vpDisplay::displayText(I, 20, 20, "Left  click: init/reinit tracker", vpColor::green);
+      vpDisplay::displayText(I, 40, 20, "Right click: quit", vpColor::green);
+
+      {
+        std::stringstream ss;
+        ss << "Time: " << vpTime::measureTimeMs() - t_begin << " ms";
+        vpDisplay::displayText(I, 20, I.getWidth()-100, ss.str(), vpColor::green);
+      }
+
       vpDisplay::flush(I);
 
       vpMouseButton::vpMouseButtonType button;
