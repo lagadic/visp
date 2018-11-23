@@ -16,11 +16,11 @@
 
 // Comment / uncomment following lines to use the specific 3rd party compatible with your camera
 //! [Undef grabber]
-#undef VISP_HAVE_V4L2
-#undef VISP_HAVE_DC1394
-#undef VISP_HAVE_CMU1394
-#undef VISP_HAVE_FLYCAPTURE
-#undef VISP_HAVE_REALSENSE2
+//#undef VISP_HAVE_V4L2
+//#undef VISP_HAVE_DC1394
+//#undef VISP_HAVE_CMU1394
+//#undef VISP_HAVE_FLYCAPTURE
+//#undef VISP_HAVE_REALSENSE2
 //#undef VISP_HAVE_OPENCV
 //! [Undef grabber]
 
@@ -37,8 +37,6 @@ int main(int argc, char **argv)
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
         opt_intrinsic_file = std::string(argv[i + 1]);
-      } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
-        opt_camera_name = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
         opt_camera_name = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--input_device" && i + 1 < argc) {
@@ -77,10 +75,10 @@ int main(int argc, char **argv)
 
     //! [Grabber]
 #if defined(VISP_HAVE_V4L2)
-    std::cout << "Use Video 4 Linux grabber" << std::endl;
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
+    std::cout << "Use Video 4 Linux grabber on device " << device.str() << std::endl;
     g.setDevice(device.str());
     g.setScale(1);
     g.open(I);
@@ -109,7 +107,7 @@ int main(int argc, char **argv)
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
 #elif defined(VISP_HAVE_OPENCV)
-    std::cout << "Use OpenCV grabber" << std::endl;
+    std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -166,15 +164,13 @@ int main(int argc, char **argv)
           if (init_cv)
             init_cv = false; // turn off the computer vision initialisation specific stuff
 
-          { // Display estimated pose in [m] ans [deg]
+          { // Display estimated pose in [m] and [deg]
             vpPoseVector pose(cMo);
             std::stringstream ss;
-            ss << "Translation: " << pose.getTranslationVector().t() << " [m]";
+            ss << "Translation: " << std::setprecision(5) << pose[0] << " " << pose[1] << " " << pose[2] << " [m]";
             vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
             ss.str(""); // erase ss
-            vpColVector tu_deg(pose.getThetaUVector());
-            tu_deg.rad2deg();
-            ss << "Rotation tu: " << tu_deg.t() << " [deg]";
+            ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " " << vpMath::deg(pose[5]) << " [deg]";
             vpDisplay::displayText(I, 80, 20, ss.str(), vpColor::red);
           }
         }

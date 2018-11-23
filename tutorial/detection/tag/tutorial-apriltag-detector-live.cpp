@@ -57,7 +57,7 @@ int main(int argc, const char **argv)
       poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+    } else if (std::string(argv[i]) == "--input_device" && i + 1 < argc) {
       opt_device = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
@@ -110,10 +110,10 @@ int main(int argc, const char **argv)
 
     //! [Construct grabber]
 #if defined(VISP_HAVE_V4L2)
-    std::cout << "Use Video 4 Linux grabber" << std::endl;
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
+    std::cout << "Use Video 4 Linux grabber on device " << device.str() << std::endl;
     g.setDevice(device.str());
     g.setScale(1);
     g.open(I);
@@ -142,7 +142,7 @@ int main(int argc, const char **argv)
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
 #elif defined(VISP_HAVE_OPENCV)
-    std::cout << "Use OpenCV grabber" << std::endl;
+    std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
