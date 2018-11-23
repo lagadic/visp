@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
   std::cout << "  Config depth: " << "\"" << config_depth << "\"" << std::endl;
   std::cout << "  Model color : " << "\"" << model_color << "\"" << std::endl;
   std::cout << "  Model depth : " << "\"" << model_depth << "\"" << std::endl;
-  std::cout << "  Init file   : " << "\"" << model_depth << "\"" << std::endl;
+  std::cout << "  Init file   : " << "\"" << init_file << "\"" << std::endl;
   std::cout << "Learning options   : " << std::endl;
   std::cout << "  Learn       : " << learn << std::endl;
   std::cout << "  Auto init   : " << auto_init << std::endl;
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 
   vpRealSense2 realsense;
   int width = 640, height = 480;
-  int fps = 60;
+  int fps = 30;
   rs2::config config;
   config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
   config.enable_stream(RS2_STREAM_DEPTH, width, height, RS2_FORMAT_Z16, fps);
