@@ -257,7 +257,7 @@ int main(int argc, char *argv[])
     keypoint.setDetectorParameter("ORB", "nLevels", 1);
 #  else
     cv::Ptr<cv::ORB> orb_detector = keypoint.getDetector("ORB").dynamicCast<cv::ORB>();
-    if (orb_detector != NULL) {
+    if (orb_detector) {
       orb_detector->setNLevels(1);
     }
 #  endif
