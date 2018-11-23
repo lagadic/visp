@@ -149,6 +149,7 @@ int main(int argc, char **argv)
     bool init_cv = true;   // initialize tracking and pose computation
 
     while (! quit) {
+      double t_begin = vpTime::measureTimeMs();
       // Image Acquisition
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
@@ -197,6 +198,11 @@ int main(int argc, char **argv)
         else if (button == vpMouseButton::button1) {
           apply_cv = true;
         }
+      }
+      {
+        std::stringstream ss;
+        ss << "Time: " << vpTime::measureTimeMs() - t_begin << " ms";
+        vpDisplay::displayText(I, 20, I.getWidth()-100, ss.str(), vpColor::red);
       }
       vpDisplay::flush(I);
     }
