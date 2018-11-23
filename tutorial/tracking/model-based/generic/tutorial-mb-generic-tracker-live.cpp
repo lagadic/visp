@@ -1,4 +1,4 @@
-//! \example tutorial-mb-generic-tracker.cpp
+//! \example tutorial-mb-generic-tracker-live.cpp
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vpV4l2Grabber.h>
