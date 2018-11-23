@@ -8,10 +8,12 @@
 #include <visp3/sensor/vpRealSense2.h>
 #endif
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
+#include <visp3/vision/vpKeyPoint.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
 //! [Include]
@@ -25,13 +27,6 @@
 //#undef VISP_HAVE_OPENCV
 //! [Undef grabber]
 
-typedef enum {
-  StateWait,
-  StateInit,
-  StateTrack,
-  StateEnd
-} TrackerState_t;
-
 int main(int argc, char **argv)
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
@@ -41,8 +36,15 @@ int main(int argc, char **argv)
     std::string opt_modelname = "teabox";
     int opt_tracker = 2;
     int opt_device = 0;             // For OpenCV and V4l2 grabber to set the camera device
-    TrackerState_t tracker_state = StateWait;
-    double opt_max_projection_error = 20.;
+    double opt_proj_error_threshold = 20.;
+    bool opt_use_ogre = false;
+    bool opt_use_scanline = false;
+    bool opt_display_projection_error = false;
+    bool opt_learn = false;
+    bool opt_auto_init = false;
+    std::string opt_learning_data = "learning/data-learned.bin";
+    std::string opt_intrinsic_file = "";
+    std::string opt_camera_name = "";
 
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--model") {
@@ -55,15 +57,36 @@ int main(int argc, char **argv)
         opt_device = atoi(argv[i + 1]);
       }
       else if (std::string(argv[i]) == "--max_proj_error") {
-        opt_max_projection_error = atof(argv[i + 1]);
+        opt_proj_error_threshold = atof(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--use_ogre") {
+        opt_use_ogre = true;
+      } else if (std::string(argv[i]) == "--use_scanline") {
+        opt_use_scanline = true;
+      } else if (std::string(argv[i]) == "--learn") {
+        opt_learn = true;
+      } else if (std::string(argv[i]) == "--learning_data" && i+1 < argc) {
+        opt_learning_data = argv[i+1];
+      } else if (std::string(argv[i]) == "--auto_init") {
+        opt_auto_init = true;
+      } else if (std::string(argv[i]) == "--display_proj_error") {
+        opt_display_projection_error = true;
+      } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+        opt_intrinsic_file = std::string(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+        opt_camera_name = std::string(argv[i + 1]);
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
                   << " [--input_device <camera device> (default: 0)]"
+                  << " [--intrinsic <intrinsic file> (default: empty)]"
+                  << " [--camera_name <camera name>]  (default: empty)"
                   << " [--model <model name> (default: teabox)]"
-                     " [--tracker <0=egde|1=keypoint|2=hybrid> (default: 2)] "
-                     " [--max_proj_error <allowed projection error> (default: 20)] "
-                     " [--help] [-h]\n"
+                  << " [--tracker <0=egde|1=keypoint|2=hybrid> (default: 2)]"
+                  << " [--use_ogre] [--use_scanline]"
+                  << " [--max_proj_error <allowed projection error> (default: 20)]"
+                  << " [--learn] [--auto_init] [--learning_data <data-learned.bin> (default: learning/data-learned.bin)]"
+                  << " [--display_proj_error]"
+                  << " [--help] [-h]\n"
                   << std::endl;
         return 0;
       }
@@ -77,10 +100,37 @@ int main(int argc, char **argv)
     std::cout << "Tracker requested config files: " << objectname << ".[init, cao]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
+    std::cout << "Tracked features: " << std::endl;
+    std::cout << "  Use edges   : " << (opt_tracker == 0 || opt_tracker == 2) << std::endl;
+    std::cout << "  Use klt     : " << (opt_tracker == 1 || opt_tracker == 2) << std::endl;
+    std::cout << "Tracker options: " << std::endl;
+    std::cout << "  Use ogre    : " << opt_use_ogre << std::endl;
+    std::cout << "  Use scanline: " << opt_use_scanline << std::endl;
+    std::cout << "  Proj. error : " << opt_proj_error_threshold << std::endl;
+    std::cout << "  Display proj. error: " << opt_display_projection_error << std::endl;
+    std::cout << "Config files: " << std::endl;
+    std::cout << "  Config file: " << "\"" << objectname + ".xml" << "\"" << std::endl;
+    std::cout << "  Model file : " << "\"" << objectname + ".cao" << "\"" << std::endl;
+    std::cout << "  Init file   : " << "\"" << objectname + ".init"  << "\"" << std::endl;
+    std::cout << "Learning options   : " << std::endl;
+    std::cout << "  Learn       : " << opt_learn << std::endl;
+    std::cout << "  Auto init   : " << opt_auto_init << std::endl;
+    std::cout << "  Learning data: " << opt_learning_data << std::endl;
+
     //! [Image]
     vpImage<unsigned char> I;
-    vpCameraParameters cam;
     //! [Image]
+
+    //! [Set camera parameters]
+    vpCameraParameters cam;
+    cam.initPersProjWithoutDistortion(839, 839, 325, 243);
+    //! [Set camera parameters]
+#ifdef VISP_HAVE_XML2
+    vpXmlParserCamera parser;
+    if (!opt_intrinsic_file.empty() && !opt_camera_name.empty())
+      parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+#endif
+
     //! [cMo]
     vpHomogeneousMatrix cMo;
     //! [cMo]
@@ -95,18 +145,22 @@ int main(int argc, char **argv)
     g.setScale(1);
     g.open(I);
 #elif defined(VISP_HAVE_DC1394)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use DC1394 grabber" << std::endl;
     vp1394TwoGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_CMU1394)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use CMU1394 grabber" << std::endl;
     vp1394CMUGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_FLYCAPTURE)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use FlyCapture grabber" << std::endl;
     vpFlyCaptureGrabber g;
     g.open(I);
 #elif defined(VISP_HAVE_REALSENSE2)
+    (void)opt_device; // To avoid non used warning
     std::cout << "Use Realsense 2 grabber" << std::endl;
     vpRealSense2 g;
     rs2::config config;
@@ -118,6 +172,7 @@ int main(int argc, char **argv)
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+
 #elif defined(VISP_HAVE_OPENCV)
     std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
@@ -140,6 +195,23 @@ int main(int argc, char **argv)
     display = new vpDisplayOpenCV;
 #endif
     display->init(I, 100, 100, "Model-based tracker");
+
+    while (true) {
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
+      g.acquire(I);
+#elif defined(VISP_HAVE_OPENCV)
+      g >> frame;
+      vpImageConvert::convert(frame, I);
+#endif
+
+      vpDisplay::display(I);
+      vpDisplay::displayText(I, 20, 20, "Click when ready.", vpColor::red);
+      vpDisplay::flush(I);
+
+      if (vpDisplay::getClick(I, false)) {
+        break;
+      }
+    }
 
     //! [Constructor]
     vpMbGenericTracker tracker;
@@ -167,37 +239,50 @@ int main(int argc, char **argv)
 #endif
     //! [Constructor]
 
-    //! [Set parameters]
-    if (opt_tracker == 0 || opt_tracker == 2) {
-      vpMe me;
-      me.setMaskSize(5);
-      me.setMaskNumber(180);
-      me.setRange(8);
-      me.setThreshold(10000);
-      me.setMu1(0.5);
-      me.setMu2(0.5);
-      me.setSampleStep(4);
-      tracker.setMovingEdge(me);
-    }
-
-#ifdef VISP_HAVE_MODULE_KLT
-    if (opt_tracker == 1 || opt_tracker == 2) {
-      vpKltOpencv klt_settings;
-      klt_settings.setMaxFeatures(300);
-      klt_settings.setWindowSize(5);
-      klt_settings.setQuality(0.015);
-      klt_settings.setMinDistance(8);
-      klt_settings.setHarrisFreeParameter(0.01);
-      klt_settings.setBlockSize(3);
-      klt_settings.setPyramidLevels(3);
-      tracker.setKltOpencv(klt_settings);
-      tracker.setKltMaskBorder(5);
+    bool usexml = false;
+    //! [Load xml]
+#ifdef VISP_HAVE_XML2
+    if (vpIoTools::checkFilename(objectname + ".xml")) {
+      tracker.loadConfigFile(objectname + ".xml");
+      usexml = true;
     }
 #endif
+    //! [Load xml]
 
-    //! [Set camera parameters]
-    cam.initPersProjWithoutDistortion(839, 839, 325, 243);
-    //! [Set camera parameters]
+    if (!usexml) {
+      //! [Set parameters]
+      if (opt_tracker == 0 || opt_tracker == 2) {
+        //! [Set moving-edges parameters]
+        vpMe me;
+        me.setMaskSize(5);
+        me.setMaskNumber(180);
+        me.setRange(8);
+        me.setThreshold(10000);
+        me.setMu1(0.5);
+        me.setMu2(0.5);
+        me.setSampleStep(4);
+        tracker.setMovingEdge(me);
+        //! [Set moving-edges parameters]
+      }
+
+#ifdef VISP_HAVE_MODULE_KLT
+      if (opt_tracker == 1 || opt_tracker == 2) {
+        //! [Set klt parameters]
+        vpKltOpencv klt_settings;
+        klt_settings.setMaxFeatures(300);
+        klt_settings.setWindowSize(5);
+        klt_settings.setQuality(0.015);
+        klt_settings.setMinDistance(8);
+        klt_settings.setHarrisFreeParameter(0.01);
+        klt_settings.setBlockSize(3);
+        klt_settings.setPyramidLevels(3);
+        tracker.setKltOpencv(klt_settings);
+        tracker.setKltMaskBorder(5);
+        //! [Set klt parameters]
+      }
+#endif
+    }
+
     tracker.setCameraParameters(cam);
     //! [Set parameters]
 
@@ -207,9 +292,66 @@ int main(int argc, char **argv)
     //! [Set display]
     tracker.setDisplayFeatures(true);
     //! [Set display]
+    //! [Set visibility algorithm]
+    tracker.setOgreVisibilityTest(opt_use_ogre);
+    tracker.setScanLineVisibilityTest(opt_use_scanline);
+    //! [Set visibility algorithm]
+    //! [Set projection error computation]
+    tracker.setProjectionErrorComputation(true);
+    tracker.setProjectionErrorDisplay(opt_display_projection_error);
+    //! [Set projection error computation]
 
-    while (tracker_state != StateEnd) {
+
+#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
+    std::string detectorName = "SIFT";
+    std::string extractorName = "SIFT";
+    std::string matcherName = "BruteForce";
+#else
+    std::string detectorName = "FAST";
+    std::string extractorName = "ORB";
+    std::string matcherName = "BruteForce-Hamming";
+#endif
+    vpKeyPoint keypoint;
+    if (opt_learn || opt_auto_init) {
+      keypoint.setDetector(detectorName);
+      keypoint.setExtractor(extractorName);
+      keypoint.setMatcher(matcherName);
+#if !(defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#  if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+      keypoint.setDetectorParameter("ORB", "nLevels", 1);
+#  else
+      cv::Ptr<cv::ORB> orb_detector = keypoint.getDetector("ORB").dynamicCast<cv::ORB>();
+      if (orb_detector != NULL) {
+        orb_detector->setNLevels(1);
+      }
+#  endif
+#endif
+    }
+
+    if (opt_auto_init) {
+      if (!vpIoTools::checkFilename(opt_learning_data)) {
+        std::cout << "Cannot enable auto detection. Learning file \"" << opt_learning_data << "\" doesn't exist" << std::endl;
+        return EXIT_FAILURE;
+      }
+      keypoint.loadLearningData(opt_learning_data, true);
+    }
+    else {
+      tracker.initClick(I, objectname + ".init", true);
+    }
+
+    bool learn_position = false;
+    bool run_auto_init = false;
+    if (opt_auto_init) {
+      run_auto_init = true;
+    }
+
+    //To be able to display keypoints matching with test-detection-rs2
+    int learn_id = 1;
+    bool quit = false;
+
+    while (!quit) {
       double t_begin = vpTime::measureTimeMs();
+      bool tracking_failed = false;
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
@@ -218,84 +360,125 @@ int main(int argc, char **argv)
 #endif
       vpDisplay::display(I);
 
-      if (tracker_state == StateInit) {
-        try {
-          //! [Init tracker]
-          tracker.initClick(I, objectname + ".init", true);
-          //! [Init tracker]
-          tracker_state = StateTrack;
-        }
-        catch(...) {
-          std::cout << "Unable to initialize the tracker" << std::endl;
-          tracker_state = StateWait;
+      // Run auto initialization from learned data
+      if (run_auto_init) {
+        if (keypoint.matchPoint(I, cam, cMo)) {
+          std::cout << "Auto init succeed" << std::endl;
+          tracker.initFromPose(I, cMo);
+        } else {
+          vpDisplay::flush(I);
+          continue;
         }
       }
 
-      else if (tracker_state == StateTrack) {
-        try {
-          //! [Track]
-          tracker.track(I);
-          //! [Track]
+      // Run the tracker
+      try {
+        if (run_auto_init) {
+          // Turn display features off just after auto init to not display wrong moving-edge if the tracker fails
+          tracker.setDisplayFeatures(false);
 
-          double projection_error = tracker.getProjectionError();
-          {
-            std::stringstream ss;
-            ss << "Projection error: " << std::setprecision(3) << projection_error << std::endl;
-            vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::green);
-          }
-          if (projection_error > opt_max_projection_error) {
-            std::cout << "Lost tracking: reprojection error " << projection_error << "> " << opt_max_projection_error << std::endl;
-            tracker_state = StateWait;
-          }
-          else {
-            //! [Get pose]
-            tracker.getPose(cMo);
-            //! [Get pose]
-            //! [Display]
-            tracker.getCameraParameters(cam);
-            tracker.display(I, cMo, cam, vpColor::green, 2, true);
-            //! [Display]
-            vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
-
-            { // Display estimated pose in [m] and [deg]
-              vpPoseVector pose(cMo);
-              std::stringstream ss;
-              ss << "Translation: " << std::setprecision(5) << pose[0] << " " << pose[1] << " " << pose[2] << " [m]";
-              vpDisplay::displayText(I, 80, 20, ss.str(), vpColor::green);
-              ss.str(""); // erase ss
-              ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " " << vpMath::deg(pose[5]) << " [deg]";
-              vpDisplay::displayText(I, 100, 20, ss.str(), vpColor::green);
-            }
-          }
+          run_auto_init = false;
         }
-        catch(...) {
-          std::cout << "Lost tracking due to an internal exception" << std::endl;
-          tracker_state = StateWait;
+        tracker.track(I);
+      } catch (const vpException &e) {
+        std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
+        tracking_failed = true;
+        if (opt_auto_init) {
+          std::cout << "Tracker needs to restart (tracking exception)" << std::endl;
+          run_auto_init = true;
         }
       }
 
-      vpDisplay::displayText(I, 20, 20, "Left  click: init/reinit tracker", vpColor::green);
-      vpDisplay::displayText(I, 40, 20, "Right click: quit", vpColor::green);
-
-      {
-        std::stringstream ss;
-        ss << "Time: " << vpTime::measureTimeMs() - t_begin << " ms";
-        vpDisplay::displayText(I, 20, I.getWidth()-100, ss.str(), vpColor::green);
+      if (! tracking_failed) {
+        // Check tracking errors
+        double proj_error = tracker.getProjectionError();
+        if (proj_error > opt_proj_error_threshold) {
+          std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
+          if (opt_auto_init) {
+            run_auto_init = true;
+          }
+          tracking_failed = true;
+        }
       }
 
-      vpDisplay::flush(I);
+      if (! tracking_failed) {
+        tracker.setDisplayFeatures(true);
+        //! [Get pose]
+        tracker.getPose(cMo);
+        //! [Get pose]
+        //! [Display]
+        tracker.getCameraParameters(cam);
+        tracker.display(I, cMo, cam, vpColor::green, 2, false);
+        //! [Display]
+        vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
+
+        { // Display estimated pose in [m] and [deg]
+          vpPoseVector pose(cMo);
+          std::stringstream ss;
+          ss << "Translation: " << std::setprecision(5) << pose[0] << " " << pose[1] << " " << pose[2] << " [m]";
+          vpDisplay::displayText(I, 80, 20, ss.str(), vpColor::green);
+          ss.str(""); // erase ss
+          ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " " << vpMath::deg(pose[5]) << " [deg]";
+          vpDisplay::displayText(I, 100, 20, ss.str(), vpColor::green);
+        }
+      }
+
+      if (learn_position) {
+        // Detect keypoints on the current image
+        std::vector<cv::KeyPoint> trainKeyPoints;
+        keypoint.detect(I, trainKeyPoints);
+
+        // Keep only keypoints on the cube
+        std::vector<vpPolygon> polygons;
+        std::vector<std::vector<vpPoint> > roisPt;
+        std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > pair = tracker.getPolygonFaces();
+        polygons = pair.first;
+        roisPt = pair.second;
+
+        // Compute the 3D coordinates
+        std::vector<cv::Point3f> points3f;
+        vpKeyPoint::compute3DForPointsInPolygons(cMo, cam, trainKeyPoints, polygons, roisPt, points3f);
+
+        // Build the reference keypoints
+        keypoint.buildReference(I, trainKeyPoints, points3f, true, learn_id++);
+
+        // Display learned data
+        for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
+          vpDisplay::displayCross(I, (int)it->pt.y, (int)it->pt.x, 10, vpColor::yellow, 3);
+        }
+        learn_position = false;
+        std::cout << "Data learned" << std::endl;
+      }
+
+      std::stringstream ss;
+      ss << "Loop time: " << vpTime::measureTimeMs() - t_begin << " ms";
+      vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
+      if (opt_learn)
+        vpDisplay::displayText(I, 35, 20, "Left click: learn  Right click: quit", vpColor::red);
+      else if (opt_auto_init)
+        vpDisplay::displayText(I, 35, 20, "Left click: auto_init  Right click: quit", vpColor::red);
+      else
+        vpDisplay::displayText(I, 35, 20, "Right click: quit", vpColor::red);
 
       vpMouseButton::vpMouseButtonType button;
       if (vpDisplay::getClick(I, button, false)) {
-        if (button == vpMouseButton::button1) {
-          tracker_state = StateInit;
-        }
-        else if (button == vpMouseButton::button3) {
-          tracker_state = StateEnd;
+        if (button == vpMouseButton::button3) {
+          quit = true;
+        } else if (button == vpMouseButton::button1 && opt_learn) {
+          learn_position = true;
+        } else if (button == vpMouseButton::button1 && opt_auto_init && !opt_learn) {
+          run_auto_init = true;
         }
       }
+
+      vpDisplay::flush(I);
     }
-        //! [Cleanup]
+    if (opt_learn) {
+      std::cout << "Save learning file: " << opt_learning_data << std::endl;
+      keypoint.saveLearningData(opt_learning_data, true, true);
+    }
+
+    //! [Cleanup]
     delete display;
     //! [Cleanup]
   } catch (const vpException &e) {
