@@ -22,3 +22,8 @@ endforeach()
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-apriltag-detector.cpp ${data})
 endforeach()
+
+if(VISP_HAVE_FLYCAPTURE)
+  # Add specific build flag to turn off warnings coming from FlyCapture 3rd party
+  visp_set_source_file_compile_flag(tutorial-apriltag-detector-live.cpp -Wno-ignored-qualifiers)
+endif()
