@@ -16,11 +16,11 @@
 
 // Comment / uncomment following lines to use the specific 3rd party compatible with your camera
 //! [Undef grabber]
-//#undef VISP_HAVE_V4L2
-//#undef VISP_HAVE_DC1394
-//#undef VISP_HAVE_CMU1394
-//#undef VISP_HAVE_FLYCAPTURE
-//#undef VISP_HAVE_REALSENSE2
+#undef VISP_HAVE_V4L2
+#undef VISP_HAVE_DC1394
+#undef VISP_HAVE_CMU1394
+#undef VISP_HAVE_FLYCAPTURE
+#undef VISP_HAVE_REALSENSE2
 //#undef VISP_HAVE_OPENCV
 //! [Undef grabber]
 
