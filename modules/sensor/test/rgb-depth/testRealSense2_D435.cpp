@@ -320,11 +320,14 @@ int main(int argc, char *argv[])
     auto depth_frame = data.get_depth_frame();
     getNativeFrame(depth_frame, (unsigned char *)depth_raw.bitmap);
 
+#if (RS2_API_VERSION >= ((2 * 10000) + (10 * 100) + 0))
+    // rs2::frameset::get_infrared_frame() introduced in librealsense 2.10.0
     auto infrared1_frame = data.get_infrared_frame(1);
     getNativeFrame(infrared1_frame, (unsigned char *)infrared1.bitmap);
 
     auto infrared2_frame = data.get_infrared_frame(2);
     getNativeFrame(infrared2_frame, (unsigned char *)infrared2.bitmap);
+#endif
 
 #ifdef VISP_HAVE_PCL
     getPointcloud(depth_frame, pointcloud_colvector);
@@ -518,13 +521,18 @@ int main(int argc, char *argv[])
 #else
     frame_to_mat(color_map(data.get_depth_frame()), mat_depth);
 #endif
-    frame_to_mat(data.get_infrared_frame(1), mat_infrared1);
-    frame_to_mat(data.get_infrared_frame(2), mat_infrared2);
 
     cv::imshow("OpenCV color", mat_color);
     cv::imshow("OpenCV depth", mat_depth);
+
+#if (RS2_API_VERSION >= ((2 * 10000) + (10 * 100) + 0))
+    // rs2::frameset::get_infrared_frame() introduced in librealsense 2.10.0
+    frame_to_mat(data.get_infrared_frame(1), mat_infrared1);
+    frame_to_mat(data.get_infrared_frame(2), mat_infrared2);
+
     cv::imshow("OpenCV infrared left", mat_infrared1);
     cv::imshow("OpenCV infrared right", mat_infrared2);
+#endif
 
     time_vector.push_back(vpTime::measureTimeMs() - t);
     if (cv::waitKey(10) == 27)
