@@ -136,10 +136,10 @@ int main(int argc, const char *argv[])
 
   // Command line options
   for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--device")
+    if (std::string(argv[i]) == "--camera_device")
       opt_device = atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "Usage: " << argv[0] << " [--device <camera device>] [--help]" << std::endl;
+      std::cout << "Usage: " << argv[0] << " [--camera_device <camera device (default: 0)>] [--help]" << std::endl;
       return 0;
     }
   }

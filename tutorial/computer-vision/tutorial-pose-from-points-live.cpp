@@ -39,11 +39,11 @@ int main(int argc, char **argv)
         opt_intrinsic_file = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
         opt_camera_name = std::string(argv[i + 1]);
-      } else if (std::string(argv[i]) == "--input_device" && i + 1 < argc) {
+      } else if (std::string(argv[i]) == "--camera_device" && i + 1 < argc) {
         opt_device = atoi(argv[i + 1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--input_device <camera device> (default: 0)]"
+                  << " [--camera_device <camera device> (default: 0)]"
                   << " [--intrinsic <xml calibration file> (default: empty)]"
                      " [--camera_name <camera name in xml calibration file> (default: empty)]"
                      " [--square_width <square width in meter (default: 0.12)] [--help] [-h]\n"

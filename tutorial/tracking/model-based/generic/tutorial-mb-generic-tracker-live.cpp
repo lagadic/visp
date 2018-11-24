@@ -53,7 +53,7 @@ int main(int argc, char **argv)
       else if (std::string(argv[i]) == "--tracker") {
         opt_tracker = atoi(argv[i + 1]);
       }
-      else if (std::string(argv[i]) == "--input_device" && i + 1 < argc) {
+      else if (std::string(argv[i]) == "--camera_device" && i + 1 < argc) {
         opt_device = atoi(argv[i + 1]);
       }
       else if (std::string(argv[i]) == "--max_proj_error") {
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--input_device <camera device> (default: 0)]"
+                  << " [--camera_device <camera device> (default: 0)]"
                   << " [--intrinsic <intrinsic file> (default: empty)]"
                   << " [--camera_name <camera name>]  (default: empty)"
                   << " [--model <model name> (default: teabox)]"
