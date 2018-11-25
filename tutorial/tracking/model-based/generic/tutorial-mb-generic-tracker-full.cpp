@@ -89,7 +89,7 @@ int main(int argc, char **argv)
     //! [Constructor]
 
     bool usexml = false;
-//! [Load xml]
+    //! [Load xml]
 #ifdef VISP_HAVE_XML2
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
@@ -149,6 +149,7 @@ int main(int argc, char **argv)
       //! [Set clipping fov]
       //! [Set parameters]
     }
+
     //! [Set visibility parameters]
     //! [Set ogre visibility]
     tracker.setOgreVisibilityTest(false);

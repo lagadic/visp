@@ -29,3 +29,8 @@ if(VISP_HAVE_ZBAR)
   # Add specific build flag to turn off warnings coming from zbar 3rd party
   visp_set_source_file_compile_flag(tutorial-pose-from-qrcode-image.cpp -Wno-unused-parameter)
 endif()
+
+if(VISP_HAVE_FLYCAPTURE)
+  # Add specific build flag to turn off warnings coming from FlyCapture 3rd party
+  visp_set_source_file_compile_flag(tutorial-pose-from-points-live.cpp -Wno-ignored-qualifiers)
+endif()

@@ -118,6 +118,8 @@ For example, if you want to force OpenCV usage to grab images, uncomment the lin
 #undef VISP_HAVE_V4L2
 #undef VISP_HAVE_DC1394
 #undef VISP_HAVE_CMU1394
+#undef VISP_HAVE_FLYCAPTURE
+#undef VISP_HAVE_REALSENSE2
 \endcode
 
 After modification, build and run again this binary.

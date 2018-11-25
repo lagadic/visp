@@ -36,29 +36,46 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpImagePoint> &i
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 std::vector<vpImagePoint> track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 {
-  std::vector<vpImagePoint> ip(dot.size());
-  if (init) {
-    vpDisplay::flush(I);
-    for (unsigned int i = 0; i < dot.size(); i++) {
-      dot[i].setGraphics(true);
-      dot[i].setGraphicsThickness(2);
-      std::stringstream ss;
-      ss << "Click on point " << i+1;
-      vpDisplay::displayText(I, 20, 20, "Status: initialize blob tracker", vpColor::red);
-      vpDisplay::displayText(I, 40 + i*20, 20, ss.str(), vpColor::red);
+  try {
+    double distance_same_blob = 10.; // 2 blobs are declared same if their distance is less than this value
+    std::vector<vpImagePoint> ip(dot.size());
+    if (init) {
       vpDisplay::flush(I);
-      dot[i].initTracking(I);
-      vpDisplay::flush(I);
+      for (unsigned int i = 0; i < dot.size(); i++) {
+        dot[i].setGraphics(true);
+        dot[i].setGraphicsThickness(2);
+        std::stringstream ss;
+        ss << "Click on point " << i+1;
+        vpDisplay::displayText(I, 20, 20, "Status: initialize blob tracker", vpColor::red);
+        vpDisplay::displayText(I, 40 + i*20, 20, ss.str(), vpColor::red);
+        vpDisplay::flush(I);
+        dot[i].initTracking(I);
+        vpDisplay::flush(I);
+      }
+    } else {
+      for (unsigned int i = 0; i < dot.size(); i++) {
+        dot[i].track(I);
+      }
     }
-  } else {
     for (unsigned int i = 0; i < dot.size(); i++) {
-      dot[i].track(I);
+      ip[i] = dot[i].getCog();
+      // Compare distances between all the dots to check if some of them are not the same
     }
+    for (unsigned int i=0; i < ip.size(); i++) {
+      for (unsigned int j=i+1; j < ip.size(); j++) {
+        if (vpImagePoint::distance(ip[i], ip[j]) < distance_same_blob) {
+          std::cout << "Traking lost: 2 blobs are the same" << std::endl;
+          throw(vpException(vpException::fatalError, "Tracking lost: 2 blobs are the same"));
+        }
+      }
+    }
+
+    return ip;
   }
-  for (unsigned int i = 0; i < dot.size(); i++) {
-    ip[i] = dot[i].getCog();
+  catch(...) {
+    std::cout << "Traking lost" << std::endl;
+    throw(vpException(vpException::fatalError, "Tracking lost"));
   }
-  return ip;
 }
 #endif
 

@@ -23,7 +23,7 @@ int main(int argc, const char *argv[])
     int opt_record_mode = 0;
 
     for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--device")
+      if (std::string(argv[i]) == "--camera_device")
         opt_device = std::atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--scale")
         opt_scale = (unsigned int)atoi(argv[i + 1]);
@@ -33,13 +33,13 @@ int main(int argc, const char *argv[])
         opt_record_mode = std::atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--device <camera device (default: 0)>] [--scale <subsampling factor (default: 1)>]"
+                  << " [--camera_device <camera device (default: 0)>] [--scale <subsampling factor (default: 1)>]"
                      " [--seqname <sequence name (default: empty>] [--record <0: continuous | 1: single shot (default: 0)>]"
                      " [--help] [-h]\n"
                   << "\nExample to visualize images:\n"
                   << "  " << argv[0] << "\n"
                   << "\nExample to visualize images from a second camera:\n"
-                  << "  " << argv[0] << "--device 1\n"
+                  << "  " << argv[0] << "--camera_device 1\n"
                   << "\nExamples to record a sequence:\n"
                   << "  " << argv[0] << " --seqname I%04d.png \n"
                   << "  " << argv[0] << " --seqname folder/I%04d.png --record 0\n"
