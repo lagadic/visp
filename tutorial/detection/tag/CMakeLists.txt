@@ -25,5 +25,13 @@ endforeach()
 
 if(VISP_HAVE_FLYCAPTURE)
   # Add specific build flag to turn off warnings coming from FlyCapture 3rd party
-  visp_set_source_file_compile_flag(tutorial-apriltag-detector-live.cpp -Wno-ignored-qualifiers)
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
+endif()
+if(VISP_HAVE_REALSENSE2)
+  # Add specific build flag to turn off warnings coming from librealsense 3rd party
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
+endif()
+
+if(CXX_FLAGS_MUTE_WARNINGS)
+  visp_set_source_file_compile_flag(tutorial-apriltag-detector-live.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
