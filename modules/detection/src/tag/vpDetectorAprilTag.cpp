@@ -58,7 +58,7 @@ class vpDetectorAprilTag::Impl
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
     : m_cam(), m_poseEstimationMethod(method), m_tagFamily(tagFamily), m_tagPoses(), m_tagSize(1.0), m_td(NULL),
-      m_tf(NULL), m_detections(NULL)
+      m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -140,6 +140,7 @@ public:
               std::vector<std::string> &messages, const bool computePose, const bool displayTag,
               const vpColor color, const unsigned int thickness)
   {
+    std::vector<vpHomogeneousMatrix> tagPosesPrev = m_tagPoses;
     m_tagPoses.clear();
 
     image_u8_t im = {/*.width =*/(int32_t)I.getWidth(),
@@ -190,6 +191,11 @@ public:
 
       if (computePose) {
         vpHomogeneousMatrix cMo;
+        {
+          if ((int)tagPosesPrev.size() > i) {
+            cMo = tagPosesPrev[i];
+          }
+        }
         if (getPose(i, m_tagSize, m_cam, cMo)) {
           m_tagPoses.push_back(cMo);
         }
@@ -212,6 +218,9 @@ public:
       return false;
     }
 
+    vpHomogeneousMatrix cMo_previous = cMo;
+    std::cout << "cMo previous: \n" << cMo_previous << std::endl;
+
     if (m_poseEstimationMethod == HOMOGRAPHY || m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS
         || m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
       double fx = cam.get_px(), fy = cam.get_py();
@@ -227,6 +236,15 @@ public:
       }
 
       matd_destroy(M);
+
+      if (m_zAlignedWithCameraFrame) {
+        vpHomogeneousMatrix oMo;
+        // Apply a rotation of 180deg around x axis
+        oMo[0][0] = 1; oMo[0][1] =  0; oMo[0][2] = 0;
+        oMo[1][0] = 0; oMo[1][1] = -1; oMo[1][2] = 0;
+        oMo[2][0] = 0; oMo[2][1] =  0; oMo[2][2] = -1;
+        cMo = cMo*oMo;
+      }
     }
 
     // Add marker object points
@@ -237,28 +255,48 @@ public:
       vpImagePoint imPt;
       double x = 0.0, y = 0.0;
       std::vector<vpPoint> pts(4);
-      pt.setWorldCoordinates(-tagSize / 2.0, -tagSize / 2.0, 0.0);
+      if (m_zAlignedWithCameraFrame) {
+        pt.setWorldCoordinates(-tagSize / 2.0, tagSize / 2.0, 0.0);
+      }
+      else {
+        pt.setWorldCoordinates(-tagSize / 2.0, -tagSize / 2.0, 0.0);
+      }
       imPt.set_uv(det->p[0][0], det->p[0][1]);
       vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
       pt.set_x(x);
       pt.set_y(y);
       pts[0] = pt;
 
-      pt.setWorldCoordinates(tagSize / 2.0, -tagSize / 2.0, 0.0);
+      if (m_zAlignedWithCameraFrame) {
+        pt.setWorldCoordinates(tagSize / 2.0, tagSize / 2.0, 0.0);
+      }
+      else {
+        pt.setWorldCoordinates(tagSize / 2.0, -tagSize / 2.0, 0.0);
+      }
       imPt.set_uv(det->p[1][0], det->p[1][1]);
       vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
       pt.set_x(x);
       pt.set_y(y);
       pts[1] = pt;
 
-      pt.setWorldCoordinates(tagSize / 2.0, tagSize / 2.0, 0.0);
+      if (m_zAlignedWithCameraFrame) {
+        pt.setWorldCoordinates(tagSize / 2.0, -tagSize / 2.0, 0.0);
+      }
+      else {
+        pt.setWorldCoordinates(tagSize / 2.0, tagSize / 2.0, 0.0);
+      }
       imPt.set_uv(det->p[2][0], det->p[2][1]);
       vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
       pt.set_x(x);
       pt.set_y(y);
       pts[2] = pt;
 
-      pt.setWorldCoordinates(-tagSize / 2.0, tagSize / 2.0, 0.0);
+      if (m_zAlignedWithCameraFrame) {
+        pt.setWorldCoordinates(-tagSize / 2.0, -tagSize / 2.0, 0.0);
+      }
+      else {
+        pt.setWorldCoordinates(-tagSize / 2.0, tagSize / 2.0, 0.0);
+      }
       imPt.set_uv(det->p[3][0], det->p[3][1]);
       vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
       pt.set_x(x);
@@ -275,6 +313,7 @@ public:
         double residual_dementhon = std::numeric_limits<double>::max(),
                residual_lagrange = std::numeric_limits<double>::max();
         double residual_homography = pose.computeResidual(cMo_homography);
+        double best_residual;
 
         if (pose.computePose(vpPose::DEMENTHON, cMo_dementhon)) {
           residual_dementhon = pose.computeResidual(cMo_dementhon);
@@ -287,13 +326,46 @@ public:
         if (residual_dementhon < residual_lagrange) {
           if (residual_dementhon < residual_homography) {
             cMo = cMo_dementhon;
+            best_residual = residual_dementhon;
+            std::cout << "DBG FABIEN: Init by dementhon" << std::endl;
           } else {
             cMo = cMo_homography;
+            best_residual = residual_homography;
+            std::cout << "DBG FABIEN: Init by homography" << std::endl;
           }
         } else if (residual_lagrange < residual_homography) {
           cMo = cMo_lagrange;
+          best_residual = residual_lagrange;
+          std::cout << "DBG FABIEN: Init by lagrange" << std::endl;
         } else {
           //              cMo = cMo_homography; //already the case
+          best_residual = residual_homography;
+          std::cout << "DBG FABIEN: Init by homography" << std::endl;
+        }
+
+        // detect if cMo_previous differ from id
+        bool notId = false;
+        vpHomogeneousMatrix Id;
+        for (unsigned int i=0; i < 4; i ++) {
+          for (unsigned int j=0; j < 4; j ++) {
+            if (cMo_previous[i][j] != Id[i][j]) {
+              notId = true;
+              break;
+            }
+          }
+        }
+        if (notId) {
+          double residual_previous = pose.computeResidual(cMo_previous);
+//          if (residual_previous < best_residual) {
+            cMo = cMo_previous;
+            std::cout << "DBG FABIEN: Init by previous ++" << std::endl;
+//          }
+          std::cout << "Residual: homo: " << residual_homography << " lag: " << residual_lagrange
+                    << " dem: " << residual_dementhon << " prev: " << residual_previous << std::endl;
+        }
+        else {
+          std::cout << "Residual: homo: " << residual_homography << " lag: " << residual_lagrange
+                    << " dem: " << residual_dementhon << std::endl;
         }
       } else {
         pose.computePose(m_mapOfCorrespondingPoseMethods[m_poseEstimationMethod], cMo);
@@ -328,6 +400,8 @@ public:
 
   void setPoseEstimationMethod(const vpPoseEstimationMethod &method) { m_poseEstimationMethod = method; }
 
+  void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame) { m_zAlignedWithCameraFrame = zAlignedWithCameraFrame; }
+
 protected:
   vpCameraParameters m_cam;
   std::map<vpPoseEstimationMethod, vpPose::vpPoseMethodType> m_mapOfCorrespondingPoseMethods;
@@ -338,6 +412,7 @@ protected:
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
+  bool m_zAlignedWithCameraFrame;
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
@@ -347,7 +422,7 @@ protected:
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
-    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily),
+    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_zAlignedWithCameraFrame(false),
     m_impl(new Impl(tagFamily, poseEstimationMethod))
 {
 }
@@ -536,6 +611,18 @@ void vpDetectorAprilTag::setAprilTagRefineEdges(const bool refineEdges) { m_impl
   \param refinePose : If true, set refine_pose to 1.
 */
 void vpDetectorAprilTag::setAprilTagRefinePose(const bool refinePose) { m_impl->setRefinePose(refinePose); }
+
+/*!
+ * Modify the resulting tag pose returned by getPose() in order to get
+ * a pose where z-axis is aligned when the camera plane is parallel to the tag.
+ * \param zAlignedWithCameraFrame : Flag to get a pose where z-axis is aligned with the camera frame.
+ */
+void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
+{
+  m_zAlignedWithCameraFrame = zAlignedWithCameraFrame;
+  m_impl->setZAlignedWithCameraAxis(zAlignedWithCameraFrame);
+}
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_core.a(vpDetectorAprilTag.cpp.o) has
 // no symbols

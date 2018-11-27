@@ -279,12 +279,15 @@ public:
     m_displayTagThickness = thickness;
   }
 
+  void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
+
 protected:
   bool m_displayTag;
   vpColor m_displayTagColor;
   unsigned int m_displayTagThickness;
   vpPoseEstimationMethod m_poseEstimationMethod;
   vpAprilTagFamily m_tagFamily;
+  bool m_zAlignedWithCameraFrame;
 
 private:
   vpDetectorAprilTag(const vpDetectorAprilTag &);            // noncopyable
