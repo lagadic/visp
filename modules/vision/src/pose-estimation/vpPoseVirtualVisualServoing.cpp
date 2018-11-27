@@ -135,9 +135,10 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 
       cMoPrev = cMo;
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
-      ;
-      if (iter++ > vvsIterMax)
+
+      if (iter++ > vvsIterMax) {
         break;
+      }
     }
 
     if (computeCovariance)
