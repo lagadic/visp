@@ -39,7 +39,7 @@ int main(int argc, const char *argv[])
                   << "\nExample to visualize images:\n"
                   << "  " << argv[0] << "\n"
                   << "\nExample to visualize images from a second camera:\n"
-                  << "  " << argv[0] << "--camera_device 1\n"
+                  << "  " << argv[0] << " --camera_device 1\n"
                   << "\nExamples to record a sequence:\n"
                   << "  " << argv[0] << " --seqname I%04d.png \n"
                   << "  " << argv[0] << " --seqname folder/I%04d.png --record 0\n"
