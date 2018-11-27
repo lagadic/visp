@@ -160,7 +160,14 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I;
     vpVideoReader reader;
     reader.setFileName(s.input);
-    reader.open(I);
+    try {
+      reader.open(I);
+    }
+    catch(const vpException &e) {
+      std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
+      std::cout << "Check if input images name \"" << s.input << "\" set in " << inputSettingsFile << " config file is correct..." << std::endl;
+      return EXIT_FAILURE;
+    }
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);
@@ -193,6 +200,7 @@ int main(int argc, const char **argv)
 
     while (!reader.end()) {
       reader.acquire(I);
+
       long frame_index = reader.getFrameIndex();
       vpDisplay::display(I);
 
