@@ -218,9 +218,6 @@ public:
       return false;
     }
 
-    vpHomogeneousMatrix cMo_previous = cMo;
-    std::cout << "cMo previous: \n" << cMo_previous << std::endl;
-
     if (m_poseEstimationMethod == HOMOGRAPHY || m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS
         || m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
       double fx = cam.get_px(), fy = cam.get_py();
@@ -313,7 +310,6 @@ public:
         double residual_dementhon = std::numeric_limits<double>::max(),
                residual_lagrange = std::numeric_limits<double>::max();
         double residual_homography = pose.computeResidual(cMo_homography);
-        double best_residual;
 
         if (pose.computePose(vpPose::DEMENTHON, cMo_dementhon)) {
           residual_dementhon = pose.computeResidual(cMo_dementhon);
@@ -326,46 +322,13 @@ public:
         if (residual_dementhon < residual_lagrange) {
           if (residual_dementhon < residual_homography) {
             cMo = cMo_dementhon;
-            best_residual = residual_dementhon;
-            std::cout << "DBG FABIEN: Init by dementhon" << std::endl;
           } else {
             cMo = cMo_homography;
-            best_residual = residual_homography;
-            std::cout << "DBG FABIEN: Init by homography" << std::endl;
           }
         } else if (residual_lagrange < residual_homography) {
           cMo = cMo_lagrange;
-          best_residual = residual_lagrange;
-          std::cout << "DBG FABIEN: Init by lagrange" << std::endl;
         } else {
           //              cMo = cMo_homography; //already the case
-          best_residual = residual_homography;
-          std::cout << "DBG FABIEN: Init by homography" << std::endl;
-        }
-
-        // detect if cMo_previous differ from id
-        bool notId = false;
-        vpHomogeneousMatrix Id;
-        for (unsigned int i=0; i < 4; i ++) {
-          for (unsigned int j=0; j < 4; j ++) {
-            if (cMo_previous[i][j] != Id[i][j]) {
-              notId = true;
-              break;
-            }
-          }
-        }
-        if (notId) {
-          double residual_previous = pose.computeResidual(cMo_previous);
-//          if (residual_previous < best_residual) {
-            cMo = cMo_previous;
-            std::cout << "DBG FABIEN: Init by previous ++" << std::endl;
-//          }
-          std::cout << "Residual: homo: " << residual_homography << " lag: " << residual_lagrange
-                    << " dem: " << residual_dementhon << " prev: " << residual_previous << std::endl;
-        }
-        else {
-          std::cout << "Residual: homo: " << residual_homography << " lag: " << residual_lagrange
-                    << " dem: " << residual_dementhon << std::endl;
         }
       } else {
         pose.computePose(m_mapOfCorrespondingPoseMethods[m_poseEstimationMethod], cMo);
