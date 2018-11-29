@@ -45,7 +45,7 @@ foreach(cpp ${tutorial_cpp})
     endif()
   else()
     if(VISP_HAVE_OGRE)
-      visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+      visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations)
     endif()
   endif()
 
