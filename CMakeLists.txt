@@ -703,8 +703,6 @@ include(cmake/VISPExtraTargets.cmake)
 include(cmake/OgreTools.cmake)
 if(USE_OGRE)
   vp_set_ogre_media()
-elseif(CMAKE_TOOLCHAIN_FILE)
-  vp_set_ogre_advanced_var()
 endif()
 
 #----------------------------------------------------------------------
@@ -1063,6 +1061,16 @@ if(BUILD_TUTORIALS)
 endif()
 if(BUILD_APPS)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
+endif()
+
+# ----------------------------------------------------------------------------
+#  Make some cmake vars advanced
+# ----------------------------------------------------------------------------
+if(JPEG_FOUND)
+  mark_as_advanced(jconfig_dir)
+endif()
+if(OGRE_FOUND)
+  vp_set_ogre_advanced_var()
 endif()
 
 # ----------------------------------------------------------------------------
