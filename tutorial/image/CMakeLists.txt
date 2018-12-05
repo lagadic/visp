@@ -33,5 +33,5 @@ endforeach()
 
 # Copy the data files to the same location than the target
 foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-image-reader.cpp ${data})
+  visp_copy_data(tutorial-viewer.cpp ${data})
 endforeach()
