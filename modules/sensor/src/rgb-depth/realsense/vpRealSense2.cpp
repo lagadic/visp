@@ -99,7 +99,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 #if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
     data = align_to->process(data);
 #else
-    data = align_to->proccess(data);
+    data = align_to->process(data);
 #endif
 
   if (data_image != NULL) {
