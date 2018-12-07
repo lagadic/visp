@@ -70,9 +70,13 @@
 #############################################################################
 
 # similar code exist in VISPDetectPlatform.cmake
-if(MSVC)
+if(DEFINED OpenCV_ARCH AND DEFINED OpenCV_RUNTIME)
+  # custom overridden values
+elseif(MSVC)
   if(CMAKE_CL_64)
     set(VISP_ARCH x64)
+  elseif((CMAKE_GENERATOR MATCHES "ARM") OR ("${arch_hint}" STREQUAL "ARM") OR (CMAKE_VS_EFFECTIVE_PLATFORMS MATCHES "ARM|arm"))
+    set(VISP_ARCH ARM)
   else()
     set(VISP_ARCH x86)
   endif()
