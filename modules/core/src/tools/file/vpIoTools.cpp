@@ -62,11 +62,11 @@
 #include <windows.h>
 #endif
 #if !defined(_WIN32)
-	#ifdef __ANDROID__
-	// Like IOS, wordexp.cpp is not defined for Android
-	#else
-	#include <wordexp.h>
-	#endif
+  #ifdef __ANDROID__
+  // Like IOS, wordexp.cpp is not defined for Android
+  #else
+  #include <wordexp.h>
+  #endif
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
@@ -109,6 +109,9 @@
     defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) || defined(__ANDROID__)
     // It appears that all Android systems are little endian.
     // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
+#define VISP_LITTLE_ENDIAN
+#elif defined(WINRT) // For UWP
+// Refer https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
 #define VISP_LITTLE_ENDIAN
 #else
 #error Cannot detect host machine endianness.
@@ -948,18 +951,18 @@ std::string vpIoTools::path(const char *pathname)
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
                        // wordexp() is not available
-	#ifdef __ANDROID__
-	// Do nothing
-	#else
-	  wordexp_t exp_result;
+  #ifdef __ANDROID__
+  // Do nothing
+  #else
+    wordexp_t exp_result;
 
-	  // escape quote character
-	  replaceAll(path, "'", "'\\''");
-	  // add quotes to handle special characters like parentheses and spaces
-	  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
-	  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
-	  wordfree(&exp_result);
-	#endif
+    // escape quote character
+    replaceAll(path, "'", "'\\''");
+    // add quotes to handle special characters like parentheses and spaces
+    wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
+    path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
+    wordfree(&exp_result);
+  #endif
 #endif
 #endif
 
