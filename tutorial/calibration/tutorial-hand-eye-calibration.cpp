@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
       return EXIT_SUCCESS;
     }
   }
-  if (ndata <= 0) {
+  if (ndata == 0) {
     std::cout << "Number of data to process not specified" << std::endl;
     std::cout << argv[0] << " --help" << std::endl;
     return EXIT_SUCCESS;
