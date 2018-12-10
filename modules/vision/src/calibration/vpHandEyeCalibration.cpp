@@ -993,9 +993,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       resPos = vpHandEyeCalibration::calibrationErrVVS(cMo, rMe, eMc, errVVS);
       if (resPos < vmin)
       {
-        vmin = resPos;
         eMcMin = eMc;
 #if DEBUG_LEVEL1
+        vmin = resPos;
         He_method = HE_PROCRUSTES_NT;
 #endif
       }
