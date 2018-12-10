@@ -53,6 +53,7 @@
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
 #  include <opencv2/imgproc/imgproc.hpp>
+#  include <opencv2/calib3d/calib3d.hpp>
 #endif
 
 /*!
