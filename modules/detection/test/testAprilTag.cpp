@@ -207,7 +207,7 @@ std::ostream &operator<<(std::ostream &os, TagGroundTruth &t)
 int main(int argc, const char *argv[])
 {
   try {
-    std::string env_ipath = "";
+    std::string env_ipath;
     std::string opt_ipath = "";
     std::string opt_ppath = "";
     std::string ipath = "";
