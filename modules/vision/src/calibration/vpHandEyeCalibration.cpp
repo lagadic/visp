@@ -854,8 +854,7 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
 #endif
   vpHomogeneousMatrix eMcMin = eMc;  // best initial estimation for VSS
   // Method using Old Tsai implementation
-  int err = -1;
-  err = vpHandEyeCalibration::calibrationRotationTsaiOld(cMo, rMe, eRc);
+  int err = vpHandEyeCalibration::calibrationRotationTsaiOld(cMo, rMe, eRc);
   if (err != 0) printf("\n Problem in solving Hand-Eye Rotation by Old Tsai method \n");
   else
   {
