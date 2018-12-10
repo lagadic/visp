@@ -130,14 +130,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     if (stop) {
       unsigned int nb_joint_stop = 0;
-      static int cpt_dbg = 0;
       const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
         }
       }
-      cpt_dbg ++;
 
       if (nb_joint_stop == 7) {
         if (! log_folder.empty()) {
@@ -256,14 +254,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     if (stop) {
       unsigned int nb_joint_stop = 0;
-      static int cpt_dbg = 0;
       const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
         }
       }
-      cpt_dbg ++;
       if (nb_joint_stop == 7) {
         if (! log_folder.empty()) {
           log_time.close();
@@ -313,7 +309,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
         robot->automaticErrorRecovery();
         if (attempt == nbAttempts)
-          throw e;
+          throw;
       }
     }
     break;
@@ -334,7 +330,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
         robot->automaticErrorRecovery();
         if (attempt == nbAttempts)
-          throw e;
+          throw;
       }
     }
     break;
