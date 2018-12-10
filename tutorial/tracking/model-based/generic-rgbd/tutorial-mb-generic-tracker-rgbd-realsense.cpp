@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
   vpImage<unsigned char> I_depth(height, width);
   vpImage<uint16_t> I_depth_raw(height, width);
 
-  unsigned int _posx = 100, _posy = 50, _posdx = 10;
+  unsigned int _posx = 100, _posy = 50;
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d1, d2;
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
   if (use_edges || use_klt)
     d1.init(I_gray, _posx, _posy, "Color stream");
   if (use_depth)
-    d2.init(I_depth, _posx + I_gray.getWidth()+_posdx, _posy, "Depth stream");
+    d2.init(I_depth, _posx + I_gray.getWidth()+10, _posy, "Depth stream");
 
   while (true) {
     realsense.acquire((unsigned char *) I_color.bitmap, (unsigned char *) I_depth_raw.bitmap, NULL, NULL);
@@ -282,8 +282,6 @@ int main(int argc, char *argv[])
       vpIoTools::makeDirectory(vpIoTools::getParent(learning_data));
   }
 
-  bool quit = false;
-  bool learn_position = false;
   vpHomogeneousMatrix cMo;
   std::vector<double> times_vec;
   double loop_t = 0;
@@ -296,6 +294,8 @@ int main(int argc, char *argv[])
   try {
     //To be able to display keypoints matching with test-detection-rs2
     int learn_id = 1;
+    bool quit = false;
+    bool learn_position = false;
     while (!quit) {
       double t = vpTime::measureTimeMs();
       bool tracking_failed = false;
