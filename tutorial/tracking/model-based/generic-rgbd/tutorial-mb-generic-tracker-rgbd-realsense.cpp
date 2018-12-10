@@ -282,9 +282,6 @@ int main(int argc, char *argv[])
       vpIoTools::makeDirectory(vpIoTools::getParent(learning_data));
   }
 
-  vpHomogeneousMatrix cMo;
-  std::vector<double> times_vec;
-  double loop_t = 0;
 
   bool run_auto_init = false;
   if (auto_init) {
@@ -296,6 +293,10 @@ int main(int argc, char *argv[])
     int learn_id = 1;
     bool quit = false;
     bool learn_position = false;
+    double loop_t = 0;
+    vpHomogeneousMatrix cMo;
+    std::vector<double> times_vec;
+
     while (!quit) {
       double t = vpTime::measureTimeMs();
       bool tracking_failed = false;
