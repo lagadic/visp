@@ -356,7 +356,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
   initialized by Dementhon approach
   - vpPose::LAGRANGE_VIRTUAL_VS: Non linear virtual visual servoing approach
   initialized by Lagrange approach
-  - vpPose::RANSAC: Robust Ransac aproach (does't need an initialization)
+  - vpPose::RANSAC: Robust Ransac aproach (doesn't need an initialization)
 
 */
 bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))

@@ -80,12 +80,12 @@ class VISP_EXPORT vpPose
 public:
   //! Methods that could be used to estimate the pose from points.
   typedef enum {
-    LAGRANGE,             /*!< Linear Lagrange approach (does't need an initialization) */
-    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization) */
+    LAGRANGE,             /*!< Linear Lagrange approach (doesn't need an initialization) */
+    DEMENTHON,            /*!< Linear Dementhon aproach (doesn't need an initialization) */
     LOWE,                 /*!< Lowe aproach based on a Levenberg Marquartd non linear
                              minimization scheme that needs an initialization from Lagrange or
                              Dementhon aproach */
-    RANSAC,               /*!< Robust Ransac aproach (does't need an initialization) */
+    RANSAC,               /*!< Robust Ransac aproach (doesn't need an initialization) */
     LAGRANGE_LOWE,        /*!< Non linear Lowe aproach initialized by Lagrange
                              approach */
     DEMENTHON_LOWE,       /*!< Non linear Lowe aproach initialized by Dementhon
