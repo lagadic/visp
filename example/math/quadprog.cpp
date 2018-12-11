@@ -110,7 +110,7 @@ int main (int argc, char **argv)
   vpQuadProg qp_WS;
 
   // timing
-  int total = 1000;
+  int total = 100;
   double t, t_WS(0), t_noWS(0);
   const double eps = 1e-2;
 
@@ -120,10 +120,8 @@ int main (int argc, char **argv)
     plot = new QPlot(1, total, {"time to solveQP", "warm start"});
 #endif
 
-  std::cout << "Start first loop" << std::endl;
   for(int k = 0; k < total; ++k)
   {
-    std::cout << "Iter " << k << std::endl;
     // reset active set at some point
     if(k == total/2)
       qp_WS.resetActiveSet();
