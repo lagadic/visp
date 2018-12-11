@@ -4,7 +4,8 @@ os:
   - linux
   - osx
 
-#osx_image: xcode10.1
+# Set Xcode version to 10.1 (default is 9.4)
+osx_image: xcode10.1
 
 env:
   - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}
@@ -34,10 +35,17 @@ before_install:
   # To force the link and overwrite all conflicting files:
   # brew link --overwrite gcc
   # Work around before caling brew install opencv
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install gcc || brew link --overwrite gcc; fi"
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew upgrade; fi"
+  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
+  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install gcc || brew link --overwrite gcc; fi"
+  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew upgrade; fi"
   # end work around
+  # Work around for issue:
+  # dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
+  # Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
+  # Reason: image not found
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install glog; fi"
+  # end work around
+
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install tesseract; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then export OpenCV_DIR=/usr/local/opt/opencv; fi"
