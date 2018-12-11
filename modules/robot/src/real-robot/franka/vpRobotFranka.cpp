@@ -640,7 +640,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
         m_handler->automaticErrorRecovery();
         if (attempt == nbAttempts)
-          throw e;
+          throw;
       }
     }
   }

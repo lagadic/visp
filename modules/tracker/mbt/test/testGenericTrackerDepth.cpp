@@ -212,7 +212,7 @@ namespace
 int main(int argc, const char *argv[])
 {
   try {
-    std::string env_ipath = "";
+    std::string env_ipath;
     std::string opt_ipath = "";
     bool opt_click_allowed = true;
     bool opt_display = true;

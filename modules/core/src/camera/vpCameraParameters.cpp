@@ -409,7 +409,7 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const {
 
   std::vector<vpColVector>::const_iterator it1 = fovNormals.begin();
   std::vector<vpColVector>::const_iterator it2 = c.fovNormals.begin();
-  for (; it1 != fovNormals.end() && it2 != c.fovNormals.end(); it1++, it2++) {
+  for (; it1 != fovNormals.end() && it2 != c.fovNormals.end(); ++it1, ++it2) {
     if (*it1 != *it2)
       return false;
   }

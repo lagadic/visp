@@ -16,7 +16,6 @@ bool record_helper(const std::string &opt_seqname, int opt_record_mode,
                   const vpImage<unsigned char> &I)
 {
   static bool start_record = false;
-  static unsigned int counter = 1;
   static std::string text_record_mode = std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
 
   if (! opt_seqname.empty()) {
@@ -55,6 +54,7 @@ bool record_helper(const std::string &opt_seqname, int opt_record_mode,
     }
   }
   if (start_record) {
+    static unsigned int counter = 1;
     char filename[FILENAME_MAX];
     sprintf(filename, opt_seqname.c_str(), counter);
     {

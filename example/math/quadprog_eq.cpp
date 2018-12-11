@@ -114,7 +114,7 @@ int main (int argc, char **argv)
 
   // timing
   int total = 1000;
-  double t, t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
+  double t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
@@ -134,7 +134,7 @@ int main (int argc, char **argv)
     // solve only equalities
     // without warm start
     x = 0;
-    t = vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     vpQuadProg::solveQPe(Q, r, A, b, x);
 
     t_noWS += vpTime::measureTimeMs() - t;
