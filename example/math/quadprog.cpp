@@ -110,7 +110,7 @@ int main (int argc, char **argv)
   vpQuadProg qp_WS;
 
   // timing
-  int total = 1000;
+  int total = 100;
   double t_WS(0), t_noWS(0);
   const double eps = 1e-2;
 
