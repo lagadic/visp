@@ -51,7 +51,8 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then export OpenCV_DIR=/usr/local/opt/opencv; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install libxml2 libdc1394 gsl; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install ant; fi"
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then ls usr/local/opt/glog/lib/libglog*; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then ls /usr/local/opt/; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then ls /usr/local/opt/glog/lib/libglog*; fi"
   
   # Get libs for Linux
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get update -qq; fi"
