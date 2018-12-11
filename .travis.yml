@@ -67,8 +67,7 @@ before_script:
   # Show 3rd parties that are detected
   - cat ViSP-third-party.txt
   # debug
-  - ls /usr/local/opt/glog
-  - ls /usr/local/opt/glog/lib/libglog*
+  - ls /usr/local/opt
 
 script: 
   - make
