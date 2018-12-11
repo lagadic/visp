@@ -43,7 +43,7 @@ before_install:
   # dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
   # Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
   # Reason: image not found
-  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install clog; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install glog; fi"
   # end work around
 
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv; fi"
