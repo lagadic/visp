@@ -35,15 +35,15 @@ before_install:
   # To force the link and overwrite all conflicting files:
   # brew link --overwrite gcc
   # Work around before caling brew install opencv
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install gcc || brew link --overwrite gcc; fi"
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew upgrade; fi"
+  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
+  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install gcc || brew link --overwrite gcc; fi"
+  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew upgrade; fi"
   # end work around
   # Work around for issue:
   # dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
   # Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
   # Reason: image not found
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install clog; fi"
+  #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install clog; fi"
   # end work around
 
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv; fi"
@@ -51,6 +51,7 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then export OpenCV_DIR=/usr/local/opt/opencv; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install libxml2 libdc1394 gsl; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install ant; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then ls usr/local/opt/glog/lib/libglog*; fi"
   
   # Get libs for Linux
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get update -qq; fi"
