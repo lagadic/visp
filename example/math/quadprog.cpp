@@ -120,8 +120,10 @@ int main (int argc, char **argv)
     plot = new QPlot(1, total, {"time to solveQP", "warm start"});
 #endif
 
+  std::cout << "Start first loop" << std::endl;
   for(int k = 0; k < total; ++k)
   {
+    std::cout << "Iter " << k << std::endl;
     // reset active set at some point
     if(k == total/2)
       qp_WS.resetActiveSet();
