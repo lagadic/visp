@@ -66,6 +66,9 @@ before_script:
   - cmake ..
   # Show 3rd parties that are detected
   - cat ViSP-third-party.txt
+  # debug
+  - ls /usr/local/opt/glog
+  - ls /usr/local/opt/glog/lib/libglog*
 
 script: 
   - make
