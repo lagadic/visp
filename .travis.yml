@@ -4,7 +4,8 @@ os:
   - linux
   - osx
 
-#osx_image: xcode10.1
+# Set Xcode version to 10.1 (default is 9.4) 
+osx_image: xcode10.1
 
 env:
   - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}
