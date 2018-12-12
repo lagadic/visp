@@ -1,139 +1,190 @@
 /**
 
-\page tutorial-install-win10-msvc14-uwp Tutorial: Installation from source for UWP with Visual C++ 2015 (vc14)
+\page tutorial-install-win10-msvc14-uwp Tutorial: Cross-compilation for UWP from Windows host with Visual C++ 2015 (vc14)
 \tableofcontents
 
 In this tutorial you will learn how to build ViSP framework for Universal Windows Platform (UWP) to include ViSP functionalities in apps developments that target a wide range of devices including PC, mobile, Xbox, HoloLens, IoT, and Surface Hub. 
 
-This tutorial has been tested on Windows 10 (64 bit), with CMake 3.7.1 and Visual Studio Community 2015 and is only working since ViSP 3.0.1.
+This tutorial has been tested on Windows 10 (64 bit), with CMake 3.13.1 and Visual Studio 2015.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section tutorial_install_msvc14_uwp_required Install required software
+\section tutorial_install_msvc14_uwp_required Install prerequisites
 
-- CMake last version that could be download at http://www.cmake.org
-- <a href="https://www.visualstudio.com/downloads/">Visual Studio Community 2015</a>. Make sure that the Universal Windows App Development Tools are selected from the optional features list. Without these tools, you won't be able to create your universal apps. After the installation, start Visual Studio and create an empty C++ project to install the common tools for Visual C++ 2015.
+\subsection install_msvc14_uwp_msvc Visual Studio
+
+Install Visual Studio 2015. Make sure that the Universal Windows App Development Tools are selected from the optional features list. Without these tools, you won't be able to create your universal apps. After the installation, start Visual Studio and create an empty C++ project to install the common tools for Visual C++ 2015.
 
 \note If you have already Visual Studio 2015 installed and don't know if the Universal Windows App Development Tools are enabled see \ref install_msvc14_uwp_tips_msvc.
 
 After installing Visual Studio software, you need to <a href="https://msdn.microsoft.com/windows/uwp/get-started/enable-your-device-for-development">enable your Windows 10 device</a> for development. 
 
+\subsection install_msvc14_uwp_3rd_cmake CMake
+
+CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform (at the time this tuto was written it was the file `cmake-3.13.1-win64-x64.msi`). To install just double click on the msi file.
+
+\subsection install_msvc14_uwp_3rd_git Git
+
+Install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git in a `cmd` Command Prompt.
+
 \section install_msvc14_uwp_ws Create a workspace
 
-First create a workspace that will contain all ViSP and optional 3rd parties. This workspace is here set to \c C:\\workspace folder, but it could be set to any other location.
-To create the workspace:
-- Open a \c cmd terminal (in your "Start" menu click on "Run" and type in \c cmd.exe) and run:
+If not already done, create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `C:\visp-ws` folder, but it could be set to any other location.
+
+To create the workspace, open a `cmd` Command Prompt (a fast way to launch this window is to press the Win + R keys on your keyboard. Then, type `cmd` or `cmd.exe` and press Enter or click/tap OK) and run the following to create a workspace environment var named `VISP_WS`:
 \code
-C:\> mkdir C:\workspace
+C:\> setx VISP_WS "C:\visp-ws"
+C:\> exit
+\endcode
+Open a new `cmd` Command Prompt and create the corresponding folder
+\code
+C:\> mkdir %VISP_WS%
+C:\> exit
 \endcode
 
 \section install_msvc14_uwp_get_visp_source Get ViSP source code
 
 There are different ways to get ViSP source code.
 
-- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once visp-x.y.z.tar.gz or visp-x.y.z.zip is downloaded, uncompress the file in `C:\workspace\visp\visp-x.y.z`.
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for axample <a href="http://www.win-rar.com">WinRAR</a>.
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `C:\workspace\visp\visp-x.y.z`.
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for axample <a href="http://www.win-rar.com">WinRAR</a>.
 
-- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the git command line (see \ref install_win7_tip_git):
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the `git` command line tool:
 \code
-C:\> mkdir C:\workspace\visp
-C:\> cd C:\workspace\visp
+C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in `C:\workspace\visp\visp`. 
-
-Next we suggest to first build ViSP without OpenCV.
+We suppose now that ViSP source is in `%%VISP_WS%\visp`. 
 
 \section install_msvc14_uwp_build_without_opencv Build ViSP
 
 \subsection install_msvc14_uwp_build_ws_10 Build for Windows Store 10.0
 
-- Configure ViSP build for Windows Store 10 targeting a x86 platform, by opening a cmd terminal and running: 
+\subsubsection install_msvc14_uwp_build_ws_10_x86 Targetting a x86 platform
+
+With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version `"10"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running: 
 \code
-C:\> cd C:\workspace\visp
-C:\> md visp-build-vc14-uwp-ws-10
-C:\> cd visp-build-vc14-uwp-ws-10
-C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 ../visp
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-ws-10-x86
+C:\> cd visp-build-vc14-uwp-ws-10-x86
+C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-ws-10-install ..\visp
+C:\> cmake --build . --config Release --target install
 \endcode
 
-- To build ViSP just double click on `C:/workspace/visp/visp-build-vc14-uwp-ws-10/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-10-install` folder. Libraries are located in `x86/vc14/bin` subfolder and headers in `include` subfolder.
 
-- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-vc14-uwp-ws-10/install` folder. 
+\subsubsection install_msvc14_uwp_build_ws_10_x64 Targetting a x64 platform
+
+The same process could be applied except that during cmake configuration you have to use `"Visual Studio 14 2015 Win64"` generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
+
+\code
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-ws-10-x64
+C:\> cd visp-build-vc14-uwp-ws-10-x64
+C:\> cmake.exe -G "Visual Studio 14 2015 Win64" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-ws-10-install ..\visp
+C:\> cmake --build . --config Release --target install
+\endcode
+
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-10-install` folder. Libraries are located in `x64/vc14/bin` subfolder and headers in `include` subfolder.
+
+\subsubsection install_msvc14_uwp_build_ws_10_arm Targetting an ARM platform
+
+The same process could be applied except that during cmake configuration you have to use `"Visual Studio 14 2015 ARM"` generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
+
+\code
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-ws-10-arm
+C:\> cd visp-build-vc14-uwp-ws-10-arm
+C:\> cmake.exe -G "Visual Studio 14 2015 ARM" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc15-uwp-ws-10-install ..\visp
+C:\> cmake --build . --config Release --target install
+\endcode
+
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-10-install` folder. Libraries are located in `ARM/vc14/bin` subfolder and headers in `include` subfolder.
+
 
 \subsection install_msvc14_uwp_build_ws_8_1 Build for Windows Store 8.1
 
-- Configure ViSP build for Windows Store 8.1 targeting a x86 platform, by opening a cmd terminal and running: 
+\subsubsection install_msvc14_uwp_build_ws_8_1_x86 Targetting a x86 platform
+
+With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version `"8.1"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running: 
 \code
-C:\> cd C:\workspace\visp
-C:\> md visp-build-vc14-uwp-ws-8.1
-C:\> cd visp-build-vc14-uwp-ws-8.1
-C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="8.1" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 ../visp
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-ws-8.1-x86
+C:\> cd visp-build-vc14-uwp-ws-8.1-x86
+C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="8.1" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-ws-8.1-install ..\visp
+C:\> cmake --build . --config Release --target install
 \endcode
 
-- To build ViSP just double click on `C:/workspace/visp/visp-build-vc14-uwp-ws-8.1/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install` folder. Libraries are located in `x86/vc14/bin` subfolder and headers in `include` subfolder.
 
-- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-vc14-uwp-ws-8.1/install` folder.
+\subsubsection install_msvc14_uwp_build_ws_8_1_x64 Targetting a x64 platform
+
+With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version `"8.1"` targeting a `"x64"` platform, by opening a `cmd` Command Prompt and running: 
+\code
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-ws-8.1-x64
+C:\> cd visp-build-vc14-uwp-ws-8.1-x64
+C:\> cmake.exe -G "Visual Studio 14 2015 Win64" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="8.1" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-ws-8.1-install ..\visp
+C:\> cmake --build . --config Release --target install
+\endcode
+
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install` folder. Libraries are located in `x64/vc14/bin` subfolder and headers in `include` subfolder.
+
+\subsubsection install_msvc14_uwp_build_ws_8_1_arm Targetting an ARM platform
+
+With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version `"8.1"` targeting a `"ARM"` platform, by opening a `cmd` Command Prompt and running: 
+\code
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-ws-8.1-arm
+C:\> cd visp-build-vc14-uwp-ws-8.1-arm
+C:\> cmake.exe -G "Visual Studio 14 2015 ARM" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="8.1" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-ws-8.1-install ..\visp
+C:\> cmake --build . --config Release --target install
+\endcode
+
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-ws-8.1-install` folder. Libraries are located in `ARM/vc14/bin` subfolder and headers in `include` subfolder.
 
 \subsection install_msvc14_uwp_build_wp_8_1 Build for Windows Phone 8.1
 
-- Configure ViSP build for Windows Phone 8.1 targeting a x86 platform, by opening a cmd terminal and running: 
+\subsubsection install_msvc14_uwp_build_wp_8_1_x86 Targetting a x86 platform
+
+With CMake configure ViSP specifying options for cross compiling for `"Windows Phone"` operating system in version `"8.1"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running: 
 \code
-C:\> cd C:\workspace\visp
-C:\> md visp-build-vc14-uwp-wp-8.1
-C:\> cd visp-build-vc14-uwp-wp-8.1
-C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsPhone -DCMAKE_SYSTEM_VERSION:String="8.1" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 ../visp
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-wp-8.1-x86
+C:\> cd visp-build-vc14-uwp-wp-8.1-x86
+C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsPhone -DCMAKE_SYSTEM_VERSION:String="8.1" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-wp-8.1-install ..\visp
+C:\> cmake --build . --config Release --target install
 \endcode
 
-- To build ViSP just double click on `C:/workspace/visp/visp-build-vc14-uwp-wp-8.1/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install` folder. Libraries are located in `x86/vc14/bin` subfolder and headers in `include` subfolder.
 
-- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-vc14-uwp-wp-8.1/install` folder. 
+\subsubsection install_msvc14_uwp_build_wp_8_1_x64 Targetting a x64 platform
 
-Now if you want that ViSP benefits from OpenCV functionalities, you can follow the next section.
-
-\section install_msvc14_uwp_build_with_opencv Build ViSP with OpenCV
-
-\note The following steps are given for Windows Store 10.0 targetting a x86 platform. They need to be adapted to your use case.
-
-Building ViSP with OpenCV as 3rd party needs first to succeed in building OpenCV for UWP. As of writing on January 2017, the way is to use Microsoft fork <a href="https://github.com/Microsoft/opencv">https://github.com/Microsoft/opencv</a> and branch \c vs2015-samples.
-
-- Get OpenCV source code
+With CMake configure ViSP specifying options for cross compiling for `"Windows Phone"` operating system in version `"8.1"` targeting a `"x64"` platform, by opening a `cmd` Command Prompt and running: 
 \code
-C:\> md C:\workspace\opencv
-C:\> cd C:\workspace\opencv
-C:\> git clone https://github.com/Microsoft/opencv.git
-C:\> cd opencv
-C:\> git checkout vs2015-samples
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-wp-8.1-x64
+C:\> cd visp-build-vc14-uwp-wp-8.1-x64
+C:\> cmake.exe -G "Visual Studio 14 2015 Win64" -DCMAKE_SYSTEM_NAME:String=WindowsPhone -DCMAKE_SYSTEM_VERSION:String="8.1" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-wp-8.1-install ..\visp
+C:\> cmake --build . --config Release --target install
 \endcode
 
-- Download <a href="http://visp-doc.inria.fr/download/opencv/patch/opencv-microsoft-branch-vs2015-samples-patch.diff">opencv-microsoft-branch-vs2015-samples-patch.diff</a> patch and save it in `C:\workspace` folder. This patch allows to add \c /WZ compiler option when building highgui and videoio modules.
-- Modify the source code applying the patch
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install` folder. Libraries are located in `x64/vc14/bin` subfolder and headers in `include` subfolder.
+
+\subsubsection install_msvc14_uwp_build_wp_8_1_arm Targetting an ARM platform
+
+With CMake configure ViSP specifying options for cross compiling for `"Windows Phone"` operating system in version `"8.1"` targeting a `"ARM"` platform, by opening a `cmd` Command Prompt and running: 
 \code
-C:\> cd C:\workspace\opencv\opencv
-C:\> git apply --ignore-space-change --ignore-whitespace ..\opencv-microsoft-branch-vs2015-samples-patch.diff
+C:\> cd %VISP_WS%
+C:\> mkdir visp-build-vc14-uwp-wp-8.1-arm
+C:\> cd visp-build-vc14-uwp-wp-8.1-arm
+C:\> cmake.exe -G "Visual Studio 14 2015 ARM" -DCMAKE_SYSTEM_NAME:String=WindowsPhone -DCMAKE_SYSTEM_VERSION:String="8.1" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc14-uwp-wp-8.1-install ..\visp
+C:\> cmake --build . --config Release --target install
 \endcode
 
-- Configure OpenCV build. The following command is for Windows Store 10.0 targetting a x86 platform but could be easily adapted:
-\code
-C:\> cd C:\workspace\opencv
-C:\> md opencv-build-vc14-uwp-ws-10.0
-C:\> cd opencv-build-vc14-uwp-ws-10.0
-C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86  -DBUILD_opencv_ts=OFF ../opencv
-\endcode
-
-- Open `C:/workspace/opencv/opencv-build-vc14-uwp-ws-10/opencv.sln` file with Visual Studio 2015, build and install all the solution
-
-- If everything goes right you will find OpenCV libraries and headers in `C:/workspace/opencv/opencv-build-vc14-uwp-ws-10/install` folder.
-
-Now you can use OpenCV as third-party and configure ViSP in order to use OpenCV. To this end modify the cmake command that was used to \ref install_msvc14_uwp_build_without_opencv by adding `-DOpenCV_DIR=C:\workspace\opencv\opencv-build-vc14-uwp-ws-10\install` option to cmake command line:
-
-\code
-C:\> cd C:\workspace\visp\visp-build-vc14-uwp-ws-10
-C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 -DOpenCV_DIR=C:/workspace/opencv/opencv-build-vc14-uwp-ws-10/install ../visp
-\endcode
-
-As described in \ref install_msvc14_uwp_build_without_opencv, open again ViSP solution file, build and install ViSP.
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc14-uwp-wp-8.1-install` folder. Libraries are located in `ARM/vc14/bin` subfolder and headers in `include` subfolder.
 
 \section install_msvc14_uwp_tips Tips and tricks
 \subsection install_msvc14_uwp_tips_msvc How to add Universal Windows App Development Tools support
