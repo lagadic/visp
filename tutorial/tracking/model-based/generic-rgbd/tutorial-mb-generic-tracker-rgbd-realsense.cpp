@@ -287,6 +287,7 @@ int main(int argc, char *argv[])
   if (auto_init) {
     run_auto_init = true;
   }
+  std::vector<double> times_vec;
 
   try {
     //To be able to display keypoints matching with test-detection-rs2
@@ -295,7 +296,6 @@ int main(int argc, char *argv[])
     bool learn_position = false;
     double loop_t = 0;
     vpHomogeneousMatrix cMo;
-    std::vector<double> times_vec;
 
     while (!quit) {
       double t = vpTime::measureTimeMs();
