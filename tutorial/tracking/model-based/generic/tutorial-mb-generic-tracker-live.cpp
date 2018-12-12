@@ -29,7 +29,7 @@
 
 int main(int argc, char **argv)
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
+#if defined(VISP_HAVE_OPENCV) &&                                 \
     (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
 
   try {
@@ -484,13 +484,13 @@ int main(int argc, char **argv)
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
-#elif (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#elif defined(VISP_HAVE_OPENCV)
   (void) argc;
   (void) argv;
   std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, Realsense2), configure and build ViSP again to use this example" << std::endl;
 #else
   (void) argc;
   (void) argv;
-  std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to use this example" << std::endl;
+  std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this example" << std::endl;
 #endif
 }

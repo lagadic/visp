@@ -2,7 +2,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OPENCV)
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -493,7 +493,7 @@ int main(int argc, char *argv[])
 }
 #elif defined(VISP_HAVE_REALSENSE2)
 int main() {
-  std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to use this example" << std::endl;
+  std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this example" << std::endl;
   return 0;
 }
 #else
