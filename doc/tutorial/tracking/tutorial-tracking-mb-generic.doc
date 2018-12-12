@@ -917,9 +917,9 @@ You should be able to obtain these kind of results:
 \section mb_generic_known_issues Known issues
 \subsection mb_generic_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility check
 
-If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win10-msvc12 :
+If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
+C:\> mbtEdgeTracking.exe -c -o
 ...
 OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
 ...
@@ -930,7 +930,7 @@ and then a wonderful runtime issue as in the next image:
 
 It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
+C:\> mbtEdgeTracking.exe -c -o -w
 \endcode
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg

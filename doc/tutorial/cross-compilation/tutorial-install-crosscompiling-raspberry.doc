@@ -191,7 +191,7 @@ pi@raspberrypi:~ $ make
 
 \section cross_raspberry_tips Tips and tricks
 
-\subsection cross_raspberry_tips_howto_other_toolchain Howto use an other toochain
+\subsection cross_raspberry_tips_howto_other_toolchain How to use an other toochain
 
 The default toolchain used in \c arm-raspberrypi.toolchain.cmake file is the one located in \c $HOME/soft/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin. To set an other toochain, use \c ARM_RASPBERRY_CROSSCHAIN cmake var:
 \code
@@ -203,7 +203,7 @@ Don't forget to update the location of the toolchain in your PATH in \c ~/.bashr
 export PATH=$PATH:$HOME/soft/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
 \endcode
 
-\subsection cross_raspberry_tips_howto_other_rootfs Howto use an other rootfs location
+\subsection cross_raspberry_tips_howto_other_rootfs How to use an other rootfs location
 
 The default rootfs used in \c arm-raspberrypi.toolchain.cmake file is the one located in \c $HOME/soft/raspberrypi/roots. To set an other location, use \c ARM_RASPBERRY_ROOTFS cmake var:
 \code
