@@ -121,6 +121,7 @@ int main()
       return EXIT_FAILURE;
     }
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
     {
       std::cout << "* Compare ViSP and OpenCV point pixel meter conversion without distorsion" << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3,3) << px,  0, u0,
@@ -297,8 +298,8 @@ int main()
                   << "differ from OpenCV result (" << center_p2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
-
     }
+#endif
 
     std::cout << "Test succesful" << std::endl;
     return EXIT_SUCCESS;
