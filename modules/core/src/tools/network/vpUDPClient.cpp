@@ -49,7 +49,9 @@
 #define DWORD int
 #else
 #if defined(__MINGW32__)
-#define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#  endif
 #endif
 #include <Ws2tcpip.h>
 #endif
