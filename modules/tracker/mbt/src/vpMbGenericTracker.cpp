@@ -1103,12 +1103,34 @@ double vpMbGenericTracker::getKltThresholdAcceptation() const { return m_thresho
   \throw vpException::dimensionError if the second parameter does not
   correspond to an used level.
 
-  \param cameraName : Camera name for which we want to get the list of
-  vpMbtDistanceCircle. \param circlesList : The list of the circles of the
-  model. \param level : Level corresponding to the list to return.
+  \param circlesList : The list of the circles of the model.
+  \param level : Level corresponding to the list to return.
 
-  \note Multi-scale moving edge tracking is not possible, scale level=0 must
-  be used.
+  \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
+*/
+void vpMbGenericTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList,
+                                    const unsigned int level) const
+{
+  std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+  if (it != m_mapOfTrackers.end()) {
+    it->second->getLcircle(circlesList, level);
+  } else {
+    std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
+  }
+}
+
+/*!
+  Get the list of the circles tracked for the specified level. Each circle
+  contains the list of the vpMeSite.
+
+  \throw vpException::dimensionError if the second parameter does not
+  correspond to an used level.
+
+  \param cameraName : Camera name for which we want to get the list of vpMbtDistanceCircle.
+  \param circlesList : The list of the circles of the model.
+  \param level : Level corresponding to the list to return.
+
+  \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
                                     const unsigned int level) const
@@ -1128,12 +1150,34 @@ void vpMbGenericTracker::getLcircle(const std::string &cameraName, std::list<vpM
   \throw vpException::dimensionError if the second parameter does not
   correspond to an used level.
 
-  \param cameraName : Camera name for which we want to get the list of
-  vpMbtDistanceCylinder. \param cylindersList : The list of the cylinders of
-  the model. \param level : Level corresponding to the list to return.
+  \param cylindersList : The list of the cylinders of the model.
+  \param level : Level corresponding to the list to return.
 
-  \note Multi-scale moving edge tracking is not possible, scale level=0 must
-  be used.
+  \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
+*/
+void vpMbGenericTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList,
+                                      const unsigned int level) const
+{
+  std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+  if (it != m_mapOfTrackers.end()) {
+    it->second->getLcylinder(cylindersList, level);
+  } else {
+    std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
+  }
+}
+
+/*!
+  Get the list of the cylinders tracked for the specified level. Each cylinder
+  contains the list of the vpMeSite.
+
+  \throw vpException::dimensionError if the second parameter does not
+  correspond to an used level.
+
+  \param cameraName : Camera name for which we want to get the list of vpMbtDistanceCylinder.
+  \param cylindersList : The list of the cylinders of the model.
+  \param level : Level corresponding to the list to return.
+
+  \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *> &cylindersList,
                                       const unsigned int level) const
@@ -1143,6 +1187,32 @@ void vpMbGenericTracker::getLcylinder(const std::string &cameraName, std::list<v
     it->second->getLcylinder(cylindersList, level);
   } else {
     std::cerr << "The camera: " << cameraName << " does not exist!" << std::endl;
+  }
+}
+
+/*!
+  Get the list of the lines tracked for the specified level. Each line
+  contains the list of the vpMeSite.
+
+  \throw vpException::dimensionError if the second parameter does not
+  correspond to an used level.
+
+  \param cameraName : Camera name for which we want to get the list of
+  vpMbtDistanceLine. \param linesList : The list of the lines of the model.
+  \param level : Level corresponding to the list to return.
+
+  \note Multi-scale moving edge tracking is not possible, scale level=0 must
+  be used.
+*/
+void vpMbGenericTracker::getLline(std::list<vpMbtDistanceLine *> &linesList,
+                                  const unsigned int level) const
+{
+  std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+
+  if (it != m_mapOfTrackers.end()) {
+    it->second->getLline(linesList, level);
+  } else {
+    std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
   }
 }
 
@@ -1210,10 +1280,6 @@ void vpMbGenericTracker::getMovingEdge(vpMe &me1, vpMe &me2) const
               << std::endl;
   }
 }
-
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-
-#endif
 
 /*!
   Get the moving edge parameters for all the cameras

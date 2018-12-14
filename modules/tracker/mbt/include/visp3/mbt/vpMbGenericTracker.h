@@ -164,10 +164,13 @@ public:
   virtual double getKltThresholdAcceptation() const;
 #endif
 
+  virtual void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
   virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
                           const unsigned int level = 0) const;
+  virtual void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
   virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *> &cylindersList,
                             const unsigned int level = 0) const;
+  virtual void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
   virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
                         const unsigned int level = 0) const;
 
