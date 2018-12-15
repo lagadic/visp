@@ -308,8 +308,8 @@ macro(visp_add_target file_cpp)
   include_directories(${VISP_INCLUDE_DIRS})
   add_executable(${target} ${file_cpp} ${ARGN})
   target_link_libraries(${target} ${VISP_LIBRARIES})
-    if(POLICY CMP0020)
-  cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+  if(POLICY CMP0020)
+    cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
   endif()
 endmacro()
 
