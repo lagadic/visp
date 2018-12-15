@@ -29,13 +29,28 @@ endif()
 if(VISP_HAVE_PYLON)
   visp_set_source_file_compile_flag(tutorial-grabber-basler-pylon.cpp -Wno-unknown-pragmas -Wno-overloaded-virtual -Wno-unused-parameter)
 endif()
+
 if(VISP_HAVE_REALSENSE)
-  if(UNIX)
-    # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
-    visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp -Wno-pessimizing-move -Wno-unused-parameter)
-  else()
-    visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp /wd4244)
-  endif()
+  # Add specific build flag to turn off warnings coming from librealsense 3rd party
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-pessimizing-move")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+endif()
+if(VISP_HAVE_REALSENSE2)
+  # Add specific build flag to turn off warnings coming from librealsense 3rd party
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-pessimizing-move")
+endif()
+
+if(CXX_FLAGS_MUTE_WARNINGS)
+  # Add specific build flag to turn off warnings
+  visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
 
 foreach(cpp ${tutorial_cpp})
@@ -49,7 +64,3 @@ endforeach()
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-video-reader.cpp ${data})
 endforeach()
-
-if(VISP_HAVE_REALSENSE2)
-    visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter)
-endif()
