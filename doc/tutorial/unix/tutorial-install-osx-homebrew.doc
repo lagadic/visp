@@ -23,6 +23,8 @@ $ echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
 
+- Install XQuartz to get X11. Go to https://www.xquartz.org/, download and install the dmg file. At the time this tutorial was written, we installed `XQuartz-2.7.11.dmg` file.
+
 \section install_brew_ws Create a workspace
 
 First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
