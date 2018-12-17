@@ -113,7 +113,7 @@ int main (int argc, char **argv)
   qp_ineq_WS.setEqualityConstraint(A, b);
 
   // timing
-  int total = 1000;
+  int total = 100;
   double t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
   const double eps = 1e-2;
 
