@@ -77,6 +77,8 @@ if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
     visp_set_source_file_compile_flag(grabRealSense2.cpp /wd4244)
     visp_set_source_file_compile_flag(saveRealSenseData.cpp /wd4244)
   endif()
+else()
+  visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-comment)
 endif()
 
 foreach(cpp ${example_cpp})
