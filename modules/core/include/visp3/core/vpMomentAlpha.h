@@ -56,7 +56,7 @@ parallel to the object.
 
   In general the value of the moment is computed in \f$ [-\pi/2 .. \pi/2] \f$
 interval by the formula \f$ \alpha = \frac{1}{2}
-arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$.
+\mathrm{atan2}(2\mu_{11}, \mu_{20}-\mu_{02}) \f$.
 
   To obtain a \f$ [-\pi .. \pi] \f$ precision for non symetric object, you
 have to specify a reference information. This reference information is an
