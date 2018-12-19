@@ -43,25 +43,25 @@
 
 /*!
   Empty constructor. Initializes alpha moment as a reference alpha with a
-  value in \f$[-\pi/2..\pi/2]\f$. A default-constructed alpha moment may be
+  value in \f$[-\pi/2 ; \pi/2]\f$. A default-constructed alpha moment may be
   used as a reference information for other alphas. A reference alpha is a
-  class harbouring an alpha value computed for a \f$[-\pi/2..\pi/2]\f$ portion
+  class harbouring an alpha value computed for a \f$[-\pi/2 ; \pi/2]\f$ portion
   of the circle.
  */
 vpMomentAlpha::vpMomentAlpha() : isRef(true), symmetric(false), ref(), alphaRef(0.) { values.resize(1); }
 
 /*!
   Common constructor. Initializes alpha moment as a non-reference alpha with a
-  value computed in \f$[-\pi..\pi]\f$. \param ref_ : vector of 3rd order
-  centered moments corresponding to the reference alpha in the following
-  order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$. \param alpha_ref : value
-  of the reference alpha.
+  value computed in \f$[-\pi ; \pi]\f$.
+  \param ref_ : vector of 3rd order centered moments corresponding to the reference alpha in the following
+  order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$.
+  \param alpha_ref : value of the reference alpha.
 */
 vpMomentAlpha::vpMomentAlpha(const std::vector<double> &ref_, double alpha_ref)
   : vpMoment(), isRef(false), symmetric(false), ref(ref_), alphaRef(alpha_ref)
 {
   for (std::vector<double>::const_iterator it = ref_.begin(); it != ref_.end(); ++it)
-    if (std::fabs(*it) <= 1e-4)
+    if (std::fabs(*it) <= 1e6 * std::numeric_limits<double>::epsilon())
       symmetric = true;
 
   values.resize(1);
@@ -82,13 +82,9 @@ void vpMomentAlpha::compute()
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
-  double t = 2.0 * momentCentered.get(1, 1) / (momentCentered.get(2, 0) - momentCentered.get(0, 2));
-  // double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1),
-  // (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
-  double alpha = 0.5 * atan(t);
+  double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1),  (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
 
   std::vector<double> rotMu(4);
-  // std::vector<double> realMu(4);
 
   if (isRef) {
     alphaRef = alpha;
@@ -116,7 +112,6 @@ void vpMomentAlpha::compute()
             }
             r11_k *= r11;
           }
-          // realMu[idx] = momentCentered.get(i, j);
           idx++;
         }
       }
@@ -124,17 +119,18 @@ void vpMomentAlpha::compute()
       double sum = 0.;
       bool signChange = true;
       for (unsigned int i = 0; i < 4; i++) {
-        if (std::fabs(rotMu[i]) > 1e10 * std::numeric_limits<double>::epsilon() &&
-            std::fabs(ref[i]) > 1e10 * std::numeric_limits<double>::epsilon() && rotMu[i] * ref[i] > 0)
+        if (std::fabs(rotMu[i]) > std::numeric_limits<double>::epsilon() &&
+            std::fabs(ref[i]) > std::numeric_limits<double>::epsilon() && rotMu[i] * ref[i] > 0) {
           signChange = false;
+        }
         sum += std::fabs(rotMu[i] * ref[i]);
       }
 
-      if (sum < 1e4 * std::numeric_limits<double>::epsilon())
+      if (sum < std::numeric_limits<double>::epsilon()) {
         signChange = false;
+      }
       if (signChange) {
-        // alpha = alpha + M_PI;
-        if (alpha < 0)
+         if (alpha < 0)
           alpha += M_PI;
         else
           alpha -= M_PI;
