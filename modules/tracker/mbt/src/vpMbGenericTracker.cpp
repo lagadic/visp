@@ -1197,12 +1197,10 @@ void vpMbGenericTracker::getLcylinder(const std::string &cameraName, std::list<v
   \throw vpException::dimensionError if the second parameter does not
   correspond to an used level.
 
-  \param cameraName : Camera name for which we want to get the list of
-  vpMbtDistanceLine. \param linesList : The list of the lines of the model.
+  \param linesList : The list of the lines of the model.
   \param level : Level corresponding to the list to return.
 
-  \note Multi-scale moving edge tracking is not possible, scale level=0 must
-  be used.
+  \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLline(std::list<vpMbtDistanceLine *> &linesList,
                                   const unsigned int level) const
@@ -1223,12 +1221,11 @@ void vpMbGenericTracker::getLline(std::list<vpMbtDistanceLine *> &linesList,
   \throw vpException::dimensionError if the second parameter does not
   correspond to an used level.
 
-  \param cameraName : Camera name for which we want to get the list of
-  vpMbtDistanceLine. \param linesList : The list of the lines of the model.
+  \param cameraName : Camera name for which we want to get the list of vpMbtDistanceLine.
+  \param linesList : The list of the lines of the model.
   \param level : Level corresponding to the list to return.
 
-  \note Multi-scale moving edge tracking is not possible, scale level=0 must
-  be used.
+  \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
                                   const unsigned int level) const

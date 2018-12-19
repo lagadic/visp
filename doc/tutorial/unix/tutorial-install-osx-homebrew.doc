@@ -97,7 +97,7 @@ $ brew install opencv glog lapack eigen libdc1394 libxml2 zbar
 
 - If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300) you may install librealsense 1.12.1 and PCL library using:
 \code
-$ brew install librealsense pcl
+$ brew install librealsense pcl pkg-config
 \endcode
 
 - If you have a rather a Basler camera you may donwload and install Pylon SDK following these <a href="https://visp.inria.fr/3rd_pylon/">instructions</a>.
@@ -519,7 +519,15 @@ Call Stack (most recent call first):
   CMakeLists.txt:589 (VP_OPTION)
 \endcode
 
-This issue comes from PCL 3rd party. The fix consists in modifying `/usr/local/share/pcl-1.9/PCLConfig.cmake` by commenting the following lines:
+This issue comes from PCL 3rd party. The fix consists in installing `pkg-config` and starting a fresh CMake configuration:
+\code
+$ brew install pkg-config
+$ cd $VISP_WS/visp-build
+$ rm -rf *
+$ cmake ../visp
+\endcode
+
+An other solution, but less elegant, would be modifying `/usr/local/share/pcl-1.9/PCLConfig.cmake` by commenting the following lines:
 \code
 #cmake_policy(PUSH)
 #cmake_policy(POP)

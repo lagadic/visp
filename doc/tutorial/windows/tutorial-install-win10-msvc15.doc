@@ -402,7 +402,7 @@ $ cd $VISP_WS/visp-build-msvc15
 $ cmake --build . --config Release --target uninstall
 \endcode
 
-\subsection install__tips_modules How to build only ViSP libraries
+\subsection install_msvc15_tips_modules How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
