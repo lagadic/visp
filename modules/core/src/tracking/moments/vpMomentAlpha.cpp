@@ -82,9 +82,7 @@ void vpMomentAlpha::compute()
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
-  double t = momentCentered.get(2, 0) - momentCentered.get(0, 2);
-  t = t / sqrt(4.0 * momentCentered.get(1, 1) * momentCentered.get(1, 1) + t * t);
-  double alpha = 0.5 * copysign(1, momentCentered.get(1, 1)) * acos(t);
+  double alpha = 0.5 * atan2(2 * momentCentered.get(1, 1), momentCentered.get(2, 0) - momentCentered.get(0, 2));
 
   std::vector<double> rotMu(4);
   // std::vector<double> realMu(4);
