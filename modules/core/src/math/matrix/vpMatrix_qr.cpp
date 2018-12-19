@@ -52,7 +52,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
@@ -240,7 +239,6 @@ vpMatrix vpMatrix::inverseByQRLapack() const
   return C;
 }
 #endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition.

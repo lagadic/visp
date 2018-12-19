@@ -201,7 +201,6 @@ double vpMatrix::detByLU() const
   }
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if defined(VISP_HAVE_GSL)
 /*!
@@ -635,5 +634,3 @@ double vpMatrix::detByLUEigen3() const
   return M.determinant();
 }
 #endif
-
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -48,8 +48,6 @@
 #include <iostream>
 #include <limits> // numeric_limits
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/SVD>
 #endif
@@ -470,5 +468,3 @@ void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
   U_ = svd.matrixU();
 }
 #endif
-
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

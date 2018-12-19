@@ -115,8 +115,6 @@ vpMatrix vpMatrix::inverseByCholesky() const
 #endif
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifdef VISP_HAVE_LAPACK
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition with
@@ -239,5 +237,3 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
   return A;
 }
 #endif
-
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
