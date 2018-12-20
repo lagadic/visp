@@ -648,7 +648,7 @@ int main(int argc, const char **argv)
     vpXmlParser::cleanup();
 #endif
 
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     // Cleanup memory allocated by Coin library used to load a vrml model in
     // vpMbGenericTracker::loadModel() We clean only if Coin was used.
     if (!cao3DModel)

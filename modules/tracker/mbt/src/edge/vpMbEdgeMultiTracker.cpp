@@ -1840,7 +1840,7 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::map<std::string, std::strin
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }

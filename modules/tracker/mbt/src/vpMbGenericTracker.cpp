@@ -2172,7 +2172,7 @@ void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string>
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }
@@ -2211,7 +2211,7 @@ void vpMbGenericTracker::loadModel(const std::string &modelFile, const bool verb
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }
@@ -2261,7 +2261,7 @@ void vpMbGenericTracker::loadModel(const std::string &modelFile1, const std::str
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }

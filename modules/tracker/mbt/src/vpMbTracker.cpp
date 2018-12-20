@@ -1129,7 +1129,7 @@ void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }
@@ -1186,7 +1186,7 @@ are extracted from the vrml file.
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }
