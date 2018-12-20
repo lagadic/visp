@@ -63,8 +63,8 @@ int main()
 
   vpImage<unsigned char> I;
 
-  // Compure reference alpha for image arror-0deg.png
-  vpImageIo::read(I, "arrow-0deg.png");
+  // Compure reference alpha for image arror-0deg.pgm
+  vpImageIo::read(I, "arrow-0deg.pgm");
   vpMomentObject obj(3);
   obj.setType(vpMomentObject::DENSE_FULL_OBJECT);
   obj.fromImage(I, 127, vpCameraParameters());    // Init the dense object with the image
@@ -85,7 +85,7 @@ int main()
 
   for(size_t i = 0; i < vec_angle.size(); i++) {
     std::stringstream ss;
-    ss << "arrow-" << vec_angle[i] << "deg.png";
+    ss << "arrow-" << vec_angle[i] << "deg.pgm";
     vpImage<unsigned char> I;
     //std::cout << "Process image " << ss.str() << std::endl;
     vpImageIo::read(I, ss.str());
@@ -120,5 +120,6 @@ int main()
       return EXIT_FAILURE;
     }
   }
+  std::cout << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
 }

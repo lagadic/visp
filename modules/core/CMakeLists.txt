@@ -265,4 +265,4 @@ vp_create_compat_headers("include/visp3/core/vpConfig.h")
 vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui)
 
 # copy robot and wireframe simulator data
-vp_glob_module_copy_data("test/math/data/arrow*.png" "modules/core")
+vp_glob_module_copy_data("test/math/data/arrow*.pgm" "modules/core")
