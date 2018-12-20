@@ -1456,25 +1456,22 @@ void vpRobotViper650::getPosition(const vpRobot::vpControlFrameType frame, vpCol
     return;
   }
   case vpRobot::REFERENCE_FRAME: {
-    Try(PrimitiveACQ_POS_C_Viper650(position.data, &timestamp));
-    //    vpCTRACE << "Get cartesian position " << position.t() << std::endl;
-    // 1=tx, 2=ty, 3=tz in meters; 4=Rz 5=Ry 6=Rz in deg
-    // Convert Euler Rzyz angles from deg to rad
-    for (unsigned int i = 3; i < 6; i++)
-      position[i] = vpMath::rad(position[i]);
-    // Convert Rzyz angles into Rxyz representation
-    vpRzyzVector rzyz(position[3], position[4], position[5]);
-    vpRotationMatrix R(rzyz);
-    vpRxyzVector rxyz(R);
+    vpColVector q(njoint);
+    Try(PrimitiveACQ_POS_J_Viper650(q.data, &timestamp));
 
-    // Update the position using Rxyz representation
-    for (unsigned int i = 0; i < 3; i++)
-      position[i + 3] = rxyz[i];
-    //     vpCTRACE << "Cartesian position Rxyz (deg)"
-    // 	     << position[0] << " " << position[1] << " " << position[2] << " "
-    // 	     << vpMath::deg(position[3]) << " "
-    // 	     << vpMath::deg(position[4]) << " "
-    // 	     << vpMath::deg(position[5]) << std::endl;
+    // Compute fMc
+    vpHomogeneousMatrix fMc = vpViper650::get_fMc(q);
+
+    // From fMc extract the pose
+    vpRotationMatrix fRc;
+    fMc.extract(fRc);
+    vpRxyzVector rxyz;
+    rxyz.buildFrom(fRc);
+
+    for (unsigned int i = 0; i < 3; i++) {
+      position[i] = fMc[i][3];   // translation x,y,z
+      position[i + 3] = rxyz[i]; // Euler rotation x,y,z
+    }
 
     break;
   }
