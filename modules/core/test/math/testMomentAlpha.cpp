@@ -80,7 +80,11 @@ int main()
   mc.compute();                                   // Compute centered moments AFTER gravity center
   malpha_ref.compute();                           // Compute centered moments AFTER gravity center
 
-  std::vector<double> mu_ref = {mc.get(3,0), mc.get(2,1), mc.get(1,2), mc.get(0,3)};
+  std::vector<double> mu_ref;
+  mu_ref.push_back(mc.get(3,0));
+  mu_ref.push_back(mc.get(2,1));
+  mu_ref.push_back(mc.get(1,2));
+  mu_ref.push_back(mc.get(0,3));
   double alpha_ref = malpha_ref.get();
 
   for(size_t i = 0; i < vec_angle.size(); i++) {
