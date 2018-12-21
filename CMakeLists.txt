@@ -549,8 +549,13 @@ if(NOT USE_CXX11 AND CXX11_FOUND)
 endif()
 
 VP_OPTION(USE_SOWIN       SOWIN       ""    "Include Coin/SoWin support"   "" OFF IF (WIN32 AND USE_COIN3D) AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_SOQT        SOQT        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
+# Check for SoQt 1.6.0 linked to Qt5
+VP_OPTION(USE_SOQT        SoQt        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
+if(NOT SoQt_FOUND)
+  # Check for SoQt older versions linked to Qt4
+  VP_OPTION(USE_SOQT      SOQT        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
+  VP_OPTION(USE_QT        Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
+endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
 if (ANDROID)
   VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON)
@@ -914,7 +919,7 @@ if(USE_OPENCV)
 endif()
 
 # coin and gui
-if(USE_SOWIN OR USE_SOXT OR (USE_SOQT AND USE_QT))
+if(USE_SOWIN OR USE_SOXT OR (USE_SOQT AND SoQt_FOUND) OR (USE_SOQT AND USE_QT))
   set(VISP_HAVE_COIN3D_AND_GUI TRUE)         # for header vpConfig.h
 endif()
 
@@ -1071,6 +1076,9 @@ if(JPEG_FOUND)
 endif()
 if(OGRE_FOUND)
   vp_set_ogre_advanced_var()
+endif()
+if(Coin_FOUND)
+  mark_as_advanced(Coin_DIR Coin_LIBRARY Qt5OpenGL_DIR)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -1347,8 +1355,9 @@ status("    \\- Use Coin3D:"         USE_COIN3D       THEN "yes (ver ${COIN3D_VE
 status("    \\- Use SoWin:"          USE_SOWIN        THEN "yes" ELSE "no")
 status("    \\- Use SoXt:"           USE_SOXT         THEN "yes" ELSE "no")
 status("    \\- Use SoQt:"           USE_SOQT         THEN "yes" ELSE "no")
-status("    \\- Use Qt4:"            USE_QT AND DESIRED_QT_VERSION MATCHES 4  THEN "yes" ELSE "no")
-status("    \\- Use Qt3:"            USE_QT AND DESIRED_QT_VERSION MATCHES 3  THEN "yes" ELSE "no")
+status("    \\- Use Qt5:"            USE_SOQT AND SoQt_FOUND                    THEN "yes" ELSE "no")
+status("    \\- Use Qt4:"            USE_QT   AND DESIRED_QT_VERSION MATCHES 4  THEN "yes" ELSE "no")
+status("    \\- Use Qt3:"            USE_QT   AND DESIRED_QT_VERSION MATCHES 3  THEN "yes" ELSE "no")
 status("")
 status("  Media I/O: ")
 status("    Use JPEG:"               USE_JPEG         THEN "yes (ver ${JPEG_LIB_VERSION})" ELSE "no")
