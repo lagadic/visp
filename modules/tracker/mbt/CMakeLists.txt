@@ -61,7 +61,9 @@ if(USE_COIN3D AND NOT HAVE_visp_ar)
     list(APPEND opt_libs ${SOWIN_LIBRARIES})
   endif()
 
-  if(USE_SOQT AND USE_QT)
+  if(USE_SOQT AND SoQt_VERSION GREATER_EQUAL "1.6.0")
+    # Nothing to do; Coin 4 is not linked to SoQt and Qt5
+  elseif(USE_SOQT AND USE_QT)
     list(APPEND opt_incs ${SOQT_INCLUDE_DIRS})
     list(APPEND opt_incs ${QT_INCLUDE_DIR})
     list(APPEND opt_incs ${QT_INCLUDES})
@@ -99,7 +101,7 @@ if(USE_COIN3D AND NOT HAVE_visp_ar)
     vp_list_remove_separator(QT_DEFINITIONS)
     add_definitions(${QT_DEFINITIONS})
     add_definitions("-DQT_DLL")
-  endif(USE_SOQT AND USE_QT)
+  endif()
 
   if(USE_SOXT)
     # OpenGL and SoXt are found

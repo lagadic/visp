@@ -279,6 +279,7 @@ if(VISP_HAVE_CXX11)
     endif()
   endif()
 endif()
+
 #----------------------------------------------------------------------
 # Propagate openmp compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
@@ -292,6 +293,16 @@ endif()
 if(VISP_HAVE_FRANKA)
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
+#----------------------------------------------------------------------
+# Propagate -fPIC option requested with Qt5 that requires position independent
+# code if Qt was built with -reduce-relocations.
+#----------------------------------------------------------------------
+if(UNIX)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # Is needed for ANDROID too.
+  endif()
 endif()
 
 #----------------------------------------------------------------------

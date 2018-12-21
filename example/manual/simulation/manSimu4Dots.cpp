@@ -84,7 +84,7 @@
 static void *mainLoop(void *_simu)
 {
   // pointer copy of the vpSimulator instance
-  vpSimulator *simu = static_cast<vpSimulator *> _simu;
+  vpSimulator *simu = static_cast<vpSimulator *> (_simu);
 
   // Simulation initialization
   simu->initMainApplication();

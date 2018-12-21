@@ -91,7 +91,7 @@ This page introduces the user to the way to install ViSP from existing prebuild 
 /*! \page tutorial_install_src Installation from source code
 This page introduces the user to the way to install ViSP from source code.
 
-- \subpage tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \subpage tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu or Debian.
 - \subpage tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
 - \subpage tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
 - \subpage tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.

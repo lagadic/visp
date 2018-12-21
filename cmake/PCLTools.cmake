@@ -41,6 +41,9 @@ if(USE_PCL)
     mark_as_advanced(PCL_DIR)
     mark_as_advanced(PCL_APPS_LIBRARY)
     mark_as_advanced(PCL_APPS_LIBRARY_DEBUG)
+    mark_as_advanced(pkgcfg_lib_FLANN_flann)
+    mark_as_advanced(pkgcfg_lib_FLANN_flann_cpp)
+    mark_as_advanced(pkgcfg_lib_FLANN_lz4)
     foreach(component ${PCL_TO_FIND_COMPONENTS})
       string(TOUPPER "${component}" COMPONENT)
       if(PCL_${COMPONENT}_INCLUDE_DIR)
@@ -64,11 +67,11 @@ if(USE_PCL)
     mark_as_advanced(QHULL_LIBRARY)
     mark_as_advanced(QHULL_LIBRARY_DEBUG)
   endif()
-  
+
   mark_as_advanced(OPENNI2_INCLUDE_DIRS)
   mark_as_advanced(OPENNI2_LIBRARY)
 
   mark_as_advanced(OPENNI_INCLUDE_DIRS)
   mark_as_advanced(OPENNI_LIBRARY)
-  
+
 endif()
