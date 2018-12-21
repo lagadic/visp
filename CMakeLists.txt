@@ -549,11 +549,9 @@ if(NOT USE_CXX11 AND CXX11_FOUND)
 endif()
 
 VP_OPTION(USE_SOWIN       SOWIN       ""    "Include Coin/SoWin support"   "" OFF IF (WIN32 AND USE_COIN3D) AND NOT WINRT AND NOT IOS)
-# Check for SoQt 1.6.0 linked to Qt5
-VP_OPTION(USE_SOQT        SoQt        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
-if(NOT SoQt_FOUND)
-  # Check for SoQt older versions linked to Qt4
-  VP_OPTION(USE_SOQT      SOQT        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
+# Check for SoQt 1.6.0 linked to Qt5 or older version with SOQT
+VP_OPTION(USE_SOQT        "SoQt;SOQT" QUIET "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
+if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit Qt4 search
   VP_OPTION(USE_QT        Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
 endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
