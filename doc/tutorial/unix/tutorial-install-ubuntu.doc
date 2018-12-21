@@ -1,9 +1,9 @@
 /**
 
-\page tutorial-install-ubuntu Tutorial: Installation from source for Linux Ubuntu
+\page tutorial-install-ubuntu Tutorial: Installation from source for Linux Ubuntu or Debian
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested with Ubuntu 16.04 64bits LTS, 17.04 64bits, 18.04 64bits LTS and 18.10 64bits distributions, but should work with any other distribution as well. 
+In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested with Ubuntu 16.04 64bits LTS, 17.04 64bits, 18.04 64bits LTS, 18.10 64bits and Debian 9.6.0 64bits distributions, but should work with any other distribution as well.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -172,7 +172,11 @@ We give also the way to install other 3rd party libraries to enable specific cap
 \code
 $ sudo apt-get install libpcl-dev
 \endcode
-- Coin, to be able to support vrml cad model used by the model-based trackers
+- Coin, to be able to support vrml cad model used by the model-based trackers. If you are using Ubuntu 19.04 or a more recent version use
+\code
+$ sudo apt-get install libcoin-dev
+\endcode
+otherwise use rather:
 \code
 $ sudo apt-get install libcoin80-dev
 \endcode

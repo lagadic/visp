@@ -88,7 +88,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 \subsection tuto_install_src Installation from source
 
-- \ref tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \ref tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu or Debian.
 - \ref tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
 - \ref tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
 - \ref tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
