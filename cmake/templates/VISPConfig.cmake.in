@@ -62,7 +62,7 @@
 #     include(${VISP_USE_FILE})
 #   endif()
 #
-# Or you can search for specific OpenCV modules:
+# Or you can search for specific ViSP modules:
 #
 #   find_package(VISP REQUIRED core io)
 #
