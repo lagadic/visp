@@ -207,37 +207,45 @@ alpha expected -45 computed -45.1119 deg
 class VISP_EXPORT vpMomentAlpha : public vpMoment
 {
 private:
-  bool isRef;
-  bool symmetric;
-  std::vector<double> ref;
-  double alphaRef;
+  bool m_isRef;
+  bool m_symmetric;
+  std::vector<double> m_mu3Ref;
+  double m_alphaRef;
+  double m_symmetricThreshold;
 
 public:
   vpMomentAlpha();
-  vpMomentAlpha(const std::vector<double> &ref, double alphaRef);
+  vpMomentAlpha(const std::vector<double> &mu3_ref, double alpha_ref, double threshold = 1e-6);
   virtual ~vpMomentAlpha(){};
 
   void compute();
   /*!
-          Retrieve the orientation of the object as a single double value.
-          */
+     Retrieve the orientation of the object as a single double value.
+   */
   double get() const { return values[0]; }
   /*!
-          Moment name.
-          */
+     Moment name.
+   */
   const char *name() const { return "vpMomentAlpha"; }
 
+  /*!
+     Returns true if the alpha moment was constructed as a reference with values in \f$ [-\pi/2 ; \pi/2] \f$, false otherwise.
+   */
   inline bool is_ref() const
   {
-    if (isRef)
+    if (m_isRef)
       return true;
     else
       return false;
   }
 
+  /*!
+     Returns true if the alpha moment is computed on a symmetric object along its two axis.
+     Symmetry is computed using 3rd order centered moments \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$.
+   */
   inline bool is_symmetric() const
   {
-    if (symmetric)
+    if (m_symmetric)
       return true;
     else
       return false;
