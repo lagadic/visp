@@ -102,6 +102,7 @@ ViSP 3.2.0 (under development)
     . [#453] CMake error when building tutorials and examples with ViSP from installation folder
     . [#466] Build error with libboost_thread-mt.a
     . [#429] vpRobotViper650 getPosition(vpRobot::REFERENCE_FRAME) error
+    . [#485] CMake error when PCL is build with VTK option VTK_ENABLE_KITS=ON
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
   - Contributors:
