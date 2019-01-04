@@ -39,7 +39,7 @@
           "    vpDetectorAprilTag* me = (vpDetectorAprilTag*) self; //TODO: check for NULL",
           "    vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
           "    vpCameraParameters& cam = *((vpCameraParameters*)cam_nativeObj);",
-          "    bool _retval_ = me->detect( I, (double)tagSize, cam, cMo_vec_list_arr );",
+          "    /* bool _retval_ = */ me->detect( I, (double)tagSize, cam, cMo_vec_list_arr );",
           "    return vector_vpHomogeneousMatrix_to_List(env,cMo_vec_list_arr);",
           "  } catch(const std::exception &e) {",
           "    throwJavaException(env, &e, method_name);",
