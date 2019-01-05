@@ -39,6 +39,8 @@ ViSP 3.2.0 (under development)
     . Improve PnP pose estimation
     . Compat with OpenCV 4
     . Compat with Fedora 29
+    . Introduce SonarQube code quality analysis tool. Analysis reports are available on
+      https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard/index/rainbow:visp:master
   - Tutorials
     . New tutorial: Installation from source on a Jetson equipped with an Orbitty Carrier board
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html

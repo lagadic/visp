@@ -9,8 +9,10 @@ sonar.projectName=ViSP
 # Used to compare metrics with v1.10 for example
 sonar.projectVersion=3.2
 # Path is relative to the sonar-project.properties file. Replace "\" by "/" on Windows.
-sonar.sources=.
-sonar.exclusions=3rdparty/**/*
+sonar.sources=@VISP_SOURCE_DIR@
+sonar.projectBaseDir=@VISP_SOURCE_DIR@
+sonar.exclusions=3rdparty/**/*,cmake/**/*,platforms/**/*,doc/**/*,modules/**/*.txt,modules/**/*.py,modules/java/**/*,demo/**/*,example/**/*,tutorial/**/*,**/arms/*,**/scene/*
 # Source code language
 sonar.language=c++
+sonar.cxx.includeDirectories=@VISP_SONARQUBE_INCLUDE_DIRS@
 
