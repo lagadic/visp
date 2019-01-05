@@ -38,9 +38,11 @@ int main()
   // Updates the color image with the original loaded image and the overlay
   vpDisplay::getImage(I, Ioverlay) ;
   // Write the color image on the disk
+  std::cout << "Save image in overlay.ppm" << std::endl;
   std::string ofilename("overlay.ppm");
   vpImageIo::write(Ioverlay, ofilename) ;
   // Wait for a click in the display window
+  std::cout << "A click to quit..." << std::endl;
   vpDisplay::getClick(I);
 #ifdef VISP_HAVE_DISPLAY
   delete d;
