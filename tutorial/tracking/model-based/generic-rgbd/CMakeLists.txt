@@ -36,6 +36,10 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
   endif()
 
+  if(VISP_HAVE_PCL)
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
+  endif()
+
   if(CXX_FLAGS_MUTE_WARNINGS)
     # Add specific build flag to turn off warnings
     visp_set_source_file_compile_flag(${cpp} ${CXX_FLAGS_MUTE_WARNINGS})
