@@ -140,7 +140,7 @@ if(USE_COIN3D)
     list(APPEND opt_libs ${SOWIN_LIBRARIES})
   endif()
 
-  if(USE_SOQT AND SoQt_VERSION GREATER_EQUAL "1.6.0")
+  if(USE_SOQT AND ((SoQt_VERSION VERSION_EQUAL "1.6.0") OR (SoQt_VERSION VERSION_GREATER "1.6.0")))
     set(SoQt_incs ${SoQt_INCLUDE_DIRS})
     # Handle SoQt_LIBRARIES to extract the imported location
     set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")

@@ -61,7 +61,7 @@ if(USE_COIN3D AND NOT HAVE_visp_ar)
     list(APPEND opt_libs ${SOWIN_LIBRARIES})
   endif()
 
-  if(USE_SOQT AND SoQt_VERSION GREATER_EQUAL "1.6.0")
+  if(USE_SOQT AND ((SoQt_VERSION VERSION_EQUAL "1.6.0") OR (SoQt_VERSION VERSION_GREATER "1.6.0")))
     # Nothing to do; Coin 4 is not linked to SoQt and Qt5
   elseif(USE_SOQT AND USE_QT)
     list(APPEND opt_incs ${SOQT_INCLUDE_DIRS})
