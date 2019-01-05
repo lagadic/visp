@@ -61,7 +61,7 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
   std::cout << "*** Test symmetry detection from mu 3rd order moments" << std::endl;
   // ***************
   std::vector<double> mu_ref;
-  double alpha_ref;
+  double alpha_ref = 0.;
 
   for(int i = (int) vec_angle.size() - 1; i >= 0; --i) {
     // Compute reference alpha image <name>-<vec_angle>[i]deg.pgm
