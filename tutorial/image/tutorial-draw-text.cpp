@@ -17,7 +17,7 @@ int main()
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
     vpDisplay::displayRectangle(I, I.getHeight() / 4, I.getWidth() / 4, I.getWidth() / 2, I.getHeight() / 2, vpColor::red, true);
-    vpDisplay::displayCharString(I, I.getHeight() / 2, I.getWidth() / 2, "Hello World!", vpColor::yellow);
+    vpDisplay::displayText(I, I.getHeight() / 2, I.getWidth() / 2, "Hello World!", vpColor::yellow);
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);
