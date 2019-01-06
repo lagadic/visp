@@ -14,7 +14,14 @@ set(tutorial_cpp
   tutorial-image-filter.cpp
   tutorial-image-display.cpp
   tutorial-image-display-scaled-manu.cpp
-  tutorial-image-display-scaled-auto.cpp)
+  tutorial-image-display-scaled-auto.cpp
+  tutorial-draw-line.cpp
+  tutorial-draw-rectangle.cpp
+  tutorial-draw-point.cpp
+  tutorial-draw-cross.cpp
+  tutorial-draw-text.cpp
+  tutorial-export-image.cpp
+  tutorial-event-keyboard.cpp)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.bmp" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.ppm" )
