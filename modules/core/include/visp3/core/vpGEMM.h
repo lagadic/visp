@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __VP_GEMM__
-#define __VP_GEMM__
+#ifndef _vpGEMM_h_
+#define _vpGEMM_h_
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>

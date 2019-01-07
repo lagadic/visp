@@ -43,8 +43,8 @@
  \brief Model-based klt tracker with multiple cameras.
 */
 
-#ifndef __vpMbKltMultiTracker_h__
-#define __vpMbKltMultiTracker_h__
+#ifndef _vpMbKltMultiTracker_h_
+#define _vpMbKltMultiTracker_h_
 
 #include <iostream>
 #include <vector>
@@ -356,4 +356,4 @@ protected:
 
 #endif // VISP_HAVE_OPENCV
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#endif //__vpMbKltMultiTracker_h__
+#endif //_vpMbKltMultiTracker_h_

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpDisplayException_H
-#define __vpDisplayException_H
+#ifndef _vpDisplayException_h_
+#define _vpDisplayException_h_
 
 /* -------------------------------------------------------------------------
  */

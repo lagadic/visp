@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpSimulatorException_H
-#define __vpSimulatorException_H
+#ifndef _vpSimulatorException_H_
+#define _vpSimulatorException_H_
 
 /* -------------------------------------------------------------------------
  */

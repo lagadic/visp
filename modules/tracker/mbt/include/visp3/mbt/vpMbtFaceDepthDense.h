@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMbtFaceDepthDense_h_
-#define __vpMbtFaceDepthDense_h_
+#ifndef _vpMbtFaceDepthDense_h_
+#define _vpMbtFaceDepthDense_h_
 
 #include <iostream>
 

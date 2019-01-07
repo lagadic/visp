@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpFlyCaptureGrabber_h_
-#define __vpFlyCaptureGrabber_h_
+#ifndef _vpFlyCaptureGrabber_h_
+#define _vpFlyCaptureGrabber_h_
 
 #include <ostream>
 #include <visp3/core/vpConfig.h>

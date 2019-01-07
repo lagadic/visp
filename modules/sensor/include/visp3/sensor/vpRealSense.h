@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpRealSense_h_
-#define __vpRealSense_h_
+#ifndef _vpRealSense_h_
+#define _vpRealSense_h_
 
 #include <map>
 #include <stdint.h>

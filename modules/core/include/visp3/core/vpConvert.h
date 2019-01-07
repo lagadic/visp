@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpConvert_h__
-#define __vpConvert_h__
+#ifndef _vpConvert_h_
+#define _vpConvert_h_
 
 /*!
   \file vpConvert.h

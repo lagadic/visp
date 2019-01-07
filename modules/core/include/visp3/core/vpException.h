@@ -40,8 +40,8 @@
    \brief error that can be emited by the vp class and its derivates
  */
 
-#ifndef __vpException_H
-#define __vpException_H
+#ifndef _vpException_h_
+#define _vpException_h_
 
 /* --------------------------------------------------------------------- */
 /* --- INCLUDE --------------------------------------------------------- */
@@ -129,4 +129,4 @@ public:
   const char *what() const throw();
 };
 
-#endif /* #ifndef __vpException_H */
+#endif /* #ifndef _vpException_h_ */

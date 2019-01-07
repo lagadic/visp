@@ -35,8 +35,8 @@
  * Manikandan Bakthavatchalam
  *
  *****************************************************************************/
-#ifndef __MOMENTAREA_H__
-#define __MOMENTAREA_H__
+#ifndef _vpMomentArea_h_
+#define _vpMomentArea_h_
 
 #include <visp3/core/vpMoment.h>
 

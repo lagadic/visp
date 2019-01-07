@@ -43,8 +43,8 @@
  \brief Model-based edge tracker with multiple cameras.
 */
 
-#ifndef __vpMbEdgeMultiTracker_h__
-#define __vpMbEdgeMultiTracker_h__
+#ifndef _vpMbEdgeMultiTracker_h_
+#define _vpMbEdgeMultiTracker_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -383,4 +383,4 @@ protected:
 };
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#endif //__vpMbEdgeMultiTracker_h__
+#endif //_vpMbEdgeMultiTracker_h_

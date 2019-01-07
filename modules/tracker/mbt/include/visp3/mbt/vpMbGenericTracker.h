@@ -37,8 +37,8 @@
  \brief Generic model-based tracker
 */
 
-#ifndef __vpMbGenericTracker_h_
-#define __vpMbGenericTracker_h_
+#ifndef _vpMbGenericTracker_h_
+#define _vpMbGenericTracker_h_
 
 #include <visp3/mbt/vpMbDepthDenseTracker.h>
 #include <visp3/mbt/vpMbDepthNormalTracker.h>

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpImageException_H
-#define __vpImageException_H
+#ifndef _vpImageException_h_
+#define _vpImageException_h_
 
 /* -------------------------------------------------------------------------
  */

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpAfma6_h
-#define __vpAfma6_h
+#ifndef _vpAfma6_h
+#define _vpAfma6_h
 
 /*!
 

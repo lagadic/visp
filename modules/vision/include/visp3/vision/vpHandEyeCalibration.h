@@ -43,8 +43,8 @@
 
   \sa The example in calibrate-hand-eye.cpp
 */
-#ifndef __vpHandEyeCalibration_h_
-#define __vpHandEyeCalibration_h_
+#ifndef _vpHandEyeCalibration_h_
+#define _vpHandEyeCalibration_h_
 
 #include <vector>
 #include <visp3/core/vpExponentialMap.h>

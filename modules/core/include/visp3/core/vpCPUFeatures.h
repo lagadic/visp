@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpCPUFeatures_h_
-#define __vpCPUFeatures_h_
+#ifndef _vpCPUFeatures_h_
+#define _vpCPUFeatures_h_
 
 /*!
   \file vpCPUFeatures.h

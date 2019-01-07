@@ -41,8 +41,8 @@
   \brief 2D normalized gravity center moment descriptor (usually described by
   the pair Xn,Yn)
 */
-#ifndef __MOMENTGRAVITYNORMALIZED_H__
-#define __MOMENTGRAVITYNORMALIZED_H__
+#ifndef _vpMomentGravityCenterNormalized_h_
+#define _vpMomentGravityCenterNormalized_h_
 
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentGravityCenter.h>

@@ -35,8 +35,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpPylonFactory_h_
-#define __vpPylonFactory_h_
+#ifndef _vpPylonFactory_h_
+#define _vpPylonFactory_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -89,4 +89,4 @@ private:
 };
 
 #endif // #ifdef VISP_HAVE_PYLON
-#endif // #ifndef __vpPylonFactory_h_
+#endif // #ifndef _vpPylonFactory_h_

@@ -32,8 +32,8 @@
  * Base class for April Tag detection.
  *
  *****************************************************************************/
-#ifndef __vpDetectorAprilTag_h__
-#define __vpDetectorAprilTag_h__
+#ifndef _vpDetectorAprilTag_h_
+#define _vpDetectorAprilTag_h_
 
 #include <visp3/core/vpConfig.h>
 

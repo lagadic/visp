@@ -41,8 +41,8 @@
   supporting.
 */
 
-#ifndef __vpPylonGrabberUsb_h_
-#define __vpPylonGrabberUsb_h_
+#ifndef _vpPylonGrabberUsb_h_
+#define _vpPylonGrabberUsb_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -124,4 +124,4 @@ private:
 };
 
 #endif // #ifdef VISP_HAVE_PYLON
-#endif // #ifndef __vpPylonGrabberUsb_h_
+#endif // #ifndef _vpPylonGrabberUsb_h_

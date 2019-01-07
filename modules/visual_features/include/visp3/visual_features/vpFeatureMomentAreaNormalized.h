@@ -40,9 +40,11 @@
   \brief Implementation of the interaction matrix computation for
   vpMomentAreaNormalized.
 */
-#ifndef __FEATUREMOMENTAREANORMALIZED_H__
-#define __FEATUREMOMENTAREANORMALIZED_H__
+#ifndef _vpFeatureMomentAreaNormalized_h_
+#define _vpFeatureMomentAreaNormalized_h_
+
 #include <visp3/visual_features/vpFeatureMoment.h>
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
 

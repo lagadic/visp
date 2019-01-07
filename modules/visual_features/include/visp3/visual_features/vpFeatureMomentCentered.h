@@ -40,10 +40,12 @@
   \brief Implementation of the interaction matrix computation for
   vpMomentCentered.
 */
-#ifndef __FEATUREMOMENTCENTERED_H__
-#define __FEATUREMOMENTCENTERED_H__
+#ifndef _vpFeatureMomentCentered_h_
+#define _vpFeatureMomentCentered_h_
+
 #include <visp3/visual_features/vpFeatureMoment.h>
 #include <visp3/visual_features/vpFeatureMomentBasic.h>
+
 class vpMomentDatabase;
 /*!
   \class vpFeatureMomentCentered

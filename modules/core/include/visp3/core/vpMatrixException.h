@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMatrixException_H
-#define __vpMatrixException_H
+#ifndef _vpMatrixException_h_
+#define _vpMatrixException_h_
 
 /* -------------------------------------------------------------------------
  */

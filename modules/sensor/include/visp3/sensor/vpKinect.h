@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef __VP_KINECT__
-#define __VP_KINECT__
+#ifndef _vpKinect_h_
+#define _vpKinect_h_
 
 #include <visp3/core/vpConfig.h>
 // Note that libfreenect needs libusb-1.0 and libpthread

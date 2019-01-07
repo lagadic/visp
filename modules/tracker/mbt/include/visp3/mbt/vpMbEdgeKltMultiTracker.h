@@ -43,8 +43,8 @@
  \brief Model-based edge klt tracker with multiple cameras.
 */
 
-#ifndef __vpMbEdgeKltMultiTracker_h__
-#define __vpMbEdgeKltMultiTracker_h__
+#ifndef _vpMbEdgeKltMultiTracker_h_
+#define _vpMbEdgeKltMultiTracker_h_
 
 #include <iostream>
 #include <vector>
@@ -395,4 +395,4 @@ protected:
 
 #endif // VISP_HAVE_OPENCV
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#endif //__vpMbEdgeKltMultiTracker_h__
+#endif //_vpMbEdgeKltMultiTracker_h_

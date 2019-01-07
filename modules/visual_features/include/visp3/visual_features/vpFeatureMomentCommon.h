@@ -43,8 +43,8 @@
   moment features.
 */
 
-#ifndef __FEATUREMOMENTCOMMON_H__
-#define __FEATUREMOMENTCOMMON_H__
+#ifndef _vpFeatureMomentCommon_h_
+#define _vpFeatureMomentCommon_h_
 #include <visp3/visual_features/vpFeatureMomentAlpha.h>
 #include <visp3/visual_features/vpFeatureMomentArea.h>
 #include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>

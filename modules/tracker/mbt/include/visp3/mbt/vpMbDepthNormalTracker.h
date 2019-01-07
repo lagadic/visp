@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMbDepthNormalTracker_h_
-#define __vpMbDepthNormalTracker_h_
+#ifndef _vpMbDepthNormalTracker_h_
+#define _vpMbDepthNormalTracker_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPlane.h>

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __QUATERNIONVECTOR_H__
-#define __QUATERNIONVECTOR_H__
+#ifndef _vpQuaternionVector_h_
+#define _vpQuaternionVector_h_
 
 /*!
   \file vpQuaternionVector.h

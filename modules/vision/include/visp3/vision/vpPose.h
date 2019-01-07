@@ -43,8 +43,8 @@
   \brief Tools for pose computation (pose from point only).
 */
 
-#ifndef __vpPose_h_
-#define __vpPose_h_
+#ifndef _vpPose_h_
+#define _vpPose_h_
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>

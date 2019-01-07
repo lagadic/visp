@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpCalibrationException_H
-#define __vpCalibrationException_H
+#ifndef _vpCalibrationException_h_
+#define _vpCalibrationException_h_
 
 /* -------------------------------------------------------------------------
  */

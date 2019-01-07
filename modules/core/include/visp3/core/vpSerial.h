@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpSerial_h_
-#define __vpSerial_h_
+#ifndef _vpSerial_h_
+#define _vpSerial_h_
 
 #if !defined(_WIN32)
 

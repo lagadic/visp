@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpRealSense2_h_
-#define __vpRealSense2_h_
+#ifndef _vpRealSense2_h_
+#define _vpRealSense2_h_
 
 #include <visp3/core/vpConfig.h>
 

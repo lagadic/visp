@@ -35,8 +35,8 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-#ifndef __vpArray2D_h_
-#define __vpArray2D_h_
+#ifndef _vpArray2D_h_
+#define _vpArray2D_h_
 
 #include <fstream>
 #include <iostream>

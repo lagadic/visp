@@ -40,8 +40,8 @@
 
 #ifdef VISP_HAVE_BICLOPS
 
-#ifndef __vpROBOT_BICLOPS_H
-#define __vpROBOT_BICLOPS_H
+#ifndef _vpRobotBiclops_h_
+#define _vpRobotBiclops_h_
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
@@ -156,6 +156,6 @@ public:
   static void *vpRobotBiclopsSpeedControlLoop(void *arg);
 };
 
-#endif /* #ifndef __vpROBOT_BICLOPS_H */
+#endif /* #ifndef _vpRobotBiclops_h_ */
 
 #endif

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpDetectorBase_h__
-#define __vpDetectorBase_h__
+#ifndef _vpDetectorBase_h_
+#define _vpDetectorBase_h_
 
 #include <assert.h>
 #include <string>

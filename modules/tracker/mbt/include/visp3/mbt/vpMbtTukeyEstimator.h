@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMbtTukeyEstimator_h_
-#define __vpMbtTukeyEstimator_h_
+#ifndef _vpMbtTukeyEstimator_h_
+#define _vpMbtTukeyEstimator_h_
 
 #include <vector>
 #include <visp3/core/vpColVector.h>

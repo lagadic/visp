@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpJointVelTrajGenerator_impl_h_
-#define __vpJointVelTrajGenerator_impl_h_
+#ifndef _vpJointVelTrajGenerator_impl_h_
+#define _vpJointVelTrajGenerator_impl_h_
 
 #include <visp3/core/vpConfig.h>
 

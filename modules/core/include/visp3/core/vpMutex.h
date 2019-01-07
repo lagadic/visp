@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMutex_h_
-#define __vpMutex_h_
+#ifndef _vpMutex_h_
+#define _vpMutex_h_
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>

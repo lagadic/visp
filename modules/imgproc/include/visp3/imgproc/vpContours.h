@@ -72,8 +72,8 @@
   \brief Basic contours extraction.
 */
 
-#ifndef __vpContours_h__
-#define __vpContours_h__
+#ifndef _vpContours_h_
+#define _vpContours_h_
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>

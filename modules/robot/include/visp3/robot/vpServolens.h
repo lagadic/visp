@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpServolens_h
-#define __vpServolens_h
+#ifndef _vpServolens_h_
+#define _vpServolens_h_
 
 #include <visp3/core/vpConfig.h>
 

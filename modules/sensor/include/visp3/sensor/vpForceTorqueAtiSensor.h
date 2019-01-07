@@ -35,8 +35,8 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-#ifndef __vpForceTorqueAtiSensor_
-#define __vpForceTorqueAtiSensor_
+#ifndef _vpForceTorqueAtiSensor_h_
+#define _vpForceTorqueAtiSensor_h_
 
 #include <visp3/core/vpConfig.h>
 

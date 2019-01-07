@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpPylonGrabber_h_
-#define __vpPylonGrabber_h_
+#ifndef _vpPylonGrabber_h_
+#define _vpPylonGrabber_h_
 
 #include <ostream>
 #include <visp3/core/vpConfig.h>
@@ -392,4 +392,4 @@ public:
 };
 
 #endif // #ifdef VISP_HAVE_PYLON
-#endif // #ifndef __vpPylonGrabber_h_
+#endif // #ifndef _vpPylonGrabber_h_

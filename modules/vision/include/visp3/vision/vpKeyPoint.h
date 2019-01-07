@@ -35,8 +35,8 @@
  * Souriya Trinh
  *
  *****************************************************************************/
-#ifndef __vpKeyPoint_h__
-#define __vpKeyPoint_h__
+#ifndef _vpKeyPoint_h_
+#define _vpKeyPoint_h_
 
 #include <algorithm> // std::transform
 #include <float.h>   // DBL_MAX

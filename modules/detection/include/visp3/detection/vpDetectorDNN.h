@@ -32,8 +32,8 @@
  * DNN object detection using OpenCV DNN module.
  *
  *****************************************************************************/
-#ifndef __vpDetectorDNN_h__
-#define __vpDetectorDNN_h__
+#ifndef _vpDetectorDNN_h_
+#define _vpDetectorDNN_h_
 
 #include <visp3/core/vpConfig.h>
 

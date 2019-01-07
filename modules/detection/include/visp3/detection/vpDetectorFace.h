@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpDetectorFace_h__
-#define __vpDetectorFace_h__
+#ifndef _vpDetectorFace_h_
+#define _vpDetectorFace_h_
 
 #include <visp3/core/vpConfig.h>
 

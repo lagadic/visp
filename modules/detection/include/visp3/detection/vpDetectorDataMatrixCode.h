@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpDetectorDataMatrixCode_h__
-#define __vpDetectorDataMatrixCode_h__
+#ifndef _vpDetectorDataMatrixCode_h_
+#define _vpDetectorDataMatrixCode_h_
 
 #include <string>
 #include <utility>

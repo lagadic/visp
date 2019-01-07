@@ -41,8 +41,8 @@
   \brief Pseudo-database used to handle dependencies between moment features.
 */
 
-#ifndef __FEATUREMOMENTDATABASE_H__
-#define __FEATUREMOMENTDATABASE_H__
+#ifndef _vpFeatureMomentDatabase_h_
+#define _vpFeatureMomentDatabase_h_
 
 #include <cstring>
 #include <iostream>

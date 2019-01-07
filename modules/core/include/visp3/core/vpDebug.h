@@ -48,8 +48,8 @@
  *
  *****************************************************************************/
 
-#ifndef __VP_DEBUG_HH
-#define __VP_DEBUG_HH
+#ifndef _vpDebug_h_
+#define _vpDebug_h_
 
 #include <iostream>
 #include <stdarg.h>

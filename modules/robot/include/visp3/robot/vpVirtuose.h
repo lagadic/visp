@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpVirtuose_h_
-#define __vpVirtuose_h_
+#ifndef _vpVirtuose_h_
+#define _vpVirtuose_h_
 
 #include <ostream>
 #include <visp3/core/vpConfig.h>

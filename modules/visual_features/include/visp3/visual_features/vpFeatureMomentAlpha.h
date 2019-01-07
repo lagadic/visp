@@ -41,10 +41,12 @@
   vpMomentAlpha.
 */
 
-#ifndef __FEATUREMOMENTALPHA_H__
-#define __FEATUREMOMENTALPHA_H__
+#ifndef _vpFeatureMomentAlpha_h_
+#define _vpFeatureMomentAlpha_h_
+
 #include <visp3/core/vpColVector.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 class vpMomentDatabase;

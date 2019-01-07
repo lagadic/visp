@@ -44,8 +44,8 @@
 
 */
 
-#ifndef __vpXmlConfigParserKeyPoint_h__
-#define __vpXmlConfigParserKeyPoint_h__
+#ifndef _vpXmlConfigParserKeyPoint_h_
+#define _vpXmlConfigParserKeyPoint_h_
 
 #include <visp3/core/vpConfig.h>
 

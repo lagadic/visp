@@ -39,8 +39,8 @@
   \file vpMomentDatabase.h
   \brief Pseudo-database used to handle dependencies between moments.
 */
-#ifndef __MOMENTDATABASE_H__
-#define __MOMENTDATABASE_H__
+#ifndef _vpMomentDatabase_h_
+#define _vpMomentDatabase_h_
 
 #include <visp3/core/vpImage.h>
 

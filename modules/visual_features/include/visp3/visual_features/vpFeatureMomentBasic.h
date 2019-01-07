@@ -41,11 +41,13 @@
   vpMomentBasic.
 */
 
-#ifndef __FEATUREMOMENTBASIC_H__
-#define __FEATUREMOMENTBASIC_H__
+#ifndef _vpFeatureMomentBasic_h_
+#define _vpFeatureMomentBasic_h_
+
 #include <visp3/core/vpMomentCommon.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
+
 class vpMomentDatabase;
 /*!
   \class vpFeatureMomentBasic

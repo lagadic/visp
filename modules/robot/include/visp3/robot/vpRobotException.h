@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpRobotException_H
-#define __vpRobotException_H
+#ifndef _vpRobotException_h_
+#define _vpRobotException_h_
 
 /* -------------------------------------------------------------------------
  */

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __VP_SUB_ROW_VECTOR__
-#define __VP_SUB_ROW_VECTOR__
+#ifndef _VP_SUB_ROW_VECTOR_
+#define _VP_SUB_ROW_VECTOR_
 
 #include <visp3/core/vpRowVector.h>
 

@@ -39,8 +39,8 @@
   \file vpMomentAreaNormalized.h
   \brief 2D normalized surface moment descriptor (usually described as An).
 */
-#ifndef __MOMENTSURFACENORMALIZED_H__
-#define __MOMENTSURFACENORMALIZED_H__
+#ifndef _vpMomentAreaNormalized_h_
+#define _vpMomentAreaNormalized_h_
 
 #include <visp3/core/vpMoment.h>
 

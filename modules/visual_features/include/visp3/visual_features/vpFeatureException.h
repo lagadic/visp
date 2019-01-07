@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpFeatureException_H
-#define __vpFeatureException_H
+#ifndef _vpFeatureException_h_
+#define _vpFeatureException_h_
 
 /* -------------------------------------------------------------------------
  */

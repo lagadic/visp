@@ -41,8 +41,8 @@
   \brief Basic moment descriptor (also called m).
 */
 
-#ifndef __MOMENTBASIC_H__
-#define __MOMENTBASIC_H__
+#ifndef _vpMomentBasic_h_
+#define _vpMomentBasic_h_
 
 #include <visp3/core/vpMoment.h>
 

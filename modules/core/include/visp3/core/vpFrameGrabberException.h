@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpFrameGrabberException_H
-#define __vpFrameGrabberException_H
+#ifndef _vpFrameGrabberException_h_
+#define _vpFrameGrabberException_h_
 
 /* -------------------------------------------------------------------------
  */
@@ -91,4 +91,4 @@ public:
   explicit vpFrameGrabberException(const int id) : vpException(id) { ; }
 };
 
-#endif /* #ifndef __vpFrameGrabberException_H */
+#endif /* #ifndef _vpFrameGrabberException_h_ */

@@ -35,8 +35,8 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-#ifndef __vpComedi_
-#define __vpComedi_
+#ifndef _vpComedi_h_
+#define _vpComedi_h_
 
 #include <visp3/core/vpConfig.h>
 

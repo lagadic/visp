@@ -38,8 +38,8 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-#ifndef __vpJointPosTrajGenerator_impl_h_
-#define __vpJointPosTrajGenerator_impl_h_
+#ifndef _vpJointPosTrajGenerator_impl_h_
+#define _vpJointPosTrajGenerator_impl_h_
 
 #include <array>
 #include <iostream>

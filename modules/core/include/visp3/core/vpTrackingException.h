@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpTrackingException_H
-#define __vpTrackingException_H
+#ifndef _vpTrackingException_H
+#define _vpTrackingException_H
 
 /* -------------------------------------------------------------------------
  */

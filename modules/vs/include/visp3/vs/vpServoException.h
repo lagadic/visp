@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpServoException_H
-#define __vpServoException_H
+#ifndef _vpServoException_h_
+#define _vpServoException_h_
 
 /*!
   \file vpServoException.h

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpDetectorQRCode_h__
-#define __vpDetectorQRCode_h__
+#ifndef _vpDetectorQRCode_h_
+#define _vpDetectorQRCode_h_
 
 #include <string>
 #include <utility>

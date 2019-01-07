@@ -40,8 +40,8 @@
 \brief Adaptive gain
 */
 
-#ifndef __VP_ADAPTIVE_GAIN_H
-#define __VP_ADAPTIVE_GAIN_H
+#ifndef _vpAdaptiveGain_h_
+#define _vpAdaptiveGain_h_
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>

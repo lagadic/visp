@@ -41,8 +41,8 @@
   supporting.
 */
 
-#ifndef __vpPylonGrabberGigE_h_
-#define __vpPylonGrabberGigE_h_
+#ifndef _vpPylonGrabberGigE_h_
+#define _vpPylonGrabberGigE_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -124,4 +124,4 @@ private:
 };
 
 #endif // #ifdef VISP_HAVE_PYLON
-#endif // #ifndef __vpPylonGrabberGigE_h_
+#endif // #ifndef _vpPylonGrabberGigE_h_

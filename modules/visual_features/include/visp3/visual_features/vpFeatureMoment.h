@@ -42,8 +42,8 @@
 Handles common system operations like selection, duplication. Functionality is
 computed in derived classes.
 */
-#ifndef __FEATUREMOMENT_H__
-#define __FEATUREMOMENT_H__
+#ifndef _vpFeatureMoment_h_
+#define _vpFeatureMoment_h_
 
 #include <vector>
 #include <visp3/core/vpConfig.h>

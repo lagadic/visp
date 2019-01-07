@@ -41,8 +41,8 @@
   \brief Base class for all 2D moments.
 */
 
-#ifndef __MOMENT_H__
-#define __MOMENT_H__
+#ifndef _vpMoment_h_
+#define _vpMoment_h_
 
 #include <iostream>
 #include <vector>

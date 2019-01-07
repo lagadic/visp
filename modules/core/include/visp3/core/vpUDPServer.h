@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpUDPServer_h__
-#define __vpUDPServer_h__
+#ifndef _vpUDPServer_h_
+#define _vpUDPServer_h_
 
 #include <visp3/core/vpConfig.h>
 

@@ -39,8 +39,8 @@
   \file vpMomentObject.h
   \brief Object input structure used by moments.
 */
-#ifndef __MOMENTOBJECT_H__
-#define __MOMENTOBJECT_H__
+#ifndef _vpMomentObject_h_
+#define _vpMomentObject_h_
 
 #include <cstdlib>
 #include <utility>

@@ -41,8 +41,8 @@
   \brief Descriptor for various invariants used to drive space roations around
   X and Y axis.
 */
-#ifndef __MOMENTCINVARIANT_H__
-#define __MOMENTCINVARIANT_H__
+#ifndef _vpMomentCInvariant_h_
+#define _vpMomentCInvariant_h_
 
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpMomentDatabase.h>

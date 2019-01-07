@@ -40,9 +40,11 @@
   \brief Implementation of the interaction matrix computation for
   vpMomentGravityCenterNormalized.
 */
-#ifndef __FEATUREMOMENTGRAVITYCENTERNORMALIZED_H__
-#define __FEATUREMOMENTGRAVITYCENTERNORMALIZED_H__
+#ifndef _vpFeatureMomentGravityCenterNormalized_h_
+#define _vpFeatureMomentGravityCenterNormalized_h_
+
 #include <visp3/visual_features/vpFeatureMoment.h>
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
 /*!

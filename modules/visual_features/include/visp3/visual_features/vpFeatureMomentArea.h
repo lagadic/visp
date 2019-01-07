@@ -40,8 +40,9 @@
   \brief Implementation of the interaction matrix computation for
   vpMomentArea.
 */
-#ifndef __FEATUREMOMENTAREA_H__
-#define __FEATUREMOMENTAREA_H__
+#ifndef _vpFeatureMomentArea_h_
+#define _vpFeatureMomentArea_h_
+
 #include <visp3/visual_features/vpFeatureMoment.h>
 
 class vpMomentDatabase;

@@ -42,8 +42,8 @@
 
 */
 
-#ifndef __vpImgproc_h__
-#define __vpImgproc_h__
+#ifndef _vpImgproc_h_
+#define _vpImgproc_h_
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageMorphology.h>

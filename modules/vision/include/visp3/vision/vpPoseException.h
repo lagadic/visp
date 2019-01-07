@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpPoseException_H
-#define __vpPoseException_H
+#ifndef _vpPoseException_h_
+#define _vpPoseException_h_
 
 /* -------------------------------------------------------------------------
  */

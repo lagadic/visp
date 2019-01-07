@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpParallelPortException_H
-#define __vpParallelPortException_H
+#ifndef _vpParallelPortException_h_
+#define _vpParallelPortException_h_
 
 /* -------------------------------------------------------------------------
  */

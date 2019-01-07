@@ -41,8 +41,8 @@
   \brief Alpha moment descriptor for in-plane orientation.
 */
 
-#ifndef __MOMENTALPHA_H__
-#define __MOMENTALPHA_H__
+#ifndef _vpMomentAlpha_h_
+#define _vpMomentAlpha_h_
 
 #include <visp3/core/vpMoment.h>
 

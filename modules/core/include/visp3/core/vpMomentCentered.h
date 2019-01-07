@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __MOMENTCENTERED_H__
-#define __MOMENTCENTERED_H__
+#ifndef _vpMomentCentered_h_
+#define _vpMomentCentered_h_
 
 #include <visp3/core/vpMoment.h>
 /*!

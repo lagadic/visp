@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpRobotFranka_h__
-#define __vpRobotFranka_h__
+#ifndef _vpRobotFranka_h_
+#define _vpRobotFranka_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -343,4 +343,4 @@ public:
 };
 
 #endif
-#endif // #ifndef __vpRobotFranka_h__
+#endif // #ifndef __vpRobotFranka_h_

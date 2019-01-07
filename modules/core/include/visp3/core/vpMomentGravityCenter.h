@@ -40,8 +40,8 @@
   \brief 2D Gravity Center moment descriptor (usually described by the pair
   Xg,Yg).
 */
-#ifndef __MOMENTGRAVITYCENTER_H__
-#define __MOMENTGRAVITYCENTER_H__
+#ifndef _vpMomentGravityCenter_h_
+#define _vpMomentGravityCenter_h_
 
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpMomentDatabase.h>
