@@ -5,20 +5,20 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
+
 int main()
 {
   vpImage<unsigned char> I(240, 320); // Create a black image
-  vpDisplay *d;
 #if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
+  vpDisplay *d = new vpDisplayX;
 #elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
+  vpDisplay *d = new vpDisplayGTK;
 #elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
+  vpDisplay *d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
+  vpDisplay *d = new vpDisplayD3D;
 #elif defined(VISP_HAVE_OPENCV)
-  d = new vpDisplayOpenCV;
+  vpDisplay *d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;
   return -1;

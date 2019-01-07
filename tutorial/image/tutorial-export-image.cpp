@@ -10,19 +10,19 @@ int main()
 {
   vpImage<unsigned char> I(240, 320, 255); // Create a black grey level image
   vpImage<vpRGBa> Ioverlay;
-  vpDisplay *d;
+
   // Depending on the detected third party libraries, we instantiate here the
   // first video device which is available
 #if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
+  vpDisplay *d = new vpDisplayX;
 #elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
+  vpDisplay *d = new vpDisplayGTK;
 #elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
+  vpDisplay *d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
+  vpDisplay *d = new vpDisplayD3D;
 #elif defined(VISP_HAVE_OPENCV)
-  d = new vpDisplayOpenCV;
+  vpDisplay *d = new vpDisplayOpenCV;
 #endif
   // Initialize the display with the image I. Display and image are
   // now link together.
