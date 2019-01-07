@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
   bool use_depth = true;
   bool learn = false;
   bool auto_init = false;
-  double proj_error_threshold = 20;
+  double proj_error_threshold = 25;
   std::string learning_data = "learning/data-learned.bin";
   bool display_projection_error = false;
 
@@ -63,28 +63,30 @@ int main(int argc, char *argv[])
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n" << argv[0]
                 << " [--config_color <object.xml>] [--config_depth <object.xml>] [--model_color <object.cao>] [--model_depth <object.cao>]"
-                   " [--init_file <object.init>] [--use_ogre] [--use_scanline] [--proj_error_threshold <threshold between 0 and 90>]"
-                   " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 0)] [--use_depth <0|1> (default: 1)] [--learn] [--auto_init]"
-                   " [--learning_data <learning/data-learned.bin>] [--display_proj_error]" << std::endl;
-      std::cout << "\nExample to track a 8.4 cm width cube with manual initialization:\n" << argv[0]
+                   " [--init_file <object.init>] [--use_ogre] [--use_scanline]"
+                   " [--proj_error_threshold <threshold between 0 and 90> (default: "<< proj_error_threshold << ")]"
+                   " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 0)] [--use_depth <0|1> (default: 1)]"
+                   " [--learn] [--auto_init] [--learning_data <path to .bin> (default: learning/data-learned.bin)]"
+                   " [--display_proj_error]" << std::endl;
+      std::cout << "\nExample to track a 4.2 cm width cube with manual initialization:\n" << argv[0]
                 << " --config_color cube.xml --config_depth cube_depth.xml"
                 << " --model_color cube.cao --model_depth cube.cao"
-                << " --init_file ../model/cube/cube.init"
-                << " --use_edges 1 --use_klt 1 --use_depth 1\n"
-                << std::endl;
-      std::cout << "\nExample to learn the cube:\n" << argv[0]
-                << " --config_color cube.xml --config_depth cube_depth.xml"
-                << " --model_color cube.cao --model_depth cube.cao"
-                << " --init_file ../model/cube/cube.init"
+                << " --init_file cube.init"
                 << " --use_edges 1 --use_klt 1 --use_depth 1"
-                << " --learn\n"
                 << std::endl;
-      std::cout << "\nExample to track a 8.4 cm width cube with initialization from learning database:\n" << argv[0]
+      std::cout << "\nExample to learn the 4.2 cm width cube:\n" << argv[0]
                 << " --config_color cube.xml --config_depth cube_depth.xml"
                 << " --model_color cube.cao --model_depth cube.cao"
-                << " --init_file ../model/cube/cube.init"
+                << " --init_file cube.init"
                 << " --use_edges 1 --use_klt 1 --use_depth 1"
-                << " --auto_init\n"
+                << " --learn"
+                << std::endl;
+      std::cout << "\nExample to track a 4.2 cm width cube with initialization from learning database:\n" << argv[0]
+                << " --config_color cube.xml --config_depth cube_depth.xml"
+                << " --model_color cube.cao --model_depth cube.cao"
+                << " --init_file cube.init"
+                << " --use_edges 1 --use_klt 1 --use_depth 1"
+                << " --auto_init"
                 << std::endl;
       return 0;
     }
@@ -374,8 +376,19 @@ int main(int argc, char *argv[])
         }
       }
 
+      // Get object pose
+      cMo = tracker.getPose();
+
       // Check tracking errors
-      double proj_error = tracker.getProjectionError();
+      double proj_error = 0;
+      if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
+        // Check tracking errors
+        proj_error = tracker.getProjectionError();
+      }
+      else {
+        proj_error = tracker.computeCurrentProjectionError(I_gray, cMo, cam_color);
+      }
+
       if (auto_init && proj_error > proj_error_threshold) {
         std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
         run_auto_init = true;
@@ -386,8 +399,6 @@ int main(int argc, char *argv[])
       if (!tracking_failed) {
         // Turn display features on
         tracker.setDisplayFeatures(true);
-
-        cMo = tracker.getPose();
 
         if ((use_edges || use_klt) && use_depth) {
           tracker.display(I_gray, I_depth, cMo, depth_M_color*cMo, cam_color, cam_depth, vpColor::red, 3);

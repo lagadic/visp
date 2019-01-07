@@ -301,7 +301,6 @@ int main(int argc, char **argv)
     tracker.setProjectionErrorDisplay(opt_display_projection_error);
     //! [Set projection error computation]
 
-
 #if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
     std::string detectorName = "SIFT";
     std::string extractorName = "SIFT";
@@ -390,8 +389,16 @@ int main(int argc, char **argv)
       }
 
       if (! tracking_failed) {
-        // Check tracking errors
-        double proj_error = tracker.getProjectionError();
+        double proj_error = 0;
+        if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
+          // Check tracking errors
+          proj_error = tracker.getProjectionError();
+        }
+        else {
+          tracker.getPose(cMo);
+          tracker.getCameraParameters(cam);
+          proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
+        }
         if (proj_error > opt_proj_error_threshold) {
           std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
           if (opt_auto_init) {

@@ -135,7 +135,7 @@ and build again before using \c "--model ..." command line option.
 
 Hereafter is the description of the some lines introduced in the previous example.
 
-First we include the header of the hybrid tracker that includes internally vpMbEdgeTracker and vpMbKltTracker classes.
+First we include the header of the generic tracker.
 \snippet tutorial-mb-generic-tracker.cpp Include
 
 The tracker uses image \c I and the intrinsic camera parameters \c cam as input.
@@ -346,7 +346,7 @@ These settings could be tuned either from XML using \<ecm\> tag as:
 </conf>
 \endcode
 
-of from source code using vpMbEdgeTracker::setMovingEdge() method:
+of from source code using vpMbGenericTracker::setMovingEdge() method:
 \snippet tutorial-mb-generic-tracker-full.cpp Set moving-edges parameters
 
 Either from xml or from the previous source code you can set:
@@ -534,6 +534,60 @@ Here for simplicity, the user just has the possibility to either activate all th
 
 
 \section mb_generic_advanced Advanced
+\subsection mb_generic_advanced_failure_detection How to detect tracking failure
+
+The first way to detect a tracking failure is to catch potential exceptions:
+\code
+vpMbGenericTracker tracker;
+...
+while (! end)
+{
+  bool tracking_failed = false;
+  ...
+  try {
+    tracker.track(I);
+  } catch (const vpException &e) {
+    std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
+    tracking_failed = true;
+  }
+}
+\endcode
+If you are using edges as features, you can exploit the internal tracker state using vpMbTracker::getProjectionError() to get a scalar between 0 and 90 degrees corresponding to the cad model projection error. Thresholding this scalar allows to detect bad tracking. Usually we consider that a projection angle higher to 25 degrees corresponds to a tracking failure.
+\code
+  if (! tracking_failed) {
+    double proj_error = 0;
+    if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
+      proj_error = tracker.getProjectionError();
+    }
+    if (proj_error > 25) {
+      std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
+      tracking_failed = true;
+    }
+  }
+\endcode
+When edges are not tracked, meaning that your tracker uses rather klt keypoints or depth features, there is vpMbGenericTracker::computeCurrentProjectionError() function that may be useful.
+\code
+  if (! tracking_failed) {
+    double proj_error = 0;
+    if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
+      proj_error = tracker.getProjectionError();
+    }
+    else {
+      tracker.getPose(cMo);
+      tracker.getCameraParameters(cam);
+      proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
+    }
+    if (proj_error > 25) {
+      std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
+      tracking_failed = true;
+    }
+  }
+\endcode
+
+\note The function vpMbTracker::getProjectionError() is able to compute the projection error only from moving edges considered as inliers, while vpMbGenericTracker::computeCurrentProjectionError() is not able to distinguish between inliers & outliers. Thus, if the object is subject to occlusions, results may be more precise with vpMbTracker::getProjectionError().
+
+Tracking failure detection is used in tutorial-mb-generic-tracker-live.cpp and tutorial-mb-generic-tracker-rgbd-realsense.cpp examples.
+
 \subsection mb_generic_advanced_model How to manipulate the model
 
 The following code shows how to access to the CAD model
@@ -736,7 +790,7 @@ load("tailplane.cao")
 To exploit the name of a face in the code, see sections about \ref mb_generic_advanced_lod and \ref mb_generic_advanced_exclude.
 
 It could be useful to give a name for a face in a model in order to easily modify his LOD parameters for example, or to decide if you want to use this face or not during the tracking phase.
-This is done directly in the model file :
+This is done directly in the `.cao` model file. For example, the next example shows how to set `plane_fuselage` as name for the cylinder used to model the plane fuselage and `right reactor` as name for the corresponding plane reactor modeled as a circle:
 \code
 V1
 # header
@@ -866,12 +920,12 @@ coordIndex [
 
 \subsection mb_generic_advanced_exclude How not to consider specific polygons
 
-When using model-based trackers, it is possible not to consider edge tracking or keypoint tracking for specific faces. To do so, <b>the faces you want to consider must have a name</b>.
+When using model-based trackers, it is possible to not consider edge, keypoint or depth features tracking for specific faces. To do so, <b>the faces you want to consider must have a name</b> following \ref mb_generic_advanced_cao_nam.
 
 If you want to enable (default behavior) or disable the edge tracking on specific face it can be done via:
 
 \code
-vpMbEdgeTracker::setUseEdgeTracking("name of the face", boolean);
+vpMbGenericTracker::setUseEdgeTracking("name of the face", boolean);
 \endcode
 
 If the boolean is set to False, the tracking of the edges of the faces that have the given name will be disable. If it is set to True (default behavior), it will be enable. 
@@ -879,7 +933,13 @@ If the boolean is set to False, the tracking of the edges of the faces that have
 As for the edge tracking, the same functionality is also available when using keypoints via:
 
 \code
-vpMbKltTracker::setUseKltTracking("name of the face", boolean);
+vpMbGenericTracker::setUseKltTracking("name of the face", boolean);
+\endcode
+
+For the depth feature, this also functionality is alse available via:
+
+\code
+vpMbGenericTracker::setUseDepthTracking("name of the face", boolean);
 \endcode
 
 \section mb_generic_use_case Use case
