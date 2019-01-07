@@ -1529,6 +1529,21 @@ void vpMbGenericTracker::getPose(std::map<std::string, vpHomogeneousMatrix> &map
   }
 }
 
+/*!
+  The tracker type for the reference camera.
+*/
+int vpMbGenericTracker::getTrackerType() const
+{
+  std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+  if (it != m_mapOfTrackers.end()) {
+    TrackerWrapper *tracker = it->second;
+    return tracker->getTrackerType();
+  } else {
+    throw vpException(vpTrackingException::badValue, "Cannot find the reference camera: %s!",
+                      m_referenceCameraName.c_str());
+  }
+}
+
 void vpMbGenericTracker::init(const vpImage<unsigned char> &I)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();

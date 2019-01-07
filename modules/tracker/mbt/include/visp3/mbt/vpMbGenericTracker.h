@@ -200,6 +200,8 @@ public:
 
   virtual inline vpColVector getRobustWeights() const { return m_w; }
 
+  virtual int getTrackerType() const;
+
   virtual void init(const vpImage<unsigned char> &I);
 
 #ifdef VISP_HAVE_MODULE_GUI

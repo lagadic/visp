@@ -243,7 +243,7 @@ After initialization by 4 user clicks, the tracker is running and produces the f
 The source code that is very similar to the one provided in \ref tutorial-tracking-mb-generic-stereo is the following:
 \include tutorial-mb-generic-tracker-rgbd.cpp
 
-\subsection mb_rgbd_explanation_of_the_code Explanation of the code 
+\subsection mb_rgbd_explanation_of_the_code Source code explained
 
 The previous source code shows how to use the vpMbGenericTracker class using depth as visual feature. The procedure to configure the tracker remains the same:
 - construct the tracker enabling moving-edges, keypoints and depth as visual feature
