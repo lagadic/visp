@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_PTU46
 
-#ifndef __vpROBOT_PTU46_H
-#define __vpROBOT_PTU46_H
+#ifndef _vpRobotPtu46_h_
+#define _vpRobotPtu46_h_
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
@@ -126,12 +126,6 @@ public:
   void stopMotion();
 };
 
-#endif /* #ifndef __vpROBOT_PTU46_H */
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif /* #ifndef _vpRobotPtu46_h_ */
 
 #endif

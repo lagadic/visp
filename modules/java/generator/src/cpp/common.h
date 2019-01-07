@@ -1,7 +1,7 @@
 // This file is part of ViSP project.
 
-#ifndef __VISP_JAVA_COMMON_H__
-#define __VISP_JAVA_COMMON_H__
+#ifndef _VISP_JAVA_COMMON_H_
+#define _VISP_JAVA_COMMON_H_
 
 #include <stdexcept>
 #include <string>
@@ -23,4 +23,4 @@ extern "C" {
 #  pragma warning(disable:4800 4244)
 #endif
 
-#endif //__VISP_JAVA_COMMON_H__
+#endif //_VISP_JAVA_COMMON_H_

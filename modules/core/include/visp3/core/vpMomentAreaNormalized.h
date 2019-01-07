@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@
   \file vpMomentAreaNormalized.h
   \brief 2D normalized surface moment descriptor (usually described as An).
 */
-#ifndef __MOMENTSURFACENORMALIZED_H__
-#define __MOMENTSURFACENORMALIZED_H__
+#ifndef _vpMomentAreaNormalized_h_
+#define _vpMomentAreaNormalized_h_
 
 #include <visp3/core/vpMoment.h>
 

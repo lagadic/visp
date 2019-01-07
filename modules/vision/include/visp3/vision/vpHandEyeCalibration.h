@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@
 
   \sa The example in calibrate-hand-eye.cpp
 */
-#ifndef __vpHandEyeCalibration_h_
-#define __vpHandEyeCalibration_h_
+#ifndef _vpHandEyeCalibration_h_
+#define _vpHandEyeCalibration_h_
 
 #include <vector>
 #include <visp3/core/vpExponentialMap.h>

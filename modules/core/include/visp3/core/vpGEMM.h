@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __VP_GEMM__
-#define __VP_GEMM__
+#ifndef _vpGEMM_h_
+#define _vpGEMM_h_
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>

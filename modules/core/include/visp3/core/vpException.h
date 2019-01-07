@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
    \brief error that can be emited by the vp class and its derivates
  */
 
-#ifndef __vpException_H
-#define __vpException_H
+#ifndef _vpException_h_
+#define _vpException_h_
 
 /* --------------------------------------------------------------------- */
 /* --- INCLUDE --------------------------------------------------------- */
@@ -129,4 +129,4 @@ public:
   const char *what() const throw();
 };
 
-#endif /* #ifndef __vpException_H */
+#endif /* #ifndef _vpException_h_ */

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@
  * Base class for April Tag detection.
  *
  *****************************************************************************/
-#ifndef __vpDetectorAprilTag_h__
-#define __vpDetectorAprilTag_h__
+#ifndef _vpDetectorAprilTag_h_
+#define _vpDetectorAprilTag_h_
 
 #include <visp3/core/vpConfig.h>
 

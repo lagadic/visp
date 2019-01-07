@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +40,11 @@
   \brief Implementation of the interaction matrix computation for
   vpMomentCInvariant.
 */
-#ifndef __FEATUREMOMENTCINVARIANT_H__
-#define __FEATUREMOMENTCINVARIANT_H__
+#ifndef _vpFeatureMomentCInvariant_h_
+#define _vpFeatureMomentCInvariant_h_
+
 #include <visp3/visual_features/vpFeatureMoment.h>
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 /*!
   \class vpFeatureMomentCInvariant

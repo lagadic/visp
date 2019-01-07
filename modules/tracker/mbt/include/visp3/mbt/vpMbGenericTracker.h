@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  \brief Generic model-based tracker
 */
 
-#ifndef __vpMbGenericTracker_h_
-#define __vpMbGenericTracker_h_
+#ifndef _vpMbGenericTracker_h_
+#define _vpMbGenericTracker_h_
 
 #include <visp3/mbt/vpMbDepthDenseTracker.h>
 #include <visp3/mbt/vpMbDepthNormalTracker.h>

@@ -1,5 +1,5 @@
-#ifndef __vpPthread_h_
-#define __vpPthread_h_
+#ifndef _vpPthread_h_
+#define _vpPthread_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>

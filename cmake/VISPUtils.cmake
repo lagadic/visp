@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1230,4 +1230,27 @@ macro(vp_cmake_script_append_var content_var)
 set(${var_name} \"${${var_name}}\")
 ")
   endforeach()
+endmacro()
+
+# files: A list of input files like headers (in)
+# paths: A list of corresponding paths (out)
+# usage: vp_find_path(type.h paths PATHS /usr/local)
+macro(vp_find_path files paths)
+  set(__paths "")
+  foreach(arg_ ${ARGN})
+    if("${arg_}" STREQUAL "PATHS")
+      set(__varname "__paths")
+    else()
+      list(APPEND ${__varname} ${arg_})
+    endif()
+  endforeach()
+  unset(__varname)
+  foreach(f_ ${${files}})
+    unset(path_ CACHE)
+    find_path(path_ ${f_} PATHS ${__paths})
+    if(path_)
+      list(APPEND ${paths} ${path_})
+    endif()
+  endforeach()
+  vp_list_unique(${paths})
 endmacro()

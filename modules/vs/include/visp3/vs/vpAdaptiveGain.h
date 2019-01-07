@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
 \brief Adaptive gain
 */
 
-#ifndef __VP_ADAPTIVE_GAIN_H
-#define __VP_ADAPTIVE_GAIN_H
+#ifndef _vpAdaptiveGain_h_
+#define _vpAdaptiveGain_h_
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>
