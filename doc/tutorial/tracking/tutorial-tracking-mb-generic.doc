@@ -534,9 +534,9 @@ Here for simplicity, the user just has the possibility to either activate all th
 
 
 \section mb_generic_advanced Advanced
-\subsection mb_generic_advanced_failure_detection How to detect tracking failure
+\subsection mb_generic_advanced_failure_detection How to detect tracking failures
 
-The first way to detect a tracking failure is to catch potential exceptions:
+The first way to detect a tracking failure is to catch potential internal exceptions returned by the tracker:
 \code
 vpMbGenericTracker tracker;
 ...
@@ -550,10 +550,15 @@ while (! end)
     std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
     tracking_failed = true;
   }
+  ...
 }
 \endcode
-If you are using edges as features, you can exploit the internal tracker state using vpMbTracker::getProjectionError() to get a scalar between 0 and 90 degrees corresponding to the cad model projection error. Thresholding this scalar allows to detect bad tracking. Usually we consider that a projection angle higher to 25 degrees corresponds to a tracking failure.
+If you are using edges as features, you can exploit the internal tracker state using vpMbTracker::getProjectionError() to get a scalar criteria between 0 and 90 degrees corresponding to the cad model projection error. This criteria corresponds to the mean angle between the gradient direction of the moving-edges features that are tracked and the normal of the projected cad model. Thresholding this scalar allows to detect a tracking failure. Usually we consider that a projection angle higher to 25 degrees corresponds to a tracking failure. This threshold needs to be adapted to your setup and illumination conditions.
 \code
+...
+while (! end)
+{
+  ...
   if (! tracking_failed) {
     double proj_error = 0;
     if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
@@ -564,9 +569,15 @@ If you are using edges as features, you can exploit the internal tracker state u
       tracking_failed = true;
     }
   }
+  ...
+}
 \endcode
 When edges are not tracked, meaning that your tracker uses rather klt keypoints or depth features, there is vpMbGenericTracker::computeCurrentProjectionError() function that may be useful.
 \code
+...
+while (! end)
+{
+  ...
   if (! tracking_failed) {
     double proj_error = 0;
     if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
@@ -582,11 +593,43 @@ When edges are not tracked, meaning that your tracker uses rather klt keypoints 
       tracking_failed = true;
     }
   }
+  ...
+}
 \endcode
 
-\note The function vpMbTracker::getProjectionError() is able to compute the projection error only from moving edges considered as inliers, while vpMbGenericTracker::computeCurrentProjectionError() is not able to distinguish between inliers & outliers. Thus, if the object is subject to occlusions, results may be more precise with vpMbTracker::getProjectionError().
+\note The function vpMbTracker::getProjectionError() is able to compute the projection error only from moving edges that are located on visible faces, while vpMbGenericTracker::computeCurrentProjectionError() is not able to distinguish between visible & non visible faces. Thus, results may be more precise with vpMbTracker::getProjectionError(). The tracker allows to display gradient and model orientation when computing the projection error. To this end use the following:
+\code
+vpMbGenericTracker tracker;
+tracker.setProjectionErrorDisplay(true);
+...
+while (! end)
+{
+  ...
+}
+\endcode
 
 Tracking failure detection is used in tutorial-mb-generic-tracker-live.cpp and tutorial-mb-generic-tracker-rgbd-realsense.cpp examples.
+
+The model-based tracker can also update a covariance matrix corresponding to the estimated pose. But from our experience, analysing the diagonal of the 6 by 6 covariance matrix doesn't allow to detect a tracking failure. If you want to have a trial, we recall the way to get the covariance matrix:
+
+\code
+vpMbGenericTracker tracker;
+tracker.setCovarianceComputation(true);
+...
+while (! end)
+{
+  bool tracking_failed = false;
+  ...
+  try {
+    tracker.track(I);
+  } catch (const vpException &e) {
+    std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
+    tracking_failed = true;
+  }
+  ...
+  vpMatrix covariance = tracker.getCovarianceMatrix();
+}
+\endcode
 
 \subsection mb_generic_advanced_model How to manipulate the model
 
