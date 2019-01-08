@@ -22,6 +22,6 @@ The following tools have been developed for this project:
 A more complete description of the project is also available <a href="https://github.com/lagadic/visp_cao_editor/wiki/GSoC-2017-with-ViSP">here</a>.
 
 \section mb_GSoC_17_next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-tt.
+You are now ready to see the next \ref tutorial-tracking-mb-generic-rgbd-Blender.
 
 */
