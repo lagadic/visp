@@ -163,7 +163,7 @@ if(APPLE_FRAMEWORK)
     set(OpenCV_FOUND TRUE)
     set(OpenCV_LIBRARIES ${OpenCV_FRAMEWORK})
 
-    file(GLOB_RECURSE opencv_version_file "${OpenCV_FRAMEWORK}/Headers/version.hpp")
+    file(GLOB_RECURSE opencv_version_file "${OpenCV_FRAMEWORK}/Headers/core/version.hpp")
 
     vp_get_opencv_version_from_hpp(${opencv_version_file} "CV_VERSION_MAJOR" OpenCV_VERSION_MAJOR)
     vp_get_opencv_version_from_hpp(${opencv_version_file} "CV_VERSION_MINOR" OpenCV_VERSION_MINOR)
