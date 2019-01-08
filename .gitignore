@@ -8,3 +8,4 @@ platforms/ios/build_framework.pyc
 *.pyc
 modules/java/\.idea/
 .scannerwork
+build
