@@ -979,10 +979,14 @@ As for the edge tracking, the same functionality is also available when using ke
 vpMbGenericTracker::setUseKltTracking("name of the face", boolean);
 \endcode
 
-For the depth feature, this also functionality is alse available via:
+For the depth feature, this functionality is also available via:
 
 \code
-vpMbGenericTracker::setUseDepthTracking("name of the face", boolean);
+vpMbGenericTracker::setUseDepthDenseTracking("name of the face", boolean);
+\endcode
+or
+\code
+vpMbGenericTracker::setUseDepthNormalTracking("name of the face", boolean);
 \endcode
 
 \section mb_generic_use_case Use case
