@@ -8,9 +8,9 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd-blender.cpp)
 
-list(APPEND tutorial_data_dir "${CMAKE_CURRENT_SOURCE_DIR}/camera_poses")
-list(APPEND tutorial_data_dir "${CMAKE_CURRENT_SOURCE_DIR}/depth")
-list(APPEND tutorial_data_dir "${CMAKE_CURRENT_SOURCE_DIR}/images")
+list(APPEND tutorial_data_dir "camera_poses")
+list(APPEND tutorial_data_dir "depth")
+list(APPEND tutorial_data_dir "images")
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/depth_M_color.txt")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.cao")
@@ -41,8 +41,8 @@ foreach(cpp ${tutorial_cpp})
 endforeach()
 
 # Copy the data files to the same location than the target
-foreach(data ${tutorial_data_dir})
-  file(COPY ${data} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) #TODO: fix it on Windows
+foreach(data_dir ${tutorial_data_dir})
+  visp_copy_dir(tutorial-mb-generic-tracker-rgbd-blender.cpp "${CMAKE_CURRENT_SOURCE_DIR}" ${data_dir})
 endforeach()
 
 foreach(data ${tutorial_data})
