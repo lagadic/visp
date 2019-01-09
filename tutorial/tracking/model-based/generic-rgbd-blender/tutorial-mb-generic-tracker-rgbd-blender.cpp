@@ -117,10 +117,12 @@ int main(int argc, char *argv[])
       first_frame_index = static_cast<unsigned int>(atoi(argv[i+1]));
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: \n" << argv[0] << " --input_directory <data directory> --config_color <object.xml> --config_depth <object.xml>"
-                   " --model_color <object.cao> --model_depth <object.cao> --init_file <object.init>"
-                   " --extrinsics <depth_M_color.txt> --disable_depth --display_ground_truth --click"
-                   " --first_frame_index <index>" << std::endl;
+      std::cout << "Usage: \n" << argv[0] << " [--input_directory <data directory> (default: .)]"
+                   " [--config_color <object.xml> (default: teabox.xml)] [--config_depth <object.xml> (default: teabox_depth.xml)]"
+                   " [--model_color <object.cao> (default: teabox.cao)] [--model_depth <object.cao> (default: teabox.cao)]"
+                   " [--init_file <object.init> (default: teabox.init)]"
+                   " [--extrinsics <depth to color transformation> (default: depth_M_color.txt)] [--disable_depth]"
+                   " [--display_ground_truth] [--click] [--first_frame_index <index> (default: 1)]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
