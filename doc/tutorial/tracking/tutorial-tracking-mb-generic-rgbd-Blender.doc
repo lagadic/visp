@@ -15,6 +15,12 @@ The configuration used for this tutorial is:
 - <a href="https://docs.blender.org/manual/en/latest/index.html">Blender Reference Manual</a>
 - <a href="https://en.wikibooks.org/wiki/Blender_3D:_Noob_to_Pro/Parenting">Blender 3D: Noob to Pro</a>
 
+Note that all the material (source code, input video, CAD model or XML settings files) described and used in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic-rgbd-blender
+\endcode
+
 \section mb_Blender_camera_settings Camera settings
 
 In ViSP and in the computer vision community, camera intrinsic parameters are the following:
@@ -129,14 +135,34 @@ This script will also automatically generate and save the animation images and w
 
 \note Data are saved in the `/tmp/` directory by default and the path should be changed accordingly depending on the OS. Camera and object names should also be changed accordingly.
 
-\section mb_Blender_run_mbt Run the model-based tracker on simulated data
+\section mb_Blender_mbt Model-based tracker on simulated data
 
+\subsection mb_Blender_mbt_src Source code
 Since depth data are stored in `OpenEXR` file format, OpenCV is used for the reading.
-The following C++ sample file reads color and depth images, pointcloud is recreated using the depth camera intrinsic parameters and the ground truth data are read and printed along with the estimated camera pose from the model-based tracker.
+The following C++ sample file also available in tutorial-mb-generic-tracker-rgbd-blender.cpp reads color and depth images, pointcloud is recreated using the depth camera intrinsic parameters and the ground truth data are read and printed along with the estimated camera pose from the model-based tracker.
 
 \include tutorial-mb-generic-tracker-rgbd-blender.cpp
 
 \note Here the depth values are manually clipped in order to simulate the depth range of a depth sensor. This probably can be done directly in Blender.
+
+\subsection mb_Blender_mbt_run Usage on simulated data
+
+Once build, to get tutorial-mb-generic-tracker-rgbd-blender.cpp usage, just run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-blender -h
+./tutorial-mb-generic-tracker-rgbd-blender [--input_directory <data directory> (default: .)] [--config_color <object.xml> (default: teabox.xml)] [--config_depth <object.xml> (default: teabox_depth.xml)] [--model_color <object.cao> (default: teabox.cao)] [--model_depth <object.cao> (default: teabox.cao)] [--init_file <object.init> (default: teabox.init)] [--extrinsics <depth to color transformation> (default: depth_M_color.txt)] [--disable_depth] [--display_ground_truth] [--click] [--first_frame_index <index> (default: 1)]
+\endcode
+
+Default parameters allow to run the binary with the data provided in ViSP. Just run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-blender
+\endcode
+
+The next video shows the results that you should obtain:
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/iSAdSsd2Bk0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+\endhtmlonly
 
 \section mb_Blender_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-tt.
