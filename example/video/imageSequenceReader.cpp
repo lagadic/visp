@@ -283,7 +283,7 @@ int main(int argc, const char **argv)
     }
 
     reader.getFrame(I, opt_first + 1);
-    std::cout << "Current image number (should be " << opt_first + 1 << "): " << reader.getFrameIndex() << std::endl;
+    std::cout << "Current image number (should be " << opt_first + 1 << "): " << opt_first + 1 << std::endl;
 
     if (opt_display) {
       vpDisplay::display(I);
@@ -296,7 +296,7 @@ int main(int argc, const char **argv)
     }
 
     reader.getFrame(I, reader.getLastFrameIndex());
-    std::cout << "Current image number (should be " << reader.getLastFrameIndex() << "): " << reader.getFrameIndex()
+    std::cout << "Current image number (should be " << reader.getLastFrameIndex() << "): " << reader.getLastFrameIndex()
               << std::endl;
 
     if (opt_display) {
@@ -313,7 +313,7 @@ int main(int argc, const char **argv)
 
     for (int i = opt_first; i <= lastFrame; i++) {
       reader.getFrame(I, i);
-      std::cout << "Current image number: " << reader.getFrameIndex() << std::endl;
+      std::cout << "Current image number: " << i << std::endl;
       if (opt_display) {
         vpDisplay::display(I);
         vpDisplay::flush(I);
