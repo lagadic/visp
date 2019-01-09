@@ -1,3 +1,4 @@
+//! \example tutorial-mb-generic-tracker-rgbd.cpp
 #include <iostream>
 
 #include <visp3/core/vpDisplay.h>
