@@ -52,6 +52,7 @@ visp_add_subdirectory(tracking/keypoint                    REQUIRED_DEPS visp_co
 visp_add_subdirectory(tracking/model-based/generic         REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui visp_sensor)
 visp_add_subdirectory(tracking/model-based/generic-apriltag REQUIRED_DEPS visp_core visp_sensor visp_gui visp_vision visp_mbt visp_detection)
 visp_add_subdirectory(tracking/model-based/generic-rgbd    REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui visp_sensor)
+visp_add_subdirectory(tracking/model-based/generic-rgbd-blender REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui)
 visp_add_subdirectory(tracking/model-based/generic-stereo  REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui)
 visp_add_subdirectory(tracking/model-based/old/edges       REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui)
 visp_add_subdirectory(tracking/model-based/old/generic     REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui)

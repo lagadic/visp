@@ -78,9 +78,11 @@ ViSP 3.2.0 (under development)
     . New tutorial: Creating a simple Android App with ViSP
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-android-getting-started.html
     . New tutorial: Deep learning object detection
-      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html      
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html
     . New tutorial: Draw basic drawings
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-basic-drawings.html
+    . New tutorial: How to use Blender to generate simulated data for model-based tracking experiments
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
