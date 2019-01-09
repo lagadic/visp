@@ -138,7 +138,7 @@ The following C++ sample file reads color and depth images, pointcloud is recrea
 
 \note Here the depth values are manually clipped in order to simulate the depth range of a depth sensor. This probably can be done directly in Blender.
 
-\section mb_GSoC_17_next Next tutorial
+\section mb_Blender_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-tt.
 
 */
