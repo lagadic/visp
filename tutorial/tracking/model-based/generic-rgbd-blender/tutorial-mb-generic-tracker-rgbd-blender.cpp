@@ -9,7 +9,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_XML2)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403) && defined(VISP_HAVE_XML2)
 namespace {
 bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
                vpImage<uint16_t> &I_depth_raw, unsigned int &depth_width, unsigned int &depth_height,
