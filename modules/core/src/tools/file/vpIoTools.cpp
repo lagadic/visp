@@ -125,8 +125,9 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
 namespace
 {
-#if TARGET_OS_IOS == 0 // The following code is not working on iOS since
-                       // wordexp() is not available
+// The following code is not working on iOS since wordexp() is not available
+// The function is not used on Android
+#if (TARGET_OS_IOS == 0) && !defined(__ANDROID__)
 void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
   size_t start_pos = 0;
