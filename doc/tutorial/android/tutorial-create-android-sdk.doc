@@ -45,15 +45,22 @@ $ brew install cmake
 - <a href="https://github.com/ninja-build/ninja/releases">Ninja</a><br>
 On Ubuntu use:
 \code
-$ sudo apt-get install ninja
+$ sudo apt-get install ninja-build
 \endcode
 On OSX use rather
 \code
 $ brew install ninja
 \endcode
 
-Optionally, you can install a compiler cache for a faster build
-- <a href="https://ccache.samba.org/">ccache</a>
+- <a href="https://ccache.samba.org/">ccache</a> a compiler cache for a faster build
+On Ubuntu use:
+\code
+$ sudo apt-get install ccache
+\endcode
+On OSX use rather
+\code
+$ brew install ccache
+\endcode
 
 \section android_sdk_ws Create a workspace
 
