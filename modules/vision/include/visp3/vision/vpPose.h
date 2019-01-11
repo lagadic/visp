@@ -166,7 +166,7 @@ private:
     #endif
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
         m_func(func_),
-    #if !(defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__)) || defined(ANDROID))
+    #if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
         m_initial_seed(initial_seed_),
     #endif
         m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
@@ -198,7 +198,7 @@ private:
     vpHomogeneousMatrix m_cMo;
     bool m_foundSolution;
     bool (*m_func)(const vpHomogeneousMatrix &);
-#if !(defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__)) || defined(ANDROID))
+#if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
     unsigned int m_initial_seed;
 #endif
     std::vector<vpPoint> m_listOfUniquePoints;
