@@ -694,7 +694,7 @@ endmacro()
 
 # finds and copy data from a source to a destination
 # Usage:
-# vp_glob_module_data(<source> <destination>)
+# vp_glob_module_data(<source> <destination> <NO_INSTALL>)
 macro(vp_glob_module_copy_data src dst)
   set(__data "")
   file(GLOB_RECURSE __data
@@ -711,11 +711,13 @@ macro(vp_glob_module_copy_data src dst)
     # install
     set(__install_dst "${VISP_INSTALL_DATAROOTDIR}/${dst}")
 
-    install(FILES ${__d}
-       DESTINATION "${__install_dst}"
-       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-       OWNER_WRITE
-    )
+    if(NOT "x${ARGN}" STREQUAL "xNO_INSTALL")
+      install(FILES ${__d}
+        DESTINATION "${__install_dst}"
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+        OWNER_WRITE
+      )
+    endif()
   endforeach()
 endmacro()
 
