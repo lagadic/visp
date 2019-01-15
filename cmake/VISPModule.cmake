@@ -860,11 +860,15 @@ macro(_vp_create_module)
     set_target_properties(${the_module} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libc /DEBUG")
   endif()
 
-  vp_install_target(${the_module} EXPORT VISPModules OPTIONAL
-    RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libs
-    LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
-    ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT dev
-    )
+  get_target_property(_target_type ${the_module} TYPE)
+  if(VISP_MODULE_${the_module}_CLASS STREQUAL "PUBLIC" AND
+      ("${_target_type}" STREQUAL "SHARED_LIBRARY" OR (NOT BUILD_SHARED_LIBS OR NOT INSTALL_CREATE_DISTRIB)))
+    vp_install_target(${the_module} EXPORT VISPModules OPTIONAL
+      RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libs
+      LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
+      ARCHIVE DESTINATION ${VISP_LIB_ARCHIVE_INSTALL_PATH} COMPONENT dev
+      )
+  endif()
 
   foreach(m ${VISP_MODULE_${the_module}_CHILDREN} ${the_module})
     # only "public" headers need to be installed

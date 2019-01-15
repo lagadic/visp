@@ -183,6 +183,7 @@ set(VISP_MODULE_${item}_LINK_DEPS \"${_deps}\")
   #----------------------------------------------------------------------
   # customize install target
   #----------------------------------------------------------------------
+  if(NOT ANDROID)
   # install rule for visp-config shell script
   install(FILES ${FILE_VISP_CONFIG_SCRIPT_INSTALL}
     DESTINATION ${VISP_BIN_INSTALL_PATH}
@@ -202,6 +203,7 @@ set(VISP_MODULE_${item}_LINK_DEPS \"${_deps}\")
     )
   else()
     # not implemented yet
+  endif()
   endif()
 
 # =============================================================================

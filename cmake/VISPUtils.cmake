@@ -151,15 +151,15 @@ function(vp_gen_config TMP_DIR NESTED_PATH ROOT_NAME)
   vp_path_join(__install_nested "${VISP_CONFIG_INSTALL_PATH}" "${NESTED_PATH}")
   vp_path_join(__tmp_nested "${TMP_DIR}" "${NESTED_PATH}")
 
-  file(RELATIVE_PATH VISP_INSTALL_PATH_RELATIVE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${__install_nested}" "${CMAKE_INSTALL_PREFIX}/")
-
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig-version.cmake.in" "${TMP_DIR}/VISPConfig-version.cmake" @ONLY)
 
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig.cmake.in" "${__tmp_nested}/VISPConfig.cmake" @ONLY)
-  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModule.cmake COMPONENT dev)
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPUse.cmake.in" "${__tmp_nested}/VISPUse.cmake" @ONLY)
+  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModules.cmake COMPONENT dev)
   install(FILES
       "${TMP_DIR}/VISPConfig-version.cmake"
       "${__tmp_nested}/VISPConfig.cmake"
+      "${__tmp_nested}/VISPUse.cmake"
       DESTINATION "${__install_nested}" COMPONENT dev)
 
   if(ROOT_NAME)
