@@ -1,7 +1,8 @@
+/*
 package org.visp.gui;
 
 import java.lang.String;
-import java.awt.BasicStroke;
+import java.awt.BasicStroke; // Produces an error: package java.awt does not exist
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -81,7 +82,7 @@ public class VpDisplay {
 
 	public void displayLine(int i1, int j1, int i2, int j2,Color color,int thickness) {
 		Graphics2D g = I.createGraphics();
-		g.setStroke(new BasicStroke(thickness));
+		//g.setStroke(new BasicStroke(thickness));
 		g.setColor(color);
 		g.drawLine(i1, j1, i2, j2);
 	}
@@ -92,7 +93,7 @@ public class VpDisplay {
 
 	public void displayArrow(int i1, int j1, int i2, int j2,Color color,int w, int h, int thickness) {
 		Graphics2D g = I.createGraphics();
-		g.setStroke(new BasicStroke(thickness));
+		//g.setStroke(new BasicStroke(thickness));
 		g.setColor(color);
 		if (i1==i2){
 			--i1;
@@ -129,7 +130,7 @@ public class VpDisplay {
 	
 	public void displayText(String text, int i, int j, Color color, int thickness) {
 		Graphics2D g = I.createGraphics();
-		g.setStroke(new BasicStroke(thickness));
+		//g.setStroke(new BasicStroke(thickness));
 		g.setColor(color);
 		g.drawString(text, i, j);
 	}
@@ -178,9 +179,9 @@ public class VpDisplay {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	/*
-	 * Exit on a mouse click
-	 */
+	//
+	// Exit on a mouse click
+	//
 	public void getClick() {
 		frame.addMouseListener(new MouseListener() {
 		    @Override
@@ -199,3 +200,4 @@ public class VpDisplay {
 		});
 	}
 }
+*/
