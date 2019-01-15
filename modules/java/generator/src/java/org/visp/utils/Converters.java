@@ -9,7 +9,7 @@ import org.visp.core.VpHomogeneousMatrix;
 public class Converters {
 
     public static List<VpColVector> Array_to_vector_vpColVector(long array[]) {
-		List<VpColVector> list = new ArrayList<>();
+		List<VpColVector> list = new ArrayList<VpColVector>();
 		for(long address: array){
 			list.add(new VpColVector(address));
 		}
@@ -17,7 +17,7 @@ public class Converters {
     }
 
     public static List<VpHomogeneousMatrix> Array_to_vector_vpHomogeneousMatrix(long array[]) {
-		List<VpHomogeneousMatrix> list = new ArrayList<>();
+		List<VpHomogeneousMatrix> list = new ArrayList<VpHomogeneousMatrix>();
 		for(long address: array){
 			list.add(new VpHomogeneousMatrix(address));
 		}

@@ -18,17 +18,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 config = None
 ROOT_DIR = None
 FILES_REMAP = {}
-
-'''
-    # INFO: Function that returns the path mapped by `path` argument in FILES_REMAP dict above
-    Keys of the above dict are relative path specified files, that contain template strings
-    that should contain values generated at compile time
-    Values of the above dict are absolute path specified files, that contain OS specific,
-    platform specific and revision specific info.
-    Therefore it serves as a generic output template for all platforms
-'''
-
-
 def checkFileRemap(path):
     path = os.path.realpath(path)
     if path in FILES_REMAP:
