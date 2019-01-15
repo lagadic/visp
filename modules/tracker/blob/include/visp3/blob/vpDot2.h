@@ -196,13 +196,13 @@ public:
   /*!
     Return the color level of pixels inside the dot.
 
-    \sa getGrayLevelMax()
+    \sa getGrayLevelMin()
   */
   inline unsigned int getGrayLevelMin() const { return gray_level_min; };
   /*!
     Return the color level of pixels inside the dot.
 
-    \sa getGrayLevelMin()
+    \sa getGrayLevelMax()
   */
   inline unsigned int getGrayLevelMax() const { return gray_level_max; };
   double getGrayLevelPrecision() const;
