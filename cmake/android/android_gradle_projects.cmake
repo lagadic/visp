@@ -9,7 +9,7 @@ set(ANDROID_TARGET_SDK_VERSION "26" CACHE STRING "Android minSdkVersion")
 set(ANDROID_BUILD_BASE_DIR "${VISP_BINARY_DIR}/visp_android" CACHE INTERNAL "")
 set(ANDROID_TMP_INSTALL_BASE_DIR "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/install/visp_android")
 
-#set(ANDROID_INSTALL_SAMPLES_DIR "samples")
+set(ANDROID_INSTALL_SAMPLES_DIR "samples")
 
 set(ANDROID_BUILD_ABI_FILTER "
 reset()
@@ -32,11 +32,11 @@ endif()
 #string(REPLACE "\n" "\n${__spaces}" ANDROID_ABI_FILTER "${__spaces}${ANDROID_BUILD_ABI_FILTER}")
 #string(REPLACE REGEX "[ ]+$" "" ANDROID_ABI_FILTER "${ANDROID_ABI_FILTER}")
 set(ANDROID_ABI_FILTER "${ANDROID_BUILD_ABI_FILTER}")
-#configure_file("${VISP_SOURCE_DIR}/samples/android/build.gradle.in" "${ANDROID_BUILD_BASE_DIR}/build.gradle" @ONLY)
+configure_file("${VISP_SOURCE_DIR}/samples/android/build.gradle.in" "${ANDROID_BUILD_BASE_DIR}/build.gradle" @ONLY)
 
 set(ANDROID_ABI_FILTER "${ANDROID_INSTALL_ABI_FILTER}")
-#configure_file("${VISP_SOURCE_DIR}/samples/android/build.gradle.in" "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" @ONLY)
-#install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}" COMPONENT samples)
+configure_file("${VISP_SOURCE_DIR}/samples/android/build.gradle.in" "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" @ONLY)
+install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}" COMPONENT samples)
 
 set(GRADLE_WRAPPER_FILES
     "gradle/wrapper/gradle-wrapper.jar"
@@ -57,7 +57,7 @@ foreach(fname ${GRADLE_WRAPPER_FILES})
   if("${__dir}" STREQUAL "")
     set(__dir ".")
   endif()
-#  install(FILES "${VISP_SOURCE_DIR}/platforms/android/gradle-wrapper/${fname}" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/${__dir}" COMPONENT samples ${__permissions})
+  install(FILES "${VISP_SOURCE_DIR}/platforms/android/gradle-wrapper/${fname}" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/${__dir}" COMPONENT samples ${__permissions})
 endforeach()
 
 file(WRITE "${ANDROID_BUILD_BASE_DIR}/settings.gradle" "
@@ -99,7 +99,7 @@ macro(add_android_project target path)
 
   string(REPLACE ";" "', '" ANDROID_SAMPLE_JAVA_PATH "['${ANDROID_SAMPLE_JAVA_PATH}']")
   string(REPLACE ";" "', '" ANDROID_SAMPLE_RES_PATH "['${ANDROID_SAMPLE_RES_PATH}']")
-#  configure_file("${path}/build.gradle.in" "${ANDROID_BUILD_BASE_DIR}/${__dir}/build.gradle" @ONLY)
+  configure_file("${path}/build.gradle.in" "${ANDROID_BUILD_BASE_DIR}/${__dir}/build.gradle" @ONLY)
 
   file(APPEND "${ANDROID_BUILD_BASE_DIR}/settings.gradle" "
 include ':${__dir}'
@@ -139,8 +139,8 @@ include ':${__dir}'
 
   string(REPLACE ";" "', '" ANDROID_SAMPLE_JAVA_PATH "['${ANDROID_SAMPLE_JAVA_PATH}']")
   string(REPLACE ";" "', '" ANDROID_SAMPLE_RES_PATH "['${ANDROID_SAMPLE_RES_PATH}']")
-#  configure_file("${path}/build.gradle.in" "${ANDROID_TMP_INSTALL_BASE_DIR}/${__dir}/build.gradle" @ONLY)
-#  install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/${__dir}/build.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/${__dir}" COMPONENT samples)
+  configure_file("${path}/build.gradle.in" "${ANDROID_TMP_INSTALL_BASE_DIR}/${__dir}/build.gradle" @ONLY)
+  install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/${__dir}/build.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/${__dir}" COMPONENT samples)
 
   file(APPEND "${ANDROID_TMP_INSTALL_BASE_DIR}/settings.gradle" "
 include ':${__dir}'
@@ -148,4 +148,4 @@ include ':${__dir}'
 
 endmacro()
 
-#install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/settings.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}" COMPONENT samples)
+install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/settings.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}" COMPONENT samples)
