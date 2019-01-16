@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.visp"
+      android:versionCode="@VISP_VERSION_MAJOR@@VISP_VERSION_MINOR@@VISP_VERSION_PATCH@0"
+      android:versionName="@VISP_VERSION@">
+</manifest>

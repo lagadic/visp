@@ -1,0 +1,13 @@
+# Android API level from which OpenCV has been compiled is remembered
+set(VISP_ANDROID_NATIVE_API_LEVEL "@OpenCV_ANDROID_NATIVE_API_LEVEL_CONFIGCMAKE@")
+
+# ==============================================================
+#  Check OpenCV availability
+# ==============================================================
+if(VISP_ANDROID_NATIVE_API_LEVEL GREATER ANDROID_NATIVE_API_LEVEL)
+  if(NOT VISP_FIND_QUIETLY)
+    message(WARNING "Minimum required by ViSP API level is android-${VISP_ANDROID_NATIVE_API_LEVEL}")
+  endif()
+  set(VISP_FOUND 0)
+  return()
+endif()

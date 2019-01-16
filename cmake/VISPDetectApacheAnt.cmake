@@ -1,3 +1,6 @@
+set(VISP_JAVA_SOURCE_VERSION "" CACHE STRING "Java source version (javac Ant target)")
+set(VISP_JAVA_TARGET_VERSION "" CACHE STRING "Java target version (javac Ant target)")
+
 file(TO_CMAKE_PATH "$ENV{ANT_DIR}" ANT_DIR_ENV_PATH)
 file(TO_CMAKE_PATH "$ENV{ProgramFiles}" ProgramFiles_ENV_PATH)
 

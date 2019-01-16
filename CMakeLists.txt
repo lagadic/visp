@@ -138,17 +138,20 @@ endif()
 include(cmake/VISPDetectPlatform.cmake)
 
 # Set the path where to install the lib
-if(WIN32)
+if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
   if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
     set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
   else()
     message(STATUS "Can't detect runtime and/or arch")
     set(VISP_INSTALL_BINARIES_PREFIX "")
   endif()
+elseif(ANDROID)
+  vp_update(VISP_INSTALL_BINARIES_PREFIX "sdk/native/")
 else()
   set(VISP_INSTALL_BINARIES_PREFIX "")
 endif()
 
+# where to install the library and headers
 if(ANDROID)
   # set binary path
   vp_update(VISP_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}bin/${ANDROID_NDK_ABI_NAME}")
@@ -156,61 +159,56 @@ if(ANDROID)
   # set samples path
   vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
 
-  set(LIBRARY_OUTPUT_PATH             "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
-  vp_update(3P_LIBRARY_OUTPUT_PATH    "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
-  vp_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
-  vp_update(VISP_3P_LIB_INSTALL_PATH  sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
-  vp_update(VISP_CONFIG_INSTALL_PATH  sdk/native/jni)
-  vp_update(VISP_INCLUDE_INSTALL_PATH sdk/native/jni/include)
+  set(LIBRARY_OUTPUT_PATH                 "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_3P_LIBRARY_OUTPUT_PATH   "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_LIB_INSTALL_PATH         sdk/native/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_LIB_ARCHIVE_INSTALL_PATH sdk/native/staticlibs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_3P_LIB_INSTALL_PATH      sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_CONFIG_INSTALL_PATH      sdk/native/jni)
+  vp_update(VISP_INC_INSTALL_PATH         sdk/native/jni/include)
   vp_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
-  vp_update(VISP_OTHER_INSTALL_PATH   sdk/etc)
-endif()
-
-# where to install the data (share for linux)
-if (UNIX)
-  # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
-  set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp")
+  vp_update(VISP_INSTALL_DATAROOTDIR      sdk/etc)
 else()
-  set(VISP_INSTALL_DATAROOTDIR "")
-endif()
-
-# where to install the library and headers
-if(WIN32)
-  set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR})
-  if(VISP_STATIC)
-    set(VISP_LIB_INSTALL_PATH       "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+  set(LIBRARY_OUTPUT_PATH         "${VISP_BINARY_DIR}/lib")
+  set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib${LIB_SUFFIX}")
+  if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+    if(VISP_STATIC)
+      vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+    else()
+      vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}lib${LIB_SUFFIX}")
+    endif()
+    set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+    set(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
+    set(VISP_JAR_INSTALL_PATH         java)
+    set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
+    set(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}bin")
+    set(VISP_INSTALL_DATAROOTDIR       "")
+    # where to install the data (share for linux)
+    # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+    set(VISP_CONFIG_INSTALL_PATH      ".")
   else()
-    set(VISP_LIB_INSTALL_PATH       "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
-  endif()
-  set(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
-  set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
-  set(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
-  set(VISP_JAR_INSTALL_PATH         java)
-  set(VISP_OTHER_INSTALL_PATH       etc)
-  set(VISP_CONFIG_INSTALL_PATH      ".")
-else()
-  # The location where includes and libraries will be installed
+    # The location where includes and libraries will be installed
 
-  # The 2 following commented lines should be used to enable multi-arch support.
-  # Since catkin doesn't support multi-arch we keep these 2 lines commented for the moment.
-  # set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-  # set(VISP_LIB_INSTALL_PATH         ${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-  set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
-  set(VISP_LIB_INSTALL_PATH         "${CMAKE_INSTALL_LIBDIR}")
-  set(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
-  set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_DATAROOTDIR}/3rdparty/${VISP_LIB_INSTALL_PATH}")
-  set(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
-  set(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
-  set(VISP_OTHER_INSTALL_PATH       "${VISP_INSTALL_DATAROOTDIR}")
+    # The 2 following commented lines should be used to enable multi-arch support.
+    # Since catkin doesn't support multi-arch we keep these 2 lines commented for the moment.
+    # set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
+    # set(VISP_LIB_INSTALL_PATH         ${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
+    set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
+    set(VISP_LIB_INSTALL_PATH         "${CMAKE_INSTALL_LIBDIR}")
+    set(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
+    set(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp")
+    set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_DATAROOTDIR}/3rdparty/${VISP_LIB_INSTALL_PATH}")
+    set(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
+    set(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
+    set(VISP_CONFIG_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/cmake/visp")
+  endif()
 endif()
-set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
 # the include directory we depend on for the build
 set(VISP_INCLUDE_DIR ${VISP_BINARY_DIR}/${VISP_INC_INSTALL_PATH})
 set(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
 # The location where includes and libraries will be build
-set(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${VISP_LIB_INSTALL_PATH})
 set(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${VISP_BIN_INSTALL_PATH})
 
 if(WIN32)
@@ -255,6 +253,16 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
 
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# the RPATH to be used when installing, but only if it's not a system directory
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}" isSystemDir)
+if("${isSystemDir}" STREQUAL "-1")
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
+endif("${isSystemDir}" STREQUAL "-1")
+
 if(ANDROID)
   vp_update(VISP_JNI_INSTALL_PATH "${VISP_LIB_INSTALL_PATH}")
 elseif(INSTALL_CREATE_DISTRIB)
@@ -267,17 +275,6 @@ vp_update(VISP_JNI_BIN_INSTALL_PATH "${VISP_JNI_INSTALL_PATH}")
 if(NOT VISP_LIB_ARCHIVE_INSTALL_PATH)
   set(VISP_LIB_ARCHIVE_INSTALL_PATH ${VISP_LIB_INSTALL_PATH})
 endif()
-
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# the RPATH to be used when installing, but only if it's not a system directory
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}" isSystemDir)
-if("${isSystemDir}" STREQUAL "-1")
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
-endif("${isSystemDir}" STREQUAL "-1")
 
 # ----------------------------------------------------------------------------
 #  Path for additional contrib modules
@@ -393,6 +390,7 @@ VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AN
 # Build java as an option
 VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
 VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
+VP_OPTION(BUILD_ANDROID_SERVICE   "" "" "Build ViSP Manager for Google Play"          "" OFF IF ANDROID )
 VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
 VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
@@ -732,7 +730,7 @@ endif(MSVC)
 #----------------------------------------------------------------------
 # Create and install visp-config.1.gz man page
 #----------------------------------------------------------------------
-if(UNIX)
+if(UNIX AND NOT ANDROID)
   find_host_program(GZIP gzip)
   if(GZIP)
     file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)

@@ -168,7 +168,11 @@ private:
         m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
         m_ransacThreshold(ransacThreshold_)
-    { }
+    {
+#if (defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__)) || defined(ANDROID))
+      (void)initial_seed_;
+#endif
+    }
 
     void operator()() { m_foundSolution = poseRansacImpl(); }
 

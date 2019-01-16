@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 
-public class VISPEngineService extends Service {
-    private static final String TAG = "VISPEngine/Service";
+public class ViSPEngineService extends Service {
+    private static final String TAG = "ViSPEngine/Service";
     private IBinder mEngineInterface = null;
     private List<LibVariant> variants = new ArrayList<LibVariant>();
 
@@ -88,8 +88,7 @@ public class VISPEngineService extends Service {
 
     public void onCreate() {
         Log.d(TAG, "Service starting");
-  // TODO Was giving a bug at build time. Find out why
-  /*      for (Field field : 	R.xml.class.getDeclaredFields()) { // Build error here means that all config.xml files are missing (configuration problem)
+        for (Field field : 	R.xml.class.getDeclaredFields()) { // Build error here means that all config.xml files are missing (configuration problem)
             Log.d(TAG, "Found config: " + field.getName());
             final LibVariant lib = new LibVariant();
             try {
@@ -107,9 +106,9 @@ public class VISPEngineService extends Service {
                 variants.add(lib);
             Log.d(TAG, "Added config: " + lib.version);
             }
-        }*/
+        }
         super.onCreate();
-        mEngineInterface = new VISPEngineInterface.Stub() {
+        mEngineInterface = new ViSPEngineInterface.Stub() {
 
             @Override
             public boolean installVersion(String version)
@@ -120,9 +119,12 @@ public class VISPEngineService extends Service {
 
             @Override
             public String getLibraryList(String version) throws RemoteException {
-                for (LibVariant lib : variants)
+                Log.i(TAG, "getLibraryList(" + version + ")");
+                for (LibVariant lib : variants) {
+                    Log.i(TAG, "checking " + lib.version + " ...");
                     if (lib.isCompatible(version))
                         return lib.getFileList();
+                }
                 return null;
             }
 
@@ -157,7 +159,7 @@ public class VISPEngineService extends Service {
     }
 
     public void OnDestroy() {
-        Log.i(TAG, "VISP Engine service destruction");
+        Log.i(TAG, "ViSP Engine service destruction");
     }
 
 }

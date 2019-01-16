@@ -11,7 +11,7 @@
     <!-- This is to make a jar with a source attachment, for e.g. easy -->
     <!-- navigation in Eclipse. See this question: -->
     <!-- http://stackoverflow.com/questions/3584968/ant-how-to-compile-jar-that-includes-source-attachment -->
-    <javac sourcepath="" srcdir="java" destdir="build/classes" debug="on" includeantruntime="false" >
+    <javac sourcepath="" srcdir="java" destdir="build/classes" debug="on" includeantruntime="false" @VISP_ANT_JAVAC_EXTRA_ATTRS@ >
       <include name="**/*.java"/>
       <compilerarg line="-encoding utf-8"/>
     </javac>
@@ -22,7 +22,7 @@
         <attribute name="Specification-Title" value="ViSP"/>
         <attribute name="Specification-Version" value="@VISP_VERSION@"/>
         <attribute name="Implementation-Title" value="ViSP"/>
-        <attribute name="Implementation-Version" value="@VISP_VCS_VERSION@"/>
+        <attribute name="Implementation-Version" value="@VISP_VCSVERSION@"/>
         <attribute name="Implementation-Date" value="${timestamp}"/>
       </manifest>
     </jar>
@@ -35,7 +35,7 @@
       destdir="@VISP_BINARY_DIR@/doc/doxygen/html/javadoc"
       Windowtitle="ViSP @VISP_VERSION@ Java documentation"
       Doctitle="ViSP Java documentation (@VISP_VERSION@)"
-      bottom="Generated on ${timestamp} / ViSP @VISP_VCS_VERSION@"
+      bottom="Generated on ${timestamp} / ViSP @VISP_VCSVERSION@"
       />
   </target>
 
