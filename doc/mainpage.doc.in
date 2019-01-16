@@ -88,26 +88,24 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 \subsection tuto_install_src Installation from source
 
-- \ref tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \ref tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu or Debian.
 - \ref tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
 - \ref tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
 - \ref tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
 - \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
 - \ref tutorial-install-jetson <br>In this tutorial you will learn how to install ViSP from source on Jetson equipped with a Connect Tech Orbitty Carrier board.
-- \ref tutorial-install-win7 <br>In this tutorial you will learn how to install ViSP from source on Windows 7 with Visual C++ 2012 (vc11).
-- \ref tutorial-install-win10-msvc12 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2013 (vc12).
 - \ref tutorial-install-win10-msvc14 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2015 (vc14).
 - \ref tutorial-install-win10-msvc15 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2017 (vc15).
 - \ref tutorial-install-win10-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 8.1 or Windows 10 with Mingw-w64.
-- \ref tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to install ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015 (vc14).
-- \ref tutorial-install-win10-msvc15-uwp <br>In this tutorial you will learn how to install ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2017 (vc15).
 - \ref tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
 
 
 \subsection tuto_install_crosscompiling Installation from cross-compiling
 
-- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for Raspberry Pi target.
-- \ref tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
+- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for Raspberry Pi target.
+- \ref tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
+- \ref tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015 (vc14).
+- \ref tutorial-install-win10-msvc15-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2017 (vc15).
 
 \subsection tuto_started Getting started
 
@@ -119,6 +117,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 \subsection tuto_image Image manipulation
 
 - \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
+- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to display basic primitives such as points, lines, circles, rectangles in an image display window.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
@@ -150,6 +149,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-tracking-mb-generic-apriltag-live <br>This tutorial is a simple use case. Using a webcam or an Intel RGB-D camera it shows how to test the generic model tracker on a cube that has an AprilTag glued on one face. The tag is here used to automate the tracker initialization.
 - \ref tutorial-tracking-mb-deprecated <br>This deprecated tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
 - \ref tutorial-tracking-mb-stereo-deprecated <br>This deprecated tutorial focuses on model-based trackers with stereo cameras.
+- \ref tutorial-tracking-mb-CAO-editor <br>This tutorial presents the project done during the GSoC 2017: two Blender plugins to import/export .cao model file and a Qt-based .cao editor.
+- \ref tutorial-tracking-mb-generic-rgbd-Blender <br>This tutorial shows how to use Blender to generate simulated data to test the model-based tracker.
 - \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
 \subsection tuto_detection Detection

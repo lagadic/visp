@@ -23,7 +23,7 @@ JNIEXPORT jlong JNICALL Java_org_visp_imgproc_VpContour_VpContour1
   (void)env;
   vp::vpContour* _retval_ = new vp::vpContour();
   return (jlong) _retval_;
-} 
+}
 
 
 //
@@ -54,6 +54,7 @@ JNIEXPORT jlong JNICALL Java_org_visp_imgproc_VpContour_VpContour3 (JNIEnv*, jcl
 JNIEXPORT jlong JNICALL Java_org_visp_imgproc_VpContour_VpContour3
   (JNIEnv *env, jclass, jlong address)
 {
+  (void)env;
   vp::vpContour* other = (vp::vpContour*) address;
   vp::vpContour* _retval_ = new vp::vpContour(*other);
   return (jlong) _retval_;
@@ -72,9 +73,9 @@ JNIEXPORT void JNICALL Java_org_visp_imgproc_VpContour_n_1setParent
 {
   (void)env;
   vp::vpContour* self = (vp::vpContour*) address_self;
-	vp::vpContour* parent = (vp::vpContour*) address_parent;
-	self->setParent(parent);
-} 
+  vp::vpContour* parent = (vp::vpContour*) address_parent;
+  self->setParent(parent);
+}
 
 
 //

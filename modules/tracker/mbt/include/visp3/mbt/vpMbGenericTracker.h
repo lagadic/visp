@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  \brief Generic model-based tracker
 */
 
-#ifndef __vpMbGenericTracker_h_
-#define __vpMbGenericTracker_h_
+#ifndef _vpMbGenericTracker_h_
+#define _vpMbGenericTracker_h_
 
 #include <visp3/mbt/vpMbDepthDenseTracker.h>
 #include <visp3/mbt/vpMbDepthNormalTracker.h>
@@ -164,10 +164,13 @@ public:
   virtual double getKltThresholdAcceptation() const;
 #endif
 
+  virtual void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
   virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
                           const unsigned int level = 0) const;
+  virtual void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
   virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *> &cylindersList,
                             const unsigned int level = 0) const;
+  virtual void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
   virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
                         const unsigned int level = 0) const;
 
@@ -196,6 +199,8 @@ public:
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
   virtual inline vpColVector getRobustWeights() const { return m_w; }
+
+  virtual int getTrackerType() const;
 
   virtual void init(const vpImage<unsigned char> &I);
 

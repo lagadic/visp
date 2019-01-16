@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1640,6 +1640,16 @@ void vpRobotAfma6::setVelocity(const vpRobot::vpControlFrameType frame, const vp
   switch (frame) {
   case vpRobot::CAMERA_FRAME: {
     Try(PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPCAM_AFMA6));
+    break;
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    // Tranform in camera frame
+    vpHomogeneousMatrix cMe;
+    this->get_cMe(cMe);
+    vpVelocityTwistMatrix cVe(cMe);
+    vpColVector v_c = cVe * vel_sat;
+    // Send velocities in m/s and rad/s
+    Try(PrimitiveMOVESPEED_CART_Afma6(v_c.data, REPCAM_AFMA6));
     break;
   }
   case vpRobot::ARTICULAR_FRAME: {

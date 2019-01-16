@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,12 @@
   vpMomentAlpha.
 */
 
-#ifndef __FEATUREMOMENTALPHA_H__
-#define __FEATUREMOMENTALPHA_H__
+#ifndef _vpFeatureMomentAlpha_h_
+#define _vpFeatureMomentAlpha_h_
+
 #include <visp3/core/vpColVector.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 class vpMomentDatabase;

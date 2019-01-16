@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,6 +88,15 @@ foreach(m ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_DIS
   endif()
 endforeach()
 
+if(ANDROID)
+  if(NOT ANDROID_NATIVE_API_LEVEL)
+    set(VISP_ANDROID_NATIVE_API_LEVEL_CONFIGCMAKE 0)
+  else()
+    set(VISP_ANDROID_NATIVE_API_LEVEL_CONFIGCMAKE "${ANDROID_NATIVE_API_LEVEL}")
+  endif()
+  vp_cmake_configure("${CMAKE_CURRENT_LIST_DIR}/templates/VISPConfig-ANDROID.cmake.in" ANDROID_CONFIGCMAKE @ONLY)
+endif()
+
 # -------------------------------------------------------------------------------------------
 #  Part 1/3: ${BIN_DIR}/VISPConfig.cmake              -> For use *without* "make install"
 # -------------------------------------------------------------------------------------------
@@ -112,13 +121,13 @@ configure_file(
 )
 
 configure_file(
-  cmake/templates/VISPConfigVersion.cmake.in
-  ${VISP_BINARY_DIR}/VISPConfigVersion.cmake
+  cmake/templates/VISPConfig-version.cmake.in
+  ${VISP_BINARY_DIR}/VISPConfig-version.cmake
   IMMEDIATE @ONLY
 )
 
 configure_file(
-  cmake/VISPUse.cmake.in
+  cmake/templates/VISPUse.cmake.in
   ${VISP_BINARY_DIR}/VISPUse.cmake
   IMMEDIATE @ONLY
 )
@@ -133,40 +142,15 @@ if(UNIX)
     list(APPEND VISP_INCLUDE_DIRS_CONFIGCMAKE ${VISP_MODULE_${m}_INC_DEPS})
   endforeach()
   vp_list_unique(VISP_INCLUDE_DIRS_CONFIGCMAKE)
+endif()
 
-  configure_file(
-    cmake/templates/VISPConfig.cmake.in
-    ${VISP_BINARY_DIR}/unix-install/VISPConfig.cmake
-    IMMEDIATE @ONLY
-  )
+if((CMAKE_HOST_SYSTEM_NAME MATCHES "Linux" OR UNIX) AND NOT ANDROID)
+  vp_gen_config("${CMAKE_BINARY_DIR}/unix-install" "" "")
+endif()
 
-  configure_file(
-    cmake/templates/VISPConfigVersion.cmake.in
-    ${VISP_BINARY_DIR}/unix-install/VISPConfigVersion.cmake
-    IMMEDIATE @ONLY
-  )
-
-  configure_file(
-    cmake/VISPUse.cmake.in
-    ${VISP_BINARY_DIR}/unix-install/VISPUse.cmake
-    IMMEDIATE @ONLY
-  )
-
-  install(FILES
-    ${VISP_BINARY_DIR}/unix-install/VISPConfig.cmake
-    ${VISP_BINARY_DIR}/unix-install/VISPConfigVersion.cmake
-    ${VISP_BINARY_DIR}/unix-install/VISPUse.cmake
-    DESTINATION "${VISP_LIB_INSTALL_PATH}/cmake/visp"
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
-    COMPONENT dev
-  )
-
-  # Install the export set for use with the install-tree
-  install(EXPORT VISPModules
-    FILE VISPModules.cmake
-    DESTINATION "${VISP_LIB_INSTALL_PATH}/cmake/visp"
-    COMPONENT dev
-  )
+if(ANDROID)
+  vp_gen_config("${CMAKE_BINARY_DIR}/unix-install" "abi-${ANDROID_NDK_ABI_NAME}" "VISPConfig.root-ANDROID.cmake.in")
+  install(FILES "${VISP_SOURCE_DIR}/platforms/android/android.toolchain.cmake" DESTINATION "${VISP_CONFIG_INSTALL_PATH}" COMPONENT dev)
 endif()
 
 # --------------------------------------------------------------------------------------------
@@ -179,39 +163,14 @@ if(WIN32)
   endforeach()
   vp_list_unique(VISP_INCLUDE_DIRS_CONFIGCMAKE)
 
-  configure_file(
-    cmake/templates/VISPConfig.cmake.in
-    ${VISP_BINARY_DIR}/win-install/VISPConfig.cmake
-    IMMEDIATE @ONLY
-  )
-
-  configure_file(
-    cmake/templates/VISPConfigVersion.cmake.in
-    ${VISP_BINARY_DIR}/win-install/VISPConfigVersion.cmake
-    IMMEDIATE @ONLY
-  )
-
-  configure_file(
-    cmake/VISPUse.cmake.in
-    ${VISP_BINARY_DIR}/win-install/VISPUse.cmake
-    IMMEDIATE @ONLY
-  )
-
-  install(FILES
-    "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
-    "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
-    DESTINATION "${VISP_LIB_INSTALL_PATH}"
-    COMPONENT dev)
-  install(EXPORT VISPModules
-    DESTINATION "${VISP_LIB_INSTALL_PATH}"
-    FILE VISPModules.cmake
-    COMPONENT dev)
-
-  install(FILES
-    "cmake/VISPConfig.cmake"
-    "${VISP_BINARY_DIR}/win-install/VISPConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}"
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
-    COMPONENT dev
-  )
+  if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+    if(BUILD_SHARED_LIBS)
+      set(_lib_suffix "lib")
+    else()
+      set(_lib_suffix "staticlib")
+    endif()
+    vp_gen_config("${CMAKE_BINARY_DIR}/win-install" "${VISP_INSTALL_BINARIES_PREFIX}${_lib_suffix}" "VISPConfig.root-WIN32.cmake.in")
+  else()
+    vp_gen_config("${CMAKE_BINARY_DIR}/win-install" "" "")
+  endif()
 endif()

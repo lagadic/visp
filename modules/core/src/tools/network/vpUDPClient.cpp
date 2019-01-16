@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,9 @@
 #define DWORD int
 #else
 #if defined(__MINGW32__)
-#define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#  endif
 #endif
 #include <Ws2tcpip.h>
 #endif

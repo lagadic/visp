@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ if(APPLE_FRAMEWORK)
     set(OpenCV_FOUND TRUE)
     set(OpenCV_LIBRARIES ${OpenCV_FRAMEWORK})
 
-    file(GLOB_RECURSE opencv_version_file "${OpenCV_FRAMEWORK}/Headers/version.hpp")
+    file(GLOB_RECURSE opencv_version_file "${OpenCV_FRAMEWORK}/Headers/core/version.hpp")
 
     vp_get_opencv_version_from_hpp(${opencv_version_file} "CV_VERSION_MAJOR" OpenCV_VERSION_MAJOR)
     vp_get_opencv_version_from_hpp(${opencv_version_file} "CV_VERSION_MINOR" OpenCV_VERSION_MINOR)

@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -384,5 +384,6 @@ macro(vp_set_ogre_advanced_var)
   endforeach()
   mark_as_advanced(pkgcfg_lib_OGRE_PKGC_OgreMain)
   mark_as_advanced(pkgcfg_lib_OGRE_PKGC_pthread)
+  mark_as_advanced(pkgcfg_lib_OGRE_PKGC_boost_system)
   mark_as_advanced(pkgcfg_lib_OIS_PKGC_OIS)
 endmacro()

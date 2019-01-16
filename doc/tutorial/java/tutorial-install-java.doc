@@ -5,16 +5,26 @@
 
 \section java_intro Introduction
 
-This tutorial will help you to install ViSP for Java on your desktop.
+This tutorial will help you to install ViSP for Java on your desktop. This tutorial shows how to proceed if your desktop is running Linux or OSX. If you are rather running Windows, you need to adapt its content.
 
-\section java Install Java JDK
+\section java_ws Create a workspace
 
-Download the latest Java JDK from the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website. Now you should be able to install the last Java JDK by opening the file just downloaded.
-
-\note If you download `jdk-10.0.1_linux-x64_bin.tar.gz` (case of linux), after extracting the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK. This could be done like:
+First create a workspace in `$HOME/visp-ws` that will contain Java JDK, ViSP sources, build and dataset.
 \code
-$ tar xvzf jdk-10.0.1_linux-x64_bin.tar.gz -C $HOME
-$ echo "export JAVA_HOME=$HOME/jdk-10.0.1" >> ~/.bashrc
+$ export VISP_WS=$HOME/visp-ws
+$ mkdir -p $VISP_WS
+\endcode
+
+\section java_install_jdk Install Java Development Kit
+
+Download the latest Java Development Kit (JDK) from the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website. Now you should be able to install the last Java JDK by opening the file just downloaded.
+
+After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
+
+If you download `jdk-11.0.1_<platform>-x64_bin.tar.gz` (where `<platform>` should be replaced by is either `linux` or `osx`) this could be done like:
+\code
+$ tar xvzf jdk-11.0.1_<platform>-x64_bin.tar.gz -C $VISP_WS
+$ echo "export JAVA_HOME=$VISP_VS/jdk-11.0.1.jdk" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
 
@@ -39,13 +49,6 @@ $ brew install cmake ant
 \endcode
 
 \section install_java_visp Install ViSP from source code
-\subsection install_java_ws Create a workspace
-
-- First create a workspace in \c $HOME/visp-ws that will contain ViSP source, build and dataset.
-\code
-$ export VISP_WS=$HOME/visp-ws
-$ mkdir -p $VISP_WS
-\endcode
 
 \subsection install_java_visp_get_source Getting ViSP source code
 
@@ -90,7 +93,50 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 $ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-tutorial-java-ccmake.jpeg Snapshot of the ccmake \c ../visp command used to configure ViSP.
+\image html img-ccmake-ubuntu-all.png Snapshot of the `ccmake ../visp` command used to configure ViSP.
+
+In `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following snapshot that shows that `python`, `ant` and `JNI` are found:
+\code
+$ more ViSP-third-party.txt
+
+==========================================================
+General configuration information for ViSP 3.2.0
+
+  Version control:               3.2.0-rc1-86-gfcd39c4
+
+  Platform:
+    Timestamp:                   2019-01-09T14:36:00Z
+    Host:                        Linux 4.15.0-42-generic x86_64
+    CMake:                       3.5.1
+    CMake generator:             Unix Makefiles
+    CMake build tool:            /usr/bin/make
+    Configuration:               Release
+
+  C/C++:
+    Built as dynamic libs?:      yes
+    C++ Compiler:                /usr/bin/c++  (ver 5.4.0)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C Compiler:                  /usr/bin/cc
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    Linker flags (Release):     
+    Linker flags (Debug):       
+
+  ViSP modules:
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection
+ java mbt tt tt_mi
+    Disabled:                    -
+    Disabled by dependency:      -
+    Unavailable:                 -
+
+  Python (for build):            /usr/bin/python2.7
+
+  Java:                         
+    ant:                         /usr/bin/ant (ver 1.9.6)
+    JNI:                         /usr/lib/jvm/default-java/include /usr/lib/jvm/default-java/include/linux /usr/lib/jvm/default-java/include
+\endcode
+
 
 \subsection install_java_visp_build Building ViSP libraries
 
@@ -105,6 +151,8 @@ $ make -j$(nproc)
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.ncpu)
 \endcode
+
+Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-320.jar`.
 
 \section set_up_visp_java_eclipse Setting Up ViSP Java in Eclipse
 
@@ -122,7 +170,7 @@ In the Preferences panel navigate under `"Java > Build Path > User Libraries"` a
 
 \image html img-tutorial-java-eclipse2.jpeg Create a new User Library
 
-Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-3yz.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, then press `"External Folder"` and finaly browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows).
+Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-320.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, then press `"External Folder"` and finaly browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows).
 
 \image html img-tutorial-java-eclipse3.jpeg Add jar and native libraries to User Library
 

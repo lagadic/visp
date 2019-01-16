@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,9 +183,8 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     res_old = res;
     cMo_old = cMo;
 
-    double eps;
     for (unsigned int i = 0; i < npt; i++) {
-      eps = (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
+      double eps = (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
 
       xprim[i] = (1.0 + eps) * c3d[i].get_x();
       yprim[i] = (1.0 + eps) * c3d[i].get_y();
@@ -325,10 +324,9 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
     res_old = res_min;
     cMo_old = cMo;
 
-    double eps;
     vpColVector xprim(npt),yprim(npt);
     for (unsigned int i = 0; i < npt; i++) {
-      eps = (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
+      double eps = (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
 
       xprim[i] = (1.0 + eps)*c3d[i].get_x();
       yprim[i] = (1.0 + eps)*c3d[i].get_y();

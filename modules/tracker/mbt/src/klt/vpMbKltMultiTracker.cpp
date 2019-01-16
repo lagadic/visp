@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
+ * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
@@ -1680,7 +1680,7 @@ void vpMbKltMultiTracker::loadConfigFile(const std::map<std::string, std::string
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }

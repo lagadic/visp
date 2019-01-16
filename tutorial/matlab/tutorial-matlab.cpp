@@ -13,7 +13,7 @@
 //! [Include]
 
 int main()
-{ 
+{
   // ViSP matrix containing input data
   //! [InputData]
   vpMatrix x(3, 3, 0);
@@ -37,7 +37,7 @@ int main()
 
   // Temporary variable to hold Output data
   double res[3];
-  int resRows = 1, resCols = 3;
+  int resCols = 3;
 
   // Display input data to the user
   std::cout << "ViSP Input Matrix:" << std::endl;

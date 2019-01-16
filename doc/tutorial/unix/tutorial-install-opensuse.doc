@@ -7,63 +7,81 @@ In this tutorial you will learn how to install ViSP from source on openSUSE. The
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_opensuse_required Install prerequisities
+\section install_opensuse_ws Create a workspace
 
-- gcc 4.4.x or later. This can be installed with:
+First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
+
+In a terminal, run:
 \code
-$ sudo zypper install gcc-c++
-\endcode
-- CMake 2.6 or higher that could be installed with:
-\code
-$ sudo zypper install cmake
-\endcode
-- Git if you want to get the source code from http://github.com/lagadic/visp
-\code
-$ sudo zypper install git
+$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+$ source ~/.bashrc
+$ mkdir -p $VISP_WS
 \endcode
 
-\section install_opensuse_3rdparty Install 3rd parties
+\section install_opensuse_required Install prerequisites
+
+Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion. This can be achieved running:
+\code
+$ sudo zypper install gcc-c++ cmake git subversion wget
+\endcode
+
+\section install_opensuse_quick Quick ViSP installation
+
+In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in \ref install_opensuse_advanced.
+
+- Install a small number of recommended 3rd parties
+\code
+$ sudo zypper install opencv-devel libX11-devel eigen3-devel libxml2-devel
+\endcode
+
+- Get ViSP source code
+\code
+$ cd $VISP_WS
+$ git clone https://github.com/lagadic/visp.git
+\endcode
+
+- Create a build folder and build ViSP
+\code
+$ mkdir -p $VISP_WS/visp-build
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+$ make -j4
+\endcode
+
+- Set `VISP_DIR` environment variable
+\code
+$ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
+$ source ~/.bashrc
+\endcode
+
+To have a trial, just jump to \ref install_opensuse_dataset before running some binaries that you just build or jump to \ref install_opensuse_next. You can later come back to the \ref install_opensuse_advanced. 
+
+\section install_opensuse_advanced Advanced ViSP installation
+
+\subsection install_opensuse_3rdparty Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
 
-\subsection install_opensuse_3rdparty_recommended Recommended 3rd parties
+\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_opensuse_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_opensuse_tips_new_3rdparty.
+
+\subsubsection install_opensuse_3rdparty_recommended Recommended 3rd parties
 
 We recommend to install the following:
 
 - OpenCV
-\code
-$ sudo zypper install opencv-devel
-\endcode
 - libX11 to be able to open a window to display images
-\code
-$ sudo zypper install libX11-devel
-\endcode
 - lapack and eigen to benefit from optimized mathematical capabilities
-\code
-$ sudo zypper install lapack-devel eigen3-devel
-\endcode
-- libv4l to grab images from usb or analogic cameras
-\code
-$ sudo zypper install libv4l-devel
-\endcode
 - libdc1394 to grab images from firewire cameras
-\code
-$ sudo zypper install libdc1394-devel
-\endcode
+- libv4l to grab images from usb or analogic cameras
 - libxml2 to be able to configure the model-based trackers from xml files
-\code
-$ sudo zypper install libxml2-devel
-\endcode
 - libzbar to be able to detect QR codes
+
+Installation of recommended 3rd parties could be performed running:
 \code
-$ sudo zypper install libzbar-devel
-\endcode
-- pthread library
-\code
-zypper install pthread-stubs
+$ sudo zypper install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel libxml2-devel libzbar-devel
 \endcode
 
-\subsection install_opensuse_3rdparty_other Other optional 3rd parties
+\subsubsection install_opensuse_3rdparty_other Other optional 3rd parties
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.
 
@@ -72,16 +90,9 @@ We give also the way to install other 3rd party libraries to enable specific cap
 $ sudo zypper install libjpeg8-devel libpng-devel
 \endcode
 
-\section install_opensuse_install_visp Install ViSP from source code
-\subsection install_opensuse_ws Create a workspace
+\subsection install_opensuse_get_source Get ViSP source code
 
-- First create a workspace in \c $HOME/visp-ws that will contain ViSP source, build and dataset.
-\code
-$ export VISP_WS=$HOME/visp-ws
-$ mkdir -p $VISP_WS
-\endcode
-
-\subsection install_opensuse_get_source Getting ViSP source code
+There are different ways to get ViSP source code in this workspace:
 
 - You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
@@ -103,50 +114,40 @@ $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in the directory \c $VISP_WS/visp. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like \c $VISP_WS/visp-x.y.z.
+We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
-\subsection install_opensuse_config Configuring ViSP from source
+\subsection install_opensuse_config Configure ViSP from source
 
-- In the workspace, create first a directory named \c visp-build that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
+These are the steps to configure ViSP from source with CMake:
+
+- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
 \code
 $ mkdir $VISP_WS/visp-build
 \endcode
 
-- Enter the \c visp-build folder and configure the build:
+- Enter the `visp-build` folder and configure the build:
 \code
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
 \endcode
-A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
+A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
 \code
 $ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-opensuse-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP.
+\image html img-ccmake-opensuse-all.png Snapshot of the `ccmake ../visp` command used to configure ViSP.
 
-\subsection install_opensuse_build Building ViSP libraries
+\subsection install_opensuse_build Build ViSP libraries
 
-- To build ViSP libraries proceed with:
+To build ViSP libraries proceed with:
 \code
 $ cd $VISP_WS/visp-build
 $ make -j4
 \endcode
 
-\note Installing ViSP is optional, since ViSP could be used as a 3rd party without installation. To proceed with the installation run:
-\code
-$ cd $VISP_WS/visp-build
-$ sudo make install
-\endcode
-\note The default install location is set to \c /usr/local. This location could be changed modifying \c CMAKE_INSTALL_PREFIX var:
-\code
-$ cd $VISP_WS/visp-build
-$ cmake ../visp -DCMAKE_INSTALL_PREFIX=/usr
-$ sudo make install
-\endcode
+\subsection install_opensuse_doc Build ViSP documentation
 
-\subsection install_opensuse_doc Building ViSP documentation
-
-- To build ViSP documentation, you have first to install Doxygen package:
+To build ViSP documentation, you have first to install Doxygen package:
 \code
 $ sudo zypper install doxygen graphviz
 \endcode
@@ -156,35 +157,46 @@ $ cd $VISP_WS/visp-build
 $ cmake ../visp
 $ make -j4 visp_doc
 \endcode
-The generated documentation is then available in \c $VISP_WS/visp-build/doc/html/index\.html
+The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
-- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var \c ENABLE\_FULL\_DOC to \c ON like:
+\note It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \code
 $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j4 visp_doc
 \endcode
 
-\section install_opensuse_dataset Install ViSP dataset
-- Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c visp-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
-\code
-$ unzip visp-images-3.1.0.zip -d $VISP_WS
-\endcode
+\subsection install_opensuse_visp_dir Set VISP_DIR environment var
 
-- We suppose now that the data are located in \c $VISP_WS/visp-images-3.1.0.
+In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
 \code
-$ ls $VISP_WS/visp-images-3.1.0
-AprilTag     circle   ellipse    iv     LICENSE.txt  mbt    mire-2     video
-calibration  cube     ellipse-1  Klimt  line         mire   README.md  
-\endcode
-
-- Set \c VISP_INPUT_IMAGE_PATH environment variable to help ViSP examples and tests to find the location of the data set. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
-\code
-$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.1.0" >> ~/.bashrc
+$ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
 
-- From now, you can try to run ViSP examples and tests. For example you can run \c displayX example that should open a windows with Klimt painting image and some overlay drawings:
+\section install_opensuse_dataset Install ViSP data set
+
+Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples or tests. Note that ViSP tutorials are not using ViSP data set.
+
+- After ViSP data set <a href="https://visp.inria.fr/download/">download</a> unzip the archive
+\code
+$ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
+\endcode
+
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.2.0`.
+\code
+$ ls $VISP_WS/visp-images-3.2.0
+AprilTag   LICENSE.txt   calibration   cube      ellipse-1    iv     mbt         mire     video
+Klimt      README.md     circle	       ellipse	 endianness   line   mbt-depth   mire-2
+\endcode
+
+- Set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to find the location of the data set. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
+\code
+$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.2.0" >> ~/.bashrc
+$ source ~/.bashrc
+\endcode
+
+- From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open a windows with Klimt painting image and some overlay drawings:
 \code
 $ cd $VISP_WS/visp-build
 $ ./example/device/display/displayX
@@ -200,8 +212,49 @@ Bye
 
 \section install_opensuse_tips Tips and tricks
 
+\subsection install_opensuse_tips_new_3rdparty How to take into account a newly installed 3rd party
+
+Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be achieved with:
+\code
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+\endcode
+
+Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well detected (see \ref install_opensuse_tips_3rd_party).
+
+Finally, you need to rebuild ViSP with:
+\code
+$ make -j4
+\endcode
+
+\subsection install_opensuse_tips_install How to install ViSP
+
+Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation. If you still want to proceed with the installation run:
+\code
+$ cd $VISP_WS/visp-build
+$ sudo make install
+\endcode
+\note The default install location is set to `/usr/local`. This location could be changed modifying `CMAKE_INSTALL_PREFIX` var:
+\code
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DCMAKE_INSTALL_PREFIX=/usr
+$ make -j4
+$ sudo make install
+\endcode
+
+\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to \ref install_opensuse_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party. If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR` to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
+\code
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
+$ make -j4
+$ sudo make install
+$ echo "export VISP_DIR=/my/install/folder/lib/cmake/visp" >> ~/.bashrc
+$ source ~/.bashrc
+\endcode
+
 \subsection install_opensuse_tips_uninstall How to uninstall ViSP
-- After ViSP installation, you can remove installed material using:
+
+After ViSP installation, you can remove installed material using:
 \code
 $ cd $VISP_WS/visp-build
 $ sudo make uninstall
@@ -209,7 +262,7 @@ $ sudo make uninstall
 
 \subsection install_opensuse_tips_modules How to build only ViSP libraries
 
-- If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
+If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
 $ cd $VISP_WS/visp-build
 $ make -j4 visp_modules
@@ -217,11 +270,12 @@ $ make -j4 visp_modules
 
 \subsection install_opensuse_tips_module_once How to build a ViSP specific module
 
-- If you want to build a given module and all the dependencies:
+If you want to build a given module and all the dependencies:
 \code
 $ cd $VISP_WS/visp-build
 $ make -j4 visp_<module_name>
 \endcode
+
 For example to build the model-based tracker module named mbt, run:
 \code
 $ cd $VISP_WS/visp-build
@@ -230,20 +284,22 @@ $ make -j4 visp_mbt
 
 \subsection install_opensuse_tips_target Which are the targets that could be run with make ?
 
-- To know which are the target available with \c make:
+To know which are the target available with `make`:
 \code
 $ make help | grep visp
+... visp_tutorials
 ... visp_tests
 ... visp_modules
+... visp_doc
 ... visp_examples
 ... visp_demos
-... visp_tutorials
 ... visp_clipper
 ... visp_apriltag
 ... visp_core
 ... visp_gui
 ... visp_imgproc
 ... visp_io
+... gen_visp_java_source
 ... visp_klt
 ... visp_me
 ... visp_sensor
@@ -261,48 +317,54 @@ $ make help | grep visp
 
 \subsection install_opensuse_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
-- To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \c $VISP_WS/visp-build. We provide hereafter an example of a possible content of this file that contains also build info.
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file:
 \code
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.1.0
+General configuration information for ViSP 3.2.0
 
-  Version control:               3.0.1-346-g22ae3e680
+  Version control:               3.1.0-692-g97cace182
 
   Platform:
-    Timestamp:                   2017-09-27T13:18:49Z
-    Host:                        Linux 4.4.76-1-default x86_64
-    CMake:                       3.5.2
+    Timestamp:                   2018-12-06T16:08:10Z
+    Host:                        Linux 4.19.4-1-default x86_64
+    CMake:                       3.13.0
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/gmake
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 4.8.5)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C++ Compiler:                /usr/bin/c++  (ver 8.2.1)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     C Compiler:                  /usr/bin/cc
-    C flags (Release):           -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     Linker flags (Release):
     Linker flags (Debug):
 
   ViSP modules:
-    To be built:                 core gui io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
     Disabled:                    -
     Disabled by dependency:      -
-    Unavailable:                 -
+    Unavailable:                 java
+
+  Python (for build):            /usr/bin/python2.7
+
+  Java:                          
+    ant:                         NO
+    JNI:                         NO
 
   Build options: 
     Build deprecated:            yes
     Build with moment combine:   no
 
   Mathematics: 
-    Use Lapack/blas:             yes (ver n/a)
-    Use Lapack (built-in):       no
-    Use Eigen3:                  yes (ver 3.2.9)
-    Use OpenCV:                  yes (ver 3.1.0)
+    Use Lapack/blas:             no
+    Use Lapack (built-in):       yes (ver 3.2.1)
+    Use Eigen3:                  yes (ver 3.3.4)
+    Use OpenCV:                  yes (ver 3.4.3)
     Use GSL:                     no
 
   Simulator: 
@@ -318,44 +380,47 @@ General configuration information for ViSP 3.1.0
     \- Use Qt3:                  no
 
   Media I/O: 
-    Use JPEG:                    no
-    Use PNG:                     no
-    \- Use ZLIB:                 yes (ver 1.2.8)
-    Use OpenCV:                  yes (ver 3.1.0)
+    Use JPEG:                    yes (ver 80)
+    Use PNG:                     yes (ver 1.6.34)
+    \- Use ZLIB:                 yes (ver 1.2.11)
+    Use OpenCV:                  yes (ver 3.4.3)
 
   Real robots: 
     Use Afma4:                   no
     Use Afma6:                   no
+    Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PT:              no
+    Use Virtuose:                no
 
   GUI: 
     Use X11:                     yes
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 3.1.0)
+    Use OpenCV:                  yes (ver 3.4.3)
     Use GDI:                     no
     Use Direct3D:                no
 
   Cameras: 
-    Use DC1394-2.x:              yes (ver 2.2.3)
+    Use DC1394-2.x:              no
     Use CMU 1394:                no
-    Use V4L2:                    yes (ver 1.8.0)
+    Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 3.1.0)
+    Use OpenCV:                  yes (ver 3.4.3)
     Use Flycapture:              no
     Use Pylon:                   no
 
   RGB-D sensors: 
     Use Realsense:               no
-    \- Use PCL:                  no
-       \- Use VTK:               no
+    Use Realsense2:              no
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             no
     \- Use pthread:              yes
+    Use PCL:                     no
+    \- Use VTK:                  no
 
   F/T sensors: 
     Use atidaq (built-in):       no
@@ -368,13 +433,14 @@ General configuration information for ViSP 3.1.0
 
   Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
-    Use XML2:                    yes (ver 2.9.4)
+    Use XML2:                    no
 
   Optimization: 
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
-    Use cxx11:                   no
+    Use cxx11:                   yes
+    cxx standard:                11
 
   Documentation: 
     Use doxygen:                 no
@@ -393,7 +459,7 @@ General configuration information for ViSP 3.1.0
 \section install_opensuse_issues Known issues
 \subsection install_opensuse_issues_libjpeg libjpeg.so.8 may conflict with libjpeg.so.62
 
-- Note that with openSUSE 12.04 but also with 13.02, \c libjpeg-devel package lead to \c libjpeg62.so installation, that may conflict with \c libjpeg8.so that is also installed. That's why we recommend to not install \c libjpeg-devel, but rather install \c libjpeg8-devel.
+Note that with openSUSE 12.04 but also with 13.02, `libjpeg-devel` package lead to `libjpeg62.so` installation, that may conflict with `libjpeg8.so` that is also installed. That's why we recommend to not install `libjpeg-devel`, but rather install `libjpeg8-devel`.
 \code
 Linking CXX executable HelloWorld
 /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/ld: warning: libjpeg.so.8, needed by /usr/lib64/libopencv_highgui.so.2.4.9, may conflict with libjpeg.so.62

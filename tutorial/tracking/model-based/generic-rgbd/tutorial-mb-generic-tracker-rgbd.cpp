@@ -1,3 +1,4 @@
+//! \example tutorial-mb-generic-tracker-rgbd.cpp
 #include <iostream>
 
 #include <visp3/core/vpDisplay.h>
@@ -230,9 +231,9 @@ int main(int argc, char *argv[])
   mapOfImages.clear();
   pcl::PointCloud<pcl::PointXYZ>::Ptr empty_pointcloud(new pcl::PointCloud<pcl::PointXYZ>);
   std::vector<double> times_vec;
-  bool quit = false;
 
   try {
+    bool quit = false;
     while (! quit) {
       double t = vpTime::measureTimeMs();
       read_data(frame_cpt, input_directory, I_color, I_depth_raw, pointcloud);

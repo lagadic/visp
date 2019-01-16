@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,16 +66,19 @@ endif()
 
 if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
   if(UNIX)
+    visp_set_source_file_compile_flag(getRealSense2Info.cpp -Wno-unused-function -Wno-sign-compare -Wno-reorder -Wno-overloaded-virtual)
     # Add specific build flag to turn off warnings coming from PCL 3rd party
     visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move -Wno-comment)
-    visp_set_source_file_compile_flag(grabRealSense2.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment)
-    visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
-    visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-comment)
+    visp_set_source_file_compile_flag(grabRealSense2.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual)
+    visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-missing-field-initializers)
+    visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-comment -Wno-overloaded-virtual)
   else()
     visp_set_source_file_compile_flag(getRealSense2Info.cpp /wd4244)
     visp_set_source_file_compile_flag(grabRealSense2.cpp /wd4244)
     visp_set_source_file_compile_flag(saveRealSenseData.cpp /wd4244)
   endif()
+else()
+  visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-comment)
 endif()
 
 foreach(cpp ${example_cpp})

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@
   \brief Tools for pose computation (pose from point only).
 */
 
-#ifndef __vpPose_h_
-#define __vpPose_h_
+#ifndef _vpPose_h_
+#define _vpPose_h_
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
@@ -80,12 +80,12 @@ class VISP_EXPORT vpPose
 public:
   //! Methods that could be used to estimate the pose from points.
   typedef enum {
-    LAGRANGE,             /*!< Linear Lagrange approach (does't need an initialization) */
-    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization) */
+    LAGRANGE,             /*!< Linear Lagrange approach (doesn't need an initialization) */
+    DEMENTHON,            /*!< Linear Dementhon aproach (doesn't need an initialization) */
     LOWE,                 /*!< Lowe aproach based on a Levenberg Marquartd non linear
                              minimization scheme that needs an initialization from Lagrange or
                              Dementhon aproach */
-    RANSAC,               /*!< Robust Ransac aproach (does't need an initialization) */
+    RANSAC,               /*!< Robust Ransac aproach (doesn't need an initialization) */
     LAGRANGE_LOWE,        /*!< Non linear Lowe aproach initialized by Lagrange
                              approach */
     DEMENTHON_LOWE,       /*!< Non linear Lowe aproach initialized by Dementhon
@@ -168,7 +168,11 @@ private:
         m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
         m_ransacThreshold(ransacThreshold_)
-    { }
+    {
+#if (defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__)) || defined(ANDROID))
+      (void)initial_seed_;
+#endif
+    }
 
     void operator()() { m_foundSolution = poseRansacImpl(); }
 

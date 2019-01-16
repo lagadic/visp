@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,8 +114,6 @@ vpMatrix vpMatrix::inverseByCholesky() const
                                              "OpenCV 3rd party"));
 #endif
 }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef VISP_HAVE_LAPACK
 /*!
@@ -239,5 +237,3 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
   return A;
 }
 #endif
-
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

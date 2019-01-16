@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,11 +393,11 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
-  bool executeParallelVersion = useParallelRansac;
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   unsigned int nbThreads = 1;
+  bool executeParallelVersion = useParallelRansac;
 #else
-  executeParallelVersion = false;
+  bool executeParallelVersion = false;
 #endif
 
   if (executeParallelVersion) {

@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ set(opt_incs "")
 set(opt_libs "")
 
 # OpenCV
-if(USE_OPENCV)  
+if(USE_OPENCV)
   # On win32 since OpenCV 2.4.7 and on OSX with OpenCV 2.4.10 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.
   # Using OpenCV_LIBS works to build visp library, examples, demos and test thanks to the components,
   # but not tutorials that are stand alone Cmake project that use ViSP as a 3rd party.
@@ -263,3 +263,6 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
 vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui)
+
+# copy robot and wireframe simulator data
+vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)

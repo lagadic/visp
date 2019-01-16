@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,8 +110,8 @@ int main (int argc, char **argv)
   vpQuadProg qp_WS;
 
   // timing
-  int total = 1000;
-  double t, t_WS(0), t_noWS(0);
+  int total = 100;
+  double t_WS(0), t_noWS(0);
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
@@ -137,7 +137,7 @@ int main (int argc, char **argv)
     // solver without warm start
     vpQuadProg qp;
     x = 0;
-    t = vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     qp.solveQP(Q, r, A, b, C, d, x);
 
     t_noWS += vpTime::measureTimeMs() - t;

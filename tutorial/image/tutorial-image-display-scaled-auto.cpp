@@ -17,7 +17,9 @@ int main()
 
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
+    //! [Circle]
     vpDisplay::displayCircle(I, I.getHeight() / 2, I.getWidth() / 2, 200, vpColor::red, true);
+    //! [Circle]
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);

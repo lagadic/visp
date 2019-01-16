@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifndef __vpPtu46_H
-#define __vpPtu46_H
+#ifndef _vpPtu46_h_
+#define _vpPtu46_h_
 
 /* ----------------------------------------------------------------------- */
 /* --- INCLUDES -------------------------------------------------------- */

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_LAPACK
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
@@ -240,7 +239,6 @@ vpMatrix vpMatrix::inverseByQRLapack() const
   return C;
 }
 #endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition.

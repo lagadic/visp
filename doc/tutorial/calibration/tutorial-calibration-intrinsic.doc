@@ -31,7 +31,7 @@ In ViSP we consider two unit conversions:
 In this model we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$ where:
 - \f$(u_0, v_0)\f$ are the coordinates of the principal point in pixel;
 - \f$(p_x, p_y)\f$ are the ratio between the focal length and the size of a pixel;
-- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion.
+- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion. \f$k_{ud}\f$ is the distortion parameter used to transform the coordinates from \e undistorted to \e distorted images, while \f$k_{du}\f$ is used to transform the coordinates from \e distorted to \e undistorted images. 
 
 \note It may be useful to make a tour in \ref tutorial-bridge-opencv that makes in relation the camera model used in ViSP with the one proposed by OpenCV.
 
@@ -105,7 +105,7 @@ We will not describe in detail the source, but just mention that:
 
 In this section we consider the OpenCV chessboard pattern that has a size of 9 by 6. Each square of the chessboard is 0.025 meters large. We took 5 images called \c chessboard-01.png, \c chessboard-02.png, ..., \c chessboard-05.png. Hereafter we give an example of one of these images. 
 
-\image html img-chessboard-01.png Snapshot example of the chessboard used to calibrate the camera.
+\image html img-chessboard-01.png Snapshot example of the 9 by 6 chessboard used to calibrate the camera.
 
 Before starting the calibration we need to create a configuration file. We create \c default-chessboard.cfg with the following content:
 \code
@@ -173,7 +173,7 @@ Estimated pose on input data 3: 0.07481330068  0.0832284992  0.2825482261  -0.09
 Estimated pose on input data 4: 0.08061439562  0.08765353523  0.2837166409  0.1009190234  -0.09325252997  -2.906079819
 \endcode
 
-The resulting parameters are also saved in \c ./camera.xml file.
+The resulting parameters are also saved in `./camera.xml` file.
 
 \section calibration_circle Calibration from a circles grid
 
@@ -247,7 +247,7 @@ Estimated pose on input data 3: -0.08528071  -0.0552184701  0.216359278  0.43394
 Estimated pose on input data 4: -0.1104723502  -0.0854285443  0.2684946566  0.4130829919  0.1926077657  0.2736623762
 \endcode
 
-The resulting parameters are also saved in \c ./camera.xml file.
+The resulting parameters are also saved in `./camera.xml` file.
 
 
 \section calibration_undistort Distorsion removal

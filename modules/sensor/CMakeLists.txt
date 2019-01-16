@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ if(USE_PCL)
 
   find_package(VTK QUIET)
   if (VTK_FOUND AND NOT ANDROID)
-    # Fix for Ubuntu 16.04 to add vtkFiltering as dependency. Note that vtkFiltering does't exists on OSX
+    # Fix for Ubuntu 16.04 to add vtkFiltering as dependency. Note that vtkFiltering doesn't exists on OSX
     list(FIND VTK_LIBRARIES "vtkFiltering" vtkFiltering_exists_)
     if(NOT ${vtkFiltering_exists_} EQUAL -1)
       list(APPEND PCL_VTK_LIBRARIES "vtkFiltering") # seems required on Ubuntu 16.04
@@ -140,28 +140,67 @@ if(USE_PCL)
       # See https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
       list(REMOVE_ITEM opt_libs "vtkproj4")
     endif()
-    set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
-    foreach(lib_ ${PCL_VTK_LIBRARIES})
-      foreach(imp_config_ ${config_})
-        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
-        if(NOT EXISTS ${lib_property_${imp_config_}_})
-          get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
-        endif()
-        # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
-        if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-          list(APPEND opt_libs optimized "${lib_property_${imp_config_}_}")
-        elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
-          list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
-        elseif(EXISTS "${lib_property_${imp_config_}_}")
-          list(APPEND opt_libs "${lib_property_${imp_config_}_}")
+    # When VTK kits are enabled we need to get imported targets
+    vp_list_unique(PCL_VTK_LIBRARIES)
+    if(NOT VTK_ENABLE_KITS)
+      set(PCL_VTK_LIBS ${PCL_VTK_LIBRARIES})
+    else()
+      foreach(lib_ ${PCL_VTK_LIBRARIES})
+        get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
+        if(imported_libs_)
+          list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_} ${prop})
+          if(${lib_}_KIT)
+            list(APPEND PCL_VTK_LIBS ${${lib_}_KIT})
+          endif()
+        else()
+          list(APPEND PCL_VTK_LIBS ${lib_})
         endif()
       endforeach()
+      vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      while(PCL_VTK_IMPORTED_LIBS)
+        vp_list_pop_front(PCL_VTK_IMPORTED_LIBS elt)
+        if(elt MATCHES "^vtk") # to avoid precessing -framework ApplicationServices -framework CoreServices
+          get_target_property(imported_libs_ ${elt} INTERFACE_LINK_LIBRARIES)
+          if(imported_libs_)
+            list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
+          else()
+            list(APPEND PCL_VTK_LIBS ${elt})
+          endif()
+        else()
+          list(APPEND PCL_VTK_LIBS ${elt})
+        endif()
+        vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      endwhile()
+      vp_list_unique(PCL_VTK_LIBS)
+    endif()
+
+    set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
+    foreach(lib_ ${PCL_VTK_LIBS})
+      if(TARGET ${lib_})
+        foreach(imp_config_ ${config_})
+          get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
+          if(NOT EXISTS ${lib_property_${imp_config_}_})
+            get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
+          endif()
+          # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
+          if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
+            list(APPEND opt_libs optimized "${lib_property_${imp_config_}_}")
+          elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
+            list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
+          elseif(EXISTS "${lib_property_${imp_config_}_}")
+            list(APPEND opt_libs "${lib_property_${imp_config_}_}")
+          endif()
+        endforeach()
+      else()
+        list(APPEND opt_libs "${lib_}")
+      endif()
     endforeach()
   endif()
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
-  mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY RSSDK_DIR DSSDK_DIR)
+  mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY RSSDK_DIR DSSDK_DIR VTK_DIR)
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
-  mark_as_advanced(GLEW_INCLUDE_DIR GLEW_GLEW_LIBRARY)
+  mark_as_advanced(QHULL_INCLUDE_DIRS QHULL_LIBRARY QHULL_LIBRARY_DEBUG)
+  mark_as_advanced(GLEW_INCLUDE_DIR GLEW_GLEW_LIBRARY GLEW_cocoa_LIBRARY)
   mark_as_advanced(pkgcfg_lib_PC_FLANN_flann pkgcfg_lib_PC_FLANN_flann_cpp)
   mark_as_advanced(pkgcfg_lib_PC_OPENNI2_OpenNI2 pkgcfg_lib_PC_OPENNI2_OpenNI2 pkgcfg_lib_PC_OPENNI_OpenNI)
 endif()

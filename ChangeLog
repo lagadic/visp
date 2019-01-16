@@ -20,8 +20,8 @@ ViSP 3.2.0 (under development)
     . In MBT:
       - Improve the generic tracker implemented in vpMbGenericTracker class
       - Add possibility to introduce a homogeneous transformation matrix
-        when loading model and init files, useful to change the origin of the 3D cad model;
-        see vpMbTracker::loadModel() and vpMbTracker::initClick()
+        when loading model and init files, useful to change the origin of the 3D
+        cad model; see vpMbTracker::loadModel() and vpMbTracker::initClick()
       - Add support of pgm, png, jpg image format for initClick helper
       - Introduce a new confidence indicator that is working with all the visual
         features types to detect tracking failures;
@@ -33,15 +33,17 @@ ViSP 3.2.0 (under development)
       vpQuadProg classes
     . Add vpDetectorDNN wrapper for deep learning object detection. The idea is to have a
       small wrapper over the OpenCV DNN module as much as possible light and simple.
-      vpDetectorDNN is specialized to handle object detection tasks and provide a "convenient"
-      way to have the detection bounding boxes.
+      vpDetectorDNN is specialized to handle object detection tasks and provide a
+      "convenient" way to have the detection bounding boxes.
     . Improve eye to hand calibration
     . Improve PnP pose estimation
     . Compat with OpenCV 4
     . Compat with Fedora 29
+    . Introduce SonarQube code quality analysis tool. Analysis reports are available on
+      https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard/index/rainbow:visp:master
   - Tutorials
-    . New tutorial: Installation from source on a Jetson equipped with an Orbitty Carrier board
-      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
+    . New tutorial: Installation from source on a Jetson equipped with an Orbitty Carrier
+      board http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
     . New tutorial: Using ViSP and Matlab
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-visp-matlab.html
     . New tutorial: PBVS with Panda 7-dof robot from Franka Emika
@@ -56,7 +58,8 @@ ViSP 3.2.0 (under development)
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-stereo.html
     . New tutorial: Markerless generic model-based tracking using a RGB-D camera
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd.html
-    . New tutorial: Markerless generic model-based tracking using AprilTag for initialization (use case)
+    . New tutorial: Markerless generic model-based tracking using AprilTag for
+      initialization (use case)
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-apriltag-live.html
     . New tutorial: Developement of an interface and demo between ViSP and Unity engine
       https://github.com/lagadic/visp_unity/blob/master/README.md
@@ -75,7 +78,11 @@ ViSP 3.2.0 (under development)
     . New tutorial: Creating a simple Android App with ViSP
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-android-getting-started.html
     . New tutorial: Deep learning object detection
-      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html      
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html
+    . New tutorial: Draw basic drawings
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-basic-drawings.html
+    . New tutorial: How to use Blender to generate simulated data for model-based tracking experiments
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
@@ -86,6 +93,7 @@ ViSP 3.2.0 (under development)
     . [#302] Fix build issue with librealsense 2.9.1 or higher
     . [#324] How to compile ViSP within Visual Studio 2013 on windows 7?
     . [#348] ViSP-third-party.txt is erased after make
+    . [#353] Test imageSequenceReader not working
     . [#355] Segmentation fault with vpRealSense2 acquire
     . [#368] ViSP Contrib Module including non-existant vpConfig.h header
     . [#371] Wrong conversion from vpRotationMatrix to vpThetaUVector for rotations around pi
@@ -98,10 +106,13 @@ ViSP 3.2.0 (under development)
     . [#423] Man page location should be man/man1
     . [#424] Please have one cmake variablefor DATADIR
     . [#425] Please remove the 'register' specifier everywhere: it is deprecated and incompatible with C++17
+    . [#433] Can not build android SDK
+    . [#435] vpRobot::END_EFFECTOR_FRAME not implemented in vpRobotViper650
     . [#442] Unable to build ios framework
     . [#453] CMake error when building tutorials and examples with ViSP from installation folder
     . [#466] Build error with libboost_thread-mt.a
-
+    . [#429] vpRobotViper650 getPosition(vpRobot::REFERENCE_FRAME) error
+    . [#485] CMake error when PCL is build with VTK option VTK_ENABLE_KITS=ON
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
   - Contributors:

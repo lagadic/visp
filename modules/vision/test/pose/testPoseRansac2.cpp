@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1950,7 +1950,6 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   std::cout << "Corresponding residual: " << r_estimated << std::endl;
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
-  double r_RANSAC_estimated_parallel = std::numeric_limits<double>::max();
   vpHomogeneousMatrix cMo_estimated_RANSAC_parallel;
   double t_RANSAC_parallel = vpTime::measureTimeMs();
   pose_ransac_parallel.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_parallel);
@@ -1961,7 +1960,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
             << cMo_estimated_RANSAC_parallel << std::endl;
   std::cout << "Computation time: " << t_RANSAC_parallel << " ms" << std::endl;
 
-  r_RANSAC_estimated_parallel = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel);
+  double r_RANSAC_estimated_parallel = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel);
   std::cout << "Corresponding residual (1000 iterations): " << r_RANSAC_estimated_parallel << std::endl;
 
   vpHomogeneousMatrix cMo_estimated_RANSAC_parallel2;

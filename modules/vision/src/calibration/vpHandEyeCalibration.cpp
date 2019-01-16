@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -854,8 +854,7 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
 #endif
   vpHomogeneousMatrix eMcMin = eMc;  // best initial estimation for VSS
   // Method using Old Tsai implementation
-  int err = -1;
-  err = vpHandEyeCalibration::calibrationRotationTsaiOld(cMo, rMe, eRc);
+  int err = vpHandEyeCalibration::calibrationRotationTsaiOld(cMo, rMe, eRc);
   if (err != 0) printf("\n Problem in solving Hand-Eye Rotation by Old Tsai method \n");
   else
   {
@@ -993,9 +992,9 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
       resPos = vpHandEyeCalibration::calibrationErrVVS(cMo, rMe, eMc, errVVS);
       if (resPos < vmin)
       {
-        vmin = resPos;
         eMcMin = eMc;
 #if DEBUG_LEVEL1
+        vmin = resPos;
         He_method = HE_PROCRUSTES_NT;
 #endif
       }

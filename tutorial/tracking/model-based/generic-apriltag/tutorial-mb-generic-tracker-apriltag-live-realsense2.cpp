@@ -236,7 +236,6 @@ int main(int argc, const char **argv)
     vpImage<uint16_t> I_depth_raw(height, width);
     std::map<std::string, vpHomogeneousMatrix> mapOfCameraTransformations;
     std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
-    std::map<std::string, std::string> mapOfInitFiles;
 #ifdef VISP_HAVE_PCL
     std::map<std::string, pcl::PointCloud< pcl::PointXYZ >::ConstPtr> mapOfPointclouds;
     pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());

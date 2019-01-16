@@ -1,12 +1,11 @@
-if(NOT ANDROID_EXECUTABLE)
-  message(WARNING "'android' tool required to build Android SDK")
-  return()
-endif()
-vp_assert(ANDROID_TOOLS_Pkg_Revision GREATER 13)
 
 project(${the_module}_android)
 
-set(VISP_JAVA_DIR "${VISP_BINARY_DIR}/android_sdk" CACHE INTERNAL "")
+if(ANDROID_EXECUTABLE)
+  set(VISP_JAVA_DIR "${VISP_BINARY_DIR}/android_sdk" CACHE INTERNAL "")
+else()  # gradle
+  set(VISP_JAVA_DIR "${ANDROID_BUILD_BASE_DIR}/visp" CACHE INTERNAL "")
+endif()
 set(VISP_ANDROID_LIB_DIR "${VISP_JAVA_DIR}" CACHE INTERNAL "")  # for ViSP samples
 
 file(REMOVE_RECURSE "${VISP_JAVA_DIR}")
@@ -14,11 +13,12 @@ file(MAKE_DIRECTORY "${VISP_JAVA_DIR}/bin")
 set(java_src_dir "${VISP_JAVA_DIR}/src")
 file(MAKE_DIRECTORY "${java_src_dir}")
 
-# TODO: Some strange error. VISP_JAVA_BINDINGS_DIR is null at this line of execution. I dont know why its happening
-# Currently using a temporary workaround
-set(VISP_JAVA_BINDINGS_DIR "${VISP_BINARY_DIR}/modules/java_bindings_generator")
-
 vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/java" "${java_src_dir}")
+
+if(ANDROID_EXECUTABLE)
+
+vp_assert(ANDROID_TOOLS_Pkg_Revision GREATER 13)
+
 vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/android/java" "${java_src_dir}")
 
 # calc default SDK Target
@@ -94,5 +94,57 @@ FILE(MAKE_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${JAVA_INSTALL_ROOT
 FILE(MAKE_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${JAVA_INSTALL_ROOT}/res\")
 " COMPONENT java)
 
+vp_update(ANDROID_COMPILE_SDK_VERSION "27")
+vp_update(ANDROID_MIN_SDK_VERSION "14")
+vp_update(ANDROID_TARGET_SDK_VERSION "21")
+
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build.gradle.in" "${CMAKE_CURRENT_BINARY_DIR}/build.gradle" @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/build.gradle" DESTINATION ${JAVA_INSTALL_ROOT}/.. COMPONENT java)
+
+else()  # gradle build
+#
+# Android Gradle-based project
+#
+
+#TODO: INSTALL ONLY
+vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/android/java" "${java_src_dir}")
+vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/android-21/java" "${java_src_dir}")
+
+# copy boilerplate
+set(__base_dir "${CMAKE_CURRENT_SOURCE_DIR}/android_gradle_lib/")
+file(GLOB_RECURSE seed_project_files_rel RELATIVE "${__base_dir}/" "${__base_dir}/*")
+list(REMOVE_ITEM seed_project_files_rel "${ANDROID_MANIFEST_FILE}")
+foreach(file ${seed_project_files_rel})
+  configure_file("${__base_dir}/${file}" "${VISP_JAVA_DIR}/${file}" @ONLY)
+  list(APPEND depends "${__base_dir}/${file}")
+  get_filename_component(install_subdir "${file}" PATH)
+  install(FILES "${VISP_JAVA_DIR}/${file}" DESTINATION "${JAVA_INSTALL_ROOT}/${install_subdir}" COMPONENT java)
+endforeach()
+
+list(APPEND depends gen_visp_java_source "${VISP_DEPHELPER}/gen_visp_java_source")
+vp_copyfiles_add_target(${the_module}_android_source_copy JAVA_SRC_COPY "Copy Java(Andoid SDK) source files" ${depends})
+file(REMOVE "${VISP_DEPHELPER}/${the_module}_android_source_copy")  # force rebuild after CMake run
+
+set(depends ${the_module}_android_source_copy "${VISP_DEPHELPER}/${the_module}_android_source_copy")
+
+# build jar
+set(AAR_FILE "${VISP_JAVA_DIR}/build/outputs/aar/visp-release.aar")
+vp_update(VISP_GRADLE_VERBOSE_OPTIONS "-i")
+add_custom_command(
+    OUTPUT "${AAR_FILE}" "${VISP_DEPHELPER}/${the_module}_android"
+    COMMAND ./gradlew ${VISP_GRADLE_VERBOSE_OPTIONS} "visp:assemble"
+    COMMAND ${CMAKE_COMMAND} -E touch "${VISP_DEPHELPER}/${the_module}_android"
+    WORKING_DIRECTORY "${ANDROID_BUILD_BASE_DIR}"
+    DEPENDS ${depends} ${the_module}
+    COMMENT "Building ViSP Android library project"
+)
+file(REMOVE "${VISP_DEPHELPER}/${the_module}_android")  # force rebuild after CMake run
+
+add_custom_target(${the_module}_android ALL DEPENDS "${VISP_DEPHELPER}/${the_module}_android" SOURCES "${__base_dir}/${ANDROID_MANIFEST_FILE}")
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build.gradle.in" "${ANDROID_TMP_INSTALL_BASE_DIR}/visp/build.gradle" @ONLY)
+install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/visp/build.gradle" DESTINATION ${JAVA_INSTALL_ROOT}/.. COMPONENT java)
+
+install(DIRECTORY "${java_src_dir}" DESTINATION "${JAVA_INSTALL_ROOT}" COMPONENT java)
+
+endif()  # gradle build

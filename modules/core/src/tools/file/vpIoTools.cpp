@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,11 +62,11 @@
 #include <windows.h>
 #endif
 #if !defined(_WIN32)
-	#ifdef __ANDROID__
-	// Like IOS, wordexp.cpp is not defined for Android
-	#else
-	#include <wordexp.h>
-	#endif
+  #ifdef __ANDROID__
+  // Like IOS, wordexp.cpp is not defined for Android
+  #else
+  #include <wordexp.h>
+  #endif
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
@@ -110,6 +110,9 @@
     // It appears that all Android systems are little endian.
     // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
 #define VISP_LITTLE_ENDIAN
+#elif defined(WINRT) // For UWP
+// Refer https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
+#define VISP_LITTLE_ENDIAN
 #else
 #error Cannot detect host machine endianness.
 #endif
@@ -122,8 +125,9 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
 namespace
 {
-#if TARGET_OS_IOS == 0 // The following code is not working on iOS since
-                       // wordexp() is not available
+// The following code is not working on iOS since wordexp() is not available
+// The function is not used on Android
+#if (TARGET_OS_IOS == 0) && !defined(__ANDROID__)
 void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
   size_t start_pos = 0;
@@ -948,18 +952,18 @@ std::string vpIoTools::path(const char *pathname)
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
                        // wordexp() is not available
-	#ifdef __ANDROID__
-	// Do nothing
-	#else
-	  wordexp_t exp_result;
+  #ifdef __ANDROID__
+  // Do nothing
+  #else
+    wordexp_t exp_result;
 
-	  // escape quote character
-	  replaceAll(path, "'", "'\\''");
-	  // add quotes to handle special characters like parentheses and spaces
-	  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
-	  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
-	  wordfree(&exp_result);
-	#endif
+    // escape quote character
+    replaceAll(path, "'", "'\\''");
+    // add quotes to handle special characters like parentheses and spaces
+    wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
+    path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
+    wordfree(&exp_result);
+  #endif
 #endif
 #endif
 

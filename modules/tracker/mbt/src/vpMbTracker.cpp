@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,26 +166,22 @@ vpMbTracker::vpMbTracker()
 }
 
 vpMbTracker::~vpMbTracker() {
-  vpMbtDistanceLine *l;
-  vpMbtDistanceCylinder *cy;
-  vpMbtDistanceCircle *ci;
-
   for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end(); ++it) {
-    l = *it;
+    vpMbtDistanceLine *l = *it;
     if (l != NULL)
       delete l;
     l = NULL;
   }
 
   for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin(); it != m_projectionErrorCylinders.end(); ++it) {
-    cy = *it;
+    vpMbtDistanceCylinder *cy = *it;
     if (cy != NULL)
       delete cy;
     cy = NULL;
   }
 
   for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin(); it != m_projectionErrorCircles.end(); ++it) {
-    ci = *it;
+    vpMbtDistanceCircle *ci = *it;
     if (ci != NULL)
       delete ci;
     ci = NULL;
@@ -1133,7 +1129,7 @@ void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }
@@ -1190,7 +1186,7 @@ are extracted from the vrml file.
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1475,25 +1475,22 @@ void vpRobotViper850::getPosition(const vpRobot::vpControlFrameType frame, vpCol
     return;
   }
   case vpRobot::REFERENCE_FRAME: {
-    Try(PrimitiveACQ_POS_C_Viper850(position.data, &timestamp));
-    //    vpCTRACE << "Get cartesian position " << position.t() << std::endl;
-    // 1=tx, 2=ty, 3=tz in meters; 4=Rz 5=Ry 6=Rz in deg
-    // Convert Euler Rzyz angles from deg to rad
-    for (unsigned int i = 3; i < 6; i++)
-      position[i] = vpMath::rad(position[i]);
-    // Convert Rzyz angles into Rxyz representation
-    vpRzyzVector rzyz(position[3], position[4], position[5]);
-    vpRotationMatrix R(rzyz);
-    vpRxyzVector rxyz(R);
+    vpColVector q(njoint);
+    Try(PrimitiveACQ_POS_J_Viper850(q.data, &timestamp));
 
-    // Update the position using Rxyz representation
-    for (unsigned int i = 0; i < 3; i++)
-      position[i + 3] = rxyz[i];
-    //     vpCTRACE << "Cartesian position Rxyz (deg)"
-    // 	     << position[0] << " " << position[1] << " " << position[2] << " "
-    // 	     << vpMath::deg(position[3]) << " "
-    // 	     << vpMath::deg(position[4]) << " "
-    // 	     << vpMath::deg(position[5]) << std::endl;
+    // Compute fMc
+    vpHomogeneousMatrix fMc = vpViper850::get_fMc(q);
+
+    // From fMc extract the pose
+    vpRotationMatrix fRc;
+    fMc.extract(fRc);
+    vpRxyzVector rxyz;
+    rxyz.buildFrom(fRc);
+
+    for (unsigned int i = 0; i < 3; i++) {
+      position[i] = fMc[i][3];   // translation x,y,z
+      position[i + 3] = rxyz[i]; // Euler rotation x,y,z
+    }
 
     break;
   }
@@ -1735,6 +1732,16 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
     // Send velocities in m/s and rad/s
     // std::cout << "Vitesse cam appliquee: " << vel_sat.t();
     Try(PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPCAM_VIPER850));
+    break;
+  }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    // Transform in camera frame
+    vpHomogeneousMatrix cMe;
+    this->get_cMe(cMe);
+    vpVelocityTwistMatrix cVe(cMe);
+    vpColVector v_c = cVe * vel_sat;
+    // Send velocities in m/s and rad/s
+    Try(PrimitiveMOVESPEED_CART_Viper850(v_c.data, REPCAM_VIPER850));
     break;
   }
   case vpRobot::ARTICULAR_FRAME: {

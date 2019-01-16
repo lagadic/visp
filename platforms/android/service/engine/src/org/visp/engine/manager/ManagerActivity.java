@@ -2,8 +2,8 @@ package org.visp.engine.manager;
 
 import org.visp.engine.MarketConnector;
 import org.visp.engine.HardwareDetector;
-import org.visp.engine.VISPEngineInterface;
-import org.visp.engine.VISPEngineService;
+import org.visp.engine.ViSPEngineInterface;
+import org.visp.engine.ViSPEngineService;
 import org.visp.engine.R;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ManagerActivity extends Activity {
-    protected static final String TAG = "VISPEngine/Activity";
+    protected static final String TAG = "ViSPEngine/Activity";
     protected MarketConnector mMarket;
     protected TextView mVersionText;
     protected boolean mExtraInfo = false;
@@ -34,7 +34,7 @@ public class ManagerActivity extends Activity {
 
         setContentView(R.layout.main);
 
-        final Class<VISPEngineService> c = VISPEngineService.class;
+        final Class<ViSPEngineService> c = ViSPEngineService.class;
         final String packageName = c.getPackage().getName();
 
         mMarket = new MarketConnector(this);
@@ -68,7 +68,7 @@ public class ManagerActivity extends Activity {
 
         mVersionText = (TextView) findViewById(R.id.textView5);
         if (!bindService(new Intent(this, c),
-                new VISPEngineServiceConnection(), Context.BIND_AUTO_CREATE)) {
+                new ViSPEngineServiceConnection(), Context.BIND_AUTO_CREATE)) {
             Log.e(TAG, "Failed to bind to service:" + c.getName());
             mVersionText.setText("not avaliable");
         } else {
@@ -78,17 +78,17 @@ public class ManagerActivity extends Activity {
 
     }
 
-    protected class VISPEngineServiceConnection implements ServiceConnection {
+    protected class ViSPEngineServiceConnection implements ServiceConnection {
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "Handle: service disconnected");
         }
 
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "Handle: service connected");
-            VISPEngineInterface engine = VISPEngineInterface.Stub
+            ViSPEngineInterface engine = ViSPEngineInterface.Stub
                     .asInterface(service);
             if (engine == null) {
-                Log.e(TAG, "Cannot connect to VISP Manager Service!");
+                Log.e(TAG, "Cannot connect to ViSP Manager Service!");
                 unbindService(this);
                 return;
             }

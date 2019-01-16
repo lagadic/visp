@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -138,17 +138,20 @@ endif()
 include(cmake/VISPDetectPlatform.cmake)
 
 # Set the path where to install the lib
-if(WIN32)
+if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
   if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
     set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
   else()
     message(STATUS "Can't detect runtime and/or arch")
     set(VISP_INSTALL_BINARIES_PREFIX "")
   endif()
+elseif(ANDROID)
+  vp_update(VISP_INSTALL_BINARIES_PREFIX "sdk/native/")
 else()
   set(VISP_INSTALL_BINARIES_PREFIX "")
 endif()
 
+# where to install the library and headers
 if(ANDROID)
   # set binary path
   vp_update(VISP_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}bin/${ANDROID_NDK_ABI_NAME}")
@@ -156,61 +159,63 @@ if(ANDROID)
   # set samples path
   vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
 
-  set(LIBRARY_OUTPUT_PATH             "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
-  vp_update(3P_LIBRARY_OUTPUT_PATH    "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
-  vp_update(VISP_LIB_INSTALL_PATH     sdk/native/libs/${ANDROID_NDK_ABI_NAME})
-  vp_update(VISP_3P_LIB_INSTALL_PATH  sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
-  vp_update(VISP_CONFIG_INSTALL_PATH  sdk/native/jni)
-  vp_update(VISP_INCLUDE_INSTALL_PATH sdk/native/jni/include)
+  set(LIBRARY_OUTPUT_PATH                 "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_3P_LIBRARY_OUTPUT_PATH   "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_LIB_INSTALL_PATH         sdk/native/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_LIB_ARCHIVE_INSTALL_PATH sdk/native/staticlibs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_3P_LIB_INSTALL_PATH      sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
+  vp_update(VISP_CONFIG_INSTALL_PATH      sdk/native/jni)
+  vp_update(VISP_INC_INSTALL_PATH         sdk/native/jni/include)
   vp_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
-  vp_update(VISP_OTHER_INSTALL_PATH   sdk/etc)
-endif()
-
-# where to install the data (share for linux)
-if (UNIX)
-  # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
-  set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp")
+  vp_update(VISP_INSTALL_DATAROOTDIR      sdk/etc)
 else()
-  set(VISP_INSTALL_DATAROOTDIR "")
-endif()
-
-# where to install the library and headers
-if(WIN32)
-  set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR})
-  if(VISP_STATIC)
-    set(VISP_LIB_INSTALL_PATH       "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+  set(LIBRARY_OUTPUT_PATH         "${VISP_BINARY_DIR}/lib")
+  set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib${LIB_SUFFIX}")
+  if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+    if(VISP_STATIC)
+      vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+    else()
+      vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}lib${LIB_SUFFIX}")
+    endif()
+    set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+    set(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
+    set(VISP_JAR_INSTALL_PATH         java)
+    set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
+    set(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}bin")
+    set(VISP_INSTALL_DATAROOTDIR       "")
+    # where to install the data (share for linux)
+    # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+    set(VISP_CONFIG_INSTALL_PATH      ".")
   else()
-    set(VISP_LIB_INSTALL_PATH       "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
-  endif()
-  set(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
-  set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
-  set(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
-  set(VISP_JAR_INSTALL_PATH         java)
-  set(VISP_OTHER_INSTALL_PATH       etc)
-  set(VISP_CONFIG_INSTALL_PATH      ".")
-else()
-  # The location where includes and libraries will be installed
+    #----------------------------------------------------------------------
+    # Multi-arch option that should be enable for debian packaging
+    #----------------------------------------------------------------------
+    VP_OPTION(ENABLE_MULTIARCH  "" "" "Enable multi-arch support"  "" OFF IF (NOT APPLE))
 
-  # The 2 following commented lines should be used to enable multi-arch support.
-  # Since catkin doesn't support multi-arch we keep these 2 lines commented for the moment.
-  # set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-  # set(VISP_LIB_INSTALL_PATH         ${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-  set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
-  set(VISP_LIB_INSTALL_PATH         "${CMAKE_INSTALL_LIBDIR}")
-  set(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
-  set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_DATAROOTDIR}/3rdparty/${VISP_LIB_INSTALL_PATH}")
-  set(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
-  set(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
-  set(VISP_OTHER_INSTALL_PATH       "${VISP_INSTALL_DATAROOTDIR}")
+    # The location where includes and libraries will be installed
+    if(ENABLE_MULTIARCH)
+      # The 2 following lines should be used to enable multi-arch support.
+      set(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+      set(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+    else()
+      # catkin doesn't support multi-arch; use rather the next 2 lines
+      set(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}")
+      set(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}")
+    endif()
+    set(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
+    set(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp")
+    set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_DATAROOTDIR}/3rdparty/${VISP_LIB_INSTALL_PATH}")
+    set(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
+    set(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
+    set(VISP_CONFIG_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/cmake/visp")
+  endif()
 endif()
-set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
 # the include directory we depend on for the build
 set(VISP_INCLUDE_DIR ${VISP_BINARY_DIR}/${VISP_INC_INSTALL_PATH})
 set(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
 # The location where includes and libraries will be build
-set(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${VISP_LIB_INSTALL_PATH})
 set(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${VISP_BIN_INSTALL_PATH})
 
 if(WIN32)
@@ -255,6 +260,16 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
 
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# the RPATH to be used when installing, but only if it's not a system directory
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}" isSystemDir)
+if("${isSystemDir}" STREQUAL "-1")
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
+endif("${isSystemDir}" STREQUAL "-1")
+
 if(ANDROID)
   vp_update(VISP_JNI_INSTALL_PATH "${VISP_LIB_INSTALL_PATH}")
 elseif(INSTALL_CREATE_DISTRIB)
@@ -267,17 +282,6 @@ vp_update(VISP_JNI_BIN_INSTALL_PATH "${VISP_JNI_INSTALL_PATH}")
 if(NOT VISP_LIB_ARCHIVE_INSTALL_PATH)
   set(VISP_LIB_ARCHIVE_INSTALL_PATH ${VISP_LIB_INSTALL_PATH})
 endif()
-
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# the RPATH to be used when installing, but only if it's not a system directory
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}" isSystemDir)
-if("${isSystemDir}" STREQUAL "-1")
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
-endif("${isSystemDir}" STREQUAL "-1")
 
 # ----------------------------------------------------------------------------
 #  Path for additional contrib modules
@@ -393,6 +397,7 @@ VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AN
 # Build java as an option
 VP_OPTION(BUILD_JAVA  "" "" "Enable Java support" "" (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
 VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
+VP_OPTION(BUILD_ANDROID_SERVICE   "" "" "Build ViSP Manager for Google Play"          "" OFF IF ANDROID )
 VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
 VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
@@ -549,8 +554,11 @@ if(NOT USE_CXX11 AND CXX11_FOUND)
 endif()
 
 VP_OPTION(USE_SOWIN       SOWIN       ""    "Include Coin/SoWin support"   "" OFF IF (WIN32 AND USE_COIN3D) AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_SOQT        SOQT        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
+# Check for SoQt 1.6.0 linked to Qt5 or older version with SOQT
+VP_OPTION(USE_SOQT        "SoQt;SOQT" QUIET "Include Coin/SoQt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
+if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit Qt4 search
+  VP_OPTION(USE_QT        Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
+endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
 if (ANDROID)
   VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON)
@@ -729,7 +737,7 @@ endif(MSVC)
 #----------------------------------------------------------------------
 # Create and install visp-config.1.gz man page
 #----------------------------------------------------------------------
-if(UNIX)
+if(UNIX AND NOT ANDROID)
   find_host_program(GZIP gzip)
   if(GZIP)
     file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
@@ -914,7 +922,7 @@ if(USE_OPENCV)
 endif()
 
 # coin and gui
-if(USE_SOWIN OR USE_SOXT OR (USE_SOQT AND USE_QT))
+if(USE_SOWIN OR USE_SOXT OR (USE_SOQT AND SoQt_FOUND) OR (USE_SOQT AND USE_QT))
   set(VISP_HAVE_COIN3D_AND_GUI TRUE)         # for header vpConfig.h
 endif()
 
@@ -1071,6 +1079,9 @@ if(JPEG_FOUND)
 endif()
 if(OGRE_FOUND)
   vp_set_ogre_advanced_var()
+endif()
+if(Coin_FOUND)
+  mark_as_advanced(Coin_DIR Coin_LIBRARY Qt5OpenGL_DIR)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -1346,9 +1357,14 @@ status("    Coin simulator: ")
 status("    \\- Use Coin3D:"         USE_COIN3D       THEN "yes (ver ${COIN3D_VERSION})" ELSE "no")
 status("    \\- Use SoWin:"          USE_SOWIN        THEN "yes" ELSE "no")
 status("    \\- Use SoXt:"           USE_SOXT         THEN "yes" ELSE "no")
+if(USE_SOQT AND SoQt_FOUND)
+status("    \\- Use SoQt:"           USE_SOQT AND SoQt_FOUND THEN "yes (ver ${SoQt_VERSION})" ELSE "no")
+else()
 status("    \\- Use SoQt:"           USE_SOQT         THEN "yes" ELSE "no")
-status("    \\- Use Qt4:"            USE_QT AND DESIRED_QT_VERSION MATCHES 4  THEN "yes" ELSE "no")
-status("    \\- Use Qt3:"            USE_QT AND DESIRED_QT_VERSION MATCHES 3  THEN "yes" ELSE "no")
+endif()
+status("    \\- Use Qt5:"            USE_SOQT AND SoQt_FOUND                    THEN "yes" ELSE "no")
+status("    \\- Use Qt4:"            USE_QT   AND DESIRED_QT_VERSION MATCHES 4  THEN "yes" ELSE "no")
+status("    \\- Use Qt3:"            USE_QT   AND DESIRED_QT_VERSION MATCHES 3  THEN "yes" ELSE "no")
 status("")
 status("  Media I/O: ")
 status("    Use JPEG:"               USE_JPEG         THEN "yes (ver ${JPEG_LIB_VERSION})" ELSE "no")

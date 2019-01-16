@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@
 #     include(${VISP_USE_FILE})
 #   endif()
 #
-# Or you can search for specific OpenCV modules:
+# Or you can search for specific ViSP modules:
 #
 #   find_package(VISP REQUIRED core io)
 #
@@ -279,6 +279,7 @@ if(VISP_HAVE_CXX11)
     endif()
   endif()
 endif()
+
 #----------------------------------------------------------------------
 # Propagate openmp compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
@@ -295,6 +296,16 @@ if(VISP_HAVE_FRANKA)
 endif()
 
 #----------------------------------------------------------------------
+# Propagate -fPIC option requested with Qt5 that requires position independent
+# code if Qt was built with -reduce-relocations.
+#----------------------------------------------------------------------
+if(UNIX)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # Is needed for ANDROID too.
+  endif()
+endif()
+
+#----------------------------------------------------------------------
 # Some useful macro to be able to build the tutorials along side ViSP
 #----------------------------------------------------------------------
 # Create a target from the *.cpp file, link against ViSP libraries and add a dependency to ViSP library
@@ -308,8 +319,8 @@ macro(visp_add_target file_cpp)
   include_directories(${VISP_INCLUDE_DIRS})
   add_executable(${target} ${file_cpp} ${ARGN})
   target_link_libraries(${target} ${VISP_LIBRARIES})
-    if(POLICY CMP0020)
-  cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+  if(POLICY CMP0020)
+    cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
   endif()
 endmacro()
 
@@ -330,12 +341,10 @@ endmacro()
 if (CMAKE_VERSION VERSION_GREATER 2.8.12)
   macro(visp_copy_data file_cpp file_data)
     get_filename_component(target ${file_cpp} NAME_WE)
-    #get_target_property(target_location ${target} LOCATION)
     get_filename_component(target_location "${target_location}" PATH)
     add_custom_command(
       TARGET ${target}
       POST_BUILD
-      #COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "${target_location}"
       COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "$<TARGET_FILE_DIR:${target}>"
     )
   endmacro()
@@ -348,6 +357,32 @@ else()
       TARGET ${target}
       POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "${target_location}"
+    )
+  endmacro()
+endif()
+
+# Copy the data files to the same location than the target associated to the cpp files
+# Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
+# If CMake 3.0.0 is used, we use $<TARGET_FILE_DIR:tgt> to get the target location
+if (CMAKE_VERSION VERSION_GREATER 2.8.12)
+  macro(visp_copy_dir file_cpp root_dir rel_dir)
+    get_filename_component(target ${file_cpp} NAME_WE)
+    get_filename_component(target_location "${target_location}" PATH)
+    add_custom_command(
+      TARGET ${target}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${root_dir}/${rel_dir}" "$<TARGET_FILE_DIR:${target}>/${rel_dir}"
+    )
+  endmacro()
+else()
+  macro(visp_copy_data file_cpp root_dir rel_dir)
+    get_filename_component(target ${file_cpp} NAME_WE)
+    get_target_property(target_location ${target} LOCATION)
+    get_filename_component(target_location "${target_location}" PATH)
+    add_custom_command(
+      TARGET ${target}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${root_dir}/${rel_dir}" "${target_location}/${rel_dir}"
     )
   endmacro()
 endif()

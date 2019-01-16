@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -694,7 +694,7 @@ endmacro()
 
 # finds and copy data from a source to a destination
 # Usage:
-# vp_glob_module_data(<source> <destination>)
+# vp_glob_module_data(<source> <destination> <NO_INSTALL>)
 macro(vp_glob_module_copy_data src dst)
   set(__data "")
   file(GLOB_RECURSE __data
@@ -711,11 +711,13 @@ macro(vp_glob_module_copy_data src dst)
     # install
     set(__install_dst "${VISP_INSTALL_DATAROOTDIR}/${dst}")
 
-    install(FILES ${__d}
-       DESTINATION "${__install_dst}"
-       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-       OWNER_WRITE
-    )
+    if(NOT "x${ARGN}" STREQUAL "xNO_INSTALL")
+      install(FILES ${__d}
+        DESTINATION "${__install_dst}"
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+        OWNER_WRITE
+      )
+    endif()
   endforeach()
 endmacro()
 
@@ -858,11 +860,15 @@ macro(_vp_create_module)
     set_target_properties(${the_module} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libc /DEBUG")
   endif()
 
-  vp_install_target(${the_module} EXPORT VISPModules OPTIONAL
-    RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libs
-    LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
-    ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT dev
-    )
+  get_target_property(_target_type ${the_module} TYPE)
+  if(VISP_MODULE_${the_module}_CLASS STREQUAL "PUBLIC" AND
+      ("${_target_type}" STREQUAL "SHARED_LIBRARY" OR (NOT BUILD_SHARED_LIBS OR NOT INSTALL_CREATE_DISTRIB)))
+    vp_install_target(${the_module} EXPORT VISPModules OPTIONAL
+      RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libs
+      LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
+      ARCHIVE DESTINATION ${VISP_LIB_ARCHIVE_INSTALL_PATH} COMPONENT dev
+      )
+  endif()
 
   foreach(m ${VISP_MODULE_${the_module}_CHILDREN} ${the_module})
     # only "public" headers need to be installed

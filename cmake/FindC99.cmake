@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
 #
 # Description:
 # Try to find C99 flags only if requested by the compiler.
-# for (int i=0; i<4; i++) does't build with gcc 4.8.2 without c99 flags
-# while it builds without the c99 flag with gcc 6.2.0. 
+# for (int i=0; i<4; i++) doesn't build with gcc 4.8.2 without c99 flags
+# while it builds without the c99 flag with gcc 6.2.0.
 #
 # C99_FOUND - true if C99 support is detected
 # C99_C_FLAGS - flags to add to the C compiler for C99 support
@@ -77,7 +77,7 @@ if(C99_FLAG_DETECTED AND NOT __compiler_doesnt_need_c99_flag)
   set(C99_C_FLAGS "${C99_C_FLAGS_INTERNAL}")
   set(C99_FOUND TRUE)
 else()
-  set(C99_FOUND FALSE)  
+  set(C99_FOUND FALSE)
 endif()
 
 mark_as_advanced(

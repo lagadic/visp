@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,8 +113,8 @@ int main (int argc, char **argv)
   qp_ineq_WS.setEqualityConstraint(A, b);
 
   // timing
-  int total = 1000;
-  double t, t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
+  int total = 100;
+  double t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
@@ -134,7 +134,7 @@ int main (int argc, char **argv)
     // solve only equalities
     // without warm start
     x = 0;
-    t = vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     vpQuadProg::solveQPe(Q, r, A, b, x);
 
     t_noWS += vpTime::measureTimeMs() - t;

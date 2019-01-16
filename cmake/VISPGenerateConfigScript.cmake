@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -93,6 +93,24 @@ if(NOT DEFINED CMAKE_HELPER_SCRIPT)
     endif()
   endforeach()
 
+  #---------------------------------------------------------------------
+  # Get system_include_dirs to propagate in scripts for SonarQube
+  #----------------------------------------------------------------------
+  set(SYSTEM_HEADERS vector iostream type_traits limits.h stdarg.h endian.h)
+  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    list(APPEND COMPILER_INCLUDE_DIRS /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1)
+    list(APPEND COMPILER_INCLUDE_DIRS /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include)
+    list(APPEND COMPILER_INCLUDE_DIRS /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/i386)
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # Todo
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    # Todo
+  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    # Todo
+  endif()
+
+  vp_find_path(SYSTEM_HEADERS _system_include_dirs PATHS ${COMPILER_INCLUDE_DIRS})
+
   set(HELPER_SCRIPT "")
 
   vp_cmake_script_append_var(HELPER_SCRIPT
@@ -113,6 +131,7 @@ if(NOT DEFINED CMAKE_HELPER_SCRIPT)
     _cxx_flags
     _include_flags_deps
     _include_flags_src
+    _system_include_dirs
 
     FILE_VISP_CONFIG_SCRIPT
     FILE_VISP_CONFIG_SCRIPT_INSTALL
@@ -164,6 +183,7 @@ set(VISP_MODULE_${item}_LINK_DEPS \"${_deps}\")
   #----------------------------------------------------------------------
   # customize install target
   #----------------------------------------------------------------------
+  if(NOT ANDROID)
   # install rule for visp-config shell script
   install(FILES ${FILE_VISP_CONFIG_SCRIPT_INSTALL}
     DESTINATION ${VISP_BIN_INSTALL_PATH}
@@ -183,6 +203,7 @@ set(VISP_MODULE_${item}_LINK_DEPS \"${_deps}\")
     )
   else()
     # not implemented yet
+  endif()
   endif()
 
 # =============================================================================
@@ -296,6 +317,24 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     vp_list_remove_separator(VISP_CONFIG_LIBS_PC)
 
     configure_file("${VISP_SOURCE_DIR}/${FILE_VISP_CONFIG_PC_INSTALL_IN}" "${FILE_VISP_CONFIG_PC_INSTALL}" @ONLY)
+
+    #----------------------------------------------------------------------
+    # Generate SonarQube config file
+    #----------------------------------------------------------------------
+    set(VISP_SONARQUBE_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/${VISP_INC_INSTALL_PATH}")
+    # Include system path
+    foreach(_inc ${_system_include_dirs})
+      set(VISP_SONARQUBE_INCLUDE_DIRS "${VISP_SONARQUBE_INCLUDE_DIRS}, ${_inc}")
+    endforeach()
+    foreach(_inc ${_include_flags_src})
+      set(VISP_SONARQUBE_INCLUDE_DIRS "${VISP_SONARQUBE_INCLUDE_DIRS}, ${_inc}")
+    endforeach()
+    foreach(_inc ${_include_flags_deps})
+      set(VISP_SONARQUBE_INCLUDE_DIRS "${VISP_SONARQUBE_INCLUDE_DIRS}, ${_inc}")
+    endforeach()
+    configure_file("${VISP_SOURCE_DIR}/cmake/templates/sonar-project.properties.in"
+      "${VISP_BINARY_DIR}/sonar-project.properties"
+      @ONLY )
 
   else()
     #######################################################################

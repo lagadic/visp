@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<conf>
+  <depth_normal>
+    <feature_estimation_method>2</feature_estimation_method>
+    <PCL_plane_estimation>
+      <method>2</method>
+      <ransac_max_iter>200</ransac_max_iter>
+      <ransac_threshold>0.001</ransac_threshold>
+    </PCL_plane_estimation>
+    <sampling_step>
+      <step_X>2</step_X>
+      <step_Y>2</step_Y>
+    </sampling_step>
+  </depth_normal>
+  <depth_dense>
+    <sampling_step>
+      <step_X>4</step_X>
+      <step_Y>4</step_Y>
+    </sampling_step>
+  </depth_dense>
+  <camera>
+    <u0>320.0</u0>
+    <v0>240.0</v0>
+    <px>600.0</px>
+    <py>600.0</py>
+  </camera>
+  <face>
+    <angle_appear>70</angle_appear>
+    <angle_disappear>80</angle_disappear>
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
+</conf>
+

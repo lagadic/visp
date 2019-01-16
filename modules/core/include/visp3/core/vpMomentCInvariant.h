@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@
   \brief Descriptor for various invariants used to drive space roations around
   X and Y axis.
 */
-#ifndef __MOMENTCINVARIANT_H__
-#define __MOMENTCINVARIANT_H__
+#ifndef _vpMomentCInvariant_h_
+#define _vpMomentCInvariant_h_
 
 #include <visp3/core/vpMoment.h>
 #include <visp3/core/vpMomentDatabase.h>

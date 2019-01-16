@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
+ * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
@@ -43,8 +43,8 @@
  \brief Model-based edge klt tracker with multiple cameras.
 */
 
-#ifndef __vpMbEdgeKltMultiTracker_h__
-#define __vpMbEdgeKltMultiTracker_h__
+#ifndef _vpMbEdgeKltMultiTracker_h_
+#define _vpMbEdgeKltMultiTracker_h_
 
 #include <iostream>
 #include <vector>
@@ -395,4 +395,4 @@ protected:
 
 #endif // VISP_HAVE_OPENCV
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#endif //__vpMbEdgeKltMultiTracker_h__
+#endif //_vpMbEdgeKltMultiTracker_h_
