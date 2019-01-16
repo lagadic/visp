@@ -187,14 +187,21 @@ else()
     # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
     set(VISP_CONFIG_INSTALL_PATH      ".")
   else()
-    # The location where includes and libraries will be installed
+    #----------------------------------------------------------------------
+    # Multi-arch option that should be enable for debian packaging
+    #----------------------------------------------------------------------
+    VP_OPTION(ENABLE_MULTIARCH  "" "" "Enable multi-arch support"  "" OFF IF (NOT APPLE))
 
-    # The 2 following commented lines should be used to enable multi-arch support.
-    # Since catkin doesn't support multi-arch we keep these 2 lines commented for the moment.
-    # set(VISP_INC_INSTALL_PATH         ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-    # set(VISP_LIB_INSTALL_PATH         ${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
-    set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
-    set(VISP_LIB_INSTALL_PATH         "${CMAKE_INSTALL_LIBDIR}")
+    # The location where includes and libraries will be installed
+    if(ENABLE_MULTIARCH)
+      # The 2 following lines should be used to enable multi-arch support.
+      set(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+      set(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+    else()
+      # catkin doesn't support multi-arch; use rather the next 2 lines
+      set(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}")
+      set(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}")
+    endif()
     set(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
     set(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp")
     set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_DATAROOTDIR}/3rdparty/${VISP_LIB_INSTALL_PATH}")
