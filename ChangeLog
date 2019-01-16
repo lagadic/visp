@@ -107,6 +107,7 @@ ViSP 3.2.0 (under development)
     . [#424] Please have one cmake variablefor DATADIR
     . [#425] Please remove the 'register' specifier everywhere: it is deprecated and incompatible with C++17
     . [#433] Can not build android SDK
+    . [#435] vpRobot::END_EFFECTOR_FRAME not implemented in vpRobotViper650
     . [#442] Unable to build ios framework
     . [#453] CMake error when building tutorials and examples with ViSP from installation folder
     . [#466] Build error with libboost_thread-mt.a

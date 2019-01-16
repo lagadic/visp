@@ -1642,6 +1642,16 @@ void vpRobotAfma6::setVelocity(const vpRobot::vpControlFrameType frame, const vp
     Try(PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPCAM_AFMA6));
     break;
   }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    // Tranform in camera frame
+    vpHomogeneousMatrix cMe;
+    this->get_cMe(cMe);
+    vpVelocityTwistMatrix cVe(cMe);
+    vpColVector v_c = cVe * vel_sat;
+    // Send velocities in m/s and rad/s
+    Try(PrimitiveMOVESPEED_CART_Afma6(v_c.data, REPCAM_AFMA6));
+    break;
+  }
   case vpRobot::ARTICULAR_FRAME: {
     // Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART_AFMA6) );
     Try(PrimitiveMOVESPEED_Afma6(vel_sat.data));

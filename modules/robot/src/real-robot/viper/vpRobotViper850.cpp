@@ -1734,6 +1734,16 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
     Try(PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPCAM_VIPER850));
     break;
   }
+  case vpRobot::END_EFFECTOR_FRAME: {
+    // Transform in camera frame
+    vpHomogeneousMatrix cMe;
+    this->get_cMe(cMe);
+    vpVelocityTwistMatrix cVe(cMe);
+    vpColVector v_c = cVe * vel_sat;
+    // Send velocities in m/s and rad/s
+    Try(PrimitiveMOVESPEED_CART_Viper850(v_c.data, REPCAM_VIPER850));
+    break;
+  }
   case vpRobot::ARTICULAR_FRAME: {
     // Convert all the velocities from rad/s into deg/s
     vel_sat.rad2deg();
