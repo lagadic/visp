@@ -226,18 +226,18 @@ void vpDiskGrabber::acquire(vpImage<float> &I)
  */
 void vpDiskGrabber::acquire(vpImage<unsigned char> &I, long img_number)
 {
-  m_image_number = m_image_number_next;
+  m_image_number = img_number;
   std::stringstream ss;
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << img_number << "."
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
        << m_extension;
   }
 
-  m_image_number_next += m_image_step;
+  m_image_number_next = m_image_number + m_image_step;
 
   vpImageIo::read(I, ss.str());
 
@@ -254,18 +254,18 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I, long img_number)
  */
 void vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long img_number)
 {
-  m_image_number = m_image_number_next;
+  m_image_number = img_number;
   std::stringstream ss;
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
     sprintf(filename, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
-    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << img_number << "."
+    ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
        << m_extension;
   }
 
-  m_image_number_next += m_image_step;
+  m_image_number_next = m_image_number + m_image_step;
 
   vpImageIo::read(I, ss.str());
 

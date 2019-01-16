@@ -258,6 +258,10 @@ int main(int argc, const char **argv)
     reader.setFirstFrameIndex(opt_first);
     reader.open(I);
     std::cout << "Current image number: " << reader.getFrameIndex() << std::endl;
+    if ((opt_first) != reader.getFrameIndex()) {
+      std::cout << "Unable to get requested image number: " << opt_first << std::endl;
+      return EXIT_FAILURE;
+    }
 
 // We open a window using either X11, GTK, GDI or OpenCV.
 #if defined VISP_HAVE_X11
@@ -284,6 +288,10 @@ int main(int argc, const char **argv)
 
     reader.getFrame(I, opt_first + 1);
     std::cout << "Current image number (should be " << opt_first + 1 << "): " << reader.getFrameIndex() << std::endl;
+    if ((opt_first + 1) != reader.getFrameIndex()) {
+      std::cout << "Unable to get requested image number: " << opt_first + 1 << std::endl;
+      return EXIT_FAILURE;
+    }
 
     if (opt_display) {
       vpDisplay::display(I);
