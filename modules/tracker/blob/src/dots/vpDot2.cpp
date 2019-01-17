@@ -252,8 +252,7 @@ void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned in
 */
 void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 {
-  while (vpDisplay::getClick(I, cog) != true)
-    ;
+  while (vpDisplay::getClick(I, cog) != true) {
 
   unsigned int i = (unsigned int)cog.get_i();
   unsigned int j = (unsigned int)cog.get_j();
@@ -279,6 +278,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
   } catch (const vpException &e) {
     // vpERROR_TRACE("Error caught") ;
     throw(e);
+  }
   }
 }
 
@@ -709,7 +709,7 @@ void vpDot2::setArea(const double &a) { this->surface = a; }
 
   Set the precision of the gray level of the dot.
 
-  \param precision : It is a double precision float which value is in ]0,1]:
+  \param precision : It is a double precision float which value is in [0,1]:
   - 1 means full precision, whereas values close to 0 show a very bad
   accuracy.
   - Values lower or equal to 0 are brought back to an epsilon>0
@@ -1351,10 +1351,10 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
       u = (unsigned int)(cog_u + innerCoef * (a1 * cos(alpha) * cos(theta) - a2 * sin(alpha) * sin(theta)));
       v = (unsigned int)(cog_v + innerCoef * (a1 * sin(alpha) * cos(theta) + a2 * cos(alpha) * sin(theta)));
       if (!this->hasGoodLevel(I, u, v)) {
-// 	vpTRACE("Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
+// 	vpTRACE("Inner circle pixel (%d, %d) has bad level for dot (%g, %g)",
 // 		u, v, cog_u, cog_v);
 #ifdef DEBUG
-        printf("Inner cercle pixel (%u, %u) has bad level for dot (%g, %g): "
+        printf("Inner circle pixel (%u, %u) has bad level for dot (%g, %g): "
                "%d not in [%u, %u]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
@@ -1400,10 +1400,10 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
         continue;
       }
       if (!this->hasReverseLevel(I, u, v)) {
-// 	vpTRACE("Outside cercle pixel (%d, %d) has bad level for dot (%g,
+// 	vpTRACE("Outside circle pixel (%d, %d) has bad level for dot (%g,
 // %g)", 		u, v, cog_u, cog_v);
 #ifdef DEBUG
-        printf("Outside cercle pixel (%u, %u) has bad level for dot (%g, "
+        printf("Outside circle pixel (%u, %u) has bad level for dot (%g, "
                "%g): %d not in [%u, %u]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
