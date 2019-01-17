@@ -711,7 +711,7 @@ void vpDot2::setArea(const double &a) { this->surface = a; }
   \param precision : It is a double precision float which value is in [0.05,1]:
   - 1 means full precision, whereas values close to 0 show a very bad
   accuracy.
-  - Values lower or equal to 0.05 are brought back to an epsilon>0
+  - Values lower or equal to 0.05 are brought back to 0.05.
   - Values higher than  1 are brought back to 1
   If the initial gray level is I, the gray levels of the dot will be between :
   \f$Imin=255*\big((\frac{I}{255})^{{\gamma}^{-1}}-(1-grayLevelPrecision)\big)^{\gamma}\f$
