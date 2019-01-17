@@ -628,21 +628,21 @@ double vpDot2::getArea() const { return fabs(surface); }
 
 /*!
   Return the precision of the gray level of the dot. It is a double
-  precision float witch value is in ]0,1]. 1 means full precision, whereas
+  precision float which value is in [0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 */
 double vpDot2::getGrayLevelPrecision() const { return grayLevelPrecision; }
 
 /*!
   Return the precision of the size of the dot. It is a double
-  precision float witch value is in ]0,1]. 1 means full precision, whereas
+  precision float which value is in [0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 */
 double vpDot2::getSizePrecision() const { return sizePrecision; }
 
 /*!
   Return the precision of the ellipsoid shape of the dot. It is a double
-  precision float witch value is in [0,1]. 1 means full precision, whereas
+  precision float which value is in [0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 
   \sa setEllipsoidShapePrecision()
@@ -651,7 +651,7 @@ double vpDot2::getEllipsoidShapePrecision() const { return ellipsoidShapePrecisi
 
 /*!
   Return the precision of the search maximum distance to get the starting
-  point on a dot border. It is a double precision float witch value is in
+  point on a dot border. It is a double precision float which value is in
   [0.05,1]. 1 means full precision, whereas values close to 0 show a very bad
   precision.
 */
