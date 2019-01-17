@@ -252,7 +252,7 @@ void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned in
 */
 void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 {
-  while (vpDisplay::getClick(I, cog) != true) {
+  while (vpDisplay::getClick(I, cog) != true) {}
 
   unsigned int i = (unsigned int)cog.get_i();
   unsigned int j = (unsigned int)cog.get_j();
@@ -278,7 +278,6 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
   } catch (const vpException &e) {
     // vpERROR_TRACE("Error caught") ;
     throw(e);
-  }
   }
 }
 
@@ -635,7 +634,7 @@ double vpDot2::getGrayLevelPrecision() const { return grayLevelPrecision; }
 
 /*!
   Return the precision of the size of the dot. It is a double
-  precision float which value is in [0,1]. 1 means full precision, whereas
+  precision float which value is in [0.05,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 */
 double vpDot2::getSizePrecision() const { return sizePrecision; }
@@ -709,10 +708,10 @@ void vpDot2::setArea(const double &a) { this->surface = a; }
 
   Set the precision of the gray level of the dot.
 
-  \param precision : It is a double precision float which value is in [0,1]:
+  \param precision : It is a double precision float which value is in [0.05,1]:
   - 1 means full precision, whereas values close to 0 show a very bad
   accuracy.
-  - Values lower or equal to 0 are brought back to an epsilon>0
+  - Values lower or equal to 0.05 are brought back to an epsilon>0
   - Values higher than  1 are brought back to 1
   If the initial gray level is I, the gray levels of the dot will be between :
   \f$Imin=255*\big((\frac{I}{255})^{{\gamma}^{-1}}-(1-grayLevelPrecision)\big)^{\gamma}\f$
