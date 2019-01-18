@@ -53,7 +53,7 @@ void regularImageDifference(const vpImage<unsigned char> &I1, const vpImage<unsi
 
   unsigned int n = I1.getHeight() * I1.getWidth();
   for (unsigned int b = 0; b < n; b++) {
-    int diff = I1.bitmap[b] - I2.bitmap[b] + 128;
+    int diff = I1.bitmap[b] - I2.bitmap[b] + 128u;
     Idiff.bitmap[b] = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diff, 255), 0));
   }
 }
