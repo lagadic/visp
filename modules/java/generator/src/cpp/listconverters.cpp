@@ -21,10 +21,9 @@ std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv* env,
   std::vector<vpHomogeneousMatrix> V;
   jlong *body = env->GetLongArrayElements(arr, 0);
   int len = env->GetArrayLength(arr);
-  vpHomogeneousMatrix* temp;
 
   for(int i=0;i<len;++i){
-    temp = (vpHomogeneousMatrix*) body[i];
+    vpHomogeneousMatrix *temp = (vpHomogeneousMatrix*) body[i];
     V.push_back(*temp);
   }
 

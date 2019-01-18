@@ -38,11 +38,10 @@ int main()
   std::cout << "A keyboard event was detected" << std::endl;
   // Non blocking keyboard event loop
   int cpt_event = 0;
-  bool event;
   char key[10];
   std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
   do {
-    event = vpDisplay::getKeyboardEvent(I, &key[0], false);
+    bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
     if (event) {
       std::cout << "Key detected: " << key << std::endl;
       cpt_event ++;
