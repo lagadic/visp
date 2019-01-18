@@ -43,6 +43,15 @@
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
+
+#if defined __SSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
+#include <pmmintrin.h>
+#define VISP_HAVE_SSE3 1
+#endif
+#if defined __SSSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
+#include <tmmintrin.h>
+#define VISP_HAVE_SSSE3 1
+#endif
 #endif
 
 /*!
@@ -148,10 +157,50 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
   if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
-  unsigned int n = I1.getHeight() * I1.getWidth();
-  for (unsigned int b = 0; b < n; b++) {
-    int diff = I1.bitmap[b] - I2.bitmap[b] + 128;
-    Idiff.bitmap[b] = (unsigned char)(vpMath::maximum(vpMath::minimum(diff, 255), 0));
+  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
+#if !VISP_HAVE_SSSE3
+  checkSSSE3 = false;
+#endif
+
+  unsigned int i = 0;
+  if (checkSSSE3) {
+#if VISP_HAVE_SSSE3
+    if (I1.getSize() >= 16) {
+      const __m128i mask1 = _mm_set_epi8(-1, 14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0);
+      const __m128i mask2 = _mm_set_epi8(-1, 15, -1, 13, -1, 11, -1, 9, -1, 7, -1, 5, -1, 3, -1, 1);
+
+      const __m128i mask_out2 = _mm_set_epi8(14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0, -1);
+
+      for (; i <= I1.getSize()-16; i+= 16) {
+        const __m128i vdata1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I1.bitmap + i));
+        const __m128i vdata2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I2.bitmap + i));
+
+        __m128i vdata1_reorg = _mm_shuffle_epi8(vdata1, mask1);
+        __m128i vdata2_reorg = _mm_shuffle_epi8(vdata2, mask1);
+
+        const __m128i vshift = _mm_set1_epi16(128);
+        __m128i vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
+
+        const __m128i v255 = _mm_set1_epi16(255);
+        const __m128i vzero = _mm_setzero_si128();
+        const __m128i vdata_diff_min_max1 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
+
+        vdata1_reorg = _mm_shuffle_epi8(vdata1, mask2);
+        vdata2_reorg = _mm_shuffle_epi8(vdata2, mask2);
+
+        vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
+        const __m128i vdata_diff_min_max2 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
+
+        _mm_storeu_si128(reinterpret_cast<__m128i *>(Idiff.bitmap + i), _mm_or_si128(_mm_shuffle_epi8(vdata_diff_min_max1, mask1),
+                                                                                     _mm_shuffle_epi8(vdata_diff_min_max2, mask_out2)));
+      }
+    }
+#endif
+  }
+
+  for (; i < I1.getSize(); i++) {
+    int diff = I1.bitmap[i] - I2.bitmap[i] + 128;
+    Idiff.bitmap[i] = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diff, 255), 0));
   }
 }
 
@@ -215,7 +264,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1, con
   unsigned int n = I1.getHeight() * I1.getWidth();
   for (unsigned int b = 0; b < n; b++) {
     int diff = I1.bitmap[b] - I2.bitmap[b];
-    Idiff.bitmap[b] = diff;
+    Idiff.bitmap[b] = static_cast<unsigned char>(vpMath::abs(diff));
   }
 }
 
@@ -269,9 +318,9 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
     int diffG = I1.bitmap[b].G - I2.bitmap[b].G;
     int diffB = I1.bitmap[b].B - I2.bitmap[b].B;
     // int diffA = I1.bitmap[b].A - I2.bitmap[b].A;
-    Idiff.bitmap[b].R = diffR;
-    Idiff.bitmap[b].G = diffG;
-    Idiff.bitmap[b].B = diffB;
+    Idiff.bitmap[b].R = static_cast<unsigned char>(vpMath::abs(diffR));
+    Idiff.bitmap[b].G = static_cast<unsigned char>(vpMath::abs(diffG));
+    Idiff.bitmap[b].B = static_cast<unsigned char>(vpMath::abs(diffB));
     // Idiff.bitmap[b].A = diffA;
     Idiff.bitmap[b].A = 0;
   }
@@ -305,11 +354,11 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
 #if VISP_HAVE_SSE2
   if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
     for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
-      const __m128i v1 = _mm_loadu_si128((const __m128i *)ptr_I1);
-      const __m128i v2 = _mm_loadu_si128((const __m128i *)ptr_I2);
+      const __m128i v1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I1));
+      const __m128i v2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I2));
       const __m128i vres = saturate ? _mm_adds_epu8(v1, v2) : _mm_add_epi8(v1, v2);
 
-      _mm_storeu_si128((__m128i *)ptr_Ires, vres);
+      _mm_storeu_si128(reinterpret_cast<__m128i *>(ptr_Ires), vres);
     }
   }
 #endif
@@ -347,11 +396,11 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
 #if VISP_HAVE_SSE2
   if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
     for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
-      const __m128i v1 = _mm_loadu_si128((const __m128i *)ptr_I1);
-      const __m128i v2 = _mm_loadu_si128((const __m128i *)ptr_I2);
+      const __m128i v1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I1));
+      const __m128i v2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I2));
       const __m128i vres = saturate ? _mm_subs_epu8(v1, v2) : _mm_sub_epi8(v1, v2);
 
-      _mm_storeu_si128((__m128i *)ptr_Ires, vres);
+      _mm_storeu_si128(reinterpret_cast<__m128i *>(ptr_Ires), vres);
     }
   }
 #endif
