@@ -66,7 +66,7 @@ vpColVector randV(int n)
 class QPlot
 {
 public:
-  ~QPlot()  { delete P; }
+  virtual ~QPlot()  { delete P; }
   QPlot(int graphNum, int total, std::vector<std::string> legend)
   {
     P = new vpPlot(graphNum, 700, 700, 100, 200, "Resolution time");
@@ -95,6 +95,10 @@ public:
     P->I.display->getClick();
   }
   vpPlot* P;
+
+private:
+  // Copy constructor not allowed.
+  QPlot(const QPlot &qplot);
 };
 #else
 class VISP_EXPORT QPPlot
