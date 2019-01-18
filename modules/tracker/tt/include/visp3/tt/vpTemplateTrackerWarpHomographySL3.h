@@ -65,7 +65,7 @@ protected:
 public:
   // constructor;
   vpTemplateTrackerWarpHomographySL3();
-  ~vpTemplateTrackerWarpHomographySL3();
+  virtual ~vpTemplateTrackerWarpHomographySL3();
 
   /*!
    Compute the exponential of the homography matrix defined by the given

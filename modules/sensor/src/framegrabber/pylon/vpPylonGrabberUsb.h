@@ -66,7 +66,7 @@ class VISP_EXPORT vpPylonGrabberUsb : public vpPylonGrabber
 {
 public:
   vpPylonGrabberUsb();
-  ~vpPylonGrabberUsb();
+  virtual ~vpPylonGrabberUsb();
 
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);

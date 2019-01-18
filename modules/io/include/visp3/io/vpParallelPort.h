@@ -84,7 +84,7 @@ class VISP_EXPORT vpParallelPort
 
 public:
   vpParallelPort();
-  ~vpParallelPort();
+  virtual ~vpParallelPort();
 
   void sendData(unsigned char &data);
   unsigned char getData();

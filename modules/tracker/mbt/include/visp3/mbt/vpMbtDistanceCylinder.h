@@ -138,7 +138,7 @@ public:
 
 public:
   vpMbtDistanceCylinder();
-  ~vpMbtDistanceCylinder();
+  virtual ~vpMbtDistanceCylinder();
 
   void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r);
 

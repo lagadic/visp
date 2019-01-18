@@ -191,7 +191,7 @@ struct vpContour {
     }
   }
 
-  ~vpContour()
+  virtual ~vpContour()
   {
     for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
       (*it)->m_parent = NULL;

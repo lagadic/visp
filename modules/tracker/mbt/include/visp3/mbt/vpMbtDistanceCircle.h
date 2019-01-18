@@ -124,7 +124,7 @@ public:
 
 public:
   vpMbtDistanceCircle();
-  ~vpMbtDistanceCircle();
+  virtual ~vpMbtDistanceCircle();
 
   void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r);
 

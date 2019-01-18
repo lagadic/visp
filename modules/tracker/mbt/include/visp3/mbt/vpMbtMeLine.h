@@ -74,7 +74,7 @@ public:
 
 public:
   vpMbtMeLine();
-  ~vpMbtMeLine();
+  virtual ~vpMbtMeLine();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, const bool display,

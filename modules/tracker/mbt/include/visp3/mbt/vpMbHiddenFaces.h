@@ -93,7 +93,7 @@ private:
 
 public:
   vpMbHiddenFaces();
-  ~vpMbHiddenFaces();
+  virtual ~vpMbHiddenFaces();
   vpMbHiddenFaces(const vpMbHiddenFaces &copy);
   vpMbHiddenFaces &operator=(vpMbHiddenFaces other);
   friend void swap<>(vpMbHiddenFaces &first, vpMbHiddenFaces &second);

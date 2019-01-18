@@ -87,7 +87,7 @@ class VISP_EXPORT vpKeyboard
 
 public:
   vpKeyboard();
-  ~vpKeyboard();
+  virtual ~vpKeyboard();
   int kbhit();
   int getchar();
 

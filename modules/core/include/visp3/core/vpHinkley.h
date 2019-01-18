@@ -107,7 +107,7 @@ public:
 
 public:
   vpHinkley();
-  ~vpHinkley();
+  virtual ~vpHinkley();
   vpHinkley(double alpha, double delta);
 
   void init();

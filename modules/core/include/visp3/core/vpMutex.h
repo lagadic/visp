@@ -184,7 +184,7 @@ int main()
     //! Constructor that locks the mutex.
     vpScopedLock(vpMutex &mutex) : _mutex(mutex) { _mutex.lock(); }
     //! Destructor that unlocks the mutex.
-    ~vpScopedLock() { _mutex.unlock(); }
+    virtual ~vpScopedLock() { _mutex.unlock(); }
   };
 
 private:

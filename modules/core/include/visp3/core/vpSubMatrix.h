@@ -82,7 +82,7 @@ public:
   vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
               const unsigned int &ncols);
   //! Destructor
-  ~vpSubMatrix();
+  virtual ~vpSubMatrix();
 
   //! Initialisation of vpMatrix
   void init(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,

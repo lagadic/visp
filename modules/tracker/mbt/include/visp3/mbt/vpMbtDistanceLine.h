@@ -131,7 +131,7 @@ public:
 
 public:
   vpMbtDistanceLine();
-  ~vpMbtDistanceLine();
+  virtual ~vpMbtDistanceLine();
 
   void addPolygon(const int &index);
 

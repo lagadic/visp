@@ -169,7 +169,7 @@ class VISP_EXPORT vpUDPClient
 {
 public:
   vpUDPClient(const std::string &hostname, const int port);
-  ~vpUDPClient();
+  virtual ~vpUDPClient();
 
   int receive(std::string &msg, const int timeoutMs = 0);
   int send(const std::string &msg);
