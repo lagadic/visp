@@ -340,7 +340,13 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
       }
 
       line->changeFrame(cMo);
-      line->projection();
+      try {
+        line->projection();
+      }
+      catch(const vpException &e) {
+        isvisible = false;
+        return false;
+      }
       double rho, theta;
       // rho theta uv
       vpMeterPixelConversion::convertLine(cam, line->getRho(), line->getTheta(), rho, theta);
@@ -478,7 +484,22 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         Reinit = true;
       } else {
         line->changeFrame(cMo);
-        line->projection();
+        try {
+          line->projection();
+        }
+        catch(const vpException &e) {
+          for (size_t j = 0; j < meline.size(); j++) {
+            if (meline[j] != NULL)
+              delete meline[j];
+          }
+
+          meline.clear();
+          nbFeature.clear();
+          nbFeatureTotal = 0;
+          isvisible = false;
+          Reinit = true;
+          return;
+        }
         double rho, theta;
         // rho theta uv
         vpMeterPixelConversion::convertLine(cam, line->getRho(), line->getTheta(), rho, theta);
@@ -780,9 +801,8 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
         }
       }
     } catch (const vpException &e) {
-      std::cerr << "Catch an exception: " << e.what() << std::endl;
-      std::cerr << "Set the corresponding interaction matrix part to zero." << std::endl;
-
+      // Handle potential exception: due to a degenerate case: the image of the straight line is a point!
+      // Set the corresponding interaction matrix part to zero
       unsigned int j = 0;
       for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();

@@ -190,7 +190,10 @@ void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
   line.projection();
   \endcode
 */
-void vpLine::projection() { projection(cP, p); }
+void vpLine::projection()
+{
+  projection(cP, p);
+}
 
 /*!
 
@@ -499,8 +502,13 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix 
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);
-  projection(_cP, _p);
-  vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
+  try {
+    projection(_cP, _p);
+    vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
+  }
+  catch(const vpException &e) {
+    // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
+  }
 }
 
 /*!
@@ -518,9 +526,3 @@ vpLine *vpLine::duplicate() const
   vpLine *feature = new vpLine(*this);
   return feature;
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
