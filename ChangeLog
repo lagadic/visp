@@ -2,14 +2,15 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright (C) 2005 - 2018 by Inria. All rights reserved.
+     Copyright (C) 2005 - 2019 by Inria. All rights reserved.
                       https://visp.inria.fr
 
-ViSP 3.2.0 (under development)
+ViSP 3.2.0 (released January 21, 2019)
   - Contributors:
     . This release was possible thanks to contributions from Fabien Spindler,
       Souriya Trinh, Olivier Kermorgant, Mathieu Simon, Francois Chaumette,
-      Marc Pouliquen, Jason Chevrie, Yasutomo Shirahama
+      Marc Pouliquen, Jason Chevrie, Yash Kapoor, Tianhuanyu, Yasutomo Shirahama,
+      ashwinpathak20
     . Google Summer of Code 2018: Akshay Sharma that ported ViSP to Java and Android,
       and Utkarsh Tripathi that developped the wrapper between ViSP and Unity.
   - New features
