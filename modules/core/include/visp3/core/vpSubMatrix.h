@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef _VP_SUB_MATRIX_
-#define _VP_SUB_MATRIX_
+#ifndef _vpSubMatrix_h_
+#define _vpSubMatrix_h_
 
 #include <visp3/core/vpMatrix.h>
 

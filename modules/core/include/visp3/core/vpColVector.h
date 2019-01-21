@@ -254,11 +254,12 @@ public:
     */
   void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
   {
-    if (ncols != 1)
+    if (ncols != 1) {
       throw(vpException(vpException::fatalError,
                         "Cannot resize a column vector to a (%dx%d) "
                         "dimension vector that has more than one column",
                         nrows, ncols));
+    }
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
   }
 

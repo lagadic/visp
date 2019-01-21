@@ -140,8 +140,9 @@ public:
   inline void get_controlPoints(std::list<vpImagePoint> &list) const
   {
     list.clear();
-    for (unsigned int i = 0; i < controlPoints.size(); i++)
+    for (unsigned int i = 0; i < controlPoints.size(); i++) {
       list.push_back(*(&(controlPoints[0]) + i));
+    }
   }
 
   /*!
@@ -152,8 +153,9 @@ public:
   inline void get_knots(std::list<double> &list) const
   {
     list.clear();
-    for (unsigned int i = 0; i < knots.size(); i++)
+    for (unsigned int i = 0; i < knots.size(); i++) {
       list.push_back(*(&(knots[0]) + i));
+    }
   }
 
   /*!
@@ -165,14 +167,15 @@ public:
   inline void get_crossingPoints(std::list<vpImagePoint> &list) const
   {
     list.clear();
-    for (unsigned int i = 0; i < crossingPoints.size(); i++)
+    for (unsigned int i = 0; i < crossingPoints.size(); i++) {
       list.push_back(*(&(crossingPoints[0]) + i));
+    }
   }
 
   /*!
     Sets the degree of the B-Spline.
 
-\param degree : the degree of the B-Spline.
+    \param degree : the degree of the B-Spline.
   */
   inline void set_p(unsigned int degree) { this->p = degree; }
 

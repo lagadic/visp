@@ -1,6 +1,3 @@
-#include <iostream>
-#include <stdlib.h>
-
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.

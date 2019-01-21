@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
+ * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
@@ -29,7 +29,11 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test vpImageTools::imageDifference()
+ * Image difference.
+ *
+ * Authors:
+ * Fabien Spindler
+ * Souriya Trinh
  *
  *****************************************************************************/
 

@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef _VP_SUB_COL_VECTOR_
-#define _VP_SUB_COL_VECTOR_
+#ifndef _vpSubColVector_h_
+#define _vpSubColVector_h_
 
 #include <visp3/core/vpColVector.h>
 

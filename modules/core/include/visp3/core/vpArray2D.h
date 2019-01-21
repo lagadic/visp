@@ -194,15 +194,17 @@ public:
       this->dsize = nrows * ncols;
       this->data = (Type *)realloc(this->data, this->dsize * sizeof(Type));
       if ((NULL == this->data) && (0 != this->dsize)) {
-        if (copyTmp != NULL)
+        if (copyTmp != NULL) {
           delete[] copyTmp;
+        }
         throw(vpException(vpException::memoryAllocationError, "Memory allocation error when allocating 2D array data"));
       }
 
       this->rowPtrs = (Type **)realloc(this->rowPtrs, nrows * sizeof(Type *));
       if ((NULL == this->rowPtrs) && (0 != this->dsize)) {
-        if (copyTmp != NULL)
+        if (copyTmp != NULL) {
           delete[] copyTmp;
+        }
         throw(vpException(vpException::memoryAllocationError,
                           "Memory allocation error when allocating 2D array rowPtrs"));
       }
@@ -236,8 +238,9 @@ public:
         }
       }
 
-      if (copyTmp != NULL)
+      if (copyTmp != NULL) {
         delete[] copyTmp;
+      }
     }
   }
   //! Set all the elements of the array to \e x.
@@ -253,8 +256,9 @@ public:
   vpArray2D<Type> &operator=(const vpArray2D<Type> &A)
   {
     resize(A.rowNum, A.colNum, false, false);
-    if (data != NULL && A.data != NULL && data != A.data)
+    if (data != NULL && A.data != NULL && data != A.data) {
       memcpy(data, A.data, rowNum * colNum * sizeof(Type));
+    }
     return *this;
   }
 
@@ -270,8 +274,9 @@ public:
     */
   friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
   {
-    if (A.data == NULL || A.size() == 0)
+    if (A.data == NULL || A.size() == 0) {
       return s;
+    }
     std::ios_base::fmtflags original_flags = s.flags();
 
     s.precision(10);
@@ -282,8 +287,9 @@ public:
       // We don't add "  " after the last row element
       s << A[i][A.getCols() - 1];
       // We don't add a \n char on the end of the last array line
-      if (i < A.getRows() - 1)
+      if (i < A.getRows() - 1) {
         s << std::endl;
+      }
     }
 
     s.flags(original_flags); // restore s to standard state
@@ -317,10 +323,12 @@ public:
   {
     std::fstream file;
 
-    if (!binary)
+    if (!binary) {
       file.open(filename.c_str(), std::fstream::in);
-    else
+    }
+    else {
       file.open(filename.c_str(), std::fstream::in | std::fstream::binary);
+    }
 
     if (!file) {
       file.close();
@@ -340,8 +348,9 @@ public:
           // Line is a comment
           // If we are not on the first line, we should add "\n" to the end of
           // the previous line
-          if (pos)
+          if (pos) {
             h += "\n";
+          }
           h += line_.substr(2); // Remove "# "
         } else {
           // rewind before the line
@@ -363,8 +372,9 @@ public:
       file >> rows;
       file >> cols;
 
-      if (rows >= (std::numeric_limits<unsigned int>::max)() || cols >= (std::numeric_limits<unsigned int>::max)())
+      if (rows >= (std::numeric_limits<unsigned int>::max)() || cols >= (std::numeric_limits<unsigned int>::max)()) {
         throw vpException(vpException::badValue, "Array exceed the max size.");
+      }
 
       A.resize(rows, cols);
 
@@ -379,7 +389,7 @@ public:
       char c = '0';
       std::string h;
       // Decode header until '\0' char that ends the header string
-      while ((c != '\0')) {
+      while (c != '\0') {
         file.read(&c, 1);
         h += c;
       }
@@ -449,10 +459,12 @@ public:
           std::stringstream ss(line);
           ss >> subs;
           ss >> cols;
-        } else if (line.compare(0, 5, "data:") == 0)
+        } else if (line.compare(0, 5, "data:") == 0) {
           inheader = false;
-        else
+        }
+        else {
           h += line + "\n";
+        }
       } else {
         // if i == 0, we just got out of the header: initialize matrix
         // dimensions
@@ -467,8 +479,9 @@ public:
         }
         std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
         j = 0;
-        while (getline(ss, subs, ','))
+        while (getline(ss, subs, ',')) {
           A[i][j++] = atof(subs.c_str());
+        }
         i++;
       }
     }
@@ -508,10 +521,12 @@ public:
   {
     std::fstream file;
 
-    if (!binary)
+    if (!binary) {
       file.open(filename.c_str(), std::fstream::out);
-    else
+    }
+    else {
       file.open(filename.c_str(), std::fstream::out | std::fstream::binary);
+    }
 
     if (!file) {
       file.close();
@@ -523,8 +538,9 @@ public:
       file << "# ";
       while (header[i] != '\0') {
         file << header[i];
-        if (header[i] == '\n')
+        if (header[i] == '\n') {
           file << "# ";
+        }
         i++;
       }
       file << std::endl;
@@ -532,8 +548,9 @@ public:
       file << A << std::endl;
     } else {
       int headerSize = 0;
-      while (header[headerSize] != '\0')
+      while (header[headerSize] != '\0') {
         headerSize++;
+      }
       file.write(header, headerSize + 1);
       unsigned int matrixSize;
       matrixSize = A.getRows();
@@ -611,33 +628,40 @@ public:
       file << header[i];
       if (checkIndent) {
         if (inIndent) {
-          if (header[i] == ' ')
+          if (header[i] == ' ') {
             indent += " ";
-          else if (indent.length() > 0)
+          }
+          else if (indent.length() > 0) {
             checkIndent = false;
+          }
         }
-        if (header[i] == '\n' || (inIndent && header[i] == ' '))
+        if (header[i] == '\n' || (inIndent && header[i] == ' ')) {
           inIndent = true;
-        else
+        }
+        else {
           inIndent = false;
+        }
       }
       i++;
     }
 
-    if (i != 0)
+    if (i != 0) {
       file << std::endl;
+    }
     file << "rows: " << A.getRows() << std::endl;
     file << "cols: " << A.getCols() << std::endl;
 
-    if (indent.length() == 0)
+    if (indent.length() == 0) {
       indent = "  ";
+    }
 
     file << "data: " << std::endl;
     unsigned int j;
     for (i = 0; i < A.getRows(); ++i) {
       file << indent << "- [";
-      for (j = 0; j < A.getCols() - 1; ++j)
+      for (j = 0; j < A.getCols() - 1; ++j) {
         file << A[i][j] << ", ";
+      }
       file << A[i][j] << "]" << std::endl;
     }
 
@@ -656,8 +680,9 @@ template <class Type> Type vpArray2D<Type>::getMinValue() const
   Type min = *dataptr;
   dataptr++;
   for (unsigned int i = 0; i < dsize - 1; i++) {
-    if (*dataptr < min)
+    if (*dataptr < min) {
       min = *dataptr;
+    }
     dataptr++;
   }
   return min;
@@ -672,8 +697,9 @@ template <class Type> Type vpArray2D<Type>::getMaxValue() const
   Type max = *dataptr;
   dataptr++;
   for (unsigned int i = 0; i < dsize - 1; i++) {
-    if (*dataptr > max)
+    if (*dataptr > max) {
       max = *dataptr;
+    }
     dataptr++;
   }
   return max;

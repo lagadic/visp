@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,24 +11,22 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional
+ * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See https://visp.inria.fr/download/ for more information.
+ * See http://visp.inria.fr for more information.
  *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
  * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
+ * Inria at visp@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Description:
  * Model-based klt tracker with multiple cameras.
