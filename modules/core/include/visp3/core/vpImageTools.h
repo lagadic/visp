@@ -126,6 +126,10 @@ public:
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires, const bool saturate = false);
 
+  static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
+                               vpArray2D<int> &mapU, vpArray2D<int> &mapV,
+                               vpArray2D<float> &mapDu, vpArray2D<float> &mapDv);
+
   static double interpolate(const vpImage<unsigned char> &I, const vpImagePoint &point,
                             const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
 
@@ -135,6 +139,11 @@ public:
                                       const bool useOptimized = true);
 
   static void normalize(vpImage<double> &I);
+
+  static void remap(const vpImage<unsigned char> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                    const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<unsigned char> &Iundist);
+  static void remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                    const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist);
 
   template <class Type>
   static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height,
@@ -149,7 +158,8 @@ public:
                                const bool useOptimized = true);
 
   template <class Type>
-  static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI);
+  static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI,
+                        unsigned int nThreads=2);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -593,15 +603,23 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
   parameter \f$K_d\f$ is null (see cam.get_kd_mp()), \e undistI is
   just a copy of \e I.
 
+  \param nThreads : Number of threads to use if pthreads library is available.
+
   \warning This function works only with Types authorizing "+,-,
   multiplication by a scalar" operators.
 
   \warning This function is time consuming :
     - On "Rhea"(Intel Core 2 Extreme X6800 2.93GHz, 2Go RAM)
       or "Charon"(Intel Xeon 3 GHz, 2Go RAM) : ~8 ms for a 640x480 image.
+
+  \note If you want to undistort multiple images, you should call `vpImageTools::initUndistortMap()`
+  once and then `vpImageTools::remap()` to undistort the images. This will be less time consuming.
+
+  \sa initUndistortMap, remap
 */
 template <class Type>
-void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI)
+void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI,
+                             unsigned int nThreads)
 {
 #ifdef VISP_HAVE_PTHREAD
   //
@@ -621,7 +639,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
     return;
   }
 
-  unsigned int nthreads = 2;
+  unsigned int nthreads = nThreads;
   pthread_attr_t attr;
   pthread_t *callThd = new pthread_t[nthreads];
   pthread_attr_init(&attr);
@@ -915,17 +933,25 @@ inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa
   vpRGBa p33 = getPixelClamped(I, u + 2, v + 2);
 
   for (int c = 0; c < 3; c++) {
-    float col0 = cubicHermite(((unsigned char *)&p00)[c], ((unsigned char *)&p01)[c], ((unsigned char *)&p02)[c],
-                              ((unsigned char *)&p03)[c], xFrac);
-    float col1 = cubicHermite(((unsigned char *)&p10)[c], ((unsigned char *)&p11)[c], ((unsigned char *)&p12)[c],
-                              ((unsigned char *)&p13)[c], xFrac);
-    float col2 = cubicHermite(((unsigned char *)&p20)[c], ((unsigned char *)&p21)[c], ((unsigned char *)&p22)[c],
-                              ((unsigned char *)&p23)[c], xFrac);
-    float col3 = cubicHermite(((unsigned char *)&p30)[c], ((unsigned char *)&p31)[c], ((unsigned char *)&p32)[c],
-                              ((unsigned char *)&p33)[c], xFrac);
+    float col0 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p00)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p01)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p02)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p03)[c]), xFrac);
+    float col1 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p10)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p11)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p12)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p13)[c]), xFrac);
+    float col2 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p20)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p21)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p22)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p23)[c]), xFrac);
+    float col3 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p30)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p31)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p32)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p33)[c]), xFrac);
     float value = cubicHermite(col0, col1, col2, col3, yFrac);
 
-    ((unsigned char *)&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
+    reinterpret_cast<unsigned char *>(&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
   }
 }
 
@@ -943,8 +969,8 @@ void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, c
   unsigned int u2 = u0;
   unsigned int v2 = (std::min)(I.getHeight() - 1, (unsigned int)v + 1);
 
-  unsigned int u3 = (std::min)(I.getWidth() - 1, (unsigned int)u + 1);
-  unsigned int v3 = (std::min)(I.getHeight() - 1, (unsigned int)v + 1);
+  unsigned int u3 = u1;
+  unsigned int v3 = v2;
 
   float col0 = lerp(I[v0][u0], I[v1][u1], xFrac);
   float col1 = lerp(I[v2][u2], I[v3][u3], xFrac);
@@ -971,11 +997,13 @@ inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGB
   unsigned int v3 = (std::min)(I.getHeight() - 1, (unsigned int)v + 1);
 
   for (int c = 0; c < 3; c++) {
-    float col0 = lerp(((unsigned char *)&I[v0][u0])[c], ((unsigned char *)&I[v1][u1])[c], xFrac);
-    float col1 = lerp(((unsigned char *)&I[v2][u2])[c], ((unsigned char *)&I[v3][u3])[c], xFrac);
+    float col0 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v0][u0])[c]),
+                      static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v1][u1])[c]), xFrac);
+    float col1 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v2][u2])[c]),
+                      static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v3][u3])[c]), xFrac);
     float value = lerp(col0, col1, yFrac);
 
-    ((unsigned char *)&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
+    reinterpret_cast<unsigned char *>(&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
   }
 }
 

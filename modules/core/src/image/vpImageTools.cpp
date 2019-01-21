@@ -446,7 +446,79 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
 #endif
 
   for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 - (short int)*ptr_I2) : *ptr_I1 - *ptr_I2;
+    *ptr_Ires = saturate ?
+          vpMath::saturate<unsigned char>(static_cast<short int>(*ptr_I1) - static_cast<short int>(*ptr_I2)) :
+          *ptr_I1 - *ptr_I2;
+  }
+}
+
+/*!
+  Compute the undistortion transformation map.
+
+  \param cam : Camera intrinsic parameters with distortion coefficients.
+  \param width : Image width.
+  \param height : Image height.
+  \param mapU : 2D array that contains at each coordinate the u-coordinate in the distorted image.
+  \param mapV : 2D array that contains at each coordinate the v-coordinate in the distorted image.
+  \param mapDu : 2D array that contains at each coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv : 2D array that contains at each coordinate the \f$ \Delta v \f$ for the interpolation.
+*/
+void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
+                                    vpArray2D<int> &mapU, vpArray2D<int> &mapV,
+                                    vpArray2D<float> &mapDu, vpArray2D<float> &mapDv)
+{
+  mapU.resize(height, width, false, false);
+  mapV.resize(height, width, false, false);
+  mapDu.resize(height, width, false, false);
+  mapDv.resize(height, width, false, false);
+
+  float u0 = static_cast<float>(cam.get_u0());
+  float v0 = static_cast<float>(cam.get_v0());
+  float px = static_cast<float>(cam.get_px());
+  float py = static_cast<float>(cam.get_py());
+  float kud = static_cast<float>(cam.get_kud());
+
+  if (std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
+    // There is no need to undistort the image
+    for (unsigned int i = 0; i < height; i++) {
+      for (unsigned int j = 0; j < width; j++) {
+        mapU[i][j] = static_cast<int>(j);
+        mapV[i][j] = static_cast<int>(i);
+        mapDu[i][j] = 0;
+        mapDv[i][j] = 0;
+      }
+    }
+
+    return;
+  }
+
+  float invpx = 1.0f / px;
+  float invpy = 1.0f / py;
+
+  float kud_px2 = kud * invpx * invpx;
+  float kud_py2 = kud * invpy * invpy;
+
+  for (unsigned int v = 0; v < height; v++) {
+    float deltav = v - v0;
+    float fr1 = 1.0f + kud_py2 * deltav * deltav;
+
+    for (unsigned int u = 0; u < width; u++) {
+      // computation of u,v : corresponding pixel coordinates in I.
+      float deltau = u - u0;
+      float fr2 = fr1 + kud_px2 * deltau * deltau;
+
+      float u_float = deltau * fr2 + u0;
+      float v_float = deltav * fr2 + v0;
+
+      int u_round = static_cast<int>(u_float);
+      int v_round = static_cast<int>(v_float);
+
+      mapU[v][u] = u_round;
+      mapV[v][u] = v_round;
+
+      mapDu[v][u] = u_float - u_round;
+      mapDv[v][u] = v_float - v_round;
+    }
   }
 }
 
@@ -774,7 +846,9 @@ float vpImageTools::cubicHermite(const float A, const float B, const float C, co
   return a * t * t * t + b * t * t + c * t + d;
 }
 
-float vpImageTools::lerp(const float A, const float B, const float t) { return A * (1.0f - t) + B * t; }
+float vpImageTools::lerp(const float A, const float B, const float t) {
+  return A * (1.0f - t) + B * t;
+}
 
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
@@ -837,4 +911,169 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
                 IIsq_tpl[I2.getHeight()][0]) -
                (1.0 / I2.getSize()) * vpMath::sqr(sum2));
   return ab / sqrt(a2 * b2);
+}
+
+/*!
+  Apply the transformation map to the image.
+
+  \param I : Input grayscale image.
+  \param mapU : Map that contains at each destination coordinate the u-coordinate in the source image.
+  \param mapV : Map that contains at each destination coordinate the v-coordinate in the source image.
+  \param mapDu : Map that contains at each destination coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv : Map that contains at each destination coordinate the \f$ \Delta v \f$ for the interpolation.
+  \param Iundist : Output transformed grayscale image.
+*/
+void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                         const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<unsigned char> &Iundist)
+{
+  Iundist.resize(I.getHeight(), I.getWidth());
+
+#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#pragma omp parallel for schedule(dynamic)
+#endif
+  for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
+    const unsigned int i = static_cast<unsigned int>(i_);
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+
+      int u_round = mapU[i][j];
+      int v_round = mapV[i][j];
+
+      float du = mapDu[i][j];
+      float dv = mapDv[i][j];
+
+      if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
+          && v_round < static_cast<int>(I.getHeight()) - 1) {
+        // process interpolation
+        float col0 = lerp(I[v_round][u_round], I[v_round][u_round + 1], du);
+        float col1 = lerp(I[v_round + 1][u_round], I[v_round + 1][u_round + 1], du);
+        float value = lerp(col0, col1, dv);
+
+        Iundist[i][j] = static_cast<unsigned char>(value);
+      } else {
+        Iundist[i][j] = 0;
+      }
+    }
+  }
+}
+
+/*!
+  Apply the transformation map to the image.
+
+  \param I : Input color image.
+  \param mapU : Map that contains at each destination coordinate the u-coordinate in the source image.
+  \param mapV : Map that contains at each destination coordinate the v-coordinate in the source image.
+  \param mapDu : Map that contains at each destination coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv : Map that contains at each destination coordinate the \f$ \Delta v \f$ for the interpolation.
+  \param Iundist : Output transformed color image.
+*/
+void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                         const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist)
+{
+  Iundist.resize(I.getHeight(), I.getWidth());
+
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !VISP_HAVE_SSE2
+  checkSSE2 = false;
+#endif
+
+  if (checkSSE2) {
+#if defined VISP_HAVE_SSE2
+#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#pragma omp parallel for schedule(dynamic)
+#endif
+    for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
+      const unsigned int i = static_cast<unsigned int>(i_);
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+
+        int u_round = mapU[i][j];
+        int v_round = mapV[i][j];
+
+        const __m128 vdu = _mm_set1_ps(mapDu[i][j]);
+        const __m128 vdv = _mm_set1_ps(mapDv[i][j]);
+
+        if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
+            && v_round < static_cast<int>(I.getHeight()) - 1) {
+  #define VLERP(va, vb, vt) _mm_add_ps(va, _mm_mul_ps(_mm_sub_ps(vb, va), vt));
+
+          // process interpolation
+          const __m128 vdata1 =
+              _mm_set_ps(static_cast<float>(I[v_round][u_round].A), static_cast<float>(I[v_round][u_round].B),
+                         static_cast<float>(I[v_round][u_round].G), static_cast<float>(I[v_round][u_round].R));
+
+          const __m128 vdata2 =
+              _mm_set_ps(static_cast<float>(I[v_round][u_round + 1].A), static_cast<float>(I[v_round][u_round + 1].B),
+                         static_cast<float>(I[v_round][u_round + 1].G), static_cast<float>(I[v_round][u_round + 1].R));
+
+          const __m128 vdata3 =
+              _mm_set_ps(static_cast<float>(I[v_round + 1][u_round].A), static_cast<float>(I[v_round + 1][u_round].B),
+                         static_cast<float>(I[v_round + 1][u_round].G), static_cast<float>(I[v_round + 1][u_round].R));
+
+          const __m128 vdata4 = _mm_set_ps(
+              static_cast<float>(I[v_round + 1][u_round + 1].A), static_cast<float>(I[v_round + 1][u_round + 1].B),
+              static_cast<float>(I[v_round + 1][u_round + 1].G), static_cast<float>(I[v_round + 1][u_round + 1].R));
+
+          const __m128 vcol0 = VLERP(vdata1, vdata2, vdu);
+          const __m128 vcol1 = VLERP(vdata3, vdata4, vdu);
+          const __m128 vvalue = VLERP(vcol0, vcol1, vdv);
+
+  #undef VLERP
+
+          float values[4];
+          _mm_storeu_ps(values, vvalue);
+          Iundist[i][j].R = static_cast<unsigned char>(values[0]);
+          Iundist[i][j].G = static_cast<unsigned char>(values[1]);
+          Iundist[i][j].B = static_cast<unsigned char>(values[2]);
+          Iundist[i][j].A = static_cast<unsigned char>(values[3]);
+        } else {
+          Iundist[i][j] = 0;
+        }
+      }
+    }
+#endif
+  } else {
+#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#pragma omp parallel for schedule(dynamic)
+#endif
+    for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
+      const unsigned int i = static_cast<unsigned int>(i_);
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+
+        int u_round = mapU[i][j];
+        int v_round = mapV[i][j];
+
+        float du = mapDu[i][j];
+        float dv = mapDv[i][j];
+
+        if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
+            && v_round < static_cast<int>(I.getHeight()) - 1) {
+          // process interpolation
+          float col0 = lerp(I[v_round][u_round].R, I[v_round][u_round + 1].R, du);
+          float col1 = lerp(I[v_round + 1][u_round].G, I[v_round + 1][u_round + 1].G, du);
+          float value = lerp(col0, col1, dv);
+
+          Iundist[i][j].R = static_cast<unsigned char>(value);
+
+          col0 = lerp(I[v_round][u_round].G, I[v_round][u_round + 1].G, du);
+          col1 = lerp(I[v_round + 1][u_round].G, I[v_round + 1][u_round + 1].G, du);
+          value = lerp(col0, col1, dv);
+
+          Iundist[i][j].G = static_cast<unsigned char>(value);
+
+          col0 = lerp(I[v_round][u_round].B, I[v_round][u_round + 1].B, du);
+          col1 = lerp(I[v_round + 1][u_round].B, I[v_round + 1][u_round + 1].B, du);
+          value = lerp(col0, col1, dv);
+
+          Iundist[i][j].B = static_cast<unsigned char>(value);
+
+          col0 = lerp(I[v_round][u_round].A, I[v_round][u_round + 1].A, du);
+          col1 = lerp(I[v_round + 1][u_round].A, I[v_round + 1][u_round + 1].A, du);
+          value = lerp(col0, col1, dv);
+
+          Iundist[i][j].A = static_cast<unsigned char>(value);
+        } else {
+          Iundist[i][j] = 0;
+        }
+      }
+    }
+  }
 }
