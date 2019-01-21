@@ -5,7 +5,7 @@ sonar.login=b2bd45f5d4b8d77eba0f2c36aec2560216d83f35
 # Must be unique in a given SonarQube instance
 sonar.projectKey=rainbow:visp:master
 # Project description
-sonar.projectName=ViSP
+#sonar.projectName=rainbow:visp
 # Used to compare metrics with v1.10 for example
 sonar.projectVersion=3.2
 # Path is relative to the sonar-project.properties file. Replace "\" by "/" on Windows.
