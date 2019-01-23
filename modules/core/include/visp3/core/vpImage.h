@@ -59,6 +59,7 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+#include <inttypes.h>
 
 class vpDisplay;
 
