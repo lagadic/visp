@@ -751,7 +751,7 @@ if(UNIX AND NOT ANDROID)
     )
     install(FILES
       ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-      DESTINATION man/man1
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT dev
     )
