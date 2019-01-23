@@ -1482,7 +1482,7 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 // faster in unsigned char type
 // -O3 improve 50%
 // not -O3 improve 20%
-template <class Type>
+template <>
 unsigned char vpImage<unsigned char>::getValue(double i, double j) const {
     const int precision = 65536;
     int64_t y = (int64_t)(i * precision);
