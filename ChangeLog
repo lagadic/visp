@@ -115,6 +115,7 @@ ViSP 3.2.0 (released January 21, 2019)
     . [#429] vpRobotViper650 getPosition(vpRobot::REFERENCE_FRAME) error
     . [#485] CMake error when PCL is build with VTK option VTK_ENABLE_KITS=ON
     . [#515] Model-based tracking stops throwing an exception: the image of the straight line is a point!
+    . [#519] Cannot build java bindings when lapack is not used
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
   - Contributors:
