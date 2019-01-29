@@ -5067,7 +5067,11 @@ double vpMatrix::cond() const
     if (max < w[i])
       max = w[i];
   }
-  return max / min;
+  if(min != 0.){
+    return max / min;
+  }else{
+    return  std::numeric_limits<double>::infinity();;
+  }
 }
 
 /*!
