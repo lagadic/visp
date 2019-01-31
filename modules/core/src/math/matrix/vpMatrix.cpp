@@ -5098,42 +5098,73 @@ void vpMatrix::computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM)
 }
 
 /*!
-  Compute and return the Euclidean norm \f$ ||A|| = \Sigma_{max}(A)
+  Compute and return the Euclidean norm (also called Frobenius norm) \f$ ||A|| = \sqrt{ \sum{A_{ij}^2}}
+  \f$.
+  \return The Euclidean norm (also called Frobenius norm) if the matrix is initialized, 0 otherwise.
+  \sa infinityNorm()
+*/
+vp_deprecated double vpMatrix::euclideanNorm() const
+{
+    return this->frobeniusNorm();    
+}
+
+
+/*!
+  Compute and return the Euclidean norm (also called Frobenius norm) \f$ ||A|| = \sqrt{ \sum{A_{ij}^2}}
   \f$.
 
-  \return The Euclidean norm if the matrix is initialized, 0 otherwise.
+  \return The Euclidean norm (also called Frobenius norm) if the matrix is initialized, 0 otherwise.
 
   \sa infinityNorm()
 */
-double vpMatrix::euclideanNorm() const
+double vpMatrix::frobeniusNorm() const
 {
-    if(this->dsize != 0){
-        vpMatrix v;
-        vpColVector w;
+  double norm = 0.0;
+  for (unsigned int i = 0; i < dsize; i++) {
+    double x = *(data + i);
+    norm += x * x;
+ }
+  
+ return sqrt(norm);
+}
+
+
+/*!
+  Compute and return the induced L2 norm \f$ ||A|| = \Sigma_{max}(A)
+  \f$.
+
+  \return The induced L2 norm if the matrix is initialized, 0 otherwise.
+
+  \sa infinityNorm(), frobeniusNorm()
+*/
+double vpMatrix::inducedL2Norm() const
+{
+  if(this->dsize != 0){
+    vpMatrix v;
+    vpColVector w;
     
-        vpMatrix M;
-        M = *this;
+    vpMatrix M;
+    M = *this;
     
-        M.svd(w, v);
+    M.svd(w, v);
         
-        double max = w[0];
-        unsigned int maxRank = std::min(this->getCols(), this->getRows());
-        // The maximum reachable rank is either the number of columns or the number of rows 
-        // of the matrix.
-        unsigned int boundary = std::min(maxRank, w.size());
-        // boundary is here to ensure that the number of singular values used for the com-
-        // putation of the euclidean norm of the matrix is not greater than the maximum
-        // reachable rank. Indeed, some svd library pad the singular values vector with 0s
-        // if the input matrix is non-square.
-        for (unsigned int i = 0; i < boundary; i++) {
-            if (max < w[i])
-                max = w[i];
-        }
-        return max;
-    }else{
-        return 0.;
+    double max = w[0];
+    unsigned int maxRank = std::min(this->getCols(), this->getRows());
+    // The maximum reachable rank is either the number of columns or the number of rows 
+    // of the matrix.
+    unsigned int boundary = std::min(maxRank, w.size());
+    // boundary is here to ensure that the number of singular values used for the com-
+    // putation of the euclidean norm of the matrix is not greater than the maximum
+    // reachable rank. Indeed, some svd library pad the singular values vector with 0s
+    // if the input matrix is non-square.
+    for (unsigned int i = 0; i < boundary; i++) {
+      if (max < w[i])
+        max = w[i];
     }
-    
+      return max;
+  }else{
+    return 0.;
+  }
 }
 
 /*!

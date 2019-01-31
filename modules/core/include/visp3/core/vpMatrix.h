@@ -486,6 +486,8 @@ vpMatrix M(R);
   /** @name Norms  */
   //@{
   double euclideanNorm() const;
+  double frobeniusNorm() const;
+  double inducedL2Norm() const;
   double infinityNorm() const;
   //@}
 
