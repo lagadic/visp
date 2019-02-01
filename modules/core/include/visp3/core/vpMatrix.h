@@ -433,7 +433,7 @@ vpMatrix M(R);
 
   /** @name SVD decomposition  */
   //@{
-  double cond() const;
+  double cond(double svThreshold = 1e-6) const;
   unsigned int kernel(vpMatrix &kerAt, double svThreshold = 1e-6) const;
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
@@ -486,6 +486,8 @@ vpMatrix M(R);
   /** @name Norms  */
   //@{
   double euclideanNorm() const;
+  double frobeniusNorm() const;
+  double inducedL2Norm() const;
   double infinityNorm() const;
   //@}
 
@@ -498,7 +500,7 @@ vpMatrix M(R);
   std::ostream &csvPrint(std::ostream &os) const;
   std::ostream &maplePrint(std::ostream &os) const;
   std::ostream &matlabPrint(std::ostream &os) const;
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, const std::string &intro = "") const;
   void printSize() const { std::cout << getRows() << " x " << getCols() << "  "; }
   //@}
 

@@ -307,7 +307,7 @@ vpMatrix vpMatrix::inverseByQR() const
 
 double residual(vpMatrix M1, vpMatrix M2)
 {
-    return (M1 - M2).euclideanNorm();
+    return (M1 - M2).frobeniusNorm();
 }
 
 int main()
@@ -500,7 +500,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
 double residual(vpMatrix M1, vpMatrix M2)
 {
-    return (M1 - M2).euclideanNorm();
+    return (M1 - M2).frobeniusNorm();
 }
 
 int main()

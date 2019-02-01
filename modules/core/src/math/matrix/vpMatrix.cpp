@@ -4178,7 +4178,7 @@ void vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix 
 
   \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
 */
-int vpMatrix::print(std::ostream &s, unsigned int length, char const *intro) const
+int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &intro) const
 {
   typedef std::string::size_type size_type;
 
@@ -4231,7 +4231,7 @@ int vpMatrix::print(std::ostream &s, unsigned int length, char const *intro) con
   // the following line is useful for debugging
   // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
-  if (intro)
+  if (! intro.empty())
     s << intro;
   s << "[" << m << "," << n << "]=\n";
 
@@ -5039,27 +5039,66 @@ vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row)
 }
 
 /*!
-   \return The condition number, the ratio of the largest singular value of
-   the matrix to the smallest.
+  \return The condition number, the ratio of the largest singular value of
+  the matrix to the smallest.
+
+  \param svThreshold: Threshold used to test the singular values. If
+  a singular value is lower than this threshold we consider that the
+  matrix is not full rank.
+
  */
-double vpMatrix::cond() const
+double vpMatrix::cond(double svThreshold) const
 {
-  vpMatrix v;
-  vpColVector w;
+  unsigned int nbline = getRows();
+  unsigned int nbcol = getCols();
 
-  vpMatrix M;
-  M = *this;
+  vpMatrix U;               // Copy of the matrix, SVD function is destructive
+  vpColVector sv(nbcol);    // singular values
+  vpMatrix V(nbcol, nbcol); // V matrix of singular value decomposition
 
-  M.svd(w, v);
-  double min = w[0];
-  double max = w[0];
-  for (unsigned int i = 0; i < M.getCols(); i++) {
-    if (min > w[i])
-      min = w[i];
-    if (max < w[i])
-      max = w[i];
+  // Copy and resize matrix to have at least as many rows as columns
+  // kernel is computed in svd method only if the matrix has more rows than
+  // columns
+
+  if (nbline < nbcol)
+    U.resize(nbcol, nbcol);
+  else
+    U.resize(nbline, nbcol);
+
+  U.insert(*this, 0, 0);
+
+  U.svd(sv, V);
+
+  // Compute the highest singular value
+  double maxsv = 0;
+  for (unsigned int i = 0; i < nbcol; i++) {
+    if (fabs(sv[i]) > maxsv) {
+      maxsv = fabs(sv[i]);
+    }
   }
-  return max / min;
+
+  // Compute the rank of the matrix
+  unsigned int rank = 0;
+  for (unsigned int i = 0; i < nbcol; i++) {
+    if (fabs(sv[i]) > maxsv * svThreshold) {
+      rank++;
+    }
+  }
+
+  // Compute the lowest singular value
+  double minsv = maxsv;
+  for (unsigned int i = 0; i < rank; i++) {
+    if (fabs(sv[i]) < minsv) {
+      minsv = fabs(sv[i]);
+    }
+  }
+
+  if (std::fabs(minsv) > std::numeric_limits<double>::epsilon()) {
+    return maxsv / minsv;
+  }
+  else {
+    return std::numeric_limits<double>::infinity();
+  }
 }
 
 /*!
@@ -5086,33 +5125,85 @@ void vpMatrix::computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM)
 }
 
 /*!
-  Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{A_{ij}^2}}
-  \f$.
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  \return The Euclidean norm if the matrix is initialized, 0 otherwise.
+  Compute and return the Euclidean norm (also called Frobenius norm) \f$||A|| = \sqrt{ \sum{A_{ij}^2}}\f$.
 
-  \sa infinityNorm()
+  \return The Euclidean norm (also called Frobenius norm) if the matrix is initialized, 0 otherwise.
+
+  \sa frobeniusNorm(), infinityNorm(), inducedL2Norm()
 */
-double vpMatrix::euclideanNorm() const
+vp_deprecated double vpMatrix::euclideanNorm() const
+{
+  return frobeniusNorm();
+}
+
+/*!
+  Compute and return the Frobenius norm (also called Euclidean norm) \f$||A|| = \sqrt{ \sum{A_{ij}^2}}\f$.
+
+  \return The Frobenius norm (also called Euclidean norm) if the matrix is initialized, 0 otherwise.
+
+  \sa infinityNorm(), inducedL2Norm()
+*/
+double vpMatrix::frobeniusNorm() const
 {
   double norm = 0.0;
   for (unsigned int i = 0; i < dsize; i++) {
     double x = *(data + i);
     norm += x * x;
-  }
+ }
 
-  return sqrt(norm);
+ return sqrt(norm);
+}
+
+/*!
+  Compute and return the induced L2 norm \f$||A|| = \Sigma_{max}(A)\f$ which is equal to
+  the maximum singular value of the matrix.
+
+  \return The induced L2 norm if the matrix is initialized, 0 otherwise.
+
+  \sa infinityNorm(), frobeniusNorm()
+*/
+double vpMatrix::inducedL2Norm() const
+{
+  if(this->dsize != 0){
+    vpMatrix v;
+    vpColVector w;
+
+    vpMatrix M = *this;
+
+    M.svd(w, v);
+
+    double max = w[0];
+    unsigned int maxRank = std::min(this->getCols(), this->getRows());
+    // The maximum reachable rank is either the number of columns or the number of rows
+    // of the matrix.
+    unsigned int boundary = std::min(maxRank, w.size());
+    // boundary is here to ensure that the number of singular values used for the com-
+    // putation of the euclidean norm of the matrix is not greater than the maximum
+    // reachable rank. Indeed, some svd library pad the singular values vector with 0s
+    // if the input matrix is non-square.
+    for (unsigned int i = 0; i < boundary; i++) {
+      if (max < w[i]) {
+        max = w[i];
+      }
+    }
+    return max;
+  }
+  else {
+    return 0.;
+  }
 }
 
 /*!
 
-  Compute and return the infinity norm \f$ {||x||}_{\infty} =
-  max\left(\sum_{j=0}^{n}{\mid x_{ij} \mid}\right) \f$ with \f$i \in
+  Compute and return the infinity norm \f$ {||A||}_{\infty} =
+  max\left(\sum_{j=0}^{n}{\mid A_{ij} \mid}\right) \f$ with \f$i \in
   \{0, ..., m\}\f$ where \f$(m,n)\f$ is the matrix size.
 
   \return The infinity norm if the matrix is initialized, 0 otherwise.
 
-  \sa euclideanNorm()
+  \sa frobeniusNorm(), inducedL2Norm()
 */
 double vpMatrix::infinityNorm() const
 {

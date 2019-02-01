@@ -2451,7 +2451,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   vpVelocityTwistMatrix cVe;
 
   unsigned int i, iter = 0;
-  while ((iter++ < 300) & (err.euclideanNorm() > errMax)) {
+  while ((iter++ < 300) & (err.frobeniusNorm() > errMax)) {
     double t = vpTime::measureTimeMs();
 
     // update image
@@ -2490,7 +2490,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   setMaxRotationVelocity(wMax);
 
   // std::cout << "setPosition: final error " << err.t() << std::endl;
-  return (err.euclideanNorm() <= errMax);
+  return (err.frobeniusNorm() <= errMax);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

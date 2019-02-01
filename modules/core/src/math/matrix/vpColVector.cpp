@@ -1475,20 +1475,31 @@ double vpColVector::sumSquare() const
 }
 
 /*!
-  Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm(), infinityNorm()
 
 */
 double vpColVector::euclideanNorm() const
 {
-  // Use directly sumSquare() function
-  double norm = sumSquare();
+  return frobeniusNorm();
+}
 
-  // Old code used
-  //  for (unsigned int i=0;i<dsize;i++) {
-  //    double x = *(data +i); norm += x*x;
-  //  }
+/*!
+  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+
+  \sa infinityNorm()
+
+*/
+double vpColVector::frobeniusNorm() const
+{
+  double norm = sumSquare();
 
   return sqrt(norm);
 }
@@ -1528,14 +1539,14 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
 
 /*!
 
-  Compute and return the infinity norm \f$ {||x||}_{\infty} =
-  max\left({\mid x_{i} \mid}\right) \f$ with \f$i \in
-  \{0, ..., m-1\}\f$ where \e m is the vector size and \f$x_i\f$ an element of
+  Compute and return the infinity norm \f$ {||v||}_{\infty} =
+  max\left({\mid v_{i} \mid}\right) \f$ with \f$i \in
+  \{0, ..., m-1\}\f$ where \e m is the vector size and \f$v_i\f$ an element of
   the vector.
 
   \return The infinity norm if the matrix is initialized, 0 otherwise.
 
-  \sa euclideanNorm()
+  \sa frobeniusNorm()
 */
 double vpColVector::infinityNorm() const
 {

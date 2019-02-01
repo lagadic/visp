@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef vpColVector_H
-#define vpColVector_H
+#ifndef _vpColVector_h_
+#define _vpColVector_h_
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMath.h>
@@ -138,7 +138,7 @@ public:
     (*this) *= d2r;
   }
 
-  double euclideanNorm() const;
+  vp_deprecated double euclideanNorm() const;
   /*!
      Extract a sub-column vector from a column vector.
      \param r : Index of the row corresponding to the first element of the
@@ -167,6 +167,7 @@ public:
     return vpColVector(*this, r, colsize);
   }
 
+  double frobeniusNorm() const;
   vpColVector hadamard(const vpColVector &v) const;
 
   double infinityNorm() const;

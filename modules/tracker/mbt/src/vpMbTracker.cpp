@@ -2686,15 +2686,15 @@ void vpMbTracker::createCylinderBBox(const vpPoint &p1, const vpPoint &p2, const
   randomVec[0] = 1.0;
   axisOrtho = vpColVector::crossProd(axis, randomVec);
 
-  if (axisOrtho.euclideanNorm() < std::numeric_limits<double>::epsilon()) {
+  if (axisOrtho.frobeniusNorm() < std::numeric_limits<double>::epsilon()) {
     randomVec = 0;
     randomVec[1] = 1.0;
     axisOrtho = vpColVector::crossProd(axis, randomVec);
-    if (axisOrtho.euclideanNorm() < std::numeric_limits<double>::epsilon()) {
+    if (axisOrtho.frobeniusNorm() < std::numeric_limits<double>::epsilon()) {
       randomVec = 0;
       randomVec[2] = 1.0;
       axisOrtho = vpColVector::crossProd(axis, randomVec);
-      if (axisOrtho.euclideanNorm() < std::numeric_limits<double>::epsilon())
+      if (axisOrtho.frobeniusNorm() < std::numeric_limits<double>::epsilon())
         throw vpMatrixException(vpMatrixException::badValue, "Problem in the cylinder definition");
     }
   }

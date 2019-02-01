@@ -124,7 +124,7 @@ public:
     (*this) *= d2r;
   }
 
-  double euclideanNorm() const;
+  vp_deprecated double euclideanNorm() const;
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the
@@ -153,6 +153,7 @@ public:
     return vpRowVector(*this, c, rowsize);
   }
 
+  double frobeniusNorm() const;
   void init(const vpRowVector &v, unsigned int c, unsigned int ncols);
   void insert(unsigned int i, const vpRowVector &v);
 
