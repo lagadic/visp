@@ -991,17 +991,27 @@ double vpRowVector::sumSquare() const
 }
 
 /*!
-  Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm()
 */
 double vpRowVector::euclideanNorm() const
 {
-  double norm = 0.0;
-  for (unsigned int i = 0; i < dsize; i++) {
-    double x = *(data + i);
-    norm += x * x;
-  }
+  return frobeniusNorm();
+}
+
+/*!
+  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+*/
+double vpRowVector::frobeniusNorm() const
+{
+  double norm = sumSquare();
 
   return sqrt(norm);
 }
@@ -1011,8 +1021,8 @@ double vpRowVector::euclideanNorm() const
 
   \param v : Input row vector used for initialization.
   \param c : column index in \e v that corresponds to the first element of the
-row vector to contruct. \param ncols : Number of columns of the constructed
-row vector.
+  row vector to contruct. \param ncols : Number of columns of the constructed
+  row vector.
 
   The sub-vector starting from v[c] element and ending on v[c+ncols-1] element
   is used to initialize the contructed row vector.

@@ -204,7 +204,7 @@ int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatr
   double allowed_error = 1e-3;
 
   for (unsigned int i = 0; i < A.size(); i++) {
-    double error = (A[i] * Api[i] * A[i] - A[i]).euclideanNorm();
+    double error = (A[i] * Api[i] * A[i] - A[i]).frobeniusNorm();
     if (error > allowed_error) {
       std::cout << "Bad pseudo-inverse [" << i << "]: euclidean norm: " << error << std::endl;
       return EXIT_FAILURE;
@@ -220,7 +220,7 @@ int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatr
   double allowed_error = 1e-3;
   // test Api
   for (unsigned int i = 0; i < A.size(); i++) {
-    double error = (A[i] * Api[i] * A[i] - A[i]).euclideanNorm();
+    double error = (A[i] * Api[i] * A[i] - A[i]).frobeniusNorm();
     if (error > allowed_error) {
       std::cout << "Bad pseudo-inverse [" << i << "]: euclidean norm: " << error << std::endl;
       return EXIT_FAILURE;
@@ -231,7 +231,7 @@ int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatr
   for (unsigned int i = 0; i < kerAt.size(); i++) {
     if (kerAt[i].size()) {
       vpMatrix nullspace = A[i] * kerAt[i].t();
-      double error = nullspace.euclideanNorm();
+      double error = nullspace.frobeniusNorm();
 
       if (error > allowed_error) {
         std::cout << "Bad kernel [" << i << "]: euclidean norm: " << error << std::endl;
@@ -252,7 +252,7 @@ int test_pseudo_inverse(const std::vector<vpMatrix> &A, const std::vector<vpMatr
     Vt.insert(imAt[i].t(), 0, 0);
     Vt.insert(kerAt[i], imAt[i].getCols(), 0);
 
-    double error = (U * S * Vt - A[i]).euclideanNorm();
+    double error = (U * S * Vt - A[i]).frobeniusNorm();
 
     if (error > allowed_error) {
       std::cout << "Bad imA, imAt, sv, kerAt [" << i << "]: euclidean norm: " << error << std::endl;

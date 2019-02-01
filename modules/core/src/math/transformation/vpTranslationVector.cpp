@@ -612,19 +612,28 @@ vpRowVector vpTranslationVector::t() const
 }
 
 /*!
-  Compute and return the Euclidean norm of the translation vector
-  \f$ ||x|| = \sqrt{ \sum{t_{i}^2}} \f$.
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Fronebius nom of the translation vector
+  \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
 
+  \sa frobeniusNorm()
 */
 double vpTranslationVector::euclideanNorm() const
 {
-  double norm = 0.0;
-  for (unsigned int i = 0; i < dsize; i++) {
-    double x = *(data + i);
-    norm += x * x;
-  }
+  return frobeniusNorm();
+}
+
+/*!
+  Compute and return the Fronebius norm \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
+
+  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+*/
+double vpTranslationVector::frobeniusNorm() const
+{
+  double norm = sumSquare();
 
   return sqrt(norm);
 }

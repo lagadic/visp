@@ -1388,7 +1388,7 @@ void vpServo::computeProjectionOperators()
   double e1_ = 0.7;
   double sig = 0.0;
 
-  double norm_e = error.euclideanNorm();
+  double norm_e = error.frobeniusNorm();
   if (norm_e > e1_)
     sig = 1.0;
   else if (e0_ <= norm_e && norm_e <= e1_)

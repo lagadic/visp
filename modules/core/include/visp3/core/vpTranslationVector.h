@@ -107,7 +107,8 @@ public:
   vpTranslationVector buildFrom(const vpPoseVector &p);
   vpTranslationVector buildFrom(const vpColVector &v);
 
-  double euclideanNorm() const;
+  vp_deprecated double euclideanNorm() const;
+  double frobeniusNorm() const;
 
   // operators
 
