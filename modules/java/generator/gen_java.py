@@ -707,7 +707,7 @@ class JavaWrapperGenerator(object):
             if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
                 c_prologue.append('#if defined(VISP_HAVE_EIGEN3)')
 
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack']:
+            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
                 c_prologue.append('#if defined(VISP_HAVE_LAPACK)')
 
             if type_dict[fi.ctype]["jni_type"] == "jdoubleArray" and type_dict[fi.ctype]["suffix"] != "[D":
@@ -999,9 +999,8 @@ class JavaWrapperGenerator(object):
             if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
                 ret += '\n    #endif'
 
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack']:
+            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
                 ret += '\n    #endif'
-
 
             rtype = type_dict[fi.ctype].get("jni_type", "jdoubleArray")
             clazz = ci.jname

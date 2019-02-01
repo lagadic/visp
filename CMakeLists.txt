@@ -119,7 +119,7 @@ vp_clear_vars(VISPModules_TARGETS)
 # VISP version number.  An even minor number corresponds to releases.
 set(VISP_VERSION_MAJOR "3")
 set(VISP_VERSION_MINOR "2")
-set(VISP_VERSION_PATCH "0")
+set(VISP_VERSION_PATCH "1")
 set(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 # Package revision number
 set(VISP_REVISION "1")
@@ -751,7 +751,7 @@ if(UNIX AND NOT ANDROID)
     )
     install(FILES
       ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-      DESTINATION man/man1
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT dev
     )

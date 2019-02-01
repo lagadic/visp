@@ -236,15 +236,13 @@ std::string vpIoTools::getFullName() { return baseDir + baseName; }
 
   - Under unix, get the content of the LOGNAME environment variable.  For most
     purposes (especially in conjunction with crontab), it is more useful to
-  use the environment variable LOGNAME to find out who the user is, rather
-  than the getlogin() function.  This is more flexible precisely because the
-  user can set LOGNAME arbitrarily.
+    use the environment variable LOGNAME to find out who the user is, rather
+    than the getlogin() function.  This is more flexible precisely because the
+    user can set LOGNAME arbitrarily.
   - Under windows, uses the GetUserName() function.
 
-  \param username : The user name.
-
-  \exception vpIoException::cantGetUserName : If this method cannot get the
-  user name.
+  \param username : The user name. When the username cannot be retrieved, set \e username to
+  "unknown" string.
 
   \sa getUserName()
 */
@@ -256,10 +254,11 @@ void vpIoTools::getUserName(std::string &username)
   char *_username = NULL;
   _username = ::getenv("LOGNAME");
   if (_username == NULL) {
-    vpERROR_TRACE("Cannot get the username. Check your LOGNAME environment variable");
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
+    username = "unknown";
   }
-  username = _username;
+  else {
+    username = _username;
+  }
 #elif defined(_WIN32)
 #if (!defined(WINRT))
   unsigned int info_buffer_size = 1024;
@@ -273,9 +272,11 @@ void vpIoTools::getUserName(std::string &username)
   username = infoBuf;
   delete[] infoBuf;
 #else
-  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal "
-                                                      "Windows Platform"));
+  // Universal platform
+  username = "unknown";
 #endif
+#else
+  username = "unknown";
 #endif
 }
 /*!
