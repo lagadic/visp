@@ -506,7 +506,7 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix 
     projection(_cP, _p);
     vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
   }
-  catch(const vpException &e) {
+  catch(...) {
     // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
   }
 }

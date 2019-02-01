@@ -343,7 +343,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
       try {
         line->projection();
       }
-      catch(const vpException &e) {
+      catch(...) {
         isvisible = false;
         return false;
       }
@@ -487,7 +487,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         try {
           line->projection();
         }
-        catch(const vpException &e) {
+        catch(...) {
           for (size_t j = 0; j < meline.size(); j++) {
             if (meline[j] != NULL)
               delete meline[j];
@@ -800,7 +800,7 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
           j++;
         }
       }
-    } catch (const vpException &e) {
+    } catch (...) {
       // Handle potential exception: due to a degenerate case: the image of the straight line is a point!
       // Set the corresponding interaction matrix part to zero
       unsigned int j = 0;
