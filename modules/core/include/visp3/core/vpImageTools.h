@@ -1177,14 +1177,14 @@ void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsigned char
           int64_t up = *reinterpret_cast<uint16_t *>(I.bitmap + y_ * I.getWidth() + x_);
           int64_t down = *reinterpret_cast<uint16_t *>(I.bitmap + (y_ + 1) * I.getWidth() + x_);
 
-          Ires[i][j] = vpMath::saturate<unsigned char>(static_cast<int>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
-                                                                         ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >> 32));
+          Ires[i][j] = static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
+                                                  ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >> 32);
         } else if (y_ + 1 < static_cast<int64_t>(I.getHeight())) {
-          Ires[i][j] = vpMath::saturate<unsigned char>(static_cast<int>(((*(I.bitmap + y_ * I.getWidth() + x_)
-                                                                          * rfrac + *(I.bitmap + (y_ + 1) * I.getWidth() + x_) * rratio)) >> 16));
+          Ires[i][j] = static_cast<unsigned char>(((*(I.bitmap + y_ * I.getWidth() + x_)
+                                                  * rfrac + *(I.bitmap + (y_ + 1) * I.getWidth() + x_) * rratio)) >> 16);
         } else if (x_ + 1 < static_cast<int64_t>(I.getWidth())) {
           uint16_t up = *reinterpret_cast<uint16_t *>(I.bitmap + y_ * I.getWidth() + x_);
-          Ires[i][j] = vpMath::saturate<unsigned char>(static_cast<int>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16));
+          Ires[i][j] = static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
         } else {
           Ires[i][j] = *(I.bitmap + y_ * I.getWidth() + x_);
         }
@@ -1274,25 +1274,25 @@ void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires,
           col1 = lerp2((I.bitmap + y_ * I.getWidth() + x_ + 1)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_ + 1)->B, rratio, rfrac);
           int64_t valueB = lerp2(col0, col1, cratio, cfrac);
 
-          Ires[i][j] = vpRGBa(vpMath::saturate<unsigned char>(static_cast<int>(valueR >> 32)),
-                              vpMath::saturate<unsigned char>(static_cast<int>(valueG >> 32)),
-                              vpMath::saturate<unsigned char>(static_cast<int>(valueB >> 32)));
+          Ires[i][j] = vpRGBa(static_cast<unsigned char>(valueR >> 32),
+                              static_cast<unsigned char>(valueG >> 32),
+                              static_cast<unsigned char>(valueB >> 32));
         } else if (y_ + 1 < static_cast<int64_t>(I.getHeight())) {
           int64_t valueR = lerp2((I.bitmap + y_ * I.getWidth() + x_)->R, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->R, rratio, rfrac);
           int64_t valueG = lerp2((I.bitmap + y_ * I.getWidth() + x_)->G, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->G, rratio, rfrac);
           int64_t valueB = lerp2((I.bitmap + y_ * I.getWidth() + x_)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->B, rratio, rfrac);
 
-          Ires[i][j] = vpRGBa(vpMath::saturate<unsigned char>(static_cast<int>(valueR >> 16)),
-                              vpMath::saturate<unsigned char>(static_cast<int>(valueG >> 16)),
-                              vpMath::saturate<unsigned char>(static_cast<int>(valueB >> 16)));
+          Ires[i][j] = vpRGBa(static_cast<unsigned char>(valueR >> 16),
+                              static_cast<unsigned char>(valueG >> 16),
+                              static_cast<unsigned char>(valueB >> 16));
         } else if (x_ + 1 < static_cast<int64_t>(I.getWidth())) {
           int64_t valueR = lerp2((I.bitmap + x_)->R, (I.bitmap + x_ + 1)->R, cratio, cfrac);
           int64_t valueG = lerp2((I.bitmap + x_)->G, (I.bitmap + x_ + 1)->G, cratio, cfrac);
           int64_t valueB = lerp2((I.bitmap + x_)->B, (I.bitmap + x_ + 1)->B, cratio, cfrac);
 
-          Ires[i][j] = vpRGBa(vpMath::saturate<unsigned char>(static_cast<int>(valueR >> 16)),
-                              vpMath::saturate<unsigned char>(static_cast<int>(valueG >> 16)),
-                              vpMath::saturate<unsigned char>(static_cast<int>(valueB >> 16)));
+          Ires[i][j] = vpRGBa(static_cast<unsigned char>(valueR >> 16),
+                              static_cast<unsigned char>(valueG >> 16),
+                              static_cast<unsigned char>(valueB >> 16));
         } else {
           Ires[i][j] = *(I.bitmap + y_ * I.getWidth() + x_);
         }
