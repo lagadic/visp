@@ -38,6 +38,7 @@
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpRGBa.h>
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 #include <opencv2/imgproc/imgproc.hpp>
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -361,6 +362,28 @@ void vpImageFilter::filterX(const vpImage<unsigned char> &I, vpImage<double> &dI
     }
   }
 }
+void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter,
+                            unsigned int size)
+{
+  dIx.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+      dIx[i][j].R = vpImageFilter::filterXLeftBorderR(I, i, j, filter, size);
+      dIx[i][j].G = vpImageFilter::filterXLeftBorderG(I, i, j, filter, size);
+      dIx[i][j].B = vpImageFilter::filterXLeftBorderB(I, i, j, filter, size);
+    }
+    for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
+      dIx[i][j].R = vpImageFilter::filterXR(I, i, j, filter, size);
+      dIx[i][j].G = vpImageFilter::filterXG(I, i, j, filter, size);
+      dIx[i][j].B = vpImageFilter::filterXB(I, i, j, filter, size);
+    }
+    for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
+      dIx[i][j].R = vpImageFilter::filterXRightBorderR(I, i, j, filter, size);
+      dIx[i][j].G = vpImageFilter::filterXRightBorderG(I, i, j, filter, size);
+      dIx[i][j].B = vpImageFilter::filterXRightBorderB(I, i, j, filter, size);
+    }
+  }
+}
 void vpImageFilter::filterX(const vpImage<double> &I, vpImage<double> &dIx, const double *filter, unsigned int size)
 {
   dIx.resize(I.getHeight(), I.getWidth());
@@ -395,6 +418,32 @@ void vpImageFilter::filterY(const vpImage<unsigned char> &I, vpImage<double> &dI
   for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
       dIy[i][j] = vpImageFilter::filterYBottomBorder(I, i, j, filter, size);
+    }
+  }
+}
+void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter,
+                            unsigned int size)
+{
+  dIy.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j].R = vpImageFilter::filterYTopBorderR(I, i, j, filter, size);
+      dIy[i][j].G = vpImageFilter::filterYTopBorderG(I, i, j, filter, size);
+      dIy[i][j].B = vpImageFilter::filterYTopBorderB(I, i, j, filter, size);
+    }
+  }
+  for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j].R = vpImageFilter::filterYR(I, i, j, filter, size);
+      dIy[i][j].G = vpImageFilter::filterYG(I, i, j, filter, size);
+      dIy[i][j].B = vpImageFilter::filterYB(I, i, j, filter, size);
+    }
+  }
+  for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j].R = vpImageFilter::filterYBottomBorderR(I, i, j, filter, size);
+      dIy[i][j].G = vpImageFilter::filterYBottomBorderG(I, i, j, filter, size);
+      dIy[i][j].B = vpImageFilter::filterYBottomBorderB(I, i, j, filter, size);
     }
   }
 }
@@ -435,6 +484,29 @@ void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double
   double *fg = new double[(size + 1) / 2];
   vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
   vpImage<double> GIx;
+  vpImageFilter::filterX(I, GIx, fg, size);
+  vpImageFilter::filterY(GIx, GI, fg, size);
+  GIx.destroy();
+  delete[] fg;
+}
+
+/*!
+  Apply a Gaussian blur to RGB color image.
+  \param I : Input image.
+  \param GI : Filtered image.
+  \param size : Filter size. This value should be odd.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or
+  negative, it is computed from filter size as sigma = (size-1)/6. \param
+  normalize : Flag indicating whether to normalize the filter coefficients or
+  not.
+
+ */
+void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma,
+                                 bool normalize)
+{
+  double *fg = new double[(size + 1) / 2];
+  vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
+  vpImage<vpRGBa> GIx;
   vpImageFilter::filterX(I, GIx, fg, size);
   vpImageFilter::filterY(GIx, GI, fg, size);
   GIx.destroy();
