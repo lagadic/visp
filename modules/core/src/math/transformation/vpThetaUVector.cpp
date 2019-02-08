@@ -87,7 +87,7 @@ vpThetaUVector::vpThetaUVector(const vpRxyzVector &rxyz) : vpRotationVector(3) {
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from a quaternion representation vector.
 */
-vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(4) { buildFrom(q); }
+vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(3) { buildFrom(q); }
 
 /*!
   Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
