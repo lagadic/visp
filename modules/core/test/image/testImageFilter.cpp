@@ -41,6 +41,7 @@
 #include <iostream>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
@@ -323,7 +324,7 @@ int main(int argc, const char *argv[])
               << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
               << std::endl;
 #endif
-
+     vpImage<vpRGBa> I;
     // Test on real image
     if (opt_ppath.empty()) {
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
@@ -333,7 +334,12 @@ int main(int argc, const char *argv[])
       vpImageIo::read(I, filename);
       printf("Image \"%s\" read successfully\n", filename.c_str());
     }
-
+    
+    //Test on Gaussian Blur on RGB images
+    vpImage<vpRGBa> F;
+    vpImageFilter::gaussianBlur(I, F);
+    vpDisplay::display(F);
+    
     // Test correlation
     double t = vpTime::measureTimeMs();
     vpImageFilter::filter(I, I_correlation_1, kernel_1);
