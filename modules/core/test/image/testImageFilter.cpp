@@ -42,6 +42,11 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
@@ -325,7 +330,21 @@ int main(int argc, const char *argv[])
               << std::endl;
 #endif
      vpImage<vpRGBa> I_rgb;
-    // Test on real image
+     // Test on real image
+#if defined(VISP_HAVE_X11)
+  vpDisplayX d(I_rgb);
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV d(I_rgb);
+#elif defined(VISP_HAVE_GTK)
+  vpDisplayGTK d(I_rgb);
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d(I_rgb);
+#elif defined(VISP_HAVE_D3D9)
+  vpDisplayD3d d(I_rgb);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
+#endif
+
     if (opt_ppath.empty()) {
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
       vpImageIo::read(I_rgb, filename);
@@ -346,7 +365,10 @@ int main(int argc, const char *argv[])
     //Test on Gaussian Blur on RGB images
     vpImage<vpRGBa> F;
     vpImageFilter::gaussianBlur(I_rgb, F);
+    vpDisplay::setTitle(F, "Default");
     vpDisplay::display(F);
+    vpDisplay::flush(F);
+    vpDisplay::getClick(F);
     
     // Test correlation
     double t = vpTime::measureTimeMs();
