@@ -324,8 +324,16 @@ int main(int argc, const char *argv[])
               << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
               << std::endl;
 #endif
-     vpImage<vpRGBa> I;
+     vpImage<vpRGBa> I_rgb;
     // Test on real image
+    if (opt_ppath.empty()) {
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+      vpImageIo::read(I_rgb, filename);
+    } else {
+      filename = opt_ppath;
+      vpImageIo::read(I_rgb, filename);
+      printf("Image \"%s\" read successfully\n", filename.c_str());
+    }
     if (opt_ppath.empty()) {
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       vpImageIo::read(I, filename);
@@ -337,7 +345,7 @@ int main(int argc, const char *argv[])
     
     //Test on Gaussian Blur on RGB images
     vpImage<vpRGBa> F;
-    vpImageFilter::gaussianBlur(I, F);
+    vpImageFilter::gaussianBlur(I_rgb, F);
     vpDisplay::display(F);
     
     // Test correlation
