@@ -331,20 +331,7 @@ int main(int argc, const char *argv[])
 #endif
      vpImage<vpRGBa> I_rgb;
      // Test on real image
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d(I_rgb);
-#elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV d(I_rgb);
-#elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK d(I_rgb);
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I_rgb);
-#elif defined(VISP_HAVE_D3D9)
-  vpDisplayD3d d(I_rgb);
-#else
-  std::cout << "No image viewer is available..." << std::endl;
-#endif
-
+    
     if (opt_ppath.empty()) {
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
       vpImageIo::read(I_rgb, filename);
@@ -363,12 +350,24 @@ int main(int argc, const char *argv[])
     }
     
     //Test on Gaussian Blur on RGB images
+    #if defined(VISP_HAVE_X11)
+  vpDisplayX d(I_rgb);
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV d(I_rgb);
+#elif defined(VISP_HAVE_GTK)
+  vpDisplayGTK d(I_rgb);
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d(I_rgb);
+#elif defined(VISP_HAVE_D3D9)
+  vpDisplayD3d d(I_rgb);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
+#endif
+
     vpImage<vpRGBa> F;
     vpImageFilter::gaussianBlur(I_rgb, F);
     vpDisplay::setTitle(F, "Default");
     vpDisplay::display(F);
-    vpDisplay::flush(F);
-    vpDisplay::getClick(F);
     
     // Test correlation
     double t = vpTime::measureTimeMs();
