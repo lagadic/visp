@@ -38,9 +38,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef VISP_HAVE_MKL
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#  ifdef VISP_HAVE_MKL
 #include <mkl.h>
-#include <mkl_blas.h>
 
 void vpMatrix::blas_dgemm(char trans_a, char trans_b, const int M_, const int N_, const int K_, double alpha,
                           double *a_data, const int lda_, double *b_data, const int ldb_, double beta, double *c_data,
@@ -60,7 +60,7 @@ void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, 
 
   dgemv(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
-#elif defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#  else
 typedef int integer;
 
 extern "C" void dgemm_(char *transa, char *transb, integer *M, integer *N, integer *K, double *alpha, double *a,
@@ -87,9 +87,10 @@ void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, 
 
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
+#  endif
 #else
- // Work arround to avoid warning LNK4221: This object file does not define any
- // previously undefined public symbols
+// Work arround to avoid warning LNK4221: This object file does not define any
+// previously undefined public symbols
 void dummy_vpMatrix_blas() {};
 #endif
 

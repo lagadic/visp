@@ -243,7 +243,7 @@ void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time
 }
 #endif
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
 void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
@@ -292,7 +292,7 @@ int main(int argc, const char *argv[])
 {
   try {
 #if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_GSL) || defined(VISP_HAVE_LAPACK) ||                                \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_MKL)
+    (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -316,7 +316,7 @@ int main(int argc, const char *argv[])
       of << "\"Determinant default\""
          << "\t";
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
       of << "\"Determinant Lapack\""
          << "\t";
 #endif
@@ -349,7 +349,7 @@ int main(int argc, const char *argv[])
       test_det_default(verbose, bench, time, result_default);
       save_time("Determinant default: ", verbose, use_plot_file, of, time);
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
       std::vector<double> result_lapack;
       test_det_lapack(verbose, bench, time, result_lapack);
       save_time("Determinant by Lapack: ", verbose, use_plot_file, of, time);
@@ -386,7 +386,7 @@ int main(int argc, const char *argv[])
         }
       }
 #endif
-#if defined(VISP_HAVE_GSL) && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL))
+#if defined(VISP_HAVE_GSL) && defined(VISP_HAVE_LAPACK)
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_lapack[i]) > 1e-6) {
@@ -406,7 +406,7 @@ int main(int argc, const char *argv[])
         }
       }
 #endif
-#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_lapack[i] - result_opencv[i]) > 1e-6) {
@@ -426,7 +426,7 @@ int main(int argc, const char *argv[])
         }
       }
 #endif
-#if defined(VISP_HAVE_EIGEN3) && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL))
+#if defined(VISP_HAVE_EIGEN3) && defined(VISP_HAVE_LAPACK)
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_lapack[i]) > 1e-6) {

@@ -482,7 +482,7 @@ void vpMatrix::AtA(vpMatrix &B) const
   if ((B.rowNum != colNum) || (B.colNum != colNum))
     B.resize(colNum, colNum, false, false);
 
-#if (defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char transa = 'n';
@@ -772,7 +772,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
   if (A.rowNum != w.rowNum)
     w.resize(A.rowNum, false);
 
-#if (defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char trans = 't';
@@ -813,7 +813,7 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
                       A.getCols(), B.getRows(), B.getCols()));
   }
 
-#if (defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char trans = 'n';
@@ -987,7 +987,7 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
   vpMatrix M;
   M.resize(rowNum, 6, false, false);
 
-#if (defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char trans = 'n';
@@ -1791,7 +1791,7 @@ int main()
 */
 void vpMatrix::svd(vpColVector &w, vpMatrix &V)
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   svdLapack(w, V);
 #elif defined(VISP_HAVE_EIGEN3)
   svdEigen3(w, V);
@@ -1862,7 +1862,7 @@ Rank: 2
 */
 unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   return pseudoInverseLapack(Ap, svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, svThreshold);
@@ -1931,7 +1931,7 @@ A^+ (pseudo-inverse): [3,2]=
 */
 vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   return pseudoInverseLapack(svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(svThreshold);
@@ -1948,7 +1948,7 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
 /*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
 matrix \f$\bf A\f$ using Lapack 3rd party.
@@ -3448,7 +3448,7 @@ Singular values: 6.874359351  4.443330227
 */
 unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   return pseudoInverseLapack(Ap, sv, svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, svThreshold);
@@ -3684,7 +3684,7 @@ Im(A) * S * [Im(A^T) | Ker(A)]^T:[2,3]=
 unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
                                      vpMatrix &kerAt) const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   return pseudoInverseLapack(Ap, sv, svThreshold, imA, imAt, kerAt);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, svThreshold, imA, imAt, kerAt);

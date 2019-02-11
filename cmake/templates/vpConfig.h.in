@@ -182,6 +182,12 @@
 // Defined if Intel MKL library available
 #cmakedefine VISP_HAVE_MKL
 
+// Defined if OpenBLAS library available
+#cmakedefine VISP_HAVE_OPENBLAS
+
+// Defined if Atlas library available
+#cmakedefine VISP_HAVE_ATLAS
+
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 

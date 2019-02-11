@@ -60,23 +60,22 @@
 #include <opencv2/core/core.hpp>
 #endif
 
-#ifdef VISP_HAVE_MKL
+#ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_MKL
 #include <mkl.h>
-#include <mkl_lapack.h>
-
 typedef MKL_INT integer;
-#elif defined(VISP_HAVE_LAPACK)
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
+#  else
+#    if defined(VISP_HAVE_LAPACK_BUILT_IN)
 typedef long int integer;
-#else
+#    else
 typedef int integer;
-#endif
-
+#    endif
 extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu,
                        double *vt, integer *ldvt, double *work, integer *lwork, integer *iwork, integer *info);
 
 #include <stdio.h>
 #include <string.h>
+#  endif
 #endif
 /*---------------------------------------------------------------------
 
@@ -172,7 +171,7 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 
 #endif
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
 /*!
 
   Singular value decomposition (SVD) using Lapack 3rd party.

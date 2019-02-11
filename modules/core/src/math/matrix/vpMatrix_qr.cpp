@@ -52,10 +52,9 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#ifdef VISP_HAVE_MKL
+#ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_MKL
 #include <mkl.h>
-#include <mkl_lapack.h>
-
 typedef MKL_INT integer;
 
 integer allocate_work(double **work)
@@ -65,13 +64,12 @@ integer allocate_work(double **work)
   *work = new double[dimWork];
   return (integer)dimWork;
 }
-#elif defined(VISP_HAVE_LAPACK)
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
+#  else
+#    ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#else
+#    else
 typedef int integer;
-#endif
-
+#    endif
 extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork,
   integer *info);
 extern "C" int dormqr_(char *side, char *trans, integer *m, integer *n, integer *k, double *a, integer *lda,
@@ -90,9 +88,10 @@ int allocate_work(double **work)
   *work = new double[dimWork];
   return (int)dimWork;
 }
+#  endif
 #endif
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition with
 Lapack 3rd party.
@@ -285,7 +284,7 @@ int main()
 */
 vpMatrix vpMatrix::inverseByQR() const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   return inverseByQRLapack();
 #else
   throw(vpException(vpException::fatalError, "Cannot inverse matrix by QR. Install Lapack 3rd party"));
@@ -349,7 +348,7 @@ int main()
 */
 unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, double tol) const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   integer m = (integer)rowNum;     // also rows of Q
   integer n = (integer)colNum;     // also columns of R
   integer r = std::min(n, m);  // a priori non-null rows of R = rank of R
@@ -549,7 +548,7 @@ int main()
 */
 unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   integer m = (integer) rowNum;     // also rows of Q
   integer n = (integer) colNum;     // also columns of R
   integer r = std::min(n,m);             // a priori non-null rows of R = rank of R
@@ -725,7 +724,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 */
 vpMatrix vpMatrix::inverseTriangular(bool upper) const
 {
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
   if(rowNum != colNum || rowNum == 0)
     throw vpMatrixException::dimensionError;
 
@@ -860,5 +859,3 @@ vpColVector vpMatrix::solveByQR(const vpColVector &b) const
   solveByQR(b, x);
   return x;
 }
-
-

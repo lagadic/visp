@@ -385,7 +385,7 @@ int test_pseudo_inverse_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
 }
 #endif
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
 int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
@@ -588,7 +588,7 @@ int main(int argc, const char *argv[])
 {
   try {
 #if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL) || defined(VISP_HAVE_MKL)
+    defined(VISP_HAVE_GSL)
     unsigned int nb_matrices = 10;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 12;
@@ -633,7 +633,7 @@ int main(int argc, const char *argv[])
           of << "\"default " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
         for (unsigned int i = 0; i < nb_svd_functions; i++)
           of << "\"Lapack " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
@@ -670,7 +670,7 @@ int main(int argc, const char *argv[])
         ret += test_pseudo_inverse_default(verbose, bench_random_matrices, time);
         save_time("default -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_LAPACK)
         ret += test_pseudo_inverse_lapack(verbose, bench_random_matrices, time);
         save_time("Lapack -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif
