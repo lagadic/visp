@@ -206,6 +206,10 @@ endif()
 if(USE_LAPACK)
   list(APPEND opt_libs ${LAPACK_C_LIBRARIES})
 endif()
+if(USE_MKL)
+  list(APPEND opt_incs ${MKL_INCLUDE_DIRS})
+  list(APPEND opt_libs ${MKL_LIBRARIES})
+endif()
 
 # Misc: xml, pthread, zlib
 if(USE_XML2)
@@ -243,6 +247,7 @@ if(USE_EIGEN3)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
 endif()
+
 vp_set_source_file_compile_flag(src/image/vpImageConvert.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/image/vpImageFilter.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/image/vpImageTools.cpp -Wno-strict-overflow)

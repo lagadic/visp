@@ -179,6 +179,9 @@
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3
 
+// Defined if Intel MKL library available
+#cmakedefine VISP_HAVE_MKL
+
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 

@@ -60,7 +60,12 @@
 #include <opencv2/core/core.hpp>
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_MKL
+#include <mkl.h>
+#include <mkl_lapack.h>
+
+typedef MKL_INT integer;
+#elif defined(VISP_HAVE_LAPACK)
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
 #else
@@ -167,7 +172,7 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
 /*!
 
   Singular value decomposition (SVD) using Lapack 3rd party.

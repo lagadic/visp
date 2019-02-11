@@ -262,7 +262,7 @@ vpMatrix M(R);
 #ifdef VISP_HAVE_GSL
   double detByLUGsl() const;
 #endif
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
   double detByLULapack() const;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -361,7 +361,7 @@ vpMatrix M(R);
 #if defined(VISP_HAVE_GSL)
   vpMatrix inverseByLUGsl() const;
 #endif
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
   vpMatrix inverseByLULapack() const;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -372,7 +372,7 @@ vpMatrix M(R);
   // symmetric matrices)
   vpMatrix inverseByCholesky() const;
 
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
   vpMatrix inverseByCholeskyLapack() const;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -381,7 +381,7 @@ vpMatrix M(R);
 
   // inverse matrix A using the QR decomposition
   vpMatrix inverseByQR() const;
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
   vpMatrix inverseByQRLapack() const;
 #endif
 
@@ -396,7 +396,7 @@ vpMatrix M(R);
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
                              vpMatrix &kerAt) const;
 
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
   vpMatrix pseudoInverseLapack(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
@@ -449,7 +449,7 @@ vpMatrix M(R);
 #ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector &w, vpMatrix &V);
 #endif
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
   void svdLapack(vpColVector &w, vpMatrix &V);
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
@@ -734,7 +734,7 @@ vpMatrix M(R);
 #endif
 
 private:
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if (defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)) || defined(VISP_HAVE_MKL)
   static void blas_dgemm(char trans_a, char trans_b, const int M, const int N, const int K, double alpha,
                          double *a_data, const int lda, double *b_data, const int ldb, double beta, double *c_data,
                          const int ldc);

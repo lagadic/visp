@@ -46,12 +46,18 @@
 #include <Eigen/LU>
 #endif
 
+
 #ifdef VISP_HAVE_GSL
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_permutation.h>
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_MKL
+#include <mkl.h>
+#include <mkl_lapack.h>
+
+typedef MKL_INT integer;
+#elif defined(VISP_HAVE_LAPACK)
 #ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
 #else
@@ -129,7 +135,7 @@ inverseByLUGsl(), pseudoInverse()
 */
 vpMatrix vpMatrix::inverseByLU() const
 {
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
   return inverseByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
   return inverseByLUEigen3();
@@ -186,7 +192,7 @@ double vpMatrix::detByLU() const
             (*this)[0][1] * ((*this)[1][0] * (*this)[2][2] - (*this)[1][2] * (*this)[2][0]) +
             (*this)[0][2] * ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]));
   } else {
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
     return detByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
     return detByLUEigen3();
@@ -331,7 +337,7 @@ double vpMatrix::detByLUGsl() const
 }
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_MKL)
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with
 Lapack 3rd party.

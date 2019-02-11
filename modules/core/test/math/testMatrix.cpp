@@ -108,7 +108,7 @@ vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, 
   return M;
 }
 
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if (defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)) || defined(VISP_HAVE_MKL)
 vpColVector generateRandomVector(const unsigned int rows, const double min, const double max)
 {
   vpColVector v(rows);
@@ -765,7 +765,7 @@ int main(int argc, char *argv[])
       std::cout << "juxtaposeM:\n" << juxtaposeM << std::endl;
     }
 
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if (defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)) || defined(VISP_HAVE_MKL)
     {
       std::cout << "\n------------------------" << std::endl;
       std::cout << "--- BENCHMARK dgemm/dgemv" << std::endl;
