@@ -323,7 +323,7 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -626,6 +626,20 @@ vpColVector &vpColVector::operator<<(double *x)
   return *this;
 }
 
+vpColVector& vpColVector::operator<<(double val)
+{
+  resize(1, false);
+  data[0] = val;
+  return *this;
+}
+
+vpColVector& vpColVector::operator,(double val)
+{
+  resize(rowNum + 1, false);
+  data[rowNum - 1] = val;
+  return *this;
+}
+
 //! Set each element of the column vector to x.
 vpColVector &vpColVector::operator=(double x)
 {
@@ -649,7 +663,7 @@ std::vector<double> vpColVector::toStdVector()
   return v;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
@@ -669,6 +683,13 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
     other.data = NULL;
   }
 
+  return *this;
+}
+
+vpColVector& vpColVector::operator=(const std::initializer_list<double> &list)
+{
+  resize(static_cast<unsigned int>(list.size()), false);
+  std::copy(list.begin(), list.end(), data);
   return *this;
 }
 #endif
@@ -1165,7 +1186,7 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 
   \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpColVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
+vpMatrix vpColVector::reshape(unsigned int nrows, unsigned int ncols)
 {
   vpMatrix M(nrows, ncols);
   reshape(M, nrows, ncols);

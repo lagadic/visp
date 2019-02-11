@@ -98,8 +98,12 @@ public:
   vpColVector(const vpMatrix &M, unsigned int j);
   vpColVector(const std::vector<double> &v);
   vpColVector(const std::vector<float> &v);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
   vpColVector(vpColVector &&v);
+  vpColVector(const std::initializer_list<double> &list)
+    : vpArray2D<double>(static_cast<unsigned int>(list.size()), 1) {
+    std::copy(list.begin(), list.end(), data);
+  }
 #endif
   /*!
     Destructor.
@@ -194,8 +198,9 @@ public:
   vpColVector &operator=(const std::vector<double> &v);
   vpColVector &operator=(const std::vector<float> &v);
   vpColVector &operator=(double x);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
   vpColVector &operator=(vpColVector &&v);
+  vpColVector &operator=(const std::initializer_list<double> &list);
 #endif
   //! Comparison operator.
   bool operator==(const vpColVector &v) const;
@@ -219,6 +224,8 @@ public:
 
   vpColVector &operator<<(const vpColVector &v);
   vpColVector &operator<<(double *);
+  vpColVector& operator<<(double val);
+  vpColVector& operator,(double val);
 
   int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 
@@ -234,7 +241,7 @@ public:
   }
 
   void reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols);
-  vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
+  vpMatrix reshape(unsigned int nrows, unsigned int ncols);
 
   /*! Modify the size of the column vector.
     \param i : Size of the vector. This value corresponds to the vector number

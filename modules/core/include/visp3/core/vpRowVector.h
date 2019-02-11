@@ -53,7 +53,6 @@ class vpColVector;
   \file vpRowVector.h
   \brief Definition of row vector class as well
   as a set of operations on these vectors.
-
 */
 
 /*!
@@ -87,6 +86,10 @@ public:
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
   vpRowVector(const std::vector<float> &v);
+#ifdef VISP_HAVE_CXX11
+  vpRowVector(vpRowVector &&v);
+  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+#endif
   /*!
     Destructor.
   */
@@ -174,6 +177,10 @@ public:
   vpRowVector &operator=(const std::vector<double> &v);
   vpRowVector &operator=(const std::vector<float> &v);
   vpRowVector &operator=(const double x);
+#ifdef VISP_HAVE_CXX11
+  vpRowVector &operator=(vpRowVector &&v);
+  vpRowVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   double operator*(const vpColVector &x) const;
   vpRowVector operator*(const vpMatrix &M) const;
@@ -191,6 +198,8 @@ public:
   vpRowVector operator-() const;
 
   vpRowVector &operator<<(const vpRowVector &v);
+  vpRowVector& operator<<(double val);
+  vpRowVector& operator,(double val);
 
   int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
   /*!
@@ -203,8 +212,9 @@ public:
 
     (*this) *= r2d;
   }
+
   void reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols);
-  vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
+  vpMatrix reshape(unsigned int nrows, unsigned int ncols);
 
   /*! Modify the size of the row vector.
     \param i : Size of the vector. This value corresponds to the vector number

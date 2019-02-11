@@ -192,7 +192,7 @@ vpMatrix::vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned i
   init(M, r, c, nrows, ncols);
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
 vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
 {
   rowNum = A.rowNum;
@@ -557,7 +557,7 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
   return *this;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
 vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 {
   resize(A.getRows(), A.getCols(), false, false);
@@ -590,6 +590,35 @@ vpMatrix &vpMatrix::operator=(vpMatrix &&other)
 
   return *this;
 }
+
+vpMatrix& vpMatrix::operator=(const std::initializer_list<double> &list)
+{
+  if (dsize != static_cast<unsigned int>(list.size())) {
+    resize(1, static_cast<unsigned int>(list.size()), false, false);
+  }
+
+  std::copy(list.begin(), list.end(), data);
+
+  return *this;
+}
+
+vpMatrix& vpMatrix::operator=(const std::initializer_list<std::initializer_list<double> > &lists)
+{
+  unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
+  for (auto& l : lists) {
+    if (static_cast<unsigned int>(l.size()) > ncols) {
+      ncols = static_cast<unsigned int>(l.size());
+    }
+  }
+
+  resize(nrows, ncols, false, false);
+  auto it = lists.begin();
+  for (unsigned int i = 0; i < rowNum; i++, ++it) {
+    std::copy(it->begin(), it->end(), rowPtrs[i]);
+  }
+
+  return *this;
+}
 #endif
 
 //! Set all the element of the matrix A to \e x.
@@ -614,8 +643,21 @@ vpMatrix &vpMatrix::operator<<(double *x)
   return *this;
 }
 
-/*!
+vpMatrix& vpMatrix::operator<<(double val)
+{
+  resize(1, 1, false, false);
+  rowPtrs[0][0] = val;
+  return *this;
+}
 
+vpMatrix& vpMatrix::operator,(double val)
+{
+  resize(1, colNum + 1, false, false);
+  rowPtrs[0][colNum - 1] = val;
+  return *this;
+}
+
+/*!
   Create a diagonal matrix with the element of a vector.
 
   \param  A : Vector which element will be put in the diagonal.

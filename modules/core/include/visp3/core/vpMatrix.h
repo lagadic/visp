@@ -118,6 +118,7 @@ public:
     zero.
   */
   vpMatrix() : vpArray2D<double>(0, 0) {}
+
   /*!
     Constructor that initialize a matrix of double with 0.
 
@@ -125,6 +126,7 @@ public:
     \param c : Matrix number of columns.
   */
   vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {}
+
   /*!
     Constructor that initialize a matrix of double with \e val.
 
@@ -134,6 +136,7 @@ public:
   */
   vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
+
   /*!
      Create a matrix from a 2D array that could be one of the following
      container that inherit from vpArray2D such as vpMatrix, vpRotationMatrix,
@@ -148,10 +151,17 @@ vpMatrix M(R);
    */
   vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
 
   vpMatrix(vpMatrix &&A);
+
+  explicit vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+
+  explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list)
+    : vpArray2D<double>(nrows, ncols, list) {}
+
+  explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
 #endif
 
   //! Destructor (Memory de-allocation)
@@ -195,10 +205,15 @@ vpMatrix M(R);
   /** @name Assignment operators */
   //@{
   vpMatrix &operator<<(double *);
+  vpMatrix& operator<<(double val);
+  vpMatrix& operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
   vpMatrix &operator=(const vpMatrix &A);
   vpMatrix &operator=(vpMatrix &&A);
+
+  vpMatrix& operator=(const std::initializer_list<double> &list);
+  vpMatrix& operator=(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
   vpMatrix &operator=(const double x);
   //@}
