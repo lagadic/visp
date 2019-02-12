@@ -188,10 +188,13 @@
 // Defined if Atlas library available
 #cmakedefine VISP_HAVE_ATLAS
 
+// Defined if LAPACK Netlib library available (-lblas -llapack)
+#cmakedefine VISP_HAVE_LAPACK_NETLIB
+
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 
-// Defined if lapack/blas libraries are available (-lblas -llapack)
+// Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas)
 #cmakedefine VISP_HAVE_LAPACK
 // To keep compat with previous versions
 #ifdef VISP_HAVE_LAPACK
