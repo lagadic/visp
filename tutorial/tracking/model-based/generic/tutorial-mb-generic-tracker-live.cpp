@@ -215,7 +215,6 @@ int main(int argc, char **argv)
 
     //! [Constructor]
     vpMbGenericTracker tracker;
-    tracker.setProjectionErrorComputation(true); // To detect tracking failure
     if (opt_tracker == 0)
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV)
@@ -346,6 +345,7 @@ int main(int argc, char **argv)
 
     //To be able to display keypoints matching with test-detection-rs2
     int learn_id = 1;
+    unsigned int learn_cpt = 0;
     bool quit = false;
 
     while (!quit) {
@@ -431,6 +431,7 @@ int main(int argc, char **argv)
       }
 
       if (learn_position) {
+        learn_cpt ++;
         // Detect keypoints on the current image
         std::vector<cv::KeyPoint> trainKeyPoints;
         keypoint.detect(I, trainKeyPoints);
@@ -480,8 +481,8 @@ int main(int argc, char **argv)
 
       vpDisplay::flush(I);
     }
-    if (opt_learn) {
-      std::cout << "Save learning file: " << opt_learning_data << std::endl;
+    if (opt_learn && learn_cpt) {
+      std::cout << "Save learning from " << learn_cpt << " images in file: " << opt_learning_data << std::endl;
       keypoint.saveLearningData(opt_learning_data, true, true);
     }
 
