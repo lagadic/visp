@@ -197,14 +197,23 @@ The last lines are here to free the memory allocated for the display and tracker
 
 \section mb_generic_model Teabox CAD model
 
-ViSP supports two different ways to describe CAD models, either in cao or in vrml format.
-- cao format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension \c .cao.
-- vrml format is supported only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension \c .wrl.
+ViSP supports two different ways to describe CAD models, either in `cao` or in `vrml` format.
+- `cao` format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension `.cao`.
+- `vrml` format is supported only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension `.wrl`.
 
+To load a CAD model there is the vpMbGenericTracker::loadModel() function that could be used to load either `cao` model:
+\code
+vpMbGenericTracker tracker;
+tracker.loadModel("teabox.cao");
+\endcode
+or a `vrml` model:
+\code
+tracker.loadModel("teabox.wrl");
+\endcode
 
 \subsection mb_generic_teabox_cao teabox.cao example
 
-The content of the file teabox.cao used in the getting started \ref mb_generic_started_src but also in tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
+The content of the file `teabox.cao` used in the getting started \ref mb_generic_started_src but also in tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
 
 \includelineno teabox.cao
 
@@ -629,6 +638,22 @@ while (! end)
   ...
   vpMatrix covariance = tracker.getCovarianceMatrix();
 }
+\endcode
+
+\subsection mb_generic_advanced_origin How to change CAD model origin
+
+\warning This functionality is only implemented for CAD model in `.cao` format.
+By default, the `cMo` pose estimated by the tracker corresponds to the homogeneous transformation between the camera frame and the CAD model object frame.
+The tracker can consider an optional transformation matrix (currently only for .cao) to transform 3D points of the CAD model expressed in the original object frame to a desired object frame. Let us call this matrix `oMod`. When this matrix is introduced, the tracker estimates the homogeneous transformation between the camera and the modified CAD model object frame.
+
+The tracker has the ability to modify the location of the CAD model origin frame, introducing an extra homogeneous transformation. was designed to easily modify the location of the CAD model origin introducing an offset transformation matrix:
+
+To load a CAD model there is the vpMbGenericTracker::loadModel() function that could be used to load either `cao` model:
+\code
+vpMbGenericTracker tracker;
+vpHomogeneousMatrix oMd;
+...
+tracker.loadModel("teabox.cao", false, oMod);
 \endcode
 
 \subsection mb_generic_advanced_model How to manipulate the model
