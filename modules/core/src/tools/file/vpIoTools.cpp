@@ -1355,11 +1355,29 @@ std::string vpIoTools::getViSPImagesDataPath()
    extension. If checkFile flag is set, it will check first if the pathname
    denotes a directory and so return an empty string and second it will check
    if the file denoted by the pathanme exists. If so, it will return the
-   extension if present. \param pathname : The pathname of the file we want to
-   get the extension. \param checkFile : If true, the file must exist
-   otherwise an empty string will be returned. \return The extension of the
-   file or an empty string if the file has no extension. or if the pathname is
+   extension if present.
+
+   \param pathname : The pathname of the file we want to get the extension.
+   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the pathname is
    empty.
+
+   The following code shows how to use this function:
+   \code
+#include <visp3/core/vpIoTools.h>
+
+int main()
+{
+  std::string filename = "my/path/to/file.xml"
+  std::string ext = vpIoTools::getFileExtension(opt_learning_data);
+  std::cout << "ext: " << ext << std::endl;
+}
+   \endcode
+   It produces the following output:
+   \code
+ext: .xml
+   \endcode
+
  */
 std::string vpIoTools::getFileExtension(const std::string &pathname, const bool checkFile)
 {
