@@ -488,12 +488,14 @@ public:
   void setMovingEdge(const vpMe &me);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 
   void setScales(const std::vector<bool> &_scales);
 
   void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
 
-  void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I);
   //@}
 
 protected:
@@ -520,8 +522,9 @@ protected:
   using vpMbTracker::computeVVSWeights;
 
   void displayFeaturesOnImage(const vpImage<unsigned char> &I, const unsigned int lvl);
+  void displayFeaturesOnImage(const vpImage<vpRGBa> &I, const unsigned int lvl);
   void downScale(const unsigned int _scale);
-  void init(const vpImage<unsigned char> &I);
+  virtual void init(const vpImage<unsigned char> &I);
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "");
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
@@ -538,7 +541,8 @@ protected:
   void removeCylinder(const std::string &name);
   void removeLine(const std::string &name);
   void resetMovingEdge();
-  void testTracking();
+  virtual void testTracking();
+  virtual void track(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color);
   void trackMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdgeWeights();

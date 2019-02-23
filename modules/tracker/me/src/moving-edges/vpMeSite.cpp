@@ -599,6 +599,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
 }
 
 void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
+void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
 
 // Static functions
 

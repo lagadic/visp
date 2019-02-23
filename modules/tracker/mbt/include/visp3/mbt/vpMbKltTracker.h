@@ -408,6 +408,7 @@ public:
   }
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 
   /*!
     Set if the projection error criteria has to be computed.
@@ -427,6 +428,7 @@ public:
 
   virtual void testTracking();
   virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I_color);
 
   /*!
     @name Deprecated functions
@@ -495,6 +497,8 @@ protected:
   void preTracking(const vpImage<unsigned char> &I);
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w);
   virtual void reinit(const vpImage<unsigned char> &I);
+  virtual void setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                       const vpHomogeneousMatrix &cdMo);
   //@}
 };
 

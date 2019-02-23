@@ -113,6 +113,7 @@ public:
   virtual ~vpMeSite(){};
 
   void display(const vpImage<unsigned char> &I);
+  void display(const vpImage<vpRGBa> &I);
 
   double convolution(const vpImage<unsigned char> &ima, const vpMe *me);
 

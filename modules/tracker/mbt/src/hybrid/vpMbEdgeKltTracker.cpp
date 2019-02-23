@@ -98,7 +98,7 @@ void vpMbEdgeKltTracker::init(const vpImage<unsigned char> &I)
 
   \warning This functionnality is not available when tracking cylinders.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cdMo : Pose to affect.
 */
 void vpMbEdgeKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
@@ -114,6 +114,43 @@ void vpMbEdgeKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomoge
   }
 
   initPyramid(I, Ipyramid);
+
+  unsigned int i = (unsigned int)scales.size();
+  do {
+    i--;
+    if (scales[i]) {
+      downScale(i);
+      initMovingEdge(*Ipyramid[i], cMo);
+      upScale(i);
+    }
+  } while (i != 0);
+
+  cleanPyramid(Ipyramid);
+}
+
+/*!
+  Set the pose to be used in entry (as guess) of the next call to the track()
+  function. This pose will be just used once.
+
+  \warning This functionnality is not available when tracking cylinders.
+
+  \param I_color : image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void vpMbEdgeKltTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
+{
+  vpImageConvert::convert(I_color, m_I);
+  vpMbKltTracker::setPose(m_I, cdMo);
+
+  resetMovingEdge();
+
+  if (useScanLine) {
+    cam.computeFov(m_I.getWidth(), m_I.getHeight());
+    faces.computeClippedPolygons(cMo, cam);
+    faces.computeScanLineRender(cam, m_I.getWidth(), m_I.getHeight());
+  }
+
+  initPyramid(m_I, Ipyramid);
 
   unsigned int i = (unsigned int)scales.size();
   do {
@@ -370,6 +407,62 @@ bool vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char> &I, vpColVect
 
   if (computeProjError)
     vpMbEdgeTracker::computeProjectionError(I);
+
+  if (reInit)
+    return true;
+
+  return false;
+}
+
+/*!
+  Realize the post tracking operations. Mostly visibility tests
+*/
+bool vpMbEdgeKltTracker::postTracking(const vpImage<vpRGBa> &I_color, vpColVector &w_mbt, vpColVector &w_klt,
+                                      const unsigned int lvl)
+{
+  postTrackingMbt(w_mbt, lvl);
+
+  if (displayFeatures) {
+    if (lvl == 0) {
+      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[lvl].begin(); it != lines[lvl].end(); ++it) {
+        vpMbtDistanceLine *l = *it;
+        if (l->isVisible() && l->isTracked()) {
+          l->displayMovingEdges(I_color);
+        }
+      }
+
+      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[lvl].begin(); it != cylinders[lvl].end();
+           ++it) {
+        vpMbtDistanceCylinder *cy = *it;
+        // A cylinder is always visible: #FIXME AY: Still valid?
+        if (cy->isTracked())
+          cy->displayMovingEdges(m_I);
+      }
+
+      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[lvl].begin(); it != circles[lvl].end(); ++it) {
+        vpMbtDistanceCircle *ci = *it;
+        if (ci->isVisible() && ci->isTracked()) {
+          ci->displayMovingEdges(m_I);
+        }
+      }
+    }
+  }
+
+  bool reInit = vpMbKltTracker::postTracking(m_I, w_klt);
+
+  if (useScanLine) {
+    cam.computeFov(m_I.getWidth(), m_I.getHeight());
+    faces.computeClippedPolygons(cMo, cam);
+    faces.computeScanLineRender(cam, m_I.getWidth(), m_I.getHeight());
+  }
+
+  vpMbEdgeTracker::updateMovingEdge(m_I);
+
+  vpMbEdgeTracker::initMovingEdge(m_I, cMo);
+  vpMbEdgeTracker::reinitMovingEdge(m_I, cMo);
+
+  if (computeProjError)
+    vpMbEdgeTracker::computeProjectionError(m_I);
 
   if (reInit)
     return true;
@@ -787,7 +880,7 @@ void vpMbEdgeKltTracker::computeVVSInteractionMatrixAndResidu()
 
   \throw vpException : if the tracking is supposed to have failed.
 
-  \param I : the input image.
+  \param I : the input grayscale image.
 */
 void vpMbEdgeKltTracker::track(const vpImage<unsigned char> &I)
 {
@@ -813,6 +906,58 @@ void vpMbEdgeKltTracker::track(const vpImage<unsigned char> &I)
 
   if (postTracking(I, w_mbt, w_klt)) {
     vpMbKltTracker::reinit(I);
+
+    // AY : Removed as edge tracked, if necessary, is reinitialized in
+    // postTracking()
+
+    //    initPyramid(I, Ipyramid);
+
+    //    unsigned int i = (unsigned int)scales.size();
+    //    do {
+    //      i--;
+    //      if(scales[i]){
+    //        downScale(i);
+    //        initMovingEdge(*Ipyramid[i], cMo);
+    //        upScale(i);
+    //      }
+    //    } while(i != 0);
+
+    //    cleanPyramid(Ipyramid);
+  }
+}
+
+/*!
+  Realize the tracking of the object in the image.
+
+  \throw vpException : if the tracking is supposed to have failed.
+
+  \param I_color : the input color image.
+*/
+void vpMbEdgeKltTracker::track(const vpImage<vpRGBa> &I_color)
+{
+  vpImageConvert::convert(I_color, m_I);
+  try {
+    vpMbKltTracker::preTracking(m_I);
+  } catch (...) {
+  }
+
+  if (m_nbInfos >= 4) {
+    unsigned int old_maxIter = m_maxIter;
+    m_maxIter = m_maxIterKlt;
+    vpMbKltTracker::computeVVS();
+    m_maxIter = old_maxIter;
+  } else {
+    m_nbInfos = 0;
+    // std::cout << "[Warning] Unable to init with KLT" << std::endl;
+  }
+
+  vpMbEdgeTracker::trackMovingEdge(m_I);
+
+  unsigned int nbrow = 0;
+  computeVVS(m_I, m_nbInfos, nbrow);
+
+  if (postTracking(I_color, w_mbt, w_klt)) {
+    vpMbKltTracker::reinit(m_I);
 
     // AY : Removed as edge tracked, if necessary, is reinitialized in
     // postTracking()

@@ -657,6 +657,16 @@ void vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
   }
 }
 
+void vpMbtDistanceCylinder::displayMovingEdges(const vpImage<vpRGBa> &I)
+{
+  if (meline1 != NULL) {
+    meline1->display(I);
+  }
+  if (meline2 != NULL) {
+    meline2->display(I);
+  }
+}
+
 /*!
   Initialize the size of the interaction matrix and the error vector.
 */

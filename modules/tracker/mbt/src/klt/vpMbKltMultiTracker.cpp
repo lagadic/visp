@@ -58,7 +58,7 @@ vpMbKltMultiTracker::vpMbKltMultiTracker()
   : m_mapOfCameraTransformationMatrix(), m_mapOfKltTrackers(), m_referenceCameraName("Camera"), m_L_kltMulti(),
     m_error_kltMulti(), m_w_kltMulti(), m_weightedError_kltMulti()
 {
-  m_mapOfKltTrackers["Camera"] = new vpMbKltTracker();
+  m_mapOfKltTrackers["Camera"] = new vpMbKltTracker;
 
   // Add default camera transformation matrix
   m_mapOfCameraTransformationMatrix["Camera"] = vpHomogeneousMatrix();
@@ -77,13 +77,13 @@ vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras)
   if (nbCameras == 0) {
     throw vpException(vpTrackingException::fatalError, "Cannot construct a vpMbkltMultiTracker with no camera !");
   } else if (nbCameras == 1) {
-    m_mapOfKltTrackers["Camera"] = new vpMbKltTracker();
+    m_mapOfKltTrackers["Camera"] = new vpMbKltTracker;
 
     // Add default camera transformation matrix
     m_mapOfCameraTransformationMatrix["Camera"] = vpHomogeneousMatrix();
   } else if (nbCameras == 2) {
-    m_mapOfKltTrackers["Camera1"] = new vpMbKltTracker();
-    m_mapOfKltTrackers["Camera2"] = new vpMbKltTracker();
+    m_mapOfKltTrackers["Camera1"] = new vpMbKltTracker;
+    m_mapOfKltTrackers["Camera2"] = new vpMbKltTracker;
 
     // Add default camera transformation matrix
     m_mapOfCameraTransformationMatrix["Camera1"] = vpHomogeneousMatrix();
@@ -95,7 +95,7 @@ vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras)
     for (unsigned int i = 1; i <= nbCameras; i++) {
       std::stringstream ss;
       ss << "Camera" << i;
-      m_mapOfKltTrackers[ss.str()] = new vpMbKltTracker();
+      m_mapOfKltTrackers[ss.str()] = new vpMbKltTracker;
 
       // Add default camera transformation matrix
       m_mapOfCameraTransformationMatrix[ss.str()] = vpHomogeneousMatrix();
@@ -120,7 +120,7 @@ vpMbKltMultiTracker::vpMbKltMultiTracker(const std::vector<std::string> &cameraN
   }
 
   for (std::vector<std::string>::const_iterator it = cameraNames.begin(); it != cameraNames.end(); ++it) {
-    m_mapOfKltTrackers[*it] = new vpMbKltTracker();
+    m_mapOfKltTrackers[*it] = new vpMbKltTracker;
   }
 
   // Set by default the reference camera
@@ -2482,7 +2482,7 @@ void vpMbKltMultiTracker::setOptimizationMethod(const vpMbtOptimizationMethod &o
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cMo_ : Pose to affect.
 */
 void vpMbKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
@@ -2491,6 +2491,37 @@ void vpMbKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomog
     std::map<std::string, vpMbKltTracker *>::iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
     if (it != m_mapOfKltTrackers.end()) {
       it->second->setPose(I, cMo_);
+      this->cMo = cMo_;
+
+      c0Mo = this->cMo;
+      ctTc0.eye();
+    } else {
+      std::stringstream ss;
+      ss << "Cannot find the reference camera: " << m_referenceCameraName << " !";
+      throw vpException(vpTrackingException::fatalError, ss.str());
+    }
+  } else {
+    std::stringstream ss;
+    ss << "You are trying to set the pose with only one image and cMo "
+          "but there are multiple cameras !";
+    throw vpException(vpTrackingException::fatalError, ss.str());
+  }
+}
+
+/*!
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
+
+  \param I_color : color image corresponding to the desired pose.
+  \param cMo_ : Pose to affect.
+*/
+void vpMbKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+{
+  if (m_mapOfKltTrackers.size() == 1) {
+    std::map<std::string, vpMbKltTracker *>::iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
+    if (it != m_mapOfKltTrackers.end()) {
+      vpImageConvert::convert(I_color, m_I);
+      it->second->setPose(m_I, cMo_);
       this->cMo = cMo_;
 
       c0Mo = this->cMo;
@@ -2733,7 +2764,7 @@ void vpMbKltMultiTracker::setUseKltTracking(const std::string &name, const bool 
 
   \throw vpException : if the tracking is supposed to have failed
 
-  \param I : the input image
+  \param I : the input grayscale image
 */
 void vpMbKltMultiTracker::track(const vpImage<unsigned char> &I)
 {
@@ -2749,6 +2780,14 @@ void vpMbKltMultiTracker::track(const vpImage<unsigned char> &I)
     ss << "The reference camera: " << m_referenceCameraName << " does not exist !";
     throw vpException(vpTrackingException::fatalError, ss.str().c_str());
   }
+}
+
+/*!
+  Not supported interface, this class is deprecated.
+*/
+void vpMbKltMultiTracker::track(const vpImage<vpRGBa> &)
+{
+  std::cout << "Not supported interface, this class is deprecated." << std::endl;
 }
 
 /*!

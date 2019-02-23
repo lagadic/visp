@@ -723,10 +723,20 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 */
 void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
-  for (size_t i = 0; i < meline.size(); i++)
+  for (size_t i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL) {
       meline[i]->display(I);
     }
+  }
+}
+
+void vpMbtDistanceLine::displayMovingEdges(const vpImage<vpRGBa> &I)
+{
+  for (size_t i = 0; i < meline.size(); i++) {
+    if (meline[i] != NULL) {
+      meline[i]->display(I);
+    }
+  }
 }
 
 /*!
