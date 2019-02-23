@@ -51,9 +51,6 @@ vpMbEdgeKltTracker::vpMbEdgeKltTracker()
 {
   computeCovariance = false;
 
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
-
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT Hybrid");
 #endif

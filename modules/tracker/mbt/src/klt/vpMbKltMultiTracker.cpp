@@ -1915,8 +1915,8 @@ void vpMbKltMultiTracker::resetTracker()
   firstInitialisation = true;
   computeCovariance = false;
 
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
+  angleAppears = vpMath::rad(89);
+  angleDisappears = vpMath::rad(89);
 
   clippingFlag = vpPolygon3D::NO_CLIPPING;
 

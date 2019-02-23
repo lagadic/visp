@@ -73,9 +73,6 @@ vpMbEdgeTracker::vpMbEdgeTracker()
     m_errorCylinders(), m_errorCircles(), m_L_edge(), m_error_edge(), m_w_edge(), m_weightedError_edge(),
     m_robust_edge()
 {
-  angleAppears = vpMath::rad(89);
-  angleDisappears = vpMath::rad(89);
-
   scales[0] = true;
 
 #ifdef VISP_HAVE_OGRE

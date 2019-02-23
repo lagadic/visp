@@ -69,9 +69,6 @@ vpMbKltTracker::vpMbKltTracker()
   tracker.setBlockSize(3);
   tracker.setPyramidLevels(3);
 
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
-
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT Klt");
 #endif
@@ -298,8 +295,8 @@ void vpMbKltTracker::resetTracker()
   tracker.setBlockSize(3);
   tracker.setPyramidLevels(3);
 
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
+  angleAppears = vpMath::rad(89);
+  angleDisappears = vpMath::rad(89);
 
   clippingFlag = vpPolygon3D::NO_CLIPPING;
 
