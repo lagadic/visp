@@ -621,7 +621,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> * const I, const vpIma
 */
 void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
 {
-  setPose(&I, NULL, cdMo);
+  vpMbKltTracker::setPose(&I, NULL, cdMo);
 }
 
 /*!
@@ -635,7 +635,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneou
 */
 void vpMbKltTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
 {
-  setPose(NULL, &I_color, cdMo);
+  vpMbKltTracker::setPose(NULL, &I_color, cdMo);
 }
 
 /*!
