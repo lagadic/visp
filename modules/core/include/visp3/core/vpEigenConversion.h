@@ -75,7 +75,11 @@ void eigen2visp(const Eigen::AngleAxis<Type> &src, vpThetaUVector &dst)
 void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.rows()));
+#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
+  for (Eigen::DenseIndex i = 0; i < src.rows(); i++) {
+#else
   for (Eigen::Index i = 0; i < src.rows(); i++) {
+#endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
 }
@@ -83,7 +87,11 @@ void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
 void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.cols()));
+#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
+  for (Eigen::DenseIndex i = 0; i < src.cols(); i++) {
+#else
   for (Eigen::Index i = 0; i < src.cols(); i++) {
+#endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
 }

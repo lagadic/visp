@@ -123,8 +123,13 @@ int main()
 
   {
     Eigen::MatrixXd eigen_m(3, 5);
+#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
+    for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
+      for (Eigen::DenseIndex j = 0; j < eigen_m.cols(); j++) {
+#else
     for (Eigen::Index i = 0; i < eigen_m.rows(); i++) {
       for (Eigen::Index j = 0; j < eigen_m.cols(); j++) {
+#endif
         eigen_m(i, j) = static_cast<double>(i * eigen_m.cols() + j);
       }
     }
@@ -150,8 +155,13 @@ int main()
 
   {
     Eigen::MatrixX4d eigen_m(2, 4);
+#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
+    for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
+      for (Eigen::DenseIndex j = 0; j < eigen_m.cols(); j++) {
+#else
     for (Eigen::Index i = 0; i < eigen_m.rows(); i++) {
       for (Eigen::Index j = 0; j < eigen_m.cols(); j++) {
+#endif
         eigen_m(i, j) = static_cast<double>(i * eigen_m.cols() + j);
       }
     }
@@ -177,8 +187,13 @@ int main()
 
   {
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> eigen_m(3, 5);
+#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
+    for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
+      for (Eigen::DenseIndex j = 0; j < eigen_m.cols(); j++) {
+#else
     for (Eigen::Index i = 0; i < eigen_m.rows(); i++) {
       for (Eigen::Index j = 0; j < eigen_m.cols(); j++) {
+#endif
         eigen_m(i, j) = static_cast<double>(i * eigen_m.cols() + j);
       }
     }
@@ -204,8 +219,13 @@ int main()
 
   {
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> eigen_m(3, 5);
+#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
+    for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
+      for (Eigen::DenseIndex j = 0; j < eigen_m.cols(); j++) {
+#else
     for (Eigen::Index i = 0; i < eigen_m.rows(); i++) {
       for (Eigen::Index j = 0; j < eigen_m.cols(); j++) {
+#endif
         eigen_m(i, j) = static_cast<double>(i * eigen_m.cols() + j);
       }
     }
@@ -334,7 +354,7 @@ int main()
 
   {
     Eigen::RowVector4d eigen_row;
-    eigen_row << 9;
+    eigen_row << 9, 8, 7, 6;
     vpRowVector visp_row;
     vp::eigen2visp(eigen_row, visp_row);
     std::cout << "ViSP vpRowVector: " << visp_row << std::endl;

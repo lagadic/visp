@@ -253,6 +253,9 @@ vp_set_source_file_compile_flag(src/tools/histogram/vpHistogram.cpp -Wno-strict-
 vp_set_source_file_compile_flag(test/image/testImageBinarise.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/network/testClient.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow)
+if(USE_EIGEN3)
+  vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-misleading-indentation)
+endif()
 
 vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} WRAP java)
 
