@@ -850,6 +850,10 @@ float vpImageTools::lerp(const float A, const float B, const float t) {
   return A * (1.0f - t) + B * t;
 }
 
+int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) {
+  return A * t_1 + B * t;
+}
+
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
                                            const vpImage<double> &II_tpl, const vpImage<double> &IIsq_tpl,
