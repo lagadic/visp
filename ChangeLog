@@ -9,6 +9,7 @@
 ViSP 3.2.1 (under work)
   - Contributors:
   - New features
+    . Introduce Eigen <-> ViSP conversion functions in vp namespace
   - Tutorials
   - Bug fixed
     . [#523] dpkg-shlibdeps produces an error during Debian packaging 
