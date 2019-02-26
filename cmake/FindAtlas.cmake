@@ -45,8 +45,9 @@ find_package_handle_standard_args(Atlas DEFAULT_MSG ${LOOKED_FOR})
 if(ATLAS_FOUND)
   set(Atlas_INCLUDE_DIR ${Atlas_CBLAS_INCLUDE_DIR} ${Atlas_CLAPACK_INCLUDE_DIR})
   set(Atlas_LIBRARIES ${Atlas_LAPACK_LIBRARY} ${Atlas_CBLAS_LIBRARY} ${Atlas_BLAS_LIBRARY})
-  mark_as_advanced(${LOOKED_FOR})
 
   message(STATUS "Found Atlas (include: ${Atlas_CBLAS_INCLUDE_DIR}, library: ${Atlas_BLAS_LIBRARY})")
 endif(ATLAS_FOUND)
+
+mark_as_advanced(${LOOKED_FOR})
 
