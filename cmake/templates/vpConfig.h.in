@@ -194,7 +194,7 @@
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 
-// Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas)
+// Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas, Netlib or built-in)
 #cmakedefine VISP_HAVE_LAPACK
 // To keep compat with previous versions
 #ifdef VISP_HAVE_LAPACK
