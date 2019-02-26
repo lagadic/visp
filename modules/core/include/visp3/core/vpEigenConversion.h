@@ -45,20 +45,9 @@
 namespace vp {
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
-void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst)
-{
-  dst.resize(static_cast<unsigned int>(src.rows()), static_cast<unsigned int>(src.cols()), false, false);
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(), src.cols()) = src;
-}
+VISP_EXPORT void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst);
 
-void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst)
-{
-  if (src.rows() != 4 || src.cols() != 4) {
-    throw vpException(vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
-  }
-
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(), src.cols()) = src;
-}
+VISP_EXPORT void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst);
 
 template<typename Type>
 void eigen2visp(const Eigen::Quaternion<Type> &src, vpQuaternionVector &dst)
@@ -72,29 +61,9 @@ void eigen2visp(const Eigen::AngleAxis<Type> &src, vpThetaUVector &dst)
   dst.buildFrom(src.angle() * src.axis()(0), src.angle() * src.axis()(1), src.angle() * src.axis()(2));
 }
 
-void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
-{
-  dst.resize(static_cast<unsigned int>(src.rows()));
-#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
-  for (Eigen::DenseIndex i = 0; i < src.rows(); i++) {
-#else
-  for (Eigen::Index i = 0; i < src.rows(); i++) {
-#endif
-    dst[static_cast<unsigned int>(i)] = src(i);
-  }
-}
+VISP_EXPORT void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst);
 
-void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
-{
-  dst.resize(static_cast<unsigned int>(src.cols()));
-#if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
-  for (Eigen::DenseIndex i = 0; i < src.cols(); i++) {
-#else
-  for (Eigen::Index i = 0; i < src.cols(); i++) {
-#endif
-    dst[static_cast<unsigned int>(i)] = src(i);
-  }
-}
+VISP_EXPORT void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst);
 
 /* ViSP to Eigen */
 template<typename Derived>
@@ -127,15 +96,9 @@ void visp2eigen(const vpThetaUVector &src, Eigen::AngleAxis<Type> &dst)
   dst.axis()(2) = static_cast<Type>(src.getU()[2]);
 }
 
-void visp2eigen(const vpColVector &src, Eigen::VectorXd &dst)
-{
-  dst = Eigen::VectorXd::Map(src.data, src.size());
-}
+VISP_EXPORT void visp2eigen(const vpColVector &src, Eigen::VectorXd &dst);
 
-void visp2eigen(const vpRowVector &src, Eigen::RowVectorXd &dst)
-{
-  dst = Eigen::RowVectorXd::Map(src.data, src.size());
-}
+VISP_EXPORT void visp2eigen(const vpRowVector &src, Eigen::RowVectorXd &dst);
 #endif
 }
 #endif
