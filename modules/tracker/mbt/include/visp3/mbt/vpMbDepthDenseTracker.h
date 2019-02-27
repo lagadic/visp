@@ -95,6 +95,7 @@ public:
   virtual void setOgreVisibilityTest(const bool &v);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 #ifdef VISP_HAVE_PCL
   virtual void setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const vpHomogeneousMatrix &cdMo);
 #endif
@@ -106,6 +107,7 @@ public:
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &);
+  virtual void track(const vpImage<vpRGBa> &);
 #ifdef VISP_HAVE_PCL
   virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif

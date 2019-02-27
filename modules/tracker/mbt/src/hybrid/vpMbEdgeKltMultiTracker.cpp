@@ -1948,7 +1948,7 @@ void vpMbEdgeKltMultiTracker::setOptimizationMethod(const vpMbtOptimizationMetho
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cMo_ : Pose to affect.
 */
 void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
@@ -1961,6 +1961,34 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpH
     if (it_edge != m_mapOfEdgeTrackers.end() && it_klt != m_mapOfKltTrackers.end()) {
       it_edge->second->setPose(I, cMo_);
       it_klt->second->setPose(I, cMo_);
+
+      this->cMo = cMo_;
+      c0Mo = this->cMo;
+      ctTc0.eye();
+    } else {
+      std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << " !" << std::endl;
+    }
+  }
+}
+
+/*!
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
+
+  \param I_color : color image corresponding to the desired pose.
+  \param cMo_ : Pose to affect.
+*/
+void vpMbEdgeKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+{
+  if (m_mapOfEdgeTrackers.size() != 1 || m_mapOfKltTrackers.size() != 1) {
+    std::cerr << "This method requires only 1 camera !" << std::endl;
+  } else {
+    std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
+    std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
+    if (it_edge != m_mapOfEdgeTrackers.end() && it_klt != m_mapOfKltTrackers.end()) {
+      vpImageConvert::convert(I_color, m_I);
+      it_edge->second->setPose(m_I, cMo_);
+      it_klt->second->setPose(m_I, cMo_);
 
       this->cMo = cMo_;
       c0Mo = this->cMo;
@@ -2083,7 +2111,7 @@ void vpMbEdgeKltMultiTracker::testTracking()
 
   \throw vpException : if the tracking is supposed to have failed
 
-  \param I : the input image
+  \param I : the input grayscale image
 */
 void vpMbEdgeKltMultiTracker::track(const vpImage<unsigned char> &I)
 {
@@ -2106,6 +2134,14 @@ void vpMbEdgeKltMultiTracker::track(const vpImage<unsigned char> &I)
   if (computeProjError) {
     projectionError = it_mbt->second->getProjectionError();
   }
+}
+
+/*!
+  Not supported interface, this class is deprecated.
+*/
+void vpMbEdgeKltMultiTracker::track(const vpImage<vpRGBa> &)
+{
+  std::cout << "Not supported interface, this class is deprecated." << std::endl;
 }
 
 /*!

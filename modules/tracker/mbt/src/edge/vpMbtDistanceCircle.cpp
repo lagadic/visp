@@ -345,6 +345,15 @@ void vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
   }
 }
 
+void vpMbtDistanceCircle::displayMovingEdges(const vpImage<vpRGBa> &I)
+{
+  if (meEllipse != NULL) {
+    meEllipse->display(I); // display the me
+    if (vpDEBUG_ENABLE(3))
+      vpDisplay::flush(I);
+  }
+}
+
 /*!
   Initialize the size of the interaction matrix and the error vector.
 */

@@ -500,6 +500,13 @@ void vpMbDepthNormalTracker::setPose(const vpImage<unsigned char> &I, const vpHo
   init(I);
 }
 
+void vpMbDepthNormalTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
+{
+  cMo = cdMo;
+  vpImageConvert::convert(I_color, m_I);
+  init(m_I);
+}
+
 #if defined(VISP_HAVE_PCL)
 void vpMbDepthNormalTracker::setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                      const vpHomogeneousMatrix &cdMo)
@@ -736,6 +743,11 @@ void vpMbDepthNormalTracker::setDepthNormalSamplingStep(const unsigned int stepX
 void vpMbDepthNormalTracker::track(const vpImage<unsigned char> &)
 {
   throw vpException(vpException::fatalError, "Cannot track with a grayscale image!");
+}
+
+void vpMbDepthNormalTracker::track(const vpImage<vpRGBa> &)
+{
+  throw vpException(vpException::fatalError, "Cannot track with a color image!");
 }
 
 #ifdef VISP_HAVE_PCL

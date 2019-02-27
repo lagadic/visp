@@ -335,6 +335,7 @@ public:
   virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo);
 
   virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                        const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
@@ -357,6 +358,7 @@ public:
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I_color);
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 

@@ -151,7 +151,7 @@ vpMbTracker::vpMbTracker()
     m_projectionErrorFaces(), m_projectionErrorOgreShowConfigDialog(false),
     m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5,5), m_SobelY(5,5),
     m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20), m_projectionErrorDisplayThickness(1),
-    m_projectionErrorCam(), m_mask(NULL)
+    m_projectionErrorCam(), m_mask(NULL), m_I()
 {
   oJo.eye();
   // Map used to parse additional information in CAO model files,
@@ -189,39 +189,8 @@ vpMbTracker::~vpMbTracker() {
 }
 
 #ifdef VISP_HAVE_MODULE_GUI
-/*!
-  Initialise the tracker by clicking in the image on the pixels that
-  correspond to the 3D points whose coordinates are extracted from a file. In
-  this file, comments starting with # character are allowed. Notice that 3D
-  point coordinates are expressed in meter in the object frame with their X, Y
-  and Z values.
-
-  The structure of this file is the following:
-
-  \code
-  # 3D point coordinates
-  4                 # Number of points in the file (minimum is four)
-  0.01 0.01 0.01    # \
-  ...               #  | 3D coordinates in the object frame (X, Y, Z)
-  0.01 -0.01 -0.01  # /
-  \endcode
-
-  \param I : Input image where the user has to click.
-  \param initFile : File containing the coordinates of at least 4 3D points
-  the user has to click in the image. This file should have .init extension
-  (ie teabox.init).
-  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
-  should have the same generic name as the init file (ie teabox.ppm). This
-  image may be used to show where to click. This functionality is only
-  available if visp_io module is used.
-  \param T : optional transformation matrix to transform
-  3D points expressed in the original object frame to the desired object frame.
-
-  \exception vpException::ioError : The file specified in \e initFile doesn't
-  exist.
-*/
-void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp,
-                            const vpHomogeneousMatrix &T)
+void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color, 
+                            const std::string &initFile, const bool displayHelp, const vpHomogeneousMatrix &T)
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
@@ -261,20 +230,37 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
     std::cout << "last_cMo : " << std::endl << last_cMo << std::endl;
 
-    vpDisplay::display(I);
-    display(I, last_cMo, cam, vpColor::green, 1, true);
-    vpDisplay::displayFrame(I, last_cMo, cam, 0.05, vpColor::green);
-    vpDisplay::flush(I);
+    if (I) {
+      vpDisplay::display(*I);
+      display(*I, last_cMo, cam, vpColor::green, 1, true);
+      vpDisplay::displayFrame(*I, last_cMo, cam, 0.05, vpColor::green);
+      vpDisplay::flush(*I);
+    } else {
+      vpDisplay::display(*I_color);
+      display(*I_color, last_cMo, cam, vpColor::green, 1, true);
+      vpDisplay::displayFrame(*I_color, last_cMo, cam, 0.05, vpColor::green);
+      vpDisplay::flush(*I_color);
+    }
 
     std::cout << "No modification : left click " << std::endl;
     std::cout << "Modify initial pose : right click " << std::endl;
 
-    vpDisplay::displayText(I, 15, 10, "left click to validate, right click to modify initial pose", vpColor::red);
+    if (I) {
+      vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to modify initial pose", vpColor::red);
 
-    vpDisplay::flush(I);
+      vpDisplay::flush(*I );
 
-    while (!vpDisplay::getClick(I, ip, button))
-      ;
+      while (!vpDisplay::getClick(*I, ip, button))
+        ;
+    } else {
+      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to modify initial pose", vpColor::red);
+
+      vpDisplay::flush(*I_color);
+
+      while (!vpDisplay::getClick(*I_color, ip, button))
+        ;
+    }
+
   }
 
   if (!finitpos.fail() && button == vpMouseButton::button1) {
@@ -282,8 +268,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
   } else {
     vpDisplay *d_help = NULL;
 
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
+    if (I) {
+      vpDisplay::display(*I);
+      vpDisplay::flush(*I);
+    }
+    else {
+      vpDisplay::display(*I_color);
+      vpDisplay::flush(*I_color);
+    }
 
     vpPose pose;
 
@@ -337,7 +329,10 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
           vpImage<vpRGBa> Iref;
           vpImageIo::read(Iref, dispF);
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-          d_help->init(Iref, I.display->getWindowXPosition() + (int)I.getWidth() + 80, I.display->getWindowYPosition(),
+          const int winXPos = I != NULL ? I->display->getWindowXPosition() : I_color->display->getWindowXPosition();
+          const int winYPos = I != NULL ? I->display->getWindowYPosition() : I_color->display->getWindowYPosition();
+          const unsigned int width = I != NULL ? I->getWidth() : I_color->getWidth();
+          d_help->init(Iref, winXPos + (int)width + 80, winYPos,
                        "Where to initialize...");
           vpDisplay::display(Iref);
           vpDisplay::flush(Iref);
@@ -389,18 +384,33 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
       for (unsigned int i = 0; i < n3d; i++) {
         std::ostringstream text;
         text << "Click on point " << i + 1;
-        vpDisplay::display(I);
-        vpDisplay::displayText(I, 15, 10, text.str(), vpColor::red);
-        for (unsigned int k = 0; k < mem_ip.size(); k++) {
-          vpDisplay::displayCross(I, mem_ip[k], 10, vpColor::green, 2);
+        if (I) {
+          vpDisplay::display(*I);
+          vpDisplay::displayText(*I, 15, 10, text.str(), vpColor::red);
+          for (unsigned int k = 0; k < mem_ip.size(); k++) {
+            vpDisplay::displayCross(*I, mem_ip[k], 10, vpColor::green, 2);
+          }
+          vpDisplay::flush(*I);
+        } else {
+          vpDisplay::display(*I_color);
+          vpDisplay::displayText(*I_color, 15, 10, text.str(), vpColor::red);
+          for (unsigned int k = 0; k < mem_ip.size(); k++) {
+            vpDisplay::displayCross(*I_color, mem_ip[k], 10, vpColor::green, 2);
+          }
+          vpDisplay::flush(*I_color);
         }
-        vpDisplay::flush(I);
 
         std::cout << "Click on point " << i + 1 << " ";
         double x = 0, y = 0;
-        vpDisplay::getClick(I, ip);
-        mem_ip.push_back(ip);
-        vpDisplay::flush(I);
+        if (I) {
+          vpDisplay::getClick(*I, ip);
+          mem_ip.push_back(ip);
+          vpDisplay::flush(*I);
+        } else {
+          vpDisplay::getClick(*I_color, ip);
+          mem_ip.push_back(ip);
+          vpDisplay::flush(*I_color);
+        }
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
         P[i].set_x(x);
         P[i].set_y(y);
@@ -409,8 +419,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
         pose.addPoint(P[i]); // and added to the pose computation point list
       }
-      vpDisplay::flush(I);
-      vpDisplay::display(I);
+      if (I) {
+        vpDisplay::flush(*I);
+        vpDisplay::display(*I);
+      } else {
+        vpDisplay::flush(*I_color);
+        vpDisplay::display(*I_color);
+      }
 
       vpHomogeneousMatrix cMo1, cMo2;
       double d1, d2;
@@ -437,24 +452,46 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
       }
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-      display(I, cMo, cam, vpColor::green, 1, true);
-      vpDisplay::displayText(I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+      if (I) {
+        display(*I, cMo, cam, vpColor::green, 1, true);
+        vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
-      vpDisplay::flush(I);
+        vpDisplay::flush(*I);
 
-      button = vpMouseButton::button1;
-      while (!vpDisplay::getClick(I, ip, button))
-        ;
+        button = vpMouseButton::button1;
+        while (!vpDisplay::getClick(*I, ip, button))
+          ;
 
-      if (button == vpMouseButton::button1) {
-        isWellInit = true;
+        if (button == vpMouseButton::button1) {
+          isWellInit = true;
+        } else {
+          pose.clearPoint();
+          vpDisplay::display(*I);
+          vpDisplay::flush(*I);
+        }
       } else {
-        pose.clearPoint();
-        vpDisplay::display(I);
-        vpDisplay::flush(I);
+        display(*I_color, cMo, cam, vpColor::green, 1, true);
+        vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+
+        vpDisplay::flush(*I_color);
+
+        button = vpMouseButton::button1;
+        while (!vpDisplay::getClick(*I_color, ip, button))
+          ;
+
+        if (button == vpMouseButton::button1) {
+          isWellInit = true;
+        } else {
+          pose.clearPoint();
+          vpDisplay::display(*I_color);
+          vpDisplay::flush(*I_color);
+        }
       }
     }
-    vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
+    if (I)
+      vpDisplay::displayFrame(*I, cMo, cam, 0.05, vpColor::red);
+    else
+      vpDisplay::displayFrame(*I_color, cMo, cam, 0.05, vpColor::red);
 
     // save the pose into file
     if (poseSavingFilename.empty())
@@ -470,24 +507,99 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
   std::cout << "cMo : " << std::endl << cMo << std::endl;
 
-  init(I);
+  if (I)
+    init(*I);
+  else {
+    vpImageConvert::convert(*I_color, m_I);
+    init(m_I);
+  }
 }
 
 /*!
   Initialise the tracker by clicking in the image on the pixels that
-  correspond to the 3D points whose coordinates are given in \e points3D_list.
+  correspond to the 3D points whose coordinates are extracted from a file. In
+  this file, comments starting with # character are allowed. Notice that 3D
+  point coordinates are expressed in meter in the object frame with their X, Y
+  and Z values.
 
-  \param I : Input image where the user has to click.
-  \param points3D_list : List of at least 4 3D points with coordinates
-  expressed in meters in the object frame. \param displayFile : Path to the
-  image used to display the help. This image may be used to show where to
-  click. This functionality is only available if visp_io module is used.
+  The structure of this file is the following:
+
+  \code
+  # 3D point coordinates
+  4                 # Number of points in the file (minimum is four)
+  0.01 0.01 0.01    # \
+  ...               #  | 3D coordinates in the object frame (X, Y, Z)
+  0.01 -0.01 -0.01  # /
+  \endcode
+
+  \param I : Input grayscale image where the user has to click.
+  \param initFile : File containing the coordinates of at least 4 3D points
+  the user has to click in the image. This file should have .init extension
+  (ie teabox.init).
+  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
+  should have the same generic name as the init file (ie teabox.ppm). This
+  image may be used to show where to click. This functionality is only
+  available if visp_io module is used.
+  \param T : optional transformation matrix to transform
+  3D points expressed in the original object frame to the desired object frame.
+
+  \exception vpException::ioError : The file specified in \e initFile doesn't
+  exist.
 */
-void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
-                            const std::string &displayFile)
+void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp,
+                            const vpHomogeneousMatrix &T)
 {
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
+  initClick(&I, NULL, initFile, displayHelp, T);
+}
+
+/*!
+  Initialise the tracker by clicking in the image on the pixels that
+  correspond to the 3D points whose coordinates are extracted from a file. In
+  this file, comments starting with # character are allowed. Notice that 3D
+  point coordinates are expressed in meter in the object frame with their X, Y
+  and Z values.
+
+  The structure of this file is the following:
+
+  \code
+  # 3D point coordinates
+  4                 # Number of points in the file (minimum is four)
+  0.01 0.01 0.01    # \
+  ...               #  | 3D coordinates in the object frame (X, Y, Z)
+  0.01 -0.01 -0.01  # /
+  \endcode
+
+  \param I_color : Input color image where the user has to click.
+  \param initFile : File containing the coordinates of at least 4 3D points
+  the user has to click in the image. This file should have .init extension
+  (ie teabox.init).
+  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
+  should have the same generic name as the init file (ie teabox.ppm). This
+  image may be used to show where to click. This functionality is only
+  available if visp_io module is used.
+  \param T : optional transformation matrix to transform
+  3D points expressed in the original object frame to the desired object frame.
+
+  \exception vpException::ioError : The file specified in \e initFile doesn't
+  exist.
+*/
+void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::string &initFile, const bool displayHelp,
+                            const vpHomogeneousMatrix &T)
+{
+  initClick(NULL, &I_color, initFile, displayHelp, T);
+}
+
+void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                            const std::vector<vpPoint> &points3D_list, const std::string &displayFile)
+{
+  if (I) {
+    vpDisplay::display(*I);
+    vpDisplay::flush(*I);
+  } else {
+    vpDisplay::display(*I_color);
+    vpDisplay::flush(*I_color);
+  }
+
   vpDisplay *d_help = NULL;
 
   vpPose pose;
@@ -511,8 +623,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<v
 
       vpImageIo::read(Iref, displayFile);
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-      d_help->init(Iref, I.display->getWindowXPosition() + (int)I.getWidth() + 80, I.display->getWindowYPosition(),
-                   "Where to initialize...");
+      if (I) {
+        d_help->init(Iref, I->display->getWindowXPosition() + (int)I->getWidth() + 80, I->display->getWindowYPosition(),
+                     "Where to initialize...");
+      } else {
+        d_help->init(Iref, I_color->display->getWindowXPosition() + (int)I_color->getWidth() + 80, I_color->display->getWindowYPosition(),
+                     "Where to initialize...");
+      }
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
 #endif
@@ -533,19 +650,33 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<v
     for (unsigned int i = 0; i < points3D_list.size(); i++) {
       std::cout << "Click on point " << i + 1 << std::endl;
       double x = 0, y = 0;
-      vpDisplay::getClick(I, ip);
-      vpDisplay::displayCross(I, ip, 5, vpColor::green);
-      vpDisplay::flush(I);
+      if (I) {
+        vpDisplay::getClick(*I, ip);
+        vpDisplay::displayCross(*I, ip, 5, vpColor::green);
+        vpDisplay::flush(*I);
+      } else {
+        vpDisplay::getClick(*I_color, ip);
+        vpDisplay::displayCross(*I_color, ip, 5, vpColor::green);
+        vpDisplay::flush(*I_color);
+      }
       vpPixelMeterConversion::convertPoint(cam, ip, x, y);
       P[i].set_x(x);
       P[i].set_y(y);
 
       std::cout << "Click on point " << ip << std::endl;
 
-      vpDisplay::displayPoint(I, ip, vpColor::green); // display target point
+      if (I) {
+        vpDisplay::displayPoint(*I, ip, vpColor::green); // display target point
+      } else {
+        vpDisplay::displayPoint(*I_color, ip, vpColor::green); // display target point
+      }
       pose.addPoint(P[i]);                            // and added to the pose computation point list
     }
-    vpDisplay::flush(I);
+    if (I) {
+      vpDisplay::flush(*I);
+    } else {
+      vpDisplay::flush(*I_color);
+    }
 
     vpHomogeneousMatrix cMo1, cMo2;
     double d1, d2;
@@ -572,60 +703,99 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<v
     }
     pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-    display(I, cMo, cam, vpColor::green, 1, true);
-    vpDisplay::displayText(I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+    if (I) {
+      display(*I, cMo, cam, vpColor::green, 1, true);
+      vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
-    vpDisplay::flush(I);
+      vpDisplay::flush(*I);
 
-    vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-    while (!vpDisplay::getClick(I, ip, button)) {
-    };
+      vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+      while (!vpDisplay::getClick(*I, ip, button)) {
+      };
 
-    if (button == vpMouseButton::button1) {
-      isWellInit = true;
+      if (button == vpMouseButton::button1) {
+        isWellInit = true;
+      } else {
+        pose.clearPoint();
+        vpDisplay::display(*I);
+        vpDisplay::flush(*I);
+      }
     } else {
-      pose.clearPoint();
-      vpDisplay::display(I);
-      vpDisplay::flush(I);
+      display(*I_color, cMo, cam, vpColor::green, 1, true);
+      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+
+      vpDisplay::flush(*I_color);
+
+      vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+      while (!vpDisplay::getClick(*I_color, ip, button)) {
+      };
+
+      if (button == vpMouseButton::button1) {
+        isWellInit = true;
+      } else {
+        pose.clearPoint();
+        vpDisplay::display(*I_color);
+        vpDisplay::flush(*I_color);
+      }
     }
   }
 
-  vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
+  if (I) {
+    vpDisplay::displayFrame(*I, cMo, cam, 0.05, vpColor::red);
+  } else {
+    vpDisplay::displayFrame(*I_color, cMo, cam, 0.05, vpColor::red);
+  }
 
   if (d_help != NULL) {
     delete d_help;
     d_help = NULL;
   }
 
-  init(I);
+  if (I)
+    init(*I);
+  else {
+    vpImageConvert::convert(*I_color, m_I);
+    init(m_I);
+  }
+}
+
+/*!
+  Initialise the tracker by clicking in the image on the pixels that
+  correspond to the 3D points whose coordinates are given in \e points3D_list.
+
+  \param I : Input grayscale image where the user has to click.
+  \param points3D_list : List of at least 4 3D points with coordinates
+  expressed in meters in the object frame.
+  \param displayFile : Path to the
+  image used to display the help. This image may be used to show where to
+  click. This functionality is only available if visp_io module is used.
+*/
+void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
+                            const std::string &displayFile)
+{
+  initClick(&I, NULL, points3D_list, displayFile);
+}
+
+/*!
+  Initialise the tracker by clicking in the image on the pixels that
+  correspond to the 3D points whose coordinates are given in \e points3D_list.
+
+  \param I_color : Input color image where the user has to click.
+  \param points3D_list : List of at least 4 3D points with coordinates
+  expressed in meters in the object frame.
+  \param displayFile : Path to the
+  image used to display the help. This image may be used to show where to
+  click. This functionality is only available if visp_io module is used.
+*/
+void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::vector<vpPoint> &points3D_list,
+                            const std::string &displayFile)
+{
+  initClick(NULL, &I_color, points3D_list, displayFile);
 }
 #endif //#ifdef VISP_HAVE_MODULE_GUI
 
-/*!
-  Initialise the tracker by reading 3D point coordinates and the corresponding
-  2D image point coordinates from a file. Comments starting with # character
-  are allowed. 3D point coordinates are expressed in meter in the object frame
-  with X, Y and Z values. 2D point coordinates are expressied in pixel
-  coordinates, with first the line and then the column of the pixel in the
-  image. The structure of this file is the following.
- \code
- # 3D point coordinates
- 4                 # Number of 3D points in the file (minimum is four)
- 0.01 0.01 0.01    #  \
- ...               #  | 3D coordinates in meters in the object frame
- 0.01 -0.01 -0.01  # /
- # corresponding 2D point coordinates
- 4                 # Number of image points in the file (has to be the same
- as the number of 3D points)
- 100 200           #  \
- ...               #  | 2D coordinates in pixel in the image
- 50 10  		       #  /
-  \endcode
-
-  \param I : Input image
-  \param initFile : Path to the file containing all the points.
-*/
-void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::string &initFile)
+void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                                 const std::string &initFile)
 {
   char s[FILENAME_MAX];
   std::fstream finit;
@@ -763,19 +933,74 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
 
   delete[] P;
 
-  init(I);
+  if (I) {
+    init(*I);
+  } else {
+    vpImageConvert::convert(*I_color, m_I);
+    init(m_I);
+  }
 }
 
 /*!
-  Initialise the tracking with the list of image points (points2D_list) and
-  the list of corresponding 3D points (object frame) (points3D_list).
+  Initialise the tracker by reading 3D point coordinates and the corresponding
+  2D image point coordinates from a file. Comments starting with # character
+  are allowed. 3D point coordinates are expressed in meter in the object frame
+  with X, Y and Z values. 2D point coordinates are expressied in pixel
+  coordinates, with first the line and then the column of the pixel in the
+  image. The structure of this file is the following.
+ \code
+ # 3D point coordinates
+ 4                 # Number of 3D points in the file (minimum is four)
+ 0.01 0.01 0.01    #  \
+ ...               #  | 3D coordinates in meters in the object frame
+ 0.01 -0.01 -0.01  # /
+ # corresponding 2D point coordinates
+ 4                 # Number of image points in the file (has to be the same
+ as the number of 3D points)
+ 100 200           #  \
+ ...               #  | 2D coordinates in pixel in the image
+ 50 10  		       #  /
+  \endcode
 
-  \param I : Input image
-  \param points2D_list : List of image points.
-  \param points3D_list : List of 3D points (object frame).
+  \param I : Input grayscale image
+  \param initFile : Path to the file containing all the points.
 */
-void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &points2D_list,
-                                 const std::vector<vpPoint> &points3D_list)
+void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::string &initFile)
+{
+  initFromPoints(&I, NULL, initFile);
+}
+
+/*!
+  Initialise the tracker by reading 3D point coordinates and the corresponding
+  2D image point coordinates from a file. Comments starting with # character
+  are allowed. 3D point coordinates are expressed in meter in the object frame
+  with X, Y and Z values. 2D point coordinates are expressied in pixel
+  coordinates, with first the line and then the column of the pixel in the
+  image. The structure of this file is the following.
+ \code
+ # 3D point coordinates
+ 4                 # Number of 3D points in the file (minimum is four)
+ 0.01 0.01 0.01    #  \
+ ...               #  | 3D coordinates in meters in the object frame
+ 0.01 -0.01 -0.01  # /
+ # corresponding 2D point coordinates
+ 4                 # Number of image points in the file (has to be the same
+ as the number of 3D points)
+ 100 200           #  \
+ ...               #  | 2D coordinates in pixel in the image
+ 50 10  		       #  /
+  \endcode
+
+  \param I_color : Input color image
+  \param initFile : Path to the file containing all the points.
+*/
+void vpMbTracker::initFromPoints(const vpImage<vpRGBa> &I_color, const std::string &initFile)
+{
+  initFromPoints(NULL, &I_color, initFile);
+}
+
+void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                                 const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list)
 {
   if (points2D_list.size() != points3D_list.size())
     vpERROR_TRACE("vpMbTracker::initFromPoints(), Number of 2D points "
@@ -819,27 +1044,44 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vec
 
   pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-  init(I);
+  if (I) {
+    init(*I);
+  } else {
+    vpImageConvert::convert(*I_color, m_I);
+    init(m_I);
+  }
 }
 
 /*!
-  Initialise the tracking thanks to the pose in vpPoseVector format, and read
-  in the file initFile. The structure of this file is (without the comments):
-  \code
-  // The six value of the pose vector
-  0.0000    //  \
-  0.0000    //  |
-  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
-  0.0000    //  |
-  0.0000    //  |
-  0.0000    //  /
-  \endcode
+  Initialise the tracking with the list of image points (points2D_list) and
+  the list of corresponding 3D points (object frame) (points3D_list).
 
-  Where the three firsts lines refer to the translation and the three last to
-  the rotation in thetaU parametrisation (see vpThetaUVector). \param I :
-  Input image \param initFile : Path to the file containing the pose.
+  \param I : Input grayscale image
+  \param points2D_list : List of image points.
+  \param points3D_list : List of 3D points (object frame).
 */
-void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const std::string &initFile)
+void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &points2D_list,
+                                 const std::vector<vpPoint> &points3D_list)
+{
+  initFromPoints(&I, NULL, points2D_list, points3D_list);
+}
+
+/*!
+  Initialise the tracking with the list of image points (points2D_list) and
+  the list of corresponding 3D points (object frame) (points3D_list).
+
+  \param I_color : Input color grayscale image
+  \param points2D_list : List of image points.
+  \param points3D_list : List of 3D points (object frame).
+*/
+void vpMbTracker::initFromPoints(const vpImage<vpRGBa> &I_color, const std::vector<vpImagePoint> &points2D_list,
+                                 const std::vector<vpPoint> &points3D_list)
+{
+  initFromPoints(NULL, &I_color, points2D_list, points3D_list);
+}
+
+void vpMbTracker::initFromPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                               const std::string &initFile)
 {
   char s[FILENAME_MAX];
   std::fstream finit;
@@ -865,13 +1107,64 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const std::strin
 
   cMo.buildFrom(init_pos);
 
-  init(I);
+  if (I) {
+    init(*I);
+  } else {
+    vpImageConvert::convert(*I_color, m_I);
+    init(m_I);
+  }
+}
+
+/*!
+  Initialise the tracking thanks to the pose in vpPoseVector format, and read
+  in the file initFile. The structure of this file is (without the comments):
+  \code
+  // The six value of the pose vector
+  0.0000    //  \
+  0.0000    //  |
+  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
+  0.0000    //  |
+  0.0000    //  |
+  0.0000    //  /
+  \endcode
+
+  Where the three firsts lines refer to the translation and the three last to
+  the rotation in thetaU parametrisation (see vpThetaUVector).
+  \param I : Input grayscale image
+  \param initFile : Path to the file containing the pose.
+*/
+void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const std::string &initFile)
+{
+  initFromPose(&I, NULL, initFile);
+}
+
+/*!
+  Initialise the tracking thanks to the pose in vpPoseVector format, and read
+  in the file initFile. The structure of this file is (without the comments):
+  \code
+  // The six value of the pose vector
+  0.0000    //  \
+  0.0000    //  |
+  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
+  0.0000    //  |
+  0.0000    //  |
+  0.0000    //  /
+  \endcode
+
+  Where the three firsts lines refer to the translation and the three last to
+  the rotation in thetaU parametrisation (see vpThetaUVector).
+  \param I_color : Input color image
+  \param initFile : Path to the file containing the pose.
+*/
+void vpMbTracker::initFromPose(const vpImage<vpRGBa> &I_color, const std::string &initFile)
+{
+  initFromPose(NULL, &I_color, initFile);
 }
 
 /*!
   Initialise the tracking thanks to the pose.
 
-  \param I : Input image
+  \param I : Input grayscale image
   \param cMo_ : Pose matrix.
 */
 void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
@@ -881,15 +1174,41 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogene
 }
 
 /*!
+  Initialise the tracking thanks to the pose.
+
+  \param I_color : Input color image
+  \param cMo_ : Pose matrix.
+*/
+void vpMbTracker::initFromPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+{
+  this->cMo = cMo_;
+  vpImageConvert::convert(I_color, m_I);
+  init(m_I);
+}
+
+/*!
   Initialise the tracking thanks to the pose vector.
 
-  \param I : Input image
+  \param I : Input grayscale image
   \param cPo : Pose vector.
 */
 void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo)
 {
   vpHomogeneousMatrix _cMo(cPo);
   initFromPose(I, _cMo);
+}
+
+/*!
+  Initialise the tracking thanks to the pose vector.
+
+  \param I_color : Input color image
+  \param cPo : Pose vector.
+*/
+void vpMbTracker::initFromPose(const vpImage<vpRGBa> &I_color, const vpPoseVector &cPo)
+{
+  vpHomogeneousMatrix _cMo(cPo);
+  vpImageConvert::convert(I_color, m_I);
+  initFromPose(m_I, _cMo);
 }
 
 /*!

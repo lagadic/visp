@@ -189,6 +189,7 @@ public:
   virtual void init(const vpImage<unsigned char> &I);
 
 #ifdef VISP_HAVE_MODULE_GUI
+  using vpMbTracker::initClick;
   virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
                          const std::string &displayFile = "");
 
@@ -206,6 +207,7 @@ public:
                          const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp = false);
 #endif
 
+  using vpMbTracker::initFromPose;
   virtual void initFromPose(const vpImage<unsigned char> &I, const std::string &initFile);
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo);
@@ -301,7 +303,9 @@ public:
 
   virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt);
 
+  using vpMbKltTracker::setPose;
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo);
 
   virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                        const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
@@ -320,6 +324,7 @@ public:
   virtual void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 
   virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I_color);
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
   //@}

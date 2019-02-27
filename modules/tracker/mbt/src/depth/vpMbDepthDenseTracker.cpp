@@ -482,52 +482,52 @@ void vpMbDepthDenseTracker::resetTracker()
   m_depthDenseListOfActiveFaces.clear();
 }
 
-void vpMbDepthDenseTracker::setOgreVisibilityTest(const bool &v)
+void vpMbDepthDenseTracker::setCameraParameters(const vpCameraParameters &camera)
 {
-  vpMbTracker::setOgreVisibilityTest(v);
-#ifdef VISP_HAVE_OGRE
-  faces.getOgreContext()->setWindowName("MBT Depth Dense");
-#endif
-}
-
-void vpMbDepthDenseTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
-{
-  cMo = cdMo;
-  init(I);
-}
-
-#if defined(VISP_HAVE_PCL)
-void vpMbDepthDenseTracker::setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-                                    const vpHomogeneousMatrix &cdMo)
-{
-  vpImage<unsigned char> I_dummy(point_cloud->height, point_cloud->width);
-  cMo = cdMo;
-  init(I_dummy);
-}
-#endif
-
-void vpMbDepthDenseTracker::setScanLineVisibilityTest(const bool &v)
-{
-  vpMbTracker::setScanLineVisibilityTest(v);
+  this->cam = camera;
 
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
-    (*it)->setScanLineVisibilityTest(v);
+    (*it)->setCameraParameters(camera);
   }
 }
 
-void vpMbDepthDenseTracker::setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking)
+void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(const double maxDistance)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
-    vpMbtFaceDepthDense *face = *it;
-    if (face->m_polygon->getName() == name) {
-      face->setTracked(useDepthDenseTracking);
-    }
+    (*it)->setDepthDenseFilteringMaxDistance(maxDistance);
   }
 }
 
-void vpMbDepthDenseTracker::testTracking() {}
+void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method)
+{
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
+    (*it)->setDepthDenseFilteringMethod(method);
+  }
+}
+
+void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(const double minDistance)
+{
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
+    (*it)->setDepthDenseFilteringMinDistance(minDistance);
+  }
+}
+
+void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(const double occupancyRatio)
+{
+  if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
+    std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
+    return;
+  }
+
+  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
+       it != m_depthDenseFaces.end(); ++it) {
+    (*it)->setDepthDenseFilteringOccupancyRatio(occupancyRatio);
+  }
+}
 
 #ifdef VISP_HAVE_PCL
 void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
@@ -645,56 +645,68 @@ void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &po
 #endif
 }
 
-void vpMbDepthDenseTracker::setCameraParameters(const vpCameraParameters &camera)
+void vpMbDepthDenseTracker::setOgreVisibilityTest(const bool &v)
 {
-  this->cam = camera;
+  vpMbTracker::setOgreVisibilityTest(v);
+#ifdef VISP_HAVE_OGRE
+  faces.getOgreContext()->setWindowName("MBT Depth Dense");
+#endif
+}
+
+void vpMbDepthDenseTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
+{
+  cMo = cdMo;
+  init(I);
+}
+
+void vpMbDepthDenseTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
+{
+  cMo = cdMo;
+  vpImageConvert::convert(I_color, m_I);
+  init(m_I);
+}
+
+#if defined(VISP_HAVE_PCL)
+void vpMbDepthDenseTracker::setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
+                                    const vpHomogeneousMatrix &cdMo)
+{
+  m_I.resize(point_cloud->height, point_cloud->width);
+  cMo = cdMo;
+  init(m_I);
+}
+#endif
+
+void vpMbDepthDenseTracker::setScanLineVisibilityTest(const bool &v)
+{
+  vpMbTracker::setScanLineVisibilityTest(v);
 
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
-    (*it)->setCameraParameters(camera);
+    (*it)->setScanLineVisibilityTest(v);
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(const double maxDistance)
+void vpMbDepthDenseTracker::setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
-    (*it)->setDepthDenseFilteringMaxDistance(maxDistance);
+    vpMbtFaceDepthDense *face = *it;
+    if (face->m_polygon->getName() == name) {
+      face->setTracked(useDepthDenseTracking);
+    }
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method)
-{
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
-       it != m_depthDenseFaces.end(); ++it) {
-    (*it)->setDepthDenseFilteringMethod(method);
-  }
-}
-
-void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(const double minDistance)
-{
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
-       it != m_depthDenseFaces.end(); ++it) {
-    (*it)->setDepthDenseFilteringMinDistance(minDistance);
-  }
-}
-
-void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(const double occupancyRatio)
-{
-  if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
-    std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
-    return;
-  }
-
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
-       it != m_depthDenseFaces.end(); ++it) {
-    (*it)->setDepthDenseFilteringOccupancyRatio(occupancyRatio);
-  }
-}
+void vpMbDepthDenseTracker::testTracking() {}
 
 void vpMbDepthDenseTracker::track(const vpImage<unsigned char> &)
 {
   throw vpException(vpException::fatalError, "Cannot track with a grayscale image!");
+}
+
+void vpMbDepthDenseTracker::track(const vpImage<vpRGBa> &)
+{
+  throw vpException(vpException::fatalError, "Cannot track with a color image!");
 }
 
 #ifdef VISP_HAVE_PCL

@@ -69,9 +69,6 @@ vpMbKltTracker::vpMbKltTracker()
   tracker.setBlockSize(3);
   tracker.setPyramidLevels(3);
 
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
-
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT Klt");
 #endif
@@ -298,8 +295,8 @@ void vpMbKltTracker::resetTracker()
   tracker.setBlockSize(3);
   tracker.setPyramidLevels(3);
 
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
+  angleAppears = vpMath::rad(89);
+  angleDisappears = vpMath::rad(89);
 
   clippingFlag = vpPolygon3D::NO_CLIPPING;
 
@@ -408,24 +405,24 @@ void vpMbKltTracker::setCameraParameters(const vpCameraParameters &camera)
   this->cam = camera;
 }
 
-/*!
-  Set the pose to be used in entry (as guess) of the next call to the track()
-  function. This pose will be just used once.
-
-  \warning This functionnality is not available when tracking cylinders.
-
-  \param I : image corresponding to the desired pose.
-  \param cdMo : Pose to affect.
-*/
-void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
+void vpMbKltTracker::setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                             const vpHomogeneousMatrix &cdMo)
 {
+  if (I_color) {
+    vpImageConvert::convert(*I_color, m_I);
+  }
+
   if (!kltCylinders.empty()) {
     std::cout << "WARNING: Cannot set pose when model contains cylinder(s). "
                  "This feature is not implemented yet."
               << std::endl;
     std::cout << "Tracker will be reinitialized with the given pose." << std::endl;
     cMo = cdMo;
-    init(I);
+    if (I) {
+      init(*I);
+    } else {
+      init(m_I);
+    }
   } else {
     vpMbtDistanceKltPoints *kltpoly;
 
@@ -545,7 +542,11 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneou
       }
     }
 
-    vpImageConvert::convert(I, cur);
+    if (I) {
+      vpImageConvert::convert(*I, cur);
+    } else {
+      vpImageConvert::convert(m_I, cur);
+    }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     tracker.setInitialGuess(init_pts, guess_pts, init_ids);
@@ -566,21 +567,33 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneou
 #endif
 
     bool reInitialisation = false;
-    if (!useOgre)
-      faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
-    else {
+    if (!useOgre) {
+      if (I) {
+        faces.setVisible(*I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      } else {
+        faces.setVisible(m_I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      }
+    } else {
 #ifdef VISP_HAVE_OGRE
-      faces.setVisibleOgre(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      if (I) {
+        faces.setVisibleOgre(*I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      } else {
+        faces.setVisibleOgre(m_I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      }
 #else
-      faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      if (I) {
+        faces.setVisible(*I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      } else {
+        faces.setVisible(m_I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+      }
 #endif
     }
 
-    cam.computeFov(I.getWidth(), I.getHeight());
+    cam.computeFov(I ? I->getWidth() : m_I.getWidth(), I ? I->getHeight() : m_I.getHeight());
 
     if (useScanLine) {
       faces.computeClippedPolygons(cdMo, cam);
-      faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
+      faces.computeScanLineRender(cam, I ? I->getWidth() : m_I.getWidth(), I ? I->getHeight() : m_I.getHeight());
     }
 
     for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
@@ -595,6 +608,34 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneou
     c0Mo = cMo;
     ctTc0.eye();
   }
+}
+
+/*!
+  Set the pose to be used in entry (as guess) of the next call to the track()
+  function. This pose will be just used once.
+
+  \warning This functionnality is not available when tracking cylinders.
+
+  \param I : grayscale image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
+{
+  vpMbKltTracker::setPose(&I, NULL, cdMo);
+}
+
+/*!
+  Set the pose to be used in entry (as guess) of the next call to the track()
+  function. This pose will be just used once.
+
+  \warning This functionnality is not available when tracking cylinders.
+
+  \param I_color : color image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void vpMbKltTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
+{
+  vpMbKltTracker::setPose(NULL, &I_color, cdMo);
 }
 
 /*!
@@ -877,7 +918,7 @@ void vpMbKltTracker::computeVVSInteractionMatrixAndResidu()
 
   \throw vpException : if the tracking is supposed to have failed
 
-  \param I : the input image
+  \param I : the input grayscale image
 */
 void vpMbKltTracker::track(const vpImage<unsigned char> &I)
 {
@@ -891,6 +932,28 @@ void vpMbKltTracker::track(const vpImage<unsigned char> &I)
 
   if (postTracking(I, m_w_klt))
     reinit(I);
+}
+
+/*!
+  Realize the tracking of the object in the image
+
+  \throw vpException : if the tracking is supposed to have failed
+
+  \param I_color : the input color image
+*/
+void vpMbKltTracker::track(const vpImage<vpRGBa> &I_color)
+{
+  vpImageConvert::convert(I_color, m_I);
+  preTracking(m_I);
+
+  if (m_nbInfos < 4 || m_nbFaceUsed == 0) {
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "Error: not enough features");
+  }
+
+  computeVVS();
+
+  if (postTracking(m_I, m_w_klt))
+    reinit(m_I);
 }
 
 /*!

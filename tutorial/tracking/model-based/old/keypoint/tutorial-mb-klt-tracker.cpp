@@ -99,7 +99,7 @@ int main(int argc, char **argv)
       tracker.track(I);
       tracker.getPose(cMo);
       tracker.getCameraParameters(cam);
-      tracker.display(I, cMo, cam, vpColor::red, 2, true);
+      tracker.display(I, cMo, cam, vpColor::red, 2);
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
       vpDisplay::flush(I);

@@ -337,6 +337,14 @@ void vpMeTracker::display(const vpImage<unsigned char> &I)
   }
 }
 
+void vpMeTracker::display(const vpImage<vpRGBa> &I)
+{
+  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+    vpMeSite p_me = *it;
+    p_me.display(I);
+  }
+}
+
 /*! Displays the status of moving edge sites
 
   \param I : The image.
