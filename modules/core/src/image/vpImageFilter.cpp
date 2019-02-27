@@ -473,10 +473,11 @@ void vpImageFilter::filterY(const vpImage<double> &I, vpImage<double> &dIy, cons
   \param GI : Filtered image.
   \param size : Filter size. This value should be odd.
   \param sigma : Gaussian standard deviation. If it is equal to zero or
-  negative, it is computed from filter size as sigma = (size-1)/6. \param
-  normalize : Flag indicating whether to normalize the filter coefficients or
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or
   not.
 
+  \sa getGaussianKernel() to know which kernel is used.
  */
 void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double> &GI, unsigned int size, double sigma,
                                  bool normalize)
@@ -496,10 +497,10 @@ void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double
   \param GI : Filtered image.
   \param size : Filter size. This value should be odd.
   \param sigma : Gaussian standard deviation. If it is equal to zero or
-  negative, it is computed from filter size as sigma = (size-1)/6. \param
-  normalize : Flag indicating whether to normalize the filter coefficients or
-  not.
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 
+  \sa getGaussianKernel() to know which kernel is used.
  */
 void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma,
                                  bool normalize)
@@ -519,10 +520,10 @@ void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, 
   \param GI : Filtered image.
   \param size : Filter size. This value should be odd.
   \param sigma : Gaussian standard deviation. If it is equal to zero or
-  negative, it is computed from filter size as sigma = (size-1)/6. \param
-  normalize : Flag indicating whether to normalize the filter coefficients or
-  not.
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 
+  \sa getGaussianKernel() to know which kernel is used.
  */
 void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double> &GI, unsigned int size, double sigma,
                                  bool normalize)
@@ -537,15 +538,19 @@ void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double> &GI, 
 }
 
 /*!
-  Return the coefficients of a Gaussian filter.
+  Return the coefficients \f$G_i\f$ of a Gaussian filter.
 
-  \param filter : Pointer to the filter kernel that should refer to a
+  \param[out] filter : Pointer to the half size filter kernel that should refer to a
   (size+1)/2 array. The first value refers to the central coefficient, the
   next one to the right coefficients. Left coefficients could be deduced by
-  symmetry. \param size : Filter size. This value should be odd. \param sigma
-  : Gaussian standard deviation. If it is equal to zero or negative, it is
-  computed from filter size as sigma = (size-1)/6. \param normalize : Flag
-  indicating whether to normalize the filter coefficients or not.
+  symmetry.
+  \param[in] size : Filter size. This value should be odd and positive.
+  \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
+  computed from filter size as sigma = (size-1)/6.
+  \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case \f$\Sigma G_i = 1 \f$.
+
+  The function computes the \e (size+1)/2 values of the Gaussian filter cooefficients \f$ G_i \f$ as:
+  \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
 */
 void vpImageFilter::getGaussianKernel(double *filter, unsigned int size, double sigma, bool normalize)
 {
@@ -581,10 +586,11 @@ void vpImageFilter::getGaussianKernel(double *filter, unsigned int size, double 
   \param filter : Pointer to the filter kernel that should refer to a
   (size+1)/2 array. The first value refers to the central coefficient, the
   next one to the right coefficients. Left coefficients could be deduced by
-  symmetry. \param size : Filter size. This value should be odd. \param sigma
-  : Gaussian standard deviation. If it is equal to zero or negative, it is
-  computed from filter size as sigma = (size-1)/6. \param normalize : Flag
-  indicating whether to normalize the filter coefficients or not.
+  symmetry.
+  \param size : Filter size. This value should be odd.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is
+  computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 */
 void vpImageFilter::getGaussianDerivativeKernel(double *filter, unsigned int size, double sigma, bool normalize)
 {
@@ -736,11 +742,10 @@ void vpImageFilter::getGradY(const vpImage<double> &I, vpImage<double> &dIy, con
    Compute the gradient along X after applying a gaussian filter along Y.
    \param I : Input image
    \param dIx : Gradient along X.
-   \param gaussianKernel : Gaussian kernel which values should be computed
-   using vpImageFilter::getGaussianKernel(). \param gaussianDerivativeKernel :
-   Gaussian derivative kernel which values should be computed using
-   vpImageFilter::getGaussianDerivativeKernel(). \param size : Size of the
-   Gaussian and Gaussian derivative kernels.
+   \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
+   \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+   vpImageFilter::getGaussianDerivativeKernel().
+   \param size : Size of the Gaussian and Gaussian derivative kernels.
  */
 void vpImageFilter::getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *gaussianKernel,
                                     const double *gaussianDerivativeKernel, unsigned int size)
@@ -754,11 +759,10 @@ void vpImageFilter::getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<dou
    Compute the gradient along Y after applying a gaussian filter along X.
    \param I : Input image
    \param dIy : Gradient along Y.
-   \param gaussianKernel : Gaussian kernel which values should be computed
-   using vpImageFilter::getGaussianKernel(). \param gaussianDerivativeKernel :
-   Gaussian derivative kernel which values should be computed using
-   vpImageFilter::getGaussianDerivativeKernel(). \param size : Size of the
-   Gaussian and Gaussian derivative kernels.
+   \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
+   \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+   vpImageFilter::getGaussianDerivativeKernel().
+   \param size : Size of the Gaussian and Gaussian derivative kernels.
  */
 void vpImageFilter::getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *gaussianKernel,
                                     const double *gaussianDerivativeKernel, unsigned int size)
