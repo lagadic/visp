@@ -681,6 +681,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
   delete[] callThd;
   delete[] undistortSharedData;
 #else  // VISP_HAVE_PTHREAD
+  (void)nThreads;
   //
   // optimized version without pthreads
   //
