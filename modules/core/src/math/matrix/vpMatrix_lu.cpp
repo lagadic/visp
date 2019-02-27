@@ -52,15 +52,19 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
+#  ifdef VISP_HAVE_MKL
+#include <mkl.h>
+typedef MKL_INT integer;
+#  else
+#    ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#else
+#    else
 typedef int integer;
-#endif
-
+#    endif
 extern "C" int dgetrf_(integer *m, integer *n, double *a, integer *lda, integer *ipiv, integer *info);
 extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, integer *lwork,
                         integer *info);
+#  endif
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
@@ -331,7 +335,7 @@ double vpMatrix::detByLUGsl() const
 }
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with
 Lapack 3rd party.
