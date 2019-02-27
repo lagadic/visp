@@ -54,14 +54,18 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
+#  ifdef VISP_HAVE_MKL
+#include <mkl.h>
+typedef MKL_INT integer;
+#  else
+#    ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#else
+#    else
 typedef int integer;
-#endif
-
+#    endif
 extern "C" void dpotrf_(char *uplo, integer *n, double *a, integer *lda, integer *info);
 extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer *info);
+#  endif
 #endif
 
 /*!
@@ -104,7 +108,7 @@ int main()
 
 vpMatrix vpMatrix::inverseByCholesky() const
 {
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   return inverseByCholeskyLapack();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   return inverseByCholeskyOpenCV();
@@ -115,7 +119,7 @@ vpMatrix vpMatrix::inverseByCholesky() const
 #endif
 }
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition with
 Lapack 3rd party. The matrix must be real symmetric positive defined.

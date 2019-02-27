@@ -450,7 +450,7 @@ int main(int argc, const char *argv[])
 {
   try {
 #if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL)
+    defined(VISP_HAVE_GSL) || defined(VISP_HAVE_MKL)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;

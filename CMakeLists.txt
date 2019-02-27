@@ -241,6 +241,13 @@ VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAK
 VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86_64)) ) # X86 disabled since it produces an issue on Debian i386
 
+#----------------------------------------------------------------------
+# BLAS / LAPACK
+#----------------------------------------------------------------------
+if(NOT WINRT AND NOT IOS)
+  include(cmake/ChooseBlas.cmake)
+endif()
+
 # ----------------------------------------------------------------------------
 # Handle always full RPATH
 # http://www.cmake.org/Wiki/CMake_RPATH_handling
@@ -519,7 +526,7 @@ VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "
 VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"           "" ON IF NOT WINRT AND NOT IOS)
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
-VP_OPTION(USE_LAPACK      LAPACK_C    ""    "Include lapack support"           "" ON IF NOT WINRT AND NOT IOS)
+#VP_OPTION(USE_LAPACK      LAPACK_C    ""    "Include lapack support"           "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_GSL         GSL         ""    "Include gsl support"              "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COIN3D      "Coin3D;MyCoin3D" "" "Include coin3d support"        "" ON IF OPENGL_FOUND AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"             "YARP_DIR" ON IF NOT WINRT AND NOT IOS)
@@ -600,7 +607,7 @@ VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"
 VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
-VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
+VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_BLAS/LAPACK)
 
 # Find IsNaN (should be after USE_CXX11)
 VP_CHECK_PACKAGE(IsNaN)
@@ -805,8 +812,12 @@ VP_SET(VISP_HAVE_JPEG        TRUE IF (BUILD_MODULE_visp_core AND USE_JPEG))
 VP_SET(VISP_HAVE_PNG         TRUE IF (BUILD_MODULE_visp_core AND USE_PNG))
 VP_SET(VISP_HAVE_YARP        TRUE IF (BUILD_MODULE_visp_core AND USE_YARP))
 VP_SET(VISP_HAVE_EIGEN3      TRUE IF (BUILD_MODULE_visp_core AND USE_EIGEN3))
+VP_SET(VISP_HAVE_MKL         TRUE IF (BUILD_MODULE_visp_core AND USE_MKL))
+VP_SET(VISP_HAVE_OPENBLAS    TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLAS))
+VP_SET(VISP_HAVE_ATLAS       TRUE IF (BUILD_MODULE_visp_core AND USE_ATLAS))
 VP_SET(VISP_HAVE_GSL         TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
 VP_SET(VISP_HAVE_LAPACK      TRUE IF (BUILD_MODULE_visp_core AND (USE_LAPACK OR WITH_LAPACK)))
+VP_SET(VISP_HAVE_LAPACK_NETLIB   TRUE IF (BUILD_MODULE_visp_core AND USE_LAPACK_NETLIB))
 VP_SET(VISP_HAVE_LAPACK_BUILT_IN TRUE IF (BUILD_MODULE_visp_core AND WITH_LAPACK))
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
@@ -1343,11 +1354,14 @@ status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "y
 # ===================== Optional 3rd parties =====================
 status("")
 status("  Mathematics: ")
-status("    Use Lapack/blas:"        USE_LAPACK       THEN "yes (ver ${LAPACK_C_VERSION})" ELSE "no")
-status("    Use Lapack (built-in):"  WITH_LAPACK      THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
-status("    Use Eigen3:"             USE_EIGEN3       THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
-status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
-status("    Use GSL:"                USE_GSL          THEN "yes (ver ${GSL_VERSION})" ELSE "no")
+status("    Use MKL:"                USE_MKL            THEN "yes" ELSE "no")
+status("    Use OpenBLAS:"           USE_OPENBLAS       THEN "yes" ELSE "no")
+status("    Use Atlas:"              USE_ATLAS          THEN "yes" ELSE "no")
+status("    Use Netlib Lapack:"      USE_LAPACK_NETLIB  THEN "yes (ver ${LAPACK_C_VERSION})" ELSE "no")
+status("    Use Lapack (built-in):"  WITH_LAPACK        THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
+status("    Use Eigen3:"             USE_EIGEN3         THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
+status("    Use OpenCV:"             USE_OPENCV         THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
+status("    Use GSL:"                USE_GSL            THEN "yes (ver ${GSL_VERSION})" ELSE "no")
 status("")
 status("  Simulator: ")
 status("    Ogre simulator: ")
