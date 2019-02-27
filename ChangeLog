@@ -11,6 +11,7 @@ ViSP 3.2.1 (under work)
   - New features
     . Introduce Eigen <-> ViSP conversion functions in vp namespace
     . Add OpenBLAS, Intel MKL and Atlas explicit support
+    . Add support of vpImage<vpRGBa> to vpMbGenericTracker
   - Tutorials
   - Bug fixed
     . [#523] dpkg-shlibdeps produces an error during Debian packaging 
