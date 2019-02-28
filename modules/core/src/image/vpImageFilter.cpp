@@ -368,19 +368,19 @@ void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, cons
   dIx.resize(I.getHeight(), I.getWidth());
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < (size - 1) / 2; j++) {
-      dIx[i][j].R = vpImageFilter::filterXLeftBorderR(I, i, j, filter, size);
-      dIx[i][j].G = vpImageFilter::filterXLeftBorderG(I, i, j, filter, size);
-      dIx[i][j].B = vpImageFilter::filterXLeftBorderB(I, i, j, filter, size);
+      dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderR(I, i, j, filter, size));
+      dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderG(I, i, j, filter, size));
+      dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderB(I, i, j, filter, size));
     }
     for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
-      dIx[i][j].R = vpImageFilter::filterXR(I, i, j, filter, size);
-      dIx[i][j].G = vpImageFilter::filterXG(I, i, j, filter, size);
-      dIx[i][j].B = vpImageFilter::filterXB(I, i, j, filter, size);
+      dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXR(I, i, j, filter, size));
+      dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXG(I, i, j, filter, size));
+      dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXB(I, i, j, filter, size));
     }
     for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
-      dIx[i][j].R = vpImageFilter::filterXRightBorderR(I, i, j, filter, size);
-      dIx[i][j].G = vpImageFilter::filterXRightBorderG(I, i, j, filter, size);
-      dIx[i][j].B = vpImageFilter::filterXRightBorderB(I, i, j, filter, size);
+      dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXRightBorderR(I, i, j, filter, size));
+      dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXRightBorderG(I, i, j, filter, size));
+      dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXRightBorderB(I, i, j, filter, size));
     }
   }
 }
@@ -427,23 +427,23 @@ void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, cons
   dIy.resize(I.getHeight(), I.getWidth());
   for (unsigned int i = 0; i < (size - 1) / 2; i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
-      dIy[i][j].R = vpImageFilter::filterYTopBorderR(I, i, j, filter, size);
-      dIy[i][j].G = vpImageFilter::filterYTopBorderG(I, i, j, filter, size);
-      dIy[i][j].B = vpImageFilter::filterYTopBorderB(I, i, j, filter, size);
+      dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYTopBorderR(I, i, j, filter, size));
+      dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYTopBorderG(I, i, j, filter, size));
+      dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYTopBorderB(I, i, j, filter, size));
     }
   }
   for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
-      dIy[i][j].R = vpImageFilter::filterYR(I, i, j, filter, size);
-      dIy[i][j].G = vpImageFilter::filterYG(I, i, j, filter, size);
-      dIy[i][j].B = vpImageFilter::filterYB(I, i, j, filter, size);
+      dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYR(I, i, j, filter, size));
+      dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYG(I, i, j, filter, size));
+      dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYB(I, i, j, filter, size));
     }
   }
   for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
-      dIy[i][j].R = vpImageFilter::filterYBottomBorderR(I, i, j, filter, size);
-      dIy[i][j].G = vpImageFilter::filterYBottomBorderG(I, i, j, filter, size);
-      dIy[i][j].B = vpImageFilter::filterYBottomBorderB(I, i, j, filter, size);
+      dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderR(I, i, j, filter, size));
+      dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderG(I, i, j, filter, size));
+      dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderB(I, i, j, filter, size));
     }
   }
 }
