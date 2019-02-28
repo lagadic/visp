@@ -268,7 +268,7 @@ vp_set_source_file_compile_flag(test/image/testImageBinarise.cpp -Wno-strict-ove
 vp_set_source_file_compile_flag(test/network/testClient.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow)
 if(USE_EIGEN3)
-  vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-misleading-indentation)
+  vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
 endif()
 
 vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} WRAP java)
