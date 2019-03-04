@@ -1371,8 +1371,7 @@ void vpMbEdgeKltMultiTracker::loadModel(const std::string &modelFile, const bool
   modelInitialised = true;
 }
 
-void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                           const unsigned int lvl)
+void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages)
 {
   // MBT
   vpMbEdgeTracker *edge = NULL;
@@ -1383,7 +1382,7 @@ void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<u
     edge->updateMovingEdgeWeights();
 
     if (displayFeatures) {
-      edge->displayFeaturesOnImage(*mapOfImages[it->first], lvl);
+      edge->m_featuresToBeDisplayedEdge = edge->getFeaturesForDisplayEdge();
     }
   }
 
@@ -2213,7 +2212,7 @@ void vpMbEdgeKltMultiTracker::track(std::map<std::string, const vpImage<unsigned
 
   computeVVS(mapOfImages);
 
-  postTracking(mapOfImages, 0);
+  postTracking(mapOfImages);
 
   if (computeProjError) {
     vpMbEdgeMultiTracker::computeProjectionError();

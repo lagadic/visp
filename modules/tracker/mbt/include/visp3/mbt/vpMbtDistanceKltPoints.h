@@ -149,6 +149,11 @@ public:
   void displayPrimitive(const vpImage<unsigned char> &_I);
   void displayPrimitive(const vpImage<vpRGBa> &_I);
 
+  std::vector<std::vector<double> > getFeaturesForDisplay();
+
+  std::vector<std::vector<double> > getModelForDisplay(const vpCameraParameters &cam,
+                                                       const bool displayFullModel = false);
+
   /*!
     Get the camera parameters of the face.
 

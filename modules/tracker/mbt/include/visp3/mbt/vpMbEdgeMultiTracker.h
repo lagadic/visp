@@ -132,6 +132,15 @@ public:
                        const std::map<std::string, vpCameraParameters> &mapOfCameraParameters, const vpColor &col,
                        const unsigned int thickness = 1, const bool displayFullModel = false);
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int, unsigned int,
+                                                               const vpHomogeneousMatrix &,
+                                                               const vpCameraParameters &,
+                                                               const bool =false)
+  {
+    std::cerr << "Not implemented. Deprecated class." << std::endl;
+    return std::vector<std::vector<double> >();
+  }
+
   virtual std::vector<std::string> getCameraNames() const;
 
   virtual void getCameraParameters(vpCameraParameters &camera) const;

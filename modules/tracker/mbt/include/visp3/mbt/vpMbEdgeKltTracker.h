@@ -260,6 +260,11 @@ public:
 
   virtual inline vpColVector getError() const { return m_error_hybrid; }
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
+
   virtual inline vpColVector getRobustWeights() const { return m_w_hybrid; }
 
   /*!

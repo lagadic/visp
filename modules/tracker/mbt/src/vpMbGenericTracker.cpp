@@ -920,6 +920,46 @@ std::list<vpMbtDistanceKltPoints *> &vpMbGenericTracker::getFeaturesKlt()
 #endif
 
 /*!
+  Return a list of features parameters.
+  ME parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
+  KLT parameters are: <feature id (here 1 for KLT)>, <pt.i()>, <pt.j()>,
+                      <klt_id.i()>, <klt_id.j()>, <klt_id.id>
+  It can be used to display the 3D model with a render engine of your choice.
+
+  \note It returns the model for the reference camera.
+*/
+std::vector<std::vector<double> > vpMbGenericTracker::getFeaturesForDisplay()
+{
+  std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+
+  if (it != m_mapOfTrackers.end()) {
+    return it->second->getFeaturesForDisplay();
+  } else {
+    std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
+  }
+
+  return std::vector<std::vector<double> >();
+}
+
+/*!
+  Get a list of features parameters.
+  ME parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
+  KLT parameters are: <feature id (here 1 for KLT)>, <pt.i()>, <pt.j()>,
+                      <klt_id.i()>, <klt_id.j()>, <klt_id.id>
+  It can be used to display the 3D model with a render engine of your choice.
+*/
+void vpMbGenericTracker::getFeaturesForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfFeatures)
+{
+  // Clear the input map
+  mapOfFeatures.clear();
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+       it != m_mapOfTrackers.end(); ++it) {
+    mapOfFeatures[it->first] = it->second->getFeaturesForDisplay();
+  }
+}
+
+/*!
    \return The threshold value between 0 and 1 over good moving edges ratio.
    It allows to decide if the tracker has enough valid moving edges to compute
    a pose. 1 means that all moving edges should be considered as good to have
@@ -1235,6 +1275,68 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
     it->second->getLline(linesList, level);
   } else {
     std::cerr << "The camera: " << cameraName << " does not exist!" << std::endl;
+  }
+}
+
+/*!
+  Return a list of primitives parameters to display the model at a given pose and camera parameters.
+  Line parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
+                       <pt_end.i()>, <pt_end.j()>
+  Ellipse parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
+                          <mu20>, <mu11>, <mu02>
+  It can be used to display the 3D model with a render engine of your choice.
+
+  \param width : Image width.
+  \param height : Image height.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+
+  \note It returns the model for the reference camera.
+*/
+std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                         const vpHomogeneousMatrix &cMo,
+                                                                         const vpCameraParameters &cam,
+                                                                         const bool displayFullModel)
+{
+  std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+
+  if (it != m_mapOfTrackers.end()) {
+    return it->second->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+  } else {
+    std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
+  }
+
+  return std::vector<std::vector<double> >();
+}
+
+/*!
+  Get a list of primitives parameters to display the model at a given pose and camera parameters.
+  Line parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
+                       <pt_end.i()>, <pt_end.j()>
+  Ellipse parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
+                          <mu20>, <mu11>, <mu02>
+  It can be used to display the 3D model with a render engine of your choice.
+
+  \param mapOfModels : Map of models.
+  \param width : Image width.
+  \param height : Image height.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+void vpMbGenericTracker::getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
+                                            unsigned int width, unsigned int height,
+                                            const vpHomogeneousMatrix &cMo,
+                                            const vpCameraParameters &cam,
+                                            const bool displayFullModel)
+{
+  // Clear the input map
+  mapOfModels.clear();
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+       it != m_mapOfTrackers.end(); ++it) {
+    mapOfModels[it->first] = it->second->getModelForDisplay(width, height, cMo, cam, displayFullModel);
   }
 }
 
@@ -4992,7 +5094,23 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
 
+    if (tracker->m_trackerType & EDGE_TRACKER && displayFeatures) {
+      tracker->m_featuresToBeDisplayedEdge = tracker->getFeaturesForDisplayEdge();
+    }
+
     tracker->postTracking(mapOfImages[it->first], mapOfPointClouds[it->first]);
+
+    if (displayFeatures) {
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+      if (tracker->m_trackerType & KLT_TRACKER) {
+        tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
+      }
+#endif
+
+      if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+        tracker->m_featuresToBeDisplayedDepthNormal = tracker->getFeaturesForDisplayDepthNormal();
+      }
+    }
   }
 
   computeProjectionError();
@@ -5007,7 +5125,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
   \param mapOfPointClouds : Map of PCL pointclouds.
 */
 void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
-                   std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds)
+                               std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds)
 {
   std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
@@ -5058,13 +5176,23 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
 
-    if (displayFeatures) {
-      if (tracker->m_trackerType & EDGE_TRACKER) {
-        tracker->displayFeaturesOnImage(*mapOfColorImages[it->first], 0);
-      }
+    if (tracker->m_trackerType & EDGE_TRACKER && displayFeatures) {
+      tracker->m_featuresToBeDisplayedEdge = tracker->getFeaturesForDisplayEdge();
     }
 
     tracker->postTracking(mapOfImages[it->first], mapOfPointClouds[it->first]);
+
+    if (displayFeatures) {
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+      if (tracker->m_trackerType & KLT_TRACKER) {
+        tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
+      }
+#endif
+
+      if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+        tracker->m_featuresToBeDisplayedDepthNormal = tracker->getFeaturesForDisplayDepthNormal();
+      }
+    }
   }
 
   computeProjectionError();
@@ -5128,13 +5256,23 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
 
-    if (displayFeatures) {
-      if (tracker->m_trackerType & EDGE_TRACKER) {
-        tracker->displayFeaturesOnImage(*mapOfImages[it->first], 0);
-      }
+    if (tracker->m_trackerType & EDGE_TRACKER && displayFeatures) {
+      tracker->m_featuresToBeDisplayedEdge = tracker->getFeaturesForDisplayEdge();
     }
 
     tracker->postTracking(mapOfImages[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
+
+    if (displayFeatures) {
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+      if (tracker->m_trackerType & KLT_TRACKER) {
+        tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
+      }
+#endif
+
+      if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+        tracker->m_featuresToBeDisplayedDepthNormal = tracker->getFeaturesForDisplayDepthNormal();
+      }
+    }
   }
 
   computeProjectionError();
@@ -5204,13 +5342,23 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
 
-    if (displayFeatures) {
-      if (tracker->m_trackerType & EDGE_TRACKER) {
-        tracker->displayFeaturesOnImage(*mapOfColorImages[it->first], 0);
-      }
+    if (tracker->m_trackerType & EDGE_TRACKER && displayFeatures) {
+      tracker->m_featuresToBeDisplayedEdge = tracker->getFeaturesForDisplayEdge();
     }
 
     tracker->postTracking(mapOfImages[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
+
+    if (displayFeatures) {
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+      if (tracker->m_trackerType & KLT_TRACKER) {
+        tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
+      }
+#endif
+
+      if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+        tracker->m_featuresToBeDisplayedDepthNormal = tracker->getFeaturesForDisplayDepthNormal();
+      }
+    }
   }
 
   computeProjectionError();
@@ -5618,144 +5766,221 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I
                                                  const vpCameraParameters &camera, const vpColor &col,
                                                  const unsigned int thickness, const bool displayFullModel)
 {
-  if (m_trackerType == EDGE_TRACKER) {
-    vpMbEdgeTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  } else if (m_trackerType == KLT_TRACKER) {
-    vpMbKltTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-#endif
-  } else if (m_trackerType == DEPTH_NORMAL_TRACKER) {
-    vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-  } else if (m_trackerType == DEPTH_DENSE_TRACKER) {
-    vpMbDepthDenseTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-  } else {
-    if (m_trackerType & EDGE_TRACKER) {
-      for (unsigned int i = 0; i < scales.size(); i += 1) {
-        if (scales[i]) {
-          for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin();
-               it != lines[scaleLevel].end(); ++it) {
-            (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-          }
+  if (displayFeatures) {
+    std::vector<std::vector<double> > features = getFeaturesForDisplay();
+    for (size_t i = 0; i < features.size(); i++) {
+      if (vpMath::equal(features[i][0], 0)) {
+        vpImagePoint ip(features[i][1], features[i][2]);
+        int state = static_cast<int>(features[i][3]);
 
-          for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-               it != cylinders[scaleLevel].end(); ++it) {
-            (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-          }
+        switch (state) {
+        case vpMeSite::NO_SUPPRESSION:
+          vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
+          break;
 
-          for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-               it != circles[scaleLevel].end(); ++it) {
-            (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-          }
+        case vpMeSite::CONSTRAST:
+          vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
+          break;
 
-          break; // display model on one scale only
+        case vpMeSite::THRESHOLD:
+          vpDisplay::displayCross(I, ip, 3, vpColor::purple, 1);
+          break;
+
+        case vpMeSite::M_ESTIMATOR:
+          vpDisplay::displayCross(I, ip, 3, vpColor::red, 1);
+          break;
+
+        case vpMeSite::TOO_NEAR:
+          vpDisplay::displayCross(I, ip, 3, vpColor::cyan, 1);
+          break;
+
+        default:
+          vpDisplay::displayCross(I, ip, 3, vpColor::yellow, 1);
         }
+      } else if (vpMath::equal(features[i][0], 1)) {
+        vpImagePoint ip1(features[i][1], features[i][2]);
+        vpDisplay::displayCross(I, ip1, 10, vpColor::red);
+
+        vpImagePoint ip2(features[i][3], features[i][4]);
+        double id = features[i][5];
+        std::stringstream ss;
+        ss << id;
+        vpDisplay::displayText(I, ip2, ss.str(), vpColor::red);
+      } else if (vpMath::equal(features[i][0], 2)) {
+        vpImagePoint im_centroid(features[i][1], features[i][2]);
+        vpImagePoint im_extremity(features[i][3], features[i][4]);
+        bool desired = vpMath::equal(features[i][0], 2);
+        vpDisplay::displayArrow(I, im_centroid, im_extremity, desired ? vpColor::blue : vpColor::red, 4, 2, thickness);
       }
     }
+  }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-    if (m_trackerType & KLT_TRACKER) {
-      for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end();
-           ++it) {
-        vpMbtDistanceKltPoints *kltpoly = *it;
-        if (displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
-          kltpoly->displayPrimitive(I);
-        }
-      }
-
-      for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-           ++it) {
-        vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-        if (displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
-          kltPolyCylinder->displayPrimitive(I);
-      }
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
-#endif
-
-    if (m_trackerType & DEPTH_NORMAL_TRACKER) {
-      vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-    }
-
-    if (m_trackerType & DEPTH_DENSE_TRACKER) {
-      vpMbDepthDenseTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-    }
+  }
 
 #ifdef VISP_HAVE_OGRE
+  if ((m_trackerType & EDGE_TRACKER)
+    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+      || (m_trackerType & KLT_TRACKER)
+    #endif
+      ) {
     if (useOgre)
       faces.displayOgre(cMo_);
-#endif
   }
+#endif
 }
 
 void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo_,
                                                  const vpCameraParameters &camera, const vpColor &col,
                                                  const unsigned int thickness, const bool displayFullModel)
 {
-  if (m_trackerType == EDGE_TRACKER) {
-    vpMbEdgeTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  } else if (m_trackerType == KLT_TRACKER) {
-    vpMbKltTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-#endif
-  } else if (m_trackerType == DEPTH_NORMAL_TRACKER) {
-    vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-  } else if (m_trackerType == DEPTH_DENSE_TRACKER) {
-    vpMbDepthDenseTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-  } else {
-    if (m_trackerType & EDGE_TRACKER) {
-      for (unsigned int i = 0; i < scales.size(); i += 1) {
-        if (scales[i]) {
-          for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin();
-               it != lines[scaleLevel].end(); ++it) {
-            (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-          }
+  if (displayFeatures) {
+    std::vector<std::vector<double> > features = getFeaturesForDisplay();
+    for (size_t i = 0; i < features.size(); i++) {
+      if (vpMath::equal(features[i][0], 0)) {
+        vpImagePoint ip(features[i][1], features[i][2]);
+        int state = static_cast<int>(features[i][3]);
 
-          for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-               it != cylinders[scaleLevel].end(); ++it) {
-            (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-          }
+        switch (state) {
+        case vpMeSite::NO_SUPPRESSION:
+          vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
+          break;
 
-          for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-               it != circles[scaleLevel].end(); ++it) {
-            (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-          }
+        case vpMeSite::CONSTRAST:
+          vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
+          break;
 
-          break; // display model on one scale only
+        case vpMeSite::THRESHOLD:
+          vpDisplay::displayCross(I, ip, 3, vpColor::purple, 1);
+          break;
+
+        case vpMeSite::M_ESTIMATOR:
+          vpDisplay::displayCross(I, ip, 3, vpColor::red, 1);
+          break;
+
+        case vpMeSite::TOO_NEAR:
+          vpDisplay::displayCross(I, ip, 3, vpColor::cyan, 1);
+          break;
+
+        default:
+          vpDisplay::displayCross(I, ip, 3, vpColor::yellow, 1);
         }
+      } else if (vpMath::equal(features[i][0], 1)) {
+        vpImagePoint ip1(features[i][1], features[i][2]);
+        vpDisplay::displayCross(I, ip1, 10, vpColor::red);
+
+        vpImagePoint ip2(features[i][3], features[i][4]);
+        double id = features[i][5];
+        std::stringstream ss;
+        ss << id;
+        vpDisplay::displayText(I, ip2, ss.str(), vpColor::red);
+      } else if (vpMath::equal(features[i][0], 2)) {
+        vpImagePoint im_centroid(features[i][1], features[i][2]);
+        vpImagePoint im_extremity(features[i][3], features[i][4]);
+        bool desired = vpMath::equal(features[i][0], 2);
+        vpDisplay::displayArrow(I, im_centroid, im_extremity, desired ? vpColor::blue : vpColor::red, 4, 2, thickness);
       }
     }
+  }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-    if (m_trackerType & KLT_TRACKER) {
-      for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end();
-           ++it) {
-        vpMbtDistanceKltPoints *kltpoly = *it;
-        if (displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
-          kltpoly->displayPrimitive(I);
-        }
-      }
-
-      for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-           ++it) {
-        vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-        if (displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
-          kltPolyCylinder->displayPrimitive(I);
-      }
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
-#endif
-
-    if (m_trackerType & DEPTH_NORMAL_TRACKER) {
-      vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-    }
-
-    if (m_trackerType & DEPTH_DENSE_TRACKER) {
-      vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-    }
+  }
 
 #ifdef VISP_HAVE_OGRE
+  if ((m_trackerType & EDGE_TRACKER)
+    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+      || (m_trackerType & KLT_TRACKER)
+    #endif
+      ) {
     if (useOgre)
       faces.displayOgre(cMo_);
-#endif
   }
+#endif
+}
+
+std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getFeaturesForDisplay()
+{
+  std::vector<std::vector<double> > features;
+
+  if (m_trackerType & EDGE_TRACKER) {
+    //m_featuresToBeDisplayedEdge updated after computeVVS()
+    features.insert(features.end(), m_featuresToBeDisplayedEdge.begin(), m_featuresToBeDisplayedEdge.end());
+  }
+
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  if (m_trackerType & KLT_TRACKER) {
+    //m_featuresToBeDisplayedKlt updated after postTracking()
+    features.insert(features.end(), m_featuresToBeDisplayedKlt.begin(), m_featuresToBeDisplayedKlt.end());
+  }
+#endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    //m_featuresToBeDisplayedDepthNormal updated after postTracking()
+    features.insert(features.end(), m_featuresToBeDisplayedDepthNormal.begin(), m_featuresToBeDisplayedDepthNormal.end());
+  }
+
+  return features;
+}
+
+std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                                         const vpHomogeneousMatrix &cMo_,
+                                                                                         const vpCameraParameters &camera,
+                                                                                         const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
+  //Do not add multiple times the same models
+  if (m_trackerType == EDGE_TRACKER) {
+    models = vpMbEdgeTracker::getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+  }
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  else if (m_trackerType == KLT_TRACKER) {
+    models = vpMbKltTracker::getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+  }
+#endif
+  else if (m_trackerType == DEPTH_NORMAL_TRACKER) {
+    models = vpMbDepthNormalTracker::getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+  } else if (m_trackerType == DEPTH_DENSE_TRACKER) {
+    models = vpMbDepthDenseTracker::getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+  } else {
+    //Edge and KLT trackers use the same primitives
+    if (m_trackerType & EDGE_TRACKER) {
+      std::vector<std::vector<double> > edgeModels = vpMbEdgeTracker::getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+      models.insert(models.end(), edgeModels.begin(), edgeModels.end());
+    }
+
+    //Depth dense and depth normal trackers use the same primitives
+    if (m_trackerType & DEPTH_DENSE_TRACKER) {
+      std::vector<std::vector<double> > depthDenseModels = vpMbDepthDenseTracker::getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+      models.insert(models.end(), depthDenseModels.begin(), depthDenseModels.end());
+    }
+  }
+
+  return models;
 }
 
 void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char> &I)
@@ -5769,7 +5994,7 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char> &I)
 
   bool reInitialisation = false;
   if (!useOgre) {
-    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
   } else {
 #ifdef VISP_HAVE_OGRE
     if (!faces.isOgreInitialised()) {
@@ -5783,9 +6008,9 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char> &I)
       ogreShowConfigDialog = false;
     }
 
-    faces.setVisibleOgre(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisibleOgre(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #else
-    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
   }
 
@@ -6016,12 +6241,6 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
 void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned char> *const ptr_I,
                                                       const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
-  if (displayFeatures) {
-    if (m_trackerType & EDGE_TRACKER) {
-      vpMbEdgeTracker::displayFeaturesOnImage(*ptr_I, 0);
-    }
-  }
-
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   // KLT
   if (m_trackerType & KLT_TRACKER) {

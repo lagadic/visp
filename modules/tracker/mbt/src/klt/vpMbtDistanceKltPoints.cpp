@@ -589,36 +589,13 @@ void vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHo
                                      const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                      const bool displayFullModel)
 {
-  if ((polygon->isVisible() && isTrackedKltPoints) || displayFullModel) {
-    std::vector<std::pair<vpPoint, unsigned int> > roi;
-    polygon->getPolygonClipped(roi);
+  std::vector<std::vector<double> > models = getModelForDisplay(camera, displayFullModel);
 
-    for (unsigned int j = 0; j < roi.size(); j += 1) {
-      if (((roi[(j + 1) % roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
-          ((roi[(j + 1) % roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
-          ((roi[(j + 1) % roi.size()].second & roi[j].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
-          ((roi[(j + 1) % roi.size()].second & roi[j].second & vpPolygon3D::UP_CLIPPING) == 0) &&
-          ((roi[(j + 1) % roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
-          ((roi[(j + 1) % roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)) {
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
 
-        vpImagePoint ip1, ip2;
-        std::vector<std::pair<vpPoint, vpPoint> > linesLst;
-
-        if (useScanLine && !displayFullModel)
-          hiddenface->computeScanLineQuery(roi[j].first, roi[(j + 1) % roi.size()].first, linesLst, true);
-        else
-          linesLst.push_back(std::make_pair(roi[j].first, roi[(j + 1) % roi.size()].first));
-
-        for (unsigned int i = 0; i < linesLst.size(); i++) {
-          linesLst[i].first.project();
-          linesLst[i].second.project();
-          vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
-          vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
-
-          vpDisplay::displayLine(I, ip1, ip2, col, thickness);
-        }
-      }
-    }
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
   }
 }
 
@@ -626,6 +603,61 @@ void vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneo
                                      const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                      const bool displayFullModel)
 {
+  std::vector<std::vector<double> > models = getModelForDisplay(camera, displayFullModel);
+
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
+
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+  }
+}
+
+/*!
+  Return a list of features parameters for display.
+  Parameters are: <feature id (here 1 for KLT)>, <pt.i()>, <pt.j()>,
+                  <klt_id.i()>, <klt_id.j()>, <klt_id.id>
+*/
+std::vector<std::vector<double> > vpMbtDistanceKltPoints::getFeaturesForDisplay()
+{
+  std::vector<std::vector<double> > features;
+
+  std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
+  for (; iter != curPoints.end(); ++iter) {
+    int id(iter->first);
+    vpImagePoint iP;
+    iP.set_i(static_cast<double>(iter->second.get_i()));
+    iP.set_j(static_cast<double>(iter->second.get_j()));
+
+    vpImagePoint iP2;
+    iP2.set_i(vpMath::round(iP.get_i() + 7));
+    iP2.set_j(vpMath::round(iP.get_j() + 7));
+
+    std::vector<double> params = {1, //KLT
+                                  iP.get_i(),
+                                  iP.get_j(),
+                                  iP2.get_i(),
+                                  iP2.get_j(),
+                                  static_cast<double>(id)};
+    features.push_back(params);
+  }
+
+  return features;
+}
+
+/*!
+  Return a list of line parameters to display the primitive at a given pose and camera parameters.
+  Parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
+                  <pt_end.i()>, <pt_end.j()>
+
+  \param camera : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<std::vector<double> > vpMbtDistanceKltPoints::getModelForDisplay(const vpCameraParameters &camera,
+                                                                             const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
   if ((polygon->isVisible() && isTrackedKltPoints) || displayFullModel) {
     std::vector<std::pair<vpPoint, unsigned int> > roi;
     polygon->getPolygonClipped(roi);
@@ -652,11 +684,18 @@ void vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneo
           vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
           vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
-          vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+          std::vector<double> params = {0, //0 for line parameters
+                                        ip1.get_i(),
+                                        ip1.get_j(),
+                                        ip2.get_i(),
+                                        ip2.get_j()};
+          models.push_back(params);
         }
       }
     }
   }
+
+  return models;
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

@@ -133,7 +133,16 @@ public:
   virtual void display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                        const std::map<std::string, vpCameraParameters> &mapOfCameraParameters, const vpColor &col,
-                       const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const unsigned int thickness = 1, const bool displayFullModel = false);  
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int, unsigned int,
+                                                               const vpHomogeneousMatrix &,
+                                                               const vpCameraParameters &,
+                                                               const bool =false)
+  {
+    std::cerr << "Not implemented. Deprecated class." << std::endl;
+    return std::vector<std::vector<double> >();
+  }
 
   virtual std::vector<std::string> getCameraNames() const;
 
@@ -386,7 +395,7 @@ protected:
   // Same thing as computeVVS
   using vpMbKltMultiTracker::postTracking;
 
-  virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const unsigned int lvl);
+  virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
   virtual void reinit(/*const vpImage<unsigned char>& I*/);
 
