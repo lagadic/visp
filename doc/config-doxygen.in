@@ -2111,6 +2111,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PTHREAD \
                          VISP_HAVE_PTU46 \
                          VISP_HAVE_PYLON \
+                         VISP_HAVE_QBDEVICE \
                          VISP_HAVE_QT \
                          VISP_HAVE_REALSENSE \
                          VISP_HAVE_REALSENSE_VERSION=0x020000 \

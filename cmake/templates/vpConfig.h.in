@@ -374,13 +374,15 @@
 #  define VISP_HAVE_FRANKA_VERSION ${VISP_HAVE_FRANKA_VERSION}
 #endif
 
-
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER
 
 // Defined if Haption Virtuose SDK available.
 #cmakedefine VISP_HAVE_VIRTUOSE
+
+// Defined if qbdevice api from qb-robotics available.
+#cmakedefine VISP_HAVE_QBDEVICE
 
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT

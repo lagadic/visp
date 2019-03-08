@@ -608,6 +608,7 @@ VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_BLAS/LAPACK)
+VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF NOT WINRT AND NOT IOS)
 
 # Find IsNaN (should be after USE_CXX11)
 VP_CHECK_PACKAGE(IsNaN)
@@ -873,6 +874,7 @@ VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
 VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
+VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
 
 VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -1396,6 +1398,7 @@ status("    Use aria (Pioneer):"     USE_ARIA         THEN "yes" ELSE "no")
 status("    Use PTU46:"              USE_PTU46        THEN "yes" ELSE "no")
 status("    Use Biclops PT:"         USE_BICLOPS      THEN "yes" ELSE "no")
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
+status("    Use qbdevice (built-in):" WITH_QBDEVICE   THEN "yes (ver ${QBDEVICE_VERSION})" ELSE "no")
 status("")
 status("  GUI: ")
 status("    Use X11:"                USE_X11          THEN "yes" ELSE "no")
