@@ -41,6 +41,8 @@
   \brief File and directories basic tools.
 */
 #include <algorithm>
+#include <cctype>
+#include <functional>
 #include <cmath>
 #include <errno.h>
 #include <fcntl.h>
@@ -193,6 +195,18 @@ double swapDouble(const double d)
   return dat2.d;
 }
 #endif
+
+std::string &ltrim(std::string &s)
+{
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+  return s;
+}
+
+std::string &rtrim(std::string &s)
+{
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+  return s;
+}
 }
 
 /*!
@@ -2037,4 +2051,23 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const double double_valu
 #else
   file.write((char *)(&double_value), sizeof(double_value));
 #endif
+}
+
+bool vpIoTools::parseBoolean(std::string input)
+{
+  std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+  std::istringstream is(input);
+  bool b;
+  // Parse string to boolean either in the textual representation
+  // (True/False)  or in numeric representation (1/0)
+  is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
+  return b;
+}
+
+/*!
+   Remove whitespaces on both sides.
+ */
+std::string vpIoTools::trim(std::string s)
+{
+  return ltrim(rtrim(s));
 }

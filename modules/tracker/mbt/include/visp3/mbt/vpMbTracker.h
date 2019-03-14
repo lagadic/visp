@@ -45,13 +45,7 @@
 #ifndef vpMbTracker_hh
 #define vpMbTracker_hh
 
-#include <algorithm>
-#include <cctype>
-#include <fstream>
-#include <functional> // std::not1
-#include <locale>
 #include <map>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -898,32 +892,7 @@ protected:
 
   void removeComment(std::ifstream &fileId);
 
-  inline bool parseBoolean(std::string &input)
-  {
-    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-    std::istringstream is(input);
-    bool b;
-    // Parse string to boolean either in the textual representation
-    // (True/False)  or in numeric representation (1/0)
-    is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
-    return b;
-  }
-
   std::map<std::string, std::string> parseParameters(std::string &endLine);
-
-  inline std::string &ltrim(std::string &s) const
-  {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-    return s;
-  }
-
-  inline std::string &rtrim(std::string &s) const
-  {
-    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-    return s;
-  }
-
-  inline std::string &trim(std::string &s) const { return ltrim(rtrim(s)); }
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };

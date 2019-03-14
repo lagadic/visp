@@ -246,6 +246,9 @@ public:
   static void writeBinaryValueLE(std::ofstream &file, const float float_value);
   static void writeBinaryValueLE(std::ofstream &file, const double double_value);
 
+  static bool parseBoolean(std::string input);
+  static std::string trim(std::string s);
+
 protected:
   static std::string baseName;
   static std::string baseDir;

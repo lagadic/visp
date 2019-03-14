@@ -46,7 +46,6 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
-#include <map>
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDisplay.h>
@@ -189,7 +188,7 @@ vpMbTracker::~vpMbTracker() {
 }
 
 #ifdef VISP_HAVE_MODULE_GUI
-void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color, 
+void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
                             const std::string &initFile, const bool displayHelp, const vpHomogeneousMatrix &T)
 {
   vpHomogeneousMatrix last_cMo;
@@ -1461,10 +1460,10 @@ is not wrl or cao.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
 CAO model files which include other CAO model files.
-  \param T : optional transformation matrix (currently only for .cao) to transform
+  \param odTo : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose, const vpHomogeneousMatrix &T)
+void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose, const vpHomogeneousMatrix &odTo)
 {
   std::string::const_iterator it;
 
@@ -1480,7 +1479,7 @@ void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose, co
       nbPolygonPoints = 0;
       nbCylinders = 0;
       nbCircles = 0;
-      loadCAOModel(modelFile, vectorOfModelFilename, startIdFace, verbose, true, T);
+      loadCAOModel(modelFile, vectorOfModelFilename, startIdFace, verbose, true, odTo);
     } else if ((*(it - 1) == 'l' && *(it - 2) == 'r' && *(it - 3) == 'w' && *(it - 4) == '.') ||
                (*(it - 1) == 'L' && *(it - 2) == 'R' && *(it - 3) == 'W' && *(it - 4) == '.')) {
       loadVRMLModel(modelFile);
@@ -1596,8 +1595,7 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
 
     for (std::map<std::string, std::string>::const_iterator it = mapOfParameterNames.begin();
          it != mapOfParameterNames.end(); ++it) {
-      endLine = trim(endLine);
-      //          std::cout << "endLine=" << endLine << std::endl;
+      endLine = vpIoTools::trim(endLine);
       std::string param(it->first + "=");
 
       // Compare with a potential parameter
@@ -1685,12 +1683,12 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   \param parent : This parameter is
   set to true when parsing a parent CAO model file, and false when parsing an
   included CAO model file.
-  \param T : optional transformation matrix (currently only for .cao) to transform
+  \param odTo : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
                                int &startIdFace, const bool verbose, const bool parent,
-                               const vpHomogeneousMatrix &T)
+                               const vpHomogeneousMatrix &odTo)
 {
   std::ifstream fileId;
   fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
@@ -1735,48 +1733,106 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.unget();
     bool header = false;
     while (c == 'l' || c == 'L') {
-      header = true;
-
       getline(fileId, line);
+
       if (!line.compare(0, prefix.size(), prefix)) {
-
-        // Get the loaded model pathname
-        std::string headerPathRead = line.substr(6);
-        size_t firstIndex = headerPathRead.find_first_of("\")");
-        headerPathRead = headerPathRead.substr(0, firstIndex);
-
-        std::string headerPath = headerPathRead;
-        if (!vpIoTools::isAbsolutePathname(headerPathRead)) {
-          std::string parentDirectory = vpIoTools::getParent(modelFile);
-          headerPath = vpIoTools::createFilePath(parentDirectory, headerPathRead);
+        //remove "load("
+        std::string paramsStr = line.substr(5);
+        //get parameters inside load()
+        paramsStr = paramsStr.substr(0, paramsStr.find_first_of(")"));
+        //split by comma
+        std::vector<std::string> params = vpIoTools::splitChain(paramsStr, ",");
+        //remove whitespaces
+        for (size_t i = 0; i < params.size(); i++) {
+          params[i] = vpIoTools::trim(params[i]);
         }
 
-        // Normalize path
-        headerPath = vpIoTools::path(headerPath);
+        if (!params.empty()) {
+          // Get the loaded model pathname
+          std::string headerPathRead = params[0];
+          headerPathRead = headerPathRead.substr(1);
+          headerPathRead = headerPathRead.substr(0, headerPathRead.find_first_of("\""));
 
-        // Get real path
-        headerPath = vpIoTools::getAbsolutePathname(headerPath);
-
-        bool cyclic = false;
-        for (std::vector<std::string>::const_iterator it = vectorOfModelFilename.begin();
-             it != vectorOfModelFilename.end() && !cyclic; ++it) {
-          if (headerPath == *it) {
-            cyclic = true;
+          std::string headerPath = headerPathRead;
+          if (!vpIoTools::isAbsolutePathname(headerPathRead)) {
+            std::string parentDirectory = vpIoTools::getParent(modelFile);
+            headerPath = vpIoTools::createFilePath(parentDirectory, headerPathRead);
           }
-        }
 
-        if (!cyclic) {
-          if (vpIoTools::checkFilename(headerPath)) {
-            loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false, T);
+          // Normalize path
+          headerPath = vpIoTools::path(headerPath);
+
+          // Get real path
+          headerPath = vpIoTools::getAbsolutePathname(headerPath);
+
+          vpHomogeneousMatrix oTo_local;
+          vpTranslationVector t;
+          vpThetaUVector tu;
+          for (size_t i = 1; i < params.size(); i++) {
+            std::string param = params[i];
+            {
+              const std::string prefix = "t=[";
+              if (!param.compare(0, prefix.size(), prefix)) {
+                param = param.substr(prefix.size());
+                param = param.substr(0, param.find_first_of("]"));
+
+                std::vector<std::string> values = vpIoTools::splitChain(param, ";");
+                if (values.size() == 3) {
+                  t[0] = atof(values[0].c_str());
+                  t[1] = atof(values[1].c_str());
+                  t[2] = atof(values[2].c_str());
+                }
+              }
+            }
+            {
+              const std::string prefix = "tu=[";
+              if (!param.compare(0, prefix.size(), prefix)) {
+                param = param.substr(prefix.size());
+                param = param.substr(0, param.find_first_of("]"));
+
+                std::vector<std::string> values = vpIoTools::splitChain(param, ";");
+                if (values.size() == 3) {
+                  for (size_t j = 0; j < values.size(); j++) {
+                    std::string value = values[j];
+                    bool radian = true;
+                    size_t unitPos = value.find("deg");
+                    if (unitPos != std::string::npos) {
+                      value = value.substr(0, unitPos);
+                      radian = false;
+                    }
+
+                    unitPos = value.find("rad");
+                    if (unitPos != std::string::npos) {
+                      value = value.substr(0, unitPos);
+                    }
+                    tu[static_cast<unsigned int>(j)] = !radian ? vpMath::rad(atof(value.c_str())) : atof(value.c_str());
+                  }
+                }
+              }
+            }
+          }
+          oTo_local.buildFrom(t, tu);
+
+          bool cyclic = false;
+          for (std::vector<std::string>::const_iterator it = vectorOfModelFilename.begin();
+               it != vectorOfModelFilename.end() && !cyclic; ++it) {
+            if (headerPath == *it) {
+              cyclic = true;
+            }
+          }
+
+          if (!cyclic) {
+            if (vpIoTools::checkFilename(headerPath)) {
+              header = true;
+              loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false, odTo*oTo_local);
+            } else {
+              throw vpException(vpException::ioError, "file cannot be open");
+            }
           } else {
-            throw vpException(vpException::ioError, "file cannot be open");
+            std::cout << "WARNING Cyclic dependency detected with file " << headerPath << " declared in " << modelFile
+                      << std::endl;
           }
-        } else {
-          std::cout << "WARNING Cyclic dependency detected with file " << headerPath << " declared in " << modelFile
-                    << std::endl;
         }
-      } else {
-        header = false;
       }
 
       removeComment(fileId);
@@ -1790,7 +1846,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(256, '\n'); // skip the rest of the line
 
     nbPoints += caoNbrPoint;
-    if (verbose || vectorOfModelFilename.size() == 1) {
+    if (verbose || (parent && !header)) {
       std::cout << "> " << caoNbrPoint << " points" << std::endl;
     }
 
@@ -1821,7 +1877,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       fileId.ignore(256, '\n'); // skip the rest of the line
 
-      vpColVector pt_3d_tf = T*pt_3d;
+      vpColVector pt_3d_tf = odTo*pt_3d;
       caoPoints[k].setWorldCoordinates(pt_3d_tf[0], pt_3d_tf[1], pt_3d_tf[2]);
     }
 
@@ -1836,7 +1892,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbLines += caoNbrLine;
     unsigned int *caoLinePoints = NULL;
-    if (verbose || vectorOfModelFilename.size() == 1) {
+    if (verbose || (parent && !header)) {
       std::cout << "> " << caoNbrLine << " lines" << std::endl;
     }
 
@@ -1876,7 +1932,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         minLineLengthThresh = std::atof(mapOfParams["minLineLengthThreshold"].c_str());
       }
       if (mapOfParams.find("useLod") != mapOfParams.end()) {
-        useLod = parseBoolean(mapOfParams["useLod"]);
+        useLod = vpIoTools::parseBoolean(mapOfParams["useLod"]);
       }
 
       SegmentInfo segmentInfo;
@@ -1914,7 +1970,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(256, '\n'); // skip the rest of the line
 
     nbPolygonLines += caoNbrPolygonLine;
-    if (verbose || vectorOfModelFilename.size() == 1) {
+    if (verbose || (parent && !header)) {
       std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
     }
 
@@ -1965,7 +2021,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
       }
       if (mapOfParams.find("useLod") != mapOfParams.end()) {
-        useLod = parseBoolean(mapOfParams["useLod"]);
+        useLod = vpIoTools::parseBoolean(mapOfParams["useLod"]);
       }
 
       addPolygon(corners, idFace, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
@@ -1999,7 +2055,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(256, '\n'); // skip the rest of the line
 
     nbPolygonPoints += caoNbrPolygonPoint;
-    if (verbose || vectorOfModelFilename.size() == 1) {
+    if (verbose || (parent && !header)) {
       std::cout << "> " << caoNbrPolygonPoint << " polygon points" << std::endl;
     }
 
@@ -2041,7 +2097,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
       }
       if (mapOfParams.find("useLod") != mapOfParams.end()) {
-        useLod = parseBoolean(mapOfParams["useLod"]);
+        useLod = vpIoTools::parseBoolean(mapOfParams["useLod"]);
       }
 
       addPolygon(corners, idFace, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
@@ -2068,7 +2124,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId.ignore(256, '\n'); // skip the rest of the line
 
       nbCylinders += caoNbCylinder;
-      if (verbose || vectorOfModelFilename.size() == 1) {
+      if (verbose || (parent && !header)) {
         std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
       }
 
@@ -2102,7 +2158,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
           minLineLengthThreshold = std::atof(mapOfParams["minLineLengthThreshold"].c_str());
         }
         if (mapOfParams.find("useLod") != mapOfParams.end()) {
-          useLod = parseBoolean(mapOfParams["useLod"]);
+          useLod = vpIoTools::parseBoolean(mapOfParams["useLod"]);
         }
 
         int idRevolutionAxis = idFace;
@@ -2144,7 +2200,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId.ignore(256, '\n'); // skip the rest of the line
 
       nbCircles += caoNbCircle;
-      if (verbose || vectorOfModelFilename.size() == 1) {
+      if (verbose || (parent && !header)) {
         std::cout << "> " << caoNbCircle << " circles" << std::endl;
       }
 
@@ -2179,7 +2235,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
           minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
         }
         if (mapOfParams.find("useLod") != mapOfParams.end()) {
-          useLod = parseBoolean(mapOfParams["useLod"]);
+          useLod = vpIoTools::parseBoolean(mapOfParams["useLod"]);
         }
 
         addPolygon(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace, polygonName, useLod,
@@ -2202,7 +2258,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     delete[] caoPoints;
     delete[] caoLinePoints;
 
-    if (vectorOfModelFilename.size() > 1 && parent) {
+    if (header && parent) {
       if (verbose) {
         std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
         std::cout << "Total nb of points : " << nbPoints << std::endl;
@@ -2220,6 +2276,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         std::cout << "> " << nbCircles << " circles" << std::endl;
       }
     }
+
+    //Go up: remove current model
+    vectorOfModelFilename.pop_back();
   } catch (...) {
     std::cerr << "Cannot read line!" << std::endl;
     throw vpException(vpException::ioError, "cannot read line");
