@@ -342,6 +342,8 @@ protected:
   vpColVector m_weightedError_edge;
   //! Robust
   vpRobust m_robust_edge;
+  //! Display features
+  std::vector<std::vector<double> > m_featuresToBeDisplayedEdge;
 
 public:
   vpMbEdgeTracker();
@@ -350,14 +352,19 @@ public:
   /** @name Inherited functionalities from vpMbEdgeTracker */
   //@{
 
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
   void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
   void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
 
   /*!
     Get the moving edge parameters.
@@ -521,9 +528,10 @@ protected:
   virtual void computeVVSWeights();
   using vpMbTracker::computeVVSWeights;
 
-  void displayFeaturesOnImage(const vpImage<unsigned char> &I, const unsigned int lvl);
-  void displayFeaturesOnImage(const vpImage<vpRGBa> &I, const unsigned int lvl);
+  void displayFeaturesOnImage(const vpImage<unsigned char> &I);
+  void displayFeaturesOnImage(const vpImage<vpRGBa> &I);
   void downScale(const unsigned int _scale);
+  virtual std::vector<std::vector<double> > getFeaturesForDisplayEdge();
   virtual void init(const vpImage<unsigned char> &I);
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "");

@@ -273,21 +273,13 @@ void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomog
                                   const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
-  if ((isvisible && isTrackedCircle) || displayFullModel) {
-    // Perspective projection
-    circle->changeFrame(cMo);
+  std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
 
-    try {
-      circle->projection();
-    } catch (...) {
-      std::cout << "Cannot project the circle";
-    }
-
-    vpImagePoint center;
-    double mu20_p, mu11_p, mu02_p;
-    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
-    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
-  }
+  vpImagePoint center(params[0], params[1]);
+  double mu20_p = params[2];
+  double mu11_p = params[3];
+  double mu02_p = params[4];
+  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
 }
 
 /*!
@@ -305,6 +297,52 @@ void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
                                   const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
+  std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
+
+  vpImagePoint center(params[1], params[2]);
+  double mu20_p = params[3];
+  double mu11_p = params[4];
+  double mu02_p = params[5];
+  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
+}
+
+/*!
+  Return a list of features parameters for display.
+  Parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
+*/
+std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
+{
+  std::vector<std::vector<double> > features;
+
+  if (meEllipse != NULL) {
+    for (std::list<vpMeSite>::const_iterator it = meEllipse->list.begin(); it != meEllipse->list.end(); ++it) {
+      vpMeSite p_me = *it;
+      std::vector<double> params = {0, //ME
+                                    p_me.get_ifloat(),
+                                    p_me.get_jfloat(),
+                                    static_cast<double>(p_me.getState())};
+      features.push_back(params);
+    }
+  }
+
+  return features;
+}
+
+/*!
+  Return a list of ellipse parameters to display the primitive at a given pose and camera parameters.
+  Parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
+                  <mu20>, <mu11>, <mu02>
+
+  \param cMo : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousMatrix &cMo,
+                                                            const vpCameraParameters &camera,
+                                                            const bool displayFullModel)
+{
+  std::vector<double> params;
+
   if ((isvisible && isTrackedCircle) || displayFullModel) {
     // Perspective projection
     circle->changeFrame(cMo);
@@ -318,8 +356,15 @@ void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
     vpImagePoint center;
     double mu20_p, mu11_p, mu02_p;
     vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
-    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
+    params.push_back(1); //1 for ellipse parameters
+    params.push_back(center.get_i());
+    params.push_back(center.get_j());
+    params.push_back(mu20_p);
+    params.push_back(mu11_p);
+    params.push_back(mu02_p);
   }
+
+  return params;
 }
 
 /*!

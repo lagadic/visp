@@ -517,54 +517,14 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHom
                                     const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                     const bool displayFullModel)
 {
-  if ((isvisible && isTrackedCylinder) || displayFullModel) {
-    // Perspective projection
-    p1->changeFrame(cMo);
-    p2->changeFrame(cMo);
-    cercle1->changeFrame(cMo);
-    cercle2->changeFrame(cMo);
-    c->changeFrame(cMo);
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
+                                                                cMo, camera, displayFullModel);
 
-    p1->projection();
-    p2->projection();
-    try {
-      cercle1->projection();
-    } catch (...) {
-      std::cout << "Problem projection circle 1";
-    }
-    try {
-      cercle2->projection();
-    } catch (...) {
-      std::cout << "Problem projection circle 2";
-    }
-    c->projection();
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
 
-    double rho1, theta1;
-    double rho2, theta2;
-
-    // Meters to pixels conversion
-    vpMeterPixelConversion::convertLine(camera, c->getRho1(), c->getTheta1(), rho1, theta1);
-    vpMeterPixelConversion::convertLine(camera, c->getRho2(), c->getTheta2(), rho2, theta2);
-
-    // Determine intersections between circles and limbos
-    double i11, i12, i21, i22, j11, j12, j21, j22;
-
-    vpCircle::computeIntersectionPoint(*cercle1, cam, rho1, theta1, i11, j11);
-    vpCircle::computeIntersectionPoint(*cercle2, cam, rho1, theta1, i12, j12);
-
-    vpCircle::computeIntersectionPoint(*cercle1, cam, rho2, theta2, i21, j21);
-    vpCircle::computeIntersectionPoint(*cercle2, cam, rho2, theta2, i22, j22);
-
-    // Create the image points
-    vpImagePoint ip11, ip12, ip21, ip22;
-    ip11.set_ij(i11, j11);
-    ip12.set_ij(i12, j12);
-    ip21.set_ij(i21, j21);
-    ip22.set_ij(i22, j22);
-
-    // Display
-    vpDisplay::displayLine(I, ip11, ip12, col, thickness);
-    vpDisplay::displayLine(I, ip21, ip22, col, thickness);
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
   }
 }
 
@@ -582,6 +542,66 @@ void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneou
                                     const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                     const bool displayFullModel)
 {
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
+                                                                cMo, camera, displayFullModel);
+
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
+
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+  }
+}
+
+/*!
+  Return a list of features parameters for display.
+  Parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
+*/
+std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
+{
+  std::vector<std::vector<double> > features;
+
+  if (meline1 != NULL) {
+    for (std::list<vpMeSite>::const_iterator it = meline1->list.begin(); it != meline1->list.end(); ++it) {
+      vpMeSite p_me = *it;
+      std::vector<double> params = {0, //ME
+                                    p_me.get_ifloat(),
+                                    p_me.get_jfloat(),
+                                    static_cast<double>(p_me.getState())};
+      features.push_back(params);
+    }
+  }
+
+  if (meline2 != NULL) {
+    for (std::list<vpMeSite>::const_iterator it = meline2->list.begin(); it != meline2->list.end(); ++it) {
+      vpMeSite p_me = *it;
+      std::vector<double> params = {0, //ME
+                                    p_me.get_ifloat(),
+                                    p_me.get_jfloat(),
+                                    static_cast<double>(p_me.getState())};
+      features.push_back(params);
+    }
+  }
+
+  return features;
+}
+
+/*!
+  Return a list of line parameters to display the primitive at a given pose and camera parameters.
+  Parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
+                  <pt_end.i()>, <pt_end.j()>
+
+  \param cMo : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsigned int, unsigned int,
+                                                                            const vpHomogeneousMatrix &cMo,
+                                                                            const vpCameraParameters &camera,
+                                                                            const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
   if ((isvisible && isTrackedCylinder) || displayFullModel) {
     // Perspective projection
     p1->changeFrame(cMo);
@@ -627,10 +647,22 @@ void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneou
     ip21.set_ij(i21, j21);
     ip22.set_ij(i22, j22);
 
-    // Display
-    vpDisplay::displayLine(I, ip11, ip12, col, thickness);
-    vpDisplay::displayLine(I, ip21, ip22, col, thickness);
+    std::vector<double> params1 = {0,
+                                   ip11.get_i(),
+                                   ip11.get_j(),
+                                   ip12.get_i(),
+                                   ip12.get_j()};
+    models.push_back(params1);
+
+    std::vector<double> params2 = {0,
+                                   ip21.get_i(),
+                                   ip21.get_j(),
+                                   ip22.get_i(),
+                                   ip22.get_j()};
+    models.push_back(params1);
   }
+
+  return models;
 }
 
 /*!

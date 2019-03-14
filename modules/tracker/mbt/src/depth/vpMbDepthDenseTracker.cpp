@@ -53,7 +53,7 @@
 #endif
 
 vpMbDepthDenseTracker::vpMbDepthDenseTracker()
-  : m_depthDenseHiddenFacesDisplay(), m_depthDenseI_dummyVisibility(), m_depthDenseListOfActiveFaces(),
+  : m_depthDenseHiddenFacesDisplay(), m_depthDenseListOfActiveFaces(),
     m_denseDepthNbFeatures(0), m_depthDenseFaces(), m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
     m_error_depthDense(), m_L_depthDense(), m_robust_depthDense(), m_w_depthDense(), m_weightedError_depthDense()
 #if DEBUG_DISPLAY_DEPTH_DENSE
@@ -128,20 +128,16 @@ void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, const bool alreadyClo
 
 void vpMbDepthDenseTracker::computeVisibility(const unsigned int width, const unsigned int height)
 {
-  m_depthDenseI_dummyVisibility.resize(height, width);
-
   bool changed = false;
-  faces.setVisible(m_depthDenseI_dummyVisibility, cam, cMo, angleAppears, angleDisappears, changed);
+  faces.setVisible(width, height, cam, cMo, angleAppears, angleDisappears, changed);
 
   if (useScanLine) {
     //    if (clippingFlag <= 2) {
-    //      cam.computeFov(m_depthDenseI_dummyVisibility.getWidth(),
-    //      m_depthDenseI_dummyVisibility.getHeight());
+    //      cam.computeFov(width, height);
     //    }
 
     faces.computeClippedPolygons(cMo, cam);
-    faces.computeScanLineRender(cam, m_depthDenseI_dummyVisibility.getWidth(),
-                                m_depthDenseI_dummyVisibility.getHeight());
+    faces.computeScanLineRender(cam, width, height);
   }
 
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
@@ -291,25 +287,13 @@ void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHom
                                     const vpCameraParameters &cam_, const vpColor &col, const unsigned int thickness,
                                     const bool displayFullModel)
 {
-  vpCameraParameters c = cam_;
+  std::vector<std::vector<double> > models = vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, cam_, displayFullModel);
 
-  bool changed = false;
-  m_depthDenseHiddenFacesDisplay.setVisible(I, c, cMo_, angleAppears, angleDisappears, changed);
-
-  if (useScanLine) {
-    c.computeFov(I.getWidth(), I.getHeight());
-
-    m_depthDenseHiddenFacesDisplay.computeClippedPolygons(cMo_, c);
-    m_depthDenseHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
-  }
-
-  for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
-       it != m_depthDenseFaces.end(); ++it) {
-    vpMbtFaceDepthDense *face_normal = *it;
-    face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
-
-    if (displayFeatures) {
-      face_normal->displayFeature(I, cMo_, c, 0.05, thickness);
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
     }
   }
 }
@@ -318,29 +302,57 @@ void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneou
                                     const vpCameraParameters &cam_, const vpColor &col, const unsigned int thickness,
                                     const bool displayFullModel)
 {
+  std::vector<std::vector<double> > models = vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, cam_, displayFullModel);
+
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    }
+  }
+}
+
+/*!
+  Return a list of primitives parameters to display the model at a given pose and camera parameters.
+  Line parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
+                       <pt_end.i()>, <pt_end.j()>
+  Ellipse parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
+                          <mu20>, <mu11>, <mu02>
+
+  \param width : Image width.
+  \param height : Image height.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param cam_ : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<std::vector<double> > vpMbDepthDenseTracker::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                            const vpHomogeneousMatrix &cMo_,
+                                                                            const vpCameraParameters &cam_,
+                                                                            const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
   vpCameraParameters c = cam_;
 
   bool changed = false;
-  vpImage<unsigned char> I_dummy;
-  vpImageConvert::convert(I, I_dummy);
-  m_depthDenseHiddenFacesDisplay.setVisible(I_dummy, c, cMo_, angleAppears, angleDisappears, changed);
+  m_depthDenseHiddenFacesDisplay.setVisible(width, height, c, cMo_, angleAppears, angleDisappears, changed);
 
   if (useScanLine) {
-    c.computeFov(I.getWidth(), I.getHeight());
+    c.computeFov(width, height);
 
     m_depthDenseHiddenFacesDisplay.computeClippedPolygons(cMo_, c);
-    m_depthDenseHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
+    m_depthDenseHiddenFacesDisplay.computeScanLineRender(c, width, height);
   }
 
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
-    vpMbtFaceDepthDense *face_normal = *it;
-    face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
-
-    if (displayFeatures) {
-      face_normal->displayFeature(I, cMo_, c, 0.05, thickness);
-    }
+    vpMbtFaceDepthDense *face_dense = *it;
+    std::vector<std::vector<double> > modelLines = face_dense->getModelForDisplay(width, height, cMo_, cam_, displayFullModel);
+    models.insert(models.end(), modelLines.begin(), modelLines.end());
   }
+
+  return models;
 }
 
 void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
@@ -351,7 +363,7 @@ void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
 
   bool reInitialisation = false;
   if (!useOgre) {
-    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
   } else {
 #ifdef VISP_HAVE_OGRE
     if (!faces.isOgreInitialised()) {
@@ -364,9 +376,9 @@ void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
       ogreShowConfigDialog = false;
     }
 
-    faces.setVisibleOgre(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisibleOgre(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #else
-    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
   }
 

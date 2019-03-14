@@ -279,6 +279,8 @@ protected:
   vpColVector m_weightedError_klt;
   //! Robust
   vpRobust m_robust_klt;
+  //! Display features
+  std::vector<std::vector<double> > m_featuresToBeDisplayedKlt;
 
 public:
   vpMbKltTracker();
@@ -347,6 +349,11 @@ public:
   virtual inline vpColVector getError() const { return m_error_klt; }
 
   virtual inline vpColVector getRobustWeights() const { return m_w_klt; }
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
 
   virtual void loadConfigFile(const std::string &configFile);
 
@@ -486,6 +493,8 @@ protected:
   void computeVVS();
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
+
+  virtual std::vector<std::vector<double> > getFeaturesForDisplayKlt();
 
   virtual void init(const vpImage<unsigned char> &I);
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);

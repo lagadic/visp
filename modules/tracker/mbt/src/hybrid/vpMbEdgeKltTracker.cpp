@@ -1234,39 +1234,20 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                  const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
-           ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  std::vector<std::vector<double> > models = vpMbEdgeKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
 
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-           it != cylinders[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-           it != circles[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      break; // displaying model on one scale only
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
-  }
-
-  for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-    vpMbtDistanceKltPoints *kltpoly = *it;
-    if (displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
-      kltpoly->displayPrimitive(I);
-    }
-  }
-
-  for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-       ++it) {
-    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
-      kltPolyCylinder->displayPrimitive(I);
   }
 
 #ifdef VISP_HAVE_OGRE
@@ -1290,45 +1271,67 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                  const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
-           ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
 
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-           it != cylinders[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-           it != circles[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      break; // displaying model on one scale only
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
-  }
-
-  for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-    vpMbtDistanceKltPoints *kltpoly = *it;
-    if (displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
-      kltpoly->displayPrimitive(I);
-    }
-  }
-
-  for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-       ++it) {
-    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
-      kltPolyCylinder->displayPrimitive(I);
   }
 
 #ifdef VISP_HAVE_OGRE
   if (useOgre)
     faces.displayOgre(cMo_);
 #endif
+}
+
+std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                         const vpHomogeneousMatrix &cMo_,
+                                                                         const vpCameraParameters &camera,
+                                                                         const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
+  for (unsigned int i = 0; i < scales.size(); i += 1) {
+    if (scales[i]) {
+      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
+           ++it) {
+        std::vector<std::vector<double> > currentModel =
+          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+        models.insert(models.end(), currentModel.begin(), currentModel.end());
+      }
+
+      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
+           it != cylinders[scaleLevel].end(); ++it) {
+        std::vector<std::vector<double> > currentModel =
+          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+        models.insert(models.end(), currentModel.begin(), currentModel.end());
+      }
+
+      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
+           it != circles[scaleLevel].end(); ++it) {
+        std::vector<double> paramsCircle = (*it)->getModelForDisplay(cMo_, camera, displayFullModel);
+        models.push_back(paramsCircle);
+      }
+
+      break; // displaying model on one scale only
+    }
+  }
+
+#ifdef VISP_HAVE_OGRE
+  if (useOgre)
+    faces.displayOgre(cMo_);
+#endif
+
+  return models;
 }
 
 /*!

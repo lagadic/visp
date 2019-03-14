@@ -170,6 +170,13 @@ public:
   */
   inline double getMeanWeight() const { return wmean; }
 
+  std::vector<std::vector<double> > getFeaturesForDisplay();
+
+  std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                       const vpHomogeneousMatrix &cMo,
+                                                       const vpCameraParameters &cam,
+                                                       const bool displayFullModel = false);
+
   /*!
     Get the name of the line.
 

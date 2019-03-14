@@ -64,6 +64,11 @@ public:
 
   virtual inline vpColVector getError() const { return m_error_depthNormal; }
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
+
   virtual inline vpColVector getRobustWeights() const { return m_w_depthNormal; }
 
   virtual void init(const vpImage<unsigned char> &I);
@@ -121,8 +126,6 @@ protected:
   vpMbtFaceDepthNormal::vpFeatureEstimationType m_depthNormalFeatureEstimationMethod;
   //! Set of faces describing the object used only for display with scan line.
   vpMbHiddenFaces<vpMbtPolygon> m_depthNormalHiddenFacesDisplay;
-  //! Dummy image used to compute the visibility
-  vpImage<unsigned char> m_depthNormalI_dummyVisibility;
   //! List of current active (visible and with features extracted) faces
   std::vector<vpMbtFaceDepthNormal *> m_depthNormalListOfActiveFaces;
   //! List of desired features
@@ -143,6 +146,8 @@ protected:
   bool m_depthNormalUseRobust;
   //! (s - s*)
   vpColVector m_error_depthNormal;
+  //! Display features
+  std::vector<std::vector<double> > m_featuresToBeDisplayedDepthNormal;
   //! Interaction matrix
   vpMatrix m_L_depthNormal;
   //! Robust
@@ -163,6 +168,8 @@ protected:
   void computeVVS();
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
+
+  virtual std::vector<std::vector<double> > getFeaturesForDisplayDepthNormal();
 
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "");

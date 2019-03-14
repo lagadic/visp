@@ -681,6 +681,11 @@ public:
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false) = 0;
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false)=0;
+
   /*!
     Initialise the tracking.
 
@@ -888,7 +893,7 @@ protected:
 
   void projectionErrorInitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
   void projectionErrorResetMovingEdges();
-  void projectionErrorVisibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo);
+  void projectionErrorVisibleFace(unsigned int width, unsigned int height, const vpHomogeneousMatrix &_cMo);
 
   void removeComment(std::ifstream &fileId);
 

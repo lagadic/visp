@@ -1725,7 +1725,6 @@ void vpMbKltMultiTracker::preTracking(std::map<std::string, const vpImage<unsign
 
 void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages)
 {
-
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
        it != m_mapOfKltTrackers.end(); ++it) {
     vpMbKltTracker *klt = it->second;
@@ -1740,6 +1739,10 @@ void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsig
       if (it->first == m_referenceCameraName) {
         reinit(/*mapOfImages[it->first]*/);
       }
+    }
+
+    if (displayFeatures) {
+      klt->m_featuresToBeDisplayedKlt = klt->getFeaturesForDisplayKlt();
     }
   }
 }

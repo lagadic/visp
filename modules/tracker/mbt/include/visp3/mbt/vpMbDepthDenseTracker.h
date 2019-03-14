@@ -59,6 +59,11 @@ public:
 
   virtual inline vpColVector getError() const { return m_error_depthDense; }
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
+
   virtual inline vpColVector getRobustWeights() const { return m_w_depthDense; }
 
   virtual void init(const vpImage<unsigned char> &I);
@@ -116,8 +121,6 @@ public:
 protected:
   //! Set of faces describing the object used only for display with scan line.
   vpMbHiddenFaces<vpMbtPolygon> m_depthDenseHiddenFacesDisplay;
-  //! Dummy image used to compute the visibility
-  vpImage<unsigned char> m_depthDenseI_dummyVisibility;
   //! List of current active (visible and features extracted) faces
   std::vector<vpMbtFaceDepthDense *> m_depthDenseListOfActiveFaces;
   //! Nb features

@@ -3074,7 +3074,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
         if (displayFeatures) {
           for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
                it != m_mapOfEdgeTrackers.end(); ++it) {
-            it->second->displayFeaturesOnImage(*mapOfImages[it->first], lvl);
+            it->second->m_featuresToBeDisplayedEdge = it->second->getFeaturesForDisplayEdge();
           }
         }
 

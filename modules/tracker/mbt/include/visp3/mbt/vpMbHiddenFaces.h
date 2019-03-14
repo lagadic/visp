@@ -88,7 +88,7 @@ private:
 
   unsigned int setVisiblePrivate(const vpHomogeneousMatrix &cMo, const double &angleAppears,
                                  const double &angleDisappears, bool &changed, bool useOgre = false,
-                                 bool not_used = false, const vpImage<unsigned char> &I = vpImage<unsigned char>(),
+                                 bool not_used = false, unsigned int width=0, unsigned int height=0,
                                  const vpCameraParameters &cam = vpCameraParameters());
 
 public:
@@ -101,7 +101,7 @@ public:
   void addPolygon(PolygonType *p);
 
   bool computeVisibility(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears,
-                         bool &changed, bool useOgre, bool not_used, const vpImage<unsigned char> &I,
+                         bool &changed, bool useOgre, bool not_used, unsigned int width, unsigned int height,
                          const vpCameraParameters &cam, const vpTranslationVector &cameraPos, unsigned int index);
 
   void computeClippedPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
@@ -254,16 +254,16 @@ public:
   inline void setOgreShowConfigDialog(const bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
 #endif
 
-  unsigned int setVisible(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+  unsigned int setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
                           const vpHomogeneousMatrix &cMo, const double &angle, bool &changed);
-  unsigned int setVisible(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+  unsigned int setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
                           const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears,
                           bool &changed);
   unsigned int setVisible(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears,
                           bool &changed);
 
 #ifdef VISP_HAVE_OGRE
-  unsigned int setVisibleOgre(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+  unsigned int setVisibleOgre(unsigned int width, unsigned int height, const vpCameraParameters &cam,
                               const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears,
                               bool &changed);
   unsigned int setVisibleOgre(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears,
@@ -522,7 +522,7 @@ void vpMbHiddenFaces<PolygonType>::computeScanLineQuery(const vpPoint &a, const 
 template <class PolygonType>
 unsigned int vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &cMo, const double &angleAppears,
                                                              const double &angleDisappears, bool &changed, bool useOgre,
-                                                             bool not_used, const vpImage<unsigned char> &I,
+                                                             bool not_used, unsigned int width, unsigned int height,
                                                              const vpCameraParameters &cam)
 {
   nbVisiblePolygon = 0;
@@ -541,7 +541,7 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneous
 
   for (unsigned int i = 0; i < Lpol.size(); i++) {
     // std::cout << "Calling poly: " << i << std::endl;
-    if (computeVisibility(cMo, angleAppears, angleDisappears, changed, useOgre, not_used, I, cam, cameraPos, i))
+    if (computeVisibility(cMo, angleAppears, angleDisappears, changed, useOgre, not_used, width, height, cam, cameraPos, i))
       nbVisiblePolygon++;
   }
   return nbVisiblePolygon;
@@ -568,7 +568,7 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneous
 template <class PolygonType>
 bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo, const double &angleAppears,
                                                      const double &angleDisappears, bool &changed, bool useOgre,
-                                                     bool not_used, const vpImage<unsigned char> &I,
+                                                     bool not_used, unsigned int width, unsigned int height,
                                                      const vpCameraParameters &cam,
                                                      const vpTranslationVector &cameraPos, unsigned int index)
 {
@@ -591,15 +591,15 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
       if (!testDisappear) {
         if (useOgre)
 #ifdef VISP_HAVE_OGRE
-          testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, I)) || !isVisibleOgre(cameraPos, i));
+          testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, width, height)) || !isVisibleOgre(cameraPos, i));
 #else
         {
           (void)cameraPos; // Avoid warning
-          testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, I));
+          testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, width, height));
         }
 #endif
         else
-          testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, I));
+          testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, width, height));
       }
 
       // test if the face is still visible
@@ -621,12 +621,12 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
       if (testAppear) {
         if (useOgre)
 #ifdef VISP_HAVE_OGRE
-          testAppear = ((Lpol[i]->isVisible(cMo, angleAppears, true, cam, I)) && isVisibleOgre(cameraPos, i));
+          testAppear = ((Lpol[i]->isVisible(cMo, angleAppears, true, cam, width, height)) && isVisibleOgre(cameraPos, i));
 #else
-          testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, I));
+          testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, width, height));
 #endif
         else
-          testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, I));
+          testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, width, height));
       }
 
       if (testAppear) {
@@ -657,11 +657,11 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
   \return Return the number of visible polygons
 */
 template <class PolygonType>
-unsigned int vpMbHiddenFaces<PolygonType>::setVisible(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
                                                       const vpHomogeneousMatrix &cMo, const double &angle,
                                                       bool &changed)
 {
-  return setVisible(I, cam, cMo, angle, angle, changed);
+  return setVisible(width, height, cam, cMo, angle, angle, changed);
 }
 
 /*!
@@ -677,11 +677,11 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisible(const vpImage<unsigned cha
   \return Return the number of visible polygons
 */
 template <class PolygonType>
-unsigned int vpMbHiddenFaces<PolygonType>::setVisible(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
                                                       const vpHomogeneousMatrix &cMo, const double &angleAppears,
                                                       const double &angleDisappears, bool &changed)
 {
-  return setVisiblePrivate(cMo, angleAppears, angleDisappears, changed, false, true, I, cam);
+  return setVisiblePrivate(cMo, angleAppears, angleDisappears, changed, false, true, width, height, cam);
 }
 
 /*!
@@ -766,12 +766,12 @@ template <class PolygonType> void vpMbHiddenFaces<PolygonType>::displayOgre(cons
   \return Return the number of visible polygons
 */
 template <class PolygonType>
-unsigned int vpMbHiddenFaces<PolygonType>::setVisibleOgre(const vpImage<unsigned char> &I,
+unsigned int vpMbHiddenFaces<PolygonType>::setVisibleOgre(unsigned int width, unsigned int height,
                                                           const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo,
                                                           const double &angleAppears, const double &angleDisappears,
                                                           bool &changed)
 {
-  return setVisiblePrivate(cMo, angleAppears, angleDisappears, changed, true, true, I, cam);
+  return setVisiblePrivate(cMo, angleAppears, angleDisappears, changed, true, true, width, height, cam);
 }
 
 /*!

@@ -144,6 +144,9 @@ public:
   virtual std::list<vpMbtDistanceKltPoints *> &getFeaturesKlt();
 #endif
 
+  virtual std::vector<std::vector<double> > getFeaturesForDisplay();
+  virtual void getFeaturesForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfFeatures);
+
   virtual double getGoodMovingEdgesRatioThreshold() const;
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
@@ -173,6 +176,16 @@ public:
   virtual void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
   virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
                         const unsigned int level = 0) const;
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
+  virtual void getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
+                                  unsigned int width, unsigned int height,
+                                  const vpHomogeneousMatrix &cMo,
+                                  const vpCameraParameters &cam,
+                                  const bool displayFullModel=false);
 
   virtual vpMe getMovingEdge() const;
   virtual void getMovingEdge(vpMe &me1, vpMe &me2) const;
@@ -503,6 +516,13 @@ private:
                          const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
     virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                          const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+
+    virtual std::vector<std::vector<double> > getFeaturesForDisplay();
+
+    virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                                 const vpHomogeneousMatrix &cMo,
+                                                                 const vpCameraParameters &cam,
+                                                                 const bool displayFullModel=false);
 
     virtual void init(const vpImage<unsigned char> &I);
 

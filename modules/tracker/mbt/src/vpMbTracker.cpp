@@ -3544,7 +3544,7 @@ double vpMbTracker::computeProjectionErrorImpl(const vpImage<unsigned char> &I, 
   if (clippingFlag > 2)
     m_projectionErrorCam.computeFov(I.getWidth(), I.getHeight());
 
-  projectionErrorVisibleFace(I, _cMo);
+  projectionErrorVisibleFace(I.getWidth(), I.getHeight(), _cMo);
 
   projectionErrorResetMovingEdges();
 
@@ -3620,17 +3620,17 @@ double vpMbTracker::computeProjectionErrorImpl(const vpImage<unsigned char> &I, 
   return totalProjectionError;
 }
 
-void vpMbTracker::projectionErrorVisibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo)
+void vpMbTracker::projectionErrorVisibleFace(unsigned int width, unsigned int height, const vpHomogeneousMatrix &_cMo)
 {
   bool changed = false;
 
   if (!useOgre) {
-    m_projectionErrorFaces.setVisible(_I, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
+    m_projectionErrorFaces.setVisible(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
   } else {
 #ifdef VISP_HAVE_OGRE
-     m_projectionErrorFaces.setVisibleOgre(_I, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
+     m_projectionErrorFaces.setVisibleOgre(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
 #else
-    m_projectionErrorFaces.setVisible(_I, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
+    m_projectionErrorFaces.setVisible(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
 #endif
   }
 }
