@@ -49,6 +49,7 @@
 
 int main()
 {
+#ifdef VISP_HAVE_QBDEVICE
   std::cout << "Test qbSoftHand device" << std::endl;
   try {
     vpQbSoftHand qbsofthand;
@@ -100,7 +101,9 @@ int main()
   catch(const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
   }
-
+#else
+  std::cout << "ViSP is not build with qbdevice 3rd party" << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
 
