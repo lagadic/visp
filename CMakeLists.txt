@@ -501,7 +501,7 @@ VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "
 VP_OPTION(USE_VIRTUOSE    Virtuose    ""    "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FRANKA      Franka      QUIET "Include libfranka SDK support for Franka Emika robots" "" ON IF NOT WINRT AND NOT IOS)
 # Note: libfranka needs c++14 option to build, but to use the library c++11 is enough.
-# That's why, setting USE_CXX11=ON (which is the defqult) allows to use libfranka.
+# That's why, setting USE_CXX11=ON (which is the default) allows to use libfranka.
 VP_OPTION(USE_DC1394      DC1394      ""    "Include dc1394 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_V4L2        V4L2        ""    "Include v4l2 support"             "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  ""    "Include FlyCapture SDK support for PointGrey cameras" "" ON IF NOT WINRT AND NOT IOS)
@@ -536,7 +536,7 @@ VP_OPTION(USE_LIBFREENECT LIBFREENECT ""    "Include libfreenect support"      "
 VP_OPTION(USE_LIBUSB_1    LIBUSB_1    ""    "Include libusb-1 support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_REALSENSE   RealSense   ""    "Include RealSense SDK support"    "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_REALSENSE2  RealSense2  ""    "Include RealSense2 SDK support"   "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_CXX11       CXX11     ""    "Enable c++11 support"            "" ON)
+VP_OPTION(USE_CXX11       CXX11       ""    "Enable c++11 support"             "" ON)
 # if C++11 option is OFF, force 3rd parties that required cxx11 to OFF
 if(NOT USE_CXX11 AND CXX11_FOUND)
   if(USE_REALSENSE)
@@ -608,7 +608,7 @@ VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_BLAS/LAPACK)
-VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF USE_CXX11 AND (NOT WINRT) AND (NOT IOS))
 
 # Find IsNaN (should be after USE_CXX11)
 VP_CHECK_PACKAGE(IsNaN)
