@@ -1037,7 +1037,7 @@ void vpMbEdgeTracker::track(const vpImage<vpRGBa> &I)
   track(&m_I, &I);
 }
 
-void vpMbEdgeTracker::track(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color)
+void vpMbEdgeTracker::track(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const)
 {
   initPyramid(*I, Ipyramid);
 
