@@ -692,7 +692,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
   for (size_t i = 0; i < meline.size(); i++) {
     vpMbtMeLine *line = meline[i];
     if (line != NULL) {
-      for (std::list<vpMeSite>::const_iterator it = line->list.begin(); it != line->list.end(); ++it) {
+      for (std::list<vpMeSite>::const_iterator it = line->getMeList().begin(); it != line->getMeList().end(); ++it) {
         vpMeSite p_me = *it;
         std::vector<double> params = {0, //ME
                                       p_me.get_ifloat(),

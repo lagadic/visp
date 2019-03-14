@@ -562,7 +562,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
   std::vector<std::vector<double> > features;
 
   if (meline1 != NULL) {
-    for (std::list<vpMeSite>::const_iterator it = meline1->list.begin(); it != meline1->list.end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end(); ++it) {
       vpMeSite p_me = *it;
       std::vector<double> params = {0, //ME
                                     p_me.get_ifloat(),
@@ -573,7 +573,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
   }
 
   if (meline2 != NULL) {
-    for (std::list<vpMeSite>::const_iterator it = meline2->list.begin(); it != meline2->list.end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end(); ++it) {
       vpMeSite p_me = *it;
       std::vector<double> params = {0, //ME
                                     p_me.get_ifloat(),

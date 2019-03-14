@@ -315,7 +315,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
   std::vector<std::vector<double> > features;
 
   if (meEllipse != NULL) {
-    for (std::list<vpMeSite>::const_iterator it = meEllipse->list.begin(); it != meEllipse->list.end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end(); ++it) {
       vpMeSite p_me = *it;
       std::vector<double> params = {0, //ME
                                     p_me.get_ifloat(),
