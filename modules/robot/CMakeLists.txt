@@ -145,7 +145,12 @@ if(USE_COIN3D)
   list(APPEND opt_libs ${COIN3D_LIBRARIES})
 endif()
 
-vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor)
+if(WITH_QBDEVICE)
+  # qbdevice is private
+  include_directories(${QBDEVICE_INCLUDE_DIRS})
+endif()
+
+vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${QBDEVICE_LIBRARIES})
 vp_glob_module_sources()
 
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpKeyword.cpp -Wno-sign-conversion)
@@ -195,7 +200,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH virtuose servo-franka
+  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose
   CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp )
 
 if(USE_VIRTUOSE)
