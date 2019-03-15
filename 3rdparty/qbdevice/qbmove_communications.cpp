@@ -501,7 +501,7 @@ int RS485read(comm_settings *comm_settings_t, int id, char *package)
 
     ioctl(comm_settings_t->file_handle, FIONREAD, &n_bytes);
 
-    while((n_bytes < package_size) && ( timevaldiff(&start, &now) < READ_TIMEOUT)) {
+    while((n_bytes < (int)package_size) && ( timevaldiff(&start, &now) < READ_TIMEOUT)) {
         gettimeofday(&now, NULL);
         ioctl(comm_settings_t->file_handle, FIONREAD, &n_bytes);
     }
