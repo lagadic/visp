@@ -694,10 +694,18 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
     if (line != NULL) {
       for (std::list<vpMeSite>::const_iterator it = line->getMeList().begin(); it != line->getMeList().end(); ++it) {
         vpMeSite p_me = *it;
+#ifdef VISP_HAVE_CXX11
         std::vector<double> params = {0, //ME
                                       p_me.get_ifloat(),
                                       p_me.get_jfloat(),
                                       static_cast<double>(p_me.getState())};
+#else
+        std::vector<double> params;
+        params.push_back(0); // ME
+        params.push_back(p_me.get_ifloat());
+        params.push_back(p_me.get_jfloat());
+        params.push_back(static_cast<double>(p_me.getState()));
+#endif
         features.push_back(params);
       }
     }
@@ -757,11 +765,20 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
+#ifdef VISP_HAVE_CXX11
         std::vector<double> params = {0, //0 for line parameters
                                       ip1.get_i(),
                                       ip1.get_j(),
                                       ip2.get_i(),
                                       ip2.get_j()};
+#else   
+        std::vector<double> params;
+        params.push_back(0); //0 for line parameters
+        params.push_back(ip1.get_i());
+        params.push_back(ip1.get_j());
+        params.push_back(ip2.get_i());
+        params.push_back(ip2.get_j());
+#endif
         models.push_back(params);
       }
     }

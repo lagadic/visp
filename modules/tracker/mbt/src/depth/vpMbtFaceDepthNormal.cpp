@@ -1514,11 +1514,20 @@ std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(co
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
+#ifdef VISP_HAVE_CXX11
       std::vector<double> params = {2, //desired normal
                                     im_centroid.get_i(),
                                     im_centroid.get_j(),
                                     im_extremity.get_i(),
                                     im_extremity.get_j()};
+#else   
+      std::vector<double> params;
+      params.push_back(2); //desired normal
+      params.push_back(im_centroid.get_i());
+      params.push_back(im_centroid.get_j());
+      params.push_back(im_extremity.get_i());
+      params.push_back(im_extremity.get_j());
+#endif
       features.push_back(params);
     }
 
@@ -1545,11 +1554,20 @@ std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(co
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
+#ifdef VISP_HAVE_CXX11
       std::vector<double> params = {3, //normal at current pose
                                     im_centroid.get_i(),
                                     im_centroid.get_j(),
                                     im_extremity.get_i(),
                                     im_extremity.get_j()};
+#else   
+      std::vector<double> params;
+      params.push_back(3); //normal at current pose
+      params.push_back(im_centroid.get_i());
+      params.push_back(im_centroid.get_j());
+      params.push_back(im_extremity.get_i());
+      params.push_back(im_extremity.get_j());
+#endif
       features.push_back(params);
     }
   }

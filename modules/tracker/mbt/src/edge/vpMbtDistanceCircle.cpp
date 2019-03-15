@@ -317,10 +317,18 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
   if (meEllipse != NULL) {
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end(); ++it) {
       vpMeSite p_me = *it;
+#ifdef VISP_HAVE_CXX11
       std::vector<double> params = {0, //ME
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),
                                     static_cast<double>(p_me.getState())};
+#else   
+      std::vector<double> params;
+      params.push_back(0); //ME
+      params.push_back(p_me.get_ifloat());
+      params.push_back(p_me.get_jfloat());
+      params.push_back(static_cast<double>(p_me.getState()));
+#endif
       features.push_back(params);
     }
   }
