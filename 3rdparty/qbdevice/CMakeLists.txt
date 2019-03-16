@@ -18,6 +18,10 @@ if(UNIX)
   endif()
 endif()
 
+if(USE_CXX11 AND CXX11_CXX_FLAGS)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_CXX_FLAGS}")
+endif()
+
 if(ENABLE_SOLUTION_FOLDERS)
   set_target_properties(${QBDEVICE_LIBRARY} PROPERTIES FOLDER "3rdparty")
 endif()
