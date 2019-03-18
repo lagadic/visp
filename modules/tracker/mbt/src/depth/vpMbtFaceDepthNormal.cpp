@@ -1482,8 +1482,8 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
 
 /*!
   Return a list of features parameters for display.
-  Parameters are: <feature id (here 2 for depth normal)>, <centroid.i()>, <centroid.j()>,
-                  <extremity.i()>, extremity.j()
+  - Parameters are: `<feature id (here 2 for depth normal)>`, `<centroid.i()>`, `<centroid.j()>`,
+  `<extremity.i()>`, `extremity.j()`
 */
 std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo,
                                                                               const vpCameraParameters &cam,
@@ -1577,8 +1577,8 @@ std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(co
 
 /*!
   Return a list of line parameters to display the primitive at a given pose and camera parameters.
-  Parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
-                  <pt_end.i()>, <pt_end.j()>
+  - Parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`
 
   \param width : Image width.
   \param height : Image height.

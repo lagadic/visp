@@ -308,7 +308,7 @@ void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
 
 /*!
   Return a list of features parameters for display.
-  Parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
+  - Parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>`
 */
 std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
 {
@@ -338,8 +338,8 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
 
 /*!
   Return a list of ellipse parameters to display the primitive at a given pose and camera parameters.
-  Parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
-                  <mu20>, <mu11>, <mu02>
+  - Parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
+  `<mu20>`, `<mu11>`, `<mu02>`
 
   \param cMo : Pose used to project the 3D model into the image.
   \param camera : The camera parameters.

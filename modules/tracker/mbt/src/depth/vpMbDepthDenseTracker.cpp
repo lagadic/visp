@@ -315,10 +315,10 @@ void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneou
 
 /*!
   Return a list of primitives parameters to display the model at a given pose and camera parameters.
-  Line parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
-                       <pt_end.i()>, <pt_end.j()>
-  Ellipse parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
-                          <mu20>, <mu11>, <mu02>
+  - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`
+  - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
+  `<mu20>`, `<mu11>`, `<mu02>`
 
   \param width : Image width.
   \param height : Image height.
