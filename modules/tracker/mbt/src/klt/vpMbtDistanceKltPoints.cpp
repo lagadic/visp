@@ -633,12 +633,22 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getFeaturesForDisplay(
     iP2.set_i(vpMath::round(iP.get_i() + 7));
     iP2.set_j(vpMath::round(iP.get_j() + 7));
 
+#ifdef VISP_HAVE_CXX11
     std::vector<double> params = {1, //KLT
                                   iP.get_i(),
                                   iP.get_j(),
                                   iP2.get_i(),
                                   iP2.get_j(),
                                   static_cast<double>(id)};
+#else
+    std::vector<double> params;
+    params.push_back(1); //KLT
+    params.push_back(iP.get_i());
+    params.push_back(iP.get_j());
+    params.push_back(iP2.get_i());
+    params.push_back(iP2.get_j());
+    params.push_back(static_cast<double>(id));
+#endif
     features.push_back(params);
   }
 
@@ -684,11 +694,20 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getModelForDisplay(con
           vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
           vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
+#ifdef VISP_HAVE_CXX11
           std::vector<double> params = {0, //0 for line parameters
                                         ip1.get_i(),
                                         ip1.get_j(),
                                         ip2.get_i(),
                                         ip2.get_j()};
+#else    
+          std::vector<double> params;
+          params.push_back(0); //0 for line parameters
+          params.push_back(ip1.get_i());
+          params.push_back(ip1.get_j());
+          params.push_back(ip2.get_i());
+          params.push_back(ip2.get_j());
+#endif
           models.push_back(params);
         }
       }

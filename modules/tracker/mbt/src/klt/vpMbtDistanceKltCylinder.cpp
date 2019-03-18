@@ -619,12 +619,22 @@ std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getFeaturesForDispla
     iP2.set_i(vpMath::round(iP.get_i() + 7));
     iP2.set_j(vpMath::round(iP.get_j() + 7));
 
+#ifdef VISP_HAVE_CXX11
     std::vector<double> params = {1, //KLT
                                   iP.get_i(),
                                   iP.get_j(),
                                   iP2.get_i(),
                                   iP2.get_j(),
                                   static_cast<double>(id)};
+#else
+    std::vector<double> params;
+    params.push_back(1); //KLT
+    params.push_back(iP.get_i());
+    params.push_back(iP.get_j());
+    params.push_back(iP2.get_i());
+    params.push_back(iP2.get_j());
+    params.push_back(static_cast<double>(id));
+#endif
     features.push_back(params);
   }
 
@@ -687,6 +697,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getModelForDisplay(c
     ip21.set_ij(i21, j21);
     ip22.set_ij(i22, j22);
 
+#ifdef VISP_HAVE_CXX11
     std::vector<double> params1 = {0, //line parameters
                                    ip11.get_i(),
                                    ip11.get_j(),
@@ -699,7 +710,22 @@ std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getModelForDisplay(c
                                    ip21.get_j(),
                                    ip22.get_i(),
                                    ip22.get_j()};
+#else
+    std::vector<double> params1, params2;
+    params1.push_back(0); //line parameters
+    params1.push_back(ip11.get_i());
+    params1.push_back(ip11.get_j());
+    params1.push_back(ip12.get_i());
+    params1.push_back(ip12.get_j());
+
+    params2.push_back(0); //line parameters
+    params2.push_back(ip21.get_i());
+    params2.push_back(ip21.get_j());
+    params2.push_back(ip22.get_i());
+    params2.push_back(ip22.get_j());
+#endif
     models.push_back(params1);
+    models.push_back(params2);
   }
 
   return models;
