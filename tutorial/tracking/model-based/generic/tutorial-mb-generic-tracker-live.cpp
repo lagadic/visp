@@ -30,7 +30,8 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) &&                                 \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
+    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100) || \
+    defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
 
   try {
     std::string opt_modelname = "teabox";
@@ -118,7 +119,11 @@ int main(int argc, char **argv)
     std::cout << "  Learning data: " << opt_learning_data << std::endl;
 
     //! [Image]
-    vpImage<unsigned char> I;
+#if VISP_VERSION_INT > VP_VERSION_INT(3, 2, 0)
+    vpImage<vpRGBa> I;         // Since ViSP 3.2.0 we support model-based tracking on color images
+#else
+    vpImage<unsigned char> I;  // Tracking on gray level images
+#endif
     //! [Image]
 
     //! [Set camera parameters]
@@ -347,10 +352,10 @@ int main(int argc, char **argv)
     int learn_id = 1;
     unsigned int learn_cpt = 0;
     bool quit = false;
+    bool tracking_failed = false;
 
     while (!quit) {
       double t_begin = vpTime::measureTimeMs();
-      bool tracking_failed = false;
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
@@ -361,6 +366,7 @@ int main(int argc, char **argv)
 
       // Run auto initialization from learned data
       if (run_auto_init) {
+        tracking_failed = false;
         if (keypoint.matchPoint(I, cam, cMo)) {
           std::cout << "Auto init succeed" << std::endl;
           tracker.initFromPose(I, cMo);
@@ -368,6 +374,11 @@ int main(int argc, char **argv)
           vpDisplay::flush(I);
           continue;
         }
+      }
+      else if (tracking_failed) {
+        // Manual init
+        tracking_failed = false;
+        tracker.initClick(I, objectname + ".init", true);
       }
 
       // Run the tracker
