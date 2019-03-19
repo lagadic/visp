@@ -1,0 +1,31 @@
+V1
+#################################################################
+# CAD model in cao format of a LEGO Element ID: 4211385 2x4 brick
+# 2x4 brick size is 0.032m/0.016m/0.0096m
+#################################################################
+# 3D points
+8                    # Number of points (here 8 brick corners)
+0.000  0.000  0.0000 # Point 0: front face bottom/left
+0.032  0.000  0.0000 # Point 1: front face bottom/right
+0.032  0.000  0.0096 # Point 2: front face top/right
+0.000  0.000  0.0096 # Point 3: front face top/left
+0.000  0.016  0.0000 # Point 4: rear face bottom/left
+0.032  0.016  0.0000 # Point 5: rear face bottom/right
+0.032  0.016  0.0096 # Point 6: rear face top/right
+0.000  0.016  0.0096 # Point 7: rear face top/left
+# 3D lines
+0                    # No 3D lines
+# 3D faces from lines
+0                    # No 3D faces from lines
+# 3D faces from points
+6                    # 6 faces to describe the brick
+4 0 1 2 3            # Face 0: front face
+4 3 2 6 7            # Face 1: top face
+4 7 6 5 4            # Face 2: rear face
+4 0 4 5 1            # Face 3: bottom face
+4 0 3 7 4            # Face 4: left face
+4 1 5 6 2            # Face 5: right face
+# 3D cylinders
+0
+# 3D circle
+0                    # No 3D circle
