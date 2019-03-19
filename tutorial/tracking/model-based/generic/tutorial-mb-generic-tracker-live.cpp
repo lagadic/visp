@@ -34,10 +34,10 @@ int main(int argc, char **argv)
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2) )
 
   try {
-    std::string opt_modelname = "teabox";
+    std::string opt_modelname = "model/teabox/teabox.cao";
     int opt_tracker = 2;
     int opt_device = 0;             // For OpenCV and V4l2 grabber to set the camera device
-    double opt_proj_error_threshold = 20.;
+    double opt_proj_error_threshold = 30.;
     bool opt_use_ogre = false;
     bool opt_use_scanline = false;
     bool opt_display_projection_error = false;
@@ -80,11 +80,11 @@ int main(int argc, char **argv)
         std::cout << "\nUsage: " << argv[0]
                   << " [--camera_device <camera device> (default: 0)]"
                   << " [--intrinsic <intrinsic file> (default: empty)]"
-                  << " [--camera_name <camera name>]  (default: empty)"
+                  << " [--camera_name <camera name>  (default: empty)]"
                   << " [--model <model name> (default: teabox)]"
                   << " [--tracker <0=egde|1=keypoint|2=hybrid> (default: 2)]"
                   << " [--use_ogre] [--use_scanline]"
-                  << " [--max_proj_error <allowed projection error> (default: 20)]"
+                  << " [--max_proj_error <allowed projection error> (default: 30)]"
                   << " [--learn] [--auto_init] [--learning_data <data-learned.bin> (default: learning/data-learned.bin)]"
                   << " [--display_proj_error]"
                   << " [--help] [-h]\n"
@@ -110,8 +110,8 @@ int main(int argc, char **argv)
     std::cout << "  Proj. error : " << opt_proj_error_threshold << std::endl;
     std::cout << "  Display proj. error: " << opt_display_projection_error << std::endl;
     std::cout << "Config files: " << std::endl;
-    std::cout << "  Config file: " << "\"" << objectname + ".xml" << "\"" << std::endl;
-    std::cout << "  Model file : " << "\"" << objectname + ".cao" << "\"" << std::endl;
+    std::cout << "  Config file : " << "\"" << objectname + ".xml" << "\"" << std::endl;
+    std::cout << "  Model file  : " << "\"" << objectname + ".cao" << "\"" << std::endl;
     std::cout << "  Init file   : " << "\"" << objectname + ".init"  << "\"" << std::endl;
     std::cout << "Learning options   : " << std::endl;
     std::cout << "  Learn       : " << opt_learn << std::endl;
