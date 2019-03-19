@@ -683,7 +683,7 @@ void vpMbtDistanceLine::displayMovingEdges(const vpImage<vpRGBa> &I)
 
 /*!
   Return a list of features parameters for display.
-  Parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
+  - Parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>`
 */
 std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
 {
@@ -716,8 +716,8 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
 
 /*!
   Return a list of line parameters to display the primitive at a given pose and camera parameters.
-  Parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
-                  <pt_end.i()>, <pt_end.j()>
+  - Parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`
 
   \param width : Image width.
   \param height : Image height.

@@ -601,8 +601,8 @@ void vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogen
 
 /*!
   Return a list of features parameters for display.
-  Parameters are: <feature id (here 1 for KLT)>, <pt.i()>, <pt.j()>,
-                  <klt_id.i()>, <klt_id.j()>, <klt_id.id>
+  - Parameters are: `<feature id (here 1 for KLT)>`, `<pt.i()>`, `<pt.j()>`,
+  `<klt_id.i()>`, `<klt_id.j()>`, `<klt_id.id>`
 */
 std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getFeaturesForDisplay()
 {

@@ -98,6 +98,8 @@ public:
 
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
                                                const vpCameraParameters &_cam);
+  virtual double computeCurrentProjectionError(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &_cMo,
+                                               const vpCameraParameters &_cam);
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);

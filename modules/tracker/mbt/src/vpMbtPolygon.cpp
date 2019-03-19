@@ -100,7 +100,7 @@ vpMbtPolygon::~vpMbtPolygon() {}
   not oriented counter clockwise. If true, the orientation of the face is
   without importance.
   \param cam : Camera parameters (intrinsics parameters)
-  \param I : Image used to consider level of detail.
+  \param width, height : Image size used to consider level of detail.
 
   \return Return true if the polygon is visible.
 */

@@ -217,6 +217,32 @@ double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<unsigned 
   return 90.0;
 }
 
+/*!
+  Compute projection error given an input image and camera pose, parameters.
+  This projection error uses locations sampled exactly where the model is projected using the camera pose
+  and intrinsic parameters.
+  You may want to use \sa setProjectionErrorComputation \sa getProjectionError
+
+  to get a projection error computed at the ME locations after a call to track().
+  It works similarly to vpMbTracker::getProjectionError function:
+  <blockquote>
+  Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
+  The error is expressed in degree between 0 and 90.
+  </blockquote>
+
+  \param I_color : Input color image.
+  \param _cMo : Camera pose.
+  \param _cam : Camera parameters.
+*/
+double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &_cMo,
+                                                         const vpCameraParameters &_cam)
+{
+  vpImage<unsigned char> I;
+  vpImageConvert::convert(I_color, I); // FS: Shoudn't we use here m_I that was converted in track() ?
+
+  return computeCurrentProjectionError(I, _cMo, _cam);
+}
+
 void vpMbGenericTracker::computeProjectionError()
 {
   if (computeProjError) {
@@ -921,9 +947,10 @@ std::list<vpMbtDistanceKltPoints *> &vpMbGenericTracker::getFeaturesKlt()
 
 /*!
   Return a list of features parameters.
-  ME parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
-  KLT parameters are: <feature id (here 1 for KLT)>, <pt.i()>, <pt.j()>,
-                      <klt_id.i()>, <klt_id.j()>, <klt_id.id>
+  - ME parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>`
+  - KLT parameters are: `<feature id (here 1 for KLT)>`, `<pt.i()>`, `<pt.j()>`,
+  `<klt_id.i()>`, `<klt_id.j()>`, `<klt_id.id>`
+
   It can be used to display the 3D model with a render engine of your choice.
 
   \note It returns the model for the reference camera.
@@ -943,9 +970,9 @@ std::vector<std::vector<double> > vpMbGenericTracker::getFeaturesForDisplay()
 
 /*!
   Get a list of features parameters.
-  ME parameters are: <feature id (here 0 for ME)>, <pt.i()>, <pt.j()> <state>
-  KLT parameters are: <feature id (here 1 for KLT)>, <pt.i()>, <pt.j()>,
-                      <klt_id.i()>, <klt_id.j()>, <klt_id.id>
+  - ME parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>`
+  - KLT parameters are: `<feature id (here 1 for KLT)>`, `<pt.i()>`, `<pt.j()>`,
+  `<klt_id.i()>`, `<klt_id.j()>`, `<klt_id.id>`
   It can be used to display the 3D model with a render engine of your choice.
 */
 void vpMbGenericTracker::getFeaturesForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfFeatures)
@@ -1280,10 +1307,11 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
 
 /*!
   Return a list of primitives parameters to display the model at a given pose and camera parameters.
-  Line parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
-                       <pt_end.i()>, <pt_end.j()>
-  Ellipse parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
-                          <mu20>, <mu11>, <mu02>
+  - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`.
+  - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
+  `<mu20>`, `<mu11>`, `<mu02>`.
+
   It can be used to display the 3D model with a render engine of your choice.
 
   \param width : Image width.
@@ -1312,10 +1340,11 @@ std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigne
 
 /*!
   Get a list of primitives parameters to display the model at a given pose and camera parameters.
-  Line parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
-                       <pt_end.i()>, <pt_end.j()>
-  Ellipse parameters are: <primitive id (here 1 for ellipse)>, <pt_center.i()>, <pt_center.j()>
-                          <mu20>, <mu11>, <mu02>
+  - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`.
+  - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
+  `<mu20>`, `<mu11>`, `<mu02>`.
+
   It can be used to display the 3D model with a render engine of your choice.
 
   \param mapOfModels : Map of models.

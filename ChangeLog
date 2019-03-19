@@ -12,6 +12,7 @@ ViSP 3.2.1 (under work)
     . Introduce Eigen <-> ViSP conversion functions in vp namespace
     . Add OpenBLAS, Intel MKL and Atlas explicit support
     . Add support of vpImage<vpRGBa> to vpMbGenericTracker
+    . Add support of vpImage<vpRGBa> to vpKeyPoint
     . New vpQbDevice and vpQbSoftHand classes and examples to control qbrobotics devices
   - Tutorials
   - Bug fixed

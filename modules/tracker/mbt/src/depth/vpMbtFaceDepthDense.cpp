@@ -722,8 +722,8 @@ void vpMbtFaceDepthDense::displayFeature(const vpImage<vpRGBa> & /*I*/, const vp
 
 /*!
   Return a list of line parameters to display the primitive at a given pose and camera parameters.
-  Parameters are: <primitive id (here 0 for line)>, <pt_start.i()>, <pt_start.j()>
-                  <pt_end.i()>, <pt_end.j()>
+  - Parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`
 
   \param width : Image width.
   \param height : Image height.
