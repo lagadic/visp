@@ -85,7 +85,7 @@ int main(int argc, const char **argv)
                    " [--quad_decimate <quad_decimate> (default: 1)]"
                    " [--nthreads <nb> (default: 1)]"
                    " [--intrinsic <intrinsic file> (default: empty)]"
-                   " [--camera_name <camera name>]  (default: empty)"
+                   " [--camera_name <camera name>  (default: empty)]"
                    " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
                    " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
                    " 4: BEST_RESIDUAL_VIRTUAL_VS) (default: 0)]"
