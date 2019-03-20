@@ -550,7 +550,6 @@ protected:
   void removeLine(const std::string &name);
   void resetMovingEdge();
   virtual void testTracking();
-  virtual void track(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color);
   void trackMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdgeWeights();

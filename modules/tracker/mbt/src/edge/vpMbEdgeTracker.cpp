@@ -1028,18 +1028,7 @@ void vpMbEdgeTracker::testTracking()
  */
 void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 {
-  track(&I, NULL);
-}
-
-void vpMbEdgeTracker::track(const vpImage<vpRGBa> &I)
-{
-  vpImageConvert::convert(I, m_I);
-  track(&m_I, &I);
-}
-
-void vpMbEdgeTracker::track(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const)
-{
-  initPyramid(*I, Ipyramid);
+  initPyramid(I, Ipyramid);
 
   unsigned int lvl = (unsigned int)scales.size();
   do {
@@ -1098,22 +1087,22 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> * const I, const vpImag
 
         // Looking for new visible face
         bool newvisibleface = false;
-        visibleFace(*I, cMo, newvisibleface);
+        visibleFace(I, cMo, newvisibleface);
 
         // cam.computeFov(I.getWidth(), I.getHeight());
         if (useScanLine) {
           faces.computeClippedPolygons(cMo, cam);
-          faces.computeScanLineRender(cam, I->getWidth(), I->getHeight());
+          faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
         }
 
-        updateMovingEdge(*I);
+        updateMovingEdge(I);
 
-        initMovingEdge(*I, cMo);
+        initMovingEdge(I, cMo);
         // Reinit the moving edge for the lines which need it.
-        reinitMovingEdge(*I, cMo);
+        reinitMovingEdge(I, cMo);
 
         if (computeProjError)
-          computeProjectionError(*I);
+          computeProjectionError(I);
 
         upScale(lvl);
       } catch (const vpException &e) {
@@ -1130,6 +1119,12 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> * const I, const vpImag
   } while (lvl != 0);
 
   cleanPyramid(Ipyramid);
+}
+
+void vpMbEdgeTracker::track(const vpImage<vpRGBa> &I)
+{
+  vpImageConvert::convert(I, m_I);
+  track(m_I);
 }
 
 /*!
