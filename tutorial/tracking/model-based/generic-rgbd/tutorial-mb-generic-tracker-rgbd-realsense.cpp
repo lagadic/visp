@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   bool use_ogre = false;
   bool use_scanline = false;
   bool use_edges = true;
-  bool use_klt = false;
+  bool use_klt = true;
   bool use_depth = true;
   bool learn = false;
   bool auto_init = false;
@@ -63,36 +63,42 @@ int main(int argc, char *argv[])
       display_projection_error = true;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n" << argv[0]
-                << " [--config_color <object.xml>] [--config_depth <object.xml>] [--model_color <object.cao>] [--model_depth <object.cao>]"
+                << " [--model_color <object.cao>] [--model_depth <object.cao>]"
+                   " [--config_color <object.xml>] [--config_depth <object.xml>]"
                    " [--init_file <object.init>] [--use_ogre] [--use_scanline]"
                    " [--proj_error_threshold <threshold between 0 and 90> (default: "<< proj_error_threshold << ")]"
-                   " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 0)] [--use_depth <0|1> (default: 1)]"
+                   " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 1)] [--use_depth <0|1> (default: 1)]"
                    " [--learn] [--auto_init] [--learning_data <path to .bin> (default: learning/data-learned.bin)]"
                    " [--display_proj_error]" << std::endl;
-      std::cout << "\nExample to track a 4.2 cm width cube with manual initialization:\n" << argv[0]
-                << " --config_color cube.xml --config_depth cube_depth.xml"
-                << " --model_color cube.cao --model_depth cube.cao"
-                << " --init_file cube.init"
-                << " --use_edges 1 --use_klt 1 --use_depth 1"
+
+      std::cout << "\n** How to track a 4.2 cm width cube with manual initialization:\n"
+                << argv[0]
+                << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1"
                 << std::endl;
-      std::cout << "\nExample to learn the 4.2 cm width cube:\n" << argv[0]
-                << " --config_color cube.xml --config_depth cube_depth.xml"
-                << " --model_color cube.cao --model_depth cube.cao"
-                << " --init_file cube.init"
-                << " --use_edges 1 --use_klt 1 --use_depth 1"
-                << " --learn"
+      std::cout << "\n** How to learn the cube and create a learning database:\n" << argv[0]
+                << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --learn"
                 << std::endl;
-      std::cout << "\nExample to track a 4.2 cm width cube with initialization from learning database:\n" << argv[0]
-                << " --config_color cube.xml --config_depth cube_depth.xml"
-                << " --model_color cube.cao --model_depth cube.cao"
-                << " --init_file cube.init"
-                << " --use_edges 1 --use_klt 1 --use_depth 1"
-                << " --auto_init"
+      std::cout << "\n** How to track the cube with initialization from learning database:\n" << argv[0]
+                << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --auto_init"
                 << std::endl;
+
       return 0;
     }
   }
 
+  if (model_depth.empty()) {
+    model_depth = model_color;
+  }
+  std::string parentname = vpIoTools::getParent(model_color);
+  if (config_color.empty()) {
+    config_color = (parentname.empty() ? "" : (parentname + "/")) + vpIoTools::getNameWE(model_color) + ".xml";
+  }
+  if (config_depth.empty()) {
+    config_depth = (parentname.empty() ? "" : (parentname + "/")) + vpIoTools::getNameWE(model_color) + "_depth.xml";
+  }
+  if (init_file.empty()) {
+    init_file = (parentname.empty() ? "" : (parentname + "/")) + vpIoTools::getNameWE(model_color) + ".init";
+  }
   std::cout << "Tracked features: " << std::endl;
   std::cout << "  Use edges   : " << use_edges << std::endl;
   std::cout << "  Use klt     : " << use_klt << std::endl;
