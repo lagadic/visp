@@ -44,6 +44,8 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/detection/vpDetectorBase.h>
 
+#define BUILD_BIG_FAMILY_TAG 1
+
 /*!
   \class vpDetectorAprilTag
   \ingroup group_detection_tag
@@ -215,36 +217,53 @@ class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 
 public:
   enum vpAprilTagFamily {
-    TAG_36h11,       /*!< AprilTag <a
-                        href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a>
-                        pattern (recommended) */
-    TAG_36h10,       /*!< AprilTag <a
-                        href="https://april.eecs.umich.edu/software/apriltag.html">36h10</a>
-                        pattern */
-    TAG_36ARTOOLKIT, /*!< <a href="https://artoolkit.org/">ARToolKit</a>
-                        pattern. */
-    TAG_25h9,        /*!< AprilTag <a
-                        href="https://april.eecs.umich.edu/software/apriltag.html">25h9</a>
-                        pattern */
-    TAG_25h7,        /*!< AprilTag <a
-                        href="https://april.eecs.umich.edu/software/apriltag.html">25h7</a>
-                        pattern */
-    TAG_16h5         /*!< AprilTag <a
-                        href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                        pattern */
+    TAG_36h11,        /*!< AprilTag <a
+                         href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a>
+                         pattern (recommended) */
+    TAG_36h10,        ///< DEPRECATED
+    TAG_36ARTOOLKIT,  ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
+    TAG_25h9,         /*!< AprilTag <a
+                         href="https://april.eecs.umich.edu/software/apriltag.html">25h9</a>
+                         pattern */
+    TAG_25h7,         ///< DEPRECATED AND POOR DETECTION PERFORMANCE
+    TAG_16h5,         /*!< AprilTag <a
+                         href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
+                         pattern */
+    TAG_CIRCLE21h7,   /*!< AprilTag <a
+                         href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
+                         pattern */
+#if BUILD_BIG_FAMILY_TAG //add explicit enum values?
+    TAG_CIRCLE49h12,  /*!< AprilTag <a
+                         href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
+                         pattern */
+    TAG_CUSTOM48h12,   /*!< AprilTag <a
+                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
+                          pattern */
+    TAG_STANDARD41h12, /*!< AprilTag <a
+                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
+                          pattern */
+    TAG_STANDARD52h13  /*!< AprilTag <a
+                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
+                          pattern */
+#else
+    TAG_STANDARD41h12  /*!< AprilTag <a
+                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
+                          pattern */
+#endif
   };
 
   enum vpPoseEstimationMethod {
-    HOMOGRAPHY,              /*!< Pose from homography */
-    HOMOGRAPHY_VIRTUAL_VS,   /*!< Non linear virtual visual servoing approach
-                                initialized by the homography approach */
-    DEMENTHON_VIRTUAL_VS,    /*!< Non linear virtual visual servoing approach
-                                initialized by the Dementhon approach */
-    LAGRANGE_VIRTUAL_VS,     /*!< Non linear virtual visual servoing approach
-                                initialized by the Lagrange approach */
-    BEST_RESIDUAL_VIRTUAL_VS /*!< Non linear virtual visual servoing approach
-                                initialized by the approach that gives the
-                                lowest residual */
+    HOMOGRAPHY,                       /*!< Pose from homography */
+    HOMOGRAPHY_VIRTUAL_VS,            /*!< Non linear virtual visual servoing approach
+                                        initialized by the homography approach */
+    DEMENTHON_VIRTUAL_VS,             /*!< Non linear virtual visual servoing approach
+                                        initialized by the Dementhon approach */
+    LAGRANGE_VIRTUAL_VS,              /*!< Non linear virtual visual servoing approach
+                                        initialized by the Lagrange approach */
+    BEST_RESIDUAL_VIRTUAL_VS,         /*!< Non linear virtual visual servoing approach
+                                        initialized by the approach that gives the
+                                        lowest residual */
+    HOMOGRAPHY_ORTHOGONAL_ITERATION   /*!< Pose from homography followed by a refine by Orthogonal Iteration */
   };
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
@@ -253,15 +272,19 @@ public:
 
   bool detect(const vpImage<unsigned char> &I);
   bool detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam,
-              std::vector<vpHomogeneousMatrix> &cMo_vec);
+              std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2=NULL,
+              std::vector<double> *projErrors=NULL, std::vector<double> *projErrors2=NULL);
 
-  bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
+  bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam,
+               vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2=NULL,
+               double *projError=NULL, double *projError2=NULL);
 
   /*!
     Return the pose estimation method.
   */
   inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
+  void setAprilTagDecodeSharpening(const double decodeSharpening);
   void setAprilTagNbThreads(const int nThreads);
   void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
   void setAprilTagQuadDecimate(const float quadDecimate);
@@ -321,6 +344,10 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpPo
     os << "BEST_RESIDUAL_VIRTUAL_VS";
     break;
 
+  case vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION:
+    os << "HOMOGRAPHY_ORTHOGONAL_ITERATION";
+    break;
+
   default:
       os << "ERROR_UNKNOWN_POSE_METHOD!";
     break;
@@ -354,6 +381,28 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
 
   case vpDetectorAprilTag::TAG_16h5:
     os << "16h5";
+    break;
+
+  case vpDetectorAprilTag::TAG_CIRCLE21h7:
+    os << "CIRCLE21h7";
+    break;
+
+#if BUILD_BIG_FAMILY_TAG
+  case vpDetectorAprilTag::TAG_CIRCLE49h12:
+    os << "CIRCLE49h12";
+    break;
+
+  case vpDetectorAprilTag::TAG_CUSTOM48h12:
+    os << "CUSTOM48h12";
+    break;
+
+  case vpDetectorAprilTag::TAG_STANDARD52h13:
+    os << "STANDARD52h13";
+    break;
+#endif
+
+  case vpDetectorAprilTag::TAG_STANDARD41h12:
+    os << "STANDARD41h12";
     break;
 
   default:

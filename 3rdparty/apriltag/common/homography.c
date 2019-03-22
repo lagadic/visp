@@ -1,19 +1,15 @@
 /* Copyright (C) 2013-2016, The Regents of The University of Michigan.
 All rights reserved.
-
 This software was developed in the APRIL Robotics Lab under the
 direction of Edwin Olson, ebolson@umich.edu. This software may be
 available under alternative licensing terms; contact the address above.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-
 1. Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,7 +20,6 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
@@ -190,8 +185,8 @@ matd_t *homography_compute(zarray_t *correspondences, int flags)
 
             matd_destroy(Ainv);
         } else {
-          double data_[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0 };
-            matd_t *b = matd_create_data(9, 1, data_);
+            double data_b[] = {1, 0, 0, 0, 0, 0, 0, 0, 0};
+            matd_t *b = matd_create_data(9, 1, data_b);
             matd_t *Ainv = NULL;
 
             if (0) {
@@ -278,7 +273,7 @@ matd_t *homography_compute(zarray_t *correspondences, int flags)
 // R21 = H21
 // TZ  = H22
 
-matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, double cy, double markerScale)
+matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, double cy)
 {
     // Note that every variable that we compute is proportional to the scale factor of H.
     double R20 = MATD_EL(H, 2, 0);
@@ -348,9 +343,9 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
 
         matd_destroy(R);
     }
-    double data_[] = { -R00, R01, -R02, -TX*markerScale,
-                       -R10, R11, -R12, -TY*markerScale,
-                       -R20, R21, -R22, -TZ*markerScale,
+    double data_[] = { R00, R01, R02, TX,
+                       R10, R11, R12, TY,
+                       R20, R21, R22, TZ,
                        0, 0, 0, 1 };
     return matd_create_data(4, 4, data_);
 }
