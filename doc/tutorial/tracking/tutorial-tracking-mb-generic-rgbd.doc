@@ -313,6 +313,119 @@ To display the model with the estimated pose and also the object frame:
 
 \snippet tutorial-mb-generic-tracker-rgbd.cpp Display
 
+\section mb_rgbd_use_case Use case with an Intel Realsense camera
+
+Hereafter we provide the information to test the tracker with different objects (cube, teabox, lego-square) with an Intel Realsense D435 or SR300 camera.
+
+Enter model-based tracker tutorial build folder:
+\code
+$ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic-rgbd
+\endcode
+
+There is `tutorial-mb-generic-tracker-rgbd-realsense` binary that corresponds to the build of tutorial-mb-generic-tracker-rgbd-realsense.cpp example. This example is an extension of tutorial-mb-generic-tracker-rgbd.cpp that was explained in \ref mb_rgbd_started section.
+
+To see the command line options that are available run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --help
+\endcode
+
+\subsection mb_rgbd_use_case_cube Use Realsense camera on 4.2 cm cube object
+
+\note Here we consider a 4.2 cm cube. If your cube size differ, modify `model/cube/cube.cao` file replacing `0.042` with the appropriate value expressed in meters.
+
+To track a 4.2 cm cube with manual initialization, run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/cube/cube.cao
+\endcode
+
+You should obtain similar results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/1pRp-7yO09E" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Now if the tracker is working, you can learn the object adding `--learn` command line option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/cube/cube.cao --learn
+\endcode
+
+Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you should see printings like:
+\code
+...
+Data learned
+Data learned
+Save learning from 2 images in file: learning/data-learned.bin
+\endcode
+
+You can now use this learning to automize tracker initialization with `--auto_init` option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/cube/cube.cao --auto_init
+\endcode
+
+\subsection mb_rgbd_use_case_teabox Use Realsense camera on teabox object
+
+\note Here we consider a 16.5 x 6.8 x 8 cm box [length x width x height]. If your cube size differ, modify `model/cube/cube.cao` with the appropriate size values expressed in meters.
+
+To track the 16.5 x 6.8 x 8 cm teabox with manual initialization, run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/teabox/teabox.cao
+\endcode
+
+You should obtain similar results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/SwjWFM7srOA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Now if the tracker is working, you can learn the object adding `--learn` command line option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/teabox/teabox.cao --learn
+\endcode
+
+Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you should see printings like:
+\code
+...
+Data learned
+Data learned
+Save learning from 2 images in file: learning/data-learned.bin
+\endcode
+
+You can now use this learning to automize tracker initialization with `--auto_init` option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/teabox/teabox.cao --auto_init
+\endcode
+
+\subsection mb_rgbd_use_case_lego_Square Use Realsense camera on a lego square
+
+Here we consider an object made with four 2x4 lego bricks assembled as a square. To track this object with manual initialization, run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/lego-square/lego-square.cao
+\endcode
+
+You should obtain similar results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/zD2nrl5yqxA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Now if the tracker is working, you can learn the object adding `--learn` command line option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/lego-square/lego-square.cao --learn
+\endcode
+
+Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you should see printings like:
+\code
+...
+Data learned
+Data learned
+Save learning from 2 images in file: learning/data-learned.bin
+\endcode
+
+You can now use this learning to automize tracker initialization with `--auto_init` option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/lego-square/lego-square.cao --auto_init
+\endcode
+
 \section mb_rgbd_next Next tutorial
 
 If you have an Intel Realsense device, you are now ready to experiment the generic model-based tracker on a cube that has an AprilTag on one face following \ref tutorial-tracking-mb-generic-apriltag-live.

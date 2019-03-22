@@ -95,7 +95,7 @@ $ brew install opencv glog lapack eigen libdc1394 libxml2 zbar
 
 \subsubsection install_brew_3rdparty_other Other optional 3rd parties
 
-- If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300) you may install librealsense 1.12.1 and PCL library using:
+- If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300) you may install librealsense and PCL library using:
 \code
 $ brew install librealsense pcl pkg-config
 \endcode
