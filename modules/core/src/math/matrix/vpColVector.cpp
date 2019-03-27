@@ -324,6 +324,9 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
 }
 
 #ifdef VISP_HAVE_CXX11
+/*!
+  Move constructor that take rvalue.
+ */
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -664,6 +667,9 @@ std::vector<double> vpColVector::toStdVector()
 }
 
 #ifdef VISP_HAVE_CXX11
+/*!
+  Overloaded move assignment operator taking rvalue.
+ */
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
