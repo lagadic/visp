@@ -93,7 +93,12 @@ public:
   /*!
   Copy constructor of a 2D array.
   */
-  vpArray2D<Type>(const vpArray2D<Type> &A) : vpArray2D<Type>()
+  vpArray2D<Type>(const vpArray2D<Type> &A) :
+  #ifdef VISP_HAVE_CXX11
+    vpArray2D<Type>()
+  #else
+    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  #endif
   {
     resize(A.rowNum, A.colNum, false, false);
     memcpy(data, A.data, rowNum * colNum * sizeof(Type));
@@ -105,7 +110,12 @@ public:
   \param r : Array number of rows.
   \param c : Array number of columns.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c) : vpArray2D<Type>()
+  vpArray2D<Type>(unsigned int r, unsigned int c) :
+  #ifdef VISP_HAVE_CXX11
+      vpArray2D<Type>()
+  #else
+      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  #endif
   {
     resize(r, c);
   }
@@ -117,7 +127,12 @@ public:
   \param c : Array number of columns.
   \param val : Each element of the array is set to \e val.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c, Type val) : vpArray2D<Type>()
+  vpArray2D<Type>(unsigned int r, unsigned int c, Type val) :
+  #ifdef VISP_HAVE_CXX11
+      vpArray2D<Type>()
+  #else
+      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  #endif
   {
     resize(r, c, false, false);
     *this = val;
