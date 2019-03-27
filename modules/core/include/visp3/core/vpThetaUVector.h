@@ -101,8 +101,32 @@ axis-angle minimal representation.
   \end{array}
   \right)
   \f]
+
   From the implementation point of view, it is nothing more than an
-  array of three floats.
+  array of three floats with values in [rad].
+
+  You can set values [rad] accessing each element:
+  \code
+  vpThetaUVector tu;
+  tu[0] = M_PI_4;
+  tu[1] = M_PI_2;
+  tu[2] = M_PI;
+  \endcode
+  You can also initialize the vector using `<<` operator:
+  \code
+  tu << M_PI_4, M_PI_2, M_PI;
+  \endcode
+  Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
+  \code
+  tu = {M_PI_4, M_PI_2, M_PI};
+  \endcode
+
+  To get the values [rad] use:
+  \code
+  double tux = tu[0];
+  double tuy = tu[1];
+  double tuz = tu[2];
+  \endcode
 
   The code below shows first how to initialize a \f$\theta {\bf u}\f$
   vector, than how to contruct a rotation matrix from a vpThetaUVector
@@ -197,6 +221,10 @@ public:
 
   vpThetaUVector &operator=(const vpColVector &tu);
   vpThetaUVector &operator=(double x);
+
+#ifdef VISP_HAVE_CXX11
+  vpThetaUVector &operator=(const std::initializer_list<double> &list);
+#endif
 };
 
 #endif
