@@ -151,9 +151,9 @@ vpMatrix M(R);
    */
   vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
 
-#ifdef VISP_HAVE_CXX11
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
 
+#ifdef VISP_HAVE_CXX11
   vpMatrix(vpMatrix &&A);
 
   explicit vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
