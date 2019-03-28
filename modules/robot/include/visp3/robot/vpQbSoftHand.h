@@ -55,6 +55,16 @@
 
   See https://qbrobotics.com/ for more details.
 
+  \note Before using this class under Linux (Ubuntu, Debian, Fedora...) it is mandatory to add
+  user to the dialout group. To do so, you must execute:
+  \code
+  $ sudo adduser user_name dialout
+  \endcode
+  otherwise you will get an error:
+  \code
+  vpQbDevice fails while opening [/dev/ttyUSB0] and sets errno [Permission denied].
+  \endcode
+
   The following example shows how to close and open the SoftHand with a given speed factor and stiffness used to stop the command applied to
   the motors when the measured current is larger than the stiffness multiplied by the maximum allowed current that can be applied to the motors.
 
