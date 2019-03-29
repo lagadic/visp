@@ -41,59 +41,111 @@
 
 #include <regex>
 
+#include <qb_device_driver.h>
+
 #include <visp3/robot/vpQbDevice.h>
 #include <visp3/core/vpIoTools.h>
 
-/*!
- * Default constructor that does nothing.
- * To connect to a device call init().
- */
-vpQbDevice::vpQbDevice()
-  : vpQbDevice(std::make_shared<qb_device_driver::qbDeviceAPI>())
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+class vpQbDevice::Impl
 {
-}
+public:
+  Impl()
+    : Impl(std::make_shared<qb_device_driver::qbDeviceAPI>())
+  {
+  }
+  Impl(std::shared_ptr<qb_device_driver::qbDeviceAPI> device_api)
+    : m_serial_protectors(), m_connected_devices(),
+      m_position_limits(2), m_device_api(device_api), m_file_descriptors(),
+      m_max_repeats(1), m_current_max(750.)
+  {
+    // Default values updated after a call to init()
+    m_position_limits[0] = 0;
+    m_position_limits[1] = 19000;
+  }
 
-/**
- * Constructor called from the default constructor with the real API smart pointer,
- * but it can be called with a pointer to the mock class inherited from the \p qbDeviceAPI itself.
- * \param device_api The shared pointer to the current API derived from \p qb_device_driver::qbDeviceAPI.
- *
- * Initialises the current max to 750. The value is updated after a call to init().
- */
-vpQbDevice::vpQbDevice(std::shared_ptr<qb_device_driver::qbDeviceAPI> device_api)
-  : m_device_api(device_api), m_serial_protectors(), m_file_descriptors(),
-    m_connected_devices(), m_position_limits(2), m_max_repeats(1), m_current_max(750.), m_init_done(false)
-{
-  // Default values updated after a call to init()
-  m_position_limits[0] = 0;
-  m_position_limits[1] = 19000;
-}
-
-/**
- * Close all the still open serial ports.
- * \sa close()
- */
-vpQbDevice::~vpQbDevice()
-{
-  for (auto it = m_file_descriptors.begin(); it != m_file_descriptors.end(); ) {
-    if (close(it->first)) {
-      it = m_file_descriptors.erase(it);
-    }
-    else {
-      ++ it;
+  virtual ~Impl()
+  {
+    for (auto it = m_file_descriptors.begin(); it != m_file_descriptors.end(); ) {
+      if (close(it->first)) {
+        it = m_file_descriptors.erase(it);
+      }
+      else {
+        ++ it;
+      }
     }
   }
-}
 
-/**
- * Activate (or deactivate, according to the given command) the motors of the given device. Do nothing if the device
- * is not connected in the Communication Handler.
- * \param id The ID of the device to be activated (or deactivated), in range [\p 1, \p 128].
- * \param command \p true to turn motors on, \p false to turn them off.
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \sa activate(const int &, const int &), deactivate(), isActive()
- */
-int vpQbDevice::activate(const int &id, const bool &command, const int &max_repeats)
+  virtual int activate(const int &id, const bool &command, const int &max_repeats);
+  virtual int activate(const int &id, const int &max_repeats)
+  {
+    return activate(id, true, max_repeats);
+  }
+
+  virtual bool close(const std::string &serial_port);
+
+  virtual int deactivate(const int &id, const int &max_repeats)
+  {
+    return activate(id, false, max_repeats);
+  }
+
+  inline double getCurrentMax() const {
+    return m_current_max;
+  }
+
+  virtual int getCurrents(const int &id, const int &max_repeats, std::vector<short int> &currents);
+  virtual int getInfo(const int &id, const int &max_repeats, std::string &info);
+  virtual int getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions);
+  virtual int getParameters(const int &id, std::vector<int> &limits, std::vector<int> &resolutions);
+
+  std::vector<short int> getPositionLimits() const
+  {
+    return m_position_limits;
+  }
+
+  virtual int getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions);
+  virtual int getSerialPortsAndDevices(const int &max_repeats);
+  virtual bool init(const int &id);
+  virtual int isActive(const int &id, const int &max_repeats, bool &status);
+
+  virtual int isConnected(const int &id, const int &max_repeats);
+
+  virtual bool isInConnectedSet(const int &id)
+  {
+    return (m_connected_devices.count(id) ? true : false);
+  }
+
+  virtual bool isInOpenMap(const std::string &serial_port)
+  {
+    return (m_file_descriptors.count(serial_port) ? true : false);
+  }
+
+  inline bool isReliable(int const &failures, int const &max_repeats) { return failures >= 0 && failures <= max_repeats; }
+  virtual int open(const std::string &serial_port);
+
+  virtual int setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands);
+  virtual int setCommandsAsync(const int &id, std::vector<short int> &commands);
+
+  void setMaxRepeats(const int &max_repeats) {
+    m_max_repeats = max_repeats;
+  }
+
+public:
+  std::map<std::string, std::unique_ptr<std::mutex>> m_serial_protectors;  // only callbacks must lock the serial resources
+  std::map<int, std::string> m_connected_devices;
+
+protected:
+#if (defined(_WIN32) || defined (_WIN64))
+  std::unique_ptr<std::mutex> m_mutex_dummy; // FS: cannot build without this line with msvc
+#endif
+  std::vector<short int> m_position_limits; // min and max position values in ticks
+  std::shared_ptr<qb_device_driver::qbDeviceAPI> m_device_api;
+  std::map<std::string, comm_settings> m_file_descriptors;
+  int m_max_repeats;
+  double m_current_max;
+};
+
+int vpQbDevice::Impl::activate(const int &id, const bool &command, const int &max_repeats)
 {
   std::string command_prefix = command ? "" : "de";
   bool status = false;
@@ -114,24 +166,7 @@ int vpQbDevice::activate(const int &id, const bool &command, const int &max_repe
   return failures;
 }
 
-/**
- * Activate the motors of the given device. Do nothing if the device is not connected in the Communication Handler.
- * \param id The ID of the device to be activated, in range [\p 1, \p 128].
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \sa isActive()
- */
-int vpQbDevice::activate(const int &id, const int &max_repeats)
-{
-  return activate(id, true, max_repeats);
-}
-
-/**
- * Close the communication with all the devices connected to the given serial port.
- * \param serial_port The serial port which has to be closed, e.g. \p /dev/ttyUSB* (Unix),
- * \p /dev/tty.usbserial-* (MacOS) or \p COM* (Windows).
- * \sa isInOpenMap(), open()
- */
-bool vpQbDevice::close(const std::string &serial_port)
+bool vpQbDevice::Impl::close(const std::string &serial_port)
 {
   if (!isInOpenMap(serial_port)) {
     std::cout << "has not handled [" << serial_port << "]." << std::endl;
@@ -155,32 +190,12 @@ bool vpQbDevice::close(const std::string &serial_port)
   return true;
 }
 
-/**
- * Deactivate the motors of the given device. Do nothing if the device is not connected in the Communication Handler.
- * \param id The ID of the device to be deactivated, in range [\p 1, \p 128].
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \sa activate(const int &, const bool &, const int &), isActive()
- */
-int vpQbDevice::deactivate(const int &id, const int &max_repeats)
-{
-  return activate(id, false, max_repeats);
-}
-
-/**
- * Retrieve the motor currents of the given device.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \param[out] currents The two-element device motor current vector, expressed in \em mA: if the device is a \em
- * qbhand only the first element is filled while the other remains always \p 0; in the case of a \em qbmove both
- * the elements contain relevant data, i.e. the currents respectively of \p motor_1 and \p motor_2.
- * \return \p 0 on success.
- * \sa getMeasurements(), getPositions()
- */
-int vpQbDevice::getCurrents(const int &id, const int &max_repeats, std::vector<short int> &currents)
+int vpQbDevice::Impl::getCurrents(const int &id, const int &max_repeats, std::vector<short int> &currents)
 {
   // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
   int failures = 0;
   currents.resize(2);  // required by 'getCurrents()'
+  std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
   while (failures <= max_repeats) {
     if (m_device_api->getCurrents(&m_file_descriptors.at(m_connected_devices.at(id)), id, currents) < 0) {
       failures++;
@@ -191,15 +206,7 @@ int vpQbDevice::getCurrents(const int &id, const int &max_repeats, std::vector<s
   return failures;
 }
 
-/**
- * Retrieve the printable configuration setup of the given device.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \param info The configuration setup formatted as a plain text string (empty string on communication error).
- * \return The number of failure reads between \p 0 and \p max_repeats.
- * \sa getParameters()
- */
-int vpQbDevice::getInfo(const int &id, const int &max_repeats, std::string &info)
+int vpQbDevice::Impl::getInfo(const int &id, const int &max_repeats, std::string &info)
 {
   // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
   int failures = 0;
@@ -214,21 +221,8 @@ int vpQbDevice::getInfo(const int &id, const int &max_repeats, std::string &info
   return failures;
 }
 
-/**
- * Retrieve the motor currents of the given device.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param[out] currents The two-element device motor current vector, expressed in \em mA: if the device is a \em
- * qbhand only the first element is filled while the other remains always \p 0; in the case of a \em qbmove both
- * the elements contain relevant data, i.e. the currents respectively of \p motor_1 and \p motor_2.
- * \param[out] positions The device position vector, expressed in \em ticks: if the device is a \em qbhand only
- * the first element is filled while the others remain always \p 0; in the case of a \em qbmove all the elements
- * contain relevant data, i.e. the positions respectively of \p motor_1, \p motor_2 and \p motor_shaft (which is
- * not directly actuated).
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \return The number of failure reads between \p 0 and \p max_repeats.
- * \sa getCurrents(), getPositions()
- */
-int vpQbDevice::getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions) {
+int vpQbDevice::Impl::getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions)
+{
   // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
   int failures = 0;
   currents.resize(2);
@@ -246,19 +240,7 @@ int vpQbDevice::getMeasurements(const int &id, const int &max_repeats, std::vect
   return failures;
 }
 
-/**
- * Retrieve some of the parameters from the given device.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param[out] limits The vector of motor position limits expressed in \em ticks: two values for each motor,
- * respectively [\p lower_limit, \p upper_limit].
- * \param[out] resolutions The vector of encoder resolutions, each in range [\p 0, \p 8]: one value for each encoder
- * (\b note: the \em qbmove has also the shaft encoder even if it is not actuated). The word "resolution" could be
- * misunderstood: taken the resolution \p r, \f$2^r\f$ is the number of turns of the wire inside the device mechanics.
- * It is used essentially to convert the measured position of the motors in \em ticks to \em radians or \em degrees.
- * \return \p 0 on success.
- * \sa getInfo(), init()
- */
-int vpQbDevice::getParameters(const int &id, std::vector<int> &limits, std::vector<int> &resolutions)
+int vpQbDevice::Impl::getParameters(const int &id, std::vector<int> &limits, std::vector<int> &resolutions)
 {
   std::vector<int> input_mode = {-1};
   std::vector<int> control_mode = {-1};
@@ -269,22 +251,12 @@ int vpQbDevice::getParameters(const int &id, std::vector<int> &limits, std::vect
   return -1;
 }
 
-/**
- * Retrieve the motor positions of the given device.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param[out] positions The device position vector, expressed in \em ticks: if the device is a \em qbhand only
- * the first element is filled while the others remain always \p 0; in the case of a \em qbmove all the elements
- * contain relevant data, i.e. the positions respectively of \p motor_1, \p motor_2 and \p motor_shaft (which is
- * not directly actuated).
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \return The number of failure reads between \p 0 and \p max_repeats.
- * \sa getMeasurements()
- */
-int vpQbDevice::getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions)
+int vpQbDevice::Impl::getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions)
 {
   // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
   int failures = 0;
   positions.resize(3);  // required by 'getPositions()'
+  std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
   while (failures <= max_repeats) {
     if (m_device_api->getPositions(&m_file_descriptors.at(m_connected_devices.at(id)), id, positions) < 0) {
       failures++;
@@ -295,23 +267,13 @@ int vpQbDevice::getPositions(const int &id, const int &max_repeats, std::vector<
   return failures;
 }
 
-/**
- * Scan for all the serial ports of type \p /dev/ttyUSB* detected in the system, initialize their mutex protector
- * (each serial port connected to the system has to be accessed in a mutually exclusive fashion), and retrieve all
- * the qbrobotics devices connected to them. For each device, store its ID in the private map \p m_connected_devices,
- * i.e. insert a pair [\p device_id, \p serial_port]. The map \p m_connected_devices is constructed from scratch at
- * each call.
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \return the number of connected devices.
- * \sa isInConnectedSet(), open()
- */
-int vpQbDevice::getSerialPortsAndDevices(const int &max_repeats)
+int vpQbDevice::Impl::getSerialPortsAndDevices(const int &max_repeats)
 {
   std::map<int, std::string> connected_devices;
   std::array<char[255], 10> serial_ports;
   int serial_ports_number = m_device_api->getSerialPorts(serial_ports);
 
-  for (int i=0; i<serial_ports_number; i++) {
+  for (size_t i=0; i< static_cast<size_t>(serial_ports_number); i++) {
     int failures = 0;
     while (failures <= max_repeats) {
       if (open(serial_ports.at(i)) != 0) {
@@ -333,7 +295,7 @@ int vpQbDevice::getSerialPortsAndDevices(const int &max_repeats)
 
     std::array<char, 255> devices;
     int devices_number = m_device_api->getDeviceIds(&m_file_descriptors.at(serial_ports.at(i)), devices);
-    for (int j=0; j<devices_number; j++) {
+    for (size_t j=0; j < static_cast<size_t>(devices_number); j++) {
 
       if (devices.at(j) == 120) {
         continue;  // ID 120 is reserved for dummy board which should not be considered as a connected device
@@ -352,14 +314,7 @@ int vpQbDevice::getSerialPortsAndDevices(const int &max_repeats)
   return static_cast<int>(m_connected_devices.size());
 }
 
-/**
- * Initialize the device if the relative physical device is connected through any serial port to the system.
- * If the device is found, retrieve some of its parameter and activate its motors, if requested.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \return \p true if the call succeed.
- * \sa getSerialPortsAndDevices()
- */
-bool vpQbDevice::init(const int &id)
+bool vpQbDevice::Impl::init(const int &id)
 {
   std::vector<int> encoder_resolutions;
   std::vector<std::unique_lock<std::mutex>> serial_locks;  // need to lock on all the serial resources to scan for new ports/devices
@@ -412,7 +367,6 @@ bool vpQbDevice::init(const int &id)
     return false;
   }
 
-
   failures = activate(id, m_max_repeats);
   if (!isReliable(failures, m_max_repeats)) {
     std::cout << "has not initialized device [" << id << "] because it cannot activate its motors (please, check the motor positions)." << std::endl;
@@ -422,18 +376,10 @@ bool vpQbDevice::init(const int &id)
   std::string serial_port = m_connected_devices.at(id);
   std::cout << "Device [" + std::to_string(id) + "] connected on port [" << serial_port << "] initialization succeeds." << std::endl;
 
-  m_init_done = true;
   return true;
 }
 
-/**
- * Check whether the motors of the device specified by the given ID are active.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \param status \p true if the device motors are on.
- * \return The number of failure reads between \p 0 and \p max_repeats.
- */
-int vpQbDevice::isActive(const int &id, const int &max_repeats, bool &status)
+int vpQbDevice::Impl::isActive(const int &id, const int &max_repeats, bool &status)
 {
   // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
   int failures = 0;
@@ -448,13 +394,7 @@ int vpQbDevice::isActive(const int &id, const int &max_repeats, bool &status)
   return failures;
 }
 
-/**
- * Check whether the the device specified by the given ID is connected through the serial port.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \return The number of failure reads between \p 0 and \p max_repeats.
- */
-int vpQbDevice::isConnected(const int &id, const int &max_repeats)
+int vpQbDevice::Impl::isConnected(const int &id, const int &max_repeats)
 {
   // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
   int failures = 0;
@@ -468,38 +408,8 @@ int vpQbDevice::isConnected(const int &id, const int &max_repeats)
   return failures;
 }
 
-/**
- * Check whether the physical device specified by the given ID is connected to the Communication Handler.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \return \p true if the given device belongs to the connected device vector, i.e. \p m_connected_devices.
- * \sa getSerialPortsAndDevices()
- */
-bool vpQbDevice::isInConnectedSet(const int &id)
+int vpQbDevice::Impl::open(const std::string &serial_port)
 {
-  return (m_connected_devices.count(id) ? true : false);
-}
-
-/**
- * Check whether the given serial port is managed by the communication handler, i.e. is open.
- * \param serial_port The name of the serial port of interest, e.g. \p /dev/ttyUSB0.
- * \return \p true if the given serial port belongs to the open file descriptor map, i.e. \p m_file_descriptors.
- * \sa open(), close()
- */
-bool vpQbDevice::isInOpenMap(const std::string &serial_port)
-{
-  return (m_file_descriptors.count(serial_port) ? true : false);
-}
-
-/**
- * Open the serial communication on the given serial port. On success, store the opened file descriptor in the
- * private map \p m_file_descriptors, i.e. insert a pair [\p serial_port, \p file_descriptor].
- * \param serial_port The serial port which has to be opened, e.g. \p /dev/ttyUSB0.
- * \return \p 0 on success.
- * \sa close(), isInOpenMap()
- */
-int vpQbDevice::open(const std::string &serial_port)
-{
-  // TODO: test on MAC and windows
 #if (defined(__APPLE__) && defined(__MACH__))
   if (!std::regex_match(serial_port, std::regex("/dev/tty.usbserial-[[:digit:]]+"))) {
     std::cout << "vpQbDevice fails while opening [" << serial_port << "] because it does not match the expected pattern [/dev/tty.usbserial-*]." << std::endl;
@@ -534,16 +444,7 @@ int vpQbDevice::open(const std::string &serial_port)
   return 0;
 }
 
-/**
- * Send the reference command to the motors of the given device and wait for acknowledge.
- * \param id The ID of the device of interest, in range [\p 1, \p 128].
- * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
- * \param commands The reference command vector, expressed in \em ticks: if the device is a \em qbhand only the first
- * element is meaningful while the other remains always \p 0; in the case of a \em qbmove both the elements contain
- * relevant data, i.e. the commands respectively of \p motor_1 and \p motor_2.
- * \return \p 0 on success.
- */
-int vpQbDevice::setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands)
+int vpQbDevice::Impl::setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands)
 {
   // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
   int failures = 0;
@@ -558,6 +459,291 @@ int vpQbDevice::setCommandsAndWait(const int &id, const int &max_repeats, std::v
   return failures;
 }
 
+int vpQbDevice::Impl::setCommandsAsync(const int &id, std::vector<short int> &commands)
+{
+  // qbhand sets only inputs.at(0), but setCommandsAsync expects two-element vector (ok for both qbhand and qbmove)
+  commands.resize(2);  // required by 'setCommandsAsync()'
+  std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
+  m_device_api->setCommandsAsync(&m_file_descriptors.at(m_connected_devices.at(id)), id, commands);
+  return 0;  // note that this is a non reliable method
+}
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
+/*!
+ * Default constructor that does nothing.
+ * To connect to a device call init().
+ */
+vpQbDevice::vpQbDevice()
+  : m_impl(new Impl()), m_max_repeats(1), m_init_done(false)
+{
+  setMaxRepeats(2);
+}
+
+/**
+ * Close all the still open serial ports.
+ * \sa close()
+ */
+vpQbDevice::~vpQbDevice()
+{
+  delete m_impl;
+}
+
+/**
+ * Activate (or deactivate, according to the given command) the motors of the given device. Do nothing if the device
+ * is not connected in the Communication Handler.
+ * \param id The ID of the device to be activated (or deactivated), in range [\p 1, \p 128].
+ * \param command \p true to turn motors on, \p false to turn them off.
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \sa activate(const int &, const int &), deactivate(), isActive()
+ */
+int vpQbDevice::activate(const int &id, const bool &command, const int &max_repeats)
+{
+  return m_impl->activate(id, command, max_repeats);
+}
+
+/**
+ * Activate the motors of the given device. Do nothing if the device is not connected in the Communication Handler.
+ * \param id The ID of the device to be activated, in range [\p 1, \p 128].
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \sa isActive()
+ */
+int vpQbDevice::activate(const int &id, const int &max_repeats)
+{
+  return m_impl->activate(id, max_repeats);
+}
+
+/**
+ * Close the communication with all the devices connected to the given serial port.
+ * \param serial_port The serial port which has to be closed, e.g. \p /dev/ttyUSB* (Unix),
+ * \p /dev/tty.usbserial-* (MacOS) or \p COM* (Windows).
+ * \sa isInOpenMap(), open()
+ */
+bool vpQbDevice::close(const std::string &serial_port)
+{
+  return m_impl->close(serial_port);
+}
+
+/**
+ * Deactivate the motors of the given device. Do nothing if the device is not connected in the Communication Handler.
+ * \param id The ID of the device to be deactivated, in range [\p 1, \p 128].
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \sa activate(const int &, const bool &, const int &), isActive()
+ */
+int vpQbDevice::deactivate(const int &id, const int &max_repeats)
+{
+  return m_impl->deactivate(id, max_repeats);
+}
+
+/**
+ * Return the maximum current supported by the device.
+ */
+double vpQbDevice::getCurrentMax() const
+{
+  return m_impl->getCurrentMax();
+}
+
+/**
+ * Retrieve the motor currents of the given device.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \param[out] currents The two-element device motor current vector, expressed in \em mA: if the device is a \em
+ * qbhand only the first element is filled while the other remains always \p 0; in the case of a \em qbmove both
+ * the elements contain relevant data, i.e. the currents respectively of \p motor_1 and \p motor_2.
+ * \return \p 0 on success.
+ * \sa getMeasurements(), getPositions()
+ */
+int vpQbDevice::getCurrents(const int &id, const int &max_repeats, std::vector<short int> &currents)
+{
+  return m_impl->getCurrents(id, max_repeats, currents);
+}
+
+/**
+ * Retrieve the printable configuration setup of the given device.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \param info The configuration setup formatted as a plain text string (empty string on communication error).
+ * \return The number of failure reads between \p 0 and \p max_repeats.
+ * \sa getParameters()
+ */
+int vpQbDevice::getInfo(const int &id, const int &max_repeats, std::string &info)
+{
+  return m_impl->getInfo(id, max_repeats, info);
+}
+
+/**
+ * Retrieve the motor currents of the given device.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param[out] currents The two-element device motor current vector, expressed in \em mA: if the device is a \em
+ * qbhand only the first element is filled while the other remains always \p 0; in the case of a \em qbmove both
+ * the elements contain relevant data, i.e. the currents respectively of \p motor_1 and \p motor_2.
+ * \param[out] positions The device position vector, expressed in \em ticks: if the device is a \em qbhand only
+ * the first element is filled while the others remain always \p 0; in the case of a \em qbmove all the elements
+ * contain relevant data, i.e. the positions respectively of \p motor_1, \p motor_2 and \p motor_shaft (which is
+ * not directly actuated).
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \return The number of failure reads between \p 0 and \p max_repeats.
+ * \sa getCurrents(), getPositions()
+ */
+int vpQbDevice::getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions)
+{
+  return m_impl->getMeasurements(id, max_repeats, currents, positions);
+}
+
+/**
+ * Retrieve some of the parameters from the given device.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param[out] limits The vector of motor position limits expressed in \em ticks: two values for each motor,
+ * respectively [\p lower_limit, \p upper_limit].
+ * \param[out] resolutions The vector of encoder resolutions, each in range [\p 0, \p 8]: one value for each encoder
+ * (\b note: the \em qbmove has also the shaft encoder even if it is not actuated). The word "resolution" could be
+ * misunderstood: taken the resolution \p r, \f$2^r\f$ is the number of turns of the wire inside the device mechanics.
+ * It is used essentially to convert the measured position of the motors in \em ticks to \em radians or \em degrees.
+ * \return \p 0 on success.
+ * \sa getInfo(), init()
+ */
+int vpQbDevice::getParameters(const int &id, std::vector<int> &limits, std::vector<int> &resolutions)
+{
+  return m_impl->getParameters(id, limits, resolutions);
+}
+
+/**
+ * @return Position limits as a 2-dim vector with min and max values.
+ */
+std::vector<short int> vpQbDevice::getPositionLimits() const
+{
+  return m_impl->getPositionLimits();
+}
+
+/**
+ * Retrieve the motor positions of the given device.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param[out] positions The device position vector, expressed in \em ticks: if the device is a \em qbhand only
+ * the first element is filled while the others remain always \p 0; in the case of a \em qbmove all the elements
+ * contain relevant data, i.e. the positions respectively of \p motor_1, \p motor_2 and \p motor_shaft (which is
+ * not directly actuated).
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \return The number of failure reads between \p 0 and \p max_repeats.
+ * \sa getMeasurements()
+ */
+int vpQbDevice::getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions)
+{
+  return m_impl->getPositions(id, max_repeats, positions);
+}
+
+/**
+ * Scan for all the serial ports of type \p /dev/ttyUSB* detected in the system, initialize their mutex protector
+ * (each serial port connected to the system has to be accessed in a mutually exclusive fashion), and retrieve all
+ * the qbrobotics devices connected to them. For each device, store its ID in the private map \p m_connected_devices,
+ * i.e. insert a pair [\p device_id, \p serial_port]. The map \p m_connected_devices is constructed from scratch at
+ * each call.
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \return the number of connected devices.
+ * \sa isInConnectedSet(), open()
+ */
+int vpQbDevice::getSerialPortsAndDevices(const int &max_repeats)
+{
+  return m_impl->getSerialPortsAndDevices(max_repeats);
+}
+
+/**
+ * Initialize the device if the relative physical device is connected through any serial port to the system.
+ * If the device is found, retrieve some of its parameter and activate its motors, if requested.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \return \p true if the call succeed.
+ * \sa getSerialPortsAndDevices()
+ */
+bool vpQbDevice::init(const int &id)
+{
+  bool ret = m_impl->init(id);
+
+  if (ret) {
+    m_init_done = true;
+  }
+  return ret;
+}
+
+/**
+ * Check whether the motors of the device specified by the given ID are active.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \param status \p true if the device motors are on.
+ * \return The number of failure reads between \p 0 and \p max_repeats.
+ */
+int vpQbDevice::isActive(const int &id, const int &max_repeats, bool &status)
+{
+  return m_impl->isActive(id, max_repeats, status);
+}
+
+/**
+ * Check whether the the device specified by the given ID is connected through the serial port.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \return The number of failure reads between \p 0 and \p max_repeats.
+ */
+int vpQbDevice::isConnected(const int &id, const int &max_repeats)
+{
+  return m_impl->isConnected(id, max_repeats);
+}
+
+/**
+ * Check whether the physical device specified by the given ID is connected to the Communication Handler.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \return \p true if the given device belongs to the connected device vector, i.e. \p m_connected_devices.
+ * \sa getSerialPortsAndDevices()
+ */
+bool vpQbDevice::isInConnectedSet(const int &id)
+{
+  return m_impl->isInConnectedSet(id);
+}
+
+/**
+ * Check whether the given serial port is managed by the communication handler, i.e. is open.
+ * \param serial_port The name of the serial port of interest, e.g. \p /dev/ttyUSB0.
+ * \return \p true if the given serial port belongs to the open file descriptor map, i.e. \p m_file_descriptors.
+ * \sa open(), close()
+ */
+bool vpQbDevice::isInOpenMap(const std::string &serial_port)
+{
+  return m_impl->isInOpenMap(serial_port);
+}
+
+/**
+ * Check whether the reading failures are in the given range.
+ * \param failures The current number of communication failures per serial resource reading.
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \return \p true if the failures are less than the given threshold.
+ */
+bool vpQbDevice::isReliable(int const &failures, int const &max_repeats)
+{
+  return m_impl->isReliable(failures, max_repeats);
+}
+
+/**
+ * Open the serial communication on the given serial port. On success, store the opened file descriptor in the
+ * private map \p m_file_descriptors, i.e. insert a pair [\p serial_port, \p file_descriptor].
+ * \param serial_port The serial port which has to be opened, e.g. \p /dev/ttyUSB0.
+ * \return \p 0 on success.
+ * \sa close(), isInOpenMap()
+ */
+int vpQbDevice::open(const std::string &serial_port)
+{
+  return m_impl->open(serial_port);
+}
+
+/**
+ * Send the reference command to the motors of the given device and wait for acknowledge.
+ * \param id The ID of the device of interest, in range [\p 1, \p 128].
+ * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
+ * \param commands The reference command vector, expressed in \em ticks: if the device is a \em qbhand only the first
+ * element is meaningful while the other remains always \p 0; in the case of a \em qbmove both the elements contain
+ * relevant data, i.e. the commands respectively of \p motor_1 and \p motor_2.
+ * \return \p 0 on success.
+ */
+int vpQbDevice::setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands)
+{
+  return m_impl->setCommandsAndWait(id, max_repeats, commands);
+}
+
 /**
  * Send the reference command to the motors of the given device in a non-blocking fashion.
  * \param id The ID of the device of interest, in range [\p 1, \p 128].
@@ -566,12 +752,17 @@ int vpQbDevice::setCommandsAndWait(const int &id, const int &max_repeats, std::v
  * relevant data, i.e. the commands respectively of \p motor_1 and \p motor_2.
  * \return Always \p 0 (note that this is a non reliable method).
  */
-int vpQbDevice::setCommandsAsync(const int &id, std::vector<short int> &commands) {
-  // qbhand sets only inputs.at(0), but setCommandsAsync expects two-element vector (ok for both qbhand and qbmove)
-  commands.resize(2);  // required by 'setCommandsAsync()'
-  m_device_api->setCommandsAsync(&m_file_descriptors.at(m_connected_devices.at(id)), id, commands);
-  return 0;  // note that this is a non reliable method
+int vpQbDevice::setCommandsAsync(const int &id, std::vector<short int> &commands)
+{
+  return m_impl->setCommandsAsync(id, commands);
+}
+
+/**
+ * Set the maximum number of consecutive repetitions to mark retrieved data as corrupted. This value is set by default to 1.
+ */
+void vpQbDevice::setMaxRepeats(const int &max_repeats) {
+  m_max_repeats = max_repeats;
+  m_impl->setMaxRepeats(m_max_repeats);
 }
 
 #endif
-

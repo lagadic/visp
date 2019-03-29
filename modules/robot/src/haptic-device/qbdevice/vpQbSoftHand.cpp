@@ -75,7 +75,6 @@ void vpQbSoftHand::getCurrent(vpColVector &current, const int &id)
   if (!isInConnectedSet(id)) {
     throw(vpException(vpException::fatalError, "Cannot get current, Qb device is not connected"));
   }
-  std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
 
   std::vector<short int> currents(2);
   int failures = getCurrents(id, m_max_repeats, currents);  // blocks while reading
@@ -102,12 +101,11 @@ void vpQbSoftHand::getPosition(vpColVector &position, const int &id)
   if (!isInConnectedSet(id)) {
     throw(vpException(vpException::fatalError, "Cannot get position, Qb device is not connected"));
   }
-  std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
 
   std::vector<short int> positions;
   int failures = getPositions(id, m_max_repeats, positions);  // blocks while reading
 
-  position[0] = static_cast<double>(positions[0])/static_cast<double>(m_position_limits[1]);
+  position[0] = static_cast<double>(positions[0])/static_cast<double>(getPositionLimits()[1]);
 
   if (! isReliable(failures, m_max_repeats)) {
     throw(vpException(vpException::fatalError, "Cannot get position, communication error with Qb device after %d attempts", m_max_repeats));
@@ -130,19 +128,20 @@ void vpQbSoftHand::setPosition(const vpColVector &position, const int &id)
     throw(vpException(vpException::fatalError, "Command vector size %d is not equal to 2", position.size()));
   }
 
-  commands[0] = static_cast<short int>(position[0]*m_position_limits[1]);
+  std::vector<short int> position_limits = getPositionLimits();
 
-  if(commands[0] < m_position_limits[0]) {
-    commands[0] = m_position_limits[0];
+  commands[0] = static_cast<short int>(position[0]*position_limits[1]);
+
+  if(commands[0] < position_limits[0]) {
+    commands[0] = position_limits[0];
   }
-  else if (commands[0] > m_position_limits[1]) {
-    commands[0] = m_position_limits[1];
+  else if (commands[0] > position_limits[1]) {
+    commands[0] = position_limits[1];
   }
 
   if (!isInConnectedSet(id)) {
     throw(vpException(vpException::fatalError, "Cannot set position, Qb device is not connected"));
   }
-  std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
 
   //int failures = setCommandsAndWait(id, m_max_repeats, commands);  // FS: doesn't work
   int failures = setCommandsAsync(id, commands);
@@ -151,7 +150,6 @@ void vpQbSoftHand::setPosition(const vpColVector &position, const int &id)
     throw(vpException(vpException::fatalError, "Cannot set position, communication error with Qb device after %d attempts", m_max_repeats));
   }
 }
-
 
 /**
  * Send the reference command to the motors of the device with given id in a blocking fashion.
@@ -195,11 +193,11 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
   do {
     double t0 = vpTime::measureTimeMs();
     q[0] = q_mes[0] + slope * delta_t/1000.0 * i;
-    if(q[0] < m_position_limits[0]) {
-      q[0] = m_position_limits[0];
+    if(q[0] < getPositionLimits()[0]) {
+      q[0] = getPositionLimits()[0];
     }
-    else if (q[0] > m_position_limits[1]) {
-      q[0] = m_position_limits[1];
+    else if (q[0] > getPositionLimits()[1]) {
+      q[0] = getPositionLimits()[1];
     }
     setPosition(q, id);
     getCurrent(current, id);
