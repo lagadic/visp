@@ -298,7 +298,7 @@ void g2d_polygon_closest_boundary_point(const zarray_t *poly, const double q[2],
 {
     int psz = zarray_size(poly);
 //	  double min_dist = std::numeric_limits<double>::infinity(); //HUGE_VALF;
-    double min_dist = 0x7f800000;
+    double min_dist = double_pos_inf();
 
     for (int i = 0; i < psz; i++) {
         double *p0, *p1;

@@ -34,6 +34,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <algorithm>
 
 #include "zmaxheap.h"
+#include "common/math_util.h"
 
 #if defined(_MSC_VER)
 #define inline __inline
@@ -233,8 +234,8 @@ int zmaxheap_remove_index(zmaxheap_t *heap, int idx, void *p, float *v)
 
 //            assert(parent_score == heap->values[parent]);
 
-        float left_score = (left < heap->size) ? heap->values[left] : -0x7f800000;//std::numeric_limits<float>::infinity(); // INFINITY;
-        float right_score = (right < heap->size) ? heap->values[right] : -0x7f800000;//std::numeric_limits<float>::infinity(); //INFINITY;
+        float left_score = (left < heap->size) ? heap->values[left] : float_neg_inf();//-std::numeric_limits<float>::infinity(); // -INFINITY;
+        float right_score = (right < heap->size) ? heap->values[right] : float_neg_inf();//-std::numeric_limits<float>::infinity(); //-INFINITY;
 
         // put the biggest of (parent, left, right) as the parent.
 

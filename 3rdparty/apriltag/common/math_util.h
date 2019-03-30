@@ -217,6 +217,34 @@ static inline int dblcmp (double d1, double d2)
         return  0;
 }
 
+static inline double double_pos_inf() {
+    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-double-precision-floating-point-values-for-ieee-754-arithmetic
+    union {double d; int64_t i;} u;
+    u.i = 0x7FF0000000000000;
+    return u.d;
+}
+
+static inline double double_neg_inf() {
+    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-double-precision-floating-point-values-for-ieee-754-arithmetic
+    union {double d; uint64_t i;} u;
+    u.i = 0xFFF0000000000000;
+    return u.d;
+}
+
+static inline float float_pos_inf() {
+    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-single-precision-floating-point-values-for-ieee-754-arithmetic
+    union {float f; int32_t i;} u;
+    u.i = 0x7F800000;
+    return u.f;
+}
+
+static inline float float_neg_inf() {
+    //https://developer.arm.com/docs/dui0475/g/floating-point-support/sample-single-precision-floating-point-values-for-ieee-754-arithmetic
+    union {float f; uint32_t i;} u;
+    u.i = 0xFF800000;
+    return u.f;
+}
+
 #ifdef __cplusplus
 //}
 #endif

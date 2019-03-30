@@ -419,10 +419,10 @@ image_u8_t *image_u8_rotate(const image_u8_t *in, double rad, uint8_t pad)
     float p[][2] = { { 0, 0}, { (float)iwidth, 0 }, { (float)iwidth, (float)iheight }, { 0, (float)iheight} };
 
     //float xmin = HUGE_VALF, xmax = -HUGE_VALF, ymin = HUGE_VALF, ymax = -HUGE_VALF;
-    float xmin = 0x7f800000;//std::numeric_limits<float>::infinity(),
-    float xmax = -0x7f800000;//std::numeric_limits<float>::infinity(),
-    float ymin = 0x7f800000;//std::numeric_limits<float>::infinity(),
-    float ymax = -0x7f800000;//std::numeric_limits<float>::infinity();
+    float xmin = float_pos_inf();//std::numeric_limits<float>::infinity(),
+    float xmax = float_neg_inf();//std::numeric_limits<float>::infinity(),
+    float ymin = float_pos_inf();//std::numeric_limits<float>::infinity(),
+    float ymax = float_neg_inf();//std::numeric_limits<float>::infinity();
 
     float icx = iwidth / 2.0, icy = iheight / 2.0;
 
