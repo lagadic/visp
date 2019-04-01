@@ -290,7 +290,7 @@ int main(int argc, const char **argv)
     else
       ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
 
-#if defined(VISP_HAVE_XML2) && USE_XML
+#if defined(VISP_HAVE_PUGIXML) && USE_XML
     std::string configFile;
     if (!opt_configFile.empty())
       configFile = opt_configFile;
@@ -410,7 +410,7 @@ int main(int argc, const char **argv)
     std::map<std::string, vpCameraParameters> mapOfCameraParams;
 
 // Initialise the tracker: camera parameters, moving edge and KLT settings
-#if defined(VISP_HAVE_XML2) && USE_XML
+#if defined(VISP_HAVE_PUGIXML) && USE_XML
     // From the xml file
     std::map<std::string, std::string> mapOfConfigFiles;
     mapOfConfigFiles["Camera1"] = configFile;
@@ -575,7 +575,7 @@ int main(int argc, const char **argv)
         }
 
         tracker->resetTracker();
-#if defined(VISP_HAVE_XML2) && USE_XML
+#if defined(VISP_HAVE_PUGIXML) && USE_XML
         dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(mapOfConfigFiles);
 #else
         // By setting the parameters:
@@ -729,12 +729,6 @@ int main(int argc, const char **argv)
 
     delete tracker;
     tracker = NULL;
-
-#if defined(VISP_HAVE_XML2) && USE_XML
-    // Cleanup memory allocated by xml library used to parse the xml config
-    // file in vpMbGenericTracker::loadConfigFile()
-    vpXmlParser::cleanup();
-#endif
 
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     // Cleanup memory allocated by Coin library used to load a vrml model in

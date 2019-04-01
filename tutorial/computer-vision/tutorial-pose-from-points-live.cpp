@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
     // Parameters of our camera
     vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2); // Default parameters
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
     vpXmlParserCamera parser;
     if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
       std::cout << "Intrinsic file: " << opt_intrinsic_file << std::endl;

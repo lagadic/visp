@@ -487,7 +487,7 @@ int main(int argc, char *argv[]) {
 
     //Save intrinsics
 #ifdef USE_REALSENSE2
-#  ifdef VISP_HAVE_XML2
+#  ifdef VISP_HAVE_PUGIXML
     vpCameraParameters cam_color = realsense.getCameraParameters(RS2_STREAM_COLOR);
     vpXmlParserCamera xml_camera;
     xml_camera.save(cam_color, output_directory+"/camera.xml", "color_camera", width, height);
@@ -500,7 +500,7 @@ int main(int argc, char *argv[]) {
 #  endif
     vpHomogeneousMatrix depth_M_color = realsense.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH);
 #else
-#  ifdef VISP_HAVE_XML2
+#  ifdef VISP_HAVE_PUGIXML
     vpCameraParameters cam_color = realsense.getCameraParameters(rs::stream::color);
     vpXmlParserCamera xml_camera;
     xml_camera.save(cam_color, output_directory+"/camera.xml", "color_camera", width, height);
@@ -632,14 +632,11 @@ int main(int argc, char *argv[]) {
 
   storage_thread.join();
 
-#if !defined(VISP_HAVE_XML2)
+#if !defined(VISP_HAVE_PUGIXML)
   std::cout << "**********************************************************************" << std::endl
             << "Warning: " << std::endl
-            << "  This binary was not build with libxml2 support. " << std::endl
+            << "  This binary was not build with pugixml support. " << std::endl
             << "  It means that camera parameters are not saved. " << std::endl
-            << "  If you want to record all RealSense device data including camera intrinsic" << std::endl
-            << "  parameters, we recommend to install libxml2, configure ViSP in order to" << std::endl
-            << "  detect libxml2 and build again ViSP and this binary." << std::endl
             << "**********************************************************************" << std::endl;
 #endif
 

@@ -6,7 +6,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
 #include <visp3/core/vpXmlParserCamera.h>
 #endif
 
@@ -76,7 +76,7 @@ int main(int argc, const char **argv)
 
   vpCameraParameters cam;
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   vpXmlParserCamera parser;
   if (!intrinsic_file.empty() && !camera_name.empty())
     parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);

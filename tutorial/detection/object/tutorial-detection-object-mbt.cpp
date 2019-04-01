@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
               << "xml,"
 #endif
               << "cao or wrl]" << std::endl;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
     vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER);
     bool usexml = false;
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       tracker.getCameraParameters(cam);
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     //! [Keypoint declaration]
     if (usexml) {
 //! [Keypoint xml config]
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
       keypoint_learning.loadConfigFile(configurationFile);
 #endif
       //! [Keypoint xml config]
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
     //! [Init keypoint detection]
     vpKeyPoint keypoint_detection;
     if (usexml) {
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
       keypoint_detection.loadConfigFile(configurationFile);
 #endif
     } else {
@@ -220,9 +220,6 @@ int main(int argc, char **argv)
     }
     if (!click_done)
       vpDisplay::getClick(I);
-#ifdef VISP_HAVE_XML2
-    vpXmlParser::cleanup();
-#endif
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     SoDB::finish();
 #endif

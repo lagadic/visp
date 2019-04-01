@@ -263,7 +263,7 @@ namespace
     tracker_type[0] = trackerType_image;
     tracker_type[1] = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
     vpMbGenericTracker tracker(tracker_type);
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
     tracker.loadConfigFile(input_directory + "/Config/chateau.xml", input_directory + "/Config/chateau_depth.xml");
 #else
     {
@@ -518,12 +518,6 @@ namespace
 
     if (!vec_err_tu.empty())
       std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
-
-#if defined(VISP_HAVE_XML2)
-    // Cleanup memory allocated by xml library used to parse the xml config
-    // file in vpMbGenericTracker::loadConfigFile()
-    vpXmlParser::cleanup();
-#endif
 
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3)
     // Cleanup memory allocated by Coin library used to load a vrml model. We clean only if Coin was used.

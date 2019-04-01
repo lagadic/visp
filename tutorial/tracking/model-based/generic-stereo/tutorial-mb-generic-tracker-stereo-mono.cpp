@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 #endif
 
 //! [Set parameters]
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
     //! [Load config file]
     tracker.loadConfigFile(objectname + ".xml");
 //! [Load config file]

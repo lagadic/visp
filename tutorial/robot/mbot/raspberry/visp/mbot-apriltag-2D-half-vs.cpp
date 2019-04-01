@@ -107,7 +107,7 @@ int main(int argc, const char **argv)
 
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, I.getWidth() / 2., I.getHeight() / 2.);
-  #ifdef VISP_HAVE_XML2
+  #ifdef VISP_HAVE_PUGIXML
     vpXmlParserCamera parser;
     if (!intrinsic_file.empty() && !camera_name.empty())
       parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);

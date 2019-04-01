@@ -146,10 +146,10 @@ int main(int argc, char **argv)
 #endif
 //! [Set camera transformation matrix]
 
-#ifndef VISP_HAVE_XML2
+#ifndef VISP_HAVE_PUGIXML
     std::cout << "\n**********************************************************\n"
               << "Warning: we are not able to load the tracker settings from\n"
-              << "the xml config files since ViSP is not build with libxml2\n"
+              << "the xml config files since ViSP is not build with pugixml\n"
               << "3rd party. As a consequence, the tracking may fail !"
               << "\n**********************************************************\n"
               << std::endl;
