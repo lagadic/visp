@@ -1439,7 +1439,7 @@ status("    Use AprilTag (built-in):" WITH_APRILTAG    THEN "yes (ver ${APRILTAG
 status("")
 status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
-status("    Use pugixml:"             WITH_PUGIXML     THEN "yes (ver ${PUGIXML_VERSION})" ELSE "no")
+status("    Use pugixml (built-in):"  WITH_PUGIXML     THEN "yes (ver ${PUGIXML_VERSION})" ELSE "no")
 status("    Use XML2:"                USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
 status("")
 status("  Optimization: ")
