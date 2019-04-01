@@ -54,7 +54,7 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbtDistanceLine.h>
-#include <visp3/mbt/vpMbtXmlParser.h>
+#include <visp3/mbt/vpMbtXmlGenericParser.h>
 #include <visp3/vision/vpPose.h>
 
 #include <float.h>
@@ -1217,25 +1217,22 @@ void vpMbEdgeTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneou
   initialize the parameters corresponding to the objects: moving-edges, camera
   and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param configFile : full name of the xml file.
 
-  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
+  \sa loadConfigFile(const char*)
 */
 void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
 {
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile);
 
-#ifdef VISP_HAVE_XML2
-  vpMbtXmlParser xmlp;
+#ifdef VISP_HAVE_PUGIXML
+  vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER);
 
   xmlp.setCameraParameters(cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
-  xmlp.setMovingEdge(me);
+  xmlp.setEdgeMe(me);
 
   try {
     std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
@@ -1247,7 +1244,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
   vpCameraParameters camera;
   vpMe meParser;
   xmlp.getCameraParameters(camera);
-  xmlp.getMe(meParser);
+  xmlp.getEdgeMe(meParser);
 
   setCameraParameters(camera);
   setMovingEdge(meParser);
@@ -1264,8 +1261,8 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
     setClipping(clippingFlag | vpPolygon3D::FOV_CLIPPING);
 
   useLodGeneral = xmlp.getLodState();
-  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
-  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+  minLineLengthThresholdGeneral = xmlp.getLodMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getLodMinPolygonAreaThreshold();
 
   applyLodSettingInConfig = false;
   if (this->getNbPolygon() > 0) {
@@ -1276,7 +1273,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
   }
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 
