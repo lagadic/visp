@@ -69,7 +69,7 @@
   - 2. If tag sizes differ, use rather getPose()
 
   The following sample code shows how to use this class to detect the location
-of 36h11 AprilTag patterns in an image.
+  of 36h11 AprilTag patterns in an image.
 \code
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/io/vpImageIo.h>
@@ -113,7 +113,7 @@ Tag code 1:
   \endcode
 
   This other example shows how to estimate the 3D pose of 36h11 AprilTag
-patterns considering that all the tags have the same size (in our example 0.053 m).
+  patterns considering that all the tags have the same size (in our example 0.053 m).
 \code
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/io/vpImageIo.h>
