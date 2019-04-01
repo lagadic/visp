@@ -495,8 +495,9 @@ public:
   void getPoseWithOrthogonalMethod(apriltag_detection_info_t &info, vpHomogeneousMatrix &cMo1, vpHomogeneousMatrix *cMo2,
                                    double *err1, double *err2) {
     apriltag_pose_t pose1, pose2;
-    estimate_tag_pose_orthogonal_iteration(&info, err1, &pose1, err2, &pose2, 50);
-    if (err1 <= err2) {
+    double err_1, err_2;
+    estimate_tag_pose_orthogonal_iteration(&info, &err_1, &pose1, &err_2, &pose2, 50);
+    if (err_1 <= err_2) {
       convertHomogeneousMatrix(pose1, cMo1);
       if (cMo2) {
         if (pose2.R) {
@@ -521,6 +522,11 @@ public:
     if (pose2.R)
       matd_destroy(pose2.t);
     matd_destroy(pose2.R);
+
+    if (err1)
+      *err1 = err_1;
+    if (err2)
+      *err2 = err_2;
   }
 
   void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
