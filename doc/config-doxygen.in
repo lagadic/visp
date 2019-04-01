@@ -2110,6 +2110,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PNG \
                          VISP_HAVE_PTHREAD \
                          VISP_HAVE_PTU46 \
+                         VISP_HAVE_PUGIXML \
                          VISP_HAVE_PYLON \
                          VISP_HAVE_QBDEVICE \
                          VISP_HAVE_QT \
