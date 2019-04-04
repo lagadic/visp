@@ -114,7 +114,7 @@ class vpThetaUVector;
   The vpRzyzVector class is derived from vpRotationVector.
 
   From the implementation point of view, it is nothing more than an
-  array of three floats with values in [rad].
+  array of three doubles with values in [rad].
 
   You can set values [rad] accessing each element:
   \code
@@ -123,13 +123,15 @@ class vpThetaUVector;
   rzyz[1] = M_PI_2;
   rzyz[2] = M_PI;
   \endcode
-  You can also initialize the vector using `<<` operator:
+  You can also initialize the vector using operator<<(double):
   \code
   rzyz << M_PI_4, M_PI_2, M_PI;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
+#ifdef VISP_HAVE_CXX11
   rzyz = {M_PI_4, M_PI_2, M_PI};
+#endif
   \endcode
 
   To get the values [rad] use:

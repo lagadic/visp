@@ -67,6 +67,50 @@ class vpColVector;
   these vectors.
 
   The vpRowVector class is derived from vpArray2D<double>.
+
+  The code below shows how to create a 3-dim row vector of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpRowVector.h
+
+int main()
+{
+  vpRowVector v(3);
+  v[0] = -1; v[1] = -2.1; v[2] = -3;
+
+  std::cout << "v:" << std::endl;
+  for (unsigned int i = 0; i < v.size(); i++) {
+    std::cout << v[i] << " ";
+  }
+  std::cout << std::endl;
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+v:
+-1 -2.1 -3
+  \endcode
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpRowVector.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpRowVector v{-1, -2.1, -3};
+  std::cout << "v:\n" << v << std::endl;
+#endif
+}
+  \endcode
+  The vector could also be initialized using operator=(const std::initializer_list< double > &)
+  \code
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpRowVector v;
+  v = {-1, -2.1, -3};
+#endif
+}
+  \endcode
 */
 class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {

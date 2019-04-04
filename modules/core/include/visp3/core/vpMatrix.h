@@ -93,10 +93,70 @@ class vpForceTwistMatrix;
   - If none of these previous 3rd parties is installed, we use by default a
   Lapack built-in version.
 
-  vpMatrix class provides a data structure for the matrices as well
+  vpMatrix class provides a column-major data structure for the matrices as well
   as a set of operations on these matrices.
 
   The vpMatrix class is derived from vpArray2D<double>.
+
+  The code below shows how to create a 2-by-3 matrix of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+  vpMatrix M(2, 3);
+  M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+  M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+  std::cout << "M:" << std::endl;
+  for (unsigned int i = 0; i < M.getRows(); i++) {
+    for (unsigned int j = 0; j < M.getCols(); j++) {
+      std::cout << M[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+M:
+-1 -2 -3
+4 5.5 6
+  \endcode
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M{ {-1, -2, -3}, {4, 5.5, 6.0f} };
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+  \endcode
+  You can also create and initialize a matrix this way:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M{2, 3, {-1, -2, -3, 4, 5.5, 6.0f} };
+#endif
+}
+  \endcode
+
+  The Matrix could also be initialized using operator=(const std::initializer_list< std::initializer_list< double > > &)
+  \code
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M;
+  M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+#endif
+}
+  \endcode
 
   \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix,
   vpRotationMatrix, vpVelocityTwistMatrix, vpForceTwistMatrix, vpHomography

@@ -69,7 +69,7 @@ class vpQuaternionVector;
   \ingroup group_core_transformations
 
   \brief Implementation of a rotation vector as \f$\theta {\bf u}\f$
-axis-angle minimal representation.
+  axis-angle minimal representation.
 
   Class that consider the case of the \f$\theta {\bf u}\f$
   parameterization for the rotation.
@@ -87,7 +87,7 @@ axis-angle minimal representation.
 
   \f[
   {\bf R} =  {\bf I}_{3} + (1 - \cos{ \theta}) \; {\bf u u}^{\top} + \sin{
-\theta} \; [{\bf u}]_{\times} \f]
+  \theta} \; [{\bf u}]_{\times} \f]
 
   with \f${\bf I}_{3}\f$ the identity matrix of dimension
   \f$3\times3\f$ and \f$[{\bf u}]_{\times}\f$ the skew matrix:
@@ -112,13 +112,15 @@ axis-angle minimal representation.
   tu[1] = M_PI_2;
   tu[2] = M_PI;
   \endcode
-  You can also initialize the vector using `<<` operator:
+  You can also initialize the vector using operator<<(double):
   \code
   tu << M_PI_4, M_PI_2, M_PI;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
+#ifdef VISP_HAVE_CXX11
   tu = {M_PI_4, M_PI_2, M_PI};
+#endif
   \endcode
 
   To get the values [rad] use:

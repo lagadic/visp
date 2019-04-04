@@ -54,7 +54,7 @@
   \class vpArray2D
   \ingroup group_core_matrices
 
-  \brief Implementation of a generic 2D array used as vase class of matrices
+  \brief Implementation of a generic column-major 2D array used as vase class of matrices
   and vectors.
 
   This class implements a 2D array as a template class and all the basic
@@ -66,6 +66,67 @@
   - concerning vectors, vpColVector, vpRowVector but also specific containers
   describing the pose (vpPoseVector) and the rotation (vpRotationVector)
   inherit also from vpArray2D<double>.
+
+  The code below shows how to create a 2-by-3 array of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpArray2D.h
+
+int main()
+{
+  vpArray2D<float> a(2, 3);
+  a[0][0] = -1; a[0][1] =  -2; a[0][2] = -3;
+  a[1][0] =  4; a[1][1] = 5.5; a[1][2] =  6;
+
+  std::cout << "a:" << std::endl;
+  for (unsigned int i = 0; i < a.getRows(); i++) {
+    for (unsigned int j = 0; j < a.getCols(); j++) {
+      std::cout << a[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+a:
+-1 -2 -3
+4 5.5 6
+  \endcode
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpArray2D.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
+  std::cout << "a:\n" << a << std::endl;
+#endif
+}
+  \endcode
+  The array could also be initialized using operator=(const std::initializer_list< std::initializer_list< Type > > &)
+  \code
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<float> a;
+  a = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+#endif
+}
+  \endcode
+
+  You can also use reshape() function:
+  \code
+#include <visp3/code/vpArray2D.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<float> a{ -1, -2, -3, 4, 5.5, 6.0f };
+  a.reshape(2, 3);
+#endif
+}
+  \endcode
 */
 template <class Type> class vpArray2D
 {

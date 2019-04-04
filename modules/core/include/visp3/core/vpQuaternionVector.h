@@ -64,7 +64,7 @@
 
   The vpQuaternionVector class is derived from vpRotationVector.
 
-  A quaternion is defined by four values: \f${\bf q} = (x, y, z, w)\f$.
+  A quaternion is defined by four double values: \f${\bf q} = (x, y, z, w)\f$.
 
   This class allows to compute a quaternion from a rotation matrix
   using either vpQuaternionVector(const vpRotationMatrix &) constructor
@@ -83,7 +83,7 @@
   q[2] = z;
   q[3] = w;
   \endcode
-  You can also initialize the vector using `<<` operator:
+  You can also initialize the vector using operator<<(double):
   \code
   tu << x, y, z, w;
   \endcode
