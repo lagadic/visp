@@ -283,6 +283,20 @@ int main()
         }
       }
     }
+
+    {
+      std::cout << "** Test vpTranslationVector" << std::endl;
+      vpTranslationVector t_ref(0, 0.1, 0.5);
+      std::cout << "t_ref: " << t_ref.t() << std::endl;
+      {
+        vpTranslationVector t = {t_ref[0], t_ref[1], t_ref[2]};
+        std::cout << "t: " << t.t() << std::endl;
+        if (! equal(t_ref, t, epsilon)) {
+          return EXIT_FAILURE;
+        }
+      }
+    }
+
   }
 #endif
 
@@ -428,6 +442,24 @@ int main()
       q << q_ref[0], q_ref[1], q_ref[2], q_ref[3];
       std::cout << "q: " << q.t() << std::endl;
       if (! equal(q_ref, q, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
+
+    {
+      std::cout << "** Test vpTranslationVector" << std::endl;
+      vpTranslationVector t_ref(0, 0.1, 0.5);
+      std::cout << "t_ref: " << t_ref.t() << std::endl;
+      vpTranslationVector t;
+      t << 0, 0.1, 0.5;
+      std::cout << "t: " << t.t() << std::endl;
+      if (! equal(t_ref, t, epsilon)) {
+        return EXIT_FAILURE;
+      }
+      // Do it twice
+      t << 0, 0.1, 0.5;
+      std::cout << "t: " << t.t() << std::endl;
+      if (! equal(t_ref, t, epsilon)) {
         return EXIT_FAILURE;
       }
     }
