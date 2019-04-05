@@ -48,7 +48,7 @@
 #include <tagStandard41h12.h>
 #include <apriltag_pose.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#if BUILD_BIG_FAMILY_TAG
+#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
 #include <tagCircle49h12.h>
 #include <tagCustom48h12.h>
 #include <tagStandard52h13.h>
@@ -95,19 +95,23 @@ public:
       m_tf = tagCircle21h7_create();
       break;
 
-#if BUILD_BIG_FAMILY_TAG
     case TAG_CIRCLE49h12:
+#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
       m_tf = tagCircle49h12_create();
+#endif
       break;
 
     case TAG_CUSTOM48h12:
+#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
       m_tf = tagCustom48h12_create();
+#endif
       break;
 
     case TAG_STANDARD52h13:
+#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
       m_tf = tagStandard52h13_create();
-      break;
 #endif
+      break;
 
     case TAG_STANDARD41h12:
       m_tf = tagStandard41h12_create();
@@ -158,19 +162,23 @@ public:
       tagCircle21h7_destroy(m_tf);
       break;
 
-#if BUILD_BIG_FAMILY_TAG
     case TAG_CIRCLE49h12:
+#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
       tagCustom48h12_destroy(m_tf);
+#endif
       break;
 
     case TAG_CUSTOM48h12:
+#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
       tagCustom48h12_destroy(m_tf);
+#endif
       break;
 
     case TAG_STANDARD52h13:
+#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
       tagStandard52h13_destroy(m_tf);
-      break;
 #endif
+      break;
 
     case TAG_STANDARD41h12:
       tagStandard41h12_destroy(m_tf);
@@ -203,8 +211,16 @@ public:
   {
     if (m_tagFamily == TAG_36ARTOOLKIT) {
       //TAG_36ARTOOLKIT is not available anymore
+      std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
       return false;
     }
+#ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
+    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
+      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
+                   "and in RelWithDebInfo due to long build time issue."
+      return false;
+    }
+#endif
 
     const bool computePose = (cMo_vec != NULL);
 
@@ -284,8 +300,16 @@ public:
     }
     if (m_tagFamily == TAG_36ARTOOLKIT) {
       //TAG_36ARTOOLKIT is not available anymore
+      std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
       return  false;
     }
+#ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
+    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
+      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
+                   "and in RelWithDebInfo due to long build time issue."
+      return false;
+    }
+#endif
 
     apriltag_detection_t *det;
     zarray_get(m_detections, static_cast<int>(tagIndex), &det);
@@ -315,6 +339,7 @@ public:
       info.cx = cx;
       info.cy = cy;
 
+      //projErrors and projErrors2 will be override later
       getPoseWithOrthogonalMethod(info, cMo, cMo2, projErrors, projErrors2);
       cMo_homography_ortho_iter = cMo;
     }
@@ -345,42 +370,40 @@ public:
 
     // Add marker object points
     vpPose pose;
-    if (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
-      vpPoint pt;
+    vpPoint pt;
 
-      vpImagePoint imPt;
-      double x = 0.0, y = 0.0;
-      std::vector<vpPoint> pts(4);
-      pt.setWorldCoordinates(-tagSize / 2.0, tagSize / 2.0, 0.0);
-      imPt.set_uv(det->p[0][0], det->p[0][1]);
-      vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
-      pt.set_x(x);
-      pt.set_y(y);
-      pts[0] = pt;
+    vpImagePoint imPt;
+    double x = 0.0, y = 0.0;
+    std::vector<vpPoint> pts(4);
+    pt.setWorldCoordinates(-tagSize / 2.0, tagSize / 2.0, 0.0);
+    imPt.set_uv(det->p[0][0], det->p[0][1]);
+    vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
+    pt.set_x(x);
+    pt.set_y(y);
+    pts[0] = pt;
 
-      pt.setWorldCoordinates(tagSize / 2.0, tagSize / 2.0, 0.0);
-      imPt.set_uv(det->p[1][0], det->p[1][1]);
-      vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
-      pt.set_x(x);
-      pt.set_y(y);
-      pts[1] = pt;
+    pt.setWorldCoordinates(tagSize / 2.0, tagSize / 2.0, 0.0);
+    imPt.set_uv(det->p[1][0], det->p[1][1]);
+    vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
+    pt.set_x(x);
+    pt.set_y(y);
+    pts[1] = pt;
 
-      pt.setWorldCoordinates(tagSize / 2.0, -tagSize / 2.0, 0.0);
-      imPt.set_uv(det->p[2][0], det->p[2][1]);
-      vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
-      pt.set_x(x);
-      pt.set_y(y);
-      pts[2] = pt;
+    pt.setWorldCoordinates(tagSize / 2.0, -tagSize / 2.0, 0.0);
+    imPt.set_uv(det->p[2][0], det->p[2][1]);
+    vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
+    pt.set_x(x);
+    pt.set_y(y);
+    pts[2] = pt;
 
-      pt.setWorldCoordinates(-tagSize / 2.0, -tagSize / 2.0, 0.0);
-      imPt.set_uv(det->p[3][0], det->p[3][1]);
-      vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
-      pt.set_x(x);
-      pt.set_y(y);
-      pts[3] = pt;
+    pt.setWorldCoordinates(-tagSize / 2.0, -tagSize / 2.0, 0.0);
+    imPt.set_uv(det->p[3][0], det->p[3][1]);
+    vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
+    pt.set_x(x);
+    pt.set_y(y);
+    pts[3] = pt;
 
-      pose.addPoints(pts);
-    }
+    pose.addPoints(pts);
 
     if (m_poseEstimationMethod != HOMOGRAPHY && m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS &&
         m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
@@ -422,7 +445,7 @@ public:
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
     }
 
-    //Only with HOMOGRAPHY_ORTHOGONAL_ITERATION we can get two solutions
+    //Only with HOMOGRAPHY_ORTHOGONAL_ITERATION we can directly get two solutions
     if (m_poseEstimationMethod != HOMOGRAPHY_ORTHOGONAL_ITERATION) {
       if (cMo2) {
         double scale = tagSize/2.0;
@@ -442,10 +465,10 @@ public:
 
         apriltag_pose_t solution1, solution2;
         const int nIters = 50;
-        double err2;
         solution1.R = matd_create_data(3, 3, cMo.getRotationMatrix().data);
         solution1.t = matd_create_data(3, 1, cMo.getTranslationVector().data);
 
+        double err2;
         get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
 
         for (int i = 0; i < 4; i++) {
@@ -454,12 +477,7 @@ public:
         }
 
         if (solution2.R) {
-          for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-              (*cMo2)[i][j] = MATD_EL(solution2.R, i, j);
-            }
-            (*cMo2)[i][3] = MATD_EL(solution2.t, i, 0);
-          }
+          convertHomogeneousMatrix(solution2, *cMo2);
 
           matd_destroy(solution2.R);
           matd_destroy(solution2.t);
@@ -468,13 +486,14 @@ public:
         matd_destroy(solution1.R);
         matd_destroy(solution1.t);
       }
+    }
 
-      if (projErrors) {
-        *projErrors = pose.computeResidual(cMo);
-      }
-      if (projErrors2 && cMo2) {
-        *projErrors2 = pose.computeResidual(*cMo2);
-      }
+    //Compute projection error with vpPose::computeResidual() for consistency
+    if (projErrors) {
+      *projErrors = pose.computeResidual(cMo);
+    }
+    if (projErrors2 && cMo2) {
+      *projErrors2 = pose.computeResidual(*cMo2);
     }
 
     if (!m_zAlignedWithCameraFrame) {
@@ -508,19 +527,16 @@ public:
       }
     } else {
       if (cMo2) {
-        if (pose2.R) {
-          convertHomogeneousMatrix(pose1, *cMo2);
-        } else {
-          *cMo2 = cMo1;
-        }
+        convertHomogeneousMatrix(pose1, *cMo2);
+        convertHomogeneousMatrix(pose2, cMo1);
       }
-      convertHomogeneousMatrix(pose2, cMo1);
     }
 
     matd_destroy(pose1.R);
     matd_destroy(pose1.t);
-    if (pose2.R)
+    if (pose2.R) {
       matd_destroy(pose2.t);
+    }
     matd_destroy(pose2.R);
 
     if (err1)
@@ -567,7 +583,7 @@ protected:
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
-    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_zAlignedWithCameraFrame(false),
+    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily),
     m_impl(new Impl(tagFamily, poseEstimationMethod))
 {
 }
@@ -602,13 +618,13 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
 
   If tags with different sizes have to be considered, you may use getPose().
 
-  \param I : Input image.
-  \param tagSize : Tag size in meter corresponding to the external width of the pattern.
-  \param cam : Camera intrinsic parameters.
-  \param cMo_vec : List of tag poses.
-  \param cMo_vec2 : 2nd list of tag poses, since there are 2 solutions for planar pose estimation.
-  \param projErrors : Projection errors.
-  \param projErrors2 : Projection errors for the 2nd solution (with HOMOGRAPHY_ORTHOGONAL_ITERATION method).
+  \param[in] I : Input image.
+  \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
+  \param[in] cam : Camera intrinsic parameters.
+  \param[out] cMo_vec : List of tag poses.
+  \param[out] cMo_vec2 : Optional second list of tag poses, since there are 2 solutions for planar pose estimation.
+  \param[out] projErrors : Optional (sum of squared) projection errors in the normalized camera frame.
+  \param[out] projErrors2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera frame.
   \return true if at least one tag is detected.
 
   \sa getPose()
@@ -641,7 +657,9 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
   \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param[in] cam : Camera intrinsic parameters.
   \param[out] cMo : Pose of the tag.
-  \param[out] cMo2 : Second pose of the tag (if HOMOGRAPHY_ORTHOGONAL_ITERATION method is chosen).
+  \param[out] cMo2 : Optional second pose of the tag.
+  \param[out] projError : Optional (sum of squared) projection errors in the normalized camera frame.
+  \param[out] projError2 : Optional (sum of squared) projection errors for the 2nd solution in the normalized camera frame.
   \return true if success, false otherwise.
 
   The following code shows how to use this function:
@@ -771,7 +789,6 @@ vp_deprecated void vpDetectorAprilTag::setAprilTagRefinePose(const bool refinePo
  */
 void vpDetectorAprilTag::setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame)
 {
-  m_zAlignedWithCameraFrame = zAlignedWithCameraFrame;
   m_impl->setZAlignedWithCameraAxis(zAlignedWithCameraFrame);
 }
 

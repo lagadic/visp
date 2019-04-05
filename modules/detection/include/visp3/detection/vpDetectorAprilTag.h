@@ -44,8 +44,6 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/detection/vpDetectorBase.h>
 
-#define BUILD_BIG_FAMILY_TAG 1
-
 /*!
   \class vpDetectorAprilTag
   \ingroup group_detection_tag
@@ -54,8 +52,9 @@
   is no need to download and install AprilTag from source code or existing
   pre-built packages since the source code is embedded in ViSP. Reference papers
   are <I> AprilTag: A robust and flexible visual fiducial system </I>
-  (\cite olson2011tags) and <I> AprilTag 2: Efficient and robust fiducial
-  detection</I> (\cite wang2016iros).
+  (\cite olson2011tags), <I> AprilTag 2: Efficient and robust fiducial
+  detection </I> (\cite wang2016iros) and <I> Flexible Layouts for Fiducial Tags
+  (Under Review) </I> (\cite krogius2019iros).
 
   The detect() function allows to detect multiple tags in an image. Once
   detected, for each tag it is possible to retrieve the location of the corners
@@ -214,42 +213,19 @@ Tag code 1:
 */
 class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 {
-
 public:
   enum vpAprilTagFamily {
-    TAG_36h11,        /*!< AprilTag <a
-                         href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a>
-                         pattern (recommended) */
-    TAG_36h10,        ///< DEPRECATED
-    TAG_36ARTOOLKIT,  ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
-    TAG_25h9,         /*!< AprilTag <a
-                         href="https://april.eecs.umich.edu/software/apriltag.html">25h9</a>
-                         pattern */
-    TAG_25h7,         ///< DEPRECATED AND POOR DETECTION PERFORMANCE
-    TAG_16h5,         /*!< AprilTag <a
-                         href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                         pattern */
-    TAG_CIRCLE21h7,   /*!< AprilTag <a
-                         href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                         pattern */
-#if BUILD_BIG_FAMILY_TAG //add explicit enum values?
-    TAG_CIRCLE49h12,  /*!< AprilTag <a
-                         href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                         pattern */
-    TAG_CUSTOM48h12,   /*!< AprilTag <a
-                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                          pattern */
-    TAG_STANDARD41h12, /*!< AprilTag <a
-                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                          pattern */
-    TAG_STANDARD52h13  /*!< AprilTag <a
-                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                          pattern */
-#else
-    TAG_STANDARD41h12  /*!< AprilTag <a
-                          href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a>
-                          pattern */
-#endif
+    TAG_36h11,         ///< AprilTag 36h11 pattern (recommended)
+    TAG_36h10,         ///< DEPRECATED
+    TAG_36ARTOOLKIT,   ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
+    TAG_25h9,          ///< AprilTag 25h9 pattern
+    TAG_25h7,          ///< DEPRECATED AND POOR DETECTION PERFORMANCE
+    TAG_16h5,          ///< AprilTag 16h5 pattern
+    TAG_CIRCLE21h7,    ///< AprilTag Circle21h7 pattern
+    TAG_CIRCLE49h12,   ///< AprilTag Circle49h12 pattern
+    TAG_CUSTOM48h12,   ///< AprilTag Custom48h12 pattern
+    TAG_STANDARD41h12, ///< AprilTag Standard41h12 pattern
+    TAG_STANDARD52h13  ///< AprilTag Standard52h13 pattern
   };
 
   enum vpPoseEstimationMethod {
@@ -310,7 +286,6 @@ protected:
   unsigned int m_displayTagThickness;
   vpPoseEstimationMethod m_poseEstimationMethod;
   vpAprilTagFamily m_tagFamily;
-  bool m_zAlignedWithCameraFrame;
 
 private:
   vpDetectorAprilTag(const vpDetectorAprilTag &);            // noncopyable
@@ -387,7 +362,6 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
     os << "CIRCLE21h7";
     break;
 
-#if BUILD_BIG_FAMILY_TAG
   case vpDetectorAprilTag::TAG_CIRCLE49h12:
     os << "CIRCLE49h12";
     break;
@@ -399,7 +373,6 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpAp
   case vpDetectorAprilTag::TAG_STANDARD52h13:
     os << "STANDARD52h13";
     break;
-#endif
 
   case vpDetectorAprilTag::TAG_STANDARD41h12:
     os << "STANDARD41h12";

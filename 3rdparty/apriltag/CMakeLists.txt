@@ -13,12 +13,14 @@ vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
 vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
 vp_list_filterout(lib_hdrs common/getopt.h)    # useless and produces errors on uwp
 
-#vp_list_filterout(lib_srcs tagCircle49h12.c)     # build take too much time with RelWithDebInfo on GCC 5.4.0
-#vp_list_filterout(lib_hdrs tagCircle49h12.h)     # build take too much time with RelWithDebInfo on GCC 5.4.0
-#vp_list_filterout(lib_srcs tagCustom48h12.c)     # build take too much time with RelWithDebInfo on GCC 5.4.0
-#vp_list_filterout(lib_hdrs tagCustom48h12.h)     # build take too much time with RelWithDebInfo on GCC 5.4.0
-#vp_list_filterout(lib_srcs tagStandard52h13.c)   # build take too much time with RelWithDebInfo on GCC 5.4.0
-#vp_list_filterout(lib_hdrs tagStandard52h13.h)   # build take too much time with RelWithDebInfo on GCC 5.4.0
+if(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo" AND CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.5)
+vp_list_filterout(lib_srcs tagCircle49h12.c)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_hdrs tagCircle49h12.h)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_srcs tagCustom48h12.c)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_hdrs tagCustom48h12.h)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_srcs tagStandard52h13.c)   # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_hdrs tagStandard52h13.h)   # build takes too much time with RelWithDebInfo on GCC 5.4.0
+endif()
 
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
