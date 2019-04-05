@@ -51,7 +51,7 @@
 
 #ifdef VISP_HAVE_PUGIXML
 
-#include <iostream>
+#include <string>
 
 /*!
   \class vpXmlConfigParserKeyPoint

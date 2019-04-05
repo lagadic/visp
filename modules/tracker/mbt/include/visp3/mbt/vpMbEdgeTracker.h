@@ -47,7 +47,6 @@
 #define vpMbEdgeTracker_HH
 
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/mbt/vpMbTracker.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceCylinder.h>

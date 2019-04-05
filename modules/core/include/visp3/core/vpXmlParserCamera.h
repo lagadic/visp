@@ -47,7 +47,6 @@
 
 #ifdef VISP_HAVE_PUGIXML
 
-#include <string>
 #include <visp3/core/vpCameraParameters.h>
 
 /*!
@@ -173,33 +172,8 @@ int main()
 class VISP_EXPORT vpXmlParserCamera
 {
 public:
-  /* --- XML Code------------------------------------------------------------
-   */
-  enum vpXmlCodeType {
-    CODE_XML_BAD = -1,
-    CODE_XML_OTHER,
-    CODE_XML_CAMERA,
-    CODE_XML_CAMERA_NAME,
-    CODE_XML_HEIGHT,
-    CODE_XML_WIDTH,
-    CODE_XML_SUBSAMPLING_WIDTH,
-    CODE_XML_SUBSAMPLING_HEIGHT,
-    CODE_XML_FULL_HEIGHT,
-    CODE_XML_FULL_WIDTH,
-    CODE_XML_MODEL,
-    CODE_XML_MODEL_TYPE,
-    CODE_XML_U0,
-    CODE_XML_V0,
-    CODE_XML_PX,
-    CODE_XML_PY,
-    CODE_XML_KUD,
-    CODE_XML_KDU,
-    CODE_XML_ADDITIONAL_INFO
-  };
-
   enum vpXmlCodeSequenceType { SEQUENCE_OK, SEQUENCE_ERROR };
 
-public:
   vpXmlParserCamera();
   ~vpXmlParserCamera();
 

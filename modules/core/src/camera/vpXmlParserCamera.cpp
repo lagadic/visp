@@ -37,9 +37,10 @@
   \file vpXmlParserCamera.cpp
   \brief Definition of the vpXmlParserCamera class member functions.
   Class vpXmlParserCamera allowed to load and save intrinsic camera parameters
-
 */
+
 #include <visp3/core/vpXmlParserCamera.h>
+
 #ifdef VISP_HAVE_PUGIXML
 
 #include <pugixml.hpp>
@@ -78,16 +79,40 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlParserCamera::Impl
 {
+private:
+  /* --- XML Code------------------------------------------------------------
+   */
+  enum vpXmlCodeType {
+    CODE_XML_BAD = -1,
+    CODE_XML_OTHER,
+    CODE_XML_CAMERA,
+    CODE_XML_CAMERA_NAME,
+    CODE_XML_HEIGHT,
+    CODE_XML_WIDTH,
+    CODE_XML_SUBSAMPLING_WIDTH,
+    CODE_XML_SUBSAMPLING_HEIGHT,
+    CODE_XML_FULL_HEIGHT,
+    CODE_XML_FULL_WIDTH,
+    CODE_XML_MODEL,
+    CODE_XML_MODEL_TYPE,
+    CODE_XML_U0,
+    CODE_XML_V0,
+    CODE_XML_PX,
+    CODE_XML_PY,
+    CODE_XML_KUD,
+    CODE_XML_KDU,
+    CODE_XML_ADDITIONAL_INFO
+  };
+
 public:
-  Impl() :
-        camera(), camera_name(), image_width(0), image_height(0), subsampling_width(0),
-        subsampling_height(0), full_width(0), full_height(0)
+  Impl() : camera(), camera_name(), image_width(0), image_height(0), subsampling_width(0),
+           subsampling_height(0), full_width(0), full_height(0)
   {
   }
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-                               const vpCameraParameters::vpCameraParametersProjType &projModel,
-                               const unsigned int im_width, const unsigned int im_height)
+            const vpCameraParameters::vpCameraParametersProjType &projModel,
+            const unsigned int im_width, const unsigned int im_height)
   {
     pugi::xml_document doc;
     if (!doc.load_file(filename.c_str())) {
@@ -108,7 +133,7 @@ public:
 
   /*!
     Read camera parameters from a XML file.
-    \param node : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipement.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
     \param im_width : width of image  on which camera calibration was performed.
@@ -121,7 +146,7 @@ public:
       Set as 0 if not ambiguous.
     \return vpXmlParserCamera::SEQUENCE_OK if success and vpXmlParserCamera::SEQUENCE_ERROR otherwise.
    */
-  int read(pugi::xml_node &node, const std::string &cam_name,
+  int read(const pugi::xml_node &node_, const std::string &cam_name,
            const vpCameraParameters::vpCameraParametersProjType &projModel,
            const unsigned int im_width, const unsigned int im_height,
            const unsigned int subsampl_width=0, const unsigned int subsampl_height=0)
@@ -131,7 +156,7 @@ public:
     vpXmlCodeSequenceType back = SEQUENCE_OK;
     unsigned int nbCamera = 0;
 
-    for (node = node.first_child(); node; node = node.next_sibling()) {
+    for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
       if (node.type() != pugi::node_element)
         continue;
 
@@ -162,7 +187,7 @@ public:
 
   /*!
     Read camera fields from a XML file.
-    \param node : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipement.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
     \param im_width : width of image  on which camera calibration was performed.
@@ -175,7 +200,7 @@ public:
       Set as 0 if not ambiguous.
     \return error code.
    */
-  int read_camera(pugi::xml_node &node, const std::string &cam_name,
+  int read_camera(const pugi::xml_node &node_, const std::string &cam_name,
                   const vpCameraParameters::vpCameraParametersProjType &projModel,
                   const unsigned int im_width, const unsigned int im_height,
                   const unsigned int subsampl_width, const unsigned int subsampl_height)
@@ -192,7 +217,7 @@ public:
     bool projModelFound = false;
     vpXmlCodeSequenceType back = SEQUENCE_OK;
 
-    for (node = node.first_child(); node; node = node.next_sibling()) {
+    for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
       if (node.type() != pugi::node_element)
         continue;
 
@@ -268,14 +293,14 @@ public:
           (test_subsampling_width) && (test_subsampling_height))) {
       back = SEQUENCE_ERROR;
     } else {
-      this->camera = cam_tmp;
-      this->camera_name = camera_name_tmp;
-      this->image_width = image_width_tmp;
-      this->image_height = image_height_tmp;
-      this->subsampling_width = subsampling_width_tmp;
-      this->subsampling_height = subsampling_height_tmp;
-      this->full_width = subsampling_width_tmp * image_width_tmp;
-      this->full_height = subsampling_height_tmp * image_height_tmp;
+      camera = cam_tmp;
+      camera_name = camera_name_tmp;
+      image_width = image_width_tmp;
+      image_height = image_height_tmp;
+      subsampling_width = subsampling_width_tmp;
+      subsampling_height = subsampling_height_tmp;
+      full_width = subsampling_width_tmp * image_width_tmp;
+      full_height = subsampling_height_tmp * image_height_tmp;
     }
     return back;
   }
@@ -672,16 +697,16 @@ public:
 
       if (im_width != 0 || im_height != 0) {
         char str[11];
-        //<image_width>
         node_tmp = node_camera.append_child(pugi::node_comment);
         node_tmp.set_value("Size of the image on which camera "
                            "calibration was performed");
 
+        //<image_width>
         sprintf(str, "%u", im_width);
         node_tmp = node_camera.append_child(LABEL_XML_WIDTH);
         node_tmp.append_child(pugi::node_pcdata).set_value(str);
-        //<image_height>
 
+        //<image_height>
         sprintf(str, "%u", im_height);
         node_tmp = node_camera.append_child(LABEL_XML_HEIGHT);
         node_tmp.append_child(pugi::node_pcdata).set_value(str);
@@ -935,8 +960,7 @@ private:
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpXmlParserCamera::vpXmlParserCamera()
-  : m_impl(new Impl())
+vpXmlParserCamera::vpXmlParserCamera() : m_impl(new Impl())
 {
 }
 

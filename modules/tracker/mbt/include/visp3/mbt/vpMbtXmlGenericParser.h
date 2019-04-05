@@ -47,7 +47,6 @@
 #ifdef VISP_HAVE_PUGIXML
 
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/me/vpMe.h>
 
@@ -75,7 +74,7 @@ public:
   };
 
 public:
-  explicit vpMbtXmlGenericParser(int type = EDGE_PARSER);
+  vpMbtXmlGenericParser(int type = EDGE_PARSER);
   virtual ~vpMbtXmlGenericParser();
 
   double getAngleAppear() const;

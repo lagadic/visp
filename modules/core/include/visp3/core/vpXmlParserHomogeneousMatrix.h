@@ -49,12 +49,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
 
-#include <libxml/xmlmemory.h> /* Functions of libxml.                */
-#include <string>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpXmlParser.h>
 
 /*!
   \class vpXmlParserHomogeneousMatrix
@@ -63,9 +60,8 @@
 
   \brief XML parser to load and save an homogeneous matrix in a file.
 
-  \warning This class is only available if libxml2 is installed and detected
-by ViSP. Installation instructions are provided here
-https://visp.inria.fr/3rd_xml2.
+  \warning This class is only available if pugixml third-party is successfully
+built.
 
   To have a complete description of the homogeneous matrix implemented in
 ViSP, see vpHomogeneousMatrix.
@@ -102,7 +98,7 @@ in radians --> <theta_ux>0.20</theta_ux> <theta_uy>0.30</theta_uy>
 
 int main(int argc, char* argv[])
 {
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   vpHomogeneousMatrix eMc;
 
   // Create a XML parser
@@ -136,7 +132,7 @@ int main(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   // Create Pose Vector and convert to homogeneous matrix
   vpPoseVector r(1.0,1.3,3.5,0.2,0.3,0.5);
   vpHomogeneousMatrix M(r);
@@ -154,88 +150,37 @@ int main(int argc, char* argv[])
   if (p.save(M, filename, name_M) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
     std::cout << "Cannot save the Homogeneous matrix" << std::endl;
   }
-
-  vpXmlParser::cleanup();
 #endif
   return 0;
 }
   \endcode
 */
 
-class VISP_EXPORT vpXmlParserHomogeneousMatrix : public vpXmlParser
+class VISP_EXPORT vpXmlParserHomogeneousMatrix
 {
-
 public:
-  /* --- XML Code------------------------------------------------------------
-   */
-  typedef enum {
-    CODE_XML_BAD = -1,
-    CODE_XML_OTHER,
-    CODE_XML_M,
-    CODE_XML_M_NAME,
-    CODE_XML_VALUE,
-    CODE_XML_TX,
-    CODE_XML_TY,
-    CODE_XML_TZ,
-    CODE_XML_TUX,
-    CODE_XML_TUY,
-    CODE_XML_TUZ
-  } vpXmlCodeType;
-
   typedef enum { SEQUENCE_OK, SEQUENCE_ERROR } vpXmlCodeSequenceType;
 
-private:
-  vpHomogeneousMatrix m_M;
-  std::string m_name;
-
-public:
   vpXmlParserHomogeneousMatrix();
-  vpXmlParserHomogeneousMatrix(vpXmlParserHomogeneousMatrix &twinParser);
-  //! Default destructor.
-  virtual ~vpXmlParserHomogeneousMatrix() {}
+  ~vpXmlParserHomogeneousMatrix();
 
   // get/set functions
-  vpHomogeneousMatrix getHomogeneousMatrix() const { return this->m_M; }
-  std::string getHomogeneousMatrixName() const { return this->m_name; }
+  vpHomogeneousMatrix getHomogeneousMatrix() const;
+  std::string getHomogeneousMatrixName() const;
 
-  vpXmlParserHomogeneousMatrix &operator=(const vpXmlParserHomogeneousMatrix &twinparser);
   int parse(vpHomogeneousMatrix &M, const std::string &filename, const std::string &name);
 
   int save(const vpHomogeneousMatrix &M, const std::string &filename, const std::string &name);
 
-  void setHomogeneousMatrixName(const std::string &name) { this->m_name = name; }
+  void setHomogeneousMatrixName(const std::string &name);
 
 private:
-  int read(xmlDocPtr doc, xmlNodePtr node, const std::string &name);
+  vpXmlParserHomogeneousMatrix(const vpXmlParserHomogeneousMatrix &);            // noncopyable
+  vpXmlParserHomogeneousMatrix &operator=(const vpXmlParserHomogeneousMatrix &); //
 
-  int count(xmlDocPtr doc, xmlNodePtr node, const std::string &name);
-
-  int read_matrix(xmlDocPtr doc, xmlNodePtr node, const std::string &name);
-
-  vpXmlCodeSequenceType read_values(xmlDocPtr doc, xmlNodePtr node, vpHomogeneousMatrix &M);
-
-  static vpXmlCodeSequenceType str2xmlcode(char *str, vpXmlCodeType &res);
-  void myXmlReadIntChild(xmlDocPtr doc, xmlNodePtr node, int &res, vpXmlCodeSequenceType &code_error);
-
-  void myXmlReadDoubleChild(xmlDocPtr doc, xmlNodePtr node, double &res, vpXmlCodeSequenceType &code_error);
-
-  void myXmlReadCharChild(xmlDocPtr doc, xmlNodePtr node, char **res);
-  int write(xmlNodePtr node, const std::string &name);
-
-private:
-  /*!
-
-    \param 2doc : a pointer representing the document
-    \param node : the root node of the document
-  */
-  virtual void readMainClass(xmlDocPtr, xmlNodePtr){};
-
-  /*!
-
-
-    \param node2 : the root node of the document
-  */
-  virtual void writeMainClass(xmlNodePtr){};
+  // PIMPL idiom
+  class Impl;
+  Impl *m_impl;
 };
-#endif // VISP_HAVE_XML2
+#endif //VISP_HAVE_PUGIXML
 #endif
