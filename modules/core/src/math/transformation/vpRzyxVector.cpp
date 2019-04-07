@@ -262,6 +262,7 @@ int main()
   \code
 rzyx: 3.141592654  0  1.570796327
   \endcode
+  \sa operator<<()
 */
 vpRzyxVector &vpRzyxVector::operator=(const std::initializer_list<double> &list)
 {

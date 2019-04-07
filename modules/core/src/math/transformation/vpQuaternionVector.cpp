@@ -335,8 +335,9 @@ int main()
   \endcode
   It produces the following printings:
   \code
-q: 0  0  0 1
+q: 0  0  0  1
   \endcode
+  \sa operator<<()
 */
 vpQuaternionVector &vpQuaternionVector::operator=(const std::initializer_list<double> &list)
 {

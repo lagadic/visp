@@ -54,7 +54,7 @@
   \class vpArray2D
   \ingroup group_core_matrices
 
-  \brief Implementation of a generic column-major 2D array used as vase class of matrices
+  \brief Implementation of a generic 2D array used as base class for matrices
   and vectors.
 
   This class implements a 2D array as a template class and all the basic

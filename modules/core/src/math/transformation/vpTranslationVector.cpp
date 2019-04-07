@@ -507,7 +507,7 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
 
 #ifdef VISP_HAVE_CXX11
 /*!
-  Set vector from a list of 3 double angle values in meters.
+  Set vector from a list of 3 double values in meters.
   \code
 #include <visp3/core/vpTranslationVector.cpp>
 
@@ -521,6 +521,7 @@ int main()
   \code
 t: 0  0.1  0.5
   \endcode
+  \sa operator<<()
 */
 vpTranslationVector &vpTranslationVector::operator=(const std::initializer_list<double> &list)
 {
@@ -553,7 +554,7 @@ int main()
 t: 0  0.1  0.5
   \endcode
 
-  \sa operator,
+  \sa operator,()
  */
 vpTranslationVector& vpTranslationVector::operator<<(double val)
 {
@@ -583,7 +584,7 @@ int main()
 t: 0  0.1  0.5
   \endcode
 
-  \sa operator<<
+  \sa operator<<()
  */
 vpTranslationVector& vpTranslationVector::operator,(double val)
 {

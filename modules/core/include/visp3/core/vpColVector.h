@@ -69,7 +69,7 @@ class vpPoseVector;
 
   The vpColVector class is derived from vpArray2D<double>.
 
-  The code below shows how to create a 3-dim column vector of doubles, set the element values and access them:
+  The code below shows how to create a 3-element column vector of doubles, set the element values and access them:
   \code
 #include <visp3/code/vpColVector.h
 
@@ -91,6 +91,18 @@ v:
 -2.1
 -3
   \endcode
+  You can also use operator<< to initialize a column vector as previously:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
 #include <visp3/code/vpColVector.h
@@ -98,7 +110,7 @@ v:
 int main()
 {
 #ifdef VISP_HAVE_CXX11
-  vpColVector v{-1, -2.1, -3};
+  vpColVector v({-1, -2.1, -3});
   std::cout << "v:\n" << v << std::endl;
 #endif
 }

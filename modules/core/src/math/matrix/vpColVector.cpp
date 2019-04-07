@@ -629,6 +629,24 @@ vpColVector &vpColVector::operator<<(double *x)
   return *this;
 }
 
+/*!
+  This operator could be used to set column vector elements:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+v: -1  -2.1  -3
+  \endcode
+  \sa operator,()
+*/
 vpColVector& vpColVector::operator<<(double val)
 {
   resize(1, false);
@@ -636,6 +654,24 @@ vpColVector& vpColVector::operator<<(double val)
   return *this;
 }
 
+/*!
+  This operator could be used to set column vector elements:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+v: -1  -2.1  -3
+  \endcode
+  \sa operator<<()
+*/
 vpColVector& vpColVector::operator,(double val)
 {
   resize(rowNum + 1, false);
@@ -692,6 +728,29 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
   return *this;
 }
 
+/*!
+  Set vector elements and size from a list of values.
+  \param list : List of double. Vector size matches the number of elements.
+  \return The modified vector.
+  \code
+#include <visp3/core/vpColVector.h>
+
+int main()
+{
+  vpColVector c;
+  c = { 0, -1, -2 };
+  std::cout << "c:\n" << c << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+c:
+0
+-1
+-2
+  \endcode
+  \sa operator<<()
+ */
 vpColVector& vpColVector::operator=(const std::initializer_list<double> &list)
 {
   resize(static_cast<unsigned int>(list.size()), false);

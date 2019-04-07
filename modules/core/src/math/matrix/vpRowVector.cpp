@@ -147,6 +147,25 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
   return *this;
 }
 
+
+/*!
+  Set vector elements from a list of double.
+  \code
+#include <visp3/core/vpRowVector.cpp>
+
+int main()
+{
+  vpRowVector r;
+  r = {1, 2, 3};
+  std::cout << "r: " << r << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+r: 1  2  3
+  \endcode
+  \sa operator<<()
+*/
 vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
 {
   resize(1, static_cast<unsigned int>(list.size()), false);

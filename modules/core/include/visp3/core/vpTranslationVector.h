@@ -156,8 +156,10 @@ public:
   // Copy operator.   Allow operation such as A = v
   vpTranslationVector &operator=(const vpColVector &tv);
   vpTranslationVector &operator=(const vpTranslationVector &tv);
-
   vpTranslationVector &operator=(double x);
+#ifdef VISP_HAVE_CXX11
+  vpTranslationVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   //! Operator that allows to set a value of an element \f$t_i\f$: t[i] = x
   inline double &operator[](unsigned int n) { return *(data + n); }
@@ -167,9 +169,6 @@ public:
   vpTranslationVector &operator<<(double val);
   vpTranslationVector &operator,(double val);
 
-#ifdef VISP_HAVE_CXX11
-  vpTranslationVector &operator=(const std::initializer_list<double> &list);
-#endif
 
   /*!
     This function is not applicable to a translation vector that is always a

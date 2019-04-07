@@ -591,6 +591,30 @@ vpMatrix &vpMatrix::operator=(vpMatrix &&other)
   return *this;
 }
 
+/*!
+  Set matrix elements from a list of values.
+  \param list : List of double. Matrix size (number of columns multiplied by number of columns) should match the number of elements.
+  \return The modified Matrix.
+  The following example shows how to set each element of a 2-by-3 matrix.
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix M;
+  M = { -1, -2, -3, -4, -5, -6 };
+  M.reshape(2, 3);
+  std::cout << "M:\n" << M << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+M:
+-1  -2  -3
+-4  -5  -6
+  \endcode
+  \sa operator<<()
+ */
 vpMatrix& vpMatrix::operator=(const std::initializer_list<double> &list)
 {
   if (dsize != static_cast<unsigned int>(list.size())) {
@@ -602,6 +626,29 @@ vpMatrix& vpMatrix::operator=(const std::initializer_list<double> &list)
   return *this;
 }
 
+/*!
+  Set matrix elements from a list of values.
+  \param lists : List of double.
+  \return The modified Matrix.
+  The following example shows how to set each element of a 2-by-3 matrix.
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix M;
+  M = { {-1, -2, -3}, {-4, -5, -6} };
+  std::cout << "M:\n" << M << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+M:
+-1  -2  -3
+-4  -5  -6
+  \endcode
+  \sa operator<<()
+ */
 vpMatrix& vpMatrix::operator=(const std::initializer_list<std::initializer_list<double> > &lists)
 {
   unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;

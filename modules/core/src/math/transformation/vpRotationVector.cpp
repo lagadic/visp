@@ -127,7 +127,7 @@ int main()
 tu: 0  1.570796327  3.141592654
   \endcode
 
-  \sa operator,
+  \sa operator,()
  */
 vpRotationVector& vpRotationVector::operator<<(double val)
 {
@@ -157,13 +157,13 @@ int main()
 tu: 0  1.570796327  3.141592654
   \endcode
 
-  \sa operator<<
+  \sa operator<<()
  */
 vpRotationVector& vpRotationVector::operator,(double val)
 {
   m_index ++;
   if (m_index >= size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set rotation vector out of bounds. It has only %d values while you try to initialize with %d values", size(), m_index+1));
+    throw(vpException(vpException::dimensionError, "Cannot set rotation vector out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
   }
   data[m_index] = val;
   return *this;

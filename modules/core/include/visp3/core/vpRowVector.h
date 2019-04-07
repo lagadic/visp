@@ -68,7 +68,7 @@ class vpColVector;
 
   The vpRowVector class is derived from vpArray2D<double>.
 
-  The code below shows how to create a 3-dim row vector of doubles, set the element values and access them:
+  The code below shows how to create a 3-element row vector of doubles, set the element values and access them:
   \code
 #include <visp3/code/vpRowVector.h
 
