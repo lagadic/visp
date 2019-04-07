@@ -420,38 +420,30 @@ public:
       //<values>
       node_values = node_matrix.append_child(LABEL_XML_VALUE);
       {
-        char str[11];
-
         node_tmp = node_values.append_child(pugi::node_comment);
         node_tmp.set_value("Translation vector with values in meters");
 
         //<tx>
-        sprintf(str, "%f", m_M[0][3]);
-        node_values.append_child(LABEL_XML_TX).append_child(pugi::node_pcdata).set_value(str);
+        node_values.append_child(LABEL_XML_TX).append_child(pugi::node_pcdata).text() = m_M[0][3];
 
         //<ty>
-        sprintf(str, "%f", m_M[1][3]);
-        node_values.append_child(LABEL_XML_TY).append_child(pugi::node_pcdata).set_value(str);
+        node_values.append_child(LABEL_XML_TY).append_child(pugi::node_pcdata).text() = m_M[1][3];
 
         //<tz>
-        sprintf(str, "%f", m_M[2][3]);
-        node_values.append_child(LABEL_XML_TZ).append_child(pugi::node_pcdata).set_value(str);
+        node_values.append_child(LABEL_XML_TZ).append_child(pugi::node_pcdata).text() = m_M[2][3];
 
         node_tmp = node_values.append_child(pugi::node_comment);
         node_tmp.set_value("Rotational vector expressed in angle axis "
                            "representation with values in radians");
 
         //<tux>
-        sprintf(str, "%f", tu[0]);
-        node_values.append_child(LABEL_XML_TUX).append_child(pugi::node_pcdata).set_value(str);
+        node_values.append_child(LABEL_XML_TUX).append_child(pugi::node_pcdata).text() = tu[0];
 
         //<tuy>
-        sprintf(str, "%f", tu[1]);
-        node_values.append_child(LABEL_XML_TUY).append_child(pugi::node_pcdata).set_value(str);
+        node_values.append_child(LABEL_XML_TUY).append_child(pugi::node_pcdata).text() = tu[1];
 
         //<tuz>
-        sprintf(str, "%f", tu[2]);
-        node_values.append_child(LABEL_XML_TUZ).append_child(pugi::node_pcdata).set_value(str);
+        node_values.append_child(LABEL_XML_TUZ).append_child(pugi::node_pcdata).text() = tu[2];
       }
     }
 

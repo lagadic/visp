@@ -696,46 +696,39 @@ public:
       }
 
       if (im_width != 0 || im_height != 0) {
-        char str[11];
         node_tmp = node_camera.append_child(pugi::node_comment);
         node_tmp.set_value("Size of the image on which camera "
                            "calibration was performed");
 
         //<image_width>
-        sprintf(str, "%u", im_width);
         node_tmp = node_camera.append_child(LABEL_XML_WIDTH);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = im_width;
 
         //<image_height>
-        sprintf(str, "%u", im_height);
         node_tmp = node_camera.append_child(LABEL_XML_HEIGHT);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = im_height;
         if (subsampling_width != 0 || subsampling_height != 0) {
           node_tmp = node_camera.append_child(pugi::node_comment);
           node_tmp.set_value("Subsampling used to obtain the "
                              "current size of the image.");
 
           //<subsampling_width>
-          sprintf(str, "%u", subsampl_width);
           node_tmp = node_camera.append_child(LABEL_XML_SUBSAMPLING_WIDTH);
-          node_tmp.append_child(pugi::node_pcdata).set_value(str);
+          node_tmp.append_child(pugi::node_pcdata).text() = subsampl_width;
           //<subsampling_height>
-          sprintf(str, "%u", subsampl_height);
           node_tmp = node_camera.append_child(LABEL_XML_SUBSAMPLING_HEIGHT);
-          node_tmp.append_child(pugi::node_pcdata).set_value(str);
+          node_tmp.append_child(pugi::node_pcdata).text() = subsampl_height;
           node_tmp = node_camera.append_child(pugi::node_comment);
           node_tmp.set_value("The full size is the sensor size actually used to "
                              "grab the image. full_width = subsampling_width * "
                              "image_width");
 
           //<full_width>
-          sprintf(str, "%u", im_width * subsampl_width);
           node_tmp = node_camera.append_child(LABEL_XML_FULL_WIDTH);
-          node_tmp.append_child(pugi::node_pcdata).set_value(str);
+          node_tmp.append_child(pugi::node_pcdata).text() = im_width * subsampl_width;
           //<full_height>
-          sprintf(str, "%u", im_height * subsampl_height);
           node_tmp = node_camera.append_child(LABEL_XML_FULL_HEIGHT);
-          node_tmp.append_child(pugi::node_pcdata).set_value(str);
+          node_tmp.append_child(pugi::node_pcdata).text() = im_height * subsampl_height;
         }
       }
 
@@ -764,7 +757,6 @@ public:
       //<model>
       node_model = node_camera.append_child(LABEL_XML_MODEL);
       {
-        char str[21];
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Projection model type");
 
@@ -775,25 +767,21 @@ public:
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Pixel ratio");
         //<px>
-        sprintf(str, "%.10f", camera.get_px());
         node_tmp = node_model.append_child(LABEL_XML_PX);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
         //<py>
-        sprintf(str, "%.10f", camera.get_py());
         node_tmp = node_model.append_child(LABEL_XML_PY);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
 
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Principal point");
 
         //<u0>
-        sprintf(str, "%.10f", camera.get_u0());
         node_tmp = node_model.append_child(LABEL_XML_U0);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
         //<v0>
-        sprintf(str, "%.10f", camera.get_v0());
         node_tmp = node_model.append_child(LABEL_XML_V0);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
       }
       break;
 
@@ -801,7 +789,6 @@ public:
       //<model>
       node_model = node_camera.append_child(LABEL_XML_MODEL);
       {
-        char str[21];
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Projection model type");
         //<type>with_distortion</type>
@@ -811,38 +798,32 @@ public:
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Pixel ratio");
         //<px>
-        sprintf(str, "%.10f", camera.get_px());
         node_tmp = node_model.append_child(LABEL_XML_PX);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
         //<py>
-        sprintf(str, "%.10f", camera.get_py());
         node_tmp = node_model.append_child(LABEL_XML_PY);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
 
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Principal point");
         //<u0>
-        sprintf(str, "%.10f", camera.get_u0());
         node_tmp = node_model.append_child(LABEL_XML_U0);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
         //<v0>
-        sprintf(str, "%.10f", camera.get_v0());
         node_tmp = node_model.append_child(LABEL_XML_V0);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
 
         //<kud>
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Undistorted to distorted distortion parameter");
-        sprintf(str, "%.10f", camera.get_kud());
         node_tmp = node_model.append_child(LABEL_XML_KUD);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kud();
 
         //<kud>
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Distorted to undistorted distortion parameter");
-        sprintf(str, "%.10f", camera.get_kdu());
         node_tmp = node_model.append_child(LABEL_XML_KDU);
-        node_tmp.append_child(pugi::node_pcdata).set_value(str);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kdu();
       }
       break;
     }

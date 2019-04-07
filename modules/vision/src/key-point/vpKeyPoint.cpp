@@ -4456,8 +4456,6 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
     pugi::xml_node root_node = doc.append_child("LearningData");
 
-    std::stringstream ss;
-
     // Write the training images info
     pugi::xml_node image_node = root_node.append_child("TrainingImageInfo");
 
@@ -4465,7 +4463,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     for (std::map<int, std::string>::const_iterator it = mapOfImgPath.begin(); it != mapOfImgPath.end(); ++it) {
       pugi::xml_node image_info_node = image_node.append_child("trainImg");
       image_info_node.append_child(pugi::node_pcdata).set_value(it->second.c_str());
-      ss.str("");
+      std::stringstream ss;
       ss << it->first;
       image_info_node.append_attribute("image_id") = ss.str().c_str();
     }
@@ -4478,89 +4476,43 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     int descriptorType = m_trainDescriptors.type();
 
     // Write the number of rows
-    ss.str("");
-    ss << nRows;
-    descriptors_info_node.append_child("nrows").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
+    descriptors_info_node.append_child("nrows").append_child(pugi::node_pcdata).text() = nRows;
 
     // Write the number of cols
-    ss.str("");
-    ss << nCols;
-    descriptors_info_node.append_child("ncols").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
+    descriptors_info_node.append_child("ncols").append_child(pugi::node_pcdata).text() = nCols;
 
     // Write the descriptors type
-    ss.str("");
-    ss << descriptorType;
-    descriptors_info_node.append_child("type").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
+    descriptors_info_node.append_child("type").append_child(pugi::node_pcdata).text() = descriptorType;
 
     for (int i = 0; i < nRows; i++) {
       unsigned int i_ = (unsigned int)i;
       pugi::xml_node descriptor_node = root_node.append_child("DescriptorInfo");
 
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.x;
-      descriptor_node.append_child("u").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
+      descriptor_node.append_child("u").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.x;
+      descriptor_node.append_child("v").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.y;
+      descriptor_node.append_child("size").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].size;
+      descriptor_node.append_child("angle").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].angle;
+      descriptor_node.append_child("response").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].response;
+      descriptor_node.append_child("octave").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].octave;
+      descriptor_node.append_child("class_id").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].class_id;
 
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.y;
-      descriptor_node.append_child("v").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].size;
-      descriptor_node.append_child("size").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].angle;
-      descriptor_node.append_child("angle").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].response;
-      descriptor_node.append_child("response").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-      ss.str("");
-      ss << m_trainKeyPoints[i_].octave;
-      descriptor_node.append_child("octave").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-      ss.str("");
-      ss << m_trainKeyPoints[i_].class_id;
-      descriptor_node.append_child("class_id").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-      ss.str("");
 #ifdef VISP_HAVE_MODULE_IO
       std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
-      ss << ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
-      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
+      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).text() =
+          ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
 #else
-      ss << -1;
-      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
+      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).text() = -1;
 #endif
 
       if (have3DInfo) {
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].x;
-        descriptor_node.append_child("oX").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].y;
-        descriptor_node.append_child("oY").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
-
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].z;
-        descriptor_node.append_child("oZ").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
+        descriptor_node.append_child("oX").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].x;
+        descriptor_node.append_child("oY").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].y;
+        descriptor_node.append_child("oZ").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].z;
       }
 
       pugi::xml_node desc_node = descriptor_node.append_child("desc");
 
       for (int j = 0; j < nCols; j++) {
-        ss.str("");
-
         switch (descriptorType) {
         case CV_8U: {
           // Promote an unsigned char to an int
@@ -4568,7 +4520,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
           // We save the value in numeric form otherwise libxml2 will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<unsigned char>(i, j);
-          ss << val_tmp;
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;
         } break;
 
         case CV_8S: {
@@ -4577,36 +4529,38 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
           // We save the value in numeric form otherwise libxml2 will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<char>(i, j);
-          ss << val_tmp;
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;
         } break;
 
         case CV_16U:
-          ss << m_trainDescriptors.at<unsigned short int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<unsigned short int>(i, j);
           break;
 
         case CV_16S:
-          ss << m_trainDescriptors.at<short int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<short int>(i, j);
           break;
 
         case CV_32S:
-          ss << m_trainDescriptors.at<int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<int>(i, j);
           break;
 
         case CV_32F:
-          // max_digits10 == 9 for float
-          ss << std::fixed << std::setprecision(9) << m_trainDescriptors.at<float>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<float>(i, j);
           break;
 
         case CV_64F:
-          // max_digits10 == 17 for double
-          ss << std::fixed << std::setprecision(17) << m_trainDescriptors.at<double>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<double>(i, j);
           break;
 
         default:
           throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
           break;
         }
-        desc_node.append_child("val").append_child(pugi::node_pcdata).set_value(ss.str().c_str());
       }
     }
 

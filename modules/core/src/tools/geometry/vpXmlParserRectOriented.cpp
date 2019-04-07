@@ -149,17 +149,11 @@ public:
 
   void writeMainClass(pugi::xml_node &node)
   {
-    char str[100];
-    sprintf(str, "%lf", m_rectangle.getCenter().get_i());
-    node.append_child("center_i").append_child(pugi::node_pcdata).set_value(str);
-    sprintf(str, "%lf", m_rectangle.getCenter().get_j());
-    node.append_child("center_j").append_child(pugi::node_pcdata).set_value(str);
-    sprintf(str, "%lf", m_rectangle.getHeight());
-    node.append_child("height").append_child(pugi::node_pcdata).set_value(str);
-    sprintf(str, "%lf", m_rectangle.getWidth());
-    node.append_child("width").append_child(pugi::node_pcdata).set_value(str);
-    sprintf(str, "%lf", m_rectangle.getOrientation());
-    node.append_child("theta").append_child(pugi::node_pcdata).set_value(str);
+    node.append_child("center_i").append_child(pugi::node_pcdata).text() = m_rectangle.getCenter().get_i();
+    node.append_child("center_j").append_child(pugi::node_pcdata).text() = m_rectangle.getCenter().get_j();
+    node.append_child("height").append_child(pugi::node_pcdata).text() = m_rectangle.getHeight();
+    node.append_child("width").append_child(pugi::node_pcdata).text() = m_rectangle.getWidth();
+    node.append_child("theta").append_child(pugi::node_pcdata).text() = m_rectangle.getOrientation();
   }
 
   vpRectOriented getRectangle() const { return m_rectangle; }
