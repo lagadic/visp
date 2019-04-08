@@ -40,7 +40,6 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-b
 
 Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
 - \c OpenCV: Essential if you want to acquire images on non Linux platforms (Windows, OSX) and use the keypoints as visual features that are detected and tracked thanks to the KLT tracker.
-- \c libxml: This 3rd party is optional but recommended to read the camera settings from an xml file.
 
 \subsection mb_generic_apriltag_started_pseudo_code Pseudo code
 

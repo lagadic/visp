@@ -47,7 +47,6 @@ In this video, the same setup is used but with:
 
 Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
 - \c OpenCV: Essential if you want to use the keypoints as visual features that are detected and tracked thanks to the KLT tracker. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
-- \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mb_generic_settings_xml.
 - \c Point Cloud Library: This 3rd party is optional but could be used if your RGB-D sensor provides the depth data as a point cloud. Notice that the source code explained in this tutorial doesn't run if you don't have a version of ViSP build with PCL as 3rd party. Note also that you don't need to install PCL if you don't want to consider depth as visual feature.
 - \c Ogre \c 3D: This 3rd party is optional and could be difficult to install on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mb_generic_advanced_wrml  instead of the home-made \ref mb_generic_advanced_cao.
@@ -230,7 +229,7 @@ tracker position in the map in the stereo cameras case.
 We provide hereafter an example implemented in tutorial-mb-generic-tracker-rgbd.cpp that shows how to track a cube modeled in cao format using moving-eges, keypoints and dense depth as visual features. The input data (color image, depth map and point clould) were acquired by a RealSense RGB-D camera.
 
 \warning
-ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is needed if you want to use a configuration file, otherwise you will have to configure the tracker in the code. You need also the Point Cloud Library enabled.
+ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. You need also the Point Cloud Library enabled.
 
 Once built, run the binary:
 \code

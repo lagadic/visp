@@ -153,22 +153,6 @@ In this sample, we first import the headers to use vpHomography class. Then we c
 - You can now run your code using <tt>"Product>Run"</tt> menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
 \image html img-getting-started-iOS-log.jpeg
 
-\section getting-started-known-issue Known issues
-\subsection getting-started-known-issue-xml2 libxml/parser.h file not found
-
-When building the project, if you get the following issue `libxml/parser.h file not found` while including `vpXmlParser.h` it means that `visp3.framework` was build with `libxml2` third-party, but that the `libxml2` headers are not found.
-
-\image html img-ios-getting-started-issue-libxml.png
-
-In Xcode, the fix consists in modifying the Build Settings in order to add the following to your Header Search Paths:
-\code
-$SDKROOT/usr/include/libxml2
-\endcode
-
-This is done in the next screenshot:
-
-\image html img-ios-getting-started-issue-libxml-fix.png
-
 \section getting-started-iOS-next Next tutorial
 
 You are now ready to see the \ref tutorial-image-ios.

@@ -4517,7 +4517,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
         case CV_8U: {
           // Promote an unsigned char to an int
           // val_tmp holds the numeric value that will be written
-          // We save the value in numeric form otherwise libxml2 will not be
+          // We save the value in numeric form otherwise xml library will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<unsigned char>(i, j);
           desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;
@@ -4526,7 +4526,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
         case CV_8S: {
           // Promote a char to an int
           // val_tmp holds the numeric value that will be written
-          // We save the value in numeric form otherwise libxml2 will not be
+          // We save the value in numeric form otherwise xml library will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<char>(i, j);
           desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;

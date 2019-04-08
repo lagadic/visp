@@ -31,7 +31,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \code
-$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libdc1394-22-dev libv4l-dev libxml2-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev
+$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libdc1394-22-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev
 \endcode
 
 - Get ViSP source code
@@ -73,13 +73,12 @@ We recommend to install the following 3rd parties:
 - lapack and eigen to benefit from optimized mathematical capabilities
 - libdc1394 to grab images from firewire cameras
 - libv4l to grab images from usb or analogic cameras
-- libxml2 to be able to configure the model-based trackers from xml files
 - libzbar to be able to detect QR codes
 - pthread library
 
 Installation of recommended 3rd parties could be performed running:
 \code
-$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libdc1394-22-dev libv4l-dev libxml2-dev libzbar-dev libpthread-stubs0-dev
+$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libdc1394-22-dev libv4l-dev libzbar-dev libpthread-stubs0-dev
 \endcode
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party

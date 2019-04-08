@@ -85,7 +85,7 @@ To have a trial, just jump to \ref install_win10_msvc14_dataset before running s
 
 \subsection install_win10_msvc14_3rdparty Install 3rd parties
 
-ViSP is interfaced with several 3rd party libraries. The <a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install \ref install_win10_msvc14_3rdparty_opencv and \ref install_win10_msvc14_3rdparty_xml in the workspace. If you have an Intel Realsense depth camera you may also install \ref install_win10_msvc14_3rdparty_realsense. If your camera is a PointGrey you may install \ref install_win10_msvc14_3rdparty_flycapture, while if your camera is a Basler, you may rather install \ref install_win10_msvc14_3rdparty_pylon. If you want to be able to detect a QR code you may install \ref install_win10_msvc14_3rdparty_zbar. To use optimized matrix operations you may install \ref install_win10_msvc14_3rdparty_eigen. Other 3rd parties are optional and should be considered only by expert developers.
+ViSP is interfaced with several 3rd party libraries. The <a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install \ref install_win10_msvc14_3rdparty_opencv in the workspace. If you have an Intel Realsense depth camera you may also install \ref install_win10_msvc14_3rdparty_realsense. If your camera is a PointGrey you may install \ref install_win10_msvc14_3rdparty_flycapture, while if your camera is a Basler, you may rather install \ref install_win10_msvc14_3rdparty_pylon. If you want to be able to detect a QR code you may install \ref install_win10_msvc14_3rdparty_zbar. To use optimized matrix operations you may install \ref install_win10_msvc14_3rdparty_eigen. Other 3rd parties are optional and should be considered only by expert developers.
 
 \subsubsection install_win10_msvc14_3rdparty_opencv OpenCV 3rd party
 
@@ -111,34 +111,6 @@ C:\> exit
 where `%%VISP_WS%\opencv-4.0.0\build` is where you have installed OpenCV. Inside this folder you should have a file named `OpenCVConfig.cmake`. 
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 14 2015 Win64 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.0.0\build\x64\vc14\bin`.
-
-\subsubsection install_win10_msvc14_3rdparty_xml libxml2 3rd party
-
-<b>1. Get libxml2</b>
-
-- Download the latest libxml2 release from ftp://xmlsoft.org/libxml2. At the time this tuto was written it was `libxml2-2.9.8.tag.gz` file.
-- Extract the content of the tarball in your worksapce `%%VISP_WS%`. [Winrar](https://www.win-rar.com) could be used to this end.
-- Here we suppose that you have libxml2 source code in `%%VISP_WS%\libxml2-2.9.8` folder.
-
-<b>2. Build and install libxml2 from source</b>
-
-- In the Windows "Start" menu, scroll to "Visual Studio 2015", and select "Visual Studio Command Prompt for native x64".
-- To build libxml2 from source enter the following instructions in the Visual Studio Command Prompt:
-\code
-C:\> cd %VISP_WS%\libxml2-2.9.8\win32
-C:\> cscript configure.js iconv=no ftp=no http=no compiler=msvc prefix=%VISP_WS%\libxml2-2.9.8\build-vc14
-C:\> nmake /f Makefile.msvc install
-\endcode
-- After these steps, libxml2 library could be found in `%%VISP_WS\libxml2-2.9.8\build\vc14\bin\libxml2.dll`
-
-<b>3. Complete libxml2 installation</b>
-
-- To complete the installation, set `XML2_DIR` environment variable:
-\code
-C:\> setx XML2_DIR "%VISP_WS\libxml2-2.9.8\build-vc14"
-C:\> exit
-\endcode
-- You have also to add the location of libxml2 library in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\libxml2-2.9.8\build-vc14\bin`.
 
 \subsubsection install_win10_msvc14_3rdparty_realsense librealsense 3rd party
 
@@ -299,7 +271,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-vc14` folder.
 - Select then your compiler "Visual Studio 14 2015 Win64" and click on "Finish" button.
 \image html img-cmake-win10-msvc14-msvc-version.png
-- This will start CMake configuration. As shown in the next image, Eigen, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon, Realsense, XML2 and Zbar 3rd parties are automatically detected. 
+- This will start CMake configuration. As shown in the next image, Eigen, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon, Realsense and Zbar 3rd parties are automatically detected. 
 \image html img-cmake-win10-msvc14-visp-config.png
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc14/install`. If you want to change the installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges to write in that folder before modifying `CMAKE_INSTALL_PREFIX`. 
 

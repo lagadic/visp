@@ -134,7 +134,7 @@ The previous source code shows how to use a model-based tracking on stereo image
 -  process the tracking
 -  get the pose and display the model in the image
 
-\warning The xml2 library, used to load the configuration file, is required to build the tutorial example. OpenCV is also required and the KLT module has to be enabled to use the KLT functionality.
+\warning OpenCV is required and the KLT module has to be enabled to use the KLT functionality.
 
 Please refer to the tutorial \ref tutorial-tracking-mb-deprecated in order to have the explanations about the configuration parameters (\ref mbdep_settings) and how to model an object in a ViSP compatible format (\ref mbdep_advanced_cao).
 

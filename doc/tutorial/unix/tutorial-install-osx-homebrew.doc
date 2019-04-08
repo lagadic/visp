@@ -42,7 +42,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \code
-$ brew install opencv glog eigen libxml2
+$ brew install opencv glog eigen
 \endcode
 
 - Get ViSP source code
@@ -85,12 +85,11 @@ We recommend to install the following 3rd parties:
 - libX11 to be able to open a window to display images
 - lapack and eigen to benefit from optimized mathematical capabilities
 - libdc1394 to grab images from firewire cameras
-- libxml2 to be able to configure the model-based trackers from xml files
 - libzbar to be able to detect QR codes
 
 Installation of recommended 3rd parties could be performed running:
 \code
-$ brew install opencv glog lapack eigen libdc1394 libxml2 zbar
+$ brew install opencv glog lapack eigen libdc1394 zbar
 \endcode
 
 \subsubsection install_brew_3rdparty_other Other optional 3rd parties
