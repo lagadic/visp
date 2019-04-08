@@ -55,12 +55,12 @@ class vpColVector;
   \ingroup group_core_transformations
 
   This class derived from vpArray2D<double> implements the 6 by 6 matrix which
-transforms velocities from one frame to another. This matrix is also called
-velocity twist transformation matrix.
+  transforms velocities from one frame to another. This matrix is also called
+  velocity twist transformation matrix.
 
   The full velocity twist transformation matrix allows to compute the velocity
-at point <em>a</em> expressed in frame <em>a</em> knowing its velocity at
-point <em>b</em> expressed in frame <em>b</em>. This matrix is defined as: \f[
+  at point <em>a</em> expressed in frame <em>a</em> knowing its velocity at
+  point <em>b</em> expressed in frame <em>b</em>. This matrix is defined as: \f[
   ^a{\bf V}_b = \left[\begin{array}{cc}
   ^a{\bf R}_b & [^a{\bf t}_b]_\times \; ^a{\bf R}_b\\
   {\bf 0}_{3\times 3} & ^a{\bf R}_b
@@ -71,8 +71,35 @@ point <em>b</em> expressed in frame <em>b</em>. This matrix is defined as: \f[
   where \f$ ^a{\bf R}_b \f$ is a rotation matrix and
   \f$ ^a{\bf t}_b \f$ is a translation vector.
 
+  There are different ways to initialize such a full velocity twist matrix. The following
+  example shows how to proceed setting the translation and rotation matrix transformations:
+  \code
+#include <visp3/core/vpVelocityTwistMatrix.h>
+
+int main()
+{
+  vpTranslationVector cte(0.1, 0.2, 0.3);
+  vpRotationMatrix cRe( {0,  0, -1,
+                         0, -1,  0,
+                        -1,  0,  0} );
+
+  vpVelocityTwistMatrix cVe(cte, cRe);
+  std::cout << "cVe:\n" << cVe << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+cVe:
+0  0  -1  -0.2  0.3  0
+0  -1  0  0.1  0  -0.3
+-1  0  0  0  -0.1  0.2
+0  0  0  0  0  -1
+0  0  0  0  -1  0
+0  0  0  -1  0  0
+  \endcode
+
   When the point where the velocity is expressed doesn't change, the matrix
-becomes block diagonal. It allows than to compute the velocity at point
+  becomes block diagonal. It allows than to compute the velocity at point
   <em>b</em> expressed in frame <em>a</em> knowing its
   velocity at point <em>b</em> expressed in frame <em>b</em> :
   \f[
@@ -83,9 +110,35 @@ becomes block diagonal. It allows than to compute the velocity at point
   \right]
   \f]
 
+  To initialize such a velocity twist matrix where translation is not taken into account you
+  can proceed like in the following code:
+  \code
+#include <visp3/core/vpVelocityTwistMatrix.h>
+
+int main()
+{
+  vpRotationMatrix cRe( {0,  0, -1,
+                         0, -1,  0,
+                        -1,  0,  0} );
+
+  vpVelocityTwistMatrix cVe(cRe);
+  std::cout << "cVe:\n" << cVe << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+cVe:
+0  0  -1  0  0  0
+0  -1  0  0  0  0
+-1  0  0  0  0  0
+0  0  0  0  0  -1
+0  0  0  0  -1  0
+0  0  0  -1  0  0
+  \endcode
+
   The code below shows how to convert a velocity skew
   expressed at the origin of the camera frame into the origin of the fix frame
-using the full velocity twist matrix.
+  using the full velocity twist matrix.
 
   \code
 #include <visp3/core/vpColVector.h>
@@ -93,8 +146,7 @@ using the full velocity twist matrix.
 
 int main()
 {
-  vpVelocityTwistMatrix fVc; // Twist transformation matrix from fix to camera
-frame
+  vpVelocityTwistMatrix fVc; // Twist transformation matrix from fix to camera frame
 
   vpHomogeneousMatrix fMc; // Fix to camera frame transformation
   // ... fMc need here to be initialized

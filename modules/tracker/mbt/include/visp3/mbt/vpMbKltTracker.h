@@ -81,13 +81,12 @@
   tutorial-tracking-mb-deprecated is also a good starting point to use this class.
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpException.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbKltTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbKltTracker.h>
 
 int main()
 {
@@ -138,11 +137,11 @@ in vpMbKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
 computed using another method:
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbKltTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbKltTracker.h>
 
 int main()
 {
@@ -181,12 +180,12 @@ int main()
 a given pose:
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbKltTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbKltTracker.h>
 
 int main()
 {

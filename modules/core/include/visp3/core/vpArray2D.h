@@ -54,7 +54,7 @@
   \class vpArray2D
   \ingroup group_core_matrices
 
-  \brief Implementation of a generic 2D array used as vase class of matrices
+  \brief Implementation of a generic 2D array used as base class for matrices
   and vectors.
 
   This class implements a 2D array as a template class and all the basic
@@ -66,6 +66,67 @@
   - concerning vectors, vpColVector, vpRowVector but also specific containers
   describing the pose (vpPoseVector) and the rotation (vpRotationVector)
   inherit also from vpArray2D<double>.
+
+  The code below shows how to create a 2-by-3 array of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpArray2D.h
+
+int main()
+{
+  vpArray2D<float> a(2, 3);
+  a[0][0] = -1; a[0][1] =  -2; a[0][2] = -3;
+  a[1][0] =  4; a[1][1] = 5.5; a[1][2] =  6;
+
+  std::cout << "a:" << std::endl;
+  for (unsigned int i = 0; i < a.getRows(); i++) {
+    for (unsigned int j = 0; j < a.getCols(); j++) {
+      std::cout << a[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+a:
+-1 -2 -3
+4 5.5 6
+  \endcode
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpArray2D.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
+  std::cout << "a:\n" << a << std::endl;
+#endif
+}
+  \endcode
+  The array could also be initialized using operator=(const std::initializer_list< std::initializer_list< Type > > &)
+  \code
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<float> a;
+  a = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+#endif
+}
+  \endcode
+
+  You can also use reshape() function:
+  \code
+#include <visp3/code/vpArray2D.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<float> a{ -1, -2, -3, 4, 5.5, 6.0f };
+  a.reshape(2, 3);
+#endif
+}
+  \endcode
 */
 template <class Type> class vpArray2D
 {
@@ -89,24 +150,37 @@ public:
   Number of columns and rows are set to zero.
   */
   vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL) {}
+
   /*!
   Copy constructor of a 2D array.
   */
-  vpArray2D<Type>(const vpArray2D<Type> &A) : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  vpArray2D<Type>(const vpArray2D<Type> &A) :
+  #ifdef VISP_HAVE_CXX11
+    vpArray2D<Type>()
+  #else
+    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  #endif
   {
     resize(A.rowNum, A.colNum, false, false);
     memcpy(data, A.data, rowNum * colNum * sizeof(Type));
   }
+
   /*!
   Constructor that initializes a 2D array with 0.
 
   \param r : Array number of rows.
   \param c : Array number of columns.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c) : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  vpArray2D<Type>(unsigned int r, unsigned int c) :
+  #ifdef VISP_HAVE_CXX11
+      vpArray2D<Type>()
+  #else
+      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  #endif
   {
     resize(r, c);
   }
+
   /*!
   Constructor that initialize a 2D array with \e val.
 
@@ -114,11 +188,70 @@ public:
   \param c : Array number of columns.
   \param val : Each element of the array is set to \e val.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c, Type val) : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  vpArray2D<Type>(unsigned int r, unsigned int c, Type val) :
+  #ifdef VISP_HAVE_CXX11
+      vpArray2D<Type>()
+  #else
+      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  #endif
   {
     resize(r, c, false, false);
     *this = val;
   }
+
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<Type>(vpArray2D<Type> &&A)
+  {
+    rowNum = A.rowNum;
+    colNum = A.colNum;
+    rowPtrs = A.rowPtrs;
+    dsize = A.dsize;
+    data = A.data;
+
+    A.rowNum = 0;
+    A.colNum = 0;
+    A.rowPtrs = NULL;
+    A.dsize = 0;
+    A.data = NULL;
+  }
+
+  explicit vpArray2D<Type>(const std::initializer_list<Type> &list) : vpArray2D<Type>()
+  {
+    resize(1, static_cast<unsigned int>(list.size()), false, false);
+    std::copy(list.begin(), list.end(), data);
+  }
+
+  explicit vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
+    : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+  {
+    if (nrows * ncols != static_cast<unsigned int>(list.size())) {
+      std::ostringstream oss;
+      oss << "Cannot create a vpArray2D of size (" << nrows << ", " << ncols
+          << ") with a list of size " << list.size();
+      throw vpException(vpException::dimensionError, oss.str());
+    }
+
+    resize(nrows, ncols, false, false);
+    std::copy(list.begin(), list.end(), data);
+  }
+
+  explicit vpArray2D<Type>(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D<Type>()
+  {
+    unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
+    for (auto& l : lists) {
+      if (static_cast<unsigned int>(l.size()) > ncols) {
+        ncols = static_cast<unsigned int>(l.size());
+      }
+    }
+
+    resize(nrows, ncols, false, false);
+    auto it = lists.begin();
+    for (unsigned int i = 0; i < rowNum; i++, ++it) {
+      std::copy(it->begin(), it->end(), rowPtrs[i]);
+    }
+  }
+#endif
+
   /*!
   Destructor that desallocate memory.
   */
@@ -156,6 +289,7 @@ public:
   inline unsigned int getRows() const { return rowNum; }
   //! Return the number of elements of the 2D array.
   inline unsigned int size() const { return colNum * rowNum; }
+
   /*!
   Set the size of the array and initialize all the values to zero.
 
@@ -243,6 +377,31 @@ public:
       }
     }
   }
+
+  void reshape(unsigned int nrows, unsigned int ncols)
+  {
+    if (dsize == 0) {
+      resize(nrows, ncols);
+      return;
+    }
+
+    if (nrows * ncols != dsize) {
+      std::ostringstream oss;
+      oss << "Cannot reshape array of total size " << dsize
+          << " into shape (" << nrows << ", " << ncols << ")";
+      throw vpException(vpException::dimensionError, oss.str());
+    }
+
+    rowNum = nrows;
+    colNum = ncols;
+    rowPtrs = reinterpret_cast<Type **>(realloc(rowPtrs, nrows * sizeof(Type *)));
+    // Update rowPtrs
+    Type **t_ = rowPtrs;
+    for (unsigned int i = 0; i < dsize; i += ncols) {
+      *t_++ = data + i;
+    }
+  }
+
   //! Set all the elements of the array to \e x.
   vpArray2D<Type> &operator=(Type x)
   {
@@ -261,6 +420,58 @@ public:
     }
     return *this;
   }
+
+#ifdef VISP_HAVE_CXX11
+  vpArray2D<Type> &operator=(vpArray2D<Type> &&other)
+  {
+    if (this != &other) {
+      free(data);
+      free(rowPtrs);
+
+      rowNum = other.rowNum;
+      colNum = other.colNum;
+      rowPtrs = other.rowPtrs;
+      dsize = other.dsize;
+      data = other.data;
+
+      other.rowNum = 0;
+      other.colNum = 0;
+      other.rowPtrs = NULL;
+      other.dsize = 0;
+      other.data = NULL;
+    }
+
+    return *this;
+  }
+
+  vpArray2D<Type> &operator=(const std::initializer_list<Type> &list)
+  {
+    if (dsize != static_cast<unsigned int>(list.size())) {
+      resize(1, static_cast<unsigned int>(list.size()), false, false);
+    }
+    std::copy(list.begin(), list.end(), data);
+
+    return *this;
+  }
+
+  vpArray2D<Type> &operator=(const std::initializer_list<std::initializer_list<Type> > &lists)
+  {
+    unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
+    for (auto& l : lists) {
+      if (static_cast<unsigned int>(l.size()) > ncols) {
+        ncols = static_cast<unsigned int>(l.size());
+      }
+    }
+
+    resize(nrows, ncols, false, false);
+    auto it = lists.begin();
+    for (unsigned int i = 0; i < rowNum; i++, ++it) {
+      std::copy(it->begin(), it->end(), rowPtrs[i]);
+    }
+
+    return *this;
+  }
+#endif
 
   //! Set element \f$A_{ij} = x\f$ using A[i][j] = x
   inline Type *operator[](unsigned int i) { return rowPtrs[i]; }

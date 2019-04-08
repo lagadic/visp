@@ -93,6 +93,48 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
   return *this;
 }
 
+#ifdef VISP_HAVE_CXX11
+/*!
+  Set a rotation matrix from a list of 9 double values.
+  \param list : List of double.
+  The following code shows how to use this constructor to initialize a rotation matrix:
+  \code
+#include <visp3/core/vpRotationMatrix.h>
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpRotationMatrix R
+  R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
+  std::cout << "R:\n" << R << std::endl;
+#endif
+}
+  \endcode
+  It produces the following output:
+  \code
+R:
+0  0  -1
+0  -1  0
+-1  0  0
+  \endcode
+  \sa operator<<()
+ */
+vpRotationMatrix& vpRotationMatrix::operator=(const std::initializer_list<double> &list)
+{
+  if (dsize != static_cast<unsigned int>(list.size())) {
+    throw(vpException(vpException::dimensionError, "Cannot set a 3-by-3 rotation matrix from a %d-elements list of doubles."));
+  }
+
+  std::copy(list.begin(), list.end(), data);
+
+  if (! isARotationMatrix() ) {
+    throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+  }
+
+  return *this;
+}
+#endif
+
 /*!
   Converts a 3-by-3 matrix into a rotation matrix.
 
@@ -128,6 +170,77 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
                                                "rotation matrix"));
   }
 
+  return *this;
+}
+
+/*!
+  Set the first element of the rotation matrix.
+
+  \param val : Value of the matrix first element.
+  \return An updated matrix.
+
+  The following example shows how to initialize a rotation matrix using this operator.
+  \code
+#include <visp3/core/vpRotationMatrix.h>
+
+int main()
+{
+  vpRotationMatrix R;
+  R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
+  std::cout << "R:\n" << R << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+R:
+0  0  -1
+0  -1  0
+-1  0  0
+  \endcode
+
+  \sa operator,()
+ */
+vpRotationMatrix& vpRotationMatrix::operator<<(double val)
+{
+  m_index = 0;
+  data[m_index] = val;
+  return *this;
+}
+
+/*!
+  Set the second and next element of the rotation matrix.
+
+  \param val : Value of the matrix second or next element.
+  \return An updated matrix.
+
+  The following example shows how to initialize a rotation matrix using this operator.
+  \code
+#include <visp3/core/vpRotationMatrix.h>
+
+int main()
+{
+  vpRotationMatrix R;
+  R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
+  std::cout << "R:\n" << R << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+R:
+0  0  -1
+0  -1  0
+-1  0  0
+  \endcode
+
+  \sa operator<<()
+ */
+vpRotationMatrix& vpRotationMatrix::operator,(double val)
+{
+  m_index ++;;
+  if (m_index >= size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set rotation matrix out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
+  }
+  data[m_index] = val;
   return *this;
 }
 
@@ -288,6 +401,10 @@ bool vpRotationMatrix::isARotationMatrix() const
   unsigned int i, j;
   bool isRotation = true;
 
+  if (getCols() != 3 || getRows() != 3) {
+    return false;
+  }
+
   // test R^TR = Id ;
   vpRotationMatrix RtR = (*this).t() * (*this);
   for (i = 0; i < 3; i++) {
@@ -321,57 +438,57 @@ bool vpRotationMatrix::isARotationMatrix() const
 /*!
   Default constructor that initialise a 3-by-3 rotation matrix to identity.
 */
-vpRotationMatrix::vpRotationMatrix() : vpArray2D<double>(3, 3) { eye(); }
+vpRotationMatrix::vpRotationMatrix() : vpArray2D<double>(3, 3), m_index(0) { eye(); }
 
 /*!
   Copy contructor that construct a 3-by-3 rotation matrix from another
   rotation matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double>(3, 3) { (*this) = M; }
+vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { (*this) = M; }
 /*!
   Construct a 3-by-3 rotation matrix from an homogeneous matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 3) { buildFrom(M); }
+vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(M); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}\f$ angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpArray2D<double>(3, 3) { buildFrom(tu); }
+vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(tu); }
 
 /*!
   Construct a 3-by-3 rotation matrix from a pose vector.
  */
-vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3, 3) { buildFrom(p); }
+vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(p); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(3, 3) { buildFrom(euler); }
+vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(euler); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(x,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>(3, 3) { buildFrom(Rxyz); }
+vpRotationMatrix::vpRotationMatrix(const vpRxyzVector &Rxyz) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(Rxyz); }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,x) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(3, 3) { buildFrom(Rzyx); }
+vpRotationMatrix::vpRotationMatrix(const vpRzyxVector &Rzyx) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(Rzyx); }
 
 /*!
   Construct a 3-by-3 rotation matrix from a matrix that contains values corresponding to a rotation matrix.
 */
-vpRotationMatrix::vpRotationMatrix(const vpMatrix &R) : vpArray2D<double>(3, 3) { *this = R; }
+vpRotationMatrix::vpRotationMatrix(const vpMatrix &R) : vpArray2D<double>(3, 3), m_index(0) { *this = R; }
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy, const double tuz) : vpArray2D<double>(3, 3)
+vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy, const double tuz) : vpArray2D<double>(3, 3), m_index(0)
 {
   buildFrom(tux, tuy, tuz);
 }
@@ -379,7 +496,39 @@ vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy, const dou
 /*!
   Construct a 3-by-3 rotation matrix from quaternion angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3) { buildFrom(q); }
+vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(q); }
+
+#ifdef VISP_HAVE_CXX11
+/*!
+  Construct a rotation matrix from a list of 9 double values.
+  \param list : List of double.
+  The following code shows how to use this constructor to initialize a rotation matrix:
+  \code
+#include <visp3/core/vpRotationMatrix.h>
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
+  std::cout << "R:\n" << R << std::endl;
+#endif
+}
+  \endcode
+  It produces the following output:
+  \code
+R:
+0  0  -1
+0  -1  0
+-1  0  0
+  \endcode
+ */
+vpRotationMatrix::vpRotationMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(3, 3, list), m_index(0)
+{
+  if (! isARotationMatrix() ) {
+    throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+  }
+}
+#endif
 
 /*!
   Return the rotation matrix transpose which is also the inverse of the

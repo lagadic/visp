@@ -249,6 +249,7 @@ bool vpRect::operator!=(const vpRect &r) const
 
 /*!
  Intersection operator.
+ \param r : Rectangle to insert.
  \return Intersection rectangle or null rectangle if the two rectangles do not
  intersect.
  */

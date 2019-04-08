@@ -51,13 +51,13 @@
   \ingroup group_core_transformations
 
   This class derived from vpArray2D<double> implements the 6 by 6 matrix which
-transforms force/torque from one frame to another. This matrix is also called
-force/torque twist transformation matrix.
+  transforms force/torque from one frame to another. This matrix is also called
+  force/torque twist transformation matrix.
 
   The full force/torque twist transformation matrix allows to compute the
-force/torque at point <em>a</em> expressed in frame <em>a</em> knowing its
+  force/torque at point <em>a</em> expressed in frame <em>a</em> knowing its
   force/torque at point <em>b</em> expressed in frame <em>b</em>. This matrix
-is defined as:
+  is defined as:
 
   \f[
   ^a{\bf F}_b = \left[ \begin{array}{cc}
@@ -70,8 +70,34 @@ is defined as:
   where \f$ ^a{\bf R}_b \f$ is a rotation matrix and
   \f$ ^a{\bf t}_b \f$ is a translation vector.
 
+  There are different ways to initialize such a full force/torque twist matrix. The following
+  example shows how to proceed setting the translation and rotation matrix transformations:
+  \code
+#include <visp3/core/vpForceTwistMatrix.h>
+
+int main()
+{
+  vpTranslationVector stp(0.1, 0.2, 0.3);
+  vpRotationMatrix sRp( {0,  0, -1,
+                         0, -1,  0,
+                        -1,  0,  0} );
+  vpForceTwistMatrix sFp(stp, sRp);
+  std::cout << "sFp:\n" << sFp << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+sFp:
+0  0  -1  0  0  0
+0  -1  0  0  0  0
+-1  0  0  0  0  0
+-0.2  0.3  0  0  0  -1
+0.1  0  -0.3  0  -1  0
+0  -0.1  0.2  -1  0  0
+  \endcode
+
   When the point where the velocity is expressed doesn't change, the matrix
-becomes block diagonal. It allows than to compute the force/torque at point
+  becomes block diagonal. It allows than to compute the force/torque at point
   <em>b</em> expressed in frame <em>a</em> knowing its
   force/torque at point <em>b</em> expressed in frame <em>b</em> :
   \f[
@@ -81,6 +107,31 @@ becomes block diagonal. It allows than to compute the force/torque at point
   \end{array}
   \right]
   \f]
+
+  To initialize such a force/torque twist matrix where translation is not taken into account you
+  can proceed like in the following code:
+  \code
+#include <visp3/core/vpForceTwistMatrix.h>
+
+int main()
+{
+  vpRotationMatrix sRp( {0,  0, -1,
+                         0, -1,  0,
+                        -1,  0,  0} );
+  vpForceTwistMatrix sFp(sRp);
+  std::cout << "sFp:\n" << sFp << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+sFp:
+0  0  -1  0  0  0
+0  -1  0  0  0  0
+-1  0  0  0  0  0
+0  0  0  0  0  -1
+0  0  0  0  -1  0
+0  0  0  -1  0  0
+  \endcode
 
   The code belows shows for example how to convert a force/torque skew
   from probe frame to a sensor frame.

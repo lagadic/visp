@@ -9,6 +9,7 @@
 ViSP 3.2.1 (under work)
   - Contributors:
   - New features
+    . New matrix and vector initialization methods to ease setting elements
     . Introduce Eigen <-> ViSP conversion functions in vp namespace
     . Add OpenBLAS, Intel MKL and Atlas explicit support
     . Add support of vpImage<vpRGBa> to vpMbGenericTracker

@@ -101,16 +101,16 @@ class VISP_EXPORT vpRotationVector : public vpArray2D<double>
 {
 public:
   //! Constructor that constructs a 0-size rotation vector.
-  vpRotationVector() : vpArray2D<double>() {}
+  vpRotationVector() : vpArray2D<double>(), m_index(0) {}
 
   //! Constructor that constructs a vector of size n and initialize all values
   //! to zero.
-  explicit vpRotationVector(const unsigned int n) : vpArray2D<double>(n, 1) {}
+  explicit vpRotationVector(const unsigned int n) : vpArray2D<double>(n, 1), m_index(0) {}
 
   /*!
     Copy operator.
   */
-  vpRotationVector(const vpRotationVector &v) : vpArray2D<double>(v) {}
+  vpRotationVector(const vpRotationVector &v) : vpArray2D<double>(v), m_index(0) {}
 
   /*!
     Destructor.
@@ -142,7 +142,11 @@ public:
     }
     return *this;
   }
+
   vpColVector operator*(double x) const;
+
+  vpRotationVector &operator<<(double val);
+  vpRotationVector &operator,(double val);
 
   double sumSquare() const;
 
@@ -152,6 +156,9 @@ public:
   std::vector<double> toStdVector();
 
   //@}
+
+protected:
+  unsigned int m_index; // index used for operator<< and operator, to fill a vector
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

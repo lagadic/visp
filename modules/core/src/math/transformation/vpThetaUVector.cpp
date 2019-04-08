@@ -58,7 +58,6 @@ vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(3)
 {
   buildFrom(tu);
 }
-
 /*!
   Initialize a \f$\theta {\bf u}\f$ vector from an homogeneous matrix.
 */
@@ -90,7 +89,20 @@ vpThetaUVector::vpThetaUVector(const vpRxyzVector &rxyz) : vpRotationVector(3) {
 vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(3) { buildFrom(q); }
 
 /*!
-  Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
+  Build a \f$\theta {\bf u}\f$ vector from 3 angles in radians.
+  \code
+#include <visp3/core/vpThetaUVector.cpp>
+
+int main()
+{
+  vpThetaUVector tu(0, M_PI_2, M_PI);
+  std::cout << "tu: " << tu.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+tu: 0  1.570796327  3.141592654
+  \endcode
 */
 vpThetaUVector::vpThetaUVector(const double tux, const double tuy, const double tuz) : vpRotationVector(3)
 {
@@ -315,11 +327,11 @@ int main()
 */
 vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
 {
-  if (tu.size() != 3) {
+  if (tu.size() != size()) {
     throw(vpException(vpException::dimensionError, "Cannot set a theta-u vector from a %d-dimension col vector",
                       tu.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < size(); i++)
     data[i] = tu[i];
 
   return *this;
@@ -438,3 +450,31 @@ void vpThetaUVector::buildFrom(const double tux, const double tuy, const double 
   data[1] = tuy;
   data[2] = tuz;
 }
+
+#ifdef VISP_HAVE_CXX11
+/*!
+  Set vector from a list of 3 double angle values in radians.
+  \code
+#include <visp3/core/vpThetaUVector.cpp>
+
+int main()
+{
+  vpThetaUVector tu = {M_PI, 0, M_PI_2};
+  std::cout << "tu: " << tu.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+tu: 3.141592654  0  1.570796327
+  \endcode
+  \sa operator<<()
+*/
+vpThetaUVector &vpThetaUVector::operator=(const std::initializer_list<double> &list)
+{
+  if (list.size() > size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set theta u vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+  }
+  std::copy(list.begin(), list.end(), data);
+  return *this;
+}
+#endif
