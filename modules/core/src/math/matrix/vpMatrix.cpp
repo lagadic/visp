@@ -4607,16 +4607,17 @@ void vpMatrix::stack(const vpRowVector &r)
   Stack column vector \e c at the right of the current matrix, or copy if the
 matrix has no dimensions: this = [ this c ].
 
-  Here an example for a robot velocity log :
+  Here an example for a robot velocity log matrix:
 \code
-vpMatrix A;
+vpMatrix log;
 vpColVector v(6);
-for(unsigned int i = 0;i<100;i++)
+for(unsigned int i = 0; i<100;i++)
 {
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
-  Velocities.stack(v);
+  log.stack(v);
 }
 \endcode
+Here the log matrix has size 6 rows by 100 columns.
 */
 void vpMatrix::stack(const vpColVector &c)
 {

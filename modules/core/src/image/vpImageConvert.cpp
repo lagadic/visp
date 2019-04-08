@@ -847,7 +847,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, c
 }
 
 /*!
-  Convert a vpImage\<unsigned char\> to a cv::Mat.
+  Convert a vpImage\<vpRGBa\> to a cv::Mat color image.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
   the general OpenCV documentation, or
@@ -861,28 +861,25 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, c
   \param dest : destination image (BGR format)
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
 int main()
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  vpImage<unsigned char> Ig; // A greyscale image
-  cv::Mat Ip;
+  vpImage<vpRGBa> I; // A color image
+  cv::Mat Icv;
 
   // Read an image on a disk
-  vpImageIo::read(Ig, "image.pgm");
-  // Convert the vpImage<unsigned char> in to color cv::Mat.
-  vpImageConvert::convert(Ig, Ip);
-  // Treatments on cv::Mat Ip
+  vpImageIo::read(I, "image.ppm");
+  // Convert the image into color cv::Mat.
+  vpImageConvert::convert(I, Icv);
+  // Treatments on cv::Mat Icv
   //...
   // Save the cv::Mat on the disk
-  cv::imwrite("image.pgm", Ip);
+  cv::imwrite("image-cv.ppm", Icv);
 #endif
 }
-
   \endcode
 */
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
@@ -892,7 +889,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 }
 
 /*!
-  Convert a vpImage\<unsigned char\> to a cv::Mat.
+  Convert a vpImage\<unsigned char\> to a cv::Mat grey level image.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
   the general OpenCV documentation, or
@@ -905,11 +902,9 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
   \param src : source image
   \param dest : destination image
   \param copyData : if true, the image is copied and modification in one
-object will not modified the other.
+  object will not modified the other.
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
@@ -929,7 +924,6 @@ int main()
   cv::imwrite("image-cv.pgm", Ip);
 #endif
 }
-
   \endcode
 */
 void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData)

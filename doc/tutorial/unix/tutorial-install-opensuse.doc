@@ -31,7 +31,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \code
-$ sudo zypper install opencv-devel libX11-devel eigen3-devel libxml2-devel
+$ sudo zypper install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel libxml2-devel libzbar-devel libjpeg8-devel libpng-devel
 \endcode
 
 - Get ViSP source code

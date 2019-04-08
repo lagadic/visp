@@ -100,12 +100,12 @@ vpMbtPolygon::~vpMbtPolygon() {}
   not oriented counter clockwise. If true, the orientation of the face is
   without importance.
   \param cam : Camera parameters (intrinsics parameters)
-  \param I : Image used to consider level of detail.
+  \param width, height : Image size used to consider level of detail.
 
   \return Return true if the polygon is visible.
 */
 bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo,
-                             const vpCameraParameters &cam, const vpImage<unsigned char> &I)
+                             const vpCameraParameters &cam, unsigned int width, unsigned int height)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
 
@@ -116,7 +116,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
     if (useLod) {
       vpCameraParameters c = cam;
       if (clippingFlag > 3) { // Contains at least one FOV constraint
-        c.computeFov(I.getWidth(), I.getHeight());
+        c.computeFov(width, height);
       }
       computePolygonClipped(c);
       std::vector<vpImagePoint> roiImagePoints;
@@ -194,7 +194,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
     if (useLod) {
       vpCameraParameters c = cam;
       if (clippingFlag > 3) { // Contains at least one FOV constraint
-        c.computeFov(I.getWidth(), I.getHeight());
+        c.computeFov(width, height);
       }
       computePolygonClipped(c);
       std::vector<vpImagePoint> roiImagePoints;

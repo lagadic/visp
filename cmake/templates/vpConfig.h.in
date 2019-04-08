@@ -179,10 +179,22 @@
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3
 
+// Defined if Intel MKL library available
+#cmakedefine VISP_HAVE_MKL
+
+// Defined if OpenBLAS library available
+#cmakedefine VISP_HAVE_OPENBLAS
+
+// Defined if Atlas library available
+#cmakedefine VISP_HAVE_ATLAS
+
+// Defined if LAPACK Netlib library available (-lblas -llapack)
+#cmakedefine VISP_HAVE_LAPACK_NETLIB
+
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 
-// Defined if lapack/blas libraries are available (-lblas -llapack)
+// Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas, Netlib or built-in)
 #cmakedefine VISP_HAVE_LAPACK
 // To keep compat with previous versions
 #ifdef VISP_HAVE_LAPACK
@@ -362,13 +374,15 @@
 #  define VISP_HAVE_FRANKA_VERSION ${VISP_HAVE_FRANKA_VERSION}
 #endif
 
-
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER
 
 // Defined if Haption Virtuose SDK available.
 #cmakedefine VISP_HAVE_VIRTUOSE
+
+// Defined if qbdevice api from qb-robotics available.
+#cmakedefine VISP_HAVE_QBDEVICE
 
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT

@@ -134,6 +134,14 @@ public:
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const double scale = 0.05, const unsigned int thickness = 1);
 
+  std::vector<std::vector<double> > getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                                          const double scale = 0.05);
+
+  std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                       const vpHomogeneousMatrix &cMo,
+                                                       const vpCameraParameters &cam,
+                                                       const bool displayFullModel = false);
+
   inline bool isTracked() const { return m_isTrackedDepthNormalFace; }
 
   inline bool isVisible() const { return m_polygon->isvisible; }

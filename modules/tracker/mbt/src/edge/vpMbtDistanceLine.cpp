@@ -614,42 +614,13 @@ void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogen
                                 const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                 const bool displayFullModel)
 {
-  if ((isvisible && isTrackedLine) || displayFullModel) {
-    p1->changeFrame(cMo);
-    p2->changeFrame(cMo);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
-    vpImagePoint ip1, ip2;
-    vpCameraParameters c = camera;
-    if (poly.getClipping() > 3) // Contains at least one FOV constraint
-      c.computeFov(I.getWidth(), I.getHeight());
-
-    poly.computePolygonClipped(c);
-
-    if (poly.polyClipped.size() == 2 &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)) {
-
-      std::vector<std::pair<vpPoint, vpPoint> > linesLst;
-      if (useScanLine && !displayFullModel) {
-        hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst, true);
-      } else {
-        linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
-      }
-
-      for (unsigned int i = 0; i < linesLst.size(); i++) {
-        linesLst[i].first.project();
-        linesLst[i].second.project();
-
-        vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
-        vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
-
-        vpDisplay::displayLine(I, ip1, ip2, col, thickness);
-      }
-    }
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
   }
 }
 
@@ -668,42 +639,13 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
                                 const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                 const bool displayFullModel)
 {
-  if ((isvisible && isTrackedLine) || displayFullModel) {
-    p1->changeFrame(cMo);
-    p2->changeFrame(cMo);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
-    vpImagePoint ip1, ip2;
-    vpCameraParameters c = camera;
-    if (poly.getClipping() > 3) // Contains at least one FOV constraint
-      c.computeFov(I.getWidth(), I.getHeight());
-
-    poly.computePolygonClipped(c);
-
-    if (poly.polyClipped.size() == 2 &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
-        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)) {
-
-      std::vector<std::pair<vpPoint, vpPoint> > linesLst;
-      if (useScanLine && !displayFullModel) {
-        hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst, true);
-      } else {
-        linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
-      }
-
-      for (unsigned int i = 0; i < linesLst.size(); i++) {
-        linesLst[i].first.project();
-        linesLst[i].second.project();
-
-        vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
-        vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
-
-        vpDisplay::displayLine(I, ip1, ip2, col, thickness);
-      }
-    }
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
   }
 }
 
@@ -723,10 +665,126 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 */
 void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
-  for (size_t i = 0; i < meline.size(); i++)
+  for (size_t i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL) {
       meline[i]->display(I);
     }
+  }
+}
+
+void vpMbtDistanceLine::displayMovingEdges(const vpImage<vpRGBa> &I)
+{
+  for (size_t i = 0; i < meline.size(); i++) {
+    if (meline[i] != NULL) {
+      meline[i]->display(I);
+    }
+  }
+}
+
+/*!
+  Return a list of features parameters for display.
+  - Parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>`
+*/
+std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
+{
+  std::vector<std::vector<double> > features;
+
+  for (size_t i = 0; i < meline.size(); i++) {
+    vpMbtMeLine *line = meline[i];
+    if (line != NULL) {
+      for (std::list<vpMeSite>::const_iterator it = line->getMeList().begin(); it != line->getMeList().end(); ++it) {
+        vpMeSite p_me = *it;
+#ifdef VISP_HAVE_CXX11
+        std::vector<double> params = {0, //ME
+                                      p_me.get_ifloat(),
+                                      p_me.get_jfloat(),
+                                      static_cast<double>(p_me.getState())};
+#else
+        std::vector<double> params;
+        params.push_back(0); // ME
+        params.push_back(p_me.get_ifloat());
+        params.push_back(p_me.get_jfloat());
+        params.push_back(static_cast<double>(p_me.getState()));
+#endif
+        features.push_back(params);
+      }
+    }
+  }
+
+  return features;
+}
+
+/*!
+  Return a list of line parameters to display the primitive at a given pose and camera parameters.
+  - Parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`
+
+  \param width : Image width.
+  \param height : Image height.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                        const vpHomogeneousMatrix &cMo,
+                                                                        const vpCameraParameters &camera,
+                                                                        const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
+  if ((isvisible && isTrackedLine) || displayFullModel) {
+    p1->changeFrame(cMo);
+    p2->changeFrame(cMo);
+
+    vpImagePoint ip1, ip2;
+    vpCameraParameters c = camera;
+    if (poly.getClipping() > 3) // Contains at least one FOV constraint
+      c.computeFov(width, height);
+
+    poly.computePolygonClipped(c);
+
+    if (poly.polyClipped.size() == 2 &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)) {
+
+      std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+      if (useScanLine && !displayFullModel) {
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first, poly.polyClipped[1].first, linesLst, true);
+      } else {
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first, poly.polyClipped[1].first));
+      }
+
+      for (unsigned int i = 0; i < linesLst.size(); i++) {
+        linesLst[i].first.project();
+        linesLst[i].second.project();
+
+        vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
+        vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
+
+#ifdef VISP_HAVE_CXX11
+        std::vector<double> params = {0, //0 for line parameters
+                                      ip1.get_i(),
+                                      ip1.get_j(),
+                                      ip2.get_i(),
+                                      ip2.get_j()};
+#else   
+        std::vector<double> params;
+        params.push_back(0); //0 for line parameters
+        params.push_back(ip1.get_i());
+        params.push_back(ip1.get_j());
+        params.push_back(ip2.get_i());
+        params.push_back(ip2.get_j());
+#endif
+        models.push_back(params);
+      }
+    }
+  }
+
+  return models;
 }
 
 /*!

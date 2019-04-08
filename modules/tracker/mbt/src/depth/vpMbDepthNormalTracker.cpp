@@ -54,11 +54,11 @@
 
 vpMbDepthNormalTracker::vpMbDepthNormalTracker()
   : m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
-    m_depthNormalHiddenFacesDisplay(), m_depthNormalI_dummyVisibility(), m_depthNormalListOfActiveFaces(),
+    m_depthNormalHiddenFacesDisplay(), m_depthNormalListOfActiveFaces(),
     m_depthNormalListOfDesiredFeatures(), m_depthNormalFaces(), m_depthNormalPclPlaneEstimationMethod(2),
     m_depthNormalPclPlaneEstimationRansacMaxIter(200), m_depthNormalPclPlaneEstimationRansacThreshold(0.001),
     m_depthNormalSamplingStepX(2), m_depthNormalSamplingStepY(2), m_depthNormalUseRobust(false), m_error_depthNormal(),
-    m_L_depthNormal(), m_robust_depthNormal(), m_w_depthNormal(), m_weightedError_depthNormal()
+    m_featuresToBeDisplayedDepthNormal(), m_L_depthNormal(), m_robust_depthNormal(), m_w_depthNormal(), m_weightedError_depthNormal()
 #if DEBUG_DISPLAY_DEPTH_NORMAL
     ,
     m_debugDisp_depthNormal(NULL), m_debugImage_depthNormal()
@@ -131,20 +131,16 @@ void vpMbDepthNormalTracker::addFace(vpMbtPolygon &polygon, const bool alreadyCl
 
 void vpMbDepthNormalTracker::computeVisibility(const unsigned int width, const unsigned int height)
 {
-  m_depthNormalI_dummyVisibility.resize(height, width);
-
   bool changed = false;
-  faces.setVisible(m_depthNormalI_dummyVisibility, cam, cMo, angleAppears, angleDisappears, changed);
+  faces.setVisible(width, height, cam, cMo, angleAppears, angleDisappears, changed);
 
   if (useScanLine) {
     //    if (clippingFlag <= 2) {
-    //      cam.computeFov(m_depthNormalI_dummyVisibility.getWidth(),
-    //      m_depthNormalI_dummyVisibility.getHeight());
+    //      cam.computeFov(width, height);
     //    }
 
     faces.computeClippedPolygons(cMo, cam);
-    faces.computeScanLineRender(cam, m_depthNormalI_dummyVisibility.getWidth(),
-                                m_depthNormalI_dummyVisibility.getHeight());
+    faces.computeScanLineRender(cam, width, height);
   }
 
   for (std::vector<vpMbtFaceDepthNormal *>::const_iterator it = m_depthNormalFaces.begin();
@@ -287,25 +283,23 @@ void vpMbDepthNormalTracker::display(const vpImage<unsigned char> &I, const vpHo
                                      const vpCameraParameters &cam_, const vpColor &col, const unsigned int thickness,
                                      const bool displayFullModel)
 {
-  vpCameraParameters c = cam_;
+  std::vector<std::vector<double> > models = vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, cam_, displayFullModel);
 
-  bool changed = false;
-  m_depthNormalHiddenFacesDisplay.setVisible(I, c, cMo_, angleAppears, angleDisappears, changed);
-
-  if (useScanLine) {
-    c.computeFov(I.getWidth(), I.getHeight());
-
-    m_depthNormalHiddenFacesDisplay.computeClippedPolygons(cMo_, c);
-    m_depthNormalHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    }
   }
 
-  for (std::vector<vpMbtFaceDepthNormal *>::const_iterator it = m_depthNormalFaces.begin();
-       it != m_depthNormalFaces.end(); ++it) {
-    vpMbtFaceDepthNormal *face_normal = *it;
-    face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
-
-    if (displayFeatures) {
-      face_normal->displayFeature(I, cMo_, c, 0.05, thickness);
+  if (displayFeatures) {
+    std::vector<std::vector<double> > features = getFeaturesForDisplayDepthNormal();
+    for (size_t i = 0; i < features.size(); i++) {
+      vpImagePoint im_centroid(features[i][1], features[i][2]);
+      vpImagePoint im_extremity(features[i][3], features[i][4]);
+      bool desired = vpMath::equal(features[i][0], 2);
+      vpDisplay::displayArrow(I, im_centroid, im_extremity, desired ? vpColor::blue : vpColor::red, 4, 2, thickness);
     }
   }
 }
@@ -314,29 +308,80 @@ void vpMbDepthNormalTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneo
                                      const vpCameraParameters &cam_, const vpColor &col, const unsigned int thickness,
                                      const bool displayFullModel)
 {
+  std::vector<std::vector<double> > models = vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, cam_, displayFullModel);
+
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    }
+  }
+
+  if (displayFeatures) {
+    std::vector<std::vector<double> > features = getFeaturesForDisplayDepthNormal();
+    for (size_t i = 0; i < features.size(); i++) {
+      vpImagePoint im_centroid(features[i][1], features[i][2]);
+      vpImagePoint im_extremity(features[i][3], features[i][4]);
+      bool desired = vpMath::equal(features[i][0], 2);
+      vpDisplay::displayArrow(I, im_centroid, im_extremity, desired ? vpColor::blue : vpColor::red, 4, 2, thickness);
+    }
+  }
+}
+
+std::vector<std::vector<double> > vpMbDepthNormalTracker::getFeaturesForDisplayDepthNormal() {
+  std::vector<std::vector<double> > features;
+
+  for (std::vector<vpMbtFaceDepthNormal *>::const_iterator it = m_depthNormalFaces.begin();
+       it != m_depthNormalFaces.end(); ++it) {
+    vpMbtFaceDepthNormal *face_normal = *it;
+    std::vector<std::vector<double> > currentFeatures = face_normal->getFeaturesForDisplay(cMo, cam);
+    features.insert(features.end(), currentFeatures.begin(), currentFeatures.end());
+  }
+
+  return features;
+}
+
+/*!
+  Return a list of primitives parameters to display the model at a given pose and camera parameters.
+  - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`.
+  - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
+  `<mu20>`, `<mu11>`, `<mu02>`.
+
+  \param width : Image width.
+  \param height : Image height.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param cam_ : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<std::vector<double> > vpMbDepthNormalTracker::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                             const vpHomogeneousMatrix &cMo_,
+                                                                             const vpCameraParameters &cam_,
+                                                                             const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
   vpCameraParameters c = cam_;
 
   bool changed = false;
-  vpImage<unsigned char> I_dummy;
-  vpImageConvert::convert(I, I_dummy);
-  m_depthNormalHiddenFacesDisplay.setVisible(I_dummy, c, cMo_, angleAppears, angleDisappears, changed);
+  m_depthNormalHiddenFacesDisplay.setVisible(width, height, c, cMo_, angleAppears, angleDisappears, changed);
 
   if (useScanLine) {
-    c.computeFov(I.getWidth(), I.getHeight());
+    c.computeFov(width, height);
 
     m_depthNormalHiddenFacesDisplay.computeClippedPolygons(cMo_, c);
-    m_depthNormalHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
+    m_depthNormalHiddenFacesDisplay.computeScanLineRender(c, width, height);
   }
 
   for (std::vector<vpMbtFaceDepthNormal *>::const_iterator it = m_depthNormalFaces.begin();
        it != m_depthNormalFaces.end(); ++it) {
     vpMbtFaceDepthNormal *face_normal = *it;
-    face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
-
-    if (displayFeatures) {
-      face_normal->displayFeature(I, cMo_, c, 0.05, thickness);
-    }
+    std::vector<std::vector<double> > modelLines = face_normal->getModelForDisplay(width, height, cMo_, cam_, displayFullModel);
+    models.insert(models.end(), modelLines.begin(), modelLines.end());
   }
+
+  return models;
 }
 
 void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
@@ -347,7 +392,7 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
 
   bool reInitialisation = false;
   if (!useOgre) {
-    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
   } else {
 #ifdef VISP_HAVE_OGRE
     if (!faces.isOgreInitialised()) {
@@ -360,9 +405,9 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
       ogreShowConfigDialog = false;
     }
 
-    faces.setVisibleOgre(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisibleOgre(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #else
-    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
   }
 
@@ -498,6 +543,13 @@ void vpMbDepthNormalTracker::setPose(const vpImage<unsigned char> &I, const vpHo
 {
   cMo = cdMo;
   init(I);
+}
+
+void vpMbDepthNormalTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
+{
+  cMo = cdMo;
+  vpImageConvert::convert(I_color, m_I);
+  init(m_I);
 }
 
 #if defined(VISP_HAVE_PCL)
@@ -736,6 +788,11 @@ void vpMbDepthNormalTracker::setDepthNormalSamplingStep(const unsigned int stepX
 void vpMbDepthNormalTracker::track(const vpImage<unsigned char> &)
 {
   throw vpException(vpException::fatalError, "Cannot track with a grayscale image!");
+}
+
+void vpMbDepthNormalTracker::track(const vpImage<vpRGBa> &)
+{
+  throw vpException(vpException::fatalError, "Cannot track with a color image!");
 }
 
 #ifdef VISP_HAVE_PCL

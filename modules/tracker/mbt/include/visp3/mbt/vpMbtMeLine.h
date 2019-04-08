@@ -81,10 +81,7 @@ public:
                               const unsigned int length, const unsigned int thickness);
 
   void display(const vpImage<unsigned char> & /*I*/, vpColor /*col*/) { ; }
-  void display(const vpImage<unsigned char> &I)
-  {
-    vpMeTracker::display(I);
-  } // Shouldn't be here since it's already in vpMeTracker
+  using vpMeTracker::display;
 
   /*!
   Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j

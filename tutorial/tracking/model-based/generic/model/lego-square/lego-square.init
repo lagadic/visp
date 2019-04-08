@@ -1,0 +1,5 @@
+4
+0.000  0.000  0.0096 # lego 1, point 3: front face top/left
+0.048  0.000  0.0096 # lego 2, point 7: front face top/left
+0.048  0.000  0.0000 # lego 2, point 0: front face bottom/left
+0.048  0.032  0.0000 # lego 2, Point 1: front face bottom/right

@@ -278,6 +278,8 @@ protected:
   vpColVector m_weightedError_klt;
   //! Robust
   vpRobust m_robust_klt;
+  //! Display features
+  std::vector<std::vector<double> > m_featuresToBeDisplayedKlt;
 
 public:
   vpMbKltTracker();
@@ -347,6 +349,11 @@ public:
 
   virtual inline vpColVector getRobustWeights() const { return m_w_klt; }
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
+
   virtual void loadConfigFile(const std::string &configFile);
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
@@ -407,6 +414,7 @@ public:
   }
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 
   /*!
     Set if the projection error criteria has to be computed.
@@ -426,6 +434,7 @@ public:
 
   virtual void testTracking();
   virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I_color);
 
   /*!
     @name Deprecated functions
@@ -484,6 +493,8 @@ protected:
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
 
+  virtual std::vector<std::vector<double> > getFeaturesForDisplayKlt();
+
   virtual void init(const vpImage<unsigned char> &I);
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
@@ -494,6 +505,8 @@ protected:
   void preTracking(const vpImage<unsigned char> &I);
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w);
   virtual void reinit(const vpImage<unsigned char> &I);
+  virtual void setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                       const vpHomogeneousMatrix &cdMo);
   //@}
 };
 

@@ -10,9 +10,14 @@ ViSP 3.2.1 (under work)
   - Contributors:
   - New features
     . New matrix and vector initialization methods to ease setting elements
+    . Introduce Eigen <-> ViSP conversion functions in vp namespace
+    . Add OpenBLAS, Intel MKL and Atlas explicit support
+    . Add support of vpImage<vpRGBa> to vpMbGenericTracker
+    . Add support of vpImage<vpRGBa> to vpKeyPoint
+    . New vpQbDevice and vpQbSoftHand classes and examples to control qbrobotics devices
   - Tutorials
   - Bug fixed
-    . [#523] dpkg-shlibdeps produces an error during Debian packaging 
+    . [#523] dpkg-shlibdeps produces an error during Debian packaging
     . [#525] Tests are failing during Debian package build in a container
 ----------------------------------------------
 ViSP 3.2.0 (released January 23, 2019)

@@ -59,6 +59,11 @@ public:
 
   virtual inline vpColVector getError() const { return m_error_depthDense; }
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
+
   virtual inline vpColVector getRobustWeights() const { return m_w_depthDense; }
 
   virtual void init(const vpImage<unsigned char> &I);
@@ -95,6 +100,7 @@ public:
   virtual void setOgreVisibilityTest(const bool &v);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 #ifdef VISP_HAVE_PCL
   virtual void setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const vpHomogeneousMatrix &cdMo);
 #endif
@@ -106,6 +112,7 @@ public:
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &);
+  virtual void track(const vpImage<vpRGBa> &);
 #ifdef VISP_HAVE_PCL
   virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
@@ -114,8 +121,6 @@ public:
 protected:
   //! Set of faces describing the object used only for display with scan line.
   vpMbHiddenFaces<vpMbtPolygon> m_depthDenseHiddenFacesDisplay;
-  //! Dummy image used to compute the visibility
-  vpImage<unsigned char> m_depthDenseI_dummyVisibility;
   //! List of current active (visible and features extracted) faces
   std::vector<vpMbtFaceDepthDense *> m_depthDenseListOfActiveFaces;
   //! Nb features

@@ -264,7 +264,6 @@ int main(int argc, char *argv[])
       frame_cpt++;
     }
 
-    vpDisplay::display(I);
     vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);

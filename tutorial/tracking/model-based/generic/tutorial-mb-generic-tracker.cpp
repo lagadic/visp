@@ -14,8 +14,8 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
   try {
-    std::string opt_videoname = "teabox.mpg";
-    std::string opt_modelname = "teabox";
+    std::string opt_videoname = "model/teabox/teabox.mpg";
+    std::string opt_modelname = "model/teabox/teabox.cao";
     int opt_tracker = 1;
 
     for (int i = 0; i < argc; i++) {
@@ -27,8 +27,8 @@ int main(int argc, char **argv)
         opt_tracker = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--video <video name>] [--model <model name>] "
-                     "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help]\n"
+                  << " [--video <video name>] [--model <model name>]"
+                     " [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]\n"
                   << std::endl;
         return 0;
       }
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
       //! [Get pose]
       //! [Display]
       tracker.getCameraParameters(cam);
-      tracker.display(I, cMo, cam, vpColor::red, 2, true);
+      tracker.display(I, cMo, cam, vpColor::red, 2);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);

@@ -41,6 +41,8 @@
   \brief File and directories basic tools.
 */
 #include <algorithm>
+#include <cctype>
+#include <functional>
 #include <cmath>
 #include <errno.h>
 #include <fcntl.h>
@@ -193,6 +195,18 @@ double swapDouble(const double d)
   return dat2.d;
 }
 #endif
+
+std::string &ltrim(std::string &s)
+{
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+  return s;
+}
+
+std::string &rtrim(std::string &s)
+{
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+  return s;
+}
 }
 
 /*!
@@ -1355,11 +1369,29 @@ std::string vpIoTools::getViSPImagesDataPath()
    extension. If checkFile flag is set, it will check first if the pathname
    denotes a directory and so return an empty string and second it will check
    if the file denoted by the pathanme exists. If so, it will return the
-   extension if present. \param pathname : The pathname of the file we want to
-   get the extension. \param checkFile : If true, the file must exist
-   otherwise an empty string will be returned. \return The extension of the
-   file or an empty string if the file has no extension. or if the pathname is
+   extension if present.
+
+   \param pathname : The pathname of the file we want to get the extension.
+   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the pathname is
    empty.
+
+   The following code shows how to use this function:
+   \code
+#include <visp3/core/vpIoTools.h>
+
+int main()
+{
+  std::string filename = "my/path/to/file.xml"
+  std::string ext = vpIoTools::getFileExtension(opt_learning_data);
+  std::cout << "ext: " << ext << std::endl;
+}
+   \endcode
+   It produces the following output:
+   \code
+ext: .xml
+   \endcode
+
  */
 std::string vpIoTools::getFileExtension(const std::string &pathname, const bool checkFile)
 {
@@ -2019,4 +2051,23 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const double double_valu
 #else
   file.write((char *)(&double_value), sizeof(double_value));
 #endif
+}
+
+bool vpIoTools::parseBoolean(std::string input)
+{
+  std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+  std::istringstream is(input);
+  bool b;
+  // Parse string to boolean either in the textual representation
+  // (True/False)  or in numeric representation (1/0)
+  is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
+  return b;
+}
+
+/*!
+   Remove whitespaces on both sides.
+ */
+std::string vpIoTools::trim(std::string s)
+{
+  return ltrim(rtrim(s));
 }

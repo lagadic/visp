@@ -405,7 +405,7 @@ M:
 #ifdef VISP_HAVE_GSL
   double detByLUGsl() const;
 #endif
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   double detByLULapack() const;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -592,7 +592,7 @@ M:
 #ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector &w, vpMatrix &V);
 #endif
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   void svdLapack(vpColVector &w, vpMatrix &V);
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1

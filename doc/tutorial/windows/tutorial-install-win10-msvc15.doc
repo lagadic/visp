@@ -244,36 +244,36 @@ Even if eigen is designed as a template we recommend to install the library with
 
 <b>1. Get eigen</b>
 
-- Download the latest eigen release from http://eigen.tuxfamily.org. At the time this tutorial was written we downloaded `eigen-eigen-b3f3d4950030.tar.gz` tarball corresponding to eigen 3.3.5.
+- Download the latest eigen release from http://eigen.tuxfamily.org. At the time this tutorial was written we downloaded `eigen-eigen-323c052e1731.tar.gz` tarball corresponding to eigen 3.3.7.
 - Extract the content of the archive in `%%VISP_WS%`.
-- We recommend to rename `%%VISP_WS%\eigen-eigen-b3f3d4950030` in `%%VISP_WS%\eigen-3.3.5`
+- We recommend to rename `%%VISP_WS%\eigen-eigen-323c052e1731` in `%%VISP_WS%\eigen-3.3.7`
 
 <b>2. Build and install eigen from source</b>
 
 - Create a build directory
 \code
-C:\> mkdir %VISP_WS%\eigen-3.3.5\build-vc15
-C:\> cd %VISP_WS%\eigen-3.3.5\build-vc15
+C:\> mkdir %VISP_WS%\eigen-3.3.7\build-vc15
+C:\> cd %VISP_WS%\eigen-3.3.7\build-vc15
 \endcode
-- Run CMake in build directory (here the generator is chosen for Visual Studio 15 2017 and 64 bits hardware and installation folder is set to `%%VISP_WS%\eigen-3.3.5\build-vc15\install` folder):
+- Run CMake in build directory (here the generator is chosen for Visual Studio 15 2017 and 64 bits hardware and installation folder is set to `%%VISP_WS%\eigen-3.3.7\build-vc15\install` folder):
 \code
-C:\> cmake -G "Visual Studio 15 2017 Win64" %VISP_WS%\eigen-3.3.5 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.5\build-vc15\install
+C:\> cmake -G "Visual Studio 15 2017 Win64" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-vc15\install
 \endcode
 - Build and install eigen (installation doesn't need administrator privileges)
 \code
 C:\> cmake --build . --config Release --target install
 \endcode
-- eigen is now installed in `%%VISP_WS%\eigen-3.3.5\build-vc15\install` folder
+- eigen is now installed in `%%VISP_WS%\eigen-3.3.7\build-vc15\install` folder
 
 <b>3. Complete eigen installation</b>
 
 Now you have to complete eigen installation setting some environment vars:
 - In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
 \code
-C:\> setx Eigen3_DIR "%VISP_DIR%\eigen-3.3.5\build-vc15\install"
+C:\> setx Eigen3_DIR "%VISP_DIR%\eigen-3.3.7\build-vc15\install\share\eigen3\cmake"
 C:\> exit
 \endcode
-where `%%VISP_DIR%\eigen-3.3.5\build-vc15\install` is where you have installed eigen. Inside this folder you should have a file named `Eigen3Config.cmake`.
+where `%%VISP_DIR%\eigen-3.3.7\build-vc15\install` is where you have installed eigen. Inside the folder `share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since eigen is a template that has no library.
 
 \subsection install_win10_msvc15_get_source Get ViSP source code
@@ -474,7 +474,7 @@ General configuration information for ViSP 3.2.0
   Mathematics: 
     Use Lapack/blas:             no
     Use Lapack (built-in):       yes (ver 3.2.1)
-    Use Eigen3:                  yes (ver 3.3.5)
+    Use Eigen3:                  yes (ver 3.3.7)
     Use OpenCV:                  yes (ver 4.0.0)
     Use GSL:                     no
 

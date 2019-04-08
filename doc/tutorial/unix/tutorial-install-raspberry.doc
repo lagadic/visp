@@ -108,7 +108,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \code
-$ sudo apt-get install libopencv-dev libx11-dev libeigen3-dev libxml2-dev
+$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libxml2-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng12-dev
 \endcode
 
 - Get ViSP source code
