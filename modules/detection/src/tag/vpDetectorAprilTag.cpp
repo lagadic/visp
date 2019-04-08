@@ -217,7 +217,7 @@ public:
 #ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
     if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
       std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
-                   "and in RelWithDebInfo due to long build time issue."
+                   "and in RelWithDebInfo due to long build time issue." << std::endl;
       return false;
     }
 #endif
@@ -306,7 +306,7 @@ public:
 #ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
     if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
       std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
-                   "and in RelWithDebInfo due to long build time issue."
+                   "and in RelWithDebInfo due to long build time issue." << std::endl;
       return false;
     }
 #endif
