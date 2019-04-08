@@ -647,7 +647,7 @@ not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp/vpRowVector.h>
+#include <visp3/core/vpRowVector.h>
 
 int main()
 {

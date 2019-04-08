@@ -234,19 +234,19 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
 /*!
   Set the flag to consider if the level of detail (LOD) is used or not.
   When activated, lines and faces of the 3D model are tracked if respectively
-their projected lenght and area in the image are significative enough. By
-significative, we mean:
+  their projected lenght and area in the image are significative enough. By
+  significative, we mean:
   - if the lenght of the projected line in the image is greater that a
-threshold set by setMinLineLengthThresh()
+  threshold set by setMinLineLengthThresh()
   - if the area of the projected face in the image is greater that a threshold
-set by setMinPolygonAreaThresh().
+  set by setMinPolygonAreaThresh().
 
   \param use_lod : true if level of detail must be used, false otherwise.
 
   The sample code below shows how to introduce this feature:
   \code
-#include <visp/vpImageIo.h>
-#include <visp/vpMbEdgeTracker.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 
 int main()
 {

@@ -90,7 +90,7 @@ class vpPoint;
 
   There are different ways to initialize an homogeneous matrix. You can set each element of the matrix like:
   \code
-#include <visp/vpHomogeneousMatrix.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
 
 int main()
 {
@@ -118,7 +118,7 @@ M:
   \endcode
   You can also use vpRotationMatrix::operator<< and vpTranslationVector::operator<< like:
   \code
-#include <visp/vpHomogeneousMatrix.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
 
 int main()
 {
@@ -134,7 +134,7 @@ int main()
   \endcode
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp/vpHomogeneousMatrix.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
 
 int main()
 {

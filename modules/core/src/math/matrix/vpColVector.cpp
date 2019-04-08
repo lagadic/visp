@@ -882,7 +882,7 @@ vpColVector &vpColVector::normalize()
 
    Example:
    \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
@@ -935,7 +935,7 @@ vpColVector vpColVector::invSort(const vpColVector &v)
 
    Example:
    \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
@@ -1269,7 +1269,7 @@ have not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
