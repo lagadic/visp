@@ -45,9 +45,9 @@
 
 #ifdef VISP_HAVE_PUGIXML
 
-#include <stdio.h>
 #include <map>
 #include <pugixml.hpp>
+#include <visp3/core/vpIoTools.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpXmlParserRectOriented::Impl
@@ -130,7 +130,7 @@ public:
       root_node.append_attribute("version") = "1.0";
       root_node = doc.append_child("config");
     } else if (!append) {
-      if (remove(filename.c_str()) != 0)
+      if (!vpIoTools::remove(filename))
         throw vpException(vpException::ioError, "Cannot remove existing xml file");
 
       root_node = doc.append_child(pugi::node_declaration);
