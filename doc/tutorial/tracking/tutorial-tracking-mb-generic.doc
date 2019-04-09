@@ -31,7 +31,6 @@ Note also that combining the visual features (moving edges + keypoints) can be a
 
 Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
 - \c OpenCV: Essential if you want to use the keypoints as visual features that are detected and tracked thanks to the KLT tracker. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
-- \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mb_generic_settings_xml.
 - \c Ogre \c 3D: This 3rd party is optional and could be difficult to install on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mb_generic_advanced_wrml  instead of the home-made \ref mb_generic_advanced_cao.
 
@@ -278,8 +277,7 @@ We provide now a line by line description of the file where the faces of the box
 
 \subsection mb_generic_settings_xml Settings from an XML file
 
-
-Instead of setting the tracker parameters from source code, if libxml2 is available it is possible to specify the settings from an XML file. As done in tutorial-mb-generic-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
+Instead of setting the tracker parameters from source code, it is possible to specify the settings from an XML file. As done in tutorial-mb-generic-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
 \snippet tutorial-mb-generic-tracker-full.cpp Load xml
 The content of the XML file teabox.xml that is considered by default is the following:
 \code

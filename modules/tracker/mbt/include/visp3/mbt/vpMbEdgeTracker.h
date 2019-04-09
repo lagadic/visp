@@ -47,7 +47,6 @@
 #define vpMbEdgeTracker_HH
 
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/mbt/vpMbTracker.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceCylinder.h>
@@ -128,7 +127,7 @@ int main()
   display.init(I,100,100,"Mb Edge Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
@@ -146,9 +145,6 @@ int main()
     tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
    vpDisplay::flush(I);
   }
-
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -172,8 +168,6 @@ not) them using a vector of booleans, as presented in the following code:
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
   ...
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
 \endcode
 
   The tracker can also be used without display, in that case the initial pose
@@ -196,7 +190,7 @@ int main()
   //acquire an image
   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
@@ -208,9 +202,6 @@ int main()
     tracker.track(I); // track the object on this image
     tracker.getPose(cMo); // get the pose
   }
-
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -242,7 +233,7 @@ int main()
   display.init(I,100,100,"Mb Edge Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
@@ -257,9 +248,6 @@ int main()
     tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
     vpDisplay::flush(I);
   }
-
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
 
   return 0;
 }

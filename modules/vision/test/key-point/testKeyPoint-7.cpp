@@ -376,7 +376,7 @@ void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<T
                                                  "binary without train images !");
     }
 
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
     // Save in xml with training images
     filename = vpIoTools::createFilePath(opath, "xml_with_img");
     vpIoTools::makeDirectory(filename);
@@ -523,7 +523,7 @@ void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<T
                                                  "binary without train images saved !");
     }
 
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
     // Save in xml with training images
     filename = vpIoTools::createFilePath(opath, "xml_with_img");
     vpIoTools::makeDirectory(filename);

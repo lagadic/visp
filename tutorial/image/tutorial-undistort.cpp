@@ -13,7 +13,7 @@ int main()
 
     //! [Load camera parameters from xml]
     vpCameraParameters cam;
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
     vpXmlParserCamera p;
     vpCameraParameters::vpCameraParametersProjType projModel;
     projModel = vpCameraParameters::perspectiveProjWithDistortion;

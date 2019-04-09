@@ -248,7 +248,7 @@ namespace
     std::vector<int> tracker_type;
     tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
     vpMbGenericTracker tracker(tracker_type);
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
     tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
 #else
     {
@@ -428,12 +428,6 @@ namespace
 
     if (!vec_err_tu.empty())
       std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
-
-#if defined(VISP_HAVE_XML2)
-    // Cleanup memory allocated by xml library used to parse the xml config
-    // file in vpMbGenericTracker::loadConfigFile()
-    vpXmlParser::cleanup();
-#endif
 
     return EXIT_SUCCESS;
   }

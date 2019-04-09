@@ -1658,9 +1658,6 @@ void vpMbEdgeMultiTracker::initPyramid(const std::map<std::string, const vpImage
   From the configuration file, initialize the parameters corresponding to the
 objects: moving-edges, camera and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
   \throw vpException::ioError if the file has not been properly parsed (file
 not found or wrong format for the data).
 
@@ -1700,8 +1697,6 @@ not found or wrong format for the data).
   </camera>
 </conf>
   \endcode
-
-  \sa vpXmlParser::cleanup()
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile)
 {
@@ -1731,15 +1726,12 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile)
   documentation. From the configuration file initialize the parameters
   corresponding to the objects: moving-edges, camera and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param configFile1 : Full name of the xml file for the first camera.
   \param configFile2 : Full name of the xml file for the second camera.
   \param firstCameraIsReference : If true, the first camera is the reference,
   otherwise it is the second one.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
                                           const bool firstCameraIsReference)
@@ -1787,12 +1779,9 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile1, const 
   the configuration file initialize the parameters corresponding to the
   objects: moving-edges, camera and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param mapOfConfigFiles : Map of xml files.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles)
 {

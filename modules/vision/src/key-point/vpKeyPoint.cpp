@@ -48,6 +48,10 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #endif
 
+#ifdef VISP_HAVE_PUGIXML
+#include <pugixml.hpp>
+#endif
+
 namespace
 {
 // Specific Type transformation functions
@@ -2885,7 +2889,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
   }
 }
 
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
 /*!
    Load configuration parameters from an XML config file.
 
@@ -3163,28 +3167,15 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
     file.close();
   } else {
-#ifdef VISP_HAVE_XML2
-    xmlDocPtr doc = NULL;
-    xmlNodePtr root_element = NULL;
-
-    /*
-     * this initialize the library and check potential ABI mismatches
-     * between the version it was compiled for and the actual shared
-     * library used.
-     */
-    LIBXML_TEST_VERSION
+#ifdef VISP_HAVE_PUGIXML
+    pugi::xml_document doc;
 
     /*parse the file and get the DOM */
-    doc = xmlReadFile(filename.c_str(), NULL, 0);
-
-    if (doc == NULL) {
-      throw vpException(vpException::ioError, "Error with file " + filename);
+    if (!doc.load_file(filename.c_str())) {
+      throw vpException(vpException::ioError, "Error with file: %s", filename.c_str());
     }
 
-    root_element = xmlDocGetRootElement(doc);
-
-    xmlNodePtr first_level_node = NULL;
-    char *pEnd = NULL;
+    pugi::xml_node root_element = doc.document_element();
 
     int descriptorType = CV_32F; // float
     int nRows = 0, nCols = 0;
@@ -3192,27 +3183,21 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
     cv::Mat trainDescriptorsTmp;
 
-    for (first_level_node = root_element->children; first_level_node; first_level_node = first_level_node->next) {
+    for (pugi::xml_node first_level_node = root_element.first_child(); first_level_node; first_level_node = first_level_node.next_sibling()) {
 
-      std::string name((char *)first_level_node->name);
-      if (first_level_node->type == XML_ELEMENT_NODE && name == "TrainingImageInfo") {
-        xmlNodePtr image_info_node = NULL;
+      std::string name(first_level_node.name());
+      if (first_level_node.type() == pugi::node_element && name == "TrainingImageInfo") {
 
-        for (image_info_node = first_level_node->children; image_info_node; image_info_node = image_info_node->next) {
-          name = std::string((char *)image_info_node->name);
+        for (pugi::xml_node image_info_node = first_level_node.first_child(); image_info_node; image_info_node = image_info_node.next_sibling()) {
+          name = std::string(image_info_node.name());
 
           if (name == "trainImg") {
             // Read image_id
-            xmlChar *image_id_property = xmlGetProp(image_info_node, BAD_CAST "image_id");
-            int id = 0;
-            if (image_id_property) {
-              id = std::atoi((char *)image_id_property);
-            }
-            xmlFree(image_id_property);
+            int id = image_info_node.attribute("image_id").as_int();
 
             vpImage<unsigned char> I;
 #ifdef VISP_HAVE_MODULE_IO
-            std::string path((char *)image_info_node->children->content);
+            std::string path(image_info_node.text().as_string());
             // Read path to the training images
             if (vpIoTools::isAbsolutePathname(std::string(path))) {
               vpImageIo::read(I, path);
@@ -3225,56 +3210,54 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 #endif
           }
         }
-      } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorsInfo") {
-        xmlNodePtr descriptors_info_node = NULL;
-        for (descriptors_info_node = first_level_node->children; descriptors_info_node;
-             descriptors_info_node = descriptors_info_node->next) {
-          if (descriptors_info_node->type == XML_ELEMENT_NODE) {
-            name = std::string((char *)descriptors_info_node->name);
+      } else if (first_level_node.type() == pugi::node_element && name == "DescriptorsInfo") {
+        for (pugi::xml_node descriptors_info_node = first_level_node.first_child(); descriptors_info_node;
+             descriptors_info_node = descriptors_info_node.next_sibling()) {
+          if (descriptors_info_node.type() == pugi::node_element) {
+            name = std::string(descriptors_info_node.name());
 
             if (name == "nrows") {
-              nRows = std::atoi((char *)descriptors_info_node->children->content);
+              nRows = descriptors_info_node.text().as_int();
             } else if (name == "ncols") {
-              nCols = std::atoi((char *)descriptors_info_node->children->content);
+              nCols = descriptors_info_node.text().as_int();
             } else if (name == "type") {
-              descriptorType = std::atoi((char *)descriptors_info_node->children->content);
+              descriptorType = descriptors_info_node.text().as_int();
             }
           }
         }
 
         trainDescriptorsTmp = cv::Mat(nRows, nCols, descriptorType);
-      } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorInfo") {
-        xmlNodePtr point_node = NULL;
+      } else if (first_level_node.type() == pugi::node_element && name == "DescriptorInfo") {
         double u = 0.0, v = 0.0, size = 0.0, angle = 0.0, response = 0.0;
         int octave = 0, class_id = 0, image_id = 0;
         double oX = 0.0, oY = 0.0, oZ = 0.0;
 
         std::stringstream ss;
 
-        for (point_node = first_level_node->children; point_node; point_node = point_node->next) {
-          if (point_node->type == XML_ELEMENT_NODE) {
-            name = std::string((char *)point_node->name);
+        for (pugi::xml_node point_node = first_level_node.first_child(); point_node; point_node = point_node.next_sibling()) {
+          if (point_node.type() == pugi::node_element) {
+            name = std::string(point_node.name());
 
             // Read information about keypoints
             if (name == "u") {
-              u = std::strtod((char *)point_node->children->content, &pEnd);
+              u = point_node.text().as_double();
             } else if (name == "v") {
-              v = std::strtod((char *)point_node->children->content, &pEnd);
+              v = point_node.text().as_double();
             } else if (name == "size") {
-              size = std::strtod((char *)point_node->children->content, &pEnd);
+              size = point_node.text().as_double();
             } else if (name == "angle") {
-              angle = std::strtod((char *)point_node->children->content, &pEnd);
+              angle = point_node.text().as_double();
             } else if (name == "response") {
-              response = std::strtod((char *)point_node->children->content, &pEnd);
+              response = point_node.text().as_double();
             } else if (name == "octave") {
-              octave = std::atoi((char *)point_node->children->content);
+              octave = point_node.text().as_int();
             } else if (name == "class_id") {
-              class_id = std::atoi((char *)point_node->children->content);
+              class_id = point_node.text().as_int();
               cv::KeyPoint keyPoint(cv::Point2f((float)u, (float)v), (float)size, (float)angle, (float)response, octave,
                                     (class_id + startClassId));
               m_trainKeyPoints.push_back(keyPoint);
             } else if (name == "image_id") {
-              image_id = std::atoi((char *)point_node->children->content);
+              image_id = point_node.text().as_int();
               if (image_id != -1) {
 #ifdef VISP_HAVE_MODULE_IO
                 // No training images if image_id == -1
@@ -3282,22 +3265,21 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 #endif
               }
             } else if (name == "oX") {
-              oX = std::atof((char *)point_node->children->content);
+              oX = point_node.text().as_double();
             } else if (name == "oY") {
-              oY = std::atof((char *)point_node->children->content);
+              oY = point_node.text().as_double();
             } else if (name == "oZ") {
-              oZ = std::atof((char *)point_node->children->content);
+              oZ = point_node.text().as_double();
               m_trainPoints.push_back(cv::Point3f((float)oX, (float)oY, (float)oZ));
             } else if (name == "desc") {
-              xmlNodePtr descriptor_value_node = NULL;
               j = 0;
 
-              for (descriptor_value_node = point_node->children; descriptor_value_node;
-                   descriptor_value_node = descriptor_value_node->next) {
+              for (pugi::xml_node descriptor_value_node = point_node.first_child(); descriptor_value_node;
+                   descriptor_value_node = descriptor_value_node.next_sibling()) {
 
-                if (descriptor_value_node->type == XML_ELEMENT_NODE) {
+                if (descriptor_value_node.type() == pugi::node_element) {
                   // Read descriptors values
-                  std::string parseStr((char *)descriptor_value_node->children->content);
+                  std::string parseStr(descriptor_value_node.text().as_string());
                   ss.clear();
                   ss.str(parseStr);
 
@@ -3360,17 +3342,8 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
     } else {
       cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
-
-    /*free the document */
-    xmlFreeDoc(doc);
-
-    /*
-     *Free the global variables that may
-     *have been allocated by the parser.
-     */
-    xmlCleanupParser();
 #else
-    std::cout << "Error: libxml2 is required !" << std::endl;
+    std::cout << "Error: pugixml is not properly built!" << std::endl;
 #endif
   }
 
@@ -4268,7 +4241,8 @@ void vpKeyPoint::reset()
 
    \param filename : Path of the save file
    \param binaryMode : If true, the data are saved in binary mode, otherwise
-   in XML mode \param saveTrainingImages : If true, save also the training
+   in XML mode
+   \param saveTrainingImages : If true, save also the training
    images on disk
  */
 void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, const bool saveTrainingImages)
@@ -4470,191 +4444,129 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
     file.close();
   } else {
-#ifdef VISP_HAVE_XML2
-    xmlDocPtr doc = NULL;
-    xmlNodePtr root_node = NULL, image_node = NULL, image_info_node = NULL, descriptors_info_node = NULL,
-               descriptor_node = NULL, desc_node = NULL;
+#ifdef VISP_HAVE_PUGIXML
+    pugi::xml_document doc;
+    pugi::xml_node node = doc.append_child(pugi::node_declaration);
+    node.append_attribute("version") = "1.0";
+    node.append_attribute("encoding") = "UTF-8";
 
-    /*
-     * this initialize the library and check potential ABI mismatches
-     * between the version it was compiled for and the actual shared
-     * library used.
-     */
-    LIBXML_TEST_VERSION
-
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    if (doc == NULL) {
-      throw vpException(vpException::ioError, "Error with file " + filename);
+    if (!doc) {
+      throw vpException(vpException::ioError, "Error with file: ", filename.c_str());
     }
 
-    root_node = xmlNewNode(NULL, BAD_CAST "LearningData");
-    xmlDocSetRootElement(doc, root_node);
-
-    std::stringstream ss;
+    pugi::xml_node root_node = doc.append_child("LearningData");
 
     // Write the training images info
-    image_node = xmlNewChild(root_node, NULL, BAD_CAST "TrainingImageInfo", NULL);
+    pugi::xml_node image_node = root_node.append_child("TrainingImageInfo");
 
 #ifdef VISP_HAVE_MODULE_IO
     for (std::map<int, std::string>::const_iterator it = mapOfImgPath.begin(); it != mapOfImgPath.end(); ++it) {
-      image_info_node = xmlNewChild(image_node, NULL, BAD_CAST "trainImg", BAD_CAST it->second.c_str());
-      ss.str("");
+      pugi::xml_node image_info_node = image_node.append_child("trainImg");
+      image_info_node.append_child(pugi::node_pcdata).set_value(it->second.c_str());
+      std::stringstream ss;
       ss << it->first;
-      xmlNewProp(image_info_node, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
+      image_info_node.append_attribute("image_id") = ss.str().c_str();
     }
 #endif
 
     // Write information about descriptors
-    descriptors_info_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorsInfo", NULL);
+    pugi::xml_node descriptors_info_node = root_node.append_child("DescriptorsInfo");
 
     int nRows = m_trainDescriptors.rows, nCols = m_trainDescriptors.cols;
     int descriptorType = m_trainDescriptors.type();
 
     // Write the number of rows
-    ss.str("");
-    ss << nRows;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "nrows", BAD_CAST ss.str().c_str());
+    descriptors_info_node.append_child("nrows").append_child(pugi::node_pcdata).text() = nRows;
 
     // Write the number of cols
-    ss.str("");
-    ss << nCols;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "ncols", BAD_CAST ss.str().c_str());
+    descriptors_info_node.append_child("ncols").append_child(pugi::node_pcdata).text() = nCols;
 
     // Write the descriptors type
-    ss.str("");
-    ss << descriptorType;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "type", BAD_CAST ss.str().c_str());
+    descriptors_info_node.append_child("type").append_child(pugi::node_pcdata).text() = descriptorType;
 
     for (int i = 0; i < nRows; i++) {
       unsigned int i_ = (unsigned int)i;
-      descriptor_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorInfo", NULL);
+      pugi::xml_node descriptor_node = root_node.append_child("DescriptorInfo");
 
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.x;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "u", BAD_CAST ss.str().c_str());
+      descriptor_node.append_child("u").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.x;
+      descriptor_node.append_child("v").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.y;
+      descriptor_node.append_child("size").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].size;
+      descriptor_node.append_child("angle").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].angle;
+      descriptor_node.append_child("response").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].response;
+      descriptor_node.append_child("octave").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].octave;
+      descriptor_node.append_child("class_id").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].class_id;
 
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.y;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "v", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].size;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "size", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].angle;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "angle", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].response;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "response", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      ss << m_trainKeyPoints[i_].octave;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "octave", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      ss << m_trainKeyPoints[i_].class_id;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "class_id", BAD_CAST ss.str().c_str());
-
-      ss.str("");
 #ifdef VISP_HAVE_MODULE_IO
       std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
-      ss << ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
+      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).text() =
+          ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
 #else
-      ss << -1;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
+      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).text() = -1;
 #endif
 
       if (have3DInfo) {
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].x;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oX", BAD_CAST ss.str().c_str());
-
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].y;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oY", BAD_CAST ss.str().c_str());
-
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].z;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oZ", BAD_CAST ss.str().c_str());
+        descriptor_node.append_child("oX").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].x;
+        descriptor_node.append_child("oY").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].y;
+        descriptor_node.append_child("oZ").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].z;
       }
 
-      desc_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "desc", NULL);
+      pugi::xml_node desc_node = descriptor_node.append_child("desc");
 
       for (int j = 0; j < nCols; j++) {
-        ss.str("");
-
         switch (descriptorType) {
         case CV_8U: {
           // Promote an unsigned char to an int
           // val_tmp holds the numeric value that will be written
-          // We save the value in numeric form otherwise libxml2 will not be
+          // We save the value in numeric form otherwise xml library will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<unsigned char>(i, j);
-          ss << val_tmp;
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;
         } break;
 
         case CV_8S: {
           // Promote a char to an int
           // val_tmp holds the numeric value that will be written
-          // We save the value in numeric form otherwise libxml2 will not be
+          // We save the value in numeric form otherwise xml library will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<char>(i, j);
-          ss << val_tmp;
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;
         } break;
 
         case CV_16U:
-          ss << m_trainDescriptors.at<unsigned short int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<unsigned short int>(i, j);
           break;
 
         case CV_16S:
-          ss << m_trainDescriptors.at<short int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<short int>(i, j);
           break;
 
         case CV_32S:
-          ss << m_trainDescriptors.at<int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<int>(i, j);
           break;
 
         case CV_32F:
-          // max_digits10 == 9 for float
-          ss << std::fixed << std::setprecision(9) << m_trainDescriptors.at<float>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<float>(i, j);
           break;
 
         case CV_64F:
-          // max_digits10 == 17 for double
-          ss << std::fixed << std::setprecision(17) << m_trainDescriptors.at<double>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<double>(i, j);
           break;
 
         default:
           throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
           break;
         }
-        xmlNewChild(desc_node, NULL, BAD_CAST "val", BAD_CAST ss.str().c_str());
       }
     }
 
-    xmlSaveFormatFileEnc(filename.c_str(), doc, "UTF-8", 1);
-
-    /*free the document */
-    xmlFreeDoc(doc);
-
-    /*
-     *Free the global variables that may
-     *have been allocated by the parser.
-     */
-    xmlCleanupParser();
+    doc.save_file(filename.c_str(), PUGIXML_TEXT("  "), pugi::format_default, pugi::encoding_utf8);
 #else
-    std::cerr << "Error: libxml2 is required !" << std::endl;
+    std::cerr << "Error: pugixml is not properly built!" << std::endl;
 #endif
   }
 }

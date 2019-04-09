@@ -38,10 +38,6 @@ $ sudo apt-get install liblapack-dev
 \code
 $ sudo apt-get install libv4l-dev
 \endcode
-- libxml2 to be able to configure the model-based trackers from xml files
-\code
-$ sudo apt-get install libxml2-dev
-\endcode
 - QR code detection
 \code
 $ sudo apt-get install libzbar-dev
@@ -301,7 +297,7 @@ $ cd $HOME/soft/visp-crossbuild
 $ cmake -DCMAKE_TOOLCHAIN_FILE=../visp/platforms/linux/arm-raspberrypi.toolchain.cmake ../visp -DUSE_OPENCV=OFF
 \endcode
   
-- an other way, that we didn't investigate in depth is to upgrade the toochain to gcc-4.9. Notice that arm-rpi-4.9.3-linux-gnuabihf toolchain in https://github.com/raspberrypi/tools.git doesn't allow cmake to detect all the 3rd parties. During our trial, we succeed to build ViSP, but X11, xml2... were not detected. During the configuration cmake only found OpenCV and zbar libraries. 
+- an other way, that we didn't investigate in depth is to upgrade the toochain to gcc-4.9. Notice that arm-rpi-4.9.3-linux-gnuabihf toolchain in https://github.com/raspberrypi/tools.git doesn't allow cmake to detect all the 3rd parties. During our trial, we succeed to build ViSP, but X11 was not detected. During the configuration cmake only found OpenCV and zbar libraries. 
 
 \subsection cross_raspberry_tips_cmake_version CMake 2.8.12 or greater requested
 

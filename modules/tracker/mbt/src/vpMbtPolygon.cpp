@@ -269,7 +269,6 @@ int main()
   while (true) {
     // tracking loop
   }
-  vpXmlParser::cleanup();
 
   return 0;
 }

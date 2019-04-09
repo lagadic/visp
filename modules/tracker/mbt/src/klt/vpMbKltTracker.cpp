@@ -41,6 +41,7 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/mbt/vpMbKltTracker.h>
+#include <visp3/mbt/vpMbtXmlGenericParser.h>
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
@@ -965,9 +966,6 @@ void vpMbKltTracker::track(const vpImage<vpRGBa> &I_color)
   From the configuration file initialize the parameters corresponding to the
 objects: KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
   \throw vpException::ioError if the file has not been properly parsed (file
 not found or wrong format for the data).
 
@@ -1004,25 +1002,23 @@ not found or wrong format for the data).
   </klt>
 </conf>
   \endcode
-
-  \sa vpXmlParser::cleanup()
 */
 void vpMbKltTracker::loadConfigFile(const std::string &configFile)
 {
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile);
 
-#ifdef VISP_HAVE_XML2
-  vpMbtKltXmlParser xmlp;
+#ifdef VISP_HAVE_PUGIXML
+  vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::KLT_PARSER);
 
-  xmlp.setMaxFeatures(10000);
-  xmlp.setWindowSize(5);
-  xmlp.setQuality(0.01);
-  xmlp.setMinDistance(5);
-  xmlp.setHarrisParam(0.01);
-  xmlp.setBlockSize(3);
-  xmlp.setPyramidLevels(3);
-  xmlp.setMaskBorder(maskBorder);
+  xmlp.setKltMaxFeatures(10000);
+  xmlp.setKltWindowSize(5);
+  xmlp.setKltQuality(0.01);
+  xmlp.setKltMinDistance(5);
+  xmlp.setKltHarrisParam(0.01);
+  xmlp.setKltBlockSize(3);
+  xmlp.setKltPyramidLevels(3);
+  xmlp.setKltMaskBorder(maskBorder);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
@@ -1038,14 +1034,14 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
   xmlp.getCameraParameters(camera);
   setCameraParameters(camera);
 
-  tracker.setMaxFeatures((int)xmlp.getMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getWindowSize());
-  tracker.setQuality(xmlp.getQuality());
-  tracker.setMinDistance(xmlp.getMinDistance());
-  tracker.setHarrisFreeParameter(xmlp.getHarrisParam());
-  tracker.setBlockSize((int)xmlp.getBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getPyramidLevels());
-  maskBorder = xmlp.getMaskBorder();
+  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
+  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setQuality(xmlp.getKltQuality());
+  tracker.setMinDistance(xmlp.getKltMinDistance());
+  tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
+  tracker.setBlockSize((int)xmlp.getKltBlockSize());
+  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  maskBorder = xmlp.getKltMaskBorder();
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
 
@@ -1062,8 +1058,8 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
     setClipping(clippingFlag = clippingFlag | vpPolygon3D::FOV_CLIPPING);
 
   useLodGeneral = xmlp.getLodState();
-  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
-  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+  minLineLengthThresholdGeneral = xmlp.getLodMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getLodMinPolygonAreaThreshold();
 
   applyLodSettingInConfig = false;
   if (this->getNbPolygon() > 0) {
@@ -1074,7 +1070,7 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
   }
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 

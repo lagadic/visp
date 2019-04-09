@@ -390,7 +390,7 @@ void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
 
 void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile)
 {
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
 
   xmlp.setCameraParameters(cam);
@@ -426,7 +426,7 @@ void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile)
 
   setDepthDenseSamplingStep(xmlp.getDepthDenseSamplingStepX(), xmlp.getDepthDenseSamplingStepY());
 #else
-  std::cerr << "You need the libXML2 to read the config file " << configFile << std::endl;
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 

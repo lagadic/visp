@@ -57,7 +57,6 @@
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbKltTracker.h>
 #include <visp3/mbt/vpMbTracker.h>
-#include <visp3/mbt/vpMbtEdgeKltXmlParser.h>
 
 /*!
   \class vpMbEdgeKltTracker
@@ -103,7 +102,7 @@ int main()
   display.init(I,100,100,"Mb Hybrid Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   // Load the 3d model in cao format. No 3rd party library is required
@@ -123,11 +122,6 @@ int main()
     tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
     vpDisplay::flush(I);
   }
-
-#if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
-  vpXmlParser::cleanup();
-#endif
 
   return 0;
 #endif
@@ -155,7 +149,7 @@ int main()
   //acquire an image
   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
@@ -167,11 +161,6 @@ int main()
     tracker.track(I); // track the object on this image
     tracker.getPose(cMo); // get the pose
   }
-
-#if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
-  vpXmlParser::cleanup();
-#endif
 
   return 0;
 #endif
@@ -205,7 +194,7 @@ int main()
   display.init(I,100,100,"Mb Hybrid Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
@@ -220,9 +209,6 @@ int main()
     vpDisplay::flush(I);
   }
 
-#endif
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
- vpXmlParser::cleanup();
 #endif
 
   return 0;

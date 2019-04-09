@@ -231,7 +231,12 @@ if(WITH_CLIPPER)
   include_directories(${CLIPPER_INCLUDE_DIRS})
 endif()
 
-vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${CLIPPER_LIBRARIES})
+if(WITH_PUGIXML)
+  # pugixml is private
+  include_directories(${PUGIXML_INCLUDE_DIRS})
+endif()
+
+vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${CLIPPER_LIBRARIES} ${PUGIXML_LIBRARIES})
 vp_glob_module_sources()
 
 if(USE_OGRE)

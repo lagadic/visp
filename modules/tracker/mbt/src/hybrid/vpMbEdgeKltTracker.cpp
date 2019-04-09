@@ -43,6 +43,7 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/mbt/vpMbEdgeKltTracker.h>
+#include <visp3/mbt/vpMbtXmlGenericParser.h>
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
@@ -218,9 +219,6 @@ unsigned int vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
   From the configuration file initialize the parameters corresponding to the
 objects: moving-edges, KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
   \throw vpException::ioError if the file has not been properly parsed (file
 not found or wrong format for the data).
 
@@ -274,34 +272,32 @@ not found or wrong format for the data).
   </klt>
 </conf>
   \endcode
-
-  \sa vpXmlParser::cleanup()
 */
 void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
 {
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile);
 
-#ifdef VISP_HAVE_XML2
-  vpMbtEdgeKltXmlParser xmlp;
+#ifdef VISP_HAVE_PUGIXML
+  vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER | vpMbtXmlGenericParser::KLT_PARSER);
 
   xmlp.setCameraParameters(cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
-  xmlp.setMovingEdge(me);
+  xmlp.setEdgeMe(me);
 
-  xmlp.setMaxFeatures(10000);
-  xmlp.setWindowSize(5);
-  xmlp.setQuality(0.01);
-  xmlp.setMinDistance(5);
-  xmlp.setHarrisParam(0.01);
-  xmlp.setBlockSize(3);
-  xmlp.setPyramidLevels(3);
-  xmlp.setMaskBorder(maskBorder);
+  xmlp.setKltMaxFeatures(10000);
+  xmlp.setKltWindowSize(5);
+  xmlp.setKltQuality(0.01);
+  xmlp.setKltMinDistance(5);
+  xmlp.setKltHarrisParam(0.01);
+  xmlp.setKltBlockSize(3);
+  xmlp.setKltPyramidLevels(3);
+  xmlp.setKltMaskBorder(maskBorder);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    std::cout << " *********** Parsing XML for Mb Edge KLT Tracker ************ " << std::endl;
     xmlp.parse(configFile.c_str());
   } catch (...) {
     vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile.c_str());
@@ -326,8 +322,8 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
   }
 
   useLodGeneral = xmlp.getLodState();
-  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
-  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+  minLineLengthThresholdGeneral = xmlp.getLodMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getLodMinPolygonAreaThreshold();
 
   applyLodSettingInConfig = false;
   if (this->getNbPolygon() > 0) {
@@ -338,23 +334,23 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
   }
 
   vpMe meParser;
-  xmlp.getMe(meParser);
+  xmlp.getEdgeMe(meParser);
   vpMbEdgeTracker::setMovingEdge(meParser);
 
-  tracker.setMaxFeatures((int)xmlp.getMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getWindowSize());
-  tracker.setQuality(xmlp.getQuality());
-  tracker.setMinDistance(xmlp.getMinDistance());
-  tracker.setHarrisFreeParameter(xmlp.getHarrisParam());
-  tracker.setBlockSize((int)xmlp.getBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getPyramidLevels());
-  maskBorder = xmlp.getMaskBorder();
+  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
+  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setQuality(xmlp.getKltQuality());
+  tracker.setMinDistance(xmlp.getKltMinDistance());
+  tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
+  tracker.setBlockSize((int)xmlp.getKltBlockSize());
+  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  maskBorder = xmlp.getKltMaskBorder();
 
   // if(useScanLine)
   faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 
@@ -924,6 +920,10 @@ void vpMbEdgeKltTracker::track(const vpImage<unsigned char> &I)
 
     //    cleanPyramid(Ipyramid);
   }
+
+  if (displayFeatures) {
+    m_featuresToBeDisplayedKlt = getFeaturesForDisplayKlt();
+  }
 }
 
 /*!
@@ -975,6 +975,10 @@ void vpMbEdgeKltTracker::track(const vpImage<vpRGBa> &I_color)
     //    } while(i != 0);
 
     //    cleanPyramid(Ipyramid);
+  }
+
+  if (displayFeatures) {
+    m_featuresToBeDisplayedKlt = getFeaturesForDisplayKlt();
   }
 }
 
@@ -1250,6 +1254,21 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
     }
   }
 
+  if (displayFeatures) {
+    for (size_t i = 0; i < m_featuresToBeDisplayedKlt.size(); i++) {
+      if (vpMath::equal(m_featuresToBeDisplayedKlt[i][0], 1)) {
+        vpImagePoint ip1(m_featuresToBeDisplayedKlt[i][1], m_featuresToBeDisplayedKlt[i][2]);
+        vpDisplay::displayCross(I, ip1, 10, vpColor::red);
+
+        vpImagePoint ip2(m_featuresToBeDisplayedKlt[i][3], m_featuresToBeDisplayedKlt[i][4]);
+        double id = m_featuresToBeDisplayedKlt[i][5];
+        std::stringstream ss;
+        ss << id;
+        vpDisplay::displayText(I, ip2, ss.str(), vpColor::red);
+      }
+    }
+  }
+
 #ifdef VISP_HAVE_OGRE
   if (useOgre)
     faces.displayOgre(cMo_);
@@ -1284,6 +1303,21 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
       double mu11 = models[i][4];
       double mu02 = models[i][5];
       vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
+    }
+  }
+
+  if (displayFeatures) {
+    for (size_t i = 0; i < m_featuresToBeDisplayedKlt.size(); i++) {
+      if (vpMath::equal(m_featuresToBeDisplayedKlt[i][0], 1)) {
+        vpImagePoint ip1(m_featuresToBeDisplayedKlt[i][1], m_featuresToBeDisplayedKlt[i][2]);
+        vpDisplay::displayCross(I, ip1, 10, vpColor::red);
+
+        vpImagePoint ip2(m_featuresToBeDisplayedKlt[i][3], m_featuresToBeDisplayedKlt[i][4]);
+        double id = m_featuresToBeDisplayedKlt[i][5];
+        std::stringstream ss;
+        ss << id;
+        vpDisplay::displayText(I, ip2, ss.str(), vpColor::red);
+      }
     }
   }
 

@@ -31,7 +31,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \code
-$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel libxml2-devel zbar-devel libxcb-devel libjpeg-devel libpng-devel
+$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel zbar-devel libxcb-devel libjpeg-devel libpng-devel
 \endcode
 
 - Get ViSP source code
@@ -73,13 +73,12 @@ We recommend to install the following:
 - lapack and eigen to benefit from optimized mathematical capabilities
 - libdc1394 to grab images from firewire cameras
 - libv4l to grab images from usb or analogic cameras
-- libxml2 to be able to configure the model-based trackers from xml files
 - libzbar to be able to detect QR codes
 - pthread library
 
 Installation of recommended 3rd parties could be performed running:
 \code
-$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel libxml2-devel zbar-devel libxcb-devel
+$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel zbar-devel libxcb-devel
 \endcode
 
 \subsubsection install_fedora_3rdparty_other Other optional 3rd parties

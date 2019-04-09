@@ -378,7 +378,7 @@ int main(int argc, const char **argv)
 
     // Initialise the tracker: camera parameters, moving edge and KLT settings
     vpCameraParameters cam;
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
     // From the xml file
     tracker.loadConfigFile(configFile);
 #else
@@ -475,7 +475,7 @@ int main(int argc, const char **argv)
         if (opt_display)
           vpDisplay::display(I);
         tracker.resetTracker();
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFile);
 #else
         // By setting the parameters:
@@ -566,12 +566,6 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     reader.close();
-
-#if defined(VISP_HAVE_XML2)
-    // Cleanup memory allocated by xml library used to parse the xml config
-    // file in vpMbEdgeTracker::loadConfigFile()
-    vpXmlParser::cleanup();
-#endif
 
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     // Cleanup memory allocated by Coin library used to load a vrml model in

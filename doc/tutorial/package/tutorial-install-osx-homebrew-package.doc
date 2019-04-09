@@ -19,7 +19,7 @@ $ brew update
 $ brew info visp
 \endcode
 
-To install ViSP and additional dependencies (cmake, opencv3, libdc1304, libxml2, gsl, zbar, x11), just run:
+To install ViSP and additional dependencies (cmake, opencv3, libdc1304, gsl, zbar, x11), just run:
 
 \code
 $ brew update
@@ -45,8 +45,6 @@ $ brew options visp
 	Build without gsl support
 --without-libdc1394
 	Build without libdc1394 support
---without-libxml2
-	Build without libxml2 support
 --without-opencv3
 	Build without opencv3 support
 --without-x11
@@ -55,10 +53,10 @@ $ brew options visp
 	Build without zbar support
 \endcode
 
-For example to disable xml support, you may run
+For example to disable zbar support, you may run
 
 \code
-$ brew install visp --build-from-source --without-libxml2
+$ brew install visp --build-from-source --without-zbar
 \endcode
 
 \subsection install_osx_brew_package_not_writable /usr/local/include/visp is not writable

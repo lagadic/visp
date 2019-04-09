@@ -84,10 +84,6 @@
 #    include <opencv2/nonfree/nonfree.hpp>
 #  endif
 
-#  ifdef VISP_HAVE_XML2
-#    include <libxml/xmlwriter.h>
-#  endif
-
 /*!
   \class vpKeyPoint
   \ingroup group_vision_keypoints
@@ -703,7 +699,7 @@ public:
                            vpImage<vpRGBa> &IMatching);
   void insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
 
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   void loadConfigFile(const std::string &configFile);
 #endif
 

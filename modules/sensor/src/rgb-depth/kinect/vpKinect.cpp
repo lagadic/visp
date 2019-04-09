@@ -95,7 +95,7 @@ void vpKinect::start(vpKinect::vpDMResolution res)
     wd = 640;
   }
 
-#if defined(VISP_HAVE_VIPER850_DATA) && defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_VIPER850_DATA) && defined(VISP_HAVE_PUGIXML)
   vpXmlParserCamera cameraParser;
   std::string cameraXmlFile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_camera_Viper850.xml");
   cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera", vpCameraParameters::perspectiveProjWithDistortion, width,

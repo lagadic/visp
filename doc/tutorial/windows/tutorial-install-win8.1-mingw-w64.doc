@@ -184,7 +184,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-mingw` folder.
 - Select then your compiler "MinGW Makefiles" and click on "Finish" button.
 \image html img-cmake-win10-mingw-makefiles.png
-- This will start CMake configuration. As shown in the next image, OpenCV, GDI (Graphical Device Interface), libjpeg, libpng, pthread and libxml2 3rd party are automatically detected. 
+- This will start CMake configuration. As shown in the next image, OpenCV, GDI (Graphical Device Interface), libjpeg, libpng and pthread 3rd party are automatically detected. 
 \image html img-cmake-win10-mingw-visp-config.png
 \note If OpenCV is not detected, you may encounter the following issue \ref issue_win10_mingw_opencv_not_detected.
 

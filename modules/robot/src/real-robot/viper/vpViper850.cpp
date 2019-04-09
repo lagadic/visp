@@ -470,7 +470,7 @@ void vpViper850::parseConfigFile(const std::string &filename)
 
   \warning This method needs XML library to parse the file defined in
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
-  parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
+  parameters. If XML is detected by ViSP, VISP_HAVE_PUGIXML macro is
   defined in include/visp3/core/vpConfig.h file.
 
   \warning Thid method needs also an access to the files containing the
@@ -478,7 +478,7 @@ void vpViper850::parseConfigFile(const std::string &filename)
   VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
 file.
 
-  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined,
+  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_PUGIXML macros are defined,
   this method gets the camera parameters from const_camera_Viper850.xml
   config file.
 
@@ -520,7 +520,7 @@ int main()
   // Get the intrinsic camera parameters depending on the image size
   // Camera parameters are read from
   // /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
-  // if VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined
+  // if VISP_HAVE_VIPER850_DATA and VISP_HAVE_PUGIXML macros are defined
   // in vpConfig.h file
   try {
     robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
@@ -540,7 +540,7 @@ parameters are not found.
 void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                                      const unsigned int &image_height) const
 {
-#if defined(VISP_HAVE_XML2) && defined(VISP_HAVE_VIPER850_DATA)
+#if defined(VISP_HAVE_PUGIXML) && defined(VISP_HAVE_VIPER850_DATA)
   vpXmlParserCamera parser;
   switch (getToolType()) {
   case vpViper850::TOOL_MARLIN_F033C_CAMERA: {
@@ -678,7 +678,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int
 
   \warning This method needs XML library to parse the file defined in
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
-  parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
+  parameters. If XML is detected by ViSP, VISP_HAVE_PUGIXML macro is
   defined in include/visp3/core/vpConfig.h file.
 
   \warning Thid method needs also an access to the files containing the
@@ -686,7 +686,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int
   VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
 file.
 
-  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined,
+  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_PUGIXML macros are defined,
   this method gets the camera parameters from const_camera_Viper850.xml
   config file.
 
@@ -745,7 +745,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const vpImage<unsi
 
   \warning This method needs XML library to parse the file defined in
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
-  parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
+  parameters. If XML is detected by ViSP, VISP_HAVE_PUGIXML macro is
   defined in include/visp3/core/vpConfig.h file.
 
   \warning Thid method needs also an access to the files containing the camera
@@ -753,7 +753,7 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const vpImage<unsi
 VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h
 file.
 
-  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined,
+  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_PUGIXML macros are defined,
   this method gets the camera parameters from const_camera_Viper850.xml
   config file.
 

@@ -3784,7 +3784,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
 void vpMbTracker::loadConfigFile(const std::string &configFile)
 {
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
   xmlp.setProjectionErrorKernelSize(m_projectionErrorKernelSize);
@@ -3803,7 +3803,7 @@ void vpMbTracker::loadConfigFile(const std::string &configFile)
   setProjectionErrorKernelSize(xmlp.getProjectionErrorKernelSize());
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 

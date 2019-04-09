@@ -327,7 +327,7 @@ int main(int argc, const char **argv)
       std::cout << "Global reprojection error: " << error << std::endl;
       ss_additional_info << "<global_reprojection_error><without_distortion>" << error << "</without_distortion>";
 
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
       vpXmlParserCamera xml;
 
       if (xml.save(cam, outputFileName.c_str(), "Camera", I.getWidth(), I.getHeight()) ==
@@ -354,7 +354,7 @@ int main(int argc, const char **argv)
       std::cout << "Global reprojection error: " << error << std::endl;
       ss_additional_info << "<with_distortion>" << error << "</with_distortion></global_reprojection_error>";
 
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
       vpXmlParserCamera xml;
 
       if (xml.save(cam, outputFileName.c_str(), "Camera", I.getWidth(), I.getHeight(), ss_additional_info.str()) ==

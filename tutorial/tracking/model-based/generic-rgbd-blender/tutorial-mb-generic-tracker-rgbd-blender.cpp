@@ -9,7 +9,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403) && defined(VISP_HAVE_XML2)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403) && defined(VISP_HAVE_PUGIXML)
 namespace {
 bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
                vpImage<uint16_t> &I_depth_raw, unsigned int &depth_width, unsigned int &depth_height,
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 #else
 int main()
 {
-  std::cout << "To run this tutorial, ViSP should be built with OpenCV and libXML2 libraries." << std::endl;
+  std::cout << "To run this tutorial, ViSP should be built with OpenCV and pugixml libraries." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

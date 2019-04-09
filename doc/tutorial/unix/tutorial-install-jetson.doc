@@ -44,7 +44,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties (knowing that OpenCV should be already installed if you follow this <a href="https://github.com/NVIDIA-Jetson/jetson-trashformers/wiki/Jetson%E2%84%A2-Flashing-and-Setup-Guide-for-a-Connect-Tech-Carrier-Board">tutorial</a>).
 \code
-$ sudo apt-get install libx11-dev liblapack-dev libeigen3-dev libv4l-dev libxml2-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev
+$ sudo apt-get install libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev
 \endcode
 
 - Get ViSP source code
@@ -85,7 +85,6 @@ We recommend to install the following 3rd parties:
 - libX11 to be able to open a window to display images
 - lapack and eigen to benefit from optimized mathematical capabilities
 - libv4l to grab images from usb or analogic cameras
-- libxml2 to be able to configure the model-based trackers from xml files
 - libzbar to be able to detect QR codes
 - pthread library
 
@@ -93,7 +92,7 @@ We recommend to install the following 3rd parties:
 
 Installation of the other recommended 3rd parties could be performed running:
 \code
-$ sudo apt-get install libx11-dev liblapack-dev libeigen3-dev libv4l-dev libxml2-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev
+$ sudo apt-get install libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev
 \endcode
 
 \subsection install_jetson_visp_get_source Get ViSP source code

@@ -259,11 +259,11 @@ Once the camera is calibrated, you can remove the distortion in the images. The 
 In this example we first load the image \c chessboard.pgm
 \snippet tutorial-undistort.cpp Load image
 
-Then we read the camera parameters with distortion of a camera named "Camera" from \c ./camera.xml file. This is only possible if ViSP was build with \c libxml2 3rd party support. 
+Then we read the camera parameters with distortion of a camera named "Camera" from \c ./camera.xml file.
 
 \snippet tutorial-undistort.cpp Load camera parameters from xml
 
-If vpXmlParserCamera is not available (this may occur if ViSP was not build with \c libxml2), we initialize the camera parameters "by hand" using the following code:
+If vpXmlParserCamera is not available, we initialize the camera parameters "by hand" using the following code:
 \snippet tutorial-undistort.cpp Set camera parameters
 
 Finally, we create a new image \c Iud where distortion is removed. This image is saved in \c chessboard-undistort.pgm.

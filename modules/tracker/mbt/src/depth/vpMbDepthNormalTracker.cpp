@@ -419,7 +419,7 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
 
 void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
 {
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER);
 
   xmlp.setCameraParameters(cam);
@@ -463,7 +463,7 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
   setDepthNormalPclPlaneEstimationRansacThreshold(xmlp.getDepthNormalPclPlaneEstimationRansacThreshold());
   setDepthNormalSamplingStep(xmlp.getDepthNormalSamplingStepX(), xmlp.getDepthNormalSamplingStepY());
 #else
-  std::cerr << "You need the libXML2 to read the config file " << configFile << std::endl;
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 
