@@ -98,6 +98,66 @@ class vpForceTwistMatrix;
 
   The vpMatrix class is derived from vpArray2D<double>.
 
+  The code below shows how to create a 2-by-3 matrix of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+  vpMatrix M(2, 3);
+  M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+  M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+  std::cout << "M:" << std::endl;
+  for (unsigned int i = 0; i < M.getRows(); i++) {
+    for (unsigned int j = 0; j < M.getCols(); j++) {
+      std::cout << M[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+M:
+-1 -2 -3
+4 5.5 6
+  \endcode
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+  \endcode
+  You can also create and initialize a matrix this way:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
+#endif
+}
+  \endcode
+
+  The Matrix could also be initialized using operator=(const std::initializer_list< std::initializer_list< double > > &)
+  \code
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M;
+  M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+#endif
+}
+  \endcode
+
   \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix,
   vpRotationMatrix, vpVelocityTwistMatrix, vpForceTwistMatrix, vpHomography
 */
@@ -118,6 +178,7 @@ public:
     zero.
   */
   vpMatrix() : vpArray2D<double>(0, 0) {}
+
   /*!
     Constructor that initialize a matrix of double with 0.
 
@@ -125,6 +186,7 @@ public:
     \param c : Matrix number of columns.
   */
   vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {}
+
   /*!
     Constructor that initialize a matrix of double with \e val.
 
@@ -134,6 +196,7 @@ public:
   */
   vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
+
   /*!
      Create a matrix from a 2D array that could be one of the following
      container that inherit from vpArray2D such as vpMatrix, vpRotationMatrix,
@@ -148,10 +211,85 @@ vpMatrix M(R);
    */
   vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
 
+#ifdef VISP_HAVE_CXX11
   vpMatrix(vpMatrix &&A);
+
+  /*!
+     Construct a matrix from a list of double values.
+     \param list : List of double.
+     The following code shows how to use this constructor to initialize a 2-by-3 matrix using reshape() function:
+     \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M( {-1, -2, -3, 4, 5.5, 6.0f} );
+  M.reshape(2, 3);
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+     \endcode
+     It produces the following output:
+     \code
+M:
+-1  -2  -3
+4  5.5  6
+     \endcode
+   */
+  explicit vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+
+  /*!
+     Construct a matrix from a list of double values.
+     \param ncols, nrows : Matrix size.
+     \param list : List of double.
+     The following code shows how to use this constructor to initialize a 2-by-3 matrix:
+     \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6});
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+     \endcode
+     It produces the following output:
+     \code
+M:
+-1  -2  -3
+4  5.5  6
+     \endcode
+   */
+  explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list)
+    : vpArray2D<double>(nrows, ncols, list) {}
+
+  /*!
+     Construct a matrix from a list of double values.
+     \param lists : List of double.
+     The following code shows how to use this constructor to initialize a 2-by-3 matrix function:
+     \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpMatrix M( { {-1, -2, -3}, {4, 5.5, 6} } );
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+     \endcode
+     It produces the following output:
+     \code
+M:
+-1  -2  -3
+4  5.5  6
+     \endcode
+   */
+  explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
 #endif
 
   //! Destructor (Memory de-allocation)
@@ -195,10 +333,15 @@ vpMatrix M(R);
   /** @name Assignment operators */
   //@{
   vpMatrix &operator<<(double *);
+  vpMatrix& operator<<(double val);
+  vpMatrix& operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
   vpMatrix &operator=(const vpMatrix &A);
   vpMatrix &operator=(vpMatrix &&A);
+
+  vpMatrix& operator=(const std::initializer_list<double> &list);
+  vpMatrix& operator=(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
   vpMatrix &operator=(const double x);
   //@}

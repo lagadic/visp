@@ -124,6 +124,56 @@ vpRowVector &vpRowVector::operator=(double x)
   return *this;
 }
 
+#ifdef VISP_HAVE_CXX11
+vpRowVector &vpRowVector::operator=(vpRowVector &&other)
+{
+  if (this != &other) {
+    free(data);
+    free(rowPtrs);
+
+    rowNum = other.rowNum;
+    colNum = other.colNum;
+    rowPtrs = other.rowPtrs;
+    dsize = other.dsize;
+    data = other.data;
+
+    other.rowNum = 0;
+    other.colNum = 0;
+    other.rowPtrs = NULL;
+    other.dsize = 0;
+    other.data = NULL;
+  }
+
+  return *this;
+}
+
+
+/*!
+  Set vector elements from a list of double.
+  \code
+#include <visp3/core/vpRowVector.cpp>
+
+int main()
+{
+  vpRowVector r;
+  r = {1, 2, 3};
+  std::cout << "r: " << r << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+r: 1  2  3
+  \endcode
+  \sa operator<<()
+*/
+vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
+{
+  resize(1, static_cast<unsigned int>(list.size()), false);
+  std::copy(list.begin(), list.end(), data);
+  return *this;
+}
+#endif
+
 /*!
 
   Multiply a row vector by a column vector.
@@ -420,6 +470,20 @@ vpRowVector &vpRowVector::operator<<(const vpRowVector &v)
   return *this;
 }
 
+vpRowVector& vpRowVector::operator<<(double val)
+{
+  resize(1, false);
+  data[0] = val;
+  return *this;
+}
+
+vpRowVector& vpRowVector::operator,(double val)
+{
+  resize(colNum + 1, false);
+  data[colNum - 1] = val;
+  return *this;
+}
+
 /*!
   Transpose the row vector. The resulting vector becomes a column vector.
 */
@@ -502,6 +566,23 @@ vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncol
   init(v, c, ncols);
 }
 
+#ifdef VISP_HAVE_CXX11
+vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
+{
+  rowNum = v.rowNum;
+  colNum = v.colNum;
+  rowPtrs = v.rowPtrs;
+  dsize = v.dsize;
+  data = v.data;
+
+  v.rowNum = 0;
+  v.colNum = 0;
+  v.rowPtrs = NULL;
+  v.dsize = 0;
+  v.data = NULL;
+}
+#endif
+
 /*!
   Normalise the vector given as input parameter and return the normalized
   vector:
@@ -548,7 +629,7 @@ vpRowVector &vpRowVector::normalize()
 
   \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpRowVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
+vpMatrix vpRowVector::reshape(unsigned int nrows, unsigned int ncols)
 {
   vpMatrix M(nrows, ncols);
   reshape(M, nrows, ncols);
@@ -566,7 +647,7 @@ not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp/vpRowVector.h>
+#include <visp3/core/vpRowVector.h>
 
 int main()
 {

@@ -9,6 +9,11 @@
 ViSP 3.2.1 (under work)
   - Contributors:
   - New features
+    . Upgrade to new AprilTag3 version. Note that TAG_36h10, TAG_25h7 and
+      TAG_36ARTOOLKIT are deprecated and that new families: TAG_CIRCLE21h7,
+      TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12, TAG_STANDARD52h13
+      are supported. AprilTag detection time is reduced.
+    . New matrix and vector initialization methods to ease setting elements
     . Introduce Eigen <-> ViSP conversion functions in vp namespace
     . Add OpenBLAS, Intel MKL and Atlas explicit support
     . Add support of vpImage<vpRGBa> to vpMbGenericTracker

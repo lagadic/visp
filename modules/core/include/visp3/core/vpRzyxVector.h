@@ -66,11 +66,10 @@ class vpThetaUVector;
 
   Class that consider the case of the Euler
   \f$(\varphi,\theta,\psi)\f$ angle using the z-y-x convention, where
-\f$(\varphi,\theta,\psi)\f$ are respectively the rotation angles around the
-\f$z\f$, \f$y\f$ and \f$x\f$ axis.
+  \f$(\varphi,\theta,\psi)\f$ are respectively the rotation angles around the
+  \f$z\f$, \f$y\f$ and \f$x\f$ axis.
 
-  \f[R_{zyx}(\varphi,\theta,\psi) = R_z(\varphi) \; R_y(\theta) \;
-R_x(\psi)\f]
+  \f[R_{zyx}(\varphi,\theta,\psi) = R_z(\varphi) \; R_y(\theta) \; R_x(\psi)\f]
 
   with
 
@@ -104,16 +103,44 @@ R_x(\psi)\f]
   R_{zyx}(\varphi,\theta,\psi) = \left(
   \begin{array}{ccc}
   \cos\varphi \cos\theta & -\sin\varphi \cos\psi +
-\cos\varphi\sin\theta\sin\psi & \sin\varphi \sin\psi
-+\cos\varphi\sin\theta\cos\psi \\
+  \cos\varphi\sin\theta\sin\psi & \sin\varphi \sin\psi
+  +\cos\varphi\sin\theta\cos\psi \\
   \sin\varphi \cos\theta & \cos\varphi\cos\psi + \sin\varphi\sin\theta
-\sin\psi & -\cos\varphi \sin\psi +\sin\varphi\sin\theta\cos\psi \\
+  \sin\psi & -\cos\varphi \sin\psi +\sin\varphi\sin\theta\cos\psi \\
   -\sin\theta & \cos\theta \sin\psi & \cos\theta \cos\psi
   \end{array}
   \right)
   \f]
 
   The vpRzyxVector class is derived from vpRotationVector.
+
+  From the implementation point of view, it is nothing more than an
+  array of three doubles with values in [rad].
+
+  You can set values [rad] accessing each element:
+  \code
+  vpRzyxVector rzyx;
+  rzyx[0] = M_PI_4;
+  rzyx[1] = M_PI_2;
+  rzyx[2] = M_PI;
+  \endcode
+  You can also initialize the vector using operator<<(double):
+  \code
+  rzyx << M_PI_4, M_PI_2, M_PI;
+  \endcode
+  Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
+  \code
+#ifdef VISP_HAVE_CXX11
+  rzyx = {M_PI_4, M_PI_2, M_PI};
+#endif
+  \endcode
+
+  To get the values [rad] use:
+  \code
+  double rz = rzyx[0];
+  double ry = rzyx[1];
+  double rx = rzyx[2];
+  \endcode
 
   The code below shows first how to initialize this representation of
   Euler angles, than how to contruct a rotation matrix from a
@@ -185,6 +212,9 @@ public:
 
   vpRzyxVector &operator=(const vpColVector &rzyx);
   vpRzyxVector &operator=(double x);
+#ifdef VISP_HAVE_CXX11
+  vpRzyxVector &operator=(const std::initializer_list<double> &list);
+#endif
 };
 
 #endif

@@ -2148,6 +2148,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_MODULE_VISUAL_FEATURES \
                          VISP_HAVE_MODULE_VS \
                          VISP_BUILD_DEPRECATED_FUNCTIONS \
+                         VISP_DISABLE_APRILTAG_BIG_FAMILY \
                          WIN32 \
                          APPLE \
                          UNIX \

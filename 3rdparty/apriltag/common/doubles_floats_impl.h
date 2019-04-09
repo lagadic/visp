@@ -1,22 +1,28 @@
 /* Copyright (C) 2013-2016, The Regents of The University of Michigan.
 All rights reserved.
-
 This software was developed in the APRIL Robotics Lab under the
 direction of Edwin Olson, ebolson@umich.edu. This software may be
 available under alternative licensing terms; contact the address above.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <http://www.gnu.org/licenses/>.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the Regents of The University of Michigan.
 */
 
 #include <stdio.h>
@@ -125,7 +131,7 @@ static inline TNAME TFN(s_distance)(const TNAME *a, const TNAME *b, int len)
     TNAME acc = 0;
     for (int i = 0; i < len; i++)
         acc += (a[i] - b[i])*(a[i] - b[i]);
-    return sqrt(acc);
+    return (TNAME)sqrt(acc);
 }
 
 static inline TNAME TFN(s_squared_distance)(const TNAME *a, const TNAME *b, int len)
@@ -149,7 +155,7 @@ static inline TNAME TFN(s_magnitude)(const TNAME *v, int len)
     TNAME acc = 0;
     for (int i = 0; i < len; i++)
         acc += v[i]*v[i];
-    return sqrt(acc);
+    return (TNAME)sqrt(acc);
 }
 
 static inline void TFN(s_normalize)(const TNAME *v, int len, TNAME *r)
@@ -169,7 +175,7 @@ static inline void TFN(s_normalize_self)(TNAME *v, int len)
 static inline void TFN(s_scale_self)(TNAME *v, int len, double scale)
 {
     for (int i = 0; i < len; i++)
-        v[i] *= scale;
+        v[i] = (TNAME)(v[i] * scale);
 }
 
 static inline void TFN(s_quat_rotate)(const TNAME q[4], const TNAME v[3], TNAME r[3])
@@ -220,7 +226,7 @@ static inline void TFN(s_xyt_copy)(const TNAME xyt[3], TNAME r[3])
 
 static inline void TFN(s_xyt_to_mat44)(const TNAME xyt[3], TNAME r[16])
 {
-    TNAME s = sin(xyt[2]), c = cos(xyt[2]);
+    TNAME s = (TNAME)sin(xyt[2]), c = (TNAME)cos(xyt[2]);
     memset(r, 0, sizeof(TNAME)*16);
     r[0] = c;
     r[1] = -s;
@@ -234,7 +240,7 @@ static inline void TFN(s_xyt_to_mat44)(const TNAME xyt[3], TNAME r[16])
 
 static inline void TFN(s_xyt_transform_xy)(const TNAME xyt[3], const TNAME xy[2], TNAME r[2])
 {
-    TNAME s = sin(xyt[2]), c = cos(xyt[2]);
+    TNAME s = (TNAME)sin(xyt[2]), c = (TNAME)cos(xyt[2]);
     r[0] = c*xy[0] - s*xy[1] + xyt[0];
     r[1] = s*xy[0] + c*xy[1] + xyt[1];
 }
@@ -254,7 +260,7 @@ static inline void TFN(s_quat_to_angleaxis)(const TNAME _q[4], TNAME r[4])
     // be polite: return an angle from [-pi, pi]
     // use atan2 to be 4-quadrant safe
     TNAME mag = TFN(s_magnitude)(&q[1], 3);
-    r[0] = mod2pi(2 * atan2(mag, q[0]));
+    r[0] = (TNAME)mod2pi(2 * atan2(mag, q[0]));
     if (mag != 0) {
         r[1] = q[1] / mag;
         r[2] = q[2] / mag;
@@ -269,8 +275,8 @@ static inline void TFN(s_quat_to_angleaxis)(const TNAME _q[4], TNAME r[4])
 static inline void TFN(s_angleaxis_to_quat)(const TNAME aa[4], TNAME q[4])
 {
     TNAME rad = aa[0];
-    q[0] = cos(rad / 2.0);
-    TNAME s = sin(rad / 2.0);
+    q[0] = (TNAME)cos(rad / 2.0);
+    TNAME s = (TNAME)sin(rad / 2.0);
 
     TNAME v[3] = { aa[1], aa[2], aa[3] };
     TFN(s_normalize)(v, 3, v);
@@ -305,7 +311,26 @@ static inline void TFN(s_quat_to_mat44)(const TNAME q[4], TNAME r[16])
     r[15] = 1;
 }
 
-static inline void TFN(s_angleaxis_to_mat44)(const TNAME aa[4], TNAME r[4])
+/* Returns the skew-symmetric matrix V such that V*w = v x w (cross product).
+   Sometimes denoted [v]_x or \hat{v}.
+   [  0 -v3  v2
+     v3   0 -v1
+    -v2  v1   0]
+ */
+static inline void TFN(s_cross_matrix)(const TNAME v[3], TNAME V[9])
+{
+    V[0] = 0;
+    V[1] = -v[2];
+    V[2] = v[1];
+    V[3] = v[2];
+    V[4] = 0;
+    V[5] = -v[0];
+    V[6] = -v[1];
+    V[7] = v[0];
+    V[8] = 0;
+}
+
+static inline void TFN(s_angleaxis_to_mat44)(const TNAME aa[4], TNAME r[16])
 {
     TNAME q[4];
 
@@ -332,13 +357,13 @@ static inline void TFN(s_rpy_to_quat)(const TNAME rpy[3], TNAME quat[4])
     TNAME halfpitch = pitch / 2;
     TNAME halfyaw = yaw / 2;
 
-    TNAME sin_r2 = sin(halfroll);
-    TNAME sin_p2 = sin(halfpitch);
-    TNAME sin_y2 = sin(halfyaw);
+    TNAME sin_r2 = (TNAME)sin(halfroll);
+    TNAME sin_p2 = (TNAME)sin(halfpitch);
+    TNAME sin_y2 = (TNAME)sin(halfyaw);
 
-    TNAME cos_r2 = cos(halfroll);
-    TNAME cos_p2 = cos(halfpitch);
-    TNAME cos_y2 = cos(halfyaw);
+    TNAME cos_r2 = (TNAME)cos(halfroll);
+    TNAME cos_p2 = (TNAME)cos(halfpitch);
+    TNAME cos_y2 = (TNAME)cos(halfyaw);
 
     quat[0] = cos_r2 * cos_p2 * cos_y2 + sin_r2 * sin_p2 * sin_y2;
     quat[1] = sin_r2 * cos_p2 * cos_y2 - cos_r2 * sin_p2 * sin_y2;
@@ -359,27 +384,27 @@ static inline void TFN(s_quat_to_rpy)(const TNAME q[4], TNAME rpy[3])
 
     if (fabs(disc+0.5) < DBL_EPSILON) {         // near -1/2
         rpy[0] = 0;
-        rpy[1] = -M_PI/2;
-        rpy[2] = 2 * atan2(qx, qr);
+        rpy[1] = (TNAME)(-M_PI/2);
+        rpy[2] = (TNAME)(2 * atan2(qx, qr));
     }
     else if (fabs(disc-0.5) < DBL_EPSILON) {    // near  1/2
         rpy[0] = 0;
-        rpy[1] = M_PI/2;
-        rpy[2] = -2 * atan2(qx, qr);
+        rpy[1] = (TNAME)(M_PI/2);
+        rpy[2] = (TNAME)(-2 * atan2(qx, qr));
     }
     else {
         // roll
         TNAME roll_a = 2 * (qr*qx + qy*qz);
         TNAME roll_b = 1 - 2 * (qx*qx + qy*qy);
-        rpy[0] = atan2(roll_a, roll_b);
+        rpy[0] = (TNAME)atan2(roll_a, roll_b);
 
         // pitch
-        rpy[1] = asin(2*disc);
+        rpy[1] = (TNAME)asin(2*disc);
 
         // yaw
         TNAME yaw_a = 2 * (qr*qz + qx*qy);
         TNAME yaw_b = 1 - 2 * (qy*qy + qz*qz);
-        rpy[2] = atan2(yaw_a, yaw_b);
+        rpy[2] = (TNAME)atan2(yaw_a, yaw_b);
     }
 }
 
@@ -418,7 +443,7 @@ static inline void TFN(s_mat44_to_xyt)(const TNAME M[16], TNAME xyt[3])
     // s  c
     xyt[0] = M[3];
     xyt[1] = M[7];
-    xyt[2] = atan2(M[4], M[0]);
+    xyt[2] = (TNAME)atan2(M[4], M[0]);
 }
 
 static inline void TFN(s_mat_to_xyz)(const TNAME M[16], TNAME xyz[3])
@@ -435,28 +460,28 @@ static inline void TFN(s_mat_to_quat)(const TNAME M[16], TNAME q[4])
 
     if (T > 0.0000001) {
         S = sqrt(T) * 2;
-        q[0] = 0.25 * S;
-        q[1] = (M[9] - M[6]) / S;
-        q[2] = (M[2] - M[8]) / S;
-        q[3] = (M[4] - M[1]) / S;
+        q[0] = (TNAME)(0.25 * S);
+        q[1] = (TNAME)((M[9] - M[6]) / S);
+        q[2] = (TNAME)((M[2] - M[8]) / S);
+        q[3] = (TNAME)((M[4] - M[1]) / S);
     } else if (M[0] > M[5] && M[0] > M[10]) {   // Column 0:
         S = sqrt(1.0 + M[0] - M[5] - M[10]) * 2;
-        q[0] = (M[9] - M[6]) / S;
-        q[1] = 0.25 * S;
-        q[2] = (M[4] + M[1]) / S;
-        q[3] = (M[2] + M[8]) / S;
+        q[0] = (TNAME)((M[9] - M[6]) / S);
+        q[1] = (TNAME)(0.25 * S);
+        q[2] = (TNAME)((M[4] + M[1]) / S);
+        q[3] = (TNAME)((M[2] + M[8]) / S);
     } else if (M[5] > M[10]) {                  // Column 1:
         S = sqrt(1.0 + M[5] - M[0] - M[10]) * 2;
-        q[0] = (M[2] - M[8]) / S;
-        q[1] = (M[4] + M[1]) / S;
-        q[2] = 0.25 * S;
-        q[3] = (M[9] + M[6]) / S;
+        q[0] = (TNAME)((M[2] - M[8]) / S);
+        q[1] = (TNAME)((M[4] + M[1]) / S);
+        q[2] = (TNAME)(0.25 * S);
+        q[3] = (TNAME)((M[9] + M[6]) / S);
     } else {                                    // Column 2:
         S = sqrt(1.0 + M[10] - M[0] - M[5]);
-        q[0] = (M[4] - M[1]) / S;
-        q[1] = (M[2] + M[8]) / S;
-        q[2] = (M[9] + M[6]) / S;
-        q[3] = 0.25 * S;
+        q[0] = (TNAME)((M[4] - M[1]) / S);
+        q[1] = (TNAME)((M[2] + M[8]) / S);
+        q[2] = (TNAME)((M[9] + M[6]) / S);
+        q[3] = (TNAME)(0.25 * S);
     }
 
     TFN(s_normalize)(q, 4, q);
@@ -473,7 +498,7 @@ static inline void TFN(s_quat_xyz_to_xyt)(const TNAME q[4], const TNAME xyz[3], 
 static inline void TFN(s_xyt_mul)(const TNAME xyta[3], const TNAME xytb[3], TNAME xytr[3])
 {
     TNAME xa = xyta[0], ya = xyta[1], ta = xyta[2];
-    TNAME s = sin(ta), c = cos(ta);
+    TNAME s = (TNAME)sin(ta), c = (TNAME)cos(ta);
 
     xytr[0] = c*xytb[0] - s*xytb[1] + xa;
     xytr[1] = s*xytb[0] + c*xytb[1] + ya;
@@ -494,7 +519,7 @@ static inline void TFN(s_xytcov_mul)(const TNAME xyta[3], const TNAME Ca[9],
     TNAME xa = xyta[0], ya = xyta[1], ta = xyta[2];
     TNAME xb = xytb[0], yb = xytb[1];
 
-    TNAME sa = sin(ta), ca = cos(ta);
+    TNAME sa = (TNAME)sin(ta), ca = (TNAME)cos(ta);
 
     TNAME P11 = Ca[0], P12 = Ca[1], P13 = Ca[2];
     TNAME              P22 = Ca[4], P23 = Ca[5];
@@ -543,7 +568,7 @@ static inline void TFN(s_xytcov_mul)(const TNAME xyta[3], const TNAME Ca[9],
 
 static inline void TFN(s_xyt_inv)(const TNAME xyta[3], TNAME xytr[3])
 {
-    TNAME s = sin(xyta[2]), c = cos(xyta[2]);
+    TNAME s = (TNAME)sin(xyta[2]), c = (TNAME)cos(xyta[2]);
     xytr[0] = -s*xyta[1] - c*xyta[0];
     xytr[1] = -c*xyta[1] + s*xyta[0];
     xytr[2] = -xyta[2];
@@ -553,7 +578,7 @@ static inline void TFN(s_xytcov_inv)(const TNAME xyta[3], const TNAME Ca[9],
                                       TNAME xytr[3], TNAME Cr[9])
 {
     TNAME x = xyta[0], y = xyta[1], theta = xyta[2];
-    TNAME s = sin(theta), c = cos(theta);
+    TNAME s = (TNAME)sin(theta), c = (TNAME)cos(theta);
 
     TNAME J11 = -c, J12 = -s, J13 = -c*y + s*x;
     TNAME J21 = s,  J22 = -c, J23 = s*y + c*x;
@@ -594,8 +619,8 @@ static inline void TFN(s_xytcov_inv)(const TNAME xyta[3], const TNAME Ca[9],
 static inline void TFN(s_xyt_inv_mul)(const TNAME xyta[3], const TNAME xytb[3], TNAME xytr[3])
 {
     TNAME theta = xyta[2];
-    TNAME ca = cos(theta);
-    TNAME sa = sin(theta);
+    TNAME ca = (TNAME)cos(theta);
+    TNAME sa = (TNAME)sin(theta);
     TNAME dx = xytb[0] - xyta[0];
     TNAME dy = xytb[1] - xyta[1];
 
@@ -734,9 +759,9 @@ static inline void TFN(s_quat_slerp)(const TNAME q0[4], const TNAME _q1[4], TNAM
             r[i] = q0[i]*(1-w) + q1[i]*w;
 
     } else {
-        TNAME angle = acos(dot);
+        TNAME angle = (TNAME)acos(dot);
 
-        TNAME w0 = sin(angle*(1-w)), w1 = sin(angle*w);
+        TNAME w0 = (TNAME)sin(angle*(1-w)), w1 = (TNAME)sin(angle*w);
 
         for (int i = 0; i < 4; i++)
             r[i] = q0[i]*w0 + q1[i]*w1;
@@ -781,7 +806,7 @@ static inline void TFN(s_mat44_scale)(const TNAME sxyz[3], TNAME out[16])
 static inline void TFN(s_mat44_rotate_z)(TNAME rad, TNAME out[16])
 {
     TFN(s_mat44_identity)(out);
-    double s = sin(rad), c = cos(rad);
+    TNAME s = (TNAME)sin(rad), c = (TNAME)cos(rad);
     out[0*4 + 0] = c;
     out[0*4 + 1] = -s;
     out[1*4 + 0] = s;
@@ -791,7 +816,7 @@ static inline void TFN(s_mat44_rotate_z)(TNAME rad, TNAME out[16])
 static inline void TFN(s_mat44_rotate_y)(TNAME rad, TNAME out[16])
 {
     TFN(s_mat44_identity)(out);
-    double s = sin(rad), c = cos(rad);
+    TNAME s = (TNAME)sin(rad), c = (TNAME)cos(rad);
     out[0*4 + 0] = c;
     out[0*4 + 2] = s;
     out[2*4 + 0] = -s;
@@ -801,7 +826,7 @@ static inline void TFN(s_mat44_rotate_y)(TNAME rad, TNAME out[16])
 static inline void TFN(s_mat44_rotate_x)(TNAME rad, TNAME out[16])
 {
     TFN(s_mat44_identity)(out);
-    double s = sin(rad), c = cos(rad);
+    TNAME s = (TNAME)sin(rad), c = (TNAME)cos(rad);
     out[1*4 + 1] = c;
     out[1*4 + 2] = -s;
     out[2*4 + 1] = s;
@@ -927,7 +952,7 @@ static inline void TFN(s_mat33_chol)(const TNAME *A, int Arows, int Acols,
     assert(Bcols == Bcols);
 
     // A[0] = R[0]*R[0]
-    R[0] = sqrt(A[0]);
+    R[0] = (TNAME)sqrt(A[0]);
 
     // A[1] = R[0]*R[3];
     R[3] = A[1] / R[0];
@@ -936,13 +961,13 @@ static inline void TFN(s_mat33_chol)(const TNAME *A, int Arows, int Acols,
     R[6] = A[2] / R[0];
 
     // A[4] = R[3]*R[3] + R[4]*R[4]
-    R[4] = sqrt(A[4] - R[3]*R[3]);
+    R[4] = (TNAME)sqrt(A[4] - R[3]*R[3]);
 
     // A[5] = R[3]*R[6] + R[4]*R[7]
     R[7] = (A[5] - R[3]*R[6]) / R[4];
 
     // A[8] = R[6]*R[6] + R[7]*R[7] + R[8]*R[8]
-    R[8] = sqrt(A[8] - R[6]*R[6] - R[7]*R[7]);
+    R[8] = (TNAME)sqrt(A[8] - R[6]*R[6] - R[7]*R[7]);
 
     R[1] = 0;
     R[2] = 0;
@@ -994,9 +1019,9 @@ static inline void TFN(s_mat33_sym_solve)(const TNAME *A, int Arows, int Acols,
     tmp[1] = M[3]*B[0] + M[4]*B[1];
     tmp[2] = M[6]*B[0] + M[7]*B[1] + M[8]*B[2];
 
-    R[0] = M[0]*tmp[0] + M[3]*tmp[1] + M[6]*tmp[2];
-    R[1] = M[4]*tmp[1] + M[7]*tmp[2];
-    R[2] = M[8]*tmp[2];
+    R[0] = (TNAME)(M[0]*tmp[0] + M[3]*tmp[1] + M[6]*tmp[2]);
+    R[1] = (TNAME)(M[4]*tmp[1] + M[7]*tmp[2]);
+    R[2] = (TNAME)(M[8]*tmp[2]);
 }
 
 /*

@@ -54,7 +54,7 @@
   in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const double tx, const double ty, const double tz) : vpArray2D<double>(3, 1)
+vpTranslationVector::vpTranslationVector(const double tx, const double ty, const double tz) : vpArray2D<double>(3, 1), m_index(0)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;
@@ -68,7 +68,7 @@ vpTranslationVector::vpTranslationVector(const double tx, const double ty, const
   \param M : Homogeneous matrix where translations are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 1) { M.extract(*this); }
+vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 1), m_index(0) { M.extract(*this); }
 
 /*!
   Construct a translation vector \f$ \bf t \f$ from the translation contained
@@ -77,7 +77,7 @@ vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray
   \param p : Pose vector where translations are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<double>(3, 1)
+vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<double>(3, 1), m_index(0)
 {
   (*this)[0] = p[0];
   (*this)[1] = p[1];
@@ -94,7 +94,7 @@ vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<doub
   vpTranslationVector t2(t1);    // t2 is now a copy of t1
   \endcode
 */
-vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv) : vpArray2D<double>(tv) {}
+vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv) : vpArray2D<double>(tv), m_index(0) {}
 
 /*!
   Construct a translation vector \f$ \bf t \f$ from a 3-dimension column
@@ -110,7 +110,7 @@ vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv) : vpArra
   \endcode
 
 */
-vpTranslationVector::vpTranslationVector(const vpColVector &v) : vpArray2D<double>(v)
+vpTranslationVector::vpTranslationVector(const vpColVector &v) : vpArray2D<double>(v), m_index(0)
 {
   if (v.size() != 3) {
     throw(vpException(vpException::dimensionError,
@@ -502,6 +502,97 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
   for (int i = 0; i < 3; i++)
     *(d++) = x;
 
+  return *this;
+}
+
+#ifdef VISP_HAVE_CXX11
+/*!
+  Set vector from a list of 3 double values in meters.
+  \code
+#include <visp3/core/vpTranslationVector.cpp>
+
+int main()
+{
+  vpTranslationVector t = {0, 0.1, 0.5};
+  std::cout << "t: " << t.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+t: 0  0.1  0.5
+  \endcode
+  \sa operator<<()
+*/
+vpTranslationVector &vpTranslationVector::operator=(const std::initializer_list<double> &list)
+{
+  if (list.size() > size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+  }
+  std::copy(list.begin(), list.end(), data);
+  return *this;
+}
+#endif
+
+/*!
+  Set vector first element value.
+  \param val : Value of the vector first element [meter].
+  \return An updated vector.
+
+  The following example shows how to initialize a translation vector from a list of 3 values [meter].
+  \code
+#include <visp3/core/vpTranslationVector.h>
+
+int main()
+{
+  vpTranslationVector t;
+  t << 0, 0.1, 0.5;
+  std::cout << "t: " << t.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+t: 0  0.1  0.5
+  \endcode
+
+  \sa operator,()
+ */
+vpTranslationVector& vpTranslationVector::operator<<(double val)
+{
+  m_index = 0;
+  data[m_index] = val;
+  return *this;
+}
+
+/*!
+  Set vector second and third element values.
+  \param val : Value of the vector element [meter].
+  \return An updated vector.
+
+  The following example shows how to initialize a translations vector from a list of 3 values [meter].
+  \code
+#include <visp3/core/vpTranslationVector.h>
+
+int main()
+{
+  vpTranslationVector t;
+  t << 0, 0.1, 0.5;
+  std::cout << "t: " << t.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+t: 0  0.1  0.5
+  \endcode
+
+  \sa operator<<()
+ */
+vpTranslationVector& vpTranslationVector::operator,(double val)
+{
+  m_index ++;
+  if (m_index >= size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values", size(), m_index+1));
+  }
+  data[m_index] = val;
   return *this;
 }
 

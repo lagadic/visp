@@ -323,7 +323,10 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
+/*!
+  Move constructor that take rvalue.
+ */
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -626,6 +629,56 @@ vpColVector &vpColVector::operator<<(double *x)
   return *this;
 }
 
+/*!
+  This operator could be used to set column vector elements:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+v: -1  -2.1  -3
+  \endcode
+  \sa operator,()
+*/
+vpColVector& vpColVector::operator<<(double val)
+{
+  resize(1, false);
+  data[0] = val;
+  return *this;
+}
+
+/*!
+  This operator could be used to set column vector elements:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+v: -1  -2.1  -3
+  \endcode
+  \sa operator<<()
+*/
+vpColVector& vpColVector::operator,(double val)
+{
+  resize(rowNum + 1, false);
+  data[rowNum - 1] = val;
+  return *this;
+}
+
 //! Set each element of the column vector to x.
 vpColVector &vpColVector::operator=(double x)
 {
@@ -649,7 +702,10 @@ std::vector<double> vpColVector::toStdVector()
   return v;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
+/*!
+  Overloaded move assignment operator taking rvalue.
+ */
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
@@ -669,6 +725,36 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
     other.data = NULL;
   }
 
+  return *this;
+}
+
+/*!
+  Set vector elements and size from a list of values.
+  \param list : List of double. Vector size matches the number of elements.
+  \return The modified vector.
+  \code
+#include <visp3/core/vpColVector.h>
+
+int main()
+{
+  vpColVector c;
+  c = { 0, -1, -2 };
+  std::cout << "c:\n" << c << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+c:
+0
+-1
+-2
+  \endcode
+  \sa operator<<()
+ */
+vpColVector& vpColVector::operator=(const std::initializer_list<double> &list)
+{
+  resize(static_cast<unsigned int>(list.size()), false);
+  std::copy(list.begin(), list.end(), data);
   return *this;
 }
 #endif
@@ -796,7 +882,7 @@ vpColVector &vpColVector::normalize()
 
    Example:
    \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
@@ -849,7 +935,7 @@ vpColVector vpColVector::invSort(const vpColVector &v)
 
    Example:
    \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
@@ -1165,7 +1251,7 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 
   \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpColVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
+vpMatrix vpColVector::reshape(unsigned int nrows, unsigned int ncols)
 {
   vpMatrix M(nrows, ncols);
   reshape(M, nrows, ncols);
@@ -1183,7 +1269,7 @@ have not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {

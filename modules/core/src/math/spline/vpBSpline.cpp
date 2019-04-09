@@ -100,8 +100,8 @@ unsigned int vpBSpline::findSpan(double l_u, unsigned int l_p, std::vector<doubl
   double high = m - l_p;
   double middle = (low + high) / 2.0;
 
-  while (l_u < l_knots[(unsigned int)vpMath::round(middle)] ||
-         l_u >= l_knots[(unsigned int)vpMath::round(middle + 1)]) {
+  while (l_u < l_knots[(unsigned int)middle] ||
+         l_u >= l_knots[(unsigned int)middle + 1]) {
     if (l_u < l_knots[(unsigned int)vpMath::round(middle)])
       high = middle;
     else

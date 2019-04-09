@@ -52,7 +52,7 @@
 #if defined(VISP_HAVE_APRILTAG)
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:p:C:T:h"
+#define GETOPTARGS "cdi:p:C:T:P:zh"
 
 namespace
 {
@@ -70,8 +70,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
   \n\
   SYNOPSIS\n\
     %s [-c] [-d] [-i <input image path>] [-p <personal image path>] \
-       [-C <tag color>] [-T <tag thickness>]\n\
-       [-h]\n            \
+       [-C <tag color>] [-T <tag thickness>] [-P <pose estimation method>]\n\
+       [-z] [-h]\n            \
   ", name);
 
   fprintf(stdout, "\n\
@@ -100,6 +100,12 @@ void usage(const char *name, const char *badparam, std::string ipath)
     -T <thickness> \n\
        Thickness for tag detection display.\n\
   \n\
+    -P <method> \n\
+       Pose estimation method.\n\
+  \n\
+    -z \n\
+       Align tag frame with camera frame.\n\
+  \n\
     -h\n\
        Print the help.\n\n", ipath.c_str());
 
@@ -118,10 +124,12 @@ void usage(const char *name, const char *badparam, std::string ipath)
   \param display : Display activation.
   \param color_id : Color id for tag detection display.
   \param thickness : Thickness for tag detection display.
+  \param pose_method : Pose estimation method.
+  \param align_frame : Align tag frame with camera frame.
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, bool &click_allowed, bool &display,
-                int &color_id, unsigned int &thickness)
+                int &color_id, unsigned int &thickness, int &pose_method, bool &align_frame)
 {
   const char *optarg_;
   int c;
@@ -149,6 +157,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       break;
     case 'T':
       thickness = (unsigned int) atoi(optarg_);
+      break;
+    case 'P':
+      pose_method = atoi(optarg_);
+      break;
+    case 'z':
+      align_frame = true;
       break;
 
     default:
@@ -216,6 +230,8 @@ int main(int argc, const char *argv[])
     bool opt_display = true;
     int opt_color_id = -1;
     unsigned int opt_thickness = 2;
+    int pose_method = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+    bool align_frame = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -226,8 +242,8 @@ int main(int argc, const char *argv[])
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display,
-                   opt_color_id, opt_thickness) == false) {
+    if (!getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display,
+                    opt_color_id, opt_thickness, pose_method, align_frame)) {
       exit(EXIT_FAILURE);
     }
 
@@ -274,11 +290,14 @@ int main(int argc, const char *argv[])
 #endif
 
     vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-    vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+    vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)pose_method;
     double tagSize = 0.053;
     float quad_decimate = 1.0;
     int nThreads = 1;
     bool display_tag = true;
+
+    std::cout << "Pose estimation method: " << poseEstimationMethod << std::endl;
+    std::cout << "Align tag frame with camera frame: " << align_frame << std::endl;
 
     vpDetectorBase *detector = new vpDetectorAprilTag(tagFamily);
     dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagQuadDecimate(quad_decimate);
@@ -287,6 +306,7 @@ int main(int argc, const char *argv[])
     dynamic_cast<vpDetectorAprilTag *>(detector)->setDisplayTag(display_tag,
                                                                 opt_color_id < 0 ? vpColor::none : vpColor::getColor(opt_color_id),
                                                                 opt_thickness);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setZAlignedWithCameraAxis(align_frame);
 
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
@@ -391,8 +411,9 @@ int main(int argc, const char *argv[])
           std::cerr << "Problem with tag decoding (tag_family or id): " << message << std::endl;
           return EXIT_FAILURE;
         } else {
-          for (unsigned int cpt = 0; cpt < 6; cpt++) {
-            if (!vpMath::equal(it->second[cpt], pose_vec[cpt], 0.005)) {
+          for (unsigned int cpt = 0; cpt < 3; cpt++) {
+            if (!vpMath::equal(it->second[cpt], pose_vec[cpt], 0.005) ||
+                !vpMath::equal(it->second[cpt+3], pose_vec[cpt+3], 0.005)) {
               std::cerr << "Problem, current pose: " << pose_vec.t() << "\nGround truth pose: " << it->second.t()
                         << std::endl;
               return EXIT_FAILURE;
