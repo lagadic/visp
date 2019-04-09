@@ -45,6 +45,7 @@
 
 #ifdef VISP_HAVE_PUGIXML
 
+#include <stdio.h>
 #include <map>
 #include <pugixml.hpp>
 
