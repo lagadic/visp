@@ -272,12 +272,19 @@ vp_set_source_file_compile_flag(src/tools/histogram/vpHistogram.cpp -Wno-strict-
 vp_set_source_file_compile_flag(test/image/testImageBinarise.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/network/testClient.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow)
+
 if(USE_EIGEN3)
   vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
 endif()
 
 if(USE_XML2)
-  vp_set_source_file_compile_flag(test/tools/xml/testXmlParser.cpp -Wno-deprecated-declarations)
+  if(MSVC)
+    vp_set_source_file_compile_flag(src/tools/xml/vpXmlParser.cpp /wd"4996")
+    vp_set_source_file_compile_flag(test/tools/xml/testXmlParser.cpp /wd"4996")
+  else()
+    vp_set_source_file_compile_flag(src/tools/xml/vpXmlParser.cpp -Wno-deprecated-declarations)
+    vp_set_source_file_compile_flag(test/tools/xml/testXmlParser.cpp -Wno-deprecated-declarations)
+  endif()
 endif()
 
 vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} WRAP java)
