@@ -289,6 +289,7 @@ vp_create_module(${opt_libs})
 if(BUILD_TESTS)
   vp_set_source_file_compile_flag(test/testGenericTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
   vp_set_source_file_compile_flag(test/testGenericTrackerDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+  vp_set_source_file_compile_flag(test/testMbtXmlGenericParser.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
 endif()
 
 # Improvement: remove hack to glob the test folder with vp_add_tests
