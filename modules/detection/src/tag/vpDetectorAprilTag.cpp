@@ -423,14 +423,16 @@ public:
           residual_lagrange = pose.computeResidual(cMo_lagrange);
         }
 
-        std::vector<double> residuals = {residual_dementhon,
-                                         residual_lagrange,
-                                         residual_homography,
-                                         residual_homography_ortho_iter};
-        std::vector<vpHomogeneousMatrix> poses = {cMo_dementhon,
-                                                  cMo_lagrange,
-                                                  cMo_homography,
-                                                  cMo_homography_ortho_iter};
+        std::vector<double> residuals;
+        residuals.push_back(residual_dementhon);
+        residuals.push_back(residual_lagrange);
+        residuals.push_back(residual_homography);
+        residuals.push_back(residual_homography_ortho_iter);
+        std::vector<vpHomogeneousMatrix> poses;
+        poses.push_back(cMo_dementhon);
+        poses.push_back(cMo_lagrange);
+        poses.push_back(cMo_homography);
+        poses.push_back(cMo_homography_ortho_iter);
 
         std::ptrdiff_t minIndex = std::min_element(residuals.begin(), residuals.end()) - residuals.begin();
         cMo = *(poses.begin() + minIndex);
