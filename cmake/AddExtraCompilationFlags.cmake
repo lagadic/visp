@@ -141,18 +141,6 @@ if(DEFINED WINRT_8_1)
   add_extra_compiler_option(/ZW) # do not use with 8.0
 endif()
 
-if(USE_MKL)
-  if (NOT DEFINED ENV{CRAY_PRGENVPGI} AND
-      NOT DEFINED ENV{CRAY_PRGENVGNU} AND
-      NOT DEFINED ENV{CRAY_PRGENVCRAY} AND
-      NOT DEFINED ENV{CRAY_PRGENVINTEL})
-    set(ABI "-m64")
-  endif()
-
-  add_extra_compiler_option(-DMKL_ILP64)
-  add_extra_compiler_option("${ABI}")
-endif()
-
 # Add user supplied extra options (optimization, etc...)
 vp_list_unique(VISP_EXTRA_C_FLAGS)
 
