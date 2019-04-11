@@ -1355,19 +1355,19 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
 }
 #else
 // jpeg interface not available (nor with libjpeg, nor with OpenCV
-void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
+void vpImageIo::readJPEG(vpImage<unsigned char> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
 }
-void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
+void vpImageIo::readJPEG(vpImage<vpRGBa> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
 }
-void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename)
+void vpImageIo::writeJPEG(const vpImage<unsigned char> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
 }
-void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
+void vpImageIo::writeJPEG(const vpImage<vpRGBa> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
 }
@@ -2064,19 +2064,19 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 }
 #else
 // png interface not available (nor with libpng, nor with OpenCV)
-void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
+void vpImageIo::readPNG(vpImage<unsigned char> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
 }
-void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
+void vpImageIo::readPNG(vpImage<vpRGBa> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
 }
-void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename)
+void vpImageIo::writePNG(const vpImage<unsigned char> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
 }
-void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
+void vpImageIo::writePNG(const vpImage<vpRGBa> &, const std::string &)
 {
   throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
 }
