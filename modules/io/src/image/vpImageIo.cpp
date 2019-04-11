@@ -2062,6 +2062,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
   cvReleaseImage(&Ip);
 #endif
 }
+#else
 // png interface not available (nor with libpng, nor with OpenCV)
 void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
 {
