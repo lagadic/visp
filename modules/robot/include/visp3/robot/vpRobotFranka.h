@@ -231,7 +231,7 @@ private:
     This function is not implemented.
    */
   void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) {};
-  franka::RobotState getRobotInternalState();
+
   void init();
 
   franka::Robot *m_handler; //!< Robot handler
@@ -281,6 +281,8 @@ public:
   void getForceTorque(const vpRobot::vpControlFrameType frame, vpColVector &force);
 
   void getGravity(vpColVector &gravity);
+
+  franka::RobotState getRobotInternalState();
 
   /*!
    * Get gripper handler to access native libfranka functions.
