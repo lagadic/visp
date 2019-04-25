@@ -187,10 +187,12 @@ int main(int argc, char *argv[])
   vpDisplay::flush(I_depth);
 
   //! [Constructor]
+  std::vector<int> trackerTypes;
 #ifdef VISP_HAVE_OPENCV
-  std::vector<int> trackerTypes = {vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER, vpMbGenericTracker::DEPTH_DENSE_TRACKER};
+  trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+  trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
 #else
-  std::vector<int> trackerTypes = {vpMbGenericTracker::EDGE_TRACKER};
+  trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);
 #endif
   vpMbGenericTracker tracker(trackerTypes);
   //! [Constructor]
@@ -213,7 +215,7 @@ int main(int argc, char *argv[])
   //! [Map transformations]
   vpHomogeneousMatrix depth_M_color;
   {
-    std::ifstream file( std::string(input_directory + "/depth_M_color.txt") );
+    std::ifstream file( (std::string(input_directory + "/depth_M_color.txt")).c_str() );
     depth_M_color.load(file);
     file.close();
   }

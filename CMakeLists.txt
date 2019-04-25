@@ -105,6 +105,9 @@ endif()
 if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW) # To use legacy GL library with FindOpenGL and cmake 3.12.0
 endif()
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW) # For PCL_ROOT usage and cmake 3.12.0 when PCL 1.9.1 all in one is used on Windows
+endif()
 if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
@@ -733,6 +736,7 @@ endif()
 # definition
 if(WIN32 AND MSVC)
   add_definitions("-D_CRT_SECURE_NO_DEPRECATE")
+  add_definitions("-D_SCL_SECURE_NO_WARNINGS") # to avoid warning C4996; std::copy::_Unchecked_iterators::_Deprecate
 endif()
 
 #----------------------------------------------------------------------

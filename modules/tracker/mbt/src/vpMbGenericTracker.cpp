@@ -5094,7 +5094,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
-        mapOfPointClouds[it->first] == nullptr) {
+        ! mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
       throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
     }
   }
@@ -5176,7 +5176,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
-        mapOfPointClouds[it->first] == nullptr) {
+        ! mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
       throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
     }
   }
@@ -6715,7 +6715,7 @@ void vpMbGenericTracker::TrackerWrapper::testTracking()
 }
 
 void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_CXX11)
                                                    I
 #endif
 )
@@ -6729,7 +6729,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
     return;
   }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_CXX11)
   track(&I, nullptr);
 #endif
 }
@@ -6761,7 +6761,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *con
     throw vpException(vpException::fatalError, "Image pointer is NULL!");
   }
 
-  if (m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && point_cloud == nullptr) {
+  if (m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && ! point_cloud) { // point_cloud == nullptr
     throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
   }
 

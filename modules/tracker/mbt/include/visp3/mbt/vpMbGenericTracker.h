@@ -566,8 +566,8 @@ private:
     using vpMbDepthNormalTracker::track;
     using vpMbDepthDenseTracker::track;
     using vpMbEdgeTracker::track;
-    virtual void track(const vpImage<unsigned char> *const ptr_I = NULL,
-                       const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud = nullptr);
+    virtual void track(const vpImage<unsigned char> *const ptr_I,
+                       const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
 
   protected:
@@ -592,10 +592,10 @@ private:
     virtual void initMbtTracking(const vpImage<unsigned char> *const ptr_I);
 
 #ifdef VISP_HAVE_PCL
-    virtual void postTracking(const vpImage<unsigned char> *const ptr_I = NULL,
-                              const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud = nullptr);
-    virtual void preTracking(const vpImage<unsigned char> *const ptr_I = NULL,
-                             const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud = nullptr);
+    virtual void postTracking(const vpImage<unsigned char> *const ptr_I,
+                              const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
+    virtual void preTracking(const vpImage<unsigned char> *const ptr_I,
+                             const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
     virtual void postTracking(const vpImage<unsigned char> *const ptr_I = NULL, const unsigned int pointcloud_width = 0,
                               const unsigned int pointcloud_height = 0);
