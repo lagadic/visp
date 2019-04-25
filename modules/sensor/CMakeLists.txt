@@ -141,9 +141,10 @@ if(USE_PCL)
     # Get pcl link libraries like opengl
     vp_list_unique(PCL_VTK_LIBRARIES)
     if(NOT VTK_ENABLE_KITS)
-	  foreach(lib_ ${PCL_VTK_LIBRARIES})
+      foreach(lib_ ${PCL_VTK_LIBRARIES})
         get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
         if(imported_libs_)
+          list(APPEND PCL_VTK_LIBS ${lib_})
           list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
         else()
           list(APPEND PCL_VTK_LIBS ${lib_})
@@ -151,8 +152,8 @@ if(USE_PCL)
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
 
-	  # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
-	  foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
+      # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
+      foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
         string(REGEX REPLACE "\\$<LINK_ONLY:" "" lib_ ${lib_})
         string(REGEX REPLACE ">" "" lib_ ${lib_})
         list(APPEND PCL_VTK_LIBS ${lib_})
