@@ -134,7 +134,7 @@ Open the "Edit environment variable" UI, and modify `Path` to add a new line wit
 
 \subsubsection install_win10_msvc15_3rdparty_pcl PCL 3rd party
 
-PCL library could be installed to extend vpRealSense2 capabilities to acquire a point cloud. It could be also used to consider a point cloud as depth feature in the generic model-based tracker when using vpMbGenericTracker class.
+PCL library could be installed to extend vpRealSense2 capabilities to acquire a point cloud. It could be also used to consider a point cloud as depth feature in the generic model-based tracker when using vpMbGenericTracker class. If you don't have an Intel Realsense Depth camera (SR300 or D400 series) or if you are not interested in model-based tracking using depth as feature you can skip this section.
 
 <b>1. Install PCL from all-in-one installer</b>
 
