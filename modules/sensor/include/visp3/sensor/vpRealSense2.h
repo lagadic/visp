@@ -289,6 +289,9 @@ public:
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
                rs2::align *const align_to = NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                             std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
+                             unsigned char *const data_infrared2, rs2::align *const align_to);
 
 #ifdef VISP_HAVE_PCL
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,

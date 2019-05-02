@@ -397,6 +397,52 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
   }
 }
 
+/*!
+  Acquire data from RealSense device.
+  \param data_image : Color image buffer or NULL if not wanted.
+  \param data_depth : Depth image buffer or NULL if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param data_infrared1 : First infrared image buffer or NULL if not wanted.
+  \param data_infrared2 : Second infrared image buffer or NULL if not wanted.
+  \param align_to : Align to a reference stream or NULL if not wanted.
+ */
+void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                           std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
+                           unsigned char *const data_infrared2, rs2::align *const align_to)
+{
+  auto data = m_pipe.wait_for_frames();
+  if (align_to != NULL)
+#if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
+    data = align_to->process(data);
+#else
+    data = align_to->proccess(data);
+#endif
+
+  if (data_image != NULL) {
+    auto color_frame = data.get_color_frame();
+    getNativeFrameData(color_frame, data_image);
+  }
+
+  if (data_depth != NULL || data_pointCloud != NULL) {
+    auto depth_frame = data.get_depth_frame();
+    if (data_depth != NULL)
+      getNativeFrameData(depth_frame, data_depth);
+
+    if (data_pointCloud != NULL)
+      getPointcloud(depth_frame, *data_pointCloud);
+  }
+
+  if (data_infrared1 != NULL) {
+    auto infrared_frame = data.get_infrared_frame(1);
+    getNativeFrameData(infrared_frame, data_infrared1);
+  }
+
+  if (data_infrared2 != NULL) {
+    auto infrared_frame = data.get_infrared_frame(2);
+    getNativeFrameData(infrared_frame, data_infrared2);
+  }
+}
+
 #ifdef VISP_HAVE_PCL
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
