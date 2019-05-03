@@ -53,13 +53,17 @@
 int main(int argc, char **argv)
 {
   std::string robot_ip = "192.168.1.1";
+  std::string log_folder;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
     }
+    else if (std::string(argv[i]) == "--log_folder" && i + 1 < argc) {
+      log_folder = std::string(argv[i + 1]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << argv[0] << " [--ip 192.168.1.1] [--help] [-h]"
+      std::cout << argv[0] << " [--ip 192.168.1.1] [--log_folder <folder>] [--help] [-h]"
                            << "\n";
       return EXIT_SUCCESS;
     }
@@ -68,6 +72,7 @@ int main(int argc, char **argv)
   try {
     vpRobotFranka robot;
     robot.connect(robot_ip);
+    robot.setLogFolder(log_folder);
 
     std::cout << "WARNING: This example will move the robot! "
               << "Please make sure to have the user stop button at hand!" << std::endl
