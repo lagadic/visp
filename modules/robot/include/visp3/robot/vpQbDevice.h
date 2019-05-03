@@ -47,8 +47,6 @@
 #include <mutex>
 #include <memory>
 
-#include <qb_device_driver.h>
-
 /*!
 
   \class vpQbDevice
@@ -66,16 +64,12 @@ class VISP_EXPORT vpQbDevice
 {
 public:
   vpQbDevice();
-  vpQbDevice(std::shared_ptr<qb_device_driver::qbDeviceAPI> device_api);
   virtual ~vpQbDevice();
 
   /** @name Inherited public functionalities from vpQbDevice */
-  /**
-   * Return the maximum current supported by the device.
-   */
-  inline double getCurrentMax() const {
-    return m_current_max;
-  }
+  double getCurrentMax() const;
+  std::vector<short int> getPositionLimits() const;
+  void setMaxRepeats(const int &max_repeats);
   //@}
 
 protected:
@@ -101,38 +95,24 @@ protected:
   int isConnected(const int &id, const int &max_repeats);
   virtual bool isInConnectedSet(const int &id);
   virtual bool isInOpenMap(const std::string &serial_port);
-  /**
-   * Check whether the reading failures are in the given range.
-   * \param failures The current number of communication failures per serial resource reading.
-   * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
-   * \return \p true if the failures are less than the given threshold.
-   */
-  inline bool isReliable(int const &failures, int const &max_repeats) { return failures >= 0 && failures <= max_repeats; }
-
+  bool isReliable(int const &failures, int const &max_repeats);
   virtual int open(const std::string &serial_port);
 
   virtual int setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands);
   virtual int setCommandsAsync(const int &id, std::vector<short int> &commands);
-  /**
-   * Set the maximum number of consecutive repetitions to mark retrieved data as corrupted. This value is set by default to 1.
-   */
-  inline void setMaxRepeats(const int &max_repeats) {
-    m_max_repeats = max_repeats;
-  }
   //@}
 
+private:
+  vpQbDevice(const vpQbDevice &);            // noncopyable
+  vpQbDevice &operator=(const vpQbDevice &); //
+
+  // Implementation
+  class Impl;
+  Impl *m_impl;
+
 protected:
-#if (defined(_WIN32) || defined (_WIN64))
-  std::unique_ptr<std::mutex> m_mutex_dummy; // FS: cannot build without this line with msvc
-#endif
-  std::shared_ptr<qb_device_driver::qbDeviceAPI> m_device_api;
-  std::map<std::string, std::unique_ptr<std::mutex>> m_serial_protectors;  // only callbacks must lock the serial resources
-  std::map<std::string, comm_settings> m_file_descriptors;
-  std::map<int, std::string> m_connected_devices;
-  std::vector<short int> m_position_limits; // min and max position values in ticks
-  int m_max_repeats;
-  double m_current_max;
-  bool m_init_done;
+  int m_max_repeats; //!< Max number of trials to send a command.
+  bool m_init_done;  //!< Flag used to indicate if the device is initialized.
 };
 
 
