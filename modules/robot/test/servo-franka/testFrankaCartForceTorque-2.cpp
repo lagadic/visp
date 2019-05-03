@@ -89,13 +89,19 @@ int main(int argc, char **argv)
     double t0 = vpTime::measureTimeSecond();
     double delta_t = 12.0; // Time in second
 
-    std::cout << "Apply cartesian force/torque in a loop for " << delta_t << " sec : " << ft_d.t() << std::endl;
+    std::cout << "Apply cartesian force/torque in a loop for " << delta_t/2. << " sec : " << ft_d.t() << std::endl;
     robot.setRobotState(vpRobot::STATE_FORCE_TORQUE_CONTROL);
+    double filter_gain = 0.15;
     bool activate_pi_controller = true;
     do {
-      robot.setForceTorque(vpRobot::END_EFFECTOR_FRAME, ft_d, activate_pi_controller); // Use low level PI controller
+      robot.setForceTorque(vpRobot::END_EFFECTOR_FRAME, ft_d, filter_gain, activate_pi_controller); // Use low level PI controller
       if (vpTime::measureTimeSecond() - t0 > delta_t / 2.) {
         ft_d[2] = -10;
+        static bool change_ft = true;
+        if (change_ft) {
+          std::cout << "Apply cartesian force/torque in a loop for " << delta_t/2. << " sec : " << ft_d.t() << std::endl;
+        }
+        change_ft = false;
       }
       vpTime::wait(10); // wait 10 ms
     } while (vpTime::measureTimeSecond() - t0 < delta_t);
