@@ -112,7 +112,7 @@ class VISP_EXPORT vpRingLight
 
 public:
   vpRingLight();
-  ~vpRingLight();
+  virtual ~vpRingLight();
 
   void pulse();
   void pulse(double time);

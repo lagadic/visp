@@ -157,7 +157,7 @@ add_test(mbtGenericTrackingDepth-hybrid-dense-scanline  mbtGenericTrackingDepth 
 
 add_test(mbtGenericTrackingDepth-edge-normal            mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4)
 add_test(mbtGenericTrackingDepth-edge-normal-scanline   mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -e 14)
-add_test(mbtGenericTrackingDepth-klt-normal             mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2)
+add_test(mbtGenericTrackingDepth-klt-normal             mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2 -e 14)
 add_test(mbtGenericTrackingDepth-klt-normal-scanline    mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2 -e 14)
 add_test(mbtGenericTrackingDepth-hybrid-normal          mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 3)
 add_test(mbtGenericTrackingDepth-hybrid-normal-scanline mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 3 -e 14)

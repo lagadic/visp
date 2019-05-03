@@ -284,6 +284,352 @@ bool compareDescriptors(const cv::Mat &descriptors1, const cv::Mat &descriptors2
   return true;
 }
 
+template<typename Type>
+void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<Type> &I)
+{
+  std::string filename;
+  // Set the path location of the image sequence
+  std::string dirname = vpIoTools::createFilePath(env_ipath, "Klimt");
+
+  // Build the name of the image files
+  std::string img_filename = vpIoTools::createFilePath(dirname, "/Klimt.ppm");
+  vpImageIo::read(I, img_filename);
+
+  vpKeyPoint keyPoints;
+
+  // Test with binary descriptor
+  {
+    std::string keypointName = "ORB";
+    keyPoints.setDetector(keypointName);
+    keyPoints.setExtractor(keypointName);
+
+    keyPoints.buildReference(I);
+
+    std::vector<cv::KeyPoint> trainKeyPoints;
+    keyPoints.getTrainKeyPoints(trainKeyPoints);
+    cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
+    if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
+      throw vpException(vpException::fatalError, "Problem when detecting "
+                                                 "keypoints or when "
+                                                 "computing descriptors !");
+    }
+
+    // Save in binary with training images
+    filename = vpIoTools::createFilePath(opath, "bin_with_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_bin_with_img.bin");
+    keyPoints.saveLearningData(filename, true, true);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint1;
+    read_keypoint1.loadLearningData(filename, true);
+    std::vector<cv::KeyPoint> trainKeyPoints_read;
+    read_keypoint1.getTrainKeyPoints(trainKeyPoints_read);
+    cv::Mat trainDescriptors_read = read_keypoint1.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved "
+                                                 "in binary with train images saved !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "binary with train images saved !");
+    }
+
+    // Save in binary with no training images
+    filename = vpIoTools::createFilePath(opath, "bin_without_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_bin_without_img.bin");
+    keyPoints.saveLearningData(filename, true, false);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint2;
+    read_keypoint2.loadLearningData(filename, true);
+    trainKeyPoints_read.clear();
+    read_keypoint2.getTrainKeyPoints(trainKeyPoints_read);
+    trainDescriptors_read = read_keypoint2.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
+                                                 "binary without train images !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "binary without train images !");
+    }
+
+#if defined(VISP_HAVE_PUGIXML)
+    // Save in xml with training images
+    filename = vpIoTools::createFilePath(opath, "xml_with_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_xml_with_img.xml");
+    keyPoints.saveLearningData(filename, false, true);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint3;
+    read_keypoint3.loadLearningData(filename, false);
+    trainKeyPoints_read.clear();
+    read_keypoint3.getTrainKeyPoints(trainKeyPoints_read);
+    trainDescriptors_read = read_keypoint3.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
+                                                 "xml with train images saved !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "xml with train images saved !");
+    }
+
+    // Save in xml without training images
+    filename = vpIoTools::createFilePath(opath, "xml_without_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_xml_without_img.xml");
+    keyPoints.saveLearningData(filename, false, false);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint4;
+    read_keypoint4.loadLearningData(filename, false);
+    trainKeyPoints_read.clear();
+    read_keypoint4.getTrainKeyPoints(trainKeyPoints_read);
+    trainDescriptors_read = read_keypoint4.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
+                                                 "xml without train images saved !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "xml without train images saved !");
+    }
+#endif
+
+    std::cout << "Saving / loading learning files with binary descriptor are ok !" << std::endl;
+  }
+
+// Test with floating point descriptor
+#if defined(VISP_HAVE_OPENCV_NONFREE) ||                                                                               \
+  ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D))
+  {
+    std::string keypointName = "SIFT";
+    keyPoints.setDetector(keypointName);
+    keyPoints.setExtractor(keypointName);
+
+    keyPoints.buildReference(I);
+
+    std::vector<cv::KeyPoint> trainKeyPoints;
+    keyPoints.getTrainKeyPoints(trainKeyPoints);
+    cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
+    if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
+      throw vpException(vpException::fatalError, "Problem when detecting keypoints or when "
+                                                 "computing descriptors (SIFT) !");
+    }
+
+    // Save in binary with training images
+    filename = vpIoTools::createFilePath(opath, "bin_with_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_bin_with_img.bin");
+    keyPoints.saveLearningData(filename, true, true);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint1;
+    read_keypoint1.loadLearningData(filename, true);
+    std::vector<cv::KeyPoint> trainKeyPoints_read;
+    read_keypoint1.getTrainKeyPoints(trainKeyPoints_read);
+    cv::Mat trainDescriptors_read = read_keypoint1.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
+                                                 "binary with train images saved !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "binary with train images saved !");
+    }
+
+    // Save in binary with no training images
+    filename = vpIoTools::createFilePath(opath, "bin_without_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_bin_without_img.bin");
+    keyPoints.saveLearningData(filename, true, false);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint2;
+    read_keypoint2.loadLearningData(filename, true);
+    trainKeyPoints_read.clear();
+    read_keypoint2.getTrainKeyPoints(trainKeyPoints_read);
+    trainDescriptors_read = read_keypoint2.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
+                                                 "binary without train images saved !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "binary without train images saved !");
+    }
+
+#if defined(VISP_HAVE_PUGIXML)
+    // Save in xml with training images
+    filename = vpIoTools::createFilePath(opath, "xml_with_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_xml_with_img.xml");
+    keyPoints.saveLearningData(filename, false, true);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint3;
+    read_keypoint3.loadLearningData(filename, false);
+    trainKeyPoints_read.clear();
+    read_keypoint3.getTrainKeyPoints(trainKeyPoints_read);
+    trainDescriptors_read = read_keypoint3.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
+                                                 "xml with train images saved !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "xml with train images saved !");
+    }
+
+    // Save in xml without training images
+    filename = vpIoTools::createFilePath(opath, "xml_without_img");
+    vpIoTools::makeDirectory(filename);
+    filename = vpIoTools::createFilePath(filename, "test_save_in_xml_without_img.xml");
+    keyPoints.saveLearningData(filename, false, false);
+
+    // Test if save is ok
+    if (!vpIoTools::checkFilename(filename)) {
+      std::stringstream ss;
+      ss << "Problem when saving file=" << filename;
+      throw vpException(vpException::ioError, ss.str().c_str());
+    }
+
+    // Test if read is ok
+    vpKeyPoint read_keypoint4;
+    read_keypoint4.loadLearningData(filename, false);
+    trainKeyPoints_read.clear();
+    read_keypoint4.getTrainKeyPoints(trainKeyPoints_read);
+    trainDescriptors_read = read_keypoint4.getTrainDescriptors();
+
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
+                                                 "xml without train images saved !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
+      throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
+                                                 "learning file saved in "
+                                                 "xml without train images saved !");
+    }
+#endif
+
+    std::cout << "Saving / loading learning files with floating point "
+                 "descriptor are ok !"
+              << std::endl;
+
+    // Test vpKeyPoint::reset()
+    vpKeyPoint keypoint_reset;
+
+    keypointName = "ORB";
+    keypoint_reset.setDetector(keypointName);
+    keypoint_reset.setExtractor(keypointName);
+
+    keypoint_reset.buildReference(I);
+
+    // reset
+    keypoint_reset.reset();
+
+    keypointName = "SIFT";
+    keypoint_reset.setDetector(keypointName);
+    keypoint_reset.setExtractor(keypointName);
+
+    keypoint_reset.buildReference(I);
+
+    std::vector<cv::KeyPoint> trainKeyPoints_reset;
+    keypoint_reset.getTrainKeyPoints(trainKeyPoints_reset);
+    cv::Mat trainDescriptors_reset = keypoint_reset.getTrainDescriptors();
+
+    // If reset is ok, we should get the same keypoints and the same
+    // descriptors
+    if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_reset)) {
+      throw vpException(vpException::fatalError, "Problem with vpKeyPoint::reset() and trainKeyPoints !");
+    }
+
+    if (!compareDescriptors(trainDescriptors, trainDescriptors_reset)) {
+      throw vpException(vpException::fatalError, "Problem with vpKeyPoint::reset() and trainDescriptors !");
+    }
+
+    std::cout << "vpKeyPoint::reset() is ok with trainKeyPoints and "
+                 "trainDescriptors !"
+              << std::endl;
+  }
+#endif
+}
+
 /*!
   \example testKeyPoint-7.cpp
 
@@ -296,7 +642,6 @@ int main(int argc, const char **argv)
     std::string opt_opath;
     std::string username;
     std::string opath;
-    std::string filename;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -329,348 +674,19 @@ int main(int argc, const char **argv)
     // Append to the output path string, the login name of the user
     opath = vpIoTools::createFilePath(opath, username);
 
-    vpImage<unsigned char> I;
-
-    // Set the path location of the image sequence
-    std::string dirname = vpIoTools::createFilePath(env_ipath, "Klimt");
-
-    // Build the name of the image files
-    std::string img_filename = vpIoTools::createFilePath(dirname, "/Klimt.ppm");
-    vpImageIo::read(I, img_filename);
-
-    vpKeyPoint keyPoints;
-
-    // Test with binary descriptor
     {
-      std::string keypointName = "ORB";
-      keyPoints.setDetector(keypointName);
-      keyPoints.setExtractor(keypointName);
+      vpImage<unsigned char> I;
 
-      keyPoints.buildReference(I);
-
-      std::vector<cv::KeyPoint> trainKeyPoints;
-      keyPoints.getTrainKeyPoints(trainKeyPoints);
-      cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
-      if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
-        throw vpException(vpException::fatalError, "Problem when detecting "
-                                                   "keypoints or when "
-                                                   "computing descriptors !");
-      }
-
-      // Save in binary with training images
-      filename = vpIoTools::createFilePath(opath, "bin_with_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_bin_with_img.bin");
-      keyPoints.saveLearningData(filename, true, true);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint1;
-      read_keypoint1.loadLearningData(filename, true);
-      std::vector<cv::KeyPoint> trainKeyPoints_read;
-      read_keypoint1.getTrainKeyPoints(trainKeyPoints_read);
-      cv::Mat trainDescriptors_read = read_keypoint1.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved "
-                                                   "in binary with train images saved !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "binary with train images saved !");
-      }
-
-      // Save in binary with no training images
-      filename = vpIoTools::createFilePath(opath, "bin_without_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_bin_without_img.bin");
-      keyPoints.saveLearningData(filename, true, false);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint2;
-      read_keypoint2.loadLearningData(filename, true);
-      trainKeyPoints_read.clear();
-      read_keypoint2.getTrainKeyPoints(trainKeyPoints_read);
-      trainDescriptors_read = read_keypoint2.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
-                                                   "binary without train images !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "binary without train images !");
-      }
-
-#if defined(VISP_HAVE_XML2)
-      // Save in xml with training images
-      filename = vpIoTools::createFilePath(opath, "xml_with_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_xml_with_img.xml");
-      keyPoints.saveLearningData(filename, false, true);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint3;
-      read_keypoint3.loadLearningData(filename, false);
-      trainKeyPoints_read.clear();
-      read_keypoint3.getTrainKeyPoints(trainKeyPoints_read);
-      trainDescriptors_read = read_keypoint3.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
-                                                   "xml with train images saved !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "xml with train images saved !");
-      }
-
-      // Save in xml without training images
-      filename = vpIoTools::createFilePath(opath, "xml_without_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_xml_without_img.xml");
-      keyPoints.saveLearningData(filename, false, false);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint4;
-      read_keypoint4.loadLearningData(filename, false);
-      trainKeyPoints_read.clear();
-      read_keypoint4.getTrainKeyPoints(trainKeyPoints_read);
-      trainDescriptors_read = read_keypoint4.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
-                                                   "xml without train images saved !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "xml without train images saved !");
-      }
-#endif
-
-      std::cout << "Saving / loading learning files with binary descriptor are ok !" << std::endl;
+      std::cout << "-- Test on gray level images" << std::endl;
+      run_test(env_ipath, opath, I);
     }
 
-// Test with floating point descriptor
-#if defined(VISP_HAVE_OPENCV_NONFREE) ||                                                                               \
-    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D))
     {
-      std::string keypointName = "SIFT";
-      keyPoints.setDetector(keypointName);
-      keyPoints.setExtractor(keypointName);
+      vpImage<vpRGBa> I;
 
-      keyPoints.buildReference(I);
-
-      std::vector<cv::KeyPoint> trainKeyPoints;
-      keyPoints.getTrainKeyPoints(trainKeyPoints);
-      cv::Mat trainDescriptors = keyPoints.getTrainDescriptors();
-      if (trainKeyPoints.empty() || trainDescriptors.empty() || (int)trainKeyPoints.size() != trainDescriptors.rows) {
-        throw vpException(vpException::fatalError, "Problem when detecting keypoints or when "
-                                                   "computing descriptors (SIFT) !");
-      }
-
-      // Save in binary with training images
-      filename = vpIoTools::createFilePath(opath, "bin_with_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_bin_with_img.bin");
-      keyPoints.saveLearningData(filename, true, true);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint1;
-      read_keypoint1.loadLearningData(filename, true);
-      std::vector<cv::KeyPoint> trainKeyPoints_read;
-      read_keypoint1.getTrainKeyPoints(trainKeyPoints_read);
-      cv::Mat trainDescriptors_read = read_keypoint1.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
-                                                   "binary with train images saved !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "binary with train images saved !");
-      }
-
-      // Save in binary with no training images
-      filename = vpIoTools::createFilePath(opath, "bin_without_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_bin_without_img.bin");
-      keyPoints.saveLearningData(filename, true, false);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint2;
-      read_keypoint2.loadLearningData(filename, true);
-      trainKeyPoints_read.clear();
-      read_keypoint2.getTrainKeyPoints(trainKeyPoints_read);
-      trainDescriptors_read = read_keypoint2.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
-                                                   "binary without train images saved !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "binary without train images saved !");
-      }
-
-#if defined(VISP_HAVE_XML2)
-      // Save in xml with training images
-      filename = vpIoTools::createFilePath(opath, "xml_with_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_xml_with_img.xml");
-      keyPoints.saveLearningData(filename, false, true);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint3;
-      read_keypoint3.loadLearningData(filename, false);
-      trainKeyPoints_read.clear();
-      read_keypoint3.getTrainKeyPoints(trainKeyPoints_read);
-      trainDescriptors_read = read_keypoint3.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
-                                                   "xml with train images saved !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "xml with train images saved !");
-      }
-
-      // Save in xml without training images
-      filename = vpIoTools::createFilePath(opath, "xml_without_img");
-      vpIoTools::makeDirectory(filename);
-      filename = vpIoTools::createFilePath(filename, "test_save_in_xml_without_img.xml");
-      keyPoints.saveLearningData(filename, false, false);
-
-      // Test if save is ok
-      if (!vpIoTools::checkFilename(filename)) {
-        std::stringstream ss;
-        ss << "Problem when saving file=" << filename;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-
-      // Test if read is ok
-      vpKeyPoint read_keypoint4;
-      read_keypoint4.loadLearningData(filename, false);
-      trainKeyPoints_read.clear();
-      read_keypoint4.getTrainKeyPoints(trainKeyPoints_read);
-      trainDescriptors_read = read_keypoint4.getTrainDescriptors();
-
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainKeyPoints when reading learning file saved in "
-                                                   "xml without train images saved !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_read)) {
-        throw vpException(vpException::fatalError, "Problem with trainDescriptors when reading "
-                                                   "learning file saved in "
-                                                   "xml without train images saved !");
-      }
-#endif
-
-      std::cout << "Saving / loading learning files with floating point "
-                   "descriptor are ok !"
-                << std::endl;
-
-      // Test vpKeyPoint::reset()
-      vpKeyPoint keypoint_reset;
-
-      keypointName = "ORB";
-      keypoint_reset.setDetector(keypointName);
-      keypoint_reset.setExtractor(keypointName);
-
-      keypoint_reset.buildReference(I);
-
-      // reset
-      keypoint_reset.reset();
-
-      keypointName = "SIFT";
-      keypoint_reset.setDetector(keypointName);
-      keypoint_reset.setExtractor(keypointName);
-
-      keypoint_reset.buildReference(I);
-
-      std::vector<cv::KeyPoint> trainKeyPoints_reset;
-      keypoint_reset.getTrainKeyPoints(trainKeyPoints_reset);
-      cv::Mat trainDescriptors_reset = keypoint_reset.getTrainDescriptors();
-
-      // If reset is ok, we should get the same keypoints and the same
-      // descriptors
-      if (!compareKeyPoints(trainKeyPoints, trainKeyPoints_reset)) {
-        throw vpException(vpException::fatalError, "Problem with vpKeyPoint::reset() and trainKeyPoints !");
-      }
-
-      if (!compareDescriptors(trainDescriptors, trainDescriptors_reset)) {
-        throw vpException(vpException::fatalError, "Problem with vpKeyPoint::reset() and trainDescriptors !");
-      }
-
-      std::cout << "vpKeyPoint::reset() is ok with trainKeyPoints and "
-                   "trainDescriptors !"
-                << std::endl;
+      std::cout << "-- Test on color images" << std::endl;
+      run_test(env_ipath, opath, I);
     }
-#endif
 
   } catch (const vpException &e) {
     std::cerr << e.what() << std::endl;

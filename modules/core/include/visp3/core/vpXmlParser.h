@@ -62,8 +62,9 @@
 /*!
   \class vpXmlParser
 
-  \brief This class intends to simplify the creation of xml parser based on
-  the libxml2 third party library.
+  \deprecated This class intends to simplify the creation of xml parser based on
+  the libxml2 third party library. It was declared deprecated after ViSP 3.2.0 release
+  since we introduce pugixml built-in 3rd party library that replaces favorably libxml2.
 
   This class can be useful to manage external data parameters (for example for
   configuration of an experiment, ...).
@@ -174,7 +175,7 @@
   \endcode
 
 */
-class VISP_EXPORT vpXmlParser
+class vp_deprecated VISP_EXPORT vpXmlParser
 {
 protected:
   /** @name Protected Member Functions Inherited from vpXmlParser */

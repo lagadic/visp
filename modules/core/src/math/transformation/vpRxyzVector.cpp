@@ -238,3 +238,31 @@ vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
 
   return *this;
 }
+
+#ifdef VISP_HAVE_CXX11
+/*!
+  Set vector from a list of 3 double angle values in radians.
+  \code
+#include <visp3/core/vpRxyzVector.cpp>
+
+int main()
+{
+  vpRxyzVector rxyz = {M_PI, 0, M_PI_2};
+  std::cout << "rxyz: " << rxyz.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+rxyz: 3.141592654  0  1.570796327
+  \endcode
+  \sa operator<<()
+*/
+vpRxyzVector &vpRxyzVector::operator=(const std::initializer_list<double> &list)
+{
+  if (list.size() > size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set Euler x-y-z vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+  }
+  std::copy(list.begin(), list.end(), data);
+  return *this;
+}
+#endif

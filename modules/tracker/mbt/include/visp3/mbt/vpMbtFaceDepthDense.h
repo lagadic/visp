@@ -123,6 +123,11 @@ public:
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const double scale = 0.05, const unsigned int thickness = 1);
 
+  std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                       const vpHomogeneousMatrix &cMo,
+                                                       const vpCameraParameters &cam,
+                                                       const bool displayFullModel = false);
+
   inline unsigned int getNbFeatures() const { return (unsigned int)(m_pointCloudFace.size() / 3); }
 
   inline bool isTracked() const { return m_isTrackedDepthDenseFace; }

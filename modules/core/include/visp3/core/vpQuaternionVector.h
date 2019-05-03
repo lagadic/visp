@@ -64,7 +64,7 @@
 
   The vpQuaternionVector class is derived from vpRotationVector.
 
-  A quaternion is defined by four values: \f${\bf q} = (x, y, z, w)\f$.
+  A quaternion is defined by four double values: \f${\bf q} = (x, y, z, w)\f$.
 
   This class allows to compute a quaternion from a rotation matrix
   using either vpQuaternionVector(const vpRotationMatrix &) constructor
@@ -74,6 +74,38 @@
   - multiplication (scalar and quaternion)
   - addition
   - substraction.
+
+  You can set values accessing each element:
+  \code
+  vpQuaternionVector q;
+  q[0] = x
+  q[1] = y;
+  q[2] = z;
+  q[3] = w;
+  \endcode
+  You can also initialize the vector using operator<<(double):
+  \code
+  tu << x, y, z, w;
+  \endcode
+  Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
+  \code
+  tu = {x, y, z, w};
+  \endcode
+
+  To get the values use:
+  \code
+  double x = q[0];
+  double y = q[1];
+  double z = q[2];
+  double w = q[3];
+  \endcode
+  or use getter:
+  \code
+  double x = q.x();
+  double y = q.y();
+  double z = q.z();
+  double w = q.w();
+  \endcode
 
   */
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
@@ -112,6 +144,9 @@ public:
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
   vpQuaternionVector operator/(const double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
+#ifdef VISP_HAVE_CXX11
+  vpQuaternionVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   vpQuaternionVector conjugate() const;
   vpQuaternionVector inverse() const;

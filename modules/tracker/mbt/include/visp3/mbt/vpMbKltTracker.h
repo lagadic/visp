@@ -58,7 +58,6 @@
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceKltCylinder.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
-#include <visp3/mbt/vpMbtKltXmlParser.h>
 #include <visp3/vision/vpHomography.h>
 
 /*!
@@ -81,13 +80,12 @@
   tutorial-tracking-mb-deprecated is also a good starting point to use this class.
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpException.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbKltTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbKltTracker.h>
 
 int main()
 {
@@ -105,7 +103,7 @@ int main()
   display.init(I,100,100,"Mb Klt Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
@@ -124,10 +122,6 @@ int main()
     vpDisplay::flush(I);
   }
 
-#if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file
-in vpMbKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
-
   return 0;
 #endif
 }
@@ -138,11 +132,11 @@ in vpMbKltTracker::loadConfigFile() vpXmlParser::cleanup(); #endif
 computed using another method:
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbKltTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbKltTracker.h>
 
 int main()
 {
@@ -154,7 +148,7 @@ int main()
   //acquire an image
   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
@@ -167,11 +161,6 @@ int main()
     tracker.getPose(cMo); // get the pose
   }
 
-#if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
-  vpXmlParser::cleanup();
-#endif
-
   return 0;
 #endif
 }
@@ -181,12 +170,12 @@ int main()
 a given pose:
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbKltTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbKltTracker.h>
 
 int main()
 {
@@ -204,7 +193,7 @@ int main()
   display.init(I,100,100,"Mb Klt Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
@@ -218,11 +207,6 @@ int main()
     tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
     vpDisplay::flush(I);
   }
-
-#if defined VISP_HAVE_XML2
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
-  vpXmlParser::cleanup();
-#endif
 
   return 0;
 #endif
@@ -279,6 +263,8 @@ protected:
   vpColVector m_weightedError_klt;
   //! Robust
   vpRobust m_robust_klt;
+  //! Display features
+  std::vector<std::vector<double> > m_featuresToBeDisplayedKlt;
 
 public:
   vpMbKltTracker();
@@ -348,6 +334,11 @@ public:
 
   virtual inline vpColVector getRobustWeights() const { return m_w_klt; }
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
+
   virtual void loadConfigFile(const std::string &configFile);
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
@@ -408,6 +399,7 @@ public:
   }
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 
   /*!
     Set if the projection error criteria has to be computed.
@@ -427,6 +419,7 @@ public:
 
   virtual void testTracking();
   virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I_color);
 
   /*!
     @name Deprecated functions
@@ -485,6 +478,8 @@ protected:
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
 
+  virtual std::vector<std::vector<double> > getFeaturesForDisplayKlt();
+
   virtual void init(const vpImage<unsigned char> &I);
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
@@ -495,6 +490,8 @@ protected:
   void preTracking(const vpImage<unsigned char> &I);
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w);
   virtual void reinit(const vpImage<unsigned char> &I);
+  virtual void setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                       const vpHomogeneousMatrix &cdMo);
   //@}
 };
 

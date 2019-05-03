@@ -9,14 +9,6 @@ set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd.cpp
   tutorial-mb-generic-tracker-rgbd-realsense.cpp)
 
-file(GLOB tutorial_data data/color_image_*.jpg data/depth_image_*.bin)
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube_depth.xml")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube.xml")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube.cao")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube.init")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/cube.ppm")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/depth_M_color.txt")
-
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
 
@@ -50,7 +42,6 @@ foreach(cpp ${tutorial_cpp})
   endif()
 endforeach()
 
-# Copy the data files to the same location than the target
-foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-mb-generic-tracker-rgbd.cpp ${data})
-endforeach()
+# Copy the data files
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data model)
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd-realsense.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)

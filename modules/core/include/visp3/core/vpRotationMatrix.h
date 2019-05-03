@@ -67,6 +67,57 @@
 
   The vpRotationMatrix class is derived from vpArray2D<double>.
 
+  The code below shows how to create a rotation matrix, set the element values and access them:
+  \code
+#include <visp3/core/vpRotationMatrix.h>
+
+int main()
+{
+  vpRotationMatrix R;
+  R[0][0] =  0; R[0][1] =  0; R[0][2] = -1;
+  R[1][0] =  0; R[1][1] = -1; R[1][2] =  0;
+  R[2][0] = -1; R[2][1] =  0; R[2][2] =  0;
+
+  std::cout << "R:" << std::endl;
+  for (unsigned int i = 0; i < R.getRows(); i++) {
+    for (unsigned int j = 0; j < R.getCols(); j++) {
+      std::cout << R[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+R:
+0 0 -1
+0 -1 0
+-1 0 0
+  \endcode
+  You can also use operator<< to initialize a rotation matrix as previously:
+  \code
+#include <visp3/core/vpRotationMatrix.h>
+
+int main()
+{
+  vpRotationMatrix R;
+  R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
+  std::cout << "R:\n" << R << std::endl;
+}
+  \endcode
+
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpRotationMatrix.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
+  std::cout << "R:\n" << R << std::endl;
+#endif
+}
+  \endcode
 */
 class VISP_EXPORT vpRotationMatrix : public vpArray2D<double>
 {
@@ -82,6 +133,11 @@ public:
   explicit vpRotationMatrix(const vpQuaternionVector &q);
   explicit vpRotationMatrix(const vpMatrix &R);
   vpRotationMatrix(const double tux, const double tuy, const double tuz);
+
+#ifdef VISP_HAVE_CXX11
+  explicit vpRotationMatrix(const std::initializer_list<double> &list);
+#endif
+
   /*!
     Destructor.
   */
@@ -110,6 +166,9 @@ public:
   vpRotationMatrix &operator=(const vpRotationMatrix &R);
   // copy operator from vpMatrix (handle with care)
   vpRotationMatrix &operator=(const vpMatrix &M);
+#ifdef VISP_HAVE_CXX11
+  vpRotationMatrix& operator=(const std::initializer_list<double> &list);
+#endif
   // operation c = A * b (A is unchanged)
   vpTranslationVector operator*(const vpTranslationVector &tv) const;
   // operation C = A * B (A is unchanged)
@@ -120,6 +179,10 @@ public:
   vpColVector operator*(const vpColVector &v) const;
   vpRotationMatrix operator*(const double x) const;
   vpRotationMatrix &operator*=(const double x);
+
+  vpRotationMatrix& operator<<(double val);
+  vpRotationMatrix& operator,(double val);
+
 
   void printVector();
 
@@ -161,6 +224,9 @@ public:
 
 private:
   static const double threshold;
+
+protected:
+  unsigned int m_index;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

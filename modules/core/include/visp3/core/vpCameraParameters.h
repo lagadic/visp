@@ -86,7 +86,7 @@
   where:
 
   - \f$(X_c,Y_c,Z_c)\f$ are the coordinates of a 3D point in the camera frame
-  - \f$(x,y)\f$ are the coordinates of the projection of the 3D point in the image plane 
+  - \f$(x,y)\f$ are the coordinates of the projection of the 3D point in the image plane
   - \f$(u,v)\f$ are the coordinates in pixels of the projected 3D point
   - \f$(u_0,v_0)\f$ are the coordinates of the principal point (the
   intersection of the optical axes with the image plane) that is usually near
@@ -283,9 +283,10 @@ public:
   */
   inline double getHorizontalFovAngle() const
   {
-    if (!isFov)
+    if (!isFov) {
       vpTRACE("Warning: The FOV is not computed, getHorizontalFovAngle() "
               "won't be significant.");
+    }
     return m_hFovAngle;
   }
 
@@ -298,9 +299,10 @@ public:
   */
   inline double getVerticalFovAngle() const
   {
-    if (!isFov)
+    if (!isFov) {
       vpTRACE("Warning: The FOV is not computed, getVerticalFovAngle() won't "
               "be significant.");
+    }
     return m_vFovAngle;
   }
 
@@ -318,9 +320,10 @@ public:
   */
   inline std::vector<vpColVector> getFovNormals() const
   {
-    if (!isFov)
+    if (!isFov) {
       vpTRACE("Warning: The FOV is not computed, getFovNormals() won't be "
               "significant.");
+    }
     return fovNormals;
   }
 

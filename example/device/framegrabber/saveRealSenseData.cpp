@@ -487,6 +487,7 @@ int main(int argc, char *argv[]) {
 
     //Save intrinsics
 #ifdef USE_REALSENSE2
+#  ifdef VISP_HAVE_PUGIXML
     vpCameraParameters cam_color = realsense.getCameraParameters(RS2_STREAM_COLOR);
     vpXmlParserCamera xml_camera;
     xml_camera.save(cam_color, output_directory+"/camera.xml", "color_camera", width, height);
@@ -496,9 +497,10 @@ int main(int argc, char *argv[]) {
 
     vpCameraParameters cam_infrared = realsense.getCameraParameters(RS2_STREAM_INFRARED);
     xml_camera.save(cam_infrared, output_directory+"/camera.xml", "infrared_camera", width, height);
-
+#  endif
     vpHomogeneousMatrix depth_M_color = realsense.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH);
 #else
+#  ifdef VISP_HAVE_PUGIXML
     vpCameraParameters cam_color = realsense.getCameraParameters(rs::stream::color);
     vpXmlParserCamera xml_camera;
     xml_camera.save(cam_color, output_directory+"/camera.xml", "color_camera", width, height);
@@ -514,7 +516,7 @@ int main(int argc, char *argv[]) {
 
     vpCameraParameters cam_infrared = realsense.getCameraParameters(rs::stream::infrared);
     xml_camera.save(cam_infrared, output_directory+"/camera.xml", "infrared_camera", width, height);
-
+#  endif
     vpHomogeneousMatrix depth_M_color = realsense.getTransformation(rs::stream::color, rs::stream::depth);
 #endif
     std::ofstream file( std::string(output_directory+"/depth_M_color.txt") );
@@ -629,6 +631,14 @@ int main(int argc, char *argv[]) {
   }
 
   storage_thread.join();
+
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "**********************************************************************" << std::endl
+            << "Warning: " << std::endl
+            << "  This binary was not build with pugixml support. " << std::endl
+            << "  It means that camera parameters are not saved. " << std::endl
+            << "**********************************************************************" << std::endl;
+#endif
 
   return EXIT_SUCCESS;
 }

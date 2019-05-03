@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
               << "xml,"
 #endif
               << "cao or wrl]" << std::endl;
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 
     vpMbEdgeKltTracker tracker;
     bool usexml = false;
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
       tracker.track(I);
       tracker.getPose(cMo);
       tracker.getCameraParameters(cam);
-      tracker.display(I, cMo, cam, vpColor::red, 2, true);
+      tracker.display(I, cMo, cam, vpColor::red, 2);
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
       vpDisplay::flush(I);
@@ -115,9 +115,6 @@ int main(int argc, char **argv)
     }
     vpDisplay::getClick(I);
 
-#ifdef VISP_HAVE_XML2
-    vpXmlParser::cleanup();
-#endif
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     SoDB::finish();
 #endif

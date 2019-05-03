@@ -106,10 +106,8 @@ if(USE_PCL)
   # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
   # will be not able to give the names of PCL libraries when used without CMake.
   foreach(lib_ ${PCL_LIBRARIES})
-    # check if ${lib_} is in VTK_LIBRARIES and is a TARGET. If this is the case, we retrieve the full location
-    list(FIND VTK_LIBRARIES ${lib_} lib_is_vtk_)
-    if(NOT ${lib_is_vtk_} EQUAL -1 AND TARGET ${lib_})
-      # This is a VTK library
+    if(TARGET ${lib_})
+      # This is a PCL or VTK library
       list(APPEND PCL_VTK_LIBRARIES ${lib_})
     else()
       # Other libraries sqlite3, boost..., optimized, debug
@@ -140,15 +138,32 @@ if(USE_PCL)
       # See https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
       list(REMOVE_ITEM opt_libs "vtkproj4")
     endif()
-    # When VTK kits are enabled we need to get imported targets
+    # Get pcl link libraries like opengl
     vp_list_unique(PCL_VTK_LIBRARIES)
     if(NOT VTK_ENABLE_KITS)
-      set(PCL_VTK_LIBS ${PCL_VTK_LIBRARIES})
+      foreach(lib_ ${PCL_VTK_LIBRARIES})
+        get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
+        if(imported_libs_)
+          list(APPEND PCL_VTK_LIBS ${lib_})
+          list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
+        else()
+          list(APPEND PCL_VTK_LIBS ${lib_})
+        endif()
+      endforeach()
+      vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+
+      # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
+      foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
+        string(REGEX REPLACE "\\$<LINK_ONLY:" "" lib_ ${lib_})
+        string(REGEX REPLACE ">" "" lib_ ${lib_})
+        list(APPEND PCL_VTK_LIBS ${lib_})
+      endforeach()
+      vp_list_unique(PCL_VTK_LIBS)
     else()
       foreach(lib_ ${PCL_VTK_LIBRARIES})
         get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
         if(imported_libs_)
-          list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_} ${prop})
+          list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
           if(${lib_}_KIT)
             list(APPEND PCL_VTK_LIBS ${${lib_}_KIT})
           endif()
@@ -159,7 +174,7 @@ if(USE_PCL)
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
       while(PCL_VTK_IMPORTED_LIBS)
         vp_list_pop_front(PCL_VTK_IMPORTED_LIBS elt)
-        if(elt MATCHES "^vtk") # to avoid precessing -framework ApplicationServices -framework CoreServices
+        if(elt MATCHES "^vtk" OR elt MATCHES "^pcl") # to avoid precessing -framework ApplicationServices -framework CoreServices
           get_target_property(imported_libs_ ${elt} INTERFACE_LINK_LIBRARIES)
           if(imported_libs_)
             list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
@@ -196,6 +211,7 @@ if(USE_PCL)
       endif()
     endforeach()
   endif()
+
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
   mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY RSSDK_DIR DSSDK_DIR VTK_DIR)
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)

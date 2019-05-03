@@ -113,6 +113,34 @@ class vpThetaUVector;
 
   The vpRzyzVector class is derived from vpRotationVector.
 
+  From the implementation point of view, it is nothing more than an
+  array of three doubles with values in [rad].
+
+  You can set values [rad] accessing each element:
+  \code
+  vpRzyzVector rzyz;
+  rzyz[0] = M_PI_4;
+  rzyz[1] = M_PI_2;
+  rzyz[2] = M_PI;
+  \endcode
+  You can also initialize the vector using operator<<(double):
+  \code
+  rzyz << M_PI_4, M_PI_2, M_PI;
+  \endcode
+  Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
+  \code
+#ifdef VISP_HAVE_CXX11
+  rzyz = {M_PI_4, M_PI_2, M_PI};
+#endif
+  \endcode
+
+  To get the values [rad] use:
+  \code
+  double r1 = rzyz[0];
+  double r2 = rzyz[1];
+  double r3 = rzyz[2];
+  \endcode
+
   The code below shows first how to initialize this representation of
   Euler angles, than how to contruct a rotation matrix from a
   vpRzyzVector and finaly how to extract the vpRzyzVector Euler angles
@@ -182,5 +210,8 @@ public:
 
   vpRzyzVector &operator=(const vpColVector &rzyz);
   vpRzyzVector &operator=(double x);
+#ifdef VISP_HAVE_CXX11
+  vpRzyzVector &operator=(const std::initializer_list<double> &list);
+#endif
 };
 #endif

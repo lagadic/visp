@@ -1,8 +1,8 @@
 project(${APRILTAG_LIBRARY})
 
-set(APRILTAG_MAJOR_VERSION 0 PARENT_SCOPE)
-set(APRILTAG_MINOR_VERSION 9 PARENT_SCOPE)
-set(APRILTAG_PATCH_VERSION 8 PARENT_SCOPE)
+set(APRILTAG_MAJOR_VERSION 3 PARENT_SCOPE)
+set(APRILTAG_MINOR_VERSION 0 PARENT_SCOPE)
+set(APRILTAG_PATCH_VERSION 0 PARENT_SCOPE)
 
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -12,6 +12,15 @@ file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
 vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
 vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
 vp_list_filterout(lib_hdrs common/getopt.h)    # useless and produces errors on uwp
+
+if(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo" AND CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.5)
+vp_list_filterout(lib_srcs tagCircle49h12.c)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_hdrs tagCircle49h12.h)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_srcs tagCustom48h12.c)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_hdrs tagCustom48h12.h)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_srcs tagStandard52h13.c)   # build takes too much time with RelWithDebInfo on GCC 5.4.0
+vp_list_filterout(lib_hdrs tagStandard52h13.h)   # build takes too much time with RelWithDebInfo on GCC 5.4.0
+endif()
 
 if(UNIX)
   if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
@@ -54,7 +63,6 @@ if(MSVC)
     vp_set_source_file_compile_flag(tag16h5.c /wd4996)
     vp_set_source_file_compile_flag(tag25h7.c /wd4996)
     vp_set_source_file_compile_flag(tag25h9.c /wd4996)
-    vp_set_source_file_compile_flag(tag36artoolkit.c /wd4996)
     vp_set_source_file_compile_flag(tag36h10.c /wd4996)
     vp_set_source_file_compile_flag(tag36h11.c /wd4996)
   else()

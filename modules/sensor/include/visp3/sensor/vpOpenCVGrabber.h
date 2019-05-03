@@ -114,7 +114,7 @@ private:
 
 public:
   vpOpenCVGrabber();
-  ~vpOpenCVGrabber();
+  virtual ~vpOpenCVGrabber();
 
   void open();
   void open(vpImage<unsigned char> &I);

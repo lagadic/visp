@@ -144,7 +144,7 @@ class VISP_EXPORT vpVirtuose
 {
 public:
   vpVirtuose();
-  ~vpVirtuose();
+  virtual ~vpVirtuose();
 
   void addForce(vpColVector &force);
   void close();

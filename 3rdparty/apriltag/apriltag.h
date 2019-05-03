@@ -1,19 +1,15 @@
 /* Copyright (C) 2013-2016, The Regents of The University of Michigan.
 All rights reserved.
-
 This software was developed in the APRIL Robotics Lab under the
 direction of Edwin Olson, ebolson@umich.edu. This software may be
 available under alternative licensing terms; contact the address above.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-
 1. Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,7 +20,6 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
@@ -53,6 +48,8 @@ struct quad
 {
     float p[4][2]; // corners
 
+    bool reversed_border;
+
     // H: tag coordinates ([-1,1] at the black corners) to pixels
     // Hinv: pixels to tag
     matd_t *H, *Hinv;
@@ -71,11 +68,14 @@ struct apriltag_family
     // The codes in the family.
     uint64_t *codes;
 
-    // how wide (in bit-sizes) is the black border? (usually 1)
-    uint32_t black_border;
+    int width_at_border;
+    int total_width;
+    bool reversed_border;
 
-    // how many bits tall and wide is it? (e.g. 36bit tag ==> 6)
-    uint32_t d;
+    // The bit locations.
+    uint32_t nbits;
+    uint32_t *bit_x;
+    uint32_t *bit_y;
 
     // minimum hamming distance between any two codes. (e.g. 36h11 => 11)
     uint32_t h;
@@ -103,6 +103,7 @@ struct apriltag_quad_thresh_params
     // straight or close to 180 degrees. Zero means that no quads are
     // rejected. (In radians).
     float critical_rad;
+    float cos_critical_rad;
 
     // When fitting lines to the contours, what is the maximum mean
     // squared error allowed?  This is useful in rejecting contours
@@ -154,22 +155,12 @@ struct apriltag_detector
     // quad_decimate = 1.
     int refine_edges;
 
-    // when non-zero, detections are refined in a way intended to
-    // increase the number of detected tags. Especially effective for
-    // very small tags near the resolution threshold (e.g. 10px on a
-    // side).
-    int refine_decode;
-
-    // when non-zero, detections are refined in a way intended to
-    // increase the accuracy of the extracted pose. This is done by
-    // maximizing the contrast around the black and white border of
-    // the tag. This generally increases the number of successfully
-    // detected tags, though not as effectively (or quickly) as
-    // refine_decode.
+    // How much sharpening should be done to decoded images? This
+    // can help decode small tags but may or may not help in odd
+    // lighting conditions or low light conditions.
     //
-    // This option must be enabled in order for "goodness" to be
-    // computed.
-    int refine_pose;
+    // The default value is 0.25.
+    double decode_sharpening;
 
     // When non-zero, write a variety of debugging images to the
     // current working directory at various stages through the
@@ -218,11 +209,6 @@ struct apriltag_detection
     // a hamming distance greater than 2.
     int hamming;
 
-    // A measure of the quality of tag localization: measures the
-    // average contrast of the pixels around the border of the
-    // tag. refine_pose must be enabled, or this field will be zero.
-    float goodness;
-
     // A measure of the quality of the binary decoding process: the
     // average difference between the intensity of a data bit versus
     // the decision threshold. Higher numbers roughly indicate better
@@ -233,8 +219,8 @@ struct apriltag_detection
     float decision_margin;
 
     // The 3x3 homography matrix describing the projection from an
-    // "ideal" tag (with corners at (-1,-1), (1,-1), (1,1), and (-1,
-    // 1)) to pixels in the image. This matrix will be freed by
+    // "ideal" tag (with corners at (-1,1), (1,1), (1,-1), and (-1,
+    // -1)) to pixels in the image. This matrix will be freed by
     // apriltag_detection_destroy.
     matd_t *H;
 
@@ -283,7 +269,7 @@ void apriltag_detection_destroy(apriltag_detection_t *det);
 // destroys the array AND the detections within it.
 void apriltag_detections_destroy(zarray_t *detections);
 
-// Renders the apriltag with with 1px white border.
+// Renders the apriltag.
 // Caller is responsible for calling image_u8_destroy on the image
 image_u8_t *apriltag_to_image(apriltag_family_t *fam, int idx);
 

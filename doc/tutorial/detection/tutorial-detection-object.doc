@@ -67,7 +67,7 @@ The following line declares an instance of the vpKeyPoint class :
 
 \snippet tutorial-detection-object-mbt.cpp Keypoint declaration
 
-If libxml2 is available, you can load the configuration (type of detector, extractor, matcher, ransac pose estimation parameters) directly with an xml configuration file :
+You can load the configuration (type of detector, extractor, matcher, ransac pose estimation parameters) directly with an xml configuration file :
 
 \snippet tutorial-detection-object-mbt.cpp Keypoint xml config
 
@@ -95,7 +95,7 @@ We then visualize the result of the learning process by displaying with a cross 
 
 \snippet tutorial-detection-object-mbt.cpp Display reference keypoints
 
-We declare now another instance of the vpKeyPoint class dedicated this time to the detection of the teabox. If libxml2 is available, the configuration is directly loaded from an xml file, otherwise this is done directly in the code.
+We declare now another instance of the vpKeyPoint class dedicated this time to the detection of the teabox. The configuration is directly loaded from an xml file, otherwise this is done directly in the code.
 
 \snippet tutorial-detection-object-mbt.cpp Init keypoint detection
 

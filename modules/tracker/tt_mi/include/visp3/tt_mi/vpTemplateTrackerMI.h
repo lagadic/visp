@@ -150,7 +150,7 @@ public:
   {
   }
   explicit vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
-  ~vpTemplateTrackerMI();
+  virtual ~vpTemplateTrackerMI();
   vpMatrix getCovarianceMatrix() const { return covarianceMatrix; }
   double getMI() const { return MI_postEstimation; }
   double getMI(const vpImage<unsigned char> &I, int &nc, const int &bspline, vpColVector &tp);

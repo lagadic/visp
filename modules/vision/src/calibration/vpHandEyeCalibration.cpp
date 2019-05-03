@@ -903,7 +903,7 @@ int vpHandEyeCalibration::calibrate(const std::vector<vpHomogeneousMatrix> &cMo,
     }
   }
   // First method using Tsai formulation
-  err = vpHandEyeCalibration::calibrationRotationTsaiOld(cMo, rMe, eRc);
+  err = vpHandEyeCalibration::calibrationRotationTsai(cMo, rMe, eRc);
   if (err != 0) printf("\n Problem in solving Hand-Eye Rotation by Tsai method \n");
   else
   {

@@ -182,6 +182,10 @@ public:
   */
   inline unsigned int getCurrentNumberPoints() const { return nbPointsCur; }
 
+  std::vector<std::vector<double> > getFeaturesForDisplay();
+
+  std::vector<std::vector<double> > getModelForDisplay(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
+
   inline bool hasEnoughPoints() const { return enoughPoints; }
 
   /*!

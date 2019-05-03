@@ -1,10 +1,9 @@
 //! \example tutorial-event-keyboard.cpp
-#include <visp/vpConfig.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
 
 int main()
 {
@@ -38,11 +37,10 @@ int main()
   std::cout << "A keyboard event was detected" << std::endl;
   // Non blocking keyboard event loop
   int cpt_event = 0;
-  bool event;
   char key[10];
   std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
   do {
-    event = vpDisplay::getKeyboardEvent(I, &key[0], false);
+    bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
     if (event) {
       std::cout << "Key detected: " << key << std::endl;
       cpt_event ++;

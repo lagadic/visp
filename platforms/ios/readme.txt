@@ -8,5 +8,4 @@ If everything's fine, a few minutes later you will get ~/<workspace_dir>/ios/vis
 
 Note that this framework should be built with ViSP 3rd party:
 - OpenCV; see tutorial http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-iOS.html
-- libxml2
 - pthread

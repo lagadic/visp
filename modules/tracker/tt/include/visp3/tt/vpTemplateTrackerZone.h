@@ -71,7 +71,7 @@ protected:
 public:
   vpTemplateTrackerZone();
   vpTemplateTrackerZone(const vpTemplateTrackerZone &z);
-  ~vpTemplateTrackerZone();
+  virtual ~vpTemplateTrackerZone();
 
   // add a triangle to the zone
   void add(const vpTemplateTrackerTriangle &t);

@@ -330,12 +330,12 @@ bool read_data(const unsigned int cpt, const std::string &input_directory, vpIma
 }
 
 void loadConfiguration(vpMbTracker *const tracker, const std::string &
-#if defined(VISP_HAVE_XML2) && USE_XML
+#if defined(VISP_HAVE_PUGIXML) && USE_XML
                        configFile_depth
 #endif
 )
 {
-#if defined(VISP_HAVE_XML2) && USE_XML
+#if defined(VISP_HAVE_PUGIXML) && USE_XML
   // From the xml file
   dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(configFile_depth);
 #else
@@ -759,12 +759,6 @@ int main(int argc, const char **argv)
 
     delete tracker;
     tracker = NULL;
-
-#if defined(VISP_HAVE_XML2) && USE_XML
-    // Cleanup memory allocated by xml library used to parse the xml config
-    // file in vpMbGenericTracker::loadConfigFile()
-    vpXmlParser::cleanup();
-#endif
 
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     // Cleanup memory allocated by Coin library used to load a vrml model in

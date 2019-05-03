@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,24 +11,22 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional
+ * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See https://visp.inria.fr/download/ for more information.
+ * See http://visp.inria.fr for more information.
  *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
  * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
+ * Inria at visp@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Description:
  * Model-based edge klt tracker with multiple cameras.
@@ -1247,9 +1245,6 @@ vpMbEdgeKltMultiTracker::initMbtTracking(std::map<std::string, const vpImage<uns
   From the configuration file initialize the parameters corresponding to the
 objects: KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
   \throw vpException::ioError if the file has not been properly parsed (file
 not found or wrong format for the data).
 
@@ -1286,8 +1281,6 @@ not found or wrong format for the data).
   </klt>
 </conf>
   \endcode
-
-  \sa vpXmlParser::cleanup()
 */
 void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile)
 {
@@ -1301,15 +1294,12 @@ void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile)
   documentation. From the configuration file initialize the parameters
   corresponding to the objects: KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param configFile1 : Full name of the xml file for the first camera.
   \param configFile2 : Full name of the xml file for the second camera.
   \param firstCameraIsReference : If true, the first camera is the reference,
   otherwise it is the second one.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
                                              const bool firstCameraIsReference)
@@ -1324,12 +1314,9 @@ void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile1, con
   the configuration file initialize the parameters corresponding to the
   objects: KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param mapOfConfigFiles : Map of xml files.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeKltMultiTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles)
 {
@@ -1373,8 +1360,7 @@ void vpMbEdgeKltMultiTracker::loadModel(const std::string &modelFile, const bool
   modelInitialised = true;
 }
 
-void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                           const unsigned int lvl)
+void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages)
 {
   // MBT
   vpMbEdgeTracker *edge = NULL;
@@ -1385,7 +1371,7 @@ void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<u
     edge->updateMovingEdgeWeights();
 
     if (displayFeatures) {
-      edge->displayFeaturesOnImage(*mapOfImages[it->first], lvl);
+      edge->m_featuresToBeDisplayedEdge = edge->getFeaturesForDisplayEdge();
     }
   }
 
@@ -1950,7 +1936,7 @@ void vpMbEdgeKltMultiTracker::setOptimizationMethod(const vpMbtOptimizationMetho
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cMo_ : Pose to affect.
 */
 void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
@@ -1963,6 +1949,34 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpH
     if (it_edge != m_mapOfEdgeTrackers.end() && it_klt != m_mapOfKltTrackers.end()) {
       it_edge->second->setPose(I, cMo_);
       it_klt->second->setPose(I, cMo_);
+
+      this->cMo = cMo_;
+      c0Mo = this->cMo;
+      ctTc0.eye();
+    } else {
+      std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << " !" << std::endl;
+    }
+  }
+}
+
+/*!
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
+
+  \param I_color : color image corresponding to the desired pose.
+  \param cMo_ : Pose to affect.
+*/
+void vpMbEdgeKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+{
+  if (m_mapOfEdgeTrackers.size() != 1 || m_mapOfKltTrackers.size() != 1) {
+    std::cerr << "This method requires only 1 camera !" << std::endl;
+  } else {
+    std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
+    std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
+    if (it_edge != m_mapOfEdgeTrackers.end() && it_klt != m_mapOfKltTrackers.end()) {
+      vpImageConvert::convert(I_color, m_I);
+      it_edge->second->setPose(m_I, cMo_);
+      it_klt->second->setPose(m_I, cMo_);
 
       this->cMo = cMo_;
       c0Mo = this->cMo;
@@ -2085,7 +2099,7 @@ void vpMbEdgeKltMultiTracker::testTracking()
 
   \throw vpException : if the tracking is supposed to have failed
 
-  \param I : the input image
+  \param I : the input grayscale image
 */
 void vpMbEdgeKltMultiTracker::track(const vpImage<unsigned char> &I)
 {
@@ -2108,6 +2122,14 @@ void vpMbEdgeKltMultiTracker::track(const vpImage<unsigned char> &I)
   if (computeProjError) {
     projectionError = it_mbt->second->getProjectionError();
   }
+}
+
+/*!
+  Not supported interface, this class is deprecated.
+*/
+void vpMbEdgeKltMultiTracker::track(const vpImage<vpRGBa> &)
+{
+  std::cout << "Not supported interface, this class is deprecated." << std::endl;
 }
 
 /*!
@@ -2179,7 +2201,7 @@ void vpMbEdgeKltMultiTracker::track(std::map<std::string, const vpImage<unsigned
 
   computeVVS(mapOfImages);
 
-  postTracking(mapOfImages, 0);
+  postTracking(mapOfImages);
 
   if (computeProjError) {
     vpMbEdgeMultiTracker::computeProjectionError();

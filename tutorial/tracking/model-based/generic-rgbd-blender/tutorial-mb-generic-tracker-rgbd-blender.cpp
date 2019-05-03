@@ -9,7 +9,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403) && defined(VISP_HAVE_XML2)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403) && defined(VISP_HAVE_PUGIXML)
 namespace {
 bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
                vpImage<uint16_t> &I_depth_raw, unsigned int &depth_width, unsigned int &depth_height,
@@ -68,7 +68,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   std::string filename_pose = buffer;
 
   std::ifstream f_pose;
-  f_pose.open(filename_pose);
+  f_pose.open(filename_pose.c_str()); // .c_str() to keep compat when c++11 not available
   if (!f_pose.is_open()) {
     std::cerr << "Cannot read: " << filename_pose << std::endl;
     return false;
@@ -183,7 +183,8 @@ int main(int argc, char *argv[])
   vpHomogeneousMatrix depthMcolor;
   if (!disable_depth) {
     std::ifstream f_extrinsics;
-    f_extrinsics.open(extrinsic_file);
+    f_extrinsics.open(extrinsic_file.c_str()); // .c_str() to keep compat when c++11 not available
+
     depthMcolor.load(f_extrinsics);
     tracker.setCameraTransformationMatrix("Camera2", depthMcolor);
     std::cout << "depthMcolor:\n" << depthMcolor << std::endl;
@@ -263,7 +264,6 @@ int main(int argc, char *argv[])
       frame_cpt++;
     }
 
-    vpDisplay::display(I);
     vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 #else
 int main()
 {
-  std::cout << "To run this tutorial, ViSP should be built with OpenCV and libXML2 libraries." << std::endl;
+  std::cout << "To run this tutorial, ViSP should be built with OpenCV and pugixml libraries." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

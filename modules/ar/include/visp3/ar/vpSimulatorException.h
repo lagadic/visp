@@ -36,15 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef _vpSimulatorException_H_
-#define _vpSimulatorException_H_
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+#ifndef _vpSimulatorException_h_
+#define _vpSimulatorException_h_
 
 /* \file vpSimulatorException.h
    \brief error that can be emited by the vpSimulator class and its derivates
@@ -55,13 +48,6 @@
 
 #include <iostream> /* Classe std::ostream.    */
 #include <string>   /* Classe string.     */
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
 
 /*!
 
@@ -76,11 +62,11 @@ public:
   vpSimulator member
  */
   enum errorSimulatorCodeEnum {
-    ioError,
-    noFileNameError,
-    notInitializedError,
-    windowSizeNotInitializedError,
-    badInitializationError
+    ioError,                       //!< I/O error
+    noFileNameError,               //!< Filename error
+    notInitializedError,           //!< Initialization error
+    windowSizeNotInitializedError, //!< Window size not initialized
+    badInitializationError         //!< Initialization error
   };
 
 public:

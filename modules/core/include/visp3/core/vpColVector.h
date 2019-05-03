@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef vpColVector_H
-#define vpColVector_H
+#ifndef _vpColVector_h_
+#define _vpColVector_h_
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMath.h>
@@ -68,6 +68,64 @@ class vpPoseVector;
   operations on these vectors.
 
   The vpColVector class is derived from vpArray2D<double>.
+
+  The code below shows how to create a 3-element column vector of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v(3);
+  v[0] = -1; v[1] = -2.1; v[2] = -3;
+
+  std::cout << "v:" << std::endl;
+  for (unsigned int i = 0; i < v.size(); i++) {
+    std::cout << v[i] << std::endl;
+  }
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+v:
+-1
+-2.1
+-3
+  \endcode
+  You can also use operator<< to initialize a column vector as previously:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpColVector v({-1, -2.1, -3});
+  std::cout << "v:\n" << v << std::endl;
+#endif
+}
+  \endcode
+  The vector could also be initialized using operator=(const std::initializer_list< double > &)
+  \code
+int main()
+{
+#ifdef VISP_HAVE_CXX11
+  vpColVector v;
+  v = {-1, -2.1, -3};
+#endif
+}
+  \endcode
+
 */
 class VISP_EXPORT vpColVector : public vpArray2D<double>
 {
@@ -98,8 +156,12 @@ public:
   vpColVector(const vpMatrix &M, unsigned int j);
   vpColVector(const std::vector<double> &v);
   vpColVector(const std::vector<float> &v);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
   vpColVector(vpColVector &&v);
+  vpColVector(const std::initializer_list<double> &list)
+    : vpArray2D<double>(static_cast<unsigned int>(list.size()), 1) {
+    std::copy(list.begin(), list.end(), data);
+  }
 #endif
   /*!
     Destructor.
@@ -138,7 +200,7 @@ public:
     (*this) *= d2r;
   }
 
-  double euclideanNorm() const;
+  vp_deprecated double euclideanNorm() const;
   /*!
      Extract a sub-column vector from a column vector.
      \param r : Index of the row corresponding to the first element of the
@@ -167,6 +229,7 @@ public:
     return vpColVector(*this, r, colsize);
   }
 
+  double frobeniusNorm() const;
   vpColVector hadamard(const vpColVector &v) const;
 
   double infinityNorm() const;
@@ -193,8 +256,9 @@ public:
   vpColVector &operator=(const std::vector<double> &v);
   vpColVector &operator=(const std::vector<float> &v);
   vpColVector &operator=(double x);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#ifdef VISP_HAVE_CXX11
   vpColVector &operator=(vpColVector &&v);
+  vpColVector &operator=(const std::initializer_list<double> &list);
 #endif
   //! Comparison operator.
   bool operator==(const vpColVector &v) const;
@@ -218,6 +282,8 @@ public:
 
   vpColVector &operator<<(const vpColVector &v);
   vpColVector &operator<<(double *);
+  vpColVector& operator<<(double val);
+  vpColVector& operator,(double val);
 
   int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 
@@ -233,7 +299,7 @@ public:
   }
 
   void reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols);
-  vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
+  vpMatrix reshape(unsigned int nrows, unsigned int ncols);
 
   /*! Modify the size of the column vector.
     \param i : Size of the vector. This value corresponds to the vector number
@@ -254,11 +320,12 @@ public:
     */
   void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
   {
-    if (ncols != 1)
+    if (ncols != 1) {
       throw(vpException(vpException::fatalError,
                         "Cannot resize a column vector to a (%dx%d) "
                         "dimension vector that has more than one column",
                         nrows, ncols));
+    }
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
   }
 

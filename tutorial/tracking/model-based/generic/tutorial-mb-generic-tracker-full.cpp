@@ -14,8 +14,8 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
   try {
-    std::string opt_videoname = "teabox.mpg";
-    std::string opt_modelname = "teabox.cao";
+    std::string opt_videoname = "model/teabox/teabox.mpg";
+    std::string opt_modelname = "model/teabox/teabox.cao";
     int opt_tracker = 0;
 
     for (int i = 0; i < argc; i++) {
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << opt_videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
               << "xml,"
 #endif
               << "cao or wrl]" << std::endl;
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
     bool usexml = false;
     //! [Load xml]
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
@@ -197,9 +197,6 @@ int main(int argc, char **argv)
     }
     vpDisplay::getClick(I);
 //! [Cleanup]
-#ifdef VISP_HAVE_XML2
-    vpXmlParser::cleanup();
-#endif
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     SoDB::finish();
 #endif

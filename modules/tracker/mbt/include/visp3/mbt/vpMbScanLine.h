@@ -142,7 +142,7 @@ public:
 #endif
 
   vpMbScanLine();
-  ~vpMbScanLine();
+  virtual ~vpMbScanLine();
 
   void drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigned int> > *> &polygons,
                  std::vector<int> listPolyIndices, const vpCameraParameters &K, unsigned int w, unsigned int h);

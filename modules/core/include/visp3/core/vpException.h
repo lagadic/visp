@@ -85,19 +85,17 @@ protected:
 
 public:
   enum generalExceptionEnum {
-    memoryAllocationError,
-    memoryFreeError,
-    functionNotImplementedError,
-    ioError,
-    cannotUseConstructorError,
-    notImplementedError,
-    divideByZeroError,
-    dimensionError,
-    fatalError,
-    badValue,      /*!< Used to indicate that a value is not in the allowed range.
-                    */
-    notInitialized /*!< Used to indicate that a parameter is not initialized.
-                    */
+    memoryAllocationError,       //!< Memory allocation error
+    memoryFreeError,             //!< Memory free error
+    functionNotImplementedError, //!< Function not implemented
+    ioError,                     //!< I/O error
+    cannotUseConstructorError,   //!< Contructor error
+    notImplementedError,         //!< Not implemented
+    divideByZeroError,           //!< Division by zero
+    dimensionError,              //!< Bad dimension
+    fatalError,                  //!< Fatal error
+    badValue,                    //!< Used to indicate that a value is not in the allowed range.
+    notInitialized               //!< Used to indicate that a parameter is not initialized.
   };
 
   vpException(const int code, const char *format, va_list args);

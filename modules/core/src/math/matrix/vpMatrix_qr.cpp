@@ -53,20 +53,31 @@
 #include <visp3/core/vpDebug.h>
 
 #ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
-typedef long int integer;
-#else
-typedef int integer;
-#endif
+#  ifdef VISP_HAVE_MKL
+#include <mkl.h>
+typedef MKL_INT integer;
 
+integer allocate_work(double **work)
+{
+  integer dimWork = (integer)((*work)[0]);
+  delete[] * work;
+  *work = new double[dimWork];
+  return (integer)dimWork;
+}
+#  else
+#    ifdef VISP_HAVE_LAPACK_BUILT_IN
+typedef long int integer;
+#    else
+typedef int integer;
+#    endif
 extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork,
-                       integer *info);
+  integer *info);
 extern "C" int dormqr_(char *side, char *trans, integer *m, integer *n, integer *k, double *a, integer *lda,
-                       double *tau, double *c__, integer *ldc, double *work, integer *lwork, integer *info);
+  double *tau, double *c__, integer *ldc, double *work, integer *lwork, integer *info);
 extern "C" int dorgqr_(integer *, integer *, integer *, double *, integer *, double *, double *, integer *, integer *);
 extern "C" int dtrtri_(char *uplo, char *diag, integer *n, double *a, integer *lda, integer *info);
 extern "C" int dgeqp3_(integer *m, integer *n, double*a, integer *lda, integer *p,
-                       double *tau, double *work, integer* lwork, integer *info);
+  double *tau, double *work, integer* lwork, integer *info);
 
 int allocate_work(double **work);
 
@@ -77,9 +88,10 @@ int allocate_work(double **work)
   *work = new double[dimWork];
   return (int)dimWork;
 }
+#  endif
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition with
 Lapack 3rd party.
@@ -272,7 +284,7 @@ int main()
 */
 vpMatrix vpMatrix::inverseByQR() const
 {
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   return inverseByQRLapack();
 #else
   throw(vpException(vpException::fatalError, "Cannot inverse matrix by QR. Install Lapack 3rd party"));
@@ -307,7 +319,7 @@ vpMatrix vpMatrix::inverseByQR() const
 
 double residual(vpMatrix M1, vpMatrix M2)
 {
-    return (M1 - M2).euclideanNorm();
+    return (M1 - M2).frobeniusNorm();
 }
 
 int main()
@@ -336,10 +348,10 @@ int main()
 */
 unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, double tol) const
 {
-#ifdef VISP_HAVE_LAPACK
-  integer m = (integer) rowNum;     // also rows of Q
-  integer n = (integer) colNum;     // also columns of R
-  integer r = std::min(n,m);  // a priori non-null rows of R = rank of R
+#if defined(VISP_HAVE_LAPACK)
+  integer m = (integer)rowNum;     // also rows of Q
+  integer n = (integer)colNum;     // also columns of R
+  integer r = std::min(n, m);  // a priori non-null rows of R = rank of R
   integer q = r;              // columns of Q and rows of R
   integer na = n;             // columns of A
 
@@ -366,12 +378,12 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   integer info;
 
   // copy this to qrdata in Lapack convention
-  for(integer i = 0; i < m; ++i)
+  for (integer i = 0; i < m; ++i)
   {
-    for(integer j = 0; j < n; ++j)
-      qrdata[i+m*j] = data[j + n*i];
-    for(integer j = n; j < na; ++j)
-      qrdata[i+m*j] = 0;
+    for (integer j = 0; j < n; ++j)
+      qrdata[i + m * j] = data[j + n * i];
+    for (integer j = n; j < na; ++j)
+      qrdata[i + m * j] = 0;
   }
 
   //   work = new double[1];
@@ -500,7 +512,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
 double residual(vpMatrix M1, vpMatrix M2)
 {
-    return (M1 - M2).euclideanNorm();
+    return (M1 - M2).frobeniusNorm();
 }
 
 int main()
@@ -536,7 +548,7 @@ int main()
 */
 unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
 {
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   integer m = (integer) rowNum;     // also rows of Q
   integer n = (integer) colNum;     // also columns of R
   integer r = std::min(n,m);             // a priori non-null rows of R = rank of R
@@ -712,7 +724,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 */
 vpMatrix vpMatrix::inverseTriangular(bool upper) const
 {
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   if(rowNum != colNum || rowNum == 0)
     throw vpMatrixException::dimensionError;
 
@@ -847,5 +859,3 @@ vpColVector vpMatrix::solveByQR(const vpColVector &b) const
   solveByQR(b, x);
   return x;
 }
-
-

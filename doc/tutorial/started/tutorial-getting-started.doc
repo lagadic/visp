@@ -20,7 +20,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
 
 In this section we show how to build a CMake project that uses ViSP as third-party on a unix-like OS. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image.
 
-1. If not already done create a workspace.<br>
+1. If you did \ref tutorial_install_pkg you have to create a workspace. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
 Check if `VISP_WS` environment var exists:
 \code
 $ env | grep VISP_WS
@@ -45,9 +45,14 @@ $ mkdir -p $VISP_WS/image/build
 $ cd $VISP_WS/image/build
 \endcode
 
-4. Run CMake in build directory
+4. Run CMake in build directory<br>
+If you did \ref tutorial_install_pkg, run:
 \code
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
+\endcode
+Otherwise if you did \ref tutorial_install_src, indicate where to find ViSP thanks to `VISP_DIR` var:
+\code
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DVISP_DIR=$VISP_WS/visp-build
 \endcode
 
 5. Build `tutorial-viewer` example
@@ -64,7 +69,7 @@ $ ./tutorial-viewer monkey.pgm
 
 In this section we show how to build a CMake project that uses ViSP as third-party on Windows. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image.
 
-1. If not already done create a workspace. <br>
+1. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
 Open a `cmd` Command Prompt and check if `VISP_WS` environment var exists:
 \code
 C:\> set | findstr VISP_WS
@@ -92,9 +97,14 @@ C:\> mkdir %VISP_WS%\image\build
 C:\> cd %VISP_WS%\image\build
 \endcode
 
-4. Run CMake in build folder (here the generator is chosen for Visual Studio 15 2017 and 64 bits hardware):
+4. Run CMake in build folder and indicate where to find ViSP thanks to `VISP_DIR` var.<br>
+If your are using Visual Studio 15 2017 and 64 bits hardware, run:
 \code
-C:\> cmake -G "Visual Studio 15 2017 Win64" ..
+C:\> cmake -G "Visual Studio 15 2017 Win64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc15
+\endcode
+If your are rather using Visual Studio 14 2015 and 64 bits hardware, run:
+\code
+C:\> cmake -G "Visual Studio 14 2015 Win64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc14
 \endcode
 
 5. Build `tutorial-viewer` example

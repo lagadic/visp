@@ -169,7 +169,7 @@ public:
 
 public:
   vpPlotGraph();
-  ~vpPlotGraph();
+  virtual ~vpPlotGraph();
 
   bool check3Dline(vpImagePoint &iP1, vpImagePoint &iP2);
   bool check3Dpoint(vpImagePoint &iP);

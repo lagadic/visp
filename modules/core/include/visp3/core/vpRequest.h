@@ -76,7 +76,7 @@ private:
 public:
   vpRequestImage();
   vpRequestImage(vpImage<unsigned char> *);
-  ~vpRequestImage();
+  virtual ~vpRequestImage();
 
   virtual void encode();
   virtual void decode();

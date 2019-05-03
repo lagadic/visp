@@ -158,13 +158,8 @@ public:
                               const unsigned int length, const unsigned int thickness);
 
   void display(const vpImage<unsigned char> &I, vpColor col);
-  void display(const vpImage<unsigned char> &I)
-  {
-    vpMeTracker::display(I);
-  } // Shouldn't be here since it's already in vpMeTracker
-  /*!
-    \return Expected number of moving edges to track along the ellipse.
-   */
+  using vpMeTracker::display;
+
   int getExpectedDensity() { return (int)expecteddensity; }
 
   /*!

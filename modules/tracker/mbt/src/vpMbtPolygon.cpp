@@ -100,12 +100,12 @@ vpMbtPolygon::~vpMbtPolygon() {}
   not oriented counter clockwise. If true, the orientation of the face is
   without importance.
   \param cam : Camera parameters (intrinsics parameters)
-  \param I : Image used to consider level of detail.
+  \param width, height : Image size used to consider level of detail.
 
   \return Return true if the polygon is visible.
 */
 bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo,
-                             const vpCameraParameters &cam, const vpImage<unsigned char> &I)
+                             const vpCameraParameters &cam, unsigned int width, unsigned int height)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
 
@@ -116,7 +116,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
     if (useLod) {
       vpCameraParameters c = cam;
       if (clippingFlag > 3) { // Contains at least one FOV constraint
-        c.computeFov(I.getWidth(), I.getHeight());
+        c.computeFov(width, height);
       }
       computePolygonClipped(c);
       std::vector<vpImagePoint> roiImagePoints;
@@ -194,7 +194,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
     if (useLod) {
       vpCameraParameters c = cam;
       if (clippingFlag > 3) { // Contains at least one FOV constraint
-        c.computeFov(I.getWidth(), I.getHeight());
+        c.computeFov(width, height);
       }
       computePolygonClipped(c);
       std::vector<vpImagePoint> roiImagePoints;
@@ -234,19 +234,19 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
 /*!
   Set the flag to consider if the level of detail (LOD) is used or not.
   When activated, lines and faces of the 3D model are tracked if respectively
-their projected lenght and area in the image are significative enough. By
-significative, we mean:
+  their projected lenght and area in the image are significative enough. By
+  significative, we mean:
   - if the lenght of the projected line in the image is greater that a
-threshold set by setMinLineLengthThresh()
+  threshold set by setMinLineLengthThresh()
   - if the area of the projected face in the image is greater that a threshold
-set by setMinPolygonAreaThresh().
+  set by setMinPolygonAreaThresh().
 
   \param use_lod : true if level of detail must be used, false otherwise.
 
   The sample code below shows how to introduce this feature:
   \code
-#include <visp/vpImageIo.h>
-#include <visp/vpMbEdgeTracker.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 
 int main()
 {
@@ -269,7 +269,6 @@ int main()
   while (true) {
     // tracking loop
   }
-  vpXmlParser::cleanup();
 
   return 0;
 }

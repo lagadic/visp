@@ -105,7 +105,7 @@ public:
 
   vpServolens();
   explicit vpServolens(const char *port);
-  ~vpServolens();
+  virtual ~vpServolens();
 
   void open(const char *port = "/dev/ttyS0");
   void close();

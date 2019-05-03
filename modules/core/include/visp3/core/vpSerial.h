@@ -109,7 +109,7 @@ public:
   vpSerial(const std::string &port="", unsigned long baudrate = 9600,
            bytesize_t bytesize = eightbits, parity_t parity = parity_none, stopbits_t stopbits = stopbits_one,
            flowcontrol_t flowcontrol = flowcontrol_none);
-  ~vpSerial();
+  virtual ~vpSerial();
 
   int available();
   void close();

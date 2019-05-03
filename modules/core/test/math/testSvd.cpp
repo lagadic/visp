@@ -224,7 +224,7 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
     S.diag(s[i]);
     vpMatrix U_S_V = U[i] * S * V[i].t();
     vpMatrix D = M[i] - U_S_V;
-    if (D.euclideanNorm() > 1e-6) {
+    if (D.frobeniusNorm() > 1e-6) {
       std::cout << "SVD decomposition failed" << std::endl;
       return EXIT_FAILURE;
     }

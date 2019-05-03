@@ -47,11 +47,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_XML2
-#include <string>
-#include <visp3/core/vpDebug.h>
+#ifdef VISP_HAVE_PUGIXML
+
 #include <visp3/core/vpRectOriented.h>
-#include <visp3/core/vpXmlParser.h>
 
 /*!
   \class vpXmlParserRectOriented
@@ -89,42 +87,32 @@ int main()
 }
   \endcode
 
-  \warning This class is only available if libxml2 is installed and detected by ViSP. Installation instructions are
-  provided here https://visp.inria.fr/3rd_xml2.
+  \warning This class is only available if pugixml third-party is successfully
+built.
 */
 
-class VISP_EXPORT vpXmlParserRectOriented : public vpXmlParser
+class VISP_EXPORT vpXmlParserRectOriented
 {
-
 public:
   vpXmlParserRectOriented();
-  virtual ~vpXmlParserRectOriented();
+  ~vpXmlParserRectOriented();
 
-  typedef enum {
-    CODE_XML_BAD = -1,
-    CODE_XML_OTHER,
-    CODE_XML_CENTER_I,
-    CODE_XML_CENTER_J,
-    CODE_XML_HEIGHT,
-    CODE_XML_WIDTH,
-    CODE_XML_THETA
-  } vpXmlCodeType;
+  enum vpXmlCodeSequenceType { SEQUENCE_OK, SEQUENCE_ERROR };
 
-  typedef enum { SEQUENCE_OK, SEQUENCE_ERROR } vpXmlCodeSequenceType;
+  vpRectOriented getRectangle() const;
 
-  vpRectOriented const getRectangle() { return m_rectangle; }
-  void setRectangle(const vpRectOriented rectangle) { m_rectangle = rectangle; }
+  void parse(const std::string &filename);
+  void save(const std::string &filename, bool append=false);
+
+  void setRectangle(const vpRectOriented &rectangle);
 
 private:
-  vpRectOriented m_rectangle;
-  vpImagePoint m_center;
-  double m_height;
-  double m_width;
-  double m_theta;
+  vpXmlParserRectOriented(const vpXmlParserRectOriented &);            // noncopyable
+  vpXmlParserRectOriented &operator=(const vpXmlParserRectOriented &); //
 
-protected:
-  void readMainClass(xmlDocPtr doc, xmlNodePtr node);
-  void writeMainClass(xmlNodePtr node);
+  // PIMPL idiom
+  class Impl;
+  Impl *m_impl;
 };
-#endif // VISP_HAVE_XML2
-#endif // vpXmlParserRectOriented_h
+#endif //VISP_HAVE_PUGIXML
+#endif //vpXmlParserRectOriented_h

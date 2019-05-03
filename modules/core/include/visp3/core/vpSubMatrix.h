@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef _VP_SUB_MATRIX_
-#define _VP_SUB_MATRIX_
+#ifndef _vpSubMatrix_h_
+#define _vpSubMatrix_h_
 
 #include <visp3/core/vpMatrix.h>
 
@@ -82,7 +82,7 @@ public:
   vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
               const unsigned int &ncols);
   //! Destructor
-  ~vpSubMatrix();
+  virtual ~vpSubMatrix();
 
   //! Initialisation of vpMatrix
   void init(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,

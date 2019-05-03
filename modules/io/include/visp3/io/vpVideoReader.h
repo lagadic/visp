@@ -246,7 +246,7 @@ private:
 
 public:
   vpVideoReader();
-  ~vpVideoReader();
+  virtual ~vpVideoReader();
 
   void acquire(vpImage<vpRGBa> &I);
   void acquire(vpImage<unsigned char> &I);

@@ -199,7 +199,7 @@ class VISP_EXPORT vpUDPServer
 public:
   vpUDPServer(const int port);
   vpUDPServer(const std::string &hostname, const int port);
-  ~vpUDPServer();
+  virtual ~vpUDPServer();
 
   int receive(std::string &msg, const int timeoutMs = 0);
   int receive(std::string &msg, std::string &hostInfo, const int timeoutMs = 0);

@@ -198,7 +198,7 @@ private:
 
 public:
   vpVideoWriter();
-  ~vpVideoWriter();
+  virtual ~vpVideoWriter();
 
   void close();
 

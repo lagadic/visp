@@ -120,10 +120,10 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
 
 int main(int argc, char *argv[])
 {
-  std::string input_directory = "."; // location of the data (images, depth_map, point_cloud)
-  std::string config_color = "cube.xml", config_depth = "cube_depth.xml";
-  std::string model_color = "cube.cao", model_depth = "cube.cao";
-  std::string init_file = "cube.init";
+  std::string input_directory = "data"; // location of the data (images, depth_map, point_cloud)
+  std::string config_color = "model/cube/cube.xml", config_depth = "model/cube/cube_depth.xml";
+  std::string model_color = "model/cube/cube.cao", model_depth = "model/cube/cube.cao";
+  std::string init_file = "model/cube/cube.init";
   int frame_cpt = 0;
   bool disable_depth = false;
 
@@ -145,11 +145,19 @@ int main(int argc, char *argv[])
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n" << argv[0] << " --input_directory <data directory> --config_color <object.xml> --config_depth <object.xml>"
                                              " --model_color <object.cao> --model_depth <object.cao> --init_file <object.init> --disable_depth" << std::endl;
-      std::cout << "\nExample:\n" << argv[0] << " --config_color ../model/cube/cube.xml --config_depth ../model/cube/cube.xml"
-                                                " --model_color ../model/cube/cube.cao --model_depth ../model/cube/cube.cao --init_file ../model/cube/cube.init\n" << std::endl;
+      std::cout << "\nExample:\n" << argv[0] << " --config_color model/cube/cube.xml --config_depth model/cube/cube.xml"
+                                                " --model_color model/cube/cube.cao --model_depth model/cube/cube.cao --init_file model/cube/cube.init\n" << std::endl;
       return 0;
     }
   }
+
+  std::cout << "Config files: " << std::endl;
+  std::cout << "  Input directory: " << "\"" << input_directory << "\"" << std::endl;
+  std::cout << "  Config color: " << "\"" << config_color << "\"" << std::endl;
+  std::cout << "  Config depth: " << "\"" << config_depth << "\"" << std::endl;
+  std::cout << "  Model color : " << "\"" << model_color << "\"" << std::endl;
+  std::cout << "  Model depth : " << "\"" << model_depth << "\"" << std::endl;
+  std::cout << "  Init file   : " << "\"" << init_file << "\"" << std::endl;
 
   vpImage<vpRGBa> I_color;
   //! [Images]
@@ -179,10 +187,12 @@ int main(int argc, char *argv[])
   vpDisplay::flush(I_depth);
 
   //! [Constructor]
+  std::vector<int> trackerTypes;
 #ifdef VISP_HAVE_OPENCV
-  std::vector<int> trackerTypes = {vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER, vpMbGenericTracker::DEPTH_DENSE_TRACKER};
+  trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+  trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
 #else
-  std::vector<int> trackerTypes = {vpMbGenericTracker::EDGE_TRACKER};
+  trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);
 #endif
   vpMbGenericTracker tracker(trackerTypes);
   //! [Constructor]
@@ -205,7 +215,7 @@ int main(int argc, char *argv[])
   //! [Map transformations]
   vpHomogeneousMatrix depth_M_color;
   {
-    std::ifstream file( std::string(input_directory + "/depth_M_color.txt") );
+    std::ifstream file( (std::string(input_directory + "/depth_M_color.txt")).c_str() );
     depth_M_color.load(file);
     file.close();
   }
