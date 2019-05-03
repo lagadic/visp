@@ -57,75 +57,7 @@
 
 #include <Eigen/Core> // TODO: Remove when initial_position var is removed
 
-
-//auto force_control_callback = [=, &log_time, &log_tau_cmd, &log_tau_d, &log_tau_mes, &time, &model, &initial_position, &stop, &zero_torques, &robot_state, &tau_error_integral, &desired_mass, &mutex]
-//                                  (const franka::RobotState& state, franka::Duration period) -> franka::Torques {
-//  time += period.toSec();
-
-//  if (time == 0.0) {
-//    if (! log_folder.empty()) {
-//      std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
-//      log_time.open(log_folder + "/time.log");
-//      log_tau_cmd.open(log_folder + "/tau_cmd.log");
-//      log_tau_d.open(log_folder + "/tau_d.log");
-//      log_tau_mes.open(log_folder + "/tau_mes.log");
-//    }
-//  }
-
-//  {
-//    std::lock_guard<std::mutex> lock(mutex);
-//    robot_state = state;
-//  }
-
-//  if (time == 0.0) {
-//    initial_position = get_position(state);
-//  }
-
-//  if (time > 0 && (get_position(state) - initial_position).norm() > 0.01) {
-//    throw std::runtime_error("Aborting; too far away from starting pose!");
-//  }
-
-//  // get state variables
-//  std::array<double, 42> jacobian_array = model.zeroJacobian(franka::Frame::kEndEffector, state);
-
-//  Eigen::Map<const Eigen::Matrix<double, 6, 7> > jacobian(jacobian_array.data());
-//  Eigen::Map<const Eigen::Matrix<double, 7, 1> > tau_measured(state.tau_J.data());
-//  Eigen::Map<const Eigen::Matrix<double, 7, 1> > gravity(gravity_array.data());
-
-//  Eigen::VectorXd tau_d(7), desired_force_torque(6), tau_cmd(7), tau_ext(7);
-//  desired_force_torque.setZero();
-//  desired_force_torque(2) = desired_mass * -9.81;
-//  tau_ext << tau_measured - gravity - initial_tau_ext;
-//  tau_d << jacobian.transpose() * desired_force_torque;
-//  tau_error_integral += period.toSec() * (tau_d - tau_ext);
-//  // FF + PI control
-//  tau_cmd << tau_d + k_p * (tau_d - tau_ext) + k_i * tau_error_integral;
-
-//  // Smoothly update the mass to reach the desired target value
-//  desired_mass = filter_gain * target_mass + (1 - filter_gain) * desired_mass;
-
-//  std::array<double, 7> tau_d_array{};
-//  Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
-
-//  if (! log_folder.empty()) {
-//    log_time << time << std::endl;
-//    log_tau_cmd << std::fixed << std::setprecision(8) << tau_cmd[0] << " " << tau_cmd[1] << " " << tau_cmd[2] << " " << tau_cmd[3] << " " << tau_cmd[4] << " " << tau_cmd[5] << " " << tau_cmd[6] << std::endl;
-//    log_tau_d   << std::fixed << std::setprecision(8) << tau_d[0] << " " << tau_d[1] << " " << tau_d[2] << " " << tau_d[3] << " " << tau_d[4] << " " << tau_d[5] << " " << tau_d[6] << std::endl;
-//    log_tau_mes << std::fixed << std::setprecision(8) << tau_ext[0] << " " << tau_ext[1] << " " << tau_ext[2] << " " << tau_ext[3] << " " << tau_ext[4] << " " << tau_ext[5] << " " << tau_ext[6] << std::endl;
-//  }
-
-//  if (stop) {
-//    if (! log_folder.empty()) {
-//      log_time.close();
-//      log_tau_cmd.close();
-//      log_tau_d.close();
-//      log_tau_mes.close();
-//    }
-//    return franka::MotionFinished(zero_torques);
-//  }
-
-//  return tau_d_array;
-//};
+vpColVector ft_cart_des_prev(6,0);
 
 void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bool &stop,
                                             const std::string &log_folder,
@@ -133,19 +65,17 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
                                             const std::array<double, 7> &tau_J_des,
                                             const vpColVector &ft_cart_des,
                                             franka::RobotState &robot_state,
-                                            std::mutex &mutex)
+                                            std::mutex &mutex, const double &filter_gain,
+                                            const bool &activate_pi_controller)
 {
   double time = 0.0;
 
   Eigen::Vector3d initial_position;
   franka::Model model = robot->loadModel();
 
-//  constexpr double target_mass{1.0};    // NOLINT(readability-identifier-naming)
-  constexpr double k_p{1.0};            // NOLINT(readability-identifier-naming)
-  constexpr double k_i{2.0};            // NOLINT(readability-identifier-naming)
-  constexpr double filter_gain{0.001};  // NOLINT(readability-identifier-naming)
-//  double desired_mass{0.0};
   Eigen::VectorXd initial_tau_ext(7), tau_error_integral(7);
+  double k_p = 1.0;
+  double k_i = 2.0;
 
   // Bias torque sensor
   std::array<double, 7> gravity_array = model.gravity(robot_state);
@@ -165,15 +95,17 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
   // init integrator
   tau_error_integral.setZero();
 
+  if (! activate_pi_controller) {
+    k_p = 0;
+    k_i = 0;
+  }
+
   std::ofstream log_time;
   std::ofstream log_tau_cmd;
   std::ofstream log_tau_d;
   std::ofstream log_tau_mes;
-
-//  auto get_position = [](const franka::RobotState& robot_state) {
-//    return Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
-//                           robot_state.O_T_EE[14]);
-//  };
+  std::ofstream log_tau_diff;
+  std::ofstream log_tau_diff_prev;
 
   auto force_joint_control_callback = [=, &log_time, &log_tau_cmd, &log_tau_d, &log_tau_mes, &time, &model, &initial_position,
       &stop, &zero_torques, &robot_state, &tau_joint_d, &tau_error_integral,
@@ -196,35 +128,17 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
       robot_state = state;
     }
 
-//    if (time == 0.0) {
-//      initial_position = get_position(state);
-//    }
-
-//    if (time > 0 && (get_position(state) - initial_position).norm() > 0.01) {
-//      throw std::runtime_error("Aborting; too far away from starting pose!");
-//    }
-
-    // get state variables
-//    std::array<double, 42> jacobian_array = model.zeroJacobian(franka::Frame::kEndEffector, state);
-
-//    Eigen::Map<const Eigen::Matrix<double, 6, 7> > jacobian(jacobian_array.data());
     Eigen::Map<const Eigen::Matrix<double, 7, 1> > tau_measured(state.tau_J.data());
     Eigen::Map<const Eigen::Matrix<double, 7, 1> > gravity(gravity_array.data());
 
-    Eigen::VectorXd /*tau_d(7), desired_force_torque(6),*/ tau_cmd(7), tau_ext(7), desired_tau(7);
-//    desired_force_torque.setZero();
-//    desired_force_torque(2) = desired_mass * -9.81;
+    Eigen::VectorXd tau_cmd(7), tau_ext(7), desired_tau(7);
     tau_ext << tau_measured - gravity - initial_tau_ext;
-//    tau_d << jacobian.transpose() * desired_force_torque;
-//    for(size_t i = 0; i < 7; i++) {
-//      tau_d[i] = tau_J_des[i];
-//    }
+
     tau_error_integral += period.toSec() * (tau_joint_d - tau_ext);
     // FF + PI control
     tau_cmd << tau_joint_d + k_p * (tau_joint_d - tau_ext) + k_i * tau_error_integral;
 
     // Smoothly update the mass to reach the desired target value
-//    desired_mass = filter_gain * target_mass + (1 - filter_gain) * desired_mass;
     for(size_t i = 0; i < 7; i++) {
       tau_joint_d[i] = filter_gain * tau_J_des[i] + (1 - filter_gain) * tau_joint_d[i];
     }
@@ -252,7 +166,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
     return tau_d_array;
   };
 
-  auto force_cart_control_callback = [=, &log_time, &log_tau_cmd, &log_tau_d, &log_tau_mes, &time, &model, /*&initial_position, */
+  auto force_cart_control_callback = [=, &log_time, &log_tau_cmd, &log_tau_d, &log_tau_mes, &log_tau_diff, &log_tau_diff_prev, &time, &model, /*&initial_position, */
       &stop, &zero_torques, &robot_state, &tau_cart_d, &tau_error_integral,
       &mutex, &ft_cart_des]
       (const franka::RobotState& state, franka::Duration period) -> franka::Torques {
@@ -265,6 +179,8 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
         log_tau_cmd.open(log_folder + "/tau_cmd.log");
         log_tau_d.open(log_folder + "/tau_d.log");
         log_tau_mes.open(log_folder + "/tau_mes.log");
+        log_tau_diff.open(log_folder + "/tau_diff.log");
+        log_tau_diff_prev.open(log_folder + "/tau_diff_prev.log");
       }
     }
 
@@ -273,14 +189,6 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
       robot_state = state;
     }
 
-//    if (time == 0.0) {
-//      initial_position = get_position(state);
-//    }
-
-//    if (time > 0 && (get_position(state) - initial_position).norm() > 0.01) {
-//      throw std::runtime_error("Aborting; too far away from starting pose!");
-//    }
-
     // get state variables
     std::array<double, 42> jacobian_array = model.zeroJacobian(franka::Frame::kEndEffector, state);
 
@@ -288,23 +196,20 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
     Eigen::Map<const Eigen::Matrix<double, 7, 1> > tau_measured(state.tau_J.data());
     Eigen::Map<const Eigen::Matrix<double, 7, 1> > gravity(gravity_array.data());
 
-    Eigen::VectorXd tau_d(7), /*desired_force_torque(6),*/ tau_cmd(7), tau_ext(7), desired_tau(7);
-//    desired_force_torque.setZero();
-//    desired_force_torque(2) = desired_mass * -9.81;
+    Eigen::VectorXd tau_d(7), tau_cmd(7), tau_ext(7), desired_tau(7);
     tau_ext << tau_measured - gravity - initial_tau_ext;
-    tau_d << jacobian.transpose() * tau_cart_d;
-//    for(size_t i = 0; i < 7; i++) {
-//      tau_d[i] = tau_J_des[i];
-//    }
+
     tau_error_integral += period.toSec() * (tau_d - tau_ext);
+
     // FF + PI control
     tau_cmd << tau_d + k_p * (tau_d - tau_ext) + k_i * tau_error_integral;
 
-    // Smoothly update the mass to reach the desired target value
-//    desired_mass = filter_gain * target_mass + (1 - filter_gain) * desired_mass;
+    // Apply force with gradually increasing the force
     for(size_t i = 0; i < 7; i++) {
       tau_cart_d[i] = filter_gain * ft_cart_des[i] + (1 - filter_gain) * tau_cart_d[i];
     }
+
+    tau_d << jacobian.transpose() * tau_cart_d;
 
     std::array<double, 7> tau_d_array{};
     Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
@@ -314,6 +219,17 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
       log_tau_cmd << std::fixed << std::setprecision(8) << tau_cmd[0] << " " << tau_cmd[1] << " " << tau_cmd[2] << " " << tau_cmd[3] << " " << tau_cmd[4] << " " << tau_cmd[5] << " " << tau_cmd[6] << std::endl;
       log_tau_d   << std::fixed << std::setprecision(8) << tau_d[0] << " " << tau_d[1] << " " << tau_d[2] << " " << tau_d[3] << " " << tau_d[4] << " " << tau_d[5] << " " << tau_d[6] << std::endl;
       log_tau_mes << std::fixed << std::setprecision(8) << tau_ext[0] << " " << tau_ext[1] << " " << tau_ext[2] << " " << tau_ext[3] << " " << tau_ext[4] << " " << tau_ext[5] << " " << tau_ext[6] << std::endl;
+      log_tau_diff << std::fixed << std::setprecision(8);
+      for (size_t i = 0; i < ft_cart_des.size(); i++) {
+        log_tau_diff << ft_cart_des[i] - tau_cart_d[i] << " ";
+      }
+      log_tau_diff << std::endl;
+
+      log_tau_diff_prev << std::fixed << std::setprecision(8);
+      for (size_t i = 0; i < ft_cart_des.size(); i++) {
+        log_tau_diff_prev << ft_cart_des[i] - ft_cart_des_prev[i] << " ";
+      }
+      log_tau_diff_prev << std::endl;
     }
 
     if (stop) {
@@ -322,9 +238,13 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
         log_tau_cmd.close();
         log_tau_d.close();
         log_tau_mes.close();
+        log_tau_diff.close();
+        log_tau_diff_prev.close();
       }
       return franka::MotionFinished(zero_torques);
     }
+
+    ft_cart_des_prev = ft_cart_des;
 
     return tau_d_array;
   };
@@ -338,11 +258,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
     int nbAttempts = 10;
     for (int attempt = 1; attempt <= nbAttempts; attempt++) {
       try {
-#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
-        robot->control(force_control_callback);
-#else
         robot->control(force_joint_control_callback, true, cutoff_frequency);
-#endif
         break;
       } catch (const franka::ControlException &e) {
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
@@ -359,11 +275,7 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
     int nbAttempts = 10;
     for (int attempt = 1; attempt <= nbAttempts; attempt++) {
       try {
-#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
-        robot->control(force_control_callback);
-#else
         robot->control(force_cart_control_callback, true, cutoff_frequency);
-#endif
         break;
       } catch (const franka::ControlException &e) {
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;

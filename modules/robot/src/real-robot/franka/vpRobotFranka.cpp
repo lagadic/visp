@@ -192,8 +192,9 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
 
   franka::RobotState robot_state = getRobotInternalState();
   vpColVector q(7);
-  for (int i=0; i < 7; i++)
-    q[i] = robot_state.q_d[i];
+  for (int i=0; i < 7; i++) {
+    q[i] = robot_state.q[i];
+  }
 
   switch(frame) {
   case JOINT_STATE: {
@@ -893,10 +894,15 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
 
   \param[in] frame : Control frame in which the force/torque is applied.
 
-  \param[in] ft : Force/torque vector.The size of this vector
+  \param[in] ft : Force/torque vector. The size of this vector
   is always 6 for a cartesian force/torque skew, and 7 for joint torques.
+
+  \param[in] filter_gain : Value in range [0:1] to filter the force/torque vector \e ft.
+  To diable the filter set filter_gain to 1.
+  \param[in] activate_pi_controller : Activate proportional and integral low level controller.
  */
-void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft)
+void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft,
+                                   const double &filter_gain, const bool &activate_pi_controller)
 {
   switch (frame) {
   // Saturation in joint space
@@ -940,7 +946,8 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
     m_ftControlThreadIsRunning = true;
     m_ftControlThread = std::thread(&vpForceTorqueGenerator::control_thread, vpForceTorqueGenerator(),
                                     std::ref(m_handler), std::ref(m_ftControlThreadStopAsked), m_log_folder,
-                                    frame, std::ref(m_tau_J_des), std::ref(m_ft_cart_des), std::ref(m_robot_state), std::ref(m_mutex));
+                                    frame, std::ref(m_tau_J_des), std::ref(m_ft_cart_des), std::ref(m_robot_state),
+                                    std::ref(m_mutex), filter_gain, activate_pi_controller);
   }
 }
 

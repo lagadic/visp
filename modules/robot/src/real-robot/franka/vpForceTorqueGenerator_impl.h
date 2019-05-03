@@ -67,7 +67,8 @@ public:
                       const vpRobot::vpControlFrameType &frame,
                       const std::array<double, 7> &tau_J_des,
                       const vpColVector &ft_cart_des,
-                      franka::RobotState &robot_state, std::mutex &mutex);
+                      franka::RobotState &robot_state, std::mutex &mutex,
+                      const double &filter_gain, const bool &activate_pi_controller);
 
 
 };

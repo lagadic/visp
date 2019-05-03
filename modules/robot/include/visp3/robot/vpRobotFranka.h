@@ -340,7 +340,8 @@ public:
   bool savePosFile(const std::string &filename, const vpColVector &q);
 
   void set_eMc(const vpHomogeneousMatrix &eMc);
-  void setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft);
+  void setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft,
+                      const double &filter_gain=0.1, const bool &activate_pi_controller=false);
   void setLogFolder(const std::string &folder);
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
   void setPositioningVelocity(const double velocity);
