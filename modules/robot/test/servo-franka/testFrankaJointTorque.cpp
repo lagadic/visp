@@ -74,27 +74,17 @@ int main(int argc, char **argv)
     robot.setLogFolder(log_folder);
     robot.connect(robot_ip);
 
-    std::cout << "WARNING: This example will move the robot! "
-              << "Please make sure to have the user stop button at hand!" << std::endl
+    std::cout << "WARNING: This example will move the robot! " << std::endl
+              << "- Please make sure to have the user stop button at hand!" << std::endl
+              << "- Please make also sure the end-effector is in contact with a flat surface such as a foam board!" << std::endl
               << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
-
-//    /*
-//     * Move to a safe position
-//     */
-//    vpColVector q(7, 0);
-//    q[3] = -M_PI_2;
-//    q[5] = M_PI_2;
-//    q[6] = M_PI_4;
-//    std::cout << "Move to joint position: " << q.t() << std::endl;
-//    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
-//    robot.setPosition(vpRobot::JOINT_STATE, q);
 
     /*
      * Apply joint torque
      */
     vpColVector tau_d(7, 0);
-    tau_d[1] = 1.;
+    tau_d[1] = 1.5;
 
     double t0 = vpTime::measureTimeSecond();
     double delta_t = 12.0; // Time in second
