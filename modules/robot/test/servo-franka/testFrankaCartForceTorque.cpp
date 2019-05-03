@@ -1,6 +1,10 @@
 /****************************************************************************
  *
+<<<<<<< HEAD
+ * This file is part of the ViSP software.
+=======
  * ViSP, open source Visual Servoing Platform software.
+>>>>>>> 2264e26d6fdd6bdc6ac5477d42153179a9599159
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
@@ -74,27 +78,17 @@ int main(int argc, char **argv)
     robot.setLogFolder(log_folder);
     robot.connect(robot_ip);
 
-    std::cout << "WARNING: This example will move the robot! "
-              << "Please make sure to have the user stop button at hand!" << std::endl
+    std::cout << "WARNING: This example will move the robot! " << std::endl
+              << "- Please make sure to have the user stop button at hand!" << std::endl
+              << "- Please make also sure the end-effector is in contact with a flat surface such as a foam board!" << std::endl
               << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
-
-//    /*
-//     * Move to a safe position
-//     */
-//    vpColVector q(7, 0);
-//    q[3] = -M_PI_2;
-//    q[5] = M_PI_2;
-//    q[6] = M_PI_4;
-//    std::cout << "Move to joint position: " << q.t() << std::endl;
-//    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
-//    robot.setPosition(vpRobot::JOINT_STATE, q);
 
     /*
      * Apply joint torque
      */
     vpColVector ft_d(6, 0);
-    ft_d[2] = -2.;
+    ft_d[2] = -2;
 
     double t0 = vpTime::measureTimeSecond();
     double delta_t = 12.0; // Time in second
@@ -102,11 +96,11 @@ int main(int argc, char **argv)
     std::cout << "Apply cartesian force/torque in a loop for " << delta_t << " sec : " << ft_d.t() << std::endl;
     robot.setRobotState(vpRobot::STATE_FORCE_TORQUE_CONTROL);
     do {
-      robot.setForceTorque(vpRobot::END_EFFECTOR_FRAME, ft_d);
+      robot.setForceTorque(vpRobot::END_EFFECTOR_FRAME, ft_d); // No low level PI controller
       if (vpTime::measureTimeSecond() - t0 > delta_t / 2.) {
-        ft_d[2] = -4.;
+        ft_d[2] = -10;
       }
-      vpTime::wait(10);
+      vpTime::wait(10); // wait 10 ms
     } while (vpTime::measureTimeSecond() - t0 < delta_t);
 
     robot.setRobotState(vpRobot::STATE_STOP);
