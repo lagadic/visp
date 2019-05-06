@@ -411,7 +411,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
   \param I : Image.
   
   \param canMakeTheWindowGrow: if true, the size of the searching area is 
-  increased if the blob is not  found, otherwise it stays the same. Default
+  increased if the blob is not found, otherwise it stays the same. Default
   value is true.
 
   \exception vpTrackingException::featureLostError : If the dot tracking
@@ -487,10 +487,10 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
         std::fabs(getHeight()) <= std::numeric_limits<double>::epsilon()) {
       searchWindowWidth = 80.;
       searchWindowHeight = 80.;
-    } else if(canMakeTheWindowGrow){
+    } else if (canMakeTheWindowGrow) {
         searchWindowWidth = getWidth() * 5;
         searchWindowWidth = getWidth() * 5;
-    }else{
+    } else {
         searchWindowWidth = getWidth();
         searchWindowHeight = getHeight();
     }
