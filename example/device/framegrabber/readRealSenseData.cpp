@@ -2,7 +2,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined (VISP_HAVE_CPP11_COMPATIBILITY) && (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)) && (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
 #include <fstream>
 #include <queue>
 #include <mutex>
@@ -15,7 +15,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 #endif
 
-#if defined (VISP_HAVE_PCL) && defined (VISP_HAVE_CPP11_COMPATIBILITY)
+#if defined (VISP_HAVE_PCL) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 #define USE_PCL_VIEWER
 #endif
 

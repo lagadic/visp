@@ -42,7 +42,7 @@
 #include <visp3/mbt/vpMbtTukeyEstimator.h>
 
 #define USE_TRANSFORM 1
-#if defined(VISP_HAVE_CPP11_COMPATIBILITY) && USE_TRANSFORM
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)) && USE_TRANSFORM
 #define HAVE_TRANSFORM 1
 #endif
 

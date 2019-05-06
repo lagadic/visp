@@ -55,7 +55,7 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/gui/vpPlot.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                         \
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)) &&                                         \
   (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
 
 int main(int argc, char **argv)
@@ -393,8 +393,8 @@ int main()
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense-2.x" << std::endl;
 #endif
-#if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
-  std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON)." << std::endl;
+#if !(defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+  std::cout << "Build ViSP with c++11 or c++14 compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
 #endif
 #if !defined(VISP_HAVE_FRANKA)
   std::cout << "Install libfranka." << std::endl;

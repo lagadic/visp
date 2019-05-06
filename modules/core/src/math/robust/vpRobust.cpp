@@ -102,7 +102,7 @@ vpRobust &vpRobust::operator=(const vpRobust &other)
   return *this;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 /*!
   Move operator.
  */

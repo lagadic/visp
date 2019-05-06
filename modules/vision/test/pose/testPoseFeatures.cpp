@@ -57,7 +57,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 class vp_createPointClass
 {
 public:
@@ -158,7 +158,7 @@ int test_pose(bool use_robust)
 
   pose.addFeatureEllipse(circle);
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
   vpFeaturePoint fp;
   vpFeatureLine fl;
   vpFeatureSegment fs;

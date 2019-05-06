@@ -416,7 +416,7 @@ vpMe &vpMe::operator=(const vpMe &me)
   return *this;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 //! Move operator.
 vpMe &vpMe::operator=(const vpMe &&me)
 {

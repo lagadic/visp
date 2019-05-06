@@ -46,7 +46,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                         \
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)) &&                                         \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #ifdef VISP_HAVE_PCL
@@ -240,10 +240,10 @@ int main()
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
 #endif
-#if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
-  std::cout << "You do not build ViSP with C++11 compiler flag" << std::endl;
+#if !(defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+  std::cout << "You do not build ViSP with c++11 or c++14 compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CPP11=ON, and build again this example" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

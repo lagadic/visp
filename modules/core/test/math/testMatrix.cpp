@@ -905,7 +905,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
     {
       std::vector<vpMatrix> vec_mat;
       vec_mat.emplace_back(5, 5);

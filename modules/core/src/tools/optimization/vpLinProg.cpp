@@ -284,7 +284,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   return false;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 /*!
   Solves a Linear Program under various constraints
 
@@ -310,7 +310,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 
   Lower and upper bounds may be passed as a list of (index, bound) with C++11's braced initialization.
 
-  \warning This function is only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning This function is only available if c++11 or c++14 is activated during compilation. Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 
@@ -519,7 +519,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
 
   \return True if the solution was found.
 
-  \warning This function is only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning This function is only available if c++11 or c++14 is activated during build.
+  Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 

@@ -60,13 +60,14 @@
 
   Utility functions to reduce or check linear equalities or inequalities are also available.
 
-  \warning The solvers are only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning The solvers are only available if c++11 or c++14 is activated during build.
+  Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 */
 class VISP_EXPORT vpLinProg
 {
 public:
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 /*!
   Used to pass a list of bounded variables to solveLP(), as a list of (index, bound).
 
@@ -82,7 +83,7 @@ The type is compatible with C++11's braced initialization.
 
   Here the lower bound is built explicitely while the upper one is built during the call to solveLP():
 
-  \warning This function is only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning This function is only available if c++11 or c++14 is activated during compilation. Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 
   \code
   #include <visp3/core/vpLinProg.h>

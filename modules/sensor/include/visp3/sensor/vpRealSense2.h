@@ -38,7 +38,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 
 #include <librealsense2/rs.hpp>
 #include <librealsense2/rsutil.h>

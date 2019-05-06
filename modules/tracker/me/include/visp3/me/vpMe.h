@@ -97,7 +97,7 @@ public:
   virtual ~vpMe();
 
   vpMe &operator=(const vpMe &me);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
   vpMe &operator=(const vpMe &&me);
 #endif
 

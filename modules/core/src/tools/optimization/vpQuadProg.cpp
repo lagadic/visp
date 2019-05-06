@@ -40,7 +40,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpQuadProg.h>
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 
 /*!
 Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$

@@ -58,7 +58,7 @@
 #include <list>
 #include <math.h>
 #include <vector>
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
 #include <atomic>
 #endif
 
@@ -156,12 +156,12 @@ private:
                   const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
                   const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
                   bool (*func_)(const vpHomogeneousMatrix &)
-              #ifdef VISP_HAVE_CPP11_COMPATIBILITY
+              #if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
                   , std::atomic<bool> &abort
               #endif
                   )
       :
-    #ifdef VISP_HAVE_CPP11_COMPATIBILITY
+    #if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
         m_abort(abort),
     #endif
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
@@ -186,7 +186,7 @@ private:
     unsigned int getNbInliers() const { return m_nbInliers; }
 
   private:
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
     std::atomic<bool> &m_abort;
 #endif
     std::vector<unsigned int> m_best_consensus;

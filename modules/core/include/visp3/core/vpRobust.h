@@ -98,7 +98,7 @@ public:
                   vpColVector &weights);
 
   vpRobust &operator=(const vpRobust &other);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if(defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
   vpRobust &operator=(const vpRobust &&other);
 #endif
 
