@@ -62,11 +62,11 @@ public:
     Robot control states.
   */
   typedef enum {
-    STATE_STOP,                /*!< Stops robot motion especially in velocity and
-                       acceleration control. */
-    STATE_VELOCITY_CONTROL,    //!< Initialize the velocity controller.
-    STATE_POSITION_CONTROL,    //!< Initialize the position controller.
-    STATE_ACCELERATION_CONTROL //!< Initialize the acceleration controller.
+    STATE_STOP,                 //!< Stops robot motion especially in velocity and acceleration control.
+    STATE_VELOCITY_CONTROL,     //!< Initialize the velocity controller.
+    STATE_POSITION_CONTROL,     //!< Initialize the position controller.
+    STATE_ACCELERATION_CONTROL, //!< Initialize the acceleration controller.
+    STATE_FORCE_TORQUE_CONTROL  //!< Initialize the force/torque controller.
   } vpRobotStateType;
 
   /*!

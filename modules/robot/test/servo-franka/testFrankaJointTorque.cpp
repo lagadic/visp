@@ -37,9 +37,9 @@
  *****************************************************************************/
 
 /*!
-  \example testFrankaCartVelocity-3.cpp
+  \example testFrankaJointTorque.cpp
 
-  Test Panda robot from Franka Emika cartesian velocity controller implemented in vpRobotFranka.
+  Test Panda robot from Franka Emika joint torque controller implemented in vpRobotFranka.
 */
 
 #include <iostream>
@@ -71,64 +71,34 @@ int main(int argc, char **argv)
 
   try {
     vpRobotFranka robot;
-    robot.connect(robot_ip);
     robot.setLogFolder(log_folder);
+    robot.connect(robot_ip);
 
-    std::cout << "WARNING: This example will move the robot! "
-              << "Please make sure to have the user stop button at hand!" << std::endl
+    std::cout << "WARNING: This example will move the robot! " << std::endl
+              << "- Please make sure to have the user stop button at hand!" << std::endl
+              << "- Please make also sure the end-effector is in contact with a flat surface such as a foam board!" << std::endl
               << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
 
     /*
-     * Move to a safe position
+     * Apply joint torque
      */
-    vpColVector q(7, 0);
-    q[3] = -M_PI_2;
-    q[5] = M_PI_2;
-    q[6] = M_PI_4;
-    std::cout << "Move to joint position: " << q.t() << std::endl;
-    robot.setPositioningVelocity(10.);
-    robot.setPosition(vpRobot::JOINT_STATE, q);
+    vpColVector tau_d(7, 0);
+    tau_d[1] = 1.5;
 
-    /*
-     * Move in cartesian velocity
-     */
     double t0 = vpTime::measureTimeSecond();
-    double delta_t = 4.0; // Time in second
-    vpColVector qdot;
-    vpColVector vc(6);
-    //      vc[0] = -0.01; // vx goes toward the user
-    //      vc[1] = 0.01; // vy goes left
-    vc[2] = 0.04; // vz goes down
-    //      vc[3] = vpMath::rad(5); // wx
-    //      vc[4] = vpMath::rad(5); // wy
-    //      vc[5] = vpMath::rad(5); // wz
+    double delta_t = 12.0; // Time in second
 
-    vpHomogeneousMatrix eMc;
-    robot.set_eMc(eMc);
-
-    std::cout << "Apply cartesian vel in a loop for " << delta_t << " sec : " << vc.t() << std::endl;
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    std::cout << "Apply joint torque in a loop for " << delta_t << " sec : " << tau_d.t() << std::endl;
+    robot.setRobotState(vpRobot::STATE_FORCE_TORQUE_CONTROL);
     do {
-      robot.setVelocity(vpRobot::CAMERA_FRAME, vc);
-      vpTime::wait(100);
+      robot.setForceTorque(vpRobot::JOINT_STATE, tau_d);
+
+      vpTime::wait(10);
     } while (vpTime::measureTimeSecond() - t0 < delta_t);
 
-    //      vc[0] = -0.01; // vx goes toward the user
-    //            ve[1] = -0.01; // vy goes left
-    vc[2] = -0.02; // vz goes down
-    //      vc[3] = vpMath::rad(5); // wx
-    //      vc[4] = vpMath::rad(5); // wy
-    //      vc[5] = vpMath::rad(5); // wz
-    std::cout << "Apply cartesian vel in a loop for " << delta_t << " sec : " << vc.t() << std::endl;
-    t0 = vpTime::measureTimeSecond();
-    do {
-      robot.setVelocity(vpRobot::CAMERA_FRAME, vc);
-      vpTime::wait(100);
-    } while (vpTime::measureTimeSecond() - t0 < delta_t);
-
-    std::cout << "Ask to stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
+    vpTime::wait(100);
   }
   catch(const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;

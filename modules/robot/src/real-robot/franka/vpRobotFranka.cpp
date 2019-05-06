@@ -46,6 +46,7 @@
 
 #include "vpJointPosTrajGenerator_impl.h"
 #include "vpJointVelTrajGenerator_impl.h"
+#include "vpForceTorqueGenerator_impl.h"
 
 /*!
 
@@ -53,9 +54,13 @@
 
 */
 vpRobotFranka::vpRobotFranka()
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
-    m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_dq_des(), m_eMc(), m_log_folder(), m_franka_address()
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.),
+    m_velControlThread(), m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false),
+    m_dq_des(), m_v_cart_des(),
+    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false),
+    m_tau_J_des(), m_ft_cart_des(),
+    m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
+    m_mutex(), m_eMc(), m_log_folder(), m_franka_address()
 {
   init();
 }
@@ -67,9 +72,13 @@ vpRobotFranka::vpRobotFranka()
  * be set when required. Setting realtime_config to kIgnore disables this behavior.
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_controlThread(), m_controlThreadIsRunning(false),
-    m_controlThreadStopAsked(false), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_dq_des(), m_v_cart_des(), m_eMc(),m_log_folder(), m_franka_address()
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.),
+    m_velControlThread(), m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false),
+    m_dq_des(), m_v_cart_des(),
+    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false),
+    m_tau_J_des(), m_ft_cart_des(),
+    m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
+    m_mutex(), m_eMc(),m_log_folder(), m_franka_address()
 {
   init();
   connect(franka_address, realtime_config);
@@ -183,8 +192,9 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
 
   franka::RobotState robot_state = getRobotInternalState();
   vpColVector q(7);
-  for (int i=0; i < 7; i++)
-    q[i] = robot_state.q_d[i];
+  for (int i=0; i < 7; i++) {
+    q[i] = robot_state.q[i];
+  }
 
   switch(frame) {
   case JOINT_STATE: {
@@ -673,14 +683,23 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
 {
   switch (newState) {
   case vpRobot::STATE_STOP: {
-    // Start primitive STOP only if the current state is Velocity
+    // Start primitive STOP only if the current state is velocity or force/torque
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       // Stop the robot
-      m_controlThreadStopAsked = true;
-      if(m_controlThread.joinable()) {
-        m_controlThread.join();
-        m_controlThreadStopAsked = false;
-        m_controlThreadIsRunning = false;
+      m_velControlThreadStopAsked = true;
+      if(m_velControlThread.joinable()) {
+        m_velControlThread.join();
+        m_velControlThreadStopAsked = false;
+        m_velControlThreadIsRunning = false;
+      }
+    }
+    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+      // Stop the robot
+      m_ftControlThreadStopAsked = true;
+      if(m_ftControlThread.joinable()) {
+        m_ftControlThread.join();
+        m_ftControlThreadStopAsked = false;
+        m_ftControlThreadIsRunning = false;
       }
     }
     break;
@@ -689,21 +708,64 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to position control.\n";
       // Stop the robot
-      m_controlThreadStopAsked = true;
-      if(m_controlThread.joinable()) {
-        m_controlThread.join();
-        m_controlThreadStopAsked = false;
-        m_controlThreadIsRunning = false;
+      m_velControlThreadStopAsked = true;
+      if(m_velControlThread.joinable()) {
+        m_velControlThread.join();
+        m_velControlThreadStopAsked = false;
+        m_velControlThreadIsRunning = false;
+      }
+    }
+    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+      std::cout << "Change the control mode from force/torque to position control.\n";
+      // Stop the robot
+      m_ftControlThreadStopAsked = true;
+      if(m_ftControlThread.joinable()) {
+        m_ftControlThread.join();
+        m_ftControlThreadStopAsked = false;
+        m_ftControlThreadIsRunning = false;
       }
     }
     break;
   }
   case vpRobot::STATE_VELOCITY_CONTROL: {
-    if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
+    if (vpRobot::STATE_STOP == getRobotState()) {
       std::cout << "Change the control mode from stop to velocity control.\n";
+    }
+    else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
+      std::cout << "Change the control mode from position to velocity control.\n";
+    }
+    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+      std::cout << "Change the control mode from force/torque to velocity control.\n";
+      // Stop the robot
+      m_ftControlThreadStopAsked = true;
+      if(m_ftControlThread.joinable()) {
+        m_ftControlThread.join();
+        m_ftControlThreadStopAsked = false;
+        m_ftControlThreadIsRunning = false;
+      }
     }
     break;
   }
+  case vpRobot::STATE_FORCE_TORQUE_CONTROL: {
+    if (vpRobot::STATE_STOP == getRobotState()) {
+      std::cout << "Change the control mode from stop to force/torque control.\n";
+    }
+    else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
+      std::cout << "Change the control mode from position to force/torque control.\n";
+    }
+    else if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
+      std::cout << "Change the control mode from velocity to force/torque control.\n";
+      // Stop the robot
+      m_velControlThreadStopAsked = true;
+      if(m_velControlThread.joinable()) {
+        m_velControlThread.join();
+        m_velControlThreadStopAsked = false;
+        m_velControlThreadIsRunning = false;
+      }
+    }
+    break;
+  }
+
   default:
     break;
   }
@@ -721,7 +783,7 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
 
   \param[in] vel : Velocity vector. Translation velocities are expressed
   in m/s while rotation velocities in rad/s. The size of this vector
-  is always 6 for a cartsian velocity skew, and 7 for joint velocities.
+  is always 6 for a cartesian velocity skew, and 7 for joint velocities.
 
   - When joint velocities have to be applied, frame should be set to vpRobot::JOINT_STATE,
     and \f$ vel = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4,
@@ -817,13 +879,75 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   }
   }
 
-  if(! m_controlThreadIsRunning) {
-    m_controlThreadIsRunning = true;
-    m_controlThread = std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(),
-                                  std::ref(m_handler), std::ref(m_controlThreadStopAsked), m_log_folder,
+  if(! m_velControlThreadIsRunning) {
+    m_velControlThreadIsRunning = true;
+    m_velControlThread = std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(),
+                                  std::ref(m_handler), std::ref(m_velControlThreadStopAsked), m_log_folder,
                                   frame, m_eMc, std::ref(m_v_cart_des), std::ref(m_dq_des),
                                   std::cref(m_q_min), std::cref(m_q_max), std::cref(m_dq_max), std::cref(m_ddq_max),
                                   std::ref(m_robot_state), std::ref(m_mutex));
+  }
+}
+
+/*
+  Apply a force/torque to the robot.
+
+  \param[in] frame : Control frame in which the force/torque is applied.
+
+  \param[in] ft : Force/torque vector. The size of this vector
+  is always 6 for a cartesian force/torque skew, and 7 for joint torques.
+
+  \param[in] filter_gain : Value in range [0:1] to filter the force/torque vector \e ft.
+  To diable the filter set filter_gain to 1.
+  \param[in] activate_pi_controller : Activate proportional and integral low level controller.
+ */
+void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft,
+                                   const double &filter_gain, const bool &activate_pi_controller)
+{
+  switch (frame) {
+  // Saturation in joint space
+  case JOINT_STATE: {
+    if (ft.size() != 7) {
+      throw vpRobotException(vpRobotException::wrongStateError,
+                             "Joint torques vector (%d) is not of size 7", ft.size());
+    }
+
+    for (size_t i = 0; i < m_tau_J_des.size(); i++) { // TODO create a function to convert
+      m_tau_J_des[i] = ft[i];
+    }
+    // TODO: Introduce force/torque saturation
+
+    break;
+  }
+
+    // Saturation in cartesian space
+  case vpRobot::TOOL_FRAME:
+  case vpRobot::REFERENCE_FRAME:
+  case vpRobot::END_EFFECTOR_FRAME: {
+    if (ft.size() != 6) {
+      throw vpRobotException(vpRobotException::wrongStateError,
+                             "Cartesian force/torque vector (%d) is not of size 6", ft.size());
+    }
+
+    m_ft_cart_des = ft;
+    // TODO: Introduce force/torque saturation
+
+    break;
+  }
+
+  case vpRobot::MIXT_FRAME: {
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Velocity controller not supported");
+  }
+  }
+
+  if(! m_ftControlThreadIsRunning) {
+    getRobotInternalState(); // Update m_robot_state internally
+    m_ftControlThreadIsRunning = true;
+    m_ftControlThread = std::thread(&vpForceTorqueGenerator::control_thread, vpForceTorqueGenerator(),
+                                    std::ref(m_handler), std::ref(m_ftControlThreadStopAsked), m_log_folder,
+                                    frame, std::ref(m_tau_J_des), std::ref(m_ft_cart_des), std::ref(m_robot_state),
+                                    std::ref(m_mutex), filter_gain, activate_pi_controller);
   }
 }
 
@@ -834,7 +958,7 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
   }
   franka::RobotState robot_state;
 
-  if (! m_controlThreadIsRunning) {
+  if (! m_velControlThreadIsRunning && ! m_ftControlThreadIsRunning) {
     robot_state = m_handler->readOnce();
 
     std::lock_guard<std::mutex> lock(m_mutex);

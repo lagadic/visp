@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * ViSP, open source Visual Servoing Platform software.
+ * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
@@ -37,9 +37,9 @@
  *****************************************************************************/
 
 /*!
-  \example testFrankaCartVelocity-3.cpp
+  \example testFrankaCartForceTorque-2.cpp
 
-  Test Panda robot from Franka Emika cartesian velocity controller implemented in vpRobotFranka.
+  Test Panda robot from Franka Emika cartesian force/torque controller implemented in vpRobotFranka.
 */
 
 #include <iostream>
@@ -71,64 +71,43 @@ int main(int argc, char **argv)
 
   try {
     vpRobotFranka robot;
-    robot.connect(robot_ip);
     robot.setLogFolder(log_folder);
+    robot.connect(robot_ip);
 
-    std::cout << "WARNING: This example will move the robot! "
-              << "Please make sure to have the user stop button at hand!" << std::endl
+    std::cout << "WARNING: This example will move the robot! " << std::endl
+              << "- Please make sure to have the user stop button at hand!" << std::endl
+              << "- Please make also sure the end-effector is in contact with a flat surface such as a foam board!" << std::endl
               << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
 
     /*
-     * Move to a safe position
+     * Apply joint torque
      */
-    vpColVector q(7, 0);
-    q[3] = -M_PI_2;
-    q[5] = M_PI_2;
-    q[6] = M_PI_4;
-    std::cout << "Move to joint position: " << q.t() << std::endl;
-    robot.setPositioningVelocity(10.);
-    robot.setPosition(vpRobot::JOINT_STATE, q);
+    vpColVector ft_d(6, 0);
+    ft_d[2] = -2;
 
-    /*
-     * Move in cartesian velocity
-     */
     double t0 = vpTime::measureTimeSecond();
-    double delta_t = 4.0; // Time in second
-    vpColVector qdot;
-    vpColVector vc(6);
-    //      vc[0] = -0.01; // vx goes toward the user
-    //      vc[1] = 0.01; // vy goes left
-    vc[2] = 0.04; // vz goes down
-    //      vc[3] = vpMath::rad(5); // wx
-    //      vc[4] = vpMath::rad(5); // wy
-    //      vc[5] = vpMath::rad(5); // wz
+    double delta_t = 12.0; // Time in second
 
-    vpHomogeneousMatrix eMc;
-    robot.set_eMc(eMc);
-
-    std::cout << "Apply cartesian vel in a loop for " << delta_t << " sec : " << vc.t() << std::endl;
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    std::cout << "Apply cartesian force/torque in a loop for " << delta_t/2. << " sec : " << ft_d.t() << std::endl;
+    robot.setRobotState(vpRobot::STATE_FORCE_TORQUE_CONTROL);
+    double filter_gain = 0.15;
+    bool activate_pi_controller = true;
     do {
-      robot.setVelocity(vpRobot::CAMERA_FRAME, vc);
-      vpTime::wait(100);
+      robot.setForceTorque(vpRobot::END_EFFECTOR_FRAME, ft_d, filter_gain, activate_pi_controller); // Use low level PI controller
+      if (vpTime::measureTimeSecond() - t0 > delta_t / 2.) {
+        ft_d[2] = -10;
+        static bool change_ft = true;
+        if (change_ft) {
+          std::cout << "Apply cartesian force/torque in a loop for " << delta_t/2. << " sec : " << ft_d.t() << std::endl;
+        }
+        change_ft = false;
+      }
+      vpTime::wait(10); // wait 10 ms
     } while (vpTime::measureTimeSecond() - t0 < delta_t);
 
-    //      vc[0] = -0.01; // vx goes toward the user
-    //            ve[1] = -0.01; // vy goes left
-    vc[2] = -0.02; // vz goes down
-    //      vc[3] = vpMath::rad(5); // wx
-    //      vc[4] = vpMath::rad(5); // wy
-    //      vc[5] = vpMath::rad(5); // wz
-    std::cout << "Apply cartesian vel in a loop for " << delta_t << " sec : " << vc.t() << std::endl;
-    t0 = vpTime::measureTimeSecond();
-    do {
-      robot.setVelocity(vpRobot::CAMERA_FRAME, vc);
-      vpTime::wait(100);
-    } while (vpTime::measureTimeSecond() - t0 < delta_t);
-
-    std::cout << "Ask to stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
+    vpTime::wait(100);
   }
   catch(const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;

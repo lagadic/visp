@@ -239,9 +239,19 @@ private:
   franka::Model *m_model;
   double m_positionningVelocity;
 
-  std::thread m_controlThread;
-  std::atomic_bool m_controlThreadIsRunning;
-  std::atomic_bool m_controlThreadStopAsked;
+  // Velocity controller
+  std::thread m_velControlThread;
+  std::atomic_bool m_velControlThreadIsRunning;
+  std::atomic_bool m_velControlThreadStopAsked;
+  std::array<double, 7> m_dq_des;   // Desired joint velocity
+  vpColVector m_v_cart_des;         // Desired cartesian velocity either in reference, end-effector, camera, or tool frame
+
+  // Force/torque controller
+  std::thread m_ftControlThread;
+  std::atomic_bool m_ftControlThreadIsRunning;
+  std::atomic_bool m_ftControlThreadStopAsked;
+  std::array<double, 7> m_tau_J_des; // Desired joint torques
+  vpColVector m_ft_cart_des;         // Desired cartesian force/torque either in reference, end-effector, camera, or tool frame
 
   std::array<double, 7> m_q_min;    // Joint min position
   std::array<double, 7> m_q_max;    // Joint max position
@@ -251,8 +261,6 @@ private:
   franka::RobotState m_robot_state; // Robot state protected by mutex
   std::mutex m_mutex;               // Mutex to protect m_robot_state
 
-  std::array<double, 7> m_dq_des;   // Desired joint velocity
-  vpColVector m_v_cart_des;             // Desired cartesian velocity either in reference, end-effector, camera, or tool frame
   vpHomogeneousMatrix m_eMc;
   std::string m_log_folder;
   std::string m_franka_address;
@@ -334,6 +342,8 @@ public:
   bool savePosFile(const std::string &filename, const vpColVector &q);
 
   void set_eMc(const vpHomogeneousMatrix &eMc);
+  void setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft,
+                      const double &filter_gain=0.1, const bool &activate_pi_controller=false);
   void setLogFolder(const std::string &folder);
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
   void setPositioningVelocity(const double velocity);
