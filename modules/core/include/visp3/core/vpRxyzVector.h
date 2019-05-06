@@ -127,7 +127,7 @@ class vpThetaUVector;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   rxyz = {M_PI_4, M_PI_2, M_PI};
 #endif
   \endcode
@@ -210,7 +210,7 @@ public:
 
   vpRxyzVector &operator=(const vpColVector &rxyz);
   vpRxyzVector &operator=(double x);
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   vpRxyzVector &operator=(const std::initializer_list<double> &list);
 #endif
 };

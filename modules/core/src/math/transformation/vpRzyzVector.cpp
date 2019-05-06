@@ -237,7 +237,7 @@ vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
   return *this;
 }
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code

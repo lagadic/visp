@@ -505,7 +505,7 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
   return *this;
 }
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 /*!
   Set vector from a list of 3 double values in meters.
   \code

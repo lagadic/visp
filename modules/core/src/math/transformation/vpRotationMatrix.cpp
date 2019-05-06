@@ -93,7 +93,7 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
   return *this;
 }
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 /*!
   Set a rotation matrix from a list of 9 double values.
   \param list : List of double.
@@ -103,7 +103,7 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
 
 int main()
 {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   vpRotationMatrix R
   R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
   std::cout << "R:\n" << R << std::endl;
@@ -498,7 +498,7 @@ vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy, const dou
  */
 vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(q); }
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 /*!
   Construct a rotation matrix from a list of 9 double values.
   \param list : List of double.
@@ -508,7 +508,7 @@ vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<doub
 
 int main()
 {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
   std::cout << "R:\n" << R << std::endl;
 #endif

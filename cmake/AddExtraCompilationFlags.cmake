@@ -99,6 +99,8 @@ endif()
 
 if(USE_CXX11 AND CXX11_CXX_FLAGS)
   add_extra_compiler_option("${CXX11_CXX_FLAGS}")
+elseif(USE_CXX14 AND CXX14_CXX_FLAGS)
+  add_extra_compiler_option("${CXX14_CXX_FLAGS}")
 endif()
 
 if(BUILD_COVERAGE)

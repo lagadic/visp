@@ -45,7 +45,7 @@
 
 #if defined(VISP_HAVE_MODULE_MBT)
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 #include <type_traits>
 #endif
 
@@ -178,7 +178,7 @@ namespace
                  vpImage<Type> &I, vpImage<uint16_t> &I_depth,
                  std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
   {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
     static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                   "Template function supports only unsigned char and vpRGBa images!");
 #endif
@@ -240,7 +240,7 @@ namespace
   bool run(vpImage<Type> &I, vpImage<Type> &I_depth, const std::string &input_directory,
            bool opt_click_allowed, bool opt_display, bool useScanline, int trackerType_image,
            int opt_lastFrame, bool use_depth, bool use_mask) {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
     static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                   "Template function supports only unsigned char and vpRGBa images!");
 #endif

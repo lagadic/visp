@@ -45,6 +45,8 @@ macro(check_math_expr _expr _var)
     # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
     if(USE_CXX11 AND CXX11_CXX_FLAGS)
       set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
+    elseif(USE_CXX14 AND CXX14_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX14_CXX_FLAGS})
     endif()
     check_cxx_source_compiles("
 #include <cmath>
@@ -65,6 +67,8 @@ if(HAVE_FLOAT_H)
     # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
     if(USE_CXX11 AND CXX11_CXX_FLAGS)
       set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
+    elseif(USE_CXX14 AND CXX14_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX14_CXX_FLAGS})
     endif()
     # The version that should work with MSVC
     check_cxx_source_compiles("

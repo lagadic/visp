@@ -389,7 +389,7 @@ if(WIN32 AND NOT CYGWIN)
   mark_as_advanced(HAVE_LIBWS2_32)
 endif()
 
-# Should be before USE_CXX11
+# Should be before include(cmake/VISPDetectCXXStandard.cmake)
 VP_CHECK_FUNCTION_EXISTS(inet_ntop "${VISP_LINKER_LIBS}")
 
 #--------------------------------------------------------------------
@@ -504,7 +504,7 @@ VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "
 VP_OPTION(USE_VIRTUOSE    Virtuose    ""    "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FRANKA      Franka      QUIET "Include libfranka SDK support for Franka Emika robots" "" ON IF NOT WINRT AND NOT IOS)
 # Note: libfranka needs c++14 option to build, but to use the library c++11 is enough.
-# That's why, setting USE_CXX11=ON (which is the default) allows to use libfranka.
+# That's why, setting USE_CXX_STANDARD=11 (which is the default) allows to use libfranka.
 VP_OPTION(USE_DC1394      DC1394      ""    "Include dc1394 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_V4L2        V4L2        ""    "Include v4l2 support"             "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  ""    "Include FlyCapture SDK support for PointGrey cameras" "" ON IF NOT WINRT AND NOT IOS)
@@ -539,21 +539,22 @@ VP_OPTION(USE_LIBFREENECT LIBFREENECT ""    "Include libfreenect support"      "
 VP_OPTION(USE_LIBUSB_1    LIBUSB_1    ""    "Include libusb-1 support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_REALSENSE   RealSense   ""    "Include RealSense SDK support"    "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_REALSENSE2  RealSense2  ""    "Include RealSense2 SDK support"   "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_CXX11       CXX11       ""    "Enable c++11 support"             "" ON)
-# if C++11 option is OFF, force 3rd parties that required cxx11 to OFF
-if(NOT USE_CXX11 AND CXX11_FOUND)
+include(cmake/VISPDetectCXXStandard.cmake)
+
+# if c++11 or c++14 options are OFF, force 3rd parties that require at least c++11 to OFF
+if(NOT ((USE_CXX11 AND CXX11_FOUND) OR (USE_CXX14 AND CXX14_FOUND)))
   if(USE_REALSENSE)
-     message(WARNING "librealsense 3rd party was detected and needs cxx11 compiler flag that is turned off. Thus we disable librealsense usage turning USE_REALSENSE=OFF.")
+     message(WARNING "librealsense 3rd party was detected and needs c++11 or c++14 compiler flag that is turned off. Thus we disable librealsense usage turning USE_REALSENSE=OFF.")
      unset(USE_REALSENSE)
      set(USE_REALSENSE OFF CACHE BOOL "Include RealSense SDK support" FORCE)
   endif()
   if(USE_REALSENSE2)
-     message(WARNING "librealsense2 3rd party was detected and needs cxx11 compiler flag that is turned off. Thus we disable librealsense2 usage turning USE_REALSENSE2=OFF.")
+     message(WARNING "librealsense2 3rd party was detected and needs c++11 or c++14 compiler flag that is turned off. Thus we disable librealsense2 usage turning USE_REALSENSE2=OFF.")
      unset(USE_REALSENSE2)
      set(USE_REALSENSE2 OFF CACHE BOOL "Include RealSense2 SDK support" FORCE)
   endif()
   if(USE_FRANKA)
-     message(WARNING "libfranka 3rd party was detected and needs cxx11 compiler flag that is turned off. Thus we disable libfranka usage turning USE_FRANKA=OFF.")
+     message(WARNING "libfranka 3rd party was detected and needs c++11 or c++14 compiler flag that is turned off. Thus we disable libfranka usage turning USE_FRANKA=OFF.")
      unset(USE_FRANKA)
      set(USE_FRANKA OFF CACHE BOOL "Include libfranka SDK support for Franka Emika robots" FORCE)
   endif()
@@ -575,8 +576,8 @@ if (ANDROID)
 else()
   VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
 endif()
-# We need threads with cxx11
-if(USE_CXX11 AND NOT USE_PTHREAD)
+# We need threads with c++11
+if((USE_CXX11 OR USE_CXX14) AND NOT USE_PTHREAD)
   if(Threads_FOUND OR PTHREAD_FOUND)
     message(WARNING "We need threads. Turn USE_PTHREAD=ON.")
     unset(USE_PTHREAD)
@@ -612,19 +613,19 @@ VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_BLAS/LAPACK)
 VP_OPTION(WITH_PUGIXML    ""           ""    "Build pugixml as built-in library"   "" ON)
-VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF USE_CXX11 AND (NOT WINRT) AND (NOT IOS))
+VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (USE_CXX11 OR USE_CXX14) AND (NOT WINRT) AND (NOT IOS))
 
-# Find IsNaN (should be after USE_CXX11)
+# Find IsNaN: should be after USE_CXX_STANDARD that is set by include(cmake/VISPDetectCXXStandard.cmake)
 VP_CHECK_PACKAGE(IsNaN)
-# Find IsInf (should be after USE_CXX11)
+# Find IsInf: should be after USE_CXX_STANDARD that is set by include(cmake/VISPDetectCXXStandard.cmake)
 VP_CHECK_PACKAGE(IsInf)
-# Find Round (should be after USE_CXX11)
+# Find Round: should be after USE_CXX_STANDARD that is set by include(cmake/VISPDetectCXXStandard.cmake)
 VP_CHECK_PACKAGE(Round)
-# Find Erfc
+# Find Erfc: should be after USE_CXX_STANDARD that is set by include(cmake/VISPDetectCXXStandard.cmake)
 VP_CHECK_PACKAGE(Erfc)
-# Find Strtof
+# Find Strtof: should be after USE_CXX_STANDARD that is set by include(cmake/VISPDetectCXXStandard.cmake)
 VP_CHECK_PACKAGE(Strtof)
-# Find Log1p
+# Find Log1p: should be after USE_CXX_STANDARD that is set by include(cmake/VISPDetectCXXStandard.cmake)
 VP_CHECK_PACKAGE(Log1p)
 
 #----------------------------------------------------------------------
@@ -988,6 +989,7 @@ VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # 
 VP_SET(VISP_USE_MSVC TRUE IF MSVC) # for header vpConfig.h
 # Hack for msvc12 (Visual 2013) where C++11 implementation is incomplete
 VP_SET(VISP_HAVE_CXX11 TRUE IF USE_CXX11 OR (MSVC_VERSION EQUAL 1800)) # for header vpConfig.h
+VP_SET(VISP_HAVE_CXX14 TRUE IF USE_CXX14) # for header vpConfig.h
 
 VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)) # for header vpConfig.h
 
@@ -1452,8 +1454,7 @@ status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
 status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
-status("    Use cxx11:"              USE_CXX11          THEN "yes" ELSE "no")
-status("    cxx standard:"           CMAKE_CXX_STANDARD THEN "${CMAKE_CXX_STANDARD}" ELSE "no")
+status("    Use cxx standard:"       CMAKE_CXX_STANDARD THEN "${CMAKE_CXX_STANDARD}" ELSE "no")
 
 # ========================== documentation ==========================
 status("")

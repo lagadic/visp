@@ -1514,7 +1514,7 @@ std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(co
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
       std::vector<double> params = {2, //desired normal
                                     im_centroid.get_i(),
                                     im_centroid.get_j(),
@@ -1554,7 +1554,7 @@ std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(co
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
       std::vector<double> params = {3, //normal at current pose
                                     im_centroid.get_i(),
                                     im_centroid.get_j(),

@@ -419,6 +419,9 @@
 #  define VISP_HAVE_CPP11_COMPATIBILITY
 #endif
 
+// Defined if we want to use c++ 14
+#cmakedefine VISP_HAVE_CXX14
+
 // Defined if isnan macro is available
 #cmakedefine VISP_HAVE_FUNC_ISNAN
 

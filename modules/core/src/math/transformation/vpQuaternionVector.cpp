@@ -321,7 +321,7 @@ double vpQuaternionVector::z() const { return data[2]; }
 //! Returns w-component of the quaternion.
 double vpQuaternionVector::w() const { return data[3]; }
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 /*!
   Set vector from a list of 4 double angle values.
   \code

@@ -110,6 +110,16 @@ if(USE_COIN3D AND NOT HAVE_visp_ar)
 endif()
 
 if(USE_PCL)
+  if(PCL_VERSION VERSION_GREATER 1.9.1)
+    # pcl > 1.9.1 requires c++14
+    # if c++14 option is OFF, force to c++14
+    if(NOT (USE_CXX14 AND CXX14_FOUND))
+      message(WARNING "pcl ${PCL_VERSION} 3rd party was detected and needs c++14 compiler flags that is turned off. Thus to enable pcl usage we turn USE_CXX_STANDARD=14.")
+      unset(USE_CXX_STANDARD)
+      set(USE_CXX_STANDARD "14" CACHE STRING "Selected cxx standard" FORCE)
+    endif()
+
+  endif()
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
 
   # list(APPEND opt_libs ${PCL_LIBRARIES})

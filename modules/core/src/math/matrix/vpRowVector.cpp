@@ -124,7 +124,7 @@ vpRowVector &vpRowVector::operator=(double x)
   return *this;
 }
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 {
   if (this != &other) {
@@ -566,7 +566,7 @@ vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncol
   init(v, c, ncols);
 }
 
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
 vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;

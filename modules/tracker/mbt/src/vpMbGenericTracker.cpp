@@ -6715,7 +6715,7 @@ void vpMbGenericTracker::TrackerWrapper::testTracking()
 }
 
 void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_CXX11)
+#if defined(VISP_HAVE_PCL) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
                                                    I
 #endif
 )
@@ -6729,7 +6729,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
     return;
   }
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_CXX11)
+#if defined(VISP_HAVE_PCL) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
   track(&I, nullptr);
 #endif
 }

@@ -95,7 +95,7 @@ v:
 
 int main()
 {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   vpRowVector v{-1, -2.1, -3};
   std::cout << "v:\n" << v << std::endl;
 #endif
@@ -105,7 +105,7 @@ int main()
   \code
 int main()
 {
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   vpRowVector v;
   v = {-1, -2.1, -3};
 #endif
@@ -130,7 +130,7 @@ public:
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
   vpRowVector(const std::vector<float> &v);
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   vpRowVector(vpRowVector &&v);
   vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 #endif
@@ -221,7 +221,7 @@ public:
   vpRowVector &operator=(const std::vector<double> &v);
   vpRowVector &operator=(const std::vector<float> &v);
   vpRowVector &operator=(const double x);
-#ifdef VISP_HAVE_CXX11
+#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
   vpRowVector &operator=(vpRowVector &&v);
   vpRowVector &operator=(const std::initializer_list<double> &list);
 #endif

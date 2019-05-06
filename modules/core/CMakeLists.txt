@@ -63,11 +63,11 @@ if(USE_OPENCV)
   if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
 
     if(OpenCV_VERSION VERSION_GREATER 4.0.0 OR OpenCV_VERSION VERSION_EQUAL 4.0.0)
-      # if C++11 option is OFF, force to ON
-      if(NOT USE_CXX11 AND CXX11_FOUND)
-        message(WARNING "OpenCV ${OpenCV_VERSION} 3rd party was detected and needs cxx11 compiler flags that are turned off. Thus to enable OpenCV usage we turn USE_CXX11=ON.")
-        unset(USE_CXX11)
-        set(USE_CXX11 ON CACHE BOOL "Enable c++11 support" FORCE)
+      # if c++11 or c++14 options are OFF, force to c++11
+      if(NOT (USE_CXX11 AND CXX11_FOUND) OR (USE_CXX14 AND CXX14_FOUND))
+        message(WARNING "OpenCV ${OpenCV_VERSION} 3rd party was detected and needs c++11 or c++14 compiler flags that are turned off. Thus to enable OpenCV usage we turn USE_CXX_STANDARD=11.")
+        unset(USE_CXX_STANDARD)
+        set(USE_CXX_STANDARD "11" CACHE STRING "Selected cxx standard" FORCE)
       endif()
     endif()
 
