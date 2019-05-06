@@ -166,6 +166,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 \subsection tuto_computer_vision Computer vision
 
+- <a href="https://visp-doc.inria.fr/doxygen/camera_localization/">Pose estimation for augmented reality</a> <br>This tutorial is a self contented introduction to the most important approaches dedicated to camera localization along with a survey of the extension that have been proposed in the recent years. We also try to link these methodological concepts to the main libraries and SDK available on the market.
 - \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-pose-estimation-qrcode <br>This tutorial focuses on pose estimation of a QRcode using it's four corners location.
 - \ref tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
@@ -218,6 +219,19 @@ To cite the generic model-based tracker:
    Address = {Madrid, Spain},
    Month = {October},
    Year = {2018}
+}
+```
+To cite pose estimation algorithms and hands-on survey illustrated with ViSP examples:
+```
+@article{Marchand16a,
+   Author = {Marchand, E. and Uchiyama, H. and Spindler, F.},
+   Title = {Pose estimation for augmented reality: a hands-on survey},
+   Journal = {IEEE Trans. on Visualization and Computer Graphics},
+   Volume = {22},
+   Number = {12},
+   Pages = {2633--2651},
+   Month = {December},
+   Year = {2016}
 }
 ```
 
