@@ -409,8 +409,8 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
   - If no valid dot was found in the window, return an exception.
 
   \param I : Image.
-  
-  \param canMakeTheWindowGrow: if true, the size of the searching area is 
+
+  \param canMakeTheWindowGrow: if true, the size of the searching area is
   increased if the blob is not found, otherwise it stays the same. Default
   value is true.
 
@@ -436,7 +436,6 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 
   To get the pixels coordinates on the dot boundary, see getList_u() and
   getList_v().
-
 
 */
 void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
@@ -481,20 +480,20 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
     // get the first element in the area.
 
     // first get the size of the search window from the dot size
-    double searchWindowWidth, searchWindowHeight;
+    double searchWindowWidth = 0.0, searchWindowHeight = 0.0;
     // if( getWidth() == 0 || getHeight() == 0 )
     if (std::fabs(getWidth()) <= std::numeric_limits<double>::epsilon() ||
         std::fabs(getHeight()) <= std::numeric_limits<double>::epsilon()) {
       searchWindowWidth = 80.;
       searchWindowHeight = 80.;
     } else if (canMakeTheWindowGrow) {
-        searchWindowWidth = getWidth() * 5;
-        searchWindowWidth = getWidth() * 5;
+      searchWindowWidth = getWidth() * 5;
+      searchWindowWidth = getWidth() * 5;
     } else {
-        searchWindowWidth = getWidth();
-        searchWindowHeight = getHeight();
+      searchWindowWidth = getWidth();
+      searchWindowHeight = getHeight();
     }
-  
+
     std::list<vpDot2> candidates;
     searchDotsInArea(I, (int)(this->cog.get_u() - searchWindowWidth / 2.0),
                      (int)(this->cog.get_v() - searchWindowHeight / 2.0), (unsigned int)searchWindowWidth,
@@ -589,9 +588,13 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
   Track and get the new dot coordinates. See track() for a more complete
   description
 
-  \param I : Image to process.
+  \param[in] I : Image to process.
 
-  \param ip [out] : Sub pixel coordinate of the tracked dot center of gravity.
+  \param[out] ip : Sub pixel coordinate of the tracked dot center of gravity.
+
+  \param[in] canMakeTheWindowGrow : if true, the size of the searching area is
+  increased if the blob is not found, otherwise it stays the same. Default
+  value is true.
 
   The behavior of this method is similar to the following code:
   \code
@@ -602,9 +605,9 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
 
   \sa track()
 */
-void vpDot2::track(const vpImage<unsigned char> &I, vpImagePoint &ip)
+void vpDot2::track(const vpImage<unsigned char> &I, vpImagePoint &ip, bool canMakeTheWindowGrow)
 {
-  track(I);
+  track(I, canMakeTheWindowGrow);
 
   ip = this->cog;
 }
