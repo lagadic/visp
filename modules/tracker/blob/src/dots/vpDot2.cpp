@@ -409,6 +409,10 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
   - If no valid dot was found in the window, return an exception.
 
   \param I : Image.
+  
+  \param canMakeTheWindowGrow: if true, the size of the searching area is 
+  increased if the blob is not found, otherwise it stays the same. Default
+  value is true.
 
   \exception vpTrackingException::featureLostError : If the dot tracking
   failed. The tracking can fail if the following characteristics are not
@@ -435,7 +439,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 
 
 */
-void vpDot2::track(const vpImage<unsigned char> &I)
+void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
 {
   m00 = m11 = m02 = m20 = m10 = m01 = 0;
 
@@ -483,10 +487,14 @@ void vpDot2::track(const vpImage<unsigned char> &I)
         std::fabs(getHeight()) <= std::numeric_limits<double>::epsilon()) {
       searchWindowWidth = 80.;
       searchWindowHeight = 80.;
+    } else if (canMakeTheWindowGrow) {
+        searchWindowWidth = getWidth() * 5;
+        searchWindowWidth = getWidth() * 5;
     } else {
-      searchWindowWidth = getWidth() * 5;
-      searchWindowHeight = getHeight() * 5;
+        searchWindowWidth = getWidth();
+        searchWindowHeight = getHeight();
     }
+  
     std::list<vpDot2> candidates;
     searchDotsInArea(I, (int)(this->cog.get_u() - searchWindowWidth / 2.0),
                      (int)(this->cog.get_v() - searchWindowHeight / 2.0), (unsigned int)searchWindowWidth,

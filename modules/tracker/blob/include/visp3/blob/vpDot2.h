@@ -341,7 +341,7 @@ public:
   void setSizePrecision(const double &sizePrecision);
   void setWidth(const double &width);
 
-  void track(const vpImage<unsigned char> &I);
+  void track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow = true);
   void track(const vpImage<unsigned char> &I, vpImagePoint &cog);
 
   static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
