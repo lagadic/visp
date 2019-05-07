@@ -122,6 +122,97 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   }
 }
 
+/*!
+  Acquire data from RealSense device.
+  \param data_image : Color image buffer or NULL if not wanted.
+  \param data_depth : Depth image buffer or NULL if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param data_infrared1 : First infrared image buffer or NULL if not wanted.
+  \param data_infrared2 : Second infrared image buffer or NULL if not wanted.
+  \param align_to : Align to a reference stream or NULL if not wanted.
+
+  The following code shows how to use this function to get color, infrared 1 and infrared 2 frames
+  acquired by a D435 device:
+  \code
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/sensor/vpRealSense2.h>
+
+int main() {
+  vpRealSense2 rs;
+  rs2::config config;
+  config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+  config.enable_stream(RS2_STREAM_INFRARED, 1, 640, 480, RS2_FORMAT_Y8, 30);
+  config.enable_stream(RS2_STREAM_INFRARED, 2, 640, 480, RS2_FORMAT_Y8, 30);
+  rs.open(config);
+  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+  vpImage<unsigned char> Ii1(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                             rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+  vpImage<unsigned char> Ii2(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                             rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+
+#ifdef VISP_HAVE_X11
+  vpDisplayX dc(Ic, 0, 0, "Color");
+  vpDisplayX di1(Ii1, 100, 100, "Infrared 1");
+  vpDisplayX di2(Ii2, 200, 200, "Infrared 2");
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI dc(Ic, 0, 0, "Color");
+  vpDisplayGDI di1(Ii1, 100, 100, "Infrared 1");
+  vpDisplayGDI di2(Ii2, 100, 100, "Infrared 2");
+#endif
+
+  while (true) {
+    rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii1.bitmap, Ii2.bitmap, NULL);
+    vpDisplay::display(Ic);
+    vpDisplay::display(Ii1);
+    vpDisplay::display(Ii2);
+    vpDisplay::flush(Ic);
+    vpDisplay::flush(Ii1);
+    vpDisplay::flush(Ii2);
+    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii1, false) || vpDisplay::getClick(Ii2, false))
+      break;
+  }
+  return 0;
+}
+  \endcode
+ */
+void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                           std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
+                           unsigned char *const data_infrared2, rs2::align *const align_to)
+{
+  auto data = m_pipe.wait_for_frames();
+  if (align_to != NULL)
+#if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
+    data = align_to->process(data);
+#else
+    data = align_to->proccess(data);
+#endif
+
+  if (data_image != NULL) {
+    auto color_frame = data.get_color_frame();
+    getNativeFrameData(color_frame, data_image);
+  }
+
+  if (data_depth != NULL || data_pointCloud != NULL) {
+    auto depth_frame = data.get_depth_frame();
+    if (data_depth != NULL)
+      getNativeFrameData(depth_frame, data_depth);
+
+    if (data_pointCloud != NULL)
+      getPointcloud(depth_frame, *data_pointCloud);
+  }
+
+  if (data_infrared1 != NULL) {
+    auto infrared_frame = data.get_infrared_frame(1);
+    getNativeFrameData(infrared_frame, data_infrared1);
+  }
+
+  if (data_infrared2 != NULL) {
+    auto infrared_frame = data.get_infrared_frame(2);
+    getNativeFrameData(infrared_frame, data_infrared2);
+  }
+}
+
 #ifdef VISP_HAVE_PCL
 /*!
   Acquire data from RealSense device.
@@ -396,6 +487,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
     }
   }
 }
+
 
 #ifdef VISP_HAVE_PCL
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)

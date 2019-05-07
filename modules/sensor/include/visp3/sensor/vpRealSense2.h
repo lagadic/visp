@@ -56,24 +56,24 @@
   \ingroup group_sensor_rgbd
 
   This class provides a lightweight wrapper over the Intel librealsense2
-library https://github.com/IntelRealSense/librealsense. It allows to capture
-data from the Intel RealSense cameras.
+  library https://github.com/IntelRealSense/librealsense. It allows to capture
+  data from the Intel RealSense cameras.
 
   \note Supported devices for Intel® RealSense™ SDK 2.0 (build 2.8.3):
     - Intel® RealSense™ Camera D400-Series (not tested)
     - Intel® RealSense™ Developer Kit SR300 (vpRealSense2 is ok)
 
   The usage of vpRealSense2 class is enabled when librealsense2 3rd party is
-successfully installed.
+  successfully installed.
 
   Moreover, if Point Cloud Library (PCL) 3rd party is installed, we also
-propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
-or pcl::PointCloud<pcl::PointXYZRGB> data structures.
+  propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
+  or pcl::PointCloud<pcl::PointXYZRGB> data structures.
 
   \warning Notice that the usage of this class requires compiler and library
-support for the ISO C++ 2011 standard. This support must be enabled with the
--std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
-file that allows to build sample-realsense.cpp that uses vpRealSense2 class.
+  support for the ISO C++ 2011 standard. This support must be enabled with the
+  -std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
+  file that allows to build sample-realsense.cpp that uses vpRealSense2 class.
   \code
 project(sample)
 cmake_minimum_required(VERSION 2.6)
@@ -92,8 +92,11 @@ target_link_libraries(sample-realsense ${VISP_LIBRARIES})
   \endcode
 
   To acquire images from the RealSense color camera and convert them into grey
-level images, a good starting is to use the following code that corresponds to
-the content of sample-realsense.cpp: \code #include <visp3/gui/vpDisplayGDI.h>
+  level images, a good starting is to use the following code that corresponds to
+  the content of sample-realsense.cpp:
+
+  \code
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
@@ -131,7 +134,8 @@ int main()
 
   If you are interested in the point cloud and if ViSP is build with PCL
   support, you can start from the following example where we use PCL library to
-  visualize the point cloud:
+  visualize the point cloud
+
   \code
 #include <visp3/sensor/vpRealSense2.h>
 #include <pcl/visualization/cloud_viewer.h>
@@ -171,8 +175,9 @@ int main()
   \endcode
 
   If you want to change the default stream parameters, refer to the
-librealsense2 `rs2::config` documentation. The following code allows to
-capture the color stream in 1920x1080:
+  librealsense2 `rs2::config` documentation. The following code allows to
+  capture the color stream in 1920x1080:
+
 \code
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -273,10 +278,10 @@ int main() {
   \endcode
 
   \note This class has been tested with the Intel RealSense SR300
-(Firmware: 3.21.0.0) using librealsense (API version: 2.8.3). Refer to the
-librealsense2 documentation or [API how
-to](https://github.com/IntelRealSense/librealsense/wiki/API-How-To) for
-additional information.
+  (Firmware: 3.21.0.0) using librealsense (API version: 2.8.3). Refer to the
+  librealsense2 documentation or [API how
+  to](https://github.com/IntelRealSense/librealsense/wiki/API-How-To) for
+  additional information.
 */
 class VISP_EXPORT vpRealSense2
 {
@@ -289,6 +294,9 @@ public:
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
                rs2::align *const align_to = NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
+               unsigned char *const data_infrared2, rs2::align *const align_to);
 
 #ifdef VISP_HAVE_PCL
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
