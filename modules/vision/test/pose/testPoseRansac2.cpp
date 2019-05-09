@@ -1859,7 +1859,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   vpPose pose;
   vpPose pose_ransac, pose_ransac2;
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpPose pose_ransac_parallel, pose_ransac_parallel2;
   pose_ransac_parallel.setUseParallelRansac(true);
   pose_ransac_parallel2.setUseParallelRansac(true);
@@ -1875,7 +1875,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   // Test addPoints
   pose_ransac.addPoints(bunnyModelPoints_noisy);
   pose_ransac2.addPoints(bunnyModelPoints_noisy);
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   pose_ransac_parallel.addPoints(bunnyModelPoints_noisy);
   pose_ransac_parallel2.addPoints(bunnyModelPoints_noisy);
 #endif
@@ -1892,7 +1892,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   pose_ransac.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
   pose_ransac.setRansacThreshold(threshold);
   pose_ransac.setRansacMaxTrials(1000);
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   pose_ransac_parallel.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
   pose_ransac_parallel.setRansacThreshold(threshold);
   pose_ransac_parallel.setRansacMaxTrials(1000);
@@ -1949,7 +1949,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   double r_estimated = ground_truth_pose.computeResidual(cMo_estimated);
   std::cout << "Corresponding residual: " << r_estimated << std::endl;
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpHomogeneousMatrix cMo_estimated_RANSAC_parallel;
   double t_RANSAC_parallel = vpTime::measureTimeMs();
   pose_ransac_parallel.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_parallel);
@@ -2019,7 +2019,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
     return false;
   }
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   // Check for parallel RANSAC
   // Check inlier index
   std::cout << "\nCheck for parallel RANSAC (1000 iterations)" << std::endl;
@@ -2071,7 +2071,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
     std::cerr << "threshold=" << threshold << std::endl;
     return false;
   } else {
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     if (r_RANSAC_estimated_parallel > threshold) {
       std::cerr << "The pose estimated with the parallel RANSAC method is "
                    "badly estimated!"

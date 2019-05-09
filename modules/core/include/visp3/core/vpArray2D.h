@@ -98,7 +98,7 @@ a:
 
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
   std::cout << "a:\n" << a << std::endl;
 #endif
@@ -108,7 +108,7 @@ int main()
   \code
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<float> a;
   a = { {-1, -2, -3}, {4, 5.5, 6.0f} };
 #endif
@@ -121,7 +121,7 @@ int main()
 
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<float> a{ -1, -2, -3, 4, 5.5, 6.0f };
   a.reshape(2, 3);
 #endif
@@ -155,7 +155,7 @@ public:
   Copy constructor of a 2D array.
   */
   vpArray2D<Type>(const vpArray2D<Type> &A) :
-  #if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     vpArray2D<Type>()
   #else
     rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
@@ -172,7 +172,7 @@ public:
   \param c : Array number of columns.
   */
   vpArray2D<Type>(unsigned int r, unsigned int c) :
-  #if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       vpArray2D<Type>()
   #else
       rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
@@ -189,7 +189,7 @@ public:
   \param val : Each element of the array is set to \e val.
   */
   vpArray2D<Type>(unsigned int r, unsigned int c, Type val) :
-  #if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       vpArray2D<Type>()
   #else
       rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
@@ -199,7 +199,7 @@ public:
     *this = val;
   }
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<Type>(vpArray2D<Type> &&A)
   {
     rowNum = A.rowNum;
@@ -421,7 +421,7 @@ public:
     return *this;
   }
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<Type> &operator=(vpArray2D<Type> &&other)
   {
     if (this != &other) {

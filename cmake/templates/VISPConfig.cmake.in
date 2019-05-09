@@ -200,7 +200,11 @@ set(VISP_HAVE_COIN3D_AND_GUI "@VISP_HAVE_COIN3D_AND_GUI@")
 set(VISP_HAVE_COMEDI         "@VISP_HAVE_COMEDI@")
 set(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CXX11@") # to keep compat with previous releases
 set(VISP_HAVE_CXX11          "@VISP_HAVE_CXX11@")
-set(VISP_HAVE_CXX14          "@VISP_HAVE_CXX14@")
+set(VISP_CXX_STANDARD_98     "@VISP_CXX_STANDARD_98@")
+set(VISP_CXX_STANDARD_11     "@VISP_CXX_STANDARD_11@")
+set(VISP_CXX_STANDARD_14     "@VISP_CXX_STANDARD_14@")
+set(VISP_CXX_STANDARD_17     "@VISP_CXX_STANDARD_17@")
+set(VISP_CXX_STANDARD        "@VISP_CXX_STANDARD@")
 set(VISP_HAVE_D3D9           "@VISP_HAVE_D3D9@")
 set(VISP_HAVE_DC1394         "@VISP_HAVE_DC1394@")
 set(VISP_HAVE_DIRECTSHOW     "@VISP_HAVE_DIRECTSHOW@")
@@ -273,9 +277,9 @@ set(VISP_COMPILER_FAIL_REGEX
   )
 
 #----------------------------------------------------------------------
-# Propagate c++11/c++14 compiler option if enabled during ViSP build
+# Propagate c++ standard compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
-if(VISP_HAVE_CXX11)
+if(${VISP_CXX_STANDARD} EQUAL ${VISP_CXX_STANDARD_11})
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
   set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
@@ -285,7 +289,7 @@ if(VISP_HAVE_CXX11)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_CXX_FLAGS}")
     endif()
   endif()
-elseif(VISP_HAVE_CXX14)
+elseif(${VISP_CXX_STANDARD} EQUAL ${VISP_CXX_STANDARD_14})
   set(CMAKE_CXX_STANDARD 14)
   set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
   set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++14 instead of -std=gnu++14
@@ -293,6 +297,16 @@ elseif(VISP_HAVE_CXX14)
     set(CXX14_CXX_FLAGS @CXX14_CXX_FLAGS@)
     if(CXX14_CXX_FLAGS)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX14_CXX_FLAGS}")
+    endif()
+  endif()
+elseif(${VISP_CXX_STANDARD} EQUAL ${VISP_CXX_STANDARD_17})
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++17 instead of -std=gnu++17
+  if(NOT CMAKE_CXX17_COMPILE_FEATURES)
+    set(CXX14_CXX_FLAGS @CXX14_CXX_FLAGS@)
+    if(CXX17_CXX_FLAGS)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX17_CXX_FLAGS}")
     endif()
   endif()
 endif()

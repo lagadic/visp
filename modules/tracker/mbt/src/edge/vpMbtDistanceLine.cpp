@@ -694,7 +694,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
     if (line != NULL) {
       for (std::list<vpMeSite>::const_iterator it = line->getMeList().begin(); it != line->getMeList().end(); ++it) {
         vpMeSite p_me = *it;
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
         std::vector<double> params = {0, //ME
                                       p_me.get_ifloat(),
                                       p_me.get_jfloat(),
@@ -765,7 +765,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
         std::vector<double> params = {0, //0 for line parameters
                                       ip1.get_i(),
                                       ip1.get_j(),

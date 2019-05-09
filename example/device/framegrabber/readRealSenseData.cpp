@@ -2,7 +2,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)) && (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
 #include <fstream>
 #include <queue>
 #include <mutex>
@@ -15,7 +15,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 #endif
 
-#if defined (VISP_HAVE_PCL) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if defined (VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #define USE_PCL_VIEWER
 #endif
 
@@ -377,7 +377,7 @@ int main(int argc, char *argv[]) {
 }
 #else
 int main() {
-  std::cerr << "Need C++11 and displayX or displayGDI!" << std::endl;
+  std::cerr << "Enable C++11 or higher (cmake -DUSE_CXX_STANDARD=11) and install X11 or GDI!" << std::endl;
   return 0;
 }
 #endif

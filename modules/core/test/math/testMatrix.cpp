@@ -905,7 +905,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       std::vector<vpMatrix> vec_mat;
       vec_mat.emplace_back(5, 5);

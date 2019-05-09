@@ -192,7 +192,7 @@ vpMatrix::vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned i
   init(M, r, c, nrows, ncols);
 }
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
 {
   rowNum = A.rowNum;
@@ -557,7 +557,7 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
   return *this;
 }
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 {
   resize(A.getRows(), A.getCols(), false, false);

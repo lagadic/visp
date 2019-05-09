@@ -58,7 +58,7 @@
 #include <list>
 #include <math.h>
 #include <vector>
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <atomic>
 #endif
 
@@ -156,12 +156,12 @@ private:
                   const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
                   const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
                   bool (*func_)(const vpHomogeneousMatrix &)
-              #if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+              #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
                   , std::atomic<bool> &abort
               #endif
                   )
       :
-    #if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+    #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
         m_abort(abort),
     #endif
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
@@ -186,7 +186,7 @@ private:
     unsigned int getNbInliers() const { return m_nbInliers; }
 
   private:
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::atomic<bool> &m_abort;
 #endif
     std::vector<unsigned int> m_best_consensus;
@@ -325,7 +325,7 @@ public:
   /*!
     Set if parallel RANSAC version should be used or not (only if C++11).
 
-    \note Need C++11.
+    \note Need C++11 or higher.
   */
   inline void setUseParallelRansac(const bool use) { useParallelRansac = use; }
 

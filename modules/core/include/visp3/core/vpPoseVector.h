@@ -140,7 +140,7 @@ int main()
   vpTranslationVector t;
   vpThetaUVector tu;
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   t = { 0.1, 0.2, 0.3 };
   tu = { M_PI, M_PI_2, M_PI_4 };
 #endif

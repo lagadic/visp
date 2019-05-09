@@ -323,7 +323,7 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move constructor that take rvalue.
  */
@@ -702,7 +702,7 @@ std::vector<double> vpColVector::toStdVector()
   return v;
 }
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Overloaded move assignment operator taking rvalue.
  */

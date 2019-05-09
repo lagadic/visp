@@ -129,7 +129,7 @@ M:
 
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
   std::cout << "M:\n" << M << std::endl;
 #endif
@@ -141,7 +141,7 @@ int main()
 
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
 #endif
 }
@@ -151,7 +151,7 @@ int main()
   \code
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M;
   M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
 #endif
@@ -213,7 +213,7 @@ vpMatrix M(R);
 
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
 
   /*!
@@ -225,7 +225,7 @@ vpMatrix M(R);
 
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M( {-1, -2, -3, 4, 5.5, 6.0f} );
   M.reshape(2, 3);
   std::cout << "M:\n" << M << std::endl;
@@ -251,7 +251,7 @@ M:
 
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6});
   std::cout << "M:\n" << M << std::endl;
 #endif
@@ -276,7 +276,7 @@ M:
 
 int main()
 {
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M( { {-1, -2, -3}, {4, 5.5, 6} } );
   std::cout << "M:\n" << M << std::endl;
 #endif
@@ -336,7 +336,7 @@ M:
   vpMatrix& operator<<(double val);
   vpMatrix& operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(const vpMatrix &A);
   vpMatrix &operator=(vpMatrix &&A);
 

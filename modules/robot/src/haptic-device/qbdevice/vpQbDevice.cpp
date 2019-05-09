@@ -287,7 +287,7 @@ int vpQbDevice::Impl::getSerialPortsAndDevices(const int &max_repeats)
     }
 
     // 'serial_protectors_' is not cleared because of the previously acquired lock, do not do it!
-#if defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
     m_serial_protectors.insert(std::make_pair(serial_ports.at(i), std::make_unique<std::mutex>()));  // never override
 #else
     m_serial_protectors.insert(std::make_pair(serial_ports.at(i), std::unique_ptr<std::mutex>(new std::mutex())));  // never override

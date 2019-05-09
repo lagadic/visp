@@ -412,15 +412,19 @@
 // Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
-// Defined if we want to use c++ 11
-#cmakedefine VISP_HAVE_CXX11
-#ifdef VISP_HAVE_CXX11
-// Define VISP_HAVE_CPP11_COMPATIBILITY to keep compat with previous releases
+// Define c++ standard values also available in __cplusplus when gcc is used
+#define VISP_CXX_STANDARD_98 ${VISP_CXX_STANDARD_98}
+#define VISP_CXX_STANDARD_11 ${VISP_CXX_STANDARD_11}
+#define VISP_CXX_STANDARD_14 ${VISP_CXX_STANDARD_14}
+#define VISP_CXX_STANDARD_17 ${VISP_CXX_STANDARD_17}
+
+#define VISP_CXX_STANDARD ${VISP_CXX_STANDARD}
+
+// Defined to keep compat with previous releases when c++ 11 available
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#  define VISP_HAVE_CXX11
 #  define VISP_HAVE_CPP11_COMPATIBILITY
 #endif
-
-// Defined if we want to use c++ 14
-#cmakedefine VISP_HAVE_CXX14
 
 // Defined if isnan macro is available
 #cmakedefine VISP_HAVE_FUNC_ISNAN

@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <iomanip>
 #include <map>
 #include <set>

@@ -63,9 +63,9 @@ if(USE_OPENCV)
   if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
 
     if(OpenCV_VERSION VERSION_GREATER 4.0.0 OR OpenCV_VERSION VERSION_EQUAL 4.0.0)
-      # if c++11 or c++14 options are OFF, force to c++11
-      if(NOT (USE_CXX11 AND CXX11_FOUND) OR (USE_CXX14 AND CXX14_FOUND))
-        message(WARNING "OpenCV ${OpenCV_VERSION} 3rd party was detected and needs c++11 or c++14 compiler flags that are turned off. Thus to enable OpenCV usage we turn USE_CXX_STANDARD=11.")
+      # if c++ standard is not at least 11: force to c++11
+      if(${VISP_CXX_STANDARD} LESS ${VISP_CXX_STANDARD_11})
+        message(WARNING "OpenCV ${OpenCV_VERSION} 3rd party was detected and needs c++11 or higher compiler flags that are turned off. Thus to enable OpenCV usage we turn USE_CXX_STANDARD=11.")
         unset(USE_CXX_STANDARD)
         set(USE_CXX_STANDARD "11" CACHE STRING "Selected cxx standard" FORCE)
       endif()

@@ -46,7 +46,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#if defined(VISP_HAVE_REALSENSE) && (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)) &&                                          \
+#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                          \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <mutex>
 #include <thread>
@@ -502,8 +502,8 @@ int main()
 #if !defined(VISP_HAVE_REALSENSE)
   std::cout << "Install librealsense to make this test work." << std::endl;
 #endif
-#if !(defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
-  std::cout << "Build ViSP with c++11 or c++14 compiler flag (cmake -DUSE_CXX_STANDARD=11) "
+#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
                "to make this test work."
             << std::endl;
 #endif

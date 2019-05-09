@@ -1031,7 +1031,7 @@ public:
   /*!
     Use or not the multithreaded version.
 
-    \note Need C++11
+    \note Needs C++11 or higher.
   */
   inline void setRansacParallel(const bool parallel)
   {

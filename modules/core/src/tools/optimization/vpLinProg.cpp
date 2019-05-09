@@ -284,7 +284,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   return false;
 }
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Solves a Linear Program under various constraints
 
@@ -310,7 +310,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 
   Lower and upper bounds may be passed as a list of (index, bound) with C++11's braced initialization.
 
-  \warning This function is only available if c++11 or c++14 is activated during compilation. Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
+  \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 
@@ -508,9 +508,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & \mathbf{c}^T\mathbf{x}\\
                & \text{s.t.}& \mathbf{A}\mathbf{x} = \mathbf{b}\\
-                & \text{s.t.}& \mathbf{x} \geq 0
-\end{array}
-\f$
+               & \text{s.t.}& \mathbf{x} \geq 0
+  \end{array}
+  \f$
   \param c : cost vector (dimension n)
   \param A : equality matrix (dimension m x n)
   \param b : equality vector (dimension m)
@@ -519,7 +519,7 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
 
   \return True if the solution was found.
 
-  \warning This function is only available if c++11 or c++14 is activated during build.
+  \warning This function is only available if c++11 or higher is activated during build.
   Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:

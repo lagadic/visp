@@ -57,7 +57,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 class vp_createPointClass
 {
 public:
@@ -158,7 +158,7 @@ int test_pose(bool use_robust)
 
   pose.addFeatureEllipse(circle);
 
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpFeaturePoint fp;
   vpFeatureLine fl;
   vpFeatureSegment fs;

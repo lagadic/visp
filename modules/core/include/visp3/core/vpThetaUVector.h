@@ -118,7 +118,7 @@ class vpQuaternionVector;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   tu = {M_PI_4, M_PI_2, M_PI};
 #endif
   \endcode
@@ -224,7 +224,7 @@ public:
   vpThetaUVector &operator=(const vpColVector &tu);
   vpThetaUVector &operator=(double x);
 
-#if defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpThetaUVector &operator=(const std::initializer_list<double> &list);
 #endif
 };

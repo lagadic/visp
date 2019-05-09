@@ -125,7 +125,7 @@ public:
 
   vpRGBa &operator=(const unsigned char &v);
   vpRGBa &operator=(const vpRGBa &v);
-#if (defined(VISP_HAVE_CXX11) || defined(VISP_HAVE_CXX14))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRGBa &operator=(const vpRGBa &&v);
 #endif
   vpRGBa &operator=(const vpColVector &v);
