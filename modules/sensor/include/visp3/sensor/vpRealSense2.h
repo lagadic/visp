@@ -135,7 +135,8 @@ int main()
 
   If you are interested in the point cloud and if ViSP is build with PCL
   support, you can start from the following example where we use PCL library to
-  visualize the point cloud:
+  visualize the point cloud
+
   \code
 #include <visp3/sensor/vpRealSense2.h>
 #include <pcl/visualization/cloud_viewer.h>
@@ -294,6 +295,9 @@ public:
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
                rs2::align *const align_to = NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
+               unsigned char *const data_infrared2, rs2::align *const align_to);
 
 #ifdef VISP_HAVE_PCL
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
