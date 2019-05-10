@@ -97,8 +97,12 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
-if(USE_CXX11 AND CXX11_CXX_FLAGS)
+if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
   add_extra_compiler_option("${CXX11_CXX_FLAGS}")
+elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
+  add_extra_compiler_option("${CXX14_CXX_FLAGS}")
+elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
+  add_extra_compiler_option("${CXX17_CXX_FLAGS}")
 endif()
 
 if(BUILD_COVERAGE)

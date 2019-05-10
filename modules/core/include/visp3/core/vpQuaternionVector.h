@@ -144,7 +144,7 @@ public:
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
   vpQuaternionVector operator/(const double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpQuaternionVector &operator=(const std::initializer_list<double> &list);
 #endif
 

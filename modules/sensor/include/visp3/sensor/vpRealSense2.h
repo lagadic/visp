@@ -38,7 +38,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <librealsense2/rs.hpp>
 #include <librealsense2/rsutil.h>
@@ -74,6 +74,7 @@
   support for the ISO C++ 2011 standard. This support must be enabled with the
   -std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
   file that allows to build sample-realsense.cpp that uses vpRealSense2 class.
+
   \code
 project(sample)
 cmake_minimum_required(VERSION 2.6)

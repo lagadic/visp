@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#if (defined (VISP_HAVE_REALSENSE) || defined (VISP_HAVE_REALSENSE2)) && defined (VISP_HAVE_CPP11_COMPATIBILITY) && (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+#if (defined (VISP_HAVE_REALSENSE) || defined (VISP_HAVE_REALSENSE2)) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
 
 #include <fstream>
 #include <queue>

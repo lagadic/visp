@@ -49,7 +49,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
-#if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
+#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <librealsense/rs.hpp>
 
@@ -64,21 +64,21 @@
   \ingroup group_sensor_rgbd
 
   This class is a wrapper over the Intel librealsense library
-https://github.com/IntelRealSense/librealsense. It allows to capture data from
-the Intel RealSense cameras.
+  https://github.com/IntelRealSense/librealsense. It allows to capture data from
+  the Intel RealSense cameras.
 
   The usage of vpRealSense class is enabled when librealsense 3rd party is
-successfully installed. Installation instructions are provided following
-https://github.com/IntelRealSense/librealsense#installation-guide.
+  successfully installed. Installation instructions are provided following
+  https://github.com/IntelRealSense/librealsense#installation-guide.
 
   Moreover, if Point Cloud Library (PCL) 3rd party is installed we also
-propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
-or pcl::PointCloud<pcl::PointXYZRGB> data structures.
+  propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
+  or pcl::PointCloud<pcl::PointXYZRGB> data structures.
 
   \warning Notice that the usage of this class requires compiler and library
-support for the ISO C++ 2011 standard. This support must be enabled with the
--std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
-file that allows to build sample-realsense.cpp that uses vpRealSense class.
+  support for the ISO C++ 2011 standard. This support must be enabled with the
+  -std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
+  file that allows to build sample-realsense.cpp that uses vpRealSense class.
   \code
 project(sample)
 cmake_minimum_required(VERSION 2.6)
@@ -97,9 +97,9 @@ target_link_libraries(sample-realsense ${VISP_LIBRARIES})
   \endcode
 
   To acquire images from the RealSense color camera and convert them into grey
-level images, a good starting is to use the following code that corresponds to
-the content of sample-realsense.cpp:
-\code
+  level images, a good starting is to use the following code that corresponds to
+  the content of sample-realsense.cpp:
+  \code
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense.h>
@@ -137,10 +137,10 @@ int main()
   \endcode
 
   If you are interested in the point cloud and if ViSP is build with PCL
-support, you can start from the following example where we use PCL library to
-visualize the point cloud:
+  support, you can start from the following example where we use PCL library to
+  visualize the point cloud:
 
-\code
+  \code
 #include <visp3/sensor/vpRealSense.h>
 
 #include <pcl/visualization/cloud_viewer.h>
@@ -183,9 +183,9 @@ int main()
   \endcode
 
   If you want to change the default stream parameters, you can use \p
-setEnableStream() to enable only the desired stream and \p setStreamSettings()
-to set the stream settings. The following code allows to capture the color
-stream in 1920x1080 also with the infrared stream:
+  setEnableStream() to enable only the desired stream and \p setStreamSettings()
+  to set the stream settings. The following code allows to capture the color
+  stream in 1920x1080 also with the infrared stream:
 
 \code
 #include <visp3/gui/vpDisplayGDI.h>
@@ -323,8 +323,8 @@ int main() {
   \endcode
 
   \note This class has been tested with the Intel RealSense SR300
-(Firmware: 3.15.0.0) and R200 (Firmware: 1.0.71.06) using librealsense (API
-version: 1.12.01). The following streams are enabled by default:
+  (Firmware: 3.15.0.0) and R200 (Firmware: 1.0.71.06) using librealsense (API
+  version: 1.12.01). The following streams are enabled by default:
   - Color stream with preset: best quality
   - Depth stream with preset: best quality
   - Infrared stream with preset: best quality

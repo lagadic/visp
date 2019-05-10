@@ -56,7 +56,7 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
 
-#if defined(VISP_HAVE_CPP11_COMPATIBILITY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <thread>
 #endif
 
@@ -308,7 +308,7 @@ bool vpPose::RansacFunctor::poseRansacImpl()
     }
   }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   if (m_nbInliers >= m_ransacNbInlierConsensus)
     m_abort = true;
 #endif
@@ -393,7 +393,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   unsigned int nbThreads = 1;
   bool executeParallelVersion = useParallelRansac;
 #else
@@ -401,7 +401,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #endif
 
   if (executeParallelVersion) {
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     if (nbParallelRansacThreads <= 0) {
       // Get number of CPU threads
       nbThreads = std::thread::hardware_concurrency();
@@ -416,7 +416,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   bool foundSolution = false;
 
   if (executeParallelVersion) {
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<std::thread> threadpool;
     std::vector<RansacFunctor> ransacWorkers;
     const unsigned int nthreads = std::thread::hardware_concurrency();
@@ -461,12 +461,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #endif
   } else {
     // Sequential RANSAC
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::atomic<bool> abort{false};
 #endif
     RansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
                                    checkDegeneratePoints, listOfUniquePoints, func
-                               #ifdef VISP_HAVE_CPP11_COMPATIBILITY
+                               #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
                                    , abort
                                #endif
                                    );

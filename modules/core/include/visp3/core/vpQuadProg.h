@@ -68,12 +68,13 @@
   In order to be used sequentially, the decomposition of the equality constraint may be stored.
   The last active set is always stored and used to warm start the next call.
 
-  \warning The solvers are only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning The solvers are only available if c++11 or higher is activated during build.
+  Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 */
 class VISP_EXPORT vpQuadProg
 {
 public:
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /** @name Instanciated solvers  */
   //@{
   bool solveQPe(const vpMatrix &Q, const vpColVector &r,

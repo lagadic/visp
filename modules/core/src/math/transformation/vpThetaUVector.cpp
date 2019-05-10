@@ -451,7 +451,7 @@ void vpThetaUVector::buildFrom(const double tux, const double tuy, const double 
   data[2] = tuz;
 }
 
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code

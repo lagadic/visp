@@ -112,7 +112,7 @@ int main()
 
 int main()
 {
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
   std::cout << "R:\n" << R << std::endl;
 #endif
@@ -134,7 +134,7 @@ public:
   explicit vpRotationMatrix(const vpMatrix &R);
   vpRotationMatrix(const double tux, const double tuy, const double tuz);
 
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   explicit vpRotationMatrix(const std::initializer_list<double> &list);
 #endif
 
@@ -166,7 +166,7 @@ public:
   vpRotationMatrix &operator=(const vpRotationMatrix &R);
   // copy operator from vpMatrix (handle with care)
   vpRotationMatrix &operator=(const vpMatrix &M);
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRotationMatrix& operator=(const std::initializer_list<double> &list);
 #endif
   // operation c = A * b (A is unchanged)

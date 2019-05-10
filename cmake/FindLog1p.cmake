@@ -41,8 +41,12 @@ include(CheckCXXSourceCompiles)
 macro(check_math_expr _expr _var)
     unset(${_var} CACHE)
     # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
-    if(USE_CXX11 AND CXX11_CXX_FLAGS)
+    if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
       set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
+    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX14_CXX_FLAGS})
+    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX17_CXX_FLAGS})
     endif()
     check_cxx_source_compiles("
 #include <math.h>

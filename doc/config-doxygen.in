@@ -2078,6 +2078,11 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_COMEDI \
                          VISP_HAVE_CPP11_COMPATIBILITY \
                          VISP_HAVE_CXX11 \
+                         VISP_CXX_STANDARD_98=@VISP_CXX_STANDARD_98@ \
+                         VISP_CXX_STANDARD_11=@VISP_CXX_STANDARD_11@ \
+                         VISP_CXX_STANDARD_14=@VISP_CXX_STANDARD_14@ \
+                         VISP_CXX_STANDARD_17=@VISP_CXX_STANDARD_17@ \
+                         VISP_CXX_STANDARD=@VISP_CXX_STANDARD_11@ \
                          VISP_HAVE_D3D9 \
                          VISP_HAVE_DC1394 \
                          VISP_HAVE_DIRECTSHOW \

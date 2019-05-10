@@ -619,7 +619,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getFeaturesForDispla
     iP2.set_i(vpMath::round(iP.get_i() + 7));
     iP2.set_j(vpMath::round(iP.get_j() + 7));
 
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<double> params = {1, //KLT
                                   iP.get_i(),
                                   iP.get_j(),
@@ -697,7 +697,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getModelForDisplay(c
     ip21.set_ij(i21, j21);
     ip22.set_ij(i22, j22);
 
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<double> params1 = {0, //line parameters
                                    ip11.get_i(),
                                    ip11.get_j(),

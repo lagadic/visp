@@ -633,7 +633,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getFeaturesForDisplay(
     iP2.set_i(vpMath::round(iP.get_i() + 7));
     iP2.set_j(vpMath::round(iP.get_j() + 7));
 
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<double> params = {1, //KLT
                                   iP.get_i(),
                                   iP.get_j(),
@@ -694,7 +694,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getModelForDisplay(con
           vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
           vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
           std::vector<double> params = {0, //0 for line parameters
                                         ip1.get_i(),
                                         ip1.get_j(),

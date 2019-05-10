@@ -50,7 +50,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <visp3/core/vpQuadProg.h>
 #include <visp3/core/vpTime.h>
@@ -173,9 +173,9 @@ int main (int argc, char **argv)
 #else
 int main()
 {
-  std::cout << "You did not build ViSP with C++11 compiler flag" << std::endl;
+  std::cout << "You did not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CPP11=ON, and build again this example" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

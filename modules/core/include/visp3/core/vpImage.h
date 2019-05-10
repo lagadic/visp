@@ -138,7 +138,7 @@ public:
   vpImage();
   //! copy constructor
   vpImage(const vpImage<Type> &);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   //! move constructor
   vpImage(vpImage<Type> &&);
 #endif
@@ -926,7 +926,7 @@ vpImage<Type>::vpImage(const vpImage<Type> &I) : bitmap(NULL), display(NULL), np
   memcpy(static_cast<void*>(bitmap), static_cast<void*>(I.bitmap), I.npixels * sizeof(Type));
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move constructor
 */

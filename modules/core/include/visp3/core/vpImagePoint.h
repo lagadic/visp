@@ -118,7 +118,7 @@ public:
     this->j = ip.j;
     return *this;
   }
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
     Move operator.
   */

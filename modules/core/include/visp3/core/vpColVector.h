@@ -109,7 +109,7 @@ int main()
 
 int main()
 {
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpColVector v({-1, -2.1, -3});
   std::cout << "v:\n" << v << std::endl;
 #endif
@@ -119,7 +119,7 @@ int main()
   \code
 int main()
 {
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpColVector v;
   v = {-1, -2.1, -3};
 #endif
@@ -156,7 +156,7 @@ public:
   vpColVector(const vpMatrix &M, unsigned int j);
   vpColVector(const std::vector<double> &v);
   vpColVector(const std::vector<float> &v);
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpColVector(vpColVector &&v);
   vpColVector(const std::initializer_list<double> &list)
     : vpArray2D<double>(static_cast<unsigned int>(list.size()), 1) {
@@ -256,7 +256,7 @@ public:
   vpColVector &operator=(const std::vector<double> &v);
   vpColVector &operator=(const std::vector<float> &v);
   vpColVector &operator=(double x);
-#ifdef VISP_HAVE_CXX11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpColVector &operator=(vpColVector &&v);
   vpColVector &operator=(const std::initializer_list<double> &list);
 #endif
