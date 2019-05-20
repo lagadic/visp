@@ -1,0 +1,128 @@
+/**
+
+\page tutorial-install-win10-msvc16-uwp Tutorial: Cross-compilation for UWP from Windows host with Visual C++ 2019 (vc16)
+\tableofcontents
+
+In this tutorial you will learn how to build ViSP framework for Universal Windows Platform (UWP) to include ViSP functionalities in apps developments that target a wide range of devices including PC, mobile, Xbox, HoloLens, IoT, and Surface Hub. 
+
+This tutorial has been tested on Windows 10 (64 bit), with CMake 3.14.3 and Visual Studio Community 2019.
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section tutorial_install_msvc16_uwp_required Install prerequisites
+
+\subsection install_msvc16_uwp_msvc Visual Studio
+
+Visual Studio Community 2019 could be downloaded from https://www.visualstudio.com/downloads/. During a fresh installation enable "Universal Windows App Development Tools". Without this workload, you won't be able to create your universal apps. After a fresh installation, start Visual Studio and create an empty C++ project to install the common tools for Visual C++ 2019.
+
+If you already have Visual Studio Community 2019, you can check if "Universal Windows App Development" workload is activated following instructions given <a href="https://docs.microsoft.com/en-us/visualstudio/install/modify-visual-studio?view=vs-2019">here</a> that we resume:
+
+1. Find the Visual Studio Installer on your computer.
+Select Start, and then scroll to the letter V, where it's listed as Visual Studio Installer
+2. Click or tap to start the installer, and then choose "Modify"
+3. From the Workloads screen, check if "Universal Windows App Development" workload is activated like in the following image
+\image html img-msvc16-uwp-config.png
+4. Choose Modify again.
+5. After the new workloads and components are installed, choose Launch.
+
+After Visual Studio installation, you need to <a href="https://msdn.microsoft.com/windows/uwp/get-started/enable-your-device-for-development">enable your Windows 10 device</a> for development.
+
+\subsection install_msvc16_uwp_3rd_cmake CMake
+
+CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform (at the time this tutorial was written it was the file `cmake-3.14.3-win64-x64.msi`). To install just double click on the msi file.
+
+\subsection install_msvc16_uwp_3rd_git Git
+
+Install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git in a `cmd` Command Prompt.
+
+\section install_msvc16_uwp_ws Create a workspace
+
+If not already done, create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `C:\visp-ws` folder, but it could be set to any other location.
+
+To create the workspace, open a `cmd` Command Prompt (a fast way to launch this window is to press the Win + R keys on your keyboard. Then, type `cmd` or `cmd.exe` and press Enter or click/tap OK) and run the following to create a workspace environment var named `VISP_WS`:
+\code
+C:\> setx VISP_WS "C:\visp-ws"
+C:\> exit
+\endcode
+Open a new `cmd` Command Prompt and create the corresponding folder
+\code
+C:\> mkdir %VISP_WS%
+C:\> exit
+\endcode
+
+\section install_msvc16_uwp_get_visp_source Get ViSP source code
+
+There are different ways to get ViSP source code.
+
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the `git` command line tool:
+\code
+C:\> cd %VISP_WS%
+C:\> git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in `%%VISP_WS%\visp`. 
+
+\section install_msvc16_uwp_build_without_opencv Build ViSP
+
+\subsection install_msvc16_uwp_build_ws_10 Build for Windows Store 10.0
+
+\subsubsection install_msvc16_uwp_build_ws_10_x86 Targetting a x86 platform
+
+With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version `"10"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running: 
+\code
+C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-x86
+C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-x86
+C:\> cmake.exe -G "Visual Studio 16 2019" -A "Win32" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
+C:\> cmake --build . --config Release --target install
+\endcode
+
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc16-uwp-ws-10-install` folder. Libraries are located in `x86/vc16/bin` subfolder and headers in `include` subfolder.
+
+\note An other way to build ViSP is to use Visual Studio.
+- To this end open File Explorer, navigate to `%%VISP_WS%\visp-build-vc16-uwp-ws-10-x86` folder and just double click on `VISP.sln` solution file. This action will open ViSP solution in Visual Studio C++.
+- With Visual Studio to build and install the solution, select first `"Release"` configuration and build `"INSTALL"` project. To this end, in Visual Studio right panel apply a left click on `"INSTALL"` to select the project, then a right click to enter in the `"Build"` menu.
+\image html img-win10-msvc16-uwp-install.png
+
+\subsubsection install_msvc16_uwp_build_ws_10_x64 Targetting a x64 platform
+
+The same process could be applied except that during cmake configuration you have to use `"Visual Studio 16 2019 Win64"` generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
+
+\code
+C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-x64
+C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-x64
+C:\> cmake.exe -G "Visual Studio 16 2019" -A "x64" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
+C:\> cmake --build . --config Release --target install
+\endcode
+
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc16-uwp-ws-10-install` folder. Libraries are located in `x64/vc16/bin` subfolder and headers in `include` subfolder.
+
+\subsubsection install_msvc16_uwp_build_ws_10_arm Targetting an ARM platform
+
+The same process could be applied except that during cmake configuration you have to use `"Visual Studio 16 2019 ARM"` generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
+
+\code
+C:\> mkdir %VISP_WS%\visp-build-vc16-uwp-ws-10-arm
+C:\> cd %VISP_WS%\visp-build-vc16-uwp-ws-10-arm
+C:\> cmake.exe -G "Visual Studio 16 2019" -A "ARM" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc16-uwp-ws-10-install ..\visp
+C:\> cmake --build . --config Release --target install
+\endcode
+
+If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc16-uwp-ws-10-install` folder. Libraries are located in `ARM/vc16/bin` subfolder and headers in `include` subfolder.
+
+\section install_msvc16_uwp_tips Tips and tricks
+\subsection install_msvc16_uwp_tips_msvc How to add Universal Windows App Development Tools support
+
+In case you're trying to build Windows Store and Windows Phone 10.0 projects having only default Visual Studio 2019 installation you'll likely get the following error during `cmake` run:
+\code
+A Windows Store component with CMake requires both the Windows Desktop SDK
+as well as the Windows Store '10.0' SDK. Please make sure that you have
+both installed
+\endcode
+
+Follow \ref install_msvc16_uwp_msvc installation instructions to activate "Universal Windows App Development" workload in order to resolve this issue.
+
+*/

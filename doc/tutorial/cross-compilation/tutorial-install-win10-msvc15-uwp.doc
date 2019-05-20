@@ -21,7 +21,7 @@ If you already have Visual Studio Community 2017, you can check if "Universal Wi
 Select Start, and then scroll to the letter V, where it's listed as Visual Studio Installer
 2. Click or tap to start the installer, and then choose "Modify"
 3. From the Workloads screen, check if "Universal Windows App Development" workload is activated like in the following image
-\image html img-msvc15-config.png
+\image html img-msvc15-uwp-config.png
 4. Choose Modify again.
 5. After the new workloads and components are installed, choose Launch.
 
@@ -77,7 +77,7 @@ With CMake configure ViSP specifying options for cross compiling for `"Windows S
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc15-uwp-ws-10-x86
 C:\> cd visp-build-vc15-uwp-ws-10-x86
-C:\> cmake.exe -G "Visual Studio 15 2017" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc15-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 15 2017" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc15-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endcode
 
@@ -96,7 +96,7 @@ The same process could be applied except that during cmake configuration you hav
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc15-uwp-ws-10-x64
 C:\> cd visp-build-vc15-uwp-ws-10-x64
-C:\> cmake.exe -G "Visual Studio 15 2017 Win64" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc15-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 15 2017 Win64" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc15-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endcode
 
@@ -110,7 +110,7 @@ The same process could be applied except that during cmake configuration you hav
 C:\> cd %VISP_WS%
 C:\> mkdir visp-build-vc15-uwp-ws-10-arm
 C:\> cd visp-build-vc15-uwp-ws-10-arm
-C:\> cmake.exe -G "Visual Studio 15 2017 ARM" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_DIR\visp-build-vc15-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 15 2017 ARM" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc15-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endcode
 

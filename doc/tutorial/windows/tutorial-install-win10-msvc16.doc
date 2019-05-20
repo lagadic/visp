@@ -25,7 +25,7 @@ Select Start, and then scroll to the letter V, where it's listed as Visual Studi
 
 \subsection install_win10_msvc16_3rd_cmake CMake
 
-CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform (at the time this tuto was written it was the file `cmake-3.14.1-win64-x64.msi`). To install just double click on the msi file.
+CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform (at the time this tutorial was written it was the file `cmake-3.14.3-win64-x64.msi`). To install just double click on the msi file.
 
 \subsection install_win10_msvc16_3rd_git Git
 

@@ -28,6 +28,7 @@ ViSP 3.2.1 (under work)
 	. New option to select CXX standard set by default to c++11
   - Tutorials
     . New tutorial: Installation from source for Windows with Visual C++ 2019 (vc16)
+	. new tutorial: Cross-compilation for UWP from Windows host with Visual C++ 2019 (vc16)
   - Bug fixed
     . [#523] dpkg-shlibdeps produces an error during Debian packaging
     . [#525] Tests are failing during Debian package build in a container
