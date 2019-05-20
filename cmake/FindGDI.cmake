@@ -56,6 +56,8 @@ IF(WIN32)
   ELSE(MINGW)
     IF(CMAKE_CL_64)
       # Generic path search
+      file(GLOB _gdi_search_path "C:/Program Files (x86)/Windows Kits/*/Lib/*/um/x64")
+	  list(REVERSE _gdi_search_path) # to search first in the more recent SDK
       FIND_LIBRARY(GDI_LIBRARY gdi32
                    "$ENV{WINSDK_DIR}/Lib/x64"
                    "$ENV{WINSDK_HOME}/Lib/x64"
@@ -68,10 +70,7 @@ IF(WIN32)
                    "C:/Program Files/Microsoft SDKs/Windows/v7.1A/Lib/x64"
                    "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.0A/Lib/x64"
                    "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64"
-                   "C:/Program Files (x86)/Windows Kits/8.0/Lib/win8/um/x64"
-                   "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64"
-                   "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.15063.0/um/x64"
-                   "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x86"
+                   ${_gdi_search_path}
                    "C:/Program Files/Microsoft Platform SDK/Lib/x64"
                    "C:/DXSDK/Include/Lib/x64"
                    DOC "Where can the GDI (Graphics Device Interface) library be found"
@@ -104,6 +103,8 @@ IF(WIN32)
 
     ELSE(CMAKE_CL_64)
       # Generic path search
+      file(GLOB _gdi_search_path "C:/Program Files (x86)/Windows Kits/*/Lib/*/um/x86")
+	  list(REVERSE _gdi_search_path) # to search first in the more recent SDK
       FIND_LIBRARY(GDI_LIBRARY gdi32
                    "$ENV{WINSDK_DIR}/Lib"
                    "$ENV{WINSDK_HOME}/Lib"
@@ -119,6 +120,7 @@ IF(WIN32)
                    "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x86"
                    "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.15063.0/um/x86"
                    "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x86"
+                   ${_gdi_search_path}
                    "C:/Program Files/Microsoft Platform SDK/Lib"
                    "C:/DXSDK/Include/Lib"
                    DOC "Where can the GDI (Graphics Device Interface) library be found"
