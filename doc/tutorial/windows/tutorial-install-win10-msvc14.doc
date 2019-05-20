@@ -160,10 +160,10 @@ Complete installation instructions are given [here](https://www.ptgrey.com/KB/10
 
 \subsubsection install_win10_msvc14_3rdparty_pylon Pylon 3rd party
 
-I you have a Basler FireWire, Camera Link, GigE or USB3.0 camera, you may install Pylon SDK. Otherwise you can skip this section.
+If you have a Basler FireWire, Camera Link, GigE or USB3.0 camera, you may install Pylon SDK. Otherwise you can skip this section.
 
 To install Pylon:
-- visit [Basler Software Download page](https://www.baslerweb.com/en/support/downloads/software-downloads/) to download and install the SDK corresponding to your platform. At the time this tutorial we written we selected "Pylon 5.0.11 Camera Software Suite Windows" to download `Basler_pylon_5.0.11.10913.exe` file.
+- Visit [Basler Software Download page](https://www.baslerweb.com/en/support/downloads/software-downloads/) to download and install the SDK corresponding to your platform. At the time this tutorial we written we selected "Pylon 5.0.11 Camera Software Suite Windows" to download `Basler_pylon_5.0.11.10913.exe` file.
 - Double-click on downloaded file and follow the installation instructions.
 - Be carreful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h) besides the dll.
 \image html img-win10-pylon-developer.png
@@ -233,10 +233,10 @@ C:\> cmake --build . --config Release --target install
 Now you have to complete eigen installation setting some environment vars:
 - In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
 \code
-C:\> setx Eigen3_DIR "%VISP_DIR%\eigen-3.3.7\build-vc14\install\share\eigen3\cmake"
+C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.7\build-vc14\install\share\eigen3\cmake"
 C:\> exit
 \endcode
-where `%%VISP_DIR%\eigen-3.3.7\build-vc14\install` is where you have installed eigen. Inside the folder `share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+where `%%VISP_WS%\eigen-3.3.7\build-vc14\install` is where you have installed eigen. Inside the folder `share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since eigen is a template that has no library.
 
 \subsection install_win10_msvc14_get_source Get ViSP source code
@@ -266,9 +266,25 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-vc14` folder.
 - Select then your compiler "Visual Studio 14 2015 Win64" and click on "Finish" button.
 \image html img-cmake-win10-msvc14-msvc-version.png
-- This will start CMake configuration. As shown in the next image, Eigen, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon, Realsense and Zbar 3rd parties are automatically detected. 
+- This will start CMake configuration. As shown in the next image, Eigen, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon, Realsense2 and Zbar 3rd parties are automatically detected. 
 \image html img-cmake-win10-msvc14-visp-config.png
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc14/install`. If you want to change the installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges to write in that folder before modifying `CMAKE_INSTALL_PREFIX`. 
+\warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning in `cmake_gui`:
+\code
+CMake Warning at CMakeLists.txt:1156 (message):
+  Eigen3 config file is detected in C:/visp-ws/eigen-3.3.7/build-vc14.  Using
+  C:/visp-ws/eigen-3.3.7/build-vc14/Eigen3Config.cmake doesn't allow to use a
+  valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
+  to Eigen3Config.cmake file located in Eigen3 installation folder or turn
+  USE_EIGEN3 OFF.
+\endcode We strongly recommend to fix this warning. To this end:
+    - close `cmake-gui`
+    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.3.7\build-vc14\install\share\eigen3\cmake"`
+    - open again `cmake-gui`
+    - delete the cache using menu `File > Delete Cache`
+    - and configure again ViSP.
+	.
+    At this point, you should no more see the warning. 
 
 - Click then on "Configure" button. All the red lines should disappear.
 \image html img-cmake-win10-msvc14-visp-config2.png
@@ -409,7 +425,7 @@ $ cmake --build . --config Release --target visp_mbt
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file that contains also build info.
 \code
-$ type $VISP_WS/visp-build/ViSP-third-party.txt
+$ type $VISP_WS/visp-build-vc14/ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.2.0
 
