@@ -74,7 +74,7 @@ if(APPLE)
   endif()
 
   mark_as_advanced(PYLON_BASE_INCLUDE_DIR)
-elseif(WIN32)
+elseif(MSVC)
   find_path(PYLON_INCLUDE_DIR pylon/PylonIncludes.h
     PATHS "$ENV{PYLON_HOME}/include"
         "C:/Program Files/Basler/pylon 5/Development/include")
