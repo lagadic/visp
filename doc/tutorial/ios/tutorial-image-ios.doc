@@ -67,7 +67,7 @@ The following function implemented in \c ImageConversion.mm show how to convert 
 
 \section image_ios_output Application output
 
-- Now we are ready to build <tt>"StartedImaeProc"</tt> application using Xcode <tt>"Product>Build"</tt> menu. If you get build issues, have a look to \ref image_ios_known_issue.
+- Now we are ready to build <tt>"StartedImaeProc"</tt> application using Xcode <tt>"Product>Build"</tt> menu. 
 
 - Once build, if you run \c StartedImageProc application on your device, you should be able to see the following screen shots.
 

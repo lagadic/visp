@@ -54,7 +54,7 @@ The following function implemented in \c ImageDisplay.mm show how to display a 3
 
 \section apriltag_detection_basic_output Application output
 
-- Now we are ready to build <tt>"StartedAprilTag"</tt> application using Xcode <tt>"Product>Build"</tt> menu. If you get build issues, have a look to \ref apriltag_detection_known_issue.
+- Now we are ready to build <tt>"StartedAprilTag"</tt> application using Xcode <tt>"Product>Build"</tt> menu. 
 - Once build, if you run \c StartedAprilTag application on your device, you should be able to see the following screen shot:
 
 \image html img-detection-apriltag-ios-output.png
