@@ -164,9 +164,11 @@ int main(int argc, const char **argv)
 #endif
     //! [Construct grabber]
 
-    std::cout << "cam:\n" << cam << std::endl;
+    std::cout << cam << std::endl;
     std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
     std::cout << "tagFamily: " << tagFamily << std::endl;
+    std::cout << "nThreads : " << nThreads << std::endl;
+    std::cout << "Z aligned: " << align_frame << std::endl;
 
     vpDisplay *d = NULL;
     if (! display_off) {

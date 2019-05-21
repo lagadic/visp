@@ -47,9 +47,9 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
     } else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
-      color_id = atoi(argv[i+1]);
+      color_id = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = (unsigned int) atoi(argv[i+1]);
+      thickness = (unsigned int)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--z_aligned") {
@@ -80,9 +80,10 @@ int main(int argc, const char **argv)
   if (!intrinsic_file.empty() && !camera_name.empty())
     parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
 #endif
-  std::cout << "cam:\n" << cam << std::endl;
+  std::cout << cam << std::endl;
   std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
   std::cout << "tagFamily: " << tagFamily << std::endl;
+  std::cout << "nThreads : " << nThreads << std::endl;
   std::cout << "Z aligned: " << z_aligned << std::endl;
 
   try {
@@ -139,8 +140,7 @@ int main(int argc, const char **argv)
         int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
         ss.str("");
         ss << "Tag id: " << tag_id;
-        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(),
-                               ss.str(), vpColor::red);
+        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(), ss.str(), vpColor::red);
       }
       //! [Get tag id]
       for (size_t j = 0; j < p.size(); j++) {
