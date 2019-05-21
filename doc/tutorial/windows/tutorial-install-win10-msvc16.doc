@@ -133,6 +133,44 @@ where `%%VISP_WS%\opencv-4.1.0\build` is where you have installed OpenCV. Inside
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 Win64 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.0\build\x64\vc16\bin`.
 
+\subsubsection install_win10_msvc16_3rdparty_eigen Eigen3 3rd party
+
+Even if Eigen3 is designed as a template we recommend to install the library with Visual Studio.
+
+<b>1. Get Eigen3</b>
+
+- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was written we downloaded `eigen-eigen-323c052e1731.zip` archive corresponding to Eigen 3.3.7.
+- Extract the content of the archive in `%%VISP_WS%`.
+- We recommend to rename `%%VISP_WS%\eigen-eigen-323c052e1731` in `%%VISP_WS%\eigen-3.3.7`
+
+<b>2. Build and install Eigen3 from source</b>
+
+- Create a build directory
+\code
+C:\> mkdir %VISP_WS%\eigen-3.3.7\build-vc16
+C:\> cd %VISP_WS%\eigen-3.3.7\build-vc16
+\endcode
+- Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set to `%%VISP_WS%\eigen-3.3.7\build-vc16\install` folder):
+\code
+C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-vc16\install
+\endcode
+- Build and install Eigen3 (installation doesn't need administrator privileges)
+\code
+C:\> cmake --build . --config Release --target install
+\endcode
+- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.7\build-vc16\install` folder
+
+<b>3. Complete Eigen3 installation</b>
+
+Now you have to complete Eigen3 installation setting some environment vars:
+- In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
+\code
+C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.7\build-vc16\install\share\eigen3\cmake"
+C:\> exit
+\endcode
+where `%%VISP_WS%\eigen-3.3.7\build-vc16\install` is where you have installed Eigen3. Inside the folder `%%VISP_WS%\eigen-3.3.7\build-vc16\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
+
 \subsubsection install_win10_msvc16_3rdparty_realsense librealsense 3rd party
 
 I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class. Otherwise you can skip this section.
@@ -175,44 +213,6 @@ To install Pylon:
 - In the "Ready to install" panel, click on the "Install" button
 - Reboot the system.
 
-\subsubsection install_win10_msvc16_3rdparty_eigen eigen 3rd party
-
-Even if eigen is designed as a template we recommend to install the library with Visual Studio.
-
-<b>1. Get eigen</b>
-
-- Download the latest eigen release from http://eigen.tuxfamily.org. At the time this tutorial was written we downloaded `eigen-eigen-323c052e1731.zip` archive corresponding to eigen 3.3.7.
-- Extract the content of the archive in `%%VISP_WS%`.
-- We recommend to rename `%%VISP_WS%\eigen-eigen-323c052e1731` in `%%VISP_WS%\eigen-3.3.7`
-
-<b>2. Build and install eigen from source</b>
-
-- Create a build directory
-\code
-C:\> mkdir %VISP_WS%\eigen-3.3.7\build-vc16
-C:\> cd %VISP_WS%\eigen-3.3.7\build-vc16
-\endcode
-- Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set to `%%VISP_WS%\eigen-3.3.7\build-vc16\install` folder):
-\code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-vc16\install
-\endcode
-- Build and install eigen (installation doesn't need administrator privileges)
-\code
-C:\> cmake --build . --config Release --target install
-\endcode
-- eigen is now installed in `%%VISP_WS%\eigen-3.3.7\build-vc16\install` folder
-
-<b>3. Complete eigen installation</b>
-
-Now you have to complete eigen installation setting some environment vars:
-- In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
-\code
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.7\build-vc16\install\share\eigen3\cmake"
-C:\> exit
-\endcode
-where `%%VISP_WS%\eigen-3.3.7\build-vc16\install` is where you have installed eigen. Inside the folder `share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
-- There is no need to set `Path` environment var since eigen is a template that has no library.
-
 \subsection install_win10_msvc16_get_source Get ViSP source code
 
 There are different ways to get ViSP source code.
@@ -240,7 +240,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-vc16` folder.
 - Select then your compiler "Visual Studio 16 2019" and click on "Finish" button.
 \image html img-cmake-win10-msvc16-msvc-version.png
-- This will start CMake configuration. As shown in the next image, Eigen, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon and Realsense2 3rd parties are automatically detected. 
+- This will start CMake configuration. As shown in the next image, Eigen3, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon and Realsense2 3rd parties are automatically detected. 
 \image html img-cmake-win10-msvc16-visp-config.png
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc16/install`. If you want to change the installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges to write in that folder before modifying `CMAKE_INSTALL_PREFIX`. 
 \warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning in `cmake_gui`:
