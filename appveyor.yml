@@ -12,12 +12,12 @@ configuration:
   - Release
 
 environment:
-  VISP_OPENCV_MINGW_FILE: opencv-4.0.0-ebc801563-MinGW-build-package.7z
-  VISP_OPENCV_MINGW_DIR: opencv-4.0.0-ebc801563-MinGW-build-package
-  VISP_OPENCV_MINGW_PKG: https://github.com/s-trinh/visp-dependencies/blob/master/opencv-4.0.0-ebc801563-MinGW-build-package.7z?raw=true
-  VISP_OPENCV_VS2015_2017_FILE: opencv-4.0.0-beta-vc14_vc15.exe
-  VISP_OPENCV_VS2015_2017_DIR: opencv-4.0.0-beta-vc14_vc15
-  VISP_OPENCV_VS2015_2017_PKG: https://github.com/opencv/opencv/releases/download/4.0.0-beta/opencv-4.0.0-beta-vc14_vc15.exe
+  VISP_OPENCV_MINGW_FILE: opencv-4.1.0-MinGW-build-package.7z
+  VISP_OPENCV_MINGW_DIR: opencv-4.1.0-MinGW-build-package
+  VISP_OPENCV_MINGW_PKG: https://github.com/lagadic/visp-dependencies/blob/master/opencv-4.1.0-MinGW-build-package.7z?raw=true
+  VISP_OPENCV_VS2015_2017_FILE: opencv-4.1.0-vc14_vc15.exe
+  VISP_OPENCV_VS2015_2017_DIR: opencv-4.1.0-vc14_vc15
+  VISP_OPENCV_VS2015_2017_PKG: https://github.com/opencv/opencv/releases/download/4.1.0/opencv-4.1.0-vc14_vc15.exe
 
   matrix:
     - CMAKE_GENERATOR: MinGW Makefiles
@@ -40,8 +40,8 @@ install:
   - cd C:\projects\deps
 
   # visp-images
-  - git clone --depth 1 https://github.com/lagadic/ViSP-images C:\projects\deps\ViSP-images
-  - set VISP_INPUT_IMAGE_PATH=C:\projects\deps
+  - git clone --depth 1 https://github.com/lagadic/visp-images
+  - set VISP_INPUT_IMAGE_PATH=C:\projects\deps\visp-images
 
   # opencv
   - ps: >-
@@ -69,8 +69,8 @@ install:
       }
 
 cache:
-  - opencv-4.0.0-ebc801563-MinGW-build-package.7z -> appveyor.yml
-  - opencv-4.0.0-beta-vc14_vc15.exe -> appveyor.yml
+  - opencv-4.1.0-MinGW-build-package.7z -> appveyor.yml
+  - opencv-4.1.0-vc14_vc15.exe -> appveyor.yml
 
 # visp clone directory
 clone_folder: C:\projects\visp\visp
