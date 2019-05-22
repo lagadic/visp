@@ -148,11 +148,6 @@ elseif(UNIX)
 
     set(PYLON_FOUND TRUE)
   endif()
-else()
-  set(PYLON_FOUND FALSE)
-  message(STATUS "Pylon SDK not found.
-   If you are sure Pylon SDK is installed, set CMake variable or
-   environment variable `PYLON_ROOT' to help CMake to find Pylon SDK.")
 endif()
 
 mark_as_advanced(
