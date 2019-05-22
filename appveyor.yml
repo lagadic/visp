@@ -14,7 +14,7 @@ configuration:
 environment:
   VISP_OPENCV_MINGW_FILE: opencv-4.1.0-MinGW-build-package.7z
   VISP_OPENCV_MINGW_DIR: opencv-4.1.0-MinGW-build-package
-  VISP_OPENCV_MINGW_PKG: https://github.com/lagadic/visp-dependencies/blob/master/opencv-4.1.0-MinGW-build-package.7z?raw=true
+  VISP_OPENCV_MINGW_PKG: https://github.com/lagadic/visp-dependencies/blob/master/opencv-4.1.0-MinGW-x86_64-7.3.0-release-posix-seh-rt_v5-rev0-build-package.7z?raw=true
   VISP_OPENCV_VS2015_2017_FILE: opencv-4.1.0-vc14_vc15.exe
   VISP_OPENCV_VS2015_2017_DIR: opencv-4.1.0-vc14_vc15
   VISP_OPENCV_VS2015_2017_PKG: https://github.com/opencv/opencv/releases/download/4.1.0/opencv-4.1.0-vc14_vc15.exe
