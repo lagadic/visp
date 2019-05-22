@@ -12,12 +12,12 @@ configuration:
   - Release
 
 environment:
-  VISP_OPENCV_MINGW_FILE: opencv-4.0.0-ebc801563-MinGW-build-package.7z
-  VISP_OPENCV_MINGW_DIR: opencv-4.0.0-ebc801563-MinGW-build-package
-  VISP_OPENCV_MINGW_PKG: https://github.com/s-trinh/visp-dependencies/blob/master/opencv-4.0.0-ebc801563-MinGW-build-package.7z?raw=true
-  VISP_OPENCV_VS2015_2017_FILE: opencv-4.0.0-beta-vc14_vc15.exe
-  VISP_OPENCV_VS2015_2017_DIR: opencv-4.0.0-beta-vc14_vc15
-  VISP_OPENCV_VS2015_2017_PKG: https://github.com/opencv/opencv/releases/download/4.0.0-beta/opencv-4.0.0-beta-vc14_vc15.exe
+  VISP_OPENCV_MINGW_FILE: opencv-4.1.0-MinGW-build-package.7z
+  VISP_OPENCV_MINGW_DIR: opencv-4.1.0-MinGW-build-package
+  VISP_OPENCV_MINGW_PKG: https://github.com/lagadic/visp-dependencies/blob/master/opencv-4.1.0-MinGW-build-package.7z?raw=true
+  VISP_OPENCV_VS2015_2017_FILE: opencv-4.1.0-vc14_vc15.exe
+  VISP_OPENCV_VS2015_2017_DIR: opencv-4.1.0-vc14_vc15
+  VISP_OPENCV_VS2015_2017_PKG: https://github.com/opencv/opencv/releases/download/4.1.0/opencv-4.1.0-vc14_vc15.exe
 
   matrix:
     - CMAKE_GENERATOR: MinGW Makefiles
@@ -30,6 +30,7 @@ environment:
 init:
   - cmake --version
   - msbuild /version
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1')
 
 install:
   # Create temp dir to collect test outputs
@@ -40,8 +41,8 @@ install:
   - cd C:\projects\deps
 
   # visp-images
-  - git clone --depth 1 https://github.com/lagadic/ViSP-images C:\projects\deps\ViSP-images
-  - set VISP_INPUT_IMAGE_PATH=C:\projects\deps
+  - git clone --depth 1 https://github.com/lagadic/visp-images
+  - set VISP_INPUT_IMAGE_PATH=C:\projects\deps\visp-images
 
   # opencv
   - ps: >-
@@ -69,8 +70,8 @@ install:
       }
 
 cache:
-  - opencv-4.0.0-ebc801563-MinGW-build-package.7z -> appveyor.yml
-  - opencv-4.0.0-beta-vc14_vc15.exe -> appveyor.yml
+  - opencv-4.1.0-MinGW-build-package.7z -> appveyor.yml
+  - opencv-4.1.0-vc14_vc15.exe -> appveyor.yml
 
 # visp clone directory
 clone_folder: C:\projects\visp\visp
@@ -100,10 +101,6 @@ build_script:
   - dir %OpenCV_DLL_DIR%
   - md C:\projects\visp\build
   - cd C:\projects\visp\build
-  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%configuration% ..\visp
-  - if "%CMAKE_GENERATOR%"=="Visual Studio 15 2017 Win64" cmake --build . --config %configuration% --target install -- /m:2
-  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" cmake --build . --config %configuration% --target install -- -j2
-  - dir C:\projects\visp\build\install
-  - dir %VISP_DLL_DIR%
-  - if "%CMAKE_GENERATOR%"=="Visual Studio 15 2017 Win64" ctest --output-on-failure
-  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" ctest --output-on-failure
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_VERBOSE_MAKEFILE=ON ..\visp
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" cmake --build . --config %configuration% --target visp_core -- -j2
+  - type C:\projects\visp\build\ViSP-third-party.txt
