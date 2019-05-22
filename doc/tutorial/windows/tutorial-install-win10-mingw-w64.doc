@@ -9,30 +9,22 @@ In this tutorial you will learn how to install ViSP from source on Windows 10 wi
 
 \section install_win10_mingw64_required Install prerequisities
 
-\subsection install_win10_mingw64_required_mingw Mingw-w64
+\subsection install_win10_mingw64_required_mingw MinGW-W64
 
-Mingw-w64 could be found following http://mingw-w64.org/doku.php/download. From that page, click on download "Win-builds" that will bring you to the page http://mingw-w64.org/doku.php/download/win-builds from where you can access to http://win-builds.org/doku.php/download_and_installation_from_windows. Here simply download and run the package manager, in our case we downloaded `win-builds-1.5.0.exe` file.
+MinGW-W64 could be downloaded from https://sourceforge.net/projects/mingw-w64/files/. Scroll down to `MinGW-W64 GCC-7.3.0` and select `x86_64-posix-seh`. It allows to download [x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/7.3.0/threads-posix/seh/x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z/download) file. 
 
-- Once downloaded, double click on the the exe file. It will open an installation window. 
-- Select x86_64 and set MinGW installation folder to `C:\mingw` as in the following image: 
-\image html img-mingw64-installer-started.jpg
-\note If you want to install MinGW in an other folder, you have to set `MINGW_DIR` environment variable to your installation location in order to allow CMake to detect 3rd party libraries that come with MinGW installer. Fo example, if you install MinGW in `C:\folder\mingw-w64`, setting `MINGW_DIR` is simply done running in a `cmd` Command Prompt:
+- Once downloaded, double click on `x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z` file to unzip its content in `C:\mingw64\x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z`.
+- To finish the installation, just add `C:\mingw64\x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z\mingw64\bin` folder to the `Path` variable. To this end open `cmd` Comand Prompt and do the following:
 \code
-C:\> setx MINGW_DIR "C:\folder\mingw-w64"
-C:\> exit
-\endcode  
-- Click on "OK" button. It will open a window named "Win-builds":
-\image html img-mingw64-installer-process.jpg
-- Where you can click on "Process" button to start MinGW installation
-- "Win-builds" window shows the progression of the installation; when all the packages are installed you can close the window.
-- To finish the installation, just add `C:\mingw\bin` folder to the `Path` variable. To this end open `cmd` Comand Prompt and do the following:
-\code
-C:\> setx Path "%Path%;C:\mingw\bin"
+C:\> setx Path "%Path%;C:\mingw64\x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z\mingw64\bin"
 C:\> exit
 \endcode
-- To check that `C:\mingw\bin` was added, open a new `cmd` Command Prompt, and run:
+- To check if MinGW-W64 installation succeed, open a new `cmd` Command Prompt, and run:
 \code
-C:\> echo %Path%
+C:\> mingw32-make --version
+GNU Make 4.2.1
+C:\> g++ --version
+g++ (x86_64-posix-seh-rev0, Built by MinGW-W64 project) 7.3.0
 \endcode
 
 \subsection install_win10_mingw64_3rd_cmake CMake
@@ -69,8 +61,8 @@ C:\> git clone https://github.com/lagadic/visp.git
 \endcode
 - Create a build directory
 \code
-C:\> mkdir %VISP_WS%\visp-build-mingw
-C:\> cd %VISP_WS%\visp-build-mingw
+C:\> mkdir %VISP_WS%\visp-build-mingw-7.3.0
+C:\> cd %VISP_WS%\visp-build-mingw-7.3.0
 \endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 15 2017 and 64 bits hardware):
 \code
@@ -78,13 +70,13 @@ C:\> cmake -G "MinGW Makefiles" %VISP_WS%\visp
 \endcode
 - Build and install ViSP (installation doesn't need administrator privileges)
 \code
-C:\> cmake --build . --config Release --target install
+C:\> cmake --build . --config Release --target install -j4
 \endcode
-- ViSP is now installed in `%%VISP_WS%\visp-build-mingw\install` folder
-- Modify the `Path` var to add `%%VISP_WS%\visp-build-mingw\install\x64\mingw\bin` corresponding to the path to ViSP libraries.
+- ViSP is now installed in `%%VISP_WS%\visp-build-mingw-7.3.0\install` folder
+- Modify the `Path` var to add `%%VISP_WS%\visp-build-mingw-7.3.0\install\x64\mingw\bin` corresponding to the path to ViSP libraries.
 - Set `VISP_DIR` var to help CMake to find ViSP as a 3rd party
 \code
-C:\> setx VISP_DIR "%VISP_WS%\visp-build-mingw\install"
+C:\> setx VISP_DIR "%VISP_WS%\visp-build-mingw-7.3.0\install"
 C:\> exit
 \endcode
 
@@ -93,7 +85,7 @@ C:\> exit
 2. Click the "Environment Variables..." button
 3. Under the "User Variables" section (the upper half), find the row with "Path" in the first column, and click edit
 4. The "Edit environment variable" UI will appear.
-5. Click "New" button to add a new line with `%%VISP_WS%\visp-build-mingw\install\x64\mingw\bin`
+5. Click "New" button to add a new line with `%%VISP_WS%\visp-build-mingw-7.3.0\install\x64\mingw\bin`
 
 To have a trial, just jump to \ref install_win10_mingw64_dataset before running some binaries that you just build or jump to \ref install_win10_mingw64_next. You can later come back to the \ref install_win10_mingw64_advanced.
 
@@ -120,8 +112,8 @@ First you have to get OpenCV:
 
 - Open a `cmd` Command Prompt and create a build folder 
 \code
-C:\> mkdir %VISP_WS%\opencv-4.1.0\build-mingw
-C:\> cd %VISP_WS%\opencv-4.1.0\build-mingw
+C:\> mkdir %VISP_WS%\opencv-4.1.0\build-mingw-7.3.0
+C:\> cd %VISP_WS%\opencv-4.1.0\build-mingw-7.3.0
 \endcode
 - Run CMake in build directory and set the install dir to `%VISP_WS%\opencv-4.1.0\build`. We disable also tests build in order to speed up the build process:
 \code
@@ -129,7 +121,7 @@ C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\open
 \endcode
 - Build and install OpenCV for MinGW (installation doesn't need administrator privileges)
 \code
-C:\> cmake --build . --config Release --target install
+C:\> cmake --build . --config Release --target install -j4
 \endcode
 - OpenCV is now installed in `%%VISP_WS%\opencv-4.1.0\build` folder
 
@@ -162,28 +154,28 @@ Even if Eigen3 is designed as a template we recommend to install the library wit
 
 - Create a build directory
 \code
-C:\> mkdir %VISP_WS%\eigen-3.3.7\build-mingw
-C:\> cd %VISP_WS%\eigen-3.3.7\build-mingw
+C:\> mkdir %VISP_WS%\eigen-3.3.7\build-mingw-7.3.0
+C:\> cd %VISP_WS%\eigen-3.3.7\build-mingw-7.3.0
 \endcode
-- Run CMake in build directory (here the generator is chosen for MinGW and installation folder is set to `%%VISP_WS%\eigen-3.3.7\build-mingw\install` folder):
+- Run CMake in build directory (here the generator is chosen for MinGW and installation folder is set to `%%VISP_WS%\eigen-3.3.7\build-mingw-7.3.0\install` folder):
 \code
-C:\> cmake -G "MinGW Makefiles" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-mingw\install
+C:\> cmake -G "MinGW Makefiles" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-mingw-7.3.0\install
 \endcode
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \code
-C:\> cmake --build . --config Release --target install
+C:\> cmake --build . --config Release --target install -j4
 \endcode
-- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.7\build-mingw\install` folder.
+- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.7\build-mingw-7.3.0\install` folder.
 
 <b>3. Complete Eigen3 installation</b>
 
 Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
 \code
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.7\build-mingw\install\share\eigen3\cmake"
+C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.7\build-mingw-7.3.0\install\share\eigen3\cmake"
 C:\> exit
 \endcode
-where `%%VISP_WS%\eigen-3.3.7\build-mingw\install` is where you have installed Eigen3. Inside the folder `%%VISP_WS%\eigen-3.3.7\build-mingw\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+where `%%VISP_WS%\eigen-3.3.7\build-mingw-7.3.0\install` is where you have installed Eigen3. Inside the folder `%%VISP_WS%\eigen-3.3.7\build-mingw-7.3.0\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
 
@@ -230,9 +222,9 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 \subsection install_win10_mingw64_build Build and install ViSP libraries
 
-- To build ViSP, open a `cmd` Command Prompt, change to `%%VISP_WS%\visp-build-mingw` folder and run `mingw32-make`:
+- To build ViSP, open a `cmd` Command Prompt, change to `%%VISP_WS%\visp-build-mingw-7.3.0` folder and run `mingw32-make`:
 \code
-C:\> cd %VISP_WS%\visp-build-mingw
+C:\> cd %VISP_WS%\visp-build-mingw-7.3.0
 C:\> mingw32-make -j4
 \endcode
 
@@ -246,13 +238,13 @@ C:\> mingw32-make -j4 install
 
 \subsection install_win10_mingw64_env_var Set Path environment var
 
-Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\visp-build-mingw\install\x64\mingw\bin`.
+Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\visp-build-mingw-7.3.0\install\x64\mingw\bin`.
 
 \subsection install_win10_mingw64_visp_dir Set VISP_DIR environment var
 
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
 \code
-C:\> setx VISP_DIR "%VISP_WS%\visp-build-mingw\install"
+C:\> setx VISP_DIR "%VISP_WS%\visp-build-mingw-7.3.0\install"
 C:\> exit
 \endcode
 
@@ -275,9 +267,9 @@ C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
 C:\> exit
 \endcode
 
-- From now, you can try to run ViSP examples and tests. For example, if you want to run `%%VISP_WS%\visp-build-mingw\example\device\display\displayGDI.exe`, open a `cmd` Command Prompt, enter in the right folder and run:
+- From now, you can try to run ViSP examples and tests. For example, if you want to run `%%VISP_WS%\visp-build-mingw-7.3.0\example\device\display\displayGDI.exe`, open a `cmd` Command Prompt, enter in the right folder and run:
 \code
-C:\> cd %VISP_WS%\visp-build-mingw\example\device\display
+C:\> cd %VISP_WS%\visp-build-mingw-7.3.0\example\device\display
 C:\> displayGDI.exe
 
 A click to close the windows...
@@ -317,7 +309,7 @@ $ mingw32-make uninstall
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
-$ cd $VISP_WS/visp-build-mingw
+$ cd $VISP_WS%/visp-build-mingw_7.3.0
 $ mingw32-make visp_modules
 \endcode
 
@@ -325,21 +317,21 @@ $ mingw32-make visp_modules
 
 If you want to build a given module and all the dependencies:
 \code
-$ cd $VISP_WS/visp-build-mingw
+$ cd $VISP_WS%/visp-build-mingw-7.3.0
 $ mingw32-make visp_<module_name>
 \endcode
 
 For example to build the model-based tracker module named mbt, run:
 \code
-$ cd $VISP_WS/visp-build-mingw
+$ cd $VISP_WS%/visp-build-mingw-7.3.0
 $ mingw32-make visp_mbt
 \endcode
 
 \subsection install_mingw64_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file that contains also build info.
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `%VISP_WS%/visp-build-mingw-7.3.0`. We provide hereafter an example of a possible content of this file that contains also build info.
 \code
-$ type $VISP_WS/visp-build/ViSP-third-party.txt
+$ type %VISP_WS%/visp-build-mingw-7.3.0/ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.2.1
 
@@ -495,7 +487,7 @@ If you encounter the following issue during OpenCV build:
 \image html img-mingw-issue-opencv-d3d11.png
 you have to disable OpenCL D3D11 support and restart a new build:
 \code
-C:\> cd %VISP_WS%\opencv-4.1.0\build-mingw
+C:\> cd %VISP_WS%\opencv-4.1.0\build-mingw-7.3.0
 C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.0\build -DWITH_OPENCL_D3D11_NV=OFF
 C:\> cmake --build . --config Release --target install
 \endcode
