@@ -104,5 +104,7 @@ build_script:
   - cd C:\projects\visp\build
   - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_VERBOSE_MAKEFILE=ON ..\visp
   - type C:\projects\visp\build\ViSP-third-party.txt
+  - type C:\projects\visp\build\modules\core\CMakeFiles\visp_core.dir\includes-CXX.rsp
+  - type C:\projects\visp\build\modules\core\CMakeFiles\visp_core.dir\linklibs.rsp
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" cmake --build . --config %configuration% --target visp_core -- -j2
 
