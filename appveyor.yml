@@ -93,14 +93,16 @@ before_build:
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_MINGW_DIR%\install
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set OpenCV_DLL_DIR=%OpenCV_DIR%\x64\mingw\bin
   - set PATH=%OPENCV_DLL_DIR%;%PATH%
+  - dir C:\projects\deps\%VISP_OPENCV_MINGW_DIR%\install
 
 build_script:
   - echo %PATH%
   - dir C:\projects\deps
   - dir C:\tools
   - dir %OpenCV_DLL_DIR%
+  - type C:\projects\visp\build\ViSP-third-party.txt
   - md C:\projects\visp\build
   - cd C:\projects\visp\build
   - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%configuration% -DCMAKE_VERBOSE_MAKEFILE=ON ..\visp
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" cmake --build . --config %configuration% --target visp_core -- -j2
-  - type C:\projects\visp\build\ViSP-third-party.txt
+
