@@ -41,7 +41,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-template <typename T> class VISP_EXPORT vpMbtTukeyEstimator
+template <typename T> class vpMbtTukeyEstimator
 {
 public:
   void MEstimator(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
@@ -61,7 +61,7 @@ private:
 
 
 /*
- * The code bellow previously in vpMbtTuckeyEstimator.cpp produced 
+ * The code bellow previously in vpMbtTuckeyEstimator.cpp produced
  * a link issue with MinGW-W64 x86_64-8.1.0-posix-seh-rt_v6-rev0 (g++ 8.1.0)
  * libvisp_mbt.so.3.1.0: undefined reference to
  * `vpMbtTukeyEstimator<double>::MEstimator(std::vector<double,
@@ -71,7 +71,7 @@ private:
  * the build succeed.
  *
  * To remove this link issue the solution was to move the content of vpMbtTuckeyEstimator.cpp
- * before remove. 
+ * before remove.
  */
 #include <algorithm>
 #include <cmath>
@@ -181,8 +181,8 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
 }
 
 template <>
-void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues, std::vector<float> &weights,
-                                                       const float NoiseThreshold)
+inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues, std::vector<float> &weights,
+                                                              const float NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3
   if (residues.empty()) {
@@ -229,8 +229,8 @@ void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> 
 }
 
 template <>
-void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double> &residues,
-                                                        std::vector<double> &weights, const double NoiseThreshold)
+inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double> &residues,
+                                                               std::vector<double> &weights, const double NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3
   if (residues.empty()) {
@@ -272,7 +272,7 @@ void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double
 }
 
 template <>
-void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
+inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
                                             const float NoiseThreshold)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
@@ -287,7 +287,7 @@ void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, 
 }
 
 template <>
-void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
+inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
                                              const double NoiseThreshold)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
@@ -340,8 +340,8 @@ template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::ve
 }
 
 template <>
-void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues, vpColVector &weights,
-                                             const double NoiseThreshold)
+inline void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues, vpColVector &weights,
+                                                    const double NoiseThreshold)
 {
   if (residues.size() == 0) {
     return;
@@ -374,8 +374,8 @@ void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues, vpColV
 }
 
 template <>
-void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, vpColVector &weights,
-                                            const double NoiseThreshold)
+inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, vpColVector &weights,
+                                                   const double NoiseThreshold)
 {
   if (residues.size() == 0) {
     return;
