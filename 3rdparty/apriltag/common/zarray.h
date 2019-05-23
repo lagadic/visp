@@ -261,7 +261,7 @@ static inline void zarray_remove_index(zarray_t *za, int idx, int shuffle)
 
     if (shuffle) {
         if (idx < za->size-1)
-            memcpy(&za->data[idx*za->el_sz], &za->data[(za->size-1)*za->el_sz], za->el_sz);
+            memcpy(&za->data[idx*za->el_sz], &za->data[((size_t)(za->size)-(size_t)1)*(za->el_sz)], za->el_sz);
         za->size--;
         return;
     } else {
@@ -269,7 +269,7 @@ static inline void zarray_remove_index(zarray_t *za, int idx, int shuffle)
         // size = 10, idx = 9. Should copy 0 entries.
         int ncopy = za->size - idx - 1;
         if (ncopy > 0)
-            memmove(&za->data[idx*za->el_sz], &za->data[(idx+1)*za->el_sz], ncopy*za->el_sz);
+            memmove(&za->data[idx*za->el_sz], &za->data[((size_t)(idx)+(size_t)1)*(za->el_sz)], ncopy*za->el_sz);
         za->size--;
         return;
     }
@@ -326,7 +326,7 @@ static inline void zarray_insert(zarray_t *za, int idx, const void *p)
     // size = 10, idx = 7. Should copy three entries (idx=7, idx=8, idx=9)
     int ncopy = za->size - idx;
 
-    memmove(&za->data[(idx+1)*za->el_sz], &za->data[idx*za->el_sz], ncopy*za->el_sz);
+    memmove(&za->data[((size_t)(idx)+(size_t)1)*(za->el_sz)], &za->data[idx*za->el_sz], ncopy*za->el_sz);
     memcpy(&za->data[idx*za->el_sz], p, za->el_sz);
 
     za->size++;

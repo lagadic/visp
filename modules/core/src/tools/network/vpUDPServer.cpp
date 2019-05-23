@@ -50,7 +50,15 @@
 #  define WSAGetLastError() strerror(errno)
 #else
 #  if defined(__MINGW32__)
-#    define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#    ifdef _WIN32_WINNT
+// Undef  _WIN32_WINNT to avoid a warning (_WIN32_WINNT redefinition) with mingw
+#      undef _WIN32_WINNT
+#      define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+// Without re-defining _WIN32_WINNT = _WIN32_WINNT_VISTA there is a build issue with mingw:
+// vpUDPServer.cpp:254:23: error: 'inet_ntop' was not declared in this scope
+// const char *ptr = inet_ntop(AF_INET, (void *)&m_clientAddress.sin_addr, result, sizeof(result));
+// vpUDPServer.cpp:254:23: note: suggested alternative: 'inet_ntoa'
+#    endif
 #  endif
 #  include <Ws2tcpip.h>
 #endif

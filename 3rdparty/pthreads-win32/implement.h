@@ -601,7 +601,7 @@ extern "C"
  * =====================
  * =====================
  */
-
+  int ptw32_spinlock_check_need_init (pthread_spinlock_t * lock);
   int ptw32_is_attr (const pthread_attr_t * attr);
 
   int ptw32_cond_check_need_init (pthread_cond_t * cond);

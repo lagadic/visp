@@ -148,7 +148,7 @@ In this sample, we first import the headers to use vpHomography class. Then we c
 - After the previous copy/paste, you should have something similar to
 \image html img-getting-started-iOS-code.jpeg
 
-- Now we are ready to build this simple <tt>"Getting Started"</tt> application using Xcode <tt>"Product>Build"</tt> menu. If you get build issues, have a look to \ref getting-started-known-issue.
+- Now we are ready to build this simple <tt>"Getting Started"</tt> application using Xcode <tt>"Product>Build"</tt> menu.
 
 - You can now run your code using <tt>"Product>Run"</tt> menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
 \image html img-getting-started-iOS-log.jpeg

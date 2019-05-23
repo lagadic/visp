@@ -12,17 +12,34 @@ ViSP 3.2.1 (under work)
     . Upgrade to new AprilTag3 version. Note that TAG_36h10, TAG_25h7 and
       TAG_36ARTOOLKIT are deprecated and that new families: TAG_CIRCLE21h7,
       TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12, TAG_STANDARD52h13
-      are supported. AprilTag detection time is reduced.
+      are supported. AprilTag detection time is reduced
+    . Remove libxml2 3rd party dependency to use pugixml built-in 
     . New matrix and vector initialization methods to ease setting elements
     . Introduce Eigen <-> ViSP conversion functions in vp namespace
     . Add OpenBLAS, Intel MKL and Atlas explicit support
     . Add support of vpImage<vpRGBa> to vpMbGenericTracker
     . Add support of vpImage<vpRGBa> to vpKeyPoint
+    . Introduce force/torque controller for Franka Emika Panda robot in vpRobotFranka class
     . New vpQbDevice and vpQbSoftHand classes and examples to control qbrobotics devices
+    . Compatibility with Microsoft Visual C++ 2019 (MSCV 16)
+    . Compatibility with FlyCapture 2.13 to enable vpFlyCaptureGrabber usage
+    . Compatibility with PCL > 1.9.1 to enable additional features in vpRealSense2 class
+    . Compatibility with Windows 10 SDK latest version to enable vpDisplayGDI usage
+    . Compatibility with Fedora 29
+    . New option to select CXX standard set by default to c++11
   - Tutorials
+    . New tutorial: Installation from source for Windows with Visual C++ 2019 (vc16)
+    . new tutorial: Cross-compilation for UWP from Windows host with Visual C++ 2019 (vc16)
   - Bug fixed
     . [#523] dpkg-shlibdeps produces an error during Debian packaging
     . [#525] Tests are failing during Debian package build in a container
+    . [#546] ViSP doesn't build when C++11 off and PCL on
+    . [#549] Bug in unsigned int vpBSpline::findSpan(double u)
+    . [#554] Bug in SaveRealSenseData.cpp prevents install on windows
+    . [#564] visp_java build fails when OpenCV and libjpeg or libpng are not used
+    . [#570] Could not get left and right Infrared images from RealSense D435
+    . [#573] VISP fails to build with cmake 3.14.3 and PCL 1.9.1
+    . [#574] Compatibility problem with PCL > 1.9.1
 ----------------------------------------------
 ViSP 3.2.0 (released January 23, 2019)
   - Contributors:

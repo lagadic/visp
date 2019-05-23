@@ -129,6 +129,7 @@ namespace
 {
 // The following code is not working on iOS since wordexp() is not available
 // The function is not used on Android
+#if defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #if (TARGET_OS_IOS == 0) && !defined(__ANDROID__)
 void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
@@ -139,6 +140,7 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
                                    // substring of 'search'
   }
 }
+#endif
 #endif
 
 #ifdef VISP_BIG_ENDIAN
@@ -1028,11 +1030,11 @@ bool vpIoTools::loadConfigFile(const std::string &confFile)
           // look for the end of the actual value
           c = 200;
           for (unsigned i = 0; i < 3; ++i)
-            c = vpMath::minimum(c, (int)line.find(stop[i], k + 1));
+            c = vpMath::minimum(c, (int)line.find(stop[i], (size_t)k + (size_t)1));
           if (c == -1)
             c = (int)line.size();
           long unsigned int c_ = (long unsigned int)c;
-          val = line.substr(k + 1, c_ - k - 1);
+          val = line.substr((size_t)(k) + (size_t)(1), (size_t)c_ - (size_t)k - (size_t)1);
           configVars.push_back(var);
           configValues.push_back(val);
         } catch (...) {
@@ -1453,7 +1455,7 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, const bool 
       if (sepIndex == (int)std::string::npos) {
         sepIndex = -1;
       }
-      size_t filenameIndex = (size_t)(sepIndex + 1);
+      size_t filenameIndex = (size_t)(sepIndex) + (size_t)(1);
 
       while (filenameIndex < dotIndex) {
         if (pathname.compare(filenameIndex, 1, extsep) != 0) {

@@ -162,7 +162,7 @@ public:
   #endif
   {
     resize(A.rowNum, A.colNum, false, false);
-    memcpy(data, A.data, rowNum * colNum * sizeof(Type));
+    memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
   }
 
   /*!
@@ -356,7 +356,7 @@ public:
 
       // Recopy of this->data array values or nullify
       if (flagNullify) {
-        memset(this->data, 0, this->dsize * sizeof(Type));
+        memset(this->data, 0, (size_t)(this->dsize) * sizeof(Type));
       } else if (recopyNeeded && this->rowPtrs != NULL) {
         // Recopy...
         const unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
@@ -416,7 +416,7 @@ public:
   {
     resize(A.rowNum, A.colNum, false, false);
     if (data != NULL && A.data != NULL && data != A.data) {
-      memcpy(data, A.data, rowNum * colNum * sizeof(Type));
+      memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
     }
     return *this;
   }
@@ -762,7 +762,7 @@ public:
       while (header[headerSize] != '\0') {
         headerSize++;
       }
-      file.write(header, headerSize + 1);
+      file.write(header, (size_t)headerSize + (size_t)1);
       unsigned int matrixSize;
       matrixSize = A.getRows();
       file.write((char *)&matrixSize, sizeof(unsigned int));

@@ -74,7 +74,7 @@ if(APPLE)
   endif()
 
   mark_as_advanced(PYLON_BASE_INCLUDE_DIR)
-elseif(WIN32)
+elseif(MSVC)
   find_path(PYLON_INCLUDE_DIR pylon/PylonIncludes.h
     PATHS "$ENV{PYLON_HOME}/include"
         "C:/Program Files/Basler/pylon 5/Development/include")
@@ -148,11 +148,6 @@ elseif(UNIX)
 
     set(PYLON_FOUND TRUE)
   endif()
-else()
-  set(PYLON_FOUND FALSE)
-  message(STATUS "Pylon SDK not found.
-   If you are sure Pylon SDK is installed, set CMake variable or
-   environment variable `PYLON_ROOT' to help CMake to find Pylon SDK.")
 endif()
 
 mark_as_advanced(
