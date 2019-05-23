@@ -88,7 +88,14 @@ BOOL IsWow64()
 {
     BOOL bIsWow64 = FALSE;
 
-#ifndef WINRT // Turned off on UWP where GetModuleHandle() doesn't exist
+#if defined(__MINGW__) || defined(__MINGW32__) || defined(__MINGW64__)
+    if (!IsWow64Process(GetCurrentProcess(), &bIsWow64))
+	{
+		printf("Error Detecting Operating System.\n");
+		printf("Defaulting to 32-bit OS.\n\n");
+		bIsWow64 = FALSE;
+	}
+#elif !defined(WINRT) // Turned off on UWP where GetModuleHandle() doesn't exist
     LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
         GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 
