@@ -129,7 +129,7 @@ namespace
 {
 // The following code is not working on iOS since wordexp() is not available
 // The function is not used on Android
-#if defined(__APPLE__) && defined(__MACH__)
+#if defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
 #if (TARGET_OS_IOS == 0) && !defined(__ANDROID__)
 void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
