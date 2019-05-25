@@ -110,7 +110,7 @@ private:
 namespace
 {
 template <typename T> struct AbsDiff : public std::binary_function<T, T, T> {
-  double operator()(const T a, const T b) const { return std::fabs(a - b); }
+  T operator()(const T a, const T b) const { return std::fabs(a - b); }
 };
 }
 #endif
