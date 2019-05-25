@@ -31,50 +31,66 @@
  * Description:
  *   tests the control law
  *   eye-in-hand control
- *   velocity computed in the articular frame
+ *   velocity computed in the camera frame
  *
  * Authors:
+ * Eric Marchand
  * Fabien Spindler
  *
  *****************************************************************************/
+
 /*!
-  \example servoViper850FourPoints2DArtVelocityInteractionCurrent.cpp
+  \file servoAfma6FourPoints2DCamVelocityLs_cur.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
-  Viper S850 robot (arm with 6 degrees of freedom). The velocities resulting
-  from visual servo are here joint velocities. Visual features are the image
-  coordinates of 4 points. The target is made of 4 dots arranged as a 10cm by
-  10cm square.
+  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
+  computed in the camera frame.  Visual features are the image coordinates of
+  4 vpDot2 points. The interaction matrix is computed using the current visual
+  features.
 
 */
 
+/*!
+  \example servoAfma6FourPoints2DCamVelocityLs_cur.cpp
+
+  Example of eye-in-hand control law. We control here a real robot, the Afma6
+  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
+  in the camera frame.  Visual features are the image coordinates of 4 vpDot2
+  points. The interaction matrix is computed using the current visual
+  features.
+
+*/
+
+#include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h> // Debug trace
+#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-#if (defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394))
-
-#include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpImagePoint.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/robot/vpRobotViper850.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
+
+#include <visp3/blob/vpDot.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpRxyzVector.h>
+#include <visp3/core/vpTranslationVector.h>
+#include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
+
+// Exception
+#include <visp3/core/vpException.h>
 
 #define L 0.05 // to deal with a 10cm by 10cm square
 
@@ -114,28 +130,64 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters ca
   for (int i = 0; i < ndot; i++) {
 
     double x = 0, y = 0;
+
     cog = dot[i].getCog();
     vpPixelMeterConversion::convertPoint(cam, cog, x,
                                          y); // pixel to meter conversion
-    point[i].set_x(x);                       // projection perspective          p
+    //     std::cout << "point cam: " << i << x << " " << y << std::endl;
+    point[i].set_x(x); // projection perspective          p
     point[i].set_y(y);
     pose.addPoint(point[i]);
+    //     std::cout << "point " << i << std::endl;
+    //     point[i].print();
   }
 
   if (init == true) {
     pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
+    // compute the pose for a given method
+    //     cMo_dementhon.extract(cto);
+    //     cMo_dementhon.extract(cRo);
+    //     cro.buildFrom(cRo);
     // Compute and return the residual expressed in meter for the pose matrix
     // 'cMo'
     double residual_dementhon = pose.computeResidual(cMo_dementhon);
+
+    //     std::cout << "\nPose Dementhon "
+    // 	      << "(residual: " << residual_dementhon << ")\n "
+    // 	      << "cdto[0] = " << cto[0] << ";\n "
+    // 	      << "cdto[1] = " << cto[1] << ";\n "
+    // 	      << "cdto[2] = " << cto[2] << ";\n "
+    // 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+    // 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+    // 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+    // 	      << std::endl;
+
     pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
+    //     cMo_lagrange.extract(cto);
+    //     cMo_lagrange.extract(cRo);
+    //     cro.buildFrom(cRo);
     double residual_lagrange = pose.computeResidual(cMo_lagrange);
 
+    //     std::cout << "\nPose Lagrange "
+    // 	      << "(residual: " << residual_lagrange << ")\n "
+    // 	      << "cdto[0] = " << cto[0] << ";\n "
+    // 	      << "cdto[1] = " << cto[1] << ";\n "
+    // 	      << "cdto[2] = " << cto[2] << ";\n "
+    // 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+    // 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+    // 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+    // 	      << std::endl;
+
+    //   cout << "Lagrange residual term: " << residual_lagrange <<endl ;
+
     // Select the best pose to initialize the lowe pose computation
-    if (residual_lagrange < residual_dementhon)
+    if (residual_lagrange < residual_dementhon) // on garde le cMo
       cMo = cMo_lagrange;
     else
       cMo = cMo_dementhon;
 
+    //   cout
+    //   <<"------------------------------------------------------------"<<endl
   } else { // init = false; use of the previous pose to initialise LOWE
     cRo.buildFrom(cro);
     cMo.buildFrom(cto, cRo);
@@ -144,16 +196,32 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters ca
   cMo.extract(cto);
   cMo.extract(cRo);
   cro.buildFrom(cRo);
+  //   double residual_lowe = pose.computeResidual(cMo);
+
+  //   std::cout << "\nPose LOWE "
+  // 	    << "(residual: " << residual_lowe << ")\n "
+  // 	    << "cdto[0] = " << cto[0] << ";\n "
+  // 	    << "cdto[1] = " << cto[1] << ";\n "
+  // 	    << "cdto[2] = " << cto[2] << ";\n "
+  // 	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+  // 	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+  // 	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+  // 	    << std::endl;
+
+  //   vpTRACE( "LOWE pose :" ) ;
+  //   std::cout <<  cMo << std::endl ;
 }
 
 int main()
 {
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
-  // - the 6 computed joint velocities (m/s, rad/s) to achieve the task
+  // - the 6 computed camera velocities (m/s, rad/s) to achieve the task
   // - the 6 mesured joint velocities (m/s, rad/s)
   // - the 6 mesured joint positions (m, rad)
   // - the 8 values of s - s*
+  // - the 6 values of the pose cMo (tx,ty,tz, rx,ry,rz) with translation
+  //   in meters and rotations in radians
   std::string username;
   // Get the user login name
   vpIoTools::getUserName(username);
@@ -170,7 +238,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      return (-1);
+      exit(-1);
     }
   }
   std::string logfilename;
@@ -180,24 +248,15 @@ int main()
   std::ofstream flog(logfilename.c_str());
 
   try {
-    vpRobotViper850 robot;
-    // Load the end-effector to camera frame transformation obtained
-    // using a camera intrinsic model with distortion
-    vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
-    robot.init(vpRobotViper850::TOOL_PTGREY_FLEA2_CAMERA, projModel);
-
     vpServo task;
 
     vpImage<unsigned char> I;
     int i;
 
-    bool reset = false;
-    vp1394TwoGrabber g(reset);
+    vp1394TwoGrabber g;
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
     g.open(I);
-
-    g.acquire(I);
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
@@ -207,14 +266,17 @@ int main()
     vpDisplayGTK display(I, 100, 100, "Current image");
 #endif
 
+    g.acquire(I);
+
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
     std::cout << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << " Test program for vpServo " << std::endl;
-    std::cout << " Eye-in-hand task control, velocity computed in the joint space" << std::endl;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl;
     std::cout << " Use of the Afma6 robot " << std::endl;
+    std::cout << " Interaction matrix computed with the current features " << std::endl;
     std::cout << " task : servo 4 points on a square with dimention " << L << " meters" << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
@@ -223,21 +285,23 @@ int main()
     vpImagePoint cog;
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..." << std::endl;
-
     for (i = 0; i < 4; i++) {
-      dot[i].setGraphics(true);
       dot[i].initTracking(I);
       cog = dot[i].getCog();
       vpDisplay::displayCross(I, cog, 10, vpColor::blue);
       vpDisplay::flush(I);
     }
 
-    vpCameraParameters cam;
+    vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithDistortion;
+    vpRobotAfma6 robot;
 
+    // Load the end-effector to camera frame transformation obtained
+    // using a camera intrinsic model with distortion
+    robot.init(vpAfma6::TOOL_CCMOP, projModel);
+
+    vpCameraParameters cam;
     // Update camera parameters
     robot.getCameraParameters(cam, I);
-
-    cam.printParameters();
 
     // Sets the current position of the visual feature
     vpFeaturePoint p[4];
@@ -254,10 +318,11 @@ int main()
 
     // Initialise a desired pose to compute s*, the desired 2D point features
     vpHomogeneousMatrix cMo;
-    vpTranslationVector cto(0, 0, 0.5); // tz = 0.5 meter
-    vpRxyzVector cro(vpMath::rad(0), vpMath::rad(10), vpMath::rad(20));
-    vpRotationMatrix cRo(cro); // Build the rotation matrix
-    cMo.buildFrom(cto, cRo);   // Build the homogeneous matrix
+    vpTranslationVector cto(0, 0, 0.7); // tz = 0.7 meter
+    vpRxyzVector cro(vpMath::rad(0), vpMath::rad(0),
+                     vpMath::rad(0)); // No rotations
+    vpRotationMatrix cRo(cro);        // Build the rotation matrix
+    cMo.buildFrom(cto, cRo);          // Build the homogeneous matrix
 
     // Sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4];
@@ -272,38 +337,34 @@ int main()
       pd[i].set_Z(cP[2]);
     }
 
+    // Define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    // - Interaction matrix is computed with the current visual features
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
+
     // We want to see a point on a point
+    std::cout << std::endl;
     for (i = 0; i < 4; i++)
       task.addFeature(p[i], pd[i]);
 
     // Set the proportional gain
-    task.setLambda(0.3);
+    task.setLambda(0.1);
 
     // Display task information
-    task.print();
-
-    // Define the task
-    // - we want an eye-in-hand control law
-    // - articular velocity are computed
-    task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
-    task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
-    task.print();
-
-    vpVelocityTwistMatrix cVe;
-    robot.get_cVe(cVe);
-    task.set_cVe(cVe);
-    task.print();
-
-    // Set the Jacobian (expressed in the end-effector frame)
-    vpMatrix eJe;
-    robot.get_eJe(eJe);
-    task.set_eJe(eJe);
     task.print();
 
     // Initialise the velocity control of the robot
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
+    // Initialise the pose using Lagrange and Dementhon methods, chose the
+    // best estimated pose (either Lagrange or Dementhon) and than compute the
+    // pose using LOWE method with Lagrange or Dementhon pose as
+    // initialisation. compute_pose(point, dot, 4, cam, cMo, cto, cro, true);
+
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
+
     for (;;) {
       // Acquire a new image from the camera
       g.acquire(I);
@@ -311,21 +372,15 @@ int main()
       // Display this image
       vpDisplay::display(I);
 
-      try {
-        // For each point...
-        for (i = 0; i < 4; i++) {
-          // Achieve the tracking of the dot in the image
-          dot[i].track(I);
-          // Display a green cross at the center of gravity position in the
-          // image
-          cog = dot[i].getCog();
-          vpDisplay::displayCross(I, cog, 10, vpColor::green);
-        }
-      } catch (...) {
-        flog.close(); // Close the log file
-        vpTRACE("Error detected while tracking visual features");
-        robot.stopMotion();
-        return (1);
+      // For each point...
+      for (i = 0; i < 4; i++) {
+        // Achieve the tracking of the dot in the image
+        dot[i].track(I);
+        // Get the dot cog
+        cog = dot[i].getCog();
+        // Display a green cross at the center of gravity position in the
+        // image
+        vpDisplay::displayCross(I, cog, 10, vpColor::green);
       }
 
       // During the servo, we compute the pose using LOWE method. For the
@@ -343,12 +398,8 @@ int main()
         p[i].set_Z(cP[2]);
       }
 
-      // Get the jacobian of the robot
-      robot.get_eJe(eJe);
-      // Update this jacobian in the task structure. It will be used to
-      // compute the velocity skew (as an articular velocity) qdot = -lambda *
-      // L^+ * cVe * eJe * (s-s*)
-      task.set_eJe(eJe);
+      // Printing on stdout concerning task information
+      // task.print() ;
 
       vpColVector v;
       // Compute the visual servoing skew vector
@@ -357,12 +408,12 @@ int main()
       // Display the current and desired feature points in the image display
       vpServoDisplay::display(task, cam, I);
 
-      // Apply the computed joint velocities to the robot
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
+      // Apply the computed camera velocities to the robot
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       // Save velocities applied to the robot in the log file
-      // v[0], v[1], v[2] correspond to joint translation velocities in m/s
-      // v[3], v[4], v[5] correspond to joint rotation velocities in rad/s
+      // v[0], v[1], v[2] correspond to camera translation velocities in m/s
+      // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
@@ -388,24 +439,31 @@ int main()
       // Save feature error (s-s*) for the 4 feature points. For each feature
       // point, we have 2 errors (along x and y axis).  This error is
       // expressed in meters in the camera frame
-      flog << (task.getError()).t() << std::endl;
+      flog << (task.getError()).t() << " "; // s-s* for points
+
+      // Save the current cMo pose: translations in meters, rotations (rx, ry,
+      // rz) in radians
+      flog << cto[0] << " " << cto[1] << " " << cto[2] << " "        // translation
+           << cro[0] << " " << cro[1] << " " << cro[2] << std::endl; // rot
 
       // Flush the display
       vpDisplay::flush(I);
-
-      // std::cout << "|| s - s* || = "  << ( task.getError() ).sumSquare() <<
-      // std::endl;
     }
 
-    std::cout << "Display task information: " << std::endl;
-    task.print();
-    task.kill();
     flog.close(); // Close the log file
+
+    // Display task information
+    task.print();
+
+    // Kill the task
+    task.kill();
+
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     flog.close(); // Close the log file
-    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+
+    std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }
@@ -413,7 +471,8 @@ int main()
 #else
 int main()
 {
-  std::cout << "You do not have an Viper 850 robot connected to your computer..." << std::endl;
+  std::cout << "You do not have an afma6 robot connected to your computer..." << std::endl;
   return EXIT_SUCCESS;
 }
+
 #endif

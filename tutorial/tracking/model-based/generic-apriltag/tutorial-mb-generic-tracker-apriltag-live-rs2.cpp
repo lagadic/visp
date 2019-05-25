@@ -1,4 +1,4 @@
-//! \example tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp
+//! \example tutorial-mb-generic-tracker-apriltag-live-rs2.cpp
 #include <fstream>
 #include <ios>
 #include <iostream>
