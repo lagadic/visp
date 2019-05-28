@@ -74,9 +74,9 @@ set(example_cpp
 )
 
 if(NOT DEFINED WINRT_8_1)
-  list(APPEND example_cpp servoViper650FourPoints2DArtVelocityInteractionCurrent.cpp)
-  list(APPEND example_cpp servoViper650FourPoints2DCamVelocityInteractionCurrent.cpp)
-  list(APPEND example_cpp servoViper650FourPoints2DCamVelocityInteractionCurrent-SR300.cpp)
+  list(APPEND example_cpp servoViper650FourPoints2DArtVelocityLs_cur.cpp)
+  list(APPEND example_cpp servoViper650FourPoints2DCamVelocityLs_cur.cpp)
+  list(APPEND example_cpp servoViper650FourPoints2DCamVelocityLs_cur-SR300.cpp)
 
   list(APPEND example_data "${CMAKE_CURRENT_SOURCE_DIR}/SR300-eMc.cnf")
 endif()
@@ -91,6 +91,6 @@ endforeach()
 if(NOT DEFINED WINRT_8_1)
   # Copy the data files to the same location than the target
   foreach(data ${example_data})
-    visp_copy_data(servoViper650FourPoints2DCamVelocityInteractionCurrent-SR300.cpp ${data})
+    visp_copy_data(servoViper650FourPoints2DCamVelocityLs_cur-SR300.cpp ${data})
   endforeach()
 endif()

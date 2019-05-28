@@ -38,7 +38,7 @@
  *
  *****************************************************************************/
 /*!
-  \example servoViper650FourPoints2DCamVelocityInteractionCurrent-SR300.cpp
+  \example servoViper650FourPoints2DCamVelocityLs_cur-SR300.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Viper S650 robot (arm with 6 degrees of freedom). The velocity is

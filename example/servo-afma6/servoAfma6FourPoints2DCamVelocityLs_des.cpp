@@ -40,7 +40,7 @@
  *****************************************************************************/
 
 /*!
-  \file servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp
+  \file servoAfma6FourPoints2DCamVelocityLs_des.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
@@ -51,7 +51,7 @@
 */
 
 /*!
-  \example servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp
+  \example servoAfma6FourPoints2DCamVelocityLs_des.cpp
 
   Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed

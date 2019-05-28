@@ -77,9 +77,9 @@ set(example_cpp
 )
 
 if(NOT DEFINED WINRT_8_1)
-  list(APPEND example_cpp servoViper850FourPoints2DArtVelocityInteractionCurrent.cpp)
-  list(APPEND example_cpp servoViper850FourPoints2DArtVelocityInteractionDesired.cpp)
-  list(APPEND example_cpp servoViper850FourPoints2DCamVelocityInteractionCurrent.cpp)
+  list(APPEND example_cpp servoViper850FourPoints2DArtVelocityLs_cur.cpp)
+  list(APPEND example_cpp servoViper850FourPoints2DArtVelocityLs_des.cpp)
+  list(APPEND example_cpp servoViper850FourPoints2DCamVelocityLs_cur.cpp)
   list(APPEND example_cpp servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp)
   list(APPEND example_cpp servoViper850Point2DArtVelocity-jointAvoidance-basic.cpp)
   list(APPEND example_cpp servoViper850Point2DArtVelocity-jointAvoidance-large.cpp)

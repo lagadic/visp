@@ -6,8 +6,8 @@ find_package(VISP REQUIRED visp_core visp_sensor visp_gui visp_vision visp_mbt v
 
 # set the list of source files
 set(tutorial_cpp
-  tutorial-mb-generic-tracker-apriltag-live-webcam.cpp
-  tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp
+  tutorial-mb-generic-tracker-apriltag-webcam.cpp
+  tutorial-mb-generic-tracker-apriltag-rs2.cpp
 )
 
 foreach(cpp ${tutorial_cpp})
