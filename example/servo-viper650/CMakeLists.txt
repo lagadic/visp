@@ -91,6 +91,6 @@ endforeach()
 if(NOT DEFINED WINRT_8_1)
   # Copy the data files to the same location than the target
   foreach(data ${example_data})
-    visp_copy_data(servoViper650FourPoints2DCamVelocityLsCur-SR300.cpp ${data})
+    visp_copy_data(servoViper650FourPoints2DCamVelocityLs_cur-SR300.cpp ${data})
   endforeach()
 endif()
