@@ -77,6 +77,7 @@ clone_folder: C:\projects\visp\visp
 
 before_build:
   # Use MinGW-w64 in C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64\bin
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set MINGW_DIR=C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64
   # Workaround for CMake not wanting sh.exe on PATH for MinGW
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
   - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set PATH=C:\mingw-w64\x86_64-7.3.0-posix-seh-rt_v5-rev0\mingw64\bin;%PATH%
