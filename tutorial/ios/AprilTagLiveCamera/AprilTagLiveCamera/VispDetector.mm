@@ -30,8 +30,12 @@
  *
  *****************************************************************************/
 
-// Original file of this program was provided by Aplix Corporation.
-// Copyright © 2019 Aplix and/or its affiliates. All rights reserved.
+// This file is copied and modified from original file, which is distributed under
+// GNU General Public License v2.0 (https://github.com/AplixCorporation/groma-AprilTag/blob/master/LICENSE)
+// and is copyrighted as follows.
+//
+// VispDetector.mm
+// Copyright © 2018 Aplix and/or its affiliates. All rights reserved.
 // See https://groma.jp for more information.
 
 #import "VispDetector.h"
