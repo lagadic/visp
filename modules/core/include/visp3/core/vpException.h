@@ -107,7 +107,7 @@ public:
     Basic destructor. Do nothing but implemented to fit the inheritance from
     std::exception
   */
-  virtual ~vpException() throw() {}
+  virtual ~vpException() {}
 
   /** @name Inherited functionalities from vpException */
   //@{
