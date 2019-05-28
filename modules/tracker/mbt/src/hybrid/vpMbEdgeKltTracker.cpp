@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/mbt/vpMbEdgeKltTracker.h>
+#include <visp3/mbt/vpMbtXmlGenericParser.h>
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
@@ -50,9 +51,6 @@ vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   : thresholdKLT(2.), thresholdMBT(2.), m_maxIterKlt(30), w_mbt(), w_klt(), m_error_hybrid(), m_w_hybrid()
 {
   computeCovariance = false;
-
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
 
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT Hybrid");
@@ -101,7 +99,7 @@ void vpMbEdgeKltTracker::init(const vpImage<unsigned char> &I)
 
   \warning This functionnality is not available when tracking cylinders.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cdMo : Pose to affect.
 */
 void vpMbEdgeKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
@@ -117,6 +115,43 @@ void vpMbEdgeKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomoge
   }
 
   initPyramid(I, Ipyramid);
+
+  unsigned int i = (unsigned int)scales.size();
+  do {
+    i--;
+    if (scales[i]) {
+      downScale(i);
+      initMovingEdge(*Ipyramid[i], cMo);
+      upScale(i);
+    }
+  } while (i != 0);
+
+  cleanPyramid(Ipyramid);
+}
+
+/*!
+  Set the pose to be used in entry (as guess) of the next call to the track()
+  function. This pose will be just used once.
+
+  \warning This functionnality is not available when tracking cylinders.
+
+  \param I_color : image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void vpMbEdgeKltTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
+{
+  vpImageConvert::convert(I_color, m_I);
+  vpMbKltTracker::setPose(m_I, cdMo);
+
+  resetMovingEdge();
+
+  if (useScanLine) {
+    cam.computeFov(m_I.getWidth(), m_I.getHeight());
+    faces.computeClippedPolygons(cMo, cam);
+    faces.computeScanLineRender(cam, m_I.getWidth(), m_I.getHeight());
+  }
+
+  initPyramid(m_I, Ipyramid);
 
   unsigned int i = (unsigned int)scales.size();
   do {
@@ -184,9 +219,6 @@ unsigned int vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
   From the configuration file initialize the parameters corresponding to the
 objects: moving-edges, KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
   \throw vpException::ioError if the file has not been properly parsed (file
 not found or wrong format for the data).
 
@@ -240,34 +272,32 @@ not found or wrong format for the data).
   </klt>
 </conf>
   \endcode
-
-  \sa vpXmlParser::cleanup()
 */
 void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
 {
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile);
 
-#ifdef VISP_HAVE_XML2
-  vpMbtEdgeKltXmlParser xmlp;
+#ifdef VISP_HAVE_PUGIXML
+  vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER | vpMbtXmlGenericParser::KLT_PARSER);
 
   xmlp.setCameraParameters(cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
-  xmlp.setMovingEdge(me);
+  xmlp.setEdgeMe(me);
 
-  xmlp.setMaxFeatures(10000);
-  xmlp.setWindowSize(5);
-  xmlp.setQuality(0.01);
-  xmlp.setMinDistance(5);
-  xmlp.setHarrisParam(0.01);
-  xmlp.setBlockSize(3);
-  xmlp.setPyramidLevels(3);
-  xmlp.setMaskBorder(maskBorder);
+  xmlp.setKltMaxFeatures(10000);
+  xmlp.setKltWindowSize(5);
+  xmlp.setKltQuality(0.01);
+  xmlp.setKltMinDistance(5);
+  xmlp.setKltHarrisParam(0.01);
+  xmlp.setKltBlockSize(3);
+  xmlp.setKltPyramidLevels(3);
+  xmlp.setKltMaskBorder(maskBorder);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    std::cout << " *********** Parsing XML for Mb Edge KLT Tracker ************ " << std::endl;
     xmlp.parse(configFile.c_str());
   } catch (...) {
     vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile.c_str());
@@ -292,8 +322,8 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
   }
 
   useLodGeneral = xmlp.getLodState();
-  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
-  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+  minLineLengthThresholdGeneral = xmlp.getLodMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getLodMinPolygonAreaThreshold();
 
   applyLodSettingInConfig = false;
   if (this->getNbPolygon() > 0) {
@@ -304,23 +334,23 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
   }
 
   vpMe meParser;
-  xmlp.getMe(meParser);
+  xmlp.getEdgeMe(meParser);
   vpMbEdgeTracker::setMovingEdge(meParser);
 
-  tracker.setMaxFeatures((int)xmlp.getMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getWindowSize());
-  tracker.setQuality(xmlp.getQuality());
-  tracker.setMinDistance(xmlp.getMinDistance());
-  tracker.setHarrisFreeParameter(xmlp.getHarrisParam());
-  tracker.setBlockSize((int)xmlp.getBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getPyramidLevels());
-  maskBorder = xmlp.getMaskBorder();
+  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
+  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setQuality(xmlp.getKltQuality());
+  tracker.setMinDistance(xmlp.getKltMinDistance());
+  tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
+  tracker.setBlockSize((int)xmlp.getKltBlockSize());
+  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  maskBorder = xmlp.getKltMaskBorder();
 
   // if(useScanLine)
   faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 
@@ -373,6 +403,62 @@ bool vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char> &I, vpColVect
 
   if (computeProjError)
     vpMbEdgeTracker::computeProjectionError(I);
+
+  if (reInit)
+    return true;
+
+  return false;
+}
+
+/*!
+  Realize the post tracking operations. Mostly visibility tests
+*/
+bool vpMbEdgeKltTracker::postTracking(const vpImage<vpRGBa> &I_color, vpColVector &w_mbt, vpColVector &w_klt,
+                                      const unsigned int lvl)
+{
+  postTrackingMbt(w_mbt, lvl);
+
+  if (displayFeatures) {
+    if (lvl == 0) {
+      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[lvl].begin(); it != lines[lvl].end(); ++it) {
+        vpMbtDistanceLine *l = *it;
+        if (l->isVisible() && l->isTracked()) {
+          l->displayMovingEdges(I_color);
+        }
+      }
+
+      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[lvl].begin(); it != cylinders[lvl].end();
+           ++it) {
+        vpMbtDistanceCylinder *cy = *it;
+        // A cylinder is always visible: #FIXME AY: Still valid?
+        if (cy->isTracked())
+          cy->displayMovingEdges(m_I);
+      }
+
+      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[lvl].begin(); it != circles[lvl].end(); ++it) {
+        vpMbtDistanceCircle *ci = *it;
+        if (ci->isVisible() && ci->isTracked()) {
+          ci->displayMovingEdges(m_I);
+        }
+      }
+    }
+  }
+
+  bool reInit = vpMbKltTracker::postTracking(m_I, w_klt);
+
+  if (useScanLine) {
+    cam.computeFov(m_I.getWidth(), m_I.getHeight());
+    faces.computeClippedPolygons(cMo, cam);
+    faces.computeScanLineRender(cam, m_I.getWidth(), m_I.getHeight());
+  }
+
+  vpMbEdgeTracker::updateMovingEdge(m_I);
+
+  vpMbEdgeTracker::initMovingEdge(m_I, cMo);
+  vpMbEdgeTracker::reinitMovingEdge(m_I, cMo);
+
+  if (computeProjError)
+    vpMbEdgeTracker::computeProjectionError(m_I);
 
   if (reInit)
     return true;
@@ -790,7 +876,7 @@ void vpMbEdgeKltTracker::computeVVSInteractionMatrixAndResidu()
 
   \throw vpException : if the tracking is supposed to have failed.
 
-  \param I : the input image.
+  \param I : the input grayscale image.
 */
 void vpMbEdgeKltTracker::track(const vpImage<unsigned char> &I)
 {
@@ -833,6 +919,66 @@ void vpMbEdgeKltTracker::track(const vpImage<unsigned char> &I)
     //    } while(i != 0);
 
     //    cleanPyramid(Ipyramid);
+  }
+
+  if (displayFeatures) {
+    m_featuresToBeDisplayedKlt = getFeaturesForDisplayKlt();
+  }
+}
+
+/*!
+  Realize the tracking of the object in the image.
+
+  \throw vpException : if the tracking is supposed to have failed.
+
+  \param I_color : the input color image.
+*/
+void vpMbEdgeKltTracker::track(const vpImage<vpRGBa> &I_color)
+{
+  vpImageConvert::convert(I_color, m_I);
+  try {
+    vpMbKltTracker::preTracking(m_I);
+  } catch (...) {
+  }
+
+  if (m_nbInfos >= 4) {
+    unsigned int old_maxIter = m_maxIter;
+    m_maxIter = m_maxIterKlt;
+    vpMbKltTracker::computeVVS();
+    m_maxIter = old_maxIter;
+  } else {
+    m_nbInfos = 0;
+    // std::cout << "[Warning] Unable to init with KLT" << std::endl;
+  }
+
+  vpMbEdgeTracker::trackMovingEdge(m_I);
+
+  unsigned int nbrow = 0;
+  computeVVS(m_I, m_nbInfos, nbrow);
+
+  if (postTracking(I_color, w_mbt, w_klt)) {
+    vpMbKltTracker::reinit(m_I);
+
+    // AY : Removed as edge tracked, if necessary, is reinitialized in
+    // postTracking()
+
+    //    initPyramid(I, Ipyramid);
+
+    //    unsigned int i = (unsigned int)scales.size();
+    //    do {
+    //      i--;
+    //      if(scales[i]){
+    //        downScale(i);
+    //        initMovingEdge(*Ipyramid[i], cMo);
+    //        upScale(i);
+    //      }
+    //    } while(i != 0);
+
+    //    cleanPyramid(Ipyramid);
+  }
+
+  if (displayFeatures) {
+    m_featuresToBeDisplayedKlt = getFeaturesForDisplayKlt();
   }
 }
 
@@ -1092,39 +1238,35 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                  const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
-           ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  std::vector<std::vector<double> > models = vpMbEdgeKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
 
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-           it != cylinders[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-           it != circles[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      break; // displaying model on one scale only
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
   }
 
-  for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-    vpMbtDistanceKltPoints *kltpoly = *it;
-    if (displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
-      kltpoly->displayPrimitive(I);
-    }
-  }
+  if (displayFeatures) {
+    for (size_t i = 0; i < m_featuresToBeDisplayedKlt.size(); i++) {
+      if (vpMath::equal(m_featuresToBeDisplayedKlt[i][0], 1)) {
+        vpImagePoint ip1(m_featuresToBeDisplayedKlt[i][1], m_featuresToBeDisplayedKlt[i][2]);
+        vpDisplay::displayCross(I, ip1, 10, vpColor::red);
 
-  for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-       ++it) {
-    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
-      kltPolyCylinder->displayPrimitive(I);
+        vpImagePoint ip2(m_featuresToBeDisplayedKlt[i][3], m_featuresToBeDisplayedKlt[i][4]);
+        double id = m_featuresToBeDisplayedKlt[i][5];
+        std::stringstream ss;
+        ss << id;
+        vpDisplay::displayText(I, ip2, ss.str(), vpColor::red);
+      }
+    }
   }
 
 #ifdef VISP_HAVE_OGRE
@@ -1148,45 +1290,82 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                  const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
-           ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
 
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-           it != cylinders[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-           it != circles[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      break; // displaying model on one scale only
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
   }
 
-  for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-    vpMbtDistanceKltPoints *kltpoly = *it;
-    if (displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
-      kltpoly->displayPrimitive(I);
-    }
-  }
+  if (displayFeatures) {
+    for (size_t i = 0; i < m_featuresToBeDisplayedKlt.size(); i++) {
+      if (vpMath::equal(m_featuresToBeDisplayedKlt[i][0], 1)) {
+        vpImagePoint ip1(m_featuresToBeDisplayedKlt[i][1], m_featuresToBeDisplayedKlt[i][2]);
+        vpDisplay::displayCross(I, ip1, 10, vpColor::red);
 
-  for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-       ++it) {
-    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
-      kltPolyCylinder->displayPrimitive(I);
+        vpImagePoint ip2(m_featuresToBeDisplayedKlt[i][3], m_featuresToBeDisplayedKlt[i][4]);
+        double id = m_featuresToBeDisplayedKlt[i][5];
+        std::stringstream ss;
+        ss << id;
+        vpDisplay::displayText(I, ip2, ss.str(), vpColor::red);
+      }
+    }
   }
 
 #ifdef VISP_HAVE_OGRE
   if (useOgre)
     faces.displayOgre(cMo_);
 #endif
+}
+
+std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                         const vpHomogeneousMatrix &cMo_,
+                                                                         const vpCameraParameters &camera,
+                                                                         const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
+  for (unsigned int i = 0; i < scales.size(); i += 1) {
+    if (scales[i]) {
+      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
+           ++it) {
+        std::vector<std::vector<double> > currentModel =
+          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+        models.insert(models.end(), currentModel.begin(), currentModel.end());
+      }
+
+      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
+           it != cylinders[scaleLevel].end(); ++it) {
+        std::vector<std::vector<double> > currentModel =
+          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+        models.insert(models.end(), currentModel.begin(), currentModel.end());
+      }
+
+      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
+           it != circles[scaleLevel].end(); ++it) {
+        std::vector<double> paramsCircle = (*it)->getModelForDisplay(cMo_, camera, displayFullModel);
+        models.push_back(paramsCircle);
+      }
+
+      break; // displaying model on one scale only
+    }
+  }
+
+#ifdef VISP_HAVE_OGRE
+  if (useOgre)
+    faces.displayOgre(cMo_);
+#endif
+
+  return models;
 }
 
 /*!

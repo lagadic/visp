@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,16 +53,15 @@
 
 #if defined(VISP_HAVE_SOWIN)
 vpViewer::vpViewer(HWND parent, vpSimulator *_simu, vpViewerType type)
-  : viewerType(type), SoWinExaminerViewer(parent, (char *)NULL, false)
+  : SoWinExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
 #elif defined(VISP_HAVE_SOQT)
 vpViewer::vpViewer(QWidget *parent, vpSimulator *_simu, vpViewerType type)
-  : viewerType(type), SoQtExaminerViewer(parent, (char *)NULL, false)
+  : SoQtExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
 #elif defined(VISP_HAVE_SOXT)
 vpViewer::vpViewer(Widget parent, vpSimulator *_simu, vpViewerType type)
-  : viewerType(type), SoXtExaminerViewer(parent, (char *)NULL, false)
+  : SoXtExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
 #endif
 {
-  this->simu = _simu;
   // Coin should not clear the pixel-buffer, so the background image
   // is not removed.
 

@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -106,10 +106,8 @@ if(USE_PCL)
   # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
   # will be not able to give the names of PCL libraries when used without CMake.
   foreach(lib_ ${PCL_LIBRARIES})
-    # check if ${lib_} is in VTK_LIBRARIES and is a TARGET. If this is the case, we retrieve the full location
-    list(FIND VTK_LIBRARIES ${lib_} lib_is_vtk_)
-    if(NOT ${lib_is_vtk_} EQUAL -1 AND TARGET ${lib_})
-      # This is a VTK library
+    if(TARGET ${lib_})
+      # This is a PCL or VTK library
       list(APPEND PCL_VTK_LIBRARIES ${lib_})
     else()
       # Other libraries sqlite3, boost..., optimized, debug
@@ -129,7 +127,7 @@ if(USE_PCL)
 
   find_package(VTK QUIET)
   if (VTK_FOUND AND NOT ANDROID)
-    # Fix for Ubuntu 16.04 to add vtkFiltering as dependency. Note that vtkFiltering does't exists on OSX
+    # Fix for Ubuntu 16.04 to add vtkFiltering as dependency. Note that vtkFiltering doesn't exists on OSX
     list(FIND VTK_LIBRARIES "vtkFiltering" vtkFiltering_exists_)
     if(NOT ${vtkFiltering_exists_} EQUAL -1)
       list(APPEND PCL_VTK_LIBRARIES "vtkFiltering") # seems required on Ubuntu 16.04
@@ -140,31 +138,87 @@ if(USE_PCL)
       # See https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
       list(REMOVE_ITEM opt_libs "vtkproj4")
     endif()
-    set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
-    foreach(lib_ ${PCL_VTK_LIBRARIES})
-      foreach(imp_config_ ${config_})
-        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
-        if(NOT EXISTS ${lib_property_${imp_config_}_})
-          get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
-        endif()
-        # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
-        if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
-          list(APPEND opt_libs optimized "${lib_property_${imp_config_}_}")
-        elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
-          list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
-        elseif(EXISTS "${lib_property_${imp_config_}_}")
-          list(APPEND opt_libs "${lib_property_${imp_config_}_}")
+    # Get pcl link libraries like opengl
+    vp_list_unique(PCL_VTK_LIBRARIES)
+    if(NOT VTK_ENABLE_KITS)
+      foreach(lib_ ${PCL_VTK_LIBRARIES})
+        get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
+        if(imported_libs_)
+          list(APPEND PCL_VTK_LIBS ${lib_})
+          list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
+        else()
+          list(APPEND PCL_VTK_LIBS ${lib_})
         endif()
       endforeach()
-    endforeach()
-    if(VTK_VERSION VERSION_EQUAL 6.2.0)
-      mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR)
-    elseif(VTK_VERSION VERSION_EQUAL 7.1.0 OR VTK_VERSION VERSION_EQUAL 8.0.0)
-      mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY DSSDK_DIR ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
-      mark_as_advanced(GLEW_INCLUDE_DIR GLEW_GLEW_LIBRARY)
-      mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Sql_DIR Qt5Widgets_DIR RSSDK_DIR)
+      vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+
+      # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
+      foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
+        string(REGEX REPLACE "\\$<LINK_ONLY:" "" lib_ ${lib_})
+        string(REGEX REPLACE ">" "" lib_ ${lib_})
+        list(APPEND PCL_VTK_LIBS ${lib_})
+      endforeach()
+      vp_list_unique(PCL_VTK_LIBS)
+    else()
+      foreach(lib_ ${PCL_VTK_LIBRARIES})
+        get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
+        if(imported_libs_)
+          list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
+          if(${lib_}_KIT)
+            list(APPEND PCL_VTK_LIBS ${${lib_}_KIT})
+          endif()
+        else()
+          list(APPEND PCL_VTK_LIBS ${lib_})
+        endif()
+      endforeach()
+      vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      while(PCL_VTK_IMPORTED_LIBS)
+        vp_list_pop_front(PCL_VTK_IMPORTED_LIBS elt)
+        if(elt MATCHES "^vtk" OR elt MATCHES "^pcl") # to avoid precessing -framework ApplicationServices -framework CoreServices
+          get_target_property(imported_libs_ ${elt} INTERFACE_LINK_LIBRARIES)
+          if(imported_libs_)
+            list(APPEND PCL_VTK_IMPORTED_LIBS ${imported_libs_})
+          else()
+            list(APPEND PCL_VTK_LIBS ${elt})
+          endif()
+        else()
+          list(APPEND PCL_VTK_LIBS ${elt})
+        endif()
+        vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      endwhile()
+      vp_list_unique(PCL_VTK_LIBS)
     endif()
+
+    set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
+    foreach(lib_ ${PCL_VTK_LIBS})
+      if(TARGET ${lib_})
+        foreach(imp_config_ ${config_})
+          get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_IMPLIB_${imp_config_})
+          if(NOT EXISTS ${lib_property_${imp_config_}_})
+            get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
+          endif()
+          # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
+          if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
+            list(APPEND opt_libs optimized "${lib_property_${imp_config_}_}")
+          elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
+            list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
+          elseif(EXISTS "${lib_property_${imp_config_}_}")
+            list(APPEND opt_libs "${lib_property_${imp_config_}_}")
+          endif()
+        endforeach()
+      else()
+        list(APPEND opt_libs "${lib_}")
+      endif()
+    endforeach()
   endif()
+
+  mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
+  mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY RSSDK_DIR DSSDK_DIR VTK_DIR)
+  mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
+  mark_as_advanced(QHULL_INCLUDE_DIRS QHULL_LIBRARY QHULL_LIBRARY_DEBUG)
+  mark_as_advanced(GLEW_INCLUDE_DIR GLEW_GLEW_LIBRARY GLEW_cocoa_LIBRARY)
+  mark_as_advanced(pkgcfg_lib_PC_FLANN_flann pkgcfg_lib_PC_FLANN_flann_cpp)
+  mark_as_advanced(pkgcfg_lib_PC_OPENNI2_OpenNI2 pkgcfg_lib_PC_OPENNI2_OpenNI2 pkgcfg_lib_PC_OPENNI_OpenNI)
 endif()
 
 if(WITH_ATIDAQ)
@@ -183,12 +237,12 @@ if(USE_PYLON)
   # Add specific build flag to turn off warnings coming from Basler
   # pylon headers
   if(MSVC)
-	if(BUILD_SHARED_LIBS)
+  if(BUILD_SHARED_LIBS)
       vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabberGigE.cpp /wd4244 /wd4267)
       vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabberUsb.cpp /wd4244 /wd4267)
-	else()
-	  vp_warnings_disable(CMAKE_CXX_FLAGS /wd4244 /wd4267)
-	endif()
+  else()
+    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4244 /wd4267)
+  endif()
   else()
     vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonFactory.cpp -Wno-unknown-pragmas -Wno-unused-parameter -Wno-overloaded-virtual)
     vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabberGigE.cpp -Wno-unknown-pragmas -Wno-unused-parameter -Wno-overloaded-virtual -Wno-non-pod-varargs)
@@ -201,15 +255,24 @@ if(USE_REALSENSE)
   vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp -Wno-strict-aliasing -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
 if(USE_REALSENSE2)
-  # Add specific build flag to turn off warnings coming from RealSense2 3rd party
-  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare)
+  if(UNIX)
+    # Add specific build flag to turn off warnings coming from RealSense2 3rd party
+    vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-overloaded-virtual)
+  else()
+    vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp /wd4244)
+  endif()
 endif()
 if(USE_REALSENSE OR USE_REALSENSE2)
-  # Add specific build flag to turn off warnings coming from PCL 3rd party
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_R200.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-unused-function -Wno-reorder -Wno-sign-compare)
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-unused-function -Wno-reorder -Wno-sign-compare)
+  if(UNIX)
+    # Add specific build flag to turn off warnings coming from PCL 3rd party
+    vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_R200.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-comment)
+    vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-comment)
+    vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-unused-function -Wno-reorder -Wno-sign-compare -Wno-overloaded-virtual -Wno-comment)
+    vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter -Wno-unused-function -Wno-reorder -Wno-sign-compare -Wno-overloaded-virtual -Wno-comment)
+  else()
+    vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp /wd4244)
+    vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435.cpp /wd4244)
+  endif()
 endif()
 
 vp_module_include_directories(${opt_incs})

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,6 +265,20 @@ int main(int argc, char *argv[])
           }
         }
       }
+    }
+    {
+      // Test vpRotationMatrix construction
+      std::vector<double> bench(9, 0);
+      bench[2] = bench[4] = bench[6] = 1.;
+      vpMatrix M(3, 3);
+      M[2][0] = M[1][1] = M[0][2] = 1.;
+      vpRotationMatrix R1(M);
+      if (test("R1", R1, bench) == false)
+        return EXIT_FAILURE;
+      vpRotationMatrix R2;
+      R2 = M;
+      if (test("R2", R2, bench) == false)
+        return EXIT_FAILURE;
     }
     {
       vpColVector c(6, 1);
@@ -891,7 +905,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       std::vector<vpMatrix> vec_mat;
       vec_mat.emplace_back(5, 5);

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@
   velocity vector and \f$ \omega \f$ is a rotation velocity vector.
 
   \return An homogeneous matrix \f$ \bf M \f$ computed from an instantaneous
-  velocity \f$ \bf v \f$, where \f${\bf M} = \exp^{({\bf v})} \f$ is the
+  velocity \f$ \bf v \f$, where \f${\bf M} = \exp{({\bf v})} \f$ is the
   displacement of the object when the velocity \f$ \bf v \f$ is applied during
   1 second.
 
@@ -70,7 +70,7 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v) { return vpEx
   velocity \f$ \bf v \f$ is applied.
 
   \return An homogeneous matrix \f$ \bf M \f$ computed from an instantaneous
-  velocity \f$ \bf v \f$, where \f${\bf M} = \exp^{({\bf v},\Delta t)} \f$ is
+  velocity \f$ \bf v \f$, where \f${\bf M} = \exp{({\bf v})} \f$ is
   the displacement of the object when the velocity \f$ \bf v \f$ is applied
   during \f$\Delta t\f$ seconds.
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
  * Souriya Trinh
  *
  *****************************************************************************/
-#ifndef __vpKeyPoint_h__
-#define __vpKeyPoint_h__
+#ifndef _vpKeyPoint_h_
+#define _vpKeyPoint_h_
 
 #include <algorithm> // std::transform
 #include <float.h>   // DBL_MAX
@@ -82,10 +82,6 @@
 #  elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && \
      (VISP_HAVE_OPENCV_VERSION < 0x030000)
 #    include <opencv2/nonfree/nonfree.hpp>
-#  endif
-
-#  ifdef VISP_HAVE_XML2
-#    include <libxml/xmlwriter.h>
 #  endif
 
 /*!
@@ -337,6 +333,17 @@ public:
                       const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
                       const bool append = false, const int class_id = -1);
 
+  unsigned int buildReference(const vpImage<vpRGBa> &I_color);
+  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
+                              const unsigned int width);
+  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
+
+  void buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoint,
+                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
+  void buildReference(const vpImage<vpRGBa> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
+                      const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                      const bool append = false, const int class_id = -1);
+
   static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi, const vpCameraParameters &cam,
                         const vpHomogeneousMatrix &cMo, cv::Point3f &point);
 
@@ -369,23 +376,31 @@ public:
 
   bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
                    const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
-                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL);
+                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
-                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL);
+                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
                    std::vector<unsigned int> &inlierIndex, double &elapsedTime,
-                   bool (*func)(vpHomogeneousMatrix *) = NULL);
+                   bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   void createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsigned char> &ICurrent,
                            vpImage<unsigned char> &IMatching);
   void createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
+  void createImageMatching(vpImage<unsigned char> &IRef, vpImage<vpRGBa> &ICurrent,
+                           vpImage<vpRGBa> &IMatching);
+  void createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
+
   void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints,
+              const vpRect &rectangle = vpRect());
+  void detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints,
               const vpRect &rectangle = vpRect());
   void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &mask = cv::Mat());
   void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+              const vpRect &rectangle = vpRect());
+  void detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const vpRect &rectangle = vpRect());
   void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const cv::Mat &mask = cv::Mat());
@@ -396,18 +411,31 @@ public:
 
   void display(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent, unsigned int size = 3);
   void display(const vpImage<unsigned char> &ICurrent, unsigned int size = 3, const vpColor &color = vpColor::green);
+  void display(const vpImage<vpRGBa> &IRef, const vpImage<vpRGBa> &ICurrent, unsigned int size = 3);
+  void display(const vpImage<vpRGBa> &ICurrent, unsigned int size = 3, const vpColor &color = vpColor::green);
 
   void displayMatching(const vpImage<unsigned char> &IRef, vpImage<unsigned char> &IMatching, unsigned int crossSize,
                        unsigned int lineThickness = 1, const vpColor &color = vpColor::green);
   void displayMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching,
                        const std::vector<vpImagePoint> &ransacInliers = std::vector<vpImagePoint>(),
                        unsigned int crossSize = 3, unsigned int lineThickness = 1);
+  void displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpRGBa> &IMatching, unsigned int crossSize,
+                       unsigned int lineThickness = 1, const vpColor &color = vpColor::green);
+  void displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &IMatching, unsigned int crossSize,
+                       unsigned int lineThickness = 1, const vpColor &color = vpColor::green);
+  void displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching,
+                       const std::vector<vpImagePoint> &ransacInliers = std::vector<vpImagePoint>(),
+                       unsigned int crossSize = 3, unsigned int lineThickness = 1);
 
   void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+               std::vector<cv::Point3f> *trainPoints = NULL);
+  void extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                std::vector<cv::Point3f> *trainPoints = NULL);
   void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                std::vector<cv::Point3f> *trainPoints = NULL);
   void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+               double &elapsedTime, std::vector<cv::Point3f> *trainPoints = NULL);
+  void extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                double &elapsedTime, std::vector<cv::Point3f> *trainPoints = NULL);
   void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime,
                std::vector<cv::Point3f> *trainPoints = NULL);
@@ -608,7 +636,9 @@ public:
 
     \return The number of train images.
   */
-  inline unsigned int getNbImages() const { return static_cast<unsigned int>(m_mapOfImages.size()); }
+  inline unsigned int getNbImages() const {
+    return static_cast<unsigned int>(m_mapOfImages.size());
+  }
 
   void getObjectPoints(std::vector<cv::Point3f> &objectPoints) const;
   void getObjectPoints(std::vector<vpPoint> &objectPoints) const;
@@ -665,7 +695,11 @@ public:
                            vpImage<unsigned char> &IMatching);
   void insertImageMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
-#ifdef VISP_HAVE_XML2
+  void insertImageMatching(const vpImage<vpRGBa> &IRef, const vpImage<vpRGBa> &ICurrent,
+                           vpImage<vpRGBa> &IMatching);
+  void insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
+
+#ifdef VISP_HAVE_PUGIXML
   void loadConfigFile(const std::string &configFile);
 #endif
 
@@ -680,9 +714,9 @@ public:
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  bool (*func)(vpHomogeneousMatrix *) = NULL, const vpRect &rectangle = vpRect());
+                  bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *) = NULL,
+                  double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL,
                   const vpRect &rectangle = vpRect());
 
   bool matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
@@ -692,7 +726,18 @@ public:
 
   bool matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                            double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                           bool (*func)(vpHomogeneousMatrix *) = NULL, const vpRect &rectangle = vpRect());
+                           bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
+
+  unsigned int matchPoint(const vpImage<vpRGBa> &I_color);
+  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
+                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
+
+  bool matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                  bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
+  bool matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                  double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL,
+                  const vpRect &rectangle = vpRect());
 
   void reset();
 
@@ -986,7 +1031,7 @@ public:
   /*!
     Use or not the multithreaded version.
 
-    \note Need C++11
+    \note Needs C++11 or higher.
   */
   inline void setRansacParallel(const bool parallel)
   {
@@ -1255,6 +1300,8 @@ private:
   //! If true, keep only pairs of keypoints where each train keypoint is
   //! matched to a single query keypoint
   bool m_useSingleMatchFilter;
+  //! Grayscale image buffer, used when passing color images
+  vpImage<unsigned char> m_I;
 
   void affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask, cv::Mat &Ai);
 

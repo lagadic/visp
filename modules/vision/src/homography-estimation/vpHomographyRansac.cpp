@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -327,7 +327,7 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
   if (n < 4)
     throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
-  vpUniRand random((const long)time(NULL));
+  vpUniRand random((long)time(NULL));
 
   std::vector<unsigned int> best_consensus;
   std::vector<unsigned int> cur_consensus;

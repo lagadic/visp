@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpUDPServer_h__
-#define __vpUDPServer_h__
+#ifndef _vpUDPServer_h_
+#define _vpUDPServer_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -199,7 +199,7 @@ class VISP_EXPORT vpUDPServer
 public:
   vpUDPServer(const int port);
   vpUDPServer(const std::string &hostname, const int port);
-  ~vpUDPServer();
+  virtual ~vpUDPServer();
 
   int receive(std::string &msg, const int timeoutMs = 0);
   int receive(std::string &msg, std::string &hostInfo, const int timeoutMs = 0);

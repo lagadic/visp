@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
               << "xml,"
 #endif
               << "cao or wrl]" << std::endl;
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
     vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER);
     bool usexml = false;
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       tracker.getCameraParameters(cam);
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
     keypoint_learning.setDetectorParameter("ORB", "nLevels", 1);
 #else
     cv::Ptr<cv::ORB> orb_learning = keypoint_learning.getDetector("ORB").dynamicCast<cv::ORB>();
-    if (orb_learning != NULL) {
+    if (orb_learning) {
       orb_learning->setNLevels(1);
     }
 #endif
@@ -198,7 +198,7 @@ int main(int argc, char **argv)
 #else
     cv::Ptr<cv::ORB> orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
     orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
-    if (orb_detector != NULL) {
+    if (orb_detector) {
       orb_detector->setNLevels(1);
     }
 #endif
@@ -315,10 +315,7 @@ int main(int argc, char **argv)
     if (!click_done)
       vpDisplay::getClick(IMatching);
 
-#ifdef VISP_HAVE_XML2
-    vpXmlParser::cleanup();
-#endif
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     SoDB::finish();
 #endif
   } catch (const vpException &e) {

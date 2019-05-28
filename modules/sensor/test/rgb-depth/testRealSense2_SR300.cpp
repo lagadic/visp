@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY) &&                                         \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                         \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
@@ -212,7 +212,7 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
   const int size = w * h;
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
-    memcpy(img.ptr<cv::Vec3b>(), f.get_data(), size * 3);
+    memcpy(static_cast<void*>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
   } else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
     cv::Mat tmp(h, w, CV_8UC3, (void *)f.get_data(), cv::Mat::AUTO_STEP);
     cv::cvtColor(tmp, img, cv::COLOR_RGB2BGR);
@@ -514,7 +514,11 @@ int main(int argc, char *argv[])
 
     auto data = pipe.wait_for_frames();
     frame_to_mat(data.get_color_frame(), mat_color);
+#if (RS2_API_VERSION >= ((2 * 10000) + (16 * 100) + 0))
+    frame_to_mat(data.get_depth_frame().apply_filter(color_map), mat_depth);
+#else
     frame_to_mat(color_map(data.get_depth_frame()), mat_depth);
+#endif
     frame_to_mat(data.first(RS2_STREAM_INFRARED), mat_infrared);
 
     cv::imshow("OpenCV color", mat_color);
@@ -588,8 +592,8 @@ int main()
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense2 to make this test work." << std::endl;
 #endif
-#if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
-  std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON) "
+#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
                "to make this test work"
             << std::endl;
 #endif

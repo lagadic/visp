@@ -12,7 +12,6 @@ ViSP allows simultaneously the tracking of a markerless object using the knowled
 
 To follow this tutorial depending on your interest you should be sure that ViSP was build with the following third-parties:
 - \c OpenCV: Useful if you want to investigate the KLT keypoint tracker implemented in vpMbKltTracker or its hybrid version vpMbEdgeKltTracker. We recommend to install \c OpenCV. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
-- \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mbdep_settings_xml.
 - \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mbdep_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mbdep_advanced_wrml  instead of the home-made \ref mbdep_advanced_cao.
 
@@ -239,7 +238,7 @@ We provide now a line by line description of the file where the faces of the box
 \subsection mbdep_settings_xml Settings from an XML file
 
 
-Instead of setting the tracker parameters from source code, if libxml2 is available it is possible to specify the settings from an XML file. As done in tutorial-mb-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
+Instead of setting the tracker parameters from source code, it is possible to specify the settings from an XML file. As done in tutorial-mb-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
 \snippet tutorial-mb-tracker-full.cpp Load xml
 The content of the XML file teabox.xml that is considered by default is the following:
 \code
@@ -892,9 +891,9 @@ You should be able to obtain these kind of results:
 \section mbdep_known_issues Known issues
 \subsection mbdep_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility ckeck
 
-If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win10-msvc12 :
+If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
+C:\> mbtEdgeTracking.exe -c -o
 ...
 OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
 ...
@@ -905,7 +904,7 @@ and then a wonderful runtime issue as in the next image:
 
 It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
+C:\> mbtEdgeTracking.exe -c -o -w
 \endcode
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg

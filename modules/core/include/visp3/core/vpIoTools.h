@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,6 +245,9 @@ public:
   static void writeBinaryValueLE(std::ofstream &file, const uint32_t int_value);
   static void writeBinaryValueLE(std::ofstream &file, const float float_value);
   static void writeBinaryValueLE(std::ofstream &file, const double double_value);
+
+  static bool parseBoolean(std::string input);
+  static std::string trim(std::string s);
 
 protected:
   static std::string baseName;

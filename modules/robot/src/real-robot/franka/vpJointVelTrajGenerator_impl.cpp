@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,41 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   std::ofstream log_dq_cmd;
   std::ofstream log_v_des;
 
+  if (! log_folder.empty()) {
+    std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
+    std::cout << "Use gnuplot tool to visualize logs:" << std::endl;
+    std::cout << "$ cd " << log_folder << std::endl;
+    std::cout << "$ gnuplot plot.gp" << std::endl;
+    std::cout << "<press return key in the terminal to view next plot>" << std::endl;
+
+    std::ofstream gnuplot;
+    gnuplot.open(log_folder + "/plot.gp");
+    gnuplot << "set st data li\n" << std::endl;
+
+    if (frame == vpRobot::CAMERA_FRAME || frame == vpRobot::REFERENCE_FRAME || frame == vpRobot::END_EFFECTOR_FRAME) {
+      gnuplot << "plot ";
+      for (size_t i = 0; i < 7; i++) {
+        gnuplot << "'v-des.log' u " << i+1 << " title \"d-des" << i+1 << "\", ";
+      }
+      gnuplot << "\npause -1\n" << std::endl;
+    }
+
+    gnuplot << "plot ";
+    for (size_t i = 0; i < 7; i++) {
+      gnuplot << "'q-mes.log' u " << i+1 << " title \"q-mes" << i+1 << "\", ";
+    }
+    gnuplot << "\npause -1\n" << std::endl;
+
+    for (size_t i = 0; i < 7; i++) {
+      gnuplot << "plot 'dq-mes.log' u " << i+1 << " title \"dq-mes" << i+1
+              << "\", 'dq-des.log' u " << i+1 << " title \"dq-des" << i+1
+              << "\", 'dq-cmd.log' u " << i+1 << " title \"dq-cmd" << i+1 << "\"" << std::endl;
+      gnuplot << "\npause -1\n" << std::endl;
+    }
+
+    gnuplot.close();
+  }
+
   auto joint_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &time, &q_prev, &dq_des, &stop, &robot_state, &mutex]
       (const franka::RobotState& state, franka::Duration period) -> franka::JointVelocities {
 
@@ -90,7 +125,6 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     if (time == 0.0) {
       if (! log_folder.empty()) {
-        std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
         log_time.open(log_folder + "/time.log");
         log_q_mes.open(log_folder + "/q-mes.log");
         log_dq_mes.open(log_folder + "/dq-mes.log");
@@ -130,14 +164,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     if (stop) {
       unsigned int nb_joint_stop = 0;
-      static int cpt_dbg = 0;
-      const double q_eps = (1.0/100000.);
+      const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
         }
       }
-      cpt_dbg ++;
 
       if (nb_joint_stop == 7) {
         if (! log_folder.empty()) {
@@ -153,6 +185,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     q_prev = state.q_d;
 
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
     // state.q_d contains the last joint velocity command received by the robot.
     // In case of packet loss due to bad connection or due to a slow control loop
     // not reaching the 1kHz rate, even if your desired velocity trajectory
@@ -162,6 +195,10 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     // Note that if the robot does not receive a command it will try to extrapolate
     // the desired behavior assuming a constant acceleration model
     return limitRate(ddq_max, velocities.dq, state.dq_d);
+#else
+    // With libfranka 0.5.0 franka::control() enables limit_rate by default
+    return velocities;
+#endif
   };
 
   auto cartesian_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des,  &log_dq_cmd, &log_v_des, &time, &model, &q_prev, &v_cart_des, &stop, &robot_state, &mutex]
@@ -173,13 +210,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     if (time == 0.0) {
       if (! log_folder.empty()) {
-        std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
         log_time.open(log_folder + "/time.log");
         log_q_mes.open(log_folder + "/q-mes.log");
         log_dq_mes.open(log_folder + "/dq-mes.log");
         log_dq_des.open(log_folder + "/dq-des.log");
         log_dq_cmd.open(log_folder + "/dq-cmd.log");
-        log_v_des.open(log_folder + "v-des.log");
+        log_v_des.open(log_folder + "/v-des.log");
       }
       q_prev = state.q_d;
       joint_vel_traj_generator.init(state.q_d, q_min, q_max, dq_max, ddq_max, delta_t);
@@ -251,14 +287,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     if (stop) {
       unsigned int nb_joint_stop = 0;
-      static int cpt_dbg = 0;
-      const double q_eps = (1.0/100000.);
+      const double q_eps = 1e-6; // Motion finished
       for(size_t i=0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
           nb_joint_stop ++;
         }
       }
-      cpt_dbg ++;
       if (nb_joint_stop == 7) {
         if (! log_folder.empty()) {
           log_time.close();
@@ -274,6 +308,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     q_prev = state.q_d;
 
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
     // state.q_d contains the last joint velocity command received by the robot.
     // In case of packet loss due to bad connection or due to a slow control loop
     // not reaching the 1kHz rate, even if your desired velocity trajectory
@@ -283,17 +318,54 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     // Note that if the robot does not receive a command it will try to extrapolate
     // the desired behavior assuming a constant acceleration model
     return limitRate(ddq_max, velocities.dq, state.dq_d);
+#else
+    // With libfranka 0.5.0 franka::control enables limit_rate by default
+    return velocities;
+#endif
   };
 
+#if !(VISP_HAVE_FRANKA_VERSION < 0x000500)
+  double cutoff_frequency = 10;
+#endif
   switch (frame) {
   case vpRobot::JOINT_STATE: {
-    robot->control(joint_velocity_callback);
+    int nbAttempts = 10;
+    for (int attempt = 1; attempt <= nbAttempts; attempt++) {
+      try {
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
+        robot->control(joint_velocity_callback);
+#else
+        robot->control(joint_velocity_callback, franka::ControllerMode::kJointImpedance, true, cutoff_frequency);
+#endif
+        break;
+      } catch (const franka::ControlException &e) {
+        std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
+        robot->automaticErrorRecovery();
+        if (attempt == nbAttempts)
+          throw;
+      }
+    }
     break;
   }
   case vpRobot::CAMERA_FRAME:
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::END_EFFECTOR_FRAME: {
-    robot->control(cartesian_velocity_callback);
+    int nbAttempts = 10;
+    for (int attempt = 1; attempt <= nbAttempts; attempt++) {
+      try {
+#if (VISP_HAVE_FRANKA_VERSION < 0x000500)
+        robot->control(cartesian_velocity_callback);
+#else
+        robot->control(cartesian_velocity_callback, franka::ControllerMode::kJointImpedance, true, cutoff_frequency);
+#endif
+        break;
+      } catch (const franka::ControlException &e) {
+        std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
+        robot->automaticErrorRecovery();
+        if (attempt == nbAttempts)
+          throw;
+      }
+    }
     break;
   }
   case vpRobot::MIXT_FRAME: {

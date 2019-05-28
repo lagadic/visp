@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@ class vpColVector;
   \file vpRowVector.h
   \brief Definition of row vector class as well
   as a set of operations on these vectors.
-
 */
 
 /*!
@@ -68,6 +67,50 @@ class vpColVector;
   these vectors.
 
   The vpRowVector class is derived from vpArray2D<double>.
+
+  The code below shows how to create a 3-element row vector of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpRowVector.h
+
+int main()
+{
+  vpRowVector v(3);
+  v[0] = -1; v[1] = -2.1; v[2] = -3;
+
+  std::cout << "v:" << std::endl;
+  for (unsigned int i = 0; i < v.size(); i++) {
+    std::cout << v[i] << " ";
+  }
+  std::cout << std::endl;
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+v:
+-1 -2.1 -3
+  \endcode
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpRowVector.h
+
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRowVector v{-1, -2.1, -3};
+  std::cout << "v:\n" << v << std::endl;
+#endif
+}
+  \endcode
+  The vector could also be initialized using operator=(const std::initializer_list< double > &)
+  \code
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRowVector v;
+  v = {-1, -2.1, -3};
+#endif
+}
+  \endcode
 */
 class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {
@@ -87,6 +130,10 @@ public:
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
   vpRowVector(const std::vector<float> &v);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRowVector(vpRowVector &&v);
+  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+#endif
   /*!
     Destructor.
   */
@@ -124,7 +171,7 @@ public:
     (*this) *= d2r;
   }
 
-  double euclideanNorm() const;
+  vp_deprecated double euclideanNorm() const;
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the
@@ -153,6 +200,7 @@ public:
     return vpRowVector(*this, c, rowsize);
   }
 
+  double frobeniusNorm() const;
   void init(const vpRowVector &v, unsigned int c, unsigned int ncols);
   void insert(unsigned int i, const vpRowVector &v);
 
@@ -173,6 +221,10 @@ public:
   vpRowVector &operator=(const std::vector<double> &v);
   vpRowVector &operator=(const std::vector<float> &v);
   vpRowVector &operator=(const double x);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRowVector &operator=(vpRowVector &&v);
+  vpRowVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   double operator*(const vpColVector &x) const;
   vpRowVector operator*(const vpMatrix &M) const;
@@ -190,6 +242,8 @@ public:
   vpRowVector operator-() const;
 
   vpRowVector &operator<<(const vpRowVector &v);
+  vpRowVector& operator<<(double val);
+  vpRowVector& operator,(double val);
 
   int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
   /*!
@@ -202,8 +256,9 @@ public:
 
     (*this) *= r2d;
   }
+
   void reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols);
-  vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
+  vpMatrix reshape(unsigned int nrows, unsigned int ncols);
 
   /*! Modify the size of the row vector.
     \param i : Size of the vector. This value corresponds to the vector number

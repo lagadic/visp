@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,6 +104,69 @@ vpColVector operator*(const double &x, const vpRotationVector &v)
   vpColVector vout;
   vout = v * x;
   return vout;
+}
+
+/*!
+  Set vector first element value.
+  \param val : Value of the vector first element [rad].
+  \return An updated vector.
+
+  The following example shows how to initialize a \f$\theta_u\f$ vector from a list of 3 values [rad].
+  \code
+#include <visp3/core/vpThetaUVector.h>
+
+int main()
+{
+  vpThetaUVector tu;
+  tu << 0, M_PI_2, M_PI;
+  std::cout << "tu: " << tu.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+tu: 0  1.570796327  3.141592654
+  \endcode
+
+  \sa operator,()
+ */
+vpRotationVector& vpRotationVector::operator<<(double val)
+{
+  m_index = 0;
+  data[m_index] = val;
+  return *this;
+}
+
+/*!
+  Set vector second and third element values.
+  \param val : Value of the vector element [rad].
+  \return An updated vector.
+
+  The following example shows how to initialize a \f$\theta_u\f$ vector from a list of 3 values [rad].
+  \code
+#include <visp3/core/vpThetaUVector.h>
+
+int main()
+{
+  vpThetaUVector tu;
+  tu << 0, M_PI_2, M_PI;
+  std::cout << "tu: " << tu.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+tu: 0  1.570796327  3.141592654
+  \endcode
+
+  \sa operator<<()
+ */
+vpRotationVector& vpRotationVector::operator,(double val)
+{
+  m_index ++;
+  if (m_index >= size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set rotation vector out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
+  }
+  data[m_index] = val;
+  return *this;
 }
 
 /*!

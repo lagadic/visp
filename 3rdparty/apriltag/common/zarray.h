@@ -1,19 +1,15 @@
 /* Copyright (C) 2013-2016, The Regents of The University of Michigan.
 All rights reserved.
-
 This software was developed in the APRIL Robotics Lab under the
 direction of Edwin Olson, ebolson@umich.edu. This software may be
 available under alternative licensing terms; contact the address above.
-
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-
 1. Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,7 +20,6 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
@@ -41,10 +36,6 @@ either expressed or implied, of the Regents of The University of Michigan.
 #ifdef __cplusplus
 //extern "C" {
 #endif
-
-//#if defined(_MSC_VER)
-//#define inline __inline
-//#endif
 
 /**
  * Defines a structure which acts as a resize-able array ala Java's ArrayList.
@@ -253,6 +244,7 @@ static inline size_t zarray_copy_data(const zarray_t *za, void *buffer, size_t b
     assert(buffer != NULL);
     assert(buffer_bytes >= za->el_sz * za->size);
     memcpy(buffer, za->data, za->el_sz * za->size);
+    (void)buffer_bytes; // To avoid a warning on iOS
     return za->el_sz * za->size;
 }
 
@@ -269,7 +261,7 @@ static inline void zarray_remove_index(zarray_t *za, int idx, int shuffle)
 
     if (shuffle) {
         if (idx < za->size-1)
-            memcpy(&za->data[idx*za->el_sz], &za->data[(za->size-1)*za->el_sz], za->el_sz);
+            memcpy(&za->data[idx*za->el_sz], &za->data[((size_t)(za->size)-(size_t)1)*(za->el_sz)], za->el_sz);
         za->size--;
         return;
     } else {
@@ -277,7 +269,7 @@ static inline void zarray_remove_index(zarray_t *za, int idx, int shuffle)
         // size = 10, idx = 9. Should copy 0 entries.
         int ncopy = za->size - idx - 1;
         if (ncopy > 0)
-            memmove(&za->data[idx*za->el_sz], &za->data[(idx+1)*za->el_sz], ncopy*za->el_sz);
+            memmove(&za->data[idx*za->el_sz], &za->data[((size_t)(idx)+(size_t)1)*(za->el_sz)], ncopy*za->el_sz);
         za->size--;
         return;
     }
@@ -334,7 +326,7 @@ static inline void zarray_insert(zarray_t *za, int idx, const void *p)
     // size = 10, idx = 7. Should copy three entries (idx=7, idx=8, idx=9)
     int ncopy = za->size - idx;
 
-    memmove(&za->data[(idx+1)*za->el_sz], &za->data[idx*za->el_sz], ncopy*za->el_sz);
+    memmove(&za->data[((size_t)(idx)+(size_t)1)*(za->el_sz)], &za->data[idx*za->el_sz], ncopy*za->el_sz);
     memcpy(&za->data[idx*za->el_sz], p, za->el_sz);
 
     za->size++;

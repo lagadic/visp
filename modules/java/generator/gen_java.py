@@ -18,17 +18,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 config = None
 ROOT_DIR = None
 FILES_REMAP = {}
-
-'''
-    # INFO: Function that returns the path mapped by `path` argument in FILES_REMAP dict above
-    Keys of the above dict are relative path specified files, that contain template strings
-    that should contain values generated at compile time
-    Values of the above dict are absolute path specified files, that contain OS specific,
-    platform specific and revision specific info. 
-    Therefore it serves as a generic output template for all platforms
-'''
-
-
 def checkFileRemap(path):
     path = os.path.realpath(path)
     if path in FILES_REMAP:
@@ -549,7 +538,7 @@ class JavaWrapperGenerator(object):
             '''
                 # INFO: decls contains enum and const declared in .hpp files. It also contains function declarations,
                 but only those which have a VISP_EXPORT macro with them. Read a snippet from `hdr_parser.py` for more
-                
+
                 Each declaration is [funcname, return_value_type /* in C, not in Python */, <list_of_modifiers>, <list_of_arguments>, original_return_type, docstring],
                 where each element of <list_of_arguments> is 4-element list itself:
                 [argtype, argname, default_value /* or "" if none */, <list_of_modifiers>]
@@ -557,11 +546,11 @@ class JavaWrapperGenerator(object):
                    (currently recognized are "/O" for output argument, "/S" for static (i.e. class) methods
                    and "/A value" for the plain C arrays with counters)
                 original_return_type is None if the original_return_type is the same as return_value_type
-                
+
                 Ex:
                 ['const cv.Error.StsOk', '0', [], [], None, '']   , where cv and Error are namespaces
                 ['cv.cubeRoot', 'float', [], [['float', 'val', '', []]], 'float', '@brief Computes the cube root of an ...']
-                
+
             '''
             decls = parser.parse(hdr)
 
@@ -706,21 +695,21 @@ class JavaWrapperGenerator(object):
             j_epilogue = []
             c_prologue = []
             c_epilogue = []
-            
+
             # Add 3rd party specific tags
             # If Gsl or Lapack or OpenCV is missing, don't include them to prevent compilation error
             if fi.name in ['detByLUGsl',    'svdGsl',    'inverseByLUGsl',    'pseudoInverseGsl',    'inverseByGsl']:
                 c_prologue.append('#if defined(VISP_HAVE_GSL)')
-               
+
             if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
                 c_prologue.append('#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)')
-            
+
             if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
                 c_prologue.append('#if defined(VISP_HAVE_EIGEN3)')
-                
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack']:
+
+            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
                 c_prologue.append('#if defined(VISP_HAVE_LAPACK)')
-            
+
             if type_dict[fi.ctype]["jni_type"] == "jdoubleArray" and type_dict[fi.ctype]["suffix"] != "[D":
                 fields = type_dict[fi.ctype]["jn_args"]
                 c_epilogue.append( \
@@ -760,6 +749,8 @@ class JavaWrapperGenerator(object):
                             j_epilogue.append("Converters.Mat_to_%(t)s(%(n)s_mat, %(n)s);" % {"t": a.ctype, "n": a.name})
                             j_epilogue.append("%s_mat.release();" % a.name)
                             c_epilogue.append("%(t)s_to_Mat( %(n)s, %(n)s_mat );" % {"n": a.name, "t": a.ctype})
+                    elif type_dict[a.ctype]["v_type"] in ("std::vector<double>"):
+                        c_prologue.append("std::vector<double> v_ = List_to_vector_double(env, v);")
                     else:  # pass as list
                         jn_args.append(ArgInfo([a.ctype, a.name, "", [], ""]))
                         jni_args.append(ArgInfo([a.ctype, "%s_list" % a.name, "", [], ""]))
@@ -987,26 +978,29 @@ class JavaWrapperGenerator(object):
                     jni_name = a.defval
                 cvargs.append(type_dict[a.ctype].get("jni_name", jni_name) % {"n": a.name})
                 if "v_type" not in type_dict[a.ctype]:
-                    if ("I" in a.out or not a.out or self.isWrapped(a.ctype)) and "jni_var" in type_dict[
-                        a.ctype]:  # complex type
-                        c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n": a.name} + ";")
+                    if ("I" in a.out or not a.out or self.isWrapped(a.ctype)) and "jni_var" in type_dict[a.ctype]:  # complex type
+                        if a.ctype in [ 'vector_double', 'vector_float' ]:
+                            c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n": a.name} + "_ = List_to_" + a.ctype + "(env, " + a.name + ");")
+                            # add "_" suffix to the last argument
+                            cvargs[len(cvargs) - 1] = cvargs[len(cvargs) - 1] + "_"
+                        else:
+                            c_prologue.append(type_dict[a.ctype]["jni_var"] % {"n": a.name} + ";")
                     if a.out and "I" not in a.out and not self.isWrapped(a.ctype) and a.ctype:
                         c_prologue.append("%s %s;" % (a.ctype, a.name))
-                        
+
             # Add 3rd party specific tags
             # If Gsl or Lapack or OpenCV is missing, don't include them to prevent compilation error
             if fi.name in ['detByLUGsl',    'svdGsl',    'inverseByLUGsl',    'pseudoInverseGsl']:
                 ret += '\n    #endif'
-               
+
             if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
                 ret += '\n    #endif'
-            
+
             if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
                 ret += '\n    #endif'
-                
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack']:
+
+            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
                 ret += '\n    #endif'
-                
 
             rtype = type_dict[fi.ctype].get("jni_type", "jdoubleArray")
             clazz = ci.jname
@@ -1022,7 +1016,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
   try {
     LOGD("%s", method_name);
     $prologue
-    $retval$cvname( $cvargs );
+    $retval$cvname( ${cvargs} );
     $epilogue$ret
   } catch(const std::exception &e) {
     throwJavaException(env, &e, method_name);
@@ -1030,7 +1024,7 @@ JNIEXPORT $rtype JNICALL Java_org_visp_${module}_${clazz}_$fname
     throwJavaException(env, 0, method_name);
   }
   $default
-}  
+}
                 """).substitute( \
                 rtype=rtype, \
                 module=self.module.replace('_', '_1'), \
@@ -1143,7 +1137,7 @@ JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
                 """ % {"module": module.replace('_', '_1'), "cls": self.smartWrap(ci, ci.fullName(isCPP=True)),
                        "j_cls": ci.jname.replace('_', '_1')}
             )
-                  
+
         if ci.name != 'VpImgproc' and ci.name != self.Module or ci.base:
             # finalize()
             ci.j_code.write(
@@ -1175,7 +1169,7 @@ JNIEXPORT void JNICALL Java_org_visp_%(module)s_%(j_cls)s_delete
 {
   delete (%(cls)s*) self;
 }
-                
+
                 """ % {"module": module.replace('_', '_1'), "cls": self.smartWrap(ci, ci.fullName(isCPP=True)),
        "j_cls": ci.jname.replace('_', '_1')}
             )
@@ -1248,8 +1242,8 @@ def copy_java_files(java_files_dir, java_base_path, default_package_path='org/vi
         '''
             # INFO: Not all files are copied directly. There's a set of files
             read in the `config.json`. Instead of copyong them, the code copies
-            a diffrent set of files(also mentioned in gen_config.json, stored as 
-            a dict). 
+            a diffrent set of files(also mentioned in gen_config.json, stored as
+            a dict).
         '''
 
         src = checkFileRemap(java_file)
@@ -1394,10 +1388,10 @@ if __name__ == "__main__":
 
         '''
             # INFO: Not all C++ files can be directly turned to Java/JNI files. Get all
-            such files and classes here. Include classes/functions that are to be ignored, 
-            new classes to be added manually. Sometimes arguments are to be changed while the 
+            such files and classes here. Include classes/functions that are to be ignored,
+            new classes to be added manually. Sometimes arguments are to be changed while the
             function can be used
-            
+
             Such files exist for a few root/core modules only like core, imgproc, calib
         '''
         gendict_fname = os.path.join(misc_location, 'gen_dict.json')
@@ -1422,7 +1416,7 @@ if __name__ == "__main__":
 
         '''
             # INFO: In light of above, copy the .java files that were manually created to dst folder
-            Later machine will generate all other files  
+            Later machine will generate all other files
         '''
         java_files_dir = os.path.join(misc_location, 'src/java')
         if os.path.exists(java_files_dir):

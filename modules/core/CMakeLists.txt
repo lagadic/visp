@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -193,7 +193,19 @@ if(USE_GSL)
   list(APPEND opt_incs ${GSL_INCLUDE_DIRS})
   list(APPEND opt_libs ${GSL_LIBRARIES})
 endif()
-if(USE_LAPACK)
+if(USE_MKL)
+  list(APPEND opt_incs ${MKL_INCLUDE_DIRS})
+  list(APPEND opt_libs ${MKL_LIBRARIES})
+endif()
+if(USE_OPENBLAS)
+  list(APPEND opt_incs ${OpenBLAS_INCLUDE_DIR})
+  list(APPEND opt_libs ${OpenBLAS_LIB})
+endif()
+if(USE_ATLAS)
+  list(APPEND opt_incs ${Atlas_INCLUDE_DIR})
+  list(APPEND opt_libs ${Atlas_LIBRARIES})
+endif()
+if(USE_LAPACK_NETLIB)
   list(APPEND opt_libs ${LAPACK_C_LIBRARIES})
 endif()
 
@@ -209,6 +221,11 @@ endif()
 if(USE_ZLIB)
   list(APPEND opt_incs ${ZLIB_INCLUDE_DIRS})
   list(APPEND opt_libs ${ZLIB_LIBRARIES})
+endif()
+
+if(WITH_PUGIXML)
+  # pugixml is private
+  include_directories(${PUGIXML_INCLUDE_DIRS})
 endif()
 
 if(MSVC)
@@ -232,9 +249,35 @@ endif()
 if(USE_EIGEN3)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
+  vp_set_source_file_compile_flag(src/math/matrix/vpEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
 endif()
 
-vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} WRAP java)
+vp_set_source_file_compile_flag(src/image/vpImageConvert.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/image/vpImageFilter.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/image/vpImageTools.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/tools/optimization/vpQuadProg.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/tools/optimization/vpLinProg.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/tools/histogram/vpHistogram.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(test/image/testImageBinarise.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(test/network/testClient.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow)
+
+if(USE_EIGEN3)
+  vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
+endif()
+
+if(USE_XML2)
+  if(MSVC)
+    vp_set_source_file_compile_flag(src/tools/xml/vpXmlParser.cpp /wd"4996")
+    vp_set_source_file_compile_flag(test/tools/xml/testXmlParser.cpp /wd"4996")
+  else()
+    vp_set_source_file_compile_flag(src/tools/xml/vpXmlParser.cpp -Wno-deprecated-declarations)
+    vp_set_source_file_compile_flag(test/tools/xml/testXmlParser.cpp -Wno-deprecated-declarations)
+  endif()
+endif()
+
+vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} WRAP java)
 
 vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
 
@@ -243,3 +286,6 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
 vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui)
+
+# copy robot and wireframe simulator data
+vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)

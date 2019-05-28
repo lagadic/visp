@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,13 +56,9 @@
  */
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:o:h"
-
-//#define COLOR
-#define BW
+#define GETOPTARGS "cdi:o:t:s:h"
 
 /*
-
   Print the program options.
 
   \param name : Program name.
@@ -70,7 +66,6 @@
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
-
  */
 void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
            const std::string &user)
@@ -78,10 +73,10 @@ void usage(const char *name, const char *badparam, const std::string &ipath, con
   fprintf(stdout, "\n\
 Read an image from the disk, undistort it \n\
 and save the undistorted image on the disk.\n\
-(Klimt_undistorted.pgm).\n\
+(grid36-01_undistorted.pgm).\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-o <output image path>]\n\
+  %s [-i <input image path>] [-o <output image path>] [-t <nThreads>] [-s <scale>]\n\
      [-h]\n\
           ", name);
 
@@ -89,7 +84,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"Klimt/Klimt.pgm\"\n\
+     From this path read \"calibration/grid36-01.pgm\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -99,7 +94,13 @@ OPTIONS:                                               Default\n\
      Set image output path.\n\
      From this directory, creates the \"%s\"\n\
      subdirectory depending on the username, where \n\
-     Klimt_undistorted.pgm output image is written.\n\
+     grid36-01_undistorted.pgm output image is written.\n\
+\n\
+  -t <nThreads>                                 \n\
+     Set the number of threads to use for vpImageTools::undistort().\n\
+\n\
+  -s <scale>                                 \n\
+     Resize the image by the specified scale factor.\n\
 \n\
   -h\n\
      Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
@@ -109,7 +110,6 @@ OPTIONS:                                               Default\n\
 }
 
 /*!
-
   Set the program options.
 
   \param argc : Command line number of parameters.
@@ -117,10 +117,12 @@ OPTIONS:                                               Default\n\
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
+  \param nThreads : Nb threads for vpImageTools::undistort().
+  \param scale : Scale factor to resize the image.
   \return false if the program has to be stopped, true otherwise.
-
  */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath,
+                const std::string &user, unsigned int &nThreads, unsigned int &scale)
 {
   const char *optarg_;
   int c;
@@ -133,10 +135,15 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'o':
       opath = optarg_;
       break;
+    case 't':
+      nThreads = atoi(optarg_);
+      break;
+    case 's':
+      scale = atoi(optarg_);
+      break;
     case 'h':
       usage(argv[0], NULL, ipath, opath, user);
       return false;
-      break;
 
     case 'c':
     case 'd':
@@ -145,7 +152,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     default:
       usage(argv[0], optarg_, ipath, opath, user);
       return false;
-      break;
     }
   }
 
@@ -170,6 +176,8 @@ int main(int argc, const char **argv)
     std::string opath;
     std::string filename;
     std::string username;
+    unsigned int nThreads = 2;
+    unsigned int scale = 1;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -190,7 +198,7 @@ int main(int argc, const char **argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_opath, username, nThreads, scale) == false) {
       exit(-1);
     }
 
@@ -242,47 +250,143 @@ int main(int argc, const char **argv)
 //
 // Here starts really the test
 //
-#if defined BW
-    vpImage<unsigned char> I; // Input image
-    vpImage<unsigned char> U; // undistorted output image
-#elif defined COLOR
-    vpImage<vpRGBa> I; // Input image
+    vpImage<vpRGBa> I, I_; // Input image
+    vpImage<unsigned char> I_gray;
     vpImage<vpRGBa> U; // undistorted output image
-#endif
+    vpImage<unsigned char> U_gray; // undistorted output image
+    vpImage<vpRGBa> U_remap; // undistorted output image
+    vpImage<unsigned char> U_remap_gray; // undistorted output image
+
     vpCameraParameters cam;
-    cam.initPersProjWithDistortion(600, 600, 192, 144, -0.17, 0.17);
-// Read the input grey image from the disk
-#if defined BW
-    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
-#elif defined COLOR
-    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-#endif
+    cam.initPersProjWithDistortion(600, 600, 320, 240, -0.17, 0.17);
+    // Read the input grey image from the disk
+    filename = vpIoTools::createFilePath(ipath, "calibration/grid36-01.pgm");
     std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::read(I, filename);
+    vpImageIo::read(I_, filename);
+    if (scale > 1) {
+      std::cout << "Scale the image by a factor of " << scale << std::endl;
+      vpImageTools::resize(I_, I, I_.getWidth()*scale, I_.getHeight()*scale);
+    } else {
+      I = I_;
+    }
+    std::cout << "Input image: " << I.getWidth() << "x" << I.getHeight() << std::endl;
+    vpImageConvert::convert(I, I_gray);
 
-    std::cout << "Undistortion in process... " << std::endl;
-    vpImageTools::undistort(I, cam, U);
+    std::cout << "Nb threads to use for vpImageTools::undistort(): " << nThreads << std::endl;
 
-    double begintime = vpTime::measureTimeMs();
+    double t_undistort = 0.0, t_remap = 0.0;
+    {
+      std::cout << "\nUndistortion in process (color image)... " << std::endl;
+      vpImageTools::undistort(I, cam, U, nThreads);
 
-    // For the test, to have a significant time measure we repeat the
-    // undistortion 100 times
-    for (unsigned int i = 0; i < 100; i++)
-      // Create the undistorted image
-      vpImageTools::undistort(I, cam, U);
+      double begintime = vpTime::measureTimeMs();
 
-    double endtime = vpTime::measureTimeMs();
+      // For the test, to have a significant time measure we repeat the
+      // undistortion 10 times
+      for (unsigned int i = 0; i < 10; i++)
+        // Create the undistorted image
+        vpImageTools::undistort(I, cam, U, nThreads);
 
-    std::cout << "Time for 100 undistortion (ms): " << endtime - begintime << std::endl;
+      double endtime = vpTime::measureTimeMs();
+      t_undistort = endtime - begintime;
 
-// Write the undistorted image on the disk
-#if defined BW
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "Klimt_undistorted.pgm"));
-#elif defined COLOR
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "Klimt_undistorted.ppm"));
-#endif
-    std::cout << "Write undistorted image: " << filename << std::endl;
+      std::cout << "Time for 10 color image undistortion (ms): " << t_undistort << std::endl;
+    }
+
+    {
+      std::cout << "Undistortion in process with remap (color image)... " << std::endl;
+
+      double begintime = vpTime::measureTimeMs();
+
+      // For the test, to have a significant time measure we repeat the
+      // undistortion 10 times
+      vpArray2D<int> mapU, mapV;
+      vpArray2D<float> mapDu, mapDv;
+      for (unsigned int i = 0; i < 10; i++) {
+        if (i == 0) {
+          vpImageTools::initUndistortMap(cam, I.getWidth(), I.getHeight(), mapU, mapV, mapDu, mapDv);
+        }
+        vpImageTools::remap(I, mapU, mapV, mapDu, mapDv, U_remap);
+      }
+
+      double endtime = vpTime::measureTimeMs();
+      t_remap = endtime - begintime;
+
+      std::cout << "Time for 10 color image undistortion with remap (ms): " << t_remap << std::endl;
+      std::cout << "Speed-up: " << t_undistort / t_remap << "X" << std::endl;
+    }
+
+    {
+      std::cout << "\nUndistortion in process (gray image)... " << std::endl;
+      vpImageTools::undistort(I_gray, cam, U_gray, nThreads);
+
+      double begintime = vpTime::measureTimeMs();
+
+      // For the test, to have a significant time measure we repeat the
+      // undistortion 100 times
+      for (unsigned int i = 0; i < 100; i++)
+        // Create the undistorted image
+        vpImageTools::undistort(I_gray, cam, U_gray, nThreads);
+
+      double endtime = vpTime::measureTimeMs();
+      t_undistort = endtime - begintime;
+
+      std::cout << "Time for 100 gray image undistortion (ms): " << t_undistort << std::endl;
+    }
+
+    {
+      std::cout << "Undistortion in process with remap (gray image)... " << std::endl;
+
+      double begintime = vpTime::measureTimeMs();
+
+      // For the test, to have a significant time measure we repeat the
+      // undistortion 100 times
+      vpArray2D<int> mapU, mapV;
+      vpArray2D<float> mapDu, mapDv;
+      for (unsigned int i = 0; i < 10; i++) {
+        if (i == 0) {
+          vpImageTools::initUndistortMap(cam, I.getWidth(), I.getHeight(), mapU, mapV, mapDu, mapDv);
+        }
+        vpImageTools::remap(I_gray, mapU, mapV, mapDu, mapDv, U_remap_gray);
+      }
+
+      double endtime = vpTime::measureTimeMs();
+      t_remap = endtime - begintime;
+
+      std::cout << "Time for 100 gray image undistortion with remap (ms): " << t_remap << std::endl;
+      std::cout << "Speed-up: " << t_undistort / t_remap << "X" << std::endl;
+    }
+
+    // Write the undistorted images on the disk
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted.ppm"));
+    std::cout << "\nWrite undistorted image: " << filename << std::endl;
     vpImageIo::write(U, filename);
+
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted.pgm"));
+    std::cout << "Write undistorted image: " << filename << std::endl;
+    vpImageIo::write(U_gray, filename);
+
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_remap.ppm"));
+    std::cout << "\nWrite undistorted image with remap: " << filename << std::endl;
+    vpImageIo::write(U_remap, filename);
+
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_remap.pgm"));
+    std::cout << "Write undistorted image with remap: " << filename << std::endl;
+    vpImageIo::write(U_remap_gray, filename);
+
+    // Write the undistorted difference images on the disk
+    vpImage<vpRGBa> U_diff;
+    vpImage<unsigned char> U_diff_gray;
+    vpImageTools::imageDifference(U, U_remap, U_diff);
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_diff.ppm"));
+    std::cout << "\nWrite undistorted image: " << filename << std::endl;
+    vpImageIo::write(U_diff, filename);
+
+    vpImageTools::imageDifference(U_gray, U_remap_gray, U_diff_gray);
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_diff.pgm"));
+    std::cout << "Write undistorted image: " << filename << std::endl;
+    vpImageIo::write(U_diff_gray, filename);
+
     return 0;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

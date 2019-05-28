@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ find_path(FLYCAPTURE_INCLUDE_DIRS FlyCapture2.h
 )
 
 find_library(FLYCAPTURE_LIBRARIES
-  NAMES flycapture FlyCapture2
+  NAMES flycapture FlyCapture2 FlyCapture2_v100
   PATHS 
     $ENV{FLYCAPTURE_HOME}/lib
     ${FLYCAPTURE_LIB_SEARCH_PATH}
@@ -71,10 +71,6 @@ find_library(FLYCAPTURE_LIBRARIES
 
 if(FLYCAPTURE_LIBRARIES AND FLYCAPTURE_INCLUDE_DIRS)
   set(FLYCAPTURE_FOUND TRUE)
-  if(WIN32)
-    vp_parse_header("${FLYCAPTURE_INCLUDE_DIRS}/FC1/PGRFlyCapture.h" FLYCAPTURE_VERSION_LINES PGRFLYCAPTURE_VERSION)
-    set(FLYCAPTURE_VERSION ${PGRFLYCAPTURE_VERSION})
-  endif()
 else()
   set(FLYCAPTURE_FOUND FALSE)
 endif()

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,12 +330,12 @@ bool read_data(const unsigned int cpt, const std::string &input_directory, vpIma
 }
 
 void loadConfiguration(vpMbTracker *const tracker, const std::string &
-#if defined(VISP_HAVE_XML2) && USE_XML
+#if defined(VISP_HAVE_PUGIXML) && USE_XML
                        configFile_depth
 #endif
 )
 {
-#if defined(VISP_HAVE_XML2) && USE_XML
+#if defined(VISP_HAVE_PUGIXML) && USE_XML
   // From the xml file
   dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(configFile_depth);
 #else
@@ -760,13 +760,7 @@ int main(int argc, const char **argv)
     delete tracker;
     tracker = NULL;
 
-#if defined(VISP_HAVE_XML2) && USE_XML
-    // Cleanup memory allocated by xml library used to parse the xml config
-    // file in vpMbGenericTracker::loadConfigFile()
-    vpXmlParser::cleanup();
-#endif
-
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3 || COIN_MAJOR_VERSION == 4)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     // Cleanup memory allocated by Coin library used to load a vrml model in
     // vpMbGenericTracker::loadModel() We clean only if Coin was used.
     if (use_vrml)

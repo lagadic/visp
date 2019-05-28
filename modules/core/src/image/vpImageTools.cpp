@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,15 @@
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
+
+#if defined __SSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
+#include <pmmintrin.h>
+#define VISP_HAVE_SSE3 1
+#endif
+#if defined __SSSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
+#include <tmmintrin.h>
+#define VISP_HAVE_SSSE3 1
+#endif
 #endif
 
 /*!
@@ -148,10 +157,50 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
   if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
-  unsigned int n = I1.getHeight() * I1.getWidth();
-  for (unsigned int b = 0; b < n; b++) {
-    int diff = I1.bitmap[b] - I2.bitmap[b] + 128;
-    Idiff.bitmap[b] = (unsigned char)(vpMath::maximum(vpMath::minimum(diff, 255), 0));
+  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
+#if !VISP_HAVE_SSSE3
+  checkSSSE3 = false;
+#endif
+
+  unsigned int i = 0;
+  if (checkSSSE3) {
+#if VISP_HAVE_SSSE3
+    if (I1.getSize() >= 16) {
+      const __m128i mask1 = _mm_set_epi8(-1, 14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0);
+      const __m128i mask2 = _mm_set_epi8(-1, 15, -1, 13, -1, 11, -1, 9, -1, 7, -1, 5, -1, 3, -1, 1);
+
+      const __m128i mask_out2 = _mm_set_epi8(14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0, -1);
+
+      for (; i <= I1.getSize()-16; i+= 16) {
+        const __m128i vdata1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I1.bitmap + i));
+        const __m128i vdata2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I2.bitmap + i));
+
+        __m128i vdata1_reorg = _mm_shuffle_epi8(vdata1, mask1);
+        __m128i vdata2_reorg = _mm_shuffle_epi8(vdata2, mask1);
+
+        const __m128i vshift = _mm_set1_epi16(128);
+        __m128i vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
+
+        const __m128i v255 = _mm_set1_epi16(255);
+        const __m128i vzero = _mm_setzero_si128();
+        const __m128i vdata_diff_min_max1 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
+
+        vdata1_reorg = _mm_shuffle_epi8(vdata1, mask2);
+        vdata2_reorg = _mm_shuffle_epi8(vdata2, mask2);
+
+        vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
+        const __m128i vdata_diff_min_max2 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
+
+        _mm_storeu_si128(reinterpret_cast<__m128i *>(Idiff.bitmap + i), _mm_or_si128(_mm_shuffle_epi8(vdata_diff_min_max1, mask1),
+                                                                                     _mm_shuffle_epi8(vdata_diff_min_max2, mask_out2)));
+      }
+    }
+#endif
+  }
+
+  for (; i < I1.getSize(); i++) {
+    int diff = I1.bitmap[i] - I2.bitmap[i] + 128;
+    Idiff.bitmap[i] = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diff, 255), 0));
   }
 }
 
@@ -179,16 +228,56 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRG
   if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
-  unsigned int n = I1.getHeight() * I1.getWidth();
-  for (unsigned int b = 0; b < n; b++) {
-    int diffR = I1.bitmap[b].R - I2.bitmap[b].R + 128;
-    int diffG = I1.bitmap[b].G - I2.bitmap[b].G + 128;
-    int diffB = I1.bitmap[b].B - I2.bitmap[b].B + 128;
-    int diffA = I1.bitmap[b].A - I2.bitmap[b].A + 128;
-    Idiff.bitmap[b].R = (unsigned char)(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
-    Idiff.bitmap[b].G = (unsigned char)(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
-    Idiff.bitmap[b].B = (unsigned char)(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
-    Idiff.bitmap[b].A = (unsigned char)(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
+  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
+#if !VISP_HAVE_SSSE3
+  checkSSSE3 = false;
+#endif
+
+  unsigned int i = 0;
+  if (checkSSSE3) {
+#if VISP_HAVE_SSSE3
+    if (I1.getSize() >= 4) {
+      const __m128i mask1 = _mm_set_epi8(-1, 14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0);
+      const __m128i mask2 = _mm_set_epi8(-1, 15, -1, 13, -1, 11, -1, 9, -1, 7, -1, 5, -1, 3, -1, 1);
+
+      const __m128i mask_out2 = _mm_set_epi8(14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0, -1);
+
+      for (; i <= I1.getSize()-4; i+= 4) {
+        const __m128i vdata1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I1.bitmap + i));
+        const __m128i vdata2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I2.bitmap + i));
+
+        __m128i vdata1_reorg = _mm_shuffle_epi8(vdata1, mask1);
+        __m128i vdata2_reorg = _mm_shuffle_epi8(vdata2, mask1);
+
+        const __m128i vshift = _mm_set1_epi16(128);
+        __m128i vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
+
+        const __m128i v255 = _mm_set1_epi16(255);
+        const __m128i vzero = _mm_setzero_si128();
+        const __m128i vdata_diff_min_max1 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
+
+        vdata1_reorg = _mm_shuffle_epi8(vdata1, mask2);
+        vdata2_reorg = _mm_shuffle_epi8(vdata2, mask2);
+
+        vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
+        const __m128i vdata_diff_min_max2 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
+
+        _mm_storeu_si128(reinterpret_cast<__m128i *>(Idiff.bitmap + i), _mm_or_si128(_mm_shuffle_epi8(vdata_diff_min_max1, mask1),
+                                                                                     _mm_shuffle_epi8(vdata_diff_min_max2, mask_out2)));
+      }
+    }
+#endif
+  }
+
+  for (; i < I1.getSize(); i++) {
+    int diffR = I1.bitmap[i].R - I2.bitmap[i].R + 128;
+    int diffG = I1.bitmap[i].G - I2.bitmap[i].G + 128;
+    int diffB = I1.bitmap[i].B - I2.bitmap[i].B + 128;
+    int diffA = I1.bitmap[i].A - I2.bitmap[i].A + 128;
+    Idiff.bitmap[i].R = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
+    Idiff.bitmap[i].G = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
+    Idiff.bitmap[i].B = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
+    Idiff.bitmap[i].A = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
   }
 }
 
@@ -215,7 +304,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1, con
   unsigned int n = I1.getHeight() * I1.getWidth();
   for (unsigned int b = 0; b < n; b++) {
     int diff = I1.bitmap[b] - I2.bitmap[b];
-    Idiff.bitmap[b] = diff;
+    Idiff.bitmap[b] = static_cast<unsigned char>(vpMath::abs(diff));
   }
 }
 
@@ -269,9 +358,9 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
     int diffG = I1.bitmap[b].G - I2.bitmap[b].G;
     int diffB = I1.bitmap[b].B - I2.bitmap[b].B;
     // int diffA = I1.bitmap[b].A - I2.bitmap[b].A;
-    Idiff.bitmap[b].R = diffR;
-    Idiff.bitmap[b].G = diffG;
-    Idiff.bitmap[b].B = diffB;
+    Idiff.bitmap[b].R = static_cast<unsigned char>(vpMath::abs(diffR));
+    Idiff.bitmap[b].G = static_cast<unsigned char>(vpMath::abs(diffG));
+    Idiff.bitmap[b].B = static_cast<unsigned char>(vpMath::abs(diffB));
     // Idiff.bitmap[b].A = diffA;
     Idiff.bitmap[b].A = 0;
   }
@@ -305,11 +394,11 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
 #if VISP_HAVE_SSE2
   if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
     for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
-      const __m128i v1 = _mm_loadu_si128((const __m128i *)ptr_I1);
-      const __m128i v2 = _mm_loadu_si128((const __m128i *)ptr_I2);
+      const __m128i v1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I1));
+      const __m128i v2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I2));
       const __m128i vres = saturate ? _mm_adds_epu8(v1, v2) : _mm_add_epi8(v1, v2);
 
-      _mm_storeu_si128((__m128i *)ptr_Ires, vres);
+      _mm_storeu_si128(reinterpret_cast<__m128i *>(ptr_Ires), vres);
     }
   }
 #endif
@@ -347,17 +436,89 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
 #if VISP_HAVE_SSE2
   if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
     for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
-      const __m128i v1 = _mm_loadu_si128((const __m128i *)ptr_I1);
-      const __m128i v2 = _mm_loadu_si128((const __m128i *)ptr_I2);
+      const __m128i v1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I1));
+      const __m128i v2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I2));
       const __m128i vres = saturate ? _mm_subs_epu8(v1, v2) : _mm_sub_epi8(v1, v2);
 
-      _mm_storeu_si128((__m128i *)ptr_Ires, vres);
+      _mm_storeu_si128(reinterpret_cast<__m128i *>(ptr_Ires), vres);
     }
   }
 #endif
 
   for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 - (short int)*ptr_I2) : *ptr_I1 - *ptr_I2;
+    *ptr_Ires = saturate ?
+          vpMath::saturate<unsigned char>(static_cast<short int>(*ptr_I1) - static_cast<short int>(*ptr_I2)) :
+          *ptr_I1 - *ptr_I2;
+  }
+}
+
+/*!
+  Compute the undistortion transformation map.
+
+  \param cam : Camera intrinsic parameters with distortion coefficients.
+  \param width : Image width.
+  \param height : Image height.
+  \param mapU : 2D array that contains at each coordinate the u-coordinate in the distorted image.
+  \param mapV : 2D array that contains at each coordinate the v-coordinate in the distorted image.
+  \param mapDu : 2D array that contains at each coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv : 2D array that contains at each coordinate the \f$ \Delta v \f$ for the interpolation.
+*/
+void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
+                                    vpArray2D<int> &mapU, vpArray2D<int> &mapV,
+                                    vpArray2D<float> &mapDu, vpArray2D<float> &mapDv)
+{
+  mapU.resize(height, width, false, false);
+  mapV.resize(height, width, false, false);
+  mapDu.resize(height, width, false, false);
+  mapDv.resize(height, width, false, false);
+
+  float u0 = static_cast<float>(cam.get_u0());
+  float v0 = static_cast<float>(cam.get_v0());
+  float px = static_cast<float>(cam.get_px());
+  float py = static_cast<float>(cam.get_py());
+  float kud = static_cast<float>(cam.get_kud());
+
+  if (std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
+    // There is no need to undistort the image
+    for (unsigned int i = 0; i < height; i++) {
+      for (unsigned int j = 0; j < width; j++) {
+        mapU[i][j] = static_cast<int>(j);
+        mapV[i][j] = static_cast<int>(i);
+        mapDu[i][j] = 0;
+        mapDv[i][j] = 0;
+      }
+    }
+
+    return;
+  }
+
+  float invpx = 1.0f / px;
+  float invpy = 1.0f / py;
+
+  float kud_px2 = kud * invpx * invpx;
+  float kud_py2 = kud * invpy * invpy;
+
+  for (unsigned int v = 0; v < height; v++) {
+    float deltav = v - v0;
+    float fr1 = 1.0f + kud_py2 * deltav * deltav;
+
+    for (unsigned int u = 0; u < width; u++) {
+      // computation of u,v : corresponding pixel coordinates in I.
+      float deltau = u - u0;
+      float fr2 = fr1 + kud_px2 * deltau * deltau;
+
+      float u_float = deltau * fr2 + u0;
+      float v_float = deltav * fr2 + v0;
+
+      int u_round = static_cast<int>(u_float);
+      int v_round = static_cast<int>(v_float);
+
+      mapU[v][u] = u_round;
+      mapV[v][u] = v_round;
+
+      mapDu[v][u] = u_float - u_round;
+      mapDv[v][u] = v_float - v_round;
+    }
   }
 }
 
@@ -685,7 +846,13 @@ float vpImageTools::cubicHermite(const float A, const float B, const float C, co
   return a * t * t * t + b * t * t + c * t + d;
 }
 
-float vpImageTools::lerp(const float A, const float B, const float t) { return A * (1.0f - t) + B * t; }
+float vpImageTools::lerp(const float A, const float B, const float t) {
+  return A * (1.0f - t) + B * t;
+}
+
+int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) {
+  return A * t_1 + B * t;
+}
 
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
@@ -748,4 +915,169 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
                 IIsq_tpl[I2.getHeight()][0]) -
                (1.0 / I2.getSize()) * vpMath::sqr(sum2));
   return ab / sqrt(a2 * b2);
+}
+
+/*!
+  Apply the transformation map to the image.
+
+  \param I : Input grayscale image.
+  \param mapU : Map that contains at each destination coordinate the u-coordinate in the source image.
+  \param mapV : Map that contains at each destination coordinate the v-coordinate in the source image.
+  \param mapDu : Map that contains at each destination coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv : Map that contains at each destination coordinate the \f$ \Delta v \f$ for the interpolation.
+  \param Iundist : Output transformed grayscale image.
+*/
+void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                         const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<unsigned char> &Iundist)
+{
+  Iundist.resize(I.getHeight(), I.getWidth());
+
+#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#pragma omp parallel for schedule(dynamic)
+#endif
+  for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
+    const unsigned int i = static_cast<unsigned int>(i_);
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+
+      int u_round = mapU[i][j];
+      int v_round = mapV[i][j];
+
+      float du = mapDu[i][j];
+      float dv = mapDv[i][j];
+
+      if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
+          && v_round < static_cast<int>(I.getHeight()) - 1) {
+        // process interpolation
+        float col0 = lerp(I[v_round][u_round], I[v_round][u_round + 1], du);
+        float col1 = lerp(I[v_round + 1][u_round], I[v_round + 1][u_round + 1], du);
+        float value = lerp(col0, col1, dv);
+
+        Iundist[i][j] = static_cast<unsigned char>(value);
+      } else {
+        Iundist[i][j] = 0;
+      }
+    }
+  }
+}
+
+/*!
+  Apply the transformation map to the image.
+
+  \param I : Input color image.
+  \param mapU : Map that contains at each destination coordinate the u-coordinate in the source image.
+  \param mapV : Map that contains at each destination coordinate the v-coordinate in the source image.
+  \param mapDu : Map that contains at each destination coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv : Map that contains at each destination coordinate the \f$ \Delta v \f$ for the interpolation.
+  \param Iundist : Output transformed color image.
+*/
+void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                         const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist)
+{
+  Iundist.resize(I.getHeight(), I.getWidth());
+
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !VISP_HAVE_SSE2
+  checkSSE2 = false;
+#endif
+
+  if (checkSSE2) {
+#if defined VISP_HAVE_SSE2
+#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#pragma omp parallel for schedule(dynamic)
+#endif
+    for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
+      const unsigned int i = static_cast<unsigned int>(i_);
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+
+        int u_round = mapU[i][j];
+        int v_round = mapV[i][j];
+
+        const __m128 vdu = _mm_set1_ps(mapDu[i][j]);
+        const __m128 vdv = _mm_set1_ps(mapDv[i][j]);
+
+        if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
+            && v_round < static_cast<int>(I.getHeight()) - 1) {
+  #define VLERP(va, vb, vt) _mm_add_ps(va, _mm_mul_ps(_mm_sub_ps(vb, va), vt));
+
+          // process interpolation
+          const __m128 vdata1 =
+              _mm_set_ps(static_cast<float>(I[v_round][u_round].A), static_cast<float>(I[v_round][u_round].B),
+                         static_cast<float>(I[v_round][u_round].G), static_cast<float>(I[v_round][u_round].R));
+
+          const __m128 vdata2 =
+              _mm_set_ps(static_cast<float>(I[v_round][u_round + 1].A), static_cast<float>(I[v_round][u_round + 1].B),
+                         static_cast<float>(I[v_round][u_round + 1].G), static_cast<float>(I[v_round][u_round + 1].R));
+
+          const __m128 vdata3 =
+              _mm_set_ps(static_cast<float>(I[v_round + 1][u_round].A), static_cast<float>(I[v_round + 1][u_round].B),
+                         static_cast<float>(I[v_round + 1][u_round].G), static_cast<float>(I[v_round + 1][u_round].R));
+
+          const __m128 vdata4 = _mm_set_ps(
+              static_cast<float>(I[v_round + 1][u_round + 1].A), static_cast<float>(I[v_round + 1][u_round + 1].B),
+              static_cast<float>(I[v_round + 1][u_round + 1].G), static_cast<float>(I[v_round + 1][u_round + 1].R));
+
+          const __m128 vcol0 = VLERP(vdata1, vdata2, vdu);
+          const __m128 vcol1 = VLERP(vdata3, vdata4, vdu);
+          const __m128 vvalue = VLERP(vcol0, vcol1, vdv);
+
+  #undef VLERP
+
+          float values[4];
+          _mm_storeu_ps(values, vvalue);
+          Iundist[i][j].R = static_cast<unsigned char>(values[0]);
+          Iundist[i][j].G = static_cast<unsigned char>(values[1]);
+          Iundist[i][j].B = static_cast<unsigned char>(values[2]);
+          Iundist[i][j].A = static_cast<unsigned char>(values[3]);
+        } else {
+          Iundist[i][j] = 0;
+        }
+      }
+    }
+#endif
+  } else {
+#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#pragma omp parallel for schedule(dynamic)
+#endif
+    for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
+      const unsigned int i = static_cast<unsigned int>(i_);
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+
+        int u_round = mapU[i][j];
+        int v_round = mapV[i][j];
+
+        float du = mapDu[i][j];
+        float dv = mapDv[i][j];
+
+        if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
+            && v_round < static_cast<int>(I.getHeight()) - 1) {
+          // process interpolation
+          float col0 = lerp(I[v_round][u_round].R, I[v_round][u_round + 1].R, du);
+          float col1 = lerp(I[v_round + 1][u_round].G, I[v_round + 1][u_round + 1].G, du);
+          float value = lerp(col0, col1, dv);
+
+          Iundist[i][j].R = static_cast<unsigned char>(value);
+
+          col0 = lerp(I[v_round][u_round].G, I[v_round][u_round + 1].G, du);
+          col1 = lerp(I[v_round + 1][u_round].G, I[v_round + 1][u_round + 1].G, du);
+          value = lerp(col0, col1, dv);
+
+          Iundist[i][j].G = static_cast<unsigned char>(value);
+
+          col0 = lerp(I[v_round][u_round].B, I[v_round][u_round + 1].B, du);
+          col1 = lerp(I[v_round + 1][u_round].B, I[v_round + 1][u_round + 1].B, du);
+          value = lerp(col0, col1, dv);
+
+          Iundist[i][j].B = static_cast<unsigned char>(value);
+
+          col0 = lerp(I[v_round][u_round].A, I[v_round][u_round + 1].A, du);
+          col1 = lerp(I[v_round + 1][u_round].A, I[v_round + 1][u_round + 1].A, du);
+          value = lerp(col0, col1, dv);
+
+          Iundist[i][j].A = static_cast<unsigned char>(value);
+        } else {
+          Iundist[i][j] = 0;
+        }
+      }
+    }
+  }
 }

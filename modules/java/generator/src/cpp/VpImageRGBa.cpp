@@ -15,18 +15,22 @@ extern "C" {
 // Java Method:    VpImageRGBa()
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__
 (JNIEnv *env, jclass, jstring type){
+  (void)env;
+  (void)type;
   return (jlong) new vpImage<vpRGBa>();
 }
 
 // Java Method:    VpImageRGBa(int r, int c)
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__II
 (JNIEnv *env, jclass, jint r, jint c){
+  (void)env;
   return (jlong) new vpImage<vpRGBa>(r,c);
 }
 
 // Java Method:    VpImageRGBa(int r, int c, byte val)
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa__IICCCC
 (JNIEnv *env, jclass, jint r, jint c, jchar R, jchar G, jchar B, jchar A){
+  (void)env;
   vpRGBa val(R,G,B,A);
   return (jlong) new vpImage<vpRGBa>(r,c,val);
 }
@@ -45,6 +49,7 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageRGBa_n_1VpImageRGBa___3BIIZ
 // Java Method:    getCols()
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageRGBa_n_1cols
 (JNIEnv *env, jclass, jlong address){
+  (void)env;
   vpImage<vpRGBa>* me = (vpImage<vpRGBa>*) address; //TODO: check for NULL
   return me->getCols();
 }
@@ -52,6 +57,7 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageRGBa_n_1cols
 // Java Method:    getRows()
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageRGBa_n_1rows
 (JNIEnv *env, jclass, jlong address){
+  (void)env;
   vpImage<vpRGBa>* me = (vpImage<vpRGBa>*) address; //TODO: check for NULL
   return me->getRows();
 }
@@ -60,10 +66,10 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageRGBa_n_1rows
 JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageRGBa_n_1getPixel
 (JNIEnv *env, jclass, jlong address, jint i, jint j){
   vpImage<vpRGBa>* me = (vpImage<vpRGBa>*) address; //TODO: check for NULL
-	vpRGBa val = (*me)(i,j);
-	jbyteArray ret = env->NewByteArray(4);
-	unsigned char temp[] = {val.R,val.G,val.B,val.A};
-	env->SetByteArrayRegion (ret, 0, 4, (jbyte*) temp);
+  vpRGBa val = (*me)(i,j);
+  jbyteArray ret = env->NewByteArray(4);
+  unsigned char temp[] = {val.R,val.G,val.B,val.A};
+  env->SetByteArrayRegion (ret, 0, 4, (jbyte*) temp);
   return ret;
 }
 
@@ -71,7 +77,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageRGBa_n_1getPixel
 JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageRGBa_n_1getPixels
 (JNIEnv *env, jclass, jlong address){
   vpImage<vpRGBa>* me = (vpImage<vpRGBa>*) address; //TODO: check for NULL
-	jbyteArray ret = env->NewByteArray(me->getNumberOfPixel()*4);
+  jbyteArray ret = env->NewByteArray(me->getNumberOfPixel()*4);
   env->SetByteArrayRegion (ret, 0, me->getNumberOfPixel()*4, (jbyte*) me->bitmap);
   return ret;
 }

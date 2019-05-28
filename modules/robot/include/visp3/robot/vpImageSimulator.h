@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ private:
   double *X0_2_optim;
 
   // variable pour intersection algebre : vecteurs de la base 2D et leur norme
-  double euclideanNorm_u, euclideanNorm_v;
+  double frobeniusNorm_u, fronbniusNorm_v;
 
   // 2 vecteur 3D (typiquement deux cotes du plan) qui definissent le repere
   // 2D u,v de l'image

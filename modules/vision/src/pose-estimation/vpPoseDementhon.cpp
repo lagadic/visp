@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,143 +44,187 @@
 #define DEBUG_LEVEL2 0
 #define DEBUG_LEVEL3 0
 
-/* FC
-#ifndef DEG
-#define DEG (180.0/M_PI)
+#define SEUIL_RESIDUAL 0.0001 /* avant 0.01 dans while du calculArbreDementhon */
+#define EPS_DEM 0.001
+
+#define ITER_MAX 30  /* max number of iterations for Demonthon's loop */
+
+static void calculSolutionDementhon(vpColVector &I4, vpColVector &J4, vpHomogeneousMatrix &cMo)
+{
+
+#if (DEBUG_LEVEL1)
+  std::cout << "begin (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
 #endif
-*/
+
+  // norm of the 3 first components of I4 and J4
+  double normI3 = sqrt(I4[0]*I4[0] + I4[1]*I4[1] + I4[2]*I4[2]);
+  double normJ3 = sqrt(J4[0]*J4[0] + J4[1]*J4[1] + J4[2]*J4[2]);
+
+  if ((normI3 < 1e-10) || (normJ3 < 1e-10)) {
+    // vpERROR_TRACE(" normI+normJ = 0, division par zero " ) ;
+    throw(vpException(vpException::divideByZeroError,
+                      "Division by zero in Dementhon pose computation: normI or normJ = 0"));
+  }
+
+  double  Z0 = 2.0 / (normI3 + normJ3);
+
+  vpColVector I3(3), J3(3), K3(3);
+  for (unsigned int i=0; i<3; i++) {
+    I3[i] = I4[i] / normI3;
+    J3[i] = J4[i] / normJ3;
+  }
+
+  K3 = vpColVector::cross(I3, J3); // k = I x J
+  K3.normalize();
+
+  J3 = vpColVector::cross(K3, I3);
+
+  // calcul de la matrice de passage
+  cMo[0][0] = I3[0];
+  cMo[0][1] = I3[1];
+  cMo[0][2] = I3[2];
+  cMo[0][3] = I4[3] * Z0;
+
+  cMo[1][0] = J3[0];
+  cMo[1][1] = J3[1];
+  cMo[1][2] = J3[2];
+  cMo[1][3] = J4[3] * Z0;
+
+  cMo[2][0] = K3[0];
+  cMo[2][1] = K3[1];
+  cMo[2][2] = K3[2];
+  cMo[2][3] = Z0;
+
+#if (DEBUG_LEVEL1)
+  std::cout << "end (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
+#endif
+}
 
 /*!
-\brief  Compute the pose using Dementhon approach for non planar objects
-this is a direct implementation of the algorithm proposed by
-Dementhon and Davis in their 1995 paper \cite Dementhon95.
-
+  Compute the pose using Dementhon approach for non planar objects.
+  This is a direct implementation of the algorithm proposed by
+  Dementhon and Davis in their 1995 paper \cite Dementhon95.
 */
-
 void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 {
-  double normI = 0., normJ = 0.;
-  double Z0 = 0.;
-  // double seuil=1.0;
-  double f = 1.;
-
-  vpPoint p0 = listP.front();
-
-  c3d.clear();
   vpPoint P;
+  double cdg[3];
+  /* compute the cog of the 3D points */
+  cdg[0] = cdg[1] = cdg[2] = 0.0;
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
     P = (*it);
-    P.set_oX(P.get_oX() - p0.get_oX());
-    P.set_oY(P.get_oY() - p0.get_oY());
-    P.set_oZ(P.get_oZ() - p0.get_oZ());
+    cdg[0] += P.get_oX();
+    cdg[1] += P.get_oY();
+    cdg[2] += P.get_oZ();
+  }
+  for (unsigned int i=0; i<3;i++) cdg[i] /= npt;
+  //  printf("cdg : %lf %lf %lf\n", cdg[0], cdg[1],cdg[2]);
+
+  c3d.clear();
+  /* translate the 3D points wrt cog */
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    P = (*it);
+    P.set_oX(P.get_oX() - cdg[0]);
+    P.set_oY(P.get_oY() - cdg[1]);
+    P.set_oZ(P.get_oZ() - cdg[2]);
     c3d.push_back(P);
   }
 
-  vpMatrix a(npt, 3);
+  vpMatrix A(npt, 4), Ap;
 
   for (unsigned int i = 0; i < npt; i++) {
-    a[i][0] = c3d[i].get_oX();
-    a[i][1] = c3d[i].get_oY();
-    a[i][2] = c3d[i].get_oZ();
+    A[i][0] = c3d[i].get_oX();
+    A[i][1] = c3d[i].get_oY();
+    A[i][2] = c3d[i].get_oZ();
+    A[i][3] = 1.0;
   }
-
-  // std::cout << a << std::endl ;
-  // calcul a^T a
-  vpMatrix ata;
-  ata = a.t() * a;
-
-  // calcul (a^T a)^-1 par decomposition LU
-  vpMatrix ata1;
-  ata1 = ata.pseudoInverse(1e-6); // InverseByLU() ;
-
-  vpMatrix b;
-  b = (a * ata1).t();
+  Ap = A.pseudoInverse();
 
 #if (DEBUG_LEVEL2)
   {
-    std::cout << "a" << std::endl << a << std::endl;
-    std::cout << "ata" << std::endl << ata << std::endl;
-    std::cout << "ata1" << std::endl << ata1 << std::endl;
-    std::cout << " ata*ata1" << std::endl << ata * ata1;
-    std::cout << " b" << std::endl << (a * ata1).t();
+    std::cout << "A" << std::endl << A << std::endl;
+    std::cout << "A^+" << std::endl << Ap << std::endl;
   }
 #endif
 
-  // calcul de la premiere solution
+  vpColVector xprim(npt);
+  vpColVector yprim(npt);
 
-  vpColVector eps(npt);
-  eps = 0;
-
-  int cpt = 0;
-  vpColVector I, J, k;
-  I.resize(3);
-  J.resize(3);
-  k.resize(3);
-
-  while (cpt < 20) {
-    I = 0;
-    J = 0;
-
-    vpColVector xprim(npt);
-    vpColVector yprim(npt);
-    for (unsigned int i = 0; i < npt; i++) {
-      xprim[i] = (1 + eps[i]) * c3d[i].get_x() - c3d[0].get_x();
-      yprim[i] = (1 + eps[i]) * c3d[i].get_y() - c3d[0].get_y();
-    }
-    I = b * xprim;
-    J = b * yprim;
-    normI = sqrt(I.sumSquare());
-    normJ = sqrt(J.sumSquare());
-    I = I / normI;
-    J = J / normJ;
-
-    if (normI + normJ < 1e-10) {
-      // vpERROR_TRACE(" normI+normJ = 0, division par zero " ) ;
-      throw(vpException(vpException::divideByZeroError,
-                        "Division by zero in Dementhon pose computation: normI+normJ = 0"));
-    }
-
-    k = vpColVector::cross(I, J);
-    Z0 = 2 * f / (normI + normJ);
-    cpt = cpt + 1; // seuil=0.0;
-    for (unsigned int i = 0; i < npt; i++) {
-      // double      epsi_1 = eps[i] ;
-      eps[i] = (c3d[i].get_oX() * k[0] + c3d[i].get_oY() * k[1] + c3d[i].get_oZ() * k[2]) / Z0;
-      // seuil+=fabs(eps[i]-epsi_1);
-    }
-    if (npt == 0) {
-      // vpERROR_TRACE( " npt = 0, division par zero ");
-      throw(vpException(vpException::divideByZeroError, "Division by zero in Dementhon pose computation: no points"));
-    }
-    // seuil/=npt;
+  for (unsigned int i = 0; i < npt; i++) {
+    xprim[i] = c3d[i].get_x();
+    yprim[i] = c3d[i].get_y();
   }
-  k.normalize();
-  J = vpColVector::cross(k, I);
-  /*matrice de passage*/
+  vpColVector I4(4), J4(4);
 
-  cMo[0][0] = I[0];
-  cMo[0][1] = I[1];
-  cMo[0][2] = I[2];
-  cMo[0][3] = c3d[0].get_x() * 2 / (normI + normJ);
+  I4 = Ap * xprim;
+  J4 = Ap * yprim;
 
-  cMo[1][0] = J[0];
-  cMo[1][1] = J[1];
-  cMo[1][2] = J[2];
-  cMo[1][3] = c3d[0].get_y() * 2 / (normI + normJ);
+  calculSolutionDementhon(I4, J4, cMo);
 
-  cMo[2][0] = k[0];
-  cMo[2][1] = k[1];
-  cMo[2][2] = k[2];
-  cMo[2][3] = Z0;
+  int erreur = 0;
+  for (unsigned int i = 0; i < npt; i++) {
+    double z;
+    z = cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ() + cMo[2][3];
+    if (z <= 0.0)  erreur = -1;
+  }
+  if (erreur == -1) {
+    throw(vpException(vpException::fatalError, "End of Dementhon since z < 0 for both solutions at the beginning"));
+  }
+  int cpt = 0;
+  double res = sqrt(computeResidualDementhon(cMo) / npt);
+  double res_old = 2.0*res;
 
-  cMo[0][3] -= (p0.get_oX() * cMo[0][0] + p0.get_oY() * cMo[0][1] + p0.get_oZ() * cMo[0][2]);
-  cMo[1][3] -= (p0.get_oX() * cMo[1][0] + p0.get_oY() * cMo[1][1] + p0.get_oZ() * cMo[1][2]);
-  cMo[2][3] -= (p0.get_oX() * cMo[2][0] + p0.get_oY() * cMo[2][1] + p0.get_oZ() * cMo[2][2]);
+  // In his paper, Dementhon suggests to use the difference
+  // between 2 successive norm of eps. We prefer to use the mean of the
+  // residuals in the image
+  while ((cpt < ITER_MAX) && (res > SEUIL_RESIDUAL) && (res < res_old)) {
+
+    vpHomogeneousMatrix cMo_old;
+    res_old = res;
+    cMo_old = cMo;
+
+    for (unsigned int i = 0; i < npt; i++) {
+      double eps = (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
+
+      xprim[i] = (1.0 + eps) * c3d[i].get_x();
+      yprim[i] = (1.0 + eps) * c3d[i].get_y();
+    }
+    I4 = Ap * xprim;
+    J4 = Ap * yprim;
+
+    calculSolutionDementhon(I4, J4, cMo);
+    res = sqrt(computeResidualDementhon(cMo) / npt);
+    for (unsigned int i = 0; i < npt; i++) {
+      double z;
+      z = cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ() + cMo[2][3];
+      if (z <= 0.0)  erreur = -1;
+    }
+    if (erreur == -1) {
+      cMo = cMo_old;
+      res = res_old; // to leave the while loop
+#if (DEBUG_LEVEL3)
+      std::cout  << "Pb z < 0 with cMo in Dementhon's loop" << std::endl;
+#endif
+    }
+#if (DEBUG_LEVEL3)
+    vpThetaUVector erc;
+    cMo.extract(erc);
+    std::cout << "it = " << cpt << " residu = " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+#endif
+    if (res > res_old) {
+#if (DEBUG_LEVEL3)
+      std::cout << "Divergence : res = " << res << " res_old = " << res_old << std::endl;
+#endif
+      cMo = cMo_old;
+    }
+    cpt++;
+  }
+  // go back to the initial frame
+  cMo[0][3] -= (cdg[0] * cMo[0][0] + cdg[1] * cMo[0][1] + cdg[2] * cMo[0][2]);
+  cMo[1][3] -= (cdg[0] * cMo[1][0] + cdg[1] * cMo[1][1] + cdg[2] * cMo[1][2]);
+  cMo[2][3] -= (cdg[0] * cMo[2][0] + cdg[1] * cMo[2][1] + cdg[2] * cMo[2][2]);
 }
 
-#define DMIN 0.01 /* distance min entre la cible et la camera */
-#define EPS 0.0000001
-#define EPS_DEM 0.001
 
 static void calculRTheta(double s, double c, double &r, double &theta)
 {
@@ -204,211 +248,161 @@ static void calculRTheta(double s, double c, double &r, double &theta)
   }
 }
 
-static void calculSolutionDementhon(double xi0, double yi0, vpColVector &I, vpColVector &J, vpHomogeneousMatrix &cMo)
+
+static void calculTwoSolutionsDementhonPlan(vpColVector &I04, vpColVector &J04, vpColVector &U, vpHomogeneousMatrix &cMo1, vpHomogeneousMatrix &cMo2)
 {
+  vpColVector I0(3), J0(3);
+  for (unsigned int i=0; i<3; i++) {
+    I0[i] = I04[i];
+    J0[i] = J04[i];
+  }
+  double s = -2.0 * vpColVector::dotProd(I0, J0);
+  double c = J0.sumSquare() - I0.sumSquare();
 
-#if (DEBUG_LEVEL1)
-  std::cout << "begin (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
+  double r, theta;
+  calculRTheta(s, c, r, theta);
+  double co = cos(theta);
+  double si = sin(theta);
+
+  // calcul de la premiere solution
+  vpColVector I(4),J(4);
+  I = I04 + U * r * co;
+  J = J04 + U * r * si;
+
+#if (DEBUG_LEVEL2)
+  {
+    std::cout << "I0 " << I04.t() << std::endl;
+    std::cout << "J0 " << J04.t() << std::endl;
+    std::cout << "I1 " << I.t() << std::endl;
+    std::cout << "J1 " << J.t() << std::endl;
+  }
 #endif
+  calculSolutionDementhon(I, J, cMo1);
 
-  double normI, normJ, normk, Z0;
-  vpColVector k(3);
-
-  // normalisation de I et J
-  normI = sqrt(I.sumSquare());
-  normJ = sqrt(J.sumSquare());
-
-  I /= normI;
-  J /= normJ;
-
-  k = vpColVector::cross(I, J); // k = I^I
-
-  Z0 = 2.0 / (normI + normJ);
-
-  normk = sqrt(k.sumSquare());
-  k /= normk;
-
-  J = vpColVector::cross(k, I);
-
-  // calcul de la matrice de passage
-  cMo[0][0] = I[0];
-  cMo[0][1] = I[1];
-  cMo[0][2] = I[2];
-  cMo[0][3] = xi0 * Z0;
-
-  cMo[1][0] = J[0];
-  cMo[1][1] = J[1];
-  cMo[1][2] = J[2];
-  cMo[1][3] = yi0 * Z0;
-
-  cMo[2][0] = k[0];
-  cMo[2][1] = k[1];
-  cMo[2][2] = k[2];
-  cMo[2][3] = Z0;
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
+  // calcul de la deuxieme solution
+  I = I04 - U * r * co;
+  J = J04 - U * r * si;
+#if (DEBUG_LEVEL2)
+  {
+    std::cout << "I2 " << I.t() << std::endl;
+    std::cout << "J2 " << J.t() << std::endl;
+  }
 #endif
+  calculSolutionDementhon(I, J, cMo2);
 }
 
-int vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo)
-{
 
+/*!
+  Return 0 if success, -1 if failure.
+ */
+int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatrix &cMo)
+{
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::CalculArbreDementhon() " << std::endl;
 #endif
 
   int erreur = 0;
-  double smin;
-  vpHomogeneousMatrix cMo1, cMo2, cMo_old;
 
-  unsigned int iter_max = 20;
-  vpMatrix eps(iter_max + 1, npt);
-
-  // on test si tous les points sont devant la camera
+  // test if all points are in front of the camera
   for (unsigned int i = 0; i < npt; i++) {
     double z;
     z = cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ() + cMo[2][3];
-    if (z <= 0.0)
+    if (z <= 0.0) {
       erreur = -1;
+      return erreur;
+    }
   }
 
-  smin = sqrt(computeResidualDementhon(cMo) / npt);
+  unsigned int cpt = 0;
+  double res_min = sqrt(computeResidualDementhon(cMo)/npt);
+  double res_old = 2.0*res_min;
 
-  vpColVector xi(npt);
-  vpColVector yi(npt);
+  /* FC modif SEUIL_RESIDUAL 0.01 a 0.001 */
+  while ((cpt < ITER_MAX) && (res_min > SEUIL_RESIDUAL) && (res_min < res_old)) {
+    vpHomogeneousMatrix cMo1, cMo2, cMo_old;
 
-  if (erreur == 0) {
-    unsigned int k = 0;
+    res_old = res_min;
+    cMo_old = cMo;
+
+    vpColVector xprim(npt),yprim(npt);
     for (unsigned int i = 0; i < npt; i++) {
-      xi[k] = c3d[i].get_x();
-      yi[k] = c3d[i].get_y();
+      double eps = (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
 
-      if (k != 0) { // On ne prend pas le 1er point
-        eps[0][k] =
-            (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
-      }
-      k++;
+      xprim[i] = (1.0 + eps)*c3d[i].get_x();
+      yprim[i] = (1.0 + eps)*c3d[i].get_y();
     }
 
-    vpColVector I0(3);
-    vpColVector J0(3);
-    vpColVector I(3);
-    vpColVector J(3);
+    vpColVector I04(4), J04(4);
+    I04 = Ap * xprim;
+    J04 = Ap * yprim;
 
-    double smin_old = 2 * smin;
+    calculTwoSolutionsDementhonPlan(I04,J04,U,cMo1,cMo2);
 
-    unsigned int cpt = 0;
-    while ((cpt < 20) && (smin_old > 0.01) && (smin <= smin_old)) {
-      double r, theta, s1, s2;
+    // test if all points are in front of the camera for cMo1 and cMo2
+    int erreur1 = 0;
+    int erreur2 = 0;
+    for (unsigned int i = 0; i < npt; i++) {
+      double z;
+      z = cMo1[2][0] * c3d[i].get_oX() + cMo1[2][1] * c3d[i].get_oY() + cMo1[2][2] * c3d[i].get_oZ() + cMo1[2][3];
+      if (z <= 0.0)  erreur1 = -1;
+      z = cMo2[2][0] * c3d[i].get_oX() + cMo2[2][1] * c3d[i].get_oY() + cMo2[2][2] * c3d[i].get_oZ() + cMo2[2][3];
+      if (z <= 0.0)  erreur2 = -1;
+    }
 
-#if (DEBUG_LEVEL2)
-      {
-        std::cout << "cpt " << cpt << std::endl;
-        std::cout << "smin_old " << smin_old << std::endl;
-        std::cout << "smin " << smin << std::endl;
-      }
-#endif
-
-      smin_old = smin;
-      cMo_old = cMo;
-
-      I0 = 0;
-      J0 = 0;
-
-      for (unsigned int i = 1; i < npt; i++) {
-        double s = (1.0 + eps[cpt][i]) * xi[i] - xi[0];
-        I0[0] += b[0][i - 1] * s;
-        I0[1] += b[1][i - 1] * s;
-        I0[2] += b[2][i - 1] * s;
-        s = (1.0 + eps[cpt][i]) * yi[i] - yi[0];
-        J0[0] += b[0][i - 1] * s;
-        J0[1] += b[1][i - 1] * s;
-        J0[2] += b[2][i - 1] * s;
-      }
-
-      double s = -2.0 * (vpColVector::dotProd(I0, J0));
-      double c = J0.sumSquare() - I0.sumSquare();
-
-      calculRTheta(s, c, r, theta);
-      double co = cos(theta);
-      double si = sin(theta);
-
-      /* 1ere branche	*/
-      I = I0 + U * r * co;
-      J = J0 + U * r * si;
-
+    if ((erreur1 == -1) && (erreur2 == -1)) {
+      cMo = cMo_old;
 #if (DEBUG_LEVEL3)
-      {
-        std::cout << "I " << I.t();
-        std::cout << "J " << J.t();
-      }
+      std::cout  << " End of loop since z < 0 for both solutions" << std::endl;
 #endif
-
-      calculSolutionDementhon(xi[0], yi[0], I, J, cMo1);
-      s1 = sqrt(computeResidualDementhon(cMo1) / npt);
-#if (DEBUG_LEVEL3)
-      std::cout << "cMo1 " << std::endl << cMo1 << std::endl;
-#endif
-
-      /* 2eme branche	*/
-      I = I0 - U * r * co;
-      J = J0 - U * r * si;
-#if (DEBUG_LEVEL3)
-      {
-        std::cout << "I " << I.t();
-        std::cout << "J " << J.t();
-      }
-#endif
-
-      calculSolutionDementhon(xi[0], yi[0], I, J, cMo2);
-      s2 = sqrt(computeResidualDementhon(cMo2) / npt);
-#if (DEBUG_LEVEL3)
-      std::cout << "cMo2 " << std::endl << cMo2 << std::endl;
-#endif
-
-      cpt++;
-      if (s1 <= s2) {
-        smin = s1;
-        k = 0;
-        for (unsigned int i = 0; i < npt; i++) {
-          if (k != 0) { // On ne prend pas le 1er point
-            eps[cpt][k] = (cMo1[2][0] * c3d[i].get_oX() + cMo1[2][1] * c3d[i].get_oY() + cMo1[2][2] * c3d[i].get_oZ()) /
-                          cMo1[2][3];
-          }
-          k++;
-        }
+      break; // outside of while due to z < 0
+    }
+    if ((erreur1 == 0) && (erreur2 == -1)) {
+      cMo = cMo1;
+      res_min = sqrt(computeResidualDementhon(cMo)/npt);
+    }
+    if ((erreur1 == -1) && (erreur2 == 0)) {
+      cMo = cMo2;
+      res_min = sqrt(computeResidualDementhon(cMo)/npt);
+    }
+    if ((erreur1 == 0) && (erreur2 == 0)) {
+      double res1 = sqrt(computeResidualDementhon(cMo1)/npt);
+      double res2 = sqrt(computeResidualDementhon(cMo2)/npt);
+      if (res1 <= res2) {
+        res_min = res1;
         cMo = cMo1;
       } else {
-        smin = s2;
-        k = 0;
-        for (unsigned int i = 0; i < npt; i++) {
-          if (k != 0) { // On ne prend pas le 1er point
-            eps[cpt][k] = (cMo2[2][0] * c3d[i].get_oX() + cMo2[2][1] * c3d[i].get_oY() + cMo2[2][2] * c3d[i].get_oZ()) /
-                          cMo2[2][3];
-          }
-          k++;
-        }
+        res_min = res2;
         cMo = cMo2;
       }
-
-      if (smin > smin_old) {
-#if (DEBUG_LEVEL2)
-        std::cout << "Divergence " << std::endl;
-#endif
-
-        cMo = cMo_old;
-      }
-#if (DEBUG_LEVEL2)
-      {
-        std::cout << "s1 = " << s1 << std::endl;
-        std::cout << "s2 = " << s2 << std::endl;
-        std::cout << "smin = " << smin << std::endl;
-        std::cout << "smin_old = " << smin_old << std::endl;
-      }
-#endif
     }
-  }
+
+#if (DEBUG_LEVEL3)
+    if (erreur1 == 0) {
+      double s = sqrt(computeResidualDementhon(cMo1)/npt);
+      vpThetaUVector erc;
+      cMo1.extract(erc);
+      std::cout  << "it = " << cpt << " cMo1 : residu: " << s << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+    }
+    else std::cout  << "Pb z < 0 with cMo1" << std::endl;
+
+    if (erreur2 == 0) {
+      double s = sqrt(computeResidualDementhon(cMo2)/npt);
+      vpThetaUVector erc;
+      cMo2.extract(erc);
+      std::cout << "it = " << cpt << " cMo2 : residu: " << s << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+    }
+    else std::cout  << "Pb z < 0 with cMo2" << std::endl;
+#endif
+
+    if (res_min > res_old) {
+#if (DEBUG_LEVEL3)
+      std::cout << "Divergence : res_min = " << res_min << " res_old = " << res_old << std::endl;
+#endif
+      cMo = cMo_old;
+    }
+    cpt++;
+  }   /* end of while */
+
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::CalculArbreDementhon() return " << erreur << std::endl;
 #endif
@@ -430,221 +424,133 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   std::cout << "begin CCalculPose::PoseDementhonPlan()" << std::endl;
 #endif
 
-  unsigned int i, j, k;
-
-  vpPoint p0 = listP.front();
-
   vpPoint P;
-  c3d.clear();
+  double cdg[3];
+  /* compute the cog of the 3D points */
+  cdg[0] = cdg[1] = cdg[2] = 0.0;
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
-    P = *it;
-    P.set_oX(P.get_oX() - p0.get_oX());
-    P.set_oY(P.get_oY() - p0.get_oY());
-    P.set_oZ(P.get_oZ() - p0.get_oZ());
+    P = (*it);
+    cdg[0] += P.get_oX();
+    cdg[1] += P.get_oY();
+    cdg[2] += P.get_oZ();
+  }
+  for (unsigned int i=0; i<3;i++) cdg[i] /= npt;
+  //  printf("cdg : %lf %lf %lf\n", cdg[0], cdg[1],cdg[2]);
+
+  c3d.clear();
+  /* translate the 3D points wrt cog */
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    P = (*it);
+    P.set_oX(P.get_oX() - cdg[0]);
+    P.set_oY(P.get_oY() - cdg[1]);
+    P.set_oZ(P.get_oZ() - cdg[2]);
     c3d.push_back(P);
   }
 
-  vpMatrix a;
-  try {
-    a.resize(npt - 1, 3);
-  } catch (...) {
-    vpERROR_TRACE(" ");
-    throw;
+  vpMatrix A(npt,4);
+
+  for (unsigned int i = 0; i < npt; i++) {
+    A[i][0] = c3d[i].get_oX();
+    A[i][1] = c3d[i].get_oY();
+    A[i][2] = c3d[i].get_oZ();
+    A[i][3] = 1.0;
   }
-
-  for (i = 1; i < npt; i++) {
-    a[i - 1][0] = c3d[i].get_oX();
-    a[i - 1][1] = c3d[i].get_oY();
-    a[i - 1][2] = c3d[i].get_oZ();
+  vpColVector sv;
+  vpMatrix Ap,imA, imAt, kAt;
+  int irank = A.pseudoInverse(Ap, sv, 1.e-6, imA, imAt, kAt);
+  if (irank != 3) {
+    throw(vpException(vpException::fatalError, "In Dementhon planar, rank is not 3"));
   }
-
-  // calcul a^T a
-  vpMatrix ata;
-  ata = a.t() * a;
-
-  /* essai FC pour debug SVD */
-  /*
-  vpMatrix ata_old ;
-  ata_old = a.t()*a ;
-
-  vpMatrix ata((ata_old.getRows()-1),(ata_old.getCols()-1)) ;
-  for (i=0;i<ata.getRows();i++)
-  for (j=0;j<ata.getCols();j++) ata[i][j] = ata_old[i][j];
-  */
-  vpMatrix ata_sav;
-  ata_sav = ata;
-
-#if (DEBUG_LEVEL2)
-  {
-    std::cout << "a" << std::endl << a << std::endl;
-    std::cout << "ata" << std::endl << ata << std::endl;
-  }
-#endif
-
-  // calcul (a^T a)^-1
-  vpMatrix ata1(ata.getRows(), ata.getCols());
-  vpMatrix v(ata.getRows(), ata.getCols());
-  vpColVector sv(ata.getRows());
-  //  ata1 = ata.i() ;
-  unsigned int imin = 0;
-  double s = 0.0;
-
-  // calcul de ata^-1
-  ata.svd(sv, v);
-
-  unsigned int nc = sv.getRows();
-  for (i = 0; i < nc; i++)
-    if (sv[i] > s)
-      s = sv[i];
-
-  s *= 0.0002;
-  int irank = 0;
-  for (i = 0; i < nc; i++)
-    if (sv[i] > s)
-      irank++;
-
-  double svm = 100.0;
-  for (i = 0; i < nc; i++) {
-    if (sv[i] < svm) {
-      imin = i;
-      svm = sv[i];
-    }
-  }
-
-#if (DEBUG_LEVEL2)
-  {
-    std::cout << "rang: " << irank << std::endl;
-    ;
-    std::cout << "imin = " << imin << std::endl;
-    std::cout << "sv " << sv.t() << std::endl;
-  }
-#endif
-
-  for (i = 0; i < ata.getRows(); i++) {
-    for (j = 0; j < ata.getCols(); j++) {
-      ata1[i][j] = 0.0;
-      for (k = 0; k < nc; k++)
-        if (sv[k] > s)
-          ata1[i][j] += ((v[i][k] * ata[j][k]) / sv[k]);
-    }
-  }
-
-  vpMatrix b; // b=(at a)^-1*at
-  b = ata1 * a.t();
-
   // calcul de U
-  vpColVector U(3);
-  U = ata.getCol(imin);
-
+  vpColVector U(4);
+  for (unsigned int i = 0; i<4; i++) {
+    U[i] = kAt[0][i];
+  }
 #if (DEBUG_LEVEL2)
   {
-    std::cout << "a" << std::endl << a << std::endl;
-    std::cout << "ata" << std::endl << ata_sav << std::endl;
-    std::cout << "ata1" << std::endl << ata1 << std::endl;
-    std::cout << "ata1*ata" << std::endl << ata1 * ata_sav;
-    std::cout << "b" << std::endl << b;
-    std::cout << "U " << U.t() << std::endl;
+    std::cout << "A" << std::endl << A << std::endl;
+    std::cout << "A^+" << std::endl << Ap << std::endl;
+    std::cout << "U^T = " << U.t() << std::endl;
   }
 #endif
 
   vpColVector xi(npt);
   vpColVector yi(npt);
-  // calcul de la premiere solution
-  for (i = 0; i < npt; i++) {
+
+  for (unsigned int i = 0; i < npt; i++) {
     xi[i] = c3d[i].get_x();
     yi[i] = c3d[i].get_y();
   }
 
-  vpColVector I0(3);
-  I0 = 0;
-  vpColVector J0(3);
-  J0 = 0;
-  vpColVector I(3);
-  vpColVector J(3);
+  vpColVector I04(4), J04(4);
+  I04 = Ap * xi;
+  J04 = Ap * yi;
 
-  for (i = 1; i < npt; i++) {
-    I0[0] += b[0][i - 1] * (xi[i] - xi[0]);
-    I0[1] += b[1][i - 1] * (xi[i] - xi[0]);
-    I0[2] += b[2][i - 1] * (xi[i] - xi[0]);
+  vpHomogeneousMatrix cMo1,cMo2;
+  calculTwoSolutionsDementhonPlan(I04,J04,U,cMo1,cMo2);
 
-    J0[0] += b[0][i - 1] * (yi[i] - yi[0]);
-    J0[1] += b[1][i - 1] * (yi[i] - yi[0]);
-    J0[2] += b[2][i - 1] * (yi[i] - yi[0]);
-  }
-
-#if (DEBUG_LEVEL2)
-  {
-    std::cout << "I0 " << I0.t();
-    std::cout << "J0 " << J0.t();
-  }
+#if DEBUG_LEVEL3
+  double res = sqrt(computeResidualDementhon(cMo1)/npt);
+  vpThetaUVector erc;
+  cMo1.extract(erc);
+  std::cout << "cMo Start Tree 1 : res " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+  res = sqrt(computeResidualDementhon(cMo2)/npt);
+  cMo2.extract(erc);
+  std::cout << "cMo Start Tree 2 : res " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
 #endif
 
-  s = -2.0 * vpColVector::dotProd(I0, J0);
-  double c = J0.sumSquare() - I0.sumSquare();
+  int erreur1 = calculArbreDementhon(Ap, U, cMo1);
+  int erreur2 = calculArbreDementhon(Ap, U, cMo2);
 
-  double r, theta, si, co;
-  calculRTheta(s, c, r, theta);
-  co = cos(theta);
-  si = sin(theta);
-
-  // calcul de la premiere solution
-  I = I0 + U * r * co;
-  J = J0 + U * r * si;
-
-  vpHomogeneousMatrix cMo1f;
-  calculSolutionDementhon(xi[0], yi[0], I, J, cMo1f);
-
-  int erreur1 = calculArbreDementhon(b, U, cMo1f);
-
-  // calcul de la deuxieme solution
-  I = I0 - U * r * co;
-  J = J0 - U * r * si;
-
-  vpHomogeneousMatrix cMo2f;
-  calculSolutionDementhon(xi[0], yi[0], I, J, cMo2f);
-
-  int erreur2 = calculArbreDementhon(b, U, cMo2f);
-
+  if ((erreur1 == -1)  && (erreur2 == -1)) {
+    throw(vpException(vpException::fatalError, "Error in Dementhon planar: z < 0 with Start Tree 1 and Start Tree 2..."));
+  }
   if ((erreur1 == 0) && (erreur2 == -1))
-    cMo = cMo1f;
+    cMo = cMo1;
   if ((erreur1 == -1) && (erreur2 == 0))
-    cMo = cMo2f;
+    cMo = cMo2;
   if ((erreur1 == 0) && (erreur2 == 0)) {
-    double s1 = sqrt(computeResidualDementhon(cMo1f) / npt);
-    double s2 = sqrt(computeResidualDementhon(cMo2f) / npt);
+    double s1 = computeResidualDementhon(cMo1);
+    double s2 = computeResidualDementhon(cMo2);
 
     if (s1 <= s2)
-      cMo = cMo1f;
+      cMo = cMo1;
     else
-      cMo = cMo2f;
+      cMo = cMo2;
+
+#if DEBUG_LEVEL3
+    if (erreur1 == -1) std::cout << "Pb z < 0 with Start Tree 1" << std::endl;
+    if (erreur2 == -1) std::cout << "Pb z < 0 with Start Tree 2" << std::endl;
+    if (s1 <= s2) std::cout << " Tree 1 chosen  " << std::endl;
+    else std::cout << " Tree 2 chosen  " << std::endl;
+#endif
   }
 
-  cMo[0][3] -= p0.get_oX() * cMo[0][0] + p0.get_oY() * cMo[0][1] + p0.get_oZ() * cMo[0][2];
-  cMo[1][3] -= p0.get_oX() * cMo[1][0] + p0.get_oY() * cMo[1][1] + p0.get_oZ() * cMo[1][2];
-  cMo[2][3] -= p0.get_oX() * cMo[2][0] + p0.get_oY() * cMo[2][1] + p0.get_oZ() * cMo[2][2];
+  cMo[0][3] -= (cdg[0] * cMo[0][0] + cdg[1] * cMo[0][1] + cdg[2] * cMo[0][2]);
+  cMo[1][3] -= (cdg[0] * cMo[1][0] + cdg[1] * cMo[1][1] + cdg[2] * cMo[1][2]);
+  cMo[2][3] -= (cdg[0] * cMo[2][0] + cdg[1] * cMo[2][1] + cdg[2] * cMo[2][2]);
 
 #if (DEBUG_LEVEL1)
   std::cout << "end CCalculPose::PoseDementhonPlan()" << std::endl;
 #endif
 }
 
-#undef DMIN
-#undef EPS
-#undef EPS_DEM
-
 /*!
-\brief Compute and return the residual expressed in meter for the pose matrix
-'pose'.
+  \brief Compute and return the residual corresponding to the sum of squared residuals
+  in meter^2 for the pose matrix \e cMo.
 
-\param cMo : the matrix that defines the pose to be tested.
+  \param cMo : the matrix that defines the pose to be tested.
 
-\return the value of he residual in meter
+  \return the value of the sum of squared residuals in meter^2.
 */
 double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 {
-  double residual_ = 0;
+  double squared_error = 0;
 
-  residual_ = 0;
+  // Be careful: since c3d has been translated so that point0 is at the cdg,
+  // cMo here corresponds to object frame at that point, i.e, only the one used
+  // internally to Dementhon's method
+
   for (unsigned int i = 0; i < npt; i++) {
 
     double X = c3d[i].get_oX() * cMo[0][0] + c3d[i].get_oY() * cMo[0][1] + c3d[i].get_oZ() * cMo[0][2] + cMo[0][3];
@@ -654,11 +560,14 @@ double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
     double x = X / Z;
     double y = Y / Z;
 
-    residual_ += vpMath::sqr(x - c3d[i].get_x()) + vpMath::sqr(y - c3d[i].get_y());
+    squared_error += vpMath::sqr(x - c3d[i].get_x()) + vpMath::sqr(y - c3d[i].get_y());
   }
-  return residual_;
+  return squared_error;
 }
 
+#undef EPS_DEM
+#undef SEUIL_RESIDUAL
+#undef ITER_MAX
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
 #undef DEBUG_LEVEL3

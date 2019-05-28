@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@
 
   \brief Various image tools; sub-image extraction, modification of
   the look up table, binarisation...
-
 */
 
 #include <visp3/core/vpImage.h>
@@ -63,6 +62,10 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+
+#if defined _OPENMP
+#include <omp.h>
+#endif
 
 /*!
   \class vpImageTools
@@ -126,6 +129,10 @@ public:
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires, const bool saturate = false);
 
+  static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
+                               vpArray2D<int> &mapU, vpArray2D<int> &mapV,
+                               vpArray2D<float> &mapDu, vpArray2D<float> &mapDv);
+
   static double interpolate(const vpImage<unsigned char> &I, const vpImagePoint &point,
                             const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
 
@@ -136,20 +143,26 @@ public:
 
   static void normalize(vpImage<double> &I);
 
+  static void remap(const vpImage<unsigned char> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                    const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<unsigned char> &Iundist);
+  static void remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, const vpArray2D<int> &mapV,
+                    const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist);
+
   template <class Type>
   static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height,
-                     const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
+                     const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
 
   template <class Type>
   static void resize(const vpImage<Type> &I, vpImage<Type> &Ires,
-                     const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
+                     const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
 
   static void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
                                vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
                                const bool useOptimized = true);
 
   template <class Type>
-  static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI);
+  static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI,
+                        unsigned int nThreads=2);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -173,6 +186,7 @@ private:
 
   // Linear interpolation
   static float lerp(const float A, const float B, const float t);
+  static int64_t lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1);
 
   static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2, const vpImage<double> &II,
                                       const vpImage<double> &IIsq, const vpImage<double> &II_tpl,
@@ -201,10 +215,12 @@ private:
 
   \param I : Input image from which a sub image will be extracted.
   \param roi_top : ROI vertical position of the upper/left corner in the input
-  image. \param roi_left : ROI  horizontal position of the upper/left corner
-  in the input image. \param roi_height : Cropped image height corresponding
-  to the ROI height. \param roi_width : Cropped image width corresponding to
-  the ROI height. \param crop : Cropped image.
+  image.
+  \param roi_left : ROI  horizontal position of the upper/left corner
+  in the input image.
+  \param roi_height : Cropped image height corresponding to the ROI height.
+  \param roi_width : Cropped image width corresponding to the ROI height.
+  \param crop : Cropped image.
 
   \sa crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int,
   unsigned int, vpImage<Type> &)
@@ -248,12 +264,16 @@ template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, 
 
   \param I : Input image from which a sub image will be extracted.
   \param roi_top : ROI vertical position of the upper/left corner in the input
-  image. \param roi_left : ROI  horizontal position of the upper/left corner
-  in the input image. \param roi_height : Cropped image height corresponding
-  to the ROI height. \param roi_width : Cropped image width corresponding to
-  the ROI height. \param crop : Cropped image. \param v_scale [in] : Vertical
-  subsampling factor applied to the ROI. \param h_scale [in] : Horizontal
-  subsampling factor applied to the ROI.
+  image.
+  \param roi_left : ROI  horizontal position of the upper/left corner
+  in the input image.
+  \param roi_height : Cropped image height corresponding
+  to the ROI height.
+  \param roi_width : Cropped image width corresponding to
+  the ROI height.
+  \param crop : Cropped image.
+  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
+  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 
@@ -593,15 +613,23 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
   parameter \f$K_d\f$ is null (see cam.get_kd_mp()), \e undistI is
   just a copy of \e I.
 
+  \param nThreads : Number of threads to use if pthreads library is available.
+
   \warning This function works only with Types authorizing "+,-,
   multiplication by a scalar" operators.
 
   \warning This function is time consuming :
     - On "Rhea"(Intel Core 2 Extreme X6800 2.93GHz, 2Go RAM)
       or "Charon"(Intel Xeon 3 GHz, 2Go RAM) : ~8 ms for a 640x480 image.
+
+  \note If you want to undistort multiple images, you should call `vpImageTools::initUndistortMap()`
+  once and then `vpImageTools::remap()` to undistort the images. This will be less time consuming.
+
+  \sa initUndistortMap, remap
 */
 template <class Type>
-void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI)
+void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI,
+                             unsigned int nThreads)
 {
 #ifdef VISP_HAVE_PTHREAD
   //
@@ -621,7 +649,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
     return;
   }
 
-  unsigned int nthreads = 2;
+  unsigned int nthreads = nThreads;
   pthread_attr_t attr;
   pthread_t *callThd = new pthread_t[nthreads];
   pthread_attr_init(&attr);
@@ -653,6 +681,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
   delete[] callThd;
   delete[] undistortSharedData;
 #else  // VISP_HAVE_PTHREAD
+  (void)nThreads;
   //
   // optimized version without pthreads
   //
@@ -829,19 +858,19 @@ template <class Type> void vpImageTools::flip(vpImage<Type> &I)
 template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I, const float u, const float v)
 {
   unsigned int i, j;
-  if (u < 0.)
+  if (u < 0.f)
     j = 0;
-  else if (u > (float)I.getWidth() - 1.)
+  else if (u > static_cast<float>(I.getWidth()) - 1.f)
     j = I.getWidth() - 1;
   else
-    j = (unsigned int)u;
+    j = static_cast<unsigned int>(u);
 
-  if (v < 0.)
+  if (v < 0.f)
     i = 0;
-  else if (v > (float)I.getHeight() - 1.)
+  else if (v > static_cast<float>(I.getHeight()) - 1.f)
     i = I.getHeight() - 1;
   else
-    i = (unsigned int)v;
+    i = static_cast<unsigned int>(v);
 
   return I[i][j];
 }
@@ -915,17 +944,25 @@ inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa
   vpRGBa p33 = getPixelClamped(I, u + 2, v + 2);
 
   for (int c = 0; c < 3; c++) {
-    float col0 = cubicHermite(((unsigned char *)&p00)[c], ((unsigned char *)&p01)[c], ((unsigned char *)&p02)[c],
-                              ((unsigned char *)&p03)[c], xFrac);
-    float col1 = cubicHermite(((unsigned char *)&p10)[c], ((unsigned char *)&p11)[c], ((unsigned char *)&p12)[c],
-                              ((unsigned char *)&p13)[c], xFrac);
-    float col2 = cubicHermite(((unsigned char *)&p20)[c], ((unsigned char *)&p21)[c], ((unsigned char *)&p22)[c],
-                              ((unsigned char *)&p23)[c], xFrac);
-    float col3 = cubicHermite(((unsigned char *)&p30)[c], ((unsigned char *)&p31)[c], ((unsigned char *)&p32)[c],
-                              ((unsigned char *)&p33)[c], xFrac);
+    float col0 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p00)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p01)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p02)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p03)[c]), xFrac);
+    float col1 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p10)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p11)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p12)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p13)[c]), xFrac);
+    float col2 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p20)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p21)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p22)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p23)[c]), xFrac);
+    float col3 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p30)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p31)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p32)[c]),
+                              static_cast<float>(reinterpret_cast<unsigned char *>(&p33)[c]), xFrac);
     float value = cubicHermite(col0, col1, col2, col3, yFrac);
 
-    ((unsigned char *)&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
+    reinterpret_cast<unsigned char *>(&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
   }
 }
 
@@ -934,17 +971,17 @@ void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, c
                                   const unsigned int j, const float u, const float v, const float xFrac,
                                   const float yFrac)
 {
-  unsigned int u0 = (unsigned int)u;
-  unsigned int v0 = (unsigned int)v;
+  unsigned int u0 = static_cast<unsigned int>(u);
+  unsigned int v0 = static_cast<unsigned int>(v);
 
-  unsigned int u1 = (std::min)(I.getWidth() - 1, (unsigned int)u + 1);
+  unsigned int u1 = (std::min)(I.getWidth() - 1, static_cast<unsigned int>(u) + 1);
   unsigned int v1 = v0;
 
   unsigned int u2 = u0;
-  unsigned int v2 = (std::min)(I.getHeight() - 1, (unsigned int)v + 1);
+  unsigned int v2 = (std::min)(I.getHeight() - 1, static_cast<unsigned int>(v) + 1);
 
-  unsigned int u3 = (std::min)(I.getWidth() - 1, (unsigned int)u + 1);
-  unsigned int v3 = (std::min)(I.getHeight() - 1, (unsigned int)v + 1);
+  unsigned int u3 = u1;
+  unsigned int v3 = v2;
 
   float col0 = lerp(I[v0][u0], I[v1][u1], xFrac);
   float col1 = lerp(I[v2][u2], I[v3][u3], xFrac);
@@ -958,24 +995,26 @@ inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGB
                                          const unsigned int j, const float u, const float v, const float xFrac,
                                          const float yFrac)
 {
-  unsigned int u0 = (unsigned int)u;
-  unsigned int v0 = (unsigned int)v;
+  unsigned int u0 = static_cast<unsigned int>(u);
+  unsigned int v0 = static_cast<unsigned int>(v);
 
-  unsigned int u1 = (std::min)(I.getWidth() - 1, (unsigned int)u + 1);
+  unsigned int u1 = (std::min)(I.getWidth() - 1, static_cast<unsigned int>(u) + 1);
   unsigned int v1 = v0;
 
   unsigned int u2 = u0;
-  unsigned int v2 = (std::min)(I.getHeight() - 1, (unsigned int)v + 1);
+  unsigned int v2 = (std::min)(I.getHeight() - 1, static_cast<unsigned int>(v) + 1);
 
-  unsigned int u3 = (std::min)(I.getWidth() - 1, (unsigned int)u + 1);
-  unsigned int v3 = (std::min)(I.getHeight() - 1, (unsigned int)v + 1);
+  unsigned int u3 = (std::min)(I.getWidth() - 1, static_cast<unsigned int>(u) + 1);
+  unsigned int v3 = (std::min)(I.getHeight() - 1, static_cast<unsigned int>(v) + 1);
 
   for (int c = 0; c < 3; c++) {
-    float col0 = lerp(((unsigned char *)&I[v0][u0])[c], ((unsigned char *)&I[v1][u1])[c], xFrac);
-    float col1 = lerp(((unsigned char *)&I[v2][u2])[c], ((unsigned char *)&I[v3][u3])[c], xFrac);
+    float col0 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v0][u0])[c]),
+                      static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v1][u1])[c]), xFrac);
+    float col1 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v2][u2])[c]),
+                      static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v3][u3])[c]), xFrac);
     float value = lerp(col0, col1, yFrac);
 
-    ((unsigned char *)&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
+    reinterpret_cast<unsigned char *>(&Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
   }
 }
 
@@ -995,16 +1034,18 @@ void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, co
   \param width : Resized width.
   \param height : Resized height.
   \param method : Interpolation method.
+  \param nThreads : Number of threads to use if OpenMP is available.
 
   \warning The input \e I and output \e Ires images must be different.
 */
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width,
-                          const unsigned int height, const vpImageInterpolationType &method)
+                          const unsigned int height, const vpImageInterpolationType &method,
+                          unsigned int nThreads)
 {
   Ires.resize(height, width);
 
-  vpImageTools::resize(I, Ires, method);
+  vpImageTools::resize(I, Ires, method, nThreads);
 }
 
 /*!
@@ -1013,40 +1054,249 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const uns
 
   \param I : Input image.
   \param Ires : Output image resized (you have to init the image \e Ires at
-  the desired size). \param method : Interpolation method.
+  the desired size).
+  \param method : Interpolation method.
+  \param nThreads : Number of threads to use if OpenMP is available.
 
   \warning The input \e I and output \e Ires images must be different.
 */
 template <class Type>
-void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method)
+void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method,
+                          unsigned int
+                        #if defined _OPENMP
+                          nThreads
+                        #endif
+                          )
 {
   if (I.getWidth() < 2 || I.getHeight() < 2 || Ires.getWidth() < 2 || Ires.getHeight() < 2) {
     std::cerr << "Input or output image is too small!" << std::endl;
     return;
   }
 
-  float scaleY = (I.getHeight() - 1) / (float)(Ires.getHeight() - 1);
-  float scaleX = (I.getWidth() - 1) / (float)(Ires.getWidth() - 1);
+  float scaleY = (I.getHeight() - 1) / static_cast<float>(Ires.getHeight() - 1);
+  float scaleX = (I.getWidth() - 1) / static_cast<float>(Ires.getWidth() - 1);
 
   if (method == INTERPOLATION_NEAREST) {
-    scaleY = I.getHeight() / (float)(Ires.getHeight() - 1);
-    scaleX = I.getWidth() / (float)(Ires.getWidth() - 1);
+    scaleY = I.getHeight() / static_cast<float>(Ires.getHeight() - 1);
+    scaleX = I.getWidth() / static_cast<float>(Ires.getWidth() - 1);
   }
 
-  for (unsigned int i = 0; i < Ires.getHeight(); i++) {
+#if defined _OPENMP
+  if (nThreads > 0) {
+    omp_set_num_threads(static_cast<int>(nThreads));
+  }
+  #pragma omp parallel for schedule(dynamic)
+#endif
+  for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
     float v = i * scaleY;
-    float yFrac = v - (int)v;
+    float yFrac = v - static_cast<int>(v);
 
     for (unsigned int j = 0; j < Ires.getWidth(); j++) {
       float u = j * scaleX;
-      float xFrac = u - (int)u;
+      float xFrac = u - static_cast<int>(u);
 
       if (method == INTERPOLATION_NEAREST) {
-        resizeNearest(I, Ires, i, j, u, v);
+        resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
       } else if (method == INTERPOLATION_LINEAR) {
-        resizeBilinear(I, Ires, i, j, u, v, xFrac, yFrac);
+        resizeBilinear(I, Ires, static_cast<unsigned int>(i), j, u, v, xFrac, yFrac);
       } else if (method == INTERPOLATION_CUBIC) {
-        resizeBicubic(I, Ires, i, j, u, v, xFrac, yFrac);
+        resizeBicubic(I, Ires, static_cast<unsigned int>(i), j, u, v, xFrac, yFrac);
+      }
+    }
+  }
+}
+
+template <> inline
+void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires,
+                          const vpImageInterpolationType &method, unsigned int
+                                                                  #if defined _OPENMP
+                                                                    nThreads
+                                                                  #endif
+                          )
+{
+  if (I.getWidth() < 2 || I.getHeight() < 2 || Ires.getWidth() < 2 || Ires.getHeight() < 2) {
+    std::cerr << "Input or output image is too small!" << std::endl;
+    return;
+  }
+
+  if (method == INTERPOLATION_NEAREST || method == INTERPOLATION_CUBIC) {
+    float scaleY = (I.getHeight() - 1) / static_cast<float>(Ires.getHeight() - 1);
+    float scaleX = (I.getWidth() - 1) / static_cast<float>(Ires.getWidth() - 1);
+
+    if (method == INTERPOLATION_NEAREST) {
+      scaleY = I.getHeight() / static_cast<float>(Ires.getHeight() - 1);
+      scaleX = I.getWidth() / static_cast<float>(Ires.getWidth() - 1);
+    }
+
+  #if defined _OPENMP
+    if (nThreads > 0) {
+      omp_set_num_threads(static_cast<int>(nThreads));
+    }
+    #pragma omp parallel for schedule(dynamic)
+  #endif
+    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
+      float v = i * scaleY;
+      float yFrac = v - static_cast<int>(v);
+
+      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+        float u = j * scaleX;
+        float xFrac = u - static_cast<int>(u);
+
+        if (method == INTERPOLATION_NEAREST) {
+          resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
+        } else if (method == INTERPOLATION_CUBIC) {
+          resizeBicubic(I, Ires, static_cast<unsigned int>(i), j, u, v, xFrac, yFrac);
+        }
+      }
+    }
+  } else if (method == INTERPOLATION_LINEAR) {
+    const int precision = 1 << 16;
+    int64_t scaleY = static_cast<int64_t>((I.getHeight() - 1) / static_cast<float>(Ires.getHeight() - 1) * precision);
+    int64_t scaleX = static_cast<int64_t>((I.getWidth() - 1) / static_cast<float>(Ires.getWidth() - 1) * precision);
+
+#if defined _OPENMP
+    if (nThreads > 0) {
+      omp_set_num_threads(static_cast<int>(nThreads));
+    }
+#pragma omp parallel for schedule(dynamic)
+#endif
+    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
+      int64_t v = i * scaleY;
+      int64_t vround = v & (~0xFFFF);
+      int64_t rratio = v - vround;
+      int64_t y_ = v >> 16;
+      int64_t rfrac = precision - rratio;
+
+      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+        int64_t u = j * scaleX;
+        int64_t uround = u & (~0xFFFF);
+        int64_t cratio = u - uround;
+        int64_t x_ = u >> 16;
+        int64_t cfrac = precision - cratio;
+
+        if (y_ + 1 < static_cast<int64_t>(I.getHeight()) && x_ + 1 < static_cast<int64_t>(I.getWidth())) {
+          int64_t up = *reinterpret_cast<uint16_t *>(I.bitmap + y_ * I.getWidth() + x_);
+          int64_t down = *reinterpret_cast<uint16_t *>(I.bitmap + (y_ + 1) * I.getWidth() + x_);
+
+          Ires[i][j] = static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
+                                                  ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >> 32);
+        } else if (y_ + 1 < static_cast<int64_t>(I.getHeight())) {
+          Ires[i][j] = static_cast<unsigned char>(((*(I.bitmap + y_ * I.getWidth() + x_)
+                                                  * rfrac + *(I.bitmap + (y_ + 1) * I.getWidth() + x_) * rratio)) >> 16);
+        } else if (x_ + 1 < static_cast<int64_t>(I.getWidth())) {
+          uint16_t up = *reinterpret_cast<uint16_t *>(I.bitmap + y_ * I.getWidth() + x_);
+          Ires[i][j] = static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
+        } else {
+          Ires[i][j] = *(I.bitmap + y_ * I.getWidth() + x_);
+        }
+      }
+    }
+  }
+}
+
+template <> inline
+void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires,
+                          const vpImageInterpolationType &method, unsigned int
+                                                                  #if defined _OPENMP
+                                                                    nThreads
+                                                                  #endif
+                          )
+{
+  if (I.getWidth() < 2 || I.getHeight() < 2 || Ires.getWidth() < 2 || Ires.getHeight() < 2) {
+    std::cerr << "Input or output image is too small!" << std::endl;
+    return;
+  }
+
+  if (method == INTERPOLATION_NEAREST || method == INTERPOLATION_CUBIC) {
+    float scaleY = (I.getHeight() - 1) / static_cast<float>(Ires.getHeight() - 1);
+    float scaleX = (I.getWidth() - 1) / static_cast<float>(Ires.getWidth() - 1);
+
+    if (method == INTERPOLATION_NEAREST) {
+      scaleY = I.getHeight() / static_cast<float>(Ires.getHeight() - 1);
+      scaleX = I.getWidth() / static_cast<float>(Ires.getWidth() - 1);
+    }
+
+  #if defined _OPENMP
+    if (nThreads > 0) {
+      omp_set_num_threads(static_cast<int>(nThreads));
+    }
+    #pragma omp parallel for schedule(dynamic)
+  #endif
+    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
+      float v = i * scaleY;
+      float yFrac = v - static_cast<int>(v);
+
+      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+        float u = j * scaleX;
+        float xFrac = u - static_cast<int>(u);
+
+        if (method == INTERPOLATION_NEAREST) {
+          resizeNearest(I, Ires, static_cast<unsigned int>(i), j, u, v);
+        } else if (method == INTERPOLATION_CUBIC) {
+          resizeBicubic(I, Ires, static_cast<unsigned int>(i), j, u, v, xFrac, yFrac);
+        }
+      }
+    }
+  } else {
+    const int precision = 1 << 16;
+    int64_t scaleY = static_cast<int64_t>((I.getHeight() - 1) / static_cast<float>(Ires.getHeight() - 1) * precision);
+    int64_t scaleX = static_cast<int64_t>((I.getWidth() - 1) / static_cast<float>(Ires.getWidth() - 1) * precision);
+
+#if defined _OPENMP
+    if (nThreads > 0) {
+      omp_set_num_threads(static_cast<int>(nThreads));
+    }
+#pragma omp parallel for schedule(dynamic)
+#endif
+    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
+      int64_t v = i * scaleY;
+      int64_t vround = v & (~0xFFFF);
+      int64_t rratio = v - vround;
+      int64_t y_ = v >> 16;
+      int64_t rfrac = precision - rratio;
+
+      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+        int64_t u = j * scaleX;
+        int64_t uround = u & (~0xFFFF);
+        int64_t cratio = u - uround;
+        int64_t x_ = u >> 16;
+        int64_t cfrac = precision - cratio;
+
+        if (y_ + 1 < static_cast<int64_t>(I.getHeight()) && x_ + 1 < static_cast<int64_t>(I.getWidth())) {
+          int64_t col0 = lerp2((I.bitmap + y_ * I.getWidth() + x_)->R, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->R, rratio, rfrac);
+          int64_t col1 = lerp2((I.bitmap + y_ * I.getWidth() + x_ + 1)->R, (I.bitmap + (y_ + 1) * I.getWidth() + x_ + 1)->R, rratio, rfrac);
+          int64_t valueR = lerp2(col0, col1, cratio, cfrac);
+
+          col0 = lerp2((I.bitmap + y_ * I.getWidth() + x_)->G, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->G, rratio, rfrac);
+          col1 = lerp2((I.bitmap + y_ * I.getWidth() + x_ + 1)->G, (I.bitmap + (y_ + 1) * I.getWidth() + x_ + 1)->G, rratio, rfrac);
+          int64_t valueG = lerp2(col0, col1, cratio, cfrac);
+
+          col0 = lerp2((I.bitmap + y_ * I.getWidth() + x_)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->B, rratio, rfrac);
+          col1 = lerp2((I.bitmap + y_ * I.getWidth() + x_ + 1)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_ + 1)->B, rratio, rfrac);
+          int64_t valueB = lerp2(col0, col1, cratio, cfrac);
+
+          Ires[i][j] = vpRGBa(static_cast<unsigned char>(valueR >> 32),
+                              static_cast<unsigned char>(valueG >> 32),
+                              static_cast<unsigned char>(valueB >> 32));
+        } else if (y_ + 1 < static_cast<int64_t>(I.getHeight())) {
+          int64_t valueR = lerp2((I.bitmap + y_ * I.getWidth() + x_)->R, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->R, rratio, rfrac);
+          int64_t valueG = lerp2((I.bitmap + y_ * I.getWidth() + x_)->G, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->G, rratio, rfrac);
+          int64_t valueB = lerp2((I.bitmap + y_ * I.getWidth() + x_)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->B, rratio, rfrac);
+
+          Ires[i][j] = vpRGBa(static_cast<unsigned char>(valueR >> 16),
+                              static_cast<unsigned char>(valueG >> 16),
+                              static_cast<unsigned char>(valueB >> 16));
+        } else if (x_ + 1 < static_cast<int64_t>(I.getWidth())) {
+          int64_t valueR = lerp2((I.bitmap + x_)->R, (I.bitmap + x_ + 1)->R, cratio, cfrac);
+          int64_t valueG = lerp2((I.bitmap + x_)->G, (I.bitmap + x_ + 1)->G, cratio, cfrac);
+          int64_t valueB = lerp2((I.bitmap + x_)->B, (I.bitmap + x_ + 1)->B, cratio, cfrac);
+
+          Ires[i][j] = vpRGBa(static_cast<unsigned char>(valueR >> 16),
+                              static_cast<unsigned char>(valueG >> 16),
+                              static_cast<unsigned char>(valueB >> 16));
+        } else {
+          Ires[i][j] = *(I.bitmap + y_ * I.getWidth() + x_);
+        }
       }
     }
   }

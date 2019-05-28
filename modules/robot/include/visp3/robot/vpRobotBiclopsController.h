@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_BICLOPS
 
-#ifndef __vpROBOT_BICLOPS_CONTROLLER_H
-#define __vpROBOT_BICLOPS_CONTROLLER_H
+#ifndef _vpRobotBiclopsController_h_
+#define _vpRobotBiclopsController_h_
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
@@ -154,7 +154,7 @@ private:
   bool stopControllerThread_;
 };
 
-#endif /* #ifndef __vpROBOT_BICLOPS_CONTROLLER_H */
+#endif /* #ifndef _vpRobotBiclopsController_h_ */
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,8 +136,14 @@
 // Defined if April Tag is build and available.
 #cmakedefine VISP_HAVE_APRILTAG
 
+// Defined if big AprilTag family must be disabled.
+#cmakedefine VISP_DISABLE_APRILTAG_BIG_FAMILY
+
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
+
+// Defined if pugixml is build and available.
+#cmakedefine VISP_HAVE_PUGIXML
 
 // Defined if XML2 library available.
 #cmakedefine VISP_HAVE_XML2
@@ -179,10 +185,22 @@
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3
 
+// Defined if Intel MKL library available
+#cmakedefine VISP_HAVE_MKL
+
+// Defined if OpenBLAS library available
+#cmakedefine VISP_HAVE_OPENBLAS
+
+// Defined if Atlas library available
+#cmakedefine VISP_HAVE_ATLAS
+
+// Defined if LAPACK Netlib library available (-lblas -llapack)
+#cmakedefine VISP_HAVE_LAPACK_NETLIB
+
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 
-// Defined if lapack/blas libraries are available (-lblas -llapack)
+// Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas, Netlib or built-in)
 #cmakedefine VISP_HAVE_LAPACK
 // To keep compat with previous versions
 #ifdef VISP_HAVE_LAPACK
@@ -354,8 +372,13 @@
 #cmakedefine VISP_HAVE_VIPER850_DATA
 #define VISP_VIPER850_DATA_PATH "${VISP_VIPER850_DATA_PATH}"
 
-// Defined if Franka Emika robot available.
+// Defined if libfranka from Franka Emika available to control Panda robot.
 #cmakedefine VISP_HAVE_FRANKA
+
+// libfranka version in hexadecimal (for example 0.5.0 gives 0x000500).
+#ifdef VISP_HAVE_FRANKA
+#  define VISP_HAVE_FRANKA_VERSION ${VISP_HAVE_FRANKA_VERSION}
+#endif
 
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.
@@ -363,6 +386,9 @@
 
 // Defined if Haption Virtuose SDK available.
 #cmakedefine VISP_HAVE_VIRTUOSE
+
+// Defined if qbdevice api from qb-robotics available.
+#cmakedefine VISP_HAVE_QBDEVICE
 
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
@@ -383,11 +409,22 @@
 // other interaction matrices
 #cmakedefine VISP_MOMENTS_COMBINE_MATRICES
 
-//Defined if we want to use openmp
+// Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
-//Defined if we want to use c++ 11
-#cmakedefine VISP_HAVE_CPP11_COMPATIBILITY
+// Define c++ standard values also available in __cplusplus when gcc is used
+#define VISP_CXX_STANDARD_98 ${VISP_CXX_STANDARD_98}
+#define VISP_CXX_STANDARD_11 ${VISP_CXX_STANDARD_11}
+#define VISP_CXX_STANDARD_14 ${VISP_CXX_STANDARD_14}
+#define VISP_CXX_STANDARD_17 ${VISP_CXX_STANDARD_17}
+
+#define VISP_CXX_STANDARD ${VISP_CXX_STANDARD}
+
+// Defined to keep compat with previous releases when c++ 11 available
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#  define VISP_HAVE_CXX11
+#  define VISP_HAVE_CPP11_COMPATIBILITY
+#endif
 
 // Defined if isnan macro is available
 #cmakedefine VISP_HAVE_FUNC_ISNAN

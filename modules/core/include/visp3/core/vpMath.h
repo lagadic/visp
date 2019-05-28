@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,12 @@
 #include <algorithm>
 #include <climits>
 #include <limits>
+#if defined(_WIN32)
+// Define _USE_MATH_DEFINES before including <math.h> to expose these macro
+// definitions for common math constants.  These are placed under an #ifdef
+// since these commonly-defined names are not part of the C or C++ standards
+#  define _USE_MATH_DEFINES
+#endif
 #include <math.h>
 #include <vector>
 

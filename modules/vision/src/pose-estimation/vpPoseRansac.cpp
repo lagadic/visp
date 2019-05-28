@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
 
-#if defined(VISP_HAVE_CPP11_COMPATIBILITY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <thread>
 #endif
 
@@ -244,13 +244,12 @@ bool vpPose::RansacFunctor::poseRansacImpl()
         r = r_dementhon;
         cMo_tmp = cMo_dementhon;
       }
-      r = sqrt(r) / (double)nbMinRandom;
-
+      r = sqrt(r) / (double)nbMinRandom; // FS should be r = sqrt(r / (double)nbMinRandom);
       // Filter the pose using some criterion (orientation angles,
       // translations, etc.)
       bool isPoseValid = true;
       if (m_func != NULL) {
-        isPoseValid = m_func(&cMo_tmp);
+        isPoseValid = m_func(cMo_tmp);
         if (isPoseValid) {
           m_cMo = cMo_tmp;
         }
@@ -309,7 +308,7 @@ bool vpPose::RansacFunctor::poseRansacImpl()
     }
   }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   if (m_nbInliers >= m_ransacNbInlierConsensus)
     m_abort = true;
 #endif
@@ -330,7 +329,7 @@ bool vpPose::RansacFunctor::poseRansacImpl()
   The number of threads used can then be set with \e setNbParallelRansacThreads
   Filter flag can be used  with \e setRansacFilterFlag
 */
-bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *))
+bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
   // Check only for adding / removing problem
   // Do not take into account problem with element modification here
@@ -394,15 +393,15 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatr
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
-  bool executeParallelVersion = useParallelRansac;
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   unsigned int nbThreads = 1;
+  bool executeParallelVersion = useParallelRansac;
 #else
-  executeParallelVersion = false;
+  bool executeParallelVersion = false;
 #endif
 
   if (executeParallelVersion) {
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     if (nbParallelRansacThreads <= 0) {
       // Get number of CPU threads
       nbThreads = std::thread::hardware_concurrency();
@@ -417,7 +416,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatr
   bool foundSolution = false;
 
   if (executeParallelVersion) {
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<std::thread> threadpool;
     std::vector<RansacFunctor> ransacWorkers;
     const unsigned int nthreads = std::thread::hardware_concurrency();
@@ -462,12 +461,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatr
 #endif
   } else {
     // Sequential RANSAC
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::atomic<bool> abort{false};
 #endif
     RansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
                                    checkDegeneratePoints, listOfUniquePoints, func
-                               #ifdef VISP_HAVE_CPP11_COMPATIBILITY
+                               #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
                                    , abort
                                #endif
                                    );
@@ -567,7 +566,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatr
         // In some rare cases, the final pose could not respect the pose
         // criterion even  if the 4 minimal points picked respect the pose
         // criterion.
-        if (func != NULL && !func(&cMo)) {
+        if (func != NULL && !func(cMo)) {
           return false;
         }
 
@@ -667,12 +666,15 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
   numberOfInlierToReachAConsensus and \e threshold cannot be found.
   \param useParallelRansac : If true, use parallel RANSAC version (if C++11 is available).
   \param nthreads : Number of threads to use, if 0 the number of CPU threads will be determined.
+  \param func : Pointer to a function that takes in parameter a vpHomogeneousMatrix and returns
+  true if the pose check is OK or false otherwise
 */
 void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                        const int &maxNbTrials,
-                       const bool useParallelRansac, const unsigned int nthreads)
+                       const bool useParallelRansac, const unsigned int nthreads,
+                       bool (*func)(const vpHomogeneousMatrix &))
 {
   vpPose pose;
 
@@ -701,7 +703,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
     pose.setRansacMaxTrials(maxNbTrials);
     pose.setRansacNbInliersToReachConsensus(numberOfInlierToReachAConsensus);
     pose.setRansacThreshold(threshold);
-    pose.computePose(vpPose::RANSAC, cMo);
+    pose.computePose(vpPose::RANSAC, cMo, func);
     ninliers = pose.getRansacNbInliers();
     listInliers = pose.getRansacInliers();
   }

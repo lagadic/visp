@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@
   \brief File and directories basic tools.
 */
 #include <algorithm>
+#include <cctype>
+#include <functional>
 #include <cmath>
 #include <errno.h>
 #include <fcntl.h>
@@ -62,11 +64,11 @@
 #include <windows.h>
 #endif
 #if !defined(_WIN32)
-	#ifdef __ANDROID__
-	// Like IOS, wordexp.cpp is not defined for Android
-	#else
-	#include <wordexp.h>
-	#endif
+  #ifdef __ANDROID__
+  // Like IOS, wordexp.cpp is not defined for Android
+  #else
+  #include <wordexp.h>
+  #endif
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
@@ -110,6 +112,9 @@
     // It appears that all Android systems are little endian.
     // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
 #define VISP_LITTLE_ENDIAN
+#elif defined(WINRT) // For UWP
+// Refer https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
+#define VISP_LITTLE_ENDIAN
 #else
 #error Cannot detect host machine endianness.
 #endif
@@ -122,8 +127,10 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
 namespace
 {
-#if TARGET_OS_IOS == 0 // The following code is not working on iOS since
-                       // wordexp() is not available
+// The following code is not working on iOS since wordexp() is not available
+// The function is not used on Android
+#if defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#if (TARGET_OS_IOS == 0) && !defined(__ANDROID__)
 void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
   size_t start_pos = 0;
@@ -133,6 +140,7 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
                                    // substring of 'search'
   }
 }
+#endif
 #endif
 
 #ifdef VISP_BIG_ENDIAN
@@ -189,6 +197,18 @@ double swapDouble(const double d)
   return dat2.d;
 }
 #endif
+
+std::string &ltrim(std::string &s)
+{
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+  return s;
+}
+
+std::string &rtrim(std::string &s)
+{
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+  return s;
+}
 }
 
 /*!
@@ -232,15 +252,13 @@ std::string vpIoTools::getFullName() { return baseDir + baseName; }
 
   - Under unix, get the content of the LOGNAME environment variable.  For most
     purposes (especially in conjunction with crontab), it is more useful to
-  use the environment variable LOGNAME to find out who the user is, rather
-  than the getlogin() function.  This is more flexible precisely because the
-  user can set LOGNAME arbitrarily.
+    use the environment variable LOGNAME to find out who the user is, rather
+    than the getlogin() function.  This is more flexible precisely because the
+    user can set LOGNAME arbitrarily.
   - Under windows, uses the GetUserName() function.
 
-  \param username : The user name.
-
-  \exception vpIoException::cantGetUserName : If this method cannot get the
-  user name.
+  \param username : The user name. When the username cannot be retrieved, set \e username to
+  "unknown" string.
 
   \sa getUserName()
 */
@@ -252,10 +270,11 @@ void vpIoTools::getUserName(std::string &username)
   char *_username = NULL;
   _username = ::getenv("LOGNAME");
   if (_username == NULL) {
-    vpERROR_TRACE("Cannot get the username. Check your LOGNAME environment variable");
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
+    username = "unknown";
   }
-  username = _username;
+  else {
+    username = _username;
+  }
 #elif defined(_WIN32)
 #if (!defined(WINRT))
   unsigned int info_buffer_size = 1024;
@@ -269,9 +288,11 @@ void vpIoTools::getUserName(std::string &username)
   username = infoBuf;
   delete[] infoBuf;
 #else
-  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal "
-                                                      "Windows Platform"));
+  // Universal platform
+  username = "unknown";
 #endif
+#else
+  username = "unknown";
 #endif
 }
 /*!
@@ -948,18 +969,18 @@ std::string vpIoTools::path(const char *pathname)
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
                        // wordexp() is not available
-	#ifdef __ANDROID__
-	// Do nothing
-	#else
-	  wordexp_t exp_result;
+  #ifdef __ANDROID__
+  // Do nothing
+  #else
+    wordexp_t exp_result;
 
-	  // escape quote character
-	  replaceAll(path, "'", "'\\''");
-	  // add quotes to handle special characters like parentheses and spaces
-	  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
-	  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
-	  wordfree(&exp_result);
-	#endif
+    // escape quote character
+    replaceAll(path, "'", "'\\''");
+    // add quotes to handle special characters like parentheses and spaces
+    wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
+    path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
+    wordfree(&exp_result);
+  #endif
 #endif
 #endif
 
@@ -1009,11 +1030,11 @@ bool vpIoTools::loadConfigFile(const std::string &confFile)
           // look for the end of the actual value
           c = 200;
           for (unsigned i = 0; i < 3; ++i)
-            c = vpMath::minimum(c, (int)line.find(stop[i], k + 1));
+            c = vpMath::minimum(c, (int)line.find(stop[i], (size_t)k + (size_t)1));
           if (c == -1)
             c = (int)line.size();
           long unsigned int c_ = (long unsigned int)c;
-          val = line.substr(k + 1, c_ - k - 1);
+          val = line.substr((size_t)(k) + (size_t)(1), (size_t)c_ - (size_t)k - (size_t)1);
           configVars.push_back(var);
           configValues.push_back(val);
         } catch (...) {
@@ -1350,11 +1371,29 @@ std::string vpIoTools::getViSPImagesDataPath()
    extension. If checkFile flag is set, it will check first if the pathname
    denotes a directory and so return an empty string and second it will check
    if the file denoted by the pathanme exists. If so, it will return the
-   extension if present. \param pathname : The pathname of the file we want to
-   get the extension. \param checkFile : If true, the file must exist
-   otherwise an empty string will be returned. \return The extension of the
-   file or an empty string if the file has no extension. or if the pathname is
+   extension if present.
+
+   \param pathname : The pathname of the file we want to get the extension.
+   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the pathname is
    empty.
+
+   The following code shows how to use this function:
+   \code
+#include <visp3/core/vpIoTools.h>
+
+int main()
+{
+  std::string filename = "my/path/to/file.xml"
+  std::string ext = vpIoTools::getFileExtension(opt_learning_data);
+  std::cout << "ext: " << ext << std::endl;
+}
+   \endcode
+   It produces the following output:
+   \code
+ext: .xml
+   \endcode
+
  */
 std::string vpIoTools::getFileExtension(const std::string &pathname, const bool checkFile)
 {
@@ -1416,7 +1455,7 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, const bool 
       if (sepIndex == (int)std::string::npos) {
         sepIndex = -1;
       }
-      size_t filenameIndex = (size_t)(sepIndex + 1);
+      size_t filenameIndex = (size_t)(sepIndex) + (size_t)(1);
 
       while (filenameIndex < dotIndex) {
         if (pathname.compare(filenameIndex, 1, extsep) != 0) {
@@ -2014,4 +2053,23 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const double double_valu
 #else
   file.write((char *)(&double_value), sizeof(double_value));
 #endif
+}
+
+bool vpIoTools::parseBoolean(std::string input)
+{
+  std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+  std::istringstream is(input);
+  bool b;
+  // Parse string to boolean either in the textual representation
+  // (True/False)  or in numeric representation (1/0)
+  is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
+  return b;
+}
+
+/*!
+   Remove whitespaces on both sides.
+ */
+std::string vpIoTools::trim(std::string s)
+{
+  return ltrim(rtrim(s));
 }

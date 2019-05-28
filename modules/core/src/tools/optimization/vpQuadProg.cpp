@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpQuadProg.h>
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 /*!
 Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
@@ -190,7 +190,7 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
     if(!vpLinProg::colReduction(A, b, false, tol))
       return false;
 
-    if(A.getCols())
+    if(A.getCols() && (Q*A).infinityNorm() > tol)
       x = b + A*(Q*A).solveBySVD(r - Q*b);
     else
       x = b;
@@ -206,10 +206,11 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2 \\
                & \text{s.t.}& \mathbf{A}\mathbf{x} = \mathbf{b}\end{array}
-\f$
+  \f$
   \param Q : cost matrix (dimension c x n)
   \param r : cost vector (dimension c)
   \param x : solution (dimension n)
+  \param tol : Tolerance.
 
   \return True if the solution was found.
 
@@ -252,7 +253,7 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
   \sa setEqualityConstraint(), solveQPe()
 */
 bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
-                           vpColVector &x) const
+                           vpColVector &x, const double &tol) const
 {
   const unsigned int n = Q.getCols();
   if(Q.getRows() != r.getRows() ||
@@ -265,7 +266,12 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
     throw vpMatrixException::dimensionError;
   }
   if(Z.getCols())
-    x = x1 + Z*(Q*Z).solveBySVD(r - Q*x1);
+  {
+    if((Q*Z).infinityNorm() > tol)
+      x = x1 + Z*(Q*Z).solveBySVD(r - Q*x1);
+    else
+      x = x1;
+  }
   else
     x = Q.solveBySVD(r);
   return true;
@@ -512,15 +518,16 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   }
 
   // warm start from previous active set
-  A.resize(active.size(), n);
-  b.resize(active.size());
+  A.resize((unsigned int)active.size(), n);
+  b.resize((unsigned int)active.size());
   for(unsigned int i = 0; i < active.size(); ++i)
   {
     for(unsigned int j = 0; j < n; ++j)
       A[i][j] = C[active[i]][j];
     b[i] = d[active[i]];
   }
-  solveByProjection(Q, r, A, b, x, tol);
+  if(!solveByProjection(Q, r, A, b, x, tol))
+    x.resize(n);
 
   // or from simplex if we really have no clue
   if(!vpLinProg::allLesser(C, x, d, tol))
@@ -548,7 +555,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
     vpColVector xc(2*n+p+k);
 
     vpMatrix A_lp(p, 2*n+p+k);
-    int l = 0;
+    unsigned int l = 0;
     for(unsigned int i = 0; i < p; ++i)
     {
       // copy [C -C] part
@@ -615,8 +622,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   // solve at one iteration
   while (true)
   {
-    A.resize(active.size(), n);
-    b.resize(active.size());
+    A.resize((unsigned int)active.size(), n);
+    b.resize((unsigned int)active.size());
     for(unsigned int i = 0; i < active.size(); ++i)
     {
       for(unsigned int j = 0; j < n; ++j)
@@ -636,7 +643,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
     if(vpLinProg::allZero(u, tol))
     {
       // compute multipliers if any
-      unsigned int ineqInd = active.size();
+      unsigned int ineqInd = (unsigned int)active.size();
       if(active.size())
       {
         mu = -Ap.transpose() * Q.transpose() * (Q*u - g);
@@ -703,7 +710,6 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
       g -= alpha*Q*u;
     }
   }
-  return true;
 }
 #else
 void dummy_vpQuadProg(){};

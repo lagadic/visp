@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #
 # Description:
 # Try to find Intel RealSense SDK to work with R200, F200 and SR300 devices.
-# Once run this will define: 
+# Once run this will define:
 #
 # REALSENSE2_FOUND
 # REALSENSE2_INCLUDE_DIRS
@@ -51,7 +51,7 @@ if(MSVC)
 
   list(APPEND REALSENSE2_LIB_SEARCH_PATH $ENV{REALSENSE2_HOME}/lib)
   list(APPEND REALSENSE2_LIB_SEARCH_PATH $ENV{REALSENSE2_DIR}/lib)
-  
+
   if(CMAKE_CL_64)
     list(APPEND REALSENSE2_LIB_SEARCH_PATH "C:/Program Files (x86)/Intel RealSense SDK 2.0/lib/x64")
   else()
@@ -65,6 +65,8 @@ else()
   list(APPEND REALSENSE2_LIB_SEARCH_PATH $ENV{REALSENSE2_HOME}/lib)
   list(APPEND REALSENSE2_INC_SEARCH_PATH $ENV{REALSENSE2_DIR}/include)
   list(APPEND REALSENSE2_LIB_SEARCH_PATH $ENV{REALSENSE2_DIR}/lib)
+  list(APPEND REALSENSE2_INC_SEARCH_PATH ${REALSENSE2_DIR}/include)
+  list(APPEND REALSENSE2_LIB_SEARCH_PATH ${REALSENSE2_DIR}/lib)
 endif()
 
 find_path(REALSENSE2_INCLUDE_DIRS librealsense2/rs.hpp
@@ -85,7 +87,7 @@ if(REALSENSE2_LIBRARIES AND REALSENSE2_INCLUDE_DIRS)
 else()
   set(REALSENSE2_FOUND FALSE)
 endif()
-  
+
 mark_as_advanced(
   REALSENSE2_INCLUDE_DIRS
   REALSENSE2_LIBRARIES

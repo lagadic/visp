@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -686,14 +686,12 @@ void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomog
                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
-  if ((m_polygon->isVisible() && m_isTrackedDepthDenseFace) || displayFullModel) {
-    computeVisibilityDisplay();
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
-    for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
-         ++it) {
-      vpMbtDistanceLine *line = *it;
-      line->display(I, cMo, cam, col, thickness, displayFullModel);
-    }
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
   }
 }
 
@@ -701,14 +699,12 @@ void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                   const bool displayFullModel)
 {
-  if ((m_polygon->isVisible() && m_isTrackedDepthDenseFace) || displayFullModel) {
-    computeVisibilityDisplay();
+  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
-    for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
-         ++it) {
-      vpMbtDistanceLine *line = *it;
-      line->display(I, cMo, cam, col, thickness, displayFullModel);
-    }
+  for (size_t i = 0; i < models.size(); i++) {
+    vpImagePoint ip1(models[i][1], models[i][2]);
+    vpImagePoint ip2(models[i][3], models[i][4]);
+    vpDisplay::displayLine(I, ip1, ip2, col, thickness);
   }
 }
 
@@ -722,6 +718,38 @@ void vpMbtFaceDepthDense::displayFeature(const vpImage<vpRGBa> & /*I*/, const vp
                                          const vpCameraParameters & /*cam*/, const double /*scale*/,
                                          const unsigned int /*thickness*/)
 {
+}
+
+/*!
+  Return a list of line parameters to display the primitive at a given pose and camera parameters.
+  - Parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`
+
+  \param width : Image width.
+  \param height : Image height.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<std::vector<double> > vpMbtFaceDepthDense::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                          const vpHomogeneousMatrix &cMo,
+                                                                          const vpCameraParameters &cam,
+                                                                          const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
+  if ((m_polygon->isVisible() && m_isTrackedDepthDenseFace) || displayFullModel) {
+    computeVisibilityDisplay();
+
+    for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
+         ++it) {
+      vpMbtDistanceLine *line = *it;
+      std::vector<std::vector<double> > lineModels = line->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+      models.insert(models.end(), lineModels.begin(), lineModels.end());
+    }
+  }
+
+  return models;
 }
 
 /*!

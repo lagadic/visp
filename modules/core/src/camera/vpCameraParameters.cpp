@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -409,7 +409,7 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const {
 
   std::vector<vpColVector>::const_iterator it1 = fovNormals.begin();
   std::vector<vpColVector>::const_iterator it2 = c.fovNormals.begin();
-  for (; it1 != fovNormals.end() && it2 != c.fovNormals.end(); it1++, it2++) {
+  for (; it1 != fovNormals.end() && it2 != c.fovNormals.end(); ++it1, ++it2) {
     if (*it1 != *it2)
       return false;
   }

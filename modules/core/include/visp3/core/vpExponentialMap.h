@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,35 +55,37 @@
 
   \brief Direct or inverse exponential map computation.
 
-  The exponential map is the relationship between the velocity of a moving
-  body and its pose. The exponential map transforms exponentially the velocity
-  skew vector \f$ \bf v \f$ applied during a given time \f$\Delta t\f$ to its
-  corresponding pose. The exponential map is usually written using homogeneous
-  matrices as:
+  The exponential map gives the relationship between the velocity of a moving
+  body and its displacement:
 
-  \f[ {\bf M}_{t+\Delta t} = {\bf M}_{t} \exp^{({\bf v}, \Delta t)} \f]
-  where \f${\bf M}_{t}\f$ is a pose before applied velocity and
-  \f${\bf M}_{t+1}\f$ the result.
+  \f[ \exp({^c}{\bf v}_c) = {^{c(t)}}{\bf M}_{c(t+\Delta t)} \f]
+
+  where \f$ {^c}{\bf v}_c\f$ is the velocity skew vector applied during \f$\Delta t\f$
+  seconds at point \f$ c \f$ in frame \f$ c \f$, while \f$ {^{c(t)}}{\bf M}_{c(t+\Delta t)} \f$
+  is the corresponding displacement.
 
   This class allows to compute the direct or the inverse exponential map.
 
-  - The direct exponential map allows to determine the displacement
-    \f$ \exp^{({\bf v}, \Delta t)} \f$ from a velocity vector skew \f$ \bf v
-  \f$ applied during a sampling time \f$\Delta t\f$. With direct() the
-  sampling time is set to 1 second. With direct(const vpColVector &, const
-  double &) the sampling time can be set to an other value where the second
-  argument is \f$ \Delta t \f$.
+  - The direct exponential map allows to compute the displacement
+    \f${^{c(t)}}{\bf M}_{c(t+\Delta t)}\f$ using \f${^c}{\bf v}_c\f$ as input:
+    \f[ {^{o}}{\bf M}_{c(t+\Delta t)} = {^{o}}{\bf M}_{c(t)} \exp({^c}{\bf v}_c) \f]
+    where \f$ o \f$ is a reference frame.
+    With direct(), the velocity skew vector \f$ {^c}{\bf v}_c \f$ is applied during 1 second
+    considering \f$ \Delta t = 1\f$. With direct(const vpColVector &, const double &)
+    the sampling time can be set to an other value where the second
+    argument is \f$ \Delta t \f$.
 
-  - The inverse exponential map allows to compute a velocity skew vector \f$
-  \bf v \f$ from a displacement measured during a time interval \f$ \Delta t
-  \f$. With inverse() the time interval also called sampling time is set to 1
-  second. With inverse(const vpHomogeneousMatrix &, const double &) the
-  sampling time can be set to an other value where the second argument is \f$
-  \Delta t \f$.
+  - The inverse exponential map allows to compute the velocity skew vector \f$
+    \bf {^c}{\bf v}_c \f$ from the displacement \f$ {^{c(t)}}{\bf M}_{c(t+\Delta t)}\f$
+    measured during a time interval \f$ \Delta t \f$. With inverse() the time interval
+    also called sampling time is set to 1 second. With
+    inverse(const vpHomogeneousMatrix &, const double &) the sampling time can
+    be set to an other value where the second
+    argument is \f$ \Delta t \f$.
 
-  The displacement is represented as an homogeneous matrix implemented in
-  vpHomogeneousMatrix. Velocities \f$ \bf v \f$ are represented as a
-  velocity skew 6 dimension vector \f$ [v, \omega] \f$, where \f$ v \f$
+  A displacement \f$ \bf M \f$ is represented as an homogeneous matrix implemented in
+  vpHomogeneousMatrix. A velocities \f$ \bf v \f$ is represented as a
+  6 dimension velocity skew vector \f$ [v, \omega] \f$, where \f$ v \f$
   is a velocity translation vector with values in m/s and \f$ \omega \f$ a
   velocity rotation vector with values expressed in rad/s.
 

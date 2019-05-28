@@ -1,0 +1,22 @@
+V1
+################################################
+# Construct a square made with 4 2x4 lego bricks
+# 2x4 brick size is 0.032m/0.016m/0.0096m
+################################################
+load("lego_parts/brick-2x4.cao")
+load("lego_parts/brick-2x4.cao", t=[0.048; 0.0; 0.0], tu=[0; 0; 90 deg]) # 0.048=0.032+0.016
+load("lego_parts/brick-2x4.cao", t=[0.016; 0.032; 0.0])
+load("lego_parts/brick-2x4.cao", t=[0.016; 0.016; 0.0], tu=[0; 0; 1.57 rad])
+###############################################
+# 3D points
+0                    # No 3D points
+# 3D lines
+0                    # No 3D lines
+# 3D faces from lines
+0                    # No 3D faces from lines
+# 3D faces from points
+0                    # No 3D faces from points
+# 3D cylinders
+0                    # No 3D cylinders
+# 3D circle
+0                    # No 3D circle

@@ -1,7 +1,7 @@
 @rem #############################################################################
 @rem #
-@rem # This file is part of the ViSP software.
-@rem # Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+@rem # ViSP, open source Visual Servoing Platform software.
+@rem # Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 @rem #
 @rem # This software is free software; you can redistribute it and/or modify
 @rem # it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ for %%a in (%*) do (
   if "%%a" == "--version" (
 	echo ViSP %VERSION% Visual Servoing Platform
 	echo.
-	echo Copyright 2005 - 2017 Inria. All rights reserved.
+	echo Copyright 2005 - 2019 Inria. All rights reserved.
 	goto END
   )
   if "%%a" == "--dumpversion" (
@@ -115,7 +115,7 @@ for %%a in (%*) do (
 
 :USAGE
 echo ViSP %VERSION% (Visual Servoing Platform)
-echo Copyright (C) 2005 - 2017 Inria. All rights reserved.
+echo Copyright (C) 2005 - 2019 Inria. All rights reserved.
 echo.
 echo Usage: %0 [--prefix] [--def] [--include] [--openmp] [--libpath] 
 echo [--libs-debug] [--libs-optimized] [--version] [--dumpversion] [--help]

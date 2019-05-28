@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMbDepthDenseTracker_h_
-#define __vpMbDepthDenseTracker_h_
+#ifndef _vpMbDepthDenseTracker_h_
+#define _vpMbDepthDenseTracker_h_
 
 #include <visp3/core/vpPlane.h>
 #include <visp3/mbt/vpMbTracker.h>
@@ -58,6 +58,11 @@ public:
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   virtual inline vpColVector getError() const { return m_error_depthDense; }
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
 
   virtual inline vpColVector getRobustWeights() const { return m_w_depthDense; }
 
@@ -95,6 +100,7 @@ public:
   virtual void setOgreVisibilityTest(const bool &v);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 #ifdef VISP_HAVE_PCL
   virtual void setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const vpHomogeneousMatrix &cdMo);
 #endif
@@ -106,6 +112,7 @@ public:
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &);
+  virtual void track(const vpImage<vpRGBa> &);
 #ifdef VISP_HAVE_PCL
   virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
@@ -114,8 +121,6 @@ public:
 protected:
   //! Set of faces describing the object used only for display with scan line.
   vpMbHiddenFaces<vpMbtPolygon> m_depthDenseHiddenFacesDisplay;
-  //! Dummy image used to compute the visibility
-  vpImage<unsigned char> m_depthDenseI_dummyVisibility;
   //! List of current active (visible and features extracted) faces
   std::vector<vpMbtFaceDepthDense *> m_depthDenseListOfActiveFaces;
   //! Nb features

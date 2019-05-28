@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __VP_SUB_ROW_VECTOR__
-#define __VP_SUB_ROW_VECTOR__
+#ifndef _vpSubRowVector_h_
+#define _vpSubRowVector_h_
 
 #include <visp3/core/vpRowVector.h>
 

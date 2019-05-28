@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@
 #     include(${VISP_USE_FILE})
 #   endif()
 #
-# Or you can search for specific OpenCV modules:
+# Or you can search for specific ViSP modules:
 #
 #   find_package(VISP REQUIRED core io)
 #
@@ -191,13 +191,20 @@ set(VISP_HAVE_AFMA4          "@VISP_HAVE_AFMA4@")
 set(VISP_HAVE_AFMA6          "@VISP_HAVE_AFMA6@")
 set(VISP_HAVE_APRILTAG       "@VISP_HAVE_APRILTAG@")
 set(VISP_HAVE_ATIDAQ         "@VISP_HAVE_ATIDAQ@")
+set(VISP_HAVE_ATLAS          "@VISP_HAVE_ATLAS@")
 set(VISP_HAVE_BICLOPS        "@VISP_HAVE_BICLOPS@")
 set(VISP_HAVE_CLIPPER        "@VISP_HAVE_CLIPPER@")
 set(VISP_HAVE_CMU1394        "@VISP_HAVE_CMU1394@")
 set(VISP_HAVE_COIN3D         "@VISP_HAVE_COIN3D@")
 set(VISP_HAVE_COIN3D_AND_GUI "@VISP_HAVE_COIN3D_AND_GUI@")
 set(VISP_HAVE_COMEDI         "@VISP_HAVE_COMEDI@")
-set(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CPP11_COMPATIBILITY@")
+set(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CXX11@") # to keep compat with previous releases
+set(VISP_HAVE_CXX11          "@VISP_HAVE_CXX11@")
+set(VISP_CXX_STANDARD_98     "@VISP_CXX_STANDARD_98@")
+set(VISP_CXX_STANDARD_11     "@VISP_CXX_STANDARD_11@")
+set(VISP_CXX_STANDARD_14     "@VISP_CXX_STANDARD_14@")
+set(VISP_CXX_STANDARD_17     "@VISP_CXX_STANDARD_17@")
+set(VISP_CXX_STANDARD        "@VISP_CXX_STANDARD@")
 set(VISP_HAVE_D3D9           "@VISP_HAVE_D3D9@")
 set(VISP_HAVE_DC1394         "@VISP_HAVE_DC1394@")
 set(VISP_HAVE_DIRECTSHOW     "@VISP_HAVE_DIRECTSHOW@")
@@ -213,12 +220,15 @@ set(VISP_HAVE_JPEG           "@VISP_HAVE_JPEG@")
 set(VISP_HAVE_LAPACK         "@VISP_HAVE_LAPACK@")
 set(VISP_HAVE_LAPACK_C       "@VISP_HAVE_LAPACK_C@")
 set(VISP_HAVE_LAPACK_BUILT_IN "@VISP_HAVE_LAPACK_BUILT_IN@")
+set(VISP_HAVE_LAPACK_NETLIB  "@VISP_HAVE_LAPACK_NETLIB@")
 set(VISP_HAVE_LIBFREENECT    "@VISP_HAVE_LIBFREENECT@")
 set(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES "@VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES@")
 set(VISP_HAVE_LIBFREENECT_OLD "@VISP_HAVE_LIBFREENECT_OLD@")
 set(VISP_HAVE_LIBUSB_1       "@VISP_HAVE_LIBUSB_1@")
+set(VISP_HAVE_MKL            "@VISP_HAVE_MKL@")
 set(VISP_HAVE_OGRE           "@VISP_HAVE_OGRE@")
 set(VISP_HAVE_OIS            "@VISP_HAVE_OIS@")
+set(VISP_HAVE_OPENBLAS       "@VISP_HAVE_OPENBLAS@")
 set(VISP_HAVE_OPENCV         "@VISP_HAVE_OPENCV@")
 set(VISP_HAVE_OPENCV_NONFREE "@VISP_HAVE_OPENCV_NONFREE@")
 set(VISP_HAVE_OPENCV_VERSION "@VISP_HAVE_OPENCV_VERSION@")
@@ -230,7 +240,9 @@ set(VISP_HAVE_PIONEER        "@VISP_HAVE_PIONEER@")
 set(VISP_HAVE_PNG            "@VISP_HAVE_PNG@")
 set(VISP_HAVE_PTHREAD        "@VISP_HAVE_PTHREAD@")
 set(VISP_HAVE_PTU46          "@VISP_HAVE_PTU46@")
+set(VISP_HAVE_PUGIXML        "@VISP_HAVE_PUGIXML@")
 set(VISP_HAVE_PYLON          "@VISP_HAVE_PYLON@")
+set(VISP_HAVE_QBDEVICE       "@VISP_HAVE_QBDEVICE@")
 set(VISP_HAVE_QT             "@VISP_HAVE_QT@")
 set(VISP_HAVE_REALSENSE      "@VISP_HAVE_REALSENSE@")
 set(VISP_HAVE_REALSENSE2     "@VISP_HAVE_REALSENSE2@")
@@ -265,11 +277,40 @@ set(VISP_COMPILER_FAIL_REGEX
   )
 
 #----------------------------------------------------------------------
-# Propagate cxx11 compiler option if enabled during ViSP build
+# Propagate c++ standard compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
-if(VISP_HAVE_CPP11_COMPATIBILITY)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} @CPP11_CXX_FLAGS@")
+if(${VISP_CXX_STANDARD} EQUAL ${VISP_CXX_STANDARD_11})
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
+  if(NOT CMAKE_CXX11_COMPILE_FEATURES)
+    set(CXX11_CXX_FLAGS @CXX11_CXX_FLAGS@)
+    if(CXX11_CXX_FLAGS)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_CXX_FLAGS}")
+    endif()
+  endif()
+elseif(${VISP_CXX_STANDARD} EQUAL ${VISP_CXX_STANDARD_14})
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++14 instead of -std=gnu++14
+  if(NOT CMAKE_CXX14_COMPILE_FEATURES)
+    set(CXX14_CXX_FLAGS @CXX14_CXX_FLAGS@)
+    if(CXX14_CXX_FLAGS)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX14_CXX_FLAGS}")
+    endif()
+  endif()
+elseif(${VISP_CXX_STANDARD} EQUAL ${VISP_CXX_STANDARD_17})
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++17 instead of -std=gnu++17
+  if(NOT CMAKE_CXX17_COMPILE_FEATURES)
+    set(CXX14_CXX_FLAGS @CXX14_CXX_FLAGS@)
+    if(CXX17_CXX_FLAGS)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX17_CXX_FLAGS}")
+    endif()
+  endif()
 endif()
+
 #----------------------------------------------------------------------
 # Propagate openmp compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
@@ -278,11 +319,13 @@ if(VISP_HAVE_OPENMP)
 endif()
 
 #----------------------------------------------------------------------
-# Propagate c++14 option requested with libfranka
+# Propagate -fPIC option requested with Qt5 that requires position independent
+# code if Qt was built with -reduce-relocations.
 #----------------------------------------------------------------------
-if(VISP_HAVE_FRANKA)
-  set(CMAKE_CXX_STANDARD 14)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(UNIX)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # Is needed for ANDROID too.
+  endif()
 endif()
 
 #----------------------------------------------------------------------
@@ -299,8 +342,8 @@ macro(visp_add_target file_cpp)
   include_directories(${VISP_INCLUDE_DIRS})
   add_executable(${target} ${file_cpp} ${ARGN})
   target_link_libraries(${target} ${VISP_LIBRARIES})
-    if(POLICY CMP0020)
-  cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+  if(POLICY CMP0020)
+    cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
   endif()
 endmacro()
 
@@ -321,12 +364,10 @@ endmacro()
 if (CMAKE_VERSION VERSION_GREATER 2.8.12)
   macro(visp_copy_data file_cpp file_data)
     get_filename_component(target ${file_cpp} NAME_WE)
-    #get_target_property(target_location ${target} LOCATION)
     get_filename_component(target_location "${target_location}" PATH)
     add_custom_command(
       TARGET ${target}
       POST_BUILD
-      #COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "${target_location}"
       COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "$<TARGET_FILE_DIR:${target}>"
     )
   endmacro()
@@ -339,6 +380,32 @@ else()
       TARGET ${target}
       POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "${target_location}"
+    )
+  endmacro()
+endif()
+
+# Copy the data files to the same location than the target associated to the cpp files
+# Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
+# If CMake 3.0.0 is used, we use $<TARGET_FILE_DIR:tgt> to get the target location
+if (CMAKE_VERSION VERSION_GREATER 2.8.12)
+  macro(visp_copy_dir file_cpp root_dir rel_dir)
+    get_filename_component(target ${file_cpp} NAME_WE)
+    get_filename_component(target_location "${target_location}" PATH)
+    add_custom_command(
+      TARGET ${target}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${root_dir}/${rel_dir}" "$<TARGET_FILE_DIR:${target}>/${rel_dir}"
+    )
+  endmacro()
+else()
+  macro(visp_copy_data file_cpp root_dir rel_dir)
+    get_filename_component(target ${file_cpp} NAME_WE)
+    get_target_property(target_location ${target} LOCATION)
+    get_filename_component(target_location "${target_location}" PATH)
+    add_custom_command(
+      TARGET ${target}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${root_dir}/${rel_dir}" "${target_location}/${rel_dir}"
     )
   endmacro()
 endif()
@@ -384,46 +451,66 @@ endmacro()
 macro(visp_set_source_file_compile_flag file)
 #  if(DEFINED ACTIVATE_WARNING_3PARTY_MUTE)
 #    if(ACTIVATE_WARNING_3PARTY_MUTE)
-      set(__cxxflags "")
-      foreach(cxxflag ${ARGN})
-        visp_check_flag_support(CXX ${cxxflag} __support_flag)
-        if(${__support_flag})
-          set(__cxxflags "${__cxxflags} ${cxxflag}")
-        endif()
-      endforeach()
-      if(NOT ${__cxxflags} STREQUAL "")
-        if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${file})
-          set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/${file} PROPERTIES COMPILE_FLAGS ${__cxxflags})
-        elseif(EXISTS ${file}) # for files that are in the build tree (like those produced by qt moc
-          set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/${file} PROPERTIES COMPILE_FLAGS ${__cxxflags})
-        endif()
-      endif()
+  set(__cxxflags "")
+  set(__lang "CXX")
+  if("${file}" MATCHES "\\.(c)$")
+    set(__lang "C")
+  elseif("${file}" MATCHES "\\.(cpp|cc|cxx)$")
+    set(__lang "CXX")
+  elseif("${file}" MATCHES "\\.(f|F)$")
+    set(__lang "Fortran")
+  endif()
+  # Since cxx11 option makes try_compile() result wrong, we remove all the CXX_FLAGS
+  # when we check if an option is available or not
+  #set(CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
+  #set(CMAKE_CXX_FLAGS "")
+  foreach(cxxflag ${ARGN})
+    visp_check_flag_support(${__lang} ${cxxflag} __support_flag "")
+    if(${__support_flag})
+      set(__cxxflags "${__cxxflags} ${cxxflag}")
+    endif()
+  endforeach()
+  #set(CMAKE_CXX_FLAGS ${CXX_FLAGS_BACKUP})
+  #unset(CXX_FLAGS_BACKUP)
+  if(NOT ${__cxxflags} STREQUAL "")
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${file}")
+      set_source_files_properties("${CMAKE_CURRENT_LIST_DIR}/${file}" PROPERTIES COMPILE_FLAGS "${__cxxflags}")
+    elseif(EXISTS ${file}) # for files that are in the build tree (like those produced by qt moc)
+      set_source_files_properties("${file}" PROPERTIES COMPILE_FLAGS "${__cxxflags}")
+    endif()
+  endif()
 #    endif()
 #  endif()
 endmacro()
 
 # check if a compiler flag is supported
-macro(visp_check_flag_support lang flag varname)
+macro(visp_check_flag_support lang flag varname base_options)
+  if(CMAKE_BUILD_TYPE)
+    set(CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_BUILD_TYPE})
+  endif()
+
   if("_${lang}_" MATCHES "_CXX_")
     set(_lang CXX)
   elseif("_${lang}_" MATCHES "_C_")
     set(_lang C)
+  elseif("_${lang}_" MATCHES "_Fortran_")
+    set(_lang Fortran)
   else()
     set(_lang ${lang})
   endif()
-
   string(TOUPPER "${flag}" ${varname})
   string(REGEX REPLACE "^(/|-)" "HAVE_${_lang}_" ${varname} "${${varname}}")
   string(REGEX REPLACE " -|-|=| |\\." "_" ${varname} "${${varname}}")
-
-  visp_check_compiler_flag("${_lang}" "${ARGN} ${flag}" ${${varname}})
+  visp_check_compiler_flag("${_lang}" "${base_options} ${flag}" ${${varname}} ${ARGN})
 endmacro()
 
 # test if a compiler flag is supported
 macro(visp_check_compiler_flag LANG FLAG RESULT)
+  set(_fname "${ARGN}")
   if(NOT DEFINED ${RESULT})
-
-    if("_${LANG}_" MATCHES "_CXX_")
+    if(_fname)
+      # nothing
+    elseif("_${LANG}_" MATCHES "_CXX_")
       set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx")
       #if("${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror " OR "${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror=unknown-pragmas ")
         file(WRITE "${_fname}" "int main() { return 0; }\n")
@@ -444,29 +531,46 @@ macro(visp_check_compiler_flag LANG FLAG RESULT)
       #else()
       #  file(WRITE "${_fname}" "#pragma\nint main() { return 0; }\n")
       #endif()
+    elseif("_${LANG}_" MATCHES "_Fortran_")
+      set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.f")
+      file(WRITE "${_fname}" "      PROGRAM TEST\n      RETURN\n      END\n")
     else()
       unset(_fname)
     endif()
     if(_fname)
-      # Since cxx11 option makes try_compile() result wrong, we remove all the CXX_FLAGS
-      # when we check if an option is available or not
-      set(CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
-      set(CMAKE_CXX_FLAGS "")
-      message(STATUS "Performing Test ${RESULT}")
+      if(NOT "x${ARGN}" STREQUAL "x")
+        file(RELATIVE_PATH __msg "${CMAKE_SOURCE_DIR}" "${ARGN}")
+        set(__msg " (check file: ${__msg})")
+      else()
+        set(__msg "")
+      endif()
+      message(STATUS "Performing Test ${RESULT}${__msg}")
       try_compile(${RESULT}
         "${CMAKE_BINARY_DIR}"
         "${_fname}"
+        CMAKE_FLAGS "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}"   # CMP0056 do this on new CMake
         COMPILE_DEFINITIONS "${FLAG}"
         OUTPUT_VARIABLE OUTPUT)
-      set(CMAKE_CXX_FLAGS ${CXX_FLAGS_BACKUP})
-      unset(CXX_FLAGS_BACKUP)
 
-      foreach(_regex ${VISP_COMPILER_FAIL_REGEX})
-        if("${OUTPUT}" MATCHES "${_regex}")
-          set(${RESULT} 0)
-          break()
-        endif()
-      endforeach()
+      if(${RESULT})
+        string(REPLACE ";" "," OUTPUT_LINES "${OUTPUT}")
+        string(REPLACE "\n" ";" OUTPUT_LINES "${OUTPUT_LINES}")
+        foreach(_regex ${VP_COMPILER_FAIL_REGEX})
+          if(NOT ${RESULT})
+            break()
+          endif()
+          foreach(_line ${OUTPUT_LINES})
+            if("${_line}" MATCHES "${_regex}")
+              file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+                  "Build output check failed:\n"
+                  "    Regex: '${_regex}'\n"
+                  "    Output line: '${_line}'\n")
+              set(${RESULT} 0)
+              break()
+            endif()
+          endforeach()
+        endforeach()
+      endif()
 
       if(${RESULT})
         set(${RESULT} 1 CACHE INTERNAL "Test ${RESULT}")

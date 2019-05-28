@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@
   supporting.
 */
 
-#ifndef __vpPylonGrabberUsb_h_
-#define __vpPylonGrabberUsb_h_
+#ifndef _vpPylonGrabberUsb_h_
+#define _vpPylonGrabberUsb_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -66,7 +66,7 @@ class VISP_EXPORT vpPylonGrabberUsb : public vpPylonGrabber
 {
 public:
   vpPylonGrabberUsb();
-  ~vpPylonGrabberUsb();
+  virtual ~vpPylonGrabberUsb();
 
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
@@ -124,4 +124,4 @@ private:
 };
 
 #endif // #ifdef VISP_HAVE_PYLON
-#endif // #ifndef __vpPylonGrabberUsb_h_
+#endif // #ifndef _vpPylonGrabberUsb_h_

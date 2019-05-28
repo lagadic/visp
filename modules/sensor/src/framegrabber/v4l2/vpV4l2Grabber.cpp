@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -737,11 +737,11 @@ void vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const
     if (roi == vpRect()) {
       // The framegrabber acquire aRGB format. We just shift the data
       // from 1 byte all the data and initialize the last byte
-      memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
+      memcpy(static_cast<void*>(I.bitmap), static_cast<void*>(bitmap + 1), height * width * sizeof(vpRGBa) - 1);
       I[height - 1][width - 1].A = 0;
     } else {
       for (unsigned int i = 0; i < I.getHeight(); i++) {
-        memcpy(I.bitmap, bitmap + 1 + (unsigned int)(roi.getTop() * width + roi.getLeft()),
+        memcpy(static_cast<void*>(I.bitmap), static_cast<void*>(bitmap + 1 + (unsigned int)(roi.getTop() * width + roi.getLeft())),
                I.getWidth() * sizeof(vpRGBa) - 1);
         I[i][I.getWidth() - 1].A = 0;
       }

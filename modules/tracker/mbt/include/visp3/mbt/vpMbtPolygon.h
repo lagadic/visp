@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ public:
   inline bool isPolygonOriented() { return hasOrientation; }
   virtual bool isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false,
                          const vpCameraParameters &cam = vpCameraParameters(),
-                         const vpImage<unsigned char> &I = vpImage<unsigned char>());
+                         unsigned int width=0, unsigned int height=0);
   bool isVisible() const { return isvisible; }
 
   vpMbtPolygon &operator=(const vpMbtPolygon &mbtp);

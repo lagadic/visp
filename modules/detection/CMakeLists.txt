@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,9 +63,9 @@ if(WITH_APRILTAG)
   else(WIN32)
     if(BUILD_SHARED_LIBS)
       vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp /wd4200)
-	else()
-	  vp_warnings_disable(CMAKE_CXX_FLAGS /wd4200)
-	endif()
+	  else()
+	    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4200)
+	  endif()
   endif()
 endif()
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -598,7 +598,15 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
 #endif
 }
 
-void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
+void vpMeSite::display(const vpImage<unsigned char> &I)
+{
+  vpMeSite::display(I, ifloat, jfloat, state);
+}
+
+void vpMeSite::display(const vpImage<vpRGBa> &I)
+{
+  vpMeSite::display(I, ifloat, jfloat, state);
+}
 
 // Static functions
 

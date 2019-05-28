@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,15 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpSimulatorException_H
-#define __vpSimulatorException_H
-
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+#ifndef _vpSimulatorException_h_
+#define _vpSimulatorException_h_
 
 /* \file vpSimulatorException.h
    \brief error that can be emited by the vpSimulator class and its derivates
@@ -55,13 +48,6 @@
 
 #include <iostream> /* Classe std::ostream.    */
 #include <string>   /* Classe string.     */
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
 
 /*!
 
@@ -76,11 +62,11 @@ public:
   vpSimulator member
  */
   enum errorSimulatorCodeEnum {
-    ioError,
-    noFileNameError,
-    notInitializedError,
-    windowSizeNotInitializedError,
-    badInitializationError
+    ioError,                       //!< I/O error
+    noFileNameError,               //!< Filename error
+    notInitializedError,           //!< Initialization error
+    windowSizeNotInitializedError, //!< Window size not initialized
+    badInitializationError         //!< Initialization error
   };
 
 public:

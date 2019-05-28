@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,19 +74,25 @@ int main(int argc, char **argv)
     robot.connect(robot_ip);
     robot.setLogFolder(log_folder);
 
+    std::cout << "WARNING: This example will move the robot! "
+              << "Please make sure to have the user stop button at hand!" << std::endl
+              << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
+
     /*
-       * Move to a safe position
-       */
+     * Move to a safe position
+     */
     vpColVector q(7, 0);
     q[3] = -M_PI_2;
     q[5] = M_PI_2;
     q[6] = M_PI_4;
     std::cout << "Move to joint position: " << q.t() << std::endl;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
     robot.setPosition(vpRobot::JOINT_STATE, q);
 
     /*
-       * Move in joint velocity
-       */
+     * Move in joint velocity
+     */
     vpColVector dq_d(7, 0);
     dq_d[4] = vpMath::rad(-20.);
     dq_d[6] = vpMath::rad(20.);
@@ -100,6 +106,10 @@ int main(int argc, char **argv)
 
       vpTime::wait(10);
     } while (vpTime::measureTimeSecond() - t0 < delta_t);
+
+    robot.setRobotState(vpRobot::STATE_STOP);
+    vpTime::wait(100);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     dq_d[4] = -dq_d[4];
     dq_d[6] = -dq_d[6];

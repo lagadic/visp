@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,8 +271,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 
       try {
         s.track(I, me, true);
-      } catch (vpTrackingException) {
-        vpERROR_TRACE("catch exception ");
+      } catch (...) {
         s.setState(vpMeSite::THRESHOLD);
       }
       
@@ -332,6 +331,14 @@ void vpMeTracker::display(const vpImage<unsigned char> &I)
     std::cout << " There are " << list.size() << " sites in the list " << std::endl;
   }
 #endif
+  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+    vpMeSite p_me = *it;
+    p_me.display(I);
+  }
+}
+
+void vpMeTracker::display(const vpImage<vpRGBa> &I)
+{
   for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite p_me = *it;
     p_me.display(I);

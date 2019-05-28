@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@
  *
  *****************************************************************************/
 
+#include <cmath>     // For std::abs() on iOS
+#include <cstdlib>   // For std::abs() on iOS
 #include <algorithm> // for (std::min) and (std::max)
 #include <visp3/core/vpConfig.h>
 
@@ -50,22 +52,32 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
-typedef long int integer;
-#else
-typedef int integer;
-#endif
+#  ifdef VISP_HAVE_MKL
+#include <mkl.h>
+typedef MKL_INT integer;
 
+integer allocate_work(double **work)
+{
+  integer dimWork = (integer)((*work)[0]);
+  delete[] * work;
+  *work = new double[dimWork];
+  return (integer)dimWork;
+}
+#  else
+#    ifdef VISP_HAVE_LAPACK_BUILT_IN
+typedef long int integer;
+#    else
+typedef int integer;
+#    endif
 extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork,
-                       integer *info);
+  integer *info);
 extern "C" int dormqr_(char *side, char *trans, integer *m, integer *n, integer *k, double *a, integer *lda,
-                       double *tau, double *c__, integer *ldc, double *work, integer *lwork, integer *info);
+  double *tau, double *c__, integer *ldc, double *work, integer *lwork, integer *info);
 extern "C" int dorgqr_(integer *, integer *, integer *, double *, integer *, double *, double *, integer *, integer *);
 extern "C" int dtrtri_(char *uplo, char *diag, integer *n, double *a, integer *lda, integer *info);
 extern "C" int dgeqp3_(integer *m, integer *n, double*a, integer *lda, integer *p,
-                       double *tau, double *work, integer* lwork, integer *info);
+  double *tau, double *work, integer* lwork, integer *info);
 
 int allocate_work(double **work);
 
@@ -76,9 +88,10 @@ int allocate_work(double **work)
   *work = new double[dimWork];
   return (int)dimWork;
 }
+#  endif
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition with
 Lapack 3rd party.
@@ -238,7 +251,6 @@ vpMatrix vpMatrix::inverseByQRLapack() const
   return C;
 }
 #endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition.
@@ -272,7 +284,7 @@ int main()
 */
 vpMatrix vpMatrix::inverseByQR() const
 {
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   return inverseByQRLapack();
 #else
   throw(vpException(vpException::fatalError, "Cannot inverse matrix by QR. Install Lapack 3rd party"));
@@ -307,7 +319,7 @@ vpMatrix vpMatrix::inverseByQR() const
 
 double residual(vpMatrix M1, vpMatrix M2)
 {
-    return (M1 - M2).euclideanNorm();
+    return (M1 - M2).frobeniusNorm();
 }
 
 int main()
@@ -336,10 +348,10 @@ int main()
 */
 unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, double tol) const
 {
-#ifdef VISP_HAVE_LAPACK
-  integer m = (integer) rowNum;     // also rows of Q
-  integer n = (integer) colNum;     // also columns of R
-  integer r = std::min(n,m);  // a priori non-null rows of R = rank of R
+#if defined(VISP_HAVE_LAPACK)
+  integer m = (integer)rowNum;     // also rows of Q
+  integer n = (integer)colNum;     // also columns of R
+  integer r = std::min(n, m);  // a priori non-null rows of R = rank of R
   integer q = r;              // columns of Q and rows of R
   integer na = n;             // columns of A
 
@@ -351,11 +363,11 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   }
 
   // prepare matrices and deal with r = 0
-  Q.resize(m,q);
+  Q.resize(static_cast<unsigned int>(m), static_cast<unsigned int>(q));
   if(squareR)
-    R.resize(r,r);
+    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
   else
-    R.resize(r,n);
+    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
   if(r == 0)
     return 0;
 
@@ -366,12 +378,12 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   integer info;
 
   // copy this to qrdata in Lapack convention
-  for(int i = 0; i < m; ++i)
+  for (integer i = 0; i < m; ++i)
   {
-    for(int j = 0; j < n; ++j)
-      qrdata[i+m*j] = data[j + n*i];
-    for(int j = n; j < na; ++j)
-      qrdata[i+m*j] = 0;
+    for (integer j = 0; j < n; ++j)
+      qrdata[i + m * j] = data[j + n * i];
+    for (integer j = n; j < na; ++j)
+      qrdata[i + m * j] = 0;
   }
 
   //   work = new double[1];
@@ -462,7 +474,12 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   delete[] tau;
   return (unsigned int) r;
 #else
-  throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
+  (void)Q;
+  (void)R;
+  (void)full;
+  (void)squareR;
+  (void)tol;
+  throw(vpException(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
 #endif
 }
 
@@ -495,7 +512,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
 double residual(vpMatrix M1, vpMatrix M2)
 {
-    return (M1 - M2).euclideanNorm();
+    return (M1 - M2).frobeniusNorm();
 }
 
 int main()
@@ -531,7 +548,7 @@ int main()
 */
 unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full, bool squareR, double tol) const
 {
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   integer m = (integer) rowNum;     // also rows of Q
   integer n = (integer) colNum;     // also columns of R
   integer r = std::min(n,m);             // a priori non-null rows of R = rank of R
@@ -546,18 +563,18 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   }
 
   // prepare Q and deal with r = 0
-  Q.resize(m, q);
+  Q.resize(static_cast<unsigned int>(m), static_cast<unsigned int>(q));
   if(r == 0)
   {
     if(squareR)
     {
       R.resize(0, 0);
-      P.resize(0, n);
+      P.resize(0, static_cast<unsigned int>(n));
     }
     else
     {
-      R.resize(r, n);
-      P.resize(n, n);
+      R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
+      P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
     }
     return 0;
   }
@@ -573,11 +590,11 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   integer info;
 
   // copy this to qrdata in Lapack convention
-  for(int i = 0; i < m; ++i)
+  for(integer i = 0; i < m; ++i)
   {
-    for(int j = 0; j < n; ++j)
+    for(integer j = 0; j < n; ++j)
       qrdata[i+m*j] = data[j + n*i];
-    for(int j = n; j < na; ++j)
+    for(integer j = n; j < na; ++j)
       qrdata[i+m*j] = 0;
   }
 
@@ -639,24 +656,24 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   // write R
   if(squareR) // R r x r
   {
-    R.resize(r, r);
+    R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
     for(int i=0;i<r;i++)
       for(int j=i;j<r;j++)
         R[i][j] = qrdata[i+m*j];
 
     // write P
-    P.resize(r,n);
+    P.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(n));
     for(int i = 0; i < r; ++i)
       P[i][p[i]-1] = 1;
   }
   else        // R is min(m,n) x n of rank r
   {
-    R.resize(na, n);
+    R.resize(static_cast<unsigned int>(na), static_cast<unsigned int>(n));
     for(int i=0;i<na;i++)
       for(int j=i;j<n;j++)
         R[i][j] = qrdata[i+m*j];
     // write P
-    P.resize(n,n);
+    P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
     for(int i = 0; i < n; ++i)
       P[i][p[i]-1] = 1;
   }
@@ -684,7 +701,13 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   delete[] p;
   return (unsigned int) r;
 #else
-  throw(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
+  (void)Q;
+  (void)R;
+  (void)P;
+  (void)full;
+  (void)squareR;
+  (void)tol;
+  throw(vpException(vpException::fatalError, "Cannot perform QR decomposition. Install Lapack 3rd party"));
 #endif
 }
 
@@ -701,7 +724,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 */
 vpMatrix vpMatrix::inverseTriangular(bool upper) const
 {
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   if(rowNum != colNum || rowNum == 0)
     throw vpMatrixException::dimensionError;
 
@@ -730,7 +753,8 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
   }
   return R;
 #else
-  throw(vpException::fatalError, "Cannot perform triangular inverse. Install Lapack 3rd party"));
+  (void)upper;
+  throw(vpException(vpException::fatalError, "Cannot perform triangular inverse. Install Lapack 3rd party"));
 #endif
 }
 
@@ -835,5 +859,3 @@ vpColVector vpMatrix::solveByQR(const vpColVector &b) const
   solveByQR(b, x);
   return x;
 }
-
-

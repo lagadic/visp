@@ -5,14 +5,14 @@
 jlongArray vector_vpColVector_to_List(JNIEnv* env, std::vector<vpColVector> V)
 {
   jlongArray result;
-  result = env->NewLongArray(V.size());  
+  result = env->NewLongArray(V.size());
   jlong *body = env->GetLongArrayElements(result, 0);
 
   for(unsigned int i=0;i<V.size();++i)
     body[i] = (long) new vpColVector(V[i]);
 
   env->ReleaseLongArrayElements(result, body, 0);
-  
+
   return result;
 }
 
@@ -21,10 +21,9 @@ std::vector<vpHomogeneousMatrix> List_to_vector_vpHomogeneousMatrix(JNIEnv* env,
   std::vector<vpHomogeneousMatrix> V;
   jlong *body = env->GetLongArrayElements(arr, 0);
   int len = env->GetArrayLength(arr);
-  vpHomogeneousMatrix* temp;
 
-  for(unsigned int i=0;i<len;++i){
-    temp = (vpHomogeneousMatrix*) body[i]; 
+  for(int i=0;i<len;++i){
+    vpHomogeneousMatrix *temp = (vpHomogeneousMatrix*) body[i];
     V.push_back(*temp);
   }
 
@@ -48,14 +47,14 @@ std::vector<float> List_to_vector_float(JNIEnv* env, jfloatArray arr)
 jlongArray vector_vpHomogeneousMatrix_to_List(JNIEnv* env, std::vector<vpHomogeneousMatrix> V)
 {
   jlongArray result;
-  result = env->NewLongArray(V.size());  
+  result = env->NewLongArray(V.size());
   jlong *body = env->GetLongArrayElements(result, 0);
 
   for(unsigned int i=0;i<V.size();++i)
     body[i] = (long) new vpHomogeneousMatrix(V[i]);
 
   env->ReleaseLongArrayElements(result, body, 0);
-  
+
   return result;
 }
 
@@ -69,7 +68,7 @@ std::vector<double> List_to_vector_double(JNIEnv* env, jdoubleArray arr)
     V.push_back(body[i]);
 
   env->ReleaseDoubleArrayElements(arr, body, 0);
-  
+
   return V;
 }
 
@@ -83,6 +82,6 @@ std::vector<int> List_to_vector_int(JNIEnv* env, jintArray arr)
     V.push_back(body[i]);
 
   env->ReleaseIntArrayElements(arr, body, 0);
-  
+
   return V;
 }

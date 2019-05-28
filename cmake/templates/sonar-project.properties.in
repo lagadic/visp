@@ -1,0 +1,18 @@
+# Url of the SonarQube server
+sonar.host.url=https://sonarqube.bordeaux.inria.fr/sonarqube
+# Login/password mechanism required to transmit the analysis to the sonarqube server (password must be left empty with the token usage)
+sonar.login=b2bd45f5d4b8d77eba0f2c36aec2560216d83f35
+# Must be unique in a given SonarQube instance
+sonar.projectKey=rainbow:visp:master
+# Project description
+#sonar.projectName=rainbow:visp
+# Used to compare metrics with v1.10 for example
+sonar.projectVersion=3.2
+# Path is relative to the sonar-project.properties file. Replace "\" by "/" on Windows.
+sonar.sources=@VISP_SOURCE_DIR@
+sonar.projectBaseDir=@VISP_SOURCE_DIR@
+sonar.exclusions=3rdparty/**/*,cmake/**/*,platforms/**/*,doc/**/*,modules/**/*.txt,modules/**/*.py,modules/java/**/*,demo/**/*,example/**/*,tutorial/**/*,**/arms/*,**/scene/*
+# Source code language
+sonar.language=c++
+sonar.cxx.includeDirectories=@VISP_SONARQUBE_INCLUDE_DIRS@
+

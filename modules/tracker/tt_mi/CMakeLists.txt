@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,6 +37,9 @@
 #############################################################################
 
 vp_define_module(tt_mi visp_tt)
+
+vp_set_source_file_compile_flag(src/mi/vpTemplateTrackerMIInverseCompositional.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/tools/vpTemplateTrackerMIBSpline.cpp -Wno-strict-overflow)
 
 # The previous line is similar to the following:
 #vp_add_module(tt_mi visp_tt)

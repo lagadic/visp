@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -151,15 +151,15 @@ function(vp_gen_config TMP_DIR NESTED_PATH ROOT_NAME)
   vp_path_join(__install_nested "${VISP_CONFIG_INSTALL_PATH}" "${NESTED_PATH}")
   vp_path_join(__tmp_nested "${TMP_DIR}" "${NESTED_PATH}")
 
-  file(RELATIVE_PATH VISP_INSTALL_PATH_RELATIVE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${__install_nested}" "${CMAKE_INSTALL_PREFIX}/")
-
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig-version.cmake.in" "${TMP_DIR}/VISPConfig-version.cmake" @ONLY)
 
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig.cmake.in" "${__tmp_nested}/VISPConfig.cmake" @ONLY)
-  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModule.cmake COMPONENT dev)
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPUse.cmake.in" "${__tmp_nested}/VISPUse.cmake" @ONLY)
+  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModules.cmake COMPONENT dev)
   install(FILES
       "${TMP_DIR}/VISPConfig-version.cmake"
       "${__tmp_nested}/VISPConfig.cmake"
+      "${__tmp_nested}/VISPUse.cmake"
       DESTINATION "${__install_nested}" COMPONENT dev)
 
   if(ROOT_NAME)
@@ -829,7 +829,9 @@ set(VP_COMPILER_FAIL_REGEX
 macro(vp_check_compiler_flag LANG FLAG RESULT)
   set(_fname "${ARGN}")
   if(NOT DEFINED ${RESULT})
-    if("_${LANG}_" MATCHES "_CXX_")
+    if(_fname)
+      # nothing
+    elseif("_${LANG}_" MATCHES "_CXX_")
       set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx")
       #if("${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror " OR "${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror=unknown-pragmas ")
         file(WRITE "${_fname}" "int main() { return 0; }\n")
@@ -986,16 +988,16 @@ macro(vp_set_source_file_compile_flag file)
     endif()
     # Since cxx11 option makes try_compile() result wrong, we remove all the CXX_FLAGS
     # when we check if an option is available or not
-    set(CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
-    set(CMAKE_CXX_FLAGS "")
+    #set(CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
+    #set(CMAKE_CXX_FLAGS "")
     foreach(cxxflag ${ARGN})
       vp_check_flag_support(${__lang} ${cxxflag} __support_flag "")
       if(${__support_flag})
         set(__cxxflags "${__cxxflags} ${cxxflag}")
       endif()
     endforeach()
-    set(CMAKE_CXX_FLAGS ${CXX_FLAGS_BACKUP})
-    unset(CXX_FLAGS_BACKUP)
+    #set(CMAKE_CXX_FLAGS ${CXX_FLAGS_BACKUP})
+    #unset(CXX_FLAGS_BACKUP)
     if(NOT ${__cxxflags} STREQUAL "")
       if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${file})
         set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/${file} PROPERTIES COMPILE_FLAGS ${__cxxflags})
@@ -1228,4 +1230,27 @@ macro(vp_cmake_script_append_var content_var)
 set(${var_name} \"${${var_name}}\")
 ")
   endforeach()
+endmacro()
+
+# files: A list of input files like headers (in)
+# paths: A list of corresponding paths (out)
+# usage: vp_find_path(type.h paths PATHS /usr/local)
+macro(vp_find_path files paths)
+  set(__paths "")
+  foreach(arg_ ${ARGN})
+    if("${arg_}" STREQUAL "PATHS")
+      set(__varname "__paths")
+    else()
+      list(APPEND ${__varname} ${arg_})
+    endif()
+  endforeach()
+  unset(__varname)
+  foreach(f_ ${${files}})
+    find_path(path_ ${f_} PATHS ${__paths})
+    if(path_)
+      list(APPEND ${paths} ${path_})
+    endif()
+    unset(path_ CACHE)
+  endforeach()
+  vp_list_unique(${paths})
 endmacro()

@@ -31,7 +31,6 @@ Note also that combining the visual features (moving edges + keypoints) can be a
 
 Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
 - \c OpenCV: Essential if you want to use the keypoints as visual features that are detected and tracked thanks to the KLT tracker. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
-- \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mb_generic_settings_xml.
 - \c Ogre \c 3D: This 3rd party is optional and could be difficult to install on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mb_generic_advanced_wrml  instead of the home-made \ref mb_generic_advanced_cao.
 
@@ -52,6 +51,13 @@ vpImage<unsigned char> I;
 vpImageConvert::convert(I_color, I);
 \endcode
 
+Since ViSP 3.2.1, it is also possible to consider color images as input with the following data type:
+\code
+vpImage<vpRGBa> I;
+\endcode
+
+\note If you consider color images as intput, the time requested by the tracker to process one image will increase since there is a conversion from the color to a gray level image used in the tracker low level layers. 
+
 \section mb_generic_started Getting started
 
 To start with the generic markerless model-based tracker we recommend to understand the tutorial-mb-generic-tracker.cpp source code that is given and explained below.  
@@ -62,7 +68,7 @@ The tutorial-mb-generic-tracker.cpp example uses the following data as input:
 - a video file; `teabox.mpg` is the default video.
 - a cad model that describes the object to track. In our case the file `teabox.cao` is the default one. See \ref mb_generic_model section to learn how the teabox is modeled and section \ref mb_generic_advanced_cao to learn how to model an other object.
 - a file with extension `*.init` that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named `teabox.init`. The content of this file is detailed in \ref mb_generic_started_src_explained section.
-- an optional image with extension "*.ppm" that may help the user to remember the location of the corresponding 3D points specified in `*.init` file.
+- an optional image with extension `*.ppm` that may help the user to remember the location of the corresponding 3D points specified in `*.init` file.
 
 As an output the tracker provides the pose \f$^c {\bf M}_o \f$ corresponding to a 4 by 4 matrix that corresponds to the geometric transformation between the frame attached to the object (in our case the tea box) and the frame attached to the camera. The pose is return as a vpHomogeneousMatrix container. 
 
@@ -80,7 +86,7 @@ Once build, to see the options that are available in the previous source code, j
 $ ./tutorial-mb-generic-tracker --help
 Usage: ./tutorial-mb-generic-tracker [--video <video name>] [--model <model name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]
 \endcode
-By default, \c teabox.mpg video and \c teabox.cao model are used as input. Using \c "--tracker" option, you can specify which tracker has to be used:
+By default, `model/teabox/teabox.mpg` video and `model/teabox/teabox.cao` model are used as input. Using \c "--tracker" option, you can specify which tracker has to be used:
 - Using \c "--tracker 0" to track only moving-edges:
 \code
 $ ./tutorial-mb-generic-tracker --tracker 0
@@ -109,7 +115,7 @@ will produce results similar to:
 <p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
-With this example it is also possible to work on an other data set using "--video" and "--model" command line options. For example, if you run:
+With this example it is also possible to work on an other data set using \c "--video" and \c "--model" command line options. For example, if you run:
 \code
 $ ./tutorial-mb-generic-tracker --video <path1>/myvideo%04.png --model <path2>/myobject.cao.
 \endcode
@@ -125,7 +131,7 @@ it means that the following images will be used as input:
 and that in \c \<path2\> you have the following data:
 - \c myobject.init: The coordinates of at least four 3D points used for the initialization.
 - \c myobject.cao: The CAD model of the object to track.
-- \c myobject.ppm: An optional image that shows where the user has to click the points defined in \c myobject.init.
+- \c myobject.ppm: An optional image that shows where the user has to click the points defined in \c myobject.init. Supported image format are png, ppm, png, jpeg.
 - \c myobject.xml: An optional files that contains the tracker parameters that are specific to the image sequence and that contains also the camera intrinsic parameters obtained by calibration (see \ref tutorial-calibration-intrinsic). This file is handled in tutorial-mb-generic-tracker-full.cpp but not in tutorial-mb-generic-tracker.cpp. That's why since the video \c teabox.mpg was acquired by an other camera than yours, you have to set the camera intrinsic parameters in tutorial-mb-generic-tracker.cpp source code modifying the line:
 \snippet tutorial-mb-generic-tracker.cpp Set camera parameters
 
@@ -135,7 +141,7 @@ and build again before using \c "--model ..." command line option.
 
 Hereafter is the description of the some lines introduced in the previous example.
 
-First we include the header of the hybrid tracker that includes internally vpMbEdgeTracker and vpMbKltTracker classes.
+First we include the header of the generic tracker.
 \snippet tutorial-mb-generic-tracker.cpp Include
 
 The tracker uses image \c I and the intrinsic camera parameters \c cam as input.
@@ -197,14 +203,23 @@ The last lines are here to free the memory allocated for the display and tracker
 
 \section mb_generic_model Teabox CAD model
 
-ViSP supports two different ways to describe CAD models, either in cao or in vrml format.
-- cao format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension \c .cao.
-- vrml format is supported only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension \c .wrl.
+ViSP supports two different ways to describe CAD models, either in `cao` or in `vrml` format.
+- `cao` format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension `.cao`.
+- `vrml` format is supported only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension `.wrl`.
 
+To load a CAD model there is the vpMbGenericTracker::loadModel() function that could be used to load either `cao` model:
+\code
+vpMbGenericTracker tracker;
+tracker.loadModel("teabox.cao");
+\endcode
+or a `vrml` model:
+\code
+tracker.loadModel("teabox.wrl");
+\endcode
 
 \subsection mb_generic_teabox_cao teabox.cao example
 
-The content of the file teabox.cao used in the getting started \ref mb_generic_started_src but also in tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
+The content of the file `teabox.cao` used in the getting started \ref mb_generic_started_src but also in tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
 
 \includelineno teabox.cao
 
@@ -262,8 +277,7 @@ We provide now a line by line description of the file where the faces of the box
 
 \subsection mb_generic_settings_xml Settings from an XML file
 
-
-Instead of setting the tracker parameters from source code, if libxml2 is available it is possible to specify the settings from an XML file. As done in tutorial-mb-generic-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
+Instead of setting the tracker parameters from source code, it is possible to specify the settings from an XML file. As done in tutorial-mb-generic-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
 \snippet tutorial-mb-generic-tracker-full.cpp Load xml
 The content of the XML file teabox.xml that is considered by default is the following:
 \code
@@ -346,7 +360,7 @@ These settings could be tuned either from XML using \<ecm\> tag as:
 </conf>
 \endcode
 
-of from source code using vpMbEdgeTracker::setMovingEdge() method:
+of from source code using vpMbGenericTracker::setMovingEdge() method:
 \snippet tutorial-mb-generic-tracker-full.cpp Set moving-edges parameters
 
 Either from xml or from the previous source code you can set:
@@ -534,6 +548,103 @@ Here for simplicity, the user just has the possibility to either activate all th
 
 
 \section mb_generic_advanced Advanced
+\subsection mb_generic_advanced_failure_detection How to detect tracking failures
+
+The first way to detect a tracking failure is to catch potential internal exceptions returned by the tracker:
+\code
+vpMbGenericTracker tracker;
+...
+while (! end)
+{
+  bool tracking_failed = false;
+  ...
+  try {
+    tracker.track(I);
+  } catch (const vpException &e) {
+    std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
+    tracking_failed = true;
+  }
+  ...
+}
+\endcode
+If you are using edges as features, you can exploit the internal tracker state using vpMbTracker::getProjectionError() to get a scalar criteria between 0 and 90 degrees corresponding to the cad model projection error. This criteria corresponds to the mean angle between the gradient direction of the moving-edges features that are tracked and the normal of the projected cad model. Thresholding this scalar allows to detect a tracking failure. Usually we consider that a projection angle higher to 25 degrees corresponds to a tracking failure. This threshold needs to be adapted to your setup and illumination conditions.
+\code
+...
+while (! end)
+{
+  ...
+  if (! tracking_failed) {
+    double proj_error = 0;
+    if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
+      proj_error = tracker.getProjectionError();
+    }
+    if (proj_error > 25) {
+      std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
+      tracking_failed = true;
+    }
+  }
+  ...
+}
+\endcode
+When edges are not tracked, meaning that your tracker uses rather klt keypoints or depth features, there is vpMbGenericTracker::computeCurrentProjectionError() function that may be useful.
+\code
+...
+while (! end)
+{
+  ...
+  if (! tracking_failed) {
+    double proj_error = 0;
+    if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
+      proj_error = tracker.getProjectionError();
+    }
+    else {
+      tracker.getPose(cMo);
+      tracker.getCameraParameters(cam);
+      proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
+    }
+    if (proj_error > 25) {
+      std::cout << "Tracker needs to restart (projection error detected: " << proj_error << ")" << std::endl;
+      tracking_failed = true;
+    }
+  }
+  ...
+}
+\endcode
+
+\note The function vpMbTracker::getProjectionError() is able to compute the projection error only from moving edges that are located on visible faces, while vpMbGenericTracker::computeCurrentProjectionError() is not able to distinguish between visible & non visible faces. Thus, results may be more precise with vpMbTracker::getProjectionError(). The tracker allows to display gradient and model orientation when computing the projection error. To this end use the following:
+\code
+vpMbGenericTracker tracker;
+tracker.setProjectionErrorDisplay(true);
+...
+while (! end)
+{
+  ...
+}
+\endcode
+
+Tracking failure detection is used in tutorial-mb-generic-tracker-live.cpp and tutorial-mb-generic-tracker-rgbd-realsense.cpp examples.
+
+The model-based tracker can also update a covariance matrix corresponding to the estimated pose. But from our experience, analysing the diagonal of the 6 by 6 covariance matrix doesn't allow to detect a tracking failure. If you want to have a trial, we recall the way to get the covariance matrix:
+
+\code
+vpMbGenericTracker tracker;
+tracker.setCovarianceComputation(true);
+...
+while (! end)
+{
+  bool tracking_failed = false;
+  ...
+  try {
+    tracker.track(I);
+  } catch (const vpException &e) {
+    std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
+    tracking_failed = true;
+  }
+  ...
+  vpMatrix covariance = tracker.getCovarianceMatrix();
+}
+\endcode
+
 \subsection mb_generic_advanced_model How to manipulate the model
 
 The following code shows how to access to the CAD model
@@ -696,6 +807,20 @@ V1
 0.8 0 2 1            # circle 0: [radius] [circle center] [1st point on circle plane] [2nd point on circle plane]
 \endcode
 
+\subsubsection mb_generic_advanced_origin How to change cao model origin
+
+By default, the `cMo` pose estimated by the tracker corresponds to the homogeneous transformation between the camera frame and the CAD model object frame.
+The tracker can consider an optional transformation matrix (currently only for `.cao`) to transform 3D points of the CAD model expressed in the original object frame to a desired object frame. Let us call this matrix `oMod`. When this matrix is introduced, the tracker estimates the homogeneous transformation between the camera and the modified CAD model object frame.
+
+The tracker has the ability to modify the location of the CAD model origin frame, introducing an extra homogeneous transformation. was designed to easily modify the location of the CAD model origin introducing an offset transformation matrix:
+
+To load a CAD model there is the vpMbGenericTracker::loadModel() function that could be used to load either `cao` model:
+\code
+vpMbGenericTracker tracker;
+vpHomogeneousMatrix oMd;
+...
+tracker.loadModel("teabox.cao", false, oMod);
+\endcode
 
 \subsubsection mb_generic_advanced_cao_hie How to create a hierarchical model
 It could be useful to define a complex model instead of using one big model file with all the declaration with different sub-models, each one representing a specific part of the complex model in a specific model file.
@@ -736,7 +861,7 @@ load("tailplane.cao")
 To exploit the name of a face in the code, see sections about \ref mb_generic_advanced_lod and \ref mb_generic_advanced_exclude.
 
 It could be useful to give a name for a face in a model in order to easily modify his LOD parameters for example, or to decide if you want to use this face or not during the tracking phase.
-This is done directly in the model file :
+This is done directly in the `.cao` model file. For example, the next example shows how to set `plane_fuselage` as name for the cylinder used to model the plane fuselage and `right reactor` as name for the corresponding plane reactor modeled as a circle:
 \code
 V1
 # header
@@ -767,6 +892,92 @@ load("tailplane.cao")
 \note If the name contains space characters, it must be surrounded by quotes.
 You can give a name to all the elements excepts for points.
 
+\subsubsection mb_generic_advanced_transformation How to load cao model with transformation
+
+In ViSP 3.2.1 we introduce the capability to load a `.cao` model with 3D translation and rotation. For the translation, values are expressed in meters. For the rotation, the representation is the \f$\theta_u\f$ axis-angle implemented in vpThetaUVector class. Values can be expressed in degrees or radians.
+
+Let us model a square made with 4 lego 2x4 bricks as shown in the next immage.
+\image html img-tracker-mb-model-lego-square.jpg
+
+Instead of modeling all the 4 brick, we can just model one brick and use translation and rotation to model the others. 
+
+The `.cao` model of the 2x4 brick located in `./lego_parts/brick-2x4.cao` is the following:
+\code
+V1
+#################################################################
+# CAD model in cao format of a LEGO Element ID: 4211385 2x4 brick
+# 2x4 brick size is 0.032m/0.016m/0.0096m
+#################################################################
+# 3D points
+8                    # Number of points (here 8 brick corners)
+0.000  0.000  0.0000 # Point 0: front face bottom/left
+0.032  0.000  0.0000 # Point 1: front face bottom/right
+0.032  0.000  0.0096 # Point 2: front face top/right
+0.000  0.000  0.0096 # Point 3: front face top/left
+0.000  0.016  0.0000 # Point 4: rear face bottom/left
+0.032  0.016  0.0000 # Point 5: rear face bottom/right
+0.032  0.016  0.0096 # Point 6: rear face top/right
+0.000  0.016  0.0096 # Point 7: rear face top/left
+# 3D lines
+0                    # No 3D lines
+# 3D faces from lines
+0                    # No 3D faces from lines
+# 3D faces from points
+6                    # 6 faces to describe the brick
+4 0 1 2 3            # Face 0: front face
+4 3 2 6 7            # Face 1: top face
+4 7 6 5 4            # Face 2: rear face
+4 0 4 5 1            # Face 3: bottom face
+4 0 3 7 4            # Face 4: left face
+4 1 5 6 2            # Face 5: right face
+# 3D cylinders
+0
+# 3D circle
+0                    # No 3D circle
+\endcode
+
+Now to model a square made with 4 bricks, we can reuse the same 2x4 brick model introducing translation and rotation. The corresponding model `./lego-square.cao` is the following:
+\code
+V1
+################################################
+# Construct a square made with 4 2x4 lego bricks
+# 2x4 brick size is 0.032m/0.016m/0.0096m
+################################################
+# lego 1: the white in the previous image
+load("lego_parts/brick-2x4.cao")
+# lego 2: the yellow one
+load("lego_parts/brick-2x4.cao", t=[0.048; 0.0; 0.0], tu=[0; 0; 90 deg]) # 0.048=0.032+0.016
+# lego 3: the gray one
+load("lego_parts/brick-2x4.cao", t=[0.016; 0.032; 0.0])
+# lego 4: the blue one
+load("lego_parts/brick-2x4.cao", t=[0.016; 0.016; 0.0], tu=[0; 0; 1.57 rad])
+###############################################
+# 3D points
+0                    # No 3D points
+# 3D lines
+0                    # No 3D lines
+# 3D faces from lines
+0                    # No 3D faces from lines
+# 3D faces from points
+0                    # No 3D faces from points
+# 3D cylinders
+0                    # No 3D cylinders
+# 3D circle
+0                    # No 3D circle
+\endcode
+
+The corresponding `./lego-square.init` file could contain the following coordinates of the points 
+\code
+4
+0.000  0.000  0.0096 # Point 1 corresponding to lego 1 front face top/left
+0.032  0.000  0.0096 # Point 2 corresponding to lego 2 front face top/left
+0.032  0.000  0.0000 # Point 3 corresponding to lego 2 front face bottom/left
+0.032  0.016  0.0000 # Point 4 corresponding to lego 2 front face bottom/right
+\endcode
+
+\image html img-tracker-mb-model-lego-square-init.jpg
+
+Now to see how to track this object you can jump to \ref mb_generic_use_case_lego_square section.
 
 \subsubsection mb_generic_advanced_cao_lod How to tune the level of detail
 
@@ -866,12 +1077,12 @@ coordIndex [
 
 \subsection mb_generic_advanced_exclude How not to consider specific polygons
 
-When using model-based trackers, it is possible not to consider edge tracking or keypoint tracking for specific faces. To do so, <b>the faces you want to consider must have a name</b>.
+When using model-based trackers, it is possible to not consider edge, keypoint or depth features tracking for specific faces. To do so, <b>the faces you want to consider must have a name</b> following \ref mb_generic_advanced_cao_nam.
 
 If you want to enable (default behavior) or disable the edge tracking on specific face it can be done via:
 
 \code
-vpMbEdgeTracker::setUseEdgeTracking("name of the face", boolean);
+vpMbGenericTracker::setUseEdgeTracking("name of the face", boolean);
 \endcode
 
 If the boolean is set to False, the tracking of the edges of the faces that have the given name will be disable. If it is set to True (default behavior), it will be enable. 
@@ -879,19 +1090,57 @@ If the boolean is set to False, the tracking of the edges of the faces that have
 As for the edge tracking, the same functionality is also available when using keypoints via:
 
 \code
-vpMbKltTracker::setUseKltTracking("name of the face", boolean);
+vpMbGenericTracker::setUseKltTracking("name of the face", boolean);
+\endcode
+
+For the depth feature, this functionality is also available via:
+
+\code
+vpMbGenericTracker::setUseDepthDenseTracking("name of the face", boolean);
+\endcode
+or
+\code
+vpMbGenericTracker::setUseDepthNormalTracking("name of the face", boolean);
 \endcode
 
 \section mb_generic_use_case Use case
 
-Hereafter we provide the information to test the tracker on more complex objects. Data-set could be found browsing http://visp-doc.inria.fr/download/mbt-model/
+Hereafter we provide the information to test the tracker with different objects.
 
-\subsection mb_generic_use_case_cubesat CubeSAT satellite model
+\subsection mb_generic_use_case_teabox Test tracker on teabox model
+
+Enter model-based tracker tutorial build folder:
+\code
+$ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
+\endcode
+
+There is `tutorial-mb-generic-tracker-full` binary that corresponds to the build of tutorial-mb-generic-tracker-full.cpp example. This example is an extension of tutorial-mb-generic-tracker.cpp that was explained in \ref mb_generic_started section.
+
+to see the options that are available run:
+\code
+$ ./tutorial-mb-generic-tracker-full --help
+\endcode
+
+By default all the parameters are set to work with the teabox example. Just run the binary without option:
+\code
+$ ./tutorial-mb-generic-tracker-full
+\endcode
+
+You may also obtain the same results using:
+\code
+$ ./tutorial-mb-generic-tracker-full --video model/teabox/teabox.mpg --model model/teabox/teabox.cao
+\endcode
+
+\subsection mb_generic_use_case_cubesat Test tracker on CubeSAT satellite model
 
 In http://visp-doc.inria.fr/download/mbt-model/cubesat.zip you will find the model data set (.obj, .cao, .init, .xml, .ppm) and a video to test the \c CubeSAT object tracking. After unzip in a folder (let say \c /your-path-to-model) you may run the tracker with something similar to:
 
 \code
-$ ./tutorial-mb-generic-tracker-full --video /your-path-to-model/cubesat/video/00%2d.png --model /your-path-to-model/cubesat/cubesat1b.cao
+$ cd $VISP_WS
+$ wget http://visp-doc.inria.fr/download/mbt-model/cubesat.zip
+$ unzip ~/Downloads/mmicro.zip
+$ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
+$ ./tutorial-mb-generic-tracker-full --video $VISP_WS/cubesat/video/00%2d.png --model $VISP_WS/cubesat/cubesat1b.cao
 \endcode
 
 You should be able to obtain these kind of results:
@@ -900,12 +1149,16 @@ You should be able to obtain these kind of results:
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
-\subsection mb_generic_use_case_mmicro mmicro model
+\subsection mb_generic_use_case_mmicro Test tracker on mmicro model
 
-In http://visp-doc.inria.fr/download/mbt-model/mmicro.zip you will find the model data set (.cao, .wrl, .init, .xml, .ppm) and a video to track the \c mmicro object. After unzip in a folder (let say \c /your-path-to-model) you may run the tracker with something similar to:
+In http://visp-doc.inria.fr/download/mbt-model/mmicro.zip you will find the model data set (.cao, .wrl, .init, .xml, .ppm) and a video to track the \c mmicro object. After unzip in a folder (let say `$VISP_WS`) you may run the tracker with something similar to:
 
 \code
-$ ./tutorial-mb-generic-tracker-full --video /your-path-to-model/mmicro/video/mmicro00%2d.png --model /your-path-to-model/mmicro/mmicro.cao
+$ cd $VISP_WS
+$ wget http://visp-doc.inria.fr/download/mbt-model/mmicro.zip
+$ unzip ~/Downloads/mmicro.zip
+$ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
+$ ./tutorial-mb-generic-tracker-full --video $VISP_WS/mmicro/video/mmicro00%2d.png --model $VISP_WS/mmicro/mmicro.cao
 \endcode
 
 You should be able to obtain these kind of results:
@@ -914,12 +1167,82 @@ You should be able to obtain these kind of results:
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
+\subsection mb_generic_use_case_lego_square Test tracker on lego model with a live camera
+
+All the previous examples (teabox, CubeSAT, mmicro) were working with videos. We provide tutorial-mb-generic-tracker-live.cpp that allows to use a camera in order to test the tracker live.
+
+This example tries to use the first grabber that is available in the following list:
+- vpV4l2Grabber
+- vp1394TwoGrabber
+- vp1394CMUGrabber
+- vpFlyCaptureGrabber
+- vpRealSense2
+- cv::VideoCapture
+
+By default, if you are on an Ubuntu like system that has `libv4l-dev` package installed, you should be able to grab images from a webcam without modifying the code.
+
+To select an other grabber that corresponds to your camera you have to uncomment some lines at the beginning of tutorial-mb-generic-tracker-live.cpp tutorial:
+\snippet tutorial-mb-generic-tracker-live.cpp Undef grabber
+
+For example to force the usage of vpRealSense2 class that allows to grab images from an Intel Realsense device like D435 or SR300, you should modify the code like:
+\code
+$ cd $VISP_WS/visp/tutorial/tracking/model-based/generic
+$ gedit tutorial-mb-generic-tracker-live.cpp
+#undef VISP_HAVE_V4L2
+#undef VISP_HAVE_DC1394
+#undef VISP_HAVE_CMU1394
+#undef VISP_HAVE_FLYCAPTURE
+//#undef VISP_HAVE_REALSENSE2
+\endcode
+
+Once modified, enter the build folder and build the tutorial:
+\code
+$ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic
+$ make tutorial-mb-generic-tracker-live
+\endcode
+
+Let us now consider the object made with 4 lego 2x4 bricks described in \ref mb_generic_advanced_transformation.
+
+Once build, to get the usage, run:
+\code
+$ ./tutorial-mb-generic-tracker-live --help
+\endcode
+
+To test the tracker on the lego-square object, run:
+\code
+$ ./tutorial-mb-generic-tracker-live --model model/lego-square/lego-square.cao
+\endcode
+
+You should be able to obtain these kind of results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/nFP_9sl09t8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Now if the tracker is working, you can learn the object running:
+\code
+$ ./tutorial-mb-generic-tracker-live --model model/lego-square/lego-square.cao --learn
+\endcode
+
+Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you should see printings like:
+\code
+...
+Data learned
+Data learned
+Save learning from 2 images in file: learning/data-learned.bin
+\endcode
+
+You can now use this learning to automize tracker initialization with:
+\code
+$ ./tutorial-mb-generic-tracker-live --model model/lego-square/lego-square.cao --auto_init
+\endcode
+
 \section mb_generic_known_issues Known issues
 \subsection mb_generic_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility check
 
-If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win10-msvc12 :
+If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
+C:\> mbtEdgeTracking.exe -c -o
 ...
 OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
 ...
@@ -930,7 +1253,7 @@ and then a wonderful runtime issue as in the next image:
 
 It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
+C:\> mbtEdgeTracking.exe -c -o -w
 \endcode
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg

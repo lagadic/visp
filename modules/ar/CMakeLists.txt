@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -140,7 +140,35 @@ if(USE_COIN3D)
     list(APPEND opt_libs ${SOWIN_LIBRARIES})
   endif()
 
-  if(USE_SOQT AND USE_QT)
+  if(USE_SOQT AND ((SoQt_VERSION VERSION_EQUAL "1.6.0") OR (SoQt_VERSION VERSION_GREATER "1.6.0")))
+    set(SoQt_incs ${SoQt_INCLUDE_DIRS})
+    # Handle SoQt_LIBRARIES to extract the imported location
+    set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
+    foreach(lib_ ${SoQt_LIBRARIES})
+        if(${lib_} MATCHES "^(Coin::Coin)" OR ${lib_} MATCHES "^(SoQt::SoQt)" OR ${lib_} MATCHES "^(Qt5::)")
+          foreach(imp_config_ ${config_})
+            get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
+            get_target_property(lib_property_inc ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
+            list(APPEND opt_incs ${lib_property_inc})
+            # Under Unix, there is no specific suffix for libraries.
+            # Under Windows, we add the "optimized", "debug" specific keywords
+            if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
+              list(APPEND SoQt_libs optimized "${lib_property_${imp_config_}_}")
+            elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
+              list(APPEND SoQt_libs debug     "${lib_property_${imp_config_}_}")
+            elseif(EXISTS "${lib_property_${imp_config_}_}")
+              list(APPEND SoQt_libs "${lib_property_${imp_config_}_}")
+            endif()
+          endforeach()
+        else() # not a vtk library
+          list(APPEND SoQt_libs "${lib_}")
+        endif()
+    endforeach()
+    vp_list_unique(SoQt_incs)
+    vp_list_unique(SoQt_libs)
+    list(APPEND opt_incs ${SoQt_incs})
+    list(APPEND opt_libs ${SoQt_libs})
+  elseif(USE_SOQT AND USE_QT)
     list(APPEND opt_incs ${SOQT_INCLUDE_DIRS})
     list(APPEND opt_incs ${QT_INCLUDE_DIR})
     list(APPEND opt_incs ${QT_INCLUDES})
@@ -178,13 +206,13 @@ if(USE_COIN3D)
     vp_list_remove_separator(QT_DEFINITIONS)
     add_definitions(${QT_DEFINITIONS})
     add_definitions("-DQT_DLL")
-  endif(USE_SOQT AND USE_QT)
+  endif()
 
   if(USE_SOXT)
     # OpenGL and SoXt are found
     list(APPEND opt_libs ${SOXT_LIBRARIES})
   endif()
-endif(USE_COIN3D)
+endif()
 
 vp_add_module(ar visp_core OPTIONAL visp_io)
 vp_glob_module_sources()

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,26 +43,33 @@
 
 /*!
   Empty constructor. Initializes alpha moment as a reference alpha with a
-  value in \f$[-\pi/2..\pi/2]\f$. A default-constructed alpha moment may be
+  value in \f$[-\pi/2 ; \pi/2]\f$. A default-constructed alpha moment may be
   used as a reference information for other alphas. A reference alpha is a
-  class harbouring an alpha value computed for a \f$[-\pi/2..\pi/2]\f$ portion
+  class harbouring an alpha value computed for a \f$[-\pi/2 ; \pi/2]\f$ portion
   of the circle.
  */
-vpMomentAlpha::vpMomentAlpha() : isRef(true), symmetric(false), ref(), alphaRef(0.) { values.resize(1); }
+vpMomentAlpha::vpMomentAlpha() : m_isRef(true), m_symmetric(false), m_mu3Ref(), m_alphaRef(0.), m_symmetricThreshold(1e-6) { values.resize(1); }
 
 /*!
   Common constructor. Initializes alpha moment as a non-reference alpha with a
-  value computed in \f$[-\pi..\pi]\f$. \param ref_ : vector of 3rd order
-  centered moments corresponding to the reference alpha in the following
-  order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$. \param alpha_ref : value
-  of the reference alpha.
+  value computed in \f$[-\pi ; \pi]\f$ when the object is non symmetric.
+  \param mu3_ref : Vector of 3rd order centered moments corresponding to the reference alpha in the following
+  order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$.
+  \param alpha_ref : Value of the reference alpha that has \e mu3_ref 3rd order moments.
+  \param threshold : Threshold used to determine object symmetry along its 2 axis. The object is declared symmetric
+  if all the four 3rd order centered moments \e mu3_ref have values lower than this threshold. If the object is symmetric,
+  the alpha angle is commuted in [\f$[-\pi/2 ; \pi/2]\f$]. If the object is non symmetric, the alpha angle is
+  commuted in [\f$[-\pi ; \pi]\f$]
 */
-vpMomentAlpha::vpMomentAlpha(const std::vector<double> &ref_, double alpha_ref)
-  : vpMoment(), isRef(false), symmetric(false), ref(ref_), alphaRef(alpha_ref)
+vpMomentAlpha::vpMomentAlpha(const std::vector<double> &mu3_ref, double alpha_ref, double threshold)
+  : vpMoment(), m_isRef(false), m_symmetric(true), m_mu3Ref(mu3_ref), m_alphaRef(alpha_ref), m_symmetricThreshold(threshold)
 {
-  for (std::vector<double>::const_iterator it = ref_.begin(); it != ref_.end(); ++it)
-    if (std::fabs(*it) <= 1e-4)
-      symmetric = true;
+  for (std::vector<double>::const_iterator it = mu3_ref.begin(); it != mu3_ref.end(); ++it) {
+    if (std::fabs(*it) > m_symmetricThreshold) {
+      m_symmetric = false;
+      break;
+    }
+  }
 
   values.resize(1);
 }
@@ -82,20 +89,16 @@ void vpMomentAlpha::compute()
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
-  double t = 2.0 * momentCentered.get(1, 1) / (momentCentered.get(2, 0) - momentCentered.get(0, 2));
-  // double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1),
-  // (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
-  double alpha = 0.5 * atan(t);
+  double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1),  (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
 
   std::vector<double> rotMu(4);
-  // std::vector<double> realMu(4);
 
-  if (isRef) {
-    alphaRef = alpha;
+  if (m_isRef) {
+    m_alphaRef = alpha;
   } else {
-    if (!symmetric) {
-      double r11 = cos(alpha - alphaRef);
-      double r12 = sin(alpha - alphaRef);
+    if (! m_symmetric) {
+      double r11 = cos(alpha - m_alphaRef);
+      double r12 = sin(alpha - m_alphaRef);
       double r21 = -r12;
       double r22 = r11;
       unsigned int idx = 0;
@@ -116,28 +119,31 @@ void vpMomentAlpha::compute()
             }
             r11_k *= r11;
           }
-          // realMu[idx] = momentCentered.get(i, j);
           idx++;
         }
       }
 
       double sum = 0.;
-      bool signChange = true;
+      bool signChange = false;
       for (unsigned int i = 0; i < 4; i++) {
-        if (std::fabs(rotMu[i]) > 1e10 * std::numeric_limits<double>::epsilon() &&
-            std::fabs(ref[i]) > 1e10 * std::numeric_limits<double>::epsilon() && rotMu[i] * ref[i] > 0)
-          signChange = false;
-        sum += std::fabs(rotMu[i] * ref[i]);
+        if (std::fabs(rotMu[i]) > m_symmetricThreshold &&
+            std::fabs(m_mu3Ref[i]) > m_symmetricThreshold && rotMu[i] * m_mu3Ref[i] < 0) {
+          signChange = true;
+        }
+        sum += std::fabs(rotMu[i] * m_mu3Ref[i]);
       }
 
-      if (sum < 1e4 * std::numeric_limits<double>::epsilon())
+      if (sum < std::numeric_limits<double>::epsilon()) { // FS: Is this test useful ?
         signChange = false;
+      }
+
       if (signChange) {
-        // alpha = alpha + M_PI;
-        if (alpha < 0)
+         if (alpha < 0) {
           alpha += M_PI;
-        else
+         }
+        else {
           alpha -= M_PI;
+         }
       }
     }
   }

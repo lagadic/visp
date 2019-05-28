@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,6 +249,7 @@ bool vpRect::operator!=(const vpRect &r) const
 
 /*!
  Intersection operator.
+ \param r : Rectangle to insert.
  \return Intersection rectangle or null rectangle if the two rectangles do not
  intersect.
  */

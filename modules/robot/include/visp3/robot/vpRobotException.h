@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpRobotException_H
-#define __vpRobotException_H
+#ifndef _vpRobotException_h_
+#define _vpRobotException_h_
 
 /* -------------------------------------------------------------------------
  */

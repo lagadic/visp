@@ -1,0 +1,79 @@
+/**
+
+\page tutorial-detection-dnn Tutorial: Deep learning object detection
+\tableofcontents
+
+\section dnn_intro Introduction
+
+This tutorial shows how to use vpDetectorDNN (DNN stands for Deep Neural Network) class to perform object detection with deep learning. This class is a small wrapper over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN module</a>.
+
+It provides convenient ways to retrieve detection bounding boxes, class ids and confidence values. For other tasks such as image classification or more elaborate functionality, you should use directly the OpenCV DNN API.
+
+In the next section you will find an example that shows how to perform face detection in a single image or in images acquired from a camera connected to your computer.
+
+Note that all the material (source code and network model) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
+\endcode
+
+\section dnn_example Face detection
+
+The following example also available in tutorial-dnn-object-detection-live.cpp detects human face.
+
+\include tutorial-dnn-object-detection-live.cpp
+
+The default behavior is to detect human face, but you can input another model to detect the objects you want. To see which are the options, run:
+\code
+$ ./tutorial-dnn-object-detection-live --help
+\endcode
+
+Default DNN model and config files perform human face detection. 
+
+\snippet tutorial-dnn-object-detection-live.cpp OpenCV DNN face detector
+
+It is provided by <a href="https://github.com/opencv/opencv/tree/master/samples/dnn/face_detector">OpenCV</a> and has been trained with the following characteristics:
+
+<blockquote>
+
+This is a brief description of training process which has been used to get res10_300x300_ssd_iter_140000.caffemodel.
+The model was created with SSD framework using ResNet-10 like architecture as a backbone. Channels count in ResNet-10 convolution layers was significantly dropped (2x- or 4x- fewer channels).
+The model was trained in Caffe framework on some huge and available online dataset.
+
+</blockquote>
+
+More specifically, the model used (`opencv_face_detector_uint8.pb`) has been quantized (with the TensorFlow library) on 8-bit unsigned int to reduce the size of the training model (2.7 mo vs 10.7 mo for `res10_300x300_ssd_iter_140000.caffemodel`).
+
+To create the DNN object detector:
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN params
+
+`model` is the network trained weights, `config` is the network topology description.
+
+`inputWidth` and `inputHeight` are the dimensions to resize the input image into the blob that is fed in entry of the network.
+
+`meanR`, `meanG` and `meanB` are the values used for mean subtraction.
+
+`scaleFactor` is used to normalize the data range.
+
+`swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention, R and B channel should be swapped.
+
+You can directly refer to the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a> for the parameters values.
+
+`confThresh` is the confidence threshold used to filter the detections after inference.
+
+`nmsThresh` is the Non-Maximum Threshold. It is used to filter multiple detections that can occur approximatively at the same locations.
+
+After setting the correct parameters, you can easily detect object in an image with
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN object detection
+
+Class ids and detection confidence scores can be retrieved with
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences
+
+\section dnn_model_zoo Object detection model zoo
+
+You can find more models in the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a>.
+
+*/

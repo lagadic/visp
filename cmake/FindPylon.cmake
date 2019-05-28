@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ if(APPLE)
   endif()
 
   mark_as_advanced(PYLON_BASE_INCLUDE_DIR)
-elseif(WIN32)
+elseif(MSVC)
   find_path(PYLON_INCLUDE_DIR pylon/PylonIncludes.h
     PATHS "$ENV{PYLON_HOME}/include"
         "C:/Program Files/Basler/pylon 5/Development/include")
@@ -88,16 +88,16 @@ elseif(WIN32)
   endif()
 
   find_library(PYLON_BASE_LIBRARY
-    NAMES PylonBase_MD_VC120_v5_0.lib
+    NAMES PylonBase_v5_1.lib PylonBase_MD_VC120_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_GCBASE_LIBRARY
-    NAMES GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib
+    NAMES GCBase_MD_VC141_v3_1_Basler_pylon_v5_1.lib GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_GENAPI_LIBRARY
-    NAMES GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib
+    NAMES GenApi_MD_VC141_v3_1_Basler_pylon_v5_1.lib GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_UTILITY_LIBRARY
-    NAMES PylonUtility_MD_VC120_v5_0.lib
+    NAMES PylonUtility_v5_1.lib PylonUtility_MD_VC120_v5_0.lib
     PATHS ${PYLON_LIB_SEARCH_PATH})
 
   if(PYLON_INCLUDE_DIR)
@@ -148,11 +148,6 @@ elseif(UNIX)
 
     set(PYLON_FOUND TRUE)
   endif()
-else()
-  set(PYLON_FOUND FALSE)
-  message(STATUS "Pylon SDK not found.
-   If you are sure Pylon SDK is installed, set CMake variable or
-   environment variable `PYLON_ROOT' to help CMake to find Pylon SDK.")
 endif()
 
 mark_as_advanced(

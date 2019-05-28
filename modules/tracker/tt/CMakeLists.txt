@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,3 +40,7 @@ vp_add_module(tt visp_vision visp_core)
 vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
+
+vp_set_source_file_compile_flag(src/vpTemplateTracker.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/warp/vpTemplateTrackerWarp.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/warp/vpTemplateTrackerWarpHomographySL3.cpp -Wno-strict-overflow)

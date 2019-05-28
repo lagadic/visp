@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,6 +140,123 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
   return true;
 }
 
+template<typename Type>
+void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display,
+              vpImage<Type> &Iref, vpImage<Type> &Icur, vpImage<Type> &Imatch)
+{
+  // Set the path location of the image sequence
+  std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
+
+  // Build the name of the image files
+  std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");
+  vpImageIo::read(Iref, filenameRef);
+  std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.pgm");
+
+  // Init keypoints
+  cv::Ptr<cv::FeatureDetector> detector;
+  cv::Ptr<cv::DescriptorExtractor> extractor;
+  cv::Ptr<cv::DescriptorMatcher> matcher;
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  detector = cv::ORB::create();
+  extractor = cv::ORB::create();
+#else
+  detector = cv::FeatureDetector::create("ORB");
+  extractor = cv::DescriptorExtractor::create("ORB");
+#endif
+  matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
+
+  std::vector<cv::KeyPoint> trainKeyPoints;
+  cv::Mat matImg, trainDescriptors;
+  vpImageConvert::convert(Iref, matImg);
+  detector->detect(matImg, trainKeyPoints);
+  extractor->compute(matImg, trainKeyPoints, trainDescriptors);
+
+  vpVideoReader g;
+  g.setFileName(filenameCur);
+  g.open(Icur);
+  g.acquire(Icur);
+
+  Imatch.resize(Icur.getHeight(), 2 * Icur.getWidth());
+  Imatch.insert(Iref, vpImagePoint(0, 0));
+
+#if defined VISP_HAVE_X11
+  vpDisplayX display;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK display;
+#elif defined VISP_HAVE_GDI
+  vpDisplayGDI display;
+#else
+  vpDisplayOpenCV display;
+#endif
+
+  if (opt_display) {
+    display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+    display.init(Imatch, 0, 0, "ORB keypoints matching");
+  }
+
+  bool opt_click = false;
+  vpMouseButton::vpMouseButtonType button;
+  while (!g.end()) {
+    g.acquire(Icur);
+    Imatch.insert(Icur, vpImagePoint(0, Icur.getWidth()));
+
+    if (opt_display) {
+      vpDisplay::display(Imatch);
+    }
+
+    vpImageConvert::convert(Icur, matImg);
+    std::vector<cv::KeyPoint> queryKeyPoints;
+    detector->detect(matImg, queryKeyPoints);
+
+    cv::Mat queryDescriptors;
+    extractor->compute(matImg, queryKeyPoints, queryDescriptors);
+
+    std::vector<std::vector<cv::DMatch> > knn_matches;
+    std::vector<cv::DMatch> matches;
+    matcher->knnMatch(queryDescriptors, trainDescriptors, knn_matches, 2);
+    for (std::vector<std::vector<cv::DMatch> >::const_iterator it = knn_matches.begin(); it != knn_matches.end();
+         ++it) {
+      if (it->size() > 1) {
+        double ratio = (*it)[0].distance / (*it)[1].distance;
+        if (ratio < 0.85) {
+          matches.push_back((*it)[0]);
+        }
+      }
+    }
+
+    if (opt_display) {
+      for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
+        vpImagePoint leftPt(trainKeyPoints[(size_t)it->trainIdx].pt.y, trainKeyPoints[(size_t)it->trainIdx].pt.x);
+        vpImagePoint rightPt(queryKeyPoints[(size_t)it->queryIdx].pt.y,
+                             queryKeyPoints[(size_t)it->queryIdx].pt.x + Iref.getWidth());
+        vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);
+      }
+
+      vpDisplay::flush(Imatch);
+    }
+
+    // Click requested to process next image
+    if (opt_click_allowed && opt_display) {
+      if (opt_click) {
+        vpDisplay::getClick(Imatch, button, true);
+        if (button == vpMouseButton::button3) {
+          opt_click = false;
+        }
+      } else {
+        // Use right click to enable/disable step by step tracking
+        if (vpDisplay::getClick(Imatch, button, false)) {
+          if (button == vpMouseButton::button3) {
+            opt_click = true;
+          } else if (button == vpMouseButton::button1) {
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
 /*!
   \example testKeyPoint-3.cpp
 
@@ -169,118 +286,18 @@ int main(int argc, const char **argv)
       return -1;
     }
 
-    vpImage<unsigned char> Iref, Icur, Imatch;
+    {
+      vpImage<unsigned char> Iref, Icur, Imatch;
 
-    // Set the path location of the image sequence
-    std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
-
-    // Build the name of the image files
-    std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");
-    vpImageIo::read(Iref, filenameRef);
-    std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.pgm");
-
-    // Init keypoints
-    cv::Ptr<cv::FeatureDetector> detector;
-    cv::Ptr<cv::DescriptorExtractor> extractor;
-    cv::Ptr<cv::DescriptorMatcher> matcher;
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    detector = cv::ORB::create();
-    extractor = cv::ORB::create();
-#else
-    detector = cv::FeatureDetector::create("ORB");
-    extractor = cv::DescriptorExtractor::create("ORB");
-#endif
-    matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
-
-    std::vector<cv::KeyPoint> trainKeyPoints;
-    cv::Mat matImg, trainDescriptors;
-    vpImageConvert::convert(Iref, matImg);
-    detector->detect(matImg, trainKeyPoints);
-    extractor->compute(matImg, trainKeyPoints, trainDescriptors);
-
-    vpVideoReader g;
-    g.setFileName(filenameCur);
-    g.open(Icur);
-    g.acquire(Icur);
-
-    Imatch.resize(Icur.getHeight(), 2 * Icur.getWidth());
-    Imatch.insert(Iref, vpImagePoint(0, 0));
-
-#if defined VISP_HAVE_X11
-    vpDisplayX display;
-#elif defined VISP_HAVE_GTK
-    vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
-    vpDisplayGDI display;
-#else
-    vpDisplayOpenCV display;
-#endif
-
-    if (opt_display) {
-      display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display.init(Imatch, 0, 0, "ORB keypoints matching");
+      std::cout << "-- Test on gray level images" << std::endl;
+      run_test(env_ipath, opt_click_allowed, opt_display, Iref, Icur, Imatch);
     }
 
-    bool opt_click = false;
-    vpMouseButton::vpMouseButtonType button;
-    while (!g.end()) {
-      g.acquire(Icur);
-      Imatch.insert(Icur, vpImagePoint(0, Icur.getWidth()));
+    {
+      vpImage<vpRGBa> Iref, Icur, Imatch;
 
-      if (opt_display) {
-        vpDisplay::display(Imatch);
-      }
-
-      vpImageConvert::convert(Icur, matImg);
-      std::vector<cv::KeyPoint> queryKeyPoints;
-      detector->detect(matImg, queryKeyPoints);
-
-      cv::Mat queryDescriptors;
-      extractor->compute(matImg, queryKeyPoints, queryDescriptors);
-
-      std::vector<std::vector<cv::DMatch> > knn_matches;
-      std::vector<cv::DMatch> matches;
-      matcher->knnMatch(queryDescriptors, trainDescriptors, knn_matches, 2);
-      for (std::vector<std::vector<cv::DMatch> >::const_iterator it = knn_matches.begin(); it != knn_matches.end();
-           ++it) {
-        if (it->size() > 1) {
-          double ratio = (*it)[0].distance / (*it)[1].distance;
-          if (ratio < 0.85) {
-            matches.push_back((*it)[0]);
-          }
-        }
-      }
-
-      if (opt_display) {
-        for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
-          vpImagePoint leftPt(trainKeyPoints[(size_t)it->trainIdx].pt.y, trainKeyPoints[(size_t)it->trainIdx].pt.x);
-          vpImagePoint rightPt(queryKeyPoints[(size_t)it->queryIdx].pt.y,
-                               queryKeyPoints[(size_t)it->queryIdx].pt.x + Iref.getWidth());
-          vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);
-        }
-
-        vpDisplay::flush(Imatch);
-      }
-
-      // Click requested to process next image
-      if (opt_click_allowed && opt_display) {
-        if (opt_click) {
-          vpDisplay::getClick(Imatch, button, true);
-          if (button == vpMouseButton::button3) {
-            opt_click = false;
-          }
-        } else {
-          // Use right click to enable/disable step by step tracking
-          if (vpDisplay::getClick(Imatch, button, false)) {
-            if (button == vpMouseButton::button3) {
-              opt_click = true;
-            } else if (button == vpMouseButton::button1) {
-              break;
-            }
-          }
-        }
-      }
+      std::cout << "-- Test on color images" << std::endl;
+      run_test(env_ipath, opt_click_allowed, opt_display, Iref, Icur, Imatch);
     }
 
   } catch (const vpException &e) {

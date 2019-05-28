@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,24 +11,22 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional
+ * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See https://visp.inria.fr/download/ for more information.
+ * See http://visp.inria.fr for more information.
  *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
  * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
+ * Inria at visp@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Description:
  * Model-based edge tracker with multiple cameras.
@@ -58,7 +56,7 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker()
   : m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(),
     m_referenceCameraName("Camera"), m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti()
 {
-  m_mapOfEdgeTrackers["Camera"] = new vpMbEdgeTracker();
+  m_mapOfEdgeTrackers["Camera"] = new vpMbEdgeTracker;
 
   // Add default camera transformation matrix
   m_mapOfCameraTransformationMatrix["Camera"] = vpHomogeneousMatrix();
@@ -77,13 +75,13 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras)
   if (nbCameras == 0) {
     throw vpException(vpTrackingException::fatalError, "Cannot construct a vpMbEdgeMultiTracker with no camera !");
   } else if (nbCameras == 1) {
-    m_mapOfEdgeTrackers["Camera"] = new vpMbEdgeTracker();
+    m_mapOfEdgeTrackers["Camera"] = new vpMbEdgeTracker;
 
     // Add default camera transformation matrix
     m_mapOfCameraTransformationMatrix["Camera"] = vpHomogeneousMatrix();
   } else if (nbCameras == 2) {
-    m_mapOfEdgeTrackers["Camera1"] = new vpMbEdgeTracker();
-    m_mapOfEdgeTrackers["Camera2"] = new vpMbEdgeTracker();
+    m_mapOfEdgeTrackers["Camera1"] = new vpMbEdgeTracker;
+    m_mapOfEdgeTrackers["Camera2"] = new vpMbEdgeTracker;
 
     // Add default camera transformation matrix
     m_mapOfCameraTransformationMatrix["Camera1"] = vpHomogeneousMatrix();
@@ -95,7 +93,7 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras)
     for (unsigned int i = 1; i <= nbCameras; i++) {
       std::stringstream ss;
       ss << "Camera" << i;
-      m_mapOfEdgeTrackers[ss.str()] = new vpMbEdgeTracker();
+      m_mapOfEdgeTrackers[ss.str()] = new vpMbEdgeTracker;
 
       // Add default camera transformation matrix
       m_mapOfCameraTransformationMatrix[ss.str()] = vpHomogeneousMatrix();
@@ -123,7 +121,7 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const std::vector<std::string> &camer
   }
 
   for (std::vector<std::string>::const_iterator it = cameraNames.begin(); it != cameraNames.end(); ++it) {
-    m_mapOfEdgeTrackers[*it] = new vpMbEdgeTracker();
+    m_mapOfEdgeTrackers[*it] = new vpMbEdgeTracker;
   }
 
   // Set by default the reference camera
@@ -1660,9 +1658,6 @@ void vpMbEdgeMultiTracker::initPyramid(const std::map<std::string, const vpImage
   From the configuration file, initialize the parameters corresponding to the
 objects: moving-edges, camera and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
   \throw vpException::ioError if the file has not been properly parsed (file
 not found or wrong format for the data).
 
@@ -1702,8 +1697,6 @@ not found or wrong format for the data).
   </camera>
 </conf>
   \endcode
-
-  \sa vpXmlParser::cleanup()
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile)
 {
@@ -1733,15 +1726,12 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile)
   documentation. From the configuration file initialize the parameters
   corresponding to the objects: moving-edges, camera and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param configFile1 : Full name of the xml file for the first camera.
   \param configFile2 : Full name of the xml file for the second camera.
   \param firstCameraIsReference : If true, the first camera is the reference,
   otherwise it is the second one.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
                                           const bool firstCameraIsReference)
@@ -1789,12 +1779,9 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile1, const 
   the configuration file initialize the parameters corresponding to the
   objects: moving-edges, camera and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param mapOfConfigFiles : Map of xml files.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles)
 {
@@ -1840,7 +1827,7 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::map<std::string, std::strin
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }
@@ -2633,7 +2620,7 @@ void vpMbEdgeMultiTracker::setOptimizationMethod(const vpMbtOptimizationMethod &
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cMo_ : Pose to affect.
 */
 void vpMbEdgeMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
@@ -2642,6 +2629,34 @@ void vpMbEdgeMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomo
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(m_referenceCameraName);
     if (it != m_mapOfEdgeTrackers.end()) {
       it->second->setPose(I, cMo_);
+      this->cMo = cMo_;
+    } else {
+      std::stringstream ss;
+      ss << "Cannot find the reference camera: " << m_referenceCameraName << " !";
+      throw vpException(vpTrackingException::fatalError, ss.str());
+    }
+  } else {
+    std::stringstream ss;
+    ss << "You are trying to set the pose with only one image and cMo but "
+          "there are multiple cameras !";
+    throw vpException(vpTrackingException::fatalError, ss.str());
+  }
+}
+
+/*!
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
+
+  \param I_color : color image corresponding to the desired pose.
+  \param cMo_ : Pose to affect.
+*/
+void vpMbEdgeMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+{
+  if (m_mapOfEdgeTrackers.size() == 1) {
+    std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(m_referenceCameraName);
+    if (it != m_mapOfEdgeTrackers.end()) {
+      vpImageConvert::convert(I_color, m_I);
+      it->second->setPose(m_I, cMo_);
       this->cMo = cMo_;
     } else {
       std::stringstream ss;
@@ -2905,7 +2920,7 @@ void vpMbEdgeMultiTracker::setUseEdgeTracking(const std::string &name, const boo
 
   If the tracking is considered as failed an exception is thrown.
 
-  \param I : The image.
+  \param I : The grayscale image.
  */
 void vpMbEdgeMultiTracker::track(const vpImage<unsigned char> &I)
 {
@@ -2927,6 +2942,14 @@ void vpMbEdgeMultiTracker::track(const vpImage<unsigned char> &I)
     // m_mapOfEdgeTrackers
     projectionError = it->second->getProjectionError();
   }
+}
+
+/*!
+  Not supported interface, this class is deprecated.
+*/
+void vpMbEdgeMultiTracker::track(const vpImage<vpRGBa> &)
+{
+  std::cout << "Not supported interface, this class is deprecated." << std::endl;
 }
 
 /*!
@@ -3040,7 +3063,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
         if (displayFeatures) {
           for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
                it != m_mapOfEdgeTrackers.end(); ++it) {
-            it->second->displayFeaturesOnImage(*mapOfImages[it->first], lvl);
+            it->second->m_featuresToBeDisplayedEdge = it->second->getFeaturesForDisplayEdge();
           }
         }
 

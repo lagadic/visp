@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@
 
 #ifdef VISP_HAVE_BICLOPS
 
-#ifndef __vpROBOT_BICLOPS_H
-#define __vpROBOT_BICLOPS_H
+#ifndef _vpRobotBiclops_h_
+#define _vpRobotBiclops_h_
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
@@ -156,6 +156,6 @@ public:
   static void *vpRobotBiclopsSpeedControlLoop(void *arg);
 };
 
-#endif /* #ifndef __vpROBOT_BICLOPS_H */
+#endif /* #ifndef _vpRobotBiclops_h_ */
 
 #endif

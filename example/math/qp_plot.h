@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,10 +63,10 @@ vpColVector randV(int n)
 }
 
 #ifdef VISP_HAVE_DISPLAY
-class VISP_EXPORT QPlot
+class QPlot
 {
 public:
-  ~QPlot()  { delete P; }
+  virtual ~QPlot()  { delete P; }
   QPlot(int graphNum, int total, std::vector<std::string> legend)
   {
     P = new vpPlot(graphNum, 700, 700, 100, 200, "Resolution time");
@@ -95,6 +95,10 @@ public:
     P->I.display->getClick();
   }
   vpPlot* P;
+
+private:
+  // Copy constructor not allowed.
+  QPlot(const QPlot &qplot);
 };
 #else
 class VISP_EXPORT QPPlot

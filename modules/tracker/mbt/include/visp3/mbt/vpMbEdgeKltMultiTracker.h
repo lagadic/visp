@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,24 +11,22 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional
+ * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See https://visp.inria.fr/download/ for more information.
+ * See http://visp.inria.fr for more information.
  *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
  * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
+ * Inria at visp@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Description:
  * Model-based edge klt tracker with multiple cameras.
@@ -43,8 +41,8 @@
  \brief Model-based edge klt tracker with multiple cameras.
 */
 
-#ifndef __vpMbEdgeKltMultiTracker_h__
-#define __vpMbEdgeKltMultiTracker_h__
+#ifndef _vpMbEdgeKltMultiTracker_h_
+#define _vpMbEdgeKltMultiTracker_h_
 
 #include <iostream>
 #include <vector>
@@ -135,7 +133,16 @@ public:
   virtual void display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                        const std::map<std::string, vpCameraParameters> &mapOfCameraParameters, const vpColor &col,
-                       const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const unsigned int thickness = 1, const bool displayFullModel = false);  
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int, unsigned int,
+                                                               const vpHomogeneousMatrix &,
+                                                               const vpCameraParameters &,
+                                                               const bool =false)
+  {
+    std::cerr << "Not implemented. Deprecated class." << std::endl;
+    return std::vector<std::vector<double> >();
+  }
 
   virtual std::vector<std::string> getCameraNames() const;
 
@@ -337,6 +344,7 @@ public:
   virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo);
 
   virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                        const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
@@ -359,6 +367,7 @@ public:
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I_color);
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
@@ -386,7 +395,7 @@ protected:
   // Same thing as computeVVS
   using vpMbKltMultiTracker::postTracking;
 
-  virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const unsigned int lvl);
+  virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
   virtual void reinit(/*const vpImage<unsigned char>& I*/);
 
@@ -395,4 +404,4 @@ protected:
 
 #endif // VISP_HAVE_OPENCV
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-#endif //__vpMbEdgeKltMultiTracker_h__
+#endif //_vpMbEdgeKltMultiTracker_h_

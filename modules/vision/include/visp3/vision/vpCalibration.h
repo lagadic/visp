@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,8 +119,18 @@ public:
   // = operator
   vpCalibration &operator=(const vpCalibration &twinCalibration);
 
-  static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                              vpHomogeneousMatrix &eMc);
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
+                                            const std::vector<vpHomogeneousMatrix> &rMe,
+                                            vpHomogeneousMatrix &eMc);
+  vp_deprecated static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
+                                                  vpHomogeneousMatrix &eMc_dist);
+  //@}
+  #endif
 
   //! Suppress all the point in the array of point
   int clearPoint();
@@ -131,8 +141,6 @@ public:
   static int computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
                                      vpCameraParameters &cam, double &globalReprojectionError, bool verbose = false);
 
-  static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
-                                    vpHomogeneousMatrix &eMc_dist);
   double computeStdDeviation(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera);
   double computeStdDeviation_dist(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
   int displayData(vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1,

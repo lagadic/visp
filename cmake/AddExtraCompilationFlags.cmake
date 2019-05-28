@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -97,8 +97,12 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
-if(USE_CPP11)
-  add_extra_compiler_option("${CPP11_CXX_FLAGS}")
+if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
+  add_extra_compiler_option("${CXX11_CXX_FLAGS}")
+elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
+  add_extra_compiler_option("${CXX14_CXX_FLAGS}")
+elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
+  add_extra_compiler_option("${CXX17_CXX_FLAGS}")
 endif()
 
 if(BUILD_COVERAGE)
@@ -126,7 +130,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_extra_compiler_option(-mno-ssse3)
   endif()
 
-  if(X86)
+  if(X86 AND NOT IOS)
     add_extra_compiler_option(-ffloat-store)
   endif()
 endif()

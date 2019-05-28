@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMutex_h_
-#define __vpMutex_h_
+#ifndef _vpMutex_h_
+#define _vpMutex_h_
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>
@@ -184,7 +184,7 @@ int main()
     //! Constructor that locks the mutex.
     vpScopedLock(vpMutex &mutex) : _mutex(mutex) { _mutex.lock(); }
     //! Destructor that unlocks the mutex.
-    ~vpScopedLock() { _mutex.unlock(); }
+    virtual ~vpScopedLock() { _mutex.unlock(); }
   };
 
 private:

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +149,7 @@ public:
   vpPlot();
   vpPlot(const unsigned int nbGraph, const unsigned int height = 700, const unsigned int width = 700, const int x = -1,
          const int y = -1, const std::string &title = "");
-  ~vpPlot();
+  virtual ~vpPlot();
   void getPixelValue(const bool block);
   void init(const unsigned int nbGraph, const unsigned int height = 700, const unsigned int width = 700,
             const int x = -1, const int y = -1, const std::string &title = "");

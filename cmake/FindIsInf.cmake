@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,8 +42,13 @@ include(CheckCXXSourceCompiles)
 
 macro(check_math_expr _expr _var)
     unset(${_var} CACHE)
-    if(USE_CPP11)
-      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
+    # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
+    if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
+    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX14_CXX_FLAGS})
+    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX17_CXX_FLAGS})
     endif()
     check_cxx_source_compiles("
 #include <cmath>
@@ -61,10 +66,15 @@ check_math_expr("std::isinf(1.0)"   HAVE_FUNC_STD_ISINF)
 
 if(HAVE_FLOAT_H)
     unset(HAVE_FUNC__FINITE CACHE)
-    if(USE_CPP11)
-      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
-    endif()
     # The version that should work with MSVC
+    # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
+    if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
+    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX14_CXX_FLAGS})
+    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CXX17_CXX_FLAGS})
+    endif()
     check_cxx_source_compiles("
 #include <float.h>
 int main(int argc, char ** argv)

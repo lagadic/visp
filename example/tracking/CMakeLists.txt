@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ add_test(mbtGenericTrackingDepth-hybrid-dense-scanline  mbtGenericTrackingDepth 
 
 add_test(mbtGenericTrackingDepth-edge-normal            mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4)
 add_test(mbtGenericTrackingDepth-edge-normal-scanline   mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -e 14)
-add_test(mbtGenericTrackingDepth-klt-normal             mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2)
+add_test(mbtGenericTrackingDepth-klt-normal             mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2 -e 14)
 add_test(mbtGenericTrackingDepth-klt-normal-scanline    mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2 -e 14)
 add_test(mbtGenericTrackingDepth-hybrid-normal          mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 3)
 add_test(mbtGenericTrackingDepth-hybrid-normal-scanline mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 3 -e 14)

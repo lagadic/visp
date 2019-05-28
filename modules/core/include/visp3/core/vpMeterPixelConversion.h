@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,20 +53,27 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#  include <opencv2/calib3d/calib3d.hpp>
+#endif
+
 /*!
   \class vpMeterPixelConversion
 
   \ingroup group_core_camera
 
-  \brief Conversion from normalized coordinates \f$(x,y)\f$ in meter
-  to pixel coordinates \f$(u,v)\f$.
+  Various conversion functions to transform primitives (2D ellipse, 2D line, 2D point) from normalized
+  coordinates in meter in the image plane into pixel coordinates.
 
-  This class relates to vpCameraParameters.
+  Tranformation relies either on ViSP camera parameters implemented in vpCameraParameters or on OpenCV camera parameters
+  that are set from a projection matrix and a distorsion coefficients vector.
 
 */
 class VISP_EXPORT vpMeterPixelConversion
 {
 public:
+  /** @name Using ViSP camera parameters  */
+  //@{
   static void convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center,
                              double &mu20_p, double &mu11_p, double &mu02_p);
   static void convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center,
@@ -76,18 +83,18 @@ public:
 
   /*!
 
-    \brief Point coordinates conversion from normalized coordinates
-    \f$(x,y)\f$ in meter in the image plane to pixel coordinates \f$(u,v)\f$ in the image.
+    Point coordinates conversion from normalized coordinates
+    \f$(x,y)\f$ in meter in the image plane to pixel coordinates \f$(u,v)\f$ in the image using ViSP camera parameters.
 
     The used formula depends on the projection model of the camera. To
     know the currently used projection model use
     vpCameraParameter::get_projModel()
 
-    \param cam : camera parameters.
-    \param x : input coordinate in meter along image plane x-axis.
-    \param y : input coordinate in meter along image plane y-axis.
-    \param u : output coordinate in pixels along image horizontal axis.
-    \param v : output coordinate in pixels along image vertical axis.
+    \param[in] cam : camera parameters.
+    \param[in] x : input coordinate in meter along image plane x-axis.
+    \param[in] y : input coordinate in meter along image plane y-axis.
+    \param[out] u : output coordinate in pixels along image horizontal axis.
+    \param[out] v : output coordinate in pixels along image vertical axis.
 
     \f$ u = x*p_x + u_0 \f$ and  \f$ v = y*p_y + v_0 \f$ in the case of
     perspective projection without distortion.
@@ -97,7 +104,8 @@ public:
     distortion.
   */
 
-  inline static void convertPoint(const vpCameraParameters &cam, const double &x, const double &y, double &u, double &v)
+  inline static void convertPoint(const vpCameraParameters &cam,
+                                  const double &x, const double &y, double &u, double &v)
   {
     switch (cam.projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
@@ -111,17 +119,17 @@ public:
 
   /*!
 
-    \brief Point coordinates conversion from normalized coordinates
-    \f$(x,y)\f$ in meter in the image plane to pixel coordinates in the image.
+    Point coordinates conversion from normalized coordinates
+    \f$(x,y)\f$ in meter in the image plane to pixel coordinates in the image using ViSP camera parameters.
 
     The used formula depends on the projection model of the camera. To
     know the currently used projection model use
     vpCameraParameter::get_projModel()
 
-    \param cam : camera parameters.
-    \param x : input coordinate in meter along image plane x-axis.
-    \param y : input coordinate in meter along image plane y-axis.
-    \param iP : output coordinates in pixels.
+    \param[in] cam : camera parameters.
+    \param[in] x : input coordinate in meter along image plane x-axis.
+    \param[in] y : input coordinate in meter along image plane y-axis.
+    \param[out] iP : output coordinates in pixels.
 
     In the frame (u,v) the result is given by:
 
@@ -148,7 +156,7 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /*!
 
-    \brief Point coordinates conversion without distortion from
+    Point coordinates conversion without distortion from
     normalized coordinates \f$(x,y)\f$ in meter to pixel coordinates
     \f$(u,v)\f$.
 
@@ -164,7 +172,7 @@ public:
 
   /*!
 
-    \brief Point coordinates conversion without distortion from
+    Point coordinates conversion without distortion from
     normalized coordinates \f$(x,y)\f$ in meter to pixel coordinates.
 
     In the frame (u,v) the result is given by:
@@ -181,15 +189,15 @@ public:
 
   /*!
 
-    \brief Point coordinates conversion with distortion from
+    Point coordinates conversion with distortion from
     normalized coordinates \f$(x,y)\f$ in meter to pixel coordinates
     \f$(u,v)\f$.
 
-    \param cam : camera parameters.
-    \param x : input coordinate in meter along image plane x-axis.
-    \param y : input coordinate in meter along image plane y-axis.
-    \param u : output coordinate in pixels along image horizontal axis.
-    \param v : output coordinate in pixels along image vertical axis.
+    \param[in] cam : camera parameters.
+    \param[in] x : input coordinate in meter along image plane x-axis.
+    \param[in]y : input coordinate in meter along image plane y-axis.
+    \param[out] u : output coordinate in pixels along image horizontal axis.
+    \param[out] v : output coordinate in pixels along image vertical axis.
 
     \f$ u = x*p_x*(1+k_{ud}*r^2)+u_0 \f$ and
     \f$ v = y*p_y*(1+k_{ud}*r^2)+v_0 \f$
@@ -205,13 +213,13 @@ public:
 
   /*!
 
-    \brief Point coordinates conversion with distortion from
+    Point coordinates conversion with distortion from
     normalized coordinates \f$(x,y)\f$ in meter to pixel coordinates.
 
-    \param cam : camera parameters.
-    \param x : input coordinate in meter along image plane x-axis.
-    \param y : input coordinate in meter along image plane y-axis.
-    \param iP : output coordinates in pixels.
+    \param[in] cam : camera parameters.
+    \param[in] x : input coordinate in meter along image plane x-axis.
+    \param[in] y : input coordinate in meter along image plane y-axis.
+    \param[out] iP : output coordinates in pixels.
 
     In the frame (u,v) the result is given by:
 
@@ -227,6 +235,26 @@ public:
     iP.set_v(cam.v0 + cam.py * y * r2);
   }
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //@}
+
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+  /** @name Using OpenCV camera parameters  */
+  //@{
+  static void convertEllipse(const cv::Mat &cameraMatrix,
+                             const vpCircle &circle, vpImagePoint &center,
+                             double &mu20_p, double &mu11_p, double &mu02_p);
+  static void convertEllipse(const cv::Mat &cameraMatrix,
+                             const vpSphere &sphere, vpImagePoint &center,
+                             double &mu20_p, double &mu11_p, double &mu02_p);
+  static void convertLine(const cv::Mat &cameraMatrix,
+                          const double &rho_m, const double &theta_m,
+                          double &rho_p, double &theta_p);
+  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
+                           const double &x, const double &y, double &u, double &v);
+  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
+                           const double &x, const double &y, vpImagePoint &iP);
+  //@}
+#endif
 };
 
 #endif

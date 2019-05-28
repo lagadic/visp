@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,66 @@ class vpForceTwistMatrix;
 
   The vpMatrix class is derived from vpArray2D<double>.
 
+  The code below shows how to create a 2-by-3 matrix of doubles, set the element values and access them:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+  vpMatrix M(2, 3);
+  M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+  M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+  std::cout << "M:" << std::endl;
+  for (unsigned int i = 0; i < M.getRows(); i++) {
+    for (unsigned int j = 0; j < M.getCols(); j++) {
+      std::cout << M[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+  \endcode
+  Once build, this previous code produces the following output:
+  \code
+M:
+-1 -2 -3
+4 5.5 6
+  \endcode
+  If ViSP is build with c++11 enabled, you can do the same using:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+  \endcode
+  You can also create and initialize a matrix this way:
+  \code
+#include <visp3/code/vpMatrix.h
+
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
+#endif
+}
+  \endcode
+
+  The Matrix could also be initialized using operator=(const std::initializer_list< std::initializer_list< double > > &)
+  \code
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMatrix M;
+  M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+#endif
+}
+  \endcode
+
   \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix,
   vpRotationMatrix, vpVelocityTwistMatrix, vpForceTwistMatrix, vpHomography
 */
@@ -118,6 +178,7 @@ public:
     zero.
   */
   vpMatrix() : vpArray2D<double>(0, 0) {}
+
   /*!
     Constructor that initialize a matrix of double with 0.
 
@@ -125,6 +186,7 @@ public:
     \param c : Matrix number of columns.
   */
   vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {}
+
   /*!
     Constructor that initialize a matrix of double with \e val.
 
@@ -134,6 +196,7 @@ public:
   */
   vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
+
   /*!
      Create a matrix from a 2D array that could be one of the following
      container that inherit from vpArray2D such as vpMatrix, vpRotationMatrix,
@@ -148,10 +211,85 @@ vpMatrix M(R);
    */
   vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
+
+  /*!
+     Construct a matrix from a list of double values.
+     \param list : List of double.
+     The following code shows how to use this constructor to initialize a 2-by-3 matrix using reshape() function:
+     \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMatrix M( {-1, -2, -3, 4, 5.5, 6.0f} );
+  M.reshape(2, 3);
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+     \endcode
+     It produces the following output:
+     \code
+M:
+-1  -2  -3
+4  5.5  6
+     \endcode
+   */
+  explicit vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+
+  /*!
+     Construct a matrix from a list of double values.
+     \param ncols, nrows : Matrix size.
+     \param list : List of double.
+     The following code shows how to use this constructor to initialize a 2-by-3 matrix:
+     \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6});
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+     \endcode
+     It produces the following output:
+     \code
+M:
+-1  -2  -3
+4  5.5  6
+     \endcode
+   */
+  explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list)
+    : vpArray2D<double>(nrows, ncols, list) {}
+
+  /*!
+     Construct a matrix from a list of double values.
+     \param lists : List of double.
+     The following code shows how to use this constructor to initialize a 2-by-3 matrix function:
+     \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpMatrix M( { {-1, -2, -3}, {4, 5.5, 6} } );
+  std::cout << "M:\n" << M << std::endl;
+#endif
+}
+     \endcode
+     It produces the following output:
+     \code
+M:
+-1  -2  -3
+4  5.5  6
+     \endcode
+   */
+  explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
 #endif
 
   //! Destructor (Memory de-allocation)
@@ -195,10 +333,15 @@ vpMatrix M(R);
   /** @name Assignment operators */
   //@{
   vpMatrix &operator<<(double *);
+  vpMatrix& operator<<(double val);
+  vpMatrix& operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(const vpMatrix &A);
   vpMatrix &operator=(vpMatrix &&A);
+
+  vpMatrix& operator=(const std::initializer_list<double> &list);
+  vpMatrix& operator=(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
   vpMatrix &operator=(const double x);
   //@}
@@ -256,20 +399,18 @@ vpMatrix M(R);
   // return the determinant of the matrix.
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   double detByLU() const;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_EIGEN3
   double detByLUEigen3() const;
 #endif
 #ifdef VISP_HAVE_GSL
   double detByLUGsl() const;
 #endif
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   double detByLULapack() const;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   double detByLUOpenCV() const;
 #endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   // Compute the exponential matrix of a square matrix
   vpMatrix expm() const;
@@ -357,7 +498,6 @@ vpMatrix M(R);
   // inverse matrix A using the LU decomposition
   vpMatrix inverseByLU() const;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if defined(VISP_HAVE_EIGEN3)
   vpMatrix inverseByLUEigen3() const;
 #endif
@@ -370,32 +510,27 @@ vpMatrix M(R);
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   vpMatrix inverseByLUOpenCV() const;
 #endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   // inverse matrix A using the Cholesky decomposition (only for real
   // symmetric matrices)
   vpMatrix inverseByCholesky() const;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByCholeskyLapack() const;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   vpMatrix inverseByCholeskyOpenCV() const;
 #endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   // inverse matrix A using the QR decomposition
   vpMatrix inverseByQR() const;
+#if defined(VISP_HAVE_LAPACK)
+  vpMatrix inverseByQRLapack() const;
+#endif
 
   // inverse triangular matrix
   vpMatrix inverseTriangular(bool upper = true) const;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(VISP_HAVE_LAPACK)
-  vpMatrix inverseByQRLapack() const;
-#endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   vpMatrix pseudoInverse(double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold = 1e-6) const;
@@ -404,7 +539,6 @@ vpMatrix M(R);
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
                              vpMatrix &kerAt) const;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if defined(VISP_HAVE_LAPACK)
   vpMatrix pseudoInverseLapack(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, double svThreshold = 1e-6) const;
@@ -433,7 +567,6 @@ vpMatrix M(R);
   unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
                                 vpMatrix &kerAt) const;
 #endif
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   //@}
 
@@ -443,7 +576,7 @@ vpMatrix M(R);
 
   /** @name SVD decomposition  */
   //@{
-  double cond() const;
+  double cond(double svThreshold = 1e-6) const;
   unsigned int kernel(vpMatrix &kerAt, double svThreshold = 1e-6) const;
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
@@ -453,19 +586,17 @@ vpMatrix M(R);
 
   // singular value decomposition SVD
   void svd(vpColVector &w, vpMatrix &V);
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_EIGEN3
   void svdEigen3(vpColVector &w, vpMatrix &V);
 #endif
 #ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector &w, vpMatrix &V);
 #endif
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
   void svdLapack(vpColVector &w, vpMatrix &V);
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   void svdOpenCV(vpColVector &w, vpMatrix &V);
-#endif
 #endif
   //@}
 
@@ -498,6 +629,8 @@ vpMatrix M(R);
   /** @name Norms  */
   //@{
   double euclideanNorm() const;
+  double frobeniusNorm() const;
+  double inducedL2Norm() const;
   double infinityNorm() const;
   //@}
 
@@ -510,7 +643,7 @@ vpMatrix M(R);
   std::ostream &csvPrint(std::ostream &os) const;
   std::ostream &maplePrint(std::ostream &os) const;
   std::ostream &matlabPrint(std::ostream &os) const;
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, const std::string &intro = "") const;
   void printSize() const { std::cout << getRows() << " x " << getCols() << "  "; }
   //@}
 
