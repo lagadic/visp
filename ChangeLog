@@ -14,6 +14,8 @@ ViSP 3.2.1 (under work)
       TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12, TAG_STANDARD52h13
       are supported. AprilTag detection time is reduced
     . Remove libxml2 3rd party dependency to use pugixml built-in 
+    . Replace pthreads-win32 for POSIX threads for windows 3rd party with pthreads4w
+      implementation
     . New matrix and vector initialization methods to ease setting elements
     . Introduce Eigen <-> ViSP conversion functions in vp namespace
     . Add OpenBLAS, Intel MKL and Atlas explicit support
@@ -36,6 +38,7 @@ ViSP 3.2.1 (under work)
     . [#546] ViSP doesn't build when C++11 off and PCL on
     . [#549] Bug in unsigned int vpBSpline::findSpan(double u)
     . [#554] Bug in SaveRealSenseData.cpp prevents install on windows
+    . [#559] AprilTag detector freeze with msvc built when more than 1 thread is used
     . [#564] visp_java build fails when OpenCV and libjpeg or libpng are not used
     . [#570] Could not get left and right Infrared images from RealSense D435
     . [#573] VISP fails to build with cmake 3.14.3 and PCL 1.9.1
