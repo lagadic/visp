@@ -39,7 +39,7 @@ endif()
 if(MSVC)
   # Disable Visual C++ warnings
   foreach(f ${lib_srcs})
-    vp_set_source_file_compile_flag(${f} /wd4244 /wd4267 /wd4273 /wd4554 /wd4996)
+    vp_set_source_file_compile_flag(${f} /wd4244 /wd4267 /wd4273 /wd4554 /wd4723 /wd4996)
   endforeach()
 else()
   foreach(f ${lib_srcs})
