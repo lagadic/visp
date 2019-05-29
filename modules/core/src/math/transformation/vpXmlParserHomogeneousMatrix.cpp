@@ -338,7 +338,7 @@ public:
 
     int M_isFound = count(node, name);
 
-    if (M_isFound > 0) {
+    if (M_isFound) {
       std::cout << "There is already an homogeneous matrix " << std::endl
                 << "available in the file with the input name: " << name << "." << std::endl
                 << "Please delete it manually from the xml file." << std::endl;
