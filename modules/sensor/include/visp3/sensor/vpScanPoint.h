@@ -146,6 +146,10 @@ public:
   */
   inline double getZ() const { return (rDist * cos(this->hAngle) * sin(this->vAngle)); }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpScanPoint &operator=(const vpScanPoint &) = default;
+#endif
+
   friend inline std::ostream &operator<<(std::ostream &s, const vpScanPoint &p);
 
   /*!

@@ -213,6 +213,7 @@ public:
   vpRzyxVector &operator=(const vpColVector &rzyx);
   vpRzyxVector &operator=(double x);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRzyxVector &operator=(const vpRzyxVector &rzyx) = default;
   vpRzyxVector &operator=(const std::initializer_list<double> &list);
 #endif
 };
