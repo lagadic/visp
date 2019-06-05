@@ -27,7 +27,7 @@ ViSP 3.2.1 (under work)
     . Compatibility with FlyCapture 2.13 to enable vpFlyCaptureGrabber usage
     . Compatibility with PCL > 1.9.1 to enable additional features in vpRealSense2 class
     . Compatibility with Windows 10 SDK latest version to enable vpDisplayGDI usage
-    . Compatibility with Fedora 29
+    . Compatibility with Fedora 30
     . New option to select CXX standard set by default to c++11
   - Tutorials
     . New tutorial: Installation from source for Windows with Visual C++ 2019 (vc16)
