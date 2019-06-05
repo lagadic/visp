@@ -528,9 +528,9 @@ public:
         }
       }
     } else {
+      convertHomogeneousMatrix(pose2, cMo1);
       if (cMo2) {
         convertHomogeneousMatrix(pose1, *cMo2);
-        convertHomogeneousMatrix(pose2, cMo1);
       }
     }
 
