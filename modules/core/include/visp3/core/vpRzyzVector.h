@@ -211,6 +211,7 @@ public:
   vpRzyzVector &operator=(const vpColVector &rzyz);
   vpRzyzVector &operator=(double x);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRzyzVector &operator=(const vpRzyzVector &rzyz) = default;
   vpRzyzVector &operator=(const std::initializer_list<double> &list);
 #endif
 };

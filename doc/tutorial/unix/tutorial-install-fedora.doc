@@ -3,7 +3,7 @@
 \page tutorial-install-fedora Tutorial: Installation from source for Linux Fedora
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21, Fedora 26 (64 bit), Fedora 28 (64 bits) and Fedora 29 (64 bits) distributions, but should work with any other distribution as well. 
+In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21, Fedora 26 (64 bit), Fedora 28 (64 bits), Fedora 29 (64 bits) and Fedora 30 (64 bits) distributions, but should work with any other distribution as well. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 

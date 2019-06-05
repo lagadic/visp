@@ -387,6 +387,7 @@ void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
 vpPoint &vpPoint::operator=(const vpPoint &vpp)
 {
   p = vpp.p;
@@ -396,6 +397,7 @@ vpPoint &vpPoint::operator=(const vpPoint &vpp)
 
   return *this;
 }
+#endif
 
 /*!
   Display the point in the image.
