@@ -55,6 +55,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		30015B0F22A777A100834B9B /* 3rdparty */ = {
+			isa = PBXGroup;
+			children = (
+				3040DA56221F991200C72347 /* VideoCapture.swift */,
+			);
+			path = 3rdparty;
+			sourceTree = "<group>";
+		};
 		3040DA37221F988200C72347 = {
 			isa = PBXGroup;
 			children = (
@@ -76,10 +84,10 @@
 		3040DA42221F988200C72347 /* AprilTagLiveCamera */ = {
 			isa = PBXGroup;
 			children = (
+				30015B0F22A777A100834B9B /* 3rdparty */,
 				3040DA4A221F988300C72347 /* Assets.xcassets */,
 				3040DA4F221F988300C72347 /* Info.plist */,
 				3040DA43221F988200C72347 /* AppDelegate.swift */,
-				3040DA56221F991200C72347 /* VideoCapture.swift */,
 				3040DA57221F991300C72347 /* VispDetector.h */,
 				3040DA58221F991300C72347 /* VispDetector.mm */,
 				3040DA45221F988200C72347 /* ViewController.swift */,
@@ -337,8 +345,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Z7689KDQMR;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/visp/visp-3.1.0.framework",
@@ -366,8 +374,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Z7689KDQMR;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/visp/visp-3.1.0.framework",
