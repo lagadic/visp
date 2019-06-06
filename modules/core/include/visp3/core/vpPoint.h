@@ -104,6 +104,8 @@ public:
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint &vpp);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpPoint &operator=(const vpPoint &vpp) = default;
+#else
+  vpPoint &operator=(const vpPoint &vpp);
 #endif
 
   //! Projection onto the image plane of a point. Input: the 3D coordinates in
