@@ -1,3 +1,9 @@
+//
+// VideoCapture.swift
+// Copyright © 2019 Aplix and/or its affiliates. All rights reserved.
+// This software is released under the MIT License.
+// http://opensource.org/licenses/mit-license.php
+//
 // This file is copied and modified from original files, which are distributed under
 // MIT License (https://github.com/shu223/iOS-Depth-Sampler/blob/master/LICENSE)
 // and are copyrighted as follows.

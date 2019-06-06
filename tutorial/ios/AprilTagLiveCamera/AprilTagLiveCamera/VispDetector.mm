@@ -29,14 +29,11 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  *****************************************************************************/
-
 // This file is copied and modified from original file, which is distributed under
-// GNU General Public License v2.0 (https://github.com/AplixCorporation/groma-AprilTag/blob/master/LICENSE)
-// and is copyrighted as follows.
+// GNU General Public License v2.0.
+//  VispDetector.mm
+//  https://github.com/AplixCorporation/groma-AprilTag/
 //
-// VispDetector.mm
-// Copyright © 2018 Aplix and/or its affiliates. All rights reserved.
-// See https://groma.jp for more information.
 
 #import "VispDetector.h"
 #import "ImageConversion.h"
