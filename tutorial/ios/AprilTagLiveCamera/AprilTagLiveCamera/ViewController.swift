@@ -5,32 +5,32 @@ class ViewController: UIViewController, VideoCaptureDelegate {
     @IBOutlet weak var imageView: UIImageView!
     
     let videoCapture = VideoCapture()
-    let visp = VispDetector()
+    private let visp = VispDetector()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        videoCapture.delegate = self
+        self.videoCapture.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        videoCapture.startCapturing()
+        self.videoCapture.startCapturing()
     }
     
     // pass image to detector.
     func imageDidCapture(_ uiImage: UIImage, with px: Float, and py: Float) {
-        imageView.image = visp.detectAprilTag(uiImage, px:px, py:py)
+        self.imageView.image = self.visp.detectAprilTag(uiImage, px:px, py:py)
     }
     
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        videoCapture.stopCapturing()
+        self.videoCapture.stopCapturing()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        videoCapture.stopCapturing()
+        self.videoCapture.stopCapturing()
     }
     
 }

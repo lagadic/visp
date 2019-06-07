@@ -12,10 +12,6 @@
 //  Created by Shuichi Tsutsumi on 4/3/16.
 //  Copyright © 2016 Shuichi Tsutsumi. All rights reserved.
 //
-//  RealtimeDepthViewController.swift
-//  Created by Shuichi Tsutsumi on 2018/08/20.
-//  Copyright © 2018 Shuichi Tsutsumi. All rights reserved.
-//
 //  UIImage+CVPixelBuffer.swift
 //  Created by Shuichi Tsutsumi on 2018/08/28.
 //  Copyright © 2018 Shuichi Tsutsumi. All rights reserved.
@@ -30,10 +26,6 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     private let captureSession = AVCaptureSession()
     var delegate: VideoCaptureDelegate?
-
-    // capture counter
-    var captureCount = 0
-    let dismissCapture = 3
     
     // thread settings
     private let dataOutputQueue = DispatchQueue(label: "dataOutputQueue")
@@ -93,19 +85,13 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         // check image processing flag.
         if self.isImgProcessing { return }
         
-        // skip image process some times to reduece CPU processing power.
-        self.captureCount += 1
-        if self.captureCount % self.dismissCapture != 0 {
-            if(self.captureCount > 10000){ self.captureCount = 0 }
-            return
-        }
-        
         // make Pixel Buffer
         guard let imagePixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { fatalError() }
         
         
-        // get intrinsic matrix
         CVPixelBufferLockBaseAddress(imagePixelBuffer, [])
+        
+        // get intrinsic matrix
         var matrix = matrix_float3x3.init()
         if let camData = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) as? Data {
             matrix = camData.withUnsafeBytes { $0.pointee }
@@ -115,6 +101,7 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         // get UIImage
         guard let uiImage = imageFromCVPixelBuffer(pixelBuffer: imagePixelBuffer) else { fatalError() }
+        
         CVPixelBufferUnlockBaseAddress(imagePixelBuffer,[])
         
         
