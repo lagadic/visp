@@ -384,6 +384,10 @@
 // These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER
 
+// Defined if the Parrot ARSDK is found.
+// This library is used to control Bebop2 drone.
+#cmakedefine VISP_HAVE_ARSDK
+
 // Defined if Haption Virtuose SDK available.
 #cmakedefine VISP_HAVE_VIRTUOSE
 

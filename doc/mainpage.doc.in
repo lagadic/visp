@@ -603,6 +603,12 @@ scheme, ...</p>
   Template for users that want to integrate their own real-robot.
 */
 /*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_drone Drone
+  Flying robot interfaces.
+*/
+
+/*!
   \ingroup module_robot
   \defgroup group_robot_haptic Haptic devices
   Haptic devices interfaces.
