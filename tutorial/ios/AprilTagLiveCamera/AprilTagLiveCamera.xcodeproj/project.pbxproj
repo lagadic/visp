@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		303072F022AE2DD900F019D0 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 303072EE22AE2DD900F019D0 /* opencv2.framework */; };
+		303072F122AE2DD900F019D0 /* visp3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 303072EF22AE2DD900F019D0 /* visp3.framework */; };
 		3040DA44221F988200C72347 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA43221F988200C72347 /* AppDelegate.swift */; };
 		3040DA46221F988200C72347 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA45221F988200C72347 /* ViewController.swift */; };
 		3040DA49221F988200C72347 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3040DA47221F988200C72347 /* Main.storyboard */; };
@@ -16,12 +18,12 @@
 		3040DA5B221F991300C72347 /* VispDetector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA58221F991300C72347 /* VispDetector.mm */; };
 		3040DA61221F99DC00C72347 /* ImageConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA5E221F99DC00C72347 /* ImageConversion.mm */; };
 		3040DA62221F99DC00C72347 /* ImageDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA60221F99DC00C72347 /* ImageDisplay.mm */; };
-		3040DA66221F9A3000C72347 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3040DA64221F9A3000C72347 /* opencv2.framework */; };
-		3040DA67221F9A3000C72347 /* visp3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3040DA65221F9A3000C72347 /* visp3.framework */; };
 		30E9DA38222E16B50044ACD3 /* ImageDisplay+withContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30E9DA37222E16B50044ACD3 /* ImageDisplay+withContext.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		303072EE22AE2DD900F019D0 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		303072EF22AE2DD900F019D0 /* visp3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = visp3.framework; sourceTree = "<group>"; };
 		3040DA40221F988200C72347 /* AprilTagLiveCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AprilTagLiveCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3040DA43221F988200C72347 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3040DA45221F988200C72347 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -47,8 +49,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3040DA66221F9A3000C72347 /* opencv2.framework in Frameworks */,
-				3040DA67221F9A3000C72347 /* visp3.framework in Frameworks */,
+				303072F122AE2DD900F019D0 /* visp3.framework in Frameworks */,
+				303072F022AE2DD900F019D0 /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +68,8 @@
 		3040DA37221F988200C72347 = {
 			isa = PBXGroup;
 			children = (
+				303072EE22AE2DD900F019D0 /* opencv2.framework */,
+				303072EF22AE2DD900F019D0 /* visp3.framework */,
 				3040DA42221F988200C72347 /* AprilTagLiveCamera */,
 				3040DA5C221F99BB00C72347 /* VispHelper */,
 				3040DA41221F988200C72347 /* Products */,
@@ -349,7 +353,7 @@
 				DEVELOPMENT_TEAM = Z7689KDQMR;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/visp/visp-3.1.0.framework",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = AprilTagLiveCamera/Info.plist;
@@ -378,7 +382,7 @@
 				DEVELOPMENT_TEAM = Z7689KDQMR;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/visp/visp-3.1.0.framework",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = AprilTagLiveCamera/Info.plist;
