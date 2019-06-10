@@ -187,8 +187,8 @@ int main() {
         unsigned char val2 = getValue<unsigned char>(I, idx1, idx2, true);
         unsigned char val3 = getValue<unsigned char>(I, idx1, idx2, false);
 
-        diff_round += std::fabs(val1 - val2);
-        diff += std::fabs(val1 - val3);
+        diff_round += std::fabs((double)val1 - (double)val2);
+        diff += std::fabs((double)val1 - (double)val3);
       }
     }
 
