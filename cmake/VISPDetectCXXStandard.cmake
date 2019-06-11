@@ -67,6 +67,8 @@ if(COMPILE_FEATURES)
   if (${_index} GREATER -1)
     set(CXX17_STANDARD_FOUND ON)
   endif()
+else()
+  set(CXX98_STANDARD_FOUND ON)
 endif()
 
 if(CXX11_STANDARD_FOUND)
@@ -81,6 +83,11 @@ else()
   set(AVAILABLE_CXX_STANDARD FALSE)
 endif()
 
+# Hack for msvc12 (Visual 2013) where C++11 implementation is incomplete
+if(MSVC_VERSION EQUAL 1800)
+  set(CXX11_STANDARD_FOUND TRUE)
+endif()
+
 if(AVAILABLE_CXX_STANDARD)
   if(CXX98_STANDARD_FOUND)
     set_property(CACHE USE_CXX_STANDARD APPEND_STRING PROPERTY STRINGS "98")
@@ -93,11 +100,6 @@ if(AVAILABLE_CXX_STANDARD)
   endif()
   if(CXX17_STANDARD_FOUND)
     set_property(CACHE USE_CXX_STANDARD APPEND_STRING PROPERTY STRINGS ";17")
-  endif()
-
-  # Hack for msvc12 (Visual 2013) where C++11 implementation is incomplete
-  if(MSVC_VERSION EQUAL 1800)
-    set(CXX11_STANDARD_FOUND TRUE)
   endif()
 
   if(USE_CXX_STANDARD STREQUAL "98")
