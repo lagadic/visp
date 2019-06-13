@@ -59,7 +59,14 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
-#include <inttypes.h>
+
+// Visual Studio 2010 or previous is missing inttypes.h
+#if defined(_MSC_VER) && (_MSC_VER < 1700)
+typedef long long int64_t;
+typedef unsigned short uint16_t;
+#else
+#  include <inttypes.h>
+#endif
 
 class vpDisplay;
 

@@ -2069,6 +2069,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_APRILTAG \
+                         VISP_HAVE_APRILTAG_BIG_FAMILY \
                          VISP_HAVE_ATIDAQ \
                          VISP_HAVE_CMU1394 \
                          VISP_HAVE_BICLOPS \
@@ -2153,7 +2154,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_MODULE_VISUAL_FEATURES \
                          VISP_HAVE_MODULE_VS \
                          VISP_BUILD_DEPRECATED_FUNCTIONS \
-                         VISP_DISABLE_APRILTAG_BIG_FAMILY \
                          WIN32 \
                          APPLE \
                          UNIX \
