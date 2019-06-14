@@ -46,6 +46,22 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#if defined(_WIN32)
+// Include WinSock2.h before windows.h to ensure that winsock.h is not
+// included by windows.h since winsock.h and winsock2.h are incompatible
+#include <WinSock2.h>
+#include <windows.h>
+#endif
+
+#if defined(VISP_HAVE_JPEG)
+#include <jerror.h>
+#include <jpeglib.h>
+#endif
+
+#if defined(VISP_HAVE_PNG)
+#include <png.h>
+#endif
+
 void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
                         unsigned int &h, unsigned int &maxval);
 
