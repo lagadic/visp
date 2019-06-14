@@ -51,6 +51,20 @@ extern "C"
 #include <libARDiscovery/ARDiscovery.h>
 }
 
+#include <string>
+#include <signal.h>
+#include <curses.h>
+#include <iostream>
+
+#include <visp3/io/vpKeyboard.h>
+
+#define TAG "vpRobotBebop2"
+#define FIFO_DIR_PATTERN "/tmp/arsdk_XXXXXX"
+#define FIFO_NAME "arsdk_fifo"
+
+#define BEBOP_IP_ADDRESS "192.168.42.1"
+#define BEBOP_DISCOVERY_PORT 44444
+
 /*!
   \class vpRobotBebop2
 
@@ -63,6 +77,51 @@ class VISP_EXPORT vpRobotBebop2
 public:
   vpRobotBebop2();
   virtual ~vpRobotBebop2();
+
+  //*** Flight commands and parameters ***//
+  eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE getFlyingState();
+  bool isRunning();
+  void takeOff();
+  void land();
+  void handleKeyboardInput(int key);
+
+private:
+  //*** Attributes ***//
+  char * m_fifo_dir; ///< Path of fifo file
+  char * m_fifo_name; ///< Name of fifo file
+  static FILE * m_videoOut; ///< File used for video output visualisation
+  pid_t m_outputID; ///< ID for video output process
+  static ARSAL_Sem_t m_stateSem; ///< Semaphore
+
+  static bool m_running; ///< Used for checking if the programm is running
+
+  ARDISCOVERY_Device_t * m_device; ///< Used for drone discovery
+  ARCONTROLLER_Device_t * m_deviceController; ///< Used for drone control
+
+  eARCONTROLLER_ERROR m_errorController; ///< Used for error handling
+  eARCONTROLLER_DEVICE_STATE m_deviceState; ///< Used to store device state
+  //*** ***//
+
+  //*** Setup functions ***//
+  int activateDisplay();
+  void cleanUp();
+  ARDISCOVERY_Device_t * discoverDrone();
+  void createDroneController(ARDISCOVERY_Device_t * discoveredDrone);
+  void setupCallbacks();
+  void startController();
+  void startStreaming();
+  //*** ***//
+
+  //*** Callbacks ***//
+  static void stateChanged(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error, void * customData);
+  static eARCONTROLLER_ERROR decoderConfigCallback (ARCONTROLLER_Stream_Codec_t codec, void * customData);
+  static eARCONTROLLER_ERROR didReceiveFrameCallback (ARCONTROLLER_Frame_t * frame, void *customData);
+
+  static void cmdBatteryStateChangedRcv(ARCONTROLLER_Device_t *deviceController, ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary);
+  static void commandReceivedCallback (eARCONTROLLER_DICTIONARY_KEY commandKey, ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
+
+
+  //*** ***//
 };
 
 #endif

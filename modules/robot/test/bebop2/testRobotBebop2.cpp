@@ -46,13 +46,29 @@
 #include <iostream>
 
 #include <visp3/robot/vpRobotBebop2.h>
+#include <visp3/core/vpTime.h>
 
 int main()
 {
 #ifdef VISP_HAVE_ARSDK
-  vpRobotBebop2 robot;
+  vpRobotBebop2 drone;
 
-  std::cout << "Test succeed" << std::endl;
+  int k = 0;
+
+  initscr();
+  raw();
+  keypad(stdscr, TRUE);
+  noecho();
+  timeout(100);
+  while(drone.isRunning()){
+    k = getch();
+    drone.handleKeyboardInput(k);
+  }
+  endwin();
+
+  //vpTime::wait(2000);
+
+  std::cout << "-- End of test --" << std::endl;
 #else
   std::cout << "Install Parrot ARSDK, configure and build ViSP to use this example..." << std::endl;
 #endif
