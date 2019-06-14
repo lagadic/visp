@@ -1,10 +1,6 @@
 /****************************************************************************
  *
-<<<<<<< HEAD
- * This file is part of the ViSP software.
-=======
  * ViSP, open source Visual Servoing Platform software.
->>>>>>> 2264e26d6fdd6bdc6ac5477d42153179a9599159
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
@@ -33,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- *   Test Franka robot behavior
+ * Test Franka robot behavior
  *
  * Authors:
  * Fabien Spindler

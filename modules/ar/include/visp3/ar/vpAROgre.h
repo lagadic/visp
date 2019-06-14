@@ -321,8 +321,9 @@ protected:
   */
   virtual bool destroyScene(void)
   {
-    if (!mSceneMgr)
+    if (!mSceneMgr) {
       return false;
+    }
 
     mSceneMgr->destroyAllCameras();
     mSceneMgr->clearScene();
