@@ -488,7 +488,7 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
       searchWindowHeight = 80.;
     } else if (canMakeTheWindowGrow) {
       searchWindowWidth = getWidth() * 5;
-      searchWindowWidth = getWidth() * 5;
+      searchWindowHeight = getHeight() * 5;
     } else {
       searchWindowWidth = getWidth();
       searchWindowHeight = getHeight();
