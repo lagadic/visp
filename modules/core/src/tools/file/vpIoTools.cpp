@@ -544,6 +544,7 @@ bool vpIoTools::checkDirectory(const char *dirname)
 */
 bool vpIoTools::checkDirectory(const std::string &dirname) { return vpIoTools::checkDirectory(dirname.c_str()); }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 // See:
 // https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
 int vpIoTools::mkdir_p(const char *path, const int mode)
@@ -596,6 +597,7 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
 
   return 0;
 }
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Create a new directory. It will create recursively the parent directories if
@@ -675,6 +677,74 @@ void vpIoTools::makeDirectory(const std::string &dirname)
     vpERROR_TRACE("unable to create directory '%s'\n", dirname.c_str());
     throw(vpIoException(vpIoException::cantCreateDirectory, "unable to create directory"));
   }
+}
+
+/*!
+
+   \param[in] dirname : Fifo location.
+ */
+void vpIoTools::makeFifo(const std::string &dirname)
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo. Not implemented yet."));
+#elif defined(_WIN32)
+  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo. Not implemented yet."));
+#endif
+}
+
+/*!
+  Create a new temporary directory with a unique name based on dirname parameter.
+
+  \param dirname : Name of the directory to create. The directory name
+  needs to end with "XXXXXX", which will be converted into random
+  characters in order to create a unique directory name.
+
+  \return String corresponding to the generated directory name.
+
+  \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
+
+  \exception vpIoException::cantCreateDirectory : If the directory cannot be
+  created.
+
+  \sa makeDirectory()
+*/
+std::string vpIoTools::makeTempDirectory(const std::string &dirname)
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::string correctEnding = "XXXXXX";
+
+  size_t endingLength = correctEnding.length();
+  size_t dirNameLength = dirname.length();
+
+  //Checking if dirname ends with "XXXXXX"
+  if (endingLength > dirNameLength) {
+    throw(vpIoException(vpIoException::invalidDirectoryName,
+                        "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname.c_str()));
+  }
+
+  for (size_t i=0; i < endingLength; i++){
+    if (correctEnding[endingLength - i - 1] != dirname[dirNameLength - i - 1]){
+      throw(vpIoException(vpIoException::invalidDirectoryName,
+                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname.c_str()));
+    }
+  }
+
+  char *dirname_char = new char[dirname.length() + 1];
+  strcpy(dirname_char, dirname.c_str());
+
+  char *computedDirname = mkdtemp(dirname_char);
+
+  if (!computedDirname) {
+    delete[] dirname_char;
+    throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'.", dirname.c_str()));
+  }
+
+  std::string res(computedDirname);
+  delete[] dirname_char;
+  return res;
+#elif defined(_WIN32)
+  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create temp directory. Not implemented yet."));
+#endif
 }
 
 /*!
