@@ -502,6 +502,46 @@ int main(int argc, const char **argv)
     return EXIT_FAILURE;
   }
 
+  // Test makeTempDirectory()
+  try {
+#if (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+
+    std::string username_tmp, directory_filename_tmp;
+    vpIoTools::getUserName(username_tmp);
+    std::string tmp_dir = "/tmp/" + username_tmp;
+
+    // Test 1
+    directory_filename_tmp = tmp_dir + "/" + "vpIoTools_test_XXXXXX";
+
+    std::string converted_dirname_tmp = vpIoTools::makeTempDirectory(directory_filename_tmp);
+
+    std::cout << "Create temp directory: " << converted_dirname_tmp
+              << " ; check: " << vpIoTools::checkDirectory(converted_dirname_tmp) << std::endl;
+
+    // Delete test directory
+    if (!vpIoTools::remove(converted_dirname_tmp)) {
+      std::cerr << "Cannot remove directory: " << converted_dirname_tmp << std::endl;
+    }
+
+    // Test 2
+    vpIoTools::makeDirectory(tmp_dir);
+    converted_dirname_tmp = vpIoTools::makeTempDirectory(tmp_dir);
+
+    std::cout << "Create temp directory: " << converted_dirname_tmp
+              << " ; check: " << vpIoTools::checkDirectory(converted_dirname_tmp) << std::endl;
+
+    // Delete test directory
+    if (!vpIoTools::remove(converted_dirname_tmp)) {
+      std::cerr << "Cannot remove directory: " << converted_dirname_tmp << std::endl;
+    }
+
+  } catch (const vpException &e) {
+    std::cerr << "Exception: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+#endif
+
   // Get the user login name
   std::string username = "";
   vpIoTools::getUserName(username);

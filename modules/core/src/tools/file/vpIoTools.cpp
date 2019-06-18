@@ -695,9 +695,10 @@ void vpIoTools::makeFifo(const std::string &dirname)
 /*!
   Create a new temporary directory with a unique name based on dirname parameter.
 
-  \param dirname : Name of the directory to create. The directory name
-  needs to end with "XXXXXX", which will be converted into random
-  characters in order to create a unique directory name.
+  \param dirname : Name of the directory to create, or location of an existing directory.
+  If \e dirname corresponds to an existing directory, the temporary directory is created inside.
+  Else, \e dirname needs to end with "XXXXXX", which will be converted into random characters in order to create
+  a unique directory name.
 
   \return String corresponding to the generated directory name.
 
@@ -711,32 +712,48 @@ void vpIoTools::makeFifo(const std::string &dirname)
 std::string vpIoTools::makeTempDirectory(const std::string &dirname)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+
+  std::string dirname_cpy = std::string(dirname);
+
   std::string correctEnding = "XXXXXX";
 
   size_t endingLength = correctEnding.length();
-  size_t dirNameLength = dirname.length();
+  size_t dirNameLength = dirname_cpy.length();
 
-  //Checking if dirname ends with "XXXXXX"
-  if (endingLength > dirNameLength) {
-    throw(vpIoException(vpIoException::invalidDirectoryName,
-                        "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname.c_str()));
-  }
-
-  for (size_t i=0; i < endingLength; i++){
-    if (correctEnding[endingLength - i - 1] != dirname[dirNameLength - i - 1]){
+  // If dirname is an unexisting directory, it should end with XXXXXX in order to create a tmp directory
+  if (!vpIoTools::checkDirectory(dirname_cpy)) {
+    if (endingLength > dirNameLength) {
       throw(vpIoException(vpIoException::invalidDirectoryName,
-                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname.c_str()));
+                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
     }
-  }
 
-  char *dirname_char = new char[dirname.length() + 1];
-  strcpy(dirname_char, dirname.c_str());
+    for (size_t i = 0; i < endingLength; i++) {
+      if (correctEnding[endingLength - i - 1] != dirname_cpy[dirNameLength - i - 1]) {
+        throw(vpIoException(vpIoException::invalidDirectoryName,
+                            "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
+      }
+    }
+
+    if (dirname.compare(dirNameLength - endingLength, endingLength, correctEnding) != 0) {
+      throw(vpIoException(vpIoException::invalidDirectoryName,
+                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
+    }
+
+    // If dirname is an existing directory, we create a tmp directory inside
+  } else {
+    if (dirname_cpy.back() != '/') {
+      dirname_cpy = dirname_cpy + "/";
+    }
+    dirname_cpy = dirname_cpy + "XXXXXX";
+  }
+  char *dirname_char = new char[dirname_cpy.length() + 1];
+  strcpy(dirname_char, dirname_cpy.c_str());
 
   char *computedDirname = mkdtemp(dirname_char);
 
   if (!computedDirname) {
     delete[] dirname_char;
-    throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'.", dirname.c_str()));
+    throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'.", dirname_cpy.c_str()));
   }
 
   std::string res(computedDirname);
