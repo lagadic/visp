@@ -53,20 +53,21 @@ int main()
 #ifdef VISP_HAVE_ARSDK
   vpRobotBebop2 drone;
 
-  int k = 0;
+  drone.startStreaming();
 
+  int k = 0;
   initscr();
   raw();
   keypad(stdscr, TRUE);
   noecho();
   timeout(100);
-  while(drone.isRunning()){
+  while (drone.isRunning()) {
     k = getch();
     drone.handleKeyboardInput(k);
   }
   endwin();
 
-  //vpTime::wait(2000);
+  // vpTime::wait(2000);
 
   std::cout << "-- End of test --" << std::endl;
 #else

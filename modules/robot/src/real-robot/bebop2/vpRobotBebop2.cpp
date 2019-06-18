@@ -43,30 +43,22 @@
 
 #include <visp3/robot/vpRobotBebop2.h>
 
-//Static parameters
-bool vpRobotBebop2::m_running = false;
-FILE * vpRobotBebop2::m_videoOut = nullptr;
-ARSAL_Sem_t vpRobotBebop2::m_stateSem = nullptr;
-
 /*!
  * Default constructor.
  */
-vpRobotBebop2::vpRobotBebop2()
+vpRobotBebop2::vpRobotBebop2(std::string ipAddress, int discoveryPort, std::string fifo_dir, std::string fifo_name)
+  :m_ipAddress(ipAddress), m_discoveryPort(discoveryPort), m_fifo_dir(fifo_dir), m_fifo_name(fifo_name)
 {
-
   m_outputID = 0;
-
-  m_fifo_dir = new char[sizeof(FIFO_DIR_PATTERN)];
-  m_fifo_name = new char[sizeof(FIFO_DIR_PATTERN) + sizeof(FIFO_NAME)];
-
-  strcpy(m_fifo_dir, FIFO_DIR_PATTERN);
-  strcpy(m_fifo_name, "");
 
   std::cout<<"Configuration"<<std::endl;
 
   m_errorController = ARCONTROLLER_OK;
   m_deviceState = ARCONTROLLER_DEVICE_STATE_MAX;
   m_running = true;
+
+  //Initialises a semaphore
+  ARSAL_Sem_Init (&(m_stateSem), 0, 0);
 
   std::cout<<"Starting"<<std::endl;
 
@@ -85,9 +77,6 @@ vpRobotBebop2::vpRobotBebop2()
   startController();
   std::cout<<"Controller started"<<std::endl<<std::endl;
 
-  startStreaming();
-  std::cout<<"Streaming started"<<std::endl<<std::endl;
-
 }
 
 /*!
@@ -98,30 +87,14 @@ vpRobotBebop2::~vpRobotBebop2()
   cleanUp();
 }
 
-eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE vpRobotBebop2::getFlyingState()
+std::string vpRobotBebop2::getIpAddress()
 {
-  eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE flyingState = ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_MAX;
-  eARCONTROLLER_ERROR error;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary = ARCONTROLLER_ARDrone3_GetCommandElements(m_deviceController->aRDrone3, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED, &error);
-  if (error == ARCONTROLLER_OK && elementDictionary != nullptr)
-    {
-      ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
-      ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
-      HASH_FIND_STR (elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+  return m_ipAddress;
+}
 
-      if (element != nullptr)
-      {
-        // Get the value
-        HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE, arg);
-
-        if (arg != nullptr)
-        {
-          // Enums are stored as I32
-          flyingState = static_cast<eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE>(arg->value.I32);
-        }
-      }
-    }
-  return flyingState;
+int vpRobotBebop2::getDiscoveryPort()
+{
+  return m_discoveryPort;
 }
 
 bool vpRobotBebop2::isRunning()
@@ -129,9 +102,24 @@ bool vpRobotBebop2::isRunning()
   return m_running;
 }
 
+bool vpRobotBebop2::isHovering()
+{
+  return getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING;
+}
+
+bool vpRobotBebop2::isFlying()
+{
+  return getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING;
+}
+
+bool vpRobotBebop2::isLanded()
+{
+  return getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDED;
+}
+
 void vpRobotBebop2::takeOff()
 {
-  if (getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDED)
+  if (isLanded())
   {
     m_deviceController->aRDrone3->sendPilotingTakeOff(m_deviceController->aRDrone3);
   }
@@ -142,8 +130,7 @@ void vpRobotBebop2::takeOff()
 
 void vpRobotBebop2::land()
 {
-  eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE flyingState = getFlyingState();
-  if (flyingState == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING || flyingState == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING)
+  if (isFlying() || isHovering())
   {
     m_deviceController->aRDrone3->sendPilotingLanding(m_deviceController->aRDrone3);
   }
@@ -151,6 +138,17 @@ void vpRobotBebop2::land()
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't land : drone isn't flying or hovering.");
   }
 }
+
+void vpRobotBebop2::startStreaming()
+{
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- send StreamingVideoEnable ... ");
+  m_errorController = m_deviceController->aRDrone3->sendMediaStreamingVideoEnable (m_deviceController->aRDrone3, 1);
+  if(m_errorController != ARCONTROLLER_OK)
+  {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
+  }
+}
+
 
 void vpRobotBebop2::handleKeyboardInput(int key)
 {
@@ -233,36 +231,69 @@ void vpRobotBebop2::handleKeyboardInput(int key)
 //*** Private Functions ***//
 //***                   ***//
 
-int vpRobotBebop2::activateDisplay()
+eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE vpRobotBebop2::getFlyingState()
+{
+  eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE flyingState = ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_MAX;
+  eARCONTROLLER_ERROR error;
+
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary = ARCONTROLLER_ARDrone3_GetCommandElements(m_deviceController->aRDrone3, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED, &error);
+
+  if (error == ARCONTROLLER_OK && elementDictionary != NULL)
+    {
+      ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
+      ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+
+      #pragma GCC diagnostic ignored "-Wold-style-cast"
+      #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+      #pragma GCC diagnostic ignored "-Wcast-qual"
+      HASH_FIND_STR (elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+      #pragma GCC diagnostic pop
+      #pragma GCC diagnostic pop
+      #pragma GCC diagnostic pop
+
+      if (element != NULL)
+      {
+        //Suppress warnings
+        #pragma GCC diagnostic ignored "-Wold-style-cast"
+        #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+        #pragma GCC diagnostic ignored "-Wcast-qual"
+        // Get the value
+        HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE, arg);
+        #pragma GCC diagnostic pop
+        #pragma GCC diagnostic pop
+        #pragma GCC diagnostic pop
+
+        if (arg != NULL)
+        {
+          // Enums are stored as I32
+          flyingState = static_cast<eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE>(arg->value.I32);
+        }
+      }
+    }
+  return flyingState;
+}
+
+void vpRobotBebop2::activateDisplay()
 {
   //Creates a temp directory to store video feed
-  if(mkdtemp(m_fifo_dir) == nullptr)
-  {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Mkdtemp failed.");
-    return 1;
-  }
-  snprintf(m_fifo_name, sizeof(FIFO_NAME)+sizeof(FIFO_DIR_PATTERN), "%s/%s", m_fifo_dir, FIFO_NAME);
+  m_fifo_dir = vpIoTools::makeTempDirectory(m_fifo_dir);
 
-  if(mkfifo(m_fifo_name, 0666) < 0)
-  {
+  m_fifo_name = m_fifo_dir + "/" + m_fifo_name;
+
+  if (mkfifo(const_cast<char *>(m_fifo_name.c_str()), 0666) < 0) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Mkfifo failed: %d, %s", errno, strerror(errno));
-    return 1;
+    return;
   }
-
-  //Initialises the semaphore
-  ARSAL_Sem_Init (&(m_stateSem), 0, 0);
 
   //Launches the display
   if((m_outputID = fork()) == 0)
   {
-    execlp("xterm", "xterm", "-e", "mplayer", "-demuxer",  "h264es", m_fifo_name, "-benchmark", "-really-quiet", NULL);
+    execlp("xterm", "xterm", "-e", "mplayer", "-demuxer",  "h264es", const_cast<char*>(m_fifo_name.c_str()), "-benchmark", "-really-quiet", NULL);
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Missing mplayer, you will not see the video. Please install mplayer and xterm.");
-    return -1;
+    return;
   }
 
-  m_videoOut = fopen(m_fifo_name, "w");
-
-  return EXIT_SUCCESS;
+  m_videoOut = fopen(const_cast<char*>(m_fifo_name.c_str()), "w");
 }
 
 ARDISCOVERY_Device_t * vpRobotBebop2::discoverDrone()
@@ -271,19 +302,15 @@ ARDISCOVERY_Device_t * vpRobotBebop2::discoverDrone()
 
   ARDISCOVERY_Device_t * device = ARDISCOVERY_Device_New(&errorDiscovery);
 
-  if (errorDiscovery == ARDISCOVERY_OK)
-  {
-    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - ARDISCOVERY_Device_InitWifi ...");
-    errorDiscovery = ARDISCOVERY_Device_InitWifi(device, ARDISCOVERY_PRODUCT_BEBOP_2, "bebop2", BEBOP_IP_ADDRESS, BEBOP_DISCOVERY_PORT);
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - ARDISCOVERY_Device_InitWifi ...");
+  const char * charIpAddress = m_ipAddress.c_str();
+  errorDiscovery = ARDISCOVERY_Device_InitWifi(device, ARDISCOVERY_PRODUCT_BEBOP_2, "bebop2", charIpAddress, m_discoveryPort);
 
-    if (errorDiscovery != ARDISCOVERY_OK)
-    {
-      ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Discovery error :%s", ARDISCOVERY_Error_ToString(errorDiscovery));
-    }
-  }
-  else {
+  if (errorDiscovery != ARDISCOVERY_OK)
+  {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Discovery error :%s", ARDISCOVERY_Error_ToString(errorDiscovery));
   }
+
   return device;
 }
 
@@ -300,7 +327,7 @@ void vpRobotBebop2::createDroneController(ARDISCOVERY_Device_t * discoveredDrone
 void vpRobotBebop2::setupCallbacks()
 {
   //Adding stateChanged callback, called when the state of the controller has changed
-  m_errorController = ARCONTROLLER_Device_AddStateChangedCallback(m_deviceController, stateChanged, m_deviceController);
+  m_errorController = ARCONTROLLER_Device_AddStateChangedCallback(m_deviceController, stateChanged, this);
   if(m_errorController != ARCONTROLLER_OK)
   {
     ARSAL_PRINT (ARSAL_PRINT_ERROR, TAG, "add State callback failed.");
@@ -316,7 +343,7 @@ void vpRobotBebop2::setupCallbacks()
 
   //Adding frame received callback, called when a streaming frame has been received from the device
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- set Video callback ... ");
-  m_errorController = ARCONTROLLER_Device_SetVideoStreamCallbacks (m_deviceController, decoderConfigCallback, didReceiveFrameCallback, nullptr , nullptr);
+  m_errorController = ARCONTROLLER_Device_SetVideoStreamCallbacks (m_deviceController, decoderConfigCallback, didReceiveFrameCallback, NULL , this);
 
   if(m_errorController != ARCONTROLLER_OK)
   {
@@ -347,18 +374,12 @@ void vpRobotBebop2::startController()
   }
 }
 
-void vpRobotBebop2::startStreaming()
-{
-  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- send StreamingVideoEnable ... ");
-  m_errorController = m_deviceController->aRDrone3->sendMediaStreamingVideoEnable (m_deviceController->aRDrone3, 1);
-  if(m_errorController != ARCONTROLLER_OK)
-  {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
-  }
-}
-
 void vpRobotBebop2::cleanUp()
 {
+  //Lands the drone if not landed
+  if(!isLanded()){
+    land();
+  }
   //Deletes the controller
   m_deviceState = ARCONTROLLER_Device_GetState (m_deviceController, &m_errorController);
   if ((m_errorController == ARCONTROLLER_OK) && (m_deviceState != ARCONTROLLER_DEVICE_STATE_STOPPED))
@@ -387,13 +408,10 @@ void vpRobotBebop2::cleanUp()
   }
 
   //Destroys the semaphore
-  ARSAL_Sem_Destroy (&(m_stateSem));
+  ARSAL_Sem_Destroy(&(m_stateSem));
 
-  unlink(m_fifo_name);
-  rmdir(m_fifo_dir);
-
-  delete[] m_fifo_name;
-  delete[] m_fifo_dir;
+  unlink(const_cast<char *>(m_fifo_name.c_str()));
+  vpIoTools::remove(m_fifo_dir);
 }
 
 //***           ***//
@@ -404,19 +422,19 @@ void vpRobotBebop2::stateChanged(eARCONTROLLER_DEVICE_STATE newState, eARCONTROL
 {
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - stateChanged newState: %d .....", newState);
   (void)error;
-  (void)customData;
 
+  vpRobotBebop2 * drone = (vpRobotBebop2 *)customData;
   switch (newState)
   {
   case ARCONTROLLER_DEVICE_STATE_STOPPED:
-    ARSAL_Sem_Post (&(m_stateSem));
-    //Stopping the programm
-    m_running = false;
 
+    ARSAL_Sem_Post (&(drone->m_stateSem));
+    //Stopping the programm
+    drone->m_running = false;
     break;
 
   case ARCONTROLLER_DEVICE_STATE_RUNNING:
-    ARSAL_Sem_Post (&(m_stateSem));
+    ARSAL_Sem_Post (&(drone->m_stateSem));
     break;
 
   default:
@@ -426,15 +444,16 @@ void vpRobotBebop2::stateChanged(eARCONTROLLER_DEVICE_STATE newState, eARCONTROL
 
 eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void * customData)
 {
-  (void)customData;
-  if (m_videoOut != nullptr)
+  vpRobotBebop2 * drone = (vpRobotBebop2 *)customData;
+
+  if (drone->m_videoOut != NULL)
   {
     if (codec.type == ARCONTROLLER_STREAM_CODEC_TYPE_H264)
     {
-      fwrite(codec.parameters.h264parameters.spsBuffer, static_cast<size_t>(codec.parameters.h264parameters.spsSize), 1, m_videoOut);
-      fwrite(codec.parameters.h264parameters.ppsBuffer, static_cast<size_t>(codec.parameters.h264parameters.ppsSize), 1, m_videoOut);
+      fwrite(codec.parameters.h264parameters.spsBuffer, static_cast<size_t>(codec.parameters.h264parameters.spsSize), 1, drone->m_videoOut);
+      fwrite(codec.parameters.h264parameters.ppsBuffer, static_cast<size_t>(codec.parameters.h264parameters.ppsSize), 1, drone->m_videoOut);
 
-      fflush (m_videoOut);
+      fflush (drone->m_videoOut);
     }
   }
   else
@@ -447,14 +466,15 @@ eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Cod
 
 eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData)
 {
-  (void)customData;
-  if (m_videoOut != nullptr)
-  {
-    if (frame != nullptr)
-    {
-      fwrite(frame->data, frame->used, 1, m_videoOut);
+  vpRobotBebop2 * drone = (vpRobotBebop2 *)customData;
 
-      fflush (m_videoOut);
+  if (drone->m_videoOut != NULL)
+  {
+    if (frame != NULL)
+    {
+      fwrite(frame->data, frame->used, 1, drone->m_videoOut);
+
+      fflush (drone->m_videoOut);
     }
     else
     {
@@ -472,26 +492,40 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
 void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_Device_t * deviceController, ARCONTROLLER_DICTIONARY_ELEMENT_t * elementDictionary)
 {
   (void)deviceController;
-  ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *singleElement = nullptr;
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *singleElement = NULL;
 
-  if (elementDictionary == nullptr) {
+  if (elementDictionary == NULL) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "elements is NULL");
     return;
   }
 
+  //Suppress warnings
+  #pragma GCC diagnostic ignored "-Wold-style-cast"
+  #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+  #pragma GCC diagnostic ignored "-Wcast-qual"
   // get the command received in the device controller
   HASH_FIND_STR (elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, singleElement);
+  #pragma GCC diagnostic pop
+  #pragma GCC diagnostic pop
+  #pragma GCC diagnostic pop
 
-  if (singleElement == nullptr) {
+  if (singleElement == NULL) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "singleElement is NULL");
     return;
   }
 
+  //Suppress warnings
+  #pragma GCC diagnostic ignored "-Wold-style-cast"
+  #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+  #pragma GCC diagnostic ignored "-Wcast-qual"
   // get the value
   HASH_FIND_STR (singleElement->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_BATTERYSTATECHANGED_PERCENT, arg);
+  #pragma GCC diagnostic pop
+  #pragma GCC diagnostic pop
+  #pragma GCC diagnostic pop
 
-  if (arg == nullptr) {
+  if (arg == NULL) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "arg is NULL");
     return;
   }
@@ -503,7 +537,7 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
 {
   ARCONTROLLER_Device_t * deviceController = static_cast<ARCONTROLLER_Device_t *>(customData);
 
-  if (deviceController == nullptr)
+  if (deviceController == NULL)
       return;
 
 

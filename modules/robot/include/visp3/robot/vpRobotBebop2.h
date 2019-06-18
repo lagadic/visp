@@ -57,13 +57,10 @@ extern "C"
 #include <iostream>
 
 #include <visp3/io/vpKeyboard.h>
+#include <visp3/core/vpIoTools.h>
 
 #define TAG "vpRobotBebop2"
-#define FIFO_DIR_PATTERN "/tmp/arsdk_XXXXXX"
-#define FIFO_NAME "arsdk_fifo"
 
-#define BEBOP_IP_ADDRESS "192.168.42.1"
-#define BEBOP_DISCOVERY_PORT 44444
 
 /*!
   \class vpRobotBebop2
@@ -75,52 +72,68 @@ extern "C"
 class VISP_EXPORT vpRobotBebop2
 {
 public:
-  vpRobotBebop2();
+  vpRobotBebop2(std::string ipAddress = "192.168.42.1", int discoveryPort = 44444,
+                std::string fifo_dir = "/tmp/arsdk_XXXXXX", std::string fifo_name = "arsdk_fifo");
   virtual ~vpRobotBebop2();
 
   //*** Flight commands and parameters ***//
-  eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE getFlyingState();
+
+  std::string getIpAddress();
+  int getDiscoveryPort();
+
   bool isRunning();
+  bool isHovering();
+  bool isFlying();
+  bool isLanded();
+
   void takeOff();
   void land();
+
+
+  void startStreaming();
+
   void handleKeyboardInput(int key);
 
 private:
   //*** Attributes ***//
-  char * m_fifo_dir; ///< Path of fifo file
-  char * m_fifo_name; ///< Name of fifo file
-  static FILE * m_videoOut; ///< File used for video output visualisation
+
+  std::string m_ipAddress; ///< Ip address of the drone to discover on the network
+  int m_discoveryPort; ///< Port of the drone to discover on the network
+  std::string m_fifo_dir; ///< Path of fifo file
+  std::string m_fifo_name; ///< Name of fifo file
+
+  FILE *m_videoOut; ///< File used for video output visualisation
   pid_t m_outputID; ///< ID for video output process
-  static ARSAL_Sem_t m_stateSem; ///< Semaphore
+  ARSAL_Sem_t m_stateSem; ///< Semaphore
 
-  static bool m_running; ///< Used for checking if the programm is running
+  bool m_running; ///< Used for checking if the programm is running
 
-  ARDISCOVERY_Device_t * m_device; ///< Used for drone discovery
-  ARCONTROLLER_Device_t * m_deviceController; ///< Used for drone control
+  ARDISCOVERY_Device_t *m_device;            ///< Used for drone discovery
+  ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
 
-  eARCONTROLLER_ERROR m_errorController; ///< Used for error handling
+  eARCONTROLLER_ERROR m_errorController;    ///< Used for error handling
   eARCONTROLLER_DEVICE_STATE m_deviceState; ///< Used to store device state
   //*** ***//
 
+  eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE getFlyingState();
+
   //*** Setup functions ***//
-  int activateDisplay();
+  void activateDisplay();
   void cleanUp();
-  ARDISCOVERY_Device_t * discoverDrone();
-  void createDroneController(ARDISCOVERY_Device_t * discoveredDrone);
+  ARDISCOVERY_Device_t *discoverDrone();
+  void createDroneController(ARDISCOVERY_Device_t *discoveredDrone);
   void setupCallbacks();
   void startController();
-  void startStreaming();
   //*** ***//
 
   //*** Callbacks ***//
-  static void stateChanged(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error, void * customData);
-  static eARCONTROLLER_ERROR decoderConfigCallback (ARCONTROLLER_Stream_Codec_t codec, void * customData);
-  static eARCONTROLLER_ERROR didReceiveFrameCallback (ARCONTROLLER_Frame_t * frame, void *customData);
+  static void stateChanged(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error, void *customData);
+  static eARCONTROLLER_ERROR decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void *customData);
+  static eARCONTROLLER_ERROR didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData);
 
   static void cmdBatteryStateChangedRcv(ARCONTROLLER_Device_t *deviceController, ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary);
-  static void commandReceivedCallback (eARCONTROLLER_DICTIONARY_KEY commandKey, ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
-
-
+  static void commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
+                                      ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
   //*** ***//
 };
 
