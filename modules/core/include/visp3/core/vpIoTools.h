@@ -170,8 +170,11 @@ public:
   static bool checkFilename(const std::string &filename);
   static bool copy(const char *src, const char *dst);
   static bool copy(const std::string &src, const std::string &dst);
+
   static void makeDirectory(const char *dirname);
   static void makeDirectory(const std::string &dirname);
+  static void makeFifo(const std::string &dirname);
+  static std::string makeTempDirectory(const std::string &dirname);
   static bool remove(const char *filename);
   static bool remove(const std::string &filename);
   static bool rename(const char *oldfilename, const char *newfilename);
@@ -256,6 +259,8 @@ protected:
   static std::vector<std::string> configVars;
   static std::vector<std::string> configValues;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static int mkdir_p(const char *path, const int mode);
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 };
 #endif
