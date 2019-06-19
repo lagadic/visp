@@ -544,6 +544,41 @@ bool vpIoTools::checkDirectory(const char *dirname)
 */
 bool vpIoTools::checkDirectory(const std::string &dirname) { return vpIoTools::checkDirectory(dirname.c_str()); }
 
+/*!
+  Check if a fifo file exists.
+
+  \param fifofilename : Fifo filename to test if it exists.
+
+  \return true : If the fifo file exists and is accessible with read access.
+
+  \return false : If fifofilename string is null, or is not a fifo filename, or
+                              has no read access.
+
+  \sa checkFilename(const std::string &)
+*/
+bool vpIoTools::checkFifo(const std::string &fifofilename)
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  struct stat stbuf;
+
+  std::string _filename = path(fifofilename);
+  if (stat(_filename.c_str(), &stbuf) != 0) {
+    return false;
+  }
+  if ((stbuf.st_mode & S_IFIFO) == 0) {
+    return false;
+  }
+  if ((stbuf.st_mode & S_IRUSR) == 0)
+
+  {
+    return false;
+  }
+  return true;
+#elif defined(_WIN32)
+  throw(vpIoException(vpIoException::notImplementedError, "Fifo files are not supported on Windows platforms."));
+#endif
+}
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // See:
 // https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
@@ -680,15 +715,40 @@ void vpIoTools::makeDirectory(const std::string &dirname)
 }
 
 /*!
+  Create a new FIFO file. A FIFO file is a special file, similar to a pipe, but actually existing on the hard drive. It
+  can be used to communicate data between multiple processes.
 
-   \param[in] dirname : Fifo location.
- */
-void vpIoTools::makeFifo(const std::string &dirname)
+  \param[in] fifoname : Pathname of the fifo file to create.
+
+  \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
+
+  \exception vpIoException::cantCreateDirectory : If the file cannot be created.
+*/
+void vpIoTools::makeFifo(const std::string &fifoname)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo. Not implemented yet."));
+
+  // If dirname is a directory, we throw an error
+  if (vpIoTools::checkDirectory(fifoname)) {
+    throw(vpIoException(vpIoException::invalidDirectoryName,
+                        "Unable to create fifo file. '%s' is an existing directory.", fifoname.c_str()));
+  }
+
+  // If dirname refers to an already existing file, we throw an error
+  else if (vpIoTools::checkFilename(fifoname)) {
+    throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. File already exists.",
+                        fifoname.c_str()));
+    // If dirname refers to an already existing fifo, we throw an error
+  } else if (vpIoTools::checkFifo(fifoname)) {
+    throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. Fifo already exists.",
+                        fifoname.c_str()));
+  }
+
+  else if (mkfifo(fifoname.c_str(), 0666) < 0) {
+    throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo file '%s'.", fifoname.c_str()));
+  }
 #elif defined(_WIN32)
-  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo. Not implemented yet."));
+  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo on Windows platforms."));
 #endif
 }
 
@@ -725,13 +785,6 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
     if (endingLength > dirNameLength) {
       throw(vpIoException(vpIoException::invalidDirectoryName,
                           "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
-    }
-
-    for (size_t i = 0; i < endingLength; i++) {
-      if (correctEnding[endingLength - i - 1] != dirname_cpy[dirNameLength - i - 1]) {
-        throw(vpIoException(vpIoException::invalidDirectoryName,
-                            "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
-      }
     }
 
     if (dirname.compare(dirNameLength - endingLength, endingLength, correctEnding) != 0) {
@@ -941,7 +994,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 bool vpIoTools::remove(const char *file_or_dir)
 {
   // Check if we have to consider a file or a directory
-  if (vpIoTools::checkFilename(file_or_dir)) {
+  if (vpIoTools::checkFilename(file_or_dir) || vpIoTools::checkFifo(std::string(file_or_dir))) {
     // std::cout << "remove file: " << file_or_dir << std::endl;
     if (::remove(file_or_dir) != 0)
       return false;

@@ -166,6 +166,7 @@ public:
   static void getVersion(const std::string &version, unsigned int &major, unsigned int &minor, unsigned int &patch);
   static bool checkDirectory(const char *dirname);
   static bool checkDirectory(const std::string &dirname);
+  static bool checkFifo(const std::string &filename);
   static bool checkFilename(const char *filename);
   static bool checkFilename(const std::string &filename);
   static bool copy(const char *src, const char *dst);
