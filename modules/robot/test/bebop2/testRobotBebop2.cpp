@@ -55,19 +55,20 @@ int main()
 
   drone.startStreaming();
 
-  int k = 0;
-  initscr();
-  raw();
-  keypad(stdscr, TRUE);
-  noecho();
-  timeout(100);
-  while (drone.isRunning()) {
-    k = getch();
-    drone.handleKeyboardInput(k);
-  }
-  endwin();
+  //  int k = 0;
+  //  initscr();
+  //  raw();
+  //  keypad(stdscr, TRUE);
+  //  noecho();
+  //  timeout(100);
+  //  while (drone.isRunning()) {
+  //    k = getch();
+  //    drone.handleKeyboardInput(k);
+  //  }
+  //  endwin();
 
-  // vpTime::wait(2000);
+  vpTime::wait(2000);
+  drone.setMaxTilt(20);
 
   std::cout << "-- End of test --" << std::endl;
 #else

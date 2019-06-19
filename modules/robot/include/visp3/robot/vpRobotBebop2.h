@@ -80,19 +80,20 @@ public:
 
   std::string getIpAddress();
   int getDiscoveryPort();
-
-  bool isRunning();
-  bool isHovering();
-  bool isFlying();
-  bool isLanded();
-
-  void takeOff();
-  void land();
-
-
-  void startStreaming();
+  float getMaxTilt();
 
   void handleKeyboardInput(int key);
+
+  bool isFlying();
+  bool isHovering();
+  bool isLanded();
+  bool isRunning();
+
+  void land();
+  void move(float dX, float dY, float dZ, float dPsi);
+  void setMaxTilt(float maxTilt);
+  void startStreaming();
+  void takeOff();
 
 private:
   //*** Attributes ***//
@@ -107,6 +108,7 @@ private:
   ARSAL_Sem_t m_stateSem; ///< Semaphore
 
   bool m_running; ///< Used for checking if the programm is running
+  float m_maxTilt;
 
   ARDISCOVERY_Device_t *m_device;            ///< Used for drone discovery
   ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
@@ -131,7 +133,8 @@ private:
   static eARCONTROLLER_ERROR decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void *customData);
   static eARCONTROLLER_ERROR didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData);
 
-  static void cmdBatteryStateChangedRcv(ARCONTROLLER_Device_t *deviceController, ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary);
+  static void cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary);
+  static void cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
                                       ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
   //*** ***//

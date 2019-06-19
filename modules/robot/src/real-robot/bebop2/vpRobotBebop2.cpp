@@ -82,25 +82,15 @@ vpRobotBebop2::vpRobotBebop2(std::string ipAddress, int discoveryPort, std::stri
 /*!
  * Destructor.
  */
-vpRobotBebop2::~vpRobotBebop2()
-{
-  cleanUp();
-}
+vpRobotBebop2::~vpRobotBebop2() { cleanUp(); }
 
-std::string vpRobotBebop2::getIpAddress()
-{
-  return m_ipAddress;
-}
+std::string vpRobotBebop2::getIpAddress() { return m_ipAddress; }
 
-int vpRobotBebop2::getDiscoveryPort()
-{
-  return m_discoveryPort;
-}
+int vpRobotBebop2::getDiscoveryPort() { return m_discoveryPort; }
 
-bool vpRobotBebop2::isRunning()
-{
-  return m_running;
-}
+float vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
+
+bool vpRobotBebop2::isRunning() { return m_running; }
 
 bool vpRobotBebop2::isHovering()
 {
@@ -119,32 +109,59 @@ bool vpRobotBebop2::isLanded()
 
 void vpRobotBebop2::takeOff()
 {
-  if (isLanded())
-  {
+  if (isLanded()) {
     m_deviceController->aRDrone3->sendPilotingTakeOff(m_deviceController->aRDrone3);
-  }
-  else {
+  } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't take off : drone isn't landed.");
   }
 }
 
 void vpRobotBebop2::land()
 {
-  if (isFlying() || isHovering())
-  {
+  if (isFlying() || isHovering()) {
     m_deviceController->aRDrone3->sendPilotingLanding(m_deviceController->aRDrone3);
-  }
-  else {
+  } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't land : drone isn't flying or hovering.");
   }
+}
+
+/*!
+
+  Move the drone by the given amounts \e dX, \e dY, \e dZ (meters) and rotate the heading by \e dPsi (radian).
+  Doesn't do anything if the drone isn't flying or hovering.
+
+  \param dX : displacement along X axis (meters).
+  \param dY : displacement along Y axis (meters).
+  \param dZ : displacement along Z axis (meters).
+  \param dPsi : rotation of the heading (radians).
+
+  */
+void vpRobotBebop2::move(float dX, float dY, float dZ, float dPsi)
+{
+  if (isFlying() || isHovering()) {
+    m_deviceController->aRDrone3->sendPilotingMoveBy(m_deviceController->aRDrone3, dX, dY, dZ, dPsi);
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't land : drone isn't flying or hovering.");
+  }
+}
+
+/*!
+
+Sets the max pitch and roll values for the drone.
+
+  \param maxTilt : new maximum pitch and roll value for the drone (degrees).
+
+*/
+void vpRobotBebop2::setMaxTilt(float maxTilt)
+{
+  m_deviceController->aRDrone3->sendPilotingSettingsMaxTilt(m_deviceController->aRDrone3, maxTilt);
 }
 
 void vpRobotBebop2::startStreaming()
 {
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- send StreamingVideoEnable ... ");
-  m_errorController = m_deviceController->aRDrone3->sendMediaStreamingVideoEnable (m_deviceController->aRDrone3, 1);
-  if(m_errorController != ARCONTROLLER_OK)
-  {
+  m_errorController = m_deviceController->aRDrone3->sendMediaStreamingVideoEnable(m_deviceController->aRDrone3, 1);
+  if (m_errorController != ARCONTROLLER_OK) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
   }
 }
@@ -153,76 +170,76 @@ void vpRobotBebop2::startStreaming()
 void vpRobotBebop2::handleKeyboardInput(int key)
 {
   switch (key) {
-    case 'q':
-      //Quit
-      m_running = false;
-      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Quitting ... ");
-      break;
+  case 'q':
+    // Quit
+    m_running = false;
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Quitting ... ");
+    break;
 
-    case 'e':
-      //Emergency
-      m_errorController = m_deviceController->aRDrone3->sendPilotingEmergency(m_deviceController->aRDrone3);
-      m_running = false;
-      break;
+  case 'e':
+    // Emergency
+    m_errorController = m_deviceController->aRDrone3->sendPilotingEmergency(m_deviceController->aRDrone3);
+    m_running = false;
+    break;
 
-    case 't':
-      //Takeoff
-      takeOff();
-      break;
+  case 't':
+    // Takeoff
+    takeOff();
+    break;
 
-    case ' ':
-      //Landing
-      land();
-      break;
+  case ' ':
+    // Landing
+    land();
+    break;
 
-    case KEY_UP:
-      //Up
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, 50);
-      break;
+  case KEY_UP:
+    // Up
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, 50);
+    break;
 
-    case KEY_DOWN:
-      //Down
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, -50);
-      break;
+  case KEY_DOWN:
+    // Down
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, -50);
+    break;
 
-    case KEY_RIGHT:
-      //Right
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, 50);
-      break;
+  case KEY_RIGHT:
+    // Right
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, 50);
+    break;
 
-    case KEY_LEFT:
-      //Left
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, -50);
-      break;
+  case KEY_LEFT:
+    // Left
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, -50);
+    break;
 
-    case 'r':
-      //Forward
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, 50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
+  case 'r':
+    // Forward
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, 50);
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
+    break;
 
-    case 'f':
-      //Backward
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, -50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
+  case 'f':
+    // Backward
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, -50);
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
+    break;
 
-    case 'd':
-      //Roll left
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, -50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
+  case 'd':
+    // Roll left
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, -50);
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
+    break;
 
-    case 'g':
-      //Roll right
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, 50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
+  case 'g':
+    // Roll right
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, 50);
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
+    break;
 
-    default:
-      //No inputs -> drone stops moving
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMD(m_deviceController->aRDrone3, 0, 0, 0, 0, 0, 0);
-      break;
+  default:
+    // No inputs -> drone stops moving
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMD(m_deviceController->aRDrone3, 0, 0, 0, 0, 0, 0);
+    break;
   }
   usleep(10);
 }
@@ -280,12 +297,14 @@ void vpRobotBebop2::activateDisplay()
 
   m_fifo_name = m_fifo_dir + "/" + m_fifo_name;
 
-  if (mkfifo(const_cast<char *>(m_fifo_name.c_str()), 0666) < 0) {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Mkfifo failed: %d, %s", errno, strerror(errno));
-    return;
-  }
+  //  if (mkfifo(const_cast<char *>(m_fifo_name.c_str()), 0666) < 0) {
+  //    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Mkfifo failed: %d, %s", errno, strerror(errno));
+  //    return;
+  //  }
 
-  //Launches the display
+  vpIoTools::makeFifo(m_fifo_name);
+
+  // Launches the display
   if((m_outputID = fork()) == 0)
   {
     execlp("xterm", "xterm", "-e", "mplayer", "-demuxer",  "h264es", const_cast<char*>(m_fifo_name.c_str()), "-benchmark", "-really-quiet", NULL);
@@ -334,7 +353,7 @@ void vpRobotBebop2::setupCallbacks()
   }
 
   //Adding commendReceived callback, called when the a command has been received from the device
-  m_errorController = ARCONTROLLER_Device_AddCommandReceivedCallback (m_deviceController, commandReceivedCallback, m_deviceController);
+  m_errorController = ARCONTROLLER_Device_AddCommandReceivedCallback(m_deviceController, commandReceivedCallback, this);
 
   if(m_errorController != ARCONTROLLER_OK)
   {
@@ -410,7 +429,8 @@ void vpRobotBebop2::cleanUp()
   //Destroys the semaphore
   ARSAL_Sem_Destroy(&(m_stateSem));
 
-  unlink(const_cast<char *>(m_fifo_name.c_str()));
+  // unlink(const_cast<char *>(m_fifo_name.c_str()));
+  vpIoTools::remove(m_fifo_name);
   vpIoTools::remove(m_fifo_dir);
 }
 
@@ -489,9 +509,8 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
   return ARCONTROLLER_OK;
 }
 
-void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_Device_t * deviceController, ARCONTROLLER_DICTIONARY_ELEMENT_t * elementDictionary)
+void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary)
 {
-  (void)deviceController;
   ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
   ARCONTROLLER_DICTIONARY_ELEMENT_t *singleElement = NULL;
 
@@ -500,30 +519,31 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_Device_t * deviceCont
     return;
   }
 
-  //Suppress warnings
-  #pragma GCC diagnostic ignored "-Wold-style-cast"
-  #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-  #pragma GCC diagnostic ignored "-Wcast-qual"
+  // Suppress warnings
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wcast-qual"
   // get the command received in the device controller
-  HASH_FIND_STR (elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, singleElement);
-  #pragma GCC diagnostic pop
-  #pragma GCC diagnostic pop
-  #pragma GCC diagnostic pop
+  HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, singleElement);
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 
   if (singleElement == NULL) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "singleElement is NULL");
     return;
   }
 
-  //Suppress warnings
-  #pragma GCC diagnostic ignored "-Wold-style-cast"
-  #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-  #pragma GCC diagnostic ignored "-Wcast-qual"
+  // Suppress warnings
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wcast-qual"
   // get the value
-  HASH_FIND_STR (singleElement->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_BATTERYSTATECHANGED_PERCENT, arg);
-  #pragma GCC diagnostic pop
-  #pragma GCC diagnostic pop
-  #pragma GCC diagnostic pop
+  HASH_FIND_STR(singleElement->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_BATTERYSTATECHANGED_PERCENT,
+                arg);
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 
   if (arg == NULL) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "arg is NULL");
@@ -533,21 +553,60 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_Device_t * deviceCont
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Battery level changed : %d percent remaining.", arg->value.U8);
 }
 
-void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey, ARCONTROLLER_DICTIONARY_ELEMENT_t * elementDictionary, void * customData)
+void vpRobotBebop2::cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary,
+                                              vpRobotBebop2 *drone)
 {
-  ARCONTROLLER_Device_t * deviceController = static_cast<ARCONTROLLER_Device_t *>(customData);
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-  if (deviceController == NULL)
-      return;
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wcast-qual"
+  HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+  if (element != NULL) {
+    HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED_CURRENT,
+                  arg);
+    if (arg != NULL) {
+      float current = arg->value.Float;
+      std::cout << "CURRENT MAX TILT VALUE" << current << std::endl;
+      drone->m_maxTilt = current;
+    }
+    HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED_MIN,
+                  arg);
+    if (arg != NULL) {
+      float min = arg->value.Float;
+      std::cout << "MIN TILT VALUE" << min << std::endl;
+    }
+    HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED_MAX,
+                  arg);
+    if (arg != NULL) {
+      float max = arg->value.Float;
+      std::cout << "MAX TILT VALUE" << max << std::endl;
+    }
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+  }
+}
+void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
+                                            ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData)
+{
+  //  ARCONTROLLER_Device_t * deviceController = static_cast<ARCONTROLLER_Device_t *>(customData);
+  vpRobotBebop2 *drone = (vpRobotBebop2 *)customData;
 
+  if (drone == NULL)
+    return;
 
-  switch(commandKey) {
+  switch (commandKey) {
   case ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_BATTERYSTATECHANGED:
-      //If the command received is a battery state changed
-      cmdBatteryStateChangedRcv(deviceController, elementDictionary);
-      break;
+    // If the command received is a battery state changed
+    cmdBatteryStateChangedRcv(elementDictionary);
+    break;
+  case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED:
+    // If the command receivend is a max pitch/roll changed
+    cmdMaxPitchRollChangedRcv(elementDictionary, drone);
   default:
-      break;
+    break;
   }
 }
 
