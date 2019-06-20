@@ -606,8 +606,7 @@ int main(int argc, const char **argv)
 #endif
 
   // Get the user login name
-  std::string username = "";
-  vpIoTools::getUserName(username);
+  std::string username = vpIoTools::getUserName();
   std::ofstream dummy_file;
 
 // Test isSamePathname()
