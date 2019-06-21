@@ -246,10 +246,12 @@ void vpAROgre::init(bool
   }
   std::cout << "######################### Load plugin file: " << pluginFile << std::endl;
 
-  if (Ogre::Root::getSingletonPtr() == NULL)
+  if (Ogre::Root::getSingletonPtr() == NULL) {
     mRoot = new Ogre::Root(pluginFile, "ogre.cfg", "Ogre.log");
-  else
+  }
+  else {
     mRoot = Ogre::Root::getSingletonPtr();
+  }
 
   // Load resource paths from config file
 
@@ -311,18 +313,21 @@ void vpAROgre::init(bool
   bool canInit = true;
   if (mshowConfigDialog) {
     mRoot->restoreConfig();
-    if (!mRoot->showConfigDialog())
+    if (!mRoot->showConfigDialog()) {
       canInit = false;
+    }
   } else {
-    if (!mRoot->restoreConfig())
+    if (!mRoot->restoreConfig()) {
       canInit = false;
+    }
   }
 
   if (!mRoot->isInitialised()) {
     if (!canInit) { // We set the default renderer system
       const Ogre::RenderSystemList &lRenderSystemList = mRoot->getAvailableRenderers();
-      if (lRenderSystemList.size() == 0)
+      if (lRenderSystemList.size() == 0) {
         throw "ConfigDialog aborted"; // Exit the application on cancel
+      }
 
       Ogre::RenderSystem *lRenderSystem = lRenderSystemList.at(0);
       std::cout << "Using " << lRenderSystem->getName() << " as renderer." << std::endl;
@@ -346,21 +351,20 @@ void vpAROgre::init(bool
         std::stringstream ss(rightconf.c_str());
         std::string dummy;
         ss >> mWindowWidth >> dummy >> mWindowHeight;
-        if (ss.fail())
+        if (ss.fail()) {
           std::cout << "Cannot read Ogre video mode" << std::endl;
-      } else {
-        if (mWindowWidth == 0 && mWindowHeight == 0) {
-          mWindowWidth = mBackgroundWidth;
-          mWindowHeight = mBackgroundHeight;
         }
+      } else if (mWindowWidth == 0 && mWindowHeight == 0) {
+        mWindowWidth = mBackgroundWidth;
+        mWindowHeight = mBackgroundHeight;
       }
     } else if (leftconf == "Full Screen") {
-      if (canInit) {
-        if (rightconf == "Yes")
-          fullscreen = true;
+      if (canInit && (rightconf == "Yes")) {
+        fullscreen = true;
       }
-    } else
+    } else {
       misc[leftconf] = rightconf;
+    }
 
     ++it;
   }
@@ -428,8 +432,9 @@ void vpAROgre::init(bool
   // Create all devices
   // Here we only consider the keyboard input
   mKeyboard = static_cast<OIS::Keyboard *>(mInputManager->createInputObject(OIS::OISKeyboard, bufferedKeys));
-  if (!bufferedKeys)
+  if (!bufferedKeys) {
     mKeyboard->setEventCallback(this);
+  }
 #endif
 
   // Initialise a render to texture to be able to retrieve a screenshot
@@ -464,10 +469,8 @@ vpAROgre::~vpAROgre(void)
   }
 
   // Delete root
-  if (Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements()) {
-    if (mRoot) {
-      delete mRoot;
-    }
+  if (Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements() && mRoot) {
+    delete mRoot;
   }
   mRoot = 0;
 }
@@ -482,8 +485,10 @@ bool vpAROgre::stopTest(const Ogre::FrameEvent &evt)
   // Always keep this part
   if (keepOn) {
     return updateScene(evt);
-  } else
+  }
+  else {
     return keepOn;
+  }
 }
 
 /*!

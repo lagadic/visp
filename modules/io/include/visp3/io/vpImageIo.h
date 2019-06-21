@@ -52,22 +52,6 @@
 #include <iostream>
 #include <stdio.h>
 
-#if defined(_WIN32)
-// Include WinSock2.h before windows.h to ensure that winsock.h is not
-// included by windows.h since winsock.h and winsock2.h are incompatible
-#include <WinSock2.h>
-#include <windows.h>
-#endif
-
-#if defined(VISP_HAVE_JPEG)
-#include <jerror.h>
-#include <jpeglib.h>
-#endif
-
-#if defined(VISP_HAVE_PNG)
-#include <png.h>
-#endif
-
 /*!
   \class vpImageIo
 

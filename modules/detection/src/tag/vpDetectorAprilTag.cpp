@@ -48,9 +48,10 @@
 #include <tagStandard41h12.h>
 #include <apriltag_pose.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
 #include <tagCircle49h12.h>
 #include <tagCustom48h12.h>
+#include <tagStandard41h12.h>
 #include <tagStandard52h13.h>
 #endif
 
@@ -96,25 +97,27 @@ public:
       break;
 
     case TAG_CIRCLE49h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagCircle49h12_create();
 #endif
       break;
 
     case TAG_CUSTOM48h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagCustom48h12_create();
 #endif
       break;
 
     case TAG_STANDARD52h13:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagStandard52h13_create();
 #endif
       break;
 
     case TAG_STANDARD41h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagStandard41h12_create();
+#endif
       break;
 
     default:
@@ -163,25 +166,27 @@ public:
       break;
 
     case TAG_CIRCLE49h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       tagCustom48h12_destroy(m_tf);
 #endif
       break;
 
     case TAG_CUSTOM48h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       tagCustom48h12_destroy(m_tf);
 #endif
       break;
 
     case TAG_STANDARD52h13:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       tagStandard52h13_destroy(m_tf);
 #endif
       break;
 
     case TAG_STANDARD41h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       tagStandard41h12_destroy(m_tf);
+#endif
       break;
 
     default:
@@ -214,10 +219,9 @@ public:
       std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
       return false;
     }
-#ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
-      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
-                   "and in RelWithDebInfo due to long build time issue." << std::endl;
+#if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 || m_tagFamily == TAG_STANDARD52h13) {
+      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled." << std::endl;
       return false;
     }
 #endif
@@ -303,10 +307,9 @@ public:
       std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
       return  false;
     }
-#ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
-      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
-                   "and in RelWithDebInfo due to long build time issue." << std::endl;
+#if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 || m_tagFamily == TAG_STANDARD52h13) {
+      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled." << std::endl;
       return false;
     }
 #endif

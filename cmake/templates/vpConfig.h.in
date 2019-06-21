@@ -133,11 +133,12 @@
 // Defined if Clipper is build and available.
 #cmakedefine VISP_HAVE_CLIPPER
 
-// Defined if April Tag is build and available.
+// Defined if AprilTag is build and available.
 #cmakedefine VISP_HAVE_APRILTAG
 
-// Defined if big AprilTag family must be disabled.
-#cmakedefine VISP_DISABLE_APRILTAG_BIG_FAMILY
+// Defined if AprilTag big family (41h12, 48h12, 49h12, 52h13) known to produce long build time issue
+// with gcc < 5.5 in RelWithDebInfo and Visual Studio 12 2013 in Release are available
+/* #undef VISP_HAVE_APRILTAG_BIG_FAMILY */
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
