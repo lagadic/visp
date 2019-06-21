@@ -520,7 +520,7 @@ int main(int argc, const char **argv)
   }
 
   // Test FIFO only implemented on unix like OS
-#if (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   try {
     std::string username, fifo_file;
     vpIoTools::getUserName(username);
@@ -558,7 +558,7 @@ int main(int argc, const char **argv)
 #endif
 
   // Test makeTempDirectory()
-#if (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   try {
     std::string username, directory_filename_tmp;
     vpIoTools::getUserName(username);
