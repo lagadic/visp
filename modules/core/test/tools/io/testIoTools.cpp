@@ -462,8 +462,12 @@ int main(int argc, const char **argv)
 #endif
     vpIoTools::makeDirectory(directory_filename);
     vpIoTools::makeDirectory(directory_filename);
-    std::cout << "Create directories: " << directory_filename
-              << " ; check: " << vpIoTools::checkDirectory(directory_filename) << std::endl;
+    std::cout << "Create directories: " << directory_filename << std::endl;
+
+    if (! vpIoTools::checkDirectory(directory_filename)) {
+      std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
+      return EXIT_FAILURE;
+    }
 
 #if defined(_WIN32)
     directory_filename = tmp_dir + "/test_directory1/test directory 3";
@@ -471,8 +475,12 @@ int main(int argc, const char **argv)
     directory_filename = tmp_dir + "/test_directory1/test directory 3";
 #endif
     vpIoTools::makeDirectory(directory_filename);
-    std::cout << "Create directories: " << directory_filename
-              << " ; check: " << vpIoTools::checkDirectory(directory_filename) << std::endl;
+    std::cout << "Create directories: " << directory_filename << std::endl;
+
+    if (! vpIoTools::checkDirectory(directory_filename)) {
+      std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
+      return EXIT_FAILURE;
+    }
 
 #if defined(_WIN32)
     directory_filename = "C:\\temp/" + username + "\\test_directory1\\test directory 4";
@@ -481,8 +489,12 @@ int main(int argc, const char **argv)
 #endif
     vpIoTools::makeDirectory(directory_filename);
     vpIoTools::makeDirectory(directory_filename);
-    std::cout << "Create directories: " << directory_filename
-              << " ; check: " << vpIoTools::checkDirectory(directory_filename) << std::endl;
+    std::cout << "Create directories: " << directory_filename << std::endl;
+
+    if (! vpIoTools::checkDirectory(directory_filename)) {
+      std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
+      return EXIT_FAILURE;
+    }
 
 #if defined(_WIN32)
     directory_filename = "C:\\temp/" + username + "\\test_directory1\\test directory 5 . dir/test directory 6";
@@ -490,21 +502,111 @@ int main(int argc, const char **argv)
     directory_filename = "/tmp\\" + username + "\\test_directory1\\test directory 5 . dir/test directory 6";
 #endif
     vpIoTools::makeDirectory(directory_filename);
-    std::cout << "Create directories: " << directory_filename
-              << " ; check: " << vpIoTools::checkDirectory(directory_filename) << std::endl;
+    std::cout << "Create directories: " << directory_filename << std::endl;
+
+    if (! vpIoTools::checkDirectory(directory_filename)) {
+      std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
+      return EXIT_FAILURE;
+    }
 
     //Delete test directory
     if (!vpIoTools::remove(tmp_dir + "/test_directory1")) {
-      std::cerr << "Cannot remove directory: " << tmp_dir << "/test_directory1" << std::endl;
+      std::cerr << "Error: cannot remove directory: " << tmp_dir << "/test_directory1" << std::endl;
+      return EXIT_FAILURE;
     }
   } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
 
+  // Test FIFO only implemented on unix like OS
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  try {
+    std::string username, fifo_file;
+    vpIoTools::getUserName(username);
+    std::string fifo_tmp_dir = "/tmp/" + username + "/fifo_test_directory";
+
+    if (!vpIoTools::checkDirectory(fifo_tmp_dir)) {
+      vpIoTools::makeDirectory(fifo_tmp_dir);
+    }
+
+    // Test 1
+    fifo_file = fifo_tmp_dir + "/" + "fifo_testfile";
+
+    vpIoTools::makeFifo(fifo_file);
+    std::cout << "Create fifo file: " << fifo_file << std::endl;
+
+    if (! vpIoTools::checkFifo(fifo_file)) {
+      std::cerr << "Error: file " << fifo_file << " is not a fifo file as expected" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    // Delete test file and directory
+    if (!vpIoTools::remove(fifo_file)) {
+      std::cerr << "Error: cannot remove fifo: " << fifo_file << std::endl;
+      return EXIT_FAILURE;
+    }
+    if (!vpIoTools::remove(fifo_tmp_dir)) {
+      std::cerr << "Error: cannot remove directory: " << fifo_tmp_dir << std::endl;
+      return EXIT_FAILURE;
+    }
+
+  } catch (const vpException &e) {
+    std::cerr << "Catch an exception: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+#endif
+
+  // Test makeTempDirectory()
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  try {
+    std::string username, directory_filename_tmp;
+    vpIoTools::getUserName(username);
+    std::string tmp_dir = "/tmp/" + username;
+
+    // Test 1
+    directory_filename_tmp = tmp_dir + "/" + "vpIoTools_test_XXXXXX";
+
+    std::string converted_dirname_tmp = vpIoTools::makeTempDirectory(directory_filename_tmp);
+
+    std::cout << "Create temp directory: " << converted_dirname_tmp << std::endl;
+
+    if (! vpIoTools::checkDirectory(converted_dirname_tmp)) {
+      std::cerr << "Error: " << converted_dirname_tmp << " is not a tmp directory" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    // Delete test directory
+    if (!vpIoTools::remove(converted_dirname_tmp)) {
+      std::cerr << "Error: cannot remove temp directory: " << converted_dirname_tmp << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    // Test 2
+    vpIoTools::makeDirectory(tmp_dir);
+    converted_dirname_tmp = vpIoTools::makeTempDirectory(tmp_dir);
+
+    std::cout << "Create temp directory: " << converted_dirname_tmp << std::endl;
+
+    if (! vpIoTools::checkDirectory(converted_dirname_tmp)) {
+      std::cerr << "Error: " << converted_dirname_tmp << " is not a temp directory" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    // Delete test directory
+    if (!vpIoTools::remove(converted_dirname_tmp)) {
+      std::cerr << "Cannot remove directory: " << converted_dirname_tmp << std::endl;
+      return EXIT_FAILURE;
+    }
+
+  } catch (const vpException &e) {
+    std::cerr << "Catch an exception: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+#endif
+
   // Get the user login name
-  std::string username = "";
-  vpIoTools::getUserName(username);
+  std::string username = vpIoTools::getUserName();
   std::ofstream dummy_file;
 
 // Test isSamePathname()
@@ -660,6 +762,6 @@ int main(int argc, const char **argv)
     }
   }
 
-  std::cout << std::endl << "End" << std::endl;
+  std::cout << std::endl << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
 }
