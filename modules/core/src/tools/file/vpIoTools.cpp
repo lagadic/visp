@@ -710,7 +710,7 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
 
     // If dirname is an existing directory, we create a temp directory inside
   } else {
-    if (dirname_cpy.back() != '/') {
+    if (dirname_cpy.at(dirname_cpy.length() - 1) != '/') {
       dirname_cpy = dirname_cpy + "/";
     }
     dirname_cpy = dirname_cpy + "XXXXXX";
@@ -873,9 +873,9 @@ bool vpIoTools::remove(const std::string &file_or_dir)
   // Check if we have to consider a file or a directory
   if (vpIoTools::checkFilename(file_or_dir)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-	  || vpIoTools::checkFifo(std::string(file_or_dir))
+    || vpIoTools::checkFifo(std::string(file_or_dir))
 #endif
-	  ) {
+    ) {
     // std::cout << "remove file: " << file_or_dir << std::endl;
     if (::remove(file_or_dir.c_str()) != 0)
       return false;
