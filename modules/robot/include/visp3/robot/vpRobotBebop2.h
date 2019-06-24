@@ -72,7 +72,7 @@ extern "C"
 class VISP_EXPORT vpRobotBebop2
 {
 public:
-  vpRobotBebop2(std::string ipAddress = "192.168.42.1", int discoveryPort = 44444,
+  vpRobotBebop2(float maxTilt = 10.0f, std::string ipAddress = "192.168.42.1", int discoveryPort = 44444,
                 std::string fifo_dir = "/tmp/arsdk_XXXXXX", std::string fifo_name = "arsdk_fifo");
   virtual ~vpRobotBebop2();
 
@@ -89,9 +89,11 @@ public:
   bool isLanded();
   bool isRunning();
 
-  void land();
-  void move(float dX, float dY, float dZ, float dPsi);
+  static void land();
   void setMaxTilt(float maxTilt);
+  void setPosition(float dX, float dY, float dZ, float dPsi, bool blocking);
+  void setPosition(const vpHomogeneousMatrix &M, bool blocking);
+  void setVelocity(const vpColVector &vel, double delta_t);
   void startStreaming();
   void takeOff();
 
@@ -106,18 +108,23 @@ private:
   FILE *m_videoOut; ///< File used for video output visualisation
   pid_t m_outputID; ///< ID for video output process
   ARSAL_Sem_t m_stateSem; ///< Semaphore
+  struct sigaction m_sigAct; ///< Signal handler
 
-  bool m_running; ///< Used for checking if the programm is running
-  float m_maxTilt;
+  static bool m_running; ///< Used for checking if the programm is running
+  float m_maxTilt;       ///< Max pitch and roll value of the drone
+  bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
 
   ARDISCOVERY_Device_t *m_device;            ///< Used for drone discovery
-  ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
+  static ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
 
   eARCONTROLLER_ERROR m_errorController;    ///< Used for error handling
   eARCONTROLLER_DEVICE_STATE m_deviceState; ///< Used to store device state
   //*** ***//
 
+  static void sighandler(int signo);
+
   eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE getFlyingState();
+  eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED getStreamingState();
 
   //*** Setup functions ***//
   void activateDisplay();
@@ -135,6 +142,7 @@ private:
 
   static void cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary);
   static void cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
+  static void cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
                                       ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
   //*** ***//

@@ -48,27 +48,57 @@
 #include <visp3/robot/vpRobotBebop2.h>
 #include <visp3/core/vpTime.h>
 
+#ifdef VISP_HAVE_ARSDK
+
+void startDroneKeyboardControl(vpRobotBebop2 &drone)
+{
+  int k = 0;
+  WINDOW *win = initscr();
+  raw();
+  keypad(stdscr, TRUE);
+  noecho();
+  timeout(100);
+
+  int y, x;
+  getyx(win, y, x);
+  move(y + 1, 0); // Move to next line
+  clrtoeol();     // Clear line
+  mvprintw(y + 1, 0,
+           "Control the drone with the keyboard : 't' to takeoff ; Spacebar to land ; 'e' for emergency ; Arrow keys "
+           "and ('r','f','d','g') to "
+           "move ; 'q' to quit ;");
+  getyx(win, y, x);
+  move(y + 1, 0);
+
+  while (drone.isRunning()) {
+    k = getch();
+    drone.handleKeyboardInput(k);
+  }
+  endwin();
+}
+
 int main()
 {
-#ifdef VISP_HAVE_ARSDK
   vpRobotBebop2 drone;
 
   drone.startStreaming();
 
-  //  int k = 0;
-  //  initscr();
-  //  raw();
-  //  keypad(stdscr, TRUE);
-  //  noecho();
-  //  timeout(100);
-  //  while (drone.isRunning()) {
-  //    k = getch();
-  //    drone.handleKeyboardInput(k);
-  //  }
-  //  endwin();
-
   vpTime::wait(2000);
-  drone.setMaxTilt(20);
+
+  // startDroneKeyboardControl(drone);
+
+  // vpTime::wait(2000);
+  //  drone.setMaxTilt(10);
+  //  vpTime::wait(2000);
+
+  drone.takeOff();
+  //  vpTime::wait(50000);
+
+  drone.setPosition(0.0f, 0.3f, 0.0f, static_cast<float>(vpMath::rad(0.0)), true);
+
+  //  vpTime::wait(10000);
+
+  drone.land();
 
   std::cout << "-- End of test --" << std::endl;
 #else
