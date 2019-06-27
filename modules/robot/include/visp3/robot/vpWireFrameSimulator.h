@@ -451,9 +451,9 @@ public:
     */
   void setCameraColor(const vpColor &col) { camColor = col; }
   /*!
-      Set the position of the camera relative to the object.
+      Set the transformation between the camera frame and the object frame.
 
-      \param cMo_ : The pose of the camera.
+      \param cMo_ : The pose of the object in the camera frame.
     */
   void setCameraPositionRelObj(const vpHomogeneousMatrix &cMo_)
   {
@@ -508,9 +508,9 @@ public:
     */
   void setCurrentViewColor(const vpColor &col) { curColor = col; }
   /*!
-      Set the desired position of the camera relative to the object.
+      Set the transformation between the desired position of the camera and the object.
 
-      \param cdMo_ : The desired pose of the camera.
+      \param cdMo_ : The position of the object in the desired camera frame
     */
   void setDesiredCameraPosition(const vpHomogeneousMatrix &cdMo_) { this->cdMo = rotz * cdMo_; }
   /*!

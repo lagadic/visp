@@ -174,7 +174,7 @@ protected:
     */
   void set_cMe()
   {
-    // Position of the camera in the pan frame
+    // Position of pan head end effector frame in the camera frame
     double cx = 0;
     double cy = -0.065; // distance between camera and tilt axis
     double cz = 0;
