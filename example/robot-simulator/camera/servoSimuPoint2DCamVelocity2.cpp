@@ -190,7 +190,7 @@ int main(int argc, const char **argv)
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
     task.setInteractionMatrixType(vpServo::MEAN);
 
-    // Set the position of the camera in the end-effector frame
+    // Set the position of the end-effector frame in the camera frame
     vpHomogeneousMatrix cMe;
     vpVelocityTwistMatrix cVe(cMe);
     task.set_cVe(cVe);
@@ -221,7 +221,7 @@ int main(int argc, const char **argv)
 
       // get the robot position
       robot.getPosition(wMc);
-      // Compute the position of the camera wrt the object frame
+      // Compute the position of the object frame in the camera frame
       cMo = wMc.inverse() * wMo;
 
       // new point position

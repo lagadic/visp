@@ -317,8 +317,8 @@ int main(int argc, const char **argv)
 
     // Initialize simulator frames
     sim.set_fMo(wMo);                   // Position of the object in the world reference frame
-    sim.setCameraPositionRelObj(cMo);   // initial position of the camera
-    sim.setDesiredCameraPosition(cdMo); // desired position of the camera
+    sim.setCameraPositionRelObj(cMo);   // Initial position of the object in the camera frame
+    sim.setDesiredCameraPosition(cdMo); // Desired position of the object in the camera frame
 
     // Set the External camera position
     vpHomogeneousMatrix camMf(0.0, 0, 3.5, vpMath::rad(0), vpMath::rad(30), 0);

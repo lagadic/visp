@@ -1006,7 +1006,7 @@ vpColVector vpRobotFranka::getJointMax() const
  * By default, this transformation is set to identity, meaning that the camera (or tool)
  * frame is located on the end-effector.
  *
- * To change the position of the camera (or tool) frame , use set_eMc().
+ * To change the position of the camera (or tool) frame on the end-effector frame, use set_eMc().
 
  */
 vpHomogeneousMatrix vpRobotFranka::get_eMc() const

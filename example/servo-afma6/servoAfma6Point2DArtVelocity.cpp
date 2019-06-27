@@ -187,7 +187,7 @@ int main()
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
-    vpTRACE("Set the position of the camera in the end-effector frame ");
+    vpTRACE("Set the position of the end-effector frame in the camera frame");
     vpHomogeneousMatrix cMe;
     //  robot.get_cMe(cMe) ;
 

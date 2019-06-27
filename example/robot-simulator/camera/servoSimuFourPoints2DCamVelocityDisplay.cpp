@@ -270,12 +270,12 @@ int main(int argc, const char **argv)
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
     task.setInteractionMatrixType(vpServo::MEAN);
 
-    // Set the position of the camera in the end-effector frame ") ;
+    // Set the position of the end-effector frame in the camera frame as identity
     vpHomogeneousMatrix cMe;
     vpVelocityTwistMatrix cVe(cMe);
     task.set_cVe(cVe);
 
-    // Set the Jacobian (expressed in the end-effector frame)
+    // Set the Jacobian (expressed in the end-effector frame
     vpMatrix eJe;
     robot.get_eJe(eJe);
     task.set_eJe(eJe);
@@ -287,7 +287,7 @@ int main(int argc, const char **argv)
     // set the gain
     task.setLambda(1);
 
-    // Display task information " ) ;
+    // Display task information
     task.print();
 
     unsigned int iter = 0;
@@ -303,7 +303,7 @@ int main(int argc, const char **argv)
 
       // get the robot position
       robot.getPosition(wMc);
-      // Compute the position of the camera wrt the object frame
+      // Compute the position of the object frame in the camera frame
       cMo = wMc.inverse() * wMo;
 
       // update new point position and corresponding features

@@ -178,7 +178,7 @@ static void *mainLoop(void *_simu)
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
   task.setInteractionMatrixType(vpServo::DESIRED);
 
-  // Set the position of the camera in the end-effector frame
+  // Set the position of the end-effector frame in the camera frame as identity
   vpHomogeneousMatrix cMe;
   vpVelocityTwistMatrix cVe(cMe);
   task.set_cVe(cVe);

@@ -194,7 +194,7 @@ int main(int argc, const char **argv)
 
       // get the robot position
       robot.getPosition(wMc);
-      // Compute the position of the camera wrt the object frame
+      // Compute the position of the object frame in the camera frame
       cMo = wMc.inverse() * wMo;
 
       // new rotation to achieve
