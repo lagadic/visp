@@ -85,20 +85,57 @@ int main()
 
   vpTime::wait(2000);
 
+  vpImage<unsigned char> I;
+
+  drone.getImage(I);
+  vpDisplayX display(I, 100, 100, "DRONE VIEW");
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
+
+  double t = vpTime::measureTimeMs();
+  do {
+    drone.getImage(I);
+    vpDisplay::display(I);
+    vpDisplay::displayText(I, 10, 10, "Click to exit", vpColor::red);
+    vpDisplay::flush(I);
+    if (vpDisplay::getClick(I, false)) {
+      break;
+    }
+  } while (vpTime::measureTimeMs() - t < 20 * 1000);
+
   // startDroneKeyboardControl(drone);
 
   // vpTime::wait(2000);
   //  drone.setMaxTilt(10);
   //  vpTime::wait(2000);
 
-  drone.takeOff();
-  //  vpTime::wait(50000);
-
-  drone.setPosition(0.0f, 0.3f, 0.0f, static_cast<float>(vpMath::rad(0.0)), true);
-
+  //  drone.takeOff();
   //  vpTime::wait(10000);
 
-  drone.land();
+  //  drone.setPosition(1.0f, 0.5f, 0.0f, static_cast<float>(vpMath::rad(45.0)), true);
+
+  //  vpHomogeneousMatrix M(1., 0.5, 0, 0, 0, vpMath::rad(45));
+  //  drone.setPosition(M, true);
+
+#if 0
+  vpColVector vel(6, 0.0);
+  vel[0] = 0.1;
+  //  vel[5] = vpMath::rad(10);
+  double delta_t = 0.040;
+  double t = vpTime::measureTimeMs();
+  do {
+    drone.setVelocity(vel, 1);
+    vpTime::wait(delta_t * 1000);
+  } while (vpTime::measureTimeMs() - t < 20 * 1000);
+
+  //  vpColVector vel(6, 0.0);
+  //  vel[0] = 0.01;
+  //  vel[5] = vpMath::rad(90.0);
+
+  //  drone.setVelocity(vel, 1);
+//  vpTime::wait(300000);
+#endif
+  //  drone.land();
 
   std::cout << "-- End of test --" << std::endl;
 #else

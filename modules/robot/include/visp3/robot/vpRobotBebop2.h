@@ -47,8 +47,10 @@
 extern "C"
 {
 #include <libARController/ARController.h>
-#include <libARSAL/ARSAL.h>
 #include <libARDiscovery/ARDiscovery.h>
+#include <libARSAL/ARSAL.h>
+
+#include <libavcodec/avcodec.h>
 }
 
 #include <string>
@@ -56,11 +58,11 @@ extern "C"
 #include <curses.h>
 #include <iostream>
 
-#include <visp3/io/vpKeyboard.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpImage.h>
+#include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpIoTools.h>
-
-#define TAG "vpRobotBebop2"
-
+#include <visp3/io/vpKeyboard.h>
 
 /*!
   \class vpRobotBebop2
@@ -77,10 +79,11 @@ public:
   virtual ~vpRobotBebop2();
 
   //*** Flight commands and parameters ***//
-
+  void getImage(vpImage<unsigned char> &I);
   std::string getIpAddress();
   int getDiscoveryPort();
   float getMaxTilt();
+  unsigned int getBatteryLevel();
 
   void handleKeyboardInput(int key);
 
@@ -88,6 +91,7 @@ public:
   bool isHovering();
   bool isLanded();
   bool isRunning();
+  bool isStreaming();
 
   static void land();
   void setMaxTilt(float maxTilt);
@@ -95,11 +99,13 @@ public:
   void setPosition(const vpHomogeneousMatrix &M, bool blocking);
   void setVelocity(const vpColVector &vel, double delta_t);
   void startStreaming();
+  void stopStreaming();
+
   void takeOff();
+  //*** ***//
 
 private:
   //*** Attributes ***//
-
   std::string m_ipAddress; ///< Ip address of the drone to discover on the network
   int m_discoveryPort; ///< Port of the drone to discover on the network
   std::string m_fifo_dir; ///< Path of fifo file
@@ -107,14 +113,24 @@ private:
 
   FILE *m_videoOut; ///< File used for video output visualisation
   pid_t m_outputID; ///< ID for video output process
-  ARSAL_Sem_t m_stateSem; ///< Semaphore
+  ARSAL_Sem_t m_stateSem;    ///< Semaphore
   struct sigaction m_sigAct; ///< Signal handler
 
-  static bool m_running; ///< Used for checking if the programm is running
-  float m_maxTilt;       ///< Max pitch and roll value of the drone
-  bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
+  AVCodecContext *m_codecContext; ///< Codec context for video stream decoding
+  AVPacket m_packet;              ///< Packet used for video stream decoding
 
-  ARDISCOVERY_Device_t *m_device;            ///< Used for drone discovery
+  vpImage<unsigned char> m_currentImage; /// Last image streamed by the drone, decoded
+  vpDisplayX m_display;           ///< Display for m_currentImage visualisation with ViSP
+
+  static bool m_running; ///< Used for checking if the programm is running
+  bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
+  bool m_firstFrameHasBeenReceived; ///< Used to know if a frame received is the first (display setup is then needed)
+  bool m_videoDecodingStarted;
+
+  float m_maxTilt;             ///< Max pitch and roll value of the drone
+  unsigned int m_batteryLevel; ///< Percentage of battery remaining
+
+  ARDISCOVERY_Device_t *m_device;                   ///< Used for drone discovery
   static ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
 
   eARCONTROLLER_ERROR m_errorController;    ///< Used for error handling
@@ -133,6 +149,14 @@ private:
   void createDroneController(ARDISCOVERY_Device_t *discoveredDrone);
   void setupCallbacks();
   void startController();
+  void initCodec();
+  void cleanUpCodec();
+  //*** ***//
+
+  //*** Video streaming functions ***//
+  void startVideoDecoding();
+  void stopVideoDecoding();
+  void computeFrame(ARCONTROLLER_Frame_t *frame);
   //*** ***//
 
   //*** Callbacks ***//
@@ -140,7 +164,7 @@ private:
   static eARCONTROLLER_ERROR decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void *customData);
   static eARCONTROLLER_ERROR didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData);
 
-  static void cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary);
+  static void cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
