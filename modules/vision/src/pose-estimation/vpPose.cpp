@@ -97,7 +97,8 @@ vpPose::vpPose()
     distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(),
     useParallelRansac(false),
     nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
-    vvsEpsilon(1e-8)
+    vvsEpsilon(1e-8),
+    m_REPPnPMinError(0.02), m_REPPnPInlierIndices()
 {
 }
 
@@ -380,7 +381,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     // test si les point 3D sont coplanaires
     int coplanar_plane_type = 0;
     bool plan = coplanar(coplanar_plane_type);
-    if (plan == true) {
+    if (plan) {
       poseDementhonPlan(cMo);
     } else {
       poseDementhonNonPlan(cMo);
@@ -393,9 +394,8 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     int coplanar_plane_type;
     bool plan = coplanar(coplanar_plane_type);
 
-    if (plan == true)
+    if (plan)
     {
-
       if (coplanar_plane_type == 4) {
         throw(vpPoseException(vpPoseException::notEnoughPointError,
                               "Lagrange method cannot be used in that case "
@@ -418,6 +418,23 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
       poseLagrangeNonPlan(cMo);
     }
   } break;
+  case EPPnP:
+  case EPPnP_LOWE:
+  case EPPnP_VIRTUAL_VS: {
+    if (npt < 4) {
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+                            "EPPnP method cannot be used in that case "
+                            "(at least 4 points are required). "
+                            "Not enough point (%d) to compute the pose  ", npt));
+    }
+    int coplanar_plane_type = 0;
+    bool plan = coplanar(coplanar_plane_type);
+    if (plan) {
+      poseEPPnPPlan(cMo);
+    } else {
+      poseEPPnPNonPlan(cMo);
+    }
+    } break;
   case RANSAC:
     if (npt < 4) {
       throw(vpPoseException(vpPoseException::notEnoughPointError,
@@ -427,6 +444,15 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     }
       return poseRansac(cMo, func);
     break;
+  case REPPnP: {
+    int coplanar_plane_type = 0;
+    bool plan = coplanar(coplanar_plane_type);
+    if (plan) {
+      poseREPPnPPlan(cMo);
+    } else {
+      poseREPPnPNonPlan(cMo);
+    }
+    } break;
   case LOWE:
   case VIRTUAL_VS:
     break;
@@ -435,16 +461,20 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   switch (method) {
   case LAGRANGE:
   case DEMENTHON:
+  case EPPnP:
+  case REPPnP:
   case RANSAC:
     break;
   case VIRTUAL_VS:
   case LAGRANGE_VIRTUAL_VS:
-  case DEMENTHON_VIRTUAL_VS: {
+  case DEMENTHON_VIRTUAL_VS:
+  case EPPnP_VIRTUAL_VS: {
     poseVirtualVS(cMo);
   } break;
   case LOWE:
   case LAGRANGE_LOWE:
-  case DEMENTHON_LOWE: {
+  case DEMENTHON_LOWE:
+  case EPPnP_LOWE: {
     poseLowe(cMo);
   } break;
   }
@@ -467,12 +497,13 @@ void vpPose::printPoint()
 
 /*!
    Display in the image \e I the pose represented by its homogenous
-   transformation \e cMo as a 3 axis frame. \param I: Image where the pose is
-   displayed in overlay. \param cMo: Considered pose to display. \param cam:
-   Camera parameters associated to image \e I. \param size: length in meter of
-   the axis that will be displayed \param col: Color used to display the 3
-   axis. If vpColor::none, red, green and blue will represent x-axiw, y-axis
-   and z-axis respectively.
+   transformation \e cMo as a 3 axis frame.
+   \param I: Image where the pose is displayed in overlay.
+   \param cMo: Considered pose to display.
+   \param cam: Camera parameters associated to image \e I.
+   \param size: length in meter of the axis that will be displayed
+   \param col: Color used to display the 3 axis. If vpColor::none,
+   red, green and blue will represent x-axiw, y-axis and z-axis respectively.
  */
 void vpPose::display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
                      vpColor col)
@@ -482,12 +513,13 @@ void vpPose::display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCame
 
 /*!
    Display in the image \e I the pose represented by its homogenous
-   transformation \e cMo as a 3 axis frame. \param I: Image where the pose is
-   displayed in overlay. \param cMo: Considered pose to display. \param cam:
-   Camera parameters associated to image \e I. \param size: length in meter of
-   the axis that will be displayed \param col: Color used to display the 3
-   axis. If vpColor::none, red, green and blue will represent x-axiw, y-axis
-   and z-axis respectively.
+   transformation \e cMo as a 3 axis frame.
+   \param I: Image where the pose is displayed in overlay.
+   \param cMo: Considered pose to display.
+   \param cam: Camera parameters associated to image \e I.
+   \param size: length in meter of the axis that will be displayed
+   \param col: Color used to display the 3 axis. If vpColor::none,
+   red, green and blue will represent x-axiw, y-axis and z-axis respectively.
  */
 void vpPose::display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size, vpColor col)
 {

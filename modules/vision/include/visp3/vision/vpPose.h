@@ -94,8 +94,12 @@ public:
                              initialization from Lagrange or Dementhon aproach */
     DEMENTHON_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach
                              initialized by Dementhon approach */
-    LAGRANGE_VIRTUAL_VS   /*!< Non linear virtual visual servoing approach
+    LAGRANGE_VIRTUAL_VS,  /*!< Non linear virtual visual servoing approach
                              initialized by Lagrange approach */
+    EPPnP,
+    EPPnP_LOWE,
+    EPPnP_VIRTUAL_VS,
+    REPPnP
   } vpPoseMethodType;
 
   enum RANSAC_FILTER_FLAGS {
@@ -147,6 +151,10 @@ private:
   //! Stop the optimization loop when the residual change (|r-r_prec|) <=
   //! epsilon
   double vvsEpsilon;
+  //! Inliers / outliers decision threshold in m for REPPnP method
+  double m_REPPnPMinError;
+  ///! Inlier indices for REPPnP method
+  std::vector<unsigned int> m_REPPnPInlierIndices;
 
   // For parallel RANSAC
   class RansacFunctor
@@ -225,10 +233,14 @@ public:
   void init();
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
+  void poseEPPnPNonPlan(vpHomogeneousMatrix &cMo);
+  void poseEPPnPPlan(vpHomogeneousMatrix &cMo);
   void poseLagrangePlan(vpHomogeneousMatrix &cMo);
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo);
   void poseLowe(vpHomogeneousMatrix &cMo);
   bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
+  void poseREPPnPNonPlan(vpHomogeneousMatrix &cMo);
+  void poseREPPnPPlan(vpHomogeneousMatrix &cMo);
   void poseVirtualVSrobust(vpHomogeneousMatrix &cMo);
   void poseVirtualVS(vpHomogeneousMatrix &cMo);
   void printPoint();
@@ -258,6 +270,13 @@ public:
   unsigned int getRansacNbInliers() const { return (unsigned int)ransacInliers.size(); }
   std::vector<unsigned int> getRansacInlierIndex() const { return ransacInlierIndex; }
   std::vector<vpPoint> getRansacInliers() const { return ransacInliers; }
+
+  void setREPPnPMinError(double t)
+  {
+    m_REPPnPMinError = t;
+  }
+
+  std::vector<unsigned int> getREPPnPInlierIndices() const { return m_REPPnPInlierIndices; }
 
   /*!
     Set if the covariance matrix has to be computed in the Virtual Visual
