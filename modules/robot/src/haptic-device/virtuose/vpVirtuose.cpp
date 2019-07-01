@@ -52,7 +52,7 @@
  * Authorize indexing on all movements by default.
  */
 vpVirtuose::vpVirtuose()
-  : m_virtContext(NULL), m_ip("localhost#5000"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
+  : m_virtContext(NULL), m_ip("localhost#53210"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
     m_ctrlMajorVersion(0), m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
     m_is_init(false), m_period(0.001f), m_njoints(6)
 {
@@ -590,15 +590,15 @@ void vpVirtuose::setArticularForce(const vpColVector &articularForce)
 {
   init();
 
-  if (articularForce.size() != 6) {
+  if (articularForce.size() != m_njoints) {
     throw(vpException(vpException::dimensionError,
                       "Cannot apply an articular force feedback (dim %d) to "
                       "the haptic device that is not 6-dimension",
                       articularForce.size()));
   }
 
-  float articular_force[6];
-  for (unsigned int i = 0; i < 6; i++)
+  float articular_force[m_njoints];
+  for (unsigned int i = 0; i < m_njoints; i++)
     articular_force[i] = (float)articularForce[i];
 
   if (virtSetArticularForce(m_virtContext, articular_force)) {

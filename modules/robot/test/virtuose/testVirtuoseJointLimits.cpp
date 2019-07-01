@@ -100,7 +100,7 @@ int main()
     float period = 0.001f;
     vpVirtuose virtuose;
     virtuose.setTimeStep(period);
-    virtuose.setIpAddress("localhost#5000");
+    virtuose.setIpAddress("localhost#53210");
     virtuose.setVerbose(true);
     virtuose.setPowerOn();
 
