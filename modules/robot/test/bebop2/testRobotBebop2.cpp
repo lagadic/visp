@@ -53,11 +53,20 @@
 void startDroneKeyboardControl(vpRobotBebop2 &drone)
 {
   int k = 0;
+
+  drone.startStreaming();
+
   WINDOW *win = initscr();
   raw();
   keypad(stdscr, TRUE);
   noecho();
-  timeout(100);
+  timeout(30);
+
+  vpImage<unsigned char> I(1, 1, 0);
+  drone.getImage(I);
+  vpDisplayX display(I, 100, 100, "DRONE VIEW");
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
 
   int y, x;
   getyx(win, y, x);
@@ -70,7 +79,13 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
   getyx(win, y, x);
   move(y + 1, 0);
 
-  while (drone.isRunning()) {
+  while (drone.isRunning() && drone.isStreaming()) {
+
+    drone.getImage(I);
+    vpDisplay::display(I);
+    vpDisplay::displayText(I, 10, 10, "Press q to quit", vpColor::red);
+    vpDisplay::flush(I);
+
     k = getch();
     drone.handleKeyboardInput(k);
   }
@@ -79,32 +94,35 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 
 int main()
 {
-  vpRobotBebop2 drone;
+  vpRobotBebop2 drone(true);
 
-  drone.startStreaming();
+  //  drone.startStreaming();
 
-  vpTime::wait(2000);
+  //  vpTime::wait(2000);
 
-  vpImage<unsigned char> I;
+  //  vpImage<unsigned char> I;
 
-  drone.getImage(I);
-  vpDisplayX display(I, 100, 100, "DRONE VIEW");
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
+  //  drone.getImage(I);
+  //  vpDisplayX display(I, 100, 100, "DRONE VIEW");
+  //  vpDisplay::display(I);
+  //  vpDisplay::flush(I);
 
-  double t = vpTime::measureTimeMs();
-  do {
-    drone.getImage(I);
-    vpDisplay::display(I);
-    vpDisplay::displayText(I, 10, 10, "Click to exit", vpColor::red);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false)) {
-      break;
-    }
-  } while (vpTime::measureTimeMs() - t < 20 * 1000);
+  //  double t = vpTime::measureTimeMs();
+  //  do {
+  //    drone.getImage(I);
+  //    vpDisplay::display(I);
+  //    vpDisplay::displayText(I, 10, 10, "Click to exit", vpColor::red);
+  //    vpDisplay::flush(I);
+  //    if (vpDisplay::getClick(I, false)) {
+  //      break;
+  //    }
+  //  } while (vpTime::measureTimeMs() - t < 20 * 1000);
 
-  // startDroneKeyboardControl(drone);
-
+  if (drone.isRunning()) {
+    startDroneKeyboardControl(drone);
+  } else {
+    std::cout << "Error : failed to setup drone control" << std::endl;
+  }
   // vpTime::wait(2000);
   //  drone.setMaxTilt(10);
   //  vpTime::wait(2000);

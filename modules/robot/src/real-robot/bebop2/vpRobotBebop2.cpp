@@ -71,11 +71,15 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
 /*!
  * Default constructor.
  */
-vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discoveryPort, std::string fifo_dir,
-                             std::string fifo_name)
-  : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort), m_fifo_dir(fifo_dir), m_fifo_name(fifo_name),
-    m_videoOut(NULL), m_outputID(0), m_currentImage()
+vpRobotBebop2::vpRobotBebop2(bool verbose, float maxTilt, std::string ipAddress, int discoveryPort)
+  : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort), m_currentImage()
 {
+
+  if (verbose) {
+    ARSAL_Print_SetMinimumLevel(ARSAL_PRINT_INFO);
+  } else {
+    ARSAL_Print_SetMinimumLevel(ARSAL_PRINT_WARNING);
+  }
 
   // Setting up signal handling
   memset(&m_sigAct, 0, sizeof(m_sigAct));
@@ -86,7 +90,6 @@ vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discovery
   sigaction(SIGKILL, &m_sigAct, 0);
   sigaction(SIGQUIT, &m_sigAct, 0);
 
-  m_outputID = 0;
   m_batteryLevel = 100;
   m_firstFrameHasBeenReceived = false;
 
@@ -94,10 +97,7 @@ vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discovery
   m_deviceState = ARCONTROLLER_DEVICE_STATE_MAX;
 
   // Initialises a semaphore
-  ARSAL_Sem_Init (&(m_stateSem), 0, 0);
-
-  activateDisplay();
-  std::cout<<"Display activated"<<std::endl<<std::endl;
+  ARSAL_Sem_Init(&(m_stateSem), 0, 0);
 
   ARDISCOVERY_Device_t * discoverDevice = discoverDrone();
   std::cout<<"Device created"<<std::endl<<std::endl;
@@ -117,10 +117,10 @@ vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discovery
                 "- Failed to setup drone control. Make sure your computer is connected to the drone Wifi spot before "
                 "starting.");
   } else {
-    setMaxTilt(maxTilt);
     m_relativeMoveEnded = true;
     m_videoDecodingStarted = false;
     m_running = true;
+    setMaxTilt(maxTilt);
   }
 }
 
@@ -367,20 +367,20 @@ void vpRobotBebop2::stopStreaming()
 {
   if (m_videoDecodingStarted) {
 
-    stopVideoDecoding();
-
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Stopping video streaming ... ");
 
-    // Sending command to the drone to start the video stream
+    // Sending command to the drone to stop the video stream
     m_errorController = m_deviceController->aRDrone3->sendMediaStreamingVideoEnable(m_deviceController->aRDrone3, 0);
 
     if (m_errorController == ARCONTROLLER_OK) {
 
-      // Blocking until streaming is started
+      // Blocking until streaming is stopped
       while (getStreamingState() != ARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED_DISABLED) {
         vpTime::sleepMs(1);
       }
 
+      stopVideoDecoding();
+      std::cout << "VIDEO DECODING STOPPED" << std::endl;
     } else {
       ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
     }
@@ -567,27 +567,6 @@ eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED vpRobotBebop
   return streamingState;
 }
 
-void vpRobotBebop2::activateDisplay()
-{
-  //Creates a temp directory to store video feed
-  m_fifo_dir = vpIoTools::makeTempDirectory(m_fifo_dir);
-
-  m_fifo_name = m_fifo_dir + "/" + m_fifo_name;
-
-  vpIoTools::makeFifo(m_fifo_name);
-
-  // Launches the display
-  if ((m_outputID = fork()) == 0) {
-    execlp("xterm", "xterm", "-e", "mplayer", "-demuxer", "h264es", const_cast<char *>(m_fifo_name.c_str()),
-           "-benchmark", "-really-quiet", NULL);
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG,
-                "Missing mplayer, you will not see the video. Please install mplayer and xterm.");
-    return;
-  }
-
-  m_videoOut = fopen(const_cast<char *>(m_fifo_name.c_str()), "w");
-}
-
 ARDISCOVERY_Device_t * vpRobotBebop2::discoverDrone()
 {
   eARDISCOVERY_ERROR errorDiscovery = ARDISCOVERY_OK;
@@ -671,8 +650,6 @@ void vpRobotBebop2::initCodec()
   avcodec_register_all();
   avformat_network_init();
 
-  AVFormatContext *format_context = avformat_alloc_context();
-
   av_init_packet(&m_packet);
 
   AVCodec *codec = avcodec_find_decoder(AV_CODEC_ID_H264);
@@ -713,7 +690,9 @@ void vpRobotBebop2::initCodec()
 void vpRobotBebop2::cleanUpCodec()
 {
   m_videoDecodingStarted = false;
+  std::cout << "BEFORE FREEING CODEC" << std::endl;
   avcodec_free_context(&m_codecContext);
+  std::cout << "AFTER FREEING CODEC" << std::endl;
 }
 
 void vpRobotBebop2::startVideoDecoding()
@@ -761,27 +740,6 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
 
   av_image_fill_arrays(rgb_picture->data, rgb_picture->linesize, buffer, pFormat, m_codecContext->width,
                        m_codecContext->height, 1);
-
-  //  int got_frame = 0;
-  //  int len = avcodec_decode_video2(m_codecContext, picture, &got_frame, &m_packet);
-
-  //  if (len >= 0 && got_frame) {
-  //    struct SwsContext *img_convert_ctx;
-  //    img_convert_ctx =
-  //        sws_getContext(m_codecContext->width, m_codecContext->height, m_codecContext->pix_fmt,
-  //        m_codecContext->width,
-  //                       m_codecContext->height, AV_PIX_FMT_BGR24, SWS_BICUBIC, NULL, NULL, NULL);
-  //    sws_scale(img_convert_ctx, (picture)->data, (picture)->linesize, 0, m_codecContext->height, (rgb_picture)->data,
-  //              (rgb_picture)->linesize);
-
-  //  } else {
-  //    char *errbuff = new char[AV_ERROR_MAX_STRING_SIZE];
-  //    av_strerror(len, errbuff, AV_ERROR_MAX_STRING_SIZE);
-  //    std::string err(errbuff);
-  //    delete[] errbuff;
-  //    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error sending a packet for decoding : %d, %s", len, err.c_str());
-  //    return;
-  //  }
 
   int ret = avcodec_send_packet(m_codecContext, &m_packet);
   if (ret < 0) {
@@ -833,47 +791,37 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
 
 void vpRobotBebop2::cleanUp()
 {
-  // Lands the drone if not landed
-  land();
+  if (m_deviceController != NULL) {
+    // Lands the drone if not landed
+    land();
 
-  // Stops the streaming if not stopped
-  stopStreaming();
+    // Stops the streaming if not stopped
+    stopStreaming();
 
-  // Deletes the controller
-  m_deviceState = ARCONTROLLER_Device_GetState (m_deviceController, &m_errorController);
-  if ((m_errorController == ARCONTROLLER_OK) && (m_deviceState != ARCONTROLLER_DEVICE_STATE_STOPPED))
-  {
-    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Disconnecting ...");
-    m_errorController = ARCONTROLLER_Device_Stop (m_deviceController);
+    // Deletes the controller
+    m_deviceState = ARCONTROLLER_Device_GetState(m_deviceController, &m_errorController);
+    if ((m_errorController == ARCONTROLLER_OK) && (m_deviceState != ARCONTROLLER_DEVICE_STATE_STOPPED)) {
+      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Disconnecting ...");
+      m_errorController = ARCONTROLLER_Device_Stop(m_deviceController);
 
-    if (m_errorController == ARCONTROLLER_OK)
-    {
-      // wait state update update
-      ARSAL_Sem_Wait (&(m_stateSem));
+      if (m_errorController == ARCONTROLLER_OK) {
+        // wait state update update
+        ARSAL_Sem_Wait(&(m_stateSem));
+      }
     }
+
+    m_running = false;
+
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Deleting device controller ...");
+    ARCONTROLLER_Device_Delete(&m_deviceController);
+
+    // Destroys the semaphore
+    ARSAL_Sem_Destroy(&(m_stateSem));
+
+    std::cout << "-- CLEANUP DONE --" << std::endl;
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error while cleaning up memory.");
   }
-
-  m_running = false;
-
-  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Deleting device controller ...");
-  ARCONTROLLER_Device_Delete (&m_deviceController);
-
-  //Closes the display and deletes tmp files and processes
-  fflush (m_videoOut);
-  fclose (m_videoOut);
-
-  if(m_outputID > 0)
-  {
-    kill(m_outputID, SIGKILL);
-  }
-
-  //Destroys the semaphore
-  ARSAL_Sem_Destroy(&(m_stateSem));
-
-  vpIoTools::remove(m_fifo_name);
-  vpIoTools::remove(m_fifo_dir);
-
-  std::cout << "-- CLEANUP DONE --" << std::endl;
 }
 
 //***           ***//
@@ -906,48 +854,23 @@ void vpRobotBebop2::stateChanged(eARCONTROLLER_DEVICE_STATE newState, eARCONTROL
 
 eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void * customData)
 {
-  vpRobotBebop2 * drone = (vpRobotBebop2 *)customData;
-
-  if (drone->m_videoOut != NULL)
-  {
-    if (codec.type == ARCONTROLLER_STREAM_CODEC_TYPE_H264)
-    {
-      fwrite(codec.parameters.h264parameters.spsBuffer, static_cast<size_t>(codec.parameters.h264parameters.spsSize), 1, drone->m_videoOut);
-      fwrite(codec.parameters.h264parameters.ppsBuffer, static_cast<size_t>(codec.parameters.h264parameters.ppsSize), 1, drone->m_videoOut);
-
-      fflush (drone->m_videoOut);
-    }
-  }
-  else
-  {
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "videoOut is NULL.");
-  }
-
+  (void)codec;
+  (void)customData;
   return ARCONTROLLER_OK;
 }
 
 eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData)
 {
-  vpRobotBebop2 * drone = (vpRobotBebop2 *)customData;
+  vpRobotBebop2 *drone = (vpRobotBebop2 *)customData;
 
-  if (drone->m_videoOut != NULL)
-  {
-    if (frame != NULL) {
+  if (frame != NULL) {
 
-      fwrite(frame->data, frame->used, 1, drone->m_videoOut);
-      fflush(drone->m_videoOut);
-
-      if (drone->m_videoDecodingStarted) {
-        drone->computeFrame(frame);
-      }
-
-    } else {
-      ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is NULL.");
+    if (drone->m_videoDecodingStarted) {
+      drone->computeFrame(frame);
     }
-  }
-  else
-  {
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "videoOut is NULL.");
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is NULL.");
   }
 
   return ARCONTROLLER_OK;

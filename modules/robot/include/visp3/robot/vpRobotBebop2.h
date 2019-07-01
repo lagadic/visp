@@ -74,8 +74,8 @@ extern "C"
 class VISP_EXPORT vpRobotBebop2
 {
 public:
-  vpRobotBebop2(float maxTilt = 10.0f, std::string ipAddress = "192.168.42.1", int discoveryPort = 44444,
-                std::string fifo_dir = "/tmp/arsdk_XXXXXX", std::string fifo_name = "arsdk_fifo");
+  vpRobotBebop2(bool verbose = false, float maxTilt = 10.0f, std::string ipAddress = "192.168.42.1",
+                int discoveryPort = 44444);
   virtual ~vpRobotBebop2();
 
   //*** Flight commands and parameters ***//
@@ -108,11 +108,7 @@ private:
   //*** Attributes ***//
   std::string m_ipAddress; ///< Ip address of the drone to discover on the network
   int m_discoveryPort; ///< Port of the drone to discover on the network
-  std::string m_fifo_dir; ///< Path of fifo file
-  std::string m_fifo_name; ///< Name of fifo file
 
-  FILE *m_videoOut; ///< File used for video output visualisation
-  pid_t m_outputID; ///< ID for video output process
   ARSAL_Sem_t m_stateSem;    ///< Semaphore
   struct sigaction m_sigAct; ///< Signal handler
 
@@ -143,7 +139,6 @@ private:
   eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED getStreamingState();
 
   //*** Setup functions ***//
-  void activateDisplay();
   void cleanUp();
   ARDISCOVERY_Device_t *discoverDrone();
   void createDroneController(ARDISCOVERY_Device_t *discoveredDrone);
