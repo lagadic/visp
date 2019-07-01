@@ -629,7 +629,7 @@ if(USE_PCL)
 endif()
 
 # ----------------------------------------------------------------------------
-# Build-in 3rd parties. Sould be after c++ standard potential modification
+# Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
 VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
@@ -640,6 +640,13 @@ VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_BLAS/LAPACK)
 VP_OPTION(WITH_PUGIXML    ""           ""    "Build pugixml as built-in library"   "" ON)
 VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WINRT) AND (NOT IOS))
+
+# Use stb_image as built-in library only when OpenCV, libjpeg and libpng not available
+if(NOT USE_OPENCV AND (NOT USE_PNG OR NOT USE_JPEG))
+  set(WITH_STBIMAGE ON)
+else()
+  set(WITH_STBIMAGE OFF)
+endif()
 
 # ----------------------------------------------------------------------------
 # Check for specific functions. Should be after cxx standard detection in VISPDetectCXXStandard.cmake and potential modification depending on pcl, realsense2, libfranka
@@ -1415,6 +1422,7 @@ status("    Use JPEG:"               USE_JPEG         THEN "yes (ver ${JPEG_LIB_
 status("    Use PNG:"                USE_PNG          THEN "yes (ver ${PNG_VERSION_STRING})" ELSE "no")
 status("    \\- Use ZLIB:"           USE_ZLIB         THEN "yes (ver ${ZLIB_VERSION_STRING})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
+status("    Use stb_image (built-in):" WITH_STBIMAGE  THEN "yes (ver ${STBIMAGE_VERSION})" ELSE "no")
 status("")
 status("  Real robots: ")
 status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")
