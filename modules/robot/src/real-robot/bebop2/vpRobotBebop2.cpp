@@ -71,16 +71,9 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
 /*!
  * Default constructor.
  */
-vpRobotBebop2::vpRobotBebop2(bool verbose, float maxTilt, std::string ipAddress, int discoveryPort)
+vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discoveryPort)
   : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort), m_currentImage()
 {
-
-  if (verbose) {
-    ARSAL_Print_SetMinimumLevel(ARSAL_PRINT_INFO);
-  } else {
-    ARSAL_Print_SetMinimumLevel(ARSAL_PRINT_WARNING);
-  }
-
   // Setting up signal handling
   memset(&m_sigAct, 0, sizeof(m_sigAct));
   m_sigAct.sa_handler = vpRobotBebop2::sighandler;
@@ -156,7 +149,12 @@ bool vpRobotBebop2::isLanded()
   return getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDED;
 }
 
-void vpRobotBebop2::takeOff()
+/*!
+  Send take off command.
+  \param[in] blocking : If true, the function return when take off is achieved. If false, returns immediately. You can
+  check if Take off done using isHovering().
+ */
+void vpRobotBebop2::takeOff(bool blocking)
 {
   if (m_running && isLanded()) {
     // We're doing a flat trim calibration of the drone before each takeoff
@@ -164,8 +162,10 @@ void vpRobotBebop2::takeOff()
 
     m_deviceController->aRDrone3->sendPilotingTakeOff(m_deviceController->aRDrone3);
 
-    while (getFlyingState() != ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING) {
-      vpTime::sleepMs(1);
+    if (blocking) {
+      while (!isHovering()) {
+        vpTime::sleepMs(1);
+      }
     }
 
   } else {
@@ -202,6 +202,7 @@ void vpRobotBebop2::sighandler(int signo)
   if (m_deviceController != NULL) {
     m_deviceController->aRDrone3->sendPilotingLanding(m_deviceController->aRDrone3);
   }
+  std::exit(EXIT_FAILURE);
 }
 
 void vpRobotBebop2::land()
@@ -315,6 +316,24 @@ void vpRobotBebop2::setVelocity(const vpColVector &vel, double delta_t)
 
 /*!
 
+Sets the verbose level for console prints.
+
+\param verbose : specifies the desired verbose level.
+  If verbose is true : info, warning, error and fatal error messages are displayed.
+  If verbose is false : only warning, error and fatal error messages are displayed.
+
+*/
+void vpRobotBebop2::setVerbose(bool verbose)
+{
+  if (verbose) {
+    ARSAL_Print_SetMinimumLevel(ARSAL_PRINT_INFO);
+  } else {
+    ARSAL_Print_SetMinimumLevel(ARSAL_PRINT_WARNING);
+  }
+}
+
+/*!
+
 Sets the max pitch and roll values for the drone.
 These values are not taken into consideration by the drone when using
 setPosition or setVelocity functions.
@@ -365,7 +384,9 @@ void vpRobotBebop2::startStreaming()
 
 void vpRobotBebop2::stopStreaming()
 {
-  if (m_videoDecodingStarted) {
+  if (m_videoDecodingStarted && m_deviceController != NULL) {
+
+    stopVideoDecoding();
 
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Stopping video streaming ... ");
 
@@ -379,8 +400,6 @@ void vpRobotBebop2::stopStreaming()
         vpTime::sleepMs(1);
       }
 
-      stopVideoDecoding();
-      std::cout << "VIDEO DECODING STOPPED" << std::endl;
     } else {
       ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
     }
@@ -417,7 +436,7 @@ void vpRobotBebop2::handleKeyboardInput(int key)
 
   case 't':
     // Takeoff
-    takeOff();
+    takeOff(false);
     break;
 
   case ' ':
@@ -650,7 +669,7 @@ void vpRobotBebop2::initCodec()
   avcodec_register_all();
   avformat_network_init();
 
-  av_init_packet(&m_packet);
+  //  av_init_packet(&m_packet);
 
   AVCodec *codec = avcodec_find_decoder(AV_CODEC_ID_H264);
   if (!codec) {
@@ -659,11 +678,29 @@ void vpRobotBebop2::initCodec()
   }
 
   m_codecContext = avcodec_alloc_context3(codec);
+
   if (!m_codecContext) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Failed to allocate codec context.");
     return;
   }
 
+#if 1
+  m_codecContext->pix_fmt = AV_PIX_FMT_YUV420P;
+  m_codecContext->skip_frame = AVDISCARD_DEFAULT;
+  m_codecContext->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
+  m_codecContext->skip_loop_filter = AVDISCARD_DEFAULT;
+  m_codecContext->workaround_bugs = AVMEDIA_TYPE_VIDEO;
+  m_codecContext->codec_id = AV_CODEC_ID_H264;
+  m_codecContext->skip_idct = AVDISCARD_DEFAULT;
+  // At the beginning we have no idea about the frame size
+  m_codecContext->width = 0;
+  m_codecContext->height = 0;
+
+  if (codec->capabilities & CODEC_CAP_TRUNCATED) {
+    m_codecContext->flags |= CODEC_FLAG_TRUNCATED;
+  }
+  m_codecContext->flags2 |= CODEC_FLAG2_CHUNKS;
+#else
   avcodec_get_context_defaults3(m_codecContext, codec);
   m_codecContext->flags |= CODEC_FLAG_LOW_DELAY;
   m_codecContext->flags2 |= CODEC_FLAG2_CHUNKS;
@@ -678,21 +715,26 @@ void vpRobotBebop2::initCodec()
   m_codecContext->codec_type = AVMEDIA_TYPE_VIDEO;
   m_codecContext->codec_id = AV_CODEC_ID_H264;
   m_codecContext->skip_idct = AVDISCARD_DEFAULT;
+#endif
 
-  if (avcodec_open2(m_codecContext, codec, nullptr) < 0) {
+  if (avcodec_open2(m_codecContext, codec, NULL) < 0) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Failed to open codec.");
     return;
   }
-  m_packet.pts = AV_NOPTS_VALUE;
-  m_packet.dts = AV_NOPTS_VALUE;
+
+  av_init_packet(&m_packet);
+
+  //  m_packet.pts = AV_NOPTS_VALUE;
+  //  m_packet.dts = AV_NOPTS_VALUE;
 }
 
 void vpRobotBebop2::cleanUpCodec()
 {
   m_videoDecodingStarted = false;
-  std::cout << "BEFORE FREEING CODEC" << std::endl;
-  avcodec_free_context(&m_codecContext);
-  std::cout << "AFTER FREEING CODEC" << std::endl;
+  av_packet_unref(&m_packet);
+  if (m_codecContext) {
+    avcodec_free_context(&m_codecContext);
+  }
 }
 
 void vpRobotBebop2::startVideoDecoding()
@@ -801,6 +843,7 @@ void vpRobotBebop2::cleanUp()
     // Deletes the controller
     m_deviceState = ARCONTROLLER_Device_GetState(m_deviceController, &m_errorController);
     if ((m_errorController == ARCONTROLLER_OK) && (m_deviceState != ARCONTROLLER_DEVICE_STATE_STOPPED)) {
+
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Disconnecting ...");
       m_errorController = ARCONTROLLER_Device_Stop(m_deviceController);
 

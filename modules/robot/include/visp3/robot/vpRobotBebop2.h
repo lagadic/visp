@@ -74,8 +74,7 @@ extern "C"
 class VISP_EXPORT vpRobotBebop2
 {
 public:
-  vpRobotBebop2(bool verbose = false, float maxTilt = 10.0f, std::string ipAddress = "192.168.42.1",
-                int discoveryPort = 44444);
+  vpRobotBebop2(float maxTilt = 10.0f, std::string ipAddress = "192.168.42.1", int discoveryPort = 44444);
   virtual ~vpRobotBebop2();
 
   //*** Flight commands and parameters ***//
@@ -98,10 +97,11 @@ public:
   void setPosition(float dX, float dY, float dZ, float dPsi, bool blocking);
   void setPosition(const vpHomogeneousMatrix &M, bool blocking);
   void setVelocity(const vpColVector &vel, double delta_t);
+  void setVerbose(bool verbose = false);
   void startStreaming();
   void stopStreaming();
 
-  void takeOff();
+  void takeOff(bool blocking = true);
   //*** ***//
 
 private:

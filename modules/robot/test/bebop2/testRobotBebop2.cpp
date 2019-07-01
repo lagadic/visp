@@ -45,8 +45,8 @@
 
 #include <iostream>
 
-#include <visp3/robot/vpRobotBebop2.h>
 #include <visp3/core/vpTime.h>
+#include <visp3/robot/vpRobotBebop2.h>
 
 #ifdef VISP_HAVE_ARSDK
 
@@ -94,7 +94,15 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 
 int main()
 {
-  vpRobotBebop2 drone(true);
+  vpRobotBebop2 drone;
+
+  drone.setVerbose(true);
+
+  if (drone.isRunning()) {
+    startDroneKeyboardControl(drone);
+  } else {
+    std::cout << "Error : failed to setup drone control" << std::endl;
+  }
 
   //  drone.startStreaming();
 
@@ -118,11 +126,6 @@ int main()
   //    }
   //  } while (vpTime::measureTimeMs() - t < 20 * 1000);
 
-  if (drone.isRunning()) {
-    startDroneKeyboardControl(drone);
-  } else {
-    std::cout << "Error : failed to setup drone control" << std::endl;
-  }
   // vpTime::wait(2000);
   //  drone.setMaxTilt(10);
   //  vpTime::wait(2000);
