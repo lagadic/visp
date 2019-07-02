@@ -41,7 +41,7 @@
   \brief Test vpImage ownership.
 */
 
-int main(int /*argc*/, const char **/*argv*/)
+int main(int /* argc */, const char ** /* argv */)
 {
   try {
     {
@@ -142,11 +142,19 @@ int main(int /*argc*/, const char **/*argv*/)
     {
       unsigned char* bitmap = new unsigned char[12];
       vpImage<unsigned char> I = std::move(vpImage<unsigned char>(bitmap, 3, 4, false));
+      if (bitmap != I.bitmap) {
+        std::cout << "std::move(vpImage) failed" << std::endl;
+        return EXIT_FAILURE;
+      }
       delete[] bitmap;
     }
     {
       unsigned char* bitmap = new unsigned char[12];
       vpImage<unsigned char> I(std::move(vpImage<unsigned char>(bitmap, 3, 4, false)));
+      if (bitmap != I.bitmap) {
+        std::cout << "vpImage(td::move(vpImage)) failed" << std::endl;
+        return EXIT_FAILURE;
+      }
       delete[] bitmap;
     }
 #endif
@@ -155,5 +163,6 @@ int main(int /*argc*/, const char **/*argv*/)
     return EXIT_FAILURE;
   }
 
+  std::cout << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
 }
