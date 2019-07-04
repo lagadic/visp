@@ -62,8 +62,8 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
   noecho();
   timeout(30);
 
-  vpImage<unsigned char> I(1, 1, 0);
-  drone.getImage(I);
+  vpImage<vpRGBa> I(1, 1, 0);
+  drone.getRGBaImage(I);
   vpDisplayX display(I, 100, 100, "DRONE VIEW");
   vpDisplay::display(I);
   vpDisplay::flush(I);
@@ -81,7 +81,7 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 
   while (drone.isRunning() && drone.isStreaming()) {
 
-    drone.getImage(I);
+    drone.getRGBaImage(I);
     vpDisplay::display(I);
     vpDisplay::displayText(I, 10, 10, "Press q to quit", vpColor::red);
     vpDisplay::flush(I);
@@ -105,8 +105,7 @@ int main()
   }
 
   //  drone.startStreaming();
-
-  //  vpTime::wait(2000);
+  //  vpTime::wait(20000);
 
   //  vpImage<unsigned char> I;
 
@@ -117,7 +116,7 @@ int main()
 
   //  double t = vpTime::measureTimeMs();
   //  do {
-  //    drone.getImage(I);
+  //    drone.getGrayscaleImage(I);
   //    vpDisplay::display(I);
   //    vpDisplay::displayText(I, 10, 10, "Click to exit", vpColor::red);
   //    vpDisplay::flush(I);
@@ -139,24 +138,27 @@ int main()
   //  drone.setPosition(M, true);
 
 #if 0
-  vpColVector vel(6, 0.0);
-  vel[0] = 0.1;
-  //  vel[5] = vpMath::rad(10);
-  double delta_t = 0.040;
-  double t = vpTime::measureTimeMs();
-  do {
-    drone.setVelocity(vel, 1);
-    vpTime::wait(delta_t * 1000);
-  } while (vpTime::measureTimeMs() - t < 20 * 1000);
+  if (drone.isRunning()) {
+    drone.takeOff();
+    vpColVector vel(4, 0.0);
+    vel[0] = 0.1;
+    //  vel[5] = vpMath::rad(10);
+    double delta_t = 0.040;
+    double t = vpTime::measureTimeMs();
+    do {
+      drone.setVelocity(vel, 1);
+      vpTime::wait(delta_t * 1000);
+    } while (vpTime::measureTimeMs() - t < 10 * 1000);
 
-  //  vpColVector vel(6, 0.0);
-  //  vel[0] = 0.01;
-  //  vel[5] = vpMath::rad(90.0);
+    //  vpColVector vel(6, 0.0);
+    //  vel[0] = 0.01;
+    //  vel[5] = vpMath::rad(90.0);
 
-  //  drone.setVelocity(vel, 1);
-//  vpTime::wait(300000);
+    //  drone.setVelocity(vel, 1);
+    //  vpTime::wait(300000);
+    drone.land();
+  }
 #endif
-  //  drone.land();
 
   std::cout << "-- End of test --" << std::endl;
 #else

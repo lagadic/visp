@@ -77,12 +77,13 @@ public:
   vpRobotBebop2(float maxTilt = 10.0f, std::string ipAddress = "192.168.42.1", int discoveryPort = 44444);
   virtual ~vpRobotBebop2();
 
-  //*** Flight commands and parameters ***//
-  void getImage(vpImage<unsigned char> &I);
   std::string getIpAddress();
   int getDiscoveryPort();
   float getMaxTilt();
   unsigned int getBatteryLevel();
+
+  void getGrayscaleImage(vpImage<unsigned char> &I);
+  void getRGBaImage(vpImage<vpRGBa> &I);
 
   void handleKeyboardInput(int key);
 
@@ -99,6 +100,7 @@ public:
   void setVelocity(const vpColVector &vel, double delta_t);
   void setVerbose(bool verbose = false);
   void startStreaming();
+  void stopMoving();
   void stopStreaming();
 
   void takeOff(bool blocking = true);
@@ -115,13 +117,11 @@ private:
   AVCodecContext *m_codecContext; ///< Codec context for video stream decoding
   AVPacket m_packet;              ///< Packet used for video stream decoding
 
-  vpImage<unsigned char> m_currentImage; /// Last image streamed by the drone, decoded
-  vpDisplayX m_display;           ///< Display for m_currentImage visualisation with ViSP
+  vpImage<vpRGBa> m_currentImage; /// Last image streamed and decoded by the drone, stored in RGBa
 
-  static bool m_running; ///< Used for checking if the programm is running
+  static bool m_running;    ///< Used for checking if the programm is running
   bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
-  bool m_firstFrameHasBeenReceived; ///< Used to know if a frame received is the first (display setup is then needed)
-  bool m_videoDecodingStarted;
+  bool m_videoDecodingStarted; ///< Used to know if the drone is currently streaming and decoding its camera video feed
 
   float m_maxTilt;             ///< Max pitch and roll value of the drone
   unsigned int m_batteryLevel; ///< Percentage of battery remaining
@@ -133,7 +133,7 @@ private:
   eARCONTROLLER_DEVICE_STATE m_deviceState; ///< Used to store device state
   //*** ***//
 
-  static void sighandler(int signo);
+  [[noreturn]] static void sighandler(int signo);
 
   eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE getFlyingState();
   eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED getStreamingState();
@@ -155,7 +155,7 @@ private:
   //*** ***//
 
   //*** Callbacks ***//
-  static void stateChanged(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error, void *customData);
+  static void stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error, void *customData);
   static eARCONTROLLER_ERROR decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void *customData);
   static eARCONTROLLER_ERROR didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData);
 
