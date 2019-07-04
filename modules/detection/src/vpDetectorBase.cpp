@@ -42,7 +42,7 @@
 /*!
         Default constructor.
 */
-vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0) {}
+vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0), m_timeout_ms(0) {}
 
 /*!
         Returns ith object container box as a vector of points.
