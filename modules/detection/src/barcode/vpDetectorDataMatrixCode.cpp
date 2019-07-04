@@ -47,13 +47,15 @@
 #include <visp3/detection/vpDetectorDataMatrixCode.h>
 
 /*!
-   Default constructor that does nothing.
+   Default constructor that does nothing except setting detection timeout to 50ms.
+   This value could be changed using setTimeout().
  */
-vpDetectorDataMatrixCode::vpDetectorDataMatrixCode() {}
+vpDetectorDataMatrixCode::vpDetectorDataMatrixCode() { setTimeout(50); }
 
 /*!
-  Detect datamatrix bar codes in the image. Return true if a bar code is
-  detected, false otherwise.
+  Detect datamatrix codes in the image. Return true if a code is detected, false otherwise.
+  There is the setTimeout() function that allows to tune the value of the timeout used to detect a datamatrix code.
+  By default, there is a timeout of 50 ms set in the constructor.
 
   \param I : Input image.
  */
@@ -68,6 +70,13 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
   DmtxImage *img;
   DmtxMessage *msg;
 
+  DmtxTime *dmtx_timeout = NULL;
+  if (m_timeout_ms) {
+    dmtx_timeout = new DmtxTime;
+    *dmtx_timeout = dmtxTimeNow();
+    dmtx_timeout->usec += m_timeout_ms * 1000;
+  }
+
   img = dmtxImageCreate(I.bitmap, (int)I.getWidth(), (int)I.getHeight(), DmtxPack8bppK);
   assert(img != NULL);
 
@@ -76,7 +85,7 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
 
   bool end = false;
   do {
-    reg = dmtxRegionFindNext(dec, 0);
+    reg = dmtxRegionFindNext(dec, dmtx_timeout);
 
     if (reg != NULL) {
       msg = dmtxDecodeMatrixRegion(dec, reg, DmtxUndefined);
@@ -116,6 +125,9 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
 
   dmtxDecodeDestroy(&dec);
   dmtxImageDestroy(&img);
+  if (dmtx_timeout) {
+    delete dmtx_timeout;
+  }
   return detected;
 }
 
