@@ -79,6 +79,11 @@ If you have a Realsense camera use rather:
 ./tutorial-grabber-realsense --seqname chessboard-%02d.png --record 1
 \endcode
 
+If you have a Parrot Bebop 2 drone camera use rather:
+\code
+./tutorial-grabber-bebop2 --seqname chessboard-%02d.png --record 1
+\endcode
+
 In all other cases, try with:
 \code
 ./tutorial-grabber-opencv --seqname chessboard-%02d.png --record 1
