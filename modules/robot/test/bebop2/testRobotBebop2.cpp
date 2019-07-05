@@ -43,9 +43,11 @@
   Example to control Parrot Bebop2.
 */
 
+#include <curses.h>
 #include <iostream>
 
 #include <visp3/core/vpTime.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/robot/vpRobotBebop2.h>
 
 #ifdef VISP_HAVE_ARSDK
@@ -54,6 +56,8 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 {
   int k = 0;
 
+  drone.setMaxTilt(10);
+  drone.doFlatTrim();
   drone.startStreaming();
 
   WINDOW *win = initscr();
@@ -62,8 +66,8 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
   noecho();
   timeout(30);
 
-  vpImage<vpRGBa> I(1, 1, 0);
-  drone.getRGBaImage(I);
+  vpImage<unsigned char> I(1, 1, 0);
+  drone.getGrayscaleImage(I);
   vpDisplayX display(I, 100, 100, "DRONE VIEW");
   vpDisplay::display(I);
   vpDisplay::flush(I);
@@ -73,7 +77,7 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
   move(y + 1, 0); // Move to next line
   clrtoeol();     // Clear line
   mvprintw(y + 1, 0,
-           "Control the drone with the keyboard : 't' to takeoff ; Spacebar to land ; 'e' for emergency ; Arrow keys "
+           "Control the drone with the keyboard : 't' to takeoff ; Spacebar to land ; Arrow keys "
            "and ('r','f','d','g') to "
            "move ; 'q' to quit ;");
   getyx(win, y, x);
@@ -81,7 +85,7 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 
   while (drone.isRunning() && drone.isStreaming()) {
 
-    drone.getRGBaImage(I);
+    drone.getGrayscaleImage(I);
     vpDisplay::display(I);
     vpDisplay::displayText(I, 10, 10, "Press q to quit", vpColor::red);
     vpDisplay::flush(I);
@@ -94,9 +98,7 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 
 int main()
 {
-  vpRobotBebop2 drone;
-
-  drone.setVerbose(true);
+  vpRobotBebop2 drone(false);
 
   if (drone.isRunning()) {
     startDroneKeyboardControl(drone);
@@ -139,6 +141,7 @@ int main()
 
 #if 0
   if (drone.isRunning()) {
+    drone.doFlatTrim();
     drone.takeOff();
     vpColVector vel(4, 0.0);
     vel[0] = 0.1;

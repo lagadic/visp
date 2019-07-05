@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Interface for Parrot's Bebop2 drone.
+ * Interface for Parrot Bebop2 drone.
  *
  * Authors:
  * Gatien Gaumerais
@@ -43,24 +43,23 @@
 
 #include <visp3/robot/vpRobotBebop2.h>
 
+#include <curses.h> // For keyboard inputs
+#include <iostream>
+
 // FFmpeg is part of OpenCV
 #ifdef VISP_HAVE_OPENCV
+
 extern "C" {
 #include <libavformat/avformat.h>
-#include <libavutil/avutil.h>
-#include <libavutil/frame.h>
 #include <libavutil/imgutils.h>
-#include <libswscale/swscale.h>
 }
 
-#include <visp/vpDisplayX.h>
+#include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpImageConvert.h>
 
-#include <opencv2/core/core.hpp>
+#endif // #ifdef VISP_HAVE_OPENCV
 
-#endif // VISP_HAVE_OPENCV
-
-#define TAG "vpRobotBebop2"
+#define TAG "vpRobotBebop2" // For error messages of ARSDK
 
 bool vpRobotBebop2::m_running = false;
 ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
@@ -80,13 +79,15 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
   it is recommanded to check if the drone is running with isRunning() before sending commands to the drone.
 
 
-  \param[in] maxTilt : maximum desired pitch and roll values for the drone (degrees). Can only be between 5 and 35
-  degrees.
+  \param[in] verbose : turn verbose on or off
+    If verbose is true : info, warning, error and fatal error messages are displayed.
+    If verbose is false : only warning, error and fatal error messages are displayed.
   \param[in] ipAddress : ip address used to discover the drone on the wifi network.
   \param[in] discoveryPort : port used to discover the drone on the wifi network.
  */
-vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discoveryPort)
-  : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort), m_currentImage()
+vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryPort)
+  : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort), m_picture(NULL), m_rgb_picture(NULL),
+    m_img_convert_ctx(NULL), m_buffer(NULL), m_currentImage()
 {
   // Setting up signal handling
   memset(&m_sigAct, 0, sizeof(m_sigAct));
@@ -102,24 +103,27 @@ vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discovery
   m_relativeMoveEnded = true;
   m_videoDecodingStarted = false;
 
+  setVerbose(verbose);
+
   m_errorController = ARCONTROLLER_OK;
   m_deviceState = ARCONTROLLER_DEVICE_STATE_MAX;
 
   // Initialises a semaphore
   ARSAL_Sem_Init(&(m_stateSem), 0, 0);
 
-  ARDISCOVERY_Device_t * discoverDevice = discoverDrone();
-  std::cout<<"Device created"<<std::endl<<std::endl;
+  // Creates a discovery device to find the drone on the wifi network
+  ARDISCOVERY_Device_t *discoverDevice = discoverDrone();
 
+  // Creates a drone controller with the discovery device
   createDroneController(discoverDevice);
-  std::cout<<"Drone controller created"<<std::endl<<std::endl;
 
+  // Sets up callbacks
   setupCallbacks();
-  std::cout<<"Callbacks created"<<std::endl<<std::endl;
 
+  // Start the drone controller, connects to the drone. If an error occurs, it will set m_errorController to the error.
   startController();
-  std::cout << "Controller started" << std::endl << std::endl;
 
+  // We check if the drone was actually found and connected to the controller
   if ((m_errorController != ARCONTROLLER_OK) || (m_deviceState != ARCONTROLLER_DEVICE_STATE_RUNNING)) {
     m_running = false;
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG,
@@ -127,7 +131,6 @@ vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discovery
                 "starting.");
   } else {
     m_running = true;
-    setMaxTilt(maxTilt);
   }
 }
 
@@ -135,42 +138,69 @@ vpRobotBebop2::vpRobotBebop2(float maxTilt, std::string ipAddress, int discovery
 
   Destructor. Lands the drone if not landed, safely disconnects everything, and deactivates video streaming and
   decoding if needed.
- */
+*/
 vpRobotBebop2::~vpRobotBebop2() { cleanUp(); }
 
 /*!
 
+  Sends a flat trim command to the robot, to calibrate accelerometer and gyro.
+
+  \warning Should be executed only if the drone is landed and on a flat surface.
+*/
+void vpRobotBebop2::doFlatTrim()
+{
+  if (isRunning() && m_deviceController != NULL && isLanded()) {
+
+    m_flatTrimFinished = false;
+
+    m_deviceController->aRDrone3->sendPilotingFlatTrim(m_deviceController->aRDrone3);
+
+    // m_flatTrimFinished is set back to true when the drone has finished the calibration, via a callback
+    while (!m_flatTrimFinished) {
+      vpTime::sleepMs(1);
+    }
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't do a flat trim : drone isn't landed.");
+  }
+}
+
+/*!
+
   Gets the drone IP address used during wifi discovery.
- */
+*/
 std::string vpRobotBebop2::getIpAddress() { return m_ipAddress; }
 
 /*!
 
   Gets the drone port used during wifi discovery.
- */
+*/
 int vpRobotBebop2::getDiscoveryPort() { return m_discoveryPort; }
 
 /*!
 
   Gets the current max pitch and roll values allowed for the drone.
- */
+*/
 float vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
 
 /*!
 
   Gets current battery level.
- */
+*/
 unsigned int vpRobotBebop2::getBatteryLevel() { return m_batteryLevel; }
 
+#ifdef VISP_HAVE_OPENCV
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
-  Gets the last streamed and decoded image from the drone camera feed in grayscale .
+  Gets the last streamed and decoded image from the drone camera feed in grayscale.
+  The image obtained has a width of 856 and a height of 480.
 
   \param[in,out] I : grayscale image that will contain last streamed and decoded image after the function ends.
-                           */
+*/
 void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
 {
   if (m_videoDecodingStarted) {
+    I.resize(m_currentImage.getHeight(), m_currentImage.getWidth());
     vpImageConvert::RGBaToGrey(reinterpret_cast<unsigned char *>(m_currentImage.bitmap), I.bitmap,
                                m_currentImage.getSize());
   } else {
@@ -179,11 +209,13 @@ void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
 }
 
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Gets the last streamed and decoded image from the drone camera feed in RGBa.
+  The image obtained has a width of 856 and a height of 480.
 
   \param[in,out] I : RGBa image that will contain last streamed and decoded image after the function ends.
-                           */
+*/
 void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
 {
   if (m_videoDecodingStarted) {
@@ -192,6 +224,7 @@ void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
   }
 }
+#endif // #ifdef VISP_HAVE_OPENCV
 
 /*!
 
@@ -237,13 +270,11 @@ bool vpRobotBebop2::isLanded()
   Sends take off command.
 
   \param[in] blocking : If true, the function return when take off is achieved. If false, returns immediately. You can
-  check if Take off done using isHovering().
+  check if take off is finished using isHovering().
  */
 void vpRobotBebop2::takeOff(bool blocking)
 {
   if (isRunning() && isLanded() && m_deviceController != NULL) {
-    // We're doing a flat trim calibration of the drone before each takeoff
-    m_deviceController->aRDrone3->sendPilotingFlatTrim(m_deviceController->aRDrone3);
 
     m_deviceController->aRDrone3->sendPilotingTakeOff(m_deviceController->aRDrone3);
 
@@ -285,7 +316,7 @@ void vpRobotBebop2::land()
     If blocking is false, the function will return even if the drone is still moving.
 
   \sa setPosition(const vpHomogeneousMatrix &M, bool blocking)
-  */
+*/
 void vpRobotBebop2::setPosition(float dX, float dY, float dZ, float dPsi, bool blocking)
 {
   if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
@@ -295,6 +326,7 @@ void vpRobotBebop2::setPosition(float dX, float dY, float dZ, float dPsi, bool b
 
     if (blocking) {
 
+      // m_relativeMoveEnded is set back to true when the drone has finished his move, via a callback
       while (!m_relativeMoveEnded) {
         vpTime::sleepMs(1);
       }
@@ -432,7 +464,8 @@ void vpRobotBebop2::startStreaming()
         vpTime::sleepMs(1);
       }
       startVideoDecoding();
-
+      vpTime::sleepMs(1000); // We wait for the streaming to actually start (it has a delay before actually sending
+                             // frames, even if it is indicated as started by the drone).
     } else {
       ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
     }
@@ -460,9 +493,6 @@ void vpRobotBebop2::stopMoving()
 void vpRobotBebop2::stopStreaming()
 {
   if (m_videoDecodingStarted && m_deviceController != NULL) {
-
-    stopVideoDecoding();
-
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Stopping video streaming ... ");
 
     // Sending command to the drone to stop the video stream
@@ -474,6 +504,8 @@ void vpRobotBebop2::stopStreaming()
       while (getStreamingState() != ARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED_DISABLED) {
         vpTime::sleepMs(1);
       }
+      vpTime::sleepMs(500); // We wait for the streaming to actually stops or else it causes segmentation fault.
+      stopVideoDecoding();
 
     } else {
       ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
@@ -489,7 +521,7 @@ void vpRobotBebop2::stopStreaming()
   Sends predefined movement commands to the drone based on a keyboard input \e key.
   See keyboard control example.
 
-  \warning can handle directionnal arrows if Curses is used to detect input.
+  \warning Can handle directionnal arrows if Curses is used to detect input.
 
   \param[in] key : key input to handle.
 */
@@ -738,7 +770,7 @@ ARDISCOVERY_Device_t * vpRobotBebop2::discoverDrone()
   {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Discovery error :%s", ARDISCOVERY_Error_ToString(errorDiscovery));
   }
-
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Drone controller created.");
   return device;
 }
 
@@ -756,6 +788,7 @@ void vpRobotBebop2::createDroneController(ARDISCOVERY_Device_t * discoveredDrone
       ARSAL_PRINT (ARSAL_PRINT_ERROR, TAG, "Creation of deviceController failed.");
   }
   ARDISCOVERY_Device_Delete (&discoveredDrone);
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Device created.");
 }
 
 /*!
@@ -786,6 +819,7 @@ void vpRobotBebop2::setupCallbacks()
   {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error: %s", ARCONTROLLER_Error_ToString(m_errorController));
   }
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Callbacks set up.");
 }
 
 /*!
@@ -803,6 +837,7 @@ void vpRobotBebop2::startController()
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
   }
 
+  // Waits for the stateChangedCallback to unclock the semaphore
   ARSAL_Sem_Wait (&(m_stateSem));
 
   //Checks the device state
@@ -813,6 +848,7 @@ void vpRobotBebop2::startController()
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- deviceState :%d", m_deviceState);
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
   }
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Controller started.");
 }
 
 /*!
@@ -825,14 +861,14 @@ void vpRobotBebop2::initCodec()
   avcodec_register_all();
   avformat_network_init();
 
-  //  av_init_packet(&m_packet);
-
+  // Finds the correct codec
   AVCodec *codec = avcodec_find_decoder(AV_CODEC_ID_H264);
   if (!codec) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Codec not found.");
     return;
   }
 
+  // Allocates memory for codec
   m_codecContext = avcodec_alloc_context3(codec);
 
   if (!m_codecContext) {
@@ -840,7 +876,7 @@ void vpRobotBebop2::initCodec()
     return;
   }
 
-#if 1
+  // Sets codec parameters (TODO : should be done automaticaly by drone callback decoderConfigCallback
   m_codecContext->pix_fmt = AV_PIX_FMT_YUV420P;
   m_codecContext->skip_frame = AVDISCARD_DEFAULT;
   m_codecContext->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
@@ -848,40 +884,32 @@ void vpRobotBebop2::initCodec()
   m_codecContext->workaround_bugs = AVMEDIA_TYPE_VIDEO;
   m_codecContext->codec_id = AV_CODEC_ID_H264;
   m_codecContext->skip_idct = AVDISCARD_DEFAULT;
-  // At the beginning we have no idea about the frame size
-  m_codecContext->width = 0;
-  m_codecContext->height = 0;
-
+  m_codecContext->width = 856;
+  m_codecContext->height = 480;
   if (codec->capabilities & CODEC_CAP_TRUNCATED) {
     m_codecContext->flags |= CODEC_FLAG_TRUNCATED;
   }
   m_codecContext->flags2 |= CODEC_FLAG2_CHUNKS;
-#else
-  avcodec_get_context_defaults3(m_codecContext, codec);
-  m_codecContext->flags |= CODEC_FLAG_LOW_DELAY;
-  m_codecContext->flags2 |= CODEC_FLAG2_CHUNKS;
-  m_codecContext->thread_count = 4;
-  m_codecContext->thread_type = FF_THREAD_SLICE;
-  m_codecContext->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
-  m_codecContext->pix_fmt = AV_PIX_FMT_YUV420P;
-  m_codecContext->skip_frame = AVDISCARD_DEFAULT;
-  m_codecContext->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;
-  m_codecContext->skip_loop_filter = AVDISCARD_DEFAULT;
-  m_codecContext->workaround_bugs = FF_BUG_AUTODETECT;
-  m_codecContext->codec_type = AVMEDIA_TYPE_VIDEO;
-  m_codecContext->codec_id = AV_CODEC_ID_H264;
-  m_codecContext->skip_idct = AVDISCARD_DEFAULT;
-#endif
 
+  // Opens the codec
   if (avcodec_open2(m_codecContext, codec, NULL) < 0) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Failed to open codec.");
     return;
   }
 
-  av_init_packet(&m_packet);
+  AVPixelFormat pFormat = AV_PIX_FMT_BGR24;
+  m_codecContext->width = 856;
+  m_codecContext->height = 480;
+  int numBytes = av_image_get_buffer_size(pFormat, m_codecContext->width, m_codecContext->height, 1);
+  m_buffer = (uint8_t *)av_malloc(static_cast<unsigned long>(numBytes) * sizeof(uint8_t));
 
-  //  m_packet.pts = AV_NOPTS_VALUE;
-  //  m_packet.dts = AV_NOPTS_VALUE;
+  av_init_packet(&m_packet);        // Packed used to send data to the decoder
+  m_picture = av_frame_alloc();     // Frame used to receive data from the decoder
+  m_rgb_picture = av_frame_alloc(); // Frame used to store rescaled frame received from the decoder
+
+  m_img_convert_ctx = sws_getContext(m_codecContext->width, m_codecContext->height, m_codecContext->pix_fmt,
+                                     m_codecContext->width, m_codecContext->height, AV_PIX_FMT_BGR24, SWS_BICUBIC, NULL,
+                                     NULL, NULL); // Used to rescale frame received from the decoder
 }
 
 /*!
@@ -892,9 +920,25 @@ void vpRobotBebop2::cleanUpCodec()
 {
   m_videoDecodingStarted = false;
   av_packet_unref(&m_packet);
+
   if (m_codecContext) {
     avcodec_flush_buffers(m_codecContext);
     avcodec_free_context(&m_codecContext);
+  }
+
+  if (m_picture) {
+    av_frame_free(&m_picture);
+  }
+
+  if (m_rgb_picture) {
+    av_frame_free(&m_rgb_picture);
+  }
+
+  if (m_img_convert_ctx) {
+    sws_freeContext(m_img_convert_ctx);
+  }
+  if (m_buffer) {
+    av_free(m_buffer);
   }
 }
 
@@ -935,78 +979,53 @@ void vpRobotBebop2::stopVideoDecoding()
 */
 void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
 {
-  AVFrame *picture = av_frame_alloc();
-  AVFrame *rgb_picture =
-      av_frame_alloc(); // TODO : alloc une fois et mettre en membre privé de la classe, voir example sur git
 
-  AVPixelFormat pFormat = AV_PIX_FMT_BGR24;
+  m_packet.data = frame->data;
+  m_packet.size = static_cast<int>(frame->used);
 
-  if (!picture) {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Failed to allocate video frame.");
+  av_image_fill_arrays(m_rgb_picture->data, m_rgb_picture->linesize, m_buffer, AV_PIX_FMT_BGR24, m_codecContext->width,
+                       m_codecContext->height, 1);
+
+  int ret = avcodec_send_packet(m_codecContext, &m_packet);
+  if (ret < 0) {
+
+    char *errbuff = new char[AV_ERROR_MAX_STRING_SIZE];
+    av_strerror(ret, errbuff, AV_ERROR_MAX_STRING_SIZE);
+    std::string err(errbuff);
+    delete[] errbuff;
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error sending a packet for decoding : %d, %s", ret, err.c_str());
+
   } else {
 
-    m_codecContext->width = 856;
-    m_codecContext->height = 480;
-    int numBytes = av_image_get_buffer_size(pFormat, m_codecContext->width, m_codecContext->height, 1);
+    ret = avcodec_receive_frame(m_codecContext, m_picture);
 
-    m_packet.data = frame->data;
-    m_packet.size = static_cast<int>(frame->used);
-
-    uint8_t *buffer = (uint8_t *)av_malloc(static_cast<unsigned long>(numBytes) * sizeof(uint8_t));
-
-    av_image_fill_arrays(rgb_picture->data, rgb_picture->linesize, buffer, pFormat, m_codecContext->width,
-                         m_codecContext->height, 1);
-
-    int ret = avcodec_send_packet(m_codecContext, &m_packet);
     if (ret < 0) {
 
-      char *errbuff = new char[AV_ERROR_MAX_STRING_SIZE];
-      av_strerror(ret, errbuff, AV_ERROR_MAX_STRING_SIZE);
-      std::string err(errbuff);
-      delete[] errbuff;
-      ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error sending a packet for decoding : %d, %s", ret, err.c_str());
-
-    } else {
-
-      ret = avcodec_receive_frame(m_codecContext, picture);
-
-      if (ret < 0) {
-
-        if (ret == AVERROR(EAGAIN)) {
-          ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "AVERROR(EAGAIN)");
-        } else if (ret == AVERROR_EOF) {
-          ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "AVERROR_EOF");
-        } else {
-
-          char *errbuff = new char[AV_ERROR_MAX_STRING_SIZE];
-          av_strerror(ret, errbuff, AV_ERROR_MAX_STRING_SIZE);
-          std::string err(errbuff);
-          delete[] errbuff;
-          ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error receiving a decoded frame : %d, %s", ret, err.c_str());
-        }
+      if (ret == AVERROR(EAGAIN)) {
+        ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "AVERROR(EAGAIN)");
+      } else if (ret == AVERROR_EOF) {
+        ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "AVERROR_EOF");
       } else {
 
-        struct SwsContext *img_convert_ctx;
-        img_convert_ctx = sws_getContext(m_codecContext->width, m_codecContext->height, m_codecContext->pix_fmt,
-                                         m_codecContext->width, m_codecContext->height, AV_PIX_FMT_BGR24, SWS_BICUBIC,
-                                         NULL, NULL, NULL);
-        sws_scale(img_convert_ctx, (picture)->data, (picture)->linesize, 0, m_codecContext->height, (rgb_picture)->data,
-                  (rgb_picture)->linesize);
-
-        // vpImageConvert::RGBToGrey(rgb_picture->data[0], m_currentImage.bitmap, m_currentImage.getWidth(),
-        //                        m_currentImage.getHeight());
-        vpImageConvert::BGRToRGBa(rgb_picture->data[0], reinterpret_cast<unsigned char *>(m_currentImage.bitmap),
-                                  m_currentImage.getWidth(), m_currentImage.getHeight());
-
-        sws_freeContext(img_convert_ctx);
+        char *errbuff = new char[AV_ERROR_MAX_STRING_SIZE];
+        av_strerror(ret, errbuff, AV_ERROR_MAX_STRING_SIZE);
+        std::string err(errbuff);
+        delete[] errbuff;
+        ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error receiving a decoded frame : %d, %s", ret, err.c_str());
       }
+    } else {
+      sws_scale(m_img_convert_ctx, (m_picture)->data, (m_picture)->linesize, 0, m_codecContext->height,
+                (m_rgb_picture)->data, (m_rgb_picture)->linesize);
+      // TODO ; faire std::mutex sur m_picture et faire le décodage au moment de l'appel de getRGB ou gray image
+      vpImageConvert::BGRToRGBa(m_rgb_picture->data[0], reinterpret_cast<unsigned char *>(m_currentImage.bitmap),
+                                m_currentImage.getWidth(), m_currentImage.getHeight());
     }
-    av_free(buffer);
   }
 
   av_packet_unref(&m_packet);
-  av_frame_free(&picture);
-  av_frame_free(&rgb_picture);
+
+  av_frame_unref(m_picture);
+  av_frame_unref(m_rgb_picture);
 }
 
 /*!
@@ -1296,10 +1315,16 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
     // If the command received is a relative move ended
     cmdRelativeMoveEndedRcv(elementDictionary, drone);
     break;
-
+  case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLATTRIMCHANGED:
+    // If the command received is a flat trim finished
+    drone->m_flatTrimFinished = true;
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Flat trim finished ...");
+    break;
   default:
     break;
   }
 }
+
+#undef TAG
 
 #endif // VISP_HAVE_ARSDK

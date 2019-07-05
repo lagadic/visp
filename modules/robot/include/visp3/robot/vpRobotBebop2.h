@@ -44,25 +44,20 @@
 
 #ifdef VISP_HAVE_ARSDK
 
-extern "C"
-{
-#include <libARController/ARController.h>
-#include <libARDiscovery/ARDiscovery.h>
-#include <libARSAL/ARSAL.h>
+extern "C" {
+#include <libARController/ARController.h> // For drone control
 
-#include <libavcodec/avcodec.h>
+#include <libARSAL/ARSAL.h> // For semaphore
+
+#include <libavcodec/avcodec.h> // For video decoding
+#include <libswscale/swscale.h> // For rescaling decoded frames
 }
 
-#include <string>
+#include <mutex>
 #include <signal.h>
-#include <curses.h>
-#include <iostream>
+#include <string>
 
-#include <visp/vpDisplayX.h>
-#include <visp/vpImage.h>
-#include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpKeyboard.h>
+#include <visp3/core/vpImage.h>
 
 /*!
   \class vpRobotBebop2
@@ -74,8 +69,10 @@ extern "C"
 class VISP_EXPORT vpRobotBebop2
 {
 public:
-  vpRobotBebop2(float maxTilt = 10.0f, std::string ipAddress = "192.168.42.1", int discoveryPort = 44444);
+  vpRobotBebop2(bool verbose = false, std::string ipAddress = "192.168.42.1", int discoveryPort = 44444);
   virtual ~vpRobotBebop2();
+
+  void doFlatTrim();
 
   std::string getIpAddress();
   int getDiscoveryPort();
@@ -115,11 +112,18 @@ private:
   struct sigaction m_sigAct; ///< Signal handler
 
   AVCodecContext *m_codecContext; ///< Codec context for video stream decoding
-  AVPacket m_packet;              ///< Packet used for video stream decoding
+  AVPacket m_packet;              ///< Packed used to send data to the decoder
+  AVFrame *m_picture;             ///< Frame used to receive data from the decoder
+  std::mutex m_picture_mutex;     ///< Mutex to protect m_picture
+  AVFrame *m_rgb_picture;         ///< Frame used to store rescaled frame received from the decoder
+  SwsContext *m_img_convert_ctx;  ///< Used to rescale frame received from the decoder
+  uint8_t *m_buffer;              ///< Buffer used to fill frame arrays
 
   vpImage<vpRGBa> m_currentImage; /// Last image streamed and decoded by the drone, stored in RGBa
 
-  static bool m_running;    ///< Used for checking if the programm is running
+  static bool m_running; ///< Used for checking if the programm is running
+
+  bool m_flatTrimFinished;  ///< Used to know when the drone has finished a flat trim
   bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
   bool m_videoDecodingStarted; ///< Used to know if the drone is currently streaming and decoding its camera video feed
 
