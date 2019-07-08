@@ -260,7 +260,7 @@ int vpUDPClient::receive(void *msg, size_t len, const int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress,
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress,
                                            (socklen_t *)&m_serverLength));
     if (length <= 0) {
       return length < 0 ? -1 : 0;
@@ -343,7 +343,7 @@ int vpUDPClient::send(const void *msg, size_t len)
   return static_cast<int>(sendto(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress,
                                  m_serverLength));
 #else
-  return sendto(m_socketFileDescriptor, msg, (int)len, 0, (struct sockaddr *)&m_serverAddress,
+  return sendto(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress,
                 m_serverLength);
 #endif
 }
