@@ -274,6 +274,7 @@ if(USE_REALSENSE OR USE_REALSENSE2)
     vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_D435.cpp /wd4244)
   endif()
 endif()
+vp_set_source_file_compile_flag(src/force-torque/vpForceTorqueAtiNetFTSensor.cpp -Wno-strict-aliasing)
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
