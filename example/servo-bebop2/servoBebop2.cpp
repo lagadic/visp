@@ -100,7 +100,7 @@ int main(int argc, char **argv)
         opt_cam_parameters = std::string(argv[i + 1]);
         has_opt_cam_parameters = true;
 #else
-        std::cout << "PUGIXML is needed for custom camera parameters input" << std::endl;
+        std::cout << "PUGIXML is required for custom camera parameters input" << std::endl;
         return 0;
 #endif
 
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     vpRobotBebop2 drone(true); // Create the drone with verbose level
 
     if (drone.isRunning()) {
-      drone.doFlatTrim();
+      drone.doFlatTrim();  // Flat trim calibration
       drone.takeOff(true); // Take off
 
       drone.startStreaming(); // Start streaming and decoding video data
@@ -337,7 +337,7 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 80, 20, sstime.str(), vpColor::red);
         vpDisplay::flush(I);
 
-        vpTime::wait(std::max(1.0, 40.0 - totalTime));
+        vpTime::wait(std::max(1.0, 40.0 - totalTime)); // We wait a total of 40 milliseconds
 
       } while (drone.isRunning());
 

@@ -43,21 +43,18 @@
 
 #include <visp3/robot/vpRobotBebop2.h>
 
-#include <curses.h> // For keyboard inputs
-#include <iostream>
+#include <visp3/core/vpExponentialMap.h> // For velocity computation
 
-// FFmpeg is part of OpenCV
-#ifdef VISP_HAVE_OPENCV
-
+#ifdef VISP_HAVE_OPENCV // FFmpeg is part of OpenCV
 extern "C" {
 #include <libavformat/avformat.h>
 #include <libavutil/imgutils.h>
 }
-
-#include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpImageConvert.h>
-
 #endif // #ifdef VISP_HAVE_OPENCV
+
+#include <curses.h> // For keyboard inputs
+#include <iostream>
 
 #define TAG "vpRobotBebop2" // For error messages of ARSDK
 
@@ -86,8 +83,7 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
   \param[in] discoveryPort : port used to discover the drone on the wifi network.
  */
 vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryPort)
-  : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort), m_picture(NULL), m_rgb_picture(NULL),
-    m_img_convert_ctx(NULL), m_buffer(NULL), m_currentImage()
+  : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort)
 {
   // Setting up signal handling
   memset(&m_sigAct, 0, sizeof(m_sigAct));
@@ -98,10 +94,20 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   sigaction(SIGKILL, &m_sigAct, 0);
   sigaction(SIGQUIT, &m_sigAct, 0);
 
+#ifdef VISP_HAVE_OPENCV
+  m_codecContext = NULL;
+  m_packet = AVPacket();
+  m_picture = NULL;
+  m_rgb_picture = NULL;
+  m_img_convert_ctx = NULL;
+  m_buffer = NULL;
+  m_currentImage = vpImage<vpRGBa>();
+  m_videoDecodingStarted = false;
+#endif // #ifdef VISP_HAVE_OPENCV
+
   m_batteryLevel = 100;
 
   m_relativeMoveEnded = true;
-  m_videoDecodingStarted = false;
 
   setVerbose(verbose);
 
@@ -189,6 +195,17 @@ float vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
 unsigned int vpRobotBebop2::getBatteryLevel() { return m_batteryLevel; }
 
 #ifdef VISP_HAVE_OPENCV
+
+void vpRobotBebop2::getRGBaImage2(vpImage<vpRGBa> &I)
+{
+  if (m_videoDecodingStarted) {
+    I.resize(m_currentImage.getHeight(), m_currentImage.getWidth());
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
+  }
+}
+
 /*!
   \warning This function is only available if ViSP is build with OpenCV support.
 
@@ -236,7 +253,14 @@ bool vpRobotBebop2::isRunning() { return m_running; }
 
   Checks if the drone is currently streaming and decoding the video from its camera.
  */
-bool vpRobotBebop2::isStreaming() { return m_videoDecodingStarted; }
+bool vpRobotBebop2::isStreaming()
+{
+#ifdef VISP_HAVE_OPENCV
+  return m_videoDecodingStarted;
+#else
+  return false;
+#endif //#ifdef VISP_HAVE_OPENCV
+}
 
 /*!
 
@@ -442,6 +466,7 @@ void vpRobotBebop2::setMaxTilt(float maxTilt)
   }
 }
 
+#ifdef VISP_HAVE_OPENCV
 /*!
 
   Starts the video streaming from the drone camera. Every time a frame is received, it is decoded and stored into \e
@@ -474,6 +499,7 @@ void vpRobotBebop2::startStreaming()
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't start streaming : drone isn't running.");
   }
 }
+#endif // #ifdef VISP_HAVE_OPENCV
 
 /*!
 
@@ -486,6 +512,7 @@ void vpRobotBebop2::stopMoving()
   }
 }
 
+#ifdef VISP_HAVE_OPENCV
 /*!
 
   Stops the streaming and decoding of the drone camera video
@@ -515,6 +542,7 @@ void vpRobotBebop2::stopStreaming()
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't stop streaming : streaming already stopped.");
   }
 }
+#endif // #ifdef VISP_HAVE_OPENCV
 
 /*!
 
@@ -851,6 +879,7 @@ void vpRobotBebop2::startController()
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Controller started.");
 }
 
+#ifdef VISP_HAVE_OPENCV
 /*!
 
   Initialises the codec used to decode the drone H264 video stream.
@@ -1027,7 +1056,7 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
   av_frame_unref(m_picture);
   av_frame_unref(m_rgb_picture);
 }
-
+#endif // #ifdef VISP_HAVE_OPENCV
 /*!
 
   Safely stops the drone controller and everything needed during drone control. Called by the destructor.
@@ -1039,8 +1068,10 @@ void vpRobotBebop2::cleanUp()
     // Lands the drone if not landed
     land();
 
+#ifdef VISP_HAVE_OPENCV
     // Stops the streaming if not stopped
     stopStreaming();
+#endif // #ifdef VISP_HAVE_OPENCV
 
     // Deletes the controller
     m_deviceState = ARCONTROLLER_Device_GetState(m_deviceController, &m_errorController);
@@ -1135,9 +1166,11 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
 
   if (frame != NULL) {
 
+#ifdef VISP_HAVE_OPENCV
     if (drone->m_videoDecodingStarted) {
       drone->computeFrame(frame);
     }
+#endif // #ifdef VISP_HAVE_OPENCV
 
   } else {
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is NULL.");

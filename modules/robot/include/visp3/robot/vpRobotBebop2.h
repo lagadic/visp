@@ -44,20 +44,22 @@
 
 #ifdef VISP_HAVE_ARSDK
 
+#include <visp3/core/vpImage.h>
+
 extern "C" {
 #include <libARController/ARController.h> // For drone control
-
 #include <libARSAL/ARSAL.h> // For semaphore
 
+#ifdef VISP_HAVE_OPENCV         // FFmpeg is part of OpenCV
 #include <libavcodec/avcodec.h> // For video decoding
 #include <libswscale/swscale.h> // For rescaling decoded frames
+
+#endif // #ifdef VISP_HAVE_OPENCV
 }
 
 #include <mutex>
 #include <signal.h>
 #include <string>
-
-#include <visp3/core/vpImage.h>
 
 /*!
   \class vpRobotBebop2
@@ -79,8 +81,12 @@ public:
   float getMaxTilt();
   unsigned int getBatteryLevel();
 
+#ifdef VISP_HAVE_OPENCV
+  void getGrayscaleImage2(vpImage<unsigned char> &I);
+  void getRGBaImage2(vpImage<vpRGBa> &I);
   void getGrayscaleImage(vpImage<unsigned char> &I);
   void getRGBaImage(vpImage<vpRGBa> &I);
+#endif // #ifdef VISP_HAVE_OPENCV
 
   void handleKeyboardInput(int key);
 
@@ -96,11 +102,14 @@ public:
   void setPosition(const vpHomogeneousMatrix &M, bool blocking);
   void setVelocity(const vpColVector &vel, double delta_t);
   void setVerbose(bool verbose = false);
-  void startStreaming();
   void stopMoving();
-  void stopStreaming();
-
   void takeOff(bool blocking = true);
+
+#ifdef VISP_HAVE_OPENCV
+  void startStreaming();
+  void stopStreaming();
+#endif // #ifdef VISP_HAVE_OPENCV
+
   //*** ***//
 
 private:
@@ -111,6 +120,7 @@ private:
   ARSAL_Sem_t m_stateSem;    ///< Semaphore
   struct sigaction m_sigAct; ///< Signal handler
 
+#ifdef VISP_HAVE_OPENCV
   AVCodecContext *m_codecContext; ///< Codec context for video stream decoding
   AVPacket m_packet;              ///< Packed used to send data to the decoder
   AVFrame *m_picture;             ///< Frame used to receive data from the decoder
@@ -120,12 +130,14 @@ private:
   uint8_t *m_buffer;              ///< Buffer used to fill frame arrays
 
   vpImage<vpRGBa> m_currentImage; /// Last image streamed and decoded by the drone, stored in RGBa
+  bool m_videoDecodingStarted; ///< Used to know if the drone is currently streaming and decoding its camera video feed
+
+#endif // #ifdef VISP_HAVE_OPENCV
 
   static bool m_running; ///< Used for checking if the programm is running
 
   bool m_flatTrimFinished;  ///< Used to know when the drone has finished a flat trim
   bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
-  bool m_videoDecodingStarted; ///< Used to know if the drone is currently streaming and decoding its camera video feed
 
   float m_maxTilt;             ///< Max pitch and roll value of the drone
   unsigned int m_batteryLevel; ///< Percentage of battery remaining
@@ -148,15 +160,17 @@ private:
   void createDroneController(ARDISCOVERY_Device_t *discoveredDrone);
   void setupCallbacks();
   void startController();
+
+#ifdef VISP_HAVE_OPENCV
+  //*** Video streaming functions ***//
   void initCodec();
   void cleanUpCodec();
-  //*** ***//
 
-  //*** Video streaming functions ***//
   void startVideoDecoding();
   void stopVideoDecoding();
   void computeFrame(ARCONTROLLER_Frame_t *frame);
   //*** ***//
+#endif //#ifdef VISP_HAVE_OPENCV
 
   //*** Callbacks ***//
   static void stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error, void *customData);
