@@ -64,11 +64,10 @@
   Use connect() to establish the connexion with the server.
 */
 vpUDPClient::vpUDPClient()
-  : m_serverAddress(), m_serverLength(0), m_socketFileDescriptor(),
+  : m_is_init(false), m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
 #if defined(_WIN32)
-    m_wsa(),
+    , m_wsa()
 #endif
-    m_is_init(false)
 {
 }
 
@@ -79,11 +78,10 @@ vpUDPClient::vpUDPClient()
   \param port : Server port number.
 */
 vpUDPClient::vpUDPClient(const std::string &hostname, const int port)
-  : m_serverAddress(), m_serverLength(0), m_socketFileDescriptor(),
+  : m_is_init(false), m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
 #if defined(_WIN32)
-    m_wsa(),
+    , m_wsa()
 #endif
-    m_is_init(false)
 {
   init(hostname, port);
 }
