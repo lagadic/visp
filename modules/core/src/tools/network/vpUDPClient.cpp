@@ -59,33 +59,67 @@
 #include <visp3/core/vpUDPClient.h>
 
 /*!
+  Default constructor.
+
+  Use connect() to establish the connexion with the server.
+*/
+vpUDPClient::vpUDPClient()
+  : m_serverAddress(), m_serverLength(0), m_socketFileDescriptor(),
+#if defined(_WIN32)
+    m_wsa(),
+#endif
+    m_is_init(false)
+{
+}
+
+/*!
   Create a (IPv4) UDP client.
 
   \param hostname : Server hostname or IP address.
   \param port : Server port number.
 */
 vpUDPClient::vpUDPClient(const std::string &hostname, const int port)
-  : m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
+  : m_serverAddress(), m_serverLength(0), m_socketFileDescriptor(),
 #if defined(_WIN32)
-    ,
-    m_wsa()
+    m_wsa(),
 #endif
+    m_is_init(false)
 {
   init(hostname, port);
 }
 
-vpUDPClient::~vpUDPClient()
+/*!
+   Destructor.
+ */
+vpUDPClient::~vpUDPClient() { close(); }
+
+/*!
+   Close UDP connexion.
+ */
+void vpUDPClient::close()
 {
+  if (m_is_init) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  close(m_socketFileDescriptor);
+    ::close(m_socketFileDescriptor);
 #else
-  closesocket(m_socketFileDescriptor);
-  WSACleanup();
+    closesocket(m_socketFileDescriptor);
+    WSACleanup();
 #endif
+    m_is_init = false;
+  }
 }
 
+/*!
+  Initialize a (IPv4) UDP client.
+
+  \param hostname : Server hostname or IP address.
+  \param port : Server port number.
+*/
 void vpUDPClient::init(const std::string &hostname, const int port)
 {
+  // Close connexion if already initialized
+  close();
+
 #if defined(_WIN32)
   if (WSAStartup(MAKEWORD(2, 2), &m_wsa) != 0) {
     std::stringstream ss;
@@ -133,6 +167,7 @@ void vpUDPClient::init(const std::string &hostname, const int port)
   freeaddrinfo(result);
 
   m_serverLength = sizeof(m_serverAddress);
+  m_is_init = true;
 }
 
 /*!
@@ -159,6 +194,9 @@ void vpUDPClient::init(const std::string &hostname, const int port)
 */
 int vpUDPClient::receive(std::string &msg, const int timeoutMs)
 {
+  if (!m_is_init) {
+    throw(vpException(vpException::notInitialized, "UDP client is not initialized"));
+  }
   fd_set s;
   FD_ZERO(&s);
   FD_SET(m_socketFileDescriptor, &s);
@@ -191,6 +229,52 @@ int vpUDPClient::receive(std::string &msg, const int timeoutMs)
 }
 
 /*!
+  Receive data sent by the server.
+
+  \param msg : A message to send over the network.
+  \param len : Message length.
+  \param timeoutMs : Timeout in millisecond (if zero, the call is blocking).
+
+  \return The message length / size of the byte array sent received, or -1 if
+  there is an error, or 0 if there is a timeout.
+*/
+int vpUDPClient::receive(void *msg, size_t len, const int timeoutMs)
+{
+  if (!m_is_init) {
+    throw(vpException(vpException::notInitialized, "UDP client is not initialized"));
+  }
+  fd_set s;
+  FD_ZERO(&s);
+  FD_SET(m_socketFileDescriptor, &s);
+  struct timeval timeout;
+  if (timeoutMs > 0) {
+    timeout.tv_sec = timeoutMs / 1000;
+    timeout.tv_usec = (timeoutMs % 1000) * 1000;
+  }
+  int retval = select((int)m_socketFileDescriptor + 1, &s, NULL, NULL, timeoutMs > 0 ? &timeout : NULL);
+
+  if (retval == -1) {
+    std::cerr << "Error select!" << std::endl;
+    return -1;
+  }
+
+  if (retval > 0) {
+    /* recvfrom: receive a UDP datagram from the server */
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress,
+                                           (socklen_t *)&m_serverLength));
+    if (length <= 0) {
+      return length < 0 ? -1 : 0;
+    }
+
+    return length;
+  }
+
+  // Timeout
+  return 0;
+}
+
+
+/*!
   Send data to the server.
 
   \param msg : ASCII message or byte data.
@@ -217,6 +301,9 @@ int vpUDPClient::receive(std::string &msg, const int timeoutMs)
 */
 int vpUDPClient::send(const std::string &msg)
 {
+  if (!m_is_init) {
+    throw(vpException(vpException::notInitialized, "UDP client is not initialized"));
+  }
   if (msg.size() > VP_MAX_UDP_PAYLOAD) {
     std::cerr << "Message is too long!" << std::endl;
     return 0;
@@ -228,6 +315,35 @@ int vpUDPClient::send(const std::string &msg)
                                  m_serverLength));
 #else
   return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_serverAddress,
+                m_serverLength);
+#endif
+}
+
+/*!
+  Send data to the server.
+
+  \param msg : Message to send.
+  \param len : Message length.
+
+  \return The message length / size of the byte array sent.
+
+*/
+int vpUDPClient::send(const void *msg, size_t len)
+{
+  if (!m_is_init) {
+    throw(vpException(vpException::notInitialized, "UDP client is not initialized"));
+  }
+  if (len > VP_MAX_UDP_PAYLOAD) {
+    std::cerr << "Message is too long!" << std::endl;
+    return 0;
+  }
+
+/* send the message to the server */
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  return static_cast<int>(sendto(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress,
+                                 m_serverLength));
+#else
+  return sendto(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress,
                 m_serverLength);
 #endif
 }

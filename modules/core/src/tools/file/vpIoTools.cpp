@@ -517,6 +517,7 @@ bool vpIoTools::checkFifo(const std::string &fifofilename)
   }
   return true;
 #elif defined(_WIN32)
+  (void)fifofilename;
   throw(vpIoException(vpIoException::notImplementedError, "Fifo files are not supported on Windows platforms."));
 #endif
 }
@@ -662,6 +663,7 @@ void vpIoTools::makeFifo(const std::string &fifoname)
     throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo file '%s'.", fifoname.c_str()));
   }
 #elif defined(_WIN32)
+  (void)fifoname;
   throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo on Windows platforms."));
 #endif
 }
@@ -729,6 +731,7 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
   delete[] dirname_char;
   return res;
 #elif defined(_WIN32)
+	(void)dirname;
   throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create temp directory. Not implemented yet."));
 #endif
 }
