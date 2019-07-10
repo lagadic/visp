@@ -53,8 +53,12 @@ extern "C" {
 #include <visp3/core/vpImageConvert.h>
 #endif // #ifdef VISP_HAVE_OPENCV
 
-#include <curses.h> // For keyboard inputs
+#ifdef VISP_HAVE_CURSES // For keyboard inputs
+#include <curses.h>
+#endif //#ifdef VISP_HAVE_CURSES
+
 #include <iostream>
+#include <math.h>
 
 #define TAG "vpRobotBebop2" // For error messages of ARSDK
 
@@ -98,15 +102,15 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   m_codecContext = NULL;
   m_packet = AVPacket();
   m_picture = NULL;
-  m_rgb_picture = NULL;
+  m_bgr_picture = NULL;
   m_img_convert_ctx = NULL;
   m_buffer = NULL;
-  m_currentImage = vpImage<vpRGBa>();
   m_videoDecodingStarted = false;
 #endif // #ifdef VISP_HAVE_OPENCV
 
   m_batteryLevel = 100;
 
+  m_flatTrimFinished = true;
   m_relativeMoveEnded = true;
 
   setVerbose(verbose);
@@ -137,6 +141,7 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
                 "starting.");
   } else {
     m_running = true;
+    setMaxTilt(10);
   }
 }
 
@@ -195,31 +200,24 @@ float vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
 unsigned int vpRobotBebop2::getBatteryLevel() { return m_batteryLevel; }
 
 #ifdef VISP_HAVE_OPENCV
-
-void vpRobotBebop2::getRGBaImage2(vpImage<vpRGBa> &I)
-{
-  if (m_videoDecodingStarted) {
-    I.resize(m_currentImage.getHeight(), m_currentImage.getWidth());
-
-  } else {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
-  }
-}
-
 /*!
   \warning This function is only available if ViSP is build with OpenCV support.
 
   Gets the last streamed and decoded image from the drone camera feed in grayscale.
-  The image obtained has a width of 856 and a height of 480.
+    The image obtained has a width of 856 and a height of 480.
 
   \param[in,out] I : grayscale image that will contain last streamed and decoded image after the function ends.
 */
 void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
 {
   if (m_videoDecodingStarted) {
-    I.resize(m_currentImage.getHeight(), m_currentImage.getWidth());
-    vpImageConvert::RGBaToGrey(reinterpret_cast<unsigned char *>(m_currentImage.bitmap), I.bitmap,
-                               m_currentImage.getSize());
+    I.resize(static_cast<unsigned int>(m_codecContext->height), static_cast<unsigned int>(m_codecContext->width));
+
+    m_bgr_picture_mutex.lock();
+    vpImageConvert::BGRToGrey(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
+                              I.getHeight());
+    m_bgr_picture_mutex.unlock();
+
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
   }
@@ -229,18 +227,25 @@ void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
   \warning This function is only available if ViSP is build with OpenCV support.
 
   Gets the last streamed and decoded image from the drone camera feed in RGBa.
-  The image obtained has a width of 856 and a height of 480.
+    The image obtained has a width of 856 and a height of 480.
 
   \param[in,out] I : RGBa image that will contain last streamed and decoded image after the function ends.
 */
 void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
 {
   if (m_videoDecodingStarted) {
-    I = m_currentImage;
+    I.resize(static_cast<unsigned int>(m_codecContext->height), static_cast<unsigned int>(m_codecContext->width));
+
+    m_bgr_picture_mutex.lock();
+    vpImageConvert::BGRToRGBa(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
+                              I.getHeight());
+    m_bgr_picture_mutex.unlock();
+
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
   }
 }
+
 #endif // #ifdef VISP_HAVE_OPENCV
 
 /*!
@@ -420,10 +425,16 @@ void vpRobotBebop2::setVelocity(const vpColVector &vel_cmd, double delta_t)
   }
 
   vpColVector ve(6);
+  //  ve[0] = round(vel_cmd[0] * 100) / 100;
+  //  ve[1] = round(vel_cmd[1] * 100) / 100;
+  //  ve[2] = floor(vel_cmd[2] * 10) / 10;
+  //  ve[5] = round(vel_cmd[3] * 1000) / 1000;
+
   ve[0] = vel_cmd[0];
   ve[1] = vel_cmd[1];
   ve[2] = vel_cmd[2];
   ve[5] = vel_cmd[3];
+  std::cout << "ve: " << ve.t() << std::endl;
   vpHomogeneousMatrix M = vpExponentialMap::direct(ve, delta_t);
   setPosition(M, false);
 }
@@ -468,6 +479,7 @@ void vpRobotBebop2::setMaxTilt(float maxTilt)
 
 #ifdef VISP_HAVE_OPENCV
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Starts the video streaming from the drone camera. Every time a frame is received, it is decoded and stored into \e
   m_currentImage, which can be obtained with getImage().
@@ -514,6 +526,7 @@ void vpRobotBebop2::stopMoving()
 
 #ifdef VISP_HAVE_OPENCV
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Stops the streaming and decoding of the drone camera video
 */
@@ -544,7 +557,9 @@ void vpRobotBebop2::stopStreaming()
 }
 #endif // #ifdef VISP_HAVE_OPENCV
 
+#ifdef VISP_HAVE_CURSES
 /*!
+  \warning This function is only available if ViSP is build with Curses support.
 
   Sends predefined movement commands to the drone based on a keyboard input \e key.
   See keyboard control example.
@@ -634,6 +649,7 @@ void vpRobotBebop2::handleKeyboardInput(int key)
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error when handling keyboard input : drone isn't running.");
   }
 }
+#endif // #ifdef VISP_HAVE_CURSES
 
 //***                   ***//
 //*** Private Functions ***//
@@ -881,6 +897,7 @@ void vpRobotBebop2::startController()
 
 #ifdef VISP_HAVE_OPENCV
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Initialises the codec used to decode the drone H264 video stream.
 */
@@ -934,7 +951,10 @@ void vpRobotBebop2::initCodec()
 
   av_init_packet(&m_packet);        // Packed used to send data to the decoder
   m_picture = av_frame_alloc();     // Frame used to receive data from the decoder
-  m_rgb_picture = av_frame_alloc(); // Frame used to store rescaled frame received from the decoder
+
+  m_bgr_picture_mutex.lock();
+  m_bgr_picture = av_frame_alloc(); // Frame used to store rescaled frame received from the decoder
+  m_bgr_picture_mutex.unlock();
 
   m_img_convert_ctx = sws_getContext(m_codecContext->width, m_codecContext->height, m_codecContext->pix_fmt,
                                      m_codecContext->width, m_codecContext->height, AV_PIX_FMT_BGR24, SWS_BICUBIC, NULL,
@@ -942,6 +962,7 @@ void vpRobotBebop2::initCodec()
 }
 
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Safely frees any memory that was allocated by the codec.
 */
@@ -959,8 +980,10 @@ void vpRobotBebop2::cleanUpCodec()
     av_frame_free(&m_picture);
   }
 
-  if (m_rgb_picture) {
-    av_frame_free(&m_rgb_picture);
+  if (m_bgr_picture) {
+    m_bgr_picture_mutex.lock();
+    av_frame_free(&m_bgr_picture);
+    m_bgr_picture_mutex.unlock();
   }
 
   if (m_img_convert_ctx) {
@@ -972,6 +995,7 @@ void vpRobotBebop2::cleanUpCodec()
 }
 
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Starts the video decoding : initialises the codec and the image stored by the drone.
 */
@@ -979,8 +1003,6 @@ void vpRobotBebop2::startVideoDecoding()
 {
   if (!m_videoDecodingStarted) {
     initCodec();
-
-    m_currentImage.resize(480, 856, 0);
     m_videoDecodingStarted = true;
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Video decoding is already started.");
@@ -988,6 +1010,7 @@ void vpRobotBebop2::startVideoDecoding()
 }
 
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Stops the video decoding : safely cleans up memory allocated by the codec.
 */
@@ -1001,6 +1024,7 @@ void vpRobotBebop2::stopVideoDecoding()
 }
 
 /*!
+  \warning This function is only available if ViSP is build with OpenCV support.
 
   Decodes a H264 frame received from the drone.
 
@@ -1011,9 +1035,6 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
 
   m_packet.data = frame->data;
   m_packet.size = static_cast<int>(frame->used);
-
-  av_image_fill_arrays(m_rgb_picture->data, m_rgb_picture->linesize, m_buffer, AV_PIX_FMT_BGR24, m_codecContext->width,
-                       m_codecContext->height, 1);
 
   int ret = avcodec_send_packet(m_codecContext, &m_packet);
   if (ret < 0) {
@@ -1031,9 +1052,9 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
     if (ret < 0) {
 
       if (ret == AVERROR(EAGAIN)) {
-        ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "AVERROR(EAGAIN)");
+        ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "AVERROR(EAGAIN)"); // Not an error, need to send data again
       } else if (ret == AVERROR_EOF) {
-        ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "AVERROR_EOF");
+        ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "AVERROR_EOF"); // End of file reached, should not happen with drone footage
       } else {
 
         char *errbuff = new char[AV_ERROR_MAX_STRING_SIZE];
@@ -1043,18 +1064,21 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
         ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error receiving a decoded frame : %d, %s", ret, err.c_str());
       }
     } else {
+      m_bgr_picture_mutex.lock();
+      av_frame_unref(m_bgr_picture);
+      av_image_fill_arrays(m_bgr_picture->data, m_bgr_picture->linesize, m_buffer, AV_PIX_FMT_BGR24,
+                           m_codecContext->width, m_codecContext->height, 1);
+
       sws_scale(m_img_convert_ctx, (m_picture)->data, (m_picture)->linesize, 0, m_codecContext->height,
-                (m_rgb_picture)->data, (m_rgb_picture)->linesize);
-      // TODO ; faire std::mutex sur m_picture et faire le décodage au moment de l'appel de getRGB ou gray image
-      vpImageConvert::BGRToRGBa(m_rgb_picture->data[0], reinterpret_cast<unsigned char *>(m_currentImage.bitmap),
-                                m_currentImage.getWidth(), m_currentImage.getHeight());
+                (m_bgr_picture)->data, (m_bgr_picture)->linesize);
+
+      m_bgr_picture_mutex.unlock();
     }
   }
 
   av_packet_unref(&m_packet);
 
   av_frame_unref(m_picture);
-  av_frame_unref(m_rgb_picture);
 }
 #endif // #ifdef VISP_HAVE_OPENCV
 /*!
@@ -1094,7 +1118,7 @@ void vpRobotBebop2::cleanUp()
     // Destroys the semaphore
     ARSAL_Sem_Destroy(&(m_stateSem));
 
-    std::cout << "-- CLEANUP DONE --" << std::endl;
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Cleanup done.");
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error while cleaning up memory.");
   }

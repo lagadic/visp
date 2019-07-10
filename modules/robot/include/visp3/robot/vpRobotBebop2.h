@@ -124,12 +124,11 @@ private:
   AVCodecContext *m_codecContext; ///< Codec context for video stream decoding
   AVPacket m_packet;              ///< Packed used to send data to the decoder
   AVFrame *m_picture;             ///< Frame used to receive data from the decoder
-  std::mutex m_picture_mutex;     ///< Mutex to protect m_picture
-  AVFrame *m_rgb_picture;         ///< Frame used to store rescaled frame received from the decoder
+  std::mutex m_bgr_picture_mutex; ///< Mutex to protect m_bgr_picture
+  AVFrame *m_bgr_picture;         ///< Frame used to store rescaled frame received from the decoder
   SwsContext *m_img_convert_ctx;  ///< Used to rescale frame received from the decoder
   uint8_t *m_buffer;              ///< Buffer used to fill frame arrays
 
-  vpImage<vpRGBa> m_currentImage; /// Last image streamed and decoded by the drone, stored in RGBa
   bool m_videoDecodingStarted; ///< Used to know if the drone is currently streaming and decoding its camera video feed
 
 #endif // #ifdef VISP_HAVE_OPENCV

@@ -120,7 +120,7 @@ int main(int argc, char **argv)
                  "drone has approximately 3 meters of free space on all sides.\n"
               << std::endl;
 
-    vpRobotBebop2 drone(true); // Create the drone with verbose level
+    vpRobotBebop2 drone(false); // Create the drone with low verbose level
 
     if (drone.isRunning()) {
       drone.doFlatTrim();  // Flat trim calibration
@@ -157,10 +157,13 @@ int main(int argc, char **argv)
       }
 
       cam.printParameters();
-      double tagSize = 0.08;
+      double tagSize = 0.14;
 
       vpServo task; // Visual servoing task
-      double lambda = 0.5;
+
+      //      double lambda = 1.25; // pour 0
+      //      double lambda = 0.7; // pour oo
+      vpAdaptiveGain lambda = vpAdaptiveGain(1.5, 0.7, 30);
       task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
       task.setInteractionMatrixType(vpServo::CURRENT);
       task.setLambda(lambda);
@@ -181,7 +184,7 @@ int main(int argc, char **argv)
       eJe[2][2] = 1;
       eJe[5][3] = 1;
 
-      double Z_d = 1.0; // Desired distance to the target
+      double Z_d = 1.5; // Desired distance to the target
 
       // Define the desired polygon corresponding the the AprilTag CLOCKWISE
       double X[4] = {tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2.};
@@ -248,11 +251,12 @@ int main(int argc, char **argv)
       s_man_d.compute_interaction();
 
       // Visual servoing loop
-      do {
+      while (drone.isRunning()) {
+        double startTime = vpTime::measureTimeMs();
+
         drone.getGrayscaleImage(I);
         vpDisplay::display(I);
 
-        double startTime = vpTime::measureTimeMs();
         std::vector<vpHomogeneousMatrix> cMo_vec;
         detector.detect(I, tagSize, cam, cMo_vec); // Detect AprilTags in current image
         double t = vpTime::measureTimeMs() - startTime;
@@ -313,7 +317,7 @@ int main(int argc, char **argv)
           // Compute the control law. Velocities are computed in the mobile robot reference frame
           vpColVector ve = task.computeControlLaw();
 
-          std::cout << "v: " << ve.t() << std::endl;
+          // std::cout << "v: " << ve.t() << std::endl;
 
           // Sending the control law to the drone
           drone.setVelocity(ve, 1.0);
@@ -337,9 +341,8 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 80, 20, sstime.str(), vpColor::red);
         vpDisplay::flush(I);
 
-        vpTime::wait(std::max(1.0, 40.0 - totalTime)); // We wait a total of 40 milliseconds
-
-      } while (drone.isRunning());
+        vpTime::wait(startTime, 40.0); // We wait a total of 40 milliseconds
+      }
 
       return EXIT_SUCCESS;
 
