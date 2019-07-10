@@ -838,7 +838,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst).c_str());
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
