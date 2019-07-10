@@ -731,7 +731,7 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
   delete[] dirname_char;
   return res;
 #elif defined(_WIN32)
-	(void)dirname;
+  (void)dirname;
   throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create temp directory. Not implemented yet."));
 #endif
 }
@@ -805,7 +805,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -838,7 +838,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst).c_str());
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -897,7 +897,7 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform", file_or_dir));
+    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform", file_or_dir.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -1422,20 +1422,20 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, const bool 
 
   int sepIndex = static_cast<int>(pathname.rfind(sep));
   if (!altsep.empty()) {
-	int altsepIndex = static_cast<int>(pathname.rfind(altsep));
+  int altsepIndex = static_cast<int>(pathname.rfind(altsep));
     sepIndex = ((std::max))(sepIndex, altsepIndex);
   }
 
   size_t dotIndex = pathname.rfind(extsep);
   if (dotIndex != std::string::npos) {
     // The extsep character exists
-	size_t npos = std::string::npos;
-	if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) || sepIndex == static_cast<int>(npos)) {
-	  if (sepIndex == static_cast<int>(npos)) {
+  size_t npos = std::string::npos;
+  if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) || sepIndex == static_cast<int>(npos)) {
+    if (sepIndex == static_cast<int>(npos)) {
         sepIndex = 0;
-		std::cout << "Debug sepIndex: " << sepIndex << std::endl;
+    std::cout << "Debug sepIndex: " << sepIndex << std::endl;
       }
-	  size_t filenameIndex = static_cast<size_t>(sepIndex) + static_cast<size_t>(1);
+    size_t filenameIndex = static_cast<size_t>(sepIndex) + static_cast<size_t>(1);
 
       while (filenameIndex < dotIndex) {
         if (pathname.compare(filenameIndex, 1, extsep) != 0) {
