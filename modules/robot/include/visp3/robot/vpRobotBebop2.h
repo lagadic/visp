@@ -82,10 +82,7 @@ public:
   unsigned int getBatteryLevel();
 
 #ifdef VISP_HAVE_OPENCV
-  void getGrayscaleImage2(vpImage<unsigned char> &I);
-  void getRGBaImage2(vpImage<vpRGBa> &I);
-  void getGrayscaleImage(vpImage<unsigned char> &I);
-  void getRGBaImage(vpImage<vpRGBa> &I);
+
 #endif // #ifdef VISP_HAVE_OPENCV
 
   void handleKeyboardInput(int key);
@@ -106,6 +103,13 @@ public:
   void takeOff(bool blocking = true);
 
 #ifdef VISP_HAVE_OPENCV
+  void getGrayscaleImage(vpImage<unsigned char> &I);
+  void getRGBaImage(vpImage<vpRGBa> &I);
+  int getVideoHeight();
+  int getVideoWidth();
+  void setExposure(float expo);
+  void setStreamingMode(int mode);
+  void setVideoStabilisationMode(int mode);
   void startStreaming();
   void stopStreaming();
 #endif // #ifdef VISP_HAVE_OPENCV
@@ -131,15 +135,19 @@ private:
 
   bool m_videoDecodingStarted; ///< Used to know if the drone is currently streaming and decoding its camera video feed
 
+  int m_videoWidth;  ///< Width of the video streamed from the camera
+  int m_videoHeight; ///< Height of the video streamed from the camera
+
 #endif // #ifdef VISP_HAVE_OPENCV
 
   static bool m_running; ///< Used for checking if the programm is running
 
+  bool m_exposureSet;       ///< Used to know if exposure has been set
   bool m_flatTrimFinished;  ///< Used to know when the drone has finished a flat trim
   bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
 
-  float m_maxTilt;             ///< Max pitch and roll value of the drone
   unsigned int m_batteryLevel; ///< Percentage of battery remaining
+  float m_maxTilt;             ///< Max pitch and roll value of the drone
 
   ARDISCOVERY_Device_t *m_device;                   ///< Used for drone discovery
   static ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
@@ -179,6 +187,7 @@ private:
   static void cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
+  static void cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
                                       ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
   //*** ***//

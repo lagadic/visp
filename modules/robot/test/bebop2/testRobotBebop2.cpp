@@ -58,7 +58,13 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 
   drone.setMaxTilt(10);
   drone.doFlatTrim();
+
+  drone.setStreamingMode(0);
+
   drone.startStreaming();
+  drone.setExposure(1.5f);
+
+  drone.setVideoStabilisationMode(0);
 
   WINDOW *win = initscr();
   raw();
@@ -66,8 +72,8 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
   noecho();
   timeout(30);
 
-  vpImage<unsigned char> I(1, 1, 0);
-  drone.getGrayscaleImage(I);
+  vpImage<vpRGBa> I(1, 1, 0);
+  drone.getRGBaImage(I);
   vpDisplayX display(I, 100, 100, "DRONE VIEW");
   vpDisplay::display(I);
   vpDisplay::flush(I);
@@ -85,7 +91,7 @@ void startDroneKeyboardControl(vpRobotBebop2 &drone)
 
   while (drone.isRunning() && drone.isStreaming()) {
 
-    drone.getGrayscaleImage(I);
+    drone.getRGBaImage(I);
     vpDisplay::display(I);
     vpDisplay::displayText(I, 10, 10, "Press q to quit", vpColor::red);
     vpDisplay::flush(I);

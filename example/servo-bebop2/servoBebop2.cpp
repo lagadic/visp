@@ -123,10 +123,16 @@ int main(int argc, char **argv)
     vpRobotBebop2 drone(false); // Create the drone with low verbose level
 
     if (drone.isRunning()) {
+
+      drone.setStreamingMode(0);          // Set lowest latency stream mode
+      drone.setVideoStabilisationMode(0); // Disable video stabilisation
+
       drone.doFlatTrim();  // Flat trim calibration
       drone.takeOff(true); // Take off
 
       drone.startStreaming(); // Start streaming and decoding video data
+
+      drone.setExposure(1.5f);
 
       vpImage<unsigned char> I;
       drone.getGrayscaleImage(I);
@@ -250,8 +256,10 @@ int main(int argc, char **argv)
       s_man_d.update(A, B, C);
       s_man_d.compute_interaction();
 
+      bool runLoop = true;
+
       // Visual servoing loop
-      while (drone.isRunning()) {
+      while (drone.isRunning() && runLoop) {
         double startTime = vpTime::measureTimeMs();
 
         drone.getGrayscaleImage(I);
@@ -332,7 +340,8 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 10, 10, "Click to exit", vpColor::red);
         vpDisplay::flush(I);
         if (vpDisplay::getClick(I, false)) {
-          break;
+          drone.land();
+          runLoop = false;
         }
 
         double totalTime = vpTime::measureTimeMs() - startTime;

@@ -79,6 +79,12 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
   \warning If the connection to the drone failed, commands will not be accepted. After having called this constructor,
   it is recommanded to check if the drone is running with isRunning() before sending commands to the drone.
 
+  If the connection succeded, sets the following parameters to their default values :
+    - Max roll and pitch to 10 degrees.
+    - Video stabilisation to 0 (no stabilisation).
+    - Video exposure to +1.5 (maximum).
+    - Video streaming mode to 0 (lowest latency, average reliability).
+
 
   \param[in] verbose : turn verbose on or off
     If verbose is true : info, warning, error and fatal error messages are displayed.
@@ -106,10 +112,13 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   m_img_convert_ctx = NULL;
   m_buffer = NULL;
   m_videoDecodingStarted = false;
+  m_videoWidth = 856;
+  m_videoHeight = 480;
 #endif // #ifdef VISP_HAVE_OPENCV
 
   m_batteryLevel = 100;
 
+  m_exposureSet = true;
   m_flatTrimFinished = true;
   m_relativeMoveEnded = true;
 
@@ -135,13 +144,19 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
 
   // We check if the drone was actually found and connected to the controller
   if ((m_errorController != ARCONTROLLER_OK) || (m_deviceState != ARCONTROLLER_DEVICE_STATE_RUNNING)) {
+    cleanUp();
     m_running = false;
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG,
-                "- Failed to setup drone control. Make sure your computer is connected to the drone Wifi spot before "
-                "starting.");
+
+    throw(vpException(vpException::fatalError,
+                      "Failed to connect to bebop2 with ip %s and port %d. Make sure your computer is connected to the "
+                      "drone Wifi spot before starting",
+                      ipAddress.c_str(), discoveryPort));
   } else {
     m_running = true;
     setMaxTilt(10);
+    setVideoStabilisationMode(0);
+    setExposure(1.5f);
+    setStreamingMode(0);
   }
 }
 
@@ -199,60 +214,18 @@ float vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
 */
 unsigned int vpRobotBebop2::getBatteryLevel() { return m_batteryLevel; }
 
-#ifdef VISP_HAVE_OPENCV
-/*!
-  \warning This function is only available if ViSP is build with OpenCV support.
-
-  Gets the last streamed and decoded image from the drone camera feed in grayscale.
-    The image obtained has a width of 856 and a height of 480.
-
-  \param[in,out] I : grayscale image that will contain last streamed and decoded image after the function ends.
-*/
-void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
-{
-  if (m_videoDecodingStarted) {
-    I.resize(static_cast<unsigned int>(m_codecContext->height), static_cast<unsigned int>(m_codecContext->width));
-
-    m_bgr_picture_mutex.lock();
-    vpImageConvert::BGRToGrey(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
-                              I.getHeight());
-    m_bgr_picture_mutex.unlock();
-
-  } else {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
-  }
-}
-
-/*!
-  \warning This function is only available if ViSP is build with OpenCV support.
-
-  Gets the last streamed and decoded image from the drone camera feed in RGBa.
-    The image obtained has a width of 856 and a height of 480.
-
-  \param[in,out] I : RGBa image that will contain last streamed and decoded image after the function ends.
-*/
-void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
-{
-  if (m_videoDecodingStarted) {
-    I.resize(static_cast<unsigned int>(m_codecContext->height), static_cast<unsigned int>(m_codecContext->width));
-
-    m_bgr_picture_mutex.lock();
-    vpImageConvert::BGRToRGBa(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
-                              I.getHeight());
-    m_bgr_picture_mutex.unlock();
-
-  } else {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
-  }
-}
-
-#endif // #ifdef VISP_HAVE_OPENCV
-
 /*!
 
   Checks if the drone is running, ie if the drone is connected and ready to receive commands.
  */
-bool vpRobotBebop2::isRunning() { return m_running; }
+bool vpRobotBebop2::isRunning()
+{
+  if (m_deviceController == NULL) {
+    return false;
+  } else {
+    return m_running;
+  }
+}
 
 /*!
 
@@ -425,10 +398,6 @@ void vpRobotBebop2::setVelocity(const vpColVector &vel_cmd, double delta_t)
   }
 
   vpColVector ve(6);
-  //  ve[0] = round(vel_cmd[0] * 100) / 100;
-  //  ve[1] = round(vel_cmd[1] * 100) / 100;
-  //  ve[2] = floor(vel_cmd[2] * 10) / 10;
-  //  ve[5] = round(vel_cmd[3] * 1000) / 1000;
 
   ve[0] = vel_cmd[0];
   ve[1] = vel_cmd[1];
@@ -477,7 +446,201 @@ void vpRobotBebop2::setMaxTilt(float maxTilt)
   }
 }
 
-#ifdef VISP_HAVE_OPENCV
+/*!
+
+  Stops any drone movement.
+*/
+void vpRobotBebop2::stopMoving()
+{
+  if (isRunning() && !isLanded() && m_deviceController != NULL) {
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMD(m_deviceController->aRDrone3, 0, 0, 0, 0, 0, 0);
+  }
+}
+
+//***                     ***//
+//*** Streaming functions ***//
+//***                     ***//
+
+#ifdef VISP_HAVE_OPENCV // Functions related to video streaming and decoding requiers FFmpeg, which is part of OpenCV
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Gets the last streamed and decoded image from the drone camera feed in grayscale.
+    The image obtained has a width of 856 and a height of 480.
+
+  \param[in,out] I : grayscale image that will contain last streamed and decoded image after the function ends.
+*/
+void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
+{
+  if (m_videoDecodingStarted) {
+    I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
+
+    m_bgr_picture_mutex.lock();
+    vpImageConvert::BGRToGrey(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
+                              I.getHeight());
+    m_bgr_picture_mutex.unlock();
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
+  }
+}
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Gets the last streamed and decoded image from the drone camera feed in RGBa.
+    The image obtained has a width of 856 and a height of 480.
+
+  \param[in,out] I : RGBa image that will contain last streamed and decoded image after the function ends.
+*/
+void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
+{
+  if (m_videoDecodingStarted) {
+    I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
+
+    m_bgr_picture_mutex.lock();
+    vpImageConvert::BGRToRGBa(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
+                              I.getHeight());
+    m_bgr_picture_mutex.unlock();
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
+  }
+}
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Gets the height of the video streamed by the drone (pixels).
+*/
+int vpRobotBebop2::getVideoHeight() { return m_videoHeight; }
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Gets the width of the video streamed by the drone (pixels).
+*/
+int vpRobotBebop2::getVideoWidth() { return m_videoWidth; }
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Sets the exposure of the video (min : -1.5, max : 1.5).
+
+  \param[in] expo : desired video exposure.
+*/
+void vpRobotBebop2::setExposure(float expo)
+{
+  if (isRunning() && m_deviceController != NULL) {
+    expo = std::min(1.5f, std::max(-1.5f, expo));
+
+    m_exposureSet = false;
+    m_deviceController->aRDrone3->sendPictureSettingsExpositionSelection(m_deviceController->aRDrone3, expo);
+
+    // m_exposureSet is set back to true when the drone has finished his move, via a callback
+    while (!m_exposureSet) {
+      vpTime::sleepMs(1);
+    }
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set exposure : drone isn't running.");
+  }
+}
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Sets the streaming mode.
+
+  \warning This function should be called only if the drone isn't flying and the streaming isn't started.
+
+  \param[in] mode : desired streaming mode.
+    If mode = 0 (default mode), the streaming minimizes latency with average reliability (best for piloting).
+    If mode = 1, the streaming maximizes the reliability with an average latency (best when streaming quality is
+  important but not the latency).
+    If mode = 2, the streaming maximizes the reliability using a framerate decimation with an average latency (best when
+  streaming quality is important but not the latency).
+*/
+void vpRobotBebop2::setStreamingMode(int mode)
+{
+  if (isRunning() && m_deviceController != NULL) {
+
+    if (!isStreaming() && isLanded()) {
+      eARCOMMANDS_ARDRONE3_MEDIASTREAMING_VIDEOSTREAMMODE_MODE cmd_mode =
+          ARCOMMANDS_ARDRONE3_MEDIASTREAMING_VIDEOSTREAMMODE_MODE_LOW_LATENCY;
+      switch (mode) {
+      case 0:
+        cmd_mode = ARCOMMANDS_ARDRONE3_MEDIASTREAMING_VIDEOSTREAMMODE_MODE_LOW_LATENCY;
+        break;
+      case 1:
+        cmd_mode = ARCOMMANDS_ARDRONE3_MEDIASTREAMING_VIDEOSTREAMMODE_MODE_HIGH_RELIABILITY;
+        break;
+      case 2:
+        cmd_mode = ARCOMMANDS_ARDRONE3_MEDIASTREAMING_VIDEOSTREAMMODE_MODE_HIGH_RELIABILITY_LOW_FRAMERATE;
+        break;
+      default:
+        break;
+      }
+      m_deviceController->aRDrone3->sendMediaStreamingVideoStreamMode(m_deviceController->aRDrone3, cmd_mode);
+
+    } else {
+      ARSAL_PRINT(
+          ARSAL_PRINT_ERROR, "ERROR",
+          "Can't set streaming mode : drone has to be landed and not streaming in order to set streaming mode.");
+    }
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set streaming mode : drone isn't running.");
+  }
+}
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Sets the video stabilisation mode.
+
+  \param[in] mode : desired stabilisation mode.
+    If mode = 0, the video follows drone angles (no stabilisation, default).
+    If mode = 1, the video is stabilised on roll only.
+    If mode = 2, the video is stabilised on pitch only.
+    If mode = 3, the video is stabilised on both pitch and roll.
+*/
+void vpRobotBebop2::setVideoStabilisationMode(int mode)
+{
+  if (isRunning() && m_deviceController != NULL) {
+
+    //    if (!isStreaming() && isLanded()) {
+    eARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE cmd_mode =
+        ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE_NONE;
+    switch (mode) {
+
+    case 0:
+      cmd_mode = ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE_NONE;
+      break;
+    case 1:
+      cmd_mode = ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE_ROLL;
+      break;
+    case 2:
+      cmd_mode = ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE_PITCH;
+      break;
+    case 3:
+      cmd_mode = ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE_ROLL_PITCH;
+      break;
+
+    default:
+      break;
+    }
+    m_deviceController->aRDrone3->sendPictureSettingsVideoStabilizationMode(m_deviceController->aRDrone3, cmd_mode);
+
+    //    } else {
+    //      ARSAL_PRINT(
+    //          ARSAL_PRINT_ERROR, "ERROR",
+    //          "Can't set streaming mode : drone has to be landed and not streaming in order to set streaming mode.");
+    //    }
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set video stabilisation mode : drone isn't running.");
+  }
+}
+
 /*!
   \warning This function is only available if ViSP is build with OpenCV support.
 
@@ -511,20 +674,7 @@ void vpRobotBebop2::startStreaming()
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't start streaming : drone isn't running.");
   }
 }
-#endif // #ifdef VISP_HAVE_OPENCV
 
-/*!
-
-  Stops any drone movement.
-*/
-void vpRobotBebop2::stopMoving()
-{
-  if (isRunning() && !isLanded() && m_deviceController != NULL) {
-    m_errorController = m_deviceController->aRDrone3->setPilotingPCMD(m_deviceController->aRDrone3, 0, 0, 0, 0, 0, 0);
-  }
-}
-
-#ifdef VISP_HAVE_OPENCV
 /*!
   \warning This function is only available if ViSP is build with OpenCV support.
 
@@ -930,8 +1080,10 @@ void vpRobotBebop2::initCodec()
   m_codecContext->workaround_bugs = AVMEDIA_TYPE_VIDEO;
   m_codecContext->codec_id = AV_CODEC_ID_H264;
   m_codecContext->skip_idct = AVDISCARD_DEFAULT;
-  m_codecContext->width = 856;
-  m_codecContext->height = 480;
+
+  m_codecContext->width = m_videoWidth;
+  m_codecContext->height = m_videoHeight;
+
   if (codec->capabilities & CODEC_CAP_TRUNCATED) {
     m_codecContext->flags |= CODEC_FLAG_TRUNCATED;
   }
@@ -944,8 +1096,6 @@ void vpRobotBebop2::initCodec()
   }
 
   AVPixelFormat pFormat = AV_PIX_FMT_BGR24;
-  m_codecContext->width = 856;
-  m_codecContext->height = 480;
   int numBytes = av_image_get_buffer_size(pFormat, m_codecContext->width, m_codecContext->height, 1);
   m_buffer = (uint8_t *)av_malloc(static_cast<unsigned long>(numBytes) * sizeof(uint8_t));
 
@@ -957,8 +1107,8 @@ void vpRobotBebop2::initCodec()
   m_bgr_picture_mutex.unlock();
 
   m_img_convert_ctx = sws_getContext(m_codecContext->width, m_codecContext->height, m_codecContext->pix_fmt,
-                                     m_codecContext->width, m_codecContext->height, AV_PIX_FMT_BGR24, SWS_BICUBIC, NULL,
-                                     NULL, NULL); // Used to rescale frame received from the decoder
+                                     m_codecContext->width, m_codecContext->height, pFormat, SWS_BICUBIC, NULL, NULL,
+                                     NULL); // Used to rescale frame received from the decoder
 }
 
 /*!
@@ -1118,8 +1268,9 @@ void vpRobotBebop2::cleanUp()
     // Destroys the semaphore
     ARSAL_Sem_Destroy(&(m_stateSem));
 
-    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Cleanup done.");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "- Cleanup done.");
   } else {
+    m_running = false;
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error while cleaning up memory.");
   }
 }
@@ -1342,6 +1493,46 @@ void vpRobotBebop2::cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *e
 
 /*!
 
+  Called when the drone sends a exposureChanged callback.
+    Used to know when the drone has changed its video exposure level.
+
+  \param[in] elementDictionary : the object containing the data received.
+  \param[in] drone : pointer to the drone who called the callback.
+
+  \sa commandReceivedCallback()
+*/
+void vpRobotBebop2::cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone)
+{
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wcast-qual"
+  HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+
+  if (element != NULL) {
+
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wcast-qual"
+    HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_EXPOSITIONCHANGED_VALUE,
+                  arg);
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
+
+    if (arg != NULL) {
+      drone->m_exposureSet = true;
+    }
+  }
+}
+
+/*!
+
   Callback. Computes a command received from the drone.
 
   \param[in] : the type of command received from the drone.
@@ -1372,11 +1563,18 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
     // If the command received is a relative move ended
     cmdRelativeMoveEndedRcv(elementDictionary, drone);
     break;
+
   case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLATTRIMCHANGED:
     // If the command received is a flat trim finished
     drone->m_flatTrimFinished = true;
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Flat trim finished ...");
     break;
+
+  case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_EXPOSITIONCHANGED:
+    // If the command received is a exposition changed
+    cmdExposureSetRcv(elementDictionary, drone);
+    break;
+
   default:
     break;
   }
