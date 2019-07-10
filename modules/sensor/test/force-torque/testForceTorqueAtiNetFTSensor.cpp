@@ -95,12 +95,12 @@ int main(int argc, char **argv)
     plotter->setLegend(1, 1, "Ty");
     plotter->setLegend(1, 2, "Tz");
   }
+  bool bias = false;
 #endif
 
   vpColVector ft;
   bool end = false;
   unsigned long nbacq = 0;
-  bool bias = false;
   double t_start = vpTime::measureTimeMs();
   while (!end) {
     double t = vpTime::measureTimeMs();
