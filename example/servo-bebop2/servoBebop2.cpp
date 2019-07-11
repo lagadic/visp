@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Example that shows how to control a Pioneer mobile robot in ViSP.
+ * Example that shows how to visual servoing with Parrot Bebop 2 drone in ViSP.
  *
  * Authors:
  * Fabien Spindler
@@ -76,6 +76,7 @@ int main()
 #else
 
 /*!
+
   \example servoBebop2.cpp example showing how to do visual servoing of
   Parrot Bebop 2 drone.
 
@@ -167,8 +168,7 @@ int main(int argc, char **argv)
 
       vpServo task; // Visual servoing task
 
-      //      double lambda = 1.25; // pour 0
-      //      double lambda = 0.7; // pour oo
+      // double lambda = 0.5;
       vpAdaptiveGain lambda = vpAdaptiveGain(1.5, 0.7, 30);
       task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
       task.setInteractionMatrixType(vpServo::CURRENT);
@@ -325,8 +325,6 @@ int main(int argc, char **argv)
           // Compute the control law. Velocities are computed in the mobile robot reference frame
           vpColVector ve = task.computeControlLaw();
 
-          // std::cout << "v: " << ve.t() << std::endl;
-
           // Sending the control law to the drone
           drone.setVelocity(ve, 1.0);
         } else {
@@ -361,9 +359,9 @@ int main(int argc, char **argv)
     }
 
   } catch (const vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+    std::cout << "Caught an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }
 
-#endif
+#endif // #elif !defined(VISP_HAVE_OPENCV)

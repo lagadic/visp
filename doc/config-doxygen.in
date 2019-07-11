@@ -2078,7 +2078,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_COIN3D \
                          VISP_HAVE_COIN3D_AND_GUI \
                          VISP_HAVE_COMEDI \
-                         VISP_HAVE_CURSES \
                          VISP_HAVE_CPP11_COMPATIBILITY \
                          VISP_HAVE_CXX11 \
                          VISP_CXX_STANDARD_98=@VISP_CXX_STANDARD_98@ \

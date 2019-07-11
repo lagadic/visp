@@ -389,10 +389,6 @@
 // This library is used to control Bebop2 drone.
 #cmakedefine VISP_HAVE_ARSDK
 
-// Defined if the curses is found.
-// This library is used to control Bebop2 drone with keyboard.
-#cmakedefine VISP_HAVE_CURSES
-
 // Defined if Haption Virtuose SDK available.
 #cmakedefine VISP_HAVE_VIRTUOSE
 

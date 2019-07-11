@@ -53,10 +53,6 @@ extern "C" {
 #include <visp3/core/vpImageConvert.h>
 #endif // #ifdef VISP_HAVE_OPENCV
 
-#ifdef VISP_HAVE_CURSES // For keyboard inputs
-#include <curses.h>
-#endif //#ifdef VISP_HAVE_CURSES
-
 #include <iostream>
 #include <math.h>
 
@@ -91,7 +87,9 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
     If verbose is false : only warning, error and fatal error messages are displayed.
   \param[in] ipAddress : ip address used to discover the drone on the wifi network.
   \param[in] discoveryPort : port used to discover the drone on the wifi network.
- */
+
+  \exception vpException::fatalError : If the program failed to connect to the drone.
+*/
 vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryPort)
   : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort)
 {
@@ -112,7 +110,7 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   m_img_convert_ctx = NULL;
   m_buffer = NULL;
   m_videoDecodingStarted = false;
-  m_videoWidth = 856;
+  m_videoWidth = 854;
   m_videoHeight = 480;
 #endif // #ifdef VISP_HAVE_OPENCV
 
@@ -306,6 +304,128 @@ void vpRobotBebop2::land()
 
 /*!
 
+  Sets the vertical speed, expressed as signed percentage of the maximum vertical speed.
+
+  \warning The drone will not stop moving in that direction until you send another motion command.
+
+  \param[in] value : desired vertical speed in signed percentage, between 100 and -100.
+    Positive values will make the drone go up
+    Negative values will make the drone go down
+*/
+void vpRobotBebop2::setVerticalSpeed(int value)
+{
+  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+    m_errorController =
+        m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, static_cast<char>(value));
+
+    if (m_errorController != ARCONTROLLER_OK) {
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error when sending move command : %s",
+                  ARCONTROLLER_Error_ToString(m_errorController));
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set vertical speed : drone isn't flying or hovering.");
+  }
+}
+
+/*!
+
+  Sets the yaw speed, expressed as signed percentage of the maximum yaw speed.
+
+  \warning The drone will not stop moving in that direction until you send another motion command.
+
+  \param[in] value : desired yaw speed in signed percentage, between 100 and -100.
+    Positive values will make the drone turn to its right / clockwise
+    Negative values will make the drone turn to its left / counterclockwise
+*/
+void vpRobotBebop2::setYawSpeed(int value)
+{
+  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+
+    m_errorController =
+        m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, static_cast<char>(value));
+
+    if (m_errorController != ARCONTROLLER_OK) {
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error when sending move command : %s",
+                  ARCONTROLLER_Error_ToString(m_errorController));
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set yaw speed : drone isn't flying or hovering.");
+  }
+}
+
+/*!
+
+  Sets the pitch angle, expressed as signed percentage of the maximum pitch angle.
+
+  \warning The drone will not stop moving in that direction until you send another motion command.
+
+  \param[in] value : desired pitch in signed percentage, between 100 and -100.
+    Positive values will make the drone tilt and go forward
+    Negative values will make the drone tilt and go backward
+*/
+void vpRobotBebop2::setPitch(int value)
+{
+  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+
+    m_errorController =
+        m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, static_cast<char>(value));
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
+
+    if (m_errorController != ARCONTROLLER_OK) {
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error when sending move command : %s",
+                  ARCONTROLLER_Error_ToString(m_errorController));
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set pitch value : drone isn't flying or hovering.");
+  }
+}
+
+/*!
+
+  Sets the roll angle, expressed as signed percentage of the maximum roll angle.
+
+  \warning The drone will not stop moving in that direction until you send another motion command.
+
+  \param[in] value : desired roll in signed percentage, between 100 and -100.
+    Positive values will make the drone tilt and go to its right
+    Negative values will make the drone tilt and go to its left
+*/
+void vpRobotBebop2::setRoll(int value)
+{
+  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+
+    m_errorController =
+        m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, static_cast<char>(value));
+    m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
+
+    if (m_errorController != ARCONTROLLER_OK) {
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error when sending move command : %s",
+                  ARCONTROLLER_Error_ToString(m_errorController));
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set roll value : drone isn't flying or hovering.");
+  }
+}
+
+/*!
+
+  Cuts the motors. Should only be used in emergency cases.
+
+  \warning The drone will fall.
+*/
+void vpRobotBebop2::cutMotors()
+{
+  if (m_deviceController != NULL) {
+    m_errorController = m_deviceController->aRDrone3->sendPilotingEmergency(m_deviceController->aRDrone3);
+  }
+}
+
+/*!
+
   Moves the drone by the given amounts \e dX, \e dY, \e dZ (meters) and rotate the heading by \e dPsi (radian).
   Doesn't do anything if the drone isn't flying or hovering.
 
@@ -337,15 +457,6 @@ void vpRobotBebop2::setPosition(float dX, float dY, float dZ, float dPsi, bool b
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't move : drone isn't flying or hovering.");
   }
 }
-
-#if 0
-void vpRobotBebop2::setPosition(const vpColVector &pos, bool blocking)
-{
-  if (pos.size() != 4)
-    exception
-    setPosition(pos[0], ...)
-}
-#endif
 
 /*!
 
@@ -608,7 +719,6 @@ void vpRobotBebop2::setVideoStabilisationMode(int mode)
 {
   if (isRunning() && m_deviceController != NULL) {
 
-    //    if (!isStreaming() && isLanded()) {
     eARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE cmd_mode =
         ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE_NONE;
     switch (mode) {
@@ -631,11 +741,6 @@ void vpRobotBebop2::setVideoStabilisationMode(int mode)
     }
     m_deviceController->aRDrone3->sendPictureSettingsVideoStabilizationMode(m_deviceController->aRDrone3, cmd_mode);
 
-    //    } else {
-    //      ARSAL_PRINT(
-    //          ARSAL_PRINT_ERROR, "ERROR",
-    //          "Can't set streaming mode : drone has to be landed and not streaming in order to set streaming mode.");
-    //    }
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set video stabilisation mode : drone isn't running.");
   }
@@ -706,100 +811,6 @@ void vpRobotBebop2::stopStreaming()
   }
 }
 #endif // #ifdef VISP_HAVE_OPENCV
-
-#ifdef VISP_HAVE_CURSES
-/*!
-  \warning This function is only available if ViSP is build with Curses support.
-
-  Sends predefined movement commands to the drone based on a keyboard input \e key.
-  See keyboard control example.
-
-  \warning Can handle directionnal arrows if Curses is used to detect input.
-
-  \param[in] key : key input to handle.
-*/
-void vpRobotBebop2::handleKeyboardInput(int key)
-{
-  if (isRunning()) {
-    switch (key) {
-    case 'q':
-      // Quit
-      land();
-      m_running = false;
-      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Quitting ... ");
-      break;
-
-    case 'e':
-      // Emergency
-      m_errorController = m_deviceController->aRDrone3->sendPilotingEmergency(m_deviceController->aRDrone3);
-      m_running = false;
-      break;
-
-    case 't':
-      // Takeoff
-      takeOff(false);
-      break;
-
-    case ' ':
-      // Landing
-      land();
-      break;
-
-    case KEY_UP:
-      // Up
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, 50);
-      break;
-
-    case KEY_DOWN:
-      // Down
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, -50);
-      break;
-
-    case KEY_RIGHT:
-      // Right
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, 50);
-      break;
-
-    case KEY_LEFT:
-      // Left
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, -50);
-      break;
-
-    case 'r':
-      // Forward
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, 50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
-
-    case 'f':
-      // Backward
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, -50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
-
-    case 'd':
-      // Roll left
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, -50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
-
-    case 'g':
-      // Roll right
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, 50);
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMDFlag(m_deviceController->aRDrone3, 1);
-      break;
-
-    default:
-      // No inputs -> drone stops moving
-      m_errorController = m_deviceController->aRDrone3->setPilotingPCMD(m_deviceController->aRDrone3, 0, 0, 0, 0, 0, 0);
-      break;
-    }
-    usleep(10);
-  } else {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error when handling keyboard input : drone isn't running.");
-  }
-}
-#endif // #ifdef VISP_HAVE_CURSES
 
 //***                   ***//
 //*** Private Functions ***//
@@ -1255,13 +1266,10 @@ void vpRobotBebop2::cleanUp()
       m_errorController = ARCONTROLLER_Device_Stop(m_deviceController);
 
       if (m_errorController == ARCONTROLLER_OK) {
-        // wait state update update
+        // Wait for the semaphore to increment, it will when the controller changes its state to 'stopped'
         ARSAL_Sem_Wait(&(m_stateSem));
       }
     }
-
-    m_running = false;
-
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Deleting device controller ...");
     ARCONTROLLER_Device_Delete(&m_deviceController);
 
@@ -1270,9 +1278,10 @@ void vpRobotBebop2::cleanUp()
 
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "- Cleanup done.");
   } else {
-    m_running = false;
+
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error while cleaning up memory.");
   }
+  m_running = false;
 }
 
 //***           ***//
@@ -1297,14 +1306,15 @@ void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eA
   switch (newState)
   {
   case ARCONTROLLER_DEVICE_STATE_STOPPED:
-
-    ARSAL_Sem_Post (&(drone->m_stateSem));
-    //Stopping the programm
+    // Stopping the programm
     drone->m_running = false;
+    // Incrementing semaphore
+    ARSAL_Sem_Post(&(drone->m_stateSem));
     break;
 
   case ARCONTROLLER_DEVICE_STATE_RUNNING:
-    ARSAL_Sem_Post (&(drone->m_stateSem));
+    // Incrementing semaphore
+    ARSAL_Sem_Post(&(drone->m_stateSem));
     break;
 
   default:
@@ -1566,8 +1576,8 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
 
   case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLATTRIMCHANGED:
     // If the command received is a flat trim finished
-    drone->m_flatTrimFinished = true;
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Flat trim finished ...");
+    drone->m_flatTrimFinished = true;
     break;
 
   case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_EXPOSITIONCHANGED:

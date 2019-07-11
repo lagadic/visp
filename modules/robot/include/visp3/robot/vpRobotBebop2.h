@@ -81,10 +81,6 @@ public:
   float getMaxTilt();
   unsigned int getBatteryLevel();
 
-#ifdef VISP_HAVE_OPENCV
-
-#endif // #ifdef VISP_HAVE_OPENCV
-
   void handleKeyboardInput(int key);
 
   bool isFlying();
@@ -93,15 +89,24 @@ public:
   bool isRunning();
   bool isStreaming();
 
-  static void land();
   void setMaxTilt(float maxTilt);
+  void setVerbose(bool verbose = false);
+
+  //*** Motion commands ***//
+  void cutMotors();
+  static void land();
+  void setPitch(int value);
   void setPosition(float dX, float dY, float dZ, float dPsi, bool blocking);
   void setPosition(const vpHomogeneousMatrix &M, bool blocking);
+  void setRoll(int value);
   void setVelocity(const vpColVector &vel, double delta_t);
-  void setVerbose(bool verbose = false);
+  void setVerticalSpeed(int value);
+  void setYawSpeed(int value);
   void stopMoving();
   void takeOff(bool blocking = true);
+  //*** ***//
 
+  //*** Streaming commands ***//
 #ifdef VISP_HAVE_OPENCV
   void getGrayscaleImage(vpImage<unsigned char> &I);
   void getRGBaImage(vpImage<vpRGBa> &I);
@@ -113,7 +118,6 @@ public:
   void startStreaming();
   void stopStreaming();
 #endif // #ifdef VISP_HAVE_OPENCV
-
   //*** ***//
 
 private:

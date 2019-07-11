@@ -44,6 +44,7 @@ find_package(VISP REQUIRED visp_core visp_vs visp_robot  visp_gui visp_detection
 
 set(example_cpp
     servoBebop2.cpp
+    keyboardControlBebop2.cpp
 )
 
 foreach(cpp ${example_cpp})

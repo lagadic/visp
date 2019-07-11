@@ -128,11 +128,9 @@ if(USE_FRANKA)
   endforeach()
 endif()
 
-if(USE_ARSDK AND USE_CURSES)
+if(USE_ARSDK)
   list(APPEND opt_incs ${ARSDK_INCLUDE_DIRS})
-  list(APPEND opt_incs ${CURSES_INCLUDE_DIRS})
   list(APPEND opt_libs ${ARSDK_LIBRARIES})
-  list(APPEND opt_libs ${CURSES_LIBRARIES})
 endif()
 
 # for the wireframe simulator we can use optional opengl and coin
