@@ -47,6 +47,7 @@
 
 #ifdef VISP_HAVE_OPENCV // FFmpeg is part of OpenCV
 extern "C" {
+#include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/imgutils.h>
 }
@@ -870,25 +871,13 @@ eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE vpRobotBebop2::getFl
       ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
       ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-      #pragma GCC diagnostic ignored "-Wold-style-cast"
-      #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-      #pragma GCC diagnostic ignored "-Wcast-qual"
       HASH_FIND_STR (elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
-      #pragma GCC diagnostic pop
-      #pragma GCC diagnostic pop
-      #pragma GCC diagnostic pop
 
       if (element != NULL)
       {
         //Suppress warnings
-        #pragma GCC diagnostic ignored "-Wold-style-cast"
-        #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-        #pragma GCC diagnostic ignored "-Wcast-qual"
         // Get the value
         HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE, arg);
-        #pragma GCC diagnostic pop
-        #pragma GCC diagnostic pop
-        #pragma GCC diagnostic pop
 
         if (arg != NULL)
         {
@@ -923,25 +912,13 @@ eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED vpRobotBebop
       ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
       ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
     HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
     if (element != NULL) {
 // Suppress warnings
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
       // Get the value
       HASH_FIND_STR(element->arguments,
                     ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED, arg);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
       if (arg != NULL) {
         // Enums are stored as I32
@@ -1095,10 +1072,10 @@ void vpRobotBebop2::initCodec()
   m_codecContext->width = m_videoWidth;
   m_codecContext->height = m_videoHeight;
 
-  if (codec->capabilities & CODEC_CAP_TRUNCATED) {
-    m_codecContext->flags |= CODEC_FLAG_TRUNCATED;
+  if (codec->capabilities & AV_CODEC_CAP_TRUNCATED) {
+    m_codecContext->flags |= AV_CODEC_FLAG_TRUNCATED;
   }
-  m_codecContext->flags2 |= CODEC_FLAG2_CHUNKS;
+  m_codecContext->flags2 |= AV_CODEC_FLAG2_CHUNKS;
 
   // Opens the codec
   if (avcodec_open2(m_codecContext, codec, NULL) < 0) {
@@ -1385,14 +1362,8 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
   }
 
   // Suppress warnings
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
   // Get the command received in the device controller
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, singleElement);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
   if (singleElement == NULL) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "singleElement is NULL");
@@ -1400,15 +1371,9 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
   }
 
   // Suppress warnings
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
   // Get the value
   HASH_FIND_STR(singleElement->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_BATTERYSTATECHANGED_PERCENT,
                 arg);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
   if (arg == NULL) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "arg is NULL");
@@ -1440,9 +1405,6 @@ void vpRobotBebop2::cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
   ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
   ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
   if (element != NULL) {
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED_CURRENT,
@@ -1451,9 +1413,6 @@ void vpRobotBebop2::cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
       float current = arg->value.Float;
       drone->m_maxTilt = current;
     }
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
   }
 }
 
@@ -1472,22 +1431,10 @@ void vpRobotBebop2::cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *e
   ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
   ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
   if (element != NULL) {
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGEVENT_MOVEBYEND_ERROR, arg);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
     if (arg != NULL) {
       eARCOMMANDS_ARDRONE3_PILOTINGEVENT_MOVEBYEND_ERROR error =
@@ -1516,24 +1463,12 @@ void vpRobotBebop2::cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *element
   ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
   ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
   if (element != NULL) {
 
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wcast-qual"
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_EXPOSITIONCHANGED_VALUE,
                   arg);
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
 
     if (arg != NULL) {
       drone->m_exposureSet = true;
