@@ -49,10 +49,9 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/robot/vpRobotBebop2.h>
 
-#ifdef VISP_HAVE_ARSDK
-
 int main()
 {
+#ifdef VISP_HAVE_ARSDK
   vpRobotBebop2 drone(false);
 
   if (drone.isRunning()) {
