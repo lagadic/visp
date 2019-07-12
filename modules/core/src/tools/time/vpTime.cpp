@@ -42,10 +42,16 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTime.h>
 
+//https://devblogs.microsoft.com/cppblog/c14-stl-features-fixes-and-breaking-changes-in-visual-studio-14-ctp1/
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 && (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
+#define USE_CXX11_CHRONO 1
+#else
+#define USE_CXX11_CHRONO 0
+#endif
+
 /*!
   \file vpTime.cpp
   \brief Time management and measurement
-
 */
 
 // Unix depend version
@@ -70,7 +76,7 @@ namespace vpTime
    minus vpTime::minTimeForUsleepCall. The rest of the time to wait is managed
    by a while loop.
 */
-double minTimeForUsleepCall = 4;
+static const double minTimeForUsleepCall = 4;
 
 /*!
    \return The time during which a while loop is used to handle the time
@@ -80,40 +86,16 @@ double minTimeForUsleepCall = 4;
 double getMinTimeForUsleepCall() { return minTimeForUsleepCall; }
 
 /*!
-  \fn vpTime::measureTimeMs()
-  Return the time in milliseconds since January 1st 1970.
-
-  \sa measureTimeMicros(), measureTimeSecond()
-*/
-double measureTimeMs()
-{
-#if defined(_WIN32)
-#if !defined(WINRT)
-  LARGE_INTEGER time, frequency;
-  QueryPerformanceFrequency(&frequency);
-  if (frequency.QuadPart == 0) {
-    return (timeGetTime());
-  } else {
-    QueryPerformanceCounter(&time);
-    return (double)(1000.0 * time.QuadPart / frequency.QuadPart);
-  }
-#else
-  throw(vpException(vpException::fatalError, "Cannot get time: not implemented on Universal Windows Platform"));
-#endif
-#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  struct timeval tp;
-  gettimeofday(&tp, 0);
-  return (1000.0 * tp.tv_sec + tp.tv_usec / 1000.0);
-#endif
-}
-
-/*!
   Return the time in microseconds since January 1st 1970.
 
   \sa measureTimeMs(), measureTimeSecond()
 */
 double measureTimeMicros()
 {
+#if USE_CXX11_CHRONO
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  return std::chrono::duration<double, std::micro>(now.time_since_epoch()).count();
+#else
 #if defined(_WIN32)
 #if !defined(WINRT)
   LARGE_INTEGER time, frequency;
@@ -132,7 +114,48 @@ double measureTimeMicros()
   gettimeofday(&tp, 0);
   return (1000000.0 * tp.tv_sec + tp.tv_usec);
 #endif
+#endif
 }
+
+/*!
+  \fn vpTime::measureTimeMs()
+  Return the time in milliseconds since January 1st 1970.
+
+  \sa measureTimeMicros(), measureTimeSecond()
+*/
+double measureTimeMs()
+{
+#if USE_CXX11_CHRONO
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  return std::chrono::duration<double, std::milli>(now.time_since_epoch()).count();
+#else
+#if defined(_WIN32)
+#if !defined(WINRT)
+  LARGE_INTEGER time, frequency;
+  QueryPerformanceFrequency(&frequency);
+  if (frequency.QuadPart == 0) {
+    return (timeGetTime());
+  } else {
+    QueryPerformanceCounter(&time);
+    return (double)(1000.0 * time.QuadPart / frequency.QuadPart);
+  }
+#else
+  throw(vpException(vpException::fatalError, "Cannot get time: not implemented on Universal Windows Platform"));
+#endif
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  struct timeval tp;
+  gettimeofday(&tp, 0);
+  return (1000.0 * tp.tv_sec + tp.tv_usec / 1000.0);
+#endif
+#endif
+}
+
+/*!
+  Return the measured time in seconds since January 1st 1970.
+
+  \sa measureTimeMs()
+*/
+double measureTimeSecond() { return vpTime::measureTimeMs() * 1e-3; }
 
 /*!
 
@@ -197,7 +220,6 @@ int wait(double t0, double t)
   than vpTime::minTimeForUsleepCall.
 
   \param t : Time to wait in ms.
-
 */
 void wait(double t)
 {
@@ -242,18 +264,9 @@ void wait(double t)
 }
 
 /*!
-
-  Return the measured time in seconds since January 1st 1970.
-
-  \sa measureTimeMs()
-*/
-double measureTimeSecond() { return vpTime::measureTimeMs() / 1000.0; }
-
-/*!
   Sleep t miliseconds from now.
 
   \param t : Time to sleep in ms.
-
 */
 void sleepMs(double t)
 {
@@ -360,3 +373,59 @@ std::string getDateTime(const std::string &format)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 };
 #endif
+
+vpChrono::vpChrono() : m_durationMs(), m_lastTimePoint()
+{
+}
+
+/*!
+  Get chrono duration in microsecond.
+*/
+double vpChrono::getDurationMicros()
+{
+  return m_durationMs * 1e3;
+}
+
+/*!
+  Get chrono duration in millisecond.
+*/
+double vpChrono::getDurationMs()
+{
+  return m_durationMs;
+}
+
+/*!
+  Get chrono duration in second.
+*/
+double vpChrono::getDurationSeconds()
+{
+  return m_durationMs * 1e-3;
+}
+
+/*!
+  Start the chrono.
+  \param[in] reset : If true, reset the current chrono duration.
+*/
+void vpChrono::start(bool reset)
+{
+#if USE_CXX11_CHRONO
+  m_lastTimePoint = std::chrono::steady_clock::now();
+#else
+  m_lastTimePoint = vpTime::measureTimeMs();
+#endif
+  if (reset) {
+    m_durationMs = 0.0;
+  }
+}
+
+/*!
+  Stop the chrono.
+*/
+void vpChrono::stop()
+{
+#if USE_CXX11_CHRONO
+  m_durationMs += std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - m_lastTimePoint).count();
+#else
+  m_durationMs += vpTime::measureTimeMs() - m_lastTimePoint;
+#endif
+}
