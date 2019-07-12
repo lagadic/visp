@@ -217,3 +217,7 @@ if(USE_VIRTUOSE)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp -Wno-int-to-pointer-cast)
 endif()
+
+if(USE_ARSDK)
+  vp_set_source_file_compile_flag(src/real-robot/bebop2/vpRobotBebop2.cpp -Wno-old-style-cast -Wno-implicit-fallthrough -Wno-cast-qual -Wno-deprecated-declarations)
+endif()
