@@ -161,15 +161,20 @@ int main()
 
     if (drone.isRunning()) {
 
-      vpKeyboard keyboard;
 
       int k = 0;
       bool running = true;
+
+      std::cout << "\nConfiguring drone settings ...\n" << std::endl;
+
+      drone.setVideoResolution(1);
 
       drone.setMaxTilt(10); // Setting the max roll and pitch values, the drone speed will depend on it
       drone.doFlatTrim();   // Flat trim calibration
 
       drone.setStreamingMode(0); // Set streaming mode 0 : lowest latency
+
+      std::cout << "\nWaiting for streaming to start ...\n" << std::endl;
       drone.startStreaming();
 
       // Prepare image for display
@@ -179,9 +184,16 @@ int main()
       vpDisplay::display(I);
       vpDisplay::flush(I);
 
+      vpKeyboard keyboard;
+      std::cout << "\n| Control the drone with the keyboard :\n"
+                   "|   't' to takeoff / spacebar to land / 'e' for emergency stop\n"
+                   "|   ('r','f','d','g') and ('i','k','j','l') to move\n"
+                   "|   'q' to quit.\n"
+                << std::endl;
+
       while (running && drone.isRunning() && drone.isStreaming()) {
 
-        k = '0'; // If no key is hit, we send a non assigned key
+        k = '0'; // If no key is hit, we send a non-assigned key
         if (keyboard.kbhit()) {
           k = keyboard.getchar();
         }
@@ -192,6 +204,7 @@ int main()
         vpDisplay::displayText(I, 10, 10, "Press q to quit", vpColor::red);
         vpDisplay::flush(I);
       }
+      std::cout << "\nQuitting ...\n" << std::endl;
 
     } else {
       std::cout << "ERROR : failed to setup drone control." << std::endl;

@@ -81,7 +81,7 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
     - Video stabilisation to 0 (no stabilisation).
     - Video exposure to +1.5 (maximum).
     - Video streaming mode to 0 (lowest latency, average reliability).
-
+    - Video streaming resolution mode to 0 (480p, 856x480).
 
   \param[in] verbose : turn verbose on or off
     If verbose is true : info, warning, error and fatal error messages are displayed.
@@ -111,8 +111,6 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   m_img_convert_ctx = NULL;
   m_buffer = NULL;
   m_videoDecodingStarted = false;
-  m_videoWidth = 854;
-  m_videoHeight = 480;
 #endif // #ifdef VISP_HAVE_OPENCV
 
   m_batteryLevel = 100;
@@ -120,6 +118,10 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   m_exposureSet = true;
   m_flatTrimFinished = true;
   m_relativeMoveEnded = true;
+  m_videoResolutionSet = true;
+  m_streamingStarted = false;
+  m_streamingModeSet = false;
+  m_settingsReset = false;
 
   setVerbose(verbose);
 
@@ -152,7 +154,11 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
                       ipAddress.c_str(), discoveryPort));
   } else {
     m_running = true;
+
+    resetAllSettings();
+
     setMaxTilt(10);
+    setVideoResolution(0);
     setVideoStabilisationMode(0);
     setExposure(1.5f);
     setStreamingMode(0);
@@ -539,6 +545,26 @@ void vpRobotBebop2::setVerbose(bool verbose)
 
 /*!
 
+  Resets drone settings (like max tilt or streaming mode) to factory defaults.
+*/
+void vpRobotBebop2::resetAllSettings()
+{
+  if (isRunning() && m_deviceController != NULL) {
+
+    m_settingsReset = false;
+    m_deviceController->common->sendSettingsReset(m_deviceController->common);
+
+    while (!m_settingsReset) {
+      vpTime::sleepMs(1);
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't reset drone settings : drone isn't running.");
+  }
+}
+
+/*!
+
   Sets the max pitch and roll values for the drone.
   The smallest possible angle is 5, the maximum is 35.
 
@@ -586,12 +612,17 @@ void vpRobotBebop2::stopMoving()
 void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
 {
   if (m_videoDecodingStarted) {
-    I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
 
-    m_bgr_picture_mutex.lock();
-    vpImageConvert::BGRToGrey(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
-                              I.getHeight());
-    m_bgr_picture_mutex.unlock();
+    if (m_bgr_picture->data[0] != NULL) {
+      I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
+
+      m_bgr_picture_mutex.lock();
+      vpImageConvert::BGRToGrey(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
+                                I.getHeight());
+      m_bgr_picture_mutex.unlock();
+    } else {
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Error while getting current grayscale image : image data is NULL");
+    }
 
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
@@ -609,12 +640,17 @@ void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
 void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
 {
   if (m_videoDecodingStarted) {
-    I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
 
-    m_bgr_picture_mutex.lock();
-    vpImageConvert::BGRToRGBa(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
-                              I.getHeight());
-    m_bgr_picture_mutex.unlock();
+    if (m_bgr_picture->data[0] != NULL) {
+      I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
+
+      m_bgr_picture_mutex.lock();
+      vpImageConvert::BGRToRGBa(m_bgr_picture->data[0], reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth(),
+                                I.getHeight());
+      m_bgr_picture_mutex.unlock();
+    } else {
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Error while getting current RGBa image : image data is NULL");
+    }
 
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't get current image : video streaming isn't started.");
@@ -693,7 +729,13 @@ void vpRobotBebop2::setStreamingMode(int mode)
       default:
         break;
       }
+      m_streamingModeSet = false;
       m_deviceController->aRDrone3->sendMediaStreamingVideoStreamMode(m_deviceController->aRDrone3, cmd_mode);
+
+      // m_streamingModeSet is set back to true when the drone has finished setting the stream mode, via a callback
+      while (!m_streamingModeSet) {
+        vpTime::sleepMs(1);
+      }
 
     } else {
       ARSAL_PRINT(
@@ -702,6 +744,59 @@ void vpRobotBebop2::setStreamingMode(int mode)
     }
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set streaming mode : drone isn't running.");
+  }
+}
+
+/*!
+  \warning This function is only available if ViSP is build with OpenCV support.
+
+  Sets the streaming mode.
+
+  \warning This function should be called only if the drone isn't flying and the streaming isn't started.
+
+  \param[in] mode : desired streaming mode.
+    If mode = 0 (default mode), the resolution is 480p (856x480).
+    If mode = 1, the resolution is 720p (1280x720).
+*/
+void vpRobotBebop2::setVideoResolution(int mode)
+{
+  if (isRunning() && m_deviceController != NULL) {
+
+    if (!isStreaming() && isLanded()) {
+
+      eARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEORESOLUTIONS_TYPE cmd_mode;
+
+      switch (mode) {
+
+      case 0:
+      default:
+        cmd_mode = ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEORESOLUTIONS_TYPE_REC1080_STREAM480;
+        m_videoWidth = 856;
+        m_videoHeight = 480;
+        break;
+
+      case 1:
+        cmd_mode = ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEORESOLUTIONS_TYPE_REC720_STREAM720;
+        m_videoWidth = 1280;
+        m_videoHeight = 720;
+        break;
+      }
+
+      m_videoResolutionSet = false;
+      m_deviceController->aRDrone3->sendPictureSettingsVideoResolutions(m_deviceController->aRDrone3, cmd_mode);
+
+      // m_videoResolutionSet is set back to true when the drone has finished setting the resolution, via a callback
+      while (!m_videoResolutionSet) {
+        vpTime::sleepMs(1);
+      }
+
+    } else {
+      ARSAL_PRINT(
+          ARSAL_PRINT_ERROR, "ERROR",
+          "Can't set video resolution : drone has to be landed and not streaming in order to set streaming mode.");
+    }
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set video resolution : drone isn't running.");
   }
 }
 
@@ -764,14 +859,18 @@ void vpRobotBebop2::startStreaming()
     m_errorController = m_deviceController->aRDrone3->sendMediaStreamingVideoEnable(m_deviceController->aRDrone3, 1);
 
     if (m_errorController == ARCONTROLLER_OK) {
-
+      m_streamingStarted = false;
       // Blocking until streaming is started
-      while (getStreamingState() != ARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED_ENABLED) {
+      while (!m_streamingStarted) {
         vpTime::sleepMs(1);
       }
       startVideoDecoding();
-      vpTime::sleepMs(1000); // We wait for the streaming to actually start (it has a delay before actually sending
-                             // frames, even if it is indicated as started by the drone).
+
+      /* We wait for the streaming to actually start (it has a delay before actually
+      sending frames, even if it is indicated as started by the drone), or else the
+      decoder is doesn't have time to synchronize with the stream */
+      vpTime::sleepMs(4000);
+
     } else {
       ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
     }
@@ -1085,7 +1184,7 @@ void vpRobotBebop2::initCodec()
 
   AVPixelFormat pFormat = AV_PIX_FMT_BGR24;
   int numBytes = av_image_get_buffer_size(pFormat, m_codecContext->width, m_codecContext->height, 1);
-  m_buffer = (uint8_t *)av_malloc(static_cast<unsigned long>(numBytes) * sizeof(uint8_t));
+  m_buffer = static_cast<uint8_t *>(av_malloc(static_cast<unsigned long>(numBytes) * sizeof(uint8_t)));
 
   av_init_packet(&m_packet);        // Packed used to send data to the decoder
   m_picture = av_frame_alloc();     // Frame used to receive data from the decoder
@@ -1253,7 +1352,7 @@ void vpRobotBebop2::cleanUp()
     // Destroys the semaphore
     ARSAL_Sem_Destroy(&(m_stateSem));
 
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "- Cleanup done.");
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Cleanup done.");
   } else {
 
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error while cleaning up memory.");
@@ -1276,7 +1375,7 @@ void vpRobotBebop2::cleanUp()
 void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error,
                                          void *customData)
 {
-  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Controller state changed, newState: %d .....", newState);
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Controller state changed, new state: %d.", newState);
   (void)error;
 
   vpRobotBebop2 * drone = (vpRobotBebop2 *)customData;
@@ -1361,7 +1460,6 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
     return;
   }
 
-  // Suppress warnings
   // Get the command received in the device controller
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, singleElement);
 
@@ -1370,7 +1468,6 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
     return;
   }
 
-  // Suppress warnings
   // Get the value
   HASH_FIND_STR(singleElement->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_BATTERYSTATECHANGED_PERCENT,
                 arg);
@@ -1518,6 +1615,28 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
   case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_EXPOSITIONCHANGED:
     // If the command received is a exposition changed
     cmdExposureSetRcv(elementDictionary, drone);
+    break;
+
+  case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_VIDEORESOLUTIONSCHANGED:
+    // If the command received is a exposition changed
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Video resolution set ...");
+    drone->m_videoResolutionSet = true;
+    break;
+
+  case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED:
+    // If the command received is a streaming started
+    drone->m_streamingStarted = true;
+    break;
+
+  case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOSTREAMMODECHANGED:
+    // If the command received is a streaming mode changed
+    drone->m_streamingModeSet = true;
+    break;
+
+  case ARCONTROLLER_DICTIONARY_KEY_COMMON_SETTINGSSTATE_RESETCHANGED:
+    // If the command received is a settings reset
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Settings reset ...");
+    drone->m_settingsReset = true;
     break;
 
   default:

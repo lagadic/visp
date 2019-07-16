@@ -92,6 +92,8 @@ public:
   void setMaxTilt(float maxTilt);
   void setVerbose(bool verbose = false);
 
+  void resetAllSettings();
+
   //*** Motion commands ***//
   void cutMotors();
   static void land();
@@ -114,6 +116,7 @@ public:
   int getVideoWidth();
   void setExposure(float expo);
   void setStreamingMode(int mode);
+  void setVideoResolution(int mode);
   void setVideoStabilisationMode(int mode);
   void startStreaming();
   void stopStreaming();
@@ -149,6 +152,10 @@ private:
   bool m_exposureSet;       ///< Used to know if exposure has been set
   bool m_flatTrimFinished;  ///< Used to know when the drone has finished a flat trim
   bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
+  bool m_videoResolutionSet; ///< Used to know if video resolution has been set
+  bool m_streamingStarted;   ///< Used to know if the streaming has been started
+  bool m_streamingModeSet;   ///< Used to know if the streaming mode has been set
+  bool m_settingsReset;
 
   unsigned int m_batteryLevel; ///< Percentage of battery remaining
   float m_maxTilt;             ///< Max pitch and roll value of the drone
@@ -189,9 +196,9 @@ private:
   static eARCONTROLLER_ERROR didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData);
 
   static void cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
+  static void cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
-  static void cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
                                       ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData);
   //*** ***//

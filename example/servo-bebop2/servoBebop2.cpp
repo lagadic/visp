@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Example that shows how to visual servoing with Parrot Bebop 2 drone in ViSP.
+ * Example that shows how to do visual servoing with Parrot Bebop 2 drone in ViSP.
  *
  * Authors:
  * Fabien Spindler
@@ -124,6 +124,8 @@ int main(int argc, char **argv)
     vpRobotBebop2 drone(false); // Create the drone with low verbose level
 
     if (drone.isRunning()) {
+
+      drone.setVideoResolution(0); // Set video resolution to 480p
 
       drone.setStreamingMode(0);          // Set lowest latency stream mode
       drone.setVideoStabilisationMode(0); // Disable video stabilisation
