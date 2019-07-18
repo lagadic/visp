@@ -59,6 +59,20 @@ extern "C" {
 
 #define TAG "vpRobotBebop2" // For error messages of ARSDK
 
+/*!
+  Bebop coordinates system :
+
+  Camera reference :
+    + x : right
+    + y : down
+    x z : forward
+
+  Effective reference :
+    + x : forward
+    + y : right
+    + z : down
+*/
+
 bool vpRobotBebop2::m_running = false;
 ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
 
@@ -122,6 +136,14 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   m_streamingStarted = false;
   m_streamingModeSet = false;
   m_settingsReset = false;
+
+  m_cameraHorizontalFOV = -1;
+  m_currentCameraTilt = -1;
+  m_minCameraTilt = -1;
+  m_maxCameraTilt = -1;
+  m_currentCameraPan = -1;
+  m_minCameraPan = -1;
+  m_maxCameraPan = -1;
 
   setVerbose(verbose);
 
@@ -211,7 +233,7 @@ int vpRobotBebop2::getDiscoveryPort() { return m_discoveryPort; }
 
   Gets the current max pitch and roll values allowed for the drone.
 */
-float vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
+double vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
 
 /*!
 
@@ -221,8 +243,138 @@ unsigned int vpRobotBebop2::getBatteryLevel() { return m_batteryLevel; }
 
 /*!
 
+  Gets camera horizontal FOV (degrees).
+*/
+double vpRobotBebop2::getCameraHorizontalFOV() const { return m_cameraHorizontalFOV; }
+
+/*!
+
+  Gets current camera tilt (degrees).
+*/
+double vpRobotBebop2::getCurrentCameraTilt() const { return m_currentCameraTilt; }
+
+/*!
+
+  Gets minimum camera tilt (degrees).
+*/
+double vpRobotBebop2::getMinCameraTilt() const { return m_minCameraTilt; }
+
+/*!
+
+  Gets maximum camera tilt (degrees).
+*/
+double vpRobotBebop2::getMaxCameraTilt() const { return m_maxCameraTilt; }
+
+/*!
+
+  Gets current camera pan (degrees).
+*/
+double vpRobotBebop2::getCurrentCameraPan() const { return m_currentCameraPan; }
+
+/*!
+
+  Gets minimum camera pan (degrees).
+*/
+double vpRobotBebop2::getMinCameraPan() const { return m_minCameraPan; }
+
+/*!
+
+  Gets maximum camera pan (degrees).
+*/
+double vpRobotBebop2::getMaxCameraPan() const { return m_maxCameraPan; }
+
+/*!
+
+  Sets camera orientation : tilt and pan (degrees).
+
+  \warning The camera movement is gradual. It takes some time for the camera to reach the desired orientation.
+
+  \param[in] tilt : The desired tilt.
+  \param[in] pan : The desired pan.
+  \param[in] blocking : If true, the function returns when the camera reached the desired position.
+                        If false, returns immediately. You can check if the camera reached the desired position
+                        using getCurrentCameraTilt() and getCurrentCameraPan().
+*/
+void vpRobotBebop2::setCameraOrientation(double tilt, double pan, bool blocking)
+{
+  if (isRunning() && m_deviceController != NULL) {
+
+    m_deviceController->aRDrone3->sendCameraOrientationV2(m_deviceController->aRDrone3, static_cast<float>(tilt),
+                                                          static_cast<float>(pan));
+
+    if (blocking) {
+      while (std::abs(tilt - m_currentCameraTilt) > 0.01 || std::abs(pan - m_currentCameraPan) > 0.01) {
+        vpTime::sleepMs(1);
+      }
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set camera orientation : drone isn't running.");
+  }
+}
+
+/*!
+
+  Sets camera tilt (degrees).
+
+  \warning The camera movement is gradual. It takes some time for the camera to reach the desired tilt.
+
+  \param[in] tilt : The desired tilt.
+  \param[in] blocking : If true, the function returns when the camera reached the desired position.
+                        If false, returns immediately. You can check if the camera reached the desired position
+                        using getCurrentCameraTilt().
+*/
+void vpRobotBebop2::setCameraTilt(double tilt, bool blocking)
+{
+  if (isRunning() && m_deviceController != NULL) {
+
+    m_deviceController->aRDrone3->sendCameraOrientationV2(m_deviceController->aRDrone3, static_cast<float>(tilt),
+                                                          static_cast<float>(getCurrentCameraPan()));
+
+    if (blocking) {
+      while (std::abs(tilt - m_currentCameraTilt) > 0.01) {
+        vpTime::sleepMs(1);
+      }
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set camera tilt value : drone isn't running.");
+  }
+}
+
+/*!
+
+  Sets camera pan (degrees).
+
+  \warning The camera movement is gradual. It takes some time for the camera to reach the desired pan.
+
+  \param[in] pan : The desired pan.
+  \param[in] blocking : If true, the function returns when the camera reached the desired position.
+                        If false, returns immediately. You can check if the camera reached the desired position
+                        using getCurrentCameraPan().
+*/
+void vpRobotBebop2::setCameraPan(double pan, bool blocking)
+{
+  if (isRunning() && m_deviceController != NULL) {
+
+    m_deviceController->aRDrone3->sendCameraOrientationV2(
+        m_deviceController->aRDrone3, static_cast<float>(getCurrentCameraTilt()), static_cast<float>(pan));
+
+    if (blocking) {
+      while (std::abs(pan - m_currentCameraPan) > 0.01) {
+        vpTime::sleepMs(1);
+      }
+    }
+
+  } else {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set camera pan value : drone isn't running.");
+  }
+}
+
+/*!
+
   Checks if the drone is running, ie if the drone is connected and ready to receive commands.
- */
+*/
 bool vpRobotBebop2::isRunning()
 {
   if (m_deviceController == NULL) {
@@ -235,7 +387,7 @@ bool vpRobotBebop2::isRunning()
 /*!
 
   Checks if the drone is currently streaming and decoding the video from its camera.
- */
+*/
 bool vpRobotBebop2::isStreaming()
 {
 #ifdef VISP_HAVE_OPENCV
@@ -248,7 +400,7 @@ bool vpRobotBebop2::isStreaming()
 /*!
 
   Checks if the drone is currently hovering, ie if the drone is up in the air but not moving.
- */
+*/
 bool vpRobotBebop2::isHovering()
 {
   return getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_HOVERING;
@@ -257,7 +409,7 @@ bool vpRobotBebop2::isHovering()
 /*!
 
   Checks if the drone is currently flying, ie if the drone is up in the air and moving.
- */
+*/
 bool vpRobotBebop2::isFlying()
 {
   return getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_FLYING;
@@ -266,7 +418,7 @@ bool vpRobotBebop2::isFlying()
 /*!
 
   Checks if the drone is currently landed.
- */
+*/
 bool vpRobotBebop2::isLanded()
 {
   return getFlyingState() == ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_LANDED;
@@ -276,9 +428,9 @@ bool vpRobotBebop2::isLanded()
 
   Sends take off command.
 
-  \param[in] blocking : If true, the function return when take off is achieved. If false, returns immediately. You can
+  \param[in] blocking : If true, the function returns when take off is achieved. If false, returns immediately. You can
   check if take off is finished using isHovering().
- */
+*/
 void vpRobotBebop2::takeOff(bool blocking)
 {
   if (isRunning() && isLanded() && m_deviceController != NULL) {
@@ -301,7 +453,7 @@ void vpRobotBebop2::takeOff(bool blocking)
   Sends landing command.
 
   \warning This function is static because it needs to be called by the signal handler in case of a detected signal.
- */
+*/
 void vpRobotBebop2::land()
 {
   if (m_deviceController != NULL) {
@@ -575,10 +727,11 @@ void vpRobotBebop2::resetAllSettings()
 
   \warning This value is not taken into account by the drone when using setPosition or setVelocity functions.
 */
-void vpRobotBebop2::setMaxTilt(float maxTilt)
+void vpRobotBebop2::setMaxTilt(double maxTilt)
 {
   if (isRunning() && m_deviceController != NULL) {
-    m_deviceController->aRDrone3->sendPilotingSettingsMaxTilt(m_deviceController->aRDrone3, maxTilt);
+    m_deviceController->aRDrone3->sendPilotingSettingsMaxTilt(m_deviceController->aRDrone3,
+                                                              static_cast<float>(maxTilt));
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set tilt value : drone isn't running.");
   }
@@ -910,6 +1063,7 @@ void vpRobotBebop2::stopStreaming()
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't stop streaming : streaming already stopped.");
   }
 }
+
 #endif // #ifdef VISP_HAVE_OPENCV
 
 //***                   ***//
@@ -1014,7 +1168,6 @@ eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED vpRobotBebop
     HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
 
     if (element != NULL) {
-// Suppress warnings
       // Get the value
       HASH_FIND_STR(element->arguments,
                     ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED, arg);
@@ -1378,7 +1531,7 @@ void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eA
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Controller state changed, new state: %d.", newState);
   (void)error;
 
-  vpRobotBebop2 * drone = (vpRobotBebop2 *)customData;
+  vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
   switch (newState)
   {
   case ARCONTROLLER_DEVICE_STATE_STOPPED:
@@ -1423,7 +1576,7 @@ eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Cod
 */
 eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData)
 {
-  vpRobotBebop2 *drone = (vpRobotBebop2 *)customData;
+  vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
 
   if (frame != NULL) {
 
@@ -1488,6 +1641,83 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
 
 /*!
 
+  Gets the camera pan and tilt values when a camera-orientation-changed callback is called.
+  Stores the values in m_currentCameraPan and m_currentCameraTilt.
+
+  \param[in] elementDictionary : the object containing the data received.
+  \param[in] drone : pointer to the drone who called the callback.
+
+  \sa commandReceivedCallback()
+*/
+void vpRobotBebop2::cmdCameraOrientationChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary,
+                                                   vpRobotBebop2 *drone)
+{
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+  HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+  if (element != NULL) {
+    HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_CAMERASTATE_ORIENTATIONV2_TILT, arg);
+
+    if (arg != NULL) {
+      drone->m_currentCameraTilt = arg->value.Double;
+    }
+
+    HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_CAMERASTATE_ORIENTATIONV2_PAN, arg);
+    if (arg != NULL) {
+      drone->m_currentCameraPan = arg->value.Double;
+    }
+  }
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG,
+              "    - Camera orientation settings changed, new values :\n Pan : %f degrees, Tilt : %f degrees.",
+              static_cast<double>(drone->m_currentCameraPan), static_cast<double>(drone->m_currentCameraTilt));
+}
+
+void vpRobotBebop2::cmdCameraSettingsRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone)
+{
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+  HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+  if (element != NULL) {
+    HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_FOV,
+                  arg);
+    if (arg != NULL) {
+      drone->m_cameraHorizontalFOV = arg->value.Double;
+      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Camera horizontal FOV : %f degrees.",
+                  static_cast<double>(drone->m_cameraHorizontalFOV));
+    }
+    HASH_FIND_STR(element->arguments,
+                  ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_PANMAX, arg);
+    if (arg != NULL) {
+      drone->m_maxCameraPan = arg->value.Double;
+      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Max camera pan : %f degrees.",
+                  static_cast<double>(drone->m_maxCameraPan));
+    }
+    HASH_FIND_STR(element->arguments,
+                  ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_PANMIN, arg);
+    if (arg != NULL) {
+      drone->m_minCameraPan = arg->value.Double;
+      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Min camera pan : %f degrees.",
+                  static_cast<double>(drone->m_minCameraPan));
+    }
+    HASH_FIND_STR(element->arguments,
+                  ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_TILTMAX, arg);
+    if (arg != NULL) {
+      drone->m_maxCameraTilt = arg->value.Double;
+      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Max camera tilt : %f degrees.",
+                  static_cast<double>(drone->m_maxCameraTilt));
+    }
+    HASH_FIND_STR(element->arguments,
+                  ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_TILTMIN, arg);
+    if (arg != NULL) {
+      drone->m_minCameraTilt = arg->value.Double;
+      ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Min camera tilt : %f degrees.",
+                  static_cast<double>(drone->m_minCameraTilt));
+    }
+  }
+}
+
+/*!
+
   Gets the current max pitch and roll values of the drone when a maxPitchRoll-changed callback is called.
   Used to save the value in a attribute of the drone.
 
@@ -1507,8 +1737,7 @@ void vpRobotBebop2::cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED_CURRENT,
                   arg);
     if (arg != NULL) {
-      float current = arg->value.Float;
-      drone->m_maxTilt = current;
+      drone->m_maxTilt = arg->value.Double;
     }
   }
 }
@@ -1585,7 +1814,7 @@ void vpRobotBebop2::cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *element
 void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY commandKey,
                                             ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, void *customData)
 {
-  vpRobotBebop2 *drone = (vpRobotBebop2 *)customData;
+  vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
 
   if (drone == NULL)
     return;
@@ -1637,6 +1866,16 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
     // If the command received is a settings reset
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Settings reset ...");
     drone->m_settingsReset = true;
+    break;
+
+  case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_CAMERASTATE_ORIENTATIONV2:
+    // If the command received is a camera orientation changed
+    cmdCameraOrientationChangedRcv(elementDictionary, drone);
+    break;
+
+  case ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED:
+    // If the command received is a camera information sent
+    cmdCameraSettingsRcv(elementDictionary, drone);
     break;
 
   default:

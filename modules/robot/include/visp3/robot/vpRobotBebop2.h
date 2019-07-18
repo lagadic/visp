@@ -78,7 +78,7 @@ public:
 
   std::string getIpAddress();
   int getDiscoveryPort();
-  float getMaxTilt();
+  double getMaxTilt();
   unsigned int getBatteryLevel();
 
   void handleKeyboardInput(int key);
@@ -89,8 +89,8 @@ public:
   bool isRunning();
   bool isStreaming();
 
-  void setMaxTilt(float maxTilt);
-  void setVerbose(bool verbose = false);
+  void setMaxTilt(double maxTilt);
+  void setVerbose(bool verbose);
 
   void resetAllSettings();
 
@@ -121,6 +121,21 @@ public:
   void startStreaming();
   void stopStreaming();
 #endif // #ifdef VISP_HAVE_OPENCV
+  //*** ***//
+
+  //*** Camera control commands ***//
+  double getCurrentCameraPan() const;
+  double getMaxCameraPan() const;
+  double getMinCameraPan() const;
+  double getCurrentCameraTilt() const;
+  double getMaxCameraTilt() const;
+  double getMinCameraTilt() const;
+
+  double getCameraHorizontalFOV() const;
+
+  void setCameraOrientation(double tilt, double pan, bool blocking = false);
+  void setCameraPan(double pan, bool blocking = false);
+  void setCameraTilt(double tilt, bool blocking = false);
   //*** ***//
 
 private:
@@ -155,10 +170,20 @@ private:
   bool m_videoResolutionSet; ///< Used to know if video resolution has been set
   bool m_streamingStarted;   ///< Used to know if the streaming has been started
   bool m_streamingModeSet;   ///< Used to know if the streaming mode has been set
-  bool m_settingsReset;
+  bool m_settingsReset;      ///< Used to know when the drone a finished the settings reset
 
   unsigned int m_batteryLevel; ///< Percentage of battery remaining
-  float m_maxTilt;             ///< Max pitch and roll value of the drone
+  double m_maxTilt;            ///< Max pitch and roll value of the drone
+
+  double m_cameraHorizontalFOV; ///< Camera horizontal FOV
+
+  double m_currentCameraTilt; ///< Current tilt of the camera
+  double m_minCameraTilt;     ///< Minimum possible tilt of the camera
+  double m_maxCameraTilt;     ///< Maximum possible tilt of the camera
+
+  double m_currentCameraPan; ///< Current pan of the camera
+  double m_minCameraPan;     ///< Minimum possible tilt of the camera
+  double m_maxCameraPan;     ///< Maximum possible tilt of the camera
 
   ARDISCOVERY_Device_t *m_device;                   ///< Used for drone discovery
   static ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
@@ -196,6 +221,9 @@ private:
   static eARCONTROLLER_ERROR didReceiveFrameCallback(ARCONTROLLER_Frame_t *frame, void *customData);
 
   static void cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
+  static void cmdCameraOrientationChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary,
+                                             vpRobotBebop2 *drone);
+  static void cmdCameraSettingsRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);
   static void cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone);

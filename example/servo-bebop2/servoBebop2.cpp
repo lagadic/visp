@@ -52,10 +52,14 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpPlot.h>
 #include <visp3/robot/vpRobotBebop2.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>
 #include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
+#include <visp3/visual_features/vpFeatureVanishingPoint.h>
 #include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
 
 #ifdef VISP_HAVE_PUGIXML
 #include <visp3/core/vpXmlParserCamera.h>
@@ -75,6 +79,11 @@ int main()
 }
 #else
 
+bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpImagePoint> p2)
+{
+  return (p1.second.get_v() < p2.second.get_v());
+};
+
 /*!
 
   \example servoBebop2.cpp example showing how to do visual servoing of
@@ -91,7 +100,7 @@ int main(int argc, char **argv)
   try {
 
     std::string opt_cam_parameters;
-    bool has_opt_cam_parameters = false;
+    bool opt_has_cam_parameters = false;
 
     for (int i = 0; i < argc; i++) {
 
@@ -99,7 +108,7 @@ int main(int argc, char **argv)
 
 #ifdef VISP_HAVE_PUGIXML
         opt_cam_parameters = std::string(argv[i + 1]);
-        has_opt_cam_parameters = true;
+        opt_has_cam_parameters = true;
 #else
         std::cout << "PUGIXML is required for custom camera parameters input" << std::endl;
         return 0;
@@ -130,18 +139,35 @@ int main(int argc, char **argv)
       drone.setStreamingMode(0);          // Set lowest latency stream mode
       drone.setVideoStabilisationMode(0); // Disable video stabilisation
 
-      drone.doFlatTrim();  // Flat trim calibration
-      drone.takeOff(true); // Take off
+      drone.doFlatTrim(); // Flat trim calibration
+                          //      drone.takeOff(true); // Take off
 
       drone.startStreaming(); // Start streaming and decoding video data
 
       drone.setExposure(1.5f);
 
+      drone.setCameraOrientation(-15., 0., true);
+
       vpImage<unsigned char> I;
       drone.getGrayscaleImage(I);
-      vpDisplayX display(I, 100, 100, "DRONE VIEW");
+
+#if defined VISP_HAVE_X11
+      vpDisplayX display;
+#elif defined VISP_HAVE_GTK
+      vpDisplayGTK display;
+#elif defined VISP_HAVE_GDI
+      vpDisplayGDI display;
+#elif defined VISP_HAVE_OPENCV
+      vpDisplayOpenCV display;
+#endif
+      int orig_displayX = 100;
+      int orig_displayY = 100;
+      display.init(I, orig_displayX, orig_displayY, "DRONE VIEW");
       vpDisplay::display(I);
       vpDisplay::flush(I);
+
+      vpPlot plotter(1, 700, 700, orig_displayX + static_cast<int>(I.getWidth()) + 20, orig_displayY, "Curves...");
+      unsigned int iter = 0;
 
       vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
       vpDetectorAprilTag detector(tagFamily); // The detector used to detect Apritags
@@ -151,7 +177,7 @@ int main(int argc, char **argv)
 
       vpCameraParameters cam;
 
-      if (has_opt_cam_parameters) {
+      if (opt_has_cam_parameters) {
 
         vpXmlParserCamera p;
         vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
@@ -159,13 +185,13 @@ int main(int argc, char **argv)
         if (p.parse(cam, opt_cam_parameters, "Camera", projModel, I.getWidth(), I.getHeight()) !=
             vpXmlParserCamera::SEQUENCE_OK) {
           std::cout << "Cannot find parameters in XML file " << opt_cam_parameters << std::endl;
-          cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, I.getWidth() / 2., I.getHeight() / 2.);
+          cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
         }
       } else {
-        cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, I.getWidth() / 2., I.getHeight() / 2.);
+        cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
       }
-
       cam.printParameters();
+
       double tagSize = 0.14;
 
       vpServo task; // Visual servoing task
@@ -176,13 +202,26 @@ int main(int argc, char **argv)
       task.setInteractionMatrixType(vpServo::CURRENT);
       task.setLambda(lambda);
 
-      vpRotationMatrix cRe{0, 1, 0, 0, 0, 1, 1, 0, 0};
+      /*
+       In the following section, camera 1 refers to camera coordonates system of the drone, but without taking pan and
+         tilt into account.
+       Those values are taken into consideration in Camera 2.
+       E is the effective coordinate system of the drone, the one in which we need to convert every velocity command.
 
-      vpTranslationVector cte(0, 0, -0.09);
+       We can easily compute homogeneous matrix between camera 1 and camera 2, and between camera 1
+         and effective coordonate system E of the drone.
+      */
+      vpRxyzVector c1_rxyz_c2(vpMath::rad(drone.getCurrentCameraTilt()), vpMath::rad(drone.getCurrentCameraPan()), 0);
+      vpRotationMatrix c1Rc2(c1_rxyz_c2);                      // Rotation between camera 1 and 2
+      vpHomogeneousMatrix c1Mc2(vpTranslationVector(), c1Rc2); // Homogeneous matrix between c1 and c2
 
-      vpHomogeneousMatrix cMe(cte, cRe);
+      vpRotationMatrix c1Re{0, 1, 0, 0, 0, 1, 1, 0, 0}; // Rotation between camera 1 and E
+      vpTranslationVector c1te(0, 0, -0.09);            // Translation between camera 1 and E
+      vpHomogeneousMatrix c1Me(c1te, c1Re);             // Homogeneous matrix between c1 and E
 
-      vpVelocityTwistMatrix cVe(cMe);
+      vpHomogeneousMatrix c2Me = c1Mc2.inverse() * c1Me; // Homogeneous matrix between c2 and E
+
+      vpVelocityTwistMatrix cVe(c2Me);
       task.set_cVe(cVe);
 
       vpMatrix eJe(6, 4, 0);
@@ -192,7 +231,7 @@ int main(int argc, char **argv)
       eJe[2][2] = 1;
       eJe[5][3] = 1;
 
-      double Z_d = 1.5; // Desired distance to the target
+      double Z_d = 1.; // Desired distance to the target
 
       // Define the desired polygon corresponding the the AprilTag CLOCKWISE
       double X[4] = {tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2.};
@@ -210,8 +249,7 @@ int main(int argc, char **argv)
       vpMomentBasic mb_d; // Here only to get the desired area m00
       vpMomentGravityCenter mg, mg_d;
       vpMomentCentered mc, mc_d;
-      vpMomentAreaNormalized man(0, Z_d),
-          man_d(0, Z_d); // Declare normalized area. Desired area parameter will be updated below with m00
+      vpMomentAreaNormalized man(0, Z_d), man_d(0, Z_d); // Declare normalized area updated below with m00
       vpMomentGravityCenterNormalized mgn, mgn_d; // Declare normalized gravity center
 
       // Desired moments
@@ -232,7 +270,7 @@ int main(int argc, char **argv)
         area = mb_d.get(2, 0) + mb_d.get(0, 2);
       else
         area = mb_d.get(0, 0);
-      // Update an moment with the desired area
+      // Update moment with the desired area
       man_d.setDesiredArea(area);
 
       man_d.compute(); // Compute area normalized moment AFTER centered moments
@@ -246,10 +284,18 @@ int main(int argc, char **argv)
       // Construct area normalized features
       vpFeatureMomentGravityCenterNormalized s_mgn(mdb, A, B, C), s_mgn_d(mdb_d, A, B, C);
       vpFeatureMomentAreaNormalized s_man(mdb, A, B, C), s_man_d(mdb_d, A, B, C);
+      vpFeatureVanishingPoint s_vp, s_vp_d;
 
       // Add the features
-      task.addFeature(s_mgn, s_mgn_d); //, vpFeatureMomentGravityCenterNormalized::selectXn());
+      task.addFeature(s_mgn, s_mgn_d);
       task.addFeature(s_man, s_man_d);
+      task.addFeature(s_vp, s_vp_d, vpFeatureVanishingPoint::selectAtanOneOverRho());
+
+      plotter.initGraph(0, 4);
+      plotter.setLegend(0, 0, "Xn");          // Distance from center on X axis feature
+      plotter.setLegend(0, 1, "Yn");          // Distance from center on Y axis feature
+      plotter.setLegend(0, 2, "an");          // Tag area feature
+      plotter.setLegend(0, 3, "atan(1/rho)"); // Vanishing point feature
 
       // Update desired gravity center normalized feature
       s_mgn_d.update(A, B, C);
@@ -258,10 +304,17 @@ int main(int argc, char **argv)
       s_man_d.update(A, B, C);
       s_man_d.compute_interaction();
 
-      bool runLoop = true;
+      // Update desired vanishing point feature for the horizontal line
+      s_vp_d.setAtanOneOverRho(0);
+      s_vp_d.setAlpha(0);
 
-      // Visual servoing loop
-      while (drone.isRunning() && runLoop) {
+      bool runLoop = true;
+      bool vec_ip_has_been_sorted = false;
+      std::vector<std::pair<size_t, vpImagePoint> > vec_ip_sorted;
+
+      //** Visual servoing loop **//
+      while (drone.isRunning() && drone.isStreaming() && runLoop) {
+
         double startTime = vpTime::measureTimeMs();
 
         drone.getGrayscaleImage(I);
@@ -289,17 +342,6 @@ int main(int argc, char **argv)
             vec_P.push_back(P);
           }
 
-          // Display visual features
-          vpDisplay::displayPolygon(I, vec_ip, vpColor::green, 3); // Current polygon used to compure an moment
-          vpDisplay::displayCross(I, detector.getCog(0), 15, vpColor::green,
-                                  3); // Current polygon used to compute a moment
-          vpDisplay::displayLine(I, 0, static_cast<int>(cam.get_u0()), static_cast<int>(I.getHeight()) - 1,
-                                 static_cast<int>(cam.get_u0()), vpColor::red,
-                                 3); // Vertical line as desired x position
-          vpDisplay::displayLine(I, static_cast<int>(cam.get_v0()), 0, static_cast<int>(cam.get_v0()),
-                                 static_cast<int>(I.getWidth()) - 1, vpColor::red,
-                                 3); // Horizontal line as desired y position
-
           // Current moments
           m_obj.setType(vpMomentObject::DENSE_POLYGON); // Consider the AprilTag as a polygon
           m_obj.fromVector(vec_P);                      // Initialize the object with the points coordinates
@@ -311,15 +353,36 @@ int main(int argc, char **argv)
           mdb.updateAll(m_obj); // All of the moments must be updated, not just an_d
           mg.compute();         // Compute gravity center moment
           mc.compute();         // Compute centered moments AFTER gravity center
-          man.setDesiredArea(
-              area);     // Since desired area was init at 0, because unknow at contruction, need to be updated here
-          man.compute(); // Compute area normalized moment AFTER centered moment
-          mgn.compute(); // Compute gravity center normalized moment AFTER area normalized moment
+          man.setDesiredArea(area); // Desired area was init at 0 (unknow at contruction), need to be updated here
+          man.compute();            // Compute area normalized moment AFTER centered moment
+          mgn.compute();            // Compute gravity center normalized moment AFTER area normalized moment
 
           s_mgn.update(A, B, C);
           s_mgn.compute_interaction();
           s_man.update(A, B, C);
           s_man.compute_interaction();
+
+          /* Sort points from their height in the image, and keep original indexes.
+          This is done once, in order to be independent from the orientation of the tag
+          when detecting vanishing points. */
+          if (!vec_ip_has_been_sorted) {
+            for (size_t i = 0; i < vec_ip.size(); i++) {
+
+              // Add the points and their corresponding index
+              std::pair<size_t, vpImagePoint> index_pair = std::pair<size_t, vpImagePoint>(i, vec_ip[i]);
+              vec_ip_sorted.push_back(index_pair);
+            }
+
+            // Sort the points and indexes from the v value of the points
+            std::sort(vec_ip_sorted.begin(), vec_ip_sorted.end(), compareImagePoint);
+
+            vec_ip_has_been_sorted = true;
+          }
+
+          // Use the two highest points for the first line, and the two others for the second line.
+          vpFeatureBuilder::create(s_vp, cam, vec_ip[vec_ip_sorted[0].first], vec_ip[vec_ip_sorted[1].first],
+                                   vec_ip[vec_ip_sorted[2].first], vec_ip[vec_ip_sorted[3].first],
+                                   vpFeatureVanishingPoint::selectAtanOneOverRho());
 
           task.set_cVe(cVe);
           task.set_eJe(eJe);
@@ -329,6 +392,31 @@ int main(int argc, char **argv)
 
           // Sending the control law to the drone
           drone.setVelocity(ve, 1.0);
+
+          for (size_t i = 0; i < 4; i++) {
+            vpDisplay::displayCross(I, vec_ip[i], 15, vpColor::red, 1);
+            std::stringstream ss;
+            ss << i;
+            vpDisplay::displayText(I, vec_ip[i] + vpImagePoint(15, 15), ss.str(), vpColor::green);
+          }
+
+          // Display visual features
+          vpDisplay::displayPolygon(I, vec_ip, vpColor::green, 3); // Current polygon used to compure an moment
+          vpDisplay::displayCross(I, detector.getCog(0), 15, vpColor::green,
+                                  3); // Current polygon used to compute a moment
+          vpDisplay::displayLine(I, 0, static_cast<int>(cam.get_u0()), static_cast<int>(I.getHeight()) - 1,
+                                 static_cast<int>(cam.get_u0()), vpColor::red,
+                                 3); // Vertical line as desired x position
+          vpDisplay::displayLine(I, static_cast<int>(cam.get_v0()), 0, static_cast<int>(cam.get_v0()),
+                                 static_cast<int>(I.getWidth()) - 1, vpColor::red,
+                                 3); // Horizontal line as desired y position
+
+          // Display lines corresponding to the vanishing point for the horizontal lines
+          vpDisplay::displayLine(I, vec_ip[vec_ip_sorted[0].first], vec_ip[vec_ip_sorted[1].first], vpColor::red, 1,
+                                 false);
+          vpDisplay::displayLine(I, vec_ip[vec_ip_sorted[2].first], vec_ip[vec_ip_sorted[3].first], vpColor::red, 1,
+                                 false);
+
         } else {
           std::stringstream sserr;
           sserr << "Failed to detect an Apriltag, or detected multiple ones";
@@ -344,12 +432,15 @@ int main(int argc, char **argv)
           runLoop = false;
         }
 
+        plotter.plot(0, iter, task.getError());
+
         double totalTime = vpTime::measureTimeMs() - startTime;
         std::stringstream sstime;
         sstime << "Total time: " << totalTime << " ms";
         vpDisplay::displayText(I, 80, 20, sstime.str(), vpColor::red);
         vpDisplay::flush(I);
 
+        iter++;
         vpTime::wait(startTime, 40.0); // We wait a total of 40 milliseconds
       }
 
