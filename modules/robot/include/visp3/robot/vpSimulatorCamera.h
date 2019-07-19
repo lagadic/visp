@@ -61,12 +61,12 @@
   It evolves as a gentry robot with respect to a world frame. This class
   is similar to vpRobotCamera class except that here the position of the robot
   is provided as the transformation from world frame to camera frame; wMc.
-This representation is more intuitive than the one implemented in
-vpRobotCamera where the transformation from camera to world frame is
-considered; cMw.
+  This representation is more intuitive than the one implemented in
+  vpRobotCamera where the transformation from camera to world frame is
+  considered; cMw.
 
   For this particular simulated robot, the end-effector and camera frame are
-confused. That means that the cMe transformation is equal to identity.
+  confused. That means that the cMe transformation is equal to identity.
 
   The robot jacobian expressed in the end-effector frame
   \f$ {^e}{\bf J}_e \f$ is also set to identity (see get_eJe()).

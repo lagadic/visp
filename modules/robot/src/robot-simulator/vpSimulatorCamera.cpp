@@ -227,8 +227,21 @@ void vpSimulatorCamera::setVelocity(const vpRobot::vpControlFrameType frame, con
 
     break;
   case vpRobot::END_EFFECTOR_FRAME:
-    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the end-effector frame:"
-                                                              "functionality not implemented");
+    vpColVector v_max(6);
+
+    for (unsigned int i = 0; i < 3; i++)
+      v_max[i] = getMaxTranslationVelocity();
+    for (unsigned int i = 3; i < 6; i++)
+      v_max[i] = getMaxRotationVelocity();
+
+    vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
+
+    wMc_ = wMc_ * vpExponentialMap::direct(v_sat, delta_t_);
+    setRobotFrame(frame);
+    break;
+
+//    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in the end-effector frame:"
+//                                                              "functionality not implemented");
 
     break;
   }
