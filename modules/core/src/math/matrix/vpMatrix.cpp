@@ -1548,7 +1548,12 @@ void vpMatrix::stackColumns(vpColVector &out)
   if ((out.rowNum != colNum * rowNum) || (out.colNum != 1))
     out.resize(colNum * rowNum, false, false);
 
-  memcpy(out.data, data, sizeof(double)*out.getRows());
+  double *optr = out.data;
+  for (unsigned int j = 0; j < colNum; j++) {
+    for (unsigned int i = 0; i < rowNum; i++) {
+      *(optr++) = rowPtrs[i][j];
+    }
+  }
 }
 
 /*!
