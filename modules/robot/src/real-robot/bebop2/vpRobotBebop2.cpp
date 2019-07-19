@@ -90,22 +90,28 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
   \warning If the connection to the drone failed, commands will not be accepted. After having called this constructor,
   it is recommanded to check if the drone is running with isRunning() before sending commands to the drone.
 
-  If the connection succeded, sets the following parameters to their default values :
-    - Max roll and pitch to 10 degrees.
-    - Video stabilisation to 0 (no stabilisation).
-    - Video exposure to +1.5 (maximum).
-    - Video streaming mode to 0 (lowest latency, average reliability).
-    - Video streaming resolution mode to 0 (480p, 856x480).
+  If the drone successfuly connected, set the streaming resolution mode to 0 (480p, 856x480),
+    because 720p is unstable.
 
   \param[in] verbose : turn verbose on or off
     If verbose is true : info, warning, error and fatal error messages are displayed.
     If verbose is false : only warning, error and fatal error messages are displayed.
+
+  \param[in] setDefaultSettings : set default settings or not
+    If setDefaultSettings is true : the drone is reset to factory settings and the following parameters are set :
+      - Max roll and pitch to 10 degrees.
+      - Video stabilisation to 0 (no stabilisation).
+      - Video exposure to +1.5 (maximum).
+      - Video streaming mode to 0 (lowest latency, average reliability).
+      - Set camera orientation to 0 degrees for tilt and 0 degrees for pan
+    If setDefaultSettings is false : the current settings are unchanged.
+
   \param[in] ipAddress : ip address used to discover the drone on the wifi network.
   \param[in] discoveryPort : port used to discover the drone on the wifi network.
 
   \exception vpException::fatalError : If the program failed to connect to the drone.
 */
-vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryPort)
+vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string ipAddress, int discoveryPort)
   : m_ipAddress(ipAddress), m_discoveryPort(discoveryPort)
 {
   // Setting up signal handling
@@ -136,6 +142,8 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   m_streamingStarted = false;
   m_streamingModeSet = false;
   m_settingsReset = false;
+
+  m_maxTilt = -1;
 
   m_cameraHorizontalFOV = -1;
   m_currentCameraTilt = -1;
@@ -177,13 +185,18 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, std::string ipAddress, int discoveryP
   } else {
     m_running = true;
 
-    resetAllSettings();
+    setVideoResolution(0); // 720p streaming is unstable, so we force this setting to 480p
 
-    setMaxTilt(10);
-    setVideoResolution(0);
-    setVideoStabilisationMode(0);
-    setExposure(1.5f);
-    setStreamingMode(0);
+    if (setDefaultSettings) {
+      resetAllSettings();
+
+      setMaxTilt(10);
+
+      setVideoStabilisationMode(0);
+      setExposure(1.5f);
+      setStreamingMode(0);
+      setCameraOrientation(0, 0, true);
+    }
   }
 }
 
@@ -238,6 +251,8 @@ double vpRobotBebop2::getMaxTilt() { return m_maxTilt; }
 /*!
 
   Gets current battery level.
+
+  \warning When the drone battery gets to 0, it will automatically land and won't process any command.
 */
 unsigned int vpRobotBebop2::getBatteryLevel() { return m_batteryLevel; }
 
@@ -740,6 +755,9 @@ void vpRobotBebop2::setMaxTilt(double maxTilt)
 /*!
 
   Stops any drone movement.
+
+  \warning Depending on the speed of the drone when the function is called, the drone may still move a bit until it
+    stabilizes.
 */
 void vpRobotBebop2::stopMoving()
 {
@@ -910,6 +928,9 @@ void vpRobotBebop2::setStreamingMode(int mode)
   \param[in] mode : desired streaming mode.
     If mode = 0 (default mode), the resolution is 480p (856x480).
     If mode = 1, the resolution is 720p (1280x720).
+
+  \warning 720p mode is very unstable ! For an unknown reason, FFmpeg H264 stream decoder will sometimes fail to
+  register SPS and PPS frames needed to decode the stream. Use with caution...
 */
 void vpRobotBebop2::setVideoResolution(int mode)
 {
@@ -1659,19 +1680,27 @@ void vpRobotBebop2::cmdCameraOrientationChangedRcv(ARCONTROLLER_DICTIONARY_ELEME
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_CAMERASTATE_ORIENTATIONV2_TILT, arg);
 
     if (arg != NULL) {
-      drone->m_currentCameraTilt = arg->value.Double;
+      drone->m_currentCameraTilt = static_cast<double>(arg->value.Float);
     }
 
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_CAMERASTATE_ORIENTATIONV2_PAN, arg);
     if (arg != NULL) {
-      drone->m_currentCameraPan = arg->value.Double;
+      drone->m_currentCameraPan = static_cast<double>(arg->value.Float);
     }
   }
-  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG,
-              "    - Camera orientation settings changed, new values :\n Pan : %f degrees, Tilt : %f degrees.",
-              static_cast<double>(drone->m_currentCameraPan), static_cast<double>(drone->m_currentCameraTilt));
 }
 
+/*!
+
+  Gets the camera orientation values : min and max pan and tilt values which are sent via a callback when the drone
+  connects.
+    Stores the values in m_minCameraTilt, m_maxCameraTilt, m_minCameraPan and m_maxCameraPan.
+
+  \param[in] elementDictionary : the object containing the data received.
+  \param[in] drone : pointer to the drone who called the callback.
+
+  \sa commandReceivedCallback()
+*/
 void vpRobotBebop2::cmdCameraSettingsRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone)
 {
   ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
@@ -1681,35 +1710,35 @@ void vpRobotBebop2::cmdCameraSettingsRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elem
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_FOV,
                   arg);
     if (arg != NULL) {
-      drone->m_cameraHorizontalFOV = arg->value.Double;
+      drone->m_cameraHorizontalFOV = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Camera horizontal FOV : %f degrees.",
                   static_cast<double>(drone->m_cameraHorizontalFOV));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_PANMAX, arg);
     if (arg != NULL) {
-      drone->m_maxCameraPan = arg->value.Double;
+      drone->m_maxCameraPan = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Max camera pan : %f degrees.",
                   static_cast<double>(drone->m_maxCameraPan));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_PANMIN, arg);
     if (arg != NULL) {
-      drone->m_minCameraPan = arg->value.Double;
+      drone->m_minCameraPan = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Min camera pan : %f degrees.",
                   static_cast<double>(drone->m_minCameraPan));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_TILTMAX, arg);
     if (arg != NULL) {
-      drone->m_maxCameraTilt = arg->value.Double;
+      drone->m_maxCameraTilt = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Max camera tilt : %f degrees.",
                   static_cast<double>(drone->m_maxCameraTilt));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_TILTMIN, arg);
     if (arg != NULL) {
-      drone->m_minCameraTilt = arg->value.Double;
+      drone->m_minCameraTilt = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Min camera tilt : %f degrees.",
                   static_cast<double>(drone->m_minCameraTilt));
     }
@@ -1737,7 +1766,7 @@ void vpRobotBebop2::cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED_CURRENT,
                   arg);
     if (arg != NULL) {
-      drone->m_maxTilt = arg->value.Double;
+      drone->m_maxTilt = static_cast<double>(arg->value.Float);
     }
   }
 }

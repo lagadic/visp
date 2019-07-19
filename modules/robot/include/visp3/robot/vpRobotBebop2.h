@@ -71,7 +71,8 @@ extern "C" {
 class VISP_EXPORT vpRobotBebop2
 {
 public:
-  vpRobotBebop2(bool verbose = false, std::string ipAddress = "192.168.42.1", int discoveryPort = 44444);
+  vpRobotBebop2(bool verbose = false, bool setDefaultSettings = true, std::string ipAddress = "192.168.42.1",
+                int discoveryPort = 44444);
   virtual ~vpRobotBebop2();
 
   void doFlatTrim();

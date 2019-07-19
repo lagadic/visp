@@ -102,25 +102,43 @@ int main(int argc, char **argv)
     std::string opt_cam_parameters;
     bool opt_has_cam_parameters = false;
 
-    for (int i = 0; i < argc; i++) {
+    double tagSize = -1;
 
-      if (std::string(argv[i]) == "--intrinsic") {
+    double opt_distance_to_tag = -1;
+    bool opt_has_distance_to_tag = false;
+
+    if (argc >= 3 && std::string(argv[1]) == "--tag_size") {
+      tagSize = std::atof(argv[2]); // Tag size option is required
+
+      for (int i = 3; i < argc; i++) {
+
+        if (std::string(argv[i]) == "--distance_to_tag" && i + 1 < argc) {
+          opt_distance_to_tag = std::atof(argv[i + 1]);
+          opt_has_distance_to_tag = true;
+
+        } else if (std::string(argv[i]) == "--intrinsic") {
 
 #ifdef VISP_HAVE_PUGIXML
-        opt_cam_parameters = std::string(argv[i + 1]);
-        opt_has_cam_parameters = true;
+          opt_cam_parameters = std::string(argv[i + 1]);
+          opt_has_cam_parameters = true;
 #else
-        std::cout << "PUGIXML is required for custom camera parameters input" << std::endl;
-        return 0;
+          std::cout << "PUGIXML is required for custom camera parameters input." << std::endl;
+          return 0;
 #endif
-
-      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--intrinsic <XML file containing computed intrinsic camera parameters (default: empty>]"
-                     " [--help] [-h]\n"
-                  << std::endl;
-        return 0;
+        }
       }
+    } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
+      std::cout << "\nUsage: " << argv[0]
+                << " [--tag_size <The size of the tag to detect in meters, required.>]\n"
+                   " [--distance_to_tag <The desired distance to the tag in meters (default: 1 meter)>]\n"
+                   " [--intrinsic <XML file containing computed intrinsic camera parameters (default: empty)>]\n"
+                   " [--help] [-h]\n"
+                << std::endl;
+      return 0;
+
+    } else {
+      std::cout << "Error : tag size parameter required." << std::endl << "See " << argv[0] << " --help" << std::endl;
+      return 0;
     }
 
     std::cout << "\nWARNING: this program does no sensing or avoiding of "
@@ -130,7 +148,7 @@ int main(int argc, char **argv)
                  "drone has approximately 3 meters of free space on all sides.\n"
               << std::endl;
 
-    vpRobotBebop2 drone(false); // Create the drone with low verbose level
+    vpRobotBebop2 drone(true); // Create the drone with low verbose level
 
     if (drone.isRunning()) {
 
@@ -140,13 +158,14 @@ int main(int argc, char **argv)
       drone.setVideoStabilisationMode(0); // Disable video stabilisation
 
       drone.doFlatTrim(); // Flat trim calibration
-                          //      drone.takeOff(true); // Take off
 
       drone.startStreaming(); // Start streaming and decoding video data
 
-      drone.setExposure(1.5f);
+      drone.setExposure(1.5f); // Set exposure to max so that the aprilTag detection is more efficient
 
-      drone.setCameraOrientation(-15., 0., true);
+      drone.setCameraOrientation(-15., 0., true); // Set camera to look slightly down
+
+      drone.takeOff(true); // Take off
 
       vpImage<unsigned char> I;
       drone.getGrayscaleImage(I);
@@ -166,7 +185,8 @@ int main(int argc, char **argv)
       vpDisplay::display(I);
       vpDisplay::flush(I);
 
-      vpPlot plotter(1, 700, 700, orig_displayX + static_cast<int>(I.getWidth()) + 20, orig_displayY, "Curves...");
+      vpPlot plotter(1, 700, 700, orig_displayX + static_cast<int>(I.getWidth()) + 20, orig_displayY,
+                     "Visual servoing tasks");
       unsigned int iter = 0;
 
       vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
@@ -185,14 +205,21 @@ int main(int argc, char **argv)
         if (p.parse(cam, opt_cam_parameters, "Camera", projModel, I.getWidth(), I.getHeight()) !=
             vpXmlParserCamera::SEQUENCE_OK) {
           std::cout << "Cannot find parameters in XML file " << opt_cam_parameters << std::endl;
-          cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
+          if (drone.getVideoHeight() == 720) { // 720p streaming
+            cam.initPersProjWithoutDistortion(785.6412585, 785.3322447, 637.9049857, 359.7524531);
+          } else { // 480p streaming
+            cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
+          }
         }
       } else {
-        cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
+        std::cout << "Setting default camera parameters ... " << std::endl;
+        if (drone.getVideoHeight() == 720) { // 720p streaming
+          cam.initPersProjWithoutDistortion(785.6412585, 785.3322447, 637.9049857, 359.7524531);
+        } else { // 480p streaming
+          cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
+        }
       }
       cam.printParameters();
-
-      double tagSize = 0.14;
 
       vpServo task; // Visual servoing task
 
@@ -231,7 +258,8 @@ int main(int argc, char **argv)
       eJe[2][2] = 1;
       eJe[5][3] = 1;
 
-      double Z_d = 1.; // Desired distance to the target
+      //      double Z_d = 1.; // Desired distance to the target
+      double Z_d = (opt_has_distance_to_tag ? opt_distance_to_tag : 1.);
 
       // Define the desired polygon corresponding the the AprilTag CLOCKWISE
       double X[4] = {tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2.};
@@ -450,7 +478,6 @@ int main(int argc, char **argv)
       std::cout << "ERROR : failed to setup drone control." << std::endl;
       return EXIT_FAILURE;
     }
-
   } catch (const vpException &e) {
     std::cout << "Caught an exception: " << e << std::endl;
     return EXIT_FAILURE;
