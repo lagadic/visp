@@ -55,73 +55,68 @@
   \class vpFeatureVanishingPoint
   \ingroup group_visual_features
 
-  \brief Class that defines 2D vanishing point visual feature (Z
-  coordinate in 3D space is infinity).
+  Class that defines 2D vanishing point visual features. Various features can be considered:
+
+  - Either the cartesian coordinates \f$ (x, y) \f$ of the vanishing point obtained from the intersection of two lines;
+    in that case \f$ {\bf s} = (x, y) \f$ and the corresponding interaction matrices are:
+    \f[ L_x = \left[ \begin{array}{cccccc} 0 & 0 & 0 & x y & -(1 + x^2) & y \end{array} \right] \f]
+    \f[ L_y = \left[ \begin{array}{cccccc} 0 & 0 & 0 & 1 + y * y & -xy & -x \end{array} \right] \f]
+
+  - Rather features fonction of the polar coordinates of the vanishing point obtained themselves from the polar coordinates of the two lines
+    \f$(\rho_1, \theta_1)\f$ and \f$(\rho_2, \theta_2)\f$;
+    in that case \f$ {\bf s} = (\arctan(1/\rho), 1/\rho, \alpha) \f$ with:
+    \f[ 1/\rho = \frac{\sin(\theta_1 - \theta_2)}{\sqrt{\rho_1^2 + \rho_2^2 - 2 \rho_1 \rho_2 cos(\theta_1 - \theta_2)}} \f]
+    \f[ \alpha = \frac{\rho_1 \cos \theta_2 - \rho_2 cos \theta_1}{\sqrt{\rho_1^2 + \rho_2^2 - 2 \rho_1 \rho_2 cos(\theta_1 - \theta_2)}} \f]
+    The corresponding interaction matrices are:
+    \f[ L_{\arctan(\frac{1}{\rho})} = \left[ \begin{array}{cccccc} 0 & 0 & 0 & - \sin \alpha & \cos \alpha & 0 \end{array} \right] \f]
+    \f[ L_{\frac{1}{\rho}} = \left[ \begin{array}{cccccc} 0 & 0 & 0 & -(1 + \frac{1}{\rho^2}) \sin \alpha & (1 + \frac{1}{\rho^2}) \cos \alpha & 0 \end{array} \right] \f]
+    \f[ L_{\alpha} = \left[ \begin{array}{cccccc} 0 & 0 & 0 & \frac{\cos \alpha}{\rho} & \frac{\sin \alpha}{\rho}  & -1 \end{array} \right] \f]
 */
 class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
 {
 public:
-  typedef enum {
-    X = 1, // x coordinates
-    Y = 2  // y coordinates
-  } vpFeatureVanishingPointType;
-
-  /*
-    attributes and members directly related to the vpBasicFeature needs
-    other functionalities ar useful but not mandatory
-  */
-  // no Z required
+  static unsigned int selectAlpha();
+  static unsigned int selectAtanOneOverRho();
+  static unsigned int selectOneOverRho();
+  static unsigned int selectX();
+  static unsigned int selectY();
 
 public:
-  //! Default constructor.
   vpFeatureVanishingPoint();
   //! Destructor.
   virtual ~vpFeatureVanishingPoint() {}
 
-  // void buildFrom(const vpPoint &p) ;
-  void buildFrom(const double _x, const double _y);
+  void buildFrom(const double x, const double y);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
 
-  //! feature duplication
   vpFeatureVanishingPoint *duplicate() const;
 
-  //! compute the error between two visual features from a subset
-  //! a the possible features
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
-  //! compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = (selectX() | selectY()));
 
-  //! get the point x-coordinates
   double get_x() const;
-  //! get the point y-coordinates
   double get_y() const;
+  double getAtanOneOverRho() const;
+  double getOneOverRho() const;
+  double getAlpha() const;
 
-  //! Default initialization.
   void init();
-  //! compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(const unsigned int select = (selectX() | selectY()));
 
-  //! print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(const unsigned int select = (selectX() | selectY())) const;
 
-  //! Set the point x-coordinates
-  void set_x(const double _x);
-  //! Set the point y-coordinates
-  void set_y(const double _y);
-  //! Set the point xy coordinates
-  void set_xy(const double _x, const double _y);
+  void set_x(const double x);
+  void set_y(const double y);
+  void set_xy(const double x, const double y);
+  void setAtanOneOverRho(const double atan_one_over_rho);
+  void setOneOverRho(const double one_over_rho);
+  void setAlpha(const double alpha);
 
-public:
-  /*
-    vpBasicFeature method instantiation
-  */
-  // feature selection
-  static unsigned int selectX();
-  static unsigned int selectY();
+protected:
+  unsigned int m_select; // Memory to know which features are used for display;
 };
 
 #endif

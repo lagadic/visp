@@ -55,11 +55,15 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
+/*!
+ * Vanishing point visual feature initialization.
+ */
 void vpFeatureVanishingPoint::init()
 {
-  // feature dimension
-  dim_s = 2;
-  nbParameters = 2;
+  // Feature dimension
+  dim_s = 5;
+  nbParameters = 5;
+  m_select = 0;
 
   // memory allocation
   s.resize(dim_s);
@@ -67,38 +71,82 @@ void vpFeatureVanishingPoint::init()
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
-
-  // Z not required  (infinity)
-  // set_Z(1) ;
 }
+
+//! Default constructor that calls init().
 vpFeatureVanishingPoint::vpFeatureVanishingPoint() { init(); }
 
-//! set the point x-coordinates
-void vpFeatureVanishingPoint::set_x(const double _x)
+//! Set vanishing point feature \f$ x \f$ value.
+void vpFeatureVanishingPoint::set_x(const double x)
 {
-  s[0] = _x;
+  s[0] = x;
   flags[0] = true;
+  m_select |= selectX();
 }
-//! get the point x-coordinates
+
+//! Get vanishing point feature \f$ x \f$ value.
 double vpFeatureVanishingPoint::get_x() const { return s[0]; }
 
-//! set the point y-coordinates
-void vpFeatureVanishingPoint::set_y(const double _y)
+//! Set vanishing point feature \f$ y \f$ value.
+void vpFeatureVanishingPoint::set_y(const double y)
 {
-  s[1] = _y;
+  s[1] = y;
   flags[1] = true;
+  m_select |= selectY();
 }
-//! get the point y-coordinates
+
+//! Get vanishing point feature \f$ y \f$ value.
 double vpFeatureVanishingPoint::get_y() const { return s[1]; }
 
-//! set the point xy coordinates
-void vpFeatureVanishingPoint::set_xy(const double _x, const double _y)
+//! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as buildFrom().
+void vpFeatureVanishingPoint::set_xy(const double x, const double y)
 {
-  set_x(_x);
-  set_y(_y);
+  set_x(x);
+  set_y(y);
+  m_select = selectX() | selectY();
 }
 
-//! compute the interaction matrix from a subset of the possible features
+//! Set vanishing point feature \f$ 1/\rho \f$ value.
+void vpFeatureVanishingPoint::setOneOverRho(const double one_over_rho)
+{
+  s[2] = one_over_rho;
+  flags[2] = true;
+  m_select |= selectOneOverRho();
+}
+
+//! Set vanishing point feature \f$ \arctan(1/\rho) \f$ value.
+void vpFeatureVanishingPoint::setAtanOneOverRho(const double atan_one_over_rho)
+{
+  s[3] = atan_one_over_rho;
+  flags[3] = true;
+  m_select |= selectAtanOneOverRho();
+}
+
+//! Get vanishing point feature \f$ 1/\rho \f$ value.
+double vpFeatureVanishingPoint::getOneOverRho() const { return s[2]; }
+
+//! Get vanishing point feature \f$ \arctan(1/\rho) \f$ value.
+double vpFeatureVanishingPoint::getAtanOneOverRho() const { return s[3]; }
+
+//! Set vanishing point feature \f$ \alpha \f$ value.
+void vpFeatureVanishingPoint::setAlpha(const double alpha)
+{
+  s[4] = alpha;
+  flags[4] = true;
+  m_select |= selectAlpha();
+}
+
+//! Get vanishing point feature \f$ \alpha \f$ value.
+double vpFeatureVanishingPoint::getAlpha() const { return s[4]; }
+
+/*!
+ * Compute the interaction matrix from a subset of the possible features.
+ *
+ * \param select : Feature selector. Value is either selectX() to select x visual feature, selectY()
+ * for y visual feature, selectOneOverRho() for \f$ 1/\rho \f$, or selectAlpha() for
+ * \f$ \alpha \f$ visual feature. You can also use a combination like selectX() | selectY() to
+ * select x and y visual features.
+ */
 vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
 {
   vpMatrix L;
@@ -110,12 +158,19 @@ vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
       if (flags[i] == false) {
         switch (i) {
         case 0:
-          vpTRACE("Warning !!!  The interaction matrix is computed but x was "
-                  "not set yet");
+          vpTRACE("Warning !!!  The interaction matrix is computed but x was not set yet");
           break;
         case 1:
-          vpTRACE("Warning !!!  The interaction matrix is computed but y was "
-                  "not set yet");
+          vpTRACE("Warning !!!  The interaction matrix is computed but y was not set yet");
+          break;
+        case 2:
+          vpTRACE("Warning !!! The interaction matrix is computed but 1/rho was not set yet");
+          break;
+        case 3:
+          vpTRACE("Warning !!! The interaction matrix is computed but atan(1/rho) was not set yet");
+          break;
+        case 4:
+          vpTRACE("Warning !!! The interaction matrix is computed but alpha was not set yet");
           break;
         default:
           vpTRACE("Problem during the reading of the variable flags");
@@ -125,10 +180,9 @@ vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
     resetFlags();
   }
 
-  double x = get_x();
-  double y = get_y();
-
   if (vpFeatureVanishingPoint::selectX() & select) {
+    double x = get_x();
+    double y = get_y();
     vpMatrix Lx(1, 6);
     Lx = 0;
 
@@ -143,6 +197,8 @@ vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
   }
 
   if (vpFeatureVanishingPoint::selectY() & select) {
+    double x = get_x();
+    double y = get_y();
     vpMatrix Ly(1, 6);
     Ly = 0;
 
@@ -155,106 +211,217 @@ vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
 
     L = vpMatrix::stack(L, Ly);
   }
+
+  if (vpFeatureVanishingPoint::selectOneOverRho() & select) {
+    double one_over_rho = getOneOverRho();
+    double alpha = getAlpha();
+    vpMatrix Lone_over_rho(1, 6);
+    double rho2 = 1. + one_over_rho * one_over_rho;
+
+    Lone_over_rho[0][0] = 0.;
+    Lone_over_rho[0][1] = 0.;
+    Lone_over_rho[0][2] = 0.;
+    Lone_over_rho[0][3] = - rho2 * sin(alpha);
+    Lone_over_rho[0][4] =   rho2 * cos(alpha);
+    Lone_over_rho[0][5] = 0.;
+
+    L = vpMatrix::stack(L, Lone_over_rho);
+  }
+
+  if (vpFeatureVanishingPoint::selectAtanOneOverRho() & select) {
+    double alpha = getAlpha();
+    vpMatrix Latan_one_over_rho(1, 6);
+
+    Latan_one_over_rho[0][0] = 0.;
+    Latan_one_over_rho[0][1] = 0.;
+    Latan_one_over_rho[0][2] = 0.;
+    Latan_one_over_rho[0][3] = - sin(alpha);
+    Latan_one_over_rho[0][4] =   cos(alpha);
+    Latan_one_over_rho[0][5] = 0.;
+
+    L = vpMatrix::stack(L, Latan_one_over_rho);
+  }
+
+  if (vpFeatureVanishingPoint::selectAlpha() & select) {
+    double one_over_rho = getOneOverRho();
+    double alpha = getAlpha();
+    vpMatrix Lalpha(1, 6);
+
+    Lalpha[0][0] = 0;
+    Lalpha[0][1] = 0.;
+    Lalpha[0][2] = 0.;
+    Lalpha[0][3] = cos(alpha) * one_over_rho;
+    Lalpha[0][4] = sin(alpha) * one_over_rho;
+    Lalpha[0][5] = -1.;
+
+    L = vpMatrix::stack(L, Lalpha);
+  }
+
   return L;
 }
 
-/*! compute the error between two visual features from a subset of the
-  possible features
+/*!
+ * Compute the error between two visual features from a subset of the
+ * possible features.
+ *
+ * \param s_star : Desired visual feature \f$ {\bf s}^* \f$.
+ *
+ * \param select : Feature selector. Value is either selectX() to select x visual feature, selectY()
+ * for y visual feature, selectOneOverRho() for \f$ 1/\rho \f$, or selectAlpha() for
+ * \f$ \alpha \f$ visual feature. You can also use a combination like selectX() | selectY() to
+ * select x and y visual features.
  */
 vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, const unsigned int select)
 {
   vpColVector e(0);
 
-  try {
-    if (vpFeatureVanishingPoint::selectX() & select) {
-      vpColVector ex(1);
-      ex[0] = s[0] - s_star[0];
+  if (vpFeatureVanishingPoint::selectX() & select) {
+    vpColVector ex(1);
+    ex[0] = s[0] - s_star[0];
 
-      e = vpColVector::stack(e, ex);
-    }
-
-    if (vpFeatureVanishingPoint::selectY() & select) {
-      vpColVector ey(1);
-      ey[0] = s[1] - s_star[1];
-      e = vpColVector::stack(e, ey);
-    }
-  } catch (...) {
-    throw;
+    e = vpColVector::stack(e, ex);
   }
+
+  if (vpFeatureVanishingPoint::selectY() & select) {
+    vpColVector ey(1);
+    ey[0] = s[1] - s_star[1];
+    e = vpColVector::stack(e, ey);
+  }
+
+  if (vpFeatureVanishingPoint::selectOneOverRho() & select) {
+    vpColVector e_one_over_rho(1);
+    e_one_over_rho[0] = s[2] - s_star[2];
+
+    e = vpColVector::stack(e, e_one_over_rho);
+  }
+
+  if (vpFeatureVanishingPoint::selectAtanOneOverRho() & select) {
+    vpColVector e_atan_one_over_rho(1);
+    e_atan_one_over_rho[0] = s[3] - s_star[3];
+
+    e = vpColVector::stack(e, e_atan_one_over_rho);
+  }
+
+  if (vpFeatureVanishingPoint::selectAlpha() & select) {
+    vpColVector e_alpha(1);
+    double err = s[4] - s_star[4];
+
+    if (err < -M_PI)
+      err += 2 * M_PI;
+    if (err > M_PI)
+      err -= 2 * M_PI;
+
+    e_alpha[0] = err;
+    e = vpColVector::stack(e, e_alpha);
+  }
+
   return e;
 }
 
+/*!
+ * Print vanishing point features values to stdout.
+ *
+ * \param select : Use either selectX() to display x value, selectY() to display y value,
+ * select selectOneOverRho() to display \f$ 1/\rho \f$ value, or selectAlpha() to display
+ * \f$ \alpha \f$ value. You can also use a combination like selectX() | selectY() to
+ * display x and y values.
+ */
 void vpFeatureVanishingPoint::print(const unsigned int select) const
 {
-
-  std::cout << "Point: " << std::endl;
+  std::cout << "Vanishing point:";
   if (vpFeatureVanishingPoint::selectX() & select)
     std::cout << " x=" << get_x();
   if (vpFeatureVanishingPoint::selectY() & select)
     std::cout << " y=" << get_y();
+  if (vpFeatureVanishingPoint::selectOneOverRho() & select) {
+    std::cout << " 1/rho=" << getOneOverRho();
+  }
+  if (vpFeatureVanishingPoint::selectAtanOneOverRho() & select) {
+    std::cout << " atan(1/rho)=" << getAtanOneOverRho();
+  }
+  if (vpFeatureVanishingPoint::selectAlpha() & select) {
+    std::cout << " alpha=" << getAlpha();
+  }
   std::cout << std::endl;
 }
 
-void vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
+
+//! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as set_xy().
+void vpFeatureVanishingPoint::buildFrom(const double x, const double y)
 {
-  s[0] = _x;
-  s[1] = _y;
-  for (unsigned int i = 0; i < nbParameters; i++)
-    flags[i] = true;
+  set_xy(x, y);
 }
 
 /*!
-
   Display vanishing point feature.
 
   \param cam : Camera parameters.
   \param I : Image.
   \param color : Color to use for the display.
   \param thickness : Thickness of the feature representation.
-
 */
 void vpFeatureVanishingPoint::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                                       const vpColor &color, unsigned int thickness) const
 {
-  try {
+  if ((vpFeatureVanishingPoint::selectX() & m_select) || (vpFeatureVanishingPoint::selectY() & m_select)) {
     double x, y;
     x = get_x();
     y = get_y();
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
+  }
+  else if(vpFeatureVanishingPoint::selectOneOverRho() & m_select) {
+    double one_over_rho = getOneOverRho();
+    double alpha = getAlpha();
+    double x = cos(alpha) / one_over_rho;
+    double y = sin(alpha) / one_over_rho;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
+  }
+  else if(vpFeatureVanishingPoint::selectAtanOneOverRho() & m_select) {
+    double atan_one_over_rho = getAtanOneOverRho();
+    double alpha = getAlpha();
+    double x = cos(alpha) / tan(atan_one_over_rho);
+    double y = sin(alpha) / tan(atan_one_over_rho);
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
   }
 }
-/*!
 
+/*!
   Display vanishing point feature.
 
   \param cam : Camera parameters.
   \param I : color Image.
   \param color : Color to use for the display.
   \param thickness : Thickness of the feature representation.
-
 */
 void vpFeatureVanishingPoint::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                       unsigned int thickness) const
 {
-  try {
+  if ((vpFeatureVanishingPoint::selectX() & m_select) || (vpFeatureVanishingPoint::selectY() & m_select)) {
     double x, y;
     x = get_x();
     y = get_y();
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
+  }
+  else if(vpFeatureVanishingPoint::selectOneOverRho() & m_select) {
+    double one_over_rho = getOneOverRho();
+    double alpha = getAlpha();
+    double x = cos(alpha) / one_over_rho;
+    double y = sin(alpha) / one_over_rho;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
+  }
+  else if(vpFeatureVanishingPoint::selectAtanOneOverRho() & m_select) {
+    double atan_one_over_rho = getAtanOneOverRho();
+    double alpha = getAlpha();
+    double x = cos(alpha) / tan(atan_one_over_rho);
+    double y = sin(alpha) / tan(atan_one_over_rho);
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
   }
 }
 
-/*! for memory issue (used by the vpServo class only)
+/*!
+ * Duplicate visual feature (used by the vpServo class only).
  */
 vpFeatureVanishingPoint *vpFeatureVanishingPoint::duplicate() const
 {
@@ -262,5 +429,24 @@ vpFeatureVanishingPoint *vpFeatureVanishingPoint::duplicate() const
   return feature;
 }
 
+//! Select visual feature \f$ s = x \f$.
 unsigned int vpFeatureVanishingPoint::selectX() { return FEATURE_LINE[0]; }
+
+//! Select visual feature \f$ s = y \f$.
 unsigned int vpFeatureVanishingPoint::selectY() { return FEATURE_LINE[1]; }
+
+/*!
+ * Select visual feature \f$ s = 1/\rho \f$.
+ */
+unsigned int vpFeatureVanishingPoint::selectOneOverRho() { return FEATURE_LINE[2]; }
+
+/*!
+ * Select visual feature \f$ s = \arctan(1/\rho) \f$.
+ */
+unsigned int vpFeatureVanishingPoint::selectAtanOneOverRho() { return FEATURE_LINE[3]; }
+
+/*!
+ * Select \f$ s = \theta \f$ visual feature.
+ */
+unsigned int vpFeatureVanishingPoint::selectAlpha() { return FEATURE_LINE[4]; }
+
