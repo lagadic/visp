@@ -939,6 +939,56 @@ int main(int argc, char *argv[])
       std::cout << "\nRes:\n" << M2 << std::endl;
     }
 
+    {
+      std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::stackColums()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      vpMatrix M(3, 5);
+      for (unsigned int j = 0; j < M.getCols(); j++) {
+        for (unsigned int i = 0; i < M.getRows(); i++) {
+          M[i][j] = i + j*M.getRows();
+        }
+      }
+      std::cout << "M:\n" << M << std::endl;
+      vpColVector v = M.stackColumns();
+      std::cout << "Column stack: " << v.t() << std::endl;
+      if (M.size() != v.size()) {
+        std::cerr << "Problem in vpMatrix::stackColumns(): size differ" << std::endl;
+        return EXIT_FAILURE;
+      }
+      for (unsigned int i=0; i < v.size(); i++) {
+        if (std::fabs(v[i]-static_cast<double>(i)) > std::numeric_limits<double>::epsilon()) {
+          std::cerr << "Problem in vpMatrix::stackColumns(): content differ" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
+
+    {
+      std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::stackRows()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      vpMatrix M(3, 5);
+      for (unsigned int i = 0; i < M.getRows(); i++) {
+        for (unsigned int j = 0; j < M.getCols(); j++) {
+          M[i][j] = i*M.getCols() + j;
+        }
+      }
+      std::cout << "M:\n" << M << std::endl;
+      vpRowVector v = M.stackRows();
+      std::cout << "Rows stack: " << v << std::endl;
+      if (M.size() != v.size()) {
+        std::cerr << "Problem in vpMatrix::stackRows(): size differ" << std::endl;
+        return EXIT_FAILURE;
+      }
+      for (unsigned int i=0; i < v.size(); i++) {
+        if (std::fabs(v[i]-static_cast<double>(i)) > std::numeric_limits<double>::epsilon()) {
+          std::cerr << "Problem in vpMatrix::stackRows(): content differ" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
+
     std::cout << "\nAll tests succeed" << std::endl;
     return EXIT_SUCCESS;
   } catch (const vpException &e) {

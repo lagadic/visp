@@ -1576,11 +1576,7 @@ void vpMatrix::stackRows(vpRowVector &out)
   if ((out.getRows() != 1) || (out.getCols() != colNum * rowNum))
     out.resize(colNum * rowNum, false, false);
 
-  double *mdata = data;
-  double *optr = out.data;
-  for (unsigned int i = 0; i < dsize; i++) {
-    *(optr++) = *(mdata++);
-  }
+  memcpy(out.data, data, sizeof(double)*out.getCols());
 }
 /*!
   Stacks rows of a matrix in a vector.
@@ -1639,10 +1635,7 @@ void vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2, vpMatrix &out)
   unsigned int r2 = m2.getRows();
   unsigned int c2 = m2.getCols();
 
-  if (r1 * r2 != out.rowNum || c1 * c2 != out.colNum) {
-    vpERROR_TRACE("Kronecker prodect bad dimension of output vpMatrix");
-    throw(vpException(vpException::dimensionError, "In Kronecker product bad dimension of output matrix"));
-  }
+  out.resize(r1*r2, c1*c2, false, false);
 
   for (unsigned int r = 0; r < r1; r++) {
     for (unsigned int c = 0; c < c1; c++) {
