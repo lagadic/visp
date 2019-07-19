@@ -124,7 +124,7 @@ public:
       throw vpException(vpException::fatalError, "Unknow Tag family!");
     }
 
-    if (m_tagFamily != TAG_36ARTOOLKIT) {
+    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
       m_td = apriltag_detector_create();
       apriltag_detector_add_family(m_td, m_tf);
     }
@@ -135,62 +135,66 @@ public:
 
   ~Impl()
   {
-    apriltag_detector_destroy(m_td);
+    if (m_td) {
+      apriltag_detector_destroy(m_td);
+    }
 
-    switch (m_tagFamily) {
-    case TAG_36h11:
-      tag36h11_destroy(m_tf);
-      break;
+    if (m_tf) {
+      switch (m_tagFamily) {
+      case TAG_36h11:
+        tag36h11_destroy(m_tf);
+        break;
 
-    case TAG_36h10:
-      tag36h10_destroy(m_tf);
-      break;
+      case TAG_36h10:
+        tag36h10_destroy(m_tf);
+        break;
 
-    case TAG_36ARTOOLKIT:
-      break;
+      case TAG_36ARTOOLKIT:
+        break;
 
-    case TAG_25h9:
-      tag25h9_destroy(m_tf);
-      break;
+      case TAG_25h9:
+        tag25h9_destroy(m_tf);
+        break;
 
-    case TAG_25h7:
-      tag25h7_destroy(m_tf);
-      break;
+      case TAG_25h7:
+        tag25h7_destroy(m_tf);
+        break;
 
-    case TAG_16h5:
-      tag16h5_destroy(m_tf);
-      break;
+      case TAG_16h5:
+        tag16h5_destroy(m_tf);
+        break;
 
-    case TAG_CIRCLE21h7:
-      tagCircle21h7_destroy(m_tf);
-      break;
+      case TAG_CIRCLE21h7:
+        tagCircle21h7_destroy(m_tf);
+        break;
 
-    case TAG_CIRCLE49h12:
-#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-      tagCustom48h12_destroy(m_tf);
-#endif
-      break;
+      case TAG_CIRCLE49h12:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagCustom48h12_destroy(m_tf);
+  #endif
+        break;
 
-    case TAG_CUSTOM48h12:
-#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-      tagCustom48h12_destroy(m_tf);
-#endif
-      break;
+      case TAG_CUSTOM48h12:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagCustom48h12_destroy(m_tf);
+  #endif
+        break;
 
-    case TAG_STANDARD52h13:
-#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-      tagStandard52h13_destroy(m_tf);
-#endif
-      break;
+      case TAG_STANDARD52h13:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagStandard52h13_destroy(m_tf);
+  #endif
+        break;
 
-    case TAG_STANDARD41h12:
-#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-      tagStandard41h12_destroy(m_tf);
-#endif
-      break;
+      case TAG_STANDARD41h12:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagStandard41h12_destroy(m_tf);
+  #endif
+        break;
 
-    default:
-      break;
+      default:
+        break;
+      }
     }
 
     if (m_detections) {
@@ -552,17 +556,37 @@ public:
 
   void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
 
-  void setAprilTagDecodeSharpening(const double decodeSharpening) { m_td->decode_sharpening = decodeSharpening; }
+  void setAprilTagDecodeSharpening(const double decodeSharpening) {
+    if (m_td) {
+      m_td->decode_sharpening = decodeSharpening;
+    }
+  }
 
-  void setNbThreads(const int nThreads) { m_td->nthreads = nThreads; }
+  void setNbThreads(const int nThreads) {
+    if (m_td) {
+      m_td->nthreads = nThreads;
+    }
+  }
 
-  void setQuadDecimate(const float quadDecimate) { m_td->quad_decimate = quadDecimate; }
+  void setQuadDecimate(const float quadDecimate) {
+    if (m_td) {
+      m_td->quad_decimate = quadDecimate;
+    }
+  }
 
-  void setQuadSigma(const float quadSigma) { m_td->quad_sigma = quadSigma; }
+  void setQuadSigma(const float quadSigma) {
+    if (m_td) {
+      m_td->quad_sigma = quadSigma;
+    }
+  }
 
   void setRefineDecode(const bool) { }
 
-  void setRefineEdges(const bool refineEdges) { m_td->refine_edges = refineEdges ? 1 : 0; }
+  void setRefineEdges(const bool refineEdges) {
+    if (m_td) {
+      m_td->refine_edges = refineEdges ? 1 : 0;
+    }
+  }
 
   void setRefinePose(const bool) { }
 
