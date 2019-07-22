@@ -157,22 +157,21 @@ int main()
                  "drone has approximately 3 meters of free space on all sides.\n"
               << std::endl;
 
-    vpRobotBebop2 drone(false); // Create the drone with low verbose level
+    vpRobotBebop2 drone(true); // Create the drone with low verbose level
 
     if (drone.isRunning()) {
-
 
       int k = 0;
       bool running = true;
 
       std::cout << "\nConfiguring drone settings ...\n" << std::endl;
 
-      drone.setVideoResolution(1);
+      drone.setVideoResolution(0); // Setting stream video resolution to 480p
 
-      drone.setMaxTilt(10); // Setting the max roll and pitch values, the drone speed will depend on it
-      drone.doFlatTrim();   // Flat trim calibration
-
+      drone.setMaxTilt(10);      // Setting the max roll and pitch values, the drone speed will depend on it
       drone.setStreamingMode(0); // Set streaming mode 0 : lowest latency
+
+      drone.doFlatTrim(); // Flat trim calibration
 
       std::cout << "\nWaiting for streaming to start ...\n" << std::endl;
       drone.startStreaming();
@@ -212,7 +211,7 @@ int main()
     }
 
   } catch (const vpException &e) {
-    std::cout << "Caught an exception: " << e << std::endl;
+    std::cout << "\nCaught an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 }

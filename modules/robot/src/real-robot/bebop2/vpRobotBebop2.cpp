@@ -143,6 +143,9 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
   m_streamingModeSet = false;
   m_settingsReset = false;
 
+  m_update_codec_params = false;
+  m_codec_params_data = std::vector<uint8_t>();
+
   m_maxTilt = -1;
 
   m_cameraHorizontalFOV = -1;
@@ -1444,6 +1447,34 @@ void vpRobotBebop2::stopVideoDecoding()
 void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
 {
 
+  // Updating codec parameters from SPS and PPS buffers received from the drone in decoderConfigCallback
+  if (m_update_codec_params && m_codec_params_data.size()) {
+    ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Updating H264 codec parameters (Buffer Size: %lu) ...",
+                m_codec_params_data.size());
+
+    m_packet.data = &m_codec_params_data[0];
+    m_packet.size = static_cast<int>(m_codec_params_data.size());
+
+    int ret = avcodec_send_packet(m_codecContext, &m_packet);
+
+    if (ret == 0) {
+
+      ret = avcodec_receive_frame(m_codecContext, m_picture);
+
+      if (ret == 0 || ret == AVERROR(EAGAIN)) {
+        m_update_codec_params = false;
+      } else {
+        ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Unexpected error while updating H264 parameters.");
+      }
+    } else {
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Unexpected error while sending H264 parameters.");
+    }
+
+    av_packet_unref(&m_packet);
+    av_frame_unref(m_picture);
+  }
+
+  // Decoding frame comming from the drone
   m_packet.data = frame->data;
   m_packet.size = static_cast<int>(frame->used);
 
@@ -1582,8 +1613,31 @@ void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eA
 */
 eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void * customData)
 {
-  (void)codec;
-  (void)customData;
+#ifdef VISP_HAVE_OPENCV
+  vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
+
+  uint8_t *sps_buffer_ptr = codec.parameters.h264parameters.spsBuffer;
+  uint32_t sps_buffer_size = static_cast<uint32_t>(codec.parameters.h264parameters.spsSize);
+  uint8_t *pps_buffer_ptr = codec.parameters.h264parameters.ppsBuffer;
+  uint32_t pps_buffer_size = static_cast<uint32_t>(codec.parameters.h264parameters.ppsSize);
+
+  ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "H264 configuration packet received: #SPS: %d #PPS: %d", sps_buffer_size,
+              pps_buffer_size);
+
+  drone->m_update_codec_params = (sps_buffer_ptr && pps_buffer_ptr && sps_buffer_size && pps_buffer_size &&
+                                  (pps_buffer_size < 32) && (sps_buffer_size < 32));
+
+  if (drone->m_update_codec_params) {
+    // If codec parameters where received from the drone, we store them to pass them to the decoder in the next call of
+    // computeFrame
+    drone->m_codec_params_data.resize(sps_buffer_size + pps_buffer_size);
+    std::copy(sps_buffer_ptr, sps_buffer_ptr + sps_buffer_size, drone->m_codec_params_data.begin());
+    std::copy(pps_buffer_ptr, pps_buffer_ptr + pps_buffer_size, drone->m_codec_params_data.begin() + sps_buffer_size);
+  } else {
+    // If data is invalid, we clear the vector
+    drone->m_codec_params_data.clear();
+  }
+#endif // #ifdef VISP_HAVE_OPENCV
   return ARCONTROLLER_OK;
 }
 
@@ -1876,7 +1930,7 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
     break;
 
   case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_VIDEORESOLUTIONSCHANGED:
-    // If the command received is a exposition changed
+    // If the command received is a resolution changed
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Video resolution set ...");
     drone->m_videoResolutionSet = true;
     break;

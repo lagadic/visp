@@ -173,6 +173,9 @@ private:
   bool m_streamingModeSet;   ///< Used to know if the streaming mode has been set
   bool m_settingsReset;      ///< Used to know when the drone a finished the settings reset
 
+  bool m_update_codec_params;               ///< Used to know if codec parameters need to be updated
+  std::vector<uint8_t> m_codec_params_data; ///< Used to store codec parameters when they need to be updated
+
   unsigned int m_batteryLevel; ///< Percentage of battery remaining
   double m_maxTilt;            ///< Max pitch and roll value of the drone
 

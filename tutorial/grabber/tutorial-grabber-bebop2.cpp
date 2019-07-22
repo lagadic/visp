@@ -54,7 +54,11 @@ int main(int argc, char **argv)
     vpRobotBebop2 drone(false);
 
     if (drone.isRunning()) {
+
+      drone.setVideoResolution(1);
+
       drone.startStreaming();
+      drone.setExposure(1.5f);
       drone.getGrayscaleImage(I);
     } else {
       std::cout << "Error : failed to setup drone control" << std::endl;
@@ -88,7 +92,7 @@ int main(int argc, char **argv)
       vpDisplay::flush(I);
     }
   } catch (const vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+    std::cout << "Caught an exception: " << e << std::endl;
   }
 #else
   (void)argc;

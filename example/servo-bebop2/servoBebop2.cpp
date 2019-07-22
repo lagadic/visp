@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 
     if (drone.isRunning()) {
 
-      drone.setVideoResolution(0); // Set video resolution to 480p
+      drone.setVideoResolution(1); // Set video resolution to 480p
 
       drone.setStreamingMode(0);          // Set lowest latency stream mode
       drone.setVideoStabilisationMode(0); // Disable video stabilisation
@@ -230,13 +230,15 @@ int main(int argc, char **argv)
       task.setLambda(lambda);
 
       /*
-       In the following section, camera 1 refers to camera coordonates system of the drone, but without taking pan and
-         tilt into account.
+       In the following section, camera 1 refers to camera coordonates system of the drone, but without taking camera
+       pan and camera tilt into account.
        Those values are taken into consideration in Camera 2.
        E is the effective coordinate system of the drone, the one in which we need to convert every velocity command.
 
        We can easily compute homogeneous matrix between camera 1 and camera 2, and between camera 1
          and effective coordonate system E of the drone.
+
+      Using those matrices, we can in the end obtain the matrix between c2 and E
       */
       vpRxyzVector c1_rxyz_c2(vpMath::rad(drone.getCurrentCameraTilt()), vpMath::rad(drone.getCurrentCameraPan()), 0);
       vpRotationMatrix c1Rc2(c1_rxyz_c2);                      // Rotation between camera 1 and 2
