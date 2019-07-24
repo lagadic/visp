@@ -379,7 +379,7 @@ M:
   //@}
 
   //-------------------------------------------------
-  // Columns, Rows extraction, SubMatrix
+  // Columns, Rows, Diag extraction, SubMatrix
   //-------------------------------------------------
   /** @name Columns, rows, sub-matrices extraction */
   //@{
@@ -388,6 +388,7 @@ M:
   vpColVector getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const;
   vpRowVector getRow(const unsigned int i) const;
   vpRowVector getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const;
+  vpColVector getDiag() const;
   void init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
   //@}
 

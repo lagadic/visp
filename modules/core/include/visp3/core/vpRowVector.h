@@ -225,6 +225,9 @@ public:
   vpRowVector &operator=(vpRowVector &&v);
   vpRowVector &operator=(const std::initializer_list<double> &list);
 #endif
+  //! Comparison operator.
+  bool operator==(const vpRowVector &v) const;
+  bool operator!=(const vpRowVector &v) const;
 
   double operator*(const vpColVector &x) const;
   vpRowVector operator*(const vpMatrix &M) const;
