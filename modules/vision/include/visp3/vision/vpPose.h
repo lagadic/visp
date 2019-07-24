@@ -212,6 +212,7 @@ protected:
 
 public:
   vpPose();
+  vpPose(const std::vector<vpPoint>& lP);
   virtual ~vpPose();
   void addPoint(const vpPoint &P);
   void addPoints(const std::vector<vpPoint> &lP);

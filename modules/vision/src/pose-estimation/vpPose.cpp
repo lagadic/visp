@@ -68,7 +68,7 @@ void vpPose::init()
   npt = 0;
   listP.clear();
   residual = 0;
-  lambda = 1.;
+  lambda = 0.25;
   vvsIterMax = 200;
   c3d.clear();
   computeCovariance = false;
@@ -96,6 +96,16 @@ vpPose::vpPose()
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
     distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(),
     useParallelRansac(false),
+    nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
+    vvsEpsilon(1e-8)
+{
+}
+
+vpPose::vpPose(const std::vector<vpPoint>& lP)
+  : npt(static_cast<unsigned int>(lP.size())), listP(lP.begin(), lP.end()), residual(0), lambda(0.25), vvsIterMax(200), c3d(),
+    computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(),
+    ransacInlierIndex(), ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER),
+    listOfPoints(lP), useParallelRansac(false),
     nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
     vvsEpsilon(1e-8)
 {
