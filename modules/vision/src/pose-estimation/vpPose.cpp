@@ -56,8 +56,9 @@ pour faire du calcul de pose par difference methode
 #include <limits> // numeric_limits
 
 #define DEBUG_LEVEL1 0
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
-  Basic initialisation that is called by the constructors.
+  \deprecated This function is deprecated since same initialisation is done in constructors.
 */
 void vpPose::init()
 {
@@ -68,7 +69,7 @@ void vpPose::init()
   npt = 0;
   listP.clear();
   residual = 0;
-  lambda = 0.25;
+  lambda = 1.;
   vvsIterMax = 200;
   c3d.clear();
   computeCovariance = false;
@@ -89,10 +90,11 @@ void vpPose::init()
   std::cout << "end vpPose::Init() " << std::endl;
 #endif
 }
+#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*! Default constructor. */
 vpPose::vpPose()
-  : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
+  : npt(0), listP(), residual(0), lambda(1.), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
     distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(),
     useParallelRansac(false),
@@ -102,7 +104,7 @@ vpPose::vpPose()
 }
 
 vpPose::vpPose(const std::vector<vpPoint>& lP)
-  : npt(static_cast<unsigned int>(lP.size())), listP(lP.begin(), lP.end()), residual(0), lambda(0.25), vvsIterMax(200), c3d(),
+  : npt(static_cast<unsigned int>(lP.size())), listP(lP.begin(), lP.end()), residual(0), lambda(1.), vvsIterMax(200), c3d(),
     computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(),
     ransacInlierIndex(), ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER),
     listOfPoints(lP), useParallelRansac(false),
