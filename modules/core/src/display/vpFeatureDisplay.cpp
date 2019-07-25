@@ -69,7 +69,6 @@ void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters
 {
   vpImagePoint ip; // pixel coordinates in float
   vpMeterPixelConversion::convertPoint(cam, x, y, ip);
-
   vpDisplay::displayCross(I, ip, 15, color, thickness);
 }
 
