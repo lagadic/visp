@@ -1,0 +1,42 @@
+/**
+
+\page tutorial-bebop2-vs Tutorial: Visual-servoing with Parrot Bebop 2 drone 
+\tableofcontents
+
+\section bebop2_intro Introduction
+
+This tutorial explains how to do image-based servoing with a Parrot Bebop 2 drone.
+
+\image html img-bebop2.jpg
+
+The following material is necessary:
+- Parrot Bebop 2 drone
+- An AprilTag from 36h11 family that will serve as target for the visual servoing. \ref franka_prereq_target. 
+
+ViSP must be built with OpenCV and Parrot ARSDK3 support.
+
+\note Before continuing, we recommend that you succeed to complete \ref tutorial-detection-apriltag.
+
+\section bebop2_ibvs Image-based visual-servoing 
+\subsection mbot_run_ibvs Running the program
+
+The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp. 
+\n In this example, we use three visual features for the servoing :
+- Image moment for normalized gravity center implemented in vpFeatureMomentGravityCenterNormalized, to center the drone along X and Y axes in front of the tag.
+- Image moment for normalized area implemented in vpFeatureMomentAreaNormalized to control the distance between the drone and the tag.
+- Horizontal vanishing points from the top and bottom tag sides implemented in vpFeatureVanishingPoint, to change the orientation of the drone based on the tag orientation.
+
+\note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi.
+
+If you built ViSP with OpenCV and Parrot ARSDK3 support, the corresponding binary is available in `/home/[...]/visp-ws/visp-build/example/servo-bebop2/`.
+
+    $ cd /home/[...]/visp-ws/visp-build/example/servo-bebop2
+    $ ./servoBebop2 --tag_size 0.14
+
+\note Passing the tag size (in meters) as a parameter is required.
+
+Run `./servoBebop2 --help` to see which are the command line options available.
+- Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended.
+- Adding option `--intrinsic ~/path-to-calibration-file/camera.xml` allows you to specify the intrinsic camera calibration parameters. This file can be obtained by completing \ref tutorial-calibration-intrinsic.
+
+*/
