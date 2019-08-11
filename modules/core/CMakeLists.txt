@@ -228,6 +228,11 @@ if(WITH_PUGIXML)
   include_directories(${PUGIXML_INCLUDE_DIRS})
 endif()
 
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
+
 if(MSVC)
   # Disable Visual C++ C4996 warning
   # warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead

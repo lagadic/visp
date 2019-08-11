@@ -183,6 +183,9 @@
 #  define VISP_HAVE_DISPLAY
 #endif
 
+// Defined if Catch2 library available
+#cmakedefine VISP_HAVE_CATCH2
+
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3
 
