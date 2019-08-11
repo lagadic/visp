@@ -663,10 +663,10 @@ int main(int argc, const char **argv)
     std::vector<unsigned char> saturation(size);
     std::vector<unsigned char> value(size);
 
-    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, hue.data(), saturation.data(), value.data(), size);
-    vpImage<unsigned char> I_hue(hue.data(), h, w);
-    vpImage<unsigned char> I_saturation(saturation.data(), h, w);
-    vpImage<unsigned char> I_value(value.data(), h, w);
+    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, &hue.front(), &saturation.front(), &value.front(), size);
+    vpImage<unsigned char> I_hue(&hue.front(), h, w);
+    vpImage<unsigned char> I_saturation(&saturation.front(), h, w);
+    vpImage<unsigned char> I_value(&value.front(), h, w);
     vpImage<vpRGBa> I_HSV;
     vpImageConvert::merge(&I_hue, &I_saturation, &I_value, NULL, I_HSV);
 
@@ -678,12 +678,12 @@ int main(int argc, const char **argv)
     std::vector<double> hue2(size);
     std::vector<double> saturation2(size);
     std::vector<double> value2(size);
-    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, hue2.data(), saturation2.data(), value2.data(), size);
+    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, &hue2.front(), &saturation2.front(), &value2.front(), size);
 
     std::vector<unsigned char> rgba(size * 4);
-    vpImageConvert::HSVToRGBa(hue2.data(), saturation2.data(), value2.data(), rgba.data(), size);
+    vpImageConvert::HSVToRGBa(&hue2.front(), &saturation2.front(), &value2.front(), &rgba.front(), size);
 
-    vpImage<vpRGBa> I_HSV2RGBa(reinterpret_cast<vpRGBa *>(rgba.data()), h, w);
+    vpImage<vpRGBa> I_HSV2RGBa(reinterpret_cast<vpRGBa *>(&rgba.front()), h, w);
     filename = vpIoTools::createFilePath(opath, "Klimt_HSV2RGBa.ppm");
     std::cout << "   Resulting image saved in: " << filename << std::endl;
     vpImageIo::write(I_HSV2RGBa, filename);
@@ -708,7 +708,7 @@ int main(int argc, const char **argv)
     std::cout << "** Construction of a vpImage from an array with copyData==true" << std::endl;
     std::vector<unsigned char> rgba2(size*4);
     std::fill(rgba2.begin(), rgba2.end(), 127);
-    vpImage<vpRGBa> I_copyData(reinterpret_cast<vpRGBa *>(rgba2.data()), h, w, true);
+    vpImage<vpRGBa> I_copyData(reinterpret_cast<vpRGBa *>(&rgba2.front()), h, w, true);
 
     filename = vpIoTools::createFilePath(opath, "I_copyData.ppm");
     std::cout << "   Resulting image saved in: " << filename << std::endl;
@@ -776,7 +776,7 @@ int main(int argc, const char **argv)
 
       // RGB to Grayscale conversion
       std::vector<unsigned char> rgb_array(I_color.getSize()*3);
-      vpImageConvert::RGBaToRGB((unsigned char *)I_color.bitmap, rgb_array.data(), I_color.getSize());
+      vpImageConvert::RGBaToRGB((unsigned char *)I_color.bitmap, &rgb_array.front(), I_color.getSize());
 
       value_sse = 0;
       value_regular = 0;
@@ -784,7 +784,7 @@ int main(int argc, const char **argv)
       std::vector<unsigned char> rgb2gray_array_sse(I_color.getSize());
       chrono_sse.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
-        vpImageConvert::RGBToGrey(rgb_array.data(), rgb2gray_array_sse.data(), I_color.getWidth(), I_color.getHeight(), false);
+        vpImageConvert::RGBToGrey(&rgb_array.front(), &rgb2gray_array_sse.front(), I_color.getWidth(), I_color.getHeight(), false);
         value_sse += rgb2gray_array_sse[0];
       }
       chrono_sse.stop();
@@ -792,13 +792,13 @@ int main(int argc, const char **argv)
       std::vector<unsigned char> rgb2gray_array_regular(I_color.getSize());
       chrono.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
-        computeRegularRGBToGrayscale(rgb_array.data(), rgb2gray_array_regular.data(), I_color.getSize());
+        computeRegularRGBToGrayscale(&rgb_array.front(), &rgb2gray_array_regular.front(), I_color.getSize());
         value_regular += rgb2gray_array_regular[0];
       }
       chrono.stop();
 
-      vpImage<unsigned char> I_gray2rgba_sse(rgb2gray_array_sse.data(), I_color.getHeight(), I_color.getWidth(), false);
-      vpImage<unsigned char> I_gray2rgba_regular(rgb2gray_array_regular.data(), I_color.getHeight(), I_color.getWidth(),
+      vpImage<unsigned char> I_gray2rgba_sse(&rgb2gray_array_sse.front(), I_color.getHeight(), I_color.getWidth(), false);
+      vpImage<unsigned char> I_gray2rgba_regular(&rgb2gray_array_regular.front(), I_color.getHeight(), I_color.getWidth(),
                                                  false);
 
       // Compute the error between the SSE and regular version
@@ -907,8 +907,8 @@ int main(int argc, const char **argv)
       // Test RGB to Grayscale + Flip
       std::cout << "\n   RGB to Grayscale + Flip" << std::endl;
       std::vector<unsigned char> rgb2gray_flip_array_sse(I_color.getSize());
-      vpImageConvert::RGBToGrey(rgb_array.data(), rgb2gray_flip_array_sse.data(), I_color.getWidth(), I_color.getHeight(), true);
-      vpImage<unsigned char> I_rgb2gray_flip_sse(rgb2gray_flip_array_sse.data(), I_color.getHeight(), I_color.getWidth());
+      vpImageConvert::RGBToGrey(&rgb_array.front(), &rgb2gray_flip_array_sse.front(), I_color.getWidth(), I_color.getHeight(), true);
+      vpImage<unsigned char> I_rgb2gray_flip_sse(&rgb2gray_flip_array_sse.front(), I_color.getHeight(), I_color.getWidth());
 
       filename = vpIoTools::createFilePath(opath, "I_rgb2gray_flip_sse.pgm");
       std::cout << "   Resulting image saved in: " << filename << std::endl;
@@ -917,7 +917,7 @@ int main(int argc, const char **argv)
       // Test BGR to Grayscale + Flip
       std::cout << "\n   Conversion BGR to Grayscale + Flip" << std::endl;
       std::vector<unsigned char> bgr2gray_flip_array_sse(I_color.getSize());
-      vpImage<unsigned char> I_bgr2gray_flip_sse(bgr2gray_flip_array_sse.data(), I_color.getHeight(), I_color.getWidth());
+      vpImage<unsigned char> I_bgr2gray_flip_sse(&bgr2gray_flip_array_sse.front(), I_color.getHeight(), I_color.getWidth());
       vpImageConvert::convert(colorMat, I_bgr2gray_flip_sse, true);
 
       filename = vpIoTools::createFilePath(opath, "I_bgr2gray_flip_sse.pgm");
@@ -946,12 +946,12 @@ int main(int argc, const char **argv)
       vpImageIo::write(I_color_crop, filename);
 
       std::vector<unsigned char> rgb_array_crop(I_color_crop.getSize() * 3);
-      vpImageConvert::RGBaToRGB((unsigned char *)I_color_crop.bitmap, rgb_array_crop.data(), I_color_crop.getSize());
+      vpImageConvert::RGBaToRGB((unsigned char *)I_color_crop.bitmap, &rgb_array_crop.front(), I_color_crop.getSize());
 
       std::vector<unsigned char> rgb2gray_flip_crop_array_sse(I_color_crop.getSize());
-      vpImageConvert::RGBToGrey(rgb_array_crop.data(), rgb2gray_flip_crop_array_sse.data(), I_color_crop.getWidth(),
+      vpImageConvert::RGBToGrey(&rgb_array_crop.front(), &rgb2gray_flip_crop_array_sse.front(), I_color_crop.getWidth(),
                                 I_color_crop.getHeight(), true);
-      vpImage<unsigned char> I_rgb2gray_flip_crop_sse(rgb2gray_flip_crop_array_sse.data(), I_color_crop.getHeight(),
+      vpImage<unsigned char> I_rgb2gray_flip_crop_sse(&rgb2gray_flip_crop_array_sse.front(), I_color_crop.getHeight(),
                                                       I_color_crop.getWidth());
 
       filename = vpIoTools::createFilePath(opath, "I_rgb2gray_flip_crop_sse.pgm");

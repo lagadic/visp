@@ -58,9 +58,9 @@ int main()
     rgba_array[i] = vpRGBa(i, i, i, i);
   }
 
-  vpImage<unsigned char> I(uchar_array.data(), height, width);
-  vpImage<double> I_double(double_array.data(), height, width);
-  vpImage<vpRGBa> I_rgba(rgba_array.data(), height, width);
+  vpImage<unsigned char> I(&uchar_array.front(), height, width);
+  vpImage<double> I_double(&double_array.front(), height, width);
+  vpImage<vpRGBa> I_rgba(&rgba_array.front(), height, width);
 
   std::cout << "I:" << std::endl;
   for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -128,8 +128,8 @@ int main()
     uchar_array2[i] = (unsigned char)i;
   }
 
-  vpImage<unsigned char> I_uchar1(uchar_array1.data(), height, width);
-  vpImage<unsigned char> I_uchar2(uchar_array2.data(), height, width);
+  vpImage<unsigned char> I_uchar1(&uchar_array1.front(), height, width);
+  vpImage<unsigned char> I_uchar2(&uchar_array2.front(), height, width);
 
   unsigned char threshold1 = 50, threshold2 = 200;
   unsigned char value1 = 4, value2 = 127, value3 = 250;
@@ -155,8 +155,8 @@ int main()
     uchar_array_perf_iterate[i] = (unsigned char)i;
   }
 
-  vpImage<unsigned char> I_perf_lut(uchar_array_perf_lut.data(), height, width);
-  vpImage<unsigned char> I_perf_iterate(uchar_array_perf_iterate.data(), height, width);
+  vpImage<unsigned char> I_perf_lut(&uchar_array_perf_lut.front(), height, width);
+  vpImage<unsigned char> I_perf_iterate(&uchar_array_perf_iterate.front(), height, width);
 
   unsigned int nbIterations = 100;
   vpChrono chrono;
