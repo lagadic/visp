@@ -174,6 +174,23 @@ vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
 }
 #endif
 
+bool vpRowVector::operator==(const vpRowVector &v) const {
+  if (colNum != v.colNum ||
+      rowNum != v.rowNum /* should not happen */)
+    return false;
+
+  for (unsigned int i = 0; i < colNum; i++) {
+    if (!vpMath::equal(data[i], v.data[i], std::numeric_limits<double>::epsilon()))
+      return false;
+  }
+
+  return true;
+}
+
+bool vpRowVector::operator!=(const vpRowVector &v) const {
+  return !(*this == v);
+}
+
 /*!
 
   Multiply a row vector by a column vector.

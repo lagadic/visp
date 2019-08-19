@@ -49,18 +49,18 @@ int main()
   std::cout << "Test vpImageTools::binarise() with different data types." << std::endl;
 
   unsigned int width = 5, height = 4;
-  unsigned char *uchar_array = new unsigned char[width * height];
-  double *double_array = new double[width * height];
-  vpRGBa *rgba_array = new vpRGBa[width * height];
+  std::vector<unsigned char> uchar_array(width * height);
+  std::vector<double> double_array(width * height);
+  std::vector<vpRGBa> rgba_array(width * height);
   for (unsigned char i = 0; i < width * height; i++) {
     uchar_array[i] = i;
     double_array[i] = i;
     rgba_array[i] = vpRGBa(i, i, i, i);
   }
 
-  vpImage<unsigned char> I(uchar_array, height, width);
-  vpImage<double> I_double(double_array, height, width);
-  vpImage<vpRGBa> I_rgba(rgba_array, height, width);
+  vpImage<unsigned char> I(&uchar_array.front(), height, width);
+  vpImage<double> I_double(&double_array.front(), height, width);
+  vpImage<vpRGBa> I_rgba(&rgba_array.front(), height, width);
 
   std::cout << "I:" << std::endl;
   for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -121,15 +121,15 @@ int main()
   // Check if results are the same between iterate and LUT methods
   width = 32;
   height = 8;
-  unsigned char *uchar_array1 = new unsigned char[width * height];
-  unsigned char *uchar_array2 = new unsigned char[width * height];
+  std::vector<unsigned char> uchar_array1(width * height);
+  std::vector<unsigned char> uchar_array2(width * height);
   for (unsigned int i = 0; i < 256; i++) {
     uchar_array1[i] = (unsigned char)i;
     uchar_array2[i] = (unsigned char)i;
   }
 
-  vpImage<unsigned char> I_uchar1(uchar_array1, height, width);
-  vpImage<unsigned char> I_uchar2(uchar_array2, height, width);
+  vpImage<unsigned char> I_uchar1(&uchar_array1.front(), height, width);
+  vpImage<unsigned char> I_uchar2(&uchar_array2.front(), height, width);
 
   unsigned char threshold1 = 50, threshold2 = 200;
   unsigned char value1 = 4, value2 = 127, value3 = 250;
@@ -148,30 +148,31 @@ int main()
   // Test performance between iterate and LUT methods
   width = 640;
   height = 480;
-  unsigned char *uchar_array_perf_lut = new unsigned char[width * height];
-  unsigned char *uchar_array_perf_iterate = new unsigned char[width * height];
+  std::vector<unsigned char> uchar_array_perf_lut(width * height);
+  std::vector<unsigned char> uchar_array_perf_iterate(width * height);
   for (unsigned int i = 0; i < width * height; i++) {
     uchar_array_perf_lut[i] = (unsigned char)i;
     uchar_array_perf_iterate[i] = (unsigned char)i;
   }
 
-  vpImage<unsigned char> I_perf_lut(uchar_array_perf_lut, height, width);
-  vpImage<unsigned char> I_perf_iterate(uchar_array_perf_iterate, height, width);
+  vpImage<unsigned char> I_perf_lut(&uchar_array_perf_lut.front(), height, width);
+  vpImage<unsigned char> I_perf_iterate(&uchar_array_perf_iterate.front(), height, width);
 
   unsigned int nbIterations = 100;
-  double t1 = vpTime::measureTimeMs();
+  vpChrono chrono;
+  chrono.start();
   for (unsigned int cpt = 0; cpt < nbIterations; cpt++) {
     vpImageTools::binarise(I_perf_iterate, threshold1, threshold2, value1, value2, value3, false);
   }
-  t1 = vpTime::measureTimeMs() - t1;
-  std::cout << "Iterate: " << t1 << " ms for " << nbIterations << " iterations." << std::endl;
+  chrono.stop();
+  std::cout << "Iterate: " << chrono.getDurationMs() << " ms for " << nbIterations << " iterations." << std::endl;
 
-  double t2 = vpTime::measureTimeMs();
+  chrono.start();
   for (unsigned int cpt = 0; cpt < nbIterations; cpt++) {
     vpImageTools::binarise(I_perf_lut, threshold1, threshold2, value1, value2, value3, true);
   }
-  t2 = vpTime::measureTimeMs() - t2;
-  std::cout << "LUT: " << t2 << " ms for " << nbIterations << " iterations." << std::endl;
+  chrono.stop();
+  std::cout << "LUT: " << chrono.getDurationMs() << " ms for " << nbIterations << " iterations." << std::endl;
 
   std::cout << "\ntestImageBinarise ok !" << std::endl;
   return 0;

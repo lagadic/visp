@@ -989,7 +989,83 @@ int main(int argc, char *argv[])
       }
     }
 
-    std::cout << "\nAll tests succeed" << std::endl;
+    {
+      std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::getCol()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      vpMatrix A(4,4);
+      for(unsigned int i=0; i < A.getRows(); i++)
+        for(unsigned int j=0; j < A.getCols(); j++)
+          A[i][j] = i*A.getCols()+j;
+
+      {
+        vpColVector cv = A.getCol(1, 1, 3);
+        vpColVector ref;
+        ref << 5, 9, 13;
+        if (cv != ref) {
+          std::cerr << "Problem in vpMatrix::getCol(): values are different" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+      {
+        vpColVector cv = A.getCol(1);
+        vpColVector ref;
+        ref << 1, 5, 9, 13;
+        if (cv != ref) {
+          std::cerr << "Problem in vpMatrix::getCol(): values are different" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
+
+    {
+      std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::getRow()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      vpMatrix A(4,4);
+      for(unsigned int i=0; i < A.getRows(); i++)
+        for(unsigned int j=0; j < A.getCols(); j++)
+          A[i][j] = i*A.getCols()+j;
+
+      {
+        vpRowVector rv = A.getRow(1, 1, 3);
+        vpRowVector ref;
+        ref << 5, 6, 7;
+        if (rv != ref) {
+          std::cerr << "Problem in vpMatrix::getRow(): values are different" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+      {
+        vpRowVector rv = A.getRow(1);
+        vpRowVector ref;
+        ref << 4, 5, 6, 7;
+        if (rv != ref) {
+          std::cerr << "Problem in vpMatrix::getRow(): values are different" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
+
+    {
+      std::cout << "\n------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::getDiag()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      vpMatrix A(3,4);
+      for(unsigned int i=0; i < A.getRows(); i++)
+        for(unsigned int j=0; j < A.getCols(); j++)
+          A[i][j] = i*A.getCols()+j;
+
+      vpColVector diag = A.getDiag();
+      vpColVector ref;
+      ref << 0.0, 5.0, 10.0;
+      if (diag != ref) {
+        std::cerr << "Problem in vpMatrix::getDiag(): values are different" << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    std::cout << "\nAll tests succeeded" << std::endl;
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
