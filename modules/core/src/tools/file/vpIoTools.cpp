@@ -279,10 +279,10 @@ void vpIoTools::getUserName(std::string &username)
   DWORD bufCharCount = (DWORD)info_buffer_size;
   // Get the user name.
   if (!GetUserName(infoBuf, &bufCharCount)) {
-    delete[] infoBuf;
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
+    username = "unknown";
+  } else {
+    username = infoBuf;
   }
-  username = infoBuf;
   delete[] infoBuf;
 #else
   // Universal platform
@@ -292,6 +292,7 @@ void vpIoTools::getUserName(std::string &username)
   username = "unknown";
 #endif
 }
+
 /*!
   Get the user name.
 
@@ -304,40 +305,12 @@ void vpIoTools::getUserName(std::string &username)
 
   \return The user name.
 
-  \exception vpIoException::cantGetUserName : If this method cannot get the
-  user name.
-
   \sa getUserName(std::string &)
 */
 std::string vpIoTools::getUserName()
 {
   std::string username;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Get the user name.
-  char *_username = ::getenv("LOGNAME");
-  if (! _username) {
-    vpERROR_TRACE("Cannot get the username. Check your LOGNAME environment variable");
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
-  }
-  username = _username;
-#elif defined(_WIN32)
-#if (!defined(WINRT))
-  unsigned int info_buffer_size = 1024;
-  TCHAR *infoBuf = new TCHAR[info_buffer_size];
-  DWORD bufCharCount = (DWORD)info_buffer_size;
-  // Get the user name.
-  if (!GetUserName(infoBuf, &bufCharCount)) {
-    delete[] infoBuf;
-    vpERROR_TRACE("Cannot get the username");
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
-  }
-  username = infoBuf;
-  delete[] infoBuf;
-#else
-  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal "
-                                                      "Windows Platform"));
-#endif
-#endif
+  getUserName(username);
   return username;
 }
 
