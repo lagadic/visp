@@ -46,7 +46,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DCTEST_TEST_TIMEOUT=2500'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -79,7 +79,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DCTEST_TEST_TIMEOUT=2500'
   commands:
     - lscpu
     - cat /proc/cpuinfo
