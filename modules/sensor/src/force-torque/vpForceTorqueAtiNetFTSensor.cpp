@@ -43,6 +43,11 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/sensor/vpForceTorqueAtiNetFTSensor.h>
 
+// Make vpForceTorqueAtiNetFTSensor available only if inet_ntop() used to
+// communicate by UDP with the sensor through vpUDPClient is available; inet_ntop()
+// is not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
+
 typedef struct response_struct {
   uint32_t rdt_sequence;
   uint32_t ft_sequence;
@@ -268,3 +273,5 @@ bool vpForceTorqueAtiNetFTSensor::waitForNewData(unsigned int timeout)
 
   return false;
 }
+
+#endif
