@@ -49,6 +49,10 @@
 
 int main(int argc, char **argv)
 {
+  // Check if vpForceTorqueAtiNetFTSensor can be used since inet_ntop() used to
+  // communicate by UDP with the sensor is not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
+
   std::string opt_ip = "192.168.1.1";
   int opt_port = 49152;
   bool opt_no_display = false;
@@ -164,5 +168,10 @@ int main(int argc, char **argv)
 
   std::cout << "Mean acquisition frequency: " << fps << " Hz" << std::endl;
   std::cout << "Test succeed" << std::endl;
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "vpForceTorqueAtiNetFTSensor is not supported on this platform" << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
