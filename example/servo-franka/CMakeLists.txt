@@ -46,6 +46,7 @@ set(example_cpp
   frankaGripper.cpp
   frankaMoveToPosition.cpp
   frankaSavePosition.cpp
+  servoFrankaIBVS.cpp
   servoFrankaPBVS.cpp
 )
 
