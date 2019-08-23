@@ -35,15 +35,30 @@
 
 /*!
   \example servoFrankaPBVS.cpp
-  This example shows how to achieve a position-based visual servoing with a RealSense RGB-D sensor attached
-  to a Panda robot from Franka Emika.
+  Example of eye-in-hand image-based control law. We control here a real robot, the
+  Franka Emika Panda robot (arm with 7 degrees of freedom). The velocity is
+  computed in the camera frame. The inverse jacobian that converts cartesian
+  velocities in joint velocities is implemented in the robot low level
+  controller. Visual features correspond to the 3D pose of the target (an AprilTag)
+  in the camera frame.
+
+  The device used to acquire images is a Realsense SR300 device.
+
+  Camera extrinsic (eMc) parameters are set by default to a value that will not match
+  Your configuration. Use --eMc command line option to read the values from a file.
+  This file could be obtained following extrinsic camera calibration tutorial:
+  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html
+
+  Camera intrinsic parameters are retrieved from the Realsense SDK.
+
+  The target is an AprilTag that is by default 12cm large. To print your own tag, see
+  https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
+  You can specify the size of your tag using --tag_size command line option.
 */
 
 #include <iostream>
 
-#include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
@@ -53,10 +68,32 @@
 #include <visp3/visual_features/vpFeatureThetaU.h>
 #include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
 #include <visp3/gui/vpPlot.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
   (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
+
+void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
+                              std::vector<vpImagePoint> *traj_vip)
+{
+  for (size_t i = 0; i < vip.size(); i++) {
+    if (traj_vip[i].size()) {
+      // Add the point only if distance with the previous > 1 pixel
+      if (vpImagePoint::distance(vip[i], traj_vip[i].back()) > 1.) {
+        traj_vip[i].push_back(vip[i]);
+      }
+    }
+    else {
+      traj_vip[i].push_back(vip[i]);
+    }
+  }
+  for (size_t i = 0; i < vip.size(); i++) {
+    for (size_t j = 1; j < traj_vip[i].size(); j++) {
+      vpDisplay::displayLine(I, traj_vip[i][j - 1], traj_vip[i][j], vpColor::green, 2);
+    }
+  }
+}
 
 int main(int argc, char **argv)
 {
@@ -94,11 +131,15 @@ int main(int argc, char **argv)
       opt_task_sequencing = true;
     }
     else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
-      opt_quad_decimate = std::stod(argv[i + 1]);
+      opt_quad_decimate = std::stoi(argv[i + 1]);
+    }
+    else if (std::string(argv[i]) == "--no-convergence-threshold") {
+      convergence_threshold_t = 0.;
+      convergence_threshold_tu = 0.;
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default " << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
-                           << "[--quad_decimate <decimation; default " << opt_quad_decimate << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--verbose] [--help] [-h]"
+                           << "[--quad_decimate <decimation; default " << opt_quad_decimate << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
                            << "\n";
       return EXIT_SUCCESS;
     }
@@ -119,9 +160,11 @@ int main(int argc, char **argv)
 
     // Get camera extrinsics
     vpPoseVector ePc;
+    // Set camera extrinsics default values
     ePc[0] = 0.0337731; ePc[1] = -0.00535012; ePc[2] = -0.0523339;
     ePc[3] = -0.247294; ePc[4] = -0.306729; ePc[5] = 1.53055;
 
+    // If provided, read camera extrinsics from --eMc <file>
     if (!opt_eMc_filename.empty()) {
       ePc.loadYAML(opt_eMc_filename, ePc);
     }
@@ -152,15 +195,11 @@ int main(int argc, char **argv)
     detector.setAprilTagQuadDecimate(opt_quad_decimate);
 
     // Servo
-    vpHomogeneousMatrix cdMc, cMo, cdMo, oMo;
+    vpHomogeneousMatrix cdMc, cMo, oMo;
 
     // Desired pose to reach
-    cdMo[0][0] = 1; cdMo[0][1] =  0; cdMo[0][2] =  0;
-    cdMo[1][0] = 0; cdMo[1][1] = -1; cdMo[1][2] =  0;
-    cdMo[2][0] = 0; cdMo[2][1] =  0; cdMo[2][2] = -1;
-    cdMo[0][3] = 0;
-    cdMo[1][3] = 0;
-    cdMo[2][3] = 0.3; // 30 cm along camera z axis
+    vpHomogeneousMatrix cdMo( vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
+                              vpRotationMatrix( {1, 0, 0, 0, -1, 0, 0, 0, -1} ) );
 
     cdMc = cdMo * cMo.inverse();
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
@@ -185,11 +224,11 @@ int main(int argc, char **argv)
       task.setLambda(0.5);
     }
 
-    vpPlot *plotter = NULL;
+    vpPlot *plotter = nullptr;
     int iter_plot = 0;
 
     if (opt_plot) {
-      plotter = new vpPlot(2, 250 * 2, 500, I.getWidth() + 80, 10, "Real time curves plotter");
+      plotter = new vpPlot(2, static_cast<int>(250 * 2), 500, static_cast<int>(I.getWidth()) + 80, 10, "Real time curves plotter");
       plotter->setTitle(0, "Visual features error");
       plotter->setTitle(1, "Camera velocities");
       plotter->initGraph(0, 6);
@@ -212,6 +251,7 @@ int main(int argc, char **argv)
     bool has_converged = false;
     bool send_velocities = false;
     bool servo_started = false;
+    std::vector<vpImagePoint> *traj_vip = nullptr; // To memorize point trajectory
 
     static double t_init_servo = vpTime::measureTimeMs();
 
@@ -253,14 +293,9 @@ int main(int argc, char **argv)
             std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
             oMo = v_oMo[1];   // Introduce PI rotation
           }
-
-          first_time = false;
         }
-        // Display desired and current pose
-        vpDisplay::displayFrame(I, cdMo * oMo, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
-        vpDisplay::displayFrame(I, cMo,  cam, opt_tagSize / 2,   vpColor::none,   3);
 
-        // VVS
+        // Update visual features
         cdMc = cdMo * oMo * cMo.inverse();
         t.buildFrom(cdMc);
         tu.buildFrom(cdMc);
@@ -277,6 +312,19 @@ int main(int argc, char **argv)
         else {
           v_c = task.computeControlLaw();
         }
+
+        // Display desired and current pose features
+        vpDisplay::displayFrame(I, cdMo * oMo, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
+        vpDisplay::displayFrame(I, cMo,  cam, opt_tagSize / 2,   vpColor::none,   3);
+        // Get tag corners
+        std::vector<vpImagePoint> vip = detector.getPolygon(0);
+        // Get the tag cog corresponding to the projection of the tag frame in the image
+        vip.push_back(detector.getCog(0));
+        // Display the trajectory of the points
+        if (first_time) {
+           traj_vip = new std::vector<vpImagePoint> [vip.size()];
+        }
+        display_point_trajectory(I, vip, traj_vip);
 
         if (opt_plot) {
           plotter->plot(0, iter_plot, task.getError());
@@ -295,20 +343,24 @@ int main(int argc, char **argv)
 
         ss.str("");
         ss << "error_t: " << error_t;
-        vpDisplay::displayText(I, 20, I.getWidth() - 150, ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
         ss.str("");
         ss << "error_tu: " << error_tu;
-        vpDisplay::displayText(I, 40, I.getWidth() - 150, ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 40, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
 
         if (opt_verbose)
-          std::cout << "error translation: " << error_t << " ; error rotation: " << error_tu << "\n";
+          std::cout << "error translation: " << error_t << " ; error rotation: " << error_tu << std::endl;
 
         if (error_t < convergence_threshold_t && error_tu < convergence_threshold_tu) {
           has_converged = true;
-          std::cout << "Servo task has converged" << "\n";
-          vpDisplay::displayText(I, 100, 20, "Servo task has converged, wait for robot go to init position", vpColor::red);
+          std::cout << "Servo task has converged" << std::endl;;
+          vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
-      } //if (cMo_vec.size() == 1)
+
+        if (first_time) {
+          first_time = false;
+        }
+      } // end if (cMo_vec.size() == 1)
       else {
         v_c = 0;
       }
@@ -340,14 +392,14 @@ int main(int argc, char **argv)
         default:
           break;
         }
-      }     
+      }
     }
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
 
-    if (opt_plot && plotter != NULL) {
+    if (opt_plot && plotter != nullptr) {
       delete plotter;
-      plotter = NULL;
+      plotter = nullptr;
     }
 
     task.kill();
@@ -366,6 +418,10 @@ int main(int argc, char **argv)
 
         vpDisplay::flush(I);
       }
+    }
+
+    if (traj_vip) {
+      delete [] traj_vip;
     }
   }
   catch(const vpException &e) {
