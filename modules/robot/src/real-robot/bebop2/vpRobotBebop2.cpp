@@ -691,7 +691,7 @@ void vpRobotBebop2::setVelocity(const vpColVector &vel_cmd, double delta_t)
   ve[1] = vel_cmd[1];
   ve[2] = vel_cmd[2];
   ve[5] = vel_cmd[3];
-  std::cout << "ve: " << ve.t() << std::endl;
+
   vpHomogeneousMatrix M = vpExponentialMap::direct(ve, delta_t);
   setPosition(M, false);
 }
@@ -931,9 +931,6 @@ void vpRobotBebop2::setStreamingMode(int mode)
   \param[in] mode : desired streaming mode.
     If mode = 0 (default mode), the resolution is 480p (856x480).
     If mode = 1, the resolution is 720p (1280x720).
-
-  \warning 720p mode is very unstable ! For an unknown reason, FFmpeg H264 stream decoder will sometimes fail to
-  register SPS and PPS frames needed to decode the stream. Use with caution...
 */
 void vpRobotBebop2::setVideoResolution(int mode)
 {

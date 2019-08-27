@@ -17,6 +17,8 @@ ViSP must be built with OpenCV and Parrot ARSDK3 support.
 
 \note Before continuing, we recommend that you succeed to complete \ref tutorial-detection-apriltag.
 
+\n
+
 \section bebop2_ibvs Image-based visual-servoing 
 \subsection mbot_run_ibvs Running the program
 
@@ -26,7 +28,10 @@ The next step is now to run the image-based visual servoing example implemented 
 - Image moment for normalized area implemented in vpFeatureMomentAreaNormalized to control the distance between the drone and the tag.
 - Horizontal vanishing points from the top and bottom tag sides implemented in vpFeatureVanishingPoint, to change the orientation of the drone based on the tag orientation.
 
-\note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi.
+\note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi, as shown in the following picture : \image html drone_connexion.png
+\n
+\warning CAUTION : It's is strongly recommended to use this program outside or in a large room with non-uniform flooring, as the drone uses a downward-facing camera for horizontal speed estimation.
+\n If the surface under the drone is uniform, its movements will be inaccurate and dangerous.
 
 If you built ViSP with OpenCV and Parrot ARSDK3 support, the corresponding binary is available in `/home/[...]/visp-ws/visp-build/example/servo-bebop2/`.
 
@@ -38,5 +43,34 @@ If you built ViSP with OpenCV and Parrot ARSDK3 support, the corresponding binar
 Run `./servoBebop2 --help` to see which are the command line options available.
 - Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended.
 - Adding option `--intrinsic ~/path-to-calibration-file/camera.xml` allows you to specify the intrinsic camera calibration parameters. This file can be obtained by completing \ref tutorial-calibration-intrinsic.
+- Adding option `--hd_stream` enables HD 720p stream resolution. Increase range and accuracy of the tag detection, but increases latency and computation time.
+\note Camera calibration settings are different for the two resolutions.\n  Make sure that if you pass custom intrinsic camera parameters, they were obtained with the correct resolution.
+- Adding option `--verbose` or `-v` enables the display of information messages from the drone, and the velocity commands sent to the drone.
 
+\n
+
+The program will first connect to the drone, start the video streaming and decoding, and then the drone will take off and hover until it detects one (and one only) 36h11 AprilTag in the image.
+
+\htmlonly <style>div.image img[src="img-drone_tag.jpg"]{width:600px;}</style> 
+\endhtmlonly 
+@image html img-drone_tag.jpg
+
+\n
+We then display the drone video stream with the features visible, and the error progression for each task :
+\htmlonly <style>div.image img[src="drone_view.png"]{width:600px;}</style> 
+\endhtmlonly 
+@image html drone_view.png
+
+\htmlonly <style>div.image img[src="servoing_task.png"]{width:600px;}</style> 
+\endhtmlonly 
+@image html servoing_task.png
+
+In this graph :
+- Xn corresponds to the error along X axis,
+- Yn corresponds to the error along Y axis,
+- an corresponds to the error along Z axis, which uses the surface area of the tag to compute the distance between the drone and the tag along this axis,
+- atan(1/rho) corresponds to the error related to the top and bottom edges of the tag. This feature will make the drone move to ensure that the two lines remain parallel.
+
+Clicking on the drone view display will make the drone land, safely disconnect everything and quit the program.
+\n
 */

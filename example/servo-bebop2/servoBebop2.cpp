@@ -107,33 +107,60 @@ int main(int argc, char **argv)
     double opt_distance_to_tag = -1;
     bool opt_has_distance_to_tag = false;
 
+    int stream_res = 0; // Default 480p resolution
+
+    bool verbose = false;
+
     if (argc >= 3 && std::string(argv[1]) == "--tag_size") {
       tagSize = std::atof(argv[2]); // Tag size option is required
-
+      if (tagSize <= 0) {
+        std::cout << "Error : invalid tag size." << std::endl << "See " << argv[0] << " --help" << std::endl;
+        return 0;
+      }
       for (int i = 3; i < argc; i++) {
 
         if (std::string(argv[i]) == "--distance_to_tag" && i + 1 < argc) {
           opt_distance_to_tag = std::atof(argv[i + 1]);
+          if (opt_distance_to_tag <= 0) {
+            std::cout << "Error : invalid distance to tag." << std::endl << "See " << argv[0] << " --help" << std::endl;
+            return 0;
+          }
           opt_has_distance_to_tag = true;
-
+          i++;
         } else if (std::string(argv[i]) == "--intrinsic") {
 
 #ifdef VISP_HAVE_PUGIXML
           opt_cam_parameters = std::string(argv[i + 1]);
           opt_has_cam_parameters = true;
+          i++;
 #else
           std::cout << "PUGIXML is required for custom camera parameters input." << std::endl;
           return 0;
 #endif
+        } else if (std::string(argv[i]) == "--hd_stream") {
+          stream_res = 1;
+        } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+          verbose = true;
+        } else {
+          std::cout << "Error : unknown parameter " << argv[i] << std::endl
+                    << "See " << argv[0] << " --help" << std::endl;
+          return 0;
         }
       }
     } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
-      std::cout << "\nUsage: " << argv[0]
-                << " [--tag_size <The size of the tag to detect in meters, required.>]\n"
-                   " [--distance_to_tag <The desired distance to the tag in meters (default: 1 meter)>]\n"
-                   " [--intrinsic <XML file containing computed intrinsic camera parameters (default: empty)>]\n"
-                   " [--help] [-h]\n"
-                << std::endl;
+      std::cout
+          << "\nUsage: " << argv[0]
+          << " [--tag_size <The size of the tag to detect in meters, required.>]\n"
+             " [--distance_to_tag <The desired distance to the tag in meters (default: 1 meter)>]\n"
+             " [--intrinsic <XML file containing computed intrinsic camera parameters (default: empty)>]\n"
+             " [--hd_stream] : Enables HD 720p streaming instead of default 480p.\n  Increase range and accuracy of "
+             "the tag detection, but increases latency and computation time.\n  Caution : camera calibration settings "
+             "are different for the two resolutions.\n  Make sure that if you pass custom intrinsic camera parameters, "
+             "they were obtained with the correct resolution.\n"
+             " [--verbose] [-v] : Enables verbose (drone information messages and velocity commands are then "
+             "displayed)."
+             " [--help] [-h]\n"
+          << std::endl;
       return 0;
 
     } else {
@@ -141,18 +168,22 @@ int main(int argc, char **argv)
       return 0;
     }
 
-    std::cout << "\nWARNING: this program does no sensing or avoiding of "
-                 "obstacles, \n"
-                 "the drone WILL collide with any objects in the way! Make sure "
-                 "the \n"
-                 "drone has approximately 3 meters of free space on all sides.\n"
-              << std::endl;
+    std::cout
+        << "\nWARNING: \n - This program does no sensing or avoiding of "
+           "obstacles, \n"
+           "the drone WILL collide with any objects in the way! Make sure "
+           "the \n"
+           "drone has approximately 3 meters of free space on all sides.\n"
+           "  - The drone uses a downward-facing camera for horizontal speed estimation,\n make sure the drone flies "
+           "above a non-uniform flooring,\n or its movement will be inacurate and dangerous !\n"
 
-    vpRobotBebop2 drone(true); // Create the drone with low verbose level
+        << std::endl;
+
+    vpRobotBebop2 drone(verbose); // Create the drone with desired verbose level
 
     if (drone.isRunning()) {
 
-      drone.setVideoResolution(1); // Set video resolution to 480p
+      drone.setVideoResolution(stream_res); // Set video resolution to 480p (default) or 720p
 
       drone.setStreamingMode(0);          // Set lowest latency stream mode
       drone.setVideoStabilisationMode(0); // Disable video stabilisation
@@ -163,7 +194,8 @@ int main(int argc, char **argv)
 
       drone.setExposure(1.5f); // Set exposure to max so that the aprilTag detection is more efficient
 
-      drone.setCameraOrientation(-15., 0., true); // Set camera to look slightly down
+      drone.setCameraOrientation(-15., 0.,
+                                 true); // Set camera to look slightly down so that the drone is slightly above the tag
 
       drone.takeOff(true); // Take off
 
@@ -421,6 +453,9 @@ int main(int argc, char **argv)
           vpColVector ve = task.computeControlLaw();
 
           // Sending the control law to the drone
+          if (verbose) {
+            std::cout << "ve: " << ve.t() << std::endl;
+          }
           drone.setVelocity(ve, 1.0);
 
           for (size_t i = 0; i < 4; i++) {

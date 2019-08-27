@@ -246,6 +246,10 @@ To grab a sequence of images, you may rather use:
 \code
 ./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 0
 \endcode
+You can chose to record HD 720p pictures from the drone (instead of default 480p) using --hd_resolution option : 
+\code
+./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 0 --hd_resolution
+\endcode
 
 \section grabber-video-stream Images from a video stream
 
