@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
@@ -347,6 +347,9 @@
 
 // Defined if Irisa's Afma6 robot available.
 #cmakedefine VISP_HAVE_AFMA6
+
+// Defined if Jaco2 robot available.
+#cmakedefine VISP_HAVE_JACO2
 
 // Defined if Irisa's Afma6 data files (camera intrinsic/extrinsic parameters) are available
 #cmakedefine VISP_HAVE_AFMA6_DATA

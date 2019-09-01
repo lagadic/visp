@@ -93,6 +93,11 @@ if(USE_BICLOPS)
   list(APPEND opt_libs ${BICLOPS_LIBRARIES})
 endif()
 
+if(USE_JACO2)
+  list(APPEND opt_incs ${JACO2_INCLUDE_DIRS})
+  list(APPEND opt_libs ${JACO2_LIBRARIES})
+endif()
+
 if(USE_PTU46)
   list(APPEND opt_incs ${PTU46_INCLUDE_DIRS})
   list(APPEND opt_libs ${PTU46_LIBRARIES})
