@@ -349,9 +349,6 @@ public:
   inline void setMaxZ(const float maxZ) { m_max_Z = maxZ; }
 
 protected:
-  rs2_intrinsics m_colorIntrinsics;
-  rs2_extrinsics m_depth2ColorExtrinsics;
-  rs2_intrinsics m_depthIntrinsics;
   float m_depthScale;
   float m_invalidDepthValue;
   float m_max_Z;
