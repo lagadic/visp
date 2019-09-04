@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   bool align_to_depth = false;
   bool color_pointcloud = false;
   bool col_vector = false;
-  bool not_align = false;
+  bool no_align = false;
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--align_to_depth") {
       align_to_depth = true;
@@ -101,15 +101,15 @@ int main(int argc, char *argv[])
       color_pointcloud = true;
     } else if (std::string(argv[i]) == "--col_vector") {
       col_vector = true;
-    } else if (std::string(argv[i]) == "--not_align") {
-      not_align = true;
+    } else if (std::string(argv[i]) == "--no_align") {
+      no_align = true;
     }
   }
 
   std::cout << "align_to_depth: " << align_to_depth << std::endl;
   std::cout << "color_pointcloud: " << color_pointcloud << std::endl;
   std::cout << "col_vector: " << col_vector << std::endl;
-  std::cout << "not_align: " << not_align << std::endl;
+  std::cout << "no_align: " << no_align << std::endl;
 
   vpRealSense2 rs;
   rs2::config config;
@@ -148,14 +148,14 @@ int main(int argc, char *argv[])
                  &vp_pointcloud,
                  pointcloud_color,
                  NULL,
-                 not_align ? NULL : &align_to);
+                 no_align ? NULL : &align_to);
     } else {
       rs.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
                  reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
                  &vp_pointcloud,
                  pointcloud,
                  NULL,
-                 not_align ? NULL : &align_to);
+                 no_align ? NULL : &align_to);
     }
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
