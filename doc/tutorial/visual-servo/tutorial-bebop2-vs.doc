@@ -5,22 +5,63 @@
 
 \section bebop2_intro Introduction
 
-This tutorial explains how to do image-based servoing with a Parrot Bebop 2 drone.
+This tutorial explains how to do an image-based servoing with a Parrot Bebop 2 drone using Ubuntu or OSX.
 
 \image html img-bebop2.jpg
+
+\section bebop2_prereq Prerequisites
 
 The following material is necessary:
 - Parrot Bebop 2 drone
 - An AprilTag from 36h11 family that will serve as target for the visual servoing. \ref franka_prereq_target. 
 
-ViSP must be built with OpenCV and Parrot ARSDK3 support.
+ViSP must be built with OpenCV support if you want to get the video streamed by the drone, which needs to be decoded.
 
 \note Before continuing, we recommend that you succeed to complete \ref tutorial-detection-apriltag.
 
+\subsection bebop2_prereq_arsdk3 Parrot ARSDK3 installation
+In order to use Parrot Bebop 2 drone with ViSP, you first need to install Parrot's SDK <a href="https://developer.parrot.com/docs/SDK3/">ARDroneSDK3</a>.
+
+To install ARSDK3 for ViSP, follow these steps (as seen <a href="https://developer.parrot.com/docs/SDK3/#go-deeper">here</a>) : \n\n
+
+<b>On Ubuntu (tested on 18.04) and OSX (tested on macOS Mojave 10.14.5)</b>\n
+1 - Get the SDK source code :
+- Create a workspace.
+\code
+    $ cd ${VISP_WS}
+    $ mkdir ARDroneSDK3 && cd ARDroneSDK3
+\endcode
+- Initialize the repo.
+\code
+    $ sudo apt  install repo
+    $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
+\endcode
+- You can then download all the repositories automatically, by executing the following command.
+\code
+    $ repo sync
+\endcode
+
+2 - Build the SDK :
+- Install required 3rd parties:
+\note Doesn't seem to be needed on OSX.
+
+\code
+$ sudo apt-get install git build-essential autoconf libtool libavahi-client-dev libavcodec-dev libavformat-dev libswscale-dev libncurses5-dev mplayer
+\endcode
+- Build :
+\code
+$ ./build.sh -p arsdk-native -t build-sdk -j
+\endcode
+The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/usr`
+
+3 - In order for ViSP to find ARDroneSDK3, set ARSDK_DIR environment variable :
+\code
+$ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
+\endcode
 \n
 
 \section bebop2_ibvs Image-based visual-servoing 
-\subsection mbot_run_ibvs Running the program
+\subsection bebop2_ibvs_run Running the program
 
 The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp. 
 \n In this example, we use three visual features for the servoing :
@@ -34,10 +75,10 @@ The next step is now to run the image-based visual servoing example implemented 
 \n If the surface under the drone is uniform, its movements will be inaccurate and dangerous.
 
 If you built ViSP with OpenCV and Parrot ARSDK3 support, the corresponding binary is available in `/home/[...]/visp-ws/visp-build/example/servo-bebop2/`.
-
+\code
     $ cd /home/[...]/visp-ws/visp-build/example/servo-bebop2
     $ ./servoBebop2 --tag_size 0.14
-
+\endcode
 \note Passing the tag size (in meters) as a parameter is required.
 
 Run `./servoBebop2 --help` to see which are the command line options available.
@@ -73,4 +114,8 @@ In this graph :
 
 Clicking on the drone view display will make the drone land, safely disconnect everything and quit the program.
 \n
+
+\subsection bebop2_understanding Understanding the program
+You can read \ref tutorial-ibvs to understand the basics, and then check the comments in servoBebop2.cpp for a more detailed explanation of the program.
+TODO
 */
