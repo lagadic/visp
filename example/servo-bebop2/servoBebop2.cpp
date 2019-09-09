@@ -194,7 +194,7 @@ int main(int argc, char **argv)
 
       drone.setExposure(1.5f); // Set exposure to max so that the aprilTag detection is more efficient
 
-      drone.setCameraOrientation(-15., 0.,
+      drone.setCameraOrientation(-5., 0.,
                                  true); // Set camera to look slightly down so that the drone is slightly above the tag
 
       drone.takeOff(true); // Take off
@@ -522,3 +522,4 @@ int main(int argc, char **argv)
 }
 
 #endif // #elif !defined(VISP_HAVE_OPENCV)
+
