@@ -738,9 +738,9 @@ int main()
                            const vpCameraParameters &cam, double size, const vpColor &color = vpColor::none,
                            unsigned int thickness = 1, const vpImagePoint &offset = vpImagePoint(0, 0));
   static void displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          const vpColor &color, unsigned int thickness = 1, bool segment = true);
+                          const vpColor &color, unsigned int thickness = 1);
   static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color,
-                          unsigned int thickness = 1, bool segment = true);
+                          unsigned int thickness = 1);
   static void displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
                           const bool closeTheShape, const vpColor &color, unsigned int thickness = 1);
   static void displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color,
@@ -837,9 +837,9 @@ int main()
                            double size, const vpColor &color = vpColor::none, unsigned int thickness = 1,
                            const vpImagePoint &offset = vpImagePoint(0, 0));
   static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          const vpColor &color, unsigned int thickness = 1, bool segment = true);
+                          const vpColor &color, unsigned int thickness = 1);
   static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color,
-                          unsigned int thickness = 1, bool segment = true);
+                          unsigned int thickness = 1);
   static void displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape,
                           const vpColor &color, unsigned int thickness = 1);
   static void displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color,
