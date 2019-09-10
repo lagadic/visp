@@ -21,10 +21,10 @@ int main(int argc, const char **argv)
       opt_device = atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--code-type")
       opt_barcode = atoi(argv[i + 1]);
-    else if (std::string(argv[i]) == "--help") {
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-                << " [--device <camera number>] [--code-type <0 for QRcode | "
-                   "1 for DataMatrix>] [--help]"
+                << " [--device <camera number>] [--code-type <0 for QR code | "
+                   "1 for DataMatrix code>] [--help] [-h]"
                 << std::endl;
       return 0;
     }

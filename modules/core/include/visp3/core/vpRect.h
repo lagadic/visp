@@ -86,10 +86,19 @@ public:
   explicit vpRect(const std::vector<vpImagePoint> &ip);
 
   /*!
+    Returns the area of the rectangle.
+  */
+  inline double getArea() const
+  {
+    return width*height;
+  }
+
+  /*!
     Returns the bottom coordinate of the rectangle.
     \sa getRight()
   */
   inline double getBottom() const { return (this->top + this->height - 1.0); }
+
   /*!
     Returns the bottom-right coordinate of the rectangle.
     \sa getTopLeft(), getBottom(), getRight()
@@ -142,7 +151,6 @@ public:
    top and bottom edges, i.e. height = bottom - top + 1.
 
    \sa getWidth()
-
   */
   inline double getHeight() const { return this->height; }
 

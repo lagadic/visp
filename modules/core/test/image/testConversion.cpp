@@ -138,7 +138,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'h':
       usage(argv[0], NULL, ipath, opath, user, nbIterations);
       return false;
-      break;
 
     case 'c':
     case 'd':
@@ -147,7 +146,6 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     default:
       usage(argv[0], optarg_, ipath, opath, user, nbIterations);
       return false;
-      break;
     }
   }
 
@@ -348,6 +346,7 @@ int main(int argc, const char **argv)
     std::cout << "   y(" << (int)y << ") u(" << (int)u << ") v(" << (int)v << ") = r(" << (int)r << ") g(" << (int)g
               << ") b(" << (int)b << ")" << std::endl;
 
+    vpChrono chrono;
 #ifdef VISP_HAVE_OPENCV
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
     double t0 = vpTime::measureTimeMs();
@@ -487,7 +486,7 @@ int main(int argc, const char **argv)
 /* ------------------------------------------------------------------------ */
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    double t2 = vpTime::measureTimeMs();
+    chrono.start();
     /////////////////////////
     // Convert a cv::Mat to a vpImage<vpRGBa>
     ////////////////////////
@@ -597,8 +596,8 @@ int main(int argc, const char **argv)
       return (-1);
     }
     std::cout << "   Convert result in " << filename << std::endl;
-    double t3 = vpTime::measureTimeMs();
-    std::cout << "== Conversion c++ interface : " << t3 - t2 << " ms" << std::endl;
+    chrono.stop();
+    std::cout << "== Conversion c++ interface : " << chrono.getDurationMs() << " ms" << std::endl;
 #endif
 #endif
 
@@ -615,13 +614,13 @@ int main(int argc, const char **argv)
     vpImageIo::read(Ic, filename);
     vpImage<unsigned char> R, G, B, a;
     vpImageConvert::split(Ic, &R, NULL, &B);
-    double begintime = vpTime::measureTimeMs();
+    chrono.start();
     for (int iteration = 0; iteration < nbIterations; iteration++) {
       vpImageConvert::split(Ic, &R, NULL, &B);
     }
-    double endtime = vpTime::measureTimeMs();
+    chrono.stop();
 
-    std::cout << "   Time for " << nbIterations << " split (ms): " << endtime - begintime << std::endl;
+    std::cout << "   Time for " << nbIterations << " split (ms): " << chrono.getDurationMs() << std::endl;
 
     filename = vpIoTools::createFilePath(opath, "Klimt_RChannel.pgm");
     /* Save the the current image */
@@ -638,14 +637,14 @@ int main(int argc, const char **argv)
     ////////////////////////////////////
     std::cout << "** Merge 4 vpImage<unsigned char> (RGBa) to vpImage<vpRGBa>" << std::endl;
     vpImageConvert::split(Ic, &R, &G, &B, &a);
-    begintime = vpTime::measureTimeMs();
+    chrono.start();
     vpImage<vpRGBa> I_merge;
     for (int iteration = 0; iteration < nbIterations; iteration++) {
       vpImageConvert::merge(&R, &G, &B, &a, I_merge);
     }
-    endtime = vpTime::measureTimeMs();
+    chrono.stop();
 
-    std::cout << "   Time for 1000 merge (ms): " << endtime - begintime << std::endl;
+    std::cout << "   Time for 1000 merge (ms): " << chrono.getDurationMs() << std::endl;
 
     filename = vpIoTools::createFilePath(opath, "Klimt_merge.ppm");
     std::cout << "   Resulting image saved in: " << filename << std::endl;
@@ -660,14 +659,14 @@ int main(int argc, const char **argv)
               << std::endl;
     unsigned int size = Ic.getSize();
     unsigned int w = Ic.getWidth(), h = Ic.getHeight();
-    unsigned char *hue = new unsigned char[size];
-    unsigned char *saturation = new unsigned char[size];
-    unsigned char *value = new unsigned char[size];
+    std::vector<unsigned char> hue(size);
+    std::vector<unsigned char> saturation(size);
+    std::vector<unsigned char> value(size);
 
-    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, hue, saturation, value, size);
-    vpImage<unsigned char> I_hue(hue, h, w);
-    vpImage<unsigned char> I_saturation(saturation, h, w);
-    vpImage<unsigned char> I_value(value, h, w);
+    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, &hue.front(), &saturation.front(), &value.front(), size);
+    vpImage<unsigned char> I_hue(&hue.front(), h, w);
+    vpImage<unsigned char> I_saturation(&saturation.front(), h, w);
+    vpImage<unsigned char> I_value(&value.front(), h, w);
     vpImage<vpRGBa> I_HSV;
     vpImageConvert::merge(&I_hue, &I_saturation, &I_value, NULL, I_HSV);
 
@@ -676,30 +675,15 @@ int main(int argc, const char **argv)
     vpImageIo::write(I_HSV, filename);
 
     // Check the conversion RGBa <==> HSV
-    double *hue2 = new double[size];
-    double *saturation2 = new double[size];
-    double *value2 = new double[size];
-    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, hue2, saturation2, value2, size);
+    std::vector<double> hue2(size);
+    std::vector<double> saturation2(size);
+    std::vector<double> value2(size);
+    vpImageConvert::RGBaToHSV((unsigned char *)Ic.bitmap, &hue2.front(), &saturation2.front(), &value2.front(), size);
 
-    unsigned char *rgba = new unsigned char[size * 4];
-    vpImageConvert::HSVToRGBa(hue2, saturation2, value2, rgba, size);
+    std::vector<unsigned char> rgba(size * 4);
+    vpImageConvert::HSVToRGBa(&hue2.front(), &saturation2.front(), &value2.front(), &rgba.front(), size);
 
-    if (hue2 != NULL) {
-      delete[] hue2;
-      hue2 = NULL;
-    }
-
-    if (saturation2 != NULL) {
-      delete[] saturation2;
-      saturation2 = NULL;
-    }
-
-    if (value2 != NULL) {
-      delete[] value2;
-      value2 = NULL;
-    }
-
-    vpImage<vpRGBa> I_HSV2RGBa((vpRGBa *)rgba, h, w);
+    vpImage<vpRGBa> I_HSV2RGBa(reinterpret_cast<vpRGBa *>(&rgba.front()), h, w);
     filename = vpIoTools::createFilePath(opath, "Klimt_HSV2RGBa.ppm");
     std::cout << "   Resulting image saved in: " << filename << std::endl;
     vpImageIo::write(I_HSV2RGBa, filename);
@@ -722,12 +706,9 @@ int main(int argc, const char **argv)
     // Test construction of a vpImage from an array with copyData==true
     ////////////////////////////////////
     std::cout << "** Construction of a vpImage from an array with copyData==true" << std::endl;
-    unsigned char *rgba2 = new unsigned char[size * 4];
-    memset(rgba2, 127, size * 4);
-    vpImage<vpRGBa> I_copyData((vpRGBa *)rgba2, h, w, true);
-
-    // Delete the array
-    delete[] rgba2;
+    std::vector<unsigned char> rgba2(size*4);
+    std::fill(rgba2.begin(), rgba2.end(), 127);
+    vpImage<vpRGBa> I_copyData(reinterpret_cast<vpRGBa *>(&rgba2.front()), h, w, true);
 
     filename = vpIoTools::createFilePath(opath, "I_copyData.ppm");
     std::cout << "   Resulting image saved in: " << filename << std::endl;
@@ -751,19 +732,20 @@ int main(int argc, const char **argv)
       vpImage<unsigned char> I_gray_regular(I_color.getHeight(), I_color.getWidth());
       unsigned char value_sse = 0, value_regular = 0;
 
-      double t_sse = vpTime::measureTimeMs();
+      vpChrono chrono_sse;
+      chrono_sse.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
         vpImageConvert::convert(I_color, I_gray_sse);
         value_sse += I_gray_sse[0][0];
       }
-      t_sse = vpTime::measureTimeMs() - t_sse;
+      chrono_sse.stop();
 
-      double t_regular = vpTime::measureTimeMs();
+      chrono.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
         computeRegularRGBaToGrayscale((unsigned char *)I_color.bitmap, I_gray_regular.bitmap, I_color.getSize());
         value_regular += I_gray_regular[0][0];
       }
-      t_regular = vpTime::measureTimeMs() - t_regular;
+      chrono.stop();
 
       // Compute the error between the SSE and regular version
       double rmse_error = 0.0;
@@ -774,9 +756,9 @@ int main(int argc, const char **argv)
       }
 
       std::cout << "\n   RGBa to Grayscale" << std::endl;
-      std::cout << "   t_regular (" << nbIterations << " iterations)=" << t_regular << " ms"
-                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
-      std::cout << "   Speed-up=" << (t_regular / t_sse) << "X" << std::endl;
+      std::cout << "   t_regular (" << nbIterations << " iterations)=" << chrono.getDurationMs() << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << chrono_sse.getDurationMs() << " ms" << std::endl;
+      std::cout << "   Speed-up=" << (chrono.getDurationMs() / chrono_sse.getDurationMs()) << "X" << std::endl;
       std::cout << "   RMSE error between SSE and regular version: " << (std::sqrt(rmse_error / I_color.getSize()))
                 << std::endl;
 
@@ -793,30 +775,30 @@ int main(int argc, const char **argv)
       vpImageIo::write(I_gray_regular, filename);
 
       // RGB to Grayscale conversion
-      unsigned char *rgb_array = new unsigned char[I_color.getSize() * 3];
-      vpImageConvert::RGBaToRGB((unsigned char *)I_color.bitmap, rgb_array, I_color.getSize());
+      std::vector<unsigned char> rgb_array(I_color.getSize()*3);
+      vpImageConvert::RGBaToRGB((unsigned char *)I_color.bitmap, &rgb_array.front(), I_color.getSize());
 
       value_sse = 0;
       value_regular = 0;
 
-      unsigned char *rgb2gray_array_sse = new unsigned char[I_color.getSize()];
-      t_sse = vpTime::measureTimeMs();
+      std::vector<unsigned char> rgb2gray_array_sse(I_color.getSize());
+      chrono_sse.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
-        vpImageConvert::RGBToGrey(rgb_array, rgb2gray_array_sse, I_color.getWidth(), I_color.getHeight(), false);
+        vpImageConvert::RGBToGrey(&rgb_array.front(), &rgb2gray_array_sse.front(), I_color.getWidth(), I_color.getHeight(), false);
         value_sse += rgb2gray_array_sse[0];
       }
-      t_sse = vpTime::measureTimeMs() - t_sse;
+      chrono_sse.stop();
 
-      unsigned char *rgb2gray_array_regular = new unsigned char[I_color.getSize()];
-      t_regular = vpTime::measureTimeMs();
+      std::vector<unsigned char> rgb2gray_array_regular(I_color.getSize());
+      chrono.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
-        computeRegularRGBToGrayscale(rgb_array, rgb2gray_array_regular, I_color.getSize());
+        computeRegularRGBToGrayscale(&rgb_array.front(), &rgb2gray_array_regular.front(), I_color.getSize());
         value_regular += rgb2gray_array_regular[0];
       }
-      t_regular = vpTime::measureTimeMs() - t_regular;
+      chrono.stop();
 
-      vpImage<unsigned char> I_gray2rgba_sse(rgb2gray_array_sse, I_color.getHeight(), I_color.getWidth(), false);
-      vpImage<unsigned char> I_gray2rgba_regular(rgb2gray_array_regular, I_color.getHeight(), I_color.getWidth(),
+      vpImage<unsigned char> I_gray2rgba_sse(&rgb2gray_array_sse.front(), I_color.getHeight(), I_color.getWidth(), false);
+      vpImage<unsigned char> I_gray2rgba_regular(&rgb2gray_array_regular.front(), I_color.getHeight(), I_color.getWidth(),
                                                  false);
 
       // Compute the error between the SSE and regular version
@@ -829,9 +811,9 @@ int main(int argc, const char **argv)
       }
 
       std::cout << "\n   RGB to Grayscale" << std::endl;
-      std::cout << "   t_regular (" << nbIterations << " iterations)=" << t_regular << " ms"
-                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
-      std::cout << "   Speed-up=" << (t_regular / t_sse) << "X" << std::endl;
+      std::cout << "   t_regular (" << nbIterations << " iterations)=" << chrono.getDurationMs() << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << chrono_sse.getDurationMs() << " ms" << std::endl;
+      std::cout << "   Speed-up=" << (chrono.getDurationMs() / chrono_sse.getDurationMs()) << "X" << std::endl;
       std::cout << "   RMSE error between SSE and regular version: " << (std::sqrt(rmse_error / I_color.getSize()))
                 << std::endl;
 
@@ -858,19 +840,19 @@ int main(int argc, const char **argv)
       value_sse = 0;
       value_regular = 0;
 
-      t_sse = vpTime::measureTimeMs();
+      chrono_sse.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
         vpImageConvert::convert(colorMat, I_mat2gray_sse, false);
         value_sse += I_mat2gray_sse[0][0];
       }
-      t_sse = vpTime::measureTimeMs() - t_sse;
+      chrono_sse.stop();
 
-      t_regular = vpTime::measureTimeMs();
+      chrono.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
         computeRegularBGRToGrayscale(colorMat, I_mat2gray_regular);
         value_regular += I_mat2gray_sse[0][0];
       }
-      t_regular = vpTime::measureTimeMs() - t_regular;
+      chrono.stop();
 
       // Compute the error between the SSE and regular version
       rmse_error = 0.0;
@@ -881,9 +863,9 @@ int main(int argc, const char **argv)
         }
       }
 
-      std::cout << "   t_regular (" << nbIterations << " iterations)=" << t_regular << " ms"
-                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
-      std::cout << "   Speed-up=" << (t_regular / t_sse) << "X" << std::endl;
+      std::cout << "   t_regular (" << nbIterations << " iterations)=" << chrono.getDurationMs() << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << chrono_sse.getDurationMs() << " ms" << std::endl;
+      std::cout << "   Speed-up=" << (chrono.getDurationMs() / chrono_sse.getDurationMs()) << "X" << std::endl;
       std::cout << "   RMSE error between SSE and regular version: " << (std::sqrt(rmse_error / I_color.getSize()))
                 << std::endl;
 
@@ -904,16 +886,16 @@ int main(int argc, const char **argv)
       cv::Mat grayscaleMat(colorMat.size(), CV_8U);
       unsigned char value_mat = 0;
 
-      double t_opencv = vpTime::measureTimeMs();
+      chrono.start();
       for (int iteration = 0; iteration < nbIterations; iteration++) {
         cv::cvtColor(colorMat, grayscaleMat, cv::COLOR_BGR2GRAY);
         value_mat += grayscaleMat.ptr<uchar>(0)[0];
       }
-      t_opencv = vpTime::measureTimeMs() - t_opencv;
+      chrono.stop();
 
-      std::cout << "   t_opencv (" << nbIterations << " iterations)=" << t_opencv << " ms"
-                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
-      std::cout << "   Speed-up=" << (t_opencv / t_sse) << "X" << std::endl;
+      std::cout << "   t_opencv (" << nbIterations << " iterations)=" << chrono.getDurationMs() << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << chrono_sse.getDurationMs() << " ms" << std::endl;
+      std::cout << "   Speed-up=" << (chrono.getDurationMs() / chrono_sse.getDurationMs()) << "X" << std::endl;
       std::cout << "   value_mat=" << static_cast<unsigned>(value_mat) << std::endl;
 
       vpImage<unsigned char> I_grayscale_mat;
@@ -924,9 +906,9 @@ int main(int argc, const char **argv)
 
       // Test RGB to Grayscale + Flip
       std::cout << "\n   RGB to Grayscale + Flip" << std::endl;
-      unsigned char *rgb2gray_flip_array_sse = new unsigned char[I_color.getSize()];
-      vpImageConvert::RGBToGrey(rgb_array, rgb2gray_flip_array_sse, I_color.getWidth(), I_color.getHeight(), true);
-      vpImage<unsigned char> I_rgb2gray_flip_sse(rgb2gray_flip_array_sse, I_color.getHeight(), I_color.getWidth());
+      std::vector<unsigned char> rgb2gray_flip_array_sse(I_color.getSize());
+      vpImageConvert::RGBToGrey(&rgb_array.front(), &rgb2gray_flip_array_sse.front(), I_color.getWidth(), I_color.getHeight(), true);
+      vpImage<unsigned char> I_rgb2gray_flip_sse(&rgb2gray_flip_array_sse.front(), I_color.getHeight(), I_color.getWidth());
 
       filename = vpIoTools::createFilePath(opath, "I_rgb2gray_flip_sse.pgm");
       std::cout << "   Resulting image saved in: " << filename << std::endl;
@@ -934,8 +916,8 @@ int main(int argc, const char **argv)
 
       // Test BGR to Grayscale + Flip
       std::cout << "\n   Conversion BGR to Grayscale + Flip" << std::endl;
-      unsigned char *bgr2gray_flip_array_sse = new unsigned char[I_color.getSize()];
-      vpImage<unsigned char> I_bgr2gray_flip_sse(bgr2gray_flip_array_sse, I_color.getHeight(), I_color.getWidth());
+      std::vector<unsigned char> bgr2gray_flip_array_sse(I_color.getSize());
+      vpImage<unsigned char> I_bgr2gray_flip_sse(&bgr2gray_flip_array_sse.front(), I_color.getHeight(), I_color.getWidth());
       vpImageConvert::convert(colorMat, I_bgr2gray_flip_sse, true);
 
       filename = vpIoTools::createFilePath(opath, "I_bgr2gray_flip_sse.pgm");
@@ -963,13 +945,13 @@ int main(int argc, const char **argv)
       std::cout << "   Resulting image saved in: " << filename << std::endl;
       vpImageIo::write(I_color_crop, filename);
 
-      unsigned char *rgb_array_crop = new unsigned char[I_color_crop.getSize() * 3];
-      vpImageConvert::RGBaToRGB((unsigned char *)I_color_crop.bitmap, rgb_array_crop, I_color_crop.getSize());
+      std::vector<unsigned char> rgb_array_crop(I_color_crop.getSize() * 3);
+      vpImageConvert::RGBaToRGB((unsigned char *)I_color_crop.bitmap, &rgb_array_crop.front(), I_color_crop.getSize());
 
-      unsigned char *rgb2gray_flip_crop_array_sse = new unsigned char[I_color_crop.getSize()];
-      vpImageConvert::RGBToGrey(rgb_array_crop, rgb2gray_flip_crop_array_sse, I_color_crop.getWidth(),
+      std::vector<unsigned char> rgb2gray_flip_crop_array_sse(I_color_crop.getSize());
+      vpImageConvert::RGBToGrey(&rgb_array_crop.front(), &rgb2gray_flip_crop_array_sse.front(), I_color_crop.getWidth(),
                                 I_color_crop.getHeight(), true);
-      vpImage<unsigned char> I_rgb2gray_flip_crop_sse(rgb2gray_flip_crop_array_sse, I_color_crop.getHeight(),
+      vpImage<unsigned char> I_rgb2gray_flip_crop_sse(&rgb2gray_flip_crop_array_sse.front(), I_color_crop.getHeight(),
                                                       I_color_crop.getWidth());
 
       filename = vpIoTools::createFilePath(opath, "I_rgb2gray_flip_crop_sse.pgm");
@@ -993,16 +975,13 @@ int main(int argc, const char **argv)
       filename = vpIoTools::createFilePath(opath, "I_bgr2gray_flip_crop_no_continuous_sse.pgm");
       std::cout << "   Resulting image saved in: " << filename << std::endl;
       vpImageIo::write(I_bgr2gray_flip_crop_no_continuous_sse, filename);
-
-      delete[] rgb_array_crop;
 #endif
-      delete[] rgb_array;
       std::cout << "Test succeed" << std::endl;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

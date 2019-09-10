@@ -268,17 +268,17 @@ inline void vpMbtDistanceKltPoints::computeP_mu_t(const double x_in, const doubl
 }
 
 /*!
-  compute the homography using a displacement matrix.
+  Compute the homography using a displacement matrix.
 
   the homography is given by:
 
   \f$ {}^cH_{c_0} = {}^cR_{c_0} + \frac{{}^cT_{c_0} . {}^tN}{d_0} \f$
 
-  Several internal variables are computed (dt, cRc0_0n)
+  Several internal variables are computed (dt, cRc0_0n).
 
-  \param _cTc0 : the displacement matrix of the camera between the initial
-  position of the camera and the current camera position \param _cHc0 : the
-  homography of the plane
+  \param _cTc0 : The displacement matrix of the camera between the initial
+  position of the camera and the current camera position
+  \param _cHc0 : The homography of the plane.
 */
 void vpMbtDistanceKltPoints::computeHomography(const vpHomogeneousMatrix &_cTc0, vpHomography &_cHc0)
 {
@@ -700,7 +700,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getModelForDisplay(con
                                         ip1.get_j(),
                                         ip2.get_i(),
                                         ip2.get_j()};
-#else    
+#else
           std::vector<double> params;
           params.push_back(0); //0 for line parameters
           params.push_back(ip1.get_i());

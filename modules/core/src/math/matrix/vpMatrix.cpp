@@ -1576,11 +1576,7 @@ void vpMatrix::stackRows(vpRowVector &out)
   if ((out.getRows() != 1) || (out.getCols() != colNum * rowNum))
     out.resize(colNum * rowNum, false, false);
 
-  double *mdata = data;
-  double *optr = out.data;
-  for (unsigned int i = 0; i < dsize; i++) {
-    *(optr++) = *(mdata++);
-  }
+  memcpy(out.data, data, sizeof(double)*out.getCols());
 }
 /*!
   Stacks rows of a matrix in a vector.
@@ -1639,10 +1635,7 @@ void vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2, vpMatrix &out)
   unsigned int r2 = m2.getRows();
   unsigned int c2 = m2.getCols();
 
-  if (r1 * r2 != out.rowNum || c1 * c2 != out.colNum) {
-    vpERROR_TRACE("Kronecker prodect bad dimension of output vpMatrix");
-    throw(vpException(vpException::dimensionError, "In Kronecker product bad dimension of output matrix"));
-  }
+  out.resize(r1*r2, c1*c2, false, false);
 
   for (unsigned int r = 0; r < r1; r++) {
     for (unsigned int c = 0; c < c1; c++) {
@@ -3886,13 +3879,7 @@ column vector:
  */
 vpColVector vpMatrix::getCol(const unsigned int j) const
 {
-  if (j >= getCols())
-    throw(vpException(vpException::dimensionError, "Unable to extract column %u from the %ux%u matrix", j, getRows(), getCols()));
-  unsigned int nb_rows = getRows();
-  vpColVector c(nb_rows);
-  for (unsigned int i = 0; i < nb_rows; i++)
-    c[i] = (*this)[i][j];
-  return c;
+  return getCol(j, 0, rowNum);
 }
 
 /*!
@@ -3932,17 +3919,7 @@ Row vector:
  */
 vpRowVector vpMatrix::getRow(const unsigned int i) const
 {
-  if (i >= getRows())
-    throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
-
-  vpRowVector r;
-  r.resize(colNum, false);
-
-  if (r.data != NULL && data != NULL && r.data != data) {
-    memcpy(r.data, data + i * colNum, sizeof(double) * colNum);
-  }
-
-  return r;
+  return getRow(i, 0, colNum);
 }
 
 /*!
@@ -3950,8 +3927,9 @@ vpRowVector vpMatrix::getRow(const unsigned int i) const
   \warning All the indexes start from 0 in this function.
   \param i : Index of the row to extract. If i=0, the first row is extracted.
   \param j_begin : Index of the column that gives the location of the first
-element of the row vector to extract. \param row_size : Size of the row vector
-to extract. \return The extracted row vector.
+element of the row vector to extract.
+  \param row_size : Size of the row vector to extract.
+  \return The extracted row vector.
 
   The following example shows how to use this function:
   \code
@@ -3970,7 +3948,8 @@ int main()
 
   vpRowVector rv = A.getRow(1, 1, 3);
   std::cout << "Row vector: \n" << rv << std::endl;
-}  \endcode
+}
+  \endcode
 It produces the following output:
   \code
 [4,4]=
@@ -3984,12 +3963,66 @@ Row vector:
  */
 vpRowVector vpMatrix::getRow(const unsigned int i, const unsigned int j_begin, const unsigned int row_size) const
 {
-  if (j_begin + row_size > getCols() || i >= getRows())
+  if (j_begin + row_size > colNum || i >= rowNum)
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
+
   vpRowVector r(row_size);
-  for (unsigned int j = 0; j < row_size; j++)
-    r[j] = (*this)[i][j_begin + i];
+  if (r.data != NULL && data != NULL) {
+    memcpy(r.data, (*this)[i] + j_begin, row_size*sizeof(double));
+  }
+
   return r;
+}
+
+/*!
+  Extract a diagonal vector from a matrix.
+
+  \return The diagonal of the matrix.
+
+  \warning An empty vector is returned if the matrix is empty.
+
+  The following example shows how to use this function:
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(3,4);
+
+  for(unsigned int i=0; i < A.getRows(); i++)
+    for(unsigned int j=0; j < A.getCols(); j++)
+      A[i][j] = i*A.getCols()+j;
+
+  A.print(std::cout, 4);
+
+  vpColVector diag = A.getDiag();
+  std::cout << "Diag vector: \n" << diag.t() << std::endl;
+}
+  \endcode
+It produces the following output:
+  \code
+[3,4]=
+   0  1  2  3
+   4  5  6  7
+   8  9 10 11
+Diag vector:
+0  5  10
+  \endcode
+ */
+vpColVector vpMatrix::getDiag() const
+{
+  unsigned int min_size = std::min(rowNum, colNum);
+  vpColVector diag;
+
+  if (min_size > 0) {
+    diag.resize(min_size, false);
+
+    for (unsigned int i = 0; i < min_size; i++) {
+      diag[i] = (*this)[i][i];
+    }
+  }
+
+  return diag;
 }
 
 /*!

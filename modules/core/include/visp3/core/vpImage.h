@@ -351,6 +351,7 @@ private:
   unsigned int width;   ///! number of columns
   unsigned int height;  ///! number of rows
   Type **row;           ///! points the row pointer array
+  bool hasOwnership;    ///! true if this instance owns the bitmap, false otherwise (e.g. copyData=false)
 };
 
 template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Type> &I)
@@ -674,7 +675,9 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
   if ((h != this->height) || (w != this->width)) {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10, "Destruction bitmap[]");
-      delete[] bitmap;
+      if (hasOwnership) {
+        delete[] bitmap;
+      }
       bitmap = NULL;
     }
   }
@@ -684,8 +687,10 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 
   npixels = width * height;
 
-  if (bitmap == NULL)
+  if (bitmap == NULL) {
     bitmap = new Type[npixels];
+    hasOwnership = true;
+  }
 
   if (bitmap == NULL) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
@@ -727,11 +732,14 @@ void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned
   // Delete bitmap if copyData==false, otherwise only if the dimension differs
   if ((copyData && ((h != this->height) || (w != this->width))) || !copyData) {
     if (bitmap != NULL) {
-      delete[] bitmap;
+      if (hasOwnership) {
+        delete[] bitmap;
+      }
       bitmap = NULL;
     }
   }
 
+  hasOwnership = copyData;
   this->width = w;
   this->height = h;
 
@@ -783,7 +791,7 @@ void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(h, w, 0);
 }
@@ -807,7 +815,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w)
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(h, w, value);
 }
@@ -829,7 +837,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
 */
 template <class Type>
 vpImage<Type>::vpImage(Type *const array, const unsigned int h, const unsigned int w, const bool copyData)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(array, h, w, copyData);
 }
@@ -843,7 +851,8 @@ vpImage<Type>::vpImage(Type *const array, const unsigned int h, const unsigned i
 
   \sa vpImage::resize(height, width) for memory allocation
 */
-template <class Type> vpImage<Type>::vpImage() : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+template <class Type> vpImage<Type>::vpImage() :
+  bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
 }
 
@@ -903,7 +912,9 @@ template <class Type> void vpImage<Type>::destroy()
   if (bitmap != NULL) {
     //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
     //    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
-    delete[] bitmap;
+    if (hasOwnership) {
+      delete[] bitmap;
+    }
     bitmap = NULL;
   }
 
@@ -927,7 +938,8 @@ template <class Type> vpImage<Type>::~vpImage() { destroy(); }
   Copy constructor
 */
 template <class Type>
-vpImage<Type>::vpImage(const vpImage<Type> &I) : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+vpImage<Type>::vpImage(const vpImage<Type> &I)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   resize(I.getHeight(), I.getWidth());
   memcpy(static_cast<void*>(bitmap), static_cast<void*>(I.bitmap), I.npixels * sizeof(Type));
@@ -939,7 +951,7 @@ vpImage<Type>::vpImage(const vpImage<Type> &I) : bitmap(NULL), display(NULL), np
 */
 template <class Type>
 vpImage<Type>::vpImage(vpImage<Type> &&I)
-  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row)
+  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row), hasOwnership(I.hasOwnership)
 {
   I.bitmap = NULL;
   I.display = NULL;
@@ -947,6 +959,7 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
   I.width = 0;
   I.height = 0;
   I.row = NULL;
+  I.hasOwnership = false;
 }
 #endif
 

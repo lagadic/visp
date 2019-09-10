@@ -60,7 +60,7 @@
 
 int main()
 {
-  int port = 5000;
+  int port = 53210;
 
   std::vector<vpVirtuose> virtuose(4); // 0: virtuose, 1: thumb, 2: index, 3: middle
   std::vector<vpHomogeneousMatrix> wMd(4);

@@ -64,12 +64,10 @@
 class VISP_EXPORT vpDetectorBase
 {
 protected:
-  std::vector<std::vector<vpImagePoint> > m_polygon; //!< For each object,
-                                                     //!< defines the polygon
-                                                     //!< that contains the
-                                                     //!< object.
+  std::vector<std::vector<vpImagePoint> > m_polygon; //!< For each object, defines the polygon that contains the object.
   std::vector<std::string> m_message;                //!< Message attached to each object.
   size_t m_nb_objects;                               //!< Number of detected objects.
+  unsigned long m_timeout_ms;                        //!< Detection timeout.
 
 public:
   /*!
@@ -125,6 +123,9 @@ public:
     Returns ith object container box as a vector of points.
    */
   std::vector<vpImagePoint> &getPolygon(size_t i);
+
+  /*! Set detector timeout in milli-seconds. When set to 0, there is no timeout. */
+  inline void setTimeout(unsigned long timeout_ms) { m_timeout_ms = timeout_ms; }
 
   //@}
 };

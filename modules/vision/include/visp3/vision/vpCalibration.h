@@ -90,20 +90,20 @@ public:
                                        estimation of the distortion. */
   } vpCalibrationMethodType;
 
-  vpHomogeneousMatrix cMo; //!< the pose computed for the model without distortion
+  vpHomogeneousMatrix cMo; //!< Pose computed using camera parameters without distorsion
   //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_dist; //!< the pose computed for perspective projection
+  vpHomogeneousMatrix cMo_dist; //!< Pose computed using camera parameters with distorsion
   //!< with distortion model
   //!< (as a 3x4 matrix [R T])
-  vpCameraParameters cam; //!< camera intrinsic parameters for perspective
+  vpCameraParameters cam; //!< Camera intrinsic parameters for perspective
   //!< projection model without distortion
-  vpCameraParameters cam_dist; //!< camera intrinsic parameters for perspective
+  vpCameraParameters cam_dist; //!< Camera intrinsic parameters for perspective
   //!< projection model with distortion
 
-  vpHomogeneousMatrix rMe; //!< position of the effector in relation to the
+  vpHomogeneousMatrix rMe; //!< Position of the effector in relation to the
   //!< reference coordinates (manipulator base coordinates)
-  vpHomogeneousMatrix eMc; //!< position of the camera in relation to the effector
-  vpHomogeneousMatrix eMc_dist;
+  vpHomogeneousMatrix eMc; //!< Position of the camera in end-effector frame using camera parameters without distorsion
+  vpHomogeneousMatrix eMc_dist; //!< Position of the camera in end-effector frame using camera parameters with distorsion
 
 public:
   // Constructor

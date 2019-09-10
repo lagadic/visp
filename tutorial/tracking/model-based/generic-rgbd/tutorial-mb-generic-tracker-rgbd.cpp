@@ -15,6 +15,7 @@
 #include <pcl/common/common.h>
 #include <pcl/io/pcd_io.h>
 
+namespace {
 struct rs_intrinsics {
   float ppx;       /**< Horizontal coordinate of the principal point of the image,
                       as a pixel offset from the left edge */
@@ -116,6 +117,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   }
 
   return true;
+}
 }
 
 int main(int argc, char *argv[])
