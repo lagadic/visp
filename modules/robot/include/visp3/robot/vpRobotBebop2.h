@@ -50,11 +50,10 @@ extern "C" {
 #include <libARController/ARController.h> // For drone control
 #include <libARSAL/ARSAL.h> // For semaphore
 
-#ifdef VISP_HAVE_OPENCV         // FFmpeg is part of OpenCV
+#ifdef VISP_HAVE_FFMPEG
 #include <libavcodec/avcodec.h> // For video decoding
 #include <libswscale/swscale.h> // For rescaling decoded frames
-
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif
 }
 
 #include <mutex>
@@ -110,7 +109,7 @@ public:
   //*** ***//
 
   //*** Streaming commands ***//
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
   void getGrayscaleImage(vpImage<unsigned char> &I);
   void getRGBaImage(vpImage<vpRGBa> &I);
   int getVideoHeight();
@@ -121,7 +120,7 @@ public:
   void setVideoStabilisationMode(int mode);
   void startStreaming();
   void stopStreaming();
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif
   //*** ***//
 
   //*** Camera control commands ***//
@@ -147,7 +146,7 @@ private:
   ARSAL_Sem_t m_stateSem;    ///< Semaphore
   struct sigaction m_sigAct; ///< Signal handler
 
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
   AVCodecContext *m_codecContext; ///< Codec context for video stream decoding
   AVPacket m_packet;              ///< Packed used to send data to the decoder
   AVFrame *m_picture;             ///< Frame used to receive data from the decoder
@@ -160,8 +159,7 @@ private:
 
   int m_videoWidth;  ///< Width of the video streamed from the camera
   int m_videoHeight; ///< Height of the video streamed from the camera
-
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif
 
   static bool m_running; ///< Used for checking if the programm is running
 
@@ -208,7 +206,7 @@ private:
   void setupCallbacks();
   void startController();
 
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
   //*** Video streaming functions ***//
   void initCodec();
   void cleanUpCodec();
@@ -217,7 +215,7 @@ private:
   void stopVideoDecoding();
   void computeFrame(ARCONTROLLER_Frame_t *frame);
   //*** ***//
-#endif //#ifdef VISP_HAVE_OPENCV
+#endif
 
   //*** Callbacks ***//
   static void stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eARCONTROLLER_ERROR error, void *customData);

@@ -45,14 +45,14 @@
 
 #include <visp3/core/vpExponentialMap.h> // For velocity computation
 
-#ifdef VISP_HAVE_OPENCV // FFmpeg is part of OpenCV
+#ifdef VISP_HAVE_FFMPEG
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/imgutils.h>
 }
 #include <visp3/core/vpImageConvert.h>
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif
 
 #include <iostream>
 #include <math.h>
@@ -123,7 +123,7 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
   sigaction(SIGKILL, &m_sigAct, 0);
   sigaction(SIGQUIT, &m_sigAct, 0);
 
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
   m_codecContext = NULL;
   m_packet = AVPacket();
   m_picture = NULL;
@@ -131,7 +131,7 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
   m_img_convert_ctx = NULL;
   m_buffer = NULL;
   m_videoDecodingStarted = false;
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif
 
   m_batteryLevel = 100;
 
@@ -408,11 +408,11 @@ bool vpRobotBebop2::isRunning()
 */
 bool vpRobotBebop2::isStreaming()
 {
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
   return m_videoDecodingStarted;
 #else
   return false;
-#endif //#ifdef VISP_HAVE_OPENCV
+#endif
 }
 
 /*!
@@ -773,13 +773,13 @@ void vpRobotBebop2::stopMoving()
 //*** Streaming functions ***//
 //***                     ***//
 
-#ifdef VISP_HAVE_OPENCV // Functions related to video streaming and decoding requiers FFmpeg, which is part of OpenCV
+#ifdef VISP_HAVE_FFMPEG // Functions related to video streaming and decoding requiers FFmpeg
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Gets the last streamed and decoded image from the drone camera feed in grayscale.
-    The image obtained has a width of 856 and a height of 480.
+  The image obtained has a width of 856 and a height of 480.
 
   \param[in,out] I : grayscale image that will contain last streamed and decoded image after the function ends.
 */
@@ -804,10 +804,10 @@ void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Gets the last streamed and decoded image from the drone camera feed in RGBa.
-    The image obtained has a width of 856 and a height of 480.
+  The image obtained has a width of 856 and a height of 480.
 
   \param[in,out] I : RGBa image that will contain last streamed and decoded image after the function ends.
 */
@@ -832,21 +832,21 @@ void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Gets the height of the video streamed by the drone (pixels).
 */
 int vpRobotBebop2::getVideoHeight() { return m_videoHeight; }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Gets the width of the video streamed by the drone (pixels).
 */
 int vpRobotBebop2::getVideoWidth() { return m_videoWidth; }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Sets the exposure of the video (min : -1.5, max : 1.5).
 
@@ -870,7 +870,7 @@ void vpRobotBebop2::setExposure(float expo)
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Sets the streaming mode.
 
@@ -922,7 +922,7 @@ void vpRobotBebop2::setStreamingMode(int mode)
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Sets the streaming mode.
 
@@ -975,7 +975,7 @@ void vpRobotBebop2::setVideoResolution(int mode)
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Sets the video stabilisation mode.
 
@@ -1017,7 +1017,7 @@ void vpRobotBebop2::setVideoStabilisationMode(int mode)
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Starts the video streaming from the drone camera. Every time a frame is received, it is decoded and stored into \e
   m_currentImage, which can be obtained with getImage().
@@ -1055,7 +1055,7 @@ void vpRobotBebop2::startStreaming()
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Stops the streaming and decoding of the drone camera video
 */
@@ -1085,7 +1085,7 @@ void vpRobotBebop2::stopStreaming()
   }
 }
 
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif // #ifdef VISP_HAVE_FFMPEG
 
 //***                   ***//
 //*** Private Functions ***//
@@ -1306,9 +1306,9 @@ void vpRobotBebop2::startController()
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Controller started.");
 }
 
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Initialises the codec used to decode the drone H264 video stream.
 */
@@ -1373,7 +1373,7 @@ void vpRobotBebop2::initCodec()
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Safely frees any memory that was allocated by the codec.
 */
@@ -1406,7 +1406,7 @@ void vpRobotBebop2::cleanUpCodec()
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Starts the video decoding : initialises the codec and the image stored by the drone.
 */
@@ -1421,7 +1421,7 @@ void vpRobotBebop2::startVideoDecoding()
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Stops the video decoding : safely cleans up memory allocated by the codec.
 */
@@ -1435,7 +1435,7 @@ void vpRobotBebop2::stopVideoDecoding()
 }
 
 /*!
-  \warning This function is only available if ViSP is build with OpenCV support.
+  \warning This function is only available if ViSP is build with ffmpeg support.
 
   Decodes a H264 frame received from the drone.
 
@@ -1519,7 +1519,7 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
 
   av_frame_unref(m_picture);
 }
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif // #ifdef VISP_HAVE_FFMPEG
 /*!
 
   Safely stops the drone controller and everything needed during drone control. Called by the destructor.
@@ -1531,10 +1531,10 @@ void vpRobotBebop2::cleanUp()
     // Lands the drone if not landed
     land();
 
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
     // Stops the streaming if not stopped
     stopStreaming();
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif
 
     // Deletes the controller
     m_deviceState = ARCONTROLLER_Device_GetState(m_deviceController, &m_errorController);
@@ -1610,7 +1610,7 @@ void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eA
 */
 eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void * customData)
 {
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
   vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
 
   uint8_t *sps_buffer_ptr = codec.parameters.h264parameters.spsBuffer;
@@ -1634,7 +1634,7 @@ eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Cod
     // If data is invalid, we clear the vector
     drone->m_codec_params_data.clear();
   }
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif // #ifdef VISP_HAVE_FFMPEG
   return ARCONTROLLER_OK;
 }
 
@@ -1652,11 +1652,11 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
 
   if (frame != NULL) {
 
-#ifdef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_FFMPEG
     if (drone->m_videoDecodingStarted) {
       drone->computeFrame(frame);
     }
-#endif // #ifdef VISP_HAVE_OPENCV
+#endif
 
   } else {
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is NULL.");

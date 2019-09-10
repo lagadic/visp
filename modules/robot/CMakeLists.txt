@@ -131,6 +131,10 @@ endif()
 if(USE_ARSDK)
   list(APPEND opt_incs ${ARSDK_INCLUDE_DIRS})
   list(APPEND opt_libs ${ARSDK_LIBRARIES})
+  if(USE_FFMPEG)
+    list(APPEND opt_incs ${FFMPEG_INCLUDE_DIRS})
+    list(APPEND opt_libs ${FFMPEG_LIBRARIES})
+  endif()
 endif()
 
 # for the wireframe simulator we can use optional opengl and coin
