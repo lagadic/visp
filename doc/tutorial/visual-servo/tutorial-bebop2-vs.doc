@@ -19,76 +19,152 @@ ViSP must be built with OpenCV support if you want to get the video streamed by 
 
 \note Before continuing, we recommend that you succeed to complete \ref tutorial-detection-apriltag.
 
-\subsection bebop2_prereq_arsdk3 Parrot ARSDK3 installation
-In order to use Parrot Bebop 2 drone with ViSP, you first need to install Parrot's SDK <a href="https://developer.parrot.com/docs/SDK3/">ARDroneSDK3</a>.
+\section bebop2_arsdk3 Build Parrot ARSDK3 
+In order to use Parrot Bebop 2 drone with ViSP, you first need to build Parrot's SDK <a href="https://developer.parrot.com/docs/SDK3/">ARDroneSDK3</a> as explained <a href="https://developer.parrot.com/docs/SDK3/#how-to-build-the-sdk">here</a>):
 
-To install ARSDK3 for ViSP, follow these steps (as seen <a href="https://developer.parrot.com/docs/SDK3/#go-deeper">here</a>) : \n\n
+\subsection bebop2_arsdk3_ubuntu On Ubuntu
+The following steps allow to build ARSDK3 on Ubuntu (tested on 18.04).
 
-<b>On Ubuntu (tested on 18.04) and OSX (tested on macOS Mojave 10.14.5)</b>\n
-1 - Get the SDK source code :
-- Create a workspace.
+<b>1. Get the SDK source code</b>
+
+Create a workspace.
 \code
-    $ cd ${VISP_WS}
-    $ mkdir ARDroneSDK3 && cd ARDroneSDK3
-\endcode
-- Initialize the repo.
-\code
-    $ sudo apt  install repo
-    $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-\endcode
-- You can then download all the repositories automatically, by executing the following command.
-\code
-    $ repo sync
+$ cd ${VISP_WS}
+$ mkdir ARDroneSDK3 && cd ARDroneSDK3
 \endcode
 
-2 - Build the SDK :
-- Install required 3rd parties:
-\note Doesn't seem to be needed on OSX.
+Initialize the repo.
+\code
+$ sudo apt install repo
+$ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
+\endcode
 
+You can then download all the repositories automatically, by executing the following command.
+\code
+$ repo sync
+\endcode
+
+<b>2. Build the SDK</b>
+
+Install required 3rd parties:
 \code
 $ sudo apt-get install git build-essential autoconf libtool libavahi-client-dev libavcodec-dev libavformat-dev libswscale-dev libncurses5-dev mplayer
 \endcode
-- Build :
+Build the SDK:
 \code
 $ ./build.sh -p arsdk-native -t build-sdk -j
 \endcode
 The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/usr`
 
-3 - In order for ViSP to find ARDroneSDK3, set ARSDK_DIR environment variable :
+<b>3. Set `ARSDK_DIR` environment variable</b>
+
+In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
 \code
 $ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
 \endcode
-\n
+
+\subsection bebop2_arsdk3_osx On Mac OSX
+The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
+
+<b>1. Get the SDK source code</b>
+
+Create a workspace.
+\code
+$ cd ${VISP_WS}
+$ mkdir ARDroneSDK3 && cd ARDroneSDK3
+\endcode
+
+Initialize the repo.
+\code
+$ brew install repo
+$ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
+\endcode
+
+You can then download all the repositories automatically, by executing the following command.
+\code
+$ repo sync
+\endcode
+
+<b>2. Build the SDK</b>
+
+Install required 3rd parties:
+\code
+$ brew install ffmpeg
+\endcode
+Build the SDK:
+\code
+$ ./build.sh -p arsdk-native -t build-sdk -j
+\endcode
+The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/usr`
+
+<b>3. Set `ARSDK_DIR` environment variable</b>
+
+In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
+\code
+$ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
+\endcode
+
+\section bebop2_visp_build Build ViSP to detect ARSDK3
+
+In order that ViSP takes into account ARSDK3 fresh installation you need to configure and build ViSP again.
+
+- Enter ViSP build folder:
+\code
+$ cd $VISP_WS/visp-build
+\endcode
+
+- Configure ViSP to detect ARSDK3 and ffmpeg used to decode images from Bebop2 camera stream:
+\code
+$ cmake ../visp
+\endcode
+At this point you should see in `Real robots` section that ARSDK and ffmpeg are enabled 
+\code
+  Real robots: 
+    ...
+    Use Parrot ARSDK:            yes
+    \-Use ffmpeg:                yes
+    ...
+\endcode
+
+- Now build ViSP using:
+\code
+$ make -j4
+\endcode
+
 
 \section bebop2_ibvs Image-based visual-servoing 
 \subsection bebop2_ibvs_run Running the program
 
-The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp. 
-\n In this example, we use three visual features for the servoing :
-- Image moment for normalized gravity center implemented in vpFeatureMomentGravityCenterNormalized, to center the drone along X and Y axes in front of the tag.
-- Image moment for normalized area implemented in vpFeatureMomentAreaNormalized to control the distance between the drone and the tag.
-- Horizontal vanishing points from the top and bottom tag sides implemented in vpFeatureVanishingPoint, to change the orientation of the drone based on the tag orientation.
+The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp.
+
+The corresponding source code and `CMakeLists.txt` file could be downloaded using
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/example/servo-bebop2
+\endcode
+
+In this example, we use four visual features for the servoing in order to control the four drone dof \f$(v_x, v_y, v_z, w_z)\f$.
+These visual features are:
+- Centered and normalized gravity center moment of the tag along camera X and Y  axis. This feature is implemented in vpFeatureMomentGravityCenterNormalized and used to center the tag in the image.
+- Normalized area moment of the tag. This feature implemented in vpFeatureMomentAreaNormalized is used to control the distance between the drone and the tag.
+- Horizontal vanishing point position corresponding to the intersection of the two lines passing through top and bottom tag edges. This feature implemented in vpFeatureVanishingPoint is used to control the orientation of the drone along its vertical axis based on the tag orientation.
 
 \note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi, as shown in the following picture : \image html drone_connexion.png
-\n
-\warning CAUTION : It's is strongly recommended to use this program outside or in a large room with non-uniform flooring, as the drone uses a downward-facing camera for horizontal speed estimation.
-\n If the surface under the drone is uniform, its movements will be inaccurate and dangerous.
 
-If you built ViSP with OpenCV and Parrot ARSDK3 support, the corresponding binary is available in `/home/[...]/visp-ws/visp-build/example/servo-bebop2/`.
+\warning CAUTION : It's is strongly recommended to use this program outside or in a large room with non-uniform flooring, as the drone uses a downward-facing camera to estimate its motion from optical flow. If the surface under the drone is uniform, its movements will be inaccurate and dangerous.
+
+If you built ViSP with ffmpeg and Parrot ARSDK3 support, the corresponding binary is available in `${VISP_WS}/visp-build/example/servo-bebop2` folder.
 \code
-    $ cd /home/[...]/visp-ws/visp-build/example/servo-bebop2
-    $ ./servoBebop2 --tag_size 0.14
+$ cd ${VISP_WS}/visp-build/example/servo-bebop2
+$ ./servoBebop2 --tag_size 0.14
 \endcode
 \note Passing the tag size (in meters) as a parameter is required.
 
 Run `./servoBebop2 --help` to see which are the command line options available.
 - Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended.
-- Adding option `--intrinsic ~/path-to-calibration-file/camera.xml` allows you to specify the intrinsic camera calibration parameters. This file can be obtained by completing \ref tutorial-calibration-intrinsic.
+- Adding option `--intrinsic ~/path-to-calibration-file/camera.xml` allows you to specify the intrinsic camera calibration parameters. This file can be obtained by completing \ref tutorial-calibration-intrinsic. Without this option you will use default parameters that are enough for a trial.
 - Adding option `--hd_stream` enables HD 720p stream resolution. Increase range and accuracy of the tag detection, but increases latency and computation time.
 \note Camera calibration settings are different for the two resolutions.\n  Make sure that if you pass custom intrinsic camera parameters, they were obtained with the correct resolution.
 - Adding option `--verbose` or `-v` enables the display of information messages from the drone, and the velocity commands sent to the drone.
-
-\n
 
 The program will first connect to the drone, start the video streaming and decoding, and then the drone will take off and hover until it detects one (and one only) 36h11 AprilTag in the image.
 
@@ -96,8 +172,7 @@ The program will first connect to the drone, start the video streaming and decod
 \endhtmlonly 
 @image html img-drone_tag.jpg
 
-\n
-We then display the drone video stream with the features visible, and the error progression for each task :
+We then display the drone video stream with the visible features, and the visualfeature error:
 \htmlonly <style>div.image img[src="drone_view.png"]{width:600px;}</style> 
 \endhtmlonly 
 @image html drone_view.png
@@ -107,15 +182,14 @@ We then display the drone video stream with the features visible, and the error 
 @image html servoing_task.png
 
 In this graph :
-- Xn corresponds to the error along X axis,
-- Yn corresponds to the error along Y axis,
-- an corresponds to the error along Z axis, which uses the surface area of the tag to compute the distance between the drone and the tag along this axis,
+- Xn corresponds to the error along camera X axis,
+- Yn corresponds to the error along camera Y axis,
+- an corresponds to the error along camera Z axis, which uses the surface area of the tag to compute the distance between the drone and the tag along this axis,
 - atan(1/rho) corresponds to the error related to the top and bottom edges of the tag. This feature will make the drone move to ensure that the two lines remain parallel.
 
 Clicking on the drone view display will make the drone land, safely disconnect everything and quit the program.
-\n
 
 \subsection bebop2_understanding Understanding the program
 You can read \ref tutorial-ibvs to understand the basics, and then check the comments in servoBebop2.cpp for a more detailed explanation of the program.
-TODO
+
 */
