@@ -137,18 +137,25 @@ $ make -j4
 
 The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp.
 
-The corresponding source code and `CMakeLists.txt` file could be downloaded using
+The corresponding source code and `CMakeLists.txt` file could be downloaded using:
 \code
 $ svn export https://github.com/lagadic/visp.git/trunk/example/servo-bebop2
 \endcode
 
-In this example, we use four visual features for the servoing in order to control the four drone dof \f$(v_x, v_y, v_z, w_z)\f$.
+The following image shows the frames attached to the drone:
+\htmlonly <style>div.image img[src="img-bebop2-coord-system.png"]{width:600px;}</style> 
+\endhtmlonly 
+@image html img-bebop2-coord-system.png
+- There is the drone control frame, also called end-effector frame, in which we can control the drone in velocity applying \f${^e}v_x, {^e}v_y, {^e}v_z, {^e}w_z,\f$ corresponding respectively to the 3 translational velocities along \f$X_e, Y_e, Z_e\f$ axis, and the rotational velocity along \f$Z_e\f$ axis. The vpRobotBebop2 class allows to send these velocities.
+- There is the camera frame with \f$X_c, Y_c, Z_c\f$ axis. 
+
+In servoBebop2.cpp example, we use four visual features for the servoing in order to control the four drone dof \f${^e}v_x, {^e}v_y, {^e}v_z, {^e}w_z,\f$.
 These visual features are:
 - Centered and normalized gravity center moment of the tag along camera X and Y  axis. This feature is implemented in vpFeatureMomentGravityCenterNormalized and used to center the tag in the image.
 - Normalized area moment of the tag. This feature implemented in vpFeatureMomentAreaNormalized is used to control the distance between the drone and the tag.
 - Horizontal vanishing point position corresponding to the intersection of the two lines passing through top and bottom tag edges. This feature implemented in vpFeatureVanishingPoint is used to control the orientation of the drone along its vertical axis based on the tag orientation.
 
-\note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi, as shown in the following picture : \image html drone_connexion.png
+\note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi, as shown in the following picture for Ubuntu: \image html drone_connexion.png
 
 \warning CAUTION : It's is strongly recommended to use this program outside or in a large room with non-uniform flooring, as the drone uses a downward-facing camera to estimate its motion from optical flow. If the surface under the drone is uniform, its movements will be inaccurate and dangerous.
 
@@ -158,6 +165,15 @@ $ cd ${VISP_WS}/visp-build/example/servo-bebop2
 $ ./servoBebop2 --tag_size 0.14
 \endcode
 \note Passing the tag size (in meters) as a parameter is required.
+
+Running the previous command should allow to get same results as the one presented in the video:
+
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/le07g-RRsJM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
 
 Run `./servoBebop2 --help` to see which are the command line options available.
 - Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended.
