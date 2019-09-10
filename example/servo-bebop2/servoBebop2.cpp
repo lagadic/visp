@@ -71,10 +71,10 @@ int main()
   std::cout << "\nThis example requires Parrot ARSDK3 library. You should install it.\n" << std::endl;
   return EXIT_SUCCESS;
 }
-#elif !defined(VISP_HAVE_OPENCV)
+#elif !defined(VISP_HAVE_FFMPEG)
 int main()
 {
-  std::cout << "\nThis example requires OpenCV library. You should install it.\n" << std::endl;
+  std::cout << "\nThis example requires ffmpeg library. You should install it.\n" << std::endl;
   return EXIT_SUCCESS;
 }
 #else
@@ -149,17 +149,29 @@ int main(int argc, char **argv)
       }
     } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
       std::cout
-          << "\nUsage: " << argv[0]
-          << " [--tag_size <The size of the tag to detect in meters, required.>]\n"
-             " [--distance_to_tag <The desired distance to the tag in meters (default: 1 meter)>]\n"
-             " [--intrinsic <XML file containing computed intrinsic camera parameters (default: empty)>]\n"
-             " [--hd_stream] : Enables HD 720p streaming instead of default 480p.\n  Increase range and accuracy of "
-             "the tag detection, but increases latency and computation time.\n  Caution : camera calibration settings "
-             "are different for the two resolutions.\n  Make sure that if you pass custom intrinsic camera parameters, "
-             "they were obtained with the correct resolution.\n"
-             " [--verbose] [-v] : Enables verbose (drone information messages and velocity commands are then "
-             "displayed)."
-             " [--help] [-h]\n"
+          << "\nUsage:\n"
+          << "  " << argv[0]
+          << " [--tag_size <size>] [--distance_to_tag <distance>] [--intrinsic <xml file>] [--hd_stream] [--verbose] [-v] [--help] [-h]\n"
+          << std::endl
+          << "Description:\n"
+          << "  --tag_size <size>\n"
+          << "      The size of the tag to detect in meters, required.\n\n"
+          << "  --distance_to_tag <distance>\n"
+          << "      The desired distance to the tag in meters (default: 1 meter)\n\n"
+          << "  --intrinsic <xml file>\n"
+          << "      XML file containing computed intrinsic camera parameters (default: empty)\n\n"
+          << "  --hd_stream\n"
+          << "      Enables HD 720p streaming instead of default 480p.\n"
+          << "      Allows to increase range and accuracy of the tag detection,\n"
+          << "      but increases latency and computation time.\n"
+          << "      Caution: camera calibration settings are different for the two resolutions.\n"
+          << "      Make sure that if you pass custom intrinsic camera parameters,\n"
+          << "      they were obtained with the correct resolution.\n\n"
+          << "  --verbose, -v\n"
+          << "      Enables verbose (drone information messages and velocity commands\n"
+          << "      are then displayed).\n\n"
+          << "  --help, -h\n"
+          << "      Print help message.\n"
           << std::endl;
       return 0;
 
@@ -521,5 +533,5 @@ int main(int argc, char **argv)
   }
 }
 
-#endif // #elif !defined(VISP_HAVE_OPENCV)
+#endif // #elif !defined(VISP_HAVE_FFMPEG)
 

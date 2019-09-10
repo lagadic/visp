@@ -12,7 +12,7 @@
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -104,6 +104,6 @@ int main(int argc, char **argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install Parrot ARSDK3 and OpenCV, configure and build ViSP again to use this example" << std::endl;
-#endif // #if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_OPENCV)
+  std::cout << "Install Parrot ARSDK3 and ffmpeg, configure and build ViSP again to use this example" << std::endl;
+#endif // #if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
 }

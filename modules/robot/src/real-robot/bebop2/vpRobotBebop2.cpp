@@ -188,16 +188,19 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
   } else {
     m_running = true;
 
+#ifdef VISP_HAVE_FFMPEG
     setVideoResolution(0); // 720p streaming is unstable, so we force this setting to 480p
-
+#endif
     if (setDefaultSettings) {
       resetAllSettings();
 
       setMaxTilt(10);
 
+#ifdef VISP_HAVE_FFMPEG
       setVideoStabilisationMode(0);
       setExposure(1.5f);
       setStreamingMode(0);
+#endif
       setCameraOrientation(0, 0, true);
     }
   }
@@ -1267,6 +1270,7 @@ void vpRobotBebop2::setupCallbacks()
     ARSAL_PRINT (ARSAL_PRINT_ERROR, TAG, "add Command callback failed.");
   }
 
+#ifdef VISP_HAVE_FFMPEG
   //Adding frame received callback, called when a streaming frame has been received from the device
   m_errorController = ARCONTROLLER_Device_SetVideoStreamCallbacks (m_deviceController, decoderConfigCallback, didReceiveFrameCallback, NULL , this);
 
@@ -1274,6 +1278,7 @@ void vpRobotBebop2::setupCallbacks()
   {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error: %s", ARCONTROLLER_Error_ToString(m_errorController));
   }
+#endif
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Callbacks set up.");
 }
 
@@ -1600,17 +1605,17 @@ void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eA
   }
 }
 
+#ifdef VISP_HAVE_FFMPEG
 /*!
 
   Callback. Called when streaming is started, allows to get codec parameters for the H264 video streammed by the drone.
-  Currently not used, as the codec parameter are currently manually set up.
+  Currently not used, as the codec parameter are currently manually set up. Function only available when ffmpeg available.
 
   \param[in] codec : codec used to stream the drone camera video.
   \param[in] customData : pointer to custom data.
 */
 eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void * customData)
 {
-#ifdef VISP_HAVE_FFMPEG
   vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
 
   uint8_t *sps_buffer_ptr = codec.parameters.h264parameters.spsBuffer;
@@ -1634,13 +1639,12 @@ eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Cod
     // If data is invalid, we clear the vector
     drone->m_codec_params_data.clear();
   }
-#endif // #ifdef VISP_HAVE_FFMPEG
   return ARCONTROLLER_OK;
 }
 
 /*!
 
-  Callback. Called when the drone sends a frame to decode.
+  Callback. Called when the drone sends a frame to decode. Function only available when ffmpeg available.
   Sends the frame to the computeFrame() function.
 
   \param[in] frame : the frame coded in H264 to decode.
@@ -1652,11 +1656,10 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
 
   if (frame != NULL) {
 
-#ifdef VISP_HAVE_FFMPEG
     if (drone->m_videoDecodingStarted) {
       drone->computeFrame(frame);
     }
-#endif
+
 
   } else {
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is NULL.");
@@ -1664,6 +1667,8 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
 
   return ARCONTROLLER_OK;
 }
+#endif // #ifdef VISP_HAVE_FFMPEG
+
 
 /*!
 

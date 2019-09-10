@@ -150,10 +150,8 @@ int main()
 {
   try {
 
-    std::cout << "\nWARNING: this program does no sensing or avoiding of "
-                 "obstacles, \n"
-                 "the drone WILL collide with any objects in the way! Make sure "
-                 "the \n"
+    std::cout << "\nWARNING: this program does no sensing or avoiding of obstacles, "
+                 "the drone WILL collide with any objects in the way! Make sure the "
                  "drone has approximately 3 meters of free space on all sides.\n"
               << std::endl;
 
@@ -166,13 +164,13 @@ int main()
 
       std::cout << "\nConfiguring drone settings ...\n" << std::endl;
 
-      drone.setVideoResolution(0); // Setting stream video resolution to 480p
-
       drone.setMaxTilt(10);      // Setting the max roll and pitch values, the drone speed will depend on it
-      drone.setStreamingMode(0); // Set streaming mode 0 : lowest latency
 
       drone.doFlatTrim(); // Flat trim calibration
 
+#ifdef VISP_HAVE_FFMPEG
+      drone.setVideoResolution(0); // Setting stream video resolution to 480p
+      drone.setStreamingMode(0); // Set streaming mode 0 : lowest latency
       std::cout << "\nWaiting for streaming to start ...\n" << std::endl;
       drone.startStreaming();
 
@@ -182,6 +180,7 @@ int main()
       vpDisplayX display(I, 100, 100, "DRONE VIEW");
       vpDisplay::display(I);
       vpDisplay::flush(I);
+#endif
 
       vpKeyboard keyboard;
       std::cout << "\n| Control the drone with the keyboard :\n"
@@ -198,10 +197,12 @@ int main()
         }
         running = handleKeyboardInput(drone, k);
 
+#ifdef VISP_HAVE_FFMPEG
         drone.getRGBaImage(I);
         vpDisplay::display(I);
         vpDisplay::displayText(I, 10, 10, "Press q to quit", vpColor::red);
         vpDisplay::flush(I);
+#endif
       }
       std::cout << "\nQuitting ...\n" << std::endl;
 
