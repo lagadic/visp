@@ -132,28 +132,49 @@ $ make -j4
 \endcode
 
 
-\section bebop2_ibvs Image-based visual-servoing 
-\subsection bebop2_ibvs_run Running the program
+\section bebop2_ibvs Image-based visual-servoing
 
-The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp.
+\subsection bebop2_ibvs_code Source code access
+
+An example of image-based visual servoing is implemented in servoBebop2.cpp.
 
 The corresponding source code and `CMakeLists.txt` file could be downloaded using:
 \code
 $ svn export https://github.com/lagadic/visp.git/trunk/example/servo-bebop2
 \endcode
 
+\subsection bebop2_ibvs_controller Understanding the controller
+
 The following image shows the frames attached to the drone:
 \htmlonly <style>div.image img[src="img-bebop2-coord-system.png"]{width:600px;}</style> 
 \endhtmlonly 
 @image html img-bebop2-coord-system.png
-- There is the drone control frame, also called end-effector frame, in which we can control the drone in velocity applying \f${^e}v_x, {^e}v_y, {^e}v_z, {^e}w_z,\f$ corresponding respectively to the 3 translational velocities along \f$X_e, Y_e, Z_e\f$ axis, and the rotational velocity along \f$Z_e\f$ axis. The vpRobotBebop2 class allows to send these velocities.
-- There is the camera frame with \f$X_c, Y_c, Z_c\f$ axis. 
+- There is the drone control frame, also called end-effector frame, in which we can control the drone in velocity applying \f$\dot{\bf q}_e = (v_x, v_y, v_z, w_z)\f$ corresponding respectively to the 3 translational velocities along \f$X_e, Y_e, Z_e\f$ axis, and the rotational velocity along \f$Z_e\f$ axis. The vpRobotBebop2 class allows to send these velocities. Note that the 6-dim velocity skew vector is named \f${\bf v_e}\f$
+- There is the also the camera frame with \f$X_c, Y_c, Z_c\f$ axis in which we define the velocities skew vector \f${\bf v_c} = (v_x, v_y, v_z, w_x, w_y, w_z)\f$.
+- The homogeneous transformation between the camera frame and the end-effector frame is named \f${^c}{\bf M}_e\f$. This transformation is implemented as a vpHomogeneousMatrix.
 
-In servoBebop2.cpp example, we use four visual features for the servoing in order to control the four drone dof \f${^e}v_x, {^e}v_y, {^e}v_z, {^e}w_z,\f$.
+In servoBebop2.cpp example, we use four visual features \f${\bf s}=(n_{g_x}, n_{g_y}, n_a, \arctan(1/\rho))\f$ for the servoing in order to control the four drone dof \f$\dot{\bf q}_e\f$.
 These visual features are:
-- Centered and normalized gravity center moment of the tag along camera X and Y  axis. This feature is implemented in vpFeatureMomentGravityCenterNormalized and used to center the tag in the image.
-- Normalized area moment of the tag. This feature implemented in vpFeatureMomentAreaNormalized is used to control the distance between the drone and the tag.
-- Horizontal vanishing point position corresponding to the intersection of the two lines passing through top and bottom tag edges. This feature implemented in vpFeatureVanishingPoint is used to control the orientation of the drone along its vertical axis based on the tag orientation.
+- Centered and normalized gravity center moment \f${\bf n_g}=(n_g_x, n_g_y)\f$ of the tag along camera \f$X_c\f$ and \f$Y_c\f$ axis. This feature is implemented in vpFeatureMomentGravityCenterNormalized and used to center the tag in the image.
+- Normalized area moment of the tag \f$n_a\f$. This feature implemented in vpFeatureMomentAreaNormalized is used to control the distance between the drone and the tag.
+- Horizontal vanishing point position corresponding to the intersection of the two lines passing through top and bottom tag edges. From the polar coordinates \f$(\rho, \theta)\f$ of this point, we use \f$\arctan(1/\rho)\f$ visual feature.  This feature implemented in vpFeatureVanishingPoint is used to control the orientation of the drone along its vertical axis based on the tag orientation.
+
+The corresponding controller is given by:
+\f[
+\dot{\bf q}_e = -\lambda {\left({\bf L_s} {^c}{\bf V}_e {^e}{\bf J}_e\right)}^{+}({\bf s} - {\bf s}^*)
+\f]
+where:
+- \f$\lambda\f$ is the controller gain implemented in vpAdaptiveGain
+- \f${\bf L_s}\f$ is the interaction matrix corresponding to the visual features \f${\bf s}\f$. This matrix is updated in vpServo
+- \f${^c}{\bf V}_e\f$ is the velocity twist matrix build using \f${^c}{\bf M}_e\f$. Implemented in vpVelocityTwistMatrix it allows to transform a velocity skew from end-effector frame into the camera frame: \f${\bf v_c} = {^c}{\bf V}_e  \; {\bf v_e}\f$
+- \f${^e}{\bf J}_e\f$ the robot Jacobian that makes the link between the velocity skew \f${\bf v_e}\f$ and the control dof \f${\bf q_e}\f$ in the end-effector frame: \f${\bf v_e} = {^e}{\bf J}_e \; \dot{\bf q}_e\f$
+- \f${\bf s}\f$ and \f${\bf s}^*\f$ are respectively current and desired visual feature vectors.
+
+To make the relation between this controller description and the code, check the comments in servoBebop2.cpp.
+
+\subsection bebop2_ibvs_run Running the program
+
+The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp.
 
 \note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi, as shown in the following picture for Ubuntu: \image html drone_connexion.png
 
@@ -173,7 +194,6 @@ Running the previous command should allow to get same results as the one present
 <iframe width="560" height="315" src="https://www.youtube.com/embed/le07g-RRsJM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </p>
 \endhtmlonly
-
 
 Run `./servoBebop2 --help` to see which are the command line options available.
 - Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended.
@@ -198,14 +218,14 @@ We then display the drone video stream with the visible features, and the visual
 @image html servoing_task.png
 
 In this graph :
-- Xn corresponds to the error along camera X axis,
-- Yn corresponds to the error along camera Y axis,
-- an corresponds to the error along camera Z axis, which uses the surface area of the tag to compute the distance between the drone and the tag along this axis,
-- atan(1/rho) corresponds to the error related to the top and bottom edges of the tag. This feature will make the drone move to ensure that the two lines remain parallel.
+- Xn corresponds to the error \f$(n_{g_x} - {n_{g_x}}^*)\f$ that allows to control the tag center of gravity along \f$X_c\f$ axis,
+- Yn corresponds to the error \f$(n_{g_y} - {n_{g_y}}^*)\f$ that allows to control the tag center of gravity along \f$Y_c\f$ axis,
+- an corresponds to the error \f$(a_{n} - {a_{n}}^*)\f$, used to regulate the distance between the drone and the tag along \f$Z_c\f$ axis,
+- atan(1/rho) corresponds to the error \f$(atan(1/rho) - atan(1/rho^*))\f$ related to vanishing point. This feature will make the drone move its orientation along \f$Y_c\f$ axis to ensure that the two horizontal lines remain parallel.
 
 Clicking on the drone view display will make the drone land, safely disconnect everything and quit the program.
 
-\subsection bebop2_understanding Understanding the program
-You can read \ref tutorial-ibvs to understand the basics, and then check the comments in servoBebop2.cpp for a more detailed explanation of the program.
+\subsection bebop2_next Next tutorial
+You can continue and read \ref tutorial-ibvs to understand the basics.
 
 */
