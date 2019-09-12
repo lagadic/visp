@@ -104,30 +104,30 @@ ViSP is interfaced with several 3rd party libraries. The <a href="https://visp.i
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
-- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got `opencv-4.1.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with the previous OpenCV 4.0.0 release downloading `opencv-4.0.0-vc14_vc15.exe`.
+- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got `opencv-4.1.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win10-extract-opencv.png
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.1.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.1.1`.
 
-\note OpenCV 4.1.0 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 Win64 (vc14) and Visual Studio 15 2017 Win64 (vc15) but there is no build for MinGW. That's why you need to build yourself OpenCV from source and install the libraries in `%%VISP_WS%\opencv-4.1.0\build\x64\mingw`.
+\note OpenCV 4.1.1 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 Win64 (vc14) and Visual Studio 15 2017 Win64 (vc15) but there is no build for MinGW. That's why you need to build yourself OpenCV from source and install the libraries in `%%VISP_WS%\opencv-4.1.1\build\x64\mingw`.
 
 <b>2. Configure, build and install OpenCV from source</b>
 
 - Open a `cmd` Command Prompt and create a build folder 
 \code
-C:\> mkdir %VISP_WS%\opencv-4.1.0\build-mingw
-C:\> cd %VISP_WS%\opencv-4.1.0\build-mingw
+C:\> mkdir %VISP_WS%\opencv-4.1.1\build-mingw
+C:\> cd %VISP_WS%\opencv-4.1.1\build-mingw
 \endcode
-- Run CMake in build directory and set the install dir to `%VISP_WS%\opencv-4.1.0\build`. We disable also tests build in order to speed up the build process:
+- Run CMake in build directory and set the install dir to `%VISP_WS%\opencv-4.1.1\build`. We disable also tests build in order to speed up the build process:
 \code
-C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DWITH_OPENCL_D3D11_NV=OFF
+C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.1\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DWITH_OPENCL_D3D11_NV=OFF
 \endcode
 - Build and install OpenCV for MinGW (installation doesn't need administrator privileges)
 \code
 C:\> cmake --build . --config Release --target install -j4
 \endcode
-- OpenCV is now installed in `%%VISP_WS%\opencv-4.1.0\build` folder
+- OpenCV is now installed in `%%VISP_WS%\opencv-4.1.1\build` folder
 
 \note With OpenCV 4.1.0 if you don't set `WITH_OPENCL_D3D11_NV=OFF` you will get an \ref issue_win10_mingw_opencv_opencl_d3d11.
 \note Using OpenCV older versions you may encounter the following issues, for which we propose work arrounds; \ref issue_win10_mingw_opencv_precompiled_headers, \ref issue_win10_mingw_opencv_cap_dshow, \ref issue_win10_mingw_opencv_dtor, \ref issue_win10_mingw_opencv_tiff, or \ref issue_win10_mingw_opencv_ipp.
@@ -137,12 +137,12 @@ C:\> cmake --build . --config Release --target install -j4
 Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
 \code
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.1.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.1.1\build"
 C:\> exit
 \endcode
 where `%%VISP_WS%\opencv-4.0.0\build` is where you have installed OpenCV. Inside this folder you should have a file named `OpenCVConfig.cmake`. 
 
-- You have also to add the location of OpenCV libraries corresponding to MinGW usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.0\build\x64\mingw\bin`.
+- You have also to add the location of OpenCV libraries corresponding to MinGW usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.1\build\x64\mingw\bin`.
 
 \subsubsection install_win10_mingw64_3rdparty_eigen Eigen3 3rd party
 
@@ -385,7 +385,7 @@ General configuration information for ViSP 3.2.1
     Use Netlib Lapack:           no
     Use Lapack (built-in):       yes (ver 3.2.1)
     Use Eigen3:                  yes (ver 3.3.7)
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
     Use GSL:                     no
 
   Simulator: 
@@ -405,7 +405,7 @@ General configuration information for ViSP 3.2.1
     Use JPEG:                    yes (ver 90)
     Use PNG:                     yes (ver 1.4.14)
     \- Use ZLIB:                 yes (ver 1.2.8)
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
 
   Real robots: 
     Use Afma4:                   no
@@ -422,7 +422,7 @@ General configuration information for ViSP 3.2.1
   GUI: 
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
     Use GDI:                     yes
     Use Direct3D:                no
 
@@ -431,7 +431,7 @@ General configuration information for ViSP 3.2.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
     Use Flycapture:              no
     Use Pylon:                   no
 
@@ -485,14 +485,14 @@ General configuration information for ViSP 3.2.1
 
 \subsection issue_win10_mingw_opencv_opencl_d3d11 OpenCL D3D11 build failure
 
-This issue occurs with OpenCV 4.1.0 and is referenced [here](https://github.com/opencv/opencv/issues/14286).
+This issue occurs with OpenCV 4.1.1 and is referenced [here](https://github.com/opencv/opencv/issues/14286).
 
 If you encounter the following issue during OpenCV build:
 \image html img-mingw-issue-opencv-d3d11.png
 you have to disable OpenCL D3D11 support and restart a new build:
 \code
-C:\> cd %VISP_WS%\opencv-4.1.0\build-mingw
-C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.0\build -DWITH_OPENCL_D3D11_NV=OFF
+C:\> cd %VISP_WS%\opencv-4.1.1\build-mingw
+C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.1\build -DWITH_OPENCL_D3D11_NV=OFF
 C:\> cmake --build . --config Release --target install
 \endcode
 

@@ -29,18 +29,23 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Data acquisition with RealSense RGB-D sensor and Franka robot.
+ *   tests the control law
+ *   eye-in-hand control
+ *   velocity computed in the camera frame
+ *
+ * Authors:
+ * Fabien Spindler
  *
  *****************************************************************************/
-
 /*!
-  \example servoFrankaPBVS.cpp
+  \example servoFrankaIBVS.cpp
+
   Example of eye-in-hand image-based control law. We control here a real robot, the
   Franka Emika Panda robot (arm with 7 degrees of freedom). The velocity is
   computed in the camera frame. The inverse jacobian that converts cartesian
   velocities in joint velocities is implemented in the robot low level
-  controller. Visual features correspond to the 3D pose of the target (an AprilTag)
-  in the camera frame.
+  controller. Visual features are the image coordinates of 4 points corresponding
+  too the corners of an AprilTag.
 
   The device used to acquire images is a Realsense SR300 device.
 
@@ -54,6 +59,7 @@
   The target is an AprilTag that is by default 12cm large. To print your own tag, see
   https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.html
   You can specify the size of your tag using --tag_size command line option.
+
 */
 
 #include <iostream>
@@ -65,14 +71,14 @@
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/robot/vpRobotFranka.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#include <visp3/visual_features/vpFeatureThetaU.h>
-#include <visp3/visual_features/vpFeatureTranslation.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/gui/vpPlot.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-  (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
+(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)
@@ -106,7 +112,7 @@ int main(int argc, char **argv)
   bool opt_plot = false;
   bool opt_adaptive_gain = false;
   bool opt_task_sequencing = false;
-  double convergence_threshold_t = 0.0005, convergence_threshold_tu = vpMath::rad(0.5);
+  double convergence_threshold = 0.00005;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
@@ -134,8 +140,7 @@ int main(int argc, char **argv)
       opt_quad_decimate = std::stoi(argv[i + 1]);
     }
     else if (std::string(argv[i]) == "--no-convergence-threshold") {
-      convergence_threshold_t = 0.;
-      convergence_threshold_tu = 0.;
+      convergence_threshold = 0.;
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default " << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
@@ -197,22 +202,25 @@ int main(int argc, char **argv)
     // Servo
     vpHomogeneousMatrix cdMc, cMo, oMo;
 
-    // Desired pose to reach
+    // Desired pose used to compute the desired features
     vpHomogeneousMatrix cdMo( vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
                               vpRotationMatrix( {1, 0, 0, 0, -1, 0, 0, 0, -1} ) );
 
-    cdMc = cdMo * cMo.inverse();
-    vpFeatureTranslation t(vpFeatureTranslation::cdMc);
-    vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
-    t.buildFrom(cdMc);
-    tu.buildFrom(cdMc);
+    // Create visual features
+    std::vector<vpFeaturePoint> p(4), pd(4); // We use 4 points
 
-    vpFeatureTranslation td(vpFeatureTranslation::cdMc);
-    vpFeatureThetaU tud(vpFeatureThetaU::cdRc);
+    // Define 4 3D points corresponding to the CAD model of the Apriltag
+    std::vector<vpPoint> point(4);
+    point[0].setWorldCoordinates(-opt_tagSize/2., -opt_tagSize/2., 0);
+    point[1].setWorldCoordinates( opt_tagSize/2., -opt_tagSize/2., 0);
+    point[2].setWorldCoordinates( opt_tagSize/2.,  opt_tagSize/2., 0);
+    point[3].setWorldCoordinates(-opt_tagSize/2.,  opt_tagSize/2., 0);
 
     vpServo task;
-    task.addFeature(t, td);
-    task.addFeature(tu, tud);
+    // Add the 4 visual feature points
+    for (size_t i = 0; i < p.size(); i++) {
+      task.addFeature(p[i], pd[i]);
+    }
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT);
 
@@ -231,14 +239,16 @@ int main(int argc, char **argv)
       plotter = new vpPlot(2, static_cast<int>(250 * 2), 500, static_cast<int>(I.getWidth()) + 80, 10, "Real time curves plotter");
       plotter->setTitle(0, "Visual features error");
       plotter->setTitle(1, "Camera velocities");
-      plotter->initGraph(0, 6);
+      plotter->initGraph(0, 8);
       plotter->initGraph(1, 6);
-      plotter->setLegend(0, 0, "error_feat_tx");
-      plotter->setLegend(0, 1, "error_feat_ty");
-      plotter->setLegend(0, 2, "error_feat_tz");
-      plotter->setLegend(0, 3, "error_feat_theta_ux");
-      plotter->setLegend(0, 4, "error_feat_theta_uy");
-      plotter->setLegend(0, 5, "error_feat_theta_uz");
+      plotter->setLegend(0, 0, "error_feat_p1_x");
+      plotter->setLegend(0, 1, "error_feat_p1_y");
+      plotter->setLegend(0, 2, "error_feat_p2_x");
+      plotter->setLegend(0, 3, "error_feat_p2_y");
+      plotter->setLegend(0, 4, "error_feat_p3_x");
+      plotter->setLegend(0, 5, "error_feat_p3_y");
+      plotter->setLegend(0, 6, "error_feat_p4_x");
+      plotter->setLegend(0, 7, "error_feat_p4_y");
       plotter->setLegend(1, 0, "vc_x");
       plotter->setLegend(1, 1, "vc_y");
       plotter->setLegend(1, 2, "vc_z");
@@ -251,7 +261,7 @@ int main(int argc, char **argv)
     bool has_converged = false;
     bool send_velocities = false;
     bool servo_started = false;
-    std::vector<vpImagePoint> *traj_vip = nullptr; // To memorize point trajectory
+    std::vector<vpImagePoint> *traj_corners = nullptr; // To memorize point trajectory
 
     static double t_init_servo = vpTime::measureTimeMs();
 
@@ -293,12 +303,32 @@ int main(int argc, char **argv)
             std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
             oMo = v_oMo[1];   // Introduce PI rotation
           }
+
+          // Compute the desired position of the features from the desired pose
+          for (size_t i = 0; i < point.size(); i++) {
+            vpColVector cP, p;
+            point[i].changeFrame(cdMo * oMo, cP);
+            point[i].projection(cP, p);
+
+            pd[i].set_x(p[0]);
+            pd[i].set_y(p[1]);
+            pd[i].set_Z(cP[2]);
+          }
         }
 
+        // Get tag corners
+        std::vector<vpImagePoint> corners = detector.getPolygon(0);
+
         // Update visual features
-        cdMc = cdMo * oMo * cMo.inverse();
-        t.buildFrom(cdMc);
-        tu.buildFrom(cdMc);
+        for (size_t i = 0; i < corners.size(); i++) {
+          // Update the point feature from the tag corners location
+          vpFeatureBuilder::create(p[i], cam, corners[i]);
+          // Set the feature Z coordinate from the pose
+          vpColVector cP;
+          point[i].changeFrame(cMo, cP);
+
+          p[i].set_Z(cP[2]);
+        }
 
         if (opt_task_sequencing) {
           if (! servo_started) {
@@ -313,18 +343,23 @@ int main(int argc, char **argv)
           v_c = task.computeControlLaw();
         }
 
-        // Display desired and current pose features
-        vpDisplay::displayFrame(I, cdMo * oMo, cam, opt_tagSize / 1.5, vpColor::yellow, 2);
-        vpDisplay::displayFrame(I, cMo,  cam, opt_tagSize / 2,   vpColor::none,   3);
-        // Get tag corners
-        std::vector<vpImagePoint> vip = detector.getPolygon(0);
-        // Get the tag cog corresponding to the projection of the tag frame in the image
-        vip.push_back(detector.getCog(0));
-        // Display the trajectory of the points
-        if (first_time) {
-           traj_vip = new std::vector<vpImagePoint> [vip.size()];
+        // Display the current and desired feature points in the image display
+        vpServoDisplay::display(task, cam, I);
+        for (size_t i = 0; i < corners.size(); i++) {
+          std::stringstream ss;
+          ss << i;
+          // Display current point indexes
+          vpDisplay::displayText(I, corners[i]+vpImagePoint(15, 15), ss.str(), vpColor::red);
+          // Display desired point indexes
+          vpImagePoint ip;
+          vpMeterPixelConversion::convertPoint(cam, pd[i].get_x(), pd[i].get_y(), ip);
+          vpDisplay::displayText(I, ip+vpImagePoint(15, 15), ss.str(), vpColor::red);
         }
-        display_point_trajectory(I, vip, traj_vip);
+        if (first_time) {
+           traj_corners = new std::vector<vpImagePoint> [corners.size()];
+        }
+        // Display the trajectory of the points used as features
+        display_point_trajectory(I, corners, traj_corners);
 
         if (opt_plot) {
           plotter->plot(0, iter_plot, task.getError());
@@ -336,27 +371,19 @@ int main(int argc, char **argv)
           std::cout << "v_c: " << v_c.t() << std::endl;
         }
 
-        vpTranslationVector cd_t_c = cdMc.getTranslationVector();
-        vpThetaUVector cd_tu_c = cdMc.getThetaUVector();
-        double error_t = sqrt(cd_t_c.sumSquare());
-        double error_tu = vpMath::deg(sqrt(cd_tu_c.sumSquare()));
-
+        double error = task.getError().sumSquare();
         ss.str("");
-        ss << "error_t: " << error_t;
+        ss << "error: " << error;
         vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
-        ss.str("");
-        ss << "error_tu: " << error_tu;
-        vpDisplay::displayText(I, 40, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
 
         if (opt_verbose)
-          std::cout << "error translation: " << error_t << " ; error rotation: " << error_tu << std::endl;
+          std::cout << "error: " << error << std::endl;
 
-        if (error_t < convergence_threshold_t && error_tu < convergence_threshold_tu) {
+        if (error < convergence_threshold) {
           has_converged = true;
-          std::cout << "Servo task has converged" << std::endl;;
+          std::cout << "Servo task has converged" << "\n";
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
-
         if (first_time) {
           first_time = false;
         }
@@ -419,9 +446,8 @@ int main(int argc, char **argv)
         vpDisplay::flush(I);
       }
     }
-
-    if (traj_vip) {
-      delete [] traj_vip;
+    if (traj_corners) {
+      delete [] traj_corners;
     }
   }
   catch(const vpException &e) {

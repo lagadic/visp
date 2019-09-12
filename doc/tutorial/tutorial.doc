@@ -206,6 +206,7 @@ This page introduces the user to the way to achieve a visual servoing.
 - \subpage tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \subpage tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
 - \subpage tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
+- \subpage tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \subpage tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
 - \subpage tutorial-bebop2-vs <br> Explains how to implement an image -based visual-servoing (IBVS) with Parrot Bebop 2 drone.
 
