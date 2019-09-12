@@ -52,7 +52,7 @@ And finally you can activate the adaptive gain and task sequencing:
 
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 
-\section franka_next Next tutorial
+\section franka_ibvs_next Next tutorial
 
 You are now ready follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera. 
 
