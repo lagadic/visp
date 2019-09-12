@@ -45,6 +45,11 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpUDPClient.h>
 
+// Make vpForceTorqueAtiNetFTSensor available only if inet_ntop() used to
+// communicate by UDP with the sensor through vpUDPClient is available; inet_ntop()
+// is not supported on win XP
+#ifdef VISP_HAVE_FUNC_INET_NTOP
+
 /*!
   \class vpForceTorqueAtiNetFTSensor
 
@@ -161,4 +166,5 @@ protected:
   bool m_is_streaming_started;
 };
 
+#endif
 #endif
