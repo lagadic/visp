@@ -155,7 +155,7 @@ int main()
                  "drone has approximately 3 meters of free space on all sides.\n"
               << std::endl;
 
-    vpRobotBebop2 drone(true); // Create the drone with low verbose level
+    vpRobotBebop2 drone(false); // Create the drone with low verbose level
 
     if (drone.isRunning()) {
 

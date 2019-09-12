@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Interface for Parrot Bebop2 drone.
+ * Interface for Parrot Bebop 2 drone.
  *
  * Authors:
  * Gatien Gaumerais
@@ -65,7 +65,7 @@ extern "C" {
   Camera reference :
     + x : right
     + y : down
-    x z : forward
+    + z : forward
 
   Effective reference :
     + x : forward
@@ -87,11 +87,10 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
   \warning This constructor should be called after the drone is turned on, and after the computer is connected to the
   drone wifi network.
 
-  \warning If the connection to the drone failed, commands will not be accepted. After having called this constructor,
-  it is recommanded to check if the drone is running with isRunning() before sending commands to the drone.
+  \warning If the connection to the drone failed, the programm will throw an exception.
 
-  If the drone successfuly connected, set the streaming resolution mode to 0 (480p, 856x480),
-    because 720p is unstable.
+  After having called this constructor, it is recommanded to check if the drone is running with isRunning() before
+  sending commands to the drone.
 
   \param[in] verbose : turn verbose on or off
     If verbose is true : info, warning, error and fatal error messages are displayed.
@@ -99,11 +98,12 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
 
   \param[in] setDefaultSettings : set default settings or not
     If setDefaultSettings is true : the drone is reset to factory settings and the following parameters are set :
+      - Resolution of streamed video to 480p (856x480).
       - Max roll and pitch to 10 degrees.
       - Video stabilisation to 0 (no stabilisation).
-      - Video exposure to +1.5 (maximum).
+      - Video exposure compensation to 0.
       - Video streaming mode to 0 (lowest latency, average reliability).
-      - Set camera orientation to 0 degrees for tilt and 0 degrees for pan
+      - Camera orientation to 0 degrees for tilt and 0 degrees for pan
     If setDefaultSettings is false : the current settings are unchanged.
 
   \param[in] ipAddress : ip address used to discover the drone on the wifi network.
@@ -189,7 +189,7 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
     m_running = true;
 
 #ifdef VISP_HAVE_FFMPEG
-    setVideoResolution(0); // 720p streaming is unstable, so we force this setting to 480p
+    setVideoResolution(0);
 #endif
     if (setDefaultSettings) {
       resetAllSettings();
@@ -198,7 +198,7 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
 
 #ifdef VISP_HAVE_FFMPEG
       setVideoStabilisationMode(0);
-      setExposure(1.5f);
+      setExposure(0);
       setStreamingMode(0);
 #endif
       setCameraOrientation(0, 0, true);
@@ -744,7 +744,6 @@ void vpRobotBebop2::resetAllSettings()
   \param[in] maxTilt : new maximum pitch and roll value for the drone (degrees).
 
   \warning This value is only taken into account by the drone when issuing percentage-of-max-tilt-value-based commands.
-  Currently only used by handleKeyboardInput.
 
   \warning This value is not taken into account by the drone when using setPosition or setVelocity functions.
 */
@@ -851,9 +850,9 @@ int vpRobotBebop2::getVideoWidth() { return m_videoWidth; }
 /*!
   \warning This function is only available if ViSP is build with ffmpeg support.
 
-  Sets the exposure of the video (min : -1.5, max : 1.5).
+  Sets the exposure compensation of the video (min : -1.5, max : 1.5).
 
-  \param[in] expo : desired video exposure.
+  \param[in] expo : desired video exposure compensation.
 */
 void vpRobotBebop2::setExposure(float expo)
 {
@@ -968,9 +967,9 @@ void vpRobotBebop2::setVideoResolution(int mode)
       }
 
     } else {
-      ARSAL_PRINT(
-          ARSAL_PRINT_ERROR, "ERROR",
-          "Can't set video resolution : drone has to be landed and not streaming in order to set streaming mode.");
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR",
+                  "Can't set video resolution : drone has to be landed and not streaming in order to set streaming "
+                  "parameters.");
     }
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Can't set video resolution : drone isn't running.");
@@ -1338,7 +1337,7 @@ void vpRobotBebop2::initCodec()
     return;
   }
 
-  // Sets codec parameters (TODO : should be done automaticaly by drone callback decoderConfigCallback
+  // Sets codec parameters (TODO : should be done automaticaly by drone callback decoderConfigCallback)
   m_codecContext->pix_fmt = AV_PIX_FMT_YUV420P;
   m_codecContext->skip_frame = AVDISCARD_DEFAULT;
   m_codecContext->error_concealment = FF_EC_GUESS_MVS | FF_EC_DEBLOCK;

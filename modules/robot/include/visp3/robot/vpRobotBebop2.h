@@ -51,7 +51,7 @@ extern "C" {
 #include <libARSAL/ARSAL.h> // For semaphore
 
 #ifdef VISP_HAVE_FFMPEG
-#include <libavcodec/avcodec.h> // For video decoding
+#include <libavcodec/avcodec.h> // For H264 video decoding
 #include <libswscale/swscale.h> // For rescaling decoded frames
 #endif
 }
@@ -65,7 +65,8 @@ extern "C" {
 
   \ingroup group_robot_real_drone
 
-  This class allows to control Parrot Bebop2 drone using ARSDK3.
+  Interface for Parrot ARSDK3, allowing to control the Bebop 2 drone and get images from the camera (if ViSP was built
+  with FFMpeg support).
 */
 class VISP_EXPORT vpRobotBebop2
 {
@@ -74,29 +75,35 @@ public:
                 int discoveryPort = 44444);
   virtual ~vpRobotBebop2();
 
-  void doFlatTrim();
-
+  /** @name Drone networking information  */
+  //@{
   std::string getIpAddress();
   int getDiscoveryPort();
-  double getMaxTilt();
+  //@}
+
+  /** @name General drone information  */
+  //@{
+  void doFlatTrim();
   unsigned int getBatteryLevel();
+  void setVerbose(bool verbose);
+  void resetAllSettings();
+  //@}
 
-  void handleKeyboardInput(int key);
-
+  /** @name Drone state checking */
+  //@{
   bool isFlying();
   bool isHovering();
   bool isLanded();
   bool isRunning();
   bool isStreaming();
-
-  void setMaxTilt(double maxTilt);
-  void setVerbose(bool verbose);
-
-  void resetAllSettings();
+  //@}
 
   //*** Motion commands ***//
+  /** @name Motion commands and parameters */
+  //@{
   void cutMotors();
-  static void land();
+  double getMaxTilt();
+  void setMaxTilt(double maxTilt);
   void setPitch(int value);
   void setPosition(float dX, float dY, float dZ, float dPsi, bool blocking);
   void setPosition(const vpHomogeneousMatrix &M, bool blocking);
@@ -106,10 +113,14 @@ public:
   void setYawSpeed(int value);
   void stopMoving();
   void takeOff(bool blocking = true);
+  //@}
+  static void land();
   //*** ***//
 
   //*** Streaming commands ***//
 #ifdef VISP_HAVE_FFMPEG
+  /** @name Streaming commands and parameters (only available if ViSP was built with FFMpeg support) */
+  //@{
   void getGrayscaleImage(vpImage<unsigned char> &I);
   void getRGBaImage(vpImage<vpRGBa> &I);
   int getVideoHeight();
@@ -120,22 +131,24 @@ public:
   void setVideoStabilisationMode(int mode);
   void startStreaming();
   void stopStreaming();
+  //@}
 #endif
   //*** ***//
 
   //*** Camera control commands ***//
+  /** @name Camera control commands and parameters */
+  //@{
+  double getCameraHorizontalFOV() const;
   double getCurrentCameraPan() const;
   double getMaxCameraPan() const;
   double getMinCameraPan() const;
   double getCurrentCameraTilt() const;
   double getMaxCameraTilt() const;
   double getMinCameraTilt() const;
-
-  double getCameraHorizontalFOV() const;
-
   void setCameraOrientation(double tilt, double pan, bool blocking = false);
   void setCameraPan(double pan, bool blocking = false);
   void setCameraTilt(double tilt, bool blocking = false);
+  //@}
   //*** ***//
 
 private:
@@ -161,9 +174,10 @@ private:
   int m_videoHeight; ///< Height of the video streamed from the camera
 #endif
 
-  static bool m_running; ///< Used for checking if the programm is running
+  static bool m_running; ///< Used for checking if the drone is running ie if successfully connected and ready to
+                         ///< receive commands
 
-  bool m_exposureSet;       ///< Used to know if exposure has been set
+  bool m_exposureSet;       ///< Used to know if exposure compensation has been set
   bool m_flatTrimFinished;  ///< Used to know when the drone has finished a flat trim
   bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
   bool m_videoResolutionSet; ///< Used to know if video resolution has been set
@@ -236,5 +250,5 @@ private:
   //*** ***//
 };
 
-#endif
-#endif
+#endif //#ifdef VISP_HAVE_ARSDK
+#endif //#ifndef _vpRobotBebop2_h_

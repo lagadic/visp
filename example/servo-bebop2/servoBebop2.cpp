@@ -534,4 +534,3 @@ int main(int argc, char **argv)
 }
 
 #endif // #elif !defined(VISP_HAVE_FFMPEG)
-
