@@ -393,7 +393,7 @@ void vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                             const vpColor &color, unsigned int thickness, bool segment)
 {
-  displayLine(I, ip1.get_i(), ip1.get_j(), ip2.get_i(), ip2.get_j(), color, thickness, segment);
+  displayLine(I, static_cast<int>(ip1.get_i()), static_cast<int>(ip1.get_j()), static_cast<int>(ip2.get_i()), static_cast<int>(ip2.get_j()), color, thickness, segment);
 }
 
 /*!
