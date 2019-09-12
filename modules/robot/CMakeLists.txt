@@ -98,6 +98,11 @@ if(USE_PTU46)
   list(APPEND opt_libs ${PTU46_LIBRARIES})
 endif()
 
+if(USE_JACO2)
+  list(APPEND opt_incs ${JACO2_INCLUDE_DIRS})
+  list(APPEND opt_libs ${JACO2_LIBRARIES})
+endif()
+
 if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
   # Under Unix we need Aria, pthread, dl and rt libraries
   list(APPEND opt_incs ${ARIA_INCLUDE_DIRS})

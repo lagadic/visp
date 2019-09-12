@@ -381,6 +381,9 @@
 #  define VISP_HAVE_FRANKA_VERSION ${VISP_HAVE_FRANKA_VERSION}
 #endif
 
+// Defined if Kinova Jaco2 SDK is available to control Jaco2 robot.
+#cmakedefine VISP_HAVE_JACO2
+
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER
