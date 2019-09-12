@@ -27,11 +27,22 @@ int main(int argc, char **argv)
         image_res = 1;
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout
-            << "\nUsage: " << argv[0]
-            << " [--seqname <sequence name (default: empty>] [--record <0: continuous | 1: single shot (default: 0)>]"
-               " [--hd_resolution] : Enables HD 720p images instead of default 480p.\n"
-               "  Caution : camera calibration settings are different for the two resolutions.\n"
-               " [--help] [-h]\n"
+            <<"\nUsage:\n" << "  "<< argv[0]
+            <<" [--seqname <sequence name>] [--record <0: continuous | 1: single shot>]"
+            <<" [--hd_resolution]"
+            <<" [--help] [-h]\n" 
+            <<std::endl
+            <<"Description:\n"
+            <<" --seqname <sequence name>\n"
+            <<"     Desired name for picture sequence (default: empty).\n\n"
+            <<" --record <0: continuous | 1: single shot>\n"
+            <<"     Record mode (default : 0, continuous).\n\n"
+            <<" --hd_resolution\n"
+            <<"     Enables HD 720p images instead of default 480p.\n"
+            <<"     Caution : camera calibration settings are different for the two resolutions.\n\n"
+            <<"--help, -h\n"
+            <<"     Print help message.\n\n"
+
             << "\nExample to visualize images:\n"
             << "  " << argv[0] << "\n"
             << "\nExamples to record a sequence of 720p images :\n"
