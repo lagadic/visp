@@ -304,8 +304,15 @@ public:
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
                unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
+               unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to);
+
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
                unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
+               unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to);
 #endif
 
   void close();
@@ -349,9 +356,6 @@ public:
   inline void setMaxZ(const float maxZ) { m_max_Z = maxZ; }
 
 protected:
-  rs2_intrinsics m_colorIntrinsics;
-  rs2_extrinsics m_depth2ColorExtrinsics;
-  rs2_intrinsics m_depthIntrinsics;
   float m_depthScale;
   float m_invalidDepthValue;
   float m_max_Z;
