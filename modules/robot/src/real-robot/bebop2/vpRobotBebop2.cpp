@@ -182,8 +182,8 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
     m_running = false;
 
     throw(vpException(vpException::fatalError,
-                      "Failed to connect to bebop2 with ip %s and port %d. Make sure your computer is connected to the "
-                      "drone Wifi spot before starting",
+                      "Failed to connect to bebop2 with ip %s and port %d. Make sure that the ip address is correct "
+                      "and that your computer is connected to the drone Wifi spot before starting",
                       ipAddress.c_str(), discoveryPort));
   } else {
     m_running = true;
@@ -1463,14 +1463,14 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
       ret = avcodec_receive_frame(m_codecContext, m_picture);
 
       if (ret == 0 || ret == AVERROR(EAGAIN)) {
-        m_update_codec_params = false;
+        ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "H264 codec parameters updated.");
       } else {
         ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Unexpected error while updating H264 parameters.");
       }
     } else {
       ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Unexpected error while sending H264 parameters.");
     }
-
+    m_update_codec_params = false;
     av_packet_unref(&m_packet);
     av_frame_unref(m_picture);
   }

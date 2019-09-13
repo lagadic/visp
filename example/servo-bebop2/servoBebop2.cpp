@@ -99,6 +99,7 @@ int main(int argc, char **argv)
 {
   try {
 
+    std::string ip_address = "192.168.42.1";
     std::string opt_cam_parameters;
     bool opt_has_cam_parameters = false;
 
@@ -118,8 +119,10 @@ int main(int argc, char **argv)
         return 0;
       }
       for (int i = 3; i < argc; i++) {
-
-        if (std::string(argv[i]) == "--distance_to_tag" && i + 1 < argc) {
+        if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+          ip_address = std::string(argv[i + 1]);
+          i++;
+        } else if (std::string(argv[i]) == "--distance_to_tag" && i + 1 < argc) {
           opt_distance_to_tag = std::atof(argv[i + 1]);
           if (opt_distance_to_tag <= 0) {
             std::cout << "Error : invalid distance to tag." << std::endl << "See " << argv[0] << " --help" << std::endl;
@@ -148,31 +151,33 @@ int main(int argc, char **argv)
         }
       }
     } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
-      std::cout
-          << "\nUsage:\n"
-          << "  " << argv[0]
-          << " [--tag_size <size>] [--distance_to_tag <distance>] [--intrinsic <xml file>] [--hd_stream] [--verbose] [-v] [--help] [-h]\n"
-          << std::endl
-          << "Description:\n"
-          << "  --tag_size <size>\n"
-          << "      The size of the tag to detect in meters, required.\n\n"
-          << "  --distance_to_tag <distance>\n"
-          << "      The desired distance to the tag in meters (default: 1 meter).\n\n"
-          << "  --intrinsic <xml file>\n"
-          << "      XML file containing computed intrinsic camera parameters (default: empty).\n\n"
-          << "  --hd_stream\n"
-          << "      Enables HD 720p streaming instead of default 480p.\n"
-          << "      Allows to increase range and accuracy of the tag detection,\n"
-          << "      but increases latency and computation time.\n"
-          << "      Caution: camera calibration settings are different for the two resolutions.\n"
-          << "      Make sure that if you pass custom intrinsic camera parameters,\n"
-          << "      they were obtained with the correct resolution.\n\n"
-          << "  --verbose, -v\n"
-          << "      Enables verbose (drone information messages and velocity commands\n"
-          << "      are then displayed).\n\n"
-          << "  --help, -h\n"
-          << "      Print help message.\n"
-          << std::endl;
+      std::cout << "\nUsage:\n"
+                << "  " << argv[0]
+                << " [--tag_size <size>] [--ip <drone ip>] [--distance_to_tag <distance>] [--intrinsic <xml file>] "
+                << "[--hd_stream] [--verbose] [-v] [--help] [-h]\n"
+                << std::endl
+                << "Description:\n"
+                << "  --tag_size <size>\n"
+                << "      The size of the tag to detect in meters, required.\n\n"
+                << "  --ip <drone ip>\n"
+                << "      Ip address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
+                << "  --distance_to_tag <distance>\n"
+                << "      The desired distance to the tag in meters (default: 1 meter).\n\n"
+                << "  --intrinsic <xml file>\n"
+                << "      XML file containing computed intrinsic camera parameters (default: empty).\n\n"
+                << "  --hd_stream\n"
+                << "      Enables HD 720p streaming instead of default 480p.\n"
+                << "      Allows to increase range and accuracy of the tag detection,\n"
+                << "      but increases latency and computation time.\n"
+                << "      Caution: camera calibration settings are different for the two resolutions.\n"
+                << "      Make sure that if you pass custom intrinsic camera parameters,\n"
+                << "      they were obtained with the correct resolution.\n\n"
+                << "  --verbose, -v\n"
+                << "      Enables verbose (drone information messages and velocity commands\n"
+                << "      are then displayed).\n\n"
+                << "  --help, -h\n"
+                << "      Print help message.\n"
+                << std::endl;
       return 0;
 
     } else {
@@ -191,7 +196,8 @@ int main(int argc, char **argv)
 
         << std::endl;
 
-    vpRobotBebop2 drone(verbose); // Create the drone with desired verbose level
+    vpRobotBebop2 drone(
+        verbose, true, ip_address); // Create the drone with desired verbose level, settings reset, and corresponding IP
 
     if (drone.isRunning()) {
 
