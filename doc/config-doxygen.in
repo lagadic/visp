@@ -2069,6 +2069,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_APRILTAG \
+                         VISP_HAVE_ARSDK \
                          VISP_HAVE_APRILTAG_BIG_FAMILY \
                          VISP_HAVE_ATIDAQ \
                          VISP_HAVE_CMU1394 \
@@ -2090,6 +2091,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_DISPLAY \
                          VISP_HAVE_DMTX \
                          VISP_HAVE_EIGEN3 \
+                         VISP_HAVE_FFMPEG \
                          VISP_HAVE_FRANKA \
                          VISP_HAVE_FRANKA_VERSION=0x000500 \
                          VISP_HAVE_FLYCAPTURE \

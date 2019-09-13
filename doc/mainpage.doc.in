@@ -182,6 +182,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \ref tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \ref tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
+- \ref tutorial-bebop2-vs <br> Explains how to implement an image -based visual-servoing (IBVS) with Parrot Bebop 2 drone.
 
 \subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB)
 
@@ -603,6 +604,12 @@ scheme, ...</p>
   \defgroup group_robot_real_template New robot interface (template)
   Template for users that want to integrate their own real-robot.
 */
+/*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_drone Drone
+  Flying robot interfaces.
+*/
+
 /*!
   \ingroup module_robot
   \defgroup group_robot_haptic Haptic devices

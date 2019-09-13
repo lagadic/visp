@@ -78,6 +78,11 @@ vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v) { return vpEx
 */
 vpHomogeneousMatrix vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
 {
+  if (v.size() != 6) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute direct exponential map from a %d-dim velocity vector. Should be 6-dim.",
+                      v.size()));
+  }
   double theta, si, co, sinc, mcosc, msinc;
   vpThetaUVector u;
   vpRotationMatrix rd;

@@ -172,6 +172,7 @@ public:
   static void makeFifo(const std::string &dirname);
   static std::string makeTempDirectory(const std::string &dirname);
   static std::string path(const std::string &pathname);
+
   static bool remove(const std::string &filename);
   static bool rename(const std::string &oldfilename, const std::string &newfilename);
 

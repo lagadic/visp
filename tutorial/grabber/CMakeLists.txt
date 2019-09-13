@@ -9,6 +9,7 @@ set(tutorial_cpp
   tutorial-grabber-1394.cpp
   tutorial-grabber-1394-writer.cpp
   tutorial-grabber-basler-pylon.cpp
+  tutorial-grabber-bebop2.cpp
   tutorial-grabber-CMU1394.cpp
   tutorial-grabber-flycapture.cpp
   tutorial-grabber-opencv.cpp
