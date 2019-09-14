@@ -129,7 +129,7 @@ bool handleKeyboardInput(vpRobotBebop2 &drone, int key)
       drone.stopMoving();
       break;
     }
-    vpTime::wait(25); // We wait 25ms to let the time to the drone to process the command
+    vpTime::wait(25); // We wait 25ms to give the drone the time to process the command
   } else {
     running = false;
   }
@@ -146,16 +146,54 @@ bool handleKeyboardInput(vpRobotBebop2 &drone, int key)
 
   This program makes the drone controllable with a keyboard, with display of the video streaming.
 */
-int main()
+int main(int argc, char **argv)
 {
   try {
+
+    std::string ip_address = "192.168.42.1";
+
+    int stream_res = 0; // Default 480p resolution
+
+    bool verbose = false;
+
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+        ip_address = std::string(argv[i + 1]);
+        i++;
+      } else if (std::string(argv[i]) == "--hd_stream") {
+        stream_res = 1;
+      } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+        verbose = true;
+      } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
+        std::cout << "\nUsage:\n"
+                  << "  " << argv[0] << "[--ip <drone ip>] [--hd_stream] [--verbose] [-v] [--help] [-h]\n"
+                  << std::endl
+                  << "Description:\n"
+                  << "  --ip <drone ip>\n"
+                  << "      Ip address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
+                  << "  --hd_stream\n"
+                  << "      Enables HD 720p streaming instead of default 480p.\n"
+                  << "  --verbose, -v\n"
+                  << "      Enables verbose (drone information messages and velocity commands\n"
+                  << "      are then displayed).\n\n"
+                  << "  --help, -h\n"
+                  << "      Print help message.\n"
+                  << std::endl;
+        return 0;
+      } else {
+        std::cout << "Error : unknown parameter " << argv[i] << std::endl
+                  << "See " << argv[0] << " --help" << std::endl;
+        return 0;
+      }
+    }
 
     std::cout << "\nWARNING: this program does no sensing or avoiding of obstacles, "
                  "the drone WILL collide with any objects in the way! Make sure the "
                  "drone has approximately 3 meters of free space on all sides.\n"
               << std::endl;
 
-    vpRobotBebop2 drone(false); // Create the drone with low verbose level
+    vpRobotBebop2 drone(verbose, true,
+                        ip_address); // Create the drone with low verbose level, settings reset and corresponding IP
 
     if (drone.isRunning()) {
 
@@ -164,12 +202,12 @@ int main()
 
       std::cout << "\nConfiguring drone settings ...\n" << std::endl;
 
-      drone.setMaxTilt(10);      // Setting the max roll and pitch values, the drone speed will depend on it
+      drone.setMaxTilt(10); // Setting the max roll and pitch values, the drone speed will depend on it
 
       drone.doFlatTrim(); // Flat trim calibration
 
 #ifdef VISP_HAVE_FFMPEG
-      drone.setVideoResolution(0); // Setting stream video resolution to 480p
+      drone.setVideoResolution(stream_res); // Setting desired stream video resolution
       drone.setStreamingMode(0); // Set streaming mode 0 : lowest latency
       std::cout << "\nWaiting for streaming to start ...\n" << std::endl;
       drone.startStreaming();
@@ -210,7 +248,6 @@ int main()
       std::cout << "ERROR : failed to setup drone control." << std::endl;
       return EXIT_FAILURE;
     }
-
   } catch (const vpException &e) {
     std::cout << "\nCaught an exception: " << e << std::endl;
     return EXIT_FAILURE;

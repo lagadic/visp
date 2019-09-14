@@ -138,7 +138,7 @@ $ make -j4
 
 An example of image-based visual servoing is implemented in servoBebop2.cpp.
 
-The corresponding source code and `CMakeLists.txt` file could be downloaded using:
+The corresponding source code and `CMakeLists.txt` file can be downloaded using:
 \code
 $ svn export https://github.com/lagadic/visp.git/trunk/example/servo-bebop2
 \endcode
@@ -161,9 +161,9 @@ These visual features are:
 - Horizontal vanishing point position corresponding to the intersection of the two lines passing through top and bottom tag edges. From the polar coordinates \f$(\rho, \theta)\f$ of this point, we use \f$\arctan(1/\rho)\f$ visual feature.  This feature implemented in vpFeatureVanishingPoint is used to control the orientation of the drone along its vertical axis based on the tag orientation.
 
 The corresponding controller is given by:
-\f[
-\dot{\bf q}_e = -\lambda {\left({\bf L_s} {^c}{\bf V}_e {^e}{\bf J}_e\right)}^{+}({\bf s} - {\bf s}^*)
-\f]
+
+\f[ \dot{\bf q}_e = -\lambda {\left({\bf L_s} {^c}{\bf V}_e {^e}{\bf J}_e\right)}^{+}({\bf s} - {\bf s}^*) \f]
+
 where:
 - \f$\lambda\f$ is the controller gain implemented in vpAdaptiveGain
 - \f${\bf L_s}\f$ is the interaction matrix corresponding to the visual features \f${\bf s}\f$. This matrix is updated in vpServo
@@ -211,9 +211,10 @@ Running the previous command should allow to get same results as the one present
 \endhtmlonly
 
 Run `./servoBebop2 --help` to see which are the command line options available.
-- Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended.
+- Adding option `--ip` allows you to specify the ip of the drone on the network (default is 192.168.42.1). This is useful if you changed your drone ip (see \ref bebop2_change_ip), if you want to fly multiple drones at once, for instance.
+- Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended (default is 1 meter).
 - Adding option `--intrinsic ~/path-to-calibration-file/camera.xml` allows you to specify the intrinsic camera calibration parameters. This file can be obtained by completing \ref tutorial-calibration-intrinsic. Without this option, default parameters that are enough for a trial will be used..
-- Adding option `--hd_stream` enables HD 720p stream resolution. Increase range and accuracy of the tag detection, but increases latency and computation time.
+- Adding option `--hd_stream` enables HD 720p stream resolution instead of default 480p. Increase range and accuracy of the tag detection, but increases latency and computation time.
 \note Camera calibration settings are different for the two resolutions.\n  Make sure that if you pass custom intrinsic camera parameters, they were obtained with the correct resolution.
 - Adding option `--verbose` or `-v` enables the display of information messages from the drone, and the velocity commands sent to the drone.
 
@@ -244,6 +245,67 @@ Clicking on the drone view display will make the drone land, safely disconnect e
 If you need, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the calibration grid.\n
 You can also calibrate your drone camera and generate an XML file usable in the servoing program (see \ref tutorial-calibration-intrinsic).\n
 If you need more details about this program, check the comments in servoBebop2.cpp.\n
+You can check example program keyboardControlBebop2.cpp if you want to see how to control a Bebop 2 drone with the keyboard.\n
 Finally, you can check \ref vpRobotBebop2 to see the full documentation of the Bebop 2 ViSP class.
 
+\section bebop2_change_ip Changing Bebop 2 IP address
+If you need to change the drone IP address, for flying multiple drones for instance, you can follow these steps :
+- Turn on your drone and connect to its WiFi network.
+- Press the drone on/off button 4 times.
+- Connect to the drone file system using telnet (if you haven't changed the drone IP yet, the default IP should be 192.168.42.1):
+\code
+$ telnet 192.168.42.1
+\endcode
+\note If you get the message "Connection refused", you haven't properly pressed the on/off button 4 times.\n
+If you get the message "Connection timed out", you haven't used the right IP. You can try with 192.168.43.1 .
+
+- Once you're connected to the drone file system, you need to get write access to the files. You can do so with :
+\code
+mount –o remount,rw /
+\endcode
+\warning You now have permissions to move, edit or delete any file. Proceed at your own discretion, as you could irreversibly make your drone unusable !
+
+- Edit `/sbin/broadcom_setup.sh` :
+\code
+cd sbin
+vi broadcom_setup.sh
+\endcode
+
+\note If you don't know how to use `VI` text editor : 
+  - move the cursor using arrow keys, 
+  - edit the text using `i` and `escape` to cancel, 
+  - press `:` and enter `wq` to save and quit, or `q!` to quit without saving.
+
+- Edit line `IFACE IP AP=”192.168.42.1”` to `IFACE IP AP=”192.168.x.1”`, where x represents any number that you have not assigned to any other drone yet.
+- Save and exit the text editor.
+- Exit Bebop 2 file system by entering `exit`.
+- Restart your drone. It's IP should now be changed. You will have to adapt your programs accordingly.
+
+\section bebop2_connect_multiple Connecting multiple Bebop 2 drones to a single computer
+If you want to control multiple drones using one single computer, you're going to need to change the drones ip, by following the previous tutorial \ref bebop2_change_ip.
+
+Once every drone you want to use has a unique IP address, you need to connect your PC to each drone WiFi network. You can use multiple WiFi dongles and you PC WiFi card, if it has one.
+
+For two drones, it should look like this (on Ubuntu) : 
+\htmlonly <style>div.image img[src="img_multiple_drones_connection.png"]{width:300px;}</style> 
+\endhtmlonly 
+@image html img_multiple_drones_connection.png
+
+In ViSP programs that use the drone, you can then use option `--ip` to specify the IP of the drone to which you want to connect :
+\code
+$ cd ${VISP_WS}/visp-build/example/servo-bebop2
+$ ./keyboardControlBebop2.cpp --ip 192.168.42.1
+\endcode
+
+and in another terminal :
+\code
+$ cd ${VISP_WS}/visp-build/example/servo-bebop2
+$ ./keyboardControlBebop2.cpp --ip 192.168.43.1
+\endcode
+
+In your own programs, you can specify the IP in the constructor of vpRobotBebop2 class :
+\code
+vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with low verbose level, settings reset and corresponding IP
+\endcode
+\n\n
 */
