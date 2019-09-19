@@ -94,7 +94,9 @@ $ ./tutorial-mb-generic-tracker --tracker 0
 will produce results similar to:
 \htmlonly
 <br>
-<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/b__u_yGEbmc?rel=0" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/b__u_yGEbmc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 - Using \c "--tracker 1"  to track only keypoints:
 \code
@@ -103,7 +105,9 @@ $ ./tutorial-mb-generic-tracker --tracker 1
 will produce results similar to:
 \htmlonly
 <br>
-<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/eZmUw9r6Idw?rel=0" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/eZmUw9r6Idw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 - Using \c "--tracker 2" to track moving-edges and keypoints in an hybrid scheme:
 \code
@@ -112,7 +116,9 @@ $ ./tutorial-mb-generic-tracker --tracker 2
 will produce results similar to:
 \htmlonly
 <br>
-<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/a-RX9NPF2k0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 
 With this example it is also possible to work on an other data set using \c "--video" and \c "--model" command line options. For example, if you run:
@@ -178,7 +184,7 @@ Matched 2D and 3D coordinates are then used to compute an initial pose used to i
 
 The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user initialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
 
-\includelineno teabox.init
+\includelineno tutorial/tracking/model-based/generic/model/teabox/teabox.init
 
 We give now the signification of each line of this file:
 - line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number of points requested to compute a pose.
@@ -221,7 +227,7 @@ tracker.loadModel("teabox.wrl");
 
 The content of the file `teabox.cao` used in the getting started \ref mb_generic_started_src but also in tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
 
-\includelineno teabox.cao
+\includelineno tutorial/tracking/model-based/generic/model/teabox/teabox.cao
 
 This file describes the model of the tea box corresponding to the next image:
 
@@ -246,7 +252,7 @@ We make the choice to describe the faces of the box from the 3D points that corr
 
 The content of the file teabox-triangle.cao used in the tutorial-mb-klt-tracker.cpp example is given here:
 
-\includelineno teabox-triangle.cao
+\includelineno tutorial/tracking/model-based/old/keypoint/teabox-triangle.cao
 
 This file describes the model of the tea box corresponding to the next image:
 
@@ -261,7 +267,7 @@ Until line 15, the content of this file is similar to the one described in
 
 The content of the \c teabox.wrl file used in tutorial-mb-generic-tracker-full.cpp and tutorial-mb-edge-tracker.cpp when \c teabox.cao is missing is given hereafter. This content is to make into relation with \c teabox.cao described in \ref mb_generic_teabox_cao. As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. 
 
-\includelineno teabox.wrl
+\includelineno tracking/model-based/generic/model/teabox/teabox.wrl
 
 This file describes the model of the tea box corresponding to the next image:
 
@@ -1146,7 +1152,9 @@ $ ./tutorial-mb-generic-tracker-full --video $VISP_WS/cubesat/video/00%2d.png --
 You should be able to obtain these kind of results:
 
 \htmlonly
-<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 
 \subsection mb_generic_use_case_mmicro Test tracker on mmicro model
@@ -1164,7 +1172,9 @@ $ ./tutorial-mb-generic-tracker-full --video $VISP_WS/mmicro/video/mmicro00%2d.p
 You should be able to obtain these kind of results:
 
 \htmlonly
-<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 
 \subsection mb_generic_use_case_lego_square Test tracker on lego model with a live camera

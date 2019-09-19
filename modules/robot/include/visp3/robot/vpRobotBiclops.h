@@ -36,12 +36,12 @@
  *
  *****************************************************************************/
 
+#ifndef _vpRobotBiclops_h_
+#define _vpRobotBiclops_h_
+
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_BICLOPS
-
-#ifndef _vpRobotBiclops_h_
-#define _vpRobotBiclops_h_
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
@@ -74,7 +74,7 @@
 
   This class provide a position and a speed control interface for the biclops
   head. To manage the biclops joint limits in speed control, a control loop is
-  running in a seperate thread (see vpRobotBiclopsSpeedControlLoop()).
+  running in a seperate thread implemented in vpRobotBiclopsSpeedControlLoop().
 
   The control of the head is done by vpRobotBiclopsController class.
 
@@ -93,6 +93,40 @@
 */
 class VISP_EXPORT vpRobotBiclops : public vpBiclops, public vpRobot
 {
+public:
+  static const double defaultPositioningVelocity;
+
+  vpRobotBiclops();
+  explicit vpRobotBiclops(const std::string &filename);
+  virtual ~vpRobotBiclops();
+
+  void init();
+
+  void get_cMe(vpHomogeneousMatrix &_cMe) const;
+  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
+  void get_eJe(vpMatrix &_eJe);
+  void get_fJe(vpMatrix &_fJe);
+
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  double getPositioningVelocity(void);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
+
+  bool readPositionFile(const std::string &filename, vpColVector &q);
+
+  void setConfigFile(const std::string &filename = "/usr/share/BiclopsDefault.cfg");
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
+  void setPosition(const char *filename);
+  void setPositioningVelocity(const double velocity);
+  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot);
+
+  void stopMotion();
+
+  static void *vpRobotBiclopsSpeedControlLoop(void *arg);
+
 private:
   static bool robotAlreadyCreated;
   pthread_t control_thread;
@@ -120,40 +154,6 @@ private:
   //    implemented!"); return *this;
   //  }
   //#endif
-
-public:
-  static const double defaultPositioningVelocity;
-
-  vpRobotBiclops(void);
-  explicit vpRobotBiclops(const std::string &filename);
-  virtual ~vpRobotBiclops(void);
-
-  void init(void);
-
-  void get_cMe(vpHomogeneousMatrix &_cMe) const;
-  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
-  void get_eJe(vpMatrix &_eJe);
-  void get_fJe(vpMatrix &_fJe);
-
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  double getPositioningVelocity(void);
-  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot);
-  vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
-
-  bool readPositionFile(const std::string &filename, vpColVector &q);
-
-  void setConfigFile(const std::string &filename = "/usr/share/BiclopsDefault.cfg");
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
-  void setPosition(const char *filename);
-  void setPositioningVelocity(const double velocity);
-  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot);
-
-  void stopMotion();
-
-  static void *vpRobotBiclopsSpeedControlLoop(void *arg);
 };
 
 #endif /* #ifndef _vpRobotBiclops_h_ */

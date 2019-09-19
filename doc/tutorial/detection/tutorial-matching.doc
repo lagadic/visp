@@ -26,7 +26,7 @@ Let us consider the following source code also available in tutorial-matching-ke
 Here after is the resulting video. The left image represents the reference image. The right images correspond to the successive images of the input video. All the green lines extremities represent the points that are matched.
 
 \htmlonly
-<iframe width="560" height="315" src="http://www.youtube.com/embed/sMbed_oYJgQ" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/sMbed_oYJgQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
 Now, let us explain the lines dedicated to the ORB keypoint detection and matching usage.
