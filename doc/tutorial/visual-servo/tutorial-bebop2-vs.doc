@@ -156,7 +156,7 @@ The following image shows the frames attached to the drone:
 
 In servoBebop2.cpp example, we use four visual features \f${\bf s}=(n_{g_x}, n_{g_y}, n_a, \arctan(1/\rho))\f$ for the servoing in order to control the four drone dof \f$\dot{\bf q}_e\f$.
 These visual features are:
-- Centered and normalized gravity center moment \f${\bf n_g}=(n_g_x, n_g_y)\f$ of the tag along camera \f$X_c\f$ and \f$Y_c\f$ axis. This feature is implemented in vpFeatureMomentGravityCenterNormalized and used to center the tag in the image.
+- Centered and normalized gravity center moment \f${\bf n_g}=(n_{g_x}, n_{g_y})\f$ of the tag along camera \f$X_c\f$ and \f$Y_c\f$ axis. This feature is implemented in vpFeatureMomentGravityCenterNormalized and used to center the tag in the image.
 - Normalized area moment of the tag \f$n_a\f$. This feature implemented in vpFeatureMomentAreaNormalized is used to control the distance between the drone and the tag.
 - Horizontal vanishing point position corresponding to the intersection of the two lines passing through top and bottom tag edges. From the polar coordinates \f$(\rho, \theta)\f$ of this point, we use \f$\arctan(1/\rho)\f$ visual feature.  This feature implemented in vpFeatureVanishingPoint is used to control the orientation of the drone along its vertical axis based on the tag orientation.
 
@@ -241,14 +241,9 @@ In this graph :
 
 Clicking on the drone view display will make the drone land, safely disconnect everything and quit the program.
 
-\section bebop2_next Next tutorial
-If you need, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the calibration grid.\n
-You can also calibrate your drone camera and generate an XML file usable in the servoing program (see \ref tutorial-calibration-intrinsic).\n
-If you need more details about this program, check the comments in servoBebop2.cpp.\n
-You can check example program keyboardControlBebop2.cpp if you want to see how to control a Bebop 2 drone with the keyboard.\n
-Finally, you can check \ref vpRobotBebop2 to see the full documentation of the Bebop 2 ViSP class.
 
-\section bebop2_change_ip Changing Bebop 2 IP address
+\section bebop2_tips Tips & Tricks
+\subsection bebop2_change_ip Changing Bebop 2 IP address
 If you need to change the drone IP address, for flying multiple drones for instance, you can follow these steps :
 - Turn on your drone and connect to its WiFi network.
 - Press the drone on/off button 4 times.
@@ -281,8 +276,8 @@ vi broadcom_setup.sh
 - Exit Bebop 2 file system by entering `exit`.
 - Restart your drone. It's IP should now be changed. You will have to adapt your programs accordingly.
 
-\section bebop2_connect_multiple Connecting multiple Bebop 2 drones to a single computer
-If you want to control multiple drones using one single computer, you're going to need to change the drones ip, by following the previous tutorial \ref bebop2_change_ip.
+\subsection bebop2_connect_multiple Connecting multiple Bebop 2 drones to a single computer
+If you want to control multiple drones using one single computer, you're going to need to change the drones ip, by following \ref bebop2_change_ip.
 
 Once every drone you want to use has a unique IP address, you need to connect your PC to each drone WiFi network. You can use multiple WiFi dongles and you PC WiFi card, if it has one.
 
@@ -308,4 +303,13 @@ In your own programs, you can specify the IP in the constructor of vpRobotBebop2
 vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with low verbose level, settings reset and corresponding IP
 \endcode
 \n\n
+
+\section bebop2_next Next tutorial
+If you need, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the calibration grid.\n
+You can also calibrate your drone camera and generate an XML file usable in the servoing program (see \ref tutorial-calibration-intrinsic).\n
+If you need more details about this program, check the comments in servoBebop2.cpp.\n
+You can check example program keyboardControlBebop2.cpp if you want to see how to control a Bebop 2 drone with the keyboard.\n
+Finally, you can check \ref vpRobotBebop2 to see the full documentation of the Bebop 2 ViSP class.
+
+
 */
