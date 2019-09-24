@@ -305,11 +305,12 @@ vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with
 \n\n
 
 \section bebop2_next Next tutorial
-If you need, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the calibration grid.\n
+If needed, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the calibration grid.\n
 You can also calibrate your drone camera and generate an XML file usable in the servoing program (see \ref tutorial-calibration-intrinsic).\n
 If you need more details about this program, check the comments in servoBebop2.cpp.\n
 You can check example program keyboardControlBebop2.cpp if you want to see how to control a Bebop 2 drone with the keyboard.\n
-Finally, you can check \ref vpRobotBebop2 to see the full documentation of the Bebop 2 ViSP class.
+You can also check \ref vpRobotBebop2 to see the full documentation of the Bebop 2 ViSP class.
 
+Finally, if you are more interested to do the same experiment with ROS framework, you can follow [How to do visual servoing with Parrot Bebop 2 drone using visp_ros](http://wiki.ros.org/visp_ros/Tutorials/How%20to%20do%20visual%20servoing%20with%20Parrot%20Bebop%202%20drone%20and%20visp_ros) tutorial.
 
 */
