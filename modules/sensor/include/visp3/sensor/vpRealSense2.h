@@ -71,9 +71,10 @@
   or pcl::PointCloud<pcl::PointXYZRGB> data structures.
 
   \warning Notice that the usage of this class requires compiler and library
-  support for the ISO C++ 2011 standard. This support must be enabled with the
-  -std=c++11 compiler option. Hereafter we give an example of a CMakeLists.txt
-  file that allows to build sample-realsense.cpp that uses vpRealSense2 class.
+  support for the ISO C++ 2011 standard. This support is enabled by default
+  in ViSP when supported by the compiler. Hereafter we give an example of a
+  CMakeLists.txt file that allows to build sample-realsense.cpp that
+  uses vpRealSense2 class.
 
   \code
 project(sample)
@@ -81,12 +82,6 @@ cmake_minimum_required(VERSION 2.6)
 
 find_package(VISP REQUIRED)
 include_directories(${VISP_INCLUDE_DIRS})
-
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
-if(COMPILER_SUPPORTS_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-endif()
 
 add_executable(sample-realsense sample-realsense.cpp)
 target_link_libraries(sample-realsense ${VISP_LIBRARIES})
