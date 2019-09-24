@@ -122,18 +122,18 @@ void vpRobotJaco2::get_fJe(vpMatrix &fJe)
 */
 
 /*!
-  Send to the controller a 6-dim velocity skew vector expressed in a Cartesian frame.
+  Send to the controller a 6-dim velocity twist vector expressed in a Cartesian frame.
 
   \param[in] frame : Cartesian control frame (either tool frame or end-effector) in which the velocity \e v is expressed.
   Units are m/s for translation and rad/s for rotation velocities.
 
-  \param[in] v : 6-dim vector that contains the 6 components of the velocity skew to send to the robot.
+  \param[in] v : 6-dim vector that contains the 6 components of the velocity twist to send to the robot.
   Units are m/s and rad/s.
 */
 void vpRobotJaco2::setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
   if (v.size() != 6) {
-    throw(vpException(vpException::fatalError, "Cannot send a velocity-skew vector in tool frame that is not 6-dim (%d)", v.size()));
+    throw(vpException(vpException::fatalError, "Cannot send a velocity twist vector in tool frame that is not 6-dim (%d)", v.size()));
   }
 
   vpColVector v_e; // This is the velocity that the robot is able to apply in the end-effector frame
@@ -142,7 +142,7 @@ void vpRobotJaco2::setCartVelocity(const vpRobot::vpControlFrameType frame, cons
     // We have to transform the requested velocity in the end-effector frame.
     // Knowing that the constant transformation between the tool frame and the end-effector frame obtained
     // by extrinsic calibration is set in m_eMc we can compute the velocity twist matrix eVc that transform
-    // a velocity skew from tool (or camera) frame into end-effector frame
+    // a velocity twist from tool (or camera) frame into end-effector frame
     vpVelocityTwistMatrix eVc(m_eMc);
     v_e = eVc * v;
     break;
@@ -159,7 +159,7 @@ void vpRobotJaco2::setCartVelocity(const vpRobot::vpControlFrameType frame, cons
     break;
   }
 
-  // Implement your stuff here to send the end-effector velocity skew v_e
+  // Implement your stuff here to send the end-effector velocity twist v_e
   // - If the SDK allows to send cartesian velocities in the end-effector, it's done. Just wrap data in v_e
   // - If the SDK allows to send cartesian velocities in the reference (or base) frame you have to implement
   //   the robot Jacobian in set_fJe() and call:
