@@ -42,12 +42,11 @@
 #include <signal.h>
 #include <string.h>
 
-#include <visp3/core/vpTime.h>
-
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_BICLOPS
 
+#include <visp3/core/vpTime.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpBiclops.h>
@@ -78,9 +77,9 @@ static pthread_mutex_t vpMeasure_mutex;
   Default constructor.
 
   Does nothing more than setting the default configuration file
-  to /usr/share/BiclopsDefault.cfg.
+  to `/usr/share/BiclopsDefault.cfg`.
 
-  As shown in the following example,the turret need to be initialized
+  As shown in the following example, the turret need to be initialized
   using init() function.
 
   \code
@@ -130,9 +129,7 @@ vpRobotBiclops::vpRobotBiclops()
 
 /*!
 
-  Default constructor.
-
-  Initialize the biclops pan, tilt head by reading the
+  Constructor that initialize the biclops pan, tilt head by reading the
   configuration file provided by Traclabs
   and do the homing sequence.
 
@@ -187,7 +184,7 @@ vpRobotBiclops::vpRobotBiclops(const std::string &filename)
 
 */
 
-vpRobotBiclops::~vpRobotBiclops(void)
+vpRobotBiclops::~vpRobotBiclops()
 {
 
   vpDEBUG_TRACE(12, "Start vpRobotBiclops::~vpRobotBiclops()");
