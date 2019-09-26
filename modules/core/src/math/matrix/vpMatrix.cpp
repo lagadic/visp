@@ -374,16 +374,7 @@ void vpMatrix::eye()
 */
 vpMatrix vpMatrix::t() const
 {
-  vpMatrix At;
-
-  At.resize(colNum, rowNum, false, false);
-
-  for (unsigned int i = 0; i < rowNum; i++) {
-    double *coli = (*this)[i];
-    for (unsigned int j = 0; j < colNum; j++)
-      At[j][i] = coli[j];
-  }
-  return At;
+  return transpose();
 }
 
 /*!
@@ -407,14 +398,61 @@ void vpMatrix::transpose(vpMatrix &At) const
 {
   At.resize(colNum, rowNum, false, false);
 
-  size_t A_step = colNum;
-  double **AtRowPtrs = At.rowPtrs;
+  const int tileSize = 16;
+  if (rowNum > 2 * colNum && colNum <= 64) {
+    // e.g. (Nx6)^T
+    // iterate over source matrix
+    for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int j = 0; j < colNum; j++) {
+        At[j][i] = (*this)[i][j];
+      }
+    }
+  } else if (colNum > 2 * rowNum && rowNum <= 64) {
+    // e.g. (6xN)^T
+    // iterate over destination matrix
+    for (unsigned int j = 0; j < colNum; j++) {
+      for (unsigned int i = 0; i < rowNum; i++) {
+        At[j][i] = (*this)[i][j];
+      }
+    }
+  } else if (rowNum % tileSize == 0) {
+    // StackOverflow matrix transpose
+    for (unsigned int i = 0; i < rowNum; i += tileSize) {
+      for (unsigned int j = 0; j < colNum; j++) {
+        for (unsigned int b = 0; b < tileSize && i + b < rowNum; b++) {
+          At[j][i + b] = (*this)[i + b][j];
+        }
+      }
+    }
+  } else {
+    // matrix transpose using tiling
+    const int nrows = static_cast<int>(rowNum);
+    const int ncols = static_cast<int>(colNum);
 
-  for (unsigned int i = 0; i < colNum; i++) {
-    double *row_ = AtRowPtrs[i];
-    double *col = rowPtrs[0] + i;
-    for (unsigned int j = 0; j < rowNum; j++, col += A_step)
-      *(row_++) = *col;
+    for (int i = 0; i < nrows;) {
+      for (; i <= nrows - tileSize; i += tileSize) {
+        int j = 0;
+        for (; j <= ncols - tileSize; j += tileSize) {
+          for (int k = i; k < i + tileSize; k++) {
+            for (int l = j; l < j + tileSize; l++) {
+              At[l][k] = (*this)[k][l];
+            }
+          }
+        }
+
+        for (int k = i; k < i + tileSize; k++) {
+          for (int l = j; l < ncols; l++) {
+            At[l][k] = (*this)[k][l];
+          }
+        }
+      }
+
+      for (; i < nrows; i++) {
+        for (int j = 0; j < ncols; j++) {
+          At[j][i] = (*this)[i][j];
+        }
+      }
+    }
   }
 }
 
@@ -673,6 +711,28 @@ vpMatrix &vpMatrix::operator=(double x)
 {
   std::fill(data, data + rowNum*colNum, x);
   return *this;
+}
+
+bool vpMatrix::operator==(const vpMatrix& b) const
+{
+  if (b.rowNum != rowNum || b.colNum != colNum) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < colNum; j++) {
+      if (!vpMath::equal((*this)[i][j], b[i][j], std::numeric_limits<double>::epsilon())) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+bool vpMatrix::operator!=(const vpMatrix& b) const
+{
+  return !(*this == b);
 }
 
 /*!

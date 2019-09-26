@@ -346,6 +346,15 @@ M:
   vpMatrix &operator=(const double x);
   //@}
 
+  //---------------------------------
+  // Comparison
+  //---------------------------------
+  /** @name Comparison operators */
+  //@{
+  bool operator==(const vpMatrix& b) const;
+  bool operator!=(const vpMatrix& b) const;
+  //@}
+
   //-------------------------------------------------
   // Stacking
   //-------------------------------------------------
