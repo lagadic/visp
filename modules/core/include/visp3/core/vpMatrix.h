@@ -491,7 +491,7 @@ M:
 
   // Compute the transpose C = A^T
   vpMatrix transpose() const;
-  void transpose(vpMatrix &C) const;
+  void transpose(vpMatrix &At) const;
 
   vpMatrix AAt() const;
   void AAt(vpMatrix &B) const;
