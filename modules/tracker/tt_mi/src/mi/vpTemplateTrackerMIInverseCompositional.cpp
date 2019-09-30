@@ -266,7 +266,10 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   // bspline_)*(1+nbParam+nbParam*nbParam);
 
   vpMatrix Hnorm(nbParam, nbParam);
-
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+  const double evolRMS_eps = 1e-4;
   do {
     int Nbpoint = 0;
     MIprec = MI;
@@ -278,19 +281,18 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
     {
       for (int point = 0; point < (int)templateSize; point++) {
-        vpColVector x1(2), x2(2);
         double i2, j2;
 
-        x1[0] = (double)ptTemplate[point].x;
-        x1[1] = (double)ptTemplate[point].y;
+        X1[0] = (double)ptTemplate[point].x;
+        X1[1] = (double)ptTemplate[point].y;
 
-        Warp->computeDenom(x1, p); // A modif pour parallelisation mais ne
+        Warp->computeDenom(X1, p); // A modif pour parallelisation mais ne
                                    // pose pas de pb avec warp utilises dans
                                    // DECSA
-        Warp->warpX(x1, x2, p);
+        Warp->warpX(X1, X2, p);
 
-        j2 = x2[0];
-        i2 = x2[1];
+        j2 = X2[0];
+        i2 = X2[1];
 
         if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
           // if(m_ptCurrentMask == NULL ||(m_ptCurrentMask->getWidth() ==
@@ -450,15 +452,21 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
     Warp->getParamInverse(dp, dpinv);
     Warp->pRondp(p, dpinv, p);
+    computeEvalRMS(p);
 
+    if (iteration == 0)
+    {
+        evolRMS_init = evolRMS;
+    }
     iteration++;
     iterationGlobale++;
 
-    computeEvalRMS(p);
 
-    //        std::cout << p.t() << std::endl;
-  } while ((!diverge) && (std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
-           (iteration < iterationMax) && (evolRMS > threshold_RMS));
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ((!diverge) && (std::fabs(MI - MIprec) > std::fabs(MI) *std::numeric_limits<double>::epsilon()) &&
+           (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
   // while( (!diverge) && (MI!=MIprec) &&(iteration<
   // iterationMax)&&(evolRMS>threshold_RMS) );
 
