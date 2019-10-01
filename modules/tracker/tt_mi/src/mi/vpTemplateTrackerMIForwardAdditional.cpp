@@ -159,6 +159,10 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
   unsigned int iteration = 0;
 
   initPosEvalRMS(p);
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+  const double evolRMS_eps = 1e-4;
   do {
     if (iteration % 5 == 0)
       initHessienDesired(I);
@@ -327,11 +331,20 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     }
 
     computeEvalRMS(p);
+
+    if (iteration == 0)
+        {
+            evolRMS_init = evolRMS;
+        }
     iteration++;
     iterationGlobale++;
 
+
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
   } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
-           (iteration < iterationMax) && (evolRMS > threshold_RMS));
+           (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
   // while( (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS)
   // );
   if (Nbpoint == 0) {
