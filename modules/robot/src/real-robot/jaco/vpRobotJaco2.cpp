@@ -59,7 +59,7 @@ void vpRobotJaco2::init()
   // that is set to identity by default in the constructor.
 
   maxRotationVelocity = maxRotationVelocityDefault;
-  maxTranslationVelocityDefault = maxTranslationVelocityDefault;
+  maxTranslationVelocity = maxTranslationVelocityDefault;
 
   // Set here the robot degrees of freedom number
   nDof = 6; // Jaco2 has 6 dof
