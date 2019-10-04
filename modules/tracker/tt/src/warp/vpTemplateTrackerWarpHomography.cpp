@@ -104,7 +104,7 @@ void vpTemplateTrackerWarpHomography::computeDenom(vpColVector &vX, const vpColV
   double value = (ParamM[2] * vX[0] + ParamM[5] * vX[1] + 1.);
 
   if (std::fabs(value) > std::numeric_limits<double>::epsilon()) {
-    denom = (1. / (ParamM[2] * vX[0] + ParamM[5] * vX[1] + 1.));
+    denom = (1. / value);
   } else {
     throw(vpTrackingException(vpTrackingException::fatalError,
                               "Division by zero in vpTemplateTrackerWarpHomography::computeDenom()"));
@@ -162,15 +162,16 @@ void vpTemplateTrackerWarpHomography::dWarpCompo(const vpColVector & /*X1*/, con
 
 void vpTemplateTrackerWarpHomography::warpXInv(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM)
 {
+  double value = (ParamM[2] * vX[0] + ParamM[5] * vX[1] + 1.);
 
-  if ((ParamM[2] * vX[0] + ParamM[5] * vX[1] + 1) < 0) // si dans le plan image reel
-  {
-    vXres[0] = ((1 + ParamM[0]) * vX[0] + ParamM[3] * vX[1] + ParamM[6]) / (ParamM[2] * vX[0] + ParamM[5] * vX[1] + 1);
-    vXres[1] = (ParamM[1] * vX[0] + (1 + ParamM[4]) * vX[1] + ParamM[7]) / (ParamM[2] * vX[0] + ParamM[5] * vX[1] + 1);
-  } else
+  if (std::fabs(value) > std::numeric_limits<double>::epsilon()) {
+    vXres[0] = ((1 + ParamM[0]) * vX[0] + ParamM[3] * vX[1] + ParamM[6]) / value;
+    vXres[1] = (ParamM[1] * vX[0] + (1 + ParamM[4]) * vX[1] + ParamM[7]) / value;
+  } else {
     throw(vpTrackingException(vpTrackingException::fatalError, "Division by zero in "
                                                                "vpTemplateTrackerWarpHomography::"
-                                                               "warpXSpecialInv()"));
+                                                               "warpXInv()"));
+  }
 }
 void vpTemplateTrackerWarpHomography::getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const
 {
