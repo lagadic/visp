@@ -52,7 +52,8 @@
 
 namespace {
 
-bool runBenchmark = false;
+bool g_runBenchmark = false;
+int g_tileSize = 16;
 
 vpMatrix generateMatrix(unsigned int sz1, unsigned int sz2)
 {
@@ -92,6 +93,7 @@ vpMatrix transposeIterateSrc(const vpMatrix& A)
       At[j][i] = coli[j];
     }
   }
+
   return At;
 }
 
@@ -107,13 +109,68 @@ vpMatrix transposeIterateDst(const vpMatrix& A)
       coli[i] = A[i][j];
     }
   }
+
+  return At;
+}
+
+vpMatrix transposeTilingSO(const vpMatrix& A, unsigned int tileSize=16)
+{
+  vpMatrix At;
+
+  At.resize(A.getCols(), A.getRows(), false, false);
+
+  for (unsigned int i = 0; i < A.getRows(); i += tileSize) {
+    for (unsigned int j = 0; j < A.getCols(); j++) {
+      for (unsigned int b = 0; b < tileSize && i + b < A.getRows(); b++) {
+        At[j][i + b] = A[i + b][j];
+      }
+    }
+  }
+
+  return At;
+}
+
+vpMatrix transposeTiling(const vpMatrix& A, int tileSize = 16)
+{
+  vpMatrix At;
+
+  At.resize(A.getCols(), A.getRows(), false, false);
+
+  const int nrows = static_cast<int>(A.getRows());
+  const int ncols = static_cast<int>(A.getCols());
+
+  for (int i = 0; i < nrows;) {
+    for (; i <= nrows - tileSize; i += tileSize) {
+      int j = 0;
+      for (; j <= ncols - tileSize; j += tileSize) {
+        for (int k = i; k < i + tileSize; k++) {
+          for (int l = j; l < j + tileSize; l++) {
+            At[l][k] = A[k][l];
+          }
+        }
+      }
+
+      for (int k = i; k < i + tileSize; k++) {
+        for (int l = j; l < ncols; l++) {
+          At[l][k] = A[k][l];
+        }
+      }
+    }
+
+    for (; i < nrows; i++) {
+      for (int j = 0; j < ncols; j++) {
+        At[j][i] = A[i][j];
+      }
+    }
+  }
+
   return At;
 }
 
 }
 
 TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
-  if (runBenchmark) {
+  if (g_runBenchmark) {
     const std::vector<std::pair<int, int>> sizes = { {701, 1503}, {1791, 837}, {1201, 1201}, {1024, 1024}, {2000, 2000},
                                                  {10, 6}, {25, 6}, {100, 6}, {200, 6}, {500, 6}, {1000, 6}, {1500, 6}, {2000, 6},
                                                  {6, 10}, {6, 25}, {6, 100}, {6, 200}, {6, 500}, {6, 1000}, {6, 1500}, {6, 2000},
@@ -135,25 +192,6 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
 
       oss.str("");
       oss << sz.first << "x" << sz.second;
-      oss << " - M.transpose()";
-      BENCHMARK(oss.str().c_str()) {
-        vpMatrix Mt = M.transpose();
-        REQUIRE(Mt == Mt_true);
-        return Mt;
-      };
-
-      oss.str("");
-      oss << sz.first << "x" << sz.second;
-      oss << " - M.transpose(Mt)";
-      BENCHMARK(oss.str().c_str()) {
-        vpMatrix Mt;
-        M.transpose(Mt);
-        REQUIRE(Mt == Mt_true);
-        return Mt;
-      };
-
-      oss.str("");
-      oss << sz.first << "x" << sz.second;
       oss << " - transposeIterateSrc(M)";
       BENCHMARK(oss.str().c_str()) {
         vpMatrix Mt = transposeIterateSrc(M);
@@ -166,6 +204,24 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       oss << " - transposeIterateDst(M)";
       BENCHMARK(oss.str().c_str()) {
         vpMatrix Mt = transposeIterateDst(M);
+        REQUIRE(Mt == Mt_true);
+        return Mt;
+      };
+
+      oss.str("");
+      oss << sz.first << "x" << sz.second;
+      oss << " - transposeTilingSO(M)";
+      BENCHMARK(oss.str().c_str()) {
+        vpMatrix Mt = transposeTilingSO(M, g_tileSize);
+        REQUIRE(Mt == Mt_true);
+        return Mt;
+      };
+
+      oss.str("");
+      oss << sz.first << "x" << sz.second;
+      oss << " - transposeTiling(M)";
+      BENCHMARK(oss.str().c_str()) {
+        vpMatrix Mt = transposeTiling(M, g_tileSize);
         REQUIRE(Mt == Mt_true);
         return Mt;
       };
@@ -222,9 +278,12 @@ int main(int argc, char *argv[])
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
   auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(runBenchmark)    // bind variable to a new option, with a hint string
+    | Opt(g_runBenchmark)  // bind variable to a new option, with a hint string
     ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?");    // description string for the help output
+    ("run benchmark?")     // description string for the help output
+    | Opt(g_tileSize, "tileSize")
+    ["--tileSize"]
+    ("Tile size?");
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
