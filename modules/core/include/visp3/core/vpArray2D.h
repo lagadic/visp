@@ -969,7 +969,7 @@ template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double>& A
   }
 
   for (unsigned int i = 0; i < A.size(); i++) {
-    if (std::fabs(data[i] - A.data[i]) > std::numeric_limits<double>::epsilon()) {
+    if (fabs(data[i] - A.data[i]) > std::numeric_limits<double>::epsilon()) {
       return false;
     }
   }
@@ -984,7 +984,7 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float>& A) 
   }
 
   for (unsigned int i = 0; i < A.size(); i++) {
-    if (std::fabsf(data[i] - A.data[i]) > std::numeric_limits<float>::epsilon()) {
+    if (fabsf(data[i] - A.data[i]) > std::numeric_limits<float>::epsilon()) {
       return false;
     }
   }
