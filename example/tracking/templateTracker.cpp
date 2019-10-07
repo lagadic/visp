@@ -217,7 +217,7 @@ OPTIONS:                                                            Default\n\
   -r\n\
      Disable re-init at frame 10.\n\
                           \n\
-  -s <residual r-threshold>                                            %g\n\
+  -s <residual threshold>                                            %g\n\
      Threshold used to stop optimization when residual difference\n\
      between two successive optimization iteration becomes lower\n\
      that this parameter.\n\
