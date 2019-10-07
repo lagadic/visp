@@ -83,7 +83,7 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<uns
       for (unsigned int it = 0; it < nbParam; it++)
         dWtemp[it] = ptTemplate[point].dW[it];
 
-      HiGtemp = -1. * HCompInverse * dWtemp;
+      HiGtemp = - HCompInverse * dWtemp;
       ptTemplate[point].HiG = new double[nbParam];
 
       for (unsigned int it = 0; it < nbParam; it++)

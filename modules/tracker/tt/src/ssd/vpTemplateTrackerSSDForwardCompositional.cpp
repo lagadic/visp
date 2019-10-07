@@ -141,7 +141,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
     vpMatrix::computeHLM(H, lambda, HLM);
 
     try {
-      dp = 1. * HLM.inverseByLU() * G;
+      dp = HLM.inverseByLU() * G;
     } catch (const vpException &e) {
       throw(e);
     }

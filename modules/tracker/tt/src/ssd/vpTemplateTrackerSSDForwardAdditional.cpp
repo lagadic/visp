@@ -124,7 +124,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
 
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
-      dp = 1. * HLM.inverseByLU() * G;
+      dp = HLM.inverseByLU() * G;
     } catch (const vpException &e) {
       throw(e);
     }
@@ -132,7 +132,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
     switch (minimizationMethod) {
     case vpTemplateTrackerSSDForwardAdditional::USE_LMA: {
       vpColVector p_test_LMA(nbParam);
-      p_test_LMA = p + 1. * dp;
+      p_test_LMA = p + dp;
       erreur = -getCost(I, p);
       double erreur_LMA = -getCost(I, p_test_LMA);
       if (erreur_LMA < erreur) {

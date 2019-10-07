@@ -92,8 +92,8 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
       else
         IW = BI.getValue(i2, j2);
 
-      dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-      dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+      dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+      dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
       ct = static_cast<int>((IW * (Nc - 1)) / 255.);
       cr = static_cast<int>((Tij * (Nc - 1)) / 255.);
@@ -191,8 +191,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         else
           IW = BI.getValue(i2, j2);
 
-        double dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-        double dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+        double dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+        double dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
         int ct = (int)((IW * (Nc - 1)) / 255.);
         int cr = (int)((Tij * (Nc - 1)) / 255.);
@@ -251,7 +251,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
       if (ApproxHessian == HESSIAN_NONSECOND)
         p_test_LMA = p - 100000.1 * dp;
       else
-        p_test_LMA = p + 1. * dp;
+        p_test_LMA = p + dp;
       MI = -getCost(I, p);
       double MI_LMA = -getCost(I, p_test_LMA);
       if (MI_LMA > MI) {

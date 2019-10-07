@@ -335,10 +335,10 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
         double NCC = sIcIref / denom;
         vpColVector dcovarIref(nbParam);
         dcovarIref = sIrefdIref / covarIref;
-        G = 1. * (sIcdIref / denom - NCC * dcovarIref / covarIref);
+        G = (sIcdIref / denom - NCC * dcovarIref / covarIref);
 
         try {
-          dp = -1. * HLMdesireInverse * G;
+          dp = - HLMdesireInverse * G;
         }
         catch (const vpException &e) {
           throw(e);

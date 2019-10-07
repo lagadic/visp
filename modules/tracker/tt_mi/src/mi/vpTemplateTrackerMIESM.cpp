@@ -147,8 +147,8 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
       else
         IW=BI.getValue(i2,j2);
 
-      dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-      dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+      dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+      dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
       cr = ptTemplateSupp[point].ct;
       er = ptTemplateSupp[point].et;
@@ -334,8 +334,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
           else
             IW=BI.getValue(i2,j2);
 
-          double dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-          double dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+          double dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+          double dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
           ct = static_cast<int>((IW*(Nc-1))/255.);
           et = (IW*(Nc-1))/255.-ct;
@@ -389,7 +389,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       }
 
       if (ApproxHessian == HESSIAN_NONSECOND)
-        dp = -1. * dp;
+        dp = - dp;
 
       if (useBrent) {
         alpha = 2.;

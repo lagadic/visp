@@ -252,7 +252,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
     H = H / sqrt(denom);
 
     try {
-      dp = 1. * HLMdesireInverse * G;
+      dp = HLMdesireInverse * G;
     } catch (const vpException &e) {
       throw(e);
     }

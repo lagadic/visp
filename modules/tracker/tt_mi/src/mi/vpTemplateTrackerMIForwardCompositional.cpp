@@ -111,8 +111,8 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
       else
         IW = BI.getValue(i2, j2);
 
-      dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-      dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+      dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+      dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
       cr = ptTemplateSupp[point].ct;
       er = ptTemplateSupp[point].et;
@@ -203,8 +203,8 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
         else
           IW = BI.getValue(i2, j2);
 
-        dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-        dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+        dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+        dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
         ct = (int)((IW * (Nc - 1)) / 255.);
         et = ((double)IW * (Nc - 1)) / 255. - ct;
@@ -260,8 +260,8 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
 
     if (ApproxHessian == HESSIAN_NONSECOND)
       dp = -0.04 * dp;
-    else
-      dp = 1. * dp;
+//    else
+//      dp = 1. * dp;
 
     if (useBrent) {
       alpha = 2.;

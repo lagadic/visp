@@ -339,7 +339,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
       if (ApproxHessian == HESSIAN_NONSECOND)
         dp_test_LMA = -100000.1 * dp;
       else
-        dp_test_LMA = 1. * dp;
+        dp_test_LMA = dp;
       Warp->getParamInverse(dp_test_LMA, dpinv_test_LMA);
       Warp->pRondp(p, dpinv_test_LMA, p_test_LMA);
 
@@ -380,7 +380,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
         dp = alpha * dp;
       }
       if (ApproxHessian == HESSIAN_NONSECOND)
-        dp = -1. * dp;
+        dp = - dp;
 
       break;
     }
