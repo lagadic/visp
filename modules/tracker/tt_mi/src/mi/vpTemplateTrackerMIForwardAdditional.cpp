@@ -45,11 +45,9 @@
 #endif
 
 vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp)
-  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0),
-    p_prec(), G_prec(), KQuasiNewton()
+  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
 {
   useCompositionnal = false;
-  threshold_RMS = 1e-20;
 }
 
 void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
@@ -99,10 +97,10 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
       dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
       dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
-      ct = (int)((IW * (Nc - 1)) / 255.);
-      cr = (int)((Tij * (Nc - 1)) / 255.);
+      ct = static_cast<int>((IW * (Nc - 1)) / 255.);
+      cr = static_cast<int>((Tij * (Nc - 1)) / 255.);
       et = (IW * (Nc - 1)) / 255. - ct;
-      er = ((double)Tij * (Nc - 1)) / 255. - cr;
+      er = (static_cast<double>(Tij) * (Nc - 1)) / 255. - cr;
       // std::cout<<"test"<<std::endl;
       Warp->dWarp(X1, X2, p, dW);
 
@@ -162,7 +160,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
   double evolRMS_init = 0;
   double evolRMS_prec = 0;
   double evolRMS_delta;
-  const double evolRMS_eps = 1e-4;
+
   do {
     if (iteration % 5 == 0)
       initHessienDesired(I);
@@ -234,15 +232,12 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     }
 
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       diverge = true;
       MI = 0;
-      deletePosEvalRMS();
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     } else {
       computeProba(Nbpoint);
       computeMI(MI);
-      // std::cout<<iteration<<"\tMI= "<<MI<<std::endl;
       computeHessien(H);
       computeGradient();
 
@@ -263,8 +258,6 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
           break;
         }
       } catch (const vpException &e) {
-        // std::cerr<<"probleme inversion"<<std::endl;
-        deletePosEvalRMS();
         throw(e);
       }
     }
@@ -321,7 +314,6 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
       if (useBrent) {
         alpha = 2.;
         computeOptimalBrentGain(I, p, -MI, dp, alpha);
-        // std::cout<<alpha<<std::endl;
         dp = alpha * dp;
       }
 
@@ -332,10 +324,9 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
 
     computeEvalRMS(p);
 
-    if (iteration == 0)
-        {
-            evolRMS_init = evolRMS;
-        }
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
     iteration++;
     iterationGlobale++;
 
@@ -345,11 +336,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
 
   } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
            (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
-  // while( (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS)
-  // );
+
   if (Nbpoint == 0) {
-    // std::cout<<"plus de point dans template suivi"<<std::endl;
-    deletePosEvalRMS();
     throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
   }
 
@@ -358,57 +346,4 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
   if (MI_preEstimation > MI_postEstimation) {
     MI_postEstimation = -1;
   }
-  deletePosEvalRMS();
-}
-
-void vpTemplateTrackerMIForwardAdditional::initPosEvalRMS(const vpColVector &pw)
-{
-  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
-  x_pos = new double[nb_corners];
-  y_pos = new double[nb_corners];
-
-  Warp->computeCoeff(pw);
-  vpTemplateTrackerTriangle triangle;
-
-  for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
-    zoneTracked->getTriangle(i, triangle);
-    for (unsigned int j = 0; j < 3; j++) {
-      triangle.getCorner(j, X1[0], X1[1]);
-
-      Warp->computeDenom(X1, pw);
-      Warp->warpX(X1, X2, pw);
-      x_pos[i * 3 + j] = X2[0];
-      y_pos[i * 3 + j] = X2[1];
-    }
-  }
-}
-
-void vpTemplateTrackerMIForwardAdditional::computeEvalRMS(const vpColVector &pw)
-{
-  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
-
-  Warp->computeCoeff(pw);
-  evolRMS = 0;
-  vpTemplateTrackerTriangle triangle;
-
-  for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
-    zoneTracked->getTriangle(i, triangle);
-    for (unsigned int j = 0; j < 3; j++) {
-      triangle.getCorner(j, X1[0], X1[1]);
-
-      Warp->computeDenom(X1, pw);
-      Warp->warpX(X1, X2, pw);
-      evolRMS += (x_pos[i * 3 + j] - X2[0]) * (x_pos[i * 3 + j] - X2[0]) +
-                 (y_pos[i * 3 + j] - X2[1]) * (y_pos[i * 3 + j] - X2[1]);
-      x_pos[i * 3 + j] = X2[0];
-      y_pos[i * 3 + j] = X2[1];
-    }
-  }
-  evolRMS = evolRMS / nb_corners;
-}
-
-void vpTemplateTrackerMIForwardAdditional::deletePosEvalRMS()
-{
-  delete[] x_pos;
-  delete[] y_pos;
 }

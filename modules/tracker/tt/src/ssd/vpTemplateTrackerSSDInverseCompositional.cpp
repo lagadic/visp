@@ -41,8 +41,7 @@
 #include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
 
 vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp)
-  : vpTemplateTrackerSSD(warp), compoInitialised(false), HInv(), HCompInverse(), useTemplateSelect(false), evolRMS(0),
-    x_pos(), y_pos(), threshold_RMS(1e-8)
+  : vpTemplateTrackerSSD(warp), compoInitialised(false), HInv(), HCompInverse(), useTemplateSelect(false)
 {
   useInverse = true;
   HInv.resize(nbParam, nbParam);
@@ -119,6 +118,11 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
   initPosEvalRMS(p);
 
   vpTemplateTrackerPoint *pt;
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     unsigned int Nbpoint = 0;
     double erreur = 0;
@@ -154,12 +158,9 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
     }
     // std::cout << "npoint: " << Nbpoint << std::endl;
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
-      deletePosEvalRMS();
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
     dp = gain * dp;
-    // std::cout<<erreur/Nbpoint<<","<<GetCost(I,p)<<std::endl;
     if (useBrent) {
       alpha = 2.;
       computeOptimalBrentGain(I, p, erreur / Nbpoint, dp, alpha);
@@ -167,62 +168,17 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
     }
     Warp->getParamInverse(dp, dpinv);
     Warp->pRondp(p, dpinv, p);
-    iteration++;
 
     computeEvalRMS(p);
-    // std::cout << "iteration: " << iteration << " max: " << iterationMax <<
-    // std::endl;  std::cout << "evolRMS: " <<  evolRMS << " threshold: " <<
-    // threshold_RMS << std::endl;
-  } while (/*( erreur_prec-erreur<50) &&*/ (iteration < iterationMax) && (evolRMS > threshold_RMS));
 
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
+    iteration++;
+
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
   nbIteration = iteration;
-  deletePosEvalRMS();
 }
-
-void vpTemplateTrackerSSDInverseCompositional::initPosEvalRMS(const vpColVector &p_)
-{
-  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
-  x_pos.resize(nb_corners);
-  y_pos.resize(nb_corners);
-
-  Warp->computeCoeff(p_);
-  vpTemplateTrackerTriangle triangle;
-
-  for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
-    zoneTracked->getTriangle(i, triangle);
-    for (unsigned int j = 0; j < 3; j++) {
-      triangle.getCorner(j, X1[0], X1[1]);
-
-      Warp->computeDenom(X1, p_);
-      Warp->warpX(X1, X2, p_);
-      x_pos[i * 3 + j] = X2[0];
-      y_pos[i * 3 + j] = X2[1];
-    }
-  }
-}
-
-void vpTemplateTrackerSSDInverseCompositional::computeEvalRMS(const vpColVector &p_)
-{
-  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
-
-  Warp->computeCoeff(p_);
-  evolRMS = 0;
-  vpTemplateTrackerTriangle triangle;
-
-  for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
-    zoneTracked->getTriangle(i, triangle);
-    for (unsigned int j = 0; j < 3; j++) {
-      triangle.getCorner(j, X1[0], X1[1]);
-
-      Warp->computeDenom(X1, p_);
-      Warp->warpX(X1, X2, p_);
-      evolRMS += (x_pos[i * 3 + j] - X2[0]) * (x_pos[i * 3 + j] - X2[0]) +
-                 (y_pos[i * 3 + j] - X2[1]) * (y_pos[i * 3 + j] - X2[1]);
-      x_pos[i * 3 + j] = X2[0];
-      y_pos[i * 3 + j] = X2[1];
-    }
-  }
-  evolRMS = evolRMS / nb_corners;
-}
-
-void vpTemplateTrackerSSDInverseCompositional::deletePosEvalRMS() {}
