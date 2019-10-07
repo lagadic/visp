@@ -47,8 +47,6 @@ vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardComposition
 
 void vpTemplateTrackerSSDForwardCompositional::initCompo(const vpImage<unsigned char> & /*I*/)
 {
-  // std::cout<<"Initialise precomputed value of Compositionnal
-  // Direct"<<std::endl;
   for (unsigned int point = 0; point < templateSize; point++) {
     int i = ptTemplate[point].y;
     int j = ptTemplate[point].x;
@@ -65,13 +63,13 @@ void vpTemplateTrackerSSDForwardCompositional::initHessienDesired(const vpImage<
 
 void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  if (!compoInitialised)
-    std::cout << "Compositionnal tracking no initialised\nUse "
-                 "InitCompo(vpImage<unsigned char> &I) function"
-              << std::endl;
+  if (!compoInitialised) {
+    std::cout << "Compositionnal tracking not initialised.\nUse initCompo() function." << std::endl;
+  }
 
-  if (blur)
+  if (blur) {
     vpImageFilter::filter(I, BI, fgG, taillef);
+  }
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
 
@@ -84,6 +82,13 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
   int i, j;
   double i2, j2;
   double alpha = 2.;
+
+  initPosEvalRMS(p);
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     unsigned int Nbpoint = 0;
     double erreur = 0;
@@ -149,8 +154,17 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
     }
     Warp->pRondp(p, dp, p);
 
+    computeEvalRMS(p);
+
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
     iteration++;
-  } while ( (iteration < iterationMax) );
+
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
 
   nbIteration = iteration;
 }

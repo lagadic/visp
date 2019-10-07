@@ -44,7 +44,7 @@
 
 vpTemplateTrackerMIInverseCompositional::vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
-    p_prec(), G_prec(), KQuasiNewton() //, useAYOptim(false)
+    p_prec(), G_prec(), KQuasiNewton()
 {
   useInverse = true;
 }
@@ -121,14 +121,6 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
 
     ptTemplateSupp[point].et = et;
     ptTemplateSupp[point].ct = ct;
-
-    // ###### AY Optim
-    //        if(useAYOptim)
-    //            if(ApproxHessian != HESSIAN_NONSECOND /*&&
-    //            hessianComputation !=
-    //            vpTemplateTrackerMI::USE_HESSIEN_DESIRE*/)
-    //                initTemplateRefBspline(point, et);
-    // ###################
   }
   CompoInitialised = true;
 }
@@ -136,27 +128,19 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
 {
   initCompInverse(I);
 
-  // double erreur=0;
   int Nbpoint = 0;
 
-  // double Tij;
   double IW;
   int cr, ct;
   double er, et;
 
   Nbpoint = 0;
-  // erreur=0;
 
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
 
   zeroProbabilities();
   Warp->computeCoeff(p);
-
-  // AY : Optim
-  //    unsigned int totParam = (bspline *
-  //    bspline)*(1+nbParam+nbParam*nbParam); unsigned int size = (1 + nbParam
-  //    + nbParam*nbParam)*bspline; double *ptb;
 
   for (unsigned int point = 0; point < templateSize; point++) {
     int i = ptTemplate[point].y;
@@ -172,7 +156,6 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
 
     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
-      // Tij=ptTemplate[point].val;
 
       if (blur)
         IW = BI.getValue(i2, j2);
@@ -184,9 +167,6 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
       cr = (int)((IW * (Nc - 1)) / 255.);
       er = ((double)IW * (Nc - 1)) / 255. - cr;
 
-      // calcul de l'erreur
-      // erreur+=(Tij-IW)*(Tij-IW);
-
       if (ApproxHessian == HESSIAN_NONSECOND && (ptTemplateSelect[point] || !useTemplateSelect)) {
         vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam,
                                                             bspline);
@@ -194,25 +174,8 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
                  (ptTemplateSelect[point] || !useTemplateSelect)) {
         if (bspline == 3) {
           vpTemplateTrackerMIBSpline::PutTotPVBspline3(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam);
-          //                    {
-          //                        if(et>0.5){ct++;}
-          //                        if(er>0.5){cr++;}
-          //                        int index = (cr*Nc+ct)*totParam;
-          //                        double *ptb = &PrtTout[index];
-          //                        vpTemplateTrackerMIBSpline::PutTotPVBspline3(ptb,
-          //                        er, ptTemplateSupp[point].BtInit, size);
-          //                    }
         } else {
           vpTemplateTrackerMIBSpline::PutTotPVBspline4(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam);
-
-          //                    {
-          //                        // ################### AY : Optim
-          //                        unsigned int index = (cr*Nc+ct)*totParam;
-          //                        ptb = &PrtTout[index];
-          //                        vpTemplateTrackerMIBSpline::PutTotPVBspline4(ptb,
-          //                        er, ptTemplateSupp[point].BtInit, size);
-          //                        // ###################
-          //                    }
         }
       } else if (ptTemplateSelect[point] || !useTemplateSelect)
         vpTemplateTrackerMIBSpline::PutTotPVBsplinePrt(PrtTout, cr, er, ct, et, Nc, nbParam, bspline);
@@ -234,10 +197,10 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
 
 void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  if (!CompoInitialised)
-    std::cout << "Compositionnal tracking no initialised\nUse "
-                 "InitCompInverse(vpImage<unsigned char> &I) function"
-              << std::endl;
+  if (!CompoInitialised) {
+    std::cout << "Compositionnal tracking not initialised.\nUse initCompInverse() function." << std::endl;
+  }
+
   dW = 0;
 
   if (blur)
@@ -278,9 +241,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
       X1[0] = (double)ptTemplate[point].x;
       X1[1] = (double)ptTemplate[point].y;
 
-      Warp->computeDenom(X1, p); // A modif pour parallelisation mais ne
-      // pose pas de pb avec warp utilises dans
-      // DECSA
+      Warp->computeDenom(X1, p);
       Warp->warpX(X1, X2, p);
 
       j2 = X2[0];

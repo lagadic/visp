@@ -52,8 +52,6 @@ vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTem
 
 void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
 {
-  // std::cout<<"Initialise Hessian at Desired position..."<<std::endl;
-
   dW = 0;
 
   int Nbpoint = 0;
@@ -101,7 +99,6 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
       cr = static_cast<int>((Tij * (Nc - 1)) / 255.);
       et = (IW * (Nc - 1)) / 255. - ct;
       er = (static_cast<double>(Tij) * (Nc - 1)) / 255. - cr;
-      // std::cout<<"test"<<std::endl;
       Warp->dWarp(X1, X2, p, dW);
 
       double *tptemp = new double[nbParam];
@@ -123,17 +120,12 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
     computeMI(MI);
     computeHessien(Hdesire);
 
-    //	double conditionnement=GetConditionnement(Hdesire);
-    //	std::cout<<"conditionnement : "<<conditionnement<<std::endl;
     vpMatrix::computeHLM(Hdesire, lambda, HLMdesire);
     try {
       HLMdesireInverse = HLMdesire.inverseByLU();
     } catch (const vpException &e) {
-      // std::cerr<<"probleme inversion"<<std::endl;
       throw(e);
     }
-    // std::cout<<"Hdesire = "<<Hdesire<<std::endl;
-    // std::cout<<"\tEnd initialisation..."<<std::endl;
   }
 }
 
@@ -141,7 +133,6 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
 {
   dW = 0;
 
-  // double erreur=0;
   int Nbpoint = 0;
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
@@ -208,20 +199,12 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         double et = (IW * (Nc - 1)) / 255. - ct;
         double er = ((double)Tij * (Nc - 1)) / 255. - cr;
 
-        // calcul de l'erreur
-        // erreur+=(Tij-IW)*(Tij-IW);
-
-        // Calcul de l'histogramme joint par interpolation bilinÃaire
-        // (Bspline ordre 1)
         Warp->dWarp(X1, X2, p, dW);
 
-        // double *tptemp=temp;
         double *tptemp = new double[nbParam];
         ;
         for (unsigned int it = 0; it < nbParam; it++)
           tptemp[it] = (dW[0][it] * dx + dW[1][it] * dy);
-        //*tptemp++ =dW[0][it]*dIWx+dW[1][it]*dIWy;
-        // std::cout<<cr<<"   "<<ct<<"  ; ";
         if (ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
           vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
         else if (ApproxHessian == HESSIAN_0 || ApproxHessian == HESSIAN_NEW)
@@ -285,7 +268,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         computeOptimalBrentGain(I, p, -MI, dp, alpha);
         dp = alpha * dp;
       }
-      p += 1. * dp;
+      p += dp;
       break;
     }
 
@@ -294,13 +277,11 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         vpColVector s_quasi = p - p_prec;
         vpColVector y_quasi = G - G_prec;
         double s_scal_y = s_quasi.t() * y_quasi;
-        // if(s_scal_y!=0)//BFGS
-        //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
-        // if(s_scal_y!=0)//DFP
-        if (std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon())
+        if (std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon()) {
           KQuasiNewton = KQuasiNewton + 0.001 * (s_quasi * s_quasi.t() / s_scal_y -
                                                  KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
-                                                     (y_quasi.t() * KQuasiNewton * y_quasi));
+                                                 (y_quasi.t() * KQuasiNewton * y_quasi));
+        }
       }
       dp = -KQuasiNewton * G;
       p_prec = p;
@@ -317,7 +298,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         dp = alpha * dp;
       }
 
-      p += 1. * dp;
+      p += dp;
       break;
     }
     }
@@ -329,7 +310,6 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     }
     iteration++;
     iterationGlobale++;
-
 
     evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
     evolRMS_prec = evolRMS;

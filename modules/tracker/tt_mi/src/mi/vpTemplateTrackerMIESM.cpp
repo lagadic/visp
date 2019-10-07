@@ -50,31 +50,25 @@ vpTemplateTrackerMIESM::vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp)
 {
   useCompositionnal = false;
   useInverse = false;
-  if (!Warp->isESMcompatible())
-    std::cerr << "The selected warp function is not appropriate for the ESM "
-                 "algorithm..."
-              << std::endl;
+  if (!Warp->isESMcompatible()) {
+    throw(vpException(vpException::badValue,
+                      "The selected warp function is not appropriate for the ESM algorithm..."));
+  }
 }
 
 void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
 {
   initCompInverse();
-  std::cout << "Initialise Hessian at Desired position..." << std::endl;
 
   dW = 0;
 
-  // double erreur=0;
   int Nbpoint = 0;
 
   double i2, j2;
-  // double Tij;
-  double /*IW,*/ dx, dy;
-  // int cr,ct;
-  // double er,et;
+  double dx, dy;
   int i, j;
 
   Nbpoint = 0;
-  // erreur=0;
 
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
@@ -96,29 +90,6 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
 
     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
-      //      if(blur)
-      //        IW=BI.getValue(i2,j2);
-      //      else
-      //        IW=I.getValue(i2,j2);
-
-      // ct=ptTemplateSupp[point].ct;
-      // et=ptTemplateSupp[point].et;
-      // cr=(int)((IW*(Nc-1))/255.);
-      // er=((double)IW*(Nc-1))/255.-cr;
-
-      //            if(ApproxHessian==vpTemplateTrackerMI::HESSIAN_NONSECOND)
-      //            // cas à tester AY
-      //                vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout,cr,
-      //                er, ct, et, Nc, ptTemplate[point].dW, nbParam,
-      //                bspline);
-      //            else
-      //                vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout,cr,
-      //                er, ct, et, Nc, ptTemplate[point].dW, nbParam,
-      //                bspline);
-
-      //            vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout,cr,
-      //            er, ct, et, Nc, ptTemplate[point].dW,
-      //            nbParam,bspline,ApproxHessian,false);
     }
   }
 
@@ -126,10 +97,6 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
   computeProba(Nbpoint);
   computeMI(MI);
   computeHessien(HdesireInverse);
-  // std::cout<<"HdesireInverse"<<std::endl<<HdesireInverse<<std::endl;
-
-  /////////////////////////////////////////////////////////////////////////
-  // DIRECT COMPO
 
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
@@ -141,7 +108,6 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
   }
 
   Nbpoint = 0;
-  // erreur=0;
   zeroProbabilities();
 
   Warp->computeCoeff(p);
@@ -159,72 +125,34 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
 
     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight()) && (j2 < I.getWidth())) {
       Nbpoint++;
-      // Tij=ptTemplate[point].val;
-      // if(!blur)
-      //  IW=I.getValue(i2,j2);
-      // else
-      //  IW=BI.getValue(i2,j2);
 
       dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
       dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
-      // cr=ptTemplateSupp[point].ct;
-      // er=ptTemplateSupp[point].et;
-      // ct=(int)((IW*(Nc-1))/255.);
-      // et=((double)IW*(Nc-1))/255.-ct;
-
       Warp->dWarpCompo(X1, X2, p, ptTemplateCompo[point].dW, dW);
 
-      double *tptemp = new double[nbParam];
-      for (unsigned int it = 0; it < nbParam; it++)
-        tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
+//      double *tptemp = new double[nbParam];
+//      for (unsigned int it = 0; it < nbParam; it++)
+//        tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
 
-      //                vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout,cr,
-      //                er, ct, et, Nc, ptTemplate[point].dW,
-      //                nbParam,bspline,ApproxHessian,
-      //                                                         hessianComputation==
-      //                                                         vpTemplateTrackerMI::USE_HESSIEN_DESIRE);
-      // calcul de l'erreur
-      // erreur+=(Tij-IW)*(Tij-IW);
-
-      //          if(ApproxHessian==vpTemplateTrackerMI::HESSIAN_NONSECOND) //
-      //          cas à tester AY
-      //              vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout,cr,
-      //              er, ct, et, Nc, tptemp, nbParam, bspline);
-      //          else
-      //              vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout,cr,
-      //              er, ct, et, Nc, tptemp, nbParam, bspline);
-
-      //      vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout,cr, er,
-      //      ct, et, Nc, tptemp, nbParam,bspline,ApproxHessian,false);
-
-      delete[] tptemp;
+//      delete[] tptemp;
     }
   }
 
   computeProba(Nbpoint);
   computeMI(MI);
   computeHessien(HdesireDirect);
-  // std::cout<<"HdesireDirect"<<std::endl<<HdesireDirect<<std::endl;
 
   lambda = lambdaDep;
 
   Hdesire = HdesireDirect + HdesireInverse;
-  // Hdesire=HdesireDirect;
-  // Hdesire=HdesireInverse;
 
-  // std::cout<<"HdesireDirect "<<HdesireDirect<<std::endl;
-  // std::cout<<"HdesireInverse "<<HdesireInverse<<std::endl;
   vpMatrix::computeHLM(Hdesire, lambda, HLMdesire);
   HLMdesireInverse = HLMdesire.inverseByLU();
-
-  // std::cout<<"\tEnd initialisation..."<<std::endl;
 }
 
 void vpTemplateTrackerMIESM::initCompInverse()
 {
-  // std::cout<<"Initialise precomputed value of ESM Tracker"<<std::endl;
-
   HDirect.resize(nbParam, nbParam);
   HInverse.resize(nbParam, nbParam);
   HdesireDirect.resize(nbParam, nbParam);
@@ -266,37 +194,23 @@ void vpTemplateTrackerMIESM::initCompInverse()
 
 void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  if (!CompoInitialised)
-    std::cout << "Compositionnal tracking no initialised\nUse "
-                 "initCompInverse(vpImage<unsigned char> &I) function"
-              << std::endl;
+  if (!CompoInitialised) {
+    std::cout << "Compositionnal tracking not initialised.\nUse initCompInverse() function."  << std::endl;
+  }
   dW = 0;
 
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
-  /*	if(ApproxHessian!=HESSIAN_NONSECOND && ApproxHessian!=HESSIAN_0 &&
-  ApproxHessian!=HESSIAN_NEW && ApproxHessian!=HESSIAN_YOUCEF)
-  {
-    getGradX(dIx, d2Ix,fgdG,taillef);
-    getGradY(dIx, d2Ixy,fgdG,taillef);
-    getGradY(dIy, d2Iy,fgdG,taillef);
-  }*/
 
-  // double erreur=0;
   int point;
 
   MI_preEstimation = -getCost(I, p);
 
   lambda = lambdaDep;
-  // double MIprec=-1000;
 
   double i2, j2;
-  // double Tij;
-  // double IW;
-  // int cr,ct;
-  // double er,et;
 
   vpColVector dpinv(nbParam);
 
@@ -306,9 +220,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
   unsigned int iteration = 0;
   do {
     int Nbpoint = 0;
-    // MIprec=MI;
     double MI = 0;
-    // erreur=0;
 
     zeroProbabilities();
 
@@ -329,31 +241,10 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
       if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Nbpoint++;
-        // Tij=ptTemplate[point].val;
-        // if(!blur)
-        //  IW=I.getValue(i2,j2);
-        // else
-        //  IW=BI.getValue(i2,j2);
-
-        // ct=ptTemplateSupp[point].ct;
-        // et=ptTemplateSupp[point].et;
-        // cr=(int)((IW*(Nc-1))/255.);
-        // er=((double)IW*(Nc-1))/255.-cr;
-
-        //                if(ApproxHessian==vpTemplateTrackerMI::HESSIAN_NONSECOND||hessianComputation==vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
-        //                // cas à tester AY
-        //                    vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout,
-        //                    cr, er, ct, et, Nc, ptTemplate[point].dW,
-        //                    nbParam, bspline);
-        //                else
-        //                    vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout,
-        //                    cr, er, ct, et, Nc, ptTemplate[point].dW,
-        //                    nbParam, bspline);
       }
     }
 
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       diverge = true;
       MI = 0;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
@@ -369,9 +260,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       // DIRECT
 
       Nbpoint = 0;
-      // MIprec=MI;
       MI = 0;
-      // erreur=0;
 
       zeroProbabilities();
 
@@ -393,41 +282,17 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
         X2[0] = j2;
         X2[1] = i2;
 
-        // Warp->computeDenom(X1,p);
         if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
           Nbpoint++;
-          // Tij=ptTemplate[point].val;
-          // Tij=Iterateurvecteur->val;
-          // if(!blur)
-          //  IW=I.getValue(i2,j2);
-          // else
-          //  IW=BI.getValue(i2,j2);
 
           double dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
           double dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
-
-          // ct=(int)((IW*(Nc-1))/255.);
-          // et=((double)IW*(Nc-1))/255.-ct;
-          // cr=ptTemplateSupp[point].ct;
-          // er=ptTemplateSupp[point].et;
 
           Warp->dWarpCompo(X1, X2, p, ptTemplateCompo[point].dW, dW);
 
           double *tptemp = new double[nbParam];
           for (unsigned int it = 0; it < nbParam; it++)
             tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
-
-          // calcul de l'erreur
-          // erreur+=(Tij-IW)*(Tij-IW);
-          //                    if(bspline==3)
-          //                        vpTemplateTrackerMIBSpline::PutTotPVBspline3NoSecond(PrtTout,
-          //                        cr, er, ct, et, Nc, tptemp, nbParam);
-          //                    else
-          //                        vpTemplateTrackerMIBSpline::PutTotPVBspline4NoSecond(PrtTout,
-          //                        cr, er, ct, et, Nc, tptemp, nbParam);
-          //					vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout,cr,
-          // er, ct, et, Nc, tptemp, nbParam,bspline,ApproxHessian,
-          //                               hessianComputation==vpHessienType::USE_HESSIEN_DESIRE);
 
           delete[] tptemp;
         }
@@ -445,8 +310,6 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
         vpMatrix::computeHLM(H, lambda, HLM);
       }
       G = GDirect - GInverse;
-      // G=GDirect;
-      // G=-GInverse;
 
       try {
         if (minimizationMethod == vpTemplateTrackerMIESM::USE_GRADIENT)
@@ -468,7 +331,6 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
           }
         }
       } catch (const vpException &e) {
-        // std::cerr<<"probleme inversion"<<std::endl;
         throw(e);
       }
 
@@ -484,7 +346,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
       iteration++;
     }
-  } while (/*(MI!=MIprec) &&*/ (iteration < iterationMax));
+  } while ((iteration < iterationMax));
 
   MI_postEstimation = -getCost(I, p);
   if (MI_preEstimation > MI_postEstimation) {

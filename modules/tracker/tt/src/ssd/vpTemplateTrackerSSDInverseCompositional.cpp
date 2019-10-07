@@ -50,7 +50,6 @@ vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseComposition
 
 void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<unsigned char> & /*I*/)
 {
-
   H = 0;
   int i, j;
 
@@ -76,14 +75,11 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<uns
 
   HCompInverse.resize(nbParam, nbParam);
   HCompInverse = HLMtemp.inverseByLU();
-  // std::cout<<Hinverse<<std::endl;
   vpColVector dWtemp(nbParam);
   vpColVector HiGtemp(nbParam);
 
   for (unsigned int point = 0; point < templateSize; point++) {
     if ((!useTemplateSelect) || (ptTemplateSelect[point])) {
-      // i=ptTemplate[point].y;
-      // j=ptTemplate[point].x;
       for (unsigned int it = 0; it < nbParam; it++)
         dWtemp[it] = ptTemplate[point].dW[it];
 
@@ -114,7 +110,6 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
   int i, j;
   double i2, j2;
   double alpha = 2.;
-  // vpTemplateTrackerPointtest *pt;
   initPosEvalRMS(p);
 
   vpTemplateTrackerPoint *pt;
@@ -130,7 +125,6 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
     Warp->computeCoeff(p);
     for (unsigned int point = 0; point < templateSize; point++) {
       if ((!useTemplateSelect) || (ptTemplateSelect[point])) {
-        // pt=&ptTemplatetest[point];
         pt = &ptTemplate[point];
         i = pt->y;
         j = pt->x;
@@ -156,7 +150,6 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
         }
       }
     }
-    // std::cout << "npoint: " << Nbpoint << std::endl;
     if (Nbpoint == 0) {
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }

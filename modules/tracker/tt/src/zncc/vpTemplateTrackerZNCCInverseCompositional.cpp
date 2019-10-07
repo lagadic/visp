@@ -50,8 +50,6 @@ vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositi
 
 void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(const vpImage<unsigned char> &I)
 {
-  // std::cout<<"Initialise precomputed value of Compositionnal
-  // Inverse"<<std::endl;
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
 
@@ -66,11 +64,9 @@ void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(const vpImage<un
 
     double dx = ptTemplate[point].dx;
     double dy = ptTemplate[point].dy;
-    // std::cout<<ptTemplate[point].dx<<","<<ptTemplate[point].dy<<std::endl;
 
     Warp->getdW0(i, j, dy, dx, ptTemplate[point].dW);
   }
-  // vpTRACE("fin Comp Inverse");
   compoInitialised = true;
 }
 
@@ -191,8 +187,9 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
       Warp->dWarp(X1, X2, p, dW);
 
       double *tempt = new double[nbParam];
-      for (unsigned int it = 0; it < nbParam; it++)
+      for (unsigned int it = 0; it < nbParam; it++) {
         tempt[it] = dW[0][it] * dIcx + dW[1][it] * dIcy;
+      }
 
       double prodIc = (Ic - moyIc);
 
@@ -200,13 +197,14 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
       double d_Iyy = dIyy.getValue(i2, j2);
       double d_Ixy = dIxy.getValue(i2, j2);
 
-      for (unsigned int it = 0; it < nbParam; it++)
+      for (unsigned int it = 0; it < nbParam; it++) {
         for (unsigned int jt = 0; jt < nbParam; jt++) {
           sIcd2Iref[it][jt] += prodIc * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
                                          dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy) - moyd2Iref[it][jt]);
           sdIrefdIref[it][jt] +=
               (ptTemplate[point].dW[it] - moydIrefdp[it]) * (ptTemplate[point].dW[jt] - moydIrefdp[jt]);
         }
+      }
 
       delete[] tempt;
 
@@ -224,7 +222,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
   denom = covarIref * covarIc;
 
   double NCC = sIcIref / denom;
-  // std::cout<<"NCC = "<<NCC<<std::endl;
   vpColVector dcovarIref(nbParam);
   dcovarIref = -sIcdIref / covarIref;
 
@@ -239,7 +236,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
 #endif
   vpMatrix::computeHLM(Hdesire, lambdaDep, HLMdesire);
   HLMdesireInverse = HLMdesire.inverseByLU();
-  // std::cout<<"Hdesire = "<<Hdesire<<std::endl;
 }
 
 void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
@@ -247,7 +243,6 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
   if (blur)
     vpImageFilter::filter(I, BI, fgG, taillef);
 
-  // double erreur=0;
   vpColVector dpinv(nbParam);
   double Ic;
   double Iref;
@@ -262,7 +257,6 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
   do {
     unsigned int Nbpoint = 0;
-    // erreur=0;
     G = 0;
     Warp->computeCoeff(p);
     double moyIref = 0;
@@ -326,9 +320,6 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
           for (unsigned int it = 0; it < nbParam; it++)
             sIrefdIref[it] += (Iref - moyIref) * (ptTemplate[point].dW[it] - moydIrefdp[it]);
 
-          // double er=(Iref-Ic);
-          // erreur+=(er*er);
-          // denom+=(Iref-moyIref)*(Iref-moyIref)*(Ic-moyIc)*(Ic-moyIc);
           covarIref += (Iref - moyIref) * (Iref - moyIref);
           covarIc += (Ic - moyIc) * (Ic - moyIc);
           sIcIref += (Iref - moyIref) * (Ic - moyIc);
@@ -338,7 +329,6 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
       covarIc = sqrt(covarIc);
       double denom = covarIref * covarIc;
 
-      // if(denom==0.0)
       if (std::fabs(denom) <= std::numeric_limits<double>::epsilon()) {
         diverge = true;
       } else {
@@ -349,9 +339,9 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
         try {
           dp = -1. * HLMdesireInverse * G;
-        } catch (...) {
-          std::cout << "probleme inversion" << std::endl;
-          break;
+        }
+        catch (const vpException &e) {
+          throw(e);
         }
 
         Warp->getParamInverse(dp, dpinv);
@@ -372,6 +362,5 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
   } while ( (!diverge && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) && (iteration < iterationMax)) );
 
-  // std::cout<<"erreur "<<erreur<<std::endl;
   nbIteration = iteration;
 }
