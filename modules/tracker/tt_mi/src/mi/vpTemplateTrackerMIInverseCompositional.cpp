@@ -51,7 +51,7 @@ vpTemplateTrackerMIInverseCompositional::vpTemplateTrackerMIInverseCompositional
 
 void vpTemplateTrackerMIInverseCompositional::initTemplateRefBspline(unsigned int ptIndex, double &et) // AY : Optim
 {
-  ptTemplateSupp[ptIndex].BtInit = new double[(1 + nbParam + nbParam * nbParam) * (unsigned int)bspline];
+  ptTemplateSupp[ptIndex].BtInit = new double[(1 + nbParam + nbParam * nbParam) * static_cast<unsigned int>(bspline)];
 
   unsigned int index = 0;
   int endIndex = 1;
@@ -74,13 +74,13 @@ void vpTemplateTrackerMIInverseCompositional::initTemplateRefBspline(unsigned in
   }
 
   for (int it = -1; it <= endIndex; it++) {
-    ptTemplateSupp[ptIndex].BtInit[index++] = (*ptBspFct)((double)(-it) + et);
+    ptTemplateSupp[ptIndex].BtInit[index++] = (*ptBspFct)(static_cast<double>(-it) + et);
 
     for (unsigned int ip = 0; ip < nbParam; ++ip) {
-      ptTemplateSupp[ptIndex].BtInit[index++] = (*ptdBspFct)((double)(-it) + et) * ptTemplate[ptIndex].dW[ip] * (-1.0);
+      ptTemplateSupp[ptIndex].BtInit[index++] = (*ptdBspFct)(static_cast<double>(-it) + et) * ptTemplate[ptIndex].dW[ip] * (-1.0);
       for (unsigned int ip2 = 0; ip2 < nbParam; ++ip2) {
         ptTemplateSupp[ptIndex].BtInit[index++] =
-            (*ptd2BspFct)((double)(-it) + et) * ptTemplate[ptIndex].dW[ip] * ptTemplate[ptIndex].dW[ip2];
+            (*ptd2BspFct)(static_cast<double>(-it) + et) * ptTemplate[ptIndex].dW[ip] * ptTemplate[ptIndex].dW[ip2];
       }
     }
   }
@@ -116,7 +116,7 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
 
     Warp->getdW0(i, j, dy, dx, ptTemplate[point].dW);
     double Tij = ptTemplate[point].val;
-    int ct = (int)((Tij * (Nc - 1)) / 255.);
+    int ct = static_cast<int>((Tij * (Nc - 1)) / 255.);
     double et = (Tij * (Nc - 1)) / 255. - ct;
 
     ptTemplateSupp[point].et = et;
@@ -164,8 +164,8 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
 
       ct = ptTemplateSupp[point].ct;
       et = ptTemplateSupp[point].et;
-      cr = (int)((IW * (Nc - 1)) / 255.);
-      er = ((double)IW * (Nc - 1)) / 255. - cr;
+      cr = static_cast<int>((IW * (Nc - 1)) / 255.);
+      er = (IW * (Nc - 1)) / 255. - cr;
 
       if (ApproxHessian == HESSIAN_NONSECOND && (ptTemplateSelect[point] || !useTemplateSelect)) {
         vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam,
@@ -235,11 +235,11 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
     Warp->computeCoeff(p);
 
-    for (int point = 0; point < (int)templateSize; point++) {
+    for (int point = 0; point < static_cast<int>(templateSize); point++) {
       double i2, j2;
 
-      X1[0] = (double)ptTemplate[point].x;
-      X1[1] = (double)ptTemplate[point].y;
+      X1[0] = static_cast<double>(ptTemplate[point].x);
+      X1[1] = static_cast<double>(ptTemplate[point].y);
 
       Warp->computeDenom(X1, p);
       Warp->warpX(X1, X2, p);
@@ -252,15 +252,15 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
         Nbpoint++;
         double IW;
         if (!blur)
-          IW = (double)I.getValue(i2, j2);
+          IW = static_cast<double>(I.getValue(i2, j2));
         else
           IW = BI.getValue(i2, j2);
 
         int ct = ptTemplateSupp[point].ct;
         double et = ptTemplateSupp[point].et;
-        double tmp = IW * (((double)Nc) - 1.f) / 255.f;
-        int cr = (int)tmp;
-        double er = tmp - (double)cr;
+        double tmp = IW * (static_cast<double>(Nc) - 1.) / 255.;
+        int cr = static_cast<int>(tmp);
+        double er = tmp - static_cast<double>(cr);
 
         if ((ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE) &&
             (ptTemplateSelect[point] || !useTemplateSelect)) {
@@ -288,7 +288,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
     } else {
       unsigned int indd, indd2;
       indd = indd2 = 0;
-      unsigned int Ncb_ = (unsigned int)Ncb;
+      unsigned int Ncb_ = static_cast<unsigned int>(Ncb);
       for (unsigned int i = 0; i < Ncb_ * Ncb_; i++) {
         Prt[i] = Prt[i] / Nbpoint;
         for (unsigned int j = 0; j < nbParam; j++) {

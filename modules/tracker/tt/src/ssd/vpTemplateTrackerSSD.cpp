@@ -78,11 +78,11 @@ double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I, const vpCo
       else
         IW = BI.getValue(i2, j2);
       // IW=getSubPixBspline4(I,i2,j2);
-      erreur += ((double)Tij - IW) * ((double)Tij - IW);
+      erreur += (Tij - IW) * (Tij - IW);
       Nbpoint++;
     }
   }
-  ratioPixelIn = (double)Nbpoint / (double)templateSize;
+  ratioPixelIn = static_cast<double>(Nbpoint) / static_cast<double>(templateSize);
 
   if (Nbpoint == 0)
     return 10e10;
@@ -115,7 +115,7 @@ double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpCol
       double Tij = ptTemplate[point].val;
       IW = I.getValue(i2, j2);
       // IW=getSubPixBspline4(I,i2,j2);
-      erreur += ((double)Tij - IW) * ((double)Tij - IW);
+      erreur += (Tij - IW) * (Tij - IW);
       Nbpoint++;
     }
   }
