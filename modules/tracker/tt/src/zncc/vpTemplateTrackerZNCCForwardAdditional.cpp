@@ -164,6 +164,13 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
   int i, j;
   double i2, j2;
   double alpha = 2.;
+
+  initPosEvalRMS(p);
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     int Nbpoint = 0;
     double erreur = 0;
@@ -257,8 +264,18 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
       dp = alpha * dp;
     }
     p -= dp;
+
+    computeEvalRMS(p);
+
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
     iteration++;
-  } while (/*( erreur_prec-erreur<50) && */ (iteration < iterationMax));
+
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ((iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
 
   // std::cout<<"erreur "<<erreur<<std::endl;
   nbIteration = iteration;
