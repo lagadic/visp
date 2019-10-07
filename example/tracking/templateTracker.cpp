@@ -160,8 +160,8 @@ OPTIONS:                                                            Default\n\
      %d : Homography\n\
      %d : Homography in SL3\n\
      %d : SRT (scale, rotation, translation)\n\
-     %d : RT (rotation, translation)\n\
-     %d : Translation\n\n", (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
+     %d : Translation\n\
+     %d : RT (rotation, translation)\n\n", (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
           (int)WARP_TRANSLATION, (int)WARP_RT);
 #else
   fprintf(stdout, "\n\
