@@ -161,12 +161,11 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
               << std::endl;
   dW = 0;
 
-  if (blur)
+  if (blur) {
     vpImageFilter::filter(I, BI, fgG, taillef);
+  }
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
-
-  // double erreur=0;
 
   lambda = lambdaDep;
   double MI = 0, MIprec = -1000;
@@ -174,9 +173,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
   MI_preEstimation = -getCost(I, p);
 
   double i2, j2;
-  // double Tij;
   double IW;
-  // unsigned
   int cr, ct;
   double er, et;
   double dx, dy;
@@ -186,11 +183,11 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
 
   int i, j;
   unsigned int iteration = 0;
+
   do {
     int Nbpoint = 0;
     MIprec = MI;
     MI = 0;
-    // erreur=0;
 
     zeroProbabilities();
 
@@ -208,7 +205,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
       Warp->computeDenom(X1, p);
       if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Nbpoint++;
-        // Tij=ptTemplate[point].val;
         if (!blur)
           IW = I.getValue(i2, j2);
         else
@@ -228,9 +224,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
         for (unsigned int it = 0; it < nbParam; it++)
           tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
 
-        // calcul de l'erreur
-        // erreur+=(Tij-IW)*(Tij-IW);
-
         if (ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
           vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
         else if (ApproxHessian == HESSIAN_0 || ApproxHessian == HESSIAN_NEW)
@@ -240,7 +233,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
       }
     }
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       diverge = true;
       MI = 0;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
@@ -269,7 +261,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
           break;
         }
       } catch (const vpException &e) {
-        // std::cerr<<"probleme inversion"<<std::endl;
         throw(e);
       }
     }
@@ -287,10 +278,9 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
     Warp->pRondp(p, dp, p);
 
     iteration++;
-
   } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
            (iteration < iterationMax));
-  // while( (MI!=MIprec) && (iteration< iterationMax) );
+
   nbIteration = iteration;
 
   MI_postEstimation = -getCost(I, p);

@@ -110,11 +110,6 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
         dIWx = dIx.getValue(i2, j2);
         dIWy = dIy.getValue(i2, j2);
         Nbpoint++;
-        // Calcul du Hessien
-        /*Warp->dWarp(X1,X2,p,dW);
-        double *tempt=new double[nbParam];
-        for(int it=0;it<nbParam;it++)
-        tempt[it]=dW[0][it]*dIWx+dW[1][it]*dIWy;*/
 
         Warp->dWarpCompo(X1, X2, p, ptTemplate[point].dW, dW);
 
@@ -135,7 +130,6 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
       }
     }
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
@@ -144,7 +138,6 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
     try {
       dp = 1. * HLM.inverseByLU() * G;
     } catch (const vpException &e) {
-      // std::cout<<"probleme inversion"<<std::endl;
       throw(e);
     }
 
@@ -155,9 +148,9 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
       dp = alpha * dp;
     }
     Warp->pRondp(p, dp, p);
-    // p+=Gain*dp;
+
     iteration++;
-  } while (/*( erreur_prec-erreur<50) &&*/ (iteration < iterationMax));
+  } while ( (iteration < iterationMax) );
 
   nbIteration = iteration;
 }
