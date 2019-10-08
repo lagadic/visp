@@ -34,6 +34,7 @@ ViSP 3.2.1 (under work)
     . New vpForceTorqueAtiNetFTSensor class to get F/T measurements from an ATI F/T sensor
       connected to a Net FT box
     . New vpRobotBebop2 class a wrapper over ARSDK3 to control Parrot Bebop2 drone
+    . Optimize template tracker
   - Tutorials
     . New tutorial: Installation from source for Windows with Visual C++ 2019 (vc16)
     . New tutorial: Cross-compilation for UWP from Windows host with Visual C++ 2019 (vc16)
@@ -50,6 +51,8 @@ ViSP 3.2.1 (under work)
     . [#570] Could not get left and right Infrared images from RealSense D435
     . [#573] VISP fails to build with cmake 3.14.3 and PCL 1.9.1
     . [#574] Compatibility problem with PCL > 1.9.1
+    . [#597] Fix vpImage bitmap deletion when copyData = false
+    . [#614] Performance issues in vpTemplateTrackerMIInverseCompositional
 ----------------------------------------------
 ViSP 3.2.0 (released January 23, 2019)
   - Contributors:
