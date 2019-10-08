@@ -59,24 +59,14 @@ class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional : public vpTemplateT
 {
 protected:
   bool compoInitialised;
-  // pour eval evolRMS
-  double evolRMS;
-  std::vector<double> x_pos;
-  std::vector<double> y_pos;
-  double threshold_RMS;
   vpColVector moydIrefdp;
 
 protected:
   void initCompInverse(const vpImage<unsigned char> &I);
   void initHessienDesired(const vpImage<unsigned char> &I);
   void trackNoPyr(const vpImage<unsigned char> &I);
-  void deletePosEvalRMS();
-  void computeEvalRMS(const vpColVector &p);
-  void initPosEvalRMS(const vpColVector &p);
 
 public:
   explicit vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
-
-  void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
 };
 #endif

@@ -66,6 +66,11 @@ protected:
   unsigned int nbLvlPyr; // If = 1, disable pyramidal usage
   unsigned int l0Pyr;
   bool pyrInitialised;
+  // For evolRMS computation
+  double evolRMS;
+  std::vector<double> x_pos;
+  std::vector<double> y_pos;
+  double evolRMS_eps;
 
   vpTemplateTrackerPoint *ptTemplate;
   vpTemplateTrackerPoint **ptTemplatePyr;
@@ -79,8 +84,7 @@ protected:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   vpTemplateTrackerPointSuppMIInv *ptTemplateSupp;     // pour inverse et compo
-  vpTemplateTrackerPointSuppMIInv **ptTemplateSuppPyr; // pour inverse et
-                                                       // compo
+  vpTemplateTrackerPointSuppMIInv **ptTemplateSuppPyr; // pour inverse et compo
 #endif
 
   vpTemplateTrackerPointCompo *ptTemplateCompo;     // pour ESM
@@ -138,37 +142,6 @@ protected:
   vpImage<double> dIx;
   vpImage<double> dIy;
   vpTemplateTrackerZone zoneRef_; // Reference zone
-
-  // private:
-  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //    vpTemplateTracker(const vpTemplateTracker &)
-  //      : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL),
-  //      ptTemplatePyr(NULL),
-  //        ptTemplateInit(false), templateSize(0), templateSizePyr(NULL),
-  //        ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL),
-  //        ptTemplateSelectInit(false), templateSelectSize(0),
-  //        ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
-  //        ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL),
-  //        zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(),
-  //        Hdesire(), HdesirePyr(NULL), HLM(), HLMdesire(),
-  //        HLMdesirePyr(NULL), HLMdesireInverse(), HLMdesireInversePyr(NULL),
-  //        G(), gain(0), thresholdGradient(0),
-  //        costFunctionVerification(false), blur(false), useBrent(false),
-  //        nbIterBrent(0), taillef(0), fgG(NULL), fgdG(NULL),
-  //        ratioPixelIn(0), mod_i(0), mod_j(0), nbParam(), lambdaDep(0),
-  //        iterationMax(0), iterationGlobale(0), diverge(false),
-  //        nbIteration(0), useCompositionnal(false), useInverse(false),
-  //        Warp(NULL), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(),
-  //        zoneRef_()
-  //    {
-  //      throw vpException(vpException::functionNotImplementedError, "Not
-  //      implemented!");
-  //    }
-  //    vpTemplateTracker &operator=(const vpTemplateTracker &){
-  //      throw vpException(vpException::functionNotImplementedError, "Not
-  //      implemented!"); return *this;
-  //    }
-  //#endif
 
 public:
   //! Default constructor.
@@ -278,19 +251,46 @@ public:
     mod_j = sample_j;
   }
   void setThresholdGradient(double threshold) { thresholdGradient = threshold; }
+  /*!
+    Set the threshold used to stop optimization loop.
+    When the residual difference between two successive iterations becomes lower than the threshold we stop
+    optimization loop.
+
+    \note Increasing the default value allows to speed up the tracking.
+
+    \param threshold : Threshold used to stop optimization. Default value is set to 1e-4.
+   */
+  void setThresholdResidualDifference(double threshold) { evolRMS_eps = threshold; }
+
   /*! By default Brent usage is disabled. */
   void setUseBrent(bool b) { useBrent = b; }
 
   void track(const vpImage<unsigned char> &I);
   void trackRobust(const vpImage<unsigned char> &I);
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+    \deprecated This function is deprecated and the value set is no more used.
+    Use rather setThresholdResidualDerivative()
+    \param threshold : Unused value.
+   */
+  vp_deprecated void setThresholdRMS(double threshold) { (void)threshold; }
+  //@}
+#endif
+
 protected:
+  void computeEvalRMS(const vpColVector &p);
   void computeOptimalBrentGain(const vpImage<unsigned char> &I, vpColVector &tp, double tMI, vpColVector &direction,
                                double &alpha);
   virtual double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) = 0;
   void getGaussianBluredImage(const vpImage<unsigned char> &I) { vpImageFilter::filter(I, BI, fgG, taillef); }
   virtual void initHessienDesired(const vpImage<unsigned char> &I) = 0;
   virtual void initHessienDesiredPyr(const vpImage<unsigned char> &I);
+  void initPosEvalRMS(const vpColVector &p);
   virtual void initPyramidal(unsigned int nbLvl, unsigned int l0);
   void initTracking(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone);
   virtual void initTrackingPyr(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone);

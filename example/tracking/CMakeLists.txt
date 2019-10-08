@@ -195,12 +195,8 @@ add_test(trackDot2        trackDot2 -c ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-SSDESM-SRT           templateTracker -c -l 2 -t 0 -w 3 ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-SSDESM-Translation   templateTracker -c -l 2 -t 0 -w 4 ${OPTION_TO_DESACTIVE_DISPLAY})
 
-add_test(templateTrackerPyramidal-SSDESM-Affine        templateTracker -c -l 2 -t 0 -w 0 -p ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(templateTrackerPyramidal-SSDESM-Homography    templateTracker -c -l 2 -t 0 -w 1 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDESM-HomographySL3 templateTracker -c -l 2 -t 0 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(templateTrackerPyramidal-SSDESM-SRT           templateTracker -c -l 2 -t 0 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDESM-Translation   templateTracker -c -l 2 -t 0 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(templateTrackerPyramidal-SSDESM-RT            templateTracker -c -l 2 -t 0 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 
 #add_test(templateTracker-SSDForwardAdditional-Affine        templateTracker -c -l 2 -t 1 -w 0 ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-SSDForwardAdditional-Homography    templateTracker -c -l 2 -t 1 -w 1 ${OPTION_TO_DESACTIVE_DISPLAY})

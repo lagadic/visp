@@ -111,6 +111,7 @@ protected:
   void computeHessienNormalized(vpMatrix &H);
   void computeMI(double &MI);
   void computeProba(int &nbpoint);
+
   double getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
   double getCost(const vpImage<unsigned char> &I) { return getCost(I, p); }
   double getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp);

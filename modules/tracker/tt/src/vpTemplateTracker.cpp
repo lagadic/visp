@@ -42,7 +42,8 @@
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
-  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL), ptTemplateInit(false),
+  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(),
+    evolRMS_eps(1e-4), ptTemplate(NULL), ptTemplatePyr(NULL), ptTemplateInit(false),
     templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL),
     ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
     ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(),
@@ -913,4 +914,62 @@ void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)
       p = p_pre_estimation;
   } else
     trackNoPyr(I);
+}
+
+/*!
+  Compute residual. Before using this function you need to call initPosEvalRMS() once.
+  \param p[in] : Warp function parameters.
+
+  \sa initPosEvalRMS()
+ */
+void vpTemplateTracker::computeEvalRMS(const vpColVector &p)
+{
+  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
+
+  Warp->computeCoeff(p);
+  evolRMS = 0;
+  vpTemplateTrackerTriangle triangle;
+
+  for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
+    zoneTracked->getTriangle(i, triangle);
+    for (unsigned int j = 0; j < 3; j++) {
+      triangle.getCorner(j, X1[0], X1[1]);
+
+      Warp->computeDenom(X1, p);
+      Warp->warpX(X1, X2, p);
+      evolRMS += (x_pos[i * 3 + j] - X2[0]) * (x_pos[i * 3 + j] - X2[0]) +
+                 (y_pos[i * 3 + j] - X2[1]) * (y_pos[i * 3 + j] - X2[1]);
+      x_pos[i * 3 + j] = X2[0];
+      y_pos[i * 3 + j] = X2[1];
+    }
+  }
+  evolRMS = evolRMS / nb_corners;
+}
+
+/*!
+  Initialize residual computed using computeEvalRMS().
+  \param p[in] : Warp function parameters.
+
+  \sa computeEvalRMS()
+ */
+void vpTemplateTracker::initPosEvalRMS(const vpColVector &p)
+{
+  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
+  x_pos.resize(nb_corners);
+  y_pos.resize(nb_corners);
+
+  Warp->computeCoeff(p);
+  vpTemplateTrackerTriangle triangle;
+
+  for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
+    zoneTracked->getTriangle(i, triangle);
+    for (unsigned int j = 0; j < 3; j++) {
+      triangle.getCorner(j, X1[0], X1[1]);
+
+      Warp->computeDenom(X1, p);
+      Warp->warpX(X1, X2, p);
+      x_pos[i * 3 + j] = X2[0];
+      y_pos[i * 3 + j] = X2[1];
+    }
+  }
 }
