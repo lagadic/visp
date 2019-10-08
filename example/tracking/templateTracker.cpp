@@ -372,7 +372,7 @@ int main(int argc, const char **argv)
       ipath = vpIoTools::createFilePath(env_ipath, "mire-2/image.%04d.pgm");
 
     if (opt_log) {
-      ofs.open( logfilename );
+      ofs.open( logfilename.c_str() );
     }
 
     vpImage<unsigned char> I;
