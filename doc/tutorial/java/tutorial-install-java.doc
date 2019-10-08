@@ -21,12 +21,18 @@ Download the latest Java Development Kit (JDK) from the [Oracle](http://www.orac
 
 After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
 
-If you download `jdk-11.0.1_<platform>-x64_bin.tar.gz` (where `<platform>` should be replaced by is either `linux` or `osx`) this could be done like:
+\subsection java_install_jdk_unix On unix-like platform
+
+If you download `jdk-13_<platform>-x64_bin.tar.gz` (where `<platform>` should be replaced by is either `linux` or `osx`) this could be done like:
 \code
-$ tar xvzf jdk-11.0.1_<platform>-x64_bin.tar.gz -C $VISP_WS
+$ tar xvzf jdk-13_<platform>-x64_bin.tar.gz -C $VISP_WS
 $ echo "export JAVA_HOME=$VISP_VS/jdk-11.0.1.jdk" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
+
+\subsection java_install_jdk_unix On Windows platform
+
+If you download `jdk-13_windows-x64_bin.exe` just run the binary.
 
 \section java_linux Install Prerequisites
 
