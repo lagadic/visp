@@ -96,7 +96,8 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
   if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
       ApproxHessian != HESSIAN_YOUCEF) {
     vpImageFilter::getGradX(dIx, d2Ix, fgdG, taillef);
-    vpImageFilter::getGradY(dIx, d2Ixy, fgdG, taillef);
+    //vpImageFilter::getGradY(dIx, d2Ixy, fgdG, taillef);
+    d2Ixy = d2Ix;
     vpImageFilter::getGradY(dIy, d2Iy, fgdG, taillef);
   }
 
@@ -118,7 +119,6 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
     double Tij = ptTemplate[point].val;
     int ct = static_cast<int>((Tij * (Nc - 1)) / 255.);
     double et = (Tij * (Nc - 1)) / 255. - ct;
-
     ptTemplateSupp[point].et = et;
     ptTemplateSupp[point].ct = ct;
   }

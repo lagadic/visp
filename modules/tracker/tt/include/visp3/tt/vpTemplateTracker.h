@@ -84,8 +84,7 @@ protected:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   vpTemplateTrackerPointSuppMIInv *ptTemplateSupp;     // pour inverse et compo
-  vpTemplateTrackerPointSuppMIInv **ptTemplateSuppPyr; // pour inverse et
-                                                       // compo
+  vpTemplateTrackerPointSuppMIInv **ptTemplateSuppPyr; // pour inverse et compo
 #endif
 
   vpTemplateTrackerPointCompo *ptTemplateCompo;     // pour ESM
