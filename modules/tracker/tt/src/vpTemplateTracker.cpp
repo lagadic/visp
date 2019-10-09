@@ -918,7 +918,7 @@ void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)
 
 /*!
   Compute residual. Before using this function you need to call initPosEvalRMS() once.
-  \param p[in] : Warp function parameters.
+  \param[in] p : Warp function parameters.
 
   \sa initPosEvalRMS()
  */
@@ -948,7 +948,7 @@ void vpTemplateTracker::computeEvalRMS(const vpColVector &p)
 
 /*!
   Initialize residual computed using computeEvalRMS().
-  \param p[in] : Warp function parameters.
+  \param[in] p : Warp function parameters.
 
   \sa computeEvalRMS()
  */

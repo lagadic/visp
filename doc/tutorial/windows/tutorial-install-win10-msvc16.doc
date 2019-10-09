@@ -62,7 +62,7 @@ C:\> cd %VISP_WS%\visp-build-vc16
 \endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019):
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\visp
+C:\> cmake -G "Visual Studio 16 2019" -A "Win64" %VISP_WS%\visp
 \endcode
 - Build and install ViSP (installation doesn't need administrator privileges)
 \code
@@ -113,7 +113,7 @@ C:\> cd %VISP_WS%\opencv-4.1.1\build-vc16
 \endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019) and installation dir is set to the existing folder `%%VISP_WS%\opencv-4.1.1\build`:
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\opencv-4.1.1\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.1\build
+C:\> cmake -G "Visual Studio 16 2019" -A "Win64" %VISP_WS%\opencv-4.1.1\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.1\build
 \endcode
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need administrator privileges)
 \code
@@ -152,7 +152,7 @@ C:\> cd %VISP_WS%\eigen-3.3.7\build-vc16
 \endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set to `%%VISP_WS%\eigen-3.3.7\build-vc16\install` folder):
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-vc16\install
+C:\> cmake -G "Visual Studio 16 2019" -A "Win64" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-vc16\install
 \endcode
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \code
@@ -296,7 +296,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
 \subsection install_win10_msvc16_build_visp_doc Build ViSP documentation
 
 To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
-- [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial was written, we downloaded `doxygen-1.8.15-setup.exe`
+- [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial was written, we downloaded `doxygen-1.8.16-setup.exe`
 - Run the installer following default options
 - Open a new `cmd` Command Prompt and enter build directory
 \code
@@ -304,18 +304,18 @@ C:\> cd %VISP_WS%\visp-build-vc16
 \endcode
 - Run CMake in build directory:
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\visp
+C:\> cmake -G "Visual Studio 16 2019" -A "Win64" %VISP_WS%\visp
 \endcode
 - Build documentation using:
 \code
 C:\> cmake --build . --config Release --target visp_doc
 \endcode
 
-The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
+The generated documentation is then available in `$VISP_WS/visp-build-vc16/doc/html/index.html`
 
 \note It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
+C:\> cmake -G "Visual Studio 16 2019" -A "Win64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
 C:\> cmake --build . --config Release --target visp_doc
 \endcode
 

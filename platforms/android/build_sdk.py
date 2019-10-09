@@ -48,6 +48,16 @@ def check_dir(d, create=False, clean=False):
             os.makedirs(d)
     return d
 
+def check_executable(cmd):
+    try:
+        log.debug("Executing: %s" % cmd)
+        result = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        log.debug("Result: %s" % (result+"\n".encode('ascii')).split("\n".encode('ascii'))[0])
+        return True
+    except Exception as e:
+        log.debug('Failed: %s' % e)
+        return False
+
 def determine_visp_version(version_hpp_path):
     with open(version_hpp_path, "rt") as f:
         data = f.read()
@@ -106,7 +116,7 @@ class ABI:
             self.cmake_vars['ANDROID_TOOLCHAIN_NAME'] = toolchain
         else:
             self.cmake_vars['ANDROID_TOOLCHAIN'] = 'clang'
-            self.cmake_vars['ANDROID_STL'] = 'c++_static'
+            self.cmake_vars['ANDROID_STL'] = 'c++_shared'
         if ndk_api_level:
             self.cmake_vars['ANDROID_NATIVE_API_LEVEL'] = ndk_api_level
         self.cmake_vars.update(cmake_vars)
@@ -126,6 +136,39 @@ class Builder:
         self.extra_packs = []
         self.visp_version = determine_visp_version(os.path.join(self.vispdir, "CMakeLists.txt"))
         self.use_ccache = False if config.no_ccache else True
+        self.cmake_path = self.get_cmake()
+        self.ninja_path = self.get_ninja()
+        self.debug = True if config.debug else False
+
+    def get_cmake(self):
+        if not self.config.use_android_buildtools and check_executable(['cmake', '--version']):
+            log.info("Using cmake from PATH")
+            return 'cmake'
+        # look to see if Android SDK's cmake is installed
+        android_cmake = os.path.join(os.environ['ANDROID_SDK'], 'cmake')
+        if os.path.exists(android_cmake):
+            cmake_subdirs = [f for f in os.listdir(android_cmake) if check_executable([os.path.join(android_cmake, f, 'bin', 'cmake'), '--version'])]
+            if len(cmake_subdirs) > 0:
+                # there could be more than one - just take the first one
+                cmake_from_sdk = os.path.join(android_cmake, cmake_subdirs[0], 'bin', 'cmake')
+                log.info("Using cmake from Android SDK: %s", cmake_from_sdk)
+                return cmake_from_sdk
+        raise Fail("Can't find cmake")
+
+    def get_ninja(self):
+        if not self.config.use_android_buildtools and check_executable(['ninja', '--version']):
+            log.info("Using ninja from PATH")
+            return 'ninja'
+        # Android SDK's cmake includes a copy of ninja - look to see if its there
+        android_cmake = os.path.join(os.environ['ANDROID_SDK'], 'cmake')
+        if os.path.exists(android_cmake):
+            cmake_subdirs = [f for f in os.listdir(android_cmake) if check_executable([os.path.join(android_cmake, f, 'bin', 'ninja'), '--version'])]
+            if len(cmake_subdirs) > 0:
+                # there could be more than one - just take the first one
+                ninja_from_sdk = os.path.join(android_cmake, cmake_subdirs[0], 'bin', 'ninja')
+                log.info("Using ninja from Android SDK: %s", ninja_from_sdk)
+                return ninja_from_sdk
+        raise Fail("Can't find ninja")
 
     def get_toolchain_file(self):
         if not self.config.force_visp_toolchain:
@@ -161,6 +204,11 @@ class Builder:
             BUILD_ANDROID_EXAMPLES="ON",
             INSTALL_ANDROID_EXAMPLES="ON",
         )
+        if self.ninja_path != 'ninja':
+            cmake_vars['CMAKE_MAKE_PROGRAM'] = self.ninja_path
+
+        if self.debug:
+            cmake_vars['CMAKE_BUILD_TYPE'] = "Debug"
 
         if self.config.extra_modules_path is not None:
             cmd.append("-DVISP_CONTRIB_MODULES_PATH='%s'" % self.config.extra_modules_path)
@@ -172,7 +220,7 @@ class Builder:
         cmd += [ "-D%s='%s'" % (k, v) for (k, v) in cmake_vars.items() if v is not None]
         cmd.append(self.vispdir)
         execute(cmd)
-        execute(["ninja", "install/strip"])
+        execute([self.ninja_path, "install" if (self.debug) else "install/strip"])
 
     def build_javadoc(self):
         classpaths = []
@@ -218,15 +266,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Build ViSP for Android SDK')
     parser.add_argument("work_dir", nargs='?', default='.', help="Working directory (and output)")
     parser.add_argument("visp_dir", nargs='?', default=os.path.join(SCRIPT_DIR, '../..'), help="Path to ViSP source dir")
-    parser.add_argument('--config', default='ndk-10.config.py', type=str, help="Package build configuration", )
+    parser.add_argument('--config', default='ndk-18-api-level-21.config.py', type=str, help="Package build configuration", )
     parser.add_argument('--ndk_path', help="Path to Android NDK to use for build")
     parser.add_argument('--sdk_path', help="Path to Android SDK to use for build")
+    parser.add_argument('--use_android_buildtools', action="store_true", help='Use cmake/ninja build tools from Android SDK')
     parser.add_argument("--extra_modules_path", help="Path to extra modules to use for build")
     parser.add_argument('--sign_with', help="Certificate to sign the Manager apk")
     parser.add_argument('--build_doc', action="store_true", help="Build javadoc")
     parser.add_argument('--no_ccache', action="store_true", help="Do not use ccache during library build")
     parser.add_argument('--force_copy', action="store_true", help="Do not use file move during library build (useful for debug)")
     parser.add_argument('--force_visp_toolchain', action="store_true", help="Do not use toolchain from Android NDK")
+    parser.add_argument('--debug', action="store_true", help="Build 'Debug' binaries (CMAKE_BUILD_TYPE=Debug)")
     args = parser.parse_args()
 
     log.basicConfig(format='%(message)s', level=log.DEBUG)
@@ -239,6 +289,20 @@ if __name__ == "__main__":
 
     if not 'ANDROID_HOME' in os.environ and 'ANDROID_SDK' in os.environ:
         os.environ['ANDROID_HOME'] = os.environ["ANDROID_SDK"]
+
+    if not 'ANDROID_SDK' in os.environ:
+        raise Fail("SDK location not set. Either pass --sdk_path or set ANDROID_SDK environment variable")
+
+    # look for an NDK installed with the Android SDK
+    if not 'ANDROID_NDK' in os.environ and 'ANDROID_SDK' in os.environ and os.path.exists(os.path.join(os.environ["ANDROID_SDK"], 'ndk-bundle')):
+        os.environ['ANDROID_NDK'] = os.path.join(os.environ["ANDROID_SDK"], 'ndk-bundle')
+
+    if not 'ANDROID_NDK' in os.environ:
+        raise Fail("NDK location not set. Either pass --ndk_path or set ANDROID_NDK environment variable")
+
+    if not check_executable(['ccache', '--version']):
+        log.info("ccache not found - disabling ccache support")
+        args.no_ccache = True
 
     if os.path.realpath(args.work_dir) == os.path.realpath(SCRIPT_DIR):
         raise Fail("Specify workdir (building from script directory is not supported)")
