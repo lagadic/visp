@@ -20,34 +20,36 @@
 # JACO2_LIBRARIES
 #
 # Authors:
-# zubair arif
-#
+# Zubair Arif
+# HIT University-Harbin China
 #############################################################################
 
-set(JACO2_INC_SEARCH_PATH /usr/include)
-set(JACO2_LIB_SEARCH_PATH /usr/lib)
+set(JACO2_INC_SEARCH_PATH /usr/JACO-SDK/API/include)
+set(JACO2_LIB_SEARCH_PATH /usr/JACO-SDK/API/lib)
 
 if(MSVC)
   if(CMAKE_CL_64)
     list(APPEND JACO2_INC_SEARCH_PATH "C:/Program Files (x86)/JACO-SDK/API/include")
-    list(APPEND JACO2_LIB_SEARCH_PATH "C:/Program Files (x86)/JACO-SDK/API/x64")
+    list(APPEND JACO2_LIB_SEARCH_PATH "C:/Program Files (x86)/JACO-SDK/API/lib/x64")
   else()
     list(APPEND JACO2_INC_SEARCH_PATH "C:/Program Files (x86)/JACO-SDK/API/include")
-    list(APPEND JACO2_LIB_SEARCH_PATH "C:/Program Files (x86)/JACO-SDK/API/x86")
+    list(APPEND JACO2_LIB_SEARCH_PATH "C:/Program Files (x86)/JACO-SDK/API/lib/x86")
   endif()
 endif()
 
-find_path(JACO2_INCLUDE_DIRS CommandLayer.h
+find_path(JACO2_INCLUDE_DIRS
+  NAMES CommandLayer.h CommunicationLayer.h KinovaTypes.h
   PATHS
     $ENV{JACO2_HOME}/include
     ${JACO2_INC_SEARCH_PATH}
 )
 
 find_library(JACO2_LIBRARIES
-  NAMES CommandLayerEthernet.dll CommandLayerWindows.dll CommunicationLayerEthernet.dll CommunicationLayerWindows.dll
+  NAMES CommandLayerWindows CommunicationLayerWindows CommandLayerEthernet CommunicationLayerEthernet 
   PATHS 
-    $ENV{JACO2_HOME}/lib/x64
+    ${JACO2_LIBRARIES}
     ${JACO2_LIB_SEARCH_PATH}
+    "C:/Program Files (x86)/JACO-SDK/API/lib/x64"
 )
 
 if(JACO2_LIBRARIES AND JACO2_INCLUDE_DIRS)
@@ -56,9 +58,13 @@ else()
   set(JACO2_FOUND FALSE)
 endif()
   
+message("JACO2_INCLUDE_DIRS: ${JACO2_INCLUDE_DIRS}")
+message("JACO2_LIBRARIES: ${JACO2_LIBRARIES}")
+
 mark_as_advanced(
   JACO2_INCLUDE_DIRS
   JACO2_LIBRARIES
   JACO2_INC_SEARCH_PATH
   JACO2_LIB_SEARCH_PATH
 )
+
