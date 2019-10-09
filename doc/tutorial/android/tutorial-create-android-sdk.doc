@@ -20,7 +20,7 @@ This tutorial assumes you have the following software installed and configured: 
   in `$HOME/Android/sdk` on Ubuntu. Now to install Android NDK, with Android Studio
   start a new Native C++ Android project using the default configuration. From this new project enter
   `"File > Settings... > Appearence > System Settings > Android SDK"` menu. Select the `"SDK Tools"` tab
-  and check the boxes next to `LLDB`, `CMake`, and `NDK`.
+  and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
   Once all the tools are downloaded, you can exit Android Studio.
 - Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 2.7 or 3.6)</a>,
   <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
@@ -29,20 +29,20 @@ This tutorial assumes you have the following software installed and configured: 
 $ sudo apt-get install python ant cmake-curses-gui ninja-build ccache
 \endcode
 
-- At the time this tutorial was written, on Ubuntu 16.04 LTS we got Android Studio 3.2.1, NDK 18.1 (see \ref android_sdk_ndk_version) and the following other tools versions:
+- At the time this tutorial was written, on Ubuntu 18.04 LTS we got Android Studio 3.5.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code
-$ java -version
-openjdk version "1.8.0_191"
+$ java --version
+java 11.0.4 2019-07-16 LTS
 $ python --version
-Python 2.7.12
+Python 2.7.15+
 $ ant -version
-Apache Ant(TM) version 1.9.6 compiled on July 20 2018
+Apache Ant(TM) version 1.10.5 compiled on March 28 2019
 $ cmake -version
-cmake version 3.13.2
+cmake version 3.10.2
 $ ninja --version
-1.5.1
+1.8.2
 $ ccache --version
-ccache version 3.2.4
+ccache version 3.4.1
 \endcode
 
 \subsection android_sdk_prereq_osx On Mac OSX

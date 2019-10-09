@@ -27,7 +27,14 @@ From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.
 \code
 $ tar xvzf jdk-11.0.4_linux-x64_bin.tar.gz -C $VISP_WS
 $ echo "export JAVA_HOME=$VISP_VS/jdk-11.0.4" >> ~/.bashrc
+$ echo "export PATH=${PATH}:${JAVA_HOME}/bin" >> ~/.bashrc
 $ source ~/.bashrc
+\endcode
+
+After installation check JDK version:
+\code
+$ java --version
+java 11.0.4 2019-07-16 LTS
 \endcode
 
 \subsection java_install_jdk_osx On Mac OSX platform
