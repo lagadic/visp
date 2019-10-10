@@ -98,9 +98,9 @@ if(USE_PTU46)
   list(APPEND opt_libs ${PTU46_LIBRARIES})
 endif()
 
-if(USE_JACO2)
-  list(APPEND opt_incs ${JACO2_INCLUDE_DIRS})
-  list(APPEND opt_libs ${JACO2_LIBRARIES})
+if(USE_JACOSDK)
+  list(APPEND opt_incs ${JACOSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${JACOSDK_LIBRARIES})
 endif()
 
 if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
