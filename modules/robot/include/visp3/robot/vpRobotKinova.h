@@ -83,8 +83,16 @@
 class VISP_EXPORT vpRobotKinova : public vpRobot
 {
 public:
+  typedef enum {
+    CMD_LAYER_USB,
+    CMD_LAYER_ETHERNET,
+    CMD_LAYER_UNSET
+  } CommandLayer;
+
   vpRobotKinova();
   virtual ~vpRobotKinova();
+
+  unsigned int connect();
 
   void get_eJe(vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
@@ -95,17 +103,24 @@ public:
    */
   vpHomogeneousMatrix get_eMc() const { return m_eMc; }
 
+  int getActiveDevice() const { return m_active_device; };
+  int getNumDevices() const { return m_devices_count; };
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
 
   void homing();
-  void loadPlugin();
 
   /*!
     Set constant transformation between end-effector and tool frame.
     If your tool is a camera, this transformation is obtained by hand-eye calibration.
    */
   void set_eMc(vpHomogeneousMatrix &eMc) { m_eMc = eMc; }
+  void setActiveDevice(int device);
+  /*!
+  Set command layer indicating if the robot is controlled throw USB or Ethernet.
+  \param[in] command_layer : Layer used to control the robot.
+  */
+  void setCommandLayer(CommandLayer command_layer) { m_command_layer = command_layer;  };
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
   /*!
     \param[in] plugin_location: Path to Jaco SDK plugins (ie. `Kinova.API.USBCommandLayerUbuntu.so` on
@@ -126,6 +141,7 @@ protected:
   void closePlugin();
   void getJointPosition(vpColVector &q);
   void init();
+  void loadPlugin();
   void setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
   void setJointVelocity(const vpColVector &qdot);
 
@@ -134,23 +150,29 @@ protected:
   std::string m_plugin_location;
   bool m_verbose;
   bool m_plugin_loaded;
+  int m_devices_count;
+  KinovaDevice *m_devices_list;
+  int m_active_device;
+  CommandLayer m_command_layer;
 
 #ifdef __linux__ 
-  void * m_commandLayer_handle;    //!< A handle to the API.
+  void * m_command_layer_handle;    //!< A handle to the API.
 #elif _WIN32
-  HINSTANCE m_commandLayer_handle; //!< A handle to the API.
+  HINSTANCE m_command_layer_handle; //!< A handle to the API.
 #endif
 
 private:
-  int (*KinovaInitAPI)();
   int (*KinovaCloseAPI)();
-  int (*KinovaSendBasicTrajectory)(TrajectoryPoint command);
-  int (*KinovaGetDevices)(KinovaDevice devices[MAX_KINOVA_DEVICE], int &result);
-  int (*KinovaSetActiveDevice)(KinovaDevice device);
-  int (*KinovaMoveHome)();
-  int (*KinovaInitFingers)();
   int (*KinovaGetAngularCommand)(AngularPosition &);
-
+  int (*KinovaGetCartesianCommand)(CartesianPosition &);
+  int (*KinovaGetDevices)(KinovaDevice devices[MAX_KINOVA_DEVICE], int &result);
+  int (*KinovaInitFingers)();
+  int (*KinovaInitAPI)();
+  int (*KinovaMoveHome)();
+  int (*KinovaSendBasicTrajectory)(TrajectoryPoint command);
+  int (*KinovaSetActiveDevice)(KinovaDevice device);
+  int (*KinovaSetAngularControl)();
+  int (*KinovaSetCartesianControl)();
 };
 
 #endif

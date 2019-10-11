@@ -43,8 +43,8 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
 
 set(example_cpp
-  Example_AngularControl.cpp
-  servoKinovaJaco.cpp
+  servoKinovaJacoCart.cpp
+  servoKinovaJacoJoint.cpp
 )
 
 foreach(cpp ${example_cpp})

@@ -37,9 +37,9 @@
  *****************************************************************************/
 
 /*!
-  \example servoKinovaJaco.cpp
+  \example servoKinovaJacoCart.cpp
 
-  Example with Kinova Jaco robot.
+  Example that allows to control Kinova Jaco robot in cartesian.
 
 */
 
@@ -52,52 +52,104 @@ int main(int argc, char*argv[])
 {
 #ifdef VISP_HAVE_JACOSDK
   std::string opt_plugin_path;
+  vpRobotKinova::CommandLayer opt_command_layer;
   bool opt_verbose = false;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--plugin" && i + 1 < argc) {
       opt_plugin_path = std::string(argv[i + 1]);;
     }
+    if ((std::string(argv[i]) == "--command_layer" || std::string(argv[i]) == "-l") && i + 1 < argc) {
+      if (std::string(argv[i + 1]) == "usb") {
+        opt_command_layer = vpRobotKinova::CMD_LAYER_USB;
+      }
+      else if (std::string(argv[i + 1]) == "ethernet") {
+        opt_command_layer = vpRobotKinova::CMD_LAYER_ETHERNET;
+      }
+      else {
+        opt_command_layer = vpRobotKinova::CMD_LAYER_UNSET;
+      }
+    }
     else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
       opt_verbose = true;
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "SYNOPSYS" << std::endl
-        << "  " << argv[0] << " [--plugin <path>] "
+        << "  " << argv[0] << " [--plugin <path>] --command_layer <name>"
         << "[--verbose] [--help] [-v] [-h]\n" << std::endl;
       std::cout << "DESCRIPTION" << std::endl
         << "  --plugin <path>" << std::endl
-        << "      Path to Jaco SDK .so or .dll plugin location" << std::endl << std::endl
+        << "      Path to Jaco SDK .so or .dll plugin location. Default: \"./\"." << std::endl
+        << "      Example: " << argv[0] << " --plugin \"C:\\Program Files(x86)\\JACO - SDK\\API\\x64\"" << std::endl << std::endl
+        << "  --command_layer <name>, -l <name>" << std::endl
+        << "      Command layer name, either \"usb\" or \"ethernet\"." << std::endl << std::endl
         << "  --verbose, -v" << std::endl
-        << "      Enable verbose mode to print addition information" << std::endl << std::endl
+        << "      Enable verbose mode to print addition information." << std::endl << std::endl
         << "  --help, -h" << std::endl
         << "      Print this helper message." << std::endl;
 
       return EXIT_SUCCESS;
     }
-    }
+  }
 
   try {
+
     vpRobotKinova robot;
-    robot.setVerbose(true);
+    robot.setVerbose(opt_verbose);
+    robot.setPluginLocation(opt_plugin_path);
+    robot.setCommandLayer(opt_command_layer);
 
-    robot.loadPlugin();
+    unsigned int n_devices = robot.connect();
 
+    if (!n_devices) {
+      std::cout << "There is no Kinova device connected." << std::endl;
+      return EXIT_SUCCESS;
+    }
+
+    // Move robot to home position
     robot.homing();
 
-    vpColVector q;
-    robot.getPosition(vpRobot::JOINT_STATE, q);
-    q[0] += vpMath::rad(30);
-    robot.setPosition(vpRobot::JOINT_STATE, q);
+    // Control robot in joint velocity
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    vpColVector vcart(6);
+    vcart[1] = -0.10; // send 10 cm/s on along Y axis
 
+    // Sent new joint velocities each 5 ms
+    for (unsigned int i = 0; i < 300; i++) {
+      // We send the velocity vector as long as we want the robot to move along that vector
+      robot.setVelocity(vpRobot::END_EFFECTOR_FRAME, vcart);
+      vpTime::wait(5);
+    }
 
+    // Control robot in joint position
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    vpColVector p, p1, p2;
 
+    // Move robot to home position
+    robot.homing();
+
+    // Get current cartesian position
+    robot.getPosition(vpRobot::END_EFFECTOR_FRAME, p);
+
+    // Move to first cartesian position
+    p1 = p;
+    p1[1] -= 0.1;
+    robot.setPosition(vpRobot::END_EFFECTOR_FRAME, p1);
+
+    // Move to second cartesian position
+    p2 = p;
+    p2[1] += 0.15;
+    robot.setPosition(vpRobot::END_EFFECTOR_FRAME, p2);
+
+    // Move back to home position
+    robot.setPosition(vpRobot::END_EFFECTOR_FRAME, p);
   }
   catch (const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
   }
 
   std::cout << "The end" << std::endl;
+  return EXIT_SUCCESS;
 #else
   std::cout << "Install Jaco SDK, configure and build again ViSP to use this example..." << std::endl;
 #endif

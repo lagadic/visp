@@ -43,34 +43,20 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotException.h>
 
-/*!
-  \file vpRobotKinova.cpp
-  \brief Interface for Kinova Jaco2 robot.
-*/
+ /*!
+   \file vpRobotKinova.cpp
+   \brief Interface for Kinova Jaco2 robot.
+ */
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotKinova.h>
 
-/*!
-  Basic initialization.
- */
-void vpRobotKinova::init()
-{
-  // If you want to control the robot in Cartesian in a tool frame, set the corresponding transformation in m_eMc
-  // that is set to identity by default in the constructor.
-
-  maxRotationVelocity = maxRotationVelocityDefault;
-  maxTranslationVelocity = maxTranslationVelocityDefault;
-
-  // Set here the robot degrees of freedom number
-  nDof = 6; // Jaco2 has 6 dof
-}
-
-/*!
-  Default constructor.
- */
+ /*!
+   Default constructor.
+  */
 vpRobotKinova::vpRobotKinova()
-  : m_eMc(), m_plugin_location("./"), m_commandLayer_handle(), m_verbose(false), m_plugin_loaded(false)
+  : m_eMc(), m_plugin_location("./"), m_verbose(false), m_plugin_loaded(false), m_devices_count(0),
+  m_devices_list(NULL), m_active_device(-1), m_command_layer(CMD_LAYER_UNSET), m_command_layer_handle()
 {
   init();
 }
@@ -81,6 +67,27 @@ vpRobotKinova::vpRobotKinova()
 vpRobotKinova::~vpRobotKinova()
 {
   closePlugin();
+
+  if (m_devices_list) {
+    delete[] m_devices_list;
+  }
+}
+
+/*!
+Basic initialization.
+*/
+void vpRobotKinova::init()
+{
+  // If you want to control the robot in Cartesian in a tool frame, set the corresponding transformation in m_eMc
+  // that is set to identity by default in the constructor.
+
+  maxRotationVelocity = maxRotationVelocityDefault;
+  maxTranslationVelocity = maxTranslationVelocityDefault;
+
+  // Set here the robot degrees of freedom number
+  nDof = 6; // Jaco2 has 6 dof
+
+  m_devices_list = new KinovaDevice[MAX_KINOVA_DEVICE];
 }
 
 /*
@@ -93,24 +100,42 @@ vpRobotKinova::~vpRobotKinova()
 */
 
 /*!
-  Get the robot Jacobian expressed in the end-effector frame.
+  Get the robot Jacobian expressed in the end-effector frame. This function
+  is not implemented. In fact, we don't need it since we can control the robot
+  in cartesian in end-effector frame.
 
   \param[out] eJe : End-effector frame Jacobian.
 */
 void vpRobotKinova::get_eJe(vpMatrix &eJe)
 {
-  (void) eJe;
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
+
+  (void)eJe;
   std::cout << "Not implemented ! " << std::endl;
 }
 
 /*!
-  Get the robot Jacobian expressed in the robot reference frame.
+  Get the robot Jacobian expressed in the robot reference frame. This function
+  is not implemented. In fact, we don't need it since we can control the robot
+  in cartesian in end-effector frame.
 
   \param[out] fJe : Base (or reference) frame Jacobian.
 */
 void vpRobotKinova::get_fJe(vpMatrix &fJe)
 {
-  (void) fJe;
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
+
+  (void)fJe;
   std::cout << "Not implemented ! " << std::endl;
 }
 
@@ -138,7 +163,7 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
   }
 
   vpColVector v_e; // This is the velocity that the robot is able to apply in the end-effector frame
-  switch(frame) {
+  switch (frame) {
   case vpRobot::TOOL_FRAME: {
     // We have to transform the requested velocity in the end-effector frame.
     // Knowing that the constant transformation between the tool frame and the end-effector frame obtained
@@ -149,43 +174,33 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
     break;
   }
 
-  case vpRobot::END_EFFECTOR_FRAME:
-  case vpRobot::REFERENCE_FRAME: {
+  case vpRobot::END_EFFECTOR_FRAME: {
     v_e = v;
     break;
   }
+  case vpRobot::REFERENCE_FRAME:
   case vpRobot::JOINT_STATE:
   case vpRobot::MIXT_FRAME:
     // Out of the scope
     break;
   }
 
-  // Implement your stuff here to send the end-effector velocity twist v_e
-  // - If the SDK allows to send cartesian velocities in the end-effector, it's done. Just wrap data in v_e
-  // - If the SDK allows to send cartesian velocities in the reference (or base) frame you have to implement
-  //   the robot Jacobian in set_fJe() and call:
-  //   vpColVector v = get_fJe().inverse() * v_e;
-  //   At this point you have to wrap data in v that is the 6-dim velocity to apply to the robot
-  // - If the SDK allows to send only joint velocities you have to implement the robot Jacobian in set_eJe()
-  //   and call:
-  //   vpColVector qdot = get_eJe().inverse() * v_e;
-  //   setJointVelocity(qdot);
-  // - If the SDK allows to send only a cartesian position trajectory of the end-effector position in the base frame
-  //   called fMe (for fix frame to end-effector homogeneous transformation) you can transform the cartesian
-  //   velocity in the end-effector into a displacement eMe using the exponetial map:
-  //   double delta_t = 0.010; // in sec
-  //   vpHomogenesousMatrix eMe = vpExponentialMap::direct(v_e, delta_t);
-  //   vpHomogenesousMatrix fMe = getPosition(vpRobot::REFERENCE_FRAME);
-  //   the new position to reach is than given by fMe * eMe
-  //   vpColVector fpe(vpPoseVector(fMe * eMe));
-  //   setPosition(vpRobot::REFERENCE_FRAME, fpe);
+  TrajectoryPoint pointToSend;
+  pointToSend.InitStruct();
+  // We specify that this point will be used an angular (joint by joint) velocity vector
+  pointToSend.Position.Type = CARTESIAN_VELOCITY;
+  pointToSend.Position.HandMode = HAND_NOMOVEMENT;
 
-  std::cout << "Not implemented ! " << std::endl;
-  std::cout << "To implement me you need : " << std::endl;
-  std::cout << "\t to known the robot jacobian expressed in ";
-  std::cout << "the end-effector frame (eJe) " << std::endl;
-  std::cout << "\t the frame transformation  between tool or camera frame ";
-  std::cout << "and end-effector frame (cMe)" << std::endl;
+  pointToSend.Position.CartesianPosition.X = static_cast<float>(v_e[0]);
+  pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_e[1]);
+  pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_e[2]);
+  pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_e[3]);
+  pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_e[4]);
+  pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_e[5]);
+
+  KinovaSetCartesianControl(); // Not sure that this function is useful here
+
+  KinovaSendBasicTrajectory(pointToSend);
 }
 
 /*!
@@ -194,11 +209,21 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
  */
 void vpRobotKinova::setJointVelocity(const vpColVector &qdot)
 {
-  (void) qdot;
+  TrajectoryPoint pointToSend;
+  pointToSend.InitStruct();
+  // We specify that this point will be used an angular (joint by joint) velocity vector
+  pointToSend.Position.Type = ANGULAR_VELOCITY;
+  pointToSend.Position.HandMode = HAND_NOMOVEMENT;
+  pointToSend.Position.Actuators.Actuator1 = static_cast<float>(vpMath::deg(qdot[0]));
+  pointToSend.Position.Actuators.Actuator2 = static_cast<float>(vpMath::deg(qdot[1]));
+  pointToSend.Position.Actuators.Actuator3 = static_cast<float>(vpMath::deg(qdot[2]));
+  pointToSend.Position.Actuators.Actuator4 = static_cast<float>(vpMath::deg(qdot[3]));
+  pointToSend.Position.Actuators.Actuator5 = static_cast<float>(vpMath::deg(qdot[4]));
+  pointToSend.Position.Actuators.Actuator6 = static_cast<float>(vpMath::deg(qdot[5]));
 
-  // Implement your stuff here to send the joint velocities qdot
+  KinovaSetAngularControl(); // Not sure that this function is useful here
 
-  std::cout << "Not implemented ! " << std::endl;
+  KinovaSendBasicTrajectory(pointToSend);
 }
 
 /*!
@@ -212,18 +237,24 @@ void vpRobotKinova::setJointVelocity(const vpColVector &qdot)
  */
 void vpRobotKinova::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel)
 {
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
     throw vpRobotException(vpRobotException::wrongStateError,
-"Cannot send a velocity to the robot. "
-"Call setRobotState(vpRobot::STATE_VELOCITY_CONTROL) once before "
-"entering your control loop.");
+      "Cannot send a velocity to the robot. "
+      "Call setRobotState(vpRobot::STATE_VELOCITY_CONTROL) once before "
+      "entering your control loop.");
   }
 
   vpColVector vel_sat(6);
 
   // Velocity saturation
   switch (frame) {
-    // Saturation in cartesian space
+  // Saturation in cartesian space
   case vpRobot::TOOL_FRAME:
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::END_EFFECTOR_FRAME:
@@ -243,7 +274,8 @@ void vpRobotKinova::setVelocity(const vpRobot::vpControlFrameType frame, const v
     setCartVelocity(frame, vel_sat);
     break;
   }
-                            // Saturation in joint space
+  
+  // Saturation in joint space
   case vpRobot::JOINT_STATE: {
     if (vel.size() != static_cast<size_t>(nDof)) {
       throw(vpException(vpException::dimensionError, "Cannot apply a joint velocity that is not a %-dim vector (%d)", nDof, vel.size()));
@@ -293,12 +325,33 @@ void vpRobotKinova::getJointPosition(vpColVector &q)
   Get robot position.
 
   \param[in] frame : Considered cartesian frame or joint state.
-  \param[out] q : Position of the arm.
+  \param[out] q : Position of the arm. Joint angles are expressed in rad,
+  while cartesian position are expressed in meter for translations and radian
+  for rotations.
  */
 void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
+
   if (frame == JOINT_STATE) {
     getJointPosition(q);
+  }
+  else if (frame == END_EFFECTOR_FRAME) {
+    CartesianPosition currentCommand;
+    // We get the actual cartesian position of the robot
+    KinovaGetCartesianCommand(currentCommand);
+    q.resize(6);
+    q[0] = currentCommand.Coordinates.X;
+    q[1] = currentCommand.Coordinates.Y;
+    q[2] = currentCommand.Coordinates.Z;
+    q[3] = currentCommand.Coordinates.ThetaX;
+    q[4] = currentCommand.Coordinates.ThetaY;
+    q[5] = currentCommand.Coordinates.ThetaZ;
   }
   else {
     std::cout << "Not implemented ! " << std::endl;
@@ -313,15 +366,21 @@ void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
  */
 void vpRobotKinova::setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q)
 {
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
   if (frame == vpRobot::JOINT_STATE) {
-    if (q.size() != 6) {
-      throw(vpException(vpException::fatalError, "Cannot move robot to a joint position of dim %d that is not a 6-dim vector", q.size()));
+    if (q.size() != nDof) {
+      throw(vpException(vpException::fatalError, "Cannot move robot to a joint position of dim %d that is not a %d-dim vector", q.size(), nDof));
     }
     TrajectoryPoint pointToSend;
     pointToSend.InitStruct();
     // We specify that this point will be an angular(joint by joint) position.
     pointToSend.Position.Type = ANGULAR_POSITION;
-
+    pointToSend.Position.HandMode = HAND_NOMOVEMENT;
     pointToSend.Position.Actuators.Actuator1 = static_cast<float>(vpMath::deg(q[0]));
     pointToSend.Position.Actuators.Actuator2 = static_cast<float>(vpMath::deg(q[1]));
     pointToSend.Position.Actuators.Actuator3 = static_cast<float>(vpMath::deg(q[2]));
@@ -329,12 +388,36 @@ void vpRobotKinova::setPosition(const vpRobot::vpControlFrameType frame, const v
     pointToSend.Position.Actuators.Actuator5 = static_cast<float>(vpMath::deg(q[4]));
     pointToSend.Position.Actuators.Actuator6 = static_cast<float>(vpMath::deg(q[5]));
 
+    KinovaSetAngularControl(); // Not sure that this function is useful here
+
     if (m_verbose) {
-      vpColVector qdeg = q;
-      qdeg.rad2deg();
-      std::cout << "Move robot to joint position: " << qdeg.t() << std::endl;
+      std::cout << "Move robot to joint position [rad rad rad rad rad rad]: " << q.t() << std::endl;
     }
     KinovaSendBasicTrajectory(pointToSend);
+  }
+  else if (frame == vpRobot::END_EFFECTOR_FRAME) {
+    if (q.size() != 6) {
+      throw(vpException(vpException::fatalError, "Cannot move robot to cartesian position of dim %d that is not a 6-dim vector", q.size()));
+    }
+    TrajectoryPoint pointToSend;
+    pointToSend.InitStruct();
+    // We specify that this point will be an angular(joint by joint) position.
+    pointToSend.Position.Type = CARTESIAN_POSITION;
+    pointToSend.Position.HandMode = HAND_NOMOVEMENT;
+    pointToSend.Position.CartesianPosition.X = static_cast<float>(q[0]);
+    pointToSend.Position.CartesianPosition.Y = static_cast<float>(q[1]);
+    pointToSend.Position.CartesianPosition.Z = static_cast<float>(q[2]);
+    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(q[3]);
+    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(q[4]);
+    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(q[5]);
+
+    KinovaSetCartesianControl(); // Not sure that this function is useful here
+
+    if (m_verbose) {
+      std::cout << "Move robot to cartesian position [m m m rad rad rad]: " << q.t() << std::endl;
+    }
+    KinovaSendBasicTrajectory(pointToSend);
+
   }
   else {
     throw(vpException(vpException::fatalError, "Cannot move robot to a cartesian position. Only joint positioning is implemented"));
@@ -349,64 +432,88 @@ void vpRobotKinova::setPosition(const vpRobot::vpControlFrameType frame, const v
  */
 void vpRobotKinova::getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
-  (void) frame;
-  (void) q;
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
+
+  (void)frame;
+  (void)q;
   std::cout << "Not implemented ! " << std::endl;
 }
 
 /*!
-  Load functions from Jaco SDK plugin (ie. `Kinova.API.USBCommandLayerUbuntu.so` on
-  unix-like platform or `CommandLayerWindows.dll` on Windows platform). There is setPluginLocation()
-  that allows to modify the default location of the plugin corresponds current folder from where
-  the binary is executed.
+  Load functions from Jaco SDK plugin.
+  - When command layer is set to CMD_LAYER_USB we load `Kinova.API.USBCommandLayerUbuntu.so` or `CommandLayerWindows.dll`
+  respectively on unix-like or Windows platform.
+  - When command layer is set to CMD_LAYER_ETHERNET we load `Kinova.API.EthCommandLayerUbuntu.so` or `CommandLayerEthernet.dll`
+  respectively on unix-like or Windows platform.
 
-  \sa setPluginLocation()
+  There is setPluginLocation() that allows to modify the default location of the plugin set to "./".
+
+  \sa setPluginLocation(), setCommandLayer()
 */
 void vpRobotKinova::loadPlugin()
 {
+  if (m_command_layer == CMD_LAYER_UNSET) {
+    throw(vpException(vpException::fatalError, "Kinova robot command layer unset"));
+  }
   if (m_plugin_loaded) {
     closePlugin();
   }
 #ifdef __linux__ 
   // We load the API
+  std::string plugin_name = (m_command_layer == CMD_LAYER_USB) ? std::string("Kinova.API.USBCommandLayerUbuntu.so") : std::string("Kinova.API.EthCommandLayerUbuntu.so");
   std::string plugin = vpIoTools::createFilePath(m_plugin_location, "Kinova.API.USBCommandLayerUbuntu.so");
   if (m_verbose) {
     std::cout << "Load plugin: \"" << plugin << "\"" << std::endl;
   }
-  m_commandLayer_handle = dlopen(plugin.c_str(), RTLD_NOW | RTLD_GLOBAL);
+  m_command_layer_handle = dlopen(plugin.c_str(), RTLD_NOW | RTLD_GLOBAL);
 
-  //We load the functions from the library
-  KinovaInitAPI = (int(*)()) dlsym(m_commandLayer_handle, "InitAPI");
-  KinovaCloseAPI = (int(*)()) dlsym(m_commandLayer_handle, "CloseAPI");
-  KinovaMoveHome = (int(*)()) dlsym(m_commandLayer_handle, "MoveHome");
-  KinovaInitFingers = (int(*)()) dlsym(m_commandLayer_handle, "InitFingers");
-  KinovaGetDevices = (int(*)(KinovaDevice devices[MAX_KINOVA_DEVICE], int &result)) dlsym(m_commandLayer_handle, "GetDevices");
-  KinovaSetActiveDevice = (int(*)(KinovaDevice devices)) dlsym(m_commandLayer_handle, "SetActiveDevice");
-  KinovaSendBasicTrajectory = (int(*)(TrajectoryPoint)) dlsym(m_commandLayer_handle, "SendBasicTrajectory");
-  KinovaGetAngularCommand = (int(*)(AngularPosition &)) dlsym(m_commandLayer_handle, "GetAngularCommand");
+  std::string prefix = (m_command_layer == CMD_LAYER_USB) ? std::string("") : std::string("Ethernet_");
+  // We load the functions from the library
+  KinovaCloseAPI = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("CloseAPI");
+  KinovaGetAngularCommand = (int(*)(AngularPosition &)) dlsym(m_command_layer_handle, (prefix + std::string("GetAngularCommand")).c_str());
+  KinovaGetCartesianCommand = (int(*)(CartesianPosition &)) dlsym(m_command_layer_handle, (prefix + std::string("GetCartesianCommand")).c_str());
+  KinovaGetDevices = (int(*)(KinovaDevice devices[MAX_KINOVA_DEVICE], int &result)) dlsym(m_command_layer_handle, (prefix + std::string("GetDevices")).c_str());
+  KinovaInitAPI = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("InitAPI")).c_str());
+  KinovaInitFingers = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("InitFingers")).c_str());
+  KinovaMoveHome = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("MoveHome")).c_str());
+  KinovaSendBasicTrajectory = (int(*)(TrajectoryPoint)) dlsym(m_command_layer_handle, (prefix + std::string("SendBasicTrajectory")).c_str());
+  KinovaSetActiveDevice = (int(*)(KinovaDevice devices)) dlsym(m_command_layer_handle, (prefix + std::string("SetActiveDevice")).c_str());
+  KinovaSetAngularControl = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("SetAngularControl")).c_str());
+  KinovaSetCartesianControl = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("SetCartesianControl")).c_str());
 #elif _WIN32
   // We load the API.
-  std::string plugin = vpIoTools::createFilePath(m_plugin_location, "CommandLayerWindows.dll");
+  std::string plugin_name = (m_command_layer == CMD_LAYER_USB) ? std::string("CommandLayerWindows.dll") : std::string("CommandLayerEthernet.dll");
+  std::string plugin = vpIoTools::createFilePath(m_plugin_location, plugin_name);
   if (m_verbose) {
     std::cout << "Load plugin: \"" << plugin << "\"" << std::endl;
   }
-  m_commandLayer_handle = LoadLibrary(TEXT(plugin.c_str()));
+  m_command_layer_handle = LoadLibrary(TEXT(plugin.c_str()));
 
   // We load the functions from the library
-  KinovaInitAPI = (int(*)()) GetProcAddress(m_commandLayer_handle, "InitAPI");
-  KinovaCloseAPI = (int(*)()) GetProcAddress(m_commandLayer_handle, "CloseAPI");
-  KinovaGetDevices = (int(*)(KinovaDevice[MAX_KINOVA_DEVICE], int&)) GetProcAddress(m_commandLayer_handle, "GetDevices");
-  KinovaSetActiveDevice = (int(*)(KinovaDevice)) GetProcAddress(m_commandLayer_handle, "SetActiveDevice");
-  KinovaSendBasicTrajectory = (int(*)(TrajectoryPoint)) GetProcAddress(m_commandLayer_handle, "SendBasicTrajectory");
-  KinovaGetAngularCommand = (int(*)(AngularPosition &)) GetProcAddress(m_commandLayer_handle, "GetAngularCommand");
-  KinovaMoveHome = (int(*)()) GetProcAddress(m_commandLayer_handle, "MoveHome");
-  KinovaInitFingers = (int(*)()) GetProcAddress(m_commandLayer_handle, "InitFingers");
+  KinovaCloseAPI = (int(*)()) GetProcAddress(m_command_layer_handle, "CloseAPI");
+  KinovaGetAngularCommand = (int(*)(AngularPosition &)) GetProcAddress(m_command_layer_handle, "GetAngularCommand");
+  KinovaGetCartesianCommand = (int(*)(CartesianPosition &)) GetProcAddress(m_command_layer_handle, "GetCartesianCommand");
+  KinovaGetDevices = (int(*)(KinovaDevice[MAX_KINOVA_DEVICE], int&)) GetProcAddress(m_command_layer_handle, "GetDevices");
+  KinovaInitAPI = (int(*)()) GetProcAddress(m_command_layer_handle, "InitAPI");
+  KinovaInitFingers = (int(*)()) GetProcAddress(m_command_layer_handle, "InitFingers");
+  KinovaMoveHome = (int(*)()) GetProcAddress(m_command_layer_handle, "MoveHome");
+  KinovaSendBasicTrajectory = (int(*)(TrajectoryPoint)) GetProcAddress(m_command_layer_handle, "SendBasicTrajectory");
+  KinovaSetActiveDevice = (int(*)(KinovaDevice)) GetProcAddress(m_command_layer_handle, "SetActiveDevice");
+  KinovaSetAngularControl = (int(*)()) GetProcAddress(m_command_layer_handle, "SetAngularControl");
+  KinovaSetCartesianControl = (int(*)()) GetProcAddress(m_command_layer_handle, "SetCartesianControl");
 #endif
 
   // Verify that all functions has been loaded correctly
-  if ((KinovaInitAPI == NULL) || (KinovaCloseAPI == NULL) || (KinovaSendBasicTrajectory == NULL) ||
-    (KinovaGetDevices == NULL) || (KinovaSetActiveDevice == NULL) || (KinovaGetAngularCommand == NULL) ||
-    (KinovaMoveHome == NULL) || (KinovaInitFingers == NULL)) {
+  if ((KinovaCloseAPI == NULL) ||
+    (KinovaGetAngularCommand == NULL) || (KinovaGetCartesianCommand == NULL) || (KinovaGetDevices == NULL) ||
+    (KinovaInitAPI == NULL) || (KinovaInitFingers == NULL) ||
+    (KinovaMoveHome == NULL) || (KinovaSendBasicTrajectory == NULL) ||
+    (KinovaSetActiveDevice == NULL) || (KinovaSetAngularControl == NULL) || (KinovaSetCartesianControl == NULL)) {
     throw(vpException(vpException::fatalError, "Cannot load plugin from \"%s\" folder", m_plugin_location.c_str()));
   }
   if (m_verbose) {
@@ -414,27 +521,6 @@ void vpRobotKinova::loadPlugin()
   }
 
   m_plugin_loaded = true;
-
-  int result = (*KinovaInitAPI)();
-
-  if (m_verbose) {
-    std::cout << "Initialization's result: " << result << std::endl;
-  }
-
-  KinovaDevice list[MAX_KINOVA_DEVICE];
-
-  int devicesCount = KinovaGetDevices(list, result);
-
-  if (m_verbose) {
-    std::cout << "Found " << devicesCount << " devices" << std::endl;
-  }
-  if (!devicesCount) {
-    throw(vpException(vpException::fatalError, "No Kinova robot found"));
-  }
-
-  // Here we consider only the first device. Should be improved
-  KinovaSetActiveDevice(list[0]);
-
 }
 
 /*!
@@ -447,9 +533,9 @@ void vpRobotKinova::closePlugin()
       std::cout << "Close plugin" << std::endl;
     }
 #ifdef __linux__ 
-    dlclose(m_commandLayer_handle);
+    dlclose(m_command_layer_handle);
 #elif _WIN32
-    FreeLibrary(m_commandLayer_handle);
+    FreeLibrary(m_command_layer_handle);
 #endif
     m_plugin_loaded = false;
   }
@@ -461,17 +547,79 @@ void vpRobotKinova::closePlugin()
 void vpRobotKinova::homing()
 {
   if (!m_plugin_loaded) {
-    throw(vpException(vpException::fatalError, "Cannot move robot to home position: Jaco SDK plugin not loaded"));
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
   }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
+
   if (m_verbose) {
     std::cout << "Move the robot to home position" << std::endl;
   }
   KinovaMoveHome();
 }
 
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotKinova.cpp.o) has
-// no symbols
-void dummy_vpRobotKinova(){};
-#endif
+/*!
+  Connect to Kinova devices.
+  \return Number of devices that are connected.
+*/
+unsigned int vpRobotKinova::connect()
+{
+  loadPlugin();
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
 
+  int result = (*KinovaInitAPI)();
+
+  if (m_verbose) {
+    std::cout << "Initialization's result: " << result << std::endl;
+  }
+
+  m_devices_count = KinovaGetDevices(m_devices_list, result);
+
+  if (m_verbose) {
+    std::cout << "Found " << m_devices_count << " devices" << std::endl;
+  }
+
+  // By default set the first device as active
+  setActiveDevice(0);
+
+  // Initialize fingers
+  KinovaInitFingers();
+
+  return m_devices_count;
+}
+
+/*!
+  Set active device.
+  \param[in] device : Device id corresponding to the active device. The first device has id 0.
+  The last device is is given by getNumDevices() - 1.
+  By default, the active device is the first one.
+
+  To know how many devices are connected, use getNumDevices().
+
+  \sa getActiveDevice()
+*/
+void vpRobotKinova::setActiveDevice(int device)
+{
+  if (!m_plugin_loaded) {
+    throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
+  }
+  if (!m_devices_count) {
+    throw(vpException(vpException::fatalError, "No Kinova robot found"));
+  }
+  if (device < 0 || device >= m_devices_count) {
+    throw(vpException(vpException::badValue, "Cannot set Kinova active device %d. Value should be in range [0, %d]", device, m_devices_count - 1));
+  }
+  if (device != m_active_device) {
+    m_active_device = device;
+    KinovaSetActiveDevice(m_devices_list[m_active_device]);
+  }
+}
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+ // Work arround to avoid warning: libvisp_robot.a(vpRobotKinova.cpp.o) has
+ // no symbols
+void dummy_vpRobotKinova() {};
+#endif
