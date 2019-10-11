@@ -79,6 +79,10 @@
 
   Interface for Kinova Jaco2 robot.
 
+  This class is a wrapper over Kinova Jaco SDK that could be downloaded from Kinova Robotics <a href="https://www.kinovarobotics.com/en/knowledge-hub/all-kinova-products">software resources</a> by following the link under `KINOVA SDK GEN 2 Ultra lightweight robot 1.5.1`.
+
+  It allows to control Kinova Jaco2 robot.  
+
 */
 class VISP_EXPORT vpRobotKinova : public vpRobot
 {
@@ -120,7 +124,7 @@ public:
   Set command layer indicating if the robot is controlled throw USB or Ethernet.
   \param[in] command_layer : Layer used to control the robot.
   */
-  void setCommandLayer(CommandLayer command_layer) { m_command_layer = command_layer;  };
+  void setCommandLayer(CommandLayer command_layer) { m_command_layer = command_layer; };
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
   /*!
     \param[in] plugin_location: Path to Jaco SDK plugins (ie. `Kinova.API.USBCommandLayerUbuntu.so` on

@@ -25,6 +25,7 @@
 #############################################################################
 
 set(JACOSDK_INC_SEARCH_PATH /usr/JACO-SDK/API/include)
+list(APPEND JACOSDK_INC_SEARCH_PATH /opt/JACO-SDK/API/include)
 list(APPEND JACOSDK_INC_SEARCH_PATH "C:/Program Files (x86)/JACO-SDK/API")
 
 find_path(JACOSDK_INCLUDE_DIRS

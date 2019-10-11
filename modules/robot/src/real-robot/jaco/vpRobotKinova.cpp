@@ -373,8 +373,8 @@ void vpRobotKinova::setPosition(const vpRobot::vpControlFrameType frame, const v
     throw(vpException(vpException::fatalError, "No Kinova robot found"));
   }
   if (frame == vpRobot::JOINT_STATE) {
-    if (q.size() != nDof) {
-      throw(vpException(vpException::fatalError, "Cannot move robot to a joint position of dim %d that is not a %d-dim vector", q.size(), nDof));
+    if (static_cast<int>(q.size()) != nDof) {
+      throw(vpException(vpException::fatalError, "Cannot move robot to a joint position of dim %u that is not a %d-dim vector", q.size(), nDof));
     }
     TrajectoryPoint pointToSend;
     pointToSend.InitStruct();
@@ -466,7 +466,7 @@ void vpRobotKinova::loadPlugin()
 #ifdef __linux__ 
   // We load the API
   std::string plugin_name = (m_command_layer == CMD_LAYER_USB) ? std::string("Kinova.API.USBCommandLayerUbuntu.so") : std::string("Kinova.API.EthCommandLayerUbuntu.so");
-  std::string plugin = vpIoTools::createFilePath(m_plugin_location, "Kinova.API.USBCommandLayerUbuntu.so");
+  std::string plugin = vpIoTools::createFilePath(m_plugin_location, plugin_name);
   if (m_verbose) {
     std::cout << "Load plugin: \"" << plugin << "\"" << std::endl;
   }
@@ -474,7 +474,7 @@ void vpRobotKinova::loadPlugin()
 
   std::string prefix = (m_command_layer == CMD_LAYER_USB) ? std::string("") : std::string("Ethernet_");
   // We load the functions from the library
-  KinovaCloseAPI = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("CloseAPI");
+  KinovaCloseAPI = (int(*)()) dlsym(m_command_layer_handle, (prefix + std::string("CloseAPI")).c_str());
   KinovaGetAngularCommand = (int(*)(AngularPosition &)) dlsym(m_command_layer_handle, (prefix + std::string("GetAngularCommand")).c_str());
   KinovaGetCartesianCommand = (int(*)(CartesianPosition &)) dlsym(m_command_layer_handle, (prefix + std::string("GetCartesianCommand")).c_str());
   KinovaGetDevices = (int(*)(KinovaDevice devices[MAX_KINOVA_DEVICE], int &result)) dlsym(m_command_layer_handle, (prefix + std::string("GetDevices")).c_str());
@@ -510,7 +510,7 @@ void vpRobotKinova::loadPlugin()
 
   // Verify that all functions has been loaded correctly
   if ((KinovaCloseAPI == NULL) ||
-    (KinovaGetAngularCommand == NULL) || (KinovaGetCartesianCommand == NULL) || (KinovaGetDevices == NULL) ||
+    (KinovaGetAngularCommand == NULL) || (KinovaGetAngularCommand == NULL) || (KinovaGetCartesianCommand == NULL) || (KinovaGetDevices == NULL) ||
     (KinovaInitAPI == NULL) || (KinovaInitFingers == NULL) ||
     (KinovaMoveHome == NULL) || (KinovaSendBasicTrajectory == NULL) ||
     (KinovaSetActiveDevice == NULL) || (KinovaSetAngularControl == NULL) || (KinovaSetCartesianControl == NULL)) {

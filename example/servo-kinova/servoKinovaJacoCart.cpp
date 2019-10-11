@@ -51,8 +51,8 @@
 int main(int argc, char*argv[])
 {
 #ifdef VISP_HAVE_JACOSDK
-  std::string opt_plugin_path;
-  vpRobotKinova::CommandLayer opt_command_layer;
+  std::string opt_plugin_path = "./";
+  vpRobotKinova::CommandLayer opt_command_layer = vpRobotKinova::CMD_LAYER_UNSET;
   bool opt_verbose = false;
 
   for (int i = 1; i < argc; i++) {
@@ -75,18 +75,24 @@ int main(int argc, char*argv[])
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "SYNOPSYS" << std::endl
-        << "  " << argv[0] << " [--plugin <path>] --command_layer <name>"
+        << "  " << argv[0] << " [--plugin <path>] [--command_layer <name>] "
         << "[--verbose] [--help] [-v] [-h]\n" << std::endl;
       std::cout << "DESCRIPTION" << std::endl
         << "  --plugin <path>" << std::endl
         << "      Path to Jaco SDK .so or .dll plugin location. Default: \"./\"." << std::endl
-        << "      Example: " << argv[0] << " --plugin \"C:\\Program Files(x86)\\JACO - SDK\\API\\x64\"" << std::endl << std::endl
         << "  --command_layer <name>, -l <name>" << std::endl
         << "      Command layer name, either \"usb\" or \"ethernet\"." << std::endl << std::endl
         << "  --verbose, -v" << std::endl
         << "      Enable verbose mode to print addition information." << std::endl << std::endl
         << "  --help, -h" << std::endl
-        << "      Print this helper message." << std::endl;
+        << "      Print this helper message." << std::endl << std::endl;
+      std::cout << "EXAMPLE" << std::endl
+#ifdef __linux__ 
+        << "  " << argv[0] << " --plugin /opt/JACO-SDK/API"
+#elif _WIN32
+        << "  " << argv[0] << " --plugin \"C:\\Program Files(x86)\\JACO - SDK\\API\\x64\"" 
+#endif
+        << " --command_layer usb" << std::endl << std::endl;
 
       return EXIT_SUCCESS;
     }
