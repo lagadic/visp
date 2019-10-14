@@ -218,8 +218,7 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv, const int l
   double mean = sum / dest.size();
 
   std::vector<double> diff(dest.size());
-  using namespace std::placeholders;
-  std::transform(dest.begin(), dest.end(), diff.begin(), std::bind(std::minus<double>(), _1, mean));
+  std::transform(dest.begin(), dest.end(), diff.begin(), std::bind(std::minus<double>(), std::placeholders::_1, mean));
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double stdev = std::sqrt(sq_sum / dest.size());
 
