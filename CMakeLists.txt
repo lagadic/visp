@@ -652,6 +652,8 @@ else()
   set(WITH_STBIMAGE OFF)
 endif()
 
+VP_OPTION(WITH_CATCH2   ""           ""    "Use catch2" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
+
 # ----------------------------------------------------------------------------
 # Check for specific functions. Should be after cxx standard detection in VISPDetectCXXStandard.cmake and potential modification depending on pcl, realsense2, libfranka
 # ----------------------------------------------------------------------------
@@ -919,6 +921,7 @@ VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRIL
 VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
 VP_SET(VISP_HAVE_PUGIXML     TRUE IF (BUILD_MODULE_visp_core AND WITH_PUGIXML))
 VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
+VP_SET(VISP_HAVE_CATCH2      TRUE IF (BUILD_MODULE_visp_core AND WITH_CATCH2))
 
 VP_SET(VISP_BUILD_SHARED_LIBS            TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -1499,6 +1502,7 @@ status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes" ELSE "no")
 # ========================== samples and tests ==========================
 status("")
 status("  Tests and samples:")
+status("    Use catch2 (built-in):"  WITH_CATCH2      THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
 status("    Tests:"                  BUILD_TESTS      THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS      THEN "yes" ELSE "no")
 status("    Examples:"               BUILD_EXAMPLES   THEN "yes" ELSE "no")

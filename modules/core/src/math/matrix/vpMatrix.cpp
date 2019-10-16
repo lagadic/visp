@@ -454,16 +454,7 @@ void vpMatrix::eye()
 */
 vpMatrix vpMatrix::t() const
 {
-  vpMatrix At;
-
-  At.resize(colNum, rowNum, false, false);
-
-  for (unsigned int i = 0; i < rowNum; i++) {
-    double *coli = (*this)[i];
-    for (unsigned int j = 0; j < colNum; j++)
-      At[j][i] = coli[j];
-  }
-  return At;
+  return transpose();
 }
 
 /*!
@@ -487,14 +478,10 @@ void vpMatrix::transpose(vpMatrix &At) const
 {
   At.resize(colNum, rowNum, false, false);
 
-  size_t A_step = colNum;
-  double **AtRowPtrs = At.rowPtrs;
-
-  for (unsigned int i = 0; i < colNum; i++) {
-    double *row_ = AtRowPtrs[i];
-    double *col = rowPtrs[0] + i;
-    for (unsigned int j = 0; j < rowNum; j++, col += A_step)
-      *(row_++) = *col;
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < colNum; j++) {
+      At[j][i] = (*this)[i][j];
+    }
   }
 }
 
