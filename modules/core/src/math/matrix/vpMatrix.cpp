@@ -570,6 +570,8 @@ void vpMatrix::transpose(vpMatrix &At) const
           }
         }
       }
+
+      _mm256_zeroupper();
 #endif
     } else {
       // https://stackoverflow.com/a/21548079
