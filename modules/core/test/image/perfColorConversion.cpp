@@ -158,15 +158,30 @@ int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
 
+  bool runBenchmark = false;
+  // Build a new parser on top of Catch's
+  using namespace Catch::clara;
+  auto cli = session.cli() // Get Catch's composite command line parser
+    | Opt(runBenchmark)    // bind variable to a new option, with a hint string
+    ["--benchmark"]        // the option names it will respond to
+    ("run benchmark?");    // description string for the help output
+
+  // Now pass the new composite back to Catch so it uses that
+  session.cli(cli);
+
   // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
-  int numFailed = session.run();
+  if (runBenchmark) {
+    int numFailed = session.run();
 
-  // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-  // This clamping has already been applied, so just return it here
-  // You can also do any post run clean-up here
-  return numFailed;
+    // numFailed is clamped to 255 as some unices only use the lower 8 bits.
+    // This clamping has already been applied, so just return it here
+    // You can also do any post run clean-up here
+    return numFailed;
+  }
+
+  return EXIT_SUCCESS;
 }
 #else
 #include <iostream>
