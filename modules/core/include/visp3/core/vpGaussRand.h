@@ -50,7 +50,7 @@
   The algorithms and notations used are described in \cite Gentle:2004.
 
   The code below shows how to use the random generator to get values that have
-their mean equal to 10 with a standart deviation equal to 0.5.
+  their mean equal to 10 with a standart deviation equal to 0.5.
 
   \code
 #include <iostream>
@@ -68,16 +68,16 @@ int main()
 
   The previous example produces the following printings:
 \code
-noise 0: 9.43873
-noise 1: 10.1977
-noise 2: 10.8145
-noise 3: 9.13729
-noise 4: 8.86476
-noise 5: 9.83382
-noise 6: 9.43609
-noise 7: 9.34311
-noise 8: 9.62742
-noise 9: 9.37701
+noise 0: 10.645
+noise 1: 9.67129
+noise 2: 10.1208
+noise 3: 10.1039
+noise 4: 10.8667
+noise 5: 9.89823
+noise 6: 9.81414
+noise 7: 9.96076
+noise 8: 11.0795
+noise 9: 9.79229
 \endcode
 
   Note that the previous example produces always the same "random" results. To
@@ -117,18 +117,22 @@ noise 8: 10.4238
 noise 9: 10.2391
   \endcode
  */
-class VISP_EXPORT vpGaussRand : public vpUniRand
+class VISP_EXPORT vpGaussRand
 {
 private:
-  double mean;
-  double sigma;
   double gaussianDraw();
+
+  vpUniRand m_rng;
+  double m_mean;
+  double m_sigma;
+  bool m_AlreadyDone;
+  double m_x2;
 
 public:
   /*!
       Default noise generator constructor.
      */
-  vpGaussRand() : vpUniRand(), mean(0), sigma(0) {}
+  vpGaussRand() : m_rng(), m_mean(0), m_sigma(0), m_AlreadyDone(false), m_x2(0) {}
 
   /*!
       Gaussian noise random generator constructor.
@@ -137,8 +141,8 @@ public:
       \param mean_val : Mean value.
       \param noise_seed : Seed of the noise
     */
-  vpGaussRand(const double sigma_val, const double mean_val, const long noise_seed = 0)
-    : vpUniRand(noise_seed), mean(mean_val), sigma(sigma_val)
+  vpGaussRand(double sigma_val, double mean_val, long noise_seed = 0)
+    : m_rng(noise_seed), m_mean(mean_val), m_sigma(sigma_val), m_AlreadyDone(false), m_x2(0)
   {
   }
 
@@ -148,10 +152,10 @@ public:
       \param sigma_val : New standard deviation sigma.
       \param mean_val : New mean value.
     */
-  void setSigmaMean(const double sigma_val, const double mean_val)
+  void setSigmaMean(double sigma_val, double mean_val)
   {
-    this->mean = mean_val;
-    this->sigma = sigma_val;
+    m_mean = mean_val;
+    m_sigma = sigma_val;
   }
 
   /*!
@@ -159,12 +163,12 @@ public:
 
       \param seed_val : New seed.
     */
-  void seed(const long seed_val) { x = seed_val; }
+  void seed(long seed_val) { m_rng.setSeed(seed_val, 0x123465789ULL); }
 
   /*!
       Return a random value from the Gaussian noise generator.
     */
-  double operator()() { return sigma * gaussianDraw() + mean; }
+  double operator()() { return m_sigma * gaussianDraw() + m_mean; }
 };
 
 #endif
