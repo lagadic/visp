@@ -69,30 +69,33 @@ void vpTemplateTrackerWarpHomography::getParamPyramidUp(const vpColVector &p, vp
 void vpTemplateTrackerWarpHomography::getdW0(const int &i, const int &j, const double &dy, const double &dx,
                                              double *dIdW)
 {
-  dIdW[0] = j * dx;
+  double j_dx_ = j * dx;
+  double i_dy_ = i * dy;
+  dIdW[0] = j_dx_;
   dIdW[1] = j * dy;
-  dIdW[2] = -j * j * dx - i * j * dy;
+  dIdW[2] = -j * j_dx_ - j * i_dy_;
   dIdW[3] = i * dx;
-  dIdW[4] = i * dy;
-  dIdW[5] = -i * j * dx - i * i * dy;
+  dIdW[4] = i_dy_;
+  dIdW[5] = -i * j_dx_ - i * i_dy_;
   dIdW[6] = dx;
   dIdW[7] = dy;
 }
 /*calcul de dw(x,p0)/dp  */
 void vpTemplateTrackerWarpHomography::getdWdp0(const int &i, const int &j, double *dIdW)
 {
+  double ij_ = i * j;
   dIdW[0] = j;
   dIdW[1] = 0;
   dIdW[2] = -j * j;
   dIdW[3] = i;
   dIdW[4] = 0;
-  dIdW[5] = -i * j;
+  dIdW[5] = - ij_;
   dIdW[6] = 1.;
   dIdW[7] = 0;
 
   dIdW[8] = 0;
   dIdW[9] = j;
-  dIdW[10] = -i * j;
+  dIdW[10] = - ij_;
   dIdW[11] = 0;
   dIdW[12] = i;
   dIdW[13] = -i * i;

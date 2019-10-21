@@ -57,9 +57,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(const vpImage<un
     int i = ptTemplate[point].y;
     int j = ptTemplate[point].x;
 
-    X1[0] = j;
-    X1[1] = i;
-    Warp->computeDenom(X1, p);
     ptTemplate[point].dW = new double[nbParam];
 
     double dx = ptTemplate[point].dx;
@@ -108,8 +105,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
     X1[1] = i;
     X2[0] = j;
     X2[1] = i;
-
-    Warp->computeDenom(X1, p);
 
     j2 = X2[0];
     i2 = X2[1];

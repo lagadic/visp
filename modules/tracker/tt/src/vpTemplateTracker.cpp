@@ -937,13 +937,16 @@ void vpTemplateTracker::computeEvalRMS(const vpColVector &p)
 
       Warp->computeDenom(X1, p);
       Warp->warpX(X1, X2, p);
-      evolRMS += (x_pos[i * 3 + j] - X2[0]) * (x_pos[i * 3 + j] - X2[0]) +
-                 (y_pos[i * 3 + j] - X2[1]) * (y_pos[i * 3 + j] - X2[1]);
-      x_pos[i * 3 + j] = X2[0];
-      y_pos[i * 3 + j] = X2[1];
+
+      unsigned int index = i * 3 + j;
+      double x_ = x_pos[index] - X2[0];
+      double y_ = y_pos[index] - X2[1];
+      evolRMS += x_ * x_ + y_ * y_;
+      x_pos[index] = X2[0];
+      y_pos[index] = X2[1];
     }
   }
-  evolRMS = evolRMS / nb_corners;
+  evolRMS /= nb_corners;
 }
 
 /*!
@@ -962,14 +965,15 @@ void vpTemplateTracker::initPosEvalRMS(const vpColVector &p)
   vpTemplateTrackerTriangle triangle;
 
   for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
+    unsigned int i3 = i * 3;
     zoneTracked->getTriangle(i, triangle);
     for (unsigned int j = 0; j < 3; j++) {
       triangle.getCorner(j, X1[0], X1[1]);
 
       Warp->computeDenom(X1, p);
       Warp->warpX(X1, X2, p);
-      x_pos[i * 3 + j] = X2[0];
-      y_pos[i * 3 + j] = X2[1];
+      x_pos[i3 + j] = X2[0];
+      y_pos[i3 + j] = X2[1];
     }
   }
 }
