@@ -497,6 +497,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::
     extract.setNegative(false);
     extract.filter(*point_cloud_face_extracted);
 
+#if PCL_VERSION_COMPARE(>=, 1, 8, 0)
     pcl::PointXYZ centroid_point_pcl;
     if (pcl::computeCentroid(*point_cloud_face_extracted, centroid_point_pcl)) {
       pcl::PointXYZ face_normal;
@@ -519,6 +520,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::
       std::cerr << "Cannot compute centroid!" << std::endl;
       return false;
     }
+#else
+    std::cerr << "Cannot compute centroid using PCL " << PCL_VERSION_PRETTY << "!" << std::endl;
+    return false;
+#endif
   } catch (const pcl::PCLException &e) {
     std::cerr << "Catch a PCL exception: " << e.what() << std::endl;
     throw;
