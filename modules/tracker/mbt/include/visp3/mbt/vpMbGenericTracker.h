@@ -563,7 +563,11 @@ private:
     virtual void track(const vpImage<unsigned char> &I);
     virtual void track(const vpImage<vpRGBa> &I_color);
 #ifdef VISP_HAVE_PCL
+    // Fix error: using declaration ‘using vpMbDepthDenseTracker::setPose’ conflicts with a previous
+    // using declaration that occurs with g++ 4.6.3 on Ubuntu 12.04
+#if !((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
     using vpMbDepthNormalTracker::track;
+#endif
     using vpMbDepthDenseTracker::track;
     using vpMbEdgeTracker::track;
     virtual void track(const vpImage<unsigned char> *const ptr_I,
@@ -608,7 +612,11 @@ private:
                              const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
 #ifdef VISP_HAVE_PCL
-    using vpMbDepthNormalTracker::setPose;
+    // Fix error: using declaration ‘using vpMbDepthDenseTracker::track’ conflicts with a previous
+    // using declaration that occurs with g++ 4.6.3 on Ubuntu 12.04
+#if !((__GNUC__ == 4) && (__GNUC_MINOR__ == 6))
+    using vpMbDepthNormalTracker::setPose; 
+#endif
     using vpMbDepthDenseTracker::setPose;
 #endif
     virtual void setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
