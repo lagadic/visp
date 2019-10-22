@@ -96,34 +96,30 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
   if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_0 && ApproxHessian != HESSIAN_NEW &&
       ApproxHessian != HESSIAN_YOUCEF) {
     vpImageFilter::getGradX(dIx, d2Ix, fgdG, taillef);
-    //vpImageFilter::getGradY(dIx, d2Ixy, fgdG, taillef);
-    d2Ixy = d2Ix;
+    vpImageFilter::getGradY(dIx, d2Ixy, fgdG, taillef);
     vpImageFilter::getGradY(dIy, d2Iy, fgdG, taillef);
   }
-
+  double Nc_255_ = (Nc - 1) / 255.;
   Warp->computeCoeff(p);
   for (unsigned int point = 0; point < templateSize; point++) {
     int i = ptTemplate[point].y;
     int j = ptTemplate[point].x;
 
-    X1[0] = j;
-    X1[1] = i;
-
-    Warp->computeDenom(X1, p);
     ptTemplate[point].dW = new double[nbParam];
 
-    double dx = ptTemplate[point].dx * (Nc - 1) / 255.;
-    double dy = ptTemplate[point].dy * (Nc - 1) / 255.;
+    double dx = ptTemplate[point].dx * Nc_255_;
+    double dy = ptTemplate[point].dy * Nc_255_;
 
     Warp->getdW0(i, j, dy, dx, ptTemplate[point].dW);
     double Tij = ptTemplate[point].val;
-    int ct = static_cast<int>((Tij * (Nc - 1)) / 255.);
-    double et = (Tij * (Nc - 1)) / 255. - ct;
+    int ct = static_cast<int>(Tij * Nc_255_);
+    double et = (Tij * Nc_255_) - ct;
     ptTemplateSupp[point].et = et;
     ptTemplateSupp[point].ct = ct;
   }
   CompoInitialised = true;
 }
+
 void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<unsigned char> &I)
 {
   initCompInverse(I);
@@ -226,6 +222,10 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   double evolRMS_prec = 0;
   double evolRMS_delta;
 
+  vpColVector dp_test_LMA(nbParam);
+  vpColVector dpinv_test_LMA(nbParam);
+  vpColVector p_test_LMA(nbParam);
+
   do {
     int Nbpoint = 0;
     MIprec = MI;
@@ -236,16 +236,14 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
     Warp->computeCoeff(p);
 
     for (int point = 0; point < static_cast<int>(templateSize); point++) {
-      double i2, j2;
-
       X1[0] = static_cast<double>(ptTemplate[point].x);
       X1[1] = static_cast<double>(ptTemplate[point].y);
 
       Warp->computeDenom(X1, p);
       Warp->warpX(X1, X2, p);
 
-      j2 = X2[0];
-      i2 = X2[1];
+      double j2 = X2[0];
+      double i2 = X2[1];
 
       if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
 
@@ -290,12 +288,12 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
       indd = indd2 = 0;
       unsigned int Ncb_ = static_cast<unsigned int>(Ncb);
       for (unsigned int i = 0; i < Ncb_ * Ncb_; i++) {
-        Prt[i] = Prt[i] / Nbpoint;
+        Prt[i] /= Nbpoint;
         for (unsigned int j = 0; j < nbParam; j++) {
-          dPrt[indd] = dPrt[indd] / Nbpoint;
+          dPrt[indd] /= Nbpoint;
           indd++;
           for (unsigned int k = 0; k < nbParam; k++) {
-            d2Prt[indd2] = d2Prt[indd2] / Nbpoint;
+            d2Prt[indd2] /= Nbpoint;
             indd2++;
           }
         }
@@ -308,7 +306,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
         computeHessien(H);
       }
       computeGradient();
-
       vpMatrix::computeHLM(H, lambda, HLM);
 
       try {
@@ -333,9 +330,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
     switch (minimizationMethod) {
     case vpTemplateTrackerMIInverseCompositional::USE_LMA: {
-      vpColVector dp_test_LMA(nbParam);
-      vpColVector dpinv_test_LMA(nbParam);
-      vpColVector p_test_LMA(nbParam);
       if (ApproxHessian == HESSIAN_NONSECOND)
         dp_test_LMA = -100000.1 * dp;
       else

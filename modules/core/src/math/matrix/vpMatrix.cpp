@@ -83,7 +83,8 @@ void compute_pseudo_inverse(const vpMatrix &a, const vpColVector &sv, const vpMa
                             unsigned int ncols, unsigned int nrows_orig, unsigned int ncols_orig, double svThreshold,
                             vpMatrix &Ap, unsigned int &rank)
 {
-  vpMatrix a1(ncols, nrows);
+  vpMatrix a1;
+  a1.resize(ncols, nrows, false, false);
 
   // compute the highest singular value and the rank of h
   double maxsv = 0;
@@ -119,7 +120,7 @@ void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMa
                             unsigned int ncols_orig, double svThreshold, vpMatrix &Ap, unsigned int &rank,
                             vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt)
 {
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, true);
 
   // compute the highest singular value and the rank of h
   double maxsv = fabs(sv[0]);
@@ -408,7 +409,8 @@ vpMatrix vpMatrix::extract(unsigned int r, unsigned int c, unsigned int nrows, u
     throw(vpException(vpException::dimensionError, "Bad column dimension (%d > %d) used to initialize vpMatrix", cncols,
                       getCols()));
 
-  vpMatrix M(nrows, ncols);
+  vpMatrix M;
+  M.resize(nrows, ncols, false, false);
   for (unsigned int i = 0; i < nrows; i++) {
     memcpy(M[i], &(*this)[i + r][c], ncols * sizeof(double));
   }
@@ -868,7 +870,7 @@ void vpMatrix::diag(const double &val)
 void vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 {
   unsigned int rows = A.getRows();
-  DA.resize(rows, rows);
+  DA.resize(rows, rows, true);
 
   for (unsigned int i = 0; i < rows; i++)
     DA[i][i] = A[i];
@@ -1113,7 +1115,8 @@ vpMatrix vpMatrix::operator*(const vpRotationMatrix &R) const
     throw(vpException(vpException::dimensionError, "Cannot multiply (%dx%d) matrix by (3x3) rotation matrix", rowNum,
                       colNum));
   }
-  vpMatrix C(rowNum, 3);
+  vpMatrix C;
+  C.resize(rowNum, 3, false, false);
 
   unsigned int RcolNum = R.getCols();
   unsigned int RrowNum = R.getRows();
@@ -1158,7 +1161,8 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
 
   if (checkSSE2) {
 #if USE_SSE
-    vpMatrix V_trans(6, 6);
+    vpMatrix V_trans;
+    V_trans.resize(6, 6, false, false);
     for (unsigned int i = 0; i < 6; i++) {
       for (unsigned int j = 0; j < 6; j++) {
         V_trans[i][j] = V[j][i];
@@ -1209,7 +1213,8 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
     throw(vpException(vpException::dimensionError, "Cannot multiply (%dx%d) matrix by (6x6) force/torque twist matrix",
                       rowNum, colNum));
   }
-  vpMatrix M(rowNum, 6);
+  vpMatrix M;
+  M.resize(rowNum, 6, false, false);
 
   unsigned int VcolNum = V.getCols();
   unsigned int VrowNum = V.getRows();
@@ -1505,10 +1510,15 @@ double vpMatrix::sum() const
 */
 vpMatrix operator*(const double &x, const vpMatrix &B)
 {
-  vpMatrix C(B.getRows(), B.getCols());
+  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+    return B;
+  }
 
   unsigned int Brow = B.getRows();
   unsigned int Bcol = B.getCols();
+
+  vpMatrix C;
+  C.resize(Brow, Bcol, false, false);
 
   for (unsigned int i = 0; i < Brow; i++)
     for (unsigned int j = 0; j < Bcol; j++)
@@ -1523,7 +1533,12 @@ vpMatrix operator*(const double &x, const vpMatrix &B)
  */
 vpMatrix vpMatrix::operator*(double x) const
 {
-  vpMatrix M(rowNum, colNum);
+  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+    return (*this);
+  }
+
+  vpMatrix M;
+  M.resize(rowNum, colNum, false, false);
 
   for (unsigned int i = 0; i < rowNum; i++)
     for (unsigned int j = 0; j < colNum; j++)
@@ -1535,14 +1550,16 @@ vpMatrix vpMatrix::operator*(double x) const
 //! Cij = Aij / x (A is unchanged)
 vpMatrix vpMatrix::operator/(double x) const
 {
-  vpMatrix C;
+  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+    return (*this);
+  }
 
-  C.resize(rowNum, colNum, false, false);
-
-  // if (x == 0) {
-  if (std::fabs(x) <= std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(x) == std::numeric_limits<double>::epsilon()) {
     throw vpException(vpException::divideByZeroError, "Divide matrix by zero scalar");
   }
+
+  vpMatrix C;
+  C.resize(rowNum, colNum, false, false);
 
   double xinv = 1 / x;
 
@@ -1579,6 +1596,10 @@ vpMatrix &vpMatrix::operator-=(double x)
  */
 vpMatrix &vpMatrix::operator*=(double x)
 {
+  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+    return *this;
+  }
+
   for (unsigned int i = 0; i < rowNum; i++)
     for (unsigned int j = 0; j < colNum; j++)
       rowPtrs[i][j] *= x;
@@ -1589,7 +1610,10 @@ vpMatrix &vpMatrix::operator*=(double x)
 //! Divide  all the element of the matrix by x : Aij = Aij / x
 vpMatrix &vpMatrix::operator/=(double x)
 {
-  // if (x == 0)
+  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+    return *this;
+  }
+
   if (std::fabs(x) <= std::numeric_limits<double>::epsilon())
     throw vpException(vpException::divideByZeroError, "Divide matrix by zero scalar");
 
@@ -1669,7 +1693,7 @@ vpMatrix vpMatrix::hadamard(const vpMatrix &m) const
   }
 
   vpMatrix out;
-  out.resize(rowNum, colNum, false);
+  out.resize(rowNum, colNum, false, false);
 
   unsigned int i = 0;
 
@@ -1740,7 +1764,8 @@ vpMatrix vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2)
   unsigned int r2 = m2.getRows();
   unsigned int c2 = m2.getCols();
 
-  vpMatrix out(r1 * r2, c1 * c2);
+  vpMatrix out;
+  out.resize(r1 * r2, c1 * c2, false, false);
 
   for (unsigned int r = 0; r < r1; r++) {
     for (unsigned int c = 0; c < c1; c++) {
@@ -2140,7 +2165,8 @@ vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
   unsigned int nrows_orig = getRows();
   unsigned int ncols_orig = getCols();
 
-  vpMatrix Ap(ncols_orig, nrows_orig);
+  vpMatrix Ap;
+  Ap.resize(ncols_orig, nrows_orig, false, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2150,9 +2176,11 @@ vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false, false);
+  V.resize(ncols, ncols, false, false);
+  vpColVector sv;
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -2214,7 +2242,7 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
   unsigned int ncols_orig = getCols();
   unsigned int rank;
 
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, false, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2224,9 +2252,11 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false, false);
+  V.resize(ncols, ncols, false, false);
+  vpColVector sv;
+  sv.resize(ncols, true);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -2293,7 +2323,7 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   unsigned int ncols_orig = getCols();
   unsigned int rank;
 
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, false, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2303,9 +2333,10 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  sv.resize(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false, false);
+  V.resize(ncols, ncols, false, false);
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -2436,11 +2467,11 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   vpColVector sv_;
 
   if (nrows < ncols) {
-    U.resize(ncols, ncols);
-    sv.resize(nrows);
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
   } else {
-    U.resize(nrows, ncols);
-    sv.resize(ncols);
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
   }
 
   U.insert(*this, 0, 0);
@@ -2499,7 +2530,8 @@ vpMatrix vpMatrix::pseudoInverseEigen3(double svThreshold) const
   unsigned int nrows_orig = getRows();
   unsigned int ncols_orig = getCols();
 
-  vpMatrix Ap(ncols_orig, nrows_orig);
+  vpMatrix Ap;
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2509,9 +2541,11 @@ vpMatrix vpMatrix::pseudoInverseEigen3(double svThreshold) const
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  vpColVector sv;
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -2573,7 +2607,7 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, double svThreshold) con
   unsigned int ncols_orig = getCols();
   unsigned int rank;
 
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2583,9 +2617,11 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, double svThreshold) con
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  vpColVector sv;
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -2652,7 +2688,7 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   unsigned int ncols_orig = getCols();
   unsigned int rank;
 
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2662,9 +2698,10 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  sv.resize(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -2795,11 +2832,11 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   vpColVector sv_;
 
   if (nrows < ncols) {
-    U.resize(ncols, ncols);
-    sv.resize(nrows);
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
   } else {
-    U.resize(nrows, ncols);
-    sv.resize(ncols);
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
   }
 
   U.insert(*this, 0, 0);
@@ -2858,7 +2895,8 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(double svThreshold) const
   unsigned int nrows_orig = getRows();
   unsigned int ncols_orig = getCols();
 
-  vpMatrix Ap(ncols_orig, nrows_orig);
+  vpMatrix Ap;
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2868,9 +2906,11 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(double svThreshold) const
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  vpColVector sv;
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -2932,7 +2972,7 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold) con
   unsigned int ncols_orig = getCols();
   unsigned int rank;
 
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -2942,9 +2982,11 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold) con
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  vpColVector sv;
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -3021,9 +3063,10 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  sv.resize(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -3154,11 +3197,11 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   vpColVector sv_;
 
   if (nrows < ncols) {
-    U.resize(ncols, ncols);
-    sv.resize(nrows);
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
   } else {
-    U.resize(nrows, ncols);
-    sv.resize(ncols);
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
   }
 
   U.insert(*this, 0, 0);
@@ -3217,7 +3260,8 @@ vpMatrix vpMatrix::pseudoInverseGsl(double svThreshold) const
   unsigned int nrows_orig = getRows();
   unsigned int ncols_orig = getCols();
 
-  vpMatrix Ap(ncols_orig, nrows_orig);
+  vpMatrix Ap;
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -3227,9 +3271,11 @@ vpMatrix vpMatrix::pseudoInverseGsl(double svThreshold) const
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  vpColVector sv;
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -3291,7 +3337,7 @@ unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, double svThreshold) const
   unsigned int ncols_orig = getCols();
   unsigned int rank;
 
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -3301,9 +3347,11 @@ unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, double svThreshold) const
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  vpColVector sv(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  vpColVector sv;
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -3370,7 +3418,7 @@ unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double sv
   unsigned int ncols_orig = getCols();
   unsigned int rank;
 
-  Ap.resize(ncols_orig, nrows_orig);
+  Ap.resize(ncols_orig, nrows_orig, false);
 
   if (nrows_orig >= ncols_orig) {
     nrows = nrows_orig;
@@ -3380,9 +3428,10 @@ unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double sv
     ncols = nrows_orig;
   }
 
-  vpMatrix U(nrows, ncols);
-  vpMatrix V(ncols, ncols);
-  sv.resize(ncols);
+  vpMatrix U, V;
+  U.resize(nrows, ncols, false);
+  V.resize(ncols, ncols, false);
+  sv.resize(ncols, false);
 
   if (nrows_orig >= ncols_orig)
     U = *this;
@@ -3512,11 +3561,11 @@ unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double sv
   vpColVector sv_;
 
   if (nrows < ncols) {
-    U.resize(ncols, ncols);
-    sv.resize(nrows);
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
   } else {
-    U.resize(nrows, ncols);
-    sv.resize(ncols);
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
   }
 
   U.insert(*this, 0, 0);
@@ -5013,18 +5062,19 @@ unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
   unsigned int nbline = getRows();
   unsigned int nbcol = getCols();
 
-  vpMatrix U;               // Copy of the matrix, SVD function is destructive
-  vpColVector sv(nbcol);    // singular values
-  vpMatrix V(nbcol, nbcol); // V matrix of singular value decomposition
+  vpMatrix U, V;               // Copy of the matrix, SVD function is destructive
+  vpColVector sv;
+  sv.resize(nbcol, false);    // singular values
+  V.resize(nbcol, nbcol, false); // V matrix of singular value decomposition
 
   // Copy and resize matrix to have at least as many rows as columns
   // kernel is computed in svd method only if the matrix has more rows than
   // columns
 
   if (nbline < nbcol)
-    U.resize(nbcol, nbcol);
+    U.resize(nbcol, nbcol, true);
   else
-    U.resize(nbline, nbcol);
+    U.resize(nbline, nbcol, false);
 
   U.insert(*this, 0, 0);
 
@@ -5126,17 +5176,18 @@ vpMatrix vpMatrix::expm() const
     gsl_matrix_view em = gsl_matrix_view_array(b, rowNum, colNum);
     gsl_linalg_exponential_ss(&m.matrix, &em.matrix, 0);
     // gsl_matrix_fprintf(stdout, &em.matrix, "%g");
-    vpMatrix expA(rowNum, colNum);
+    vpMatrix expA;
+    expA.resize(rowNum, colNum, false);
     memcpy(expA.data, b, size_ * sizeof(double));
 
     delete[] b;
     return expA;
 #else
-    vpMatrix _expE(rowNum, colNum);
-    vpMatrix _expD(rowNum, colNum);
-    vpMatrix _expX(rowNum, colNum);
-    vpMatrix _expcX(rowNum, colNum);
-    vpMatrix _eye(rowNum, colNum);
+    vpMatrix _expE(rowNum, colNum, false);
+    vpMatrix _expD(rowNum, colNum, false);
+    vpMatrix _expX(rowNum, colNum, false);
+    vpMatrix _expcX(rowNum, colNum, false);
+    vpMatrix _eye(rowNum, colNum, false);
 
     _eye.eye();
     vpMatrix exp(*this);
@@ -5211,7 +5262,8 @@ subblock(M, 1, 1) give the matrix 7 9
 */
 vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row)
 {
-  vpMatrix M_comp(M.getRows() - 1, M.getCols() - 1);
+  vpMatrix M_comp;
+  M_comp.resize(M.getRows() - 1, M.getCols() - 1, false);
 
   for (unsigned int i = 0; i < col; i++) {
     for (unsigned int j = 0; j < row; j++)
@@ -5242,18 +5294,19 @@ double vpMatrix::cond(double svThreshold) const
   unsigned int nbline = getRows();
   unsigned int nbcol = getCols();
 
-  vpMatrix U;               // Copy of the matrix, SVD function is destructive
-  vpColVector sv(nbcol);    // singular values
-  vpMatrix V(nbcol, nbcol); // V matrix of singular value decomposition
+  vpMatrix U, V;               // Copy of the matrix, SVD function is destructive
+  vpColVector sv;
+  sv.resize(nbcol);    // singular values
+  V.resize(nbcol, nbcol, false); // V matrix of singular value decomposition
 
   // Copy and resize matrix to have at least as many rows as columns
   // kernel is computed in svd method only if the matrix has more rows than
   // columns
 
   if (nbline < nbcol)
-    U.resize(nbcol, nbcol);
+    U.resize(nbcol, nbcol, true);
   else
-    U.resize(nbline, nbcol);
+    U.resize(nbline, nbcol, false);
 
   U.insert(*this, 0, 0);
 
@@ -5303,14 +5356,10 @@ void vpMatrix::computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM)
     throw(vpException(vpException::dimensionError, "Cannot compute HLM on a non square matrix (%dx%d)", H.getRows(),
                       H.getCols()));
   }
-  HLM.resize(H.getRows(), H.getCols(), false, false);
 
+  HLM = H;
   for (unsigned int i = 0; i < H.getCols(); i++) {
-    for (unsigned int j = 0; j < H.getCols(); j++) {
-      HLM[i][j] = H[i][j];
-      if (i == j)
-        HLM[i][j] += alpha * H[i][j];
-    }
+    HLM[i][i] += alpha * H[i][i];
   }
 }
 

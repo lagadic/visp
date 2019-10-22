@@ -57,9 +57,6 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<uns
     if ((!useTemplateSelect) || (ptTemplateSelect[point])) {
       i = ptTemplate[point].y;
       j = ptTemplate[point].x;
-      X1[0] = j;
-      X1[1] = i;
-      Warp->computeDenom(X1, p);
       ptTemplate[point].dW = new double[nbParam];
 
       Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx, ptTemplate[point].dW);

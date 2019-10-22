@@ -70,9 +70,6 @@ void vpTemplateTrackerSSDESM::initCompInverse(const vpImage<unsigned char> & /*I
     i = ptTemplate[point].y;
     j = ptTemplate[point].x;
     ptTemplateCompo[point].dW = new double[2 * nbParam];
-    X1[0] = j;
-    X1[1] = i;
-    Warp->computeDenom(X1, p);
     Warp->getdWdp0(i, j, ptTemplateCompo[point].dW);
   }
 
@@ -82,9 +79,6 @@ void vpTemplateTrackerSSDESM::initCompInverse(const vpImage<unsigned char> & /*I
     i = ptTemplate[point].y;
     j = ptTemplate[point].x;
 
-    X1[0] = j;
-    X1[1] = i;
-    Warp->computeDenom(X1, p);
     ptTemplate[point].dW = new double[nbParam];
     Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx, ptTemplate[point].dW);
 
