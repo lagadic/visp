@@ -66,14 +66,64 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTranslationVector.h>
 
-#define USE_SSE_CODE 1
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
 #endif
 
-#if VISP_HAVE_SSE2 && USE_SSE_CODE
-#define USE_SSE 1
+#if defined __AVX__
+#include <immintrin.h>
+#define VISP_HAVE_AVX 1
+#endif
+
+#if VISP_HAVE_AVX
+namespace {
+  void transpose4x4(const vpMatrix& a, vpMatrix& b, unsigned int i, unsigned int j)
+  {
+    __m256d a0 = _mm256_loadu_pd(&a[i][j]);
+    __m256d a1 = _mm256_loadu_pd(&a[i + 1][j]);
+    __m256d a2 = _mm256_loadu_pd(&a[i + 2][j]);
+    __m256d a3 = _mm256_loadu_pd(&a[i + 3][j]);
+
+    __m256d T0 = _mm256_shuffle_pd(a0, a1, 15);
+    __m256d T1 = _mm256_shuffle_pd(a0, a1, 0);
+    __m256d T2 = _mm256_shuffle_pd(a2, a3, 15);
+    __m256d T3 = _mm256_shuffle_pd(a2, a3, 0);
+
+    a1 = _mm256_permute2f128_pd(T0, T2, 32);
+    a3 = _mm256_permute2f128_pd(T0, T2, 49);
+    a0 = _mm256_permute2f128_pd(T1, T3, 32);
+    a2 = _mm256_permute2f128_pd(T1, T3, 49);
+
+    _mm256_storeu_pd(&b[j][i], a0);
+    _mm256_storeu_pd(&b[j + 1][i], a1);
+    _mm256_storeu_pd(&b[j + 2][i], a2);
+    _mm256_storeu_pd(&b[j + 3][i], a3);
+  }
+
+  void transpose16x16(const vpMatrix& a, vpMatrix& b, unsigned int i, unsigned int j)
+  {
+    transpose4x4(a, b, i, j);
+    transpose4x4(a, b, i, j + 4);
+    transpose4x4(a, b, i, j + 8);
+    transpose4x4(a, b, i, j + 12);
+
+    transpose4x4(a, b, i + 4, j);
+    transpose4x4(a, b, i + 4, j + 4);
+    transpose4x4(a, b, i + 4, j + 8);
+    transpose4x4(a, b, i + 4, j + 12);
+
+    transpose4x4(a, b, i + 8, j);
+    transpose4x4(a, b, i + 8, j + 4);
+    transpose4x4(a, b, i + 8, j + 8);
+    transpose4x4(a, b, i + 8, j + 12);
+
+    transpose4x4(a, b, i + 12, j);
+    transpose4x4(a, b, i + 12, j + 4);
+    transpose4x4(a, b, i + 12, j + 8);
+    transpose4x4(a, b, i + 12, j + 12);
+  }
+}
 #endif
 
 // Prototypes of specific functions
@@ -480,9 +530,59 @@ void vpMatrix::transpose(vpMatrix &At) const
 {
   At.resize(colNum, rowNum, false, false);
 
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++) {
-      At[j][i] = (*this)[i][j];
+  if (rowNum <= 16 || colNum <= 16) {
+    for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int j = 0; j < colNum; j++) {
+        At[j][i] = (*this)[i][j];
+      }
+    }
+  }
+  else {
+    bool haveAVX = vpCPUFeatures::checkAVX();
+#if !VISP_HAVE_AVX
+    haveAVX = false;
+#endif
+
+    if (haveAVX) {
+#if VISP_HAVE_AVX
+      // matrix transpose using tiling
+      const int nrows = static_cast<int>(rowNum);
+      const int ncols = static_cast<int>(colNum);
+      const int tileSize = 16;
+
+      for (int i = 0; i < nrows;) {
+        for (; i <= nrows - tileSize; i += tileSize) {
+          int j = 0;
+          for (; j <= ncols - tileSize; j += tileSize) {
+            transpose16x16(*this, At, i, j);
+          }
+
+          for (int k = i; k < i + tileSize; k++) {
+            for (int l = j; l < ncols; l++) {
+              At[l][k] = (*this)[k][l];
+            }
+          }
+        }
+
+        for (; i < nrows; i++) {
+          for (int j = 0; j < ncols; j++) {
+            At[j][i] = (*this)[i][j];
+          }
+        }
+      }
+
+      _mm256_zeroupper();
+#endif
+    } else {
+      // https://stackoverflow.com/a/21548079
+      const int tileSize = 32;
+      for (unsigned int i = 0; i < rowNum; i += tileSize) {
+        for (unsigned int j = 0; j < colNum; j++) {
+          for (unsigned int b = 0; b < tileSize && i + b < rowNum; b++) {
+            At[j][i + b] = (*this)[i + b][j];
+          }
+        }
+      }
     }
   }
 }
@@ -1155,12 +1255,12 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
                        V.colNum);
 #else
   bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#if !USE_SSE
+#if !VISP_HAVE_SSE2
   checkSSE2 = false;
 #endif
 
   if (checkSSE2) {
-#if USE_SSE
+#if VISP_HAVE_SSE2
     vpMatrix V_trans;
     V_trans.resize(6, 6, false, false);
     for (unsigned int i = 0; i < 6; i++) {
