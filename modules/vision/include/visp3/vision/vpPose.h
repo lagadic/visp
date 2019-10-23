@@ -62,6 +62,8 @@
 #include <atomic>
 #endif
 
+#include <visp3/core/vpUniRand.h>
+
 /*!
   \class vpPose
   \ingroup group_vision_pose
@@ -167,11 +169,8 @@ private:
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
         m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
-        m_ransacThreshold(ransacThreshold_)
+        m_ransacThreshold(ransacThreshold_), m_uniRand(initial_seed_)
     {
-#if (defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__)) || defined(ANDROID))
-      (void)initial_seed_;
-#endif
     }
 
     void operator()() { m_foundSolution = poseRansacImpl(); }
@@ -200,6 +199,7 @@ private:
     int m_ransacMaxTrials;
     unsigned int m_ransacNbInlierConsensus;
     double m_ransacThreshold;
+    vpUniRand m_uniRand;
 
     bool poseRansacImpl();
   };

@@ -41,6 +41,11 @@ if(WITH_PUGIXML)
   include_directories(${PUGIXML_INCLUDE_DIRS})
 endif()
 
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
+
 vp_add_module(vision visp_core OPTIONAL visp_visual_features visp_io PRIVATE_OPTIONAL ${PUGIXML_LIBRARIES})
 vp_glob_module_sources()
 vp_module_include_directories()
