@@ -201,7 +201,6 @@ private:
   double m_minCameraPan;     ///< Minimum possible tilt of the camera
   double m_maxCameraPan;     ///< Maximum possible tilt of the camera
 
-  ARDISCOVERY_Device_t *m_device;                   ///< Used for drone discovery
   static ARCONTROLLER_Device_t *m_deviceController; ///< Used for drone control
 
   eARCONTROLLER_ERROR m_errorController;    ///< Used for error handling
