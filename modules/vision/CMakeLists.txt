@@ -61,8 +61,8 @@ else()
   vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io)
   if(USE_OGRE)
     # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-    vp_set_source_file_compile_flag(test/key-point/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
-    vp_set_source_file_compile_flag(test/key-point/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+    vp_set_source_file_compile_flag(test/key-point/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
+    vp_set_source_file_compile_flag(test/key-point/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
  endif()
 endif()
 
