@@ -167,7 +167,7 @@ private:
         m_abort(abort),
     #endif
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
-        m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
+        m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
         m_ransacThreshold(ransacThreshold_), m_uniRand(initial_seed_)
     {
@@ -193,7 +193,6 @@ private:
     vpHomogeneousMatrix m_cMo;
     bool m_foundSolution;
     bool (*m_func)(const vpHomogeneousMatrix &);
-    unsigned int m_initial_seed;
     std::vector<vpPoint> m_listOfUniquePoints;
     unsigned int m_nbInliers;
     int m_ransacMaxTrials;
