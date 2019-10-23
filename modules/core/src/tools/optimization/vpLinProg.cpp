@@ -266,6 +266,19 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   const unsigned int m = A.getRows();
   const unsigned int n = A.getCols();
 
+  // degeneracy if A is actually null
+  if(A.infinityNorm() < tol)
+  {
+    if(b.infinityNorm() < tol)
+    {
+      b.resize(0);
+      A.resize(0,n);
+      return true;
+    }
+    else
+      return false;
+  }
+
   vpMatrix Q, R, P;
   const unsigned int r = A.qrPivot(Q, R, P, false, false, tol);
   const vpColVector x = P.transpose() *
