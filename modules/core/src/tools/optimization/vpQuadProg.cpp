@@ -113,7 +113,7 @@ void vpQuadProg::fromCanonicalCost(const vpMatrix &/*H*/, const vpColVector &/*c
   vpMatrix    V(n,n);
   // Compute the eigenvalues and eigenvectors
   H.eigenValues(d, V);
-  // find first non-null eigen value
+  // find first non-nullptr eigen value
   unsigned int k = 0;
   for(unsigned int i = 0; i < n; ++i)
   {
@@ -325,7 +325,7 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
 bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b,
                            vpColVector &x, const double &tol)
 {
-  checkDimensions(Q, r, &A, &b, NULL, NULL, "solveQPe");
+  checkDimensions(Q, r, &A, &b, nullptr, nullptr, "solveQPe");
 
   if(!solveByProjection(Q, r, A, b, x, tol))
   {
@@ -467,7 +467,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
                           vpColVector &x, const bool use_equality,
                           const double &tol)
 {
-  const unsigned int n = checkDimensions(Q, r, NULL, NULL, &C, &d, "solveQPi");
+  const unsigned int n = checkDimensions(Q, r, nullptr, nullptr, &C, &d, "solveQPi");
 
   if(use_equality)
   {

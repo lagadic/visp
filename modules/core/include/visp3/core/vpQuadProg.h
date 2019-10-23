@@ -155,8 +155,8 @@ protected:
   {
     // check data consistency
     const unsigned int n = Q.getCols();
-    const bool Ab = (A != NULL && b != NULL && A->getRows());
-    const bool Cd = (C != NULL && d != NULL && C->getRows());
+    const bool Ab = (A != nullptr && b != nullptr && A->getRows());
+    const bool Cd = (C != nullptr && d != nullptr && C->getRows());
 
     if (  (Ab && n != A->getCols()) ||
           (Cd && n != C->getCols()) ||
