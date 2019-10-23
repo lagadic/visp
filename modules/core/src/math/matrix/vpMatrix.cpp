@@ -1510,7 +1510,7 @@ double vpMatrix::sum() const
 */
 vpMatrix operator*(const double &x, const vpMatrix &B)
 {
-  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
     return B;
   }
 
@@ -1533,7 +1533,7 @@ vpMatrix operator*(const double &x, const vpMatrix &B)
  */
 vpMatrix vpMatrix::operator*(double x) const
 {
-  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
     return (*this);
   }
 
@@ -1550,11 +1550,11 @@ vpMatrix vpMatrix::operator*(double x) const
 //! Cij = Aij / x (A is unchanged)
 vpMatrix vpMatrix::operator/(double x) const
 {
-  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
     return (*this);
   }
 
-  if (std::fabs(x) == std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(x) < std::numeric_limits<double>::epsilon()) {
     throw vpException(vpException::divideByZeroError, "Divide matrix by zero scalar");
   }
 
@@ -1596,7 +1596,7 @@ vpMatrix &vpMatrix::operator-=(double x)
  */
 vpMatrix &vpMatrix::operator*=(double x)
 {
-  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
     return *this;
   }
 
@@ -1610,11 +1610,11 @@ vpMatrix &vpMatrix::operator*=(double x)
 //! Divide  all the element of the matrix by x : Aij = Aij / x
 vpMatrix &vpMatrix::operator/=(double x)
 {
-  if (std::fabs(x - 1.) == std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(x - 1.) < std::numeric_limits<double>::epsilon()) {
     return *this;
   }
 
-  if (std::fabs(x) <= std::numeric_limits<double>::epsilon())
+  if (std::fabs(x) < std::numeric_limits<double>::epsilon())
     throw vpException(vpException::divideByZeroError, "Divide matrix by zero scalar");
 
   double xinv = 1 / x;
