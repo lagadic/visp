@@ -127,6 +127,8 @@ protected:
   */
   vpMatrix Z;
 
+  static vpColVector solveSVDorQR(const vpMatrix &A, const vpColVector &b);
+
   static bool solveByProjection(const vpMatrix &Q, const vpColVector &r,
                                 vpMatrix &A, vpColVector &b,
                                 vpColVector &x, const double &tol = 1e-6);

@@ -711,6 +711,24 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
     }
   }
 }
+
+/*!
+  Pick either SVD (over-constrained) or QR (square or under-constrained)
+
+  Assumes A is full rank, hence uses SVD iif A has more row than columns.
+
+  \param A : matrix (dimension m x n)
+  \param b : vector (dimension m)
+
+  \return least-norm solution to \f$\arg\min||\mathbf{A}\mathbf{x} - \mathbf{b}||\f$
+*/
+vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
+{
+  // assume A is full rank
+  if(A.getRows() > A.getCols())
+    return A.solveBySVD(b);
+  return A.solveByQR(b);
+}
 #else
 void dummy_vpQuadProg(){};
 #endif
