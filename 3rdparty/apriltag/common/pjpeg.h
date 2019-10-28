@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _PJPEG_H
-#define _PJPEG_H
+#pragma once
 
 #include "image_u8.h"
 #include "image_u8x3.h"
@@ -101,6 +100,4 @@ image_u8x3_t *pjpeg_to_u8x3_baseline(pjpeg_t *pj);
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

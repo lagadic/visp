@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _IMAGE_U8_H
-#define _IMAGE_U8_H
+#pragma once
 
 #include <stdint.h>
 #include "image_types.h"
@@ -88,6 +87,4 @@ image_u8_t *image_u8_rotate(const image_u8_t *in, double rad, uint8_t pad);
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

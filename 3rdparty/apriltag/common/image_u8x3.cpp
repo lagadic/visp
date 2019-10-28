@@ -55,7 +55,7 @@ image_u8x3_t *image_u8x3_create_alignment(unsigned int width, unsigned int heigh
     uint8_t *buf = (uint8_t *)calloc(height*stride, sizeof(uint8_t));
 
     // const initializer
-    image_u8x3_t tmp = { (int32_t)width, (int32_t)height, (int32_t)stride, buf };
+    image_u8x3_t tmp = { .width = (int32_t)width, .height = (int32_t)height, .stride = (int32_t)stride, .buf = buf };
 
     image_u8x3_t *im = (image_u8x3_t *)calloc(1, sizeof(image_u8x3_t));
     memcpy(im, &tmp, sizeof(image_u8x3_t));
@@ -68,7 +68,7 @@ image_u8x3_t *image_u8x3_copy(const image_u8x3_t *in)
     memcpy(buf, in->buf, in->height*in->stride*sizeof(uint8_t));
 
     // const initializer
-    image_u8x3_t tmp = { in->width, in->height, in->stride, buf };
+    image_u8x3_t tmp = { .width = (int32_t)in->width, .height = (int32_t)in->height, .stride = (int32_t)in->stride, .buf = buf };
 
     image_u8x3_t *copy = (image_u8x3_t *)calloc(1, sizeof(image_u8x3_t));
     memcpy(copy, &tmp, sizeof(image_u8x3_t));
@@ -214,11 +214,7 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     // build the kernel.
-#ifdef _MSC_VER
-    double *dk = (double *)malloc(ksz*sizeof *dk);
-#else
-    double dk[ksz];
-#endif
+    double *dk = (double *)malloc(sizeof(double)*ksz);
 
     // for kernel of length 5:
     // dk[0] = f(-2), dk[1] = f(-1), dk[2] = f(0), dk[3] = f(1), dk[4] = f(2)
@@ -236,11 +232,7 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
     for (int i = 0; i < ksz; i++)
         dk[i] /= acc;
 
-#ifdef _MSC_VER
-    uint8_t *k = (uint8_t *)malloc(ksz*sizeof *k);
-#else
-    uint8_t k[ksz];
-#endif
+    uint8_t *k = (uint8_t *)malloc(sizeof(uint8_t)*ksz);
     for (int i = 0; i < ksz; i++)
         k[i] = dk[i]*255;
 
@@ -248,56 +240,39 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
         for (int i = 0; i < ksz; i++)
             printf("%d %15f %5d\n", i, dk[i], k[i]);
     }
+    free(dk);
 
     for (int c = 0; c < 3; c++) {
         for (int y = 0; y < im->height; y++) {
-#ifdef _MSC_VER
-          uint8_t *in = (uint8_t *)malloc(im->stride*sizeof *in);
-          uint8_t *out = (uint8_t *)malloc(im->stride*sizeof *out);
-#else
-            uint8_t in[im->stride];
-            uint8_t out[im->stride];
-#endif
+
+            uint8_t *in = (uint8_t *)malloc(sizeof(uint8_t)*im->stride);
+            uint8_t *out = (uint8_t *)malloc(sizeof(uint8_t)*im->stride);
 
             for (int x = 0; x < im->width; x++)
                 in[x] = im->buf[y*im->stride + 3 * x + c];
 
             convolve(in, out, im->width, k, ksz);
+            free(in);
 
             for (int x = 0; x < im->width; x++)
                 im->buf[y*im->stride + 3 * x + c] = out[x];
-
-#ifdef _MSC_VER
-            free(in);
             free(out);
-#endif
         }
 
         for (int x = 0; x < im->width; x++) {
-#ifdef _MSC_VER
-          uint8_t *in = (uint8_t *)malloc(im->height*sizeof *in);
-          uint8_t *out = (uint8_t *)malloc(im->height*sizeof *out);
-#else
-            uint8_t in[im->height];
-            uint8_t out[im->height];
-#endif
+            uint8_t *in = (uint8_t *)malloc(sizeof(uint8_t)*im->height);
+            uint8_t *out = (uint8_t *)malloc(sizeof(uint8_t)*im->height);
 
             for (int y = 0; y < im->height; y++)
                 in[y] = im->buf[y*im->stride + 3*x + c];
 
             convolve(in, out, im->height, k, ksz);
+            free(in);
 
             for (int y = 0; y < im->height; y++)
                 im->buf[y*im->stride + 3*x + c] = out[y];
-
-#ifdef _MSC_VER
-            free(in);
             free(out);
-#endif
         }
     }
-
-#ifdef _MSC_VER
-    free(dk);
-#endif
+    free(k);
 }

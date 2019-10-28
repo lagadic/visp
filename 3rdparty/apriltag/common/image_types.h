@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _IMAGE_TYPES_H
-#define _IMAGE_TYPES_H
+#pragma once
 
 #include <stdint.h>
 
@@ -83,5 +82,3 @@ struct image_u32
 
     uint32_t *buf; // indexed as buf[y*stride + x]
 };
-
-#endif

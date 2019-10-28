@@ -45,7 +45,7 @@ image_u8_t *image_u8_create_stride(unsigned int width, unsigned int height, unsi
     uint8_t *buf = (uint8_t *)calloc(height*stride, sizeof(uint8_t));
 
     // const initializer
-    image_u8_t tmp = { (int32_t)width, (int32_t)height, (int32_t)stride, buf };
+    image_u8_t tmp = { .width = (int32_t)width, .height = (int32_t)height, .stride = (int32_t)stride, .buf = buf };
 
     image_u8_t *im = (image_u8_t *)calloc(1, sizeof(image_u8_t));
     memcpy(im, &tmp, sizeof(image_u8_t));
@@ -73,7 +73,7 @@ image_u8_t *image_u8_copy(const image_u8_t *in)
     memcpy(buf, in->buf, in->height*in->stride*sizeof(uint8_t));
 
     // const initializer
-    image_u8_t tmp = { in->width, in->height, in->stride, buf };
+    image_u8_t tmp = { .width = (int32_t)in->width, .height = (int32_t)in->height, .stride = (int32_t)in->stride, .buf = buf };
 
     image_u8_t *copy = (image_u8_t *)calloc(1, sizeof(image_u8_t));
     memcpy(copy, &tmp, sizeof(image_u8_t));
@@ -320,41 +320,27 @@ void image_u8_convolve_2D(image_u8_t *im, const uint8_t *k, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     for (int y = 0; y < im->height; y++) {
-#ifdef _MSC_VER
-        uint8_t *x = (uint8_t *)malloc(im->stride*sizeof *x);
-#else
-        uint8_t x[im->stride];
-#endif
+
+        uint8_t *x = (uint8_t *)malloc(sizeof(uint8_t)*im->stride);
         memcpy(x, &im->buf[y*im->stride], im->stride);
 
         convolve(x, &im->buf[y*im->stride], im->width, k, ksz);
-
-#ifdef _MSC_VER
         free(x);
-#endif
     }
 
     for (int x = 0; x < im->width; x++) {
-#ifdef _MSC_VER
-        uint8_t *xb = (uint8_t *)malloc(im->height*sizeof *xb);
-        uint8_t *yb = (uint8_t *)malloc(im->height*sizeof *yb);
-#else
-        uint8_t xb[im->height];
-        uint8_t yb[im->height];
-#endif
+        uint8_t *xb = (uint8_t *)malloc(sizeof(uint8_t)*im->height);
+        uint8_t *yb = (uint8_t *)malloc(sizeof(uint8_t)*im->height);
 
         for (int y = 0; y < im->height; y++)
             xb[y] = im->buf[y*im->stride + x];
 
         convolve(xb, yb, im->height, k, ksz);
+        free(xb);
 
         for (int y = 0; y < im->height; y++)
             im->buf[y*im->stride + x] = yb[y];
-
-#ifdef _MSC_VER
-        free(xb);
         free(yb);
-#endif
     }
 }
 
@@ -366,11 +352,7 @@ void image_u8_gaussian_blur(image_u8_t *im, double sigma, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     // build the kernel.
-#ifdef _MSC_VER
-    double *dk = (double *)malloc(ksz*sizeof *dk);
-#else
-    double dk[ksz];
-#endif
+    double *dk = (double *)malloc(sizeof(double)*ksz);
 
     // for kernel of length 5:
     // dk[0] = f(-2), dk[1] = f(-1), dk[2] = f(0), dk[3] = f(1), dk[4] = f(2)
@@ -388,11 +370,7 @@ void image_u8_gaussian_blur(image_u8_t *im, double sigma, int ksz)
     for (int i = 0; i < ksz; i++)
         dk[i] /= acc;
 
-#ifdef _MSC_VER
-    uint8_t *k = (uint8_t *)malloc(ksz*sizeof *k);
-#else
-    uint8_t k[ksz];
-#endif
+    uint8_t *k = (uint8_t *)malloc(sizeof(uint8_t)*ksz);
     for (int i = 0; i < ksz; i++)
         k[i] = dk[i]*255;
 
@@ -400,13 +378,10 @@ void image_u8_gaussian_blur(image_u8_t *im, double sigma, int ksz)
         for (int i = 0; i < ksz; i++)
             printf("%d %15f %5d\n", i, dk[i], k[i]);
     }
+    free(dk);
 
     image_u8_convolve_2D(im, k, ksz);
-
-#ifdef _MSC_VER
-    free(dk);
     free(k);
-#endif
 }
 
 image_u8_t *image_u8_rotate(const image_u8_t *in, double rad, uint8_t pad)
@@ -433,10 +408,10 @@ image_u8_t *image_u8_rotate(const image_u8_t *in, double rad, uint8_t pad)
         float nx = px*c - py*s;
         float ny = px*s + py*c;
 
-        xmin = (std::min)(xmin, nx);
-        xmax = (std::max)(xmax, nx);
-        ymin = (std::min)(ymin, ny);
-        ymax = (std::max)(ymax, ny);
+        xmin = fmin(xmin, nx);
+        xmax = fmax(xmax, nx);
+        ymin = fmin(ymin, ny);
+        ymax = fmax(ymax, ny);
     }
 
     int owidth = ceil(xmax-xmin), oheight = ceil(ymax - ymin);
@@ -541,18 +516,18 @@ void image_u8_fill_line_max(image_u8_t *im, const image_u8_lut_t *lut, const flo
     double theta = atan2(xy1[1]-xy0[1], xy1[0]-xy0[0]);
     double v = sin(theta), u = cos(theta);
 
-    int ix0 = iclamp((std::min)(xy0[0], xy1[0]) - max_dist, 0, im->width-1);
-    int ix1 = iclamp((std::max)(xy0[0], xy1[0]) + max_dist, 0, im->width-1);
+    int ix0 = iclamp(fmin(xy0[0], xy1[0]) - max_dist, 0, im->width-1);
+    int ix1 = iclamp(fmax(xy0[0], xy1[0]) + max_dist, 0, im->width-1);
 
-    int iy0 = iclamp((std::min)(xy0[1], xy1[1]) - max_dist, 0, im->height-1);
-    int iy1 = iclamp((std::max)(xy0[1], xy1[1]) + max_dist, 0, im->height-1);
+    int iy0 = iclamp(fmin(xy0[1], xy1[1]) - max_dist, 0, im->height-1);
+    int iy1 = iclamp(fmax(xy0[1], xy1[1]) + max_dist, 0, im->height-1);
 
     // the line segment xy0---xy1 can be parameterized in terms of line coordinates.
     // We fix xy0 to be at line coordinate 0.
     float xy1_line_coord = (xy1[0]-xy0[0])*u + (xy1[1]-xy0[1])*v;
 
-    float min_line_coord = (std::min)(0.f, xy1_line_coord);
-    float max_line_coord = (std::max)(0.f, xy1_line_coord);
+    float min_line_coord = fmin(0, xy1_line_coord);
+    float max_line_coord = fmax(0, xy1_line_coord);
 
     for (int iy = iy0; iy <= iy1; iy++) {
         float y = iy+.5;

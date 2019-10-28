@@ -25,11 +25,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _IMAGE_U8X4_H
-#define _IMAGE_U8X4_H
+#pragma once
 
 #include <stdint.h>
-#include "common/image_types.h"
+#include "image_types.h"
 
 #ifdef __cplusplus
 //extern "C" {
@@ -63,6 +62,4 @@ image_u8x4_t *image_u8x4_create_from_pam(const char *path);
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

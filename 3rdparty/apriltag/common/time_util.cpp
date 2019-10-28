@@ -28,16 +28,6 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdlib.h>
 #include <math.h>
 #include "time_util.h"
-#if defined(_MSC_VER) || defined(__MINGW32__)
-#include <windows.h>
-#endif
-
-#if defined(_MSC_VER) && (_MSC_VER < 1900) && !defined(_CRT_NO_TIME_T)
-struct timespec {
-	time_t tv_sec;
-	long tv_nsec;
-};
-#endif
 
 struct timeutil_rest
 {
@@ -85,48 +75,29 @@ void utime_to_timespec(int64_t v, struct timespec *ts)
     ts->tv_nsec = (suseconds_t) utime_get_useconds(v)*1000;
 }
 
-#if defined(_MSC_VER) && ! defined(WINRT)
-//https://stackoverflow.com/a/17283549/6055233
-void usleep(__int64 usec)
-{
-  HANDLE timer;
-  LARGE_INTEGER ft;
-
-  ft.QuadPart = -(10 * usec); // Convert to 100 nanosecond interval, negative value indicates relative time
-
-  timer = CreateWaitableTimer(NULL, TRUE, NULL);
-  SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
-  WaitForSingleObject(timer, INFINITE);
-  CloseHandle(timer);
-}
-#endif
-
-#ifndef WINRT
 int32_t timeutil_usleep(int64_t useconds)
 {
+#ifdef _WIN32
+    Sleep(useconds/1000);
+    return 0;
+#else
     // unistd.h function, but usleep is obsoleted in POSIX.1-2008.
     // TODO: Eventually, rewrite this to use nanosleep
-#ifdef _MSC_VER
-  usleep(useconds);
-  return 0;
-#else
     return usleep(useconds);
 #endif
 }
-#endif
 
 uint32_t timeutil_sleep(unsigned int seconds)
 {
-    // unistd.h function
-#if defined(_MSC_VER) || defined(__MINGW32__)
-  Sleep(seconds);
-  return 0;
+#ifdef _WIN32
+    Sleep(seconds*1000);
+    return 0;
 #else
+    // unistd.h function
     return sleep(seconds);
 #endif
 }
 
-#ifndef WINRT
 int32_t timeutil_sleep_hz(timeutil_rest_t *rest, double hz)
 {
     int64_t max_delay = 1000000L/hz;
@@ -140,7 +111,6 @@ int32_t timeutil_sleep_hz(timeutil_rest_t *rest, double hz)
 
     return ret;
 }
-#endif
 
 void timeutil_timer_reset(timeutil_rest_t *rest)
 {

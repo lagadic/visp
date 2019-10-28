@@ -1,27 +1,27 @@
 project(${APRILTAG_LIBRARY})
 
 set(APRILTAG_MAJOR_VERSION 3 PARENT_SCOPE)
-set(APRILTAG_MINOR_VERSION 0 PARENT_SCOPE)
-set(APRILTAG_PATCH_VERSION 0 PARENT_SCOPE)
+set(APRILTAG_MINOR_VERSION 1 PARENT_SCOPE)
+set(APRILTAG_PATCH_VERSION 1 PARENT_SCOPE)
 
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB tag_srcs tag*.c)
-file(GLOB lib_srcs *.c common/*.c)
-file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
+file(GLOB tag_srcs tag*.cpp)
+file(GLOB lib_srcs *.cpp common/*.cpp)
+file(GLOB lib_hdrs *.h common/*.h)
 
 vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
 vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
 vp_list_filterout(lib_hdrs common/getopt.h)    # useless and produces errors on uwp
 
 if(NOT WITH_APRILTAG_BIG_FAMILY)
-  vp_list_filterout(lib_srcs tagCircle49h12.c)
+  vp_list_filterout(lib_srcs tagCircle49h12.cpp)
   vp_list_filterout(lib_hdrs tagCircle49h12.h)
-  vp_list_filterout(lib_srcs tagCustom48h12.c)
+  vp_list_filterout(lib_srcs tagCustom48h12.cpp)
   vp_list_filterout(lib_hdrs tagCustom48h12.h)
-  vp_list_filterout(lib_srcs tagStandard41h12.c)
+  vp_list_filterout(lib_srcs tagStandard41h12.cpp)
   vp_list_filterout(lib_hdrs tagStandard41h12.h)
-  vp_list_filterout(lib_srcs tagStandard52h13.c)
+  vp_list_filterout(lib_srcs tagStandard52h13.cpp)
   vp_list_filterout(lib_hdrs tagStandard52h13.h)
 endif()
 
@@ -30,10 +30,6 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   endif()
 endif()
-
-foreach(f ${lib_srcs})
-  set_source_files_properties(${f} PROPERTIES LANGUAGE CXX )
-endforeach()
 
 add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 if(WIN32 AND MSVC)

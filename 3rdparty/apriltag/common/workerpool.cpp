@@ -31,7 +31,12 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include <inttypes.h>
+#include <inttypes.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 #include "workerpool.h"
 #include "timeprofile.h"
@@ -199,91 +204,13 @@ void workerpool_run(workerpool_t *wp)
     }
 }
 
-#if _WIN32
-// Source: https://stackoverflow.com/a/735472
-///* This code is public domain -- Will Hartung 4/9/09 */
-size_t getline(char **lineptr, size_t *n, FILE *stream) {
-    char *bufptr = NULL;
-    char *p = bufptr;
-    size_t size;
-    int c;
-
-    if (lineptr == NULL) {
-        return -1;
-    }
-    if (stream == NULL) {
-        return -1;
-    }
-    if (n == NULL) {
-        return -1;
-    }
-    bufptr = *lineptr;
-    size = *n;
-
-    c = fgetc(stream);
-    if (c == EOF) {
-        return -1;
-    }
-    if (bufptr == NULL) {
-        bufptr = (char *)malloc(128);
-        if (bufptr == NULL) {
-            return -1;
-        }
-        size = 128;
-    }
-    p = bufptr;
-    while(c != EOF) {
-        int offset = p - bufptr;
-        if ((p - bufptr + 1) > size) {
-            size = size + 128;
-            bufptr = (char *)realloc(bufptr, size);
-            if (bufptr == NULL) {
-                return -1;
-            }
-            p = bufptr + offset;
-        }
-        *p++ = c;
-        if (c == '\n') {
-            break;
-        }
-        c = fgetc(stream);
-    }
-
-    *p++ = '\0';
-    *lineptr = bufptr;
-    *n = size;
-
-    return p - bufptr - 1;
-}
-#endif
-
 int workerpool_get_nprocs()
 {
-#ifdef _MSC_VER
-  int nproc = 1;
-#elif ANDROID
-  int nproc = 1;
+#ifdef WIN32
+    SYSTEM_INFO sysinfo;
+    GetSystemInfo(&sysinfo);
+    return sysinfo.dwNumberOfProcessors;
 #else
-    FILE * f = fopen("/proc/cpuinfo", "r");
-    size_t n = 0;
-    char * buf = NULL;
-
-    int nproc = 0;
-
-    while(getline(&buf, &n, f) != -1)
-    {
-        if(!str_starts_with(buf, "processor"))
-            continue;
-
-       int colon = str_indexof(buf, ":");
-
-       int v = atoi(&buf[colon+1]);
-       if (v > nproc)
-	 nproc = v;
-    }
-
-    free(buf);
+    return sysconf (_SC_NPROCESSORS_ONLN);
 #endif
-
-    return nproc;
 }

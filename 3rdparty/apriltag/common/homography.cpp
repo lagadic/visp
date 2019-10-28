@@ -185,8 +185,8 @@ matd_t *homography_compute(zarray_t *correspondences, int flags)
 
             matd_destroy(Ainv);
         } else {
-            double data_b[] = {1, 0, 0, 0, 0, 0, 0, 0, 0};
-            matd_t *b = matd_create_data(9, 1, data_b);
+          double data_b[] = {1, 0, 0, 0, 0, 0, 0, 0, 0};
+          matd_t *b = matd_create_data(9, 1, data_b);
             matd_t *Ainv = NULL;
 
             if (0) {
@@ -254,7 +254,7 @@ matd_t *homography_compute(zarray_t *correspondences, int flags)
 // And that the homography is equal to the projection matrix times the
 // model matrix, recover the model matrix (which is returned). Note
 // that the third column of the model matrix is missing in the
-// expression below, reflecting the fact that the homography assumes
+// expresison below, reflecting the fact that the homography assumes
 // all points are at z=0 (i.e., planar) and that the element of z is
 // thus omitted.  (3x1 instead of 4x1).
 //
@@ -317,6 +317,7 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
         // do polar decomposition. This makes the rotation matrix
         // "proper", but probably increases the reprojection error. An
         // iterative alignment step would be superior.
+
         double data_[] = { R00, R01, R02,
                            R10, R11, R12,
                            R20, R21, R22 };
@@ -343,6 +344,7 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
 
         matd_destroy(R);
     }
+
     double data_[] = { R00, R01, R02, TX,
                        R10, R11, R12, TY,
                        R20, R21, R22, TZ,

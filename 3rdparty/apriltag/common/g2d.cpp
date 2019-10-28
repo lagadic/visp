@@ -29,14 +29,15 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
-#include <algorithm>
 
 #include "g2d.h"
 #include "common/math_util.h"
 
-#if defined(__MINGW32__) || defined(_MSC_VER)
-#define random rand
+#ifdef _WIN32
+static inline long int random(void)
+{
+        return rand();
+}
 #endif
 
 double g2d_distance(const double a[2], const double b[2])

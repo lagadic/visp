@@ -28,25 +28,13 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdlib.h>
 #include "apriltag.h"
 
-#if defined (__clang__)
-#define APRILTAG_NO_OPTIMIZATION __attribute__ ((optnone))
-#elif __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
-#define APRILTAG_NO_OPTIMIZATION __attribute__ ((optimize("O0")))
-#else
-#define APRILTAG_NO_OPTIMIZATION /* nothing */
-#endif
-
-apriltag_family_t APRILTAG_NO_OPTIMIZATION *tagStandard41h12_create()
+apriltag_family_t *tagStandard41h12_create()
 {
-   apriltag_family_t *tf = (apriltag_family_t *)calloc(1, sizeof(apriltag_family_t));
-#ifdef WINRT
-   tf->name = _strdup("tagStandard41h12");
-#else
+   apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
    tf->name = strdup("tagStandard41h12");
-#endif
    tf->h = 12;
    tf->ncodes = 2115;
-   tf->codes = (uint64_t *)calloc(2115, sizeof(uint64_t));
+   tf->codes = calloc(2115, sizeof(uint64_t));
    tf->codes[0] = 0x000001bd8a64ad10UL;
    tf->codes[1] = 0x000001bdc4f3b2d5UL;
    tf->codes[2] = 0x000001bdff82b89aUL;
@@ -2163,8 +2151,8 @@ apriltag_family_t APRILTAG_NO_OPTIMIZATION *tagStandard41h12_create()
    tf->codes[2113] = 0x0000015cff6a6f12UL;
    tf->codes[2114] = 0x000001ee40155a64UL;
    tf->nbits = 41;
-   tf->bit_x = (uint32_t *)calloc(41, sizeof(uint32_t));
-   tf->bit_y = (uint32_t *)calloc(41, sizeof(uint32_t));
+   tf->bit_x = calloc(41, sizeof(uint32_t));
+   tf->bit_y = calloc(41, sizeof(uint32_t));
    tf->bit_x[0] = -2;
    tf->bit_y[0] = -2;
    tf->bit_x[1] = -1;

@@ -25,28 +25,29 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _TIME_UTIL_H
-#define _TIME_UTIL_H
+#pragma once
 
-//#include <stdbool.h>
+#include <stdbool.h>
 #include <stdint.h>
-#if defined(_MSC_VER) || defined(__MINGW32__)
-#include "sys/times.h"
-#include "time.h"
+#ifdef _WIN32
+#include <windows.h>
+typedef long long suseconds_t;
+#endif
+#ifdef _MSC_VER
+
+inline int gettimeofday(struct timeval* tp, void* tzp)
+{
+  unsigned long t;
+  t = timeGetTime();
+  tp->tv_sec = t / 1000;
+  tp->tv_usec = t % 1000;
+  return 0;
+}
 #else
 #include <sys/time.h>
-#include <time.h>
-#endif
-
-#if defined(__MINGW32__) // to define struct timespec
-#include <pthread.h>
-#endif
-
-#ifdef _MSC_VER
-#include <io.h>
-#else
 #include <unistd.h>
 #endif
+#include <time.h>
 
 #ifdef __cplusplus
 //extern "C" {
@@ -62,13 +63,9 @@ int64_t utime_get_useconds(int64_t v);
 void    utime_to_timeval(int64_t v, struct timeval *tv);
 void    utime_to_timespec(int64_t v, struct timespec *ts);
 
-#ifndef WINRT
 int32_t  timeutil_usleep(int64_t useconds);
-#endif
 uint32_t timeutil_sleep(unsigned int seconds);
-#ifndef WINRT
 int32_t  timeutil_sleep_hz(timeutil_rest_t *rest, double hz);
-#endif
 
 void timeutil_timer_reset(timeutil_rest_t *rest);
 void timeutil_timer_start(timeutil_rest_t *rest);
@@ -77,10 +74,8 @@ bool timeutil_timer_timeout(timeutil_rest_t *rest, double timeout_s);
 
 int64_t time_util_hhmmss_ss_to_utime(double time);
 
-
+int64_t timeutil_ms_to_us(int32_t ms);
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

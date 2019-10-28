@@ -27,6 +27,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #ifndef _ZARRAY_H
 #define _ZARRAY_H
+//#pragma once
 
 #include <stddef.h>
 #include <assert.h>
