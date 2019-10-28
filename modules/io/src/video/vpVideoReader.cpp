@@ -268,7 +268,6 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
   if (!isOpen) {
     open(I);
   }
-
   // getFrame(I,frameCount);
   if (imSequence != NULL) {
     imSequence->setStep(frameStep);
@@ -319,10 +318,12 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
 #endif
     }
 
-    if (frame.empty())
-      setLastFrameIndex(frameCount - frameStep);
-    else
+    if (frame.empty()) {
+      std::cout << "Warning: Unable to decode image " << frameCount - frameStep << std::endl;
+    }
+    else {
       vpImageConvert::convert(frame, I);
+    }
   }
 #endif
 }
@@ -390,10 +391,12 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
 #endif
     }
 
-    if (frame.empty())
-      setLastFrameIndex(frameCount - frameStep);
-    else
+    if (frame.empty()) {
+      std::cout << "Warning: Unable to decode image " << frameCount - frameStep << std::endl;
+    }
+    else {
       vpImageConvert::convert(frame, I);
+    }
   }
 #endif
 }
