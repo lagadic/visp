@@ -30,11 +30,11 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 apriltag_family_t *tagCircle49h12_create()
 {
-   apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
+   apriltag_family_t *tf = (apriltag_family_t *)calloc(1, sizeof(apriltag_family_t));
    tf->name = strdup("tagCircle49h12");
    tf->h = 12;
    tf->ncodes = 65535;
-   tf->codes = calloc(65535, sizeof(uint64_t));
+   tf->codes = (uint64_t *)calloc(65535, sizeof(uint64_t));
    tf->codes[0] = 0x0000c6c921d8614aUL;
    tf->codes[1] = 0x0000c6c95c67670fUL;
    tf->codes[2] = 0x0000c6c996f66cd4UL;
@@ -65571,8 +65571,8 @@ apriltag_family_t *tagCircle49h12_create()
    tf->codes[65533] = 0x0001719f5eec237fUL;
    tf->codes[65534] = 0x0001e520c2997b43UL;
    tf->nbits = 49;
-   tf->bit_x = calloc(49, sizeof(uint32_t));
-   tf->bit_y = calloc(49, sizeof(uint32_t));
+   tf->bit_x = (uint32_t *)calloc(49, sizeof(uint32_t));
+   tf->bit_y = (uint32_t *)calloc(49, sizeof(uint32_t));
    tf->bit_x[0] = 1;
    tf->bit_y[0] = -3;
    tf->bit_x[1] = 2;
