@@ -69,21 +69,22 @@ images.
 
   This class may benefit from optional 3rd parties:
   - libpng: If installed this optional 3rd party is used to read a sequence of
-PNG images. Installation instructions are provided here
-https://visp.inria.fr/3rd_png.
+    PNG images. Installation instructions are provided here
+    https://visp.inria.fr/3rd_png.
   - libjpeg: If installed this optional 3rd party is used to read a sequence
-of JPEG images. Installation instructions are provided here
-https://visp.inria.fr/3rd_jpeg.
+    of JPEG images. Installation instructions are provided here
+    https://visp.inria.fr/3rd_jpeg.
   - OpenCV: If installed this optional 3rd party is used to read a sequence of
-images where images could be in TIFF, BMP, DIB, PBM, RASTER, JPEG2000 format.
-If libpng or libjpeg is not installed, OpenCV is also used to consider these
-image formats. OpenCV allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV,
-FLV, MKV video formats. Installation instructions are provided here
-https://visp.inria.fr/3rd_opencv.
+    images where images could be in TIFF, BMP, DIB, PBM, RASTER, JPEG2000 format.
+    If libpng or libjpeg is not installed, OpenCV is also used to consider these
+    image formats. OpenCV allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV,
+    FLV, MKV video formats. Installation instructions are provided here
+    https://visp.inria.fr/3rd_opencv.
 
   The following example available in tutorial-video-reader.cpp shows how this
   class is really easy to use. It enables to read a video file named
-video.mpeg. \include tutorial-video-reader.cpp
+  video.mpeg.
+  \include tutorial-video-reader.cpp
 
   As shown in the next example, this class allows also to access to a specific
   frame. But be careful, for video files, the getFrame() method is not precise
@@ -119,9 +120,9 @@ int main()
   sequence of images. The images are stored in the folder "./image" and are
   named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ... As explained
   in setFirstFrameIndex() and setLastFrameIndex() it is also possible to set
-the first and last image numbers to read a portion of the sequence. If these
-two functions are not used, first and last image numbers are set automatically
-to match the first and image images of the sequence.
+  the first and last image numbers to read a portion of the sequence. If these
+  two functions are not used, first and last image numbers are set automatically
+  to match the first and image images of the sequence.
 
   \code
 #include <visp3/io/vpVideoReader.h>
@@ -145,8 +146,7 @@ int main()
 }
   \endcode
 
-  Note that it is also possible to access to a specific frame using
-getFrame().
+  Note that it is also possible to access to a specific frame using getFrame().
 \code
 #include <visp3/io/vpVideoReader.h>
 
@@ -223,6 +223,7 @@ private:
   //! The frame step
   long frameStep;
   double frameRate;
+  bool m_lastframe_unknown;
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS

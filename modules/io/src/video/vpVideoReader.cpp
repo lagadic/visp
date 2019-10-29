@@ -60,7 +60,7 @@ vpVideoReader::vpVideoReader()
     capture(), frame(),
 #endif
     formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0), firstFrame(0), lastFrame(0),
-    firstFrameIndexIsSet(false), lastFrameIndexIsSet(false), frameStep(1), frameRate(0.)
+    firstFrameIndexIsSet(false), lastFrameIndexIsSet(false), frameStep(1), frameRate(0.), m_lastframe_unknown(false)
 {
 }
 
@@ -320,6 +320,10 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
 
     if (frame.empty()) {
       std::cout << "Warning: Unable to decode image " << frameCount - frameStep << std::endl;
+      if (m_lastframe_unknown) {
+        // Set last frame to this image index
+        setLastFrameIndex(frameCount - frameStep);
+      }
     }
     else {
       vpImageConvert::convert(frame, I);
@@ -690,22 +694,23 @@ void vpVideoReader::findLastFrameIndex()
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
   else if (!lastFrameIndexIsSet) {
     lastFrame = (long)capture.get(cv::CAP_PROP_FRAME_COUNT);
-    if (lastFrame <= 2) // with tutorial/matching/video-postcard.mpeg it
-                        // return 2 with OpenCV 3.0.0
-    {
-      // std::cout << "Warning: Problem with cv::CAP_PROP_FRAME_COUNT. We set
-      // video last frame to an arbitrary value (1000)." << std::endl;
+    std::cout << "lastFrame: " << lastFrame << std::endl;
+    if (lastFrame <= 2) {
+      // With visp/tutorial/detection/matching/video-postcard.mpeg that is MPEG-2 it return 2 with OpenCV 3.0.0
+      // With visp-images/video/cube.mpeg that is MPEG-1 it return 1 with OpenCV 4.1.1
+      // We set video last frame to an arbitrary value 100000 and set a flag
+      m_lastframe_unknown = true;
       lastFrame = 100000; // Set lastFrame to an arbitrary value
     }
   }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   else if (!lastFrameIndexIsSet) {
     lastFrame = (long)capture.get(CV_CAP_PROP_FRAME_COUNT);
-    if (lastFrame <= 2) // with tutorial/matching/video-postcard.mpeg it
-                        // return 2 with OpenCV 2.4.10
-    {
-      // std::cout << "Warning: Problem with CV_CAP_PROP_FRAME_COUNT. We set
-      // video last frame to an arbitrary value (1000)." << std::endl;
+    if (lastFrame <= 2) {
+      // With visp/tutorial/detection/matching/video-postcard.mpeg that is MPEG-2 it return 2 with OpenCV 3.0.0
+      // With visp-images/video/cube.mpeg that is MPEG-1 it return 1 with OpenCV 4.1.1
+      // We set video last frame to an arbitrary value 100000 and set a flag
+      m_lastframe_unknown = true;
       lastFrame = 100000; // Set lastFrame to an arbitrary value
     }
   }
