@@ -91,7 +91,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input video path>                                %s\n\
      Set video input path.\n\
-     From this path read \"video/video.mpeg\"\n\
+     From this path read \"video/cube.mpeg\"\n\
      video.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
