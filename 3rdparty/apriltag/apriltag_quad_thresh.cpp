@@ -1557,7 +1557,7 @@ zarray_t* do_gradient_clusters(image_u8_t* threshim, int ts, int y0, int y1, int
                             clustermap[clustermap_bucket] = entry;          \
                         }                                                   \
                                                                             \
-                        struct pt p = { .x = (uint16_t)(2*x + dx), .y = (uint16_t)(2*y + dy), .gx = (int16_t)(dx*((int) v1-v0)), .gy = (int16_t)(dy*((int) v1-v0))}; \
+                        struct pt p = { (uint16_t)(2*x + dx), (uint16_t)(2*y + dy), (int16_t)(dx*((int) v1-v0)), (int16_t)(dy*((int) v1-v0))}; \
                         zarray_add(entry->cluster, &p);                     \
                     }                                                   \
                 }                                                       \

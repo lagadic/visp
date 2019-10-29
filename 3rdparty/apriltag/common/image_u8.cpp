@@ -42,10 +42,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 image_u8_t *image_u8_create_stride(unsigned int width, unsigned int height, unsigned int stride)
 {
-    uint8_t *buf = (uint8_t *)calloc(height*stride, sizeof(uint8_t));
+    uint8_t *buf = (uint8_t *)calloc((size_t)(height)*(size_t)(stride), sizeof(uint8_t));
 
     // const initializer
-    image_u8_t tmp = { .width = (int32_t)width, .height = (int32_t)height, .stride = (int32_t)stride, .buf = buf };
+    image_u8_t tmp = { (int32_t)width, (int32_t)height, (int32_t)stride, buf };
 
     image_u8_t *im = (image_u8_t *)calloc(1, sizeof(image_u8_t));
     memcpy(im, &tmp, sizeof(image_u8_t));
@@ -69,11 +69,11 @@ image_u8_t *image_u8_create_alignment(unsigned int width, unsigned int height, u
 
 image_u8_t *image_u8_copy(const image_u8_t *in)
 {
-    uint8_t *buf = (uint8_t *)malloc(in->height*in->stride*sizeof(uint8_t));
-    memcpy(buf, in->buf, in->height*in->stride*sizeof(uint8_t));
+    uint8_t *buf = (uint8_t *)malloc((size_t)(in->height)*(size_t)(in->stride)*sizeof(uint8_t));
+  memcpy(buf, in->buf, (size_t)(in->height) * (size_t)(in->stride) * sizeof(uint8_t));
 
     // const initializer
-    image_u8_t tmp = { .width = (int32_t)in->width, .height = (int32_t)in->height, .stride = (int32_t)in->stride, .buf = buf };
+    image_u8_t tmp = { (int32_t)in->width, (int32_t)in->height, (int32_t)in->stride, buf };
 
     image_u8_t *copy = (image_u8_t *)calloc(1, sizeof(image_u8_t));
     memcpy(copy, &tmp, sizeof(image_u8_t));
@@ -352,7 +352,7 @@ void image_u8_gaussian_blur(image_u8_t *im, double sigma, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     // build the kernel.
-    double *dk = (double *)malloc(sizeof(double)*ksz);
+    double *dk = (double *)malloc(sizeof(double) * ksz);
 
     // for kernel of length 5:
     // dk[0] = f(-2), dk[1] = f(-1), dk[2] = f(0), dk[3] = f(1), dk[4] = f(2)
