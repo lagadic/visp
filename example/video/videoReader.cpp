@@ -291,6 +291,13 @@ int main(int argc, const char **argv)
       std::cout << "Display frame: " << reader.getFrameIndex() << std::endl;
       if (opt_display) {
         vpDisplay::display(I);
+        if (opt_click_allowed) {
+          vpDisplay::displayText(I, 15, 15, "A click to stop...", vpColor::red);
+
+          if (vpDisplay::getClick(I, false)) {
+            break;
+          }
+        }
         vpDisplay::flush(I);
       }
     }
