@@ -25,29 +25,27 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#pragma once
+#ifndef _TIME_UTIL_H
+#define _TIME_UTIL_H
 
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <stdint.h>
-#ifdef _WIN32
-#include <windows.h>
-typedef long long suseconds_t;
-#endif
-#ifdef _MSC_VER
-
-inline int gettimeofday(struct timeval* tp, void* tzp)
-{
-  unsigned long t;
-  t = timeGetTime();
-  tp->tv_sec = t / 1000;
-  tp->tv_usec = t % 1000;
-  return 0;
-}
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#include "sys/times.h"
+#include "time.h"
 #else
 #include <sys/time.h>
+#include <time.h>
+#endif
+#if defined(__MINGW32__) // to define struct timespec
+#include <pthread.h>
+#endif
+
+#ifdef _MSC_VER
+#include <io.h>
+#else
 #include <unistd.h>
 #endif
-#include <time.h>
 
 #ifdef __cplusplus
 //extern "C" {
@@ -78,4 +76,6 @@ int64_t timeutil_ms_to_us(int32_t ms);
 
 #ifdef __cplusplus
 //}
+#endif
+
 #endif

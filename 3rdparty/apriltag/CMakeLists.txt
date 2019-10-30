@@ -8,7 +8,7 @@ vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB tag_srcs tag*.cpp)
 file(GLOB lib_srcs *.cpp common/*.cpp)
-file(GLOB lib_hdrs *.h common/*.h)
+file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
 
 vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
 vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
