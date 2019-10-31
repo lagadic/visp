@@ -98,6 +98,11 @@ if(USE_PTU46)
   list(APPEND opt_libs ${PTU46_LIBRARIES})
 endif()
 
+if(USE_FLIRPTUSDK)
+  list(APPEND opt_incs ${FLIRPTUSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${FLIRPTUSDK_LIBRARIES})
+endif()
+
 if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
   # Under Unix we need Aria, pthread, dl and rt libraries
   list(APPEND opt_incs ${ARIA_INCLUDE_DIRS})
