@@ -54,13 +54,45 @@
 /*!
   \class vpRobotFlirPtu
   \ingroup group_robot_real_arm
-  Interface for  Flir Ptu Cpi robot.
+  Interface for FLIR pan-tilt units compatible with FLIR PTU-SDK.
+
+  \warning On Unix-like OS, if you experienced the following error when running servoFlirPtu.cpp:
+  \code
+  Failed to open /dev/ttyUSB0: Permission denied.
+  \endcode
+  1. Add users to the "dialout" group:
+  \code
+  $ sudo adduser <username> dialout
+  \endcode
+  2. Reboot
+
+  \warning Again on Unix-like OS, if you experienced the following error during ViSP build:
+  \code
+  <your path>/sdk-x.y.z/libcpi.a(cerial.o): relocation R_X86_64_PC32 against symbol `serposix' can not be used when making a shared object; recompile with -fPIC
+  \endcode
+  1. Enter FLIR PTU SDK folder and modify `config.mk` to add `-fPIC` build flag
+  \code
+  $ cat <your path>/sdk-x.y.y/config.mk
+  CFLAGS=-g -Wall -Werror -DLITTLE_ENDIAN -fPIC
+  \encode
+  2. Rebuild PTU-SDK
+  \code
+  $ cd <your path>/sdk-x.y.y
+  $ make clean
+  $ make
+  \encode
+  3. Rebuild ViSP
+  $ cd $VISP_WS/visp-build
+  $ make -j4
 */
 class VISP_EXPORT vpRobotFlirPtu : public vpRobot
 {
 public:
   vpRobotFlirPtu();
   virtual ~vpRobotFlirPtu();
+
+  void connect(const std::string &portname, int baudrate=9600);
+  void disconnect();
 
   void get_eJe(vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
@@ -73,6 +105,8 @@ public:
 
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  vpColVector getPanLimit();
+  vpColVector getTiltLimit();
 
   /*!
     Set constant transformation between end-effector and tool frame.
@@ -80,18 +114,29 @@ public:
    */
   void set_eMc(vpHomogeneousMatrix &eMc) { m_eMc = eMc; }
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPositioningVelocity(double velocity);
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
 
 protected:
   void init();
+  void getLimits();
   void getJointPosition(vpColVector &q);
   void setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
   void setJointVelocity(const vpColVector &qdot);
 
 protected:
   vpHomogeneousMatrix m_eMc; //!< Constant transformation between end-effector and tool (or camera) frame
+
+  struct cerial *m_cer;
+  uint16_t m_status;
+  vpColVector m_pan_limit; // Pan min/max position in rad
+  vpColVector m_tilt_limit; // Tilt min/max position in rad
+  int m_pu, m_tu;
+  double m_pan_res, m_tilt_res;
+  bool m_connected;
+  int m_njoints;
+  double m_positioning_velocity;
 };
 
 #endif
 #endif
-

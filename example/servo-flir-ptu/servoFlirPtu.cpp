@@ -47,19 +47,37 @@ int main()
 {
   try {
     vpRobotFlirPtu robot;
-    vpColVector q(2);
+    vpColVector q(2), q_mes;
+
+    robot.connect("/dev/ttyUSB0");
+
+    std::cout << "Pan  min/max [deg]: " << vpMath::deg(robot.getPanLimit()[0])  << " " << vpMath::deg(robot.getPanLimit()[1])  << std::endl;
+    std::cout << "Tilt min/max [deg]: " << vpMath::deg(robot.getTiltLimit()[0]) << " " << vpMath::deg(robot.getTiltLimit()[1]) << std::endl;
 
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
     q = 0;
-    std::cout << "Set position in the articular frame: " << q.t() << std::endl;
+    std::cout << "Set joint position [deg]: " << vpMath::deg(q[0]) << " " << vpMath::deg(q[1]) << std::endl;
+    robot.setPositioningVelocity(100);
     robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, q_mes);
 
-    q[0] = vpMath::rad(10);
-    q[1] = vpMath::rad(20);
-    std::cout << "Set position in the articular frame: " << q.t() << std::endl;
+    std::cout << "Position reached [deg]: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << std::endl;
+    std::cout << "Positionning achieved. Enter a caracter to continue" << std::endl;
+    std::cin.get();
+
+//    q[0] = vpMath::rad(10);
+//    q[1] = vpMath::rad(20);
+
+    q = vpMath::rad(10);
+    std::cout << "Set joint position [deg]: " << vpMath::deg(q[0]) << " " << vpMath::deg(q[1]) << std::endl;
     robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, q_mes);
 
+    std::cout << "Position reached [deg]: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << std::endl;
+    std::cout << "Positionning achieved. Enter a caracter to continue" << std::endl;
+
+    return 0;
     vpColVector qm(2);
     robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
     std::cout << "Position in the articular frame " << qm.t() << std::endl;
@@ -99,7 +117,7 @@ int main()
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
     vpTime::sleepMs(2000);
   } catch (const vpException &e) {
-    std::cout << "Catch Flir Ptu exception: " << e << std::endl;
+    std::cout << "Catch Flir Ptu exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
