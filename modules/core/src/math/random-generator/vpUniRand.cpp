@@ -62,6 +62,10 @@
    * your project.
    */
 
+// To ensure UINT32_MAX, INT32_MX are defined on centos, ubuntu 12.04 we define __STDC_LIMIT_MACROS
+
+#define __STDC_LIMIT_MACROS
+
 #include <visp3/core/vpUniRand.h>
 
 vpUniRand::vpUniRand() :
