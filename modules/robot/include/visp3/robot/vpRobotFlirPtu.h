@@ -74,16 +74,18 @@
   \code
   $ cat <your path>/sdk-x.y.y/config.mk
   CFLAGS=-g -Wall -Werror -DLITTLE_ENDIAN -fPIC
-  \encode
+  \endcode
   2. Rebuild PTU-SDK
   \code
   $ cd <your path>/sdk-x.y.y
   $ make clean
   $ make
-  \encode
+  \endcode
   3. Rebuild ViSP
+  \code
   $ cd $VISP_WS/visp-build
   $ make -j4
+  \endcode
 */
 class VISP_EXPORT vpRobotFlirPtu : public vpRobot
 {
