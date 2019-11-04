@@ -29,37 +29,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
 set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
 
 if(CMAKE_CXX98_COMPILE_FEATURES)
-  list (FIND CMAKE_CXX98_COMPILE_FEATURES "cxx_std_98" _index)
-  if (${_index} GREATER -1)
-    set(CXX98_STANDARD_FOUND ON)
-  endif()
+  set(CXX98_STANDARD_FOUND ON)
 endif()
 
 if(CMAKE_CXX11_COMPILE_FEATURES)
   # cxx11 implementation maybe incomplete especially with g++ 4.6.x.
   # That's why we check more in depth for cxx_override that is not available with g++ 4.6.3
-  list (FIND CMAKE_CXX11_COMPILE_FEATURES "cxx_std_11" _index)
+  list (FIND CMAKE_CXX11_COMPILE_FEATURES "cxx_override" _index)
   if (${_index} GREATER -1)
-    list (FIND CMAKE_CXX11_COMPILE_FEATURES "cxx_override" _index)
-    if (${_index} GREATER -1)
-message("CMAKE_CXX11_COMPILE_FEATURES contient cxx_override: ${CMAKE_CXX11_COMPILE_FEATURES}")
-      set(CXX11_STANDARD_FOUND ON)
-    endif()
+    set(CXX11_STANDARD_FOUND ON)
   endif()
 endif()
 
 if(CMAKE_CXX14_COMPILE_FEATURES)
-  list (FIND CMAKE_CXX14_COMPILE_FEATURES "cxx_std_14" _index)
-  if (${_index} GREATER -1)
-    set(CXX14_STANDARD_FOUND ON)
-  endif()
+  set(CXX14_STANDARD_FOUND ON)
 endif()
 
 if(CMAKE_CXX17_COMPILE_FEATURES)
-  list (FIND CMAKE_CXX17_COMPILE_FEATURES "cxx_std_17" _index)
-  if (${_index} GREATER -1)
-    set(CXX17_STANDARD_FOUND ON)
-  endif()
+  set(CXX17_STANDARD_FOUND ON)
 endif()
 
 # Set default c++ standard to 11, the first in the list
