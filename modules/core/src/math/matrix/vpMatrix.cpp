@@ -578,7 +578,7 @@ void vpMatrix::transpose(vpMatrix &At) const
       const int tileSize = 32;
       for (unsigned int i = 0; i < rowNum; i += tileSize) {
         for (unsigned int j = 0; j < colNum; j++) {
-          for (unsigned int b = 0; b < tileSize && i + b < rowNum; b++) {
+          for (unsigned int b = 0; b < static_cast<unsigned int>(tileSize) && i + b < rowNum; b++) {
             At[j][i + b] = (*this)[i + b][j];
           }
         }
