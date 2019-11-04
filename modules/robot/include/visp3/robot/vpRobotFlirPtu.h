@@ -107,8 +107,10 @@ public:
 
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  vpColVector getPanLimit();
-  vpColVector getTiltLimit();
+  vpColVector getPosMax();
+  vpColVector getPosMin();
+  vpColVector getVelMax();
+
 
   /*!
     Set constant transformation between end-effector and tool frame.
@@ -131,10 +133,10 @@ protected:
 
   struct cerial *m_cer;
   uint16_t m_status;
-  vpColVector m_pan_limit; // Pan min/max position in rad
-  vpColVector m_tilt_limit; // Tilt min/max position in rad
-  int m_pu, m_tu;
-  double m_pan_res, m_tilt_res;
+  vpColVector m_pos_max;      //!< Pan min/max position in rad
+  vpColVector m_pos_min;      //!< Tilt min/max position in rad
+  std::vector<int> m_vel_max; //!< Pan/tilt max velocity in counts
+  vpColVector m_res;          //!< Pan/tilt count resolution in deg
   bool m_connected;
   int m_njoints;
   double m_positioning_velocity;

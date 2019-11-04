@@ -51,14 +51,15 @@ int main()
 
     robot.connect("/dev/ttyUSB0");
 
-    std::cout << "Pan  min/max [deg]: " << vpMath::deg(robot.getPanLimit()[0])  << " " << vpMath::deg(robot.getPanLimit()[1])  << std::endl;
-    std::cout << "Tilt min/max [deg]: " << vpMath::deg(robot.getTiltLimit()[0]) << " " << vpMath::deg(robot.getTiltLimit()[1]) << std::endl;
+    std::cout << "Pan  pos min/max [deg]: " << vpMath::deg(robot.getPosMin()[0]) << " " << vpMath::deg(robot.getPosMax()[0]) << std::endl;
+    std::cout << "Tilt pos min/max [deg]: " << vpMath::deg(robot.getPosMin()[1]) << " " << vpMath::deg(robot.getPosMax()[1]) << std::endl;
+    std::cout << "Pan/tilt vel max [deg/s]: " << vpMath::deg(robot.getVelMax()[0]) << " " << vpMath::deg(robot.getVelMax()[1]) << std::endl;
 
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
     q = 0;
     std::cout << "Set joint position [deg]: " << vpMath::deg(q[0]) << " " << vpMath::deg(q[1]) << std::endl;
-    robot.setPositioningVelocity(100);
+    robot.setPositioningVelocity(50);
     robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
     robot.getPosition(vpRobot::ARTICULAR_FRAME, q_mes);
 
@@ -66,10 +67,9 @@ int main()
     std::cout << "Positionning achieved. Enter a caracter to continue" << std::endl;
     std::cin.get();
 
-//    q[0] = vpMath::rad(10);
-//    q[1] = vpMath::rad(20);
+    q[0] = vpMath::rad(20); // Pan poition
+    q[1] = vpMath::rad(20); // Tilt position
 
-    q = vpMath::rad(10);
     std::cout << "Set joint position [deg]: " << vpMath::deg(q[0]) << " " << vpMath::deg(q[1]) << std::endl;
     robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
     robot.getPosition(vpRobot::ARTICULAR_FRAME, q_mes);

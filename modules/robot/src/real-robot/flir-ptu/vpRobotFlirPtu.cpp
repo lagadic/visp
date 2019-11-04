@@ -73,8 +73,9 @@ void vpRobotFlirPtu::init()
   Default constructor.
  */
 vpRobotFlirPtu::vpRobotFlirPtu()
-  : m_eMc(), m_cer(NULL), m_pan_limit(2), m_tilt_limit(2), m_pu(0), m_tu(0),
-    m_pan_res(0.), m_tilt_res(0.), m_connected(false), m_njoints(2), m_positioning_velocity(20.)
+  : m_eMc(), m_cer(NULL), m_status(0),
+    m_pos_max(2), m_pos_min(2), m_vel_max(2), m_res(2),
+    m_connected(false), m_njoints(2), m_positioning_velocity(20.)
 {
   init();
 }
@@ -272,20 +273,21 @@ void vpRobotFlirPtu::getJointPosition(vpColVector &q)
     throw(vpException(vpException::fatalError, "FLIR PTU is not connected."));
   }
 
-  int pan, tilt;
+  std::vector<int> pos(2);
 
-  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_CURRENT_POS_GET, &pan)) {
+  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_CURRENT_POS_GET, &pos[0])) {
     disconnect();
     throw(vpException(vpException::fatalError, "Unable to query pan position."));
   }
-  if(cpi_ptcmd(m_cer, &m_status, OP_TILT_CURRENT_POS_GET, &tilt)) {
+  if(cpi_ptcmd(m_cer, &m_status, OP_TILT_CURRENT_POS_GET, &pos[1])) {
     disconnect();
     throw(vpException(vpException::fatalError, "Unable to query pan position."));
   }
 
   q.resize(2);
-  q[0] = vpMath::rad(m_pan_res * pan);
-  q[1] = vpMath::rad(m_pan_res * tilt);
+  for (size_t i = 0; i < 2; i++) {
+    q[i] = vpMath::rad(m_res[i] * pos[i]);
+  }
 }
 
 /*!
@@ -331,33 +333,34 @@ void vpRobotFlirPtu::setPosition(const vpRobot::vpControlFrameType frame, const 
   }
 
   // Set desired speed wrt max pan/tilt speed
-  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, (int)(m_pu * m_positioning_velocity / 100.)) ||
-          cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, (int)(m_tu * m_positioning_velocity / 100.))){
+  std::cout << "set max vel ---: " << (int)(m_vel_max[0] * m_positioning_velocity / 100.) << " " << (int)(m_vel_max[1] * m_positioning_velocity / 100.) << std::endl;
+  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, (int)(m_vel_max[0] * m_positioning_velocity / 100.)) ||
+          cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, (int)(m_vel_max[1] * m_positioning_velocity / 100.))){
     disconnect();
     throw(vpException(vpException::fatalError, "Setting FLIR pan/tilt positioning velocity failed"));
   }
 
-  if (q[0] < m_pan_limit[0] || q[0] > m_pan_limit[1]) {
-    disconnect();
-    throw(vpException(vpException::fatalError, "Cannot set pan joint position %f (deg). Out of limits [%f, %f].", vpMath::deg(q[0]), vpMath::deg(m_pan_limit[0]), vpMath::deg(m_pan_limit[1])));
-  }
-  if (q[1] < m_tilt_limit[0] || q[1] > m_tilt_limit[1]) {
-    disconnect();
-    throw(vpException(vpException::fatalError, "Cannot set tilt joint position %f (deg). Out of limits [%f, %f].", vpMath::deg(q[1]), vpMath::deg(m_tilt_limit[0]), vpMath::deg(m_tilt_limit[1])));
+  std::vector<int> pos(2);
+
+  for (size_t i = 0; i < 2; i++) {
+    if (q[i] < m_pos_min[i] || q[i] > m_pos_max[i]) {
+      disconnect();
+      throw(vpException(vpException::fatalError, "Cannot set joint %d position %f (deg). Out of limits [%f, %f].",
+                        i, vpMath::deg(q[i]), vpMath::deg(m_pos_min[i]), vpMath::deg(m_pos_max[i])));
+    }
+
+    pos[i]  = static_cast<int>(vpMath::deg(q[i] / m_res[i]));
   }
 
-  int pan  = static_cast<int>(vpMath::deg(q[0] / m_pan_res));
-  int tilt = static_cast<int>(vpMath::deg(q[1] / m_tilt_res));
-
-  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_POS_SET, pan) ||
-     cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_POS_SET, tilt)){
+  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_POS_SET, pos[0]) ||
+     cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_POS_SET, pos[1])){
     disconnect();
-    throw(vpException(vpException::fatalError, "FLIR PTU failed to go to position %d, %d.", pan, tilt));
+    throw(vpException(vpException::fatalError, "FLIR PTU failed to go to position %d, %d.", pos[0], pos[1]));
   }
-  if(cpi_block_until(m_cer, NULL, NULL, OP_PAN_CURRENT_POS_GET, pan) ||
-          cpi_block_until(m_cer, NULL, NULL, OP_TILT_CURRENT_POS_GET, tilt)){
+  if(cpi_block_until(m_cer, NULL, NULL, OP_PAN_CURRENT_POS_GET, pos[0]) ||
+          cpi_block_until(m_cer, NULL, NULL, OP_TILT_CURRENT_POS_GET, pos[1])){
     disconnect();
-    throw(vpException(vpException::fatalError, "FLIR PTU failed to wait until position %d, %d reached", pan, tilt));
+    throw(vpException(vpException::fatalError, "FLIR PTU failed to wait until position %d, %d reached", pos[0], pos[1]));
   }
 }
 
@@ -465,57 +468,70 @@ void vpRobotFlirPtu::getLimits()
   }
 
   int status;
-  int pan_min, pan_max, tilt_min, tilt_max;
+  std::vector<int> pos_min(2), pos_max(2), vel_max(2);
 
-  if((status = cpi_ptcmd(m_cer, &m_status, OP_PAN_MAX_POSITION, &pan_max)) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_PAN_MIN_POSITION, &pan_min)) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_MAX_POSITION, &tilt_max)) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_MIN_POSITION, &tilt_min)) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_PAN_UPPER_SPEED_LIMIT_GET, &m_pu)) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_UPPER_SPEED_LIMIT_GET, &m_tu))){
+  if((status = cpi_ptcmd(m_cer, &m_status, OP_PAN_MAX_POSITION, &pos_max[0])) ||
+     (status = cpi_ptcmd(m_cer, &m_status, OP_PAN_MIN_POSITION, &pos_min[0])) ||
+     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_MAX_POSITION, &pos_max[1])) ||
+     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_MIN_POSITION, &pos_min[1])) ||
+     (status = cpi_ptcmd(m_cer, &m_status, OP_PAN_UPPER_SPEED_LIMIT_GET, &m_vel_max[0])) ||
+     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_UPPER_SPEED_LIMIT_GET, &m_vel_max[1]))){
     disconnect();
     throw(vpException(vpException::fatalError, "Failed to get limits (%d) %s.", m_status, cpi_strerror(m_status)));
   }
 
   // Get the ptu resolution so we can convert the angles to ptu positions
-  if((status = cpi_ptcmd(m_cer, &m_status, OP_PAN_RESOLUTION, &m_pan_res)) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_RESOLUTION, &m_tilt_res))) {
+  if((status = cpi_ptcmd(m_cer, &m_status, OP_PAN_RESOLUTION, &m_res[0])) ||
+     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_RESOLUTION, &m_res[1]))) {
     disconnect();
     throw(vpException(vpException::fatalError, "Failed to get resolution (%d) %s.", status, cpi_strerror(status)));
   }
 
-  // Resolutions are in arc-seconds, but we want degrees
-  m_pan_res /= 3600;
-  m_tilt_res /= 3600;
-
-  m_pan_limit[0] = vpMath::rad(m_pan_res * pan_min);
-  m_pan_limit[1] = vpMath::rad(m_pan_res * pan_max);
-  m_tilt_limit[0] = vpMath::rad(m_tilt_res * tilt_min);
-  m_tilt_limit[1] = vpMath::rad(m_tilt_res * tilt_max);
+  for (size_t i=0; i < 2; i++) {
+    m_res[i] /= 3600.; // Resolutions are in arc-seconds, but we want degrees
+    m_pos_max[i] = vpMath::rad(m_res[i] * pos_max[i]);
+    m_pos_min[i] = vpMath::rad(m_res[i] * pos_min[i]);
+  }
 }
 
 /*!
-  Return pan axis min/max positions in radians as a 2-dim vector, with first value the min position and second value, the max position.
+  Return pan/tilt axis max positions in radians as a 2-dim vector, with first value the pan max position and second value, the max tilt position.
  */
-vpColVector vpRobotFlirPtu::getPanLimit()
+vpColVector vpRobotFlirPtu::getPosMax()
 {
   if (! m_connected) {
     disconnect();
     throw(vpException(vpException::fatalError, "FLIR PTU is not connected."));
   }
-  return m_pan_limit;
+  return m_pos_max;
 }
 
 /*!
-  Return tilt axis min/max positions in radians as a 2-dim vector, with first value the min position and second value, the max position.
+  Return pan/tilt axis min positions in radians as a 2-dim vector, with first value the pan min position and second value, the min tilt position.
  */
-vpColVector vpRobotFlirPtu::getTiltLimit()
+vpColVector vpRobotFlirPtu::getPosMin()
 {
   if (! m_connected) {
     disconnect();
     throw(vpException(vpException::fatalError, "FLIR PTU is not connected."));
   }
-  return m_tilt_limit;
+  return m_pos_min;
+}
+
+/*!
+  Return pan/tilt axis max velocity in rad/s as a 2-dim vector, with first value the pan max velocity and second value, the max tilt velocity.
+ */
+vpColVector vpRobotFlirPtu::getVelMax()
+{
+  if (! m_connected) {
+    disconnect();
+    throw(vpException(vpException::fatalError, "FLIR PTU is not connected."));
+  }
+  vpColVector vel_max(2);
+  for (size_t i=0; i < 2; i++) {
+    vel_max[i] = vpMath::rad(m_res[i] * m_vel_max[i]);
+  }
+  return vel_max;
 }
 
 /*!
