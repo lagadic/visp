@@ -43,19 +43,59 @@
 #include <visp3/robot/vpRobotFlirPtu.h>
 #include <visp3/core/vpTime.h>
 
-int main()
+int main(int argc, char *argv[0])
 {
   try {
+    std::string opt_portname;
+    int opt_baudrate = 9600;
+
+    for (int i = 1; i < argc; i++) {
+      if ((std::string(argv[i]) == "--portname" || std::string(argv[i]) == "-p") && (i + 1 < argc)) {
+        opt_portname = std::string(argv[i + 1]);
+      }
+      else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
+        opt_baudrate = std::atoi(argv[i + 1]);
+      }
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        std::cout << "SYNOPSIS" << std::endl
+                  << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--help] [-h]" << std::endl << std::endl
+                  << "DESCRIPTION" << std::endl
+                  << "  --portname, -p <portname>" << std::endl
+                  << "    Set serial or tcp port name." << std::endl << std::endl
+                  << "  --baudrate, -b <rate>" << std::endl
+                  << "    Set serial communication baud rate. Default: " << opt_baudrate << "." << std::endl << std::endl
+                  << "  --help, -h" << std::endl
+                  << "    Print this helper message. " << std::endl << std::endl
+#ifdef _WIN32
+                  << "EXAMPLE" << std::endl
+                  << "  " << argv[0] << " -p COM1" << std::endl;
+#else
+                  << "EXAMPLE" << std::endl
+                  << "  " << argv[0] << " -p /dev/ttyUSB0" << std::endl;
+#endif
+
+
+        return EXIT_SUCCESS;
+      }
+    }
+
+    if (opt_portname.empty()) {
+      std::cout << "Error, portname unspecified. Run " << argv[0] << " --help" << std::endl;
+      return EXIT_SUCCESS;
+    }
+
     vpRobotFlirPtu robot;
     vpColVector q(2), q_mes;
 
-    robot.connect("/dev/ttyUSB0");
+    std::cout << "Try to connect FLIR PTU to port: " << opt_portname << " with baudrate: " << opt_baudrate << std::endl;
+    robot.connect(opt_portname, opt_baudrate);
 
     std::cout << "Pan  pos min/max [deg]: " << vpMath::deg(robot.getPosMin()[0]) << " " << vpMath::deg(robot.getPosMax()[0]) << std::endl;
     std::cout << "Tilt pos min/max [deg]: " << vpMath::deg(robot.getPosMin()[1]) << " " << vpMath::deg(robot.getPosMax()[1]) << std::endl;
     std::cout << "Pan/tilt vel max [deg/s]: " << vpMath::deg(robot.getVelMax()[0]) << " " << vpMath::deg(robot.getVelMax()[1]) << std::endl;
 
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+    robot.setMaxRotationVelocity(robot.getVelMax()[0] / 2.);
 
     q = 0;
     std::cout << "Set joint position [deg]: " << vpMath::deg(q[0]) << " " << vpMath::deg(q[1]) << std::endl;
@@ -67,8 +107,8 @@ int main()
     std::cout << "Positionning achieved. Enter a caracter to continue" << std::endl;
     std::cin.get();
 
-    q[0] = vpMath::rad(20); // Pan poition
-    q[1] = vpMath::rad(20); // Tilt position
+    q[0] = vpMath::rad(10); // Pan  position in rad
+    q[1] = vpMath::rad(20); // Tilt position in rad
 
     std::cout << "Set joint position [deg]: " << vpMath::deg(q[0]) << " " << vpMath::deg(q[1]) << std::endl;
     robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
@@ -76,46 +116,21 @@ int main()
 
     std::cout << "Position reached [deg]: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << std::endl;
     std::cout << "Positionning achieved. Enter a caracter to continue" << std::endl;
-
-    return 0;
-    vpColVector qm(2);
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame " << qm.t() << std::endl;
+    std::cin.get();
 
     vpColVector qdot(2);
+    qdot[0] = vpMath::rad(-10); // Pan  velocity in rad/s
+    qdot[1] = vpMath::rad(-10); // Tilt velocity in rad/s
+
+    std::cout << "Set velocity [deg/s]: " << vpMath::deg(qdot[0]) << " " << vpMath::deg(qdot[1]) << std::endl;
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
-#if 0
-    qdot = 0 ;
-    qdot[0] = vpMath::rad(10) ;
-    qdot[1] = vpMath::rad(10) ;
-    std::cout << "Set camera frame velocity " << qdot.t() << std::endl;
-
-    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot) ;
-    sleep(2) ;
-
-    qdot = 0 ;
-    qdot[0] = vpMath::rad(-10) ;
-    qdot[1] = vpMath::rad(-10) ;
-
-    std::cout << "Set camera frame velocity " << qdot.t() << std::endl;
-    robot.setVelocity(vpRobot::CAMERA_FRAME, qdot) ;
-    sleep(2) ;
-#endif
-
-    qdot = 0;
-    //  qdot[0] = vpMath::rad(0.1) ;
-    qdot[1] = vpMath::rad(10);
-    std::cout << "Set articular frame velocity " << qdot.t() << std::endl;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
+    robot.setVelocity(vpRobot::JOINT_STATE, qdot) ;
     vpTime::sleepMs(2000);
 
-    qdot = 0;
-    qdot[0] = vpMath::rad(-5);
-    // qdot[1] = vpMath::rad(-5);
+    robot.stopMotion();
 
-    std::cout << "Set articular frame velocity " << qdot.t() << std::endl;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
-    vpTime::sleepMs(2000);
+    std::cout << "The end" << std::endl;
+
   } catch (const vpException &e) {
     std::cout << "Catch Flir Ptu exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
