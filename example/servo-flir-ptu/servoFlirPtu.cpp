@@ -43,7 +43,7 @@
 #include <visp3/robot/vpRobotFlirPtu.h>
 #include <visp3/core/vpTime.h>
 
-int main(int argc, char *argv[0])
+int main(int argc, char **argv)
 {
   try {
     std::string opt_portname;
