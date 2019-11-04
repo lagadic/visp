@@ -370,12 +370,12 @@ void vpRobotFlirPtu::setPosition(const vpRobot::vpControlFrameType frame, const 
   if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_POS_SET, pos[0]) ||
      cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_POS_SET, pos[1])){
     disconnect();
-    throw(vpException(vpException::fatalError, "FLIR PTU failed to go to position %d, %d.", pos[0], pos[1]));
+    throw(vpException(vpException::fatalError, "FLIR PTU failed to go to position %d, %d (deg).", pos[0] * m_res[0], pos[1] * m_res[1]));
   }
   if(cpi_block_until(m_cer, NULL, NULL, OP_PAN_CURRENT_POS_GET, pos[0]) ||
           cpi_block_until(m_cer, NULL, NULL, OP_TILT_CURRENT_POS_GET, pos[1])){
     disconnect();
-    throw(vpException(vpException::fatalError, "FLIR PTU failed to wait until position %d, %d reached", pos[0], pos[1]));
+    throw(vpException(vpException::fatalError, "FLIR PTU failed to wait until position %d, %d reached (deg)", pos[0] * m_res[0], pos[1] * m_res[1]));
   }
 }
 
