@@ -119,7 +119,9 @@ public:
   void set_eMc(vpHomogeneousMatrix &eMc) { m_eMc = eMc; }
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
   void setPositioningVelocity(double velocity);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
+  void stopMotion();
 
 protected:
   void init();
@@ -133,10 +135,10 @@ protected:
 
   struct cerial *m_cer;
   uint16_t m_status;
-  vpColVector m_pos_max;      //!< Pan min/max position in rad
-  vpColVector m_pos_min;      //!< Tilt min/max position in rad
-  std::vector<int> m_vel_max; //!< Pan/tilt max velocity in counts
-  vpColVector m_res;          //!< Pan/tilt count resolution in deg
+  vpColVector m_pos_max;           //!< Pan min/max position in rad
+  vpColVector m_pos_min;           //!< Tilt min/max position in rad
+  std::vector<int> m_vel_max_tics; //!< Pan/tilt max velocity in tics unit
+  vpColVector m_res;               //!< Pan/tilt tic resolution in deg
   bool m_connected;
   int m_njoints;
   double m_positioning_velocity;

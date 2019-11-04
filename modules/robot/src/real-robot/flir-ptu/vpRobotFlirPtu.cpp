@@ -74,7 +74,7 @@ void vpRobotFlirPtu::init()
  */
 vpRobotFlirPtu::vpRobotFlirPtu()
   : m_eMc(), m_cer(NULL), m_status(0),
-    m_pos_max(2), m_pos_min(2), m_vel_max(2), m_res(2),
+    m_pos_max(2), m_pos_min(2), m_vel_max_tics(2), m_res(2),
     m_connected(false), m_njoints(2), m_positioning_velocity(20.)
 {
   init();
@@ -85,6 +85,7 @@ vpRobotFlirPtu::vpRobotFlirPtu()
  */
 vpRobotFlirPtu::~vpRobotFlirPtu()
 {
+  stopMotion();
   disconnect();
 }
 
@@ -192,11 +193,26 @@ void vpRobotFlirPtu::setCartVelocity(const vpRobot::vpControlFrameType frame, co
  */
 void vpRobotFlirPtu::setJointVelocity(const vpColVector &qdot)
 {
-  (void)qdot;
+  if (! m_connected) {
+    disconnect();
+    throw(vpException(vpException::fatalError, "FLIR PTU is not connected."));
+  }
 
-  // Implement your stuff here to send the joint velocities qdot
+  std::vector<int> vel(2);
 
-  std::cout << "Not implemented ! " << std::endl;
+  for (size_t i = 0; i < 2; i++) {
+    vel[i]  = static_cast<int>(vpMath::deg(qdot[i]) / m_res[i]);
+    if (std::fabs(vel[i]) > m_vel_max_tics[i]) {
+      disconnect();
+      throw(vpException(vpException::fatalError, "Cannot set joint %d velocity %f (deg/s). Out of limits [-%f, %f].",
+                        i, vpMath::deg(qdot[i]), -m_vel_max_tics[i] * m_res[i], m_vel_max_tics[i] * m_res[i]));
+    }
+  }
+
+  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, vel[0]) ||
+     cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, vel[1])) {
+    throw(vpException(vpException::fatalError, "Unable to set velocity."));
+  }
 }
 
 /*!
@@ -332,14 +348,6 @@ void vpRobotFlirPtu::setPosition(const vpRobot::vpControlFrameType frame, const 
     throw(vpException(vpException::fatalError, "FLIR PTU Positioning velocity %f is not in range [%f, %f]", vmin, vmax));
   }
 
-  // Set desired speed wrt max pan/tilt speed
-  std::cout << "set max vel ---: " << (int)(m_vel_max[0] * m_positioning_velocity / 100.) << " " << (int)(m_vel_max[1] * m_positioning_velocity / 100.) << std::endl;
-  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, (int)(m_vel_max[0] * m_positioning_velocity / 100.)) ||
-          cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, (int)(m_vel_max[1] * m_positioning_velocity / 100.))){
-    disconnect();
-    throw(vpException(vpException::fatalError, "Setting FLIR pan/tilt positioning velocity failed"));
-  }
-
   std::vector<int> pos(2);
 
   for (size_t i = 0; i < 2; i++) {
@@ -350,6 +358,13 @@ void vpRobotFlirPtu::setPosition(const vpRobot::vpControlFrameType frame, const 
     }
 
     pos[i]  = static_cast<int>(vpMath::deg(q[i] / m_res[i]));
+  }
+
+  // Set desired speed wrt max pan/tilt speed
+  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, (int)(m_vel_max_tics[0] * m_positioning_velocity / 100.)) ||
+          cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, (int)(m_vel_max_tics[1] * m_positioning_velocity / 100.))){
+    disconnect();
+    throw(vpException(vpException::fatalError, "Setting FLIR pan/tilt positioning velocity failed"));
   }
 
   if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_POS_SET, pos[0]) ||
@@ -474,8 +489,8 @@ void vpRobotFlirPtu::getLimits()
      (status = cpi_ptcmd(m_cer, &m_status, OP_PAN_MIN_POSITION, &pos_min[0])) ||
      (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_MAX_POSITION, &pos_max[1])) ||
      (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_MIN_POSITION, &pos_min[1])) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_PAN_UPPER_SPEED_LIMIT_GET, &m_vel_max[0])) ||
-     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_UPPER_SPEED_LIMIT_GET, &m_vel_max[1]))){
+     (status = cpi_ptcmd(m_cer, &m_status, OP_PAN_UPPER_SPEED_LIMIT_GET, &m_vel_max_tics[0])) ||
+     (status = cpi_ptcmd(m_cer, &m_status, OP_TILT_UPPER_SPEED_LIMIT_GET, &m_vel_max_tics[1]))){
     disconnect();
     throw(vpException(vpException::fatalError, "Failed to get limits (%d) %s.", m_status, cpi_strerror(m_status)));
   }
@@ -529,7 +544,7 @@ vpColVector vpRobotFlirPtu::getVelMax()
   }
   vpColVector vel_max(2);
   for (size_t i=0; i < 2; i++) {
-    vel_max[i] = vpMath::rad(m_res[i] * m_vel_max[i]);
+    vel_max[i] = vpMath::rad(m_res[i] * m_vel_max_tics[i]);
   }
   return vel_max;
 }
@@ -543,6 +558,86 @@ vpColVector vpRobotFlirPtu::getVelMax()
 void vpRobotFlirPtu::setPositioningVelocity(double velocity)
 {
   m_positioning_velocity = velocity;
+}
+
+/*!
+
+Change the robot state.
+
+\param newState : New requested robot state.
+*/
+vpRobot::vpRobotStateType vpRobotFlirPtu::setRobotState(vpRobot::vpRobotStateType newState)
+{
+  if (! m_connected) {
+    disconnect();
+    throw(vpException(vpException::fatalError, "FLIR PTU is not connected."));
+  }
+
+  switch (newState) {
+  case vpRobot::STATE_STOP: {
+    // Start primitive STOP only if the current state is Velocity
+    if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
+      stopMotion();
+
+      // Set the PTU to pure velocity mode
+      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET,
+                  (cpi_enum)CPI_CONTROL_INDEPENDENT)) {
+        throw(vpException(vpException::fatalError, "Unable to set control mode independent."));
+      }
+    }
+    break;
+  }
+  case vpRobot::STATE_POSITION_CONTROL: {
+    if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
+      std::cout << "Change the control mode from velocity to position control.\n";
+      stopMotion();
+
+      // Set the PTU to pure velocity mode
+      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET,
+                  (cpi_enum)CPI_CONTROL_INDEPENDENT)) {
+        throw(vpException(vpException::fatalError, "Unable to set control mode independent."));
+      }
+
+    } else {
+      // std::cout << "Change the control mode from stop to position
+      // control.\n";
+    }
+    break;
+  }
+  case vpRobot::STATE_VELOCITY_CONTROL: {
+    if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
+      std::cout << "Change the control mode from stop to velocity control.\n";
+
+      // Set the PTU to pure velocity mode
+      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET,
+                  (cpi_enum)CPI_CONTROL_PURE_VELOCITY)) {
+        throw(vpException(vpException::fatalError, "Unable to set velocity control mode."));
+      }
+    }
+    break;
+  }
+  default:
+    break;
+  }
+
+  return vpRobot::setRobotState(newState);
+}
+
+/*!
+  Stop PTU motion in velocity control mode.
+ */
+void vpRobotFlirPtu::stopMotion()
+{
+  if (! m_connected) {
+    return;
+  }
+
+  // Set speed back to 0
+  int vel = 0;
+  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET, vel) ||
+     cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, vel)) {
+    throw(vpException(vpException::fatalError, "Unable to stop PTU."));
+  }
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
