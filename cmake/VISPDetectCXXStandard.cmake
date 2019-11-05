@@ -19,6 +19,8 @@ if(DEFINED USE_CXX_STANDARD)
       set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_17})
   endif()
 
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
+
   return()
 else()
 
@@ -26,7 +28,6 @@ set(AVAILABLE_CXX_STANDARD TRUE)
 set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_98})
 
 set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
-set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
 
 if(CMAKE_CXX98_COMPILE_FEATURES)
   set(CXX98_STANDARD_FOUND ON)
