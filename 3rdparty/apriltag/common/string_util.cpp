@@ -36,6 +36,11 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "string_util.h"
 #include "zarray.h"
 
+// fix va_copy missing with msvc11 Visual 2012
+#ifdef _MSC_VER
+#define my_va_copy(dest, src) (dest = src)
+#endif
+
 struct string_buffer
 {
     char *s;
@@ -68,7 +73,11 @@ char *vsprintf_alloc(const char *fmt, va_list orig_args)
     int returnsize;
     va_list args;
 
+#ifdef _MSC_VER
+    my_va_copy(args, orig_args);
+#else
     va_copy(args, orig_args);
+#endif
     returnsize = vsnprintf(buf, size, fmt, args);
     va_end(args);
 
@@ -82,7 +91,11 @@ char *vsprintf_alloc(const char *fmt, va_list orig_args)
     size = returnsize + 1;
     buf = (char *)malloc(size * sizeof(char));
 
+#ifdef _MSC_VER
+    my_va_copy(args, orig_args);
+#else
     va_copy(args, orig_args);
+#endif
     returnsize = vsnprintf(buf, size, fmt, args);
     va_end(args);
 
@@ -734,6 +747,7 @@ static int is_variable_character(char c)
     return 0;
 }
 
+#ifndef WINRT
 char *str_expand_envs(const char *in)
 {
     size_t inlen = strlen(in);
@@ -770,3 +784,4 @@ char *str_expand_envs(const char *in)
 
     return out;
 }
+#endif
