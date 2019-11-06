@@ -38,6 +38,12 @@ if(MSVC AND WINRT)
   set(CMAKE_SHARED_LINKER_FLAGS_DEBUG  "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} /INCREMENTAL:NO /OPT:NOREF /OPT:NOICF")
 endif()
 
+# Removing LNK4099 warning when build in DEBUG with vtk
+# LNK4099 PDB 'vtksys.pdb' not found with 'vtksys-8.1-gd.lib(EncodingC.obj)' ...
+if(MSVC)
+  set(CMAKE_EXE_LINKER_FLAGS_DEBUG     "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /ignore:4099")
+endif()
+
 if(NOT BUILD_SHARED_LIBS AND BUILD_WITH_STATIC_CRT)
   foreach(flag_var
           CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
