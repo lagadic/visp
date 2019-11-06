@@ -413,11 +413,11 @@ int main(int argc, const char **argv)
 
     fclose(fd);
 
-    return EXIT_SUCCESS
+    return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
-    return EXIT_FAILURE
+    return EXIT_FAILURE;
   }
 }
 
