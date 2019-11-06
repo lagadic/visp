@@ -225,7 +225,7 @@ static inline void idct_1D_double(double *in, int instride, double *out, int out
         out[x*outstride] = 0;
 
     // iterate over IDCT coefficients
-    double Cu = 1./sqrt(2.);
+    double Cu = 1/sqrt(2);
 
     for (int u = 0; u < 8; u++, Cu = 1) {
 

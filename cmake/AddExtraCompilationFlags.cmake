@@ -155,6 +155,15 @@ if(DEFINED WINRT_8_1)
   add_extra_compiler_option(/ZW) # do not use with 8.0
 endif()
 
+if(MSVC)
+  # Remove unreferenced functions: function level linking
+  list(APPEND VISP_EXTRA_CXX_FLAGS "/Gy")
+  if(NOT MSVC_VERSION LESS 1400)
+    # Avoid build error C1128
+    list(APPEND VISP_EXTRA_CXX_FLAGS "/bigobj")
+  endif()
+endif()
+
 # Add user supplied extra options (optimization, etc...)
 vp_list_unique(VISP_EXTRA_C_FLAGS)
 

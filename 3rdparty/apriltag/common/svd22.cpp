@@ -29,7 +29,6 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
-#include <algorithm>
 
 #include "common/doubles.h"
 
@@ -259,6 +258,6 @@ void svd_sym_singular_values(double A00, double A01, double A11,
     double e = (C0 + C1) / 2;
     double f = (C0 - C1) / 2;
 
-    *Lmin = (std::min)(e, f);
-    *Lmax = (std::max)(e, f);
+    *Lmin = fmin(e, f);
+    *Lmax = fmax(e, f);
 }

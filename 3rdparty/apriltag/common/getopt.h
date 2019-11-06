@@ -25,14 +25,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _GETOPT_H
-#define _GETOPT_H
+#pragma once
 
 #include "zarray.h"
 #include "string_util.h"
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C" {
 #endif
 
 typedef struct getopt getopt_t;
@@ -61,8 +60,5 @@ int getopt_was_specified(getopt_t *gopt, const char *lname);
 const zarray_t *getopt_get_extra_args(getopt_t *gopt);
 
 #ifdef __cplusplus
-//}
-#endif
-
-
+}
 #endif

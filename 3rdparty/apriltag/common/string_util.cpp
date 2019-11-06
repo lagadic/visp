@@ -72,8 +72,9 @@ char *vsprintf_alloc(const char *fmt, va_list orig_args)
 
     int returnsize;
     va_list args;
+
 #ifdef _MSC_VER
-	my_va_copy(args, orig_args);
+    my_va_copy(args, orig_args);
 #else
     va_copy(args, orig_args);
 #endif
@@ -91,11 +92,10 @@ char *vsprintf_alloc(const char *fmt, va_list orig_args)
     buf = (char *)malloc(size * sizeof(char));
 
 #ifdef _MSC_VER
-	my_va_copy(args, orig_args);
+    my_va_copy(args, orig_args);
 #else
     va_copy(args, orig_args);
 #endif
-
     returnsize = vsnprintf(buf, size, fmt, args);
     va_end(args);
 
@@ -212,7 +212,7 @@ zarray_t *str_split_spaces(const char *str)
       // yes!
       size_t off0 = pos;
       while (pos < len && str[pos] != ' ')
-	pos++;
+  pos++;
       size_t off1 = pos;
 
       size_t len = off1 - off0;
@@ -266,8 +266,8 @@ char *str_rstrip(char *str)
 
 int str_indexof(const char *haystack, const char *needle)
 {
-	assert(haystack != NULL);
-	assert(needle != NULL);
+  assert(haystack != NULL);
+  assert(needle != NULL);
 
     // use signed types for hlen/nlen because hlen - nlen can be negative.
     int hlen = (int) strlen(haystack);
@@ -285,8 +285,8 @@ int str_indexof(const char *haystack, const char *needle)
 
 int str_last_indexof(const char *haystack, const char *needle)
 {
-	assert(haystack != NULL);
-	assert(needle != NULL);
+  assert(haystack != NULL);
+  assert(needle != NULL);
 
     // use signed types for hlen/nlen because hlen - nlen can be negative.
     int hlen = (int) strlen(haystack);
@@ -304,7 +304,7 @@ int str_last_indexof(const char *haystack, const char *needle)
 // in-place modification.
 char *str_tolowercase(char *s)
 {
-	assert(s != NULL);
+  assert(s != NULL);
 
     size_t slen = strlen(s);
     for (int i = 0; i < slen; i++) {
@@ -432,11 +432,8 @@ bool string_buffer_ends_with(string_buffer_t *sb, const char *str)
 char *string_buffer_to_string(string_buffer_t *sb)
 {
     assert(sb != NULL);
-#ifdef WINRT
-    return _strdup(sb->s);
-#else
+
     return strdup(sb->s);
-#endif
 }
 
 // returns length of string (not counting \0)
@@ -460,11 +457,7 @@ string_feeder_t *string_feeder_create(const char *str)
     assert(str != NULL);
 
     string_feeder_t *sf = (string_feeder_t*) calloc(1, sizeof(string_feeder_t));
-#ifdef WINRT
-    sf->s = _strdup(str);
-#else
     sf->s = strdup(str);
-#endif
     sf->len = strlen(sf->s);
     sf->line = 1;
     sf->col = 0;
@@ -592,7 +585,10 @@ bool str_ends_with(const char *haystack, const char *needle)
     return !strncmp(&haystack[lens - lenneedle], needle, lenneedle);
 }
 
-/*inline*/ bool str_starts_with(const char *haystack, const char *needle)
+#ifndef _MSC_VER
+inline
+#endif
+bool str_starts_with(const char *haystack, const char *needle)
 {
     assert(haystack != NULL);
     assert(needle != NULL);
@@ -688,11 +684,7 @@ char *str_replace_many(const char *_haystack, ...)
     va_list ap;
     va_start(ap, _haystack);
 
-#ifdef WINRT
-    char *haystack = _strdup(_haystack);
-#else
     char *haystack = strdup(_haystack);
-#endif
 
     while (true) {
         char *needle = va_arg(ap, char*);
@@ -777,7 +769,7 @@ char *str_expand_envs(const char *in)
             char *varname = NULL;
             int  varnamepos = 0;
 
-            while (varnamepos < sizeof(varname) && inpos < inlen && is_variable_character(in[inpos])) {
+            while (inpos < inlen && is_variable_character(in[inpos])) {
                 buffer_appendf(&varname, &varnamepos, "%c", in[inpos]);
                 inpos++;
             }

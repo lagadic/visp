@@ -63,12 +63,19 @@ either expressed or implied, of the Regents of The University of Michigan.
 # define M_PI 3.141592653589793238462643383279502884196
 #endif
 
-#define APRILTAG_U64_ONE ((uint64_t) 1)
+#ifdef _WIN32
+static inline void srandom(unsigned int seed)
+{
+        srand(seed);
+}
 
-#if defined(__MINGW32__) || defined(_MSC_VER)
-#define srandom srand
-#define random rand
+static inline long int random(void)
+{
+        return rand();
+}
 #endif
+
+#define APRILTAG_U64_ONE ((uint64_t) 1)
 
 extern zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im);
 
@@ -118,7 +125,6 @@ double graymodel_interpolate(struct graymodel *gm, double x, double y)
     return gm->C[0]*x + gm->C[1]*y + gm->C[2];
 }
 
-typedef struct quick_decode_entry quick_decode_entry_t;
 struct quick_decode_entry
 {
     uint64_t rcode;   // the queried code
@@ -127,7 +133,6 @@ struct quick_decode_entry
     uint8_t rotation; // number of rotations [0, 3]
 };
 
-typedef struct quick_decode quick_decode_t;
 struct quick_decode
 {
     int nentries;
@@ -143,8 +148,8 @@ static uint64_t rotate90(uint64_t w, int numBits)
     int p = numBits;
     uint64_t l = 0;
     if (numBits % 4 == 1) {
-	p = numBits - 1;
-	l = 1;
+       p = numBits - 1;
+       l = 1;
     }
     w = ((w >> l) << (p/4 + l)) | (w >> (3 * p/ 4 + l) << l) | (w & l);
     w &= ((APRILTAG_U64_ONE << numBits) - 1);
@@ -163,7 +168,7 @@ void quad_destroy(struct quad *quad)
 
 struct quad *quad_copy(struct quad *quad)
 {
-    struct quad *q = (apriltag_quad_t *)calloc(1, sizeof(struct quad));
+    struct quad *q = (struct quad *)calloc(1, sizeof(struct quad));
     memcpy(q, quad, sizeof(struct quad));
     if (quad->H)
         q->H = matd_copy(quad->H);
@@ -393,7 +398,6 @@ void apriltag_detector_destroy(apriltag_detector_t *td)
     free(td);
 }
 
-typedef struct quad_decode_task quad_decode_task_t;
 struct quad_decode_task
 {
     int i0, i1;
@@ -501,7 +505,6 @@ int quad_update_homographies(struct quad *quad)
     quad->H = homography_compute2(corr_arr);
 
     quad->Hinv = matd_inverse(quad->H);
-    //zarray_destroy(correspondences);
 
     if (quad->H && quad->Hinv)
         return 0;
@@ -526,11 +529,7 @@ double value_for_pixel(image_u8_t *im, double px, double py) {
 }
 
 void sharpen(apriltag_detector_t* td, double* values, int size) {
-#ifdef _MSC_VER
-    double *sharpened = (double *)malloc(size*size * sizeof *sharpened);
-#else
-    double sharpened[size*size];
-#endif
+    double *sharpened = (double *)malloc(sizeof(double)*size*size);
     double kernel[9] = {
         0, -1, 0,
         -1, 4, -1,
@@ -558,9 +557,7 @@ void sharpen(apriltag_detector_t* td, double* values, int size) {
         }
     }
 
-#ifdef _MSC_VER
     free(sharpened);
-#endif
 }
 
 // returns the decision margin. Return < 0 if the detection should be rejected.
@@ -674,12 +671,7 @@ float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, image_u8_t
     float black_score = 0, white_score = 0;
     float black_score_count = 1, white_score_count = 1;
 
-#ifdef _MSC_VER
-    double *values = (double *)malloc(family->total_width*family->total_width * sizeof *values);
-#else
-    double values[family->total_width*family->total_width];
-#endif
-    memset(values, 0, family->total_width*family->total_width*sizeof(double));
+    double *values = (double *)calloc(family->total_width*family->total_width, sizeof(double));
 
     int min_coord = (family->width_at_border - family->total_width)/2;
     for (int i = 0; i < family->nbits; i++) {
@@ -731,12 +723,9 @@ float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, image_u8_t
         }
     }
 
-#ifdef _MSC_VER
-    free(values);
-#endif
-
     quick_decode_codeword(family, rcode, entry);
-    return fmin(white_score / white_score_count, black_score / black_score_count);
+    free(values);
+    return (std::min)(white_score / white_score_count, black_score / black_score_count);
 }
 
 static void refine_edges(apriltag_detector_t *td, image_u8_t *im_orig, struct quad *quad)
@@ -1135,11 +1124,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
 
         int chunksize = 1 + zarray_size(quads) / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
 
-#ifdef _MSC_VER
-        struct quad_decode_task *tasks = (quad_decode_task_t *)malloc((zarray_size(quads) / chunksize + 1)*sizeof *tasks);
-#else
-        struct quad_decode_task tasks[zarray_size(quads) / chunksize + 1];
-#endif
+        struct quad_decode_task *tasks = (struct quad_decode_task *)malloc(sizeof(struct quad_decode_task)*(zarray_size(quads) / chunksize + 1));
 
         int ntasks = 0;
         for (int i = 0; i < zarray_size(quads); i+= chunksize) {
@@ -1158,9 +1143,7 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
 
         workerpool_run(td->wp);
 
-#ifdef _MSC_VER
         free(tasks);
-#endif
 
         if (im_samples != NULL) {
             image_u8_write_pnm(im_samples, "debug_samples.pnm");

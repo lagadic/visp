@@ -449,12 +449,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
                 uint8_t ns = bd_consume_bits(&bd, 8);
 
                 // for each component, what is the index into our pjd->components[] array?
-#ifdef _MSC_VER
-                uint8_t *comp_idx = (uint8_t *)malloc(ns*sizeof *comp_idx);
-#else
-                uint8_t comp_idx[ns];
-#endif
-                memset(comp_idx, 0, ns*sizeof(uint8_t));
+                uint8_t *comp_idx = (uint8_t *)calloc(ns, sizeof(uint8_t));
 
                 for (int i = 0; i < ns; i++) {
                     // component name
@@ -522,12 +517,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
 
 
                 // each component has its own DC prediction
-#ifdef _MSC_VER
-                int32_t *dcpred = (int32_t *)malloc(ns*sizeof *dcpred);
-#else
-                int32_t dcpred[ns];
-#endif
-                memset(dcpred, 0, sizeof(dcpred));
+                int32_t *dcpred = (int32_t *)calloc(ns, sizeof(int32_t));
 
                 pjd->reset_count = 0;
 
@@ -568,7 +558,7 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
                             pjd->reset_count = 0;
                             pjd->reset_next = (pjd->reset_next + 1) & 0x7;
 
-                            memset(dcpred, 0, sizeof(dcpred));
+                            memset((int32_t *)dcpred, 0, sizeof(dcpred));
                         }
 
                         for (int nsidx = 0; nsidx < ns; nsidx++) {
@@ -658,10 +648,8 @@ static int pjpeg_decode_buffer(struct pjpeg_decode_state *pjd)
                     }
                 }
 
-#ifdef _MSC_VER
-                free(comp_idx);
                 free(dcpred);
-#endif
+                free(comp_idx);
 
                 break;
             }

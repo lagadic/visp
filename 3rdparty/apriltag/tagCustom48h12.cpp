@@ -28,22 +28,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdlib.h>
 #include "apriltag.h"
 
-#if defined (__clang__)
-#define APRILTAG_NO_OPTIMIZATION __attribute__ ((optnone))
-#elif __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
-#define APRILTAG_NO_OPTIMIZATION __attribute__ ((optimize("O0")))
-#else
-#define APRILTAG_NO_OPTIMIZATION /* nothing */
-#endif
-
-apriltag_family_t APRILTAG_NO_OPTIMIZATION *tagCustom48h12_create()
+apriltag_family_t *tagCustom48h12_create()
 {
    apriltag_family_t *tf = (apriltag_family_t *)calloc(1, sizeof(apriltag_family_t));
-#ifdef WINRT
-   tf->name = _strdup("tagCustom48h12");
-#else
    tf->name = strdup("tagCustom48h12");
-#endif
    tf->h = 12;
    tf->ncodes = 42211;
    tf->codes = (uint64_t *)calloc(42211, sizeof(uint64_t));

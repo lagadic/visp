@@ -64,12 +64,14 @@ __ptw32_cancel_callback (ULONG_PTR unused)
 DWORD
 __ptw32_Registercancellation (PAPCFUNC unused1, HANDLE threadH, DWORD unused2)
 {
+#ifndef WINRT
   CONTEXT context;
 
   context.ContextFlags = CONTEXT_CONTROL;
   GetThreadContext (threadH, &context);
    __PTW32_PROGCTR (context) = (DWORD_PTR) __ptw32_cancel_self;
   SetThreadContext (threadH, &context);
+#endif
   return 0;
 }
 
@@ -139,36 +141,36 @@ pthread_cancel (pthread_t thread)
       && tp->state < PThreadStateCanceling)
     {
       if (cancel_self)
-	{
-	  tp->state = PThreadStateCanceling;
-	  tp->cancelState = PTHREAD_CANCEL_DISABLE;
+  {
+    tp->state = PThreadStateCanceling;
+    tp->cancelState = PTHREAD_CANCEL_DISABLE;
 
-	  __ptw32_mcs_lock_release (&stateLock);
-	  __ptw32_throw  (__PTW32_EPS_CANCEL);
+    __ptw32_mcs_lock_release (&stateLock);
+    __ptw32_throw  (__PTW32_EPS_CANCEL);
 
-	  /* Never reached */
-	}
+    /* Never reached */
+  }
       else
-	{
-	  HANDLE threadH = tp->threadH;
+  {
+    HANDLE threadH = tp->threadH;
 
-	  SuspendThread (threadH);
+    SuspendThread (threadH);
 
-	  if (WaitForSingleObject (threadH, 0) == WAIT_TIMEOUT)
-	    {
-	      tp->state = PThreadStateCanceling;
-	      tp->cancelState = PTHREAD_CANCEL_DISABLE;
-	      /*
-	       * If alertdrv and QueueUserAPCEx is available then the following
-	       * will result in a call to QueueUserAPCEx with the args given, otherwise
-	       * this will result in a call to __ptw32_Registercancellation and only
-	       * the threadH arg will be used.
-	       */
-	      __ptw32_register_cancellation ((PAPCFUNC)__ptw32_cancel_callback, threadH, 0);
-	      __ptw32_mcs_lock_release (&stateLock);
-	      ResumeThread (threadH);
-	    }
-	}
+    if (WaitForSingleObject (threadH, 0) == WAIT_TIMEOUT)
+      {
+        tp->state = PThreadStateCanceling;
+        tp->cancelState = PTHREAD_CANCEL_DISABLE;
+        /*
+         * If alertdrv and QueueUserAPCEx is available then the following
+         * will result in a call to QueueUserAPCEx with the args given, otherwise
+         * this will result in a call to __ptw32_Registercancellation and only
+         * the threadH arg will be used.
+         */
+        __ptw32_register_cancellation ((PAPCFUNC)__ptw32_cancel_callback, threadH, 0);
+        __ptw32_mcs_lock_release (&stateLock);
+        ResumeThread (threadH);
+      }
+  }
     }
   else
     {
@@ -176,17 +178,17 @@ pthread_cancel (pthread_t thread)
        * Set for deferred cancellation.
        */
       if (tp->state < PThreadStateCancelPending)
-	{
-	  tp->state = PThreadStateCancelPending;
-	  if (!SetEvent (tp->cancelEvent))
-	    {
-	      result = ESRCH;
-	    }
-	}
+  {
+    tp->state = PThreadStateCancelPending;
+    if (!SetEvent (tp->cancelEvent))
+      {
+        result = ESRCH;
+      }
+  }
       else if (tp->state >= PThreadStateCanceling)
-	{
-	  result = ESRCH;
-	}
+  {
+    result = ESRCH;
+  }
 
       __ptw32_mcs_lock_release (&stateLock);
     }

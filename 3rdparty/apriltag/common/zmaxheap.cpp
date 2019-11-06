@@ -31,18 +31,15 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <math.h>
 #include <assert.h>
 #include <stdint.h>
-#include <algorithm>
 
 #include "zmaxheap.h"
 #include "common/math_util.h"
 
-#if defined(_MSC_VER)
-#define inline __inline
-#endif
-
-#if defined(__MINGW32__) || defined(_MSC_VER)
-#define srandom srand
-#define random rand
+#ifdef _WIN32
+static inline long int random(void)
+{
+        return rand();
+}
 #endif
 
 //                 0
@@ -76,18 +73,11 @@ static inline void swap_default(zmaxheap_t *heap, int a, int b)
     heap->values[a] = heap->values[b];
     heap->values[b] = t;
 
-#ifdef _MSC_VER
-    char *tmp = (char *)malloc(heap->el_sz*sizeof *tmp);
-#else
-    char tmp[heap->el_sz];
-#endif
+    char *tmp = (char *)malloc(sizeof(char)*heap->el_sz);
     memcpy(tmp, &heap->data[a*heap->el_sz], heap->el_sz);
     memcpy(&heap->data[a*heap->el_sz], &heap->data[b*heap->el_sz], heap->el_sz);
     memcpy(&heap->data[b*heap->el_sz], tmp, heap->el_sz);
-
-#ifdef _MSC_VER
     free(tmp);
-#endif
 }
 
 static inline void swap_pointer(zmaxheap_t *heap, int a, int b)
@@ -153,7 +143,7 @@ void zmaxheap_ensure_capacity(zmaxheap_t *heap, int capacity)
 void zmaxheap_add(zmaxheap_t *heap, void *p, float v)
 {
 
-//    assert (isfinite(v) && "zmaxheap_add: Trying to add non-finite number to heap.  NaN's prohibited, could allow INF with testing");
+    assert (isfinite(v) && "zmaxheap_add: Trying to add non-finite number to heap.  NaN's prohibited, could allow INF with testing");
     zmaxheap_ensure_capacity(heap, heap->size + 1);
 
     int idx = heap->size;
