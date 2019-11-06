@@ -51,7 +51,9 @@ static HINSTANCE __ptw32_h_quserex;
 BOOL
 pthread_win32_process_attach_np ()
 {
+#if (defined(__GNUC__) || defined (__PTW32_CONFIG_MSVC7)) || (! defined(WINCE) && ! defined(WINRT))
   TCHAR QuserExDLLPathBuf[1024];
+#endif
   BOOL result = TRUE;
 
   result = __ptw32_processInitialize ();
