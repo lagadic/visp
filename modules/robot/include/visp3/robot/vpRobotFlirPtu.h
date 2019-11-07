@@ -50,6 +50,7 @@
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobot.h>
+#include <visp3/robot/vpRobotException.h>
 
 /*!
   \class vpRobotFlirPtu
@@ -63,7 +64,7 @@ Tilt pos min/max [deg]:  -89.99  90
 Pan/tilt vel max [deg/s]:   120 120
   \endcode
 
-  \note We strongly recommend to communication with the PTU using network. We experienced communication issues using serial
+  \note We strongly recommend to communicate with the PTU using network interface. We experienced communication issues using serial
   communication.
 
   \warning On Unix-like OS, if you experienced the following error when running servoFlirPtu.cpp:
@@ -139,6 +140,8 @@ public:
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
   void stopMotion();
+
+  static void emergencyStop(int signo);
 
 protected:
   void init();

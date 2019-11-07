@@ -40,11 +40,12 @@
 
 #ifdef VISP_HAVE_FLIR_PTU_SDK
 
+#include <signal.h>
+#include <stdexcept>
+
 extern "C" {
 #include <cpi.h>
 }
-
-#include <visp3/robot/vpRobotException.h>
 
 /*!
   \file vpRobotFlirPtu.cpp
@@ -53,6 +54,40 @@ extern "C" {
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotFlirPtu.h>
+
+/*!
+
+  Emergency stops the robot if the program is interrupted by a SIGINT
+  (CTRL C), SIGSEGV (segmentation fault), SIGBUS (bus error), SIGKILL
+  or SIGQUIT signal.
+
+*/
+void vpRobotFlirPtu::emergencyStop(int signo)
+{
+  std::stringstream msg;
+  msg << "Stop the FLIR PTU by signal (" << signo << "): " << (char)7;
+  switch (signo) {
+  case SIGINT:
+    msg << "SIGINT (stop by ^C) ";
+    break;
+  case SIGBUS:
+    msg << "SIGBUS (stop due to a bus error) ";
+    break;
+  case SIGSEGV:
+    msg << "SIGSEGV (stop due to a segmentation fault) ";
+    break;
+  case SIGKILL:
+    msg << "SIGKILL (stop by CTRL \\) ";
+    break;
+  case SIGQUIT:
+    msg << "SIGQUIT ";
+    break;
+  default:
+    msg << signo << std::endl;
+  }
+
+  throw vpRobotException(vpRobotException::signalException, msg.str());
+}
 
 /*!
   Basic initialization.
@@ -77,6 +112,12 @@ vpRobotFlirPtu::vpRobotFlirPtu()
     m_pos_max_tics(2), m_pos_min_tics(2), m_vel_max_tics(2), m_res(2),
     m_connected(false), m_njoints(2), m_positioning_velocity(20.)
 {
+  signal(SIGINT, vpRobotFlirPtu::emergencyStop);
+  signal(SIGBUS, vpRobotFlirPtu::emergencyStop);
+  signal(SIGSEGV, vpRobotFlirPtu::emergencyStop);
+  signal(SIGKILL, vpRobotFlirPtu::emergencyStop);
+  signal(SIGQUIT, vpRobotFlirPtu::emergencyStop);
+
   init();
 }
 
@@ -650,8 +691,7 @@ vpRobot::vpRobotStateType vpRobotFlirPtu::setRobotState(vpRobot::vpRobotStateTyp
       stopMotion();
 
       // Set the PTU to pure velocity mode
-      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET,
-                  (cpi_enum)CPI_CONTROL_INDEPENDENT)) {
+      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET, (cpi_enum)CPI_CONTROL_INDEPENDENT)) {
         throw(vpException(vpException::fatalError, "Unable to set control mode independent."));
       }
     }
@@ -663,8 +703,7 @@ vpRobot::vpRobotStateType vpRobotFlirPtu::setRobotState(vpRobot::vpRobotStateTyp
       stopMotion();
 
       // Set the PTU to pure velocity mode
-      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET,
-                  (cpi_enum)CPI_CONTROL_INDEPENDENT)) {
+      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET, (cpi_enum)CPI_CONTROL_INDEPENDENT)) {
         throw(vpException(vpException::fatalError, "Unable to set control mode independent."));
       }
 
@@ -679,8 +718,7 @@ vpRobot::vpRobotStateType vpRobotFlirPtu::setRobotState(vpRobot::vpRobotStateTyp
       std::cout << "Change the control mode from stop to velocity control.\n";
 
       // Set the PTU to pure velocity mode
-      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET,
-                  (cpi_enum)CPI_CONTROL_PURE_VELOCITY)) {
+      if(cpi_ptcmd(m_cer, &m_status, OP_SPEED_CONTROL_MODE_SET, (cpi_enum)CPI_CONTROL_PURE_VELOCITY)) {
         throw(vpException(vpException::fatalError, "Unable to set velocity control mode."));
       }
     }
@@ -698,16 +736,25 @@ vpRobot::vpRobotStateType vpRobotFlirPtu::setRobotState(vpRobot::vpRobotStateTyp
  */
 void vpRobotFlirPtu::stopMotion()
 {
+  if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
+    return;
+  }
+
   if (! m_connected) {
     return;
   }
 
   // Set speed back to 0
-  int vel_tics = 0;
-  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET,  vel_tics) ||
-     cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, vel_tics)) {
+//  int vel_tics = 0;
+//  if(cpi_ptcmd(m_cer, &m_status, OP_PAN_DESIRED_SPEED_SET,  vel_tics) ||
+//     cpi_ptcmd(m_cer, &m_status, OP_TILT_DESIRED_SPEED_SET, vel_tics)) {
+//    throw(vpException(vpException::fatalError, "Unable to stop PTU."));
+//  }
+
+  if(cpi_ptcmd(m_cer, &m_status, OP_HALT, NULL)) {
     throw(vpException(vpException::fatalError, "Unable to stop PTU."));
   }
+
 }
 
 /*!

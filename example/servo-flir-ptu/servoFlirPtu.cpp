@@ -44,6 +44,8 @@
 
 int main(int argc, char **argv)
 {
+  vpRobotFlirPtu robot;
+
   try {
     std::string opt_portname;
     int opt_baudrate = 9600;
@@ -100,7 +102,6 @@ int main(int argc, char **argv)
       return EXIT_SUCCESS;
     }
 
-    vpRobotFlirPtu robot;
     vpColVector q(2), q_mes;
     int answer;
 
@@ -183,9 +184,13 @@ int main(int argc, char **argv)
 
     std::cout << "The end" << std::endl;
 
+  } catch (const vpRobotException & e) {
+    std::cout << "Catch Flir Ptu signal exception: " << e.getMessage() << std::endl;
+    robot.stopMotion();
+
   } catch (const vpException &e) {
     std::cout << "Catch Flir Ptu exception: " << e.getMessage() << std::endl;
-    return EXIT_FAILURE;
+
   }
   return EXIT_SUCCESS;
 }
