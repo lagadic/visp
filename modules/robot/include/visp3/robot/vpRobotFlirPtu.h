@@ -56,6 +56,16 @@
   \ingroup group_robot_real_arm
   Interface for FLIR pan-tilt units compatible with FLIR PTU-SDK.
 
+  FLIR PTU factory settings:
+  \code
+Pan  pos min/max [deg]: -167.99 168
+Tilt pos min/max [deg]:  -89.99  90
+Pan/tilt vel max [deg/s]:   120 120
+  \endcode
+
+  \note We strongly recommend to communication with the PTU using network. We experienced communication issues using serial
+  communication.
+
   \warning On Unix-like OS, if you experienced the following error when running servoFlirPtu.cpp:
   \code
   Failed to open /dev/ttyUSB0: Permission denied.
@@ -106,11 +116,15 @@ public:
   vpHomogeneousMatrix get_eMc() const { return m_eMc; }
 
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  vpColVector getPosMax();
-  vpColVector getPosMin();
-  vpColVector getVelMax();
 
+  std::string getNetworkIP();
+  std::string getNetworkGateway();
+  std::string getNetworkHostName();
+
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  vpColVector getPanPosLimits();
+  vpColVector getTiltPosLimits();
+  vpColVector getPanTiltVelMax();
 
   /*!
     Set constant transformation between end-effector and tool frame.
@@ -118,6 +132,9 @@ public:
    */
   void set_eMc(vpHomogeneousMatrix &eMc) { m_eMc = eMc; }
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPanPosLimits(const vpColVector &pan_limits);
+  void setTiltPosLimits(const vpColVector &tilt_limits);
+
   void setPositioningVelocity(double velocity);
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
@@ -130,15 +147,20 @@ protected:
   void setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
   void setJointVelocity(const vpColVector &qdot);
 
+private:
+  double tics2deg(int axis, int tics);
+  double tics2rad(int axis, int tics);
+  int rad2tics(int axis, double rad);
+
 protected:
   vpHomogeneousMatrix m_eMc; //!< Constant transformation between end-effector and tool (or camera) frame
 
   struct cerial *m_cer;
   uint16_t m_status;
-  vpColVector m_pos_max;           //!< Pan min/max position in rad
-  vpColVector m_pos_min;           //!< Tilt min/max position in rad
-  std::vector<int> m_vel_max_tics; //!< Pan/tilt max velocity in tics unit
-  vpColVector m_res;               //!< Pan/tilt tic resolution in deg
+  std::vector<int> m_pos_max_tics; //!< Pan min/max position in robot tics unit
+  std::vector<int> m_pos_min_tics; //!< Tilt min/max position in robot tics unit
+  std::vector<int> m_vel_max_tics; //!< Pan/tilt max velocity in robot tics unit
+  std::vector<double> m_res;       //!< Pan/tilt tic resolution in deg
   bool m_connected;
   int m_njoints;
   double m_positioning_velocity;
