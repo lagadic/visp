@@ -195,6 +195,7 @@ private:
     FORMAT_AVI,
     FORMAT_MPEG,
     FORMAT_MPEG4,
+    FORMAT_MTS,
     FORMAT_MOV,
     FORMAT_OGV,
     FORMAT_WMV,
