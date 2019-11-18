@@ -57,10 +57,10 @@ Basic constructor.
 vpVideoReader::vpVideoReader()
   : vpFrameGrabber(), m_imSequence(NULL),
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    m_capture(), m_frame(),
+    m_capture(), m_frame(), m_lastframe_unknown(false),
 #endif
     m_formatType(FORMAT_UNKNOWN), m_fileName(), m_initFileName(false), m_isOpen(false), m_frameCount(0), m_firstFrame(0), m_lastFrame(0),
-    m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1), m_frameRate(0.), m_lastframe_unknown(false)
+    m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1), m_frameRate(0.)
 {
 }
 
