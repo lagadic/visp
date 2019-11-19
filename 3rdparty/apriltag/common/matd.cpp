@@ -227,6 +227,7 @@ void matd_destroy(matd_t *m)
         return;
 
     assert(m != NULL);
+    free(m->data);
     free(m);
 }
 
