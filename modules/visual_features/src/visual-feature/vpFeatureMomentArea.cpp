@@ -45,6 +45,7 @@
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/visual_features/vpFeatureMomentArea.h>
+#include <visp3/visual_features/vpFeatureMomentCentered.h>
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
 /*!
@@ -53,6 +54,9 @@
   feature depends on:
   - vpMomentGravityCenter
   - vpMomentArea
+
+  Note that the interaction matrix corresponds to \f$ L_{m_{00}} \f$ for dense
+  objects and to \f$ L_{\mu_{20}}+L_{\mu_{02}} \f$ for a discrete set of points.
 */
 void vpFeatureMomentArea::compute_interaction()
 {
@@ -63,17 +67,13 @@ void vpFeatureMomentArea::compute_interaction()
   // Retreive the moment object associated with this feature
   vpMomentObject mobj = moment->getObject();
   if (mobj.getType() == vpMomentObject::DISCRETE) {
-    /*
-     *  The interaction matrix for the discrete case is zero
-     *  since the feature m00 is constant.
-     *  Refer thesis of Omar Tahri 2005 [Section 3.4.22]
-     */
-    interaction_matrices[0][0][0] = 0.;
-    interaction_matrices[0][0][1] = 0.;
-    interaction_matrices[0][0][2] = 0.;
-    interaction_matrices[0][0][3] = 0.;
-    interaction_matrices[0][0][4] = 0.;
-    interaction_matrices[0][0][5] = 0.;
+    // Get centered moments
+    bool found_centered;
+    const vpFeatureMomentCentered &momentCentered =
+        static_cast<const vpFeatureMomentCentered &>(featureMomentsDataBase->get("vpFeatureMomentCentered", found_centered));
+    if (!found_centered)
+      throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
+    interaction_matrices[0] = momentCentered.interaction(2,0) + momentCentered.interaction(0,2);
   } else {
     // Get Xg and Yg
     bool found_xgyg;
