@@ -39,7 +39,7 @@ foreach(cpp ${tutorial_cpp})
     endif()
 
     if(VISP_HAVE_OGRE)
-      visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations -Wno-float-equal)
+      visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations -Wno-float-equal -Wno-deprecated-copy)
     else()
       visp_set_source_file_compile_flag(${cpp} -Wno-deprecated-declarations)
     endif()
