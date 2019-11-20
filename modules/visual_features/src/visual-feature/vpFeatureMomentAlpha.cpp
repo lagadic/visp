@@ -70,9 +70,9 @@ void vpFeatureMomentAlpha::compute_interaction()
   if (!found_FeatureMoment_centered)
     throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
 
-  double u11 = vp_centered.get(1,1);
-  double u20_u02 = vp_centered.get(2,0)-vp_centered.get(0,2);
-  double dinv = 1 / (4*u11*u11 + (u20-u02)*(u20-u02));
+  double u11 = momentCentered.get(1,1);
+  double u20_u02 = momentCentered.get(2,0)-momentCentered.get(0,2);
+  double dinv = 1 / (4*u11*u11 + u20_u02*u20_u02);
   interaction_matrices[0].resize(1, 6);
   interaction_matrices[0] = (u20_u02*dinv) * featureMomentCentered.interaction(1,1) +
                             (u11*dinv) * (featureMomentCentered.interaction(0,2)-featureMomentCentered.interaction(2,0));
@@ -160,6 +160,8 @@ void vpFeatureMomentAlpha::compute_interaction()
   interaction_matrices[0][0][WZ] = -1.;
 }
 
+#endif
+
 vpColVector vpFeatureMomentAlpha::error(const vpBasicFeature &s_star, const unsigned int /* select */)
 {
   vpColVector e(0);
@@ -176,4 +178,3 @@ vpColVector vpFeatureMomentAlpha::error(const vpBasicFeature &s_star, const unsi
 
   return e;
 }
-#endif
