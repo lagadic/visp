@@ -1,4 +1,4 @@
-/****************************************************************************
+****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
@@ -33,6 +33,7 @@
  *
  * Authors:
  * Fabien Spindler
+ * Zubair Arif (HIT,CHINA)
  *
  *****************************************************************************/
 
@@ -163,44 +164,106 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
   }
 
   vpColVector v_e; // This is the velocity that the robot is able to apply in the end-effector frame
-  switch (frame) {
-  case vpRobot::TOOL_FRAME: {
+  vpColVector v_c; // This is the velocity that the robot is able to apply in the camera frame
+  vpColVector v_mix; // This is the velocity that the robot is able to apply in the mix frame
+    switch (frame) {
+  case vpRobot::CAMERA_FRAME: {
     // We have to transform the requested velocity in the end-effector frame.
     // Knowing that the constant transformation between the tool frame and the end-effector frame obtained
     // by extrinsic calibration is set in m_eMc we can compute the velocity twist matrix eVc that transform
     // a velocity twist from tool (or camera) frame into end-effector frame
-    vpVelocityTwistMatrix eVc(m_eMc);
-    v_e = eVc * v;
+    vpVelocityTwistMatrix eVc(m_eMc); // GET IT FROM CAMERA EXTRNSIC CALIBRATION FILE //
+    vpColVector p_e;
+    getPosition(vpRobot::END_EFFECTOR_FRAME, p_e);
+    vpRxyzVector bre(p_e[3], p_e[4], p_e[5]);
+    vpRotationMatrix bRe(bre);
+    std::cout << "rotation matrix from base to endeffector is bRe : " << std::endl;
+    std::cout << "bRe:\n" << bRe << std::endl;
+    vpMatrix bVe(6, 6, 0);
+    bVe.eye();
+    bVe.insert(bRe, 0, 0);
+    vpColVector v_mixed = bVe * v_e;
+    v_c = eVc * v_mixed;
+    TrajectoryPoint pointToSend;
+    pointToSend.InitStruct();
+    // We specify that this point will be used an angular (joint by joint) velocity vector
+    pointToSend.Position.Type = CARTESIAN_VELOCITY;
+    pointToSend.Position.HandMode = HAND_NOMOVEMENT;
+
+    pointToSend.Position.CartesianPosition.X = static_cast<float>(v_c[0]);
+    pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_c[1]);
+    pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_c[2]);
+    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_c[3]);
+    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_c[4]);
+    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_c[5]);
+
+    KinovaSetCartesianControl(); // Not sure that this function is useful here
+
+    KinovaSendBasicTrajectory(pointToSend);
     break;
   }
 
   case vpRobot::END_EFFECTOR_FRAME: {
     v_e = v;
+    TrajectoryPoint pointToSend;
+    pointToSend.InitStruct();
+    // We specify that this point will be used an angular (joint by joint) velocity vector
+    pointToSend.Position.Type = CARTESIAN_VELOCITY;
+    pointToSend.Position.HandMode = HAND_NOMOVEMENT;
+
+    pointToSend.Position.CartesianPosition.X = static_cast<float>(v_e[0]);
+    pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_e[1]);
+    pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_e[2]);
+    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_e[3]);
+    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_e[4]);
+    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_e[5]);
+
+    KinovaSetCartesianControl(); // Not sure that this function is useful here
+
+    KinovaSendBasicTrajectory(pointToSend);
     break;
+  }
+  
+  case vpRobot::MIXT_FRAME: {
+   
+    // Convert end-effector translation velocity in base frame, rotation velocity  is unchanged
+    vpColVector p_e;
+    getPosition(vpRobot::END_EFFECTOR_FRAME, p_e);
+    vpRxyzVector bre(p_e[3], p_e[4], p_e[5]);
+    vpRotationMatrix bRe(bre);
+    std::cout << "rotation matrix from base to endeffector is bRe : " << std::endl;
+    std::cout << "bRe:\n" << bRe << std::endl;
+    vpMatrix bVe(6, 6, 0);
+    bVe.eye();
+    bVe.insert(bRe, 0, 0);
+    v_e = v;
+    //vpColVector bVe;
+    vpColVector v_mix = bVe * v_e;
+    
+    TrajectoryPoint pointToSend;
+    pointToSend.InitStruct();
+    // We specify that this point will be used an angular (joint by joint) velocity vector
+    pointToSend.Position.Type = CARTESIAN_VELOCITY;
+    pointToSend.Position.HandMode = HAND_NOMOVEMENT;
+
+    pointToSend.Position.CartesianPosition.X = static_cast<float>(v_mix[0]);
+    pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_mix[1]);
+    pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_mix[2]);
+    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_e[3]);
+    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_e[4]);
+    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_e[5]);
+
+    KinovaSetCartesianControl(); // Not sure that this function is useful here
+    KinovaSendBasicTrajectory(pointToSend);
+	  break;
   }
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::JOINT_STATE:
-  case vpRobot::MIXT_FRAME:
     // Out of the scope
     break;
   }
 
-  TrajectoryPoint pointToSend;
-  pointToSend.InitStruct();
-  // We specify that this point will be used an angular (joint by joint) velocity vector
-  pointToSend.Position.Type = CARTESIAN_VELOCITY;
-  pointToSend.Position.HandMode = HAND_NOMOVEMENT;
-
-  pointToSend.Position.CartesianPosition.X = static_cast<float>(v_e[0]);
-  pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_e[1]);
-  pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_e[2]);
-  pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_e[3]);
-  pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_e[4]);
-  pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_e[5]);
-
-  KinovaSetCartesianControl(); // Not sure that this function is useful here
-
-  KinovaSendBasicTrajectory(pointToSend);
+  
 }
 
 /*!
