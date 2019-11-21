@@ -1,4 +1,4 @@
-****************************************************************************
+/****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
@@ -151,11 +151,16 @@ void vpRobotKinova::get_fJe(vpMatrix &fJe)
 /*!
   Send to the controller a 6-dim velocity twist vector expressed in a Cartesian frame.
 
-  \param[in] frame : Cartesian control frame (either tool frame or end-effector) in which the velocity \e v is expressed.
-  Units are m/s for translation and rad/s for rotation velocities.
+  \param[in] frame : Cartesian control frame. Units are m/s for translation and rad/s for rotation velocities.
+  - In CAMERA_FRAME or TOOL_FRAME, we consider that \e v 6-dim velocity twist vector contains translation and rotation velocities expressed
+    in the camera or tool frame respectively.
+  - In END_EFFECTOR_FRAME, we consider that \e v 6-dim velocity twist vector contains translation and rotation velocities expressed
+    in the end-effector frame.
+  - In MIXT_FRAME, we consider that \e v 6-dim velocity twist vector contains translation velocities expressed
+    in the base frame and rotation velocities expressed in the effector frame.
 
-  \param[in] v : 6-dim vector that contains the 6 components of the velocity twist to send to the robot.
-  Units are m/s and rad/s.
+  \param[in] v : 6-dim velocity twist vector that contains 3 translation velocities followed by 3 rotation velocities.
+  Units are m/s for translation and rad/s for rotation velocities.
 */
 void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
@@ -172,30 +177,36 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
     // Knowing that the constant transformation between the tool frame and the end-effector frame obtained
     // by extrinsic calibration is set in m_eMc we can compute the velocity twist matrix eVc that transform
     // a velocity twist from tool (or camera) frame into end-effector frame
-    vpVelocityTwistMatrix eVc(m_eMc); // GET IT FROM CAMERA EXTRNSIC CALIBRATION FILE //
+    vpVelocityTwistMatrix eVc(m_eMc); // GET IT FROM CAMERA EXTRINSIC CALIBRATION FILE
+
+    // Input velocity is expressed in camera or tool frame
+    v_c = v;
+
+    // Tranform velocity in end-effector
+    v_e = eVc * v_c;
+
+    // Convert end-effector translation velocity in base frame, rotation velocity is unchanged
     vpColVector p_e;
     getPosition(vpRobot::END_EFFECTOR_FRAME, p_e);
     vpRxyzVector bre(p_e[3], p_e[4], p_e[5]);
     vpRotationMatrix bRe(bre);
-    std::cout << "rotation matrix from base to endeffector is bRe : " << std::endl;
-    std::cout << "bRe:\n" << bRe << std::endl;
     vpMatrix bVe(6, 6, 0);
     bVe.eye();
     bVe.insert(bRe, 0, 0);
-    vpColVector v_mixed = bVe * v_e;
-    v_c = eVc * v_mixed;
+    v_mix = bVe * v_e;
+
     TrajectoryPoint pointToSend;
     pointToSend.InitStruct();
     // We specify that this point will be used an angular (joint by joint) velocity vector
     pointToSend.Position.Type = CARTESIAN_VELOCITY;
     pointToSend.Position.HandMode = HAND_NOMOVEMENT;
 
-    pointToSend.Position.CartesianPosition.X = static_cast<float>(v_c[0]);
-    pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_c[1]);
-    pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_c[2]);
-    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_c[3]);
-    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_c[4]);
-    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_c[5]);
+    pointToSend.Position.CartesianPosition.X = static_cast<float>(v_mix[0]);
+    pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_mix[1]);
+    pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_mix[2]);
+    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_mix[3]);
+    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_mix[4]);
+    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_mix[5]);
 
     KinovaSetCartesianControl(); // Not sure that this function is useful here
 
@@ -204,29 +215,41 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
   }
 
   case vpRobot::END_EFFECTOR_FRAME: {
+    // Input velocity is expressed in end-effector
     v_e = v;
+
+    // Convert end-effector translation velocity in base frame, rotation velocity is unchanged
+    vpColVector p_e;
+    getPosition(vpRobot::END_EFFECTOR_FRAME, p_e);
+    vpRxyzVector bre(p_e[3], p_e[4], p_e[5]);
+    vpRotationMatrix bRe(bre);
+    vpMatrix bVe(6, 6, 0);
+    bVe.eye();
+    bVe.insert(bRe, 0, 0);
+    v_mix = bVe * v_e;
+
     TrajectoryPoint pointToSend;
     pointToSend.InitStruct();
     // We specify that this point will be used an angular (joint by joint) velocity vector
     pointToSend.Position.Type = CARTESIAN_VELOCITY;
     pointToSend.Position.HandMode = HAND_NOMOVEMENT;
 
-    pointToSend.Position.CartesianPosition.X = static_cast<float>(v_e[0]);
-    pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_e[1]);
-    pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_e[2]);
-    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_e[3]);
-    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_e[4]);
-    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_e[5]);
+    pointToSend.Position.CartesianPosition.X = static_cast<float>(v_mix[0]);
+    pointToSend.Position.CartesianPosition.Y = static_cast<float>(v_mix[1]);
+    pointToSend.Position.CartesianPosition.Z = static_cast<float>(v_mix[2]);
+    pointToSend.Position.CartesianPosition.ThetaX = static_cast<float>(v_mix[3]);
+    pointToSend.Position.CartesianPosition.ThetaY = static_cast<float>(v_mix[4]);
+    pointToSend.Position.CartesianPosition.ThetaZ = static_cast<float>(v_mix[5]);
 
     KinovaSetCartesianControl(); // Not sure that this function is useful here
 
     KinovaSendBasicTrajectory(pointToSend);
     break;
   }
-  
+
   case vpRobot::MIXT_FRAME: {
-   
-    // Convert end-effector translation velocity in base frame, rotation velocity  is unchanged
+
+    // Convert end-effector translation velocity in base frame, rotation velocity is unchanged
     vpColVector p_e;
     getPosition(vpRobot::END_EFFECTOR_FRAME, p_e);
     vpRxyzVector bre(p_e[3], p_e[4], p_e[5]);
@@ -239,7 +262,7 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
     v_e = v;
     //vpColVector bVe;
     vpColVector v_mix = bVe * v_e;
-    
+
     TrajectoryPoint pointToSend;
     pointToSend.InitStruct();
     // We specify that this point will be used an angular (joint by joint) velocity vector
@@ -255,20 +278,18 @@ void vpRobotKinova::setCartVelocity(const vpRobot::vpControlFrameType frame, con
 
     KinovaSetCartesianControl(); // Not sure that this function is useful here
     KinovaSendBasicTrajectory(pointToSend);
-	  break;
+    break;
   }
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::JOINT_STATE:
     // Out of the scope
     break;
   }
-
-  
 }
 
 /*!
   Send a joint velocity to the controller.
-  \param[in] qdot : Joint velocities vector. Units are rad/s for a robot arm.
+  \param[in] qdot : Joint velocities vector. Units are rad/s for a robot arm joint velocities.
  */
 void vpRobotKinova::setJointVelocity(const vpColVector &qdot)
 {
@@ -293,10 +314,18 @@ void vpRobotKinova::setJointVelocity(const vpColVector &qdot)
   Send to the controller a velocity in a given frame.
 
   \param[in] frame : Control frame in which the velocity \e vel is expressed.
-  Velocities could be joint velocities, or cartesian velocities. Units are m/s for translation and
-  rad/s for rotation velocities.
+  In cartesian control frames, units are m/s for translation and rad/s for rotation velocities.
+  - In CAMERA_FRAME or TOOL_FRAME, we consider that \e vel 6-dim velocity twist vector contains translation and rotation velocities expressed
+    in the camera or tool frame respectively.
+  - In END_EFFECTOR_FRAME, we consider that \e vel 6-dim velocity twist vector contains translation and rotation velocities expressed
+    in the end-effector frame.
+  - In MIXT_FRAME, we consider that \e vel 6-dim velocity twist vector contains translation velocities expressed
+    in the base frame and rotation velocities expressed in the effector frame.
+  To send a joint velocity, use rather JOINT_STATE. Units are rad/s for a robot arm joint velocities.
 
-  \param[in] vel : Vector that contains the velocity to apply to the robot.
+  \param[in] vel : Vector that contains the velocity to apply to the robot. In cartesian control frames, 6-dim velocity
+  twist vector that contains 3 translation velocities followed by 3 rotation velocities.
+  When a joint velocities vector is given, 6-dim vector corresponding to joint velocities.
  */
 void vpRobotKinova::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel)
 {
@@ -337,7 +366,7 @@ void vpRobotKinova::setVelocity(const vpRobot::vpControlFrameType frame, const v
     setCartVelocity(frame, vel_sat);
     break;
   }
-  
+
   // Saturation in joint space
   case vpRobot::JOINT_STATE: {
     if (vel.size() != static_cast<size_t>(nDof)) {
@@ -526,7 +555,7 @@ void vpRobotKinova::loadPlugin()
   if (m_plugin_loaded) {
     closePlugin();
   }
-#ifdef __linux__ 
+#ifdef __linux__
   // We load the API
   std::string plugin_name = (m_command_layer == CMD_LAYER_USB) ? std::string("Kinova.API.USBCommandLayerUbuntu.so") : std::string("Kinova.API.EthCommandLayerUbuntu.so");
   std::string plugin = vpIoTools::createFilePath(m_plugin_location, plugin_name);
@@ -595,7 +624,7 @@ void vpRobotKinova::closePlugin()
     if (m_verbose) {
       std::cout << "Close plugin" << std::endl;
     }
-#ifdef __linux__ 
+#ifdef __linux__
     dlclose(m_command_layer_handle);
 #elif _WIN32
     FreeLibrary(m_command_layer_handle);
