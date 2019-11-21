@@ -846,7 +846,16 @@ float vpImageTools::cubicHermite(const float A, const float B, const float C, co
   return a * t * t * t + b * t * t + c * t + d;
 }
 
-float vpImageTools::lerp(const float A, const float B, const float t) {
+int vpImageTools::coordCast(double x)
+{
+  return x < 0 ? -1 : static_cast<int>(x);
+}
+
+double vpImageTools::lerp(double A, double B, double t) {
+  return A * (1.0 - t) + B * t;
+}
+
+float vpImageTools::lerp(float A, float B, float t) {
   return A * (1.0f - t) + B * t;
 }
 
@@ -1052,7 +1061,7 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
             && v_round < static_cast<int>(I.getHeight()) - 1) {
           // process interpolation
           float col0 = lerp(I[v_round][u_round].R, I[v_round][u_round + 1].R, du);
-          float col1 = lerp(I[v_round + 1][u_round].G, I[v_round + 1][u_round + 1].G, du);
+          float col1 = lerp(I[v_round + 1][u_round].R, I[v_round + 1][u_round + 1].R, du);
           float value = lerp(col0, col1, dv);
 
           Iundist[i][j].R = static_cast<unsigned char>(value);
@@ -1080,4 +1089,20 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
       }
     }
   }
+}
+
+bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatrix &T, bool affine)
+{
+  double a0 = T[0][0];  double a1 = T[0][1];  double a2 = T[0][2];
+  double a3 = T[1][0];  double a4 = T[1][1];  double a5 = T[1][2];
+  double a6 = affine ? 0.0 : T[2][0];
+  double a7 = affine ? 0.0 : T[2][1];
+  double a8 = affine ? 1.0 : T[2][2];
+
+  double w  = a6 * x + a7 * y + a8;
+  double x2 = (a0 * x + a1 * y + a2) / w;
+  double y2 = (a3 * x + a4 * y + a5) / w;
+
+  const double limit = 1 << 15;
+  return (vpMath::abs(x2) < limit) && (vpMath::abs(y2) < limit);
 }
