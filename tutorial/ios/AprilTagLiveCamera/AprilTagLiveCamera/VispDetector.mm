@@ -2,6 +2,7 @@
 // GNU General Public License v2.0.
 //  VispDetector.mm
 //  https://github.com/AplixCorporation/groma-AprilTag/
+//  See also https://groma.jp for more information.
 
 #import "VispDetector.h"
 #import "ImageConversion.h"
