@@ -62,7 +62,8 @@ matd_t *matd_create(int rows, int cols)
 
 matd_t *matd_create_scalar(TYPE v)
 {
-    matd_t *m = (matd_t *)calloc(1, sizeof(matd_t) + sizeof(double));
+    matd_t *m = (matd_t *)calloc(1, sizeof(matd_t));
+    m->data = (double *)calloc(1, sizeof(double));
     m->nrows = 0;
     m->ncols = 0;
     m->data[0] = v;
@@ -1048,8 +1049,10 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             double mag = sqrt(mag2);
 
             // this case arises with matrices of all zeros, for example.
-            if (mag == 0)
+            if (mag == 0) {
+                free(v);
                 continue;
+            }
 
             for (int i = 0; i < vlen; i++)
                 v[i] /= mag;
