@@ -362,6 +362,9 @@ public:
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                         const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
                         bool (*func)(const vpHomogeneousMatrix &)=NULL);
+
+  static bool computePoseRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
+                              const vpCameraParameters &colorIntrinsics, double tagSize, vpHomogeneousMatrix &cMo);
 };
 
 #endif
