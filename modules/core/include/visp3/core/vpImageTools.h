@@ -1341,7 +1341,7 @@ void vpImageTools::warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImag
   }
 
   const bool affine = (T.getRows() == 2);
-  const bool interp_NN = interpolation == INTERPOLATION_NEAREST || INTERPOLATION_CUBIC;
+  const bool interp_NN = (interpolation == INTERPOLATION_NEAREST) || (interpolation == INTERPOLATION_CUBIC);
 
   if (dst.getSize() == 0) {
     dst.resize(src.getHeight(), src.getWidth(), Type(0));
@@ -1499,7 +1499,6 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
     int64_t a6_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][0] * precision) : 0;
     int64_t a7_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][1] * precision) : 0;
     int64_t a8_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][2] * precision) : 1;
-    int64_t half = static_cast<int64_t>(0.5 * precision);
 
     int64_t height_1_i64 = static_cast<int64_t>((src.getHeight() - 1) * precision);
     int64_t width_1_i64 = static_cast<int64_t>((src.getWidth() - 1) * precision);
