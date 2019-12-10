@@ -248,7 +248,7 @@ void vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vp
   for (unsigned int i = 0; i < src_depth.getSize(); ++i) {
     uint16_t d = src_depth.bitmap[i];
     if (d) {
-      int f = (int)(histogram2[d] * 255 / histogram2[0xFFFF]); // 0-255 based on histogram location
+      unsigned char f = static_cast<unsigned char>(histogram2[d] * 255 / histogram2[0xFFFF]); // 0-255 based on histogram location
       dest_depth.bitmap[i] = f;
     } else {
       dest_depth.bitmap[i] = 0;

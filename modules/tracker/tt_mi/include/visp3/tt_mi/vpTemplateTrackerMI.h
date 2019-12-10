@@ -105,12 +105,22 @@ protected:
   vpMatrix covarianceMatrix;
   bool computeCovariance;
 
+  // Internal vars for computeHessienNormalized()
+  std::vector<double> m_du;
+  std::vector<double> m_dv;
+  std::vector<double> m_A;
+  std::vector<double> m_dB;
+  std::vector< std::vector<double> > m_d2u;
+  std::vector< std::vector<double> > m_d2v;
+  std::vector< std::vector<double> > m_dA;
+
 protected:
   void computeGradient();
   void computeHessien(vpMatrix &H);
   void computeHessienNormalized(vpMatrix &H);
   void computeMI(double &MI);
   void computeProba(int &nbpoint);
+
   double getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
   double getCost(const vpImage<unsigned char> &I) { return getCost(I, p); }
   double getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp);
@@ -146,7 +156,8 @@ public:
     : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0), temp(NULL),
       Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
       influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
-      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
+      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false),
+      m_du(), m_dv(), m_A(), m_dB(), m_d2u(), m_d2v(), m_dA()
   {
   }
   explicit vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);

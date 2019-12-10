@@ -55,8 +55,12 @@ if(USE_PNG)
   list(APPEND opt_libs ${PNG_LIBRARIES})
   add_definitions(${PNG_DEFINITIONS})
 endif()
+if(WITH_STBIMAGE)
+  # stb_image is private
+  include_directories(${STBIMAGE_INCLUDE_DIRS})
+endif()
 
-if (ANDROID)
+if(ANDROID)
   vp_add_module(io visp_core)
 else()
   vp_add_module(io visp_core WRAP java)

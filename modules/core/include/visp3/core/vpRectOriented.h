@@ -58,7 +58,11 @@ public:
 
   vpRectOriented(const vpRect &rect);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpRectOriented &operator=(const vpRectOriented &rect) = default;
+#else
   vpRectOriented &operator=(const vpRectOriented &rect);
+#endif
 
   vpRectOriented &operator=(const vpRect &rect);
 

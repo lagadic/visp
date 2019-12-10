@@ -65,6 +65,13 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
   int i, j;
   double i2, j2;
   double alpha = 2.;
+
+  initPosEvalRMS(p);
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     unsigned int Nbpoint = 0;
     double erreur = 0;
@@ -112,13 +119,12 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
       }
     }
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
-      dp = 1. * HLM.inverseByLU() * G;
+      dp = HLM.inverseByLU() * G;
     } catch (const vpException &e) {
       throw(e);
     }
@@ -126,7 +132,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
     switch (minimizationMethod) {
     case vpTemplateTrackerSSDForwardAdditional::USE_LMA: {
       vpColVector p_test_LMA(nbParam);
-      p_test_LMA = p + 1. * dp;
+      p_test_LMA = p + dp;
       erreur = -getCost(I, p);
       double erreur_LMA = -getCost(I, p_test_LMA);
       if (erreur_LMA < erreur) {
@@ -143,7 +149,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
         computeOptimalBrentGain(I, p, erreur, dp, alpha);
         dp = alpha * dp;
       }
-      p += 1. * dp;
+      p += dp;
       break;
     }
 
@@ -152,9 +158,6 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
         vpColVector s_quasi = p - p_prec;
         vpColVector y_quasi = G - G_prec;
         double s_scal_y = s_quasi.t() * y_quasi;
-        // if(s_scal_y!=0)//BFGS
-        //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
-        // if(s_scal_y!=0.0)//DFP
         if (std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon()) // DFP
           KQuasiNewton = KQuasiNewton + 0.001 * (s_quasi * s_quasi.t() / s_scal_y -
                                                  KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
@@ -174,15 +177,24 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
         dp = alpha * dp;
       }
 
-      p += 1. * dp;
+      p += dp;
       break;
     }
     }
 
+    computeEvalRMS(p);
+
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
+
     iteration++;
     iterationGlobale++;
-  } while (/*( erreur_prec-erreur<50) && */ (iteration < iterationMax));
 
-  // std::cout<<"erreur "<<erreur<<std::endl;
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+
   nbIteration = iteration;
 }

@@ -128,6 +128,15 @@ if(USE_FRANKA)
   endforeach()
 endif()
 
+if(USE_ARSDK)
+  list(APPEND opt_incs ${ARSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${ARSDK_LIBRARIES})
+  if(USE_FFMPEG)
+    list(APPEND opt_incs ${FFMPEG_INCLUDE_DIRS})
+    list(APPEND opt_libs ${FFMPEG_LIBRARIES})
+  endif()
+endif()
+
 # for the wireframe simulator we can use optional opengl and coin
 if(USE_COIN3D)
   if(WIN32)
@@ -200,7 +209,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose
+  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose bebop2
   CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp )
 
 if(USE_VIRTUOSE)
@@ -211,4 +220,8 @@ if(USE_VIRTUOSE)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp -Wno-int-to-pointer-cast)
+endif()
+
+if(USE_ARSDK)
+  vp_set_source_file_compile_flag(src/real-robot/bebop2/vpRobotBebop2.cpp -Wno-old-style-cast -Wno-implicit-fallthrough -Wno-cast-qual -Wno-deprecated-declarations)
 endif()

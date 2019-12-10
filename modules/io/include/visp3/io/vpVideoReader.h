@@ -65,25 +65,26 @@
   other frame grabber class.
 
   This class has its own implementation to read a sequence of PGM and PPM
-images.
+  images.
 
   This class may benefit from optional 3rd parties:
   - libpng: If installed this optional 3rd party is used to read a sequence of
-PNG images. Installation instructions are provided here
-https://visp.inria.fr/3rd_png.
+    PNG images. Installation instructions are provided here
+    https://visp.inria.fr/3rd_png.
   - libjpeg: If installed this optional 3rd party is used to read a sequence
-of JPEG images. Installation instructions are provided here
-https://visp.inria.fr/3rd_jpeg.
+    of JPEG images. Installation instructions are provided here
+    https://visp.inria.fr/3rd_jpeg.
   - OpenCV: If installed this optional 3rd party is used to read a sequence of
-images where images could be in TIFF, BMP, DIB, PBM, RASTER, JPEG2000 format.
-If libpng or libjpeg is not installed, OpenCV is also used to consider these
-image formats. OpenCV allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV,
-FLV, MKV video formats. Installation instructions are provided here
-https://visp.inria.fr/3rd_opencv.
+    images where images could be in TIFF, BMP, DIB, PBM, RASTER, JPEG2000 format.
+    If libpng or libjpeg is not installed, OpenCV is also used to consider these
+    image formats. OpenCV allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV,
+    FLV, MKV video formats. Installation instructions are provided here
+    https://visp.inria.fr/3rd_opencv.
 
   The following example available in tutorial-video-reader.cpp shows how this
   class is really easy to use. It enables to read a video file named
-video.mpeg. \include tutorial-video-reader.cpp
+  video.mpeg.
+  \include tutorial-video-reader.cpp
 
   As shown in the next example, this class allows also to access to a specific
   frame. But be careful, for video files, the getFrame() method is not precise
@@ -119,9 +120,9 @@ int main()
   sequence of images. The images are stored in the folder "./image" and are
   named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ... As explained
   in setFirstFrameIndex() and setLastFrameIndex() it is also possible to set
-the first and last image numbers to read a portion of the sequence. If these
-two functions are not used, first and last image numbers are set automatically
-to match the first and image images of the sequence.
+  the first and last image numbers to read a portion of the sequence. If these
+  two functions are not used, first and last image numbers are set automatically
+  to match the first and image images of the sequence.
 
   \code
 #include <visp3/io/vpVideoReader.h>
@@ -145,8 +146,7 @@ int main()
 }
   \endcode
 
-  Note that it is also possible to access to a specific frame using
-getFrame().
+  Note that it is also possible to access to a specific frame using getFrame().
 \code
 #include <visp3/io/vpVideoReader.h>
 
@@ -172,11 +172,12 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 {
 private:
   //! To read sequences of images
-  vpDiskGrabber *imSequence;
+  vpDiskGrabber *m_imSequence;
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   //! To read video files with OpenCV
-  cv::VideoCapture capture;
-  cv::Mat frame;
+  cv::VideoCapture m_capture;
+  cv::Mat m_frame;
+  bool m_lastframe_unknown;
 #endif
   //! Types of available formats
   typedef enum {
@@ -195,6 +196,7 @@ private:
     FORMAT_AVI,
     FORMAT_MPEG,
     FORMAT_MPEG4,
+    FORMAT_MTS,
     FORMAT_MOV,
     FORMAT_OGV,
     FORMAT_WMV,
@@ -204,36 +206,36 @@ private:
   } vpVideoFormatType;
 
   //! Video's format which has to be read
-  vpVideoFormatType formatType;
+  vpVideoFormatType m_formatType;
 
   //! Path to the video
-  char fileName[FILENAME_MAX];
+  std::string m_fileName;
   //! Indicates if the path to the video is set.
-  bool initFileName;
+  bool m_initFileName;
   //! Indicates if the video is "open".
-  bool isOpen;
+  bool m_isOpen;
   //! Count the frame number when the class is used as a grabber.
-  long frameCount; // Index of the next image
+  long m_frameCount; // Index of the next image
   //! The first frame index
-  long firstFrame;
+  long m_firstFrame;
   //! The last frame index
-  long lastFrame;
-  bool firstFrameIndexIsSet;
-  bool lastFrameIndexIsSet;
+  long m_lastFrame;
+  bool m_firstFrameIndexIsSet;
+  bool m_lastFrameIndexIsSet;
   //! The frame step
-  long frameStep;
-  double frameRate;
+  long m_frameStep;
+  double m_frameRate;
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //    vpVideoReader(const vpVideoReader &)
-  //      : vpFrameGrabber(), imSequence(NULL),
+  //      : vpFrameGrabber(), m_imSequence(NULL),
   //    #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  //        capture(), frame(),
+  //        m_capture(), m_frame(),
   //    #endif
-  //        formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false),
-  //        frameCount(0), firstFrame(0), lastFrame(0),
-  //        firstFrameIndexIsSet(false), lastFrameIndexIsSet(false)
+  //        m_formatType(FORMAT_UNKNOWN), m_initFileName(false), m_isOpen(false),
+  //        m_frameCount(0), m_firstFrame(0), m_lastFrame(0),
+  //        m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false)
   //    {
   //      throw vpException(vpException::functionNotImplementedError, "Not
   //      implemented!");
@@ -257,11 +259,11 @@ public:
   */
   inline bool end()
   {
-    if (frameStep > 0) {
-      if (frameCount + frameStep > lastFrame)
+    if (m_frameStep > 0) {
+      if (m_frameCount + m_frameStep > m_lastFrame)
         return true;
-    } else if (frameStep < 0) {
-      if (frameCount + frameStep < firstFrame)
+    } else if (m_frameStep < 0) {
+      if (m_frameCount + m_frameStep < m_firstFrame)
         return true;
     }
     return false;
@@ -275,10 +277,10 @@ public:
   */
   double getFramerate()
   {
-    if (!isOpen) {
+    if (!m_isOpen) {
       getProperties();
     }
-    return frameRate;
+    return m_frameRate;
   }
 
   /*!
@@ -290,7 +292,7 @@ public:
 
     \sa end()
   */
-  inline long getFrameIndex() const { return frameCount; }
+  inline long getFrameIndex() const { return m_frameCount; }
 
   /*!
     Gets the first frame index.
@@ -299,10 +301,10 @@ public:
   */
   inline long getFirstFrameIndex()
   {
-    if (!isOpen) {
+    if (!m_isOpen) {
       getProperties();
     }
-    return firstFrame;
+    return m_firstFrame;
   }
   /*!
     Gets the last frame index.
@@ -311,17 +313,17 @@ public:
   */
   inline long getLastFrameIndex()
   {
-    if (!isOpen) {
+    if (!m_isOpen) {
       getProperties();
     }
-    return lastFrame;
+    return m_lastFrame;
   }
   /*!
     Gets the frame step.
 
     \return Returns the frame step value.
   */
-  inline long getFrameStep() const { return frameStep; }
+  inline long getFrameStep() const { return m_frameStep; }
   void open(vpImage<vpRGBa> &I);
   void open(vpImage<unsigned char> &I);
 
@@ -336,8 +338,7 @@ public:
     This method is useful if you use the class like a frame grabber (ie with
     theacquire method).
   */
-  inline void resetFrameCounter() { frameCount = firstFrame; }
-  void setFileName(const char *filename);
+  inline void resetFrameCounter() { m_frameCount = m_firstFrame; }
   void setFileName(const std::string &filename);
   /*!
     Enables to set the first frame index if you want to use the class like a
@@ -349,8 +350,8 @@ public:
   */
   inline void setFirstFrameIndex(const long first_frame)
   {
-    this->firstFrameIndexIsSet = true;
-    this->firstFrame = first_frame;
+    m_firstFrameIndexIsSet = true;
+    m_firstFrame = first_frame;
   }
   /*!
     Enables to set the last frame index.
@@ -361,8 +362,8 @@ public:
   */
   inline void setLastFrameIndex(const long last_frame)
   {
-    this->lastFrameIndexIsSet = true;
-    this->lastFrame = last_frame;
+    this->m_lastFrameIndexIsSet = true;
+    m_lastFrame = last_frame;
   }
 
   /*!
@@ -373,17 +374,17 @@ public:
 
   \sa setFrameStep()
 */
-  inline void setFrameStep(const long frame_step) { this->frameStep = frame_step; }
+  inline void setFrameStep(const long frame_step) { m_frameStep = frame_step; }
 
 private:
-  vpVideoFormatType getFormat(const char *filename);
+  vpVideoFormatType getFormat(const std::string &filename) const;
   static std::string getExtension(const std::string &filename);
   void findFirstFrameIndex();
   void findLastFrameIndex();
-  bool isImageExtensionSupported();
-  bool isVideoExtensionSupported();
-  long extractImageIndex(const std::string &imageName, const std::string &format);
-  bool checkImageNameFormat(const std::string &format);
+  bool isImageExtensionSupported() const;
+  bool isVideoExtensionSupported() const;
+  long extractImageIndex(const std::string &imageName, const std::string &format) const;
+  bool checkImageNameFormat(const std::string &format) const;
   void getProperties();
 };
 

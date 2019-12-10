@@ -1,25 +1,29 @@
 project(${APRILTAG_LIBRARY})
 
 set(APRILTAG_MAJOR_VERSION 3 PARENT_SCOPE)
-set(APRILTAG_MINOR_VERSION 0 PARENT_SCOPE)
-set(APRILTAG_PATCH_VERSION 0 PARENT_SCOPE)
+set(APRILTAG_MINOR_VERSION 1 PARENT_SCOPE)
+set(APRILTAG_PATCH_VERSION 1 PARENT_SCOPE)
 
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB lib_srcs *.c common/*.c)
+file(GLOB tag_srcs tag*.cpp)
+file(GLOB lib_srcs *.cpp common/*.cpp)
 file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
 
-vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
-vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
-vp_list_filterout(lib_hdrs common/getopt.h)    # useless and produces errors on uwp
+vp_list_filterout(lib_srcs common/unionfind.cpp) # has no symbols
+vp_list_filterout(lib_srcs common/pjpeg.cpp)     # useless
+vp_list_filterout(lib_srcs common/getopt.cpp)    # useless
+vp_list_filterout(lib_hdrs common/getopt.h)      # useless
 
-if(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo" AND CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.5)
-vp_list_filterout(lib_srcs tagCircle49h12.c)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
-vp_list_filterout(lib_hdrs tagCircle49h12.h)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
-vp_list_filterout(lib_srcs tagCustom48h12.c)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
-vp_list_filterout(lib_hdrs tagCustom48h12.h)     # build takes too much time with RelWithDebInfo on GCC 5.4.0
-vp_list_filterout(lib_srcs tagStandard52h13.c)   # build takes too much time with RelWithDebInfo on GCC 5.4.0
-vp_list_filterout(lib_hdrs tagStandard52h13.h)   # build takes too much time with RelWithDebInfo on GCC 5.4.0
+if(NOT WITH_APRILTAG_BIG_FAMILY)
+  vp_list_filterout(lib_srcs tagCircle49h12.cpp)
+  vp_list_filterout(lib_hdrs tagCircle49h12.h)
+  vp_list_filterout(lib_srcs tagCustom48h12.cpp)
+  vp_list_filterout(lib_hdrs tagCustom48h12.h)
+  vp_list_filterout(lib_srcs tagStandard41h12.cpp)
+  vp_list_filterout(lib_hdrs tagStandard41h12.h)
+  vp_list_filterout(lib_srcs tagStandard52h13.cpp)
+  vp_list_filterout(lib_hdrs tagStandard52h13.h)
 endif()
 
 if(UNIX)
@@ -27,10 +31,6 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   endif()
 endif()
-
-foreach(f ${lib_srcs})
-  set_source_files_properties(${f} PROPERTIES LANGUAGE CXX )
-endforeach()
 
 add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 if(WIN32 AND MSVC)
@@ -55,21 +55,37 @@ endif()
 
 if(MSVC)
   if(BUILD_SHARED_LIBS)
-    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4018 /wd4098 /wd4244 /wd4267 /wd4305 /wd4334 /wd4244 /wd4838 /wd4996)
-    vp_set_source_file_compile_flag(common/zmaxheap.c /wd4098 /wd4244)
-    vp_set_source_file_compile_flag(common/workerpool.c /wd4018 /wd4244)
-    vp_set_source_file_compile_flag(common/pam.c /wd4018)
-    vp_set_source_file_compile_flag(common/string_util.c /wd4018 /wd4267 /wd4996)
-    vp_set_source_file_compile_flag(tag16h5.c /wd4996)
-    vp_set_source_file_compile_flag(tag25h7.c /wd4996)
-    vp_set_source_file_compile_flag(tag25h9.c /wd4996)
-    vp_set_source_file_compile_flag(tag36h10.c /wd4996)
-    vp_set_source_file_compile_flag(tag36h11.c /wd4996)
+    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4018 /wd4098 /wd4244 /wd4267 /wd4305 /wd4334 /wd4244 /wd4838 /wd4996 /wd6011 /wd6385 /wd6386 /wd6387 /wd6011 /wd26451)
+    vp_set_source_file_compile_flag(common/zmaxheap.cpp /wd4098 /wd4244)
+    vp_set_source_file_compile_flag(common/workerpool.cpp /wd4018 /wd4244)
+    vp_set_source_file_compile_flag(common/pam.cpp /wd4018)
+    vp_set_source_file_compile_flag(common/string_util.cpp /wd4018 /wd4267 /wd4996)
+    vp_set_source_file_compile_flag(tag16h5.cpp /wd4996)
+    vp_set_source_file_compile_flag(tag25h7.cpp /wd4996)
+    vp_set_source_file_compile_flag(tag25h9.cpp /wd4996)
+    vp_set_source_file_compile_flag(tag36h10.cpp /wd4996)
+    vp_set_source_file_compile_flag(tag36h11.cpp /wd4996)
+    # disable optimization
+    foreach(f ${tag_srcs})
+      vp_set_source_file_compile_flag(${f} /O0)
+    endforeach()
   else()
     vp_warnings_disable(CMAKE_CXX_FLAGS /wd4018 /wd4098 /wd4244 /wd4267 /wd4305 /wd4334 /wd4244 /wd4838 /wd4996)
   endif()
+elseif(MINGW)
+  foreach(f ${lib_srcs})
+    vp_set_source_file_compile_flag(${f} -Wno-deprecated -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-float-equal -Wno-strict-overflow -Wno-type-limits -Wno-shift-negative-value -Wno-class-memaccess)
+  endforeach()
+  # disable optimization
+  foreach(f ${tag_srcs})
+    vp_set_source_file_compile_flag(${f} -O0)
+  endforeach()
 else()
   foreach(f ${lib_srcs})
-    vp_set_source_file_compile_flag(${f} -Wno-deprecated -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-float-equal -Wno-strict-overflow -Wno-type-limits -Wno-shift-negative-value -Wno-shorten-64-to-32)
+    vp_set_source_file_compile_flag(${f} -Wno-deprecated -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-float-equal -Wno-strict-overflow -Wno-type-limits -Wno-shift-negative-value -Wno-shorten-64-to-32 -Wno-attributes)
+  endforeach()
+  # disable optimization
+  foreach(f ${tag_srcs})
+    vp_set_source_file_compile_flag(${f} -O0)
   endforeach()
 endif()

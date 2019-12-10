@@ -170,20 +170,20 @@ int main(int argc, const char **argv)
     }
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX d(I);
+    vpDisplayX d(I, vpDisplay::SCALE_AUTO);
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI d(I);
+    vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK d(I);
+    vpDisplayGTK d(I, vpDisplay::SCALE_AUTO);
 #elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV d(I);
+    vpDisplayOpenCV d(I, vpDisplay::SCALE_AUTO);
 #endif
 
     vpCameraParameters cam;
 
     // Initialize camera parameters
     double px = cam.get_px();
-    double py = cam.get_px();
+    double py = cam.get_py();
     // Set (u0,v0) in the middle of the image
     double u0 = I.getWidth() / 2;
     double v0 = I.getHeight() / 2;

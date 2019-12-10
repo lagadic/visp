@@ -47,8 +47,6 @@ vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardComposition
 
 void vpTemplateTrackerSSDForwardCompositional::initCompo(const vpImage<unsigned char> & /*I*/)
 {
-  // std::cout<<"Initialise precomputed value of Compositionnal
-  // Direct"<<std::endl;
   for (unsigned int point = 0; point < templateSize; point++) {
     int i = ptTemplate[point].y;
     int j = ptTemplate[point].x;
@@ -65,13 +63,13 @@ void vpTemplateTrackerSSDForwardCompositional::initHessienDesired(const vpImage<
 
 void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  if (!compoInitialised)
-    std::cout << "Compositionnal tracking no initialised\nUse "
-                 "InitCompo(vpImage<unsigned char> &I) function"
-              << std::endl;
+  if (!compoInitialised) {
+    std::cout << "Compositionnal tracking not initialised.\nUse initCompo() function." << std::endl;
+  }
 
-  if (blur)
+  if (blur) {
     vpImageFilter::filter(I, BI, fgG, taillef);
+  }
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
 
@@ -84,6 +82,13 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
   int i, j;
   double i2, j2;
   double alpha = 2.;
+
+  initPosEvalRMS(p);
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     unsigned int Nbpoint = 0;
     double erreur = 0;
@@ -110,11 +115,6 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
         dIWx = dIx.getValue(i2, j2);
         dIWy = dIy.getValue(i2, j2);
         Nbpoint++;
-        // Calcul du Hessien
-        /*Warp->dWarp(X1,X2,p,dW);
-        double *tempt=new double[nbParam];
-        for(int it=0;it<nbParam;it++)
-        tempt[it]=dW[0][it]*dIWx+dW[1][it]*dIWy;*/
 
         Warp->dWarpCompo(X1, X2, p, ptTemplate[point].dW, dW);
 
@@ -135,16 +135,14 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
       }
     }
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
     vpMatrix::computeHLM(H, lambda, HLM);
 
     try {
-      dp = 1. * HLM.inverseByLU() * G;
+      dp = HLM.inverseByLU() * G;
     } catch (const vpException &e) {
-      // std::cout<<"probleme inversion"<<std::endl;
       throw(e);
     }
 
@@ -155,9 +153,18 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
       dp = alpha * dp;
     }
     Warp->pRondp(p, dp, p);
-    // p+=Gain*dp;
+
+    computeEvalRMS(p);
+
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
     iteration++;
-  } while (/*( erreur_prec-erreur<50) &&*/ (iteration < iterationMax));
+
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
 
   nbIteration = iteration;
 }

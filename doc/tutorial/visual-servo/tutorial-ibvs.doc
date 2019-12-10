@@ -180,8 +180,11 @@ The previous IBVS simulation can be modified easily to introduce a basic interna
 The result of this program is visible in the next videos. The first one shows the internal camera view with the straight line trajectory of each point in the image. The second one provides an external view that shows the 3D camera trajectory to reach the desired position.
 
 \htmlonly
-<iframe width="420" height="315" src="http://www.youtube.com/embed/sPNkDfp3UeU?rel=0" frameborder="0" allowfullscreen></iframe>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/ejzZqkyXXHw?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/sPNkDfp3UeU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+\endhtmlonly
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ejzZqkyXXHw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
 We explain now the new lines that were introduced.
@@ -277,8 +280,11 @@ The IBVS simulation presented section \ref ibvs_basic can also be modified to in
 The result of this program is visible in the next videos. The first one shows the internal wireframe camera view with the straight line trajectory of each point in the image. The second one provides an external wireframe view that shows the 3D camera trajectory to reach the desired position.
 
 \htmlonly
-<iframe width="420" height="315" src="http://www.youtube.com/embed/riv3LBg6FYY?rel=0" frameborder="0" allowfullscreen></iframe>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/EnfUz5p9QNs?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/riv3LBg6FYY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+\endhtmlonly
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EnfUz5p9QNs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
 We explain now the new lines that were introduced.
@@ -318,7 +324,7 @@ Note here that the same kind of simulation could be achieved on a Viper arm or a
 The next video illustrate the behavior of the same IBVS implemented in tutorial-ibvs-4pts-wireframe-robot-viper.cpp on a Viper arm. 
 
 \htmlonly
-<iframe width="420" height="315" src="http://www.youtube.com/embed/g0B5ug0ooYo?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/g0B5ug0ooYo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
 \section ibvs_tracking IBVS simulation with image processing
@@ -334,7 +340,7 @@ The IBVS simulation presented section \ref ibvs_basic can be modified to introdu
 The result of this program is visible in the next video. 
 
 \htmlonly
-<iframe width="420" height="315" src="http://www.youtube.com/embed/gn3tfoOxwKo?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gn3tfoOxwKo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
 We explain now the new lines that were introduced.

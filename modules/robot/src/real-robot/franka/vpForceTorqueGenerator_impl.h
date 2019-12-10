@@ -37,8 +37,8 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-#ifndef __vpForceTorqueGenerator_impl_h_
-#define __vpForceTorqueGenerator_impl_h_
+#ifndef _vpForceTorqueGenerator_impl_h_
+#define _vpForceTorqueGenerator_impl_h_
 
 #include <visp3/core/vpConfig.h>
 

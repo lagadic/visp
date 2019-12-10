@@ -62,7 +62,7 @@ C:\> cd %VISP_WS%\visp-build-vc16
 \endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019):
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\visp
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\visp
 \endcode
 - Build and install ViSP (installation doesn't need administrator privileges)
 \code
@@ -96,24 +96,24 @@ ViSP is interfaced with several 3rd party libraries. The <a href="https://visp.i
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
-- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got `opencv-4.1.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with the previous OpenCV 4.0.0 release downloading `opencv-4.0.0-vc14_vc15.exe`.
+- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got `opencv-4.1.2-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win10-extract-opencv.png
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.1.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.1.2`.
 
-\note OpenCV 4.1.0 win pack installer doesn't contain prebuild OpenCV libraries build with Visual Studio 16 2019. It contains only prebuild libraries build with previous Visual Studio version (vc14 and vc15). That's why we need to build OpenCV from source.
+\note OpenCV 4.1.1 win pack installer doesn't contain prebuild OpenCV libraries build with Visual Studio 16 2019. It contains only prebuild libraries build with previous Visual Studio version (vc14 and vc15). That's why we need to build OpenCV from source.
 
 <b>2. Build OpenCV from source</b>
 
 - Create a build directory
 \code
-C:\> mkdir %VISP_WS%\opencv-4.1.0\build-vc16
-C:\> cd %VISP_WS%\opencv-4.1.0\build-vc16
+C:\> mkdir %VISP_WS%\opencv-4.1.2\build-vc16
+C:\> cd %VISP_WS%\opencv-4.1.2\build-vc16
 \endcode
-- Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019) and installation dir is set to the existing folder `%%VISP_WS%\opencv-4.1.0\build`:
+- Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019) and installation dir is set to the existing folder `%%VISP_WS%\opencv-4.1.2\build`:
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\opencv-4.1.0\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.0\build
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\opencv-4.1.2\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.1.2\build
 \endcode
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need administrator privileges)
 \code
@@ -126,12 +126,12 @@ C:\> cmake --build . --config Debug --target install
 Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
 \code
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.1.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.1.2\build"
 C:\> exit
 \endcode
-where `%%VISP_WS%\opencv-4.1.0\build` is where you have installed OpenCV. Inside this folder you should have a file named `OpenCVConfig.cmake`. 
+where `%%VISP_WS%\opencv-4.1.2\build` is where you have installed OpenCV. Inside this folder you should have a file named `OpenCVConfig.cmake`. 
 
-- You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 Win64 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.0\build\x64\vc16\bin`.
+- You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 Win64 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.2\build\x64\vc16\bin`.
 
 \subsubsection install_win10_msvc16_3rdparty_eigen Eigen3 3rd party
 
@@ -152,7 +152,7 @@ C:\> cd %VISP_WS%\eigen-3.3.7\build-vc16
 \endcode
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set to `%%VISP_WS%\eigen-3.3.7\build-vc16\install` folder):
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-vc16\install
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\eigen-3.3.7 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.7\build-vc16\install
 \endcode
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \code
@@ -296,7 +296,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
 \subsection install_win10_msvc16_build_visp_doc Build ViSP documentation
 
 To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
-- [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial was written, we downloaded `doxygen-1.8.15-setup.exe`
+- [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial was written, we downloaded `doxygen-1.8.16-setup.exe`
 - Run the installer following default options
 - Open a new `cmd` Command Prompt and enter build directory
 \code
@@ -304,18 +304,18 @@ C:\> cd %VISP_WS%\visp-build-vc16
 \endcode
 - Run CMake in build directory:
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\visp
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\visp
 \endcode
 - Build documentation using:
 \code
 C:\> cmake --build . --config Release --target visp_doc
 \endcode
 
-The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
+The generated documentation is then available in `$VISP_WS/visp-build-vc16/doc/html/index.html`
 
 \note It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \code
-C:\> cmake -G "Visual Studio 16 2019" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
 C:\> cmake --build . --config Release --target visp_doc
 \endcode
 
@@ -464,7 +464,7 @@ General configuration information for ViSP 3.2.1
     Use Netlib Lapack:           no
     Use Lapack (built-in):       yes (ver 3.2.1)
     Use Eigen3:                  yes (ver 3.3.7)
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
     Use GSL:                     no
 
   Simulator: 
@@ -484,7 +484,7 @@ General configuration information for ViSP 3.2.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
 
   Real robots: 
     Use Afma4:                   no
@@ -501,7 +501,7 @@ General configuration information for ViSP 3.2.1
   GUI: 
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
     Use GDI:                     yes
     Use Direct3D:                no
 
@@ -510,7 +510,7 @@ General configuration information for ViSP 3.2.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.1.0)
+    Use OpenCV:                  yes (ver 4.1.1)
     Use Flycapture:              yes
     Use Pylon:                   yes (ver 5.1.0)
 

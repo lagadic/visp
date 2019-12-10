@@ -70,19 +70,15 @@ void vpFeatureMomentAlpha::compute_interaction()
   if (!found_FeatureMoment_centered)
     throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
 
-  double multiplier =
-      -1. /
-      (momentCentered.get(2, 0) * momentCentered.get(2, 0) - 2 * momentCentered.get(0, 2) * momentCentered.get(2, 0) +
-       4 * momentCentered.get(1, 1) * momentCentered.get(1, 1) + momentCentered.get(0, 2) * momentCentered.get(0, 2));
-
+  double u11 = momentCentered.get(1,1);
+  double u20_u02 = momentCentered.get(2,0)-momentCentered.get(0,2);
+  double dinv = 1 / (4*u11*u11 + u20_u02*u20_u02);
   interaction_matrices[0].resize(1, 6);
-  interaction_matrices[0] =
-      multiplier * (momentCentered.get(1, 1) * featureMomentCentered.interaction(2, 0) +
-                    (momentCentered.get(0, 2) - momentCentered.get(2, 0)) * featureMomentCentered.interaction(1, 1) -
-                    momentCentered.get(1, 1) * featureMomentCentered.interaction(0, 2));
+  interaction_matrices[0] = (u20_u02*dinv) * featureMomentCentered.interaction(1,1) +
+                            (u11*dinv) * (featureMomentCentered.interaction(0,2)-featureMomentCentered.interaction(2,0));
 }
 
-#else
+#else // #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 /*!
   Computes interaction matrix for alpha moment. Called internally.
@@ -119,15 +115,7 @@ void vpFeatureMomentAlpha::compute_interaction()
   double Yg = momentGravity.getYg();
 
   double Avx, Avy, Avz, Awx, Awy;
-  double beta, gamma;
-
-  if (momentObject.getType() == vpMomentObject::DISCRETE) {
-    beta = 4;
-    gamma = 2;
-  } else {
-    beta = 5;
-    gamma = 1;
-  }
+  double beta = (momentObject.getType() == vpMomentObject::DISCRETE) ? 2 : 5;
 
   double d = (mu20 - mu02) * (mu20 - mu02) + 4 * mu11 * mu11;
   double DA = mu20 + mu02;
@@ -137,11 +125,11 @@ void vpFeatureMomentAlpha::compute_interaction()
   Avx = mu11 * DA * A / d + (DA * mu02 + (0.5) * d - (0.5) * DA_2) * B / d;
   Avy = (DA * mu02 - (0.5) * d - (.5) * DA_2) * A / d - B * mu11 * DA / d;
 
-  Awx = (beta * (mu12 * (mu20 - mu02) + mu11 * (mu03 - mu21)) + gamma * Xg * (mu02 * (mu20 - mu02) - 2 * mu11_2) +
-         gamma * Yg * mu11 * (mu20 + mu02)) /
+  Awx = (beta * (mu12 * (mu20 - mu02) + mu11 * (mu03 - mu21)) + Xg * (mu02 * (mu20 - mu02) - 2 * mu11_2) +
+         Yg * mu11 * (mu20 + mu02)) /
         d;
-  Awy = (beta * (mu21 * (mu02 - mu20) + mu11 * (mu30 - mu12)) + gamma * Xg * mu11 * (mu20 + mu02) +
-         gamma * Yg * (mu20 * (mu02 - mu20) - 2 * mu11_2)) /
+  Awy = (beta * (mu21 * (mu02 - mu20) + mu11 * (mu30 - mu12)) + Xg * mu11 * (mu20 + mu02) +
+         Yg * (mu20 * (mu02 - mu20) - 2 * mu11_2)) /
         d;
 
   Avz = B * Awx - A * Awy;
@@ -164,6 +152,8 @@ void vpFeatureMomentAlpha::compute_interaction()
   interaction_matrices[0][0][WZ] = -1.;
 }
 
+#endif // #ifdef VISP_MOMENTS_COMBINE_MATRICES
+
 vpColVector vpFeatureMomentAlpha::error(const vpBasicFeature &s_star, const unsigned int /* select */)
 {
   vpColVector e(0);
@@ -180,4 +170,3 @@ vpColVector vpFeatureMomentAlpha::error(const vpBasicFeature &s_star, const unsi
 
   return e;
 }
-#endif

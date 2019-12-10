@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _MATD_H
-#define _MATD_H
+#pragma once
 
 #include <assert.h>
 #include <stddef.h>
@@ -272,7 +271,7 @@ static inline int matd_is_vector(const matd_t *a)
 static inline int matd_is_vector_len(const matd_t *a, int len)
 {
     assert(a != NULL);
-    return (a->ncols == 1 && a->nrows == (unsigned int) len) || (a->ncols == (unsigned int) len && a->nrows == 1);
+    return (a->ncols == 1 && a->nrows == (unsigned int)len) || (a->ncols == (unsigned int)len && a->nrows == 1);
 }
 
 /**
@@ -444,6 +443,4 @@ double matd_max(matd_t *m);
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

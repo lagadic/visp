@@ -6,8 +6,8 @@ find_package(VISP REQUIRED visp_core visp_sensor visp_gui visp_vision visp_mbt v
 
 # set the list of source files
 set(tutorial_cpp
-  tutorial-mb-generic-tracker-apriltag-live-webcam.cpp
-  tutorial-mb-generic-tracker-apriltag-live-realsense2.cpp
+  tutorial-mb-generic-tracker-apriltag-webcam.cpp
+  tutorial-mb-generic-tracker-apriltag-rs2.cpp
 )
 
 foreach(cpp ${tutorial_cpp})
@@ -19,6 +19,8 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-but-set-parameter")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-float-equal")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
   endif()
   if(VISP_HAVE_FLYCAPTURE)
     # Add specific build flag to turn off warnings coming from FlyCapture 3rd party

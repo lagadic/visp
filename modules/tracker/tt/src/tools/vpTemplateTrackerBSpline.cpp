@@ -52,10 +52,12 @@ double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, dou
   int width = (int)I.getWidth();   // t
   for (int ir = -1; ir <= 2; ir++) {
     int tr = ir + cr;
-    for (int it = -1; it <= 2; it++) {
-      int tt = it + ct;
-      if (tr >= 0 && tr < height && tt >= 0 && tt < width)
-        res += Bspline4((double)ir - er) * Bspline4((double)it - et) * I[tr][tt];
+    if (tr >= 0 && tr < height) {
+      for (int it = -1; it <= 2; it++) {
+        int tt = it + ct;
+        if (tt >= 0 && tt < width)
+          res += Bspline4((double)ir - er) * Bspline4((double)it - et) * I[tr][tt];
+      }
     }
   }
   return res;
@@ -63,14 +65,14 @@ double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, dou
 
 double vpTemplateTrackerBSpline::Bspline4(double diff)
 {
-  // double result;
   double aDiff = vpMath::abs(diff);
-  if (aDiff < 1.)
-    return (aDiff * aDiff * aDiff / 2. - aDiff * aDiff + 4. / 6.);
-  // return
-  // (0.5*(1.-aDiff)*(1.-aDiff)*(1.-aDiff)+0.5*(1.-aDiff)*(1.-aDiff)-0.5*(1.-aDiff)+1./6.);
-  else if (aDiff < 2.)
-    return ((2. - aDiff) * (2. - aDiff) * (2. - aDiff) / 6.);
+  if (aDiff < 1.) {
+    return (aDiff * aDiff * (aDiff / 2. - 1) + 4. / 6.);
+  }
+  else if (aDiff < 2.) {
+    double a = 2. - aDiff;
+    return (a * a * a / 6.);
+  }
   else
     return 0;
 }

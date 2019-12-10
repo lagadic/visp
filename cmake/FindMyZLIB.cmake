@@ -85,7 +85,7 @@ else()
     C:/mingw/lib64
     )
 
-  FIND_LIBRARY(ZLIB_LIBRARY_DEBUG zlibd
+  find_library(ZLIB_LIBRARY_DEBUG zlibd
     $ENV{ZLIB_DIR}/lib
     $ENV{ZLIB_LIBRARY_DEBUG_DIR}
     /lib
@@ -125,7 +125,5 @@ mark_as_advanced(
   ZLIB_LIBRARY_RELEASE
   ZLIB_LIBRARY_DEBUG
   )
-
-
 
 

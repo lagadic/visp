@@ -256,14 +256,14 @@ void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpCo
   }
   case END_EFFECTOR_FRAME: {
     force.resize(6);
-    for (int i=0; i < 7; i++)
+    for (int i=0; i < 6; i++)
       force[i] = robot_state.K_F_ext_hat_K[i];
     break;
   }
   case TOOL_FRAME: {
     // end-effector frame
     vpColVector eFe(6);
-    for (int i=0; i < 7; i++)
+    for (int i=0; i < 6; i++)
       eFe[i] = robot_state.K_F_ext_hat_K[i];
 
     // Transform in tool frame
@@ -1006,7 +1006,7 @@ vpColVector vpRobotFranka::getJointMax() const
  * By default, this transformation is set to identity, meaning that the camera (or tool)
  * frame is located on the end-effector.
  *
- * To change the position of the camera (or tool) frame , use set_eMc().
+ * To change the position of the camera (or tool) frame on the end-effector frame, use set_eMc().
 
  */
 vpHomogeneousMatrix vpRobotFranka::get_eMc() const

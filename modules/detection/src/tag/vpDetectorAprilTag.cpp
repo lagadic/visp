@@ -48,9 +48,10 @@
 #include <tagStandard41h12.h>
 #include <apriltag_pose.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
 #include <tagCircle49h12.h>
 #include <tagCustom48h12.h>
+#include <tagStandard41h12.h>
 #include <tagStandard52h13.h>
 #endif
 
@@ -96,32 +97,34 @@ public:
       break;
 
     case TAG_CIRCLE49h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagCircle49h12_create();
 #endif
       break;
 
     case TAG_CUSTOM48h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagCustom48h12_create();
 #endif
       break;
 
     case TAG_STANDARD52h13:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagStandard52h13_create();
 #endif
       break;
 
     case TAG_STANDARD41h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
       m_tf = tagStandard41h12_create();
+#endif
       break;
 
     default:
       throw vpException(vpException::fatalError, "Unknow Tag family!");
     }
 
-    if (m_tagFamily != TAG_36ARTOOLKIT) {
+    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
       m_td = apriltag_detector_create();
       apriltag_detector_add_family(m_td, m_tf);
     }
@@ -132,60 +135,66 @@ public:
 
   ~Impl()
   {
-    apriltag_detector_destroy(m_td);
+    if (m_td) {
+      apriltag_detector_destroy(m_td);
+    }
 
-    switch (m_tagFamily) {
-    case TAG_36h11:
-      tag36h11_destroy(m_tf);
-      break;
+    if (m_tf) {
+      switch (m_tagFamily) {
+      case TAG_36h11:
+        tag36h11_destroy(m_tf);
+        break;
 
-    case TAG_36h10:
-      tag36h10_destroy(m_tf);
-      break;
+      case TAG_36h10:
+        tag36h10_destroy(m_tf);
+        break;
 
-    case TAG_36ARTOOLKIT:
-      break;
+      case TAG_36ARTOOLKIT:
+        break;
 
-    case TAG_25h9:
-      tag25h9_destroy(m_tf);
-      break;
+      case TAG_25h9:
+        tag25h9_destroy(m_tf);
+        break;
 
-    case TAG_25h7:
-      tag25h7_destroy(m_tf);
-      break;
+      case TAG_25h7:
+        tag25h7_destroy(m_tf);
+        break;
 
-    case TAG_16h5:
-      tag16h5_destroy(m_tf);
-      break;
+      case TAG_16h5:
+        tag16h5_destroy(m_tf);
+        break;
 
-    case TAG_CIRCLE21h7:
-      tagCircle21h7_destroy(m_tf);
-      break;
+      case TAG_CIRCLE21h7:
+        tagCircle21h7_destroy(m_tf);
+        break;
 
-    case TAG_CIRCLE49h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
-      tagCustom48h12_destroy(m_tf);
-#endif
-      break;
+      case TAG_CIRCLE49h12:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagCustom48h12_destroy(m_tf);
+  #endif
+        break;
 
-    case TAG_CUSTOM48h12:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
-      tagCustom48h12_destroy(m_tf);
-#endif
-      break;
+      case TAG_CUSTOM48h12:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagCustom48h12_destroy(m_tf);
+  #endif
+        break;
 
-    case TAG_STANDARD52h13:
-#if !defined(VISP_DISABLE_APRILTAG_BIG_FAMILY)
-      tagStandard52h13_destroy(m_tf);
-#endif
-      break;
+      case TAG_STANDARD52h13:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagStandard52h13_destroy(m_tf);
+  #endif
+        break;
 
-    case TAG_STANDARD41h12:
-      tagStandard41h12_destroy(m_tf);
-      break;
+      case TAG_STANDARD41h12:
+  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+        tagStandard41h12_destroy(m_tf);
+  #endif
+        break;
 
-    default:
-      break;
+      default:
+        break;
+      }
     }
 
     if (m_detections) {
@@ -214,10 +223,9 @@ public:
       std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
       return false;
     }
-#ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
-      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
-                   "and in RelWithDebInfo due to long build time issue." << std::endl;
+#if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 || m_tagFamily == TAG_STANDARD52h13) {
+      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled." << std::endl;
       return false;
     }
 #endif
@@ -303,10 +311,9 @@ public:
       std::cerr << "TAG_36ARTOOLKIT detector is not available anymore." << std::endl;
       return  false;
     }
-#ifdef VISP_DISABLE_APRILTAG_BIG_FAMILY
-    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD52h13) {
-      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12 and TAG_STANDARD52h13 are disabled with GCC < 5.5 "
-                   "and in RelWithDebInfo due to long build time issue." << std::endl;
+#if !defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+    if (m_tagFamily == TAG_CIRCLE49h12 || m_tagFamily == TAG_CUSTOM48h12 || m_tagFamily == TAG_STANDARD41h12 || m_tagFamily == TAG_STANDARD52h13) {
+      std::cerr << "TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12 and TAG_STANDARD52h13 are disabled." << std::endl;
       return false;
     }
 #endif
@@ -528,9 +535,9 @@ public:
         }
       }
     } else {
+      convertHomogeneousMatrix(pose2, cMo1);
       if (cMo2) {
         convertHomogeneousMatrix(pose1, *cMo2);
-        convertHomogeneousMatrix(pose2, cMo1);
       }
     }
 
@@ -549,17 +556,37 @@ public:
 
   void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
 
-  void setAprilTagDecodeSharpening(const double decodeSharpening) { m_td->decode_sharpening = decodeSharpening; }
+  void setAprilTagDecodeSharpening(const double decodeSharpening) {
+    if (m_td) {
+      m_td->decode_sharpening = decodeSharpening;
+    }
+  }
 
-  void setNbThreads(const int nThreads) { m_td->nthreads = nThreads; }
+  void setNbThreads(const int nThreads) {
+    if (m_td) {
+      m_td->nthreads = nThreads;
+    }
+  }
 
-  void setQuadDecimate(const float quadDecimate) { m_td->quad_decimate = quadDecimate; }
+  void setQuadDecimate(const float quadDecimate) {
+    if (m_td) {
+      m_td->quad_decimate = quadDecimate;
+    }
+  }
 
-  void setQuadSigma(const float quadSigma) { m_td->quad_sigma = quadSigma; }
+  void setQuadSigma(const float quadSigma) {
+    if (m_td) {
+      m_td->quad_sigma = quadSigma;
+    }
+  }
 
   void setRefineDecode(const bool) { }
 
-  void setRefineEdges(const bool refineEdges) { m_td->refine_edges = refineEdges ? 1 : 0; }
+  void setRefineEdges(const bool refineEdges) {
+    if (m_td) {
+      m_td->refine_edges = refineEdges ? 1 : 0;
+    }
+  }
 
   void setRefinePose(const bool) { }
 

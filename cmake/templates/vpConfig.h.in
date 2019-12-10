@@ -133,11 +133,12 @@
 // Defined if Clipper is build and available.
 #cmakedefine VISP_HAVE_CLIPPER
 
-// Defined if April Tag is build and available.
+// Defined if AprilTag is build and available.
 #cmakedefine VISP_HAVE_APRILTAG
 
-// Defined if big AprilTag family must be disabled.
-#cmakedefine VISP_DISABLE_APRILTAG_BIG_FAMILY
+// Defined if AprilTag big family (41h12, 48h12, 49h12, 52h13) known to produce long build time issue
+// with gcc < 5.5 in RelWithDebInfo and Visual Studio 12 2013 in Release are available
+#cmakedefine VISP_HAVE_APRILTAG_BIG_FAMILY
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
@@ -181,6 +182,9 @@
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
 #  define VISP_HAVE_DISPLAY
 #endif
+
+// Defined if Catch2 library available
+#cmakedefine VISP_HAVE_CATCH2
 
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3
@@ -383,6 +387,12 @@
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER
+
+// Defined if the Parrot ARSDK is found.
+// This library is used to control Bebop2 drone.
+#cmakedefine VISP_HAVE_ARSDK
+// Defined if the Parrot ARSDK is found but also ffmpeg to get camera stream.
+#cmakedefine VISP_HAVE_FFMPEG
 
 // Defined if Haption Virtuose SDK available.
 #cmakedefine VISP_HAVE_VIRTUOSE

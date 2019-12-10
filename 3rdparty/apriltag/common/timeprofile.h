@@ -25,19 +25,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _TIME_PROFILE_H
-#define _TIME_PROFILE_H
+#pragma once
 
 #ifdef __cplusplus
 //extern "C" {
 #endif
 
 #include <stdio.h>
-#if defined(_MSC_VER) || defined(__MINGW32__)
-//#include "time.h" //included in "time_util.h"
-#else
-#include <sys/time.h>
-#endif
 #include <string.h>
 #include <stdint.h>
 
@@ -123,6 +117,4 @@ static inline uint64_t timeprofile_total_utime(timeprofile_t *tp)
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

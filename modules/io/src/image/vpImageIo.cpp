@@ -46,6 +46,32 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#if defined(_WIN32)
+// Include WinSock2.h before windows.h to ensure that winsock.h is not
+// included by windows.h since winsock.h and winsock2.h are incompatible
+#include <WinSock2.h>
+#include <windows.h>
+#endif
+
+#if defined(VISP_HAVE_JPEG)
+#include <jerror.h>
+#include <jpeglib.h>
+#endif
+
+#if defined(VISP_HAVE_PNG)
+#include <png.h>
+#endif
+
+#if !defined(VISP_HAVE_OPENCV)
+#if !defined(VISP_HAVE_JPEG) || !defined(VISP_HAVE_PNG)
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+#endif
+#endif
+
 void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
                         unsigned int &h, unsigned int &maxval);
 
@@ -196,6 +222,7 @@ std::string vpImageIo::getExtension(const std::string &filename)
   memory space.
 
   Always supported formats are *.pgm and *.ppm.
+  JPEG and PNG formats are supported through the stb_image public domain image loader.
   If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
   If \c libpng 3rd party is used, we support also *.png files.
   If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras,
@@ -267,8 +294,24 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
     }
     vpImageConvert::convert(cvI, I);
 #else
-    std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-    throw(vpImageException(vpImageException::ioError, message));
+    switch (getFormat(final_filename)) {
+    case FORMAT_JPEG:
+      readJPEG(I, final_filename);
+      break;
+    case FORMAT_PNG:
+      readPNG(I, final_filename);
+      break;
+    case FORMAT_BMP:
+    case FORMAT_TIFF:
+    case FORMAT_DIB:
+    case FORMAT_PBM:
+    case FORMAT_RASTER:
+    case FORMAT_JPEG2000:
+    case FORMAT_UNKNOWN:
+    default:
+      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
+      throw(vpImageException(vpImageException::ioError, message));
+    }
 #endif
   }
 }
@@ -283,6 +326,7 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
   memory space.
 
   Always supported formats are *.pgm and *.ppm.
+  JPEG and PNG formats are supported through the stb_image public domain image loader.
   If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
   If \c libpng 3rd party is used, we support also *.png files.
   If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras,
@@ -353,8 +397,24 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
     }
     vpImageConvert::convert(cvI, I);
 #else
-    std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-    throw(vpImageException(vpImageException::ioError, message));
+    switch (getFormat(final_filename)) {
+    case FORMAT_JPEG:
+      readJPEG(I, final_filename);
+      break;
+    case FORMAT_PNG:
+      readPNG(I, final_filename);
+      break;
+    case FORMAT_BMP:
+    case FORMAT_TIFF:
+    case FORMAT_DIB:
+    case FORMAT_PBM:
+    case FORMAT_RASTER:
+    case FORMAT_JPEG2000:
+    case FORMAT_UNKNOWN:
+    default:
+      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
+      throw(vpImageException(vpImageException::ioError, message));
+    }
 #endif
   }
 }
@@ -364,6 +424,7 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
   filename.
 
   Always supported formats are *.pgm and *.ppm.
+  JPEG and PNG formats are supported through the stb_image_write public domain image writer.
   If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
   If \c libpng 3rd party is used, we support also *.png files.
   If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras,
@@ -415,8 +476,24 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
     vpImageConvert::convert(I, cvI);
     cv::imwrite(filename, cvI);
 #else
-    vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
-    throw(vpImageException(vpImageException::ioError, "Cannot write file: Image format not supported"));
+    switch (getFormat(filename)) {
+    case FORMAT_JPEG:
+      writeJPEG(I, filename);
+      break;
+    case FORMAT_PNG:
+      writePNG(I, filename);
+      break;
+    case FORMAT_BMP:
+    case FORMAT_TIFF:
+    case FORMAT_DIB:
+    case FORMAT_PBM:
+    case FORMAT_RASTER:
+    case FORMAT_JPEG2000:
+    case FORMAT_UNKNOWN:
+    default:
+      vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
+      throw(vpImageException(vpImageException::ioError, "Cannot write file: Image format not supported"));
+    }
 #endif
   }
 }
@@ -426,6 +503,7 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
   filename.
 
   Always supported formats are *.pgm and *.ppm.
+  JPEG and PNG formats are supported through the stb_image_write public domain image writer.
   If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
   If \c libpng 3rd party is used, we support also *.png files.
   If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras,
@@ -477,8 +555,24 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename)
     vpImageConvert::convert(I, cvI);
     cv::imwrite(filename, cvI);
 #else
-    vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
-    throw(vpImageException(vpImageException::ioError, "Cannot write file: Image format not supported"));
+    switch (getFormat(filename)) {
+    case FORMAT_JPEG:
+      writeJPEG(I, filename);
+      break;
+    case FORMAT_PNG:
+      writePNG(I, filename);
+      break;
+    case FORMAT_BMP:
+    case FORMAT_TIFF:
+    case FORMAT_DIB:
+    case FORMAT_PBM:
+    case FORMAT_RASTER:
+    case FORMAT_JPEG2000:
+    case FORMAT_UNKNOWN:
+    default:
+      vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
+      throw(vpImageException(vpImageException::ioError, "Cannot write file: Image format not supported"));
+  }
 #endif
   }
 }
@@ -1354,22 +1448,41 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
 #endif
 }
 #else
-// jpeg interface not available (nor with libjpeg, nor with OpenCV
-void vpImageIo::readJPEG(vpImage<unsigned char> &, const std::string &)
+void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
+  int width = 0, height = 0, channels = 0;
+  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_grey);
+  if (image == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
+  }
+  I.init(image, static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
+  stbi_image_free(image);
 }
-void vpImageIo::readJPEG(vpImage<vpRGBa> &, const std::string &)
+void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
+  int width = 0, height = 0, channels = 0;
+  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+  if (image == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
+  }
+  I.init(reinterpret_cast<vpRGBa*>(image), static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
+  stbi_image_free(image);
 }
-void vpImageIo::writeJPEG(const vpImage<unsigned char> &, const std::string &)
+void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
+  int res = stbi_write_jpg(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_grey,
+                           reinterpret_cast<void*>(I.bitmap), 90);
+  if (res == 0) {
+    throw(vpImageException(vpImageException::ioError, "JPEG write error"));
+  }
 }
-void vpImageIo::writeJPEG(const vpImage<vpRGBa> &, const std::string &)
+void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read jpeg image since ViSP in not built with OpenCV or libjpeg 3rd parties"));
+  int res = stbi_write_jpg(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_rgb_alpha,
+                           reinterpret_cast<void*>(I.bitmap), 90);
+  if (res == 0) {
+    throw(vpImageException(vpImageException::ioError, "JEPG write error"));
+  }
 }
 #endif
 
@@ -2063,21 +2176,42 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 #endif
 }
 #else
-// png interface not available (nor with libpng, nor with OpenCV)
-void vpImageIo::readPNG(vpImage<unsigned char> &, const std::string &)
+void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
+  int width = 0, height = 0, channels = 0;
+  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_grey);
+  if (image == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
+  }
+  I.init(image, static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
+  stbi_image_free(image);
 }
-void vpImageIo::readPNG(vpImage<vpRGBa> &, const std::string &)
+void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
+  int width = 0, height = 0, channels = 0;
+  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+  if (image == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
+  }
+  I.init(reinterpret_cast<vpRGBa*>(image), static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
+  stbi_image_free(image);
 }
-void vpImageIo::writePNG(const vpImage<unsigned char> &, const std::string &)
+void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
+  const int stride_in_bytes = static_cast<int>(I.getWidth());
+  int res = stbi_write_png(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_grey,
+                           reinterpret_cast<void*>(I.bitmap), stride_in_bytes);
+  if (res == 0) {
+    throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
+  }
 }
-void vpImageIo::writePNG(const vpImage<vpRGBa> &, const std::string &)
+void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
 {
-  throw(vpException(vpException::fatalError, "Cannot read png image since ViSP in not built with OpenCV or libpng 3rd parties"));
+  const int stride_in_bytes = static_cast<int>(4 * I.getWidth());
+  int res = stbi_write_png(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_rgb_alpha,
+                           reinterpret_cast<void*>(I.bitmap), stride_in_bytes);
+  if (res == 0) {
+    throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
+  }
 }
 #endif

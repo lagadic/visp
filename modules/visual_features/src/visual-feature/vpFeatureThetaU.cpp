@@ -622,15 +622,15 @@ vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, const unsigned 
 */
 void vpFeatureThetaU::print(const unsigned int select) const
 {
-  std::cout << "ThetaU: ";
+  std::cout << "ThetaU:";
   if (vpFeatureThetaU::selectTUx() & select) {
-    std::cout << s[0] << " ";
+    std::cout << " tux=" << s[0];
   }
   if (vpFeatureThetaU::selectTUy() & select) {
-    std::cout << s[1] << " ";
+    std::cout << " tuy=" << s[1];
   }
   if (vpFeatureThetaU::selectTUz() & select) {
-    std::cout << s[2] << " ";
+    std::cout << " tuz=" << s[2];
   }
   std::cout << std::endl;
 }

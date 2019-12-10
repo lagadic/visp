@@ -29,69 +29,190 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Generation of random number with uniform and normal probability density.
- *
- * Authors:
- * Eric Marchand
+ * Pseudo random number generator.
  *
  *****************************************************************************/
+ /*
+  * PCG Random Number Generation for C.
+  *
+  * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  * For additional information about the PCG random number generation scheme,
+  * including its license and other licensing options, visit
+  *
+  *     http://www.pcg-random.org
+  */
 
-#include <math.h>
+  /*
+   * This code is derived from the full C implementation, which is in turn
+   * derived from the canonical C++ PCG implementation. The C++ version
+   * has many additional features and is preferable if you can use C++ in
+   * your project.
+   */
+
+// To ensure UINT32_MAX, INT32_MX are defined on centos, ubuntu 12.04 we define __STDC_LIMIT_MACROS
+
+#define __STDC_LIMIT_MACROS
+
 #include <visp3/core/vpUniRand.h>
 
-/*!
-  Minimal random number generator of Park and Miller \cite Park:1988. Returns
-  a uniform random deviate between 0.0 and 1.0.
-
-*/
-inline void vpUniRand::draw0()
+vpUniRand::vpUniRand() :
+  m_maxInvDbl(1.0 / UINT32_MAX), m_maxInvFlt(1.0f / UINT32_MAX), m_rng()
 {
-  long k = x / q; // temp value for computing without overflow
-  x = a * (x - k * q) - k * r;
-  if (x < 0)
-    x += m; // compute x without overflow
 }
 
 /*!
-  Bays-Durham Shuffling of Park-Miller generator.
+  Create a pseudorandom number generator with uniform distribution.
+  \param seed : Starting state for the RNG, you can pass any 64-bit value.
+  \param seq : Select the output sequence for the RNG, you can pass any 64-bit value,
+  although only the low 63 bits are significant.
 
-  Minimal random number generator of Park and Miller with Bays-Durham
-  shuffle. Returns a uniform random deviate between 0.0 and 1.0 (exclusive of
-  the endpoint values).
+  \sa setSeed
 */
-double vpUniRand::draw1()
+vpUniRand::vpUniRand(uint64_t seed, uint64_t seq) :
+  m_maxInvDbl(1.0 / UINT32_MAX), m_maxInvFlt(1.0f / UINT32_MAX), m_rng()
 {
-  const long ntab = 33; // we work on a 32 elements array.
-                        // the 33rd one is actually the first value of y.
-  const long modulo = ntab - 2;
+  setSeed(seed, seq);
+}
 
-  static long y = 0;
-  static long T[ntab];
+/*!
+  Generates a pseudorandom uniformly distributed double number between [0, 1) range.
+  This is equivalent to call uniform(0.0, 1.0);
+*/
+double vpUniRand::operator()()
+{
+  return uniform(0.0, 1.0);
+}
 
-  long j; // index of T
+/*!
+  Generates a uniformly distributed 32-bit unsigned integer less than bound
+  (i.e., x where 0 <= x < bound).
 
-  // step 0
-  if (!y) { // first time
-    for (j = 0; j < ntab; j++) {
-      draw0();
-      T[j] = x;
-    } // compute table T
-    y = T[ntab - 1];
+  \note
+  <quote>
+  Some programmers may think that they can just run rng.next() % bound,
+  but doing so introduces nonuniformity when bound is not a power of two.
+  The code for boundedRand() avoids the nonuniformity by dropping a portion
+  of the RNG's output.
+  </quote>
+*/
+uint32_t vpUniRand::boundedRand(uint32_t bound)
+{
+  // To avoid bias, we need to make the range of the RNG a multiple of
+  // bound, which we do by dropping output less than a threshold.
+  // A naive scheme to calculate the threshold would be to do
+  //
+  //     uint32_t threshold = 0x100000000ull % bound;
+  //
+  // but 64-bit div/mod is slower than 32-bit div/mod (especially on
+  // 32-bit platforms).  In essence, we do
+  //
+  //     uint32_t threshold = (0x100000000ull-bound) % bound;
+  //
+  // because this version will calculate the same modulus, but the LHS
+  // value is less than 2^32.
+
+  uint32_t threshold = -bound % bound;
+
+  // Uniformity guarantees that this loop will terminate.  In practice, it
+  // should usually terminate quickly; on average (assuming all bounds are
+  // equally likely), 82.25% of the time, we can expect it to require just
+  // one iteration.  In the worst case, someone passes a bound of 2^31 + 1
+  // (i.e., 2147483649), which invalidates almost 50% of the range.  In
+  // practice, bounds are typically small and only a tiny amount of the range
+  // is eliminated.
+  for (;;) {
+    uint32_t r = next();
+    if (r >= threshold) {
+      return r % bound;
+    }
   }
+}
 
-  // step 1
-  j = y & modulo; // compute modulo ntab+1 (the first element is the 0th)
+/*!
+  Generates a pseudorandom uniformly distributed 32-bit unsigned integer
+  (i.e., x where, 0 <= x < 2^32)
+*/
+uint32_t vpUniRand::next()
+{
+  uint64_t oldstate = m_rng.state;
+  m_rng.state = oldstate * 6364136223846793005ULL + m_rng.inc;
+  uint32_t xorshifted = static_cast<uint32_t>(((oldstate >> 18u) ^ oldstate) >> 27u);
+  uint32_t rot = oldstate >> 59u;
+  return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+}
 
-  // step 3
-  y = T[j];
-  double ans = (double)y / normalizer;
+/*!
+  Generates a pseudorandom uniformly distributed int number between [a, b) range.
+  \param a : lower inclusive boundary of the returned random number.
+  \param b : upper non-inclusive boundary of the returned random number.
+*/
+int vpUniRand::uniform(int a, int b)
+{
+  if (a == b) {
+    return a;
+  }
+  return boundedRand(b - a) + a;
+}
 
-  // step 4
-  // generate x(k+i) and set y=x(k+i)
-  draw0();
+/*!
+  Generates a pseudorandom uniformly distributed float number between [a, b) range.
+  \param a : lower inclusive boundary of the returned random number.
+  \param b : upper non-inclusive boundary of the returned random number.
+*/
+float vpUniRand::uniform(float a, float b)
+{
+  return next()*m_maxInvFlt*(b - a) + a;
+}
 
-  // refresh T[j];
-  T[j] = x;
+/*!
+  Generates a pseudorandom uniformly distributed double number between [a, b) range.
+  \param a : lower inclusive boundary of the returned random number.
+  \param b : upper non-inclusive boundary of the returned random number.
+*/
+double vpUniRand::uniform(double a, double b)
+{
+  return next()*m_maxInvDbl*(b - a) + a;
+}
 
-  return ans;
+/*!
+  Initialize the random number generator.
+  \param initstate : Starting state for the RNG, you can pass any 64-bit value.
+  \param initseq : Select the output sequence for the RNG, you can pass any 64-bit value,
+  although only the low 63 bits are significant.
+
+  \note
+  > For this generator, there are 2^63 possible sequences of pseudorandom numbers.
+  > Each sequence is entirely distinct and has a period of 2^64.
+  > The initseq argument selects which stream you will use.
+  > The initstate argument specifies where you are in that 264 period.
+  >
+  > Calling setSeed with the same arguments produces the same output,
+  > allowing programs to use random number sequences repeatably.
+  >
+  > If you want truly nondeterministic output for each run of your program,
+  > you should pass values that will be different from run to run.
+  > On a Unix system, /dev/random provides random bytes that can be used for initialization,
+  > but if you want a quick and dirty way to do the initialization,
+  > one option is to pass the current time and the address of the RNG itself.
+*/
+void vpUniRand::setSeed(uint64_t initstate, uint64_t initseq)
+{
+  m_rng.state = 0U;
+  m_rng.inc = (initseq << 1u) | 1u;
+  next();
+  m_rng.state += initstate;
+  next();
 }

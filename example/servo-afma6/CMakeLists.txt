@@ -84,8 +84,8 @@ set(example_cpp
 )
 
 if(NOT DEFINED WINRT_8_1)
-  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp)
-  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp)
+  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityLs_des.cpp)
+  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityLs_cur.cpp)
   list(APPEND example_cpp servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp)
 endif()
 

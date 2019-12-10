@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _ZMAXHEAP_H
-#define _ZMAXHEAP_H
+#pragma once
 
 #include <stdio.h>
 
@@ -40,7 +39,7 @@ struct zmaxheap_iterator {
 
 zmaxheap_t *zmaxheap_create(size_t el_sz);
 
-void zmaxheap_vmap(zmaxheap_t *heap, void (*f)(void *));
+void zmaxheap_vmap(zmaxheap_t *heap, void (*f)());
 
 void zmaxheap_destroy(zmaxheap_t *heap);
 
@@ -75,5 +74,3 @@ void zmaxheap_iterator_remove(zmaxheap_iterator_t *it);
 // call after all iterator operations are done. After calling this,
 // the iterator should no longer be used, but the heap methods can be.
 void zmaxheap_iterator_finish(zmaxheap_iterator_t *it);
-
-#endif

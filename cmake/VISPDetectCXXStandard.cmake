@@ -19,56 +19,38 @@ if(DEFINED USE_CXX_STANDARD)
       set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_17})
   endif()
 
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
+
   return()
 else()
 
 set(AVAILABLE_CXX_STANDARD TRUE)
 set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_98})
 
-# Set default c++ standard to 11
-set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
-set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
-if(CMAKE_CXX11_COMPILE_FEATURES)
-  set(CXX11_STANDARD_FOUND ON)
-endif()
 
-set(COMPILE_FEATURES)
 if(CMAKE_CXX98_COMPILE_FEATURES)
-  list(APPEND COMPILE_FEATURES ${CMAKE_CXX98_COMPILE_FEATURES})
+  set(CXX98_STANDARD_FOUND ON)
 endif()
+
 if(CMAKE_CXX11_COMPILE_FEATURES)
-  list(APPEND COMPILE_FEATURES ${CMAKE_CXX11_COMPILE_FEATURES})
-endif()
-if(CMAKE_CXX14_COMPILE_FEATURES)
-  list(APPEND COMPILE_FEATURES ${CMAKE_CXX14_COMPILE_FEATURES})
-endif()
-if(CMAKE_CXX17_COMPILE_FEATURES)
-  list(APPEND COMPILE_FEATURES ${CMAKE_CXX17_COMPILE_FEATURES})
-endif()
-
-if(COMPILE_FEATURES)
-  list (FIND COMPILE_FEATURES "cxx_std_98" _index)
-  if (${_index} GREATER -1)
-    set(CXX98_STANDARD_FOUND ON)
-  endif()
-
-  list (FIND COMPILE_FEATURES "cxx_std_11" _index)
+  # cxx11 implementation maybe incomplete especially with g++ 4.6.x.
+  # That's why we check more in depth for cxx_override that is not available with g++ 4.6.3
+  list (FIND CMAKE_CXX11_COMPILE_FEATURES "cxx_override" _index)
   if (${_index} GREATER -1)
     set(CXX11_STANDARD_FOUND ON)
   endif()
-
-  list (FIND COMPILE_FEATURES "cxx_std_14" _index)
-  if (${_index} GREATER -1)
-    set(CXX14_STANDARD_FOUND ON)
-  endif()
-
-  list (FIND COMPILE_FEATURES "cxx_std_17" _index)
-  if (${_index} GREATER -1)
-    set(CXX17_STANDARD_FOUND ON)
-  endif()
 endif()
 
+if(CMAKE_CXX14_COMPILE_FEATURES)
+  set(CXX14_STANDARD_FOUND ON)
+endif()
+
+if(CMAKE_CXX17_COMPILE_FEATURES)
+  set(CXX17_STANDARD_FOUND ON)
+endif()
+
+# Set default c++ standard to 11, the first in the list
 if(CXX11_STANDARD_FOUND)
   set(USE_CXX_STANDARD "11" CACHE STRING "Selected cxx standard")
 elseif(CXX98_STANDARD_FOUND)
@@ -79,6 +61,11 @@ elseif(CMAKE_CXX17_COMPILE_FEATURES)
   set(USE_CXX_STANDARD "17" CACHE STRING "Selected cxx standard")
 else()
   set(AVAILABLE_CXX_STANDARD FALSE)
+endif()
+
+# Hack for msvc12 (Visual 2013) where C++11 implementation is incomplete
+if(MSVC_VERSION EQUAL 1800)
+  set(CXX11_STANDARD_FOUND TRUE)
 endif()
 
 if(AVAILABLE_CXX_STANDARD)
@@ -93,11 +80,6 @@ if(AVAILABLE_CXX_STANDARD)
   endif()
   if(CXX17_STANDARD_FOUND)
     set_property(CACHE USE_CXX_STANDARD APPEND_STRING PROPERTY STRINGS ";17")
-  endif()
-
-  # Hack for msvc12 (Visual 2013) where C++11 implementation is incomplete
-  if(MSVC_VERSION EQUAL 1800)
-    set(CXX11_STANDARD_FOUND TRUE)
   endif()
 
   if(USE_CXX_STANDARD STREQUAL "98")

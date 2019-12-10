@@ -41,91 +41,206 @@
 
   Test some vpPoseVector functionalities.
 */
+#include <visp3/core/vpConfig.h>
 
-#include <cmath>
+#ifdef VISP_HAVE_CATCH2
 #include <limits>
 #include <vector>
 
 #include <visp3/core/vpPoseVector.h>
 
-bool test(const std::string &s, const vpArray2D<double> &A, const std::vector<double> &bench)
-{
-  static unsigned int cpt = 0;
-  std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << A.getRows() << "," << A.getCols() << ") =" << A << std::endl;
-  if (bench.size() != A.size()) {
-    std::cout << "Test fails: bad size wrt bench" << std::endl;
-    return false;
+#define CATCH_CONFIG_RUNNER
+#include <catch.hpp>
+
+namespace {
+  void checkSize(const vpPoseVector& pose, const std::vector<double>& ref)
+  {
+    REQUIRE(pose.size() == 6);
+    REQUIRE(pose.getRows() == 6);
+    REQUIRE(pose.getCols() == 1);
+    REQUIRE(pose.size() == ref.size());
   }
-  for (unsigned int i = 0; i < A.size(); i++) {
-    if (std::fabs(A.data[i] - bench[i]) > std::fabs(A.data[i]) * std::numeric_limits<double>::epsilon()) {
-      std::cout << "Test fails: bad content" << std::endl;
-      return false;
+
+  void checkData(const vpPoseVector& pose, const std::vector<double>& ref)
+  {
+    for (unsigned int i = 0; i < pose.size(); i++) {
+      REQUIRE(pose[i] == Approx(ref[i]).epsilon(std::numeric_limits<double>::epsilon()));
     }
   }
-
-  return true;
 }
+
+TEST_CASE("vpPoseVector size", "[vpColVector]") {
+  vpPoseVector pose;
+  REQUIRE(pose.size() == 6);
+  REQUIRE(pose.getRows() == 6);
+  REQUIRE(pose.getCols() == 1);
+
+  for (unsigned int i = 0; i < pose.getRows(); i++) {
+    REQUIRE(pose[i] == Approx(0).epsilon(std::numeric_limits<double>::epsilon()));
+  }
+}
+
+TEST_CASE("vpPoseVector value assignment", "[vpColVector]") {
+  vpPoseVector pose;
+  std::vector<double> ref(6);
+  pose[0] = ref[0] = 0.1;
+  pose[1] = ref[1] = 0.2;
+  pose[2] = ref[2] = 0.3;
+  pose[3] = ref[3] = vpMath::rad(10);
+  pose[4] = ref[4] = vpMath::rad(20);
+  pose[5] = ref[5] = vpMath::rad(30);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+TEST_CASE("vpPoseVector constructor", "[vpColVector]") {
+  std::vector<double> ref(6);
+  ref[0] = 0.1;
+  ref[1] = 0.2;
+  ref[2] = 0.3;
+  ref[3] = vpMath::rad(10);
+  ref[4] = vpMath::rad(20);
+  ref[5] = vpMath::rad(30);
+
+  vpPoseVector pose(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+TEST_CASE("vpPoseVector copy constructor", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+
+  vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
+  vpPoseVector pose2(pose1);
+
+  checkSize(pose2, ref);
+  checkData(pose2, ref);
+}
+
+TEST_CASE("vpPoseVector object assignment", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+
+  vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
+  vpPoseVector pose2 = pose1;
+
+  checkSize(pose2, ref);
+  checkData(pose2, ref);
+}
+
+TEST_CASE("vpPoseVector set", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+
+  vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
+  vpPoseVector pose2;
+  pose2.set(pose1[0], pose1[1], pose1[2], pose1[3], pose1[4], pose1[5]);
+
+  checkSize(pose2, ref);
+  checkData(pose2, ref);
+}
+
+TEST_CASE("vpPoseVector constructor t, tu", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+  vpTranslationVector t(ref[0], ref[1], ref[2]);
+  vpThetaUVector tu(ref[3], ref[4], ref[5]);
+
+  vpPoseVector pose(t, tu);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+TEST_CASE("vpPoseVector buildFrom t, tu", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+  vpTranslationVector t(ref[0], ref[1], ref[2]);
+  vpThetaUVector tu(ref[3], ref[4], ref[5]);
+
+  vpPoseVector pose;
+  pose.buildFrom(t, tu);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+TEST_CASE("vpPoseVector constructor vpHomogeneousMatrix", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+  vpTranslationVector t(ref[0], ref[1], ref[2]);
+  vpThetaUVector tu(ref[3], ref[4], ref[5]);
+  vpHomogeneousMatrix M(t, tu);
+
+  vpPoseVector pose(M);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+TEST_CASE("vpPoseVector buildFrom vpHomogeneousMatrix", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+  vpTranslationVector t(ref[0], ref[1], ref[2]);
+  vpThetaUVector tu(ref[3], ref[4], ref[5]);
+  vpHomogeneousMatrix M(t, tu);
+
+  vpPoseVector pose;
+  pose.buildFrom(M);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+TEST_CASE("vpPoseVector constructor t, R", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+  vpTranslationVector t(ref[0], ref[1], ref[2]);
+  vpThetaUVector tu(ref[3], ref[4], ref[5]);
+  vpRotationMatrix R(tu);
+
+  vpPoseVector pose(t, R);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+TEST_CASE("vpPoseVector buildFrom t, R", "[vpColVector]") {
+  std::vector<double> ref = { 0.1, 0.2, 0.3,
+                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+  vpTranslationVector t(ref[0], ref[1], ref[2]);
+  vpThetaUVector tu(ref[3], ref[4], ref[5]);
+  vpRotationMatrix R(tu);
+
+  vpPoseVector pose;
+  pose.buildFrom(t, R);
+
+  checkSize(pose, ref);
+  checkData(pose, ref);
+}
+
+int main(int argc, char *argv[])
+{
+  Catch::Session session; // There must be exactly one instance
+
+  // Let Catch (using Clara) parse the command line
+  session.applyCommandLine(argc, argv);
+
+  int numFailed = session.run();
+
+  // numFailed is clamped to 255 as some unices only use the lower 8 bits.
+  // This clamping has already been applied, so just return it here
+  // You can also do any post run clean-up here
+  return numFailed;
+}
+#else
+#include <iostream>
+
 int main()
 {
-  {
-    vpPoseVector p;
-    std::vector<double> bench(6, 0);
-    int err = 1;
-    if (test("p", p, bench) == false)
-      return err;
-    p[0] = bench[0] = 0.1;
-    p[1] = bench[1] = 0.2;
-    p[2] = bench[2] = 0.3;
-    p[3] = bench[3] = vpMath::rad(10);
-    p[4] = bench[4] = vpMath::rad(20);
-    p[5] = bench[5] = vpMath::rad(30);
-
-    if (test("p", p, bench) == false)
-      return err;
-
-    vpPoseVector p1(p[0], p[1], p[2], p[3], p[4], p[5]);
-    if (test("p1", p1, bench) == false)
-      return err;
-    vpPoseVector p2(p1);
-    if (test("p2", p2, bench) == false)
-      return err;
-    vpPoseVector p3 = p1;
-    if (test("p3", p3, bench) == false)
-      return err;
-    vpPoseVector p4;
-    p4.set(p[0], p[1], p[2], p[3], p[4], p[5]);
-    if (test("p4", p4, bench) == false)
-      return err;
-
-    vpTranslationVector t(p[0], p[1], p[2]);
-    vpThetaUVector tu(p[3], p[4], p[5]);
-    vpPoseVector p5(t, tu);
-    if (test("p5", p5, bench) == false)
-      return err;
-    vpPoseVector p6;
-    p6.buildFrom(t, tu);
-    if (test("p6", p6, bench) == false)
-      return err;
-
-    vpHomogeneousMatrix M(t, tu);
-    vpPoseVector p7(M);
-    if (test("p7", p7, bench) == false)
-      return err;
-    vpPoseVector p8;
-    p8.buildFrom(M);
-    if (test("p8", p8, bench) == false)
-      return err;
-
-    vpRotationMatrix R(tu);
-    vpPoseVector p9(t, R);
-    if (test("p9", p9, bench) == false)
-      return err;
-    vpPoseVector p10;
-    p10.buildFrom(t, R);
-    if (test("p10", p10, bench) == false)
-      return err;
-  }
-  std::cout << "All tests succeed" << std::endl;
   return 0;
 }
+#endif

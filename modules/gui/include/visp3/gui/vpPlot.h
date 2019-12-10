@@ -57,13 +57,13 @@
   graphics. Each one contains a desired number of curves.
 
   \warning This class is only available if one of the display functionalities
-(X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
-header file, you should have VISP_HAVE_DISPLAY define.
+  (X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
+  header file, you should have VISP_HAVE_DISPLAY define.
 
   The example below shows how to use the vpPlot class. An other example
-provided in tutoral-ibvs-plotter.cpp and described in \ref tutorial-plotter
-shows how to use this class to plot in real-time some curves during an
-image-based visual servo.
+  provided in tutorial-ibvs-plotter.cpp and described in \ref tutorial-plotter
+  shows how to use this class to plot in real-time some curves during an
+  image-based visual servo.
 
   \code
 #include <visp3/gui/vpPlot.h>

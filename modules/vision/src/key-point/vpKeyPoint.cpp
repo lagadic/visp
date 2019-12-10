@@ -4572,6 +4572,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 }
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 // From OpenCV 2.4.11 source code.
 struct KeypointResponseGreaterThanThreshold {
   KeypointResponseGreaterThanThreshold(float _value) : value(_value) {}
@@ -4820,6 +4821,7 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image,
   if (!mask.empty())
     vpKeyPoint::KeyPointsFilter::runByPixelsMask(keypoints, mask);
 }
+#endif
 #endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

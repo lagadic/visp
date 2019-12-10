@@ -112,26 +112,36 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
   add_extra_compiler_option(-fvisibility=hidden)
 
-  if(ENABLE_SSE2)
-    add_extra_compiler_option(-msse2)
-  elseif(X86 OR X86_64)
-    add_extra_compiler_option(-mno-sse2)
-  endif()
+  if(ENABLE_AVX AND X86_64)
+    add_extra_compiler_option(-mavx)
+  else()
+    if(ENABLE_SSE2)
+      add_extra_compiler_option(-msse2)
+    elseif(X86 OR X86_64)
+      add_extra_compiler_option(-mno-sse2)
+    endif()
 
-  if(ENABLE_SSE3)
-    add_extra_compiler_option(-msse3)
-  elseif(X86 OR X86_64)
-    #add_extra_compiler_option(-mno-sse3)
-  endif()
+    if(ENABLE_SSE3)
+      add_extra_compiler_option(-msse3)
+    elseif(X86 OR X86_64)
+      #add_extra_compiler_option(-mno-sse3)
+    endif()
 
-  if(ENABLE_SSSE3)
-    add_extra_compiler_option(-mssse3)
-  elseif(X86 OR X86_64)
-    add_extra_compiler_option(-mno-ssse3)
+    if(ENABLE_SSSE3)
+      add_extra_compiler_option(-mssse3)
+    elseif(X86 OR X86_64)
+      add_extra_compiler_option(-mno-ssse3)
+    endif()
   endif()
 
   if(X86 AND NOT IOS)
-    add_extra_compiler_option(-ffloat-store)
+    add_extra_compiler_option(-ffloat-store) #to not use the x87 FPU on x86, see PR #442 for more information
+  endif()
+endif()
+
+if(MSVC AND X86_64)
+  if(ENABLE_AVX AND NOT MSVC_VERSION LESS 1600)
+    add_extra_compiler_option("/arch:AVX")
   endif()
 endif()
 
@@ -143,6 +153,15 @@ endif()
 
 if(DEFINED WINRT_8_1)
   add_extra_compiler_option(/ZW) # do not use with 8.0
+endif()
+
+if(MSVC)
+  # Remove unreferenced functions: function level linking
+  list(APPEND VISP_EXTRA_CXX_FLAGS "/Gy")
+  if(NOT MSVC_VERSION LESS 1400)
+    # Avoid build error C1128
+    list(APPEND VISP_EXTRA_CXX_FLAGS "/bigobj")
+  endif()
 endif()
 
 # Add user supplied extra options (optimization, etc...)

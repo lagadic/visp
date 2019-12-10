@@ -9,24 +9,57 @@ This tutorial will help you to install ViSP for Java on your desktop. This tutor
 
 \section java_ws Create a workspace
 
-First create a workspace in `$HOME/visp-ws` that will contain Java JDK, ViSP sources, build and dataset.
+First create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
 \code
 $ export VISP_WS=$HOME/visp-ws
 $ mkdir -p $VISP_WS
 \endcode
 
-\section java_install_jdk Install Java Development Kit
+\section java_install_jdk Install Java Development Kit 11 (JDK)
 
-Download the latest Java Development Kit (JDK) from the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website. Now you should be able to install the last Java JDK by opening the file just downloaded.
+\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) was version 13. We experienced that JDK 13 and JDK 12 are not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk.
 
-After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
+That's why we recommand to install Java SE Development Kit 11.0.4 LTS (JDK 11). 
 
-If you download `jdk-11.0.1_<platform>-x64_bin.tar.gz` (where `<platform>` should be replaced by is either `linux` or `osx`) this could be done like:
+\subsection java_install_jdk_unix On Ubuntu or Debian platform
+
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.4_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
 \code
-$ tar xvzf jdk-11.0.1_<platform>-x64_bin.tar.gz -C $VISP_WS
-$ echo "export JAVA_HOME=$VISP_VS/jdk-11.0.1.jdk" >> ~/.bashrc
+$ tar xvzf jdk-11.0.4_linux-x64_bin.tar.gz -C $VISP_WS
+$ echo "export JAVA_HOME=$VISP_VS/jdk-11.0.4" >> ~/.bashrc
+$ echo "export PATH=${PATH}:${JAVA_HOME}/bin" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
+
+After installation check JDK version:
+\code
+$ java --version
+java 11.0.4 2019-07-16 LTS
+\endcode
+
+\subsection java_install_jdk_osx On Mac OSX platform
+
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.4_osx-x64_bin.dmg` and install the package.
+
+After installation check JDK version:
+\code
+$ java --version
+java 11.0.4 2019-07-16 LTS
+\endcode
+
+\note If you have a more recent version like java 13 (that comes with JDK 13) or java 12 (that comes with JDK 12), you need to uninstall it. See \ref java_install_tips_uninstall_jdk to proceed.
+
+\subsection java_install_jdk_win On Windows platform
+
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.4_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location `C:\Program Files\Java\jdk-11.0.4\bin` to the `%%PATH%` environment variable.
+
+After installation check JDK version:
+\code
+$ java -version
+java version 11.0.4 2019-07-16 LTS
+\endcode
+
+\note If you have a more recent version like JDK 13 or JDK 12, you need to uninstall it. See \ref java_install_tips_uninstall_jdk to proceed.
 
 \section java_linux Install Prerequisites
 
@@ -175,6 +208,27 @@ Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin
 \image html img-tutorial-java-eclipse3.jpeg Add jar and native libraries to User Library
 
 Once done, press `"Apply and Close"` button.
+
+\section java_install_tips Tips & Tricks
+
+\subsection java_install_tips_uninstall_jdk How to uninstall JDK
+
+\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) was version 13. We experienced that JDK 13 and JDK 12 are not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk. That's why we give here some tips to uninstall JDK to be able to downgrade JDK version.
+
+<b>On Mac OSX platform</b>
+
+To uninstall JDK on Mac OSX, you must have administrator privileges and remove the directory whose name matches the following format: `/Library/Java/JavaVirtualMachines/jdkmajor.minor.macro[_update].jdk`. You can proceed using:
+\code
+sudo mv /Library/Java/JavaVirtualMachines/jdk-13.jdk/ /tmp
+\endcode
+and/or:
+\code
+sudo mv /Library/Java/JavaVirtualMachines/jdk-12.0.2.jdk/ /tmp
+\endcode
+
+<b>On Windows platform</b>
+
+To uninstall JDK on Windows, click Start menu, select `"Settings > System > Apps & features"`. Select the program to unsinstall like `Java(TM) SE Development Kit 13.0 (64-bit)`, then click its Uninstall button. Respond to the prompts to complete the uninstall. 
 
 \section java_install_next Next tutorial
 

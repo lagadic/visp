@@ -178,7 +178,7 @@ int main(int argc, const char **argv)
 #endif
 
     if (opt_display) {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
       // Display size is automatically defined by the image (I) size
       display.init(I, 100, 100, "Camera view...");
 #endif
@@ -251,7 +251,7 @@ int main(int argc, const char **argv)
 
       // get the robot position
       robot.getPosition(wMc);
-      // Compute the position of the camera wrt the object frame
+      // Compute the position of the object frame in the camera frame
       cMo = wMc.inverse() * wMo;
 
       // new sphere position: retrieve x,y and Z of the vpSphere structure

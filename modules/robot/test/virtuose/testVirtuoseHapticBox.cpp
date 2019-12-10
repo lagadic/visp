@@ -242,7 +242,7 @@ int main()
 {
   try {
     vpVirtuose virtuose;
-    virtuose.setIpAddress("localhost#5000");
+    virtuose.setIpAddress("localhost#53210");
     virtuose.setVerbose(true);
     virtuose.setPowerOn();
     virtuose.setPeriodicFunction(CallBackVirtuose);

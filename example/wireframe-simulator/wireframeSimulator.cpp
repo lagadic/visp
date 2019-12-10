@@ -229,8 +229,7 @@ Create a display for each different cameras.
     sim.setDesiredViewColor(vpColor::red);
     sim.setCameraColor(vpColor::green);
     /*
-    Set the current and the desired position of the camera relative to the
-    object.
+    Set the position of the object frame in the current and desired camera frame
   */
     sim.setCameraPositionRelObj(cMo);
     sim.setDesiredCameraPosition(cdMo);
@@ -257,8 +256,7 @@ Create a display for each different cameras.
       // Get the view of the main external camera
       sim.getExternalImage(Iext1);
       // Get the view of an external camera that you can positionned thanks
-      // to a vpHomogeneousMatrix which describes the position of the camera
-      // relative to the world reference frame.
+      // to a vpHomogeneousMatrix which describes the position of the world reference frame in the camera frame
       sim.getExternalImage(Iext2, camoMw);
       // Display the views.
 
@@ -299,8 +297,7 @@ Create a display for each different cameras.
       // Get the view of the main external camera
       sim.getExternalImage(Iext1);
       // Get the view of an external camera that you can positionned thanks
-      // to a vpHomogeneousMatrix which describes the position of the camera
-      // relative to the world reference frame.
+      // to a vpHomogeneousMatrix which describes the position of the world reference frame in the camera frame
       sim.getExternalImage(Iext2, camoMw);
       // Display the views.
 

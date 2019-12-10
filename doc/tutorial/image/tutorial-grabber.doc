@@ -55,7 +55,7 @@ Depending on the command line options we are recording a sequence of images, or 
 
 \subsection grabber-camera-flycap-use How to acquire images
 
-Once tutorial-grabber-flycapture.cpp is build, the binary usage is given by:
+Once tutorial-grabber-flycapture.cpp is built, the binary usage is given by:
 \code
 ./tutorial-grabber-flycapture --help
 \endcode
@@ -109,7 +109,7 @@ In the previous example we use vp1394TwoGrabber class that works for firewire ca
 
 \subsection grabber-camera-dc1394-use How to acquire images
 
-Once tutorial-grabber-1394.cpp is build, the binary usage is given by:
+Once tutorial-grabber-1394.cpp is built, the binary usage is given by:
 \code
 ./tutorial-grabber-1394 --help
 \endcode
@@ -132,7 +132,7 @@ If you want to grab images from an usb camera under Unix, you may use vpV4l2Grab
 
 \subsection grabber-camera-v4l2-use How to acquire images
 
-Once tutorial-grabber-v4l2.cpp is build, the binary usage is given by:
+Once tutorial-grabber-v4l2.cpp is built, the binary usage is given by:
 \code
 ./tutorial-grabber-v4l2 --help
 \endcode
@@ -155,7 +155,7 @@ It is also possible to grab images using Pylon, the SDK for Basler cameras. You 
 
 \subsection grabber-camera-pylon-use How to acquire images
 
-Once tutorial-grabber-basler-pylon.cpp is build, the binary usage is given by:
+Once tutorial-grabber-basler-pylon.cpp is built, the binary usage is given by:
 \code
 ./tutorial-grabber-basler-pylon --help
 \endcode
@@ -178,7 +178,7 @@ It is also possible to grab images using librealsense, the SDK provided for Inte
 
 \subsection grabber-camera-realsense-use How to acquire images
 
-Once tutorial-grabber-realsense.cpp is build, the binary usage is given by:
+Once tutorial-grabber-realsense.cpp is built, the binary usage is given by:
 \code
 ./tutorial-grabber-realsense --help
 \endcode
@@ -201,7 +201,7 @@ It is also possible to grab images using OpenCV. You may find an example in tuto
 
 \subsection grabber-camera-opencv-use How to acquire images
 
-Once tutorial-grabber-opencv.cpp is build, the binary usage is given by:
+Once tutorial-grabber-opencv.cpp is built, the binary usage is given by:
 \code
 ./tutorial-grabber-opencv --help
 \endcode
@@ -222,13 +222,42 @@ To grab a sequence of images, you may rather use:
 
 It is also possible to grab images using CMU1394 SDK if you want to use a firewire camera under Windows. You may find an example in tutorial-grabber-CMU1394.cpp.
 
+\section grabber-bebop2 Frame grabbing using Parrot Bebop 2 drone
+
+It is also possible to grab images using a Parrot Bebop 2 drone. You may find an example in tutorial-grabber-bebop2.cpp.
+
+\warning Image grabbing with Bebop 2 drone only works if ViSP was built with Parrot ARSDK3 and OpenCV support.
+
+\subsection grabber-bebop2-use How to acquire images
+
+Once tutorial-grabber-bebop2.cpp is built, the binary usage is given by:
+\code
+./tutorial-grabber-bebop2 --help
+\endcode
+To just view images, run:
+\code
+./tutorial-grabber-bebop2
+\endcode
+To grab single shot images (for camera calibration for example), you may use:
+\code
+./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 1
+\endcode
+To grab a sequence of images, you may rather use:
+\code
+./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 0
+\endcode
+You can chose to record HD 720p pictures from the drone (instead of default 480p) using --hd_resolution option : 
+\code
+./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 0 --hd_resolution
+\endcode
+
 \section grabber-video-stream Images from a video stream
 
 With ViSP it also possible to get images from an input video stream. Supported formats are *.avi, *.mp4, *.mov, *.ogv, *.flv and many others... To this end we exploit OpenCV 3rd party.
 
 The example below available in tutorial-video-reader.cpp shows how to consider an mpeg video stream.
 
-\warning We recall that this example works only if ViSP was build with OpenCV support.
+\warning We recall that this example only works if ViSP was built with OpenCV support.
 
 \subsection grabber-video-stream-src Source code explained
 
@@ -284,7 +313,7 @@ The synchronization is done by waiting from the beginning of the iteration the c
 
 \subsection grabber-video-stream-use How to acquire images
 
-Once tutorial-video-reader.cpp is build, the binary usage is given by:
+Once tutorial-video-reader.cpp is built, the binary usage is given by:
 \code
 ./tutorial-video-reader --help
 \endcode

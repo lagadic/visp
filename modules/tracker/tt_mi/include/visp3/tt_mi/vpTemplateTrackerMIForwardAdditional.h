@@ -63,11 +63,6 @@ public:
 
 private:
   vpMinimizationTypeMIForwardAdditional minimizationMethod;
-  // pour eval evolRMS
-  double evolRMS;
-  double *x_pos;
-  double *y_pos;
-  double threshold_RMS;
   // valeur pour calculer Quasi_Newton
   vpColVector p_prec;
   vpColVector G_prec;
@@ -76,37 +71,14 @@ private:
 protected:
   void initHessienDesired(const vpImage<unsigned char> &I);
   void trackNoPyr(const vpImage<unsigned char> &I);
-  void deletePosEvalRMS();
-  void computeEvalRMS(const vpColVector &p);
-  void initPosEvalRMS(const vpColVector &p);
-
-  // private:
-  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //  vpTemplateTrackerMIForwardAdditional(const
-  //  vpTemplateTrackerMIForwardAdditional &)
-  //    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), evolRMS(0),
-  //    x_pos(NULL), y_pos(NULL),
-  //      threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()
-  //  {
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!");
-  //  }
-  //  vpTemplateTrackerMIForwardAdditional &operator=(const
-  //  vpTemplateTrackerMIForwardAdditional &){
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!"); return *this;
-  //  }
-  //#endif
 
 public:
   //! Default constructor.
   vpTemplateTrackerMIForwardAdditional()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0),
-      p_prec(), G_prec(), KQuasiNewton()
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
   {
   }
   explicit vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
-  void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
   void setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method) { minimizationMethod = method; }
 };
 

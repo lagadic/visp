@@ -45,25 +45,25 @@ The Xcode project \c StartedImageProc contains \c ImageConversion.h and \c Image
 
 The following function implemented in \c ImageConversion.mm show how to convert an UIImage into a vpImage<vpRGBa> instanciated as a color image. 
 
-\snippet ImageConversion.mm vpImageColorFromUIImage
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageColorFromUIImage
 
 \subsection image_ios_convert_uiimage_vpimage_gray UIImage to gray vpImage 
 
 The following function implemented in \c ImageConversion.mm show how to convert an UIImage into a vpImage<unsigned char> instanciated as a grey level image. 
 
-\snippet ImageConversion.mm vpImageGrayFromUIImage
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageGrayFromUIImage
 
 \subsection image_ios_convert_vpimage_color_uiimage Color vpImage to UIImage
 
 The following function implemented in \c ImageConversion.mm show how to convert a gray level vpImage<unsigned char> into an UIImage. 
 
-\snippet ImageConversion.mm UIImageFromVpImageColor
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageColor
 
 \subsection image_ios_convert_vpimage_gray_uiimage Gray vpImage to UIImage
 
 The following function implemented in \c ImageConversion.mm show how to convert a color vpImage<vpRGBa> into an UIImage. 
 
-\snippet ImageConversion.mm UIImageFromVpImageGray
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageGray
 
 \section image_ios_output Application output
 

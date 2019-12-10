@@ -114,6 +114,10 @@ public:
 
   static double d2Bspline3(double diff);
   static double d2Bspline4(double diff);
+
+  static void computeProbabilities(double *Prt, int &cr, double &er, int &ct, double &et,int &Nc, double *dW,
+                                   unsigned int &NbParam, int &bspline, vpTemplateTrackerMI::vpHessienApproximationType &approx, bool use_hessien_des);
+
 };
 
 #endif

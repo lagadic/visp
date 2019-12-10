@@ -48,25 +48,22 @@
 */
 double vpGaussRand::gaussianDraw()
 {
-  static bool AlreadyDone = false;
-  static double x2;
-
-  if (AlreadyDone) {
-    AlreadyDone = false;
-    return x2;
+  if (m_AlreadyDone) {
+    m_AlreadyDone = false;
+    return m_x2;
   }
 
   else {
     double v1 = 0, v2 = 0, rsq = 0;
     do {
-      v1 = 2 * draw1() - 1;
-      v2 = 2 * draw1() - 1;
+      v1 = 2 * m_rng.uniform(0.0, 1.0) - 1;
+      v2 = 2 * m_rng.uniform(0.0, 1.0) - 1;
       rsq = v1 * v1 + v2 * v2;
     } while (rsq >= 1);
 
     double fac = sqrt(-2 * log(rsq) / rsq);
-    x2 = v2 * fac;
-    AlreadyDone = true;
+    m_x2 = v2 * fac;
+    m_AlreadyDone = true;
     return v1 * fac;
   }
 }

@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _POSTSCRIPT_UTILS_H
-#define _POSTSCRIPT_UTILS_H
+#pragma once
 
 // write commands in postscript language to render an image in the current
 // graphics environment. The image will be rendered in one pixel per unit
@@ -52,5 +51,3 @@ static void postscript_image(FILE *f, image_u8_t *im)
 
     fprintf(f, "\n");
 }
-
-#endif

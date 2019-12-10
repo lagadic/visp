@@ -39,9 +39,9 @@
 set(CTEST_PROJECT_NAME "ViSP")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 GMT")
 
-set(CTEST_DROP_METHOD "http")
-set(CTEST_DROP_SITE "cdash.inria.fr")
-set(CTEST_DROP_LOCATION "/CDash/submit.php?project=ViSP")
+set(CTEST_DROP_METHOD "https")
+set(CTEST_DROP_SITE "cdash-ci.inria.fr")
+set(CTEST_DROP_LOCATION "/submit.php?project=ViSP")
 set(CTEST_DROP_SITE_CDASH TRUE)
 
 #--------------------------------------------------------------------
@@ -64,31 +64,10 @@ else()
   set(BUILDNAME "${BUILDNAME}-i386")
 endif()
 
-# Add the compiler name, e.g. "g++, msvc7..."
-if(MSVC70)
-  set(BUILDNAME "${BUILDNAME}-msvc70")
-elseif(MSVC71)
-  set(BUILDNAME "${BUILDNAME}-msvc71")
-elseif(MSVC80)
-  set(BUILDNAME "${BUILDNAME}-msvc80")
-elseif(MSVC90)
-  set(BUILDNAME "${BUILDNAME}-msvc90")
-elseif(MSVC10)
-  set(BUILDNAME "${BUILDNAME}-msvc10")
-elseif(MSVC11)
-  set(BUILDNAME "${BUILDNAME}-msvc11")
-elseif(MSVC12)
-  set(BUILDNAME "${BUILDNAME}-msvc12")
-elseif(MSVC14)
-  set(BUILDNAME "${BUILDNAME}-msvc14")
-elseif(MSVC15)
-  set(BUILDNAME "${BUILDNAME}-msvc15")
-elseif(MSVC)
-  set(BUILDNAME "${BUILDNAME}-msvc")
-elseif(BORLAND)
-  set(BUILDNAME "${BUILDNAME}-borland")
-elseif(MINGW)
-  set(BUILDNAME "${BUILDNAME}-mingw")
+# Add the compiler name, e.g. "g++, msvc..."
+if(VISP_RUNTIME)
+  # msvc, mingw
+  set(BUILDNAME "${BUILDNAME}-${VISP_RUNTIME}")
 else()
   # g++
   set(BUILDNAME "${BUILDNAME}-${CMAKE_BASE_NAME}")

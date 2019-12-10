@@ -120,7 +120,7 @@ if(NOT DEFINED VISP_STATIC)
   endif()
 endif()
 
-if(DEFINED OpenCV_ARCH AND DEFINED OpenCV_RUNTIME)
+if(DEFINED VISP_ARCH AND DEFINED VISP_RUNTIME)
   # custom overridden values
 elseif(MSVC)
   if(CMAKE_CL_64)

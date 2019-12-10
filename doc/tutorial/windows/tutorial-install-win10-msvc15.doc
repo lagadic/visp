@@ -96,25 +96,25 @@ ViSP is interfaced with several 3rd party libraries. The <a href="https://visp.i
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
-- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got `opencv-4.1.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with the previous OpenCV 4.0.0 release downloading `opencv-4.0.0-vc14_vc15.exe`.
+- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got `opencv-4.1.2-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win10-extract-opencv.png
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.1.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.1.2`.
 
-\note OpenCV 4.1.0 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 Win64 (vc14) and Visual Studio 15 2017 Win64 (vc15). These libraries are located in `%%VISP_WS%\opencv-4.1.0\build\x64\vc14` and `%%VISP_WS%\opencv-4.1.0\build\x64\vc15` respectively.
+\note OpenCV 4.1.1 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 Win64 (vc14) and Visual Studio 15 2017 Win64 (vc15). These libraries are located in `%%VISP_WS%\opencv-4.1.2\build\x64\vc14` and `%%VISP_WS%\opencv-4.1.2\build\x64\vc15` respectively.
 
 <b>2. Complete OpenCV installation</b>
 
 Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd` Command Prompt and enter:
 \code
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.1.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.1.2\build"
 C:\> exit
 \endcode
-where `%%VISP_WS%\opencv-4.1.0\build` is where you have installed OpenCV. Inside this folder you should have a file named `OpenCVConfig.cmake`. 
+where `%%VISP_WS%\opencv-4.1.2\build` is where you have installed OpenCV. Inside this folder you should have a file named `OpenCVConfig.cmake`. 
 
-- You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 Win64 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.0\build\x64\vc15\bin`.
+- You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 Win64 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.2\build\x64\vc15\bin`.
 
 \subsubsection install_win10_msvc15_3rdparty_eigen Eigen3 3rd party
 
@@ -162,8 +162,9 @@ I you have an Intel RealSense Depth camera (SR300 or D400 series), you may insta
 
 Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
 - Go to https://github.com/IntelRealSense/librealsense/releases
-- Download `Intel.RealSense.SDK-win10.exe` corresponding to the last Intel Realsense SDK 2.0 release. At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-win10.exe` corresponding to build 2.21.0.
-- Execute `Intel.RealSense.SDK-win10.exe` and follow default installation steps.
+- From the last release Assets section, download `Intel.RealSense.SDK.exe` corresponding to the last Intel Realsense SDK 2.0 Setup. At the time this tutorial was written, we downloaded `Intel.RealSense.SDK.exe` corresponding to build 2.29.0.
+- Execute `Intel.RealSense.SDK.exe` and follow default installation steps 
+
 
 <b>2. Complete Intel Realsense SDK 2.0 installation</b>
 
@@ -179,13 +180,17 @@ PCL library could be installed to extend vpRealSense2 capabilities to acquire a 
 There exists in https://github.com/PointCloudLibrary/pcl/releases all-in-one installer that allows to install PCL and third-parties easily. Be careful to use the version that match your compiler.
 For Visual Studio 15 2017:
 - Go to https://github.com/PointCloudLibrary/pcl/releases
-- Download `PCL-1.9.1-AllInOne-msvc2017-win64.exe`
-- Execute `PCL-1.9.1-AllInOne-msvc2017-win64.exe` and follow default installation steps.
+- From the Assets section, download `PCL-1.9.1-AllInOne-msvc2017-win64.exe`
+- Execute `PCL-1.9.1-AllInOne-msvc2017-win64.exe`, add PCL to the system path for all users and follow default installation steps.
+\image html img-pcl-path.png
 
 <b>2. Complete PCL installation</b>
 
-To finalize the installation, add the location of `pcl_common_<debug|release>.dll` and `OpenNI2.dll` libraries in the `Path` environment variable. 
-Open the "Edit environment variable" UI, and modify `Path` to add respectively:
+If you experience the following error during installation you need to complete PCL installation. Otherwise you can skip next instructions.
+\image html img-pcl-error-path-to-long.png
+
+To complete PCL installation, add the location of `pcl_common_<debug|release>.dll` and `OpenNI2.dll` libraries in the `Path` environment variable. 
+Open the "Edit environment variable" UI, and modify by hand `Path` to add respectively:
 - a new line with `C:\Program Files\PCL 1.9.1\bin`
 - a new line with `C:\Program Files\OpenNI2\Redist`
 
@@ -268,7 +273,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 - Click then on "Configure" button.
 \image html img-cmake-win10-msvc15-visp-create-folder.png
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-vc15` folder.
-- Select then your compiler "Visual Studio 15 2017 Win64" and click on "Finish" button.
+- Select then your compiler "Visual Studio 15 2017", select "x64" as optional platform for generator and click on "Finish" button.
 \image html img-cmake-win10-msvc15-msvc-version.png
 - This will start CMake configuration. As shown in the next image, Eigen3, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon, Realsense2 and Zbar 3rd parties are automatically detected. 
 \image html img-cmake-win10-msvc15-visp-config.png
@@ -321,6 +326,32 @@ CMake Warning at CMakeLists.txt:1156 (message):
 \image html img-win10-msvc15-visp-explorer-install.png
 
 - Note that you can also build ViSP in `Debug` configuration. In that case, all the library names are suffixed by "d" character (`libvisp_core320d.dll`...). 
+
+\subsection install_win10_msvc15_build_visp_doc Build ViSP documentation
+
+To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
+- [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial was written, we downloaded `doxygen-1.8.16-setup.exe`
+- Run the installer following default options
+- Open a new `cmd` Command Prompt and enter build directory
+\code
+C:\> cd %VISP_WS%\visp-build-vc15
+\endcode
+- Run CMake in build directory:
+\code
+C:\> cmake -G "Visual Studio 15 2017 Win64" %VISP_WS%\visp
+\endcode
+- Build documentation using:
+\code
+C:\> cmake --build . --config Release --target visp_doc
+\endcode
+
+The generated documentation is then available in `$VISP_WS/visp-build-vc15/doc/html/index.html`
+
+\note It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+\code
+C:\> cmake -G "Visual Studio 15 2017 Win64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
+C:\> cmake --build . --config Release --target visp_doc
+\endcode
 
 \subsection install_win10_msvc15_env_var Set Path environment var
 
