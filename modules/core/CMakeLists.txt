@@ -233,6 +233,11 @@ if(WITH_CATCH2)
   include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
 
+#if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+#endif()
+
 if(MSVC)
   # Disable Visual C++ C4996 warning
   # warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead
@@ -286,7 +291,7 @@ if(USE_XML2)
   endif()
 endif()
 
-vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} WRAP java)
+vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} ${SIMDLIB_LIBRARIES} WRAP java)
 
 vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
 
