@@ -57,6 +57,13 @@ if(WITH_PUGIXML)
   set(PUGIXML_VERSION ${PUGIXML_MAJOR_VERSION}.${PUGIXML_MINOR_VERSION}.${PUGIXML_PATCH_VERSION})
 endif()
 
+#if(WITH_SIMDLIB)
+  set(SIMD_LIBRARY visp_simdlib)
+  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/simdlib")
+  set(SIMDLIB_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/simdlib")
+  set(SIMDLIB_LIBRARIES ${SIMD_LIBRARY})
+#endif()
+
 if(WITH_STBIMAGE)
   set(STBIMAGE_LIBRARY visp_stbimage)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/stb_image")
