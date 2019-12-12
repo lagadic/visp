@@ -110,7 +110,7 @@ public:
   static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba);
   static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigned char> &dest_depth);
   static void convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> &dest);
-  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest, unsigned int nThreads=0);
 
   static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
@@ -136,7 +136,8 @@ public:
   static void convert(const vpImage<unsigned char> &src, IplImage *&dest);
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip = false);
-  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip = false,
+                      unsigned int nThreads=0);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
   static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData = true);
 #endif
@@ -177,7 +178,6 @@ public:
     \f] \param b Blue component from the YUV coding format. This value is
     computed using: \f[b = 0.9999695*y + 2.04112*(u-128) - 0.0016314*(v-128)
     \f]
-
   */
   static inline void YUVToRGB(unsigned char y, unsigned char u, unsigned char v, unsigned char &r, unsigned char &g,
                               unsigned char &b)
@@ -222,14 +222,17 @@ public:
   static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int size);
   static void RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned int size);
 
+  static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
+                        bool flip = false);
   static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int size);
+  static void RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
+                         unsigned int nThreads=0);
   static void RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int size);
 
   static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int width, unsigned int height,
                         bool flip = false);
-  static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
-                        bool flip = false);
 
+  static void GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int width, unsigned int height);
   static void GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int size);
   static void GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned int size);
 
@@ -237,7 +240,7 @@ public:
                         bool flip = false);
 
   static void BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
-                        bool flip = false);
+                        bool flip = false, unsigned int nThreads=0);
 
   static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
   static void YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
