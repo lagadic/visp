@@ -58,15 +58,23 @@
 
   Allows to grab images from a PointGrey camera using FlyCapture SDK.
 
-  To use this class install first FlyCapture SDK
-https://www.ptgrey.com/flycapture-sdk. Installation instructions are provide
-here https://visp.inria.fr/3rd_flycapture. \note To install FlyCapture SDK on
-linux follow https://www.ptgrey.com/tan/10548. \note For specific details
-about using FlyCapture and Linux with a USB 3.0 camera, see
-http://www.ptgrey.com/KB/10685.
+  To use this class install first FlyCapture SDK https://www.ptgrey.com/flycapture-sdk.
+  Installation instructions are provide here https://visp.inria.fr/3rd_flycapture.
+
+  \note To install FlyCapture SDK on linux follow https://www.ptgrey.com/tan/10548.
+  \note For specific details about using FlyCapture and Linux with a USB 3.0 camera, see
+  http://www.ptgrey.com/KB/10685.
+
+  \warning With Ubuntu 16.04 or more recent versions, if you get issues during grabbing like:
+  \code
+  Grab loop had an error: There is an image consistency issue with this image.
+  \endcode
+  follow instruction provide in
+[here](https://www.flir.fr/support-center/iis/machine-vision/knowledge-base/lost-ethernet-data-packets-on-linux-systems)
+  to increase receive buffer size.
 
   Once installed configure ViSP using cmake to detect FlyCapture SDK and build
-ViSP to include FlyCapture SDK support.
+  ViSP to include FlyCapture SDK support.
 
   This class was tested under Ubuntu and Windows with the following cameras:
   - Flea3 USB 3.0 cameras (FL3-U3-32S2M-CS, FL3-U3-13E4C-C)
@@ -103,11 +111,11 @@ int main()
 }
   \endcode
 
-  If more than one camera is detected, you can use setCamera(const unsigned
-int &) to select the camera of interest.
+  If more than one camera is detected, you can use setCamera(const unsigned int &)
+  to select the camera of interest.
 
   It is also possible to capture images from multiple cameras. The following
-example shows how to capture simultaneously images from multiple cameras.
+  example shows how to capture simultaneously images from multiple cameras.
 
   \code
 #include <visp3/core/vpImage.h>
