@@ -40,11 +40,15 @@ project(example-servo-flir-ptu)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_robot visp_vision visp_gui visp_vs visp_visual_features visp_detection)
+find_package(VISP REQUIRED visp_core visp_robot visp_sensor visp_vision visp_gui visp_vs visp_visual_features visp_detection)
 
 set(example_cpp
-  servoFlirPtu.cpp
+  servoFlirPtuIBVS.cpp
 )
+
+set(example_data
+  ${CMAKE_CURRENT_SOURCE_DIR}/camera-flir-grasshoper-nikon-300mm.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/eMc.yaml)
 
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})
@@ -53,3 +57,12 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
+if(VISP_HAVE_FLYCAPTURE)
+  # Add specific build flag to turn off warnings coming from Flir Flycapture 3rd party
+  visp_set_source_file_compile_flag(servoFlirPtuIBVS.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
+endif()
+
+# Copy the data files to the same location than the target
+foreach(data ${example_data})
+  visp_copy_data(servoFlirPtuIBVS.cpp ${data})
+endforeach()
