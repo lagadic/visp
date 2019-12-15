@@ -88,10 +88,7 @@ public:
   /*!
     Returns the area of the rectangle.
   */
-  inline double getArea() const
-  {
-    return width*height;
-  }
+  inline double getArea() const { return width * height; }
 
   /*!
     Returns the bottom coordinate of the rectangle.
@@ -114,7 +111,7 @@ public:
 
   /*!
     Returns the center point of the rectangle. The center point
-    coordinates are (\e x, \e y)
+    coordinates are (\e x, \e y).
 
     The default coordinate system has origin (0, 0) in the top-left
     corner. The positive direction of the y axis is down, and the
@@ -130,7 +127,7 @@ public:
 
   /*!
     Returns the center point of the rectangle. The center point
-    coordinates are (\e x, \e y)
+    coordinates are (\e x, \e y).
 
     The default coordinate system has origin (0, 0) in the top-left
     corner. The positive direction of the y axis is down, and the
@@ -268,9 +265,10 @@ public:
     Sets the coordinates of the rectangle's top left corner to
     (left, top), and its size to (width, height).
 
-    \param l : horizontal position of the rectangle upper/left corner
-    position. \param t : vertical position of the rectangle upper/left corner
-    position. \param w : rectangle width. \param h : rectangle height.
+    \param l : horizontal position of the rectangle upper/left corner position.
+    \param t : vertical position of the rectangle upper/left corner position.
+    \param w : rectangle width.
+    \param h : rectangle height.
 
   */
   inline void setRect(double l, double t, double w, double h)
