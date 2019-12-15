@@ -57,15 +57,8 @@
   \ingroup group_robot_real_arm
   Interface for FLIR pan-tilt units compatible with FLIR PTU-SDK.
 
-  FLIR PTU factory settings:
-  \code
-Pan  pos min/max [deg]: -167.99 168
-Tilt pos min/max [deg]:  -89.99  90
-Pan/tilt vel max [deg/s]:   120 120
-  \endcode
-
-  \note We strongly recommend to communicate with the PTU using network interface. We experienced communication issues using serial
-  communication.
+  \note We strongly recommend to communicate with the PTU using network interface. We experienced communication issues
+  using serial communication.
 
   \warning On Unix-like OS, if you experienced the following error when running servoFlirPtu.cpp:
   \code
@@ -79,12 +72,12 @@ Pan/tilt vel max [deg/s]:   120 120
 
   \warning Again on Unix-like OS, if you experienced the following error during ViSP build:
   \code
-  <your path>/sdk-x.y.z/libcpi.a(cerial.o): relocation R_X86_64_PC32 against symbol `serposix' can not be used when making a shared object; recompile with -fPIC
-  \endcode
+  <your path>/sdk-x.y.z/libcpi.a(cerial.o): relocation R_X86_64_PC32 against symbol `serposix' can not be used when
+  making a shared object; recompile with -fPIC \endcode
   1. Enter FLIR PTU SDK folder and modify `config.mk` to add `-fPIC` build flag
   \code
   $ cat <your path>/sdk-x.y.y/config.mk
-  CFLAGS=-g -Wall -Werror -DLITTLE_ENDIAN -fPIC
+  CFLAGS=-g -Wall -Werror -DLITTLE_ENDIAN -O2 -fPIC
   \endcode
   2. Rebuild PTU-SDK
   \code
@@ -97,6 +90,8 @@ Pan/tilt vel max [deg/s]:   120 120
   $ cd $VISP_WS/visp-build
   $ make -j4
   \endcode
+
+  \sa \ref tutorial-flir-ptu-vs
 */
 class VISP_EXPORT vpRobotFlirPtu : public vpRobot
 {
@@ -104,17 +99,21 @@ public:
   vpRobotFlirPtu();
   virtual ~vpRobotFlirPtu();
 
-  void connect(const std::string &portname, int baudrate=9600);
+  void connect(const std::string &portname, int baudrate = 9600);
   void disconnect();
 
   void get_eJe(vpMatrix &eJe);
+  vpMatrix get_eJe();
   void get_fJe(vpMatrix &fJe);
+  vpMatrix get_fJe();
+  vpMatrix get_fMe();
 
   /*!
     Return constant transformation between end-effector and tool frame.
     If your tool is a camera, this transformation is obtained by hand-eye calibration.
    */
   vpHomogeneousMatrix get_eMc() const { return m_eMc; }
+  vpVelocityTwistMatrix get_cVe() const;
 
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
 
@@ -126,6 +125,8 @@ public:
   vpColVector getPanPosLimits();
   vpColVector getTiltPosLimits();
   vpColVector getPanTiltVelMax();
+
+  void reset();
 
   /*!
     Set constant transformation between end-effector and tool frame.
