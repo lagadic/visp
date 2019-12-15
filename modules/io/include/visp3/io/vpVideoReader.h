@@ -65,7 +65,7 @@
   other frame grabber class.
 
   This class has its own implementation to read a sequence of PGM and PPM
-images.
+  images.
 
   This class may benefit from optional 3rd parties:
   - libpng: If installed this optional 3rd party is used to read a sequence of
@@ -177,6 +177,7 @@ private:
   //! To read video files with OpenCV
   cv::VideoCapture m_capture;
   cv::Mat m_frame;
+  bool m_lastframe_unknown;
 #endif
   //! Types of available formats
   typedef enum {
@@ -195,6 +196,7 @@ private:
     FORMAT_AVI,
     FORMAT_MPEG,
     FORMAT_MPEG4,
+    FORMAT_MTS,
     FORMAT_MOV,
     FORMAT_OGV,
     FORMAT_WMV,
@@ -223,7 +225,6 @@ private:
   //! The frame step
   long m_frameStep;
   double m_frameRate;
-  bool m_lastframe_unknown;
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS

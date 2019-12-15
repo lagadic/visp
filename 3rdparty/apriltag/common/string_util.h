@@ -25,19 +25,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _STRING_UTIL_H
-#define _STRING_UTIL_H
+#pragma once
 
 #include <stdio.h>
 #include <stdarg.h>
-//#include <stdbool.h>
+#include <stdbool.h>
 #include <ctype.h>
 
-#include "common/zarray.h"
-
-#ifdef _MSC_VER
-#define __attribute__(A)
-#endif
+#include "zarray.h"
 
 #ifdef __cplusplus
 //extern "C" {
@@ -61,7 +56,11 @@ struct string_feeder
  * formatted string which it returns. It is the caller's responsibility to call
  * free() on the returned string when it is no longer needed.
  */
-char *sprintf_alloc(const char *fmt, ...) __attribute__ ((format (printf, 1, 2)));
+char *sprintf_alloc(const char *fmt, ...)
+#ifndef _MSC_VER
+__attribute__ ((format (printf, 1, 2)))
+#endif
+;
 
 /**
  * Similar to vsprintf(), except that it will malloc() enough space for the
@@ -291,7 +290,11 @@ void string_buffer_append_string(string_buffer_t *sb, const char *str);
  * Formats the supplied string and arguments in a manner akin to printf(), and
  * appends the resulting string to the end of the supplied string buffer.
  */
-void string_buffer_appendf(string_buffer_t *sb, const char *fmt, ...) __attribute__ ((format (printf, 2, 3)));
+void string_buffer_appendf(string_buffer_t *sb, const char *fmt, ...)
+#ifndef _MSC_VER
+__attribute__ ((format (printf, 2, 3)))
+#endif
+;
 
 /**
  * Determines whether the character contents held by the supplied string buffer
@@ -455,12 +458,8 @@ void string_feeder_require(string_feeder_t *sf, const char *str);
 // find everything that looks like an env variable and expand it
 // using getenv. Caller should free the result.
 // e.g. "$HOME/abc" ==> "/home/ebolson/abc"
-#ifndef WINRT
 char *str_expand_envs(const char *in);
-#endif
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

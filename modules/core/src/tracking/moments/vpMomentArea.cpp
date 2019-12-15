@@ -42,7 +42,8 @@
 #include <visp3/core/vpMomentObject.h>
 
 /*!
-  Has the area \f$ a = m_{00} = \mu_{00} \f$.
+  Has the area \f$ a = m_{00} = \mu_{00} \f$ for dense objects,
+  \f$ \mu_{20}+\mu_{02} \f$ for a discrete set of points.
   Gets the value of m00 from vpMomentCentered.
 */
 void vpMomentArea::compute()

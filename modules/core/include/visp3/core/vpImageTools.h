@@ -164,6 +164,11 @@ public:
   static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI,
                         unsigned int nThreads=2);
 
+  template <class Type>
+  static void warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst,
+                        const vpImageInterpolationType &interpolation=INTERPOLATION_NEAREST,
+                        bool fixedPointArithmetic=true, bool pixelCenter=false);
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -184,8 +189,11 @@ private:
 
   template <class Type> static Type getPixelClamped(const vpImage<Type> &I, const float u, const float v);
 
+  static int coordCast(double x);
+
   // Linear interpolation
-  static float lerp(const float A, const float B, const float t);
+  static double lerp(double A, double B, double t);
+  static float lerp(float A, float B, float t);
   static int64_t lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1);
 
   static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2, const vpImage<double> &II,
@@ -203,6 +211,14 @@ private:
   template <class Type>
   static void resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i, const unsigned int j,
                             const float u, const float v);
+
+  template <class Type>
+  static void warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst, bool affine, bool centerCorner, bool fixedPoint);
+
+  template <class Type>
+  static void warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst, bool affine, bool centerCorner, bool fixedPoint);
+
+  static bool checkFixedPoint(unsigned int x, unsigned int y, const vpMatrix &T, bool affine);
 };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -225,7 +241,6 @@ private:
   \sa crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int,
   unsigned int, vpImage<Type> &)
 */
-
 template <class Type>
 void vpImageTools::createSubImage(const vpImage<Type> &I, unsigned int roi_top, unsigned int roi_left,
                                   unsigned int roi_height, unsigned int roi_width, vpImage<Type> &crop)
@@ -276,7 +291,6 @@ template <class Type> void vpImageTools::createSubImage(const vpImage<Type> &I, 
   \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
-
 */
 template <class Type>
 void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left, unsigned int roi_height,
@@ -425,7 +439,6 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 }
 
 /*!
-
   Binarise an image.
 
   - Pixels whose values are less than \e threshold1 are set to \e value1
@@ -434,7 +447,6 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
     less then or equal to \e threshold2 are set to \e value2
 
   - Pixels whose values are greater than \e threshold2 are set to \e value3
-
 */
 template <class Type>
 inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type threshold2, Type value1, Type value2,
@@ -459,7 +471,6 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
 }
 
 /*!
-
   Binarise an image.
 
   - Pixels whose values are less than \e threshold1 are set to \e value1
@@ -468,7 +479,6 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
     less then or equal to \e threshold2 are set to \e value2
 
   - Pixels whose values are greater than \e threshold2 are set to \e value3
-
 */
 template <>
 inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char threshold1, unsigned char threshold2,
@@ -1296,6 +1306,616 @@ void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires,
                               static_cast<unsigned char>(valueB >> 16));
         } else {
           Ires[i][j] = *(I.bitmap + y_ * I.getWidth() + x_);
+        }
+      }
+    }
+  }
+}
+
+/*!
+  Apply a warping (affine or perspective) transformation to an image.
+
+  \param src : Input image.
+  \param T : Transformation / warping matrix, a `2x3` matrix for an affine transformation
+  or a `3x3` matrix for a perspective transformation (homography).
+  \param dst : Output image, if empty it will be of the same size than src and zero-initialized.
+  \param interpolation : Interpolation method (only INTERPOLATION_NEAREST and INTERPOLATION_LINEAR
+  are accepted, if INTERPOLATION_CUBIC is passed, INTERPOLATION_NEAREST will be used instead).
+  \param fixedPointArithmetic : If true and if `pixelCenter` is false, fixed-point arithmetic is used if
+  possible. Otherwise (e.g. the input image is too big) it fallbacks to the default implementation.
+  \param pixelCenter : If true, pixel coordinates are at (0.5, 0.5), otherwise at (0,0). Fixed-point
+  arithmetic cannot be used with `pixelCenter` option.
+*/
+template <class Type>
+void vpImageTools::warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst,
+                             const vpImageInterpolationType &interpolation,
+                             bool fixedPointArithmetic, bool pixelCenter)
+{
+  if ((T.getRows() != 2 && T.getRows() != 3) || T.getCols() != 3) {
+    std::cerr << "Input transformation must be a (2x3) or (3x3) matrix." << std::endl;
+    return;
+  }
+
+  if (src.getSize() == 0) {
+    return;
+  }
+
+  const bool affine = (T.getRows() == 2);
+  const bool interp_NN = (interpolation == INTERPOLATION_NEAREST) || (interpolation == INTERPOLATION_CUBIC);
+
+  if (dst.getSize() == 0) {
+    dst.resize(src.getHeight(), src.getWidth(), Type(0));
+  }
+
+  vpMatrix M = T;
+  if (affine) {
+    double D = M[0][0] * M[1][1] - M[0][1] * M[1][0];
+    D = !vpMath::nul(D, std::numeric_limits<double>::epsilon()) ? 1.0 / D : 0;
+    double A11 = M[1][1] * D, A22 = M[0][0] * D;
+    M[0][0] = A11; M[0][1] *= -D;
+    M[1][0] *= -D; M[1][1] = A22;
+    double b1 = -M[0][0] * M[0][2] - M[0][1] * M[1][2];
+    double b2 = -M[1][0] * M[0][2] - M[1][1] * M[1][2];
+    M[0][2] = b1; M[1][2] = b2;
+  } else {
+    M = T.inverseByLU();
+  }
+
+  if (fixedPointArithmetic && !pixelCenter) {
+    fixedPointArithmetic = checkFixedPoint(0, 0, M, affine) &&
+                           checkFixedPoint(dst.getWidth()-1, 0, M, affine) &&
+                           checkFixedPoint(0, dst.getHeight()-1, M, affine) &&
+                           checkFixedPoint(dst.getWidth() - 1, dst.getHeight() - 1, M, affine);
+  }
+
+  if (interp_NN) {
+    //nearest neighbor interpolation
+    warpNN(src, M, dst, affine, pixelCenter, fixedPointArithmetic);
+  } else {
+    //bilinear interpolation
+    warpLinear(src, M, dst, affine, pixelCenter, fixedPointArithmetic);
+  }
+}
+
+template <class Type>
+void vpImageTools::warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst, bool affine,
+                          bool centerCorner, bool fixedPoint)
+{
+  if (fixedPoint && !centerCorner) {
+    const int nbits = 16;
+    const int32_t precision = 1 << nbits;
+    const float precision_1 = 1 / static_cast<float>(precision);
+
+    int32_t a0_i32 = static_cast<int32_t>(T[0][0] * precision);
+    int32_t a1_i32 = static_cast<int32_t>(T[0][1] * precision);
+    int32_t a2_i32 = static_cast<int32_t>(T[0][2] * precision);
+    int32_t a3_i32 = static_cast<int32_t>(T[1][0] * precision);
+    int32_t a4_i32 = static_cast<int32_t>(T[1][1] * precision);
+    int32_t a5_i32 = static_cast<int32_t>(T[1][2] * precision);
+    int32_t a6_i32 = T.getRows() == 3 ? static_cast<int32_t>(T[2][0] * precision) : 0;
+    int32_t a7_i32 = T.getRows() == 3 ? static_cast<int32_t>(T[2][1] * precision) : 0;
+    int32_t a8_i32 = T.getRows() == 3 ? static_cast<int32_t>(T[2][2] * precision) : 1;
+
+    int32_t height_1_i32 = static_cast<int32_t>((src.getHeight() - 1) * precision) + 0x8000;
+    int32_t width_1_i32 = static_cast<int32_t>((src.getWidth() - 1) * precision) + 0x8000;
+
+    if (affine) {
+      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+        int32_t xi = a2_i32;
+        int32_t yi = a5_i32;
+
+        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+          if (yi >= 0 && yi < height_1_i32 && xi >= 0 && xi < width_1_i32) {
+            float x_ = (xi >> nbits) + (xi & 0xFFFF) * precision_1;
+            float y_ = (yi >> nbits) + (yi & 0xFFFF) * precision_1;
+
+            int x = vpMath::round(x_);
+            int y = vpMath::round(y_);
+            dst[i][j] = src[y][x];
+          }
+
+          xi += a0_i32;
+          yi += a3_i32;
+        }
+
+        a2_i32 += a1_i32;
+        a5_i32 += a4_i32;
+      }
+    } else {
+      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+        int64_t xi = a2_i32;
+        int64_t yi = a5_i32;
+        int64_t wi = a8_i32;
+
+        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+          if (wi != 0 && yi >= 0 && yi <= (static_cast<int>(src.getHeight()) - 1)*wi &&
+              xi >= 0 && xi <= (static_cast<int>(src.getWidth()) - 1)*wi) {
+            float w_ = (wi >> nbits) + (wi & 0xFFFF) * precision_1;
+            float x_ = ((xi >> nbits) + (xi & 0xFFFF) * precision_1) / w_;
+            float y_ = ((yi >> nbits) + (yi & 0xFFFF) * precision_1) / w_;
+
+            int x = vpMath::round(x_);
+            int y = vpMath::round(y_);
+
+            dst[i][j] = src[y][x];
+          }
+
+          xi += a0_i32;
+          yi += a3_i32;
+          wi += a6_i32;
+        }
+
+        a2_i32 += a1_i32;
+        a5_i32 += a4_i32;
+        a8_i32 += a7_i32;
+      }
+    }
+  } else {
+    double a0 = T[0][0];  double a1 = T[0][1];  double a2 = T[0][2];
+    double a3 = T[1][0];  double a4 = T[1][1];  double a5 = T[1][2];
+    double a6 = affine ? 0.0 : T[2][0];
+    double a7 = affine ? 0.0 : T[2][1];
+    double a8 = affine ? 1.0 : T[2][2];
+
+    for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        double x = a0 * (centerCorner ? j + 0.5 : j) + a1 * (centerCorner ? i + 0.5 : i) + a2;
+        double y = a3 * (centerCorner ? j + 0.5 : j) + a4 * (centerCorner ? i + 0.5 : i) + a5;
+        double w = a6 * (centerCorner ? j + 0.5 : j) + a7 * (centerCorner ? i + 0.5 : i) + a8;
+
+        if (vpMath::nul(w, std::numeric_limits<double>::epsilon())) {
+          w = 1.0;
+        }
+
+        int x_ = centerCorner ? coordCast(x / w) : vpMath::round(x / w);
+        int y_ = centerCorner ? coordCast(y / w) : vpMath::round(y / w);
+
+        if (x_ >= 0 && x_ < static_cast<int>(src.getWidth()) &&
+            y_ >= 0 && y_ < static_cast<int>(src.getHeight())) {
+          dst[i][j] = src[y_][x_];
+        }
+      }
+    }
+  }
+}
+
+template <class Type>
+void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst, bool affine,
+                              bool centerCorner, bool fixedPoint)
+{
+  if (fixedPoint && !centerCorner) {
+    const int nbits = 16;
+    const int64_t precision = 1 << nbits;
+    const float precision_1 = 1 / static_cast<float>(precision);
+    const int64_t precision2 = 1ULL << (2 * nbits);
+    const float precision_2 = 1 / static_cast<float>(precision2);
+
+    int64_t a0_i64 = static_cast<int64_t>(T[0][0] * precision);
+    int64_t a1_i64 = static_cast<int64_t>(T[0][1] * precision);
+    int64_t a2_i64 = static_cast<int64_t>(T[0][2] * precision);
+    int64_t a3_i64 = static_cast<int64_t>(T[1][0] * precision);
+    int64_t a4_i64 = static_cast<int64_t>(T[1][1] * precision);
+    int64_t a5_i64 = static_cast<int64_t>(T[1][2] * precision);
+    int64_t a6_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][0] * precision) : 0;
+    int64_t a7_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][1] * precision) : 0;
+    int64_t a8_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][2] * precision) : 1;
+
+    int64_t height_i64 = static_cast<int64_t>(src.getHeight() * precision);
+    int64_t width_i64 = static_cast<int64_t>(src.getWidth() * precision);
+
+    if (affine) {
+      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+        int64_t xi_ = a2_i64;
+        int64_t yi_ = a5_i64;
+
+        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+          if (yi_ >= 0 && yi_ < height_i64 && xi_ >= 0 && xi_ < width_i64) {
+            const int64_t xi_lower = xi_ & (~0xFFFF);
+            const int64_t yi_lower = yi_ & (~0xFFFF);
+
+            const int64_t t = yi_ - yi_lower;
+            const int64_t t_1 = precision - t;
+            const int64_t s = xi_ - xi_lower;
+            const int64_t s_1 = precision - s;
+
+            const int x_ = static_cast<int>(xi_ >> nbits);
+            const int y_ = static_cast<int>(yi_ >> nbits);
+
+            if (y_ < static_cast<int>(src.getHeight())-1 && x_ < static_cast<int>(src.getWidth())-1) {
+              const Type val00 = src[y_][x_];
+              const Type val01 = src[y_][x_+1];
+              const Type val10 = src[y_+1][x_];
+              const Type val11 = src[y_+1][x_+1];
+              const int64_t interp_i64 = static_cast<int64_t>(s_1*t_1*val00 + s*t_1*val01 + s_1*t*val10 + s*t*val11);
+              const float interp = (interp_i64 >> (nbits*2)) + (interp_i64 & 0xFFFFFFFF) * precision_2;
+              dst[i][j] = vpMath::saturate<Type>(interp);
+            } else if (y_ < static_cast<int>(src.getHeight())-1) {
+              const Type val00 = src[y_][x_];
+              const Type val10 = src[y_+1][x_];
+              const int64_t interp_i64 = static_cast<int64_t>(t_1*val00 + t*val10);
+              const float interp = (interp_i64 >> nbits) + (interp_i64 & 0xFFFF) * precision_1;
+              dst[i][j] = vpMath::saturate<Type>(interp);
+            } else if (x_ < static_cast<int>(src.getWidth())-1) {
+              const Type val00 = src[y_][x_];
+              const Type val01 = src[y_][x_+1];
+              const int64_t interp_i64 = static_cast<int64_t>(s_1*val00 + s*val01);
+              const float interp = (interp_i64 >> nbits) + (interp_i64 & 0xFFFF) * precision_1;
+              dst[i][j] = vpMath::saturate<Type>(interp);
+            } else {
+              dst[i][j] = src[y_][x_];
+            }
+          }
+
+          xi_ += a0_i64;
+          yi_ += a3_i64;
+        }
+
+        a2_i64 += a1_i64;
+        a5_i64 += a4_i64;
+      }
+    } else {
+      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+        int64_t xi = a2_i64;
+        int64_t yi = a5_i64;
+        int64_t wi = a8_i64;
+
+        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+          if (wi != 0 && yi >= 0 && yi <= (static_cast<int>(src.getHeight()) - 1)*wi &&
+              xi >= 0 && xi <= (static_cast<int>(src.getWidth()) - 1)*wi) {
+            const float wi_ = (wi >> nbits) + (wi & 0xFFFF) * precision_1;
+            const float xi_ = ((xi >> nbits) + (xi & 0xFFFF) * precision_1) / wi_;
+            const float yi_ = ((yi >> nbits) + (yi & 0xFFFF) * precision_1) / wi_;
+
+            const int x_ = static_cast<int>(xi_);
+            const int y_ = static_cast<int>(yi_);
+
+            const float t = yi_ - y_;
+            const float s = xi_ - x_;
+
+            if (y_ < static_cast<int>(src.getHeight()) - 1 && x_ < static_cast<int>(src.getWidth()) - 1) {
+              const Type val00 = src[y_][x_];
+              const Type val01 = src[y_][x_ + 1];
+              const Type val10 = src[y_ + 1][x_];
+              const Type val11 = src[y_ + 1][x_ + 1];
+              const float col0 = lerp(val00, val01, s);
+              const float col1 = lerp(val10, val11, s);
+              const float interp = lerp(col0, col1, t);
+              dst[i][j] = vpMath::saturate<Type>(interp);
+            } else if (y_ < static_cast<int>(src.getHeight()) - 1) {
+              const Type val00 = src[y_][x_];
+              const Type val10 = src[y_ + 1][x_];
+              const float interp = lerp(val00, val10, t);
+              dst[i][j] = vpMath::saturate<Type>(interp);
+            } else if (x_ < static_cast<int>(src.getWidth()) - 1) {
+              const Type val00 = src[y_][x_];
+              const Type val01 = src[y_][x_ + 1];
+              const float interp = lerp(val00, val01, s);
+              dst[i][j] = vpMath::saturate<Type>(interp);
+            } else {
+              dst[i][j] = src[y_][x_];
+            }
+          }
+
+          xi += a0_i64;
+          yi += a3_i64;
+          wi += a6_i64;
+        }
+
+        a2_i64 += a1_i64;
+        a5_i64 += a4_i64;
+        a8_i64 += a7_i64;
+      }
+    }
+  } else {
+    double a0 = T[0][0];  double a1 = T[0][1];  double a2 = T[0][2];
+    double a3 = T[1][0];  double a4 = T[1][1];  double a5 = T[1][2];
+    double a6 = affine ? 0.0 : T[2][0];
+    double a7 = affine ? 0.0 : T[2][1];
+    double a8 = affine ? 1.0 : T[2][2];
+
+    for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        double x = a0 * (centerCorner ? j + 0.5 : j) + a1 * (centerCorner ? i + 0.5 : i) + a2;
+        double y = a3 * (centerCorner ? j + 0.5 : j) + a4 * (centerCorner ? i + 0.5 : i) + a5;
+        double w = a6 * (centerCorner ? j + 0.5 : j) + a7 * (centerCorner ? i + 0.5 : i) + a8;
+        if (vpMath::nul(w, std::numeric_limits<double>::epsilon())) {
+          w = 1;
+        }
+
+        x = x / w - (centerCorner ? 0.5 : 0);
+        y = y / w - (centerCorner ? 0.5 : 0);
+
+        int x_lower = static_cast<int>(x);
+        int y_lower = static_cast<int>(y);
+
+        if (y_lower >= static_cast<int>(src.getHeight()) || x_lower >= static_cast<int>(src.getWidth()) ||
+            y < 0 || x < 0) {
+          continue;
+        }
+
+        double s = x - x_lower;
+        double t = y - y_lower;
+
+        if (y_lower < static_cast<int>(src.getHeight())-1 && x_lower < static_cast<int>(src.getWidth())-1) {
+          const Type val00 = src[y_lower][x_lower];
+          const Type val01 = src[y_lower][x_lower + 1];
+          const Type val10 = src[y_lower + 1][x_lower];
+          const Type val11 = src[y_lower + 1][x_lower + 1];
+          const double col0 = lerp(val00, val01, s);
+          const double col1 = lerp(val10, val11, s);
+          const double interp = lerp(col0, col1, t);
+          dst[i][j] = vpMath::saturate<Type>(interp);
+        } else if (y_lower < static_cast<int>(src.getHeight())-1) {
+          const Type val00 = src[y_lower][x_lower];
+          const Type val10 = src[y_lower + 1][x_lower];
+          const double interp = lerp(val00, val10, t);
+          dst[i][j] = vpMath::saturate<Type>(interp);
+        } else if (x_lower < static_cast<int>(src.getWidth())-1) {
+          const Type val00 = src[y_lower][x_lower];
+          const Type val01 = src[y_lower][x_lower + 1];
+          const double interp = lerp(val00, val01, s);
+          dst[i][j] = vpMath::saturate<Type>(interp);
+        } else {
+          dst[i][j] = src[y_lower][x_lower];
+        }
+      }
+    }
+  }
+}
+
+template <> inline
+void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix &T, vpImage<vpRGBa> &dst, bool affine,
+                              bool centerCorner, bool fixedPoint)
+{
+  if (fixedPoint && !centerCorner) {
+    const int nbits = 16;
+    const int64_t precision = 1 << nbits;
+    const float precision_1 = 1 / static_cast<float>(precision);
+    const int64_t precision2 = 1ULL << (2 * nbits);
+    const float precision_2 = 1 / static_cast<float>(precision2);
+
+    int64_t a0_i64 = static_cast<int64_t>(T[0][0] * precision);
+    int64_t a1_i64 = static_cast<int64_t>(T[0][1] * precision);
+    int64_t a2_i64 = static_cast<int64_t>(T[0][2] * precision);
+    int64_t a3_i64 = static_cast<int64_t>(T[1][0] * precision);
+    int64_t a4_i64 = static_cast<int64_t>(T[1][1] * precision);
+    int64_t a5_i64 = static_cast<int64_t>(T[1][2] * precision);
+    int64_t a6_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][0] * precision) : 0;
+    int64_t a7_i64 = T.getRows() == 3 ? static_cast<int64_t>(T[2][1] * precision) : 0;
+    int64_t a8_i64 = precision;
+
+    int64_t height_i64 = static_cast<int64_t>(src.getHeight() * precision);
+    int64_t width_i64 = static_cast<int64_t>(src.getWidth() * precision);
+
+    if (affine) {
+      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+        int64_t xi = a2_i64;
+        int64_t yi = a5_i64;
+
+        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+          if (yi >= 0 && yi < height_i64 && xi >= 0 && xi < width_i64) {
+            const int64_t xi_lower = xi & (~0xFFFF);
+            const int64_t yi_lower = yi & (~0xFFFF);
+
+            const int64_t t = yi - yi_lower;
+            const int64_t t_1 = precision - t;
+            const int64_t s = xi - xi_lower;
+            const int64_t s_1 = precision - s;
+
+            const int x_ = static_cast<int>(xi >> nbits);
+            const int y_ = static_cast<int>(yi >> nbits);
+
+            if (y_ < static_cast<int>(src.getHeight())-1 && x_ < static_cast<int>(src.getWidth())-1) {
+              const vpRGBa val00 = src[y_][x_];
+              const vpRGBa val01 = src[y_][x_+1];
+              const vpRGBa val10 = src[y_+1][x_];
+              const vpRGBa val11 = src[y_+1][x_+1];
+              const int64_t interpR_i64 = static_cast<int64_t>(s_1*t_1*val00.R + s * t_1*val01.R + s_1 * t*val10.R + s * t*val11.R);
+              const float interpR = (interpR_i64 >> (nbits*2)) + (interpR_i64 & 0xFFFFFFFF) * precision_2;
+
+              const int64_t interpG_i64 = static_cast<int64_t>(s_1*t_1*val00.G + s * t_1*val01.G + s_1 * t*val10.G + s * t*val11.G);
+              const float interpG = (interpG_i64 >> (nbits * 2)) + (interpG_i64 & 0xFFFFFFFF) * precision_2;
+
+              const int64_t interpB_i64 = static_cast<int64_t>(s_1*t_1*val00.B + s * t_1*val01.B + s_1 * t*val10.B + s * t*val11.B);
+              const float interpB = (interpB_i64 >> (nbits * 2)) + (interpB_i64 & 0xFFFFFFFF) * precision_2;
+
+              dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                                 vpMath::saturate<unsigned char>(interpG),
+                                 vpMath::saturate<unsigned char>(interpB),
+                                 255);
+            } else if (y_ < static_cast<int>(src.getHeight())-1) {
+              const vpRGBa val00 = src[y_][x_];
+              const vpRGBa val10 = src[y_+1][x_];
+              const int64_t interpR_i64 = static_cast<int64_t>(t_1*val00.R + t*val10.R);
+              const float interpR = (interpR_i64 >> nbits) + (interpR_i64 & 0xFFFF) * precision_1;
+
+              const int64_t interpG_i64 = static_cast<int64_t>(t_1*val00.G + t * val10.G);
+              const float interpG = (interpG_i64 >> nbits) + (interpG_i64 & 0xFFFF) * precision_1;
+
+              const int64_t interpB_i64 = static_cast<int64_t>(t_1*val00.B + t * val10.B);
+              const float interpB = (interpB_i64 >> nbits) + (interpB_i64 & 0xFFFF) * precision_1;
+
+              dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                                 vpMath::saturate<unsigned char>(interpG),
+                                 vpMath::saturate<unsigned char>(interpB),
+                                 255);
+            } else if (x_ < static_cast<int>(src.getWidth())-1) {
+              const vpRGBa val00 = src[y_][x_];
+              const vpRGBa val01 = src[y_][x_+1];
+              const int64_t interpR_i64 = static_cast<int64_t>(s_1*val00.R + s*val01.R);
+              const float interpR = (interpR_i64 >> nbits) + (interpR_i64 & 0xFFFF) * precision_1;
+
+              const int64_t interpG_i64 = static_cast<int64_t>(s_1*val00.G + s * val01.G);
+              const float interpG = (interpG_i64 >> nbits) + (interpG_i64 & 0xFFFF) * precision_1;
+
+              const int64_t interpB_i64 = static_cast<int64_t>(s_1*val00.B + s * val01.B);
+              const float interpB = (interpB_i64 >> nbits) + (interpB_i64 & 0xFFFF) * precision_1;
+
+              dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                                 vpMath::saturate<unsigned char>(interpG),
+                                 vpMath::saturate<unsigned char>(interpB),
+                                 255);
+            } else {
+              dst[i][j] = src[y_][x_];
+            }
+          }
+
+          xi += a0_i64;
+          yi += a3_i64;
+        }
+
+        a2_i64 += a1_i64;
+        a5_i64 += a4_i64;
+      }
+    } else {
+      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+        int64_t xi = a2_i64;
+        int64_t yi = a5_i64;
+        int64_t wi = a8_i64;
+
+        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+          if (yi >= 0 && yi <= (static_cast<int>(src.getHeight()) - 1)*wi &&
+              xi >= 0 && xi <= (static_cast<int>(src.getWidth()) - 1)*wi) {
+            const float wi_ = (wi >> nbits) + (wi & 0xFFFF) * precision_1;
+            const float xi_ = ((xi >> nbits) + (xi & 0xFFFF) * precision_1) / wi_;
+            const float yi_ = ((yi >> nbits) + (yi & 0xFFFF) * precision_1) / wi_;
+
+            const int x_ = static_cast<int>(xi_);
+            const int y_ = static_cast<int>(yi_);
+
+            const float t = yi_ - y_;
+            const float s = xi_ - x_;
+
+            if (y_ < static_cast<int>(src.getHeight()) - 1 && x_ < static_cast<int>(src.getWidth()) - 1) {
+              const vpRGBa val00 = src[y_][x_];
+              const vpRGBa val01 = src[y_][x_ + 1];
+              const vpRGBa val10 = src[y_ + 1][x_];
+              const vpRGBa val11 = src[y_ + 1][x_ + 1];
+              const float colR0 = lerp(val00.R, val01.R, s);
+              const float colR1 = lerp(val10.R, val11.R, s);
+              const float interpR = lerp(colR0, colR1, t);
+
+              const float colG0 = lerp(val00.G, val01.G, s);
+              const float colG1 = lerp(val10.G, val11.G, s);
+              const float interpG = lerp(colG0, colG1, t);
+
+              const float colB0 = lerp(val00.B, val01.B, s);
+              const float colB1 = lerp(val10.B, val11.B, s);
+              const float interpB = lerp(colB0, colB1, t);
+
+              dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                                 vpMath::saturate<unsigned char>(interpG),
+                                 vpMath::saturate<unsigned char>(interpB),
+                                 255);
+            } else if (y_ < static_cast<int>(src.getHeight()) - 1) {
+              const vpRGBa val00 = src[y_][x_];
+              const vpRGBa val10 = src[y_ + 1][x_];
+              const float interpR = lerp(val00.R, val10.R, t);
+              const float interpG = lerp(val00.G, val10.G, t);
+              const float interpB = lerp(val00.B, val10.B, t);
+
+              dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                                 vpMath::saturate<unsigned char>(interpG),
+                                 vpMath::saturate<unsigned char>(interpB),
+                                 255);
+            } else if (x_ < static_cast<int>(src.getWidth()) - 1) {
+              const vpRGBa val00 = src[y_][x_];
+              const vpRGBa val01 = src[y_][x_ + 1];
+              const float interpR = lerp(val00.R, val01.R, s);
+              const float interpG = lerp(val00.G, val01.G, s);
+              const float interpB = lerp(val00.B, val01.B, s);
+
+              dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                                 vpMath::saturate<unsigned char>(interpG),
+                                 vpMath::saturate<unsigned char>(interpB),
+                                 255);
+            } else {
+              dst[i][j] = src[y_][x_];
+            }
+          }
+
+          xi += a0_i64;
+          yi += a3_i64;
+          wi += a6_i64;
+        }
+
+        a2_i64 += a1_i64;
+        a5_i64 += a4_i64;
+        a8_i64 += a7_i64;
+      }
+    }
+  } else {
+    double a0 = T[0][0];  double a1 = T[0][1];  double a2 = T[0][2];
+    double a3 = T[1][0];  double a4 = T[1][1];  double a5 = T[1][2];
+    double a6 = affine ? 0.0 : T[2][0];
+    double a7 = affine ? 0.0 : T[2][1];
+    double a8 = affine ? 1.0 : T[2][2];
+
+    for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        double x = a0 * (centerCorner ? j + 0.5 : j) + a1 * (centerCorner ? i + 0.5 : i) + a2;
+        double y = a3 * (centerCorner ? j + 0.5 : j) + a4 * (centerCorner ? i + 0.5 : i) + a5;
+        double w = a6 * (centerCorner ? j + 0.5 : j) + a7 * (centerCorner ? i + 0.5 : i) + a8;
+
+        x = x / w - (centerCorner ? 0.5 : 0);
+        y = y / w - (centerCorner ? 0.5 : 0);
+
+        int x_lower = static_cast<int>(x);
+        int y_lower = static_cast<int>(y);
+
+        if (y_lower >= static_cast<int>(src.getHeight()) || x_lower >= static_cast<int>(src.getWidth()) ||
+            y < 0 || x < 0) {
+          continue;
+        }
+
+        double s = x - x_lower;
+        double t = y - y_lower;
+
+        if (y_lower < static_cast<int>(src.getHeight())-1 && x_lower < static_cast<int>(src.getWidth())-1) {
+          const vpRGBa val00 = src[y_lower][x_lower];
+          const vpRGBa val01 = src[y_lower][x_lower +1];
+          const vpRGBa val10 = src[y_lower +1][x_lower];
+          const vpRGBa val11 = src[y_lower +1][x_lower +1];
+          const double colR0 = lerp(val00.R, val01.R, s);
+          const double colR1 = lerp(val10.R, val11.R, s);
+          const double interpR = lerp(colR0, colR1, t);
+
+          const double colG0 = lerp(val00.G, val01.G, s);
+          const double colG1 = lerp(val10.G, val11.G, s);
+          const double interpG = lerp(colG0, colG1, t);
+
+          const double colB0 = lerp(val00.B, val01.B, s);
+          const double colB1 = lerp(val10.B, val11.B, s);
+          const double interpB = lerp(colB0, colB1, t);
+
+          dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                             vpMath::saturate<unsigned char>(interpG),
+                             vpMath::saturate<unsigned char>(interpB),
+                             255);
+        } else if (y_lower < static_cast<int>(src.getHeight())-1) {
+          const vpRGBa val00 = src[y_lower][x_lower];
+          const vpRGBa val10 = src[y_lower +1][x_lower];
+          const double interpR = lerp(val00.R, val10.R, t);
+          const double interpG = lerp(val00.G, val10.G, t);
+          const double interpB = lerp(val00.B, val10.B, t);
+
+          dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                              vpMath::saturate<unsigned char>(interpG),
+                              vpMath::saturate<unsigned char>(interpB),
+                             255);
+        } else if (x_lower < static_cast<int>(src.getWidth())-1) {
+          const vpRGBa val00 = src[y_lower][x_lower];
+          const vpRGBa val01 = src[y_lower][x_lower +1];
+          const double interpR = lerp(val00.R, val01.R, s);
+          const double interpG = lerp(val00.G, val01.G, s);
+          const double interpB = lerp(val00.B, val01.B, s);
+
+          dst[i][j] = vpRGBa(vpMath::saturate<unsigned char>(interpR),
+                             vpMath::saturate<unsigned char>(interpG),
+                             vpMath::saturate<unsigned char>(interpB),
+                             255);
+        } else {
+          dst[i][j] = src[y_lower][x_lower];
         }
       }
     }

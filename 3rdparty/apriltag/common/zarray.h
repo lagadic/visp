@@ -27,27 +27,27 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #ifndef _ZARRAY_H
 #define _ZARRAY_H
+//#pragma once
 
-#include <stddef.h>
 #include <assert.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef __cplusplus
-//extern "C" {
+// extern "C" {
 #endif
 
 /**
  * Defines a structure which acts as a resize-able array ala Java's ArrayList.
  */
 typedef struct zarray zarray_t;
-struct zarray
-{
-    size_t el_sz; // size of each element
+struct zarray {
+  size_t el_sz; // size of each element
 
-    int size; // how many elements?
-    int alloc; // we've allocated storage for how many elements?
-    char *data;
+  int size;  // how many elements?
+  int alloc; // we've allocated storage for how many elements?
+  char *data;
 };
 
 /**
@@ -57,11 +57,11 @@ struct zarray
  */
 static inline zarray_t *zarray_create(size_t el_sz)
 {
-    assert(el_sz > 0);
+  assert(el_sz > 0);
 
-    zarray_t *za = (zarray_t*) calloc(1, sizeof(zarray_t));
-    za->el_sz = el_sz;
-    return za;
+  zarray_t *za = (zarray_t *)calloc(1, sizeof(zarray_t));
+  za->el_sz = el_sz;
+  return za;
 }
 
 /**
@@ -70,39 +70,39 @@ static inline zarray_t *zarray_create(size_t el_sz)
  */
 static inline void zarray_destroy(zarray_t *za)
 {
-    if (za == NULL)
-        return;
+  if (za == NULL)
+    return;
 
-    if (za->data != NULL)
-        free(za->data);
-    memset(za, 0, sizeof(zarray_t));
-    free(za);
+  if (za->data != NULL)
+    free(za->data);
+  memset(za, 0, sizeof(zarray_t));
+  free(za);
 }
 
 /** Allocate a new zarray that contains a copy of the data in the argument. **/
 static inline zarray_t *zarray_copy(const zarray_t *za)
 {
-    assert(za != NULL);
+  assert(za != NULL);
 
-    zarray_t *zb = (zarray_t*) calloc(1, sizeof(zarray_t));
-    zb->el_sz = za->el_sz;
-    zb->size = za->size;
-    zb->alloc = za->alloc;
-    zb->data = (char*) malloc(zb->alloc * zb->el_sz);
-    memcpy(zb->data, za->data, za->size * za->el_sz);
-    return zb;
+  zarray_t *zb = (zarray_t *)calloc(1, sizeof(zarray_t));
+  zb->el_sz = za->el_sz;
+  zb->size = za->size;
+  zb->alloc = za->alloc;
+  zb->data = (char *)malloc(zb->alloc * zb->el_sz);
+  memcpy(zb->data, za->data, za->size * za->el_sz);
+  return zb;
 }
 
 static int iceillog2(int v)
 {
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-    return v;
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  v++;
+  return v;
 }
 
 /**
@@ -110,17 +110,15 @@ static int iceillog2(int v)
  * elements. NOTE: end index is EXCLUSIVE, that is one past the last
  * element you want.
  */
-static inline zarray_t *zarray_copy_subset(const zarray_t *za,
-                             int start_idx,
-                             int end_idx_exclusive)
+static inline zarray_t *zarray_copy_subset(const zarray_t *za, int start_idx, int end_idx_exclusive)
 {
-    zarray_t *out = (zarray_t*) calloc(1, sizeof(zarray_t));
-    out->el_sz = za->el_sz;
-    out->size = end_idx_exclusive - start_idx;
-    out->alloc = iceillog2(out->size); // round up pow 2
-    out->data = (char*) malloc(out->alloc * out->el_sz);
-    memcpy(out->data,  za->data +(start_idx*out->el_sz), out->size*out->el_sz);
-    return out;
+  zarray_t *out = (zarray_t *)calloc(1, sizeof(zarray_t));
+  out->el_sz = za->el_sz;
+  out->size = end_idx_exclusive - start_idx;
+  out->alloc = iceillog2(out->size); // round up pow 2
+  out->data = (char *)malloc(out->alloc * out->el_sz);
+  memcpy(out->data, za->data + (start_idx * out->el_sz), out->size * out->el_sz);
+  return out;
 }
 
 /**
@@ -130,9 +128,9 @@ static inline zarray_t *zarray_copy_subset(const zarray_t *za,
  */
 static inline int zarray_size(const zarray_t *za)
 {
-    assert(za != NULL);
+  assert(za != NULL);
 
-    return za->size;
+  return za->size;
 }
 
 /**
@@ -151,25 +149,29 @@ int zarray_isempty(const zarray_t *za)
 }
 */
 
-
 /**
  * Allocates enough internal storage in the supplied variable array structure to
  * guarantee that the supplied number of elements (capacity) can be safely stored.
  */
+#include <stdio.h>
 static inline void zarray_ensure_capacity(zarray_t *za, int capacity)
 {
-    assert(za != NULL);
+  assert(za != NULL);
 
-    if (capacity <= za->alloc)
-        return;
+  if (capacity <= za->alloc)
+    return;
 
-    while (za->alloc < capacity) {
-        za->alloc *= 2;
-        if (za->alloc < 8)
-            za->alloc = 8;
-    }
+  while (za->alloc < capacity) {
+    za->alloc *= 2;
+    if (za->alloc < 8)
+      za->alloc = 8;
+  }
 
-    za->data = (char*) realloc(za->data, za->alloc * za->el_sz);
+  // za->data = (char *)realloc(za->data, za->alloc * za->el_sz);
+  char *tmp = (char *)realloc(za->data, za->alloc * za->el_sz);
+  if (tmp != NULL) {
+    za->data = tmp;
+  }
 }
 
 /**
@@ -179,13 +181,13 @@ static inline void zarray_ensure_capacity(zarray_t *za, int capacity)
  */
 static inline void zarray_add(zarray_t *za, const void *p)
 {
-    assert(za != NULL);
-    assert(p != NULL);
+  assert(za != NULL);
+  assert(p != NULL);
 
-    zarray_ensure_capacity(za, za->size + 1);
+  zarray_ensure_capacity(za, za->size + 1);
 
-    memcpy(&za->data[za->size*za->el_sz], p, za->el_sz);
-    za->size++;
+  memcpy(&za->data[za->size * za->el_sz], p, za->el_sz);
+  za->size++;
 }
 
 /**
@@ -195,12 +197,12 @@ static inline void zarray_add(zarray_t *za, const void *p)
  */
 static inline void zarray_get(const zarray_t *za, int idx, void *p)
 {
-    assert(za != NULL);
-    assert(p != NULL);
-    assert(idx >= 0);
-    assert(idx < za->size);
+  assert(za != NULL);
+  assert(p != NULL);
+  assert(idx >= 0);
+  assert(idx < za->size);
 
-    memcpy(p, &za->data[idx*za->el_sz], za->el_sz);
+  memcpy(p, &za->data[idx * za->el_sz], za->el_sz);
 }
 
 /**
@@ -212,19 +214,19 @@ static inline void zarray_get(const zarray_t *za, int idx, void *p)
  */
 inline static void zarray_get_volatile(const zarray_t *za, int idx, void *p)
 {
-    assert(za != NULL);
-    assert(p != NULL);
-    assert(idx >= 0);
-    assert(idx < za->size);
+  assert(za != NULL);
+  assert(p != NULL);
+  assert(idx >= 0);
+  assert(idx < za->size);
 
-    *((void**) p) = &za->data[idx*za->el_sz];
+  *((void **)p) = &za->data[idx * za->el_sz];
 }
 
 inline static void zarray_truncate(zarray_t *za, int sz)
 {
-   assert(za != NULL);
-   assert(sz <= za->size);
-   za->size = sz;
+  assert(za != NULL);
+  assert(sz <= za->size);
+  za->size = sz;
 }
 
 /**
@@ -240,12 +242,12 @@ inline static void zarray_truncate(zarray_t *za, int sz)
  */
 static inline size_t zarray_copy_data(const zarray_t *za, void *buffer, size_t buffer_bytes)
 {
-    assert(za != NULL);
-    assert(buffer != NULL);
-    assert(buffer_bytes >= za->el_sz * za->size);
-    memcpy(buffer, za->data, za->el_sz * za->size);
-    (void)buffer_bytes; // To avoid a warning on iOS
-    return za->el_sz * za->size;
+  assert(za != NULL);
+  assert(buffer != NULL);
+  assert(buffer_bytes >= za->el_sz * za->size);
+  memcpy(buffer, za->data, za->el_sz * za->size);
+  (void)buffer_bytes; // To avoid a warning on iOS
+  return za->el_sz * za->size;
 }
 
 /**
@@ -255,24 +257,24 @@ static inline size_t zarray_copy_data(const zarray_t *za, void *buffer, size_t b
  */
 static inline void zarray_remove_index(zarray_t *za, int idx, int shuffle)
 {
-    assert(za != NULL);
-    assert(idx >= 0);
-    assert(idx < za->size);
+  assert(za != NULL);
+  assert(idx >= 0);
+  assert(idx < za->size);
 
-    if (shuffle) {
-        if (idx < za->size-1)
-            memcpy(&za->data[idx*za->el_sz], &za->data[((size_t)(za->size)-(size_t)1)*(za->el_sz)], za->el_sz);
-        za->size--;
-        return;
-    } else {
-        // size = 10, idx = 7. Should copy 2 entries (at idx=8 and idx=9).
-        // size = 10, idx = 9. Should copy 0 entries.
-        int ncopy = za->size - idx - 1;
-        if (ncopy > 0)
-            memmove(&za->data[idx*za->el_sz], &za->data[((size_t)(idx)+(size_t)1)*(za->el_sz)], ncopy*za->el_sz);
-        za->size--;
-        return;
-    }
+  if (shuffle) {
+    if (idx < za->size - 1)
+      memcpy(&za->data[idx * za->el_sz], &za->data[((size_t)(za->size) - (size_t)1) * (za->el_sz)], za->el_sz);
+    za->size--;
+    return;
+  } else {
+    // size = 10, idx = 7. Should copy 2 entries (at idx=8 and idx=9).
+    // size = 10, idx = 9. Should copy 0 entries.
+    int ncopy = za->size - idx - 1;
+    if (ncopy > 0)
+      memmove(&za->data[idx * za->el_sz], &za->data[((size_t)(idx) + (size_t)1) * (za->el_sz)], ncopy * za->el_sz);
+    za->size--;
+    return;
+  }
 }
 
 /**
@@ -294,19 +296,18 @@ static inline void zarray_remove_index(zarray_t *za, int idx, int shuffle)
 // the newly-open space; if false, the zarray is compacted.
 static inline int zarray_remove_value(zarray_t *za, const void *p, int shuffle)
 {
-    assert(za != NULL);
-    assert(p != NULL);
+  assert(za != NULL);
+  assert(p != NULL);
 
-    for (int idx = 0; idx < za->size; idx++) {
-        if (!memcmp(p, &za->data[idx*za->el_sz], za->el_sz)) {
-            zarray_remove_index(za, idx, shuffle);
-            return 1;
-        }
+  for (int idx = 0; idx < za->size; idx++) {
+    if (!memcmp(p, &za->data[idx * za->el_sz], za->el_sz)) {
+      zarray_remove_index(za, idx, shuffle);
+      return 1;
     }
+  }
 
-    return 0;
+  return 0;
 }
-
 
 /**
  * Creates a new entry and inserts it into the array so that it will have the
@@ -317,21 +318,20 @@ static inline int zarray_remove_value(zarray_t *za, const void *p, int shuffle)
  */
 static inline void zarray_insert(zarray_t *za, int idx, const void *p)
 {
-    assert(za != NULL);
-    assert(p != NULL);
-    assert(idx >= 0);
-    assert(idx <= za->size);
+  assert(za != NULL);
+  assert(p != NULL);
+  assert(idx >= 0);
+  assert(idx <= za->size);
 
-    zarray_ensure_capacity(za, za->size + 1);
-    // size = 10, idx = 7. Should copy three entries (idx=7, idx=8, idx=9)
-    int ncopy = za->size - idx;
+  zarray_ensure_capacity(za, za->size + 1);
+  // size = 10, idx = 7. Should copy three entries (idx=7, idx=8, idx=9)
+  int ncopy = za->size - idx;
 
-    memmove(&za->data[((size_t)(idx)+(size_t)1)*(za->el_sz)], &za->data[idx*za->el_sz], ncopy*za->el_sz);
-    memcpy(&za->data[idx*za->el_sz], p, za->el_sz);
+  memmove(&za->data[((size_t)(idx) + (size_t)1) * (za->el_sz)], &za->data[idx * za->el_sz], ncopy * za->el_sz);
+  memcpy(&za->data[idx * za->el_sz], p, za->el_sz);
 
-    za->size++;
+  za->size++;
 }
-
 
 /**
  * Sets the value of the current element at index 'idx' by copying its value from
@@ -340,15 +340,15 @@ static inline void zarray_insert(zarray_t *za, int idx, const void *p)
  */
 static inline void zarray_set(zarray_t *za, int idx, const void *p, void *outp)
 {
-    assert(za != NULL);
-    assert(p != NULL);
-    assert(idx >= 0);
-    assert(idx < za->size);
+  assert(za != NULL);
+  assert(p != NULL);
+  assert(idx >= 0);
+  assert(idx < za->size);
 
-    if (outp != NULL)
-        memcpy(outp, &za->data[idx*za->el_sz], za->el_sz);
+  if (outp != NULL)
+    memcpy(outp, &za->data[idx * za->el_sz], za->el_sz);
 
-    memcpy(&za->data[idx*za->el_sz], p, za->el_sz);
+  memcpy(&za->data[idx * za->el_sz], p, za->el_sz);
 }
 
 /**
@@ -358,13 +358,13 @@ static inline void zarray_set(zarray_t *za, int idx, const void *p, void *outp)
  *
  * void map_function(element_type *element)
  */
-static inline void zarray_map(zarray_t *za, void (*f)(void*))
+static inline void zarray_map(zarray_t *za, void (*f)(void *))
 {
-    assert(za != NULL);
-    assert(f != NULL);
+  assert(za != NULL);
+  assert(f != NULL);
 
-    for (int idx = 0; idx < za->size; idx++)
-        f(&za->data[idx*za->el_sz]);
+  for (int idx = 0; idx < za->size; idx++)
+    f(&za->data[idx * za->el_sz]);
 }
 
 /**
@@ -377,7 +377,7 @@ static inline void zarray_map(zarray_t *za, void (*f)(void*))
  *
  * void map_function(element_type *element)
  */
-    void zarray_vmap(zarray_t *za, void (*f)(void *));
+void zarray_vmap(zarray_t *za, void (*f)(void *));
 
 /**
  * Removes all elements from the array and sets its size to zero. Pointers to
@@ -386,8 +386,8 @@ static inline void zarray_map(zarray_t *za, void (*f)(void*))
  */
 static inline void zarray_clear(zarray_t *za)
 {
-    assert(za != NULL);
-    za->size = 0;
+  assert(za != NULL);
+  za->size = 0;
 }
 
 /**
@@ -398,16 +398,16 @@ static inline void zarray_clear(zarray_t *za)
  */
 static inline int zarray_contains(const zarray_t *za, const void *p)
 {
-    assert(za != NULL);
-    assert(p != NULL);
+  assert(za != NULL);
+  assert(p != NULL);
 
-    for (int idx = 0; idx < za->size; idx++) {
-        if (!memcmp(p, &za->data[idx*za->el_sz], za->el_sz)) {
-            return 1;
-        }
+  for (int idx = 0; idx < za->size; idx++) {
+    if (!memcmp(p, &za->data[idx * za->el_sz], za->el_sz)) {
+      return 1;
     }
+  }
 
-    return 0;
+  return 0;
 }
 
 /**
@@ -425,60 +425,58 @@ static inline int zarray_contains(const zarray_t *za, const void *p)
  * zstrcmp() can be used as the comparison function for string elements, which
  * will call strcmp() internally.
  */
-static inline void zarray_sort(zarray_t *za, int (*compar)(const void*, const void*))
+static inline void zarray_sort(zarray_t *za, int (*compar)(const void *, const void *))
 {
-    assert(za != NULL);
-    assert(compar != NULL);
-    if (za->size == 0)
-        return;
+  assert(za != NULL);
+  assert(compar != NULL);
+  if (za->size == 0)
+    return;
 
-    qsort(za->data, za->size, za->el_sz, compar);
+  qsort(za->data, za->size, za->el_sz, compar);
 }
 
 /**
  * A comparison function for comparing strings which can be used by zarray_sort()
  * to sort arrays with char* elements.
  */
-    int zstrcmp(const void * a_pp, const void * b_pp);
+int zstrcmp(const void *a_pp, const void *b_pp);
 
 /**
-  * Find the index of an element, or return -1 if not found. Remember that p is
-  * a pointer to the element.
+ * Find the index of an element, or return -1 if not found. Remember that p is
+ * a pointer to the element.
  **/
 // returns -1 if not in array. Remember p is a pointer to the item.
 static inline int zarray_index_of(const zarray_t *za, const void *p)
 {
-    assert(za != NULL);
-    assert(p != NULL);
+  assert(za != NULL);
+  assert(p != NULL);
 
-    for (int i = 0; i < za->size; i++) {
-        if (!memcmp(p, &za->data[i*za->el_sz], za->el_sz))
-            return i;
-    }
+  for (int i = 0; i < za->size; i++) {
+    if (!memcmp(p, &za->data[i * za->el_sz], za->el_sz))
+      return i;
+  }
 
-    return -1;
+  return -1;
 }
-
-
 
 /**
  * Add all elements from 'source' into 'dest'. el_size must be the same
  * for both lists
  **/
-static inline void zarray_add_all(zarray_t * dest, const zarray_t * source)
+static inline void zarray_add_all(zarray_t *dest, const zarray_t *source)
 {
-    assert(dest->el_sz == source->el_sz);
+  assert(dest->el_sz == source->el_sz);
 
-    // Don't allocate on stack because el_sz could be larger than ~8 MB
-    // stack size
-    char *tmp = (char*)calloc(1, dest->el_sz);
+  // Don't allocate on stack because el_sz could be larger than ~8 MB
+  // stack size
+  char *tmp = (char *)calloc(1, dest->el_sz);
 
-    for (int i = 0; i < zarray_size(source); i++) {
-        zarray_get(source, i, tmp);
-        zarray_add(dest, tmp);
-   }
+  for (int i = 0; i < zarray_size(source); i++) {
+    zarray_get(source, i, tmp);
+    zarray_add(dest, tmp);
+  }
 
-    free(tmp);
+  free(tmp);
 }
 
 #ifdef __cplusplus

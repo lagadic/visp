@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _APRILTAG_H
-#define _APRILTAG_H
+#pragma once
 
 #ifdef __cplusplus
 //extern "C" {
@@ -43,7 +42,6 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #define APRILTAG_TASKS_PER_THREAD_TARGET 10
 
-typedef struct quad apriltag_quad_t;
 struct quad
 {
     float p[4][2]; // corners
@@ -137,7 +135,7 @@ struct apriltag_detector
     // detection of quads can be done on a lower-resolution image,
     // improving speed at a cost of pose accuracy and a slight
     // decrease in detection rate. Decoding the binary payload is
-    // still done at full resolution.
+    // still done at full resolution. .
     float quad_decimate;
 
     // What Gaussian blur should be applied to the segmented image
@@ -275,6 +273,4 @@ image_u8_t *apriltag_to_image(apriltag_family_t *fam, int idx);
 
 #ifdef __cplusplus
 //}
-#endif
-
 #endif

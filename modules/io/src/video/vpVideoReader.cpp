@@ -57,10 +57,10 @@ Basic constructor.
 vpVideoReader::vpVideoReader()
   : vpFrameGrabber(), m_imSequence(NULL),
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    m_capture(), m_frame(),
+    m_capture(), m_frame(), m_lastframe_unknown(false),
 #endif
     m_formatType(FORMAT_UNKNOWN), m_fileName(), m_initFileName(false), m_isOpen(false), m_frameCount(0), m_firstFrame(0), m_lastFrame(0),
-    m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1), m_frameRate(0.), m_lastframe_unknown(false)
+    m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1), m_frameRate(0.)
 {
 }
 
@@ -624,6 +624,10 @@ vpVideoReader::vpVideoFormatType vpVideoReader::getFormat(const std::string &fil
     return FORMAT_MKV;
   else if (ext.compare(".mkv") == 0)
     return FORMAT_MKV;
+  else if (ext.compare(".MTS") == 0)
+    return FORMAT_MTS;
+  else if (ext.compare(".mts") == 0)
+    return FORMAT_MTS;
   else
     return FORMAT_UNKNOWN;
 }
@@ -742,7 +746,7 @@ bool vpVideoReader::isVideoExtensionSupported() const
 {
   return (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
           m_formatType == FORMAT_MOV || m_formatType == FORMAT_OGV || m_formatType == FORMAT_WMV ||
-          m_formatType == FORMAT_FLV || m_formatType == FORMAT_MKV);
+          m_formatType == FORMAT_FLV || m_formatType == FORMAT_MKV || m_formatType == FORMAT_MTS);
 }
 
 /*!

@@ -25,8 +25,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the Regents of The University of Michigan.
 */
 
-#ifndef _PAM_H
-#define _PAM_H
+#pragma once
 
 #include <stdint.h>
 
@@ -53,5 +52,3 @@ pam_t *pam_copy(pam_t *pam);
 
 // NB doesn't handle many conversions yet.
 pam_t *pam_convert(pam_t *in, int type);
-
-#endif
