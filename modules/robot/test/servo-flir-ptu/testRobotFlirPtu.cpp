@@ -42,6 +42,8 @@
   Test that show how to control FLIR PTU pan/tilt axis in position and velocity.
 */
 
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_FLIR_PTU_SDK
