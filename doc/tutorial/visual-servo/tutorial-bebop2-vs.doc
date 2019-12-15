@@ -63,6 +63,14 @@ In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
 $ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
 \endcode
 
+<b>4. Modify `LD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
+
+In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `LD_LIBRARY_PATH` with:
+\code
+$ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
+\endcode
+
+
 \subsection bebop2_arsdk3_osx On Mac OSX
 The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
 
@@ -102,6 +110,13 @@ The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/u
 In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
 \code
 $ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
+\endcode
+
+<b>4. Modify `DYLD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
+
+In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `DYLD_LIBRARY_PATH` with:
+\code
+$ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
 \endcode
 
 \section bebop2_visp_build Build ViSP to detect ARSDK3
