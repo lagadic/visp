@@ -59,7 +59,7 @@ The following function implemented in `ImageDisplay.mm` show how to display a 3D
 
 \image html img-detection-apriltag-ios-output.png
 
-\section apriltag_detection_next Next tutorial
+\section apriltag_detection_ios_next Next tutorial
 
 You are now ready to follow \ref tutorial-detection-apriltag-ios-realtime that shows how to detect in realtime AprilTags from your iOS device camera.
 
