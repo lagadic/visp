@@ -192,6 +192,20 @@ public:
     topLeft.set_v(this->top);
     return topLeft;
   }
+  inline vpImagePoint getTopRight() const
+  {
+    vpImagePoint TopRight;
+    TopRight.set_u(getRight());
+    TopRight.set_v(this->top);
+    return TopRight;
+  }
+  inline vpImagePoint getBottomLeft() const
+  {
+    vpImagePoint BottomLeft;
+    BottomLeft.set_u(this->left);
+    BottomLeft.set_v(getBottom());
+    return BottomLeft;
+  }
 
   /*!
    Returns the width of the rectangle. The width includes both the
