@@ -100,8 +100,22 @@ public:
   inline double getBottom() const { return (this->top + this->height - 1.0); }
 
   /*!
+    Returns the bottom-left position of the rectangle.
+
+    \sa getTopLeft(), getTopRight(), getBottomRight(), getBottom(), getLeft()
+  */
+  inline vpImagePoint getBottomLeft() const
+  {
+    vpImagePoint bottomLeft;
+    bottomLeft.set_u(getLeft());
+    bottomLeft.set_v(getBottom());
+    return bottomLeft;
+  }
+
+  /*!
     Returns the bottom-right coordinate of the rectangle.
-    \sa getTopLeft(), getBottom(), getRight()
+
+    \sa getTopLeft(), getTopRight(), getBottomLeft(), getBottom(), getRight()
   */
   inline vpImagePoint getBottomRight() const
   {
@@ -183,28 +197,27 @@ public:
   /*!
     Returns the top-left position of the rectangle.
 
-    \sa getBottomRight(), getTop(), getLeft()
+    \sa getTopRight(), getBottomRight(), getBottomLeft(), getTop(), getLeft()
   */
   inline vpImagePoint getTopLeft() const
   {
     vpImagePoint topLeft;
-    topLeft.set_u(this->left);
-    topLeft.set_v(this->top);
+    topLeft.set_u(getLeft());
+    topLeft.set_v(getTop());
     return topLeft;
   }
+
+  /*!
+    Returns the top-right position of the rectangle.
+
+    \sa getTopLeft(), getBottomRight(), getBottomLeft(), getTop(), getRight()
+  */
   inline vpImagePoint getTopRight() const
   {
-    vpImagePoint TopRight;
-    TopRight.set_u(getRight());
-    TopRight.set_v(this->top);
-    return TopRight;
-  }
-  inline vpImagePoint getBottomLeft() const
-  {
-    vpImagePoint BottomLeft;
-    BottomLeft.set_u(this->left);
-    BottomLeft.set_v(getBottom());
-    return BottomLeft;
+    vpImagePoint topRight;
+    topRight.set_u(getRight());
+    topRight.set_v(getTop());
+    return topRight;
   }
 
   /*!
