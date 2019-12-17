@@ -5,65 +5,38 @@
 
 \section intro_apriltag_ios_realtime Introduction
 
-This tutorial follows the`Tutorial: AprilTag marker detection on iOS` and shows you how to detect AprilTag markers in real time.
+This tutorial follows \ref tutorial-detection-apriltag-ios and shows how to detect AprilTag markers in real time.
 
 In this tutorial, you will be able to learn how to detect with Swift 4 and get camera intrinsic parameters.
 
 All the material (Xcode project) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
 \code
-$ svn export https：//github.com/lagadic/visp.git/trunk/tutorial/ios/AprilTagLiveCamera
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/AprilTagLiveCamera
 \endcode
 
-Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following Tutorial: Installation from prebuilt packages for iOS devices.
+Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
 
 \section videocapture_for_realtime VideoCapture for real time detection
 
-Real-time capture of video can be achieved with AVFundataion framework. You just apply the detection process you learned previous tutorial to each captured image.
+Real-time capture of video can be achieved with AVFundation framework. You just apply the detection process you learned from the previous tutorial to each captured image.
 
-This is capturing code in VideoCapture.swift.
+This is capturing code in `VideoCapture.swift`:
 
-\code
-func captureOutput(_ captureOutput: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        
-        guard let imagePixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { fatalError() }
-        
-        // get intrinsic matrix
-        var matrix = matrix_float3x3.init()
-        if let camData = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) as? Data {
-            matrix = camData.withUnsafeBytes { $0.pointee }
-        }
-        let px = matrix.columns.0.x
-        let py = matrix.columns.1.y
-        
-        // get UIImage
-        guard let uiImage = imageFromCVPixelBuffer(pixelBuffer: imagePixelBuffer) else { fatalError() }
-        
-        // image process
-        delegate?.imageDidCapture(uiImage, withIntrinsicParam: px, and: py)
-}
-\endcode
+\snippet VideoCapture.swift captureOutput
 
-Pass image to Image process methods in ViewController.swift.
-\code
-func imageDidCapture(_ uiImage: UIImage, withIntrinsicParam px: Float, and py: Float) {
-    imageView.image = visp.detectAprilTag(uiImage, px:px, py:py)
-}
-\endcode
+Pass image to Image process methods in `ViewController.swift`:
 
-The camera’s intrinsic parameters can be acquired from each captured image by setting `isCameraIntrinsicMatrixDeliveryEnabled` to true in the connection settings.
+\snippet ViewController.swift imageDidCapture
 
-VideoCapture.swift
-\code
-if videoConnection.isCameraIntrinsicMatrixDeliverySupported {
-    // Enable Intrinsic parameter
-    videoConnection.isCameraIntrinsicMatrixDeliveryEnabled = true
-}
-\endcode
-Note: intrinsic parameters are only supported on some iOS devices with iOS11~.
+The camera’s intrinsic parameters can be acquired from each captured image by setting `isCameraIntrinsicMatrixDeliveryEnabled` to true in the connection settings in `VideoCapture.swift`:
+
+\snippet VideoCapture.swift camera parameters
+
+Note: intrinsic parameters are only supported on some iOS devices with iOS11.
 
 The intrinsic parameters that represent camera features can generally be represented by a matrix of pixel-based focal lengths and principal points (axis centers) in the image. 
-The documentation for Swift is here(https://developer.apple.com/documentation/avfoundation/avcameracalibrationdata/2881135-intrinsicmatrix). 
+The documentation for Swift is [here](https://developer.apple.com/documentation/avfoundation/avcameracalibrationdata/2881135-intrinsicmatrix). 
 Since the principal point almost coincides with the image center, this tutorial uses only the focal length.
 
 \section call_objectivec_swift Call Objective-C class from Swift
@@ -74,16 +47,10 @@ Look for the "Objective-C Bridging Header" column in the build settings, and mak
 
 \image html img-detection-apriltag-realtime-ios-call-objc.jpg
 
-VispDetector.h
-\code
-#import <UIKit/UIKit.h>
+The content of `VispDetector.h` is the following:
+\include VispDetector.h
 
-@interface VispDetector : NSObject
-- (UIImage *)detectAprilTag: (UIImage*)image px:(float)px py:(float)py;
-@end
-\endcode
-
-ViewController.swift
+and in `ViewController.swift`you have something similar to:
 \code
 class ViewController: UIViewController {
     
@@ -98,16 +65,16 @@ class ViewController: UIViewController {
 \endcode
 
 
-\section distance_from_camera Distance from Camera
+\section distance_from_camera Distance from camera
 
 Detection and drawing processing is processed in VispDetector.mm.
-For details on the detection process, see Tutorial: April Tag Marker Detection, and on how to draw the pose of a tag, see the previous chapter, Tutorial: April Tag marker detection on iOS.
+For details on the detection process, see \ref tutorial-detection-apriltag and on how to draw the pose of a tag, see the previous \ref tutorial-detection-apriltag-ios.
 
 The distance from the iOS device to the marker can be accurately detected if the tag size is properly set. 
-The distance can be obtained using the getTranslationVector method from the homogeneous transformation matrix (cMo_vec) representing the pose (R) and position (t) of the marker in camera coordinates. 
-See here for more information: https://visp-doc.inria.fr/doxygen/visp-daily/classvpHomogeneousMatrix.html.
+The distance can be obtained using the getTranslationVector() method from the homogeneous transformation matrix (`cMo_vec`) representing the pose with rotation (R) and position (t) of the marker in camera coordinates. 
+See here for more information vpHomogeneousMatrix class
 
-VispDetector.mm
+This is achieved in VispDetector.mm:
 \code
 for(int i=0; i < NumberOfTags; i++){
     vpTranslationVector trans = cMo_vec[i].getTranslationVector();
@@ -118,8 +85,8 @@ for(int i=0; i < NumberOfTags; i++){
 }
 \endcode
 
-
 \section apriltag_ios_realtime_output Application output
+
 Like this image below, you can see the tag id, posture and position from the camera in real time with the video captured image.
 \image html img-detection-apriltag-realtime-ios-output.jpg
 

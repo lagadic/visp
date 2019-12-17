@@ -69,6 +69,7 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             fatalError()
         }
         videoConnection.videoOrientation = .portrait
+	//! [camera parameters]
         if videoConnection.isCameraIntrinsicMatrixDeliverySupported {
             // Enable Intrinsic parameter
             videoConnection.isCameraIntrinsicMatrixDeliveryEnabled = true
@@ -76,10 +77,11 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         } else {
             print("Intrinsic Matrix is NOT supported on this device :(" )
         }
-        
+        //! [camera parameters]
         captureSession.commitConfiguration()
     }
-    
+
+    //! [captureOutput]
     func captureOutput(_ captureOutput: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         // check image processing flag.
@@ -104,7 +106,6 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         
         CVPixelBufferUnlockBaseAddress(imagePixelBuffer,[])
         
-        
         // process image in main threads
         self.isImgProcessing = true
         DispatchQueue.main.async {
@@ -117,6 +118,7 @@ class VideoCapture:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             }
         }
     }
+    //! [captureOutput]
     
     func startCapturing(){
         if(!self.captureSession.isRunning){
