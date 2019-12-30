@@ -63,7 +63,6 @@
 #include <visp3/core/vpMath.h>
 
 /*!
-
   Constructor : initialize a display to visualize a gray level image
   (8 bits).
 
@@ -81,7 +80,6 @@
   and the columns.
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
-
 */
 vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType)
   : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
@@ -94,7 +92,6 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType)
 }
 
 /*!
-
   Constructor : initialize a display to visualize a gray level image
   (8 bits).
 
@@ -114,7 +111,6 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType)
   and the columns.
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
-
 */
 vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, int x, int y, const std::string &title, vpScaleType scaleType)
   : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
@@ -184,7 +180,6 @@ vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, int x, int y, const std::string &titl
 }
 
 /*!
-
   Constructor that just initialize the display position in the screen
   and the display title.
 
@@ -253,7 +248,6 @@ vpDisplayX::~vpDisplayX() { closeDisplay(); }
   \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
-
 */
 void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
 {
@@ -482,7 +476,8 @@ void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y, const std::string
     break;
 
   case 16:
-  case 24: {
+  case 24:
+  case 32: {
     xcolor.flags = DoRed | DoGreen | DoBlue;
 
     // Couleur BLACK.
@@ -682,7 +677,6 @@ void vpDisplayX::init(vpImage<unsigned char> &I, int x, int y, const std::string
   \param I : Image to be displayed (note that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
-
 */
 void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 {
@@ -914,7 +908,8 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title
     break;
 
   case 16:
-  case 24: {
+  case 24:
+  case 32: {
     xcolor.flags = DoRed | DoGreen | DoBlue;
 
     // Couleur BLACK.
