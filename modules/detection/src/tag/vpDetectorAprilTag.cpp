@@ -65,8 +65,8 @@ class vpDetectorAprilTag::Impl
 {
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
-    : m_cam(), m_poseEstimationMethod(method), m_tagFamily(tagFamily), m_tagSize(1.0), m_td(NULL),
-      m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(false)
+    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily),
+      m_td(NULL), m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -212,9 +212,10 @@ public:
     }
   }
 
-  bool detect(const vpImage<unsigned char> &I, std::vector<std::vector<vpImagePoint> > &polygons,
-              std::vector<std::string> &messages, const bool displayTag, const vpColor color,
-              const unsigned int thickness, std::vector<vpHomogeneousMatrix> *cMo_vec,
+  bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
+              std::vector<std::vector<vpImagePoint> > &polygons,
+              std::vector<std::string> &messages, bool displayTag, const vpColor color,
+              unsigned int thickness, std::vector<vpHomogeneousMatrix> *cMo_vec,
               std::vector<vpHomogeneousMatrix> *cMo_vec2, std::vector<double> *projErrors,
               std::vector<double> *projErrors2)
   {
@@ -246,8 +247,9 @@ public:
     int nb_detections = zarray_size(m_detections);
     bool detected = nb_detections > 0;
 
-    polygons.resize((size_t)nb_detections);
-    messages.resize((size_t)nb_detections);
+    polygons.resize(static_cast<size_t>(nb_detections));
+    messages.resize(static_cast<size_t>(nb_detections));
+    m_tagsId.resize(static_cast<size_t>(nb_detections));
 
     for (int i = 0; i < zarray_size(m_detections); i++) {
       apriltag_detection_t *det;
@@ -261,6 +263,7 @@ public:
       std::stringstream ss;
       ss << m_tagFamily << " id: " << det->id;
       messages[static_cast<size_t>(i)] = ss.str();
+      m_tagsId[static_cast<size_t>(i)] = det->id;
 
       if (displayTag) {
         vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
@@ -281,7 +284,7 @@ public:
       if (computePose) {
         vpHomogeneousMatrix cMo, cMo2;
         double err1, err2;
-        if (getPose(static_cast<size_t>(i), m_tagSize, m_cam, cMo, cMo_vec2 ? &cMo2 : NULL,
+        if (getPose(static_cast<size_t>(i), tagSize, cam, cMo, cMo_vec2 ? &cMo2 : NULL,
                     projErrors ? &err1 : NULL, projErrors2 ? &err2 : NULL)) {
           cMo_vec->push_back(cMo);
           if (cMo_vec2) {
@@ -301,7 +304,7 @@ public:
     return detected;
   }
 
-  bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2,
+  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2,
                double *projErrors, double *projErrors2) {
     if (m_detections == NULL) {
       throw(vpException(vpException::fatalError, "Cannot get tag index=%d pose: detection empty", tagIndex));
@@ -554,54 +557,95 @@ public:
       *err2 = err_2;
   }
 
-  void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
+  bool getAprilTagDecodeSharpening(double &decodeSharpening) const {
+    if (m_td) {
+      decodeSharpening = m_td->decode_sharpening;
+      return true;
+    }
+    return false;
+  }
 
-  void setAprilTagDecodeSharpening(const double decodeSharpening) {
+  bool getNbThreads(int &nThreads) const {
+    if (m_td) {
+      nThreads = m_td->nthreads;
+      return true;
+    }
+    return false;
+  }
+
+  bool getQuadDecimate(float &quadDecimate) const {
+    if (m_td) {
+      quadDecimate = m_td->quad_decimate;
+      return true;
+    }
+    return false;
+  }
+
+  bool getQuadSigma(float &quadSigma) const {
+    if (m_td) {
+      quadSigma = m_td->quad_sigma;
+      return true;
+    }
+    return false;
+  }
+
+  bool getRefineEdges(bool &refineEdges) const {
+    if (m_td) {
+      refineEdges = m_td->refine_edges;
+      return true;
+    }
+    return false;
+  }
+
+  bool getZAlignedWithCameraAxis() const {
+    return m_zAlignedWithCameraFrame;
+  }
+
+  std::vector<int> getTagsId() const { return m_tagsId; }
+
+  void setAprilTagDecodeSharpening(double decodeSharpening) {
     if (m_td) {
       m_td->decode_sharpening = decodeSharpening;
     }
   }
 
-  void setNbThreads(const int nThreads) {
+  void setNbThreads(int nThreads) {
     if (m_td) {
       m_td->nthreads = nThreads;
     }
   }
 
-  void setQuadDecimate(const float quadDecimate) {
+  void setQuadDecimate(float quadDecimate) {
     if (m_td) {
       m_td->quad_decimate = quadDecimate;
     }
   }
 
-  void setQuadSigma(const float quadSigma) {
+  void setQuadSigma(float quadSigma) {
     if (m_td) {
       m_td->quad_sigma = quadSigma;
     }
   }
 
-  void setRefineDecode(const bool) { }
+  void setRefineDecode(bool) { }
 
-  void setRefineEdges(const bool refineEdges) {
+  void setRefineEdges(bool refineEdges) {
     if (m_td) {
       m_td->refine_edges = refineEdges ? 1 : 0;
     }
   }
 
-  void setRefinePose(const bool) { }
-
-  void setTagSize(const double tagSize) { m_tagSize = tagSize; }
+  void setRefinePose(bool) { }
 
   void setPoseEstimationMethod(const vpPoseEstimationMethod &method) { m_poseEstimationMethod = method; }
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame) { m_zAlignedWithCameraFrame = zAlignedWithCameraFrame; }
 
 protected:
-  vpCameraParameters m_cam;
   std::map<vpPoseEstimationMethod, vpPose::vpPoseMethodType> m_mapOfCorrespondingPoseMethods;
   vpPoseEstimationMethod m_poseEstimationMethod;
+  std::vector<int> m_tagsId;
   vpAprilTagFamily m_tagFamily;
-  double m_tagSize;
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
@@ -612,7 +656,7 @@ protected:
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
-    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily),
+    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_defaultCam(),
     m_impl(new Impl(tagFamily, poseEstimationMethod))
 {
 }
@@ -633,7 +677,8 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   m_nb_objects = 0;
 
   std::vector<vpHomogeneousMatrix> cMo_vec;
-  bool detected = m_impl->detect(I, m_polygon, m_message, m_displayTag,
+  const double tagSize = 1.0;
+  bool detected = m_impl->detect(I, tagSize, m_defaultCam, m_polygon, m_message, m_displayTag,
                                  m_displayTagColor, m_displayTagThickness,
                                  NULL, NULL, NULL, NULL);
   m_nb_objects = m_message.size();
@@ -658,7 +703,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
 
   \sa getPose()
 */
-bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam,
+bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
                                 std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2,
                                 std::vector<double> *projErrors, std::vector<double> *projErrors2)
 {
@@ -666,9 +711,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
   m_polygon.clear();
   m_nb_objects = 0;
 
-  m_impl->setTagSize(tagSize);
-  m_impl->setCameraParameters(cam);
-  bool detected = m_impl->detect(I, m_polygon, m_message, m_displayTag,
+  bool detected = m_impl->detect(I, tagSize, cam, m_polygon, m_message, m_displayTag,
                                  m_displayTagColor, m_displayTagThickness,
                                  &cMo_vec, cMo_vec2, projErrors, projErrors2);
   m_nb_objects = m_message.size();
@@ -705,16 +748,49 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
 
   \sa detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &)
  */
-bool vpDetectorAprilTag::getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam,
+bool vpDetectorAprilTag::getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam,
                                  vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2,
                                  double *projError, double *projError2)
 {
-  return (m_impl->getPose(tagIndex, tagSize, cam, cMo, cMo2, projError, projError2));
+  return m_impl->getPose(tagIndex, tagSize, cam, cMo, cMo2, projError, projError2);
 }
 
-void vpDetectorAprilTag::setAprilTagDecodeSharpening(const double decodeSharpening)
+/*!
+  Return the decoded Apriltag id for each detection.
+*/
+std::vector<int> vpDetectorAprilTag::getTagsId() const
 {
-  return (m_impl->setAprilTagDecodeSharpening(decodeSharpening));
+  return m_impl->getTagsId();
+}
+
+void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
+{
+  return m_impl->setAprilTagDecodeSharpening(decodeSharpening);
+}
+
+void vpDetectorAprilTag::setAprilTagFamily(const vpAprilTagFamily &tagFamily)
+{
+  //back-up settings
+  double decodeSharpening = 0.25;
+  m_impl->getAprilTagDecodeSharpening(decodeSharpening);
+  int nThreads = 1;
+  m_impl->getNbThreads(nThreads);
+  float quadDecimate = 1;
+  m_impl->getQuadDecimate(quadDecimate);
+  float quadSigma = 0;
+  m_impl->getQuadSigma(quadSigma);
+  bool refineEdges = true;
+  m_impl->getRefineEdges(refineEdges);
+  bool zAxis = m_impl->getZAlignedWithCameraAxis();
+
+  delete m_impl;
+  m_impl = new Impl(tagFamily, m_poseEstimationMethod);
+  m_impl->setAprilTagDecodeSharpening(decodeSharpening);
+  m_impl->setNbThreads(nThreads);
+  m_impl->setQuadDecimate(quadDecimate);
+  m_impl->setQuadSigma(quadSigma);
+  m_impl->setRefineEdges(refineEdges);
+  m_impl->setZAlignedWithCameraAxis(zAxis);
 }
 
 /*!
@@ -722,10 +798,11 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(const double decodeSharpeni
 
   \param nThreads : Number of thread.
 */
-void vpDetectorAprilTag::setAprilTagNbThreads(const int nThreads)
+void vpDetectorAprilTag::setAprilTagNbThreads(int nThreads)
 {
-  if (nThreads > 0)
+  if (nThreads > 0) {
     m_impl->setNbThreads(nThreads);
+  }
 }
 
 /*!
@@ -751,7 +828,7 @@ void vpDetectorAprilTag::setAprilTagPoseEstimationMethod(const vpPoseEstimationM
 
   \param quadDecimate : Value for quad_decimate.
 */
-void vpDetectorAprilTag::setAprilTagQuadDecimate(const float quadDecimate)
+void vpDetectorAprilTag::setAprilTagQuadDecimate(float quadDecimate)
 {
   m_impl->setQuadDecimate(quadDecimate);
 }
@@ -768,7 +845,7 @@ void vpDetectorAprilTag::setAprilTagQuadDecimate(const float quadDecimate)
 
   \param quadSigma : Value for quad_sigma.
 */
-void vpDetectorAprilTag::setAprilTagQuadSigma(const float quadSigma)
+void vpDetectorAprilTag::setAprilTagQuadSigma(float quadSigma)
 {
   m_impl->setQuadSigma(quadSigma);
 }
@@ -777,7 +854,7 @@ void vpDetectorAprilTag::setAprilTagQuadSigma(const float quadSigma)
 /*!
   Deprecated parameter from AprilTag 2 version.
 */
-vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(const bool refineDecode) {
+vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(bool refineDecode) {
   m_impl->setRefineDecode(refineDecode);
 }
 #endif
@@ -796,7 +873,7 @@ vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(const bool refine
 
   \param refineEdges : If true, set refine_edges to 1.
 */
-void vpDetectorAprilTag::setAprilTagRefineEdges(const bool refineEdges)
+void vpDetectorAprilTag::setAprilTagRefineEdges(bool refineEdges)
 {
   m_impl->setRefineEdges(refineEdges);
 }
@@ -805,7 +882,7 @@ void vpDetectorAprilTag::setAprilTagRefineEdges(const bool refineEdges)
 /*!
   Deprecated parameter from AprilTag 2 version.
 */
-vp_deprecated void vpDetectorAprilTag::setAprilTagRefinePose(const bool refinePose)
+vp_deprecated void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose)
 {
   m_impl->setRefinePose(refinePose);
 }
