@@ -1343,3 +1343,9 @@ macro(vp_get_interface_link_libraries libs link_libraries)
 #  message("link_libraries: ${link_libraries}")
 
 endmacro()
+
+# Concatenate in_file to out_file
+function(vp_cat_file in_file out_file)
+  file(READ ${in_file} CONTENTS)
+  file(APPEND ${out_file} "${CONTENTS}")
+endfunction()

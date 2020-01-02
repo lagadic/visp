@@ -669,7 +669,7 @@ VP_CHECK_PACKAGE(Log1p)
 #----------------------------------------------------------------------
 # For Dart server and tests
 # We use CDash set through CTestConfig.cmake file
-# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
+# Dashboards are sent to https://cdash-ci.inria.fr/index.php?project=ViSP
 #----------------------------------------------------------------------
 if(BUILD_TESTS)
   enable_testing()
