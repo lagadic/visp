@@ -1,146 +1,146 @@
 {
-    "ManualFuncs" : {
-        "VpImgproc" : {
-			"reconstruct" : {
-				"j_code" : [
-					"\n//",
-					"// manual port",
-					"// C++: static void reconstruct(vpImage_char marker, vpImage_char mask, vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"//",
-					"//javadoc: Vp::reconstruct(marker, mask, I)\n",
-					"public static void reconstruct(VpImageUChar marker, VpImageUChar mask, VpImageUChar I)",
-					"{",
-					"   reconstruct(marker.nativeObj, mask.nativeObj, I.nativeObj);",
-					"}"
-				],
-				"jn_code" : [
-					"\n// C++: static void reconstruct(vpImage_char marker, vpImage_char mask, vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"private static native void reconstruct(long marker_nativeObj, long mask_nativeObj, long I_nativeObj);"
-				],
-				"cpp_code" : [
-					"\n//",
-					"// manual port",
-					"// static void reconstruct(vpImage_char marker, vpImage_char mask, vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"//\n",
-					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_reconstruct (JNIEnv*, jclass, jlong, jlong, jlong);\n",
-					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_reconstruct",
-					"  (JNIEnv* env, jclass , jlong marker_nativeObj, jlong mask_nativeObj, jlong I_nativeObj)",
-					"{",
-					"  static const char method_name[] = \"imgproc::reconstruct()\";",
-					"  try {",
-					"   LOGD(\"%s\", method_name);",
-					"   vpImage<unsigned char>& marker = *((vpImage<unsigned char>*)marker_nativeObj);",
-					"   vpImage<unsigned char>& mask = *((vpImage<unsigned char>*)mask_nativeObj);",
-					"   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
-					"   vp::reconstruct( marker, mask, I, vpImageMorphology::CONNEXITY_4 );",
-					"   return;",
-					"  } catch(const std::exception &e) {",
-					"   throwJavaException(env, &e, method_name);",
-					"  } catch (...) {",
-					"   throwJavaException(env, 0, method_name);",
-					"  }",
-					"  return;",
-					"}"  
-				]
-			},
-			"floodFill" : {
-				"j_code" : [
-				    "\n//",
-					"// manual port",
-					"// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)\n",
-					"//javadoc: Vp::floodFill(I, seedPoint, oldValue, newValue)\n",
-					"public static void floodFill(VpImageUChar I, org.visp.core.VpImagePoint seedPoint, char oldValue, char newValue)",
-					"{",
-					"    floodFill(I.nativeObj, seedPoint.i, seedPoint.j, oldValue, newValue);",
-					"}"
-				],
-				"jn_code" : [
-					"\n// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"private static native void floodFill(long I_nativeObj, double seedPoint_i, double seedPoint_j, char oldValue, char newValue);\n"
-				],
-				"cpp_code" : [
-					"\n//",
-					"// static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"//\n",
-					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_floodFill (JNIEnv*, jclass, jlong, jdouble, jdouble, jchar, jchar);",
-					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_floodFill",
-					"  (JNIEnv* env, jclass , jlong I_nativeObj, jdouble seedPoint_i, jdouble seedPoint_j, jchar oldValue, jchar newValue)",
-					"{",
-					"  static const char method_name[] = \"imgproc::floodFill()\";",
-					"  try {",
-					"   LOGD(\"%s\", method_name);",
-					"   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
-					"   vpImagePoint seedPoint((int)seedPoint_i, (int)seedPoint_j);",
-					"   vp::floodFill( I, seedPoint, (char)oldValue, (char)newValue, vpImageMorphology::CONNEXITY_4 );",
-					"   return;",
-					"  } catch(const std::exception &e) {",
-					"   throwJavaException(env, &e, method_name);",
-					"  } catch (...) {",
-					"   throwJavaException(env, 0, method_name);",
-					"  }",
-					"  return;",
-					"}" 
-				]
-			},
-            "fillHoles" : {
-				"j_code" : [
-					"//",
-					"// C++: static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"//",
-					"\n",
-					"//javadoc: Vp::fillHoles(I)",
-					"\n",
-					"public static void fillHoles(VpImageUChar I)",
-					"{",
-					"       fillHoles(I.nativeObj);",
-					"       return;",
-					"}",
-					"\n"
-				], 
-				"jn_code" : [
-					"// C++: static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"private static native void fillHoles(long I_nativeObj);\n"
-				], 
-				"cpp_code" : [
-					"\n\n//",
-					"// manual port",
-					"// static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
-					"//",
-					"\n",
-					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_fillHoles (JNIEnv*, jclass, jlong);\n",
-					"JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_fillHoles",
-					"  (JNIEnv* env, jclass , jlong I_nativeObj)",
-					"{",
-					"  try {",
-					"   LOGD(\"imgproc::fillHoles()\");",
-					"   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
-					"   vp::fillHoles(I);",
-					"   return;",
-					"  } catch(const std::exception &e) {",
-					"   throwJavaException(env, &e, \"imgproc::fillHoles()\");",
-					"  } catch (...) {",
-					"   throwJavaException(env, 0, \"imgproc::fillHoles()\");",
-					"  }",
-					"  return;",
-					"}\n" 
-				] 
-			}
-		}
-	},	
-	"type_dict" : {
-        "vpContour": {
-            "j_type": "VpContour",
-            "jn_args": [
-                [
-                    "__int64",
-                    ".nativeObj"
-                ]
-            ],
-            "jn_type": "long",
-            "jni_type": "jlong",
-            "jni_var": "vpContour& %(n)s = *((vpContour*)%(n)s_nativeObj)",
-            "suffix": "J",
-            "j_import": "org.visp.core.VpContour"
-        }
-	}
+  "ManualFuncs" : {
+    "VpImgproc" : {
+      "reconstruct" : {
+        "j_code" : [
+          "\n//",
+          "// manual port",
+          "// C++: static void reconstruct(vpImage_char marker, vpImage_char mask, vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "//",
+          "//javadoc: Vp::reconstruct(marker, mask, I)\n",
+          "public static void reconstruct(VpImageUChar marker, VpImageUChar mask, VpImageUChar I)",
+          "{",
+          "   reconstruct(marker.nativeObj, mask.nativeObj, I.nativeObj);",
+          "}"
+        ],
+        "jn_code" : [
+          "\n// C++: static void reconstruct(vpImage_char marker, vpImage_char mask, vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "private static native void reconstruct(long marker_nativeObj, long mask_nativeObj, long I_nativeObj);"
+        ],
+        "cpp_code" : [
+          "\n//",
+          "// manual port",
+          "// static void reconstruct(vpImage_char marker, vpImage_char mask, vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "//\n",
+          "JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_reconstruct (JNIEnv*, jclass, jlong, jlong, jlong);\n",
+          "JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_reconstruct",
+          "  (JNIEnv* env, jclass , jlong marker_nativeObj, jlong mask_nativeObj, jlong I_nativeObj)",
+          "{",
+          "  static const char method_name[] = \"imgproc::reconstruct()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpImage<unsigned char>& marker = *((vpImage<unsigned char>*)marker_nativeObj);",
+          "   vpImage<unsigned char>& mask = *((vpImage<unsigned char>*)mask_nativeObj);",
+          "   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
+          "   vp::reconstruct( marker, mask, I, vpImageMorphology::CONNEXITY_4 );",
+          "   return;",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return;",
+          "}"
+        ]
+      },
+      "floodFill" : {
+        "j_code" : [
+            "\n//",
+          "// manual port",
+          "// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)\n",
+          "//javadoc: Vp::floodFill(I, seedPoint, oldValue, newValue)\n",
+          "public static void floodFill(VpImageUChar I, org.visp.core.VpImagePoint seedPoint, char oldValue, char newValue)",
+          "{",
+          "    floodFill(I.nativeObj, seedPoint.get_i(), seedPoint.get_j(), oldValue, newValue);",
+          "}"
+        ],
+        "jn_code" : [
+          "\n// C++: static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "private static native void floodFill(long I_nativeObj, double seedPoint_i, double seedPoint_j, char oldValue, char newValue);\n"
+        ],
+        "cpp_code" : [
+          "\n//",
+          "// static void floodFill(vpImage_char I, vpImagePoint seedPoint, char oldValue, char newValue, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "//\n",
+          "JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_floodFill (JNIEnv*, jclass, jlong, jdouble, jdouble, jchar, jchar);",
+          "JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_floodFill",
+          "  (JNIEnv* env, jclass , jlong I_nativeObj, jdouble seedPoint_i, jdouble seedPoint_j, jchar oldValue, jchar newValue)",
+          "{",
+          "  static const char method_name[] = \"imgproc::floodFill()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
+          "   vpImagePoint seedPoint((int)seedPoint_i, (int)seedPoint_j);",
+          "   vp::floodFill( I, seedPoint, (char)oldValue, (char)newValue, vpImageMorphology::CONNEXITY_4 );",
+          "   return;",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return;",
+          "}"
+        ]
+      },
+      "fillHoles" : {
+        "j_code" : [
+          "//",
+          "// C++: static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "//",
+          "\n",
+          "//javadoc: Vp::fillHoles(I)",
+          "\n",
+          "public static void fillHoles(VpImageUChar I)",
+          "{",
+          "       fillHoles(I.nativeObj);",
+          "       return;",
+          "}",
+          "\n"
+        ],
+        "jn_code" : [
+          "// C++: static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "private static native void fillHoles(long I_nativeObj);\n"
+        ],
+        "cpp_code" : [
+          "\n\n//",
+          "// manual port",
+          "// static void fillHoles(vpImage_char I, vpImageMorphology_vpConnexityType connexity = vpImageMorphology::CONNEXITY_4)",
+          "//",
+          "\n",
+          "JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_fillHoles (JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT void JNICALL Java_org_visp_imgproc_VpImgproc_fillHoles",
+          "  (JNIEnv* env, jclass , jlong I_nativeObj)",
+          "{",
+          "  try {",
+          "   LOGD(\"imgproc::fillHoles()\");",
+          "   vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
+          "   vp::fillHoles(I);",
+          "   return;",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, \"imgproc::fillHoles()\");",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, \"imgproc::fillHoles()\");",
+          "  }",
+          "  return;",
+          "}\n"
+        ]
+      }
+    }
+  },
+  "type_dict" : {
+    "vpContour": {
+      "j_type": "VpContour",
+      "jn_args": [
+          [
+              "__int64",
+              ".nativeObj"
+          ]
+      ],
+      "jn_type": "long",
+      "jni_type": "jlong",
+      "jni_var": "vpContour& %(n)s = *((vpContour*)%(n)s_nativeObj)",
+      "suffix": "J",
+      "j_import": "org.visp.core.VpContour"
+    }
+  }
 }

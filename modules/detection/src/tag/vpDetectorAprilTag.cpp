@@ -756,6 +756,14 @@ bool vpDetectorAprilTag::getPose(size_t tagIndex, double tagSize, const vpCamera
 }
 
 /*!
+  Return the corners coordinates for the detected tags.
+*/
+std::vector<std::vector<vpImagePoint> > vpDetectorAprilTag::getTagsCorners() const
+{
+  return m_polygon;
+}
+
+/*!
   Return the decoded Apriltag id for each detection.
 */
 std::vector<int> vpDetectorAprilTag::getTagsId() const

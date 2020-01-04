@@ -18,8 +18,8 @@
           "// C++:  bool detect(vpImage_char I)",
           "//\n",
           "//javadoc: VpDetectorAprilTag::detect(I)\n",
-          "public boolean detect(org.visp.core.VpImageUChar I)\n",
-          "{\n",
+          "public boolean detect(org.visp.core.VpImageUChar I)",
+          "{",
           "    boolean retVal = detect_1(nativeObj, I.nativeObj);",
           "    return retVal;",
           "}"
@@ -60,7 +60,7 @@
           "  try {",
           "    LOGD(\"%s\", method_name);",
           "    vpDetectorAprilTag* me = (vpDetectorAprilTag*) self; //TODO: check for NULL",
-          "        vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
+          "    vpImage<unsigned char>& I = *((vpImage<unsigned char>*)I_nativeObj);",
           "    bool _retval_ = me->detect( I );",
           "    return _retval_;",
           "  } catch(const std::exception &e) {",
@@ -192,6 +192,47 @@
           "   throwJavaException(env, 0, method_name);",
           "  }",
           "  return;",
+          "}"
+        ]
+      },
+      "getTagsCorners" : {
+        "j_code" : [
+          "//",
+          "// manual port",
+          "// C++: std::vector<std::vector<vpImagePoint> > getTagsCorners()",
+          "//",
+          "//javadoc: VpDetectorAprilTag::getTagsCorners()\n",
+          "public java.util.List<java.util.List<org.visp.core.VpImagePoint>> getTagsCorners()",
+          "{",
+          "   long[][] matrix = getTagsCorners(nativeObj);",
+          "   return org.visp.utils.Converters.Array_Array_to_vector_vector_vpImagePoint(matrix);",
+          "}"
+        ],
+        "jn_code" : [
+          "// C++: std::vector<std::vector<vpImagePoint> > getTagsCorners()",
+          "private static native long[][] getTagsCorners(long address);"
+        ],
+        "cpp_code" : [
+          "//",
+          "// manual port",
+          "// std::vector<std::vector<vpImagePoint> > getTagsCorners()",
+          "//\n",
+          "JNIEXPORT jobjectArray JNICALL Java_org_visp_detection_VpDetectorAprilTag_getTagsCorners (JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT jobjectArray JNICALL Java_org_visp_detection_VpDetectorAprilTag_getTagsCorners",
+          "  (JNIEnv* env, jclass , jlong address)",
+          "{",
+          "  static const char method_name[] = \"detection::getTagsCorners()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpDetectorAprilTag *tag = (vpDetectorAprilTag*) address;",
+          "   std::vector<std::vector<vpImagePoint> > tags_corners = tag->getTagsCorners();",
+          "   return vector_vector_vpImagePoint_to_List(env, tags_corners);",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
           "}"
         ]
       },

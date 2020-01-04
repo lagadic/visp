@@ -247,11 +247,11 @@ public:
   virtual ~vpDetectorAprilTag();
 
   bool detect(const vpImage<unsigned char> &I);
-  bool detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam,
+  bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2=NULL,
               std::vector<double> *projErrors=NULL, std::vector<double> *projErrors2=NULL);
 
-  bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam,
+  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam,
                vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2=NULL,
                double *projError=NULL, double *projError2=NULL);
 
@@ -261,6 +261,7 @@ public:
   inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
   std::vector<int> getTagsId() const;
+  std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
 
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
