@@ -100,6 +100,66 @@
    fun:_ZN2cv5FREAK12buildPatternEv
 }
 
+#==3148== 4 bytes in 1 blocks are still reachable in loss record 81 of 3,705
+#==3148==    at 0x4C27F93: malloc (vg_replace_malloc.c:307)
+#==3148==    by 0x10BCC548: ??? (in /usr/lib64/libglib-2.0.so.0.4600.2)
+#==3148==    by 0x10C3D3DB: g_private_get (in /usr/lib64/libglib-2.0.so.0.4600.2)
+#==3148==    by 0x10C205AF: g_thread_self (in /usr/lib64/libglib-2.0.so.0.4600.2)
+#==3148==    by 0x116665AF: gst_task_join (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11641BB2: gst_pad_stop_task (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x113B5B2A: ??? (in /usr/lib64/libgstbase-0.10.so.0.30.0)
+#==3148==    by 0x1163EB87: gst_pad_activate_push (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x1163F116: gst_pad_set_active (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11620F20: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x1163225C: gst_iterator_fold (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11620FAA: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11623521: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11623873: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x113B840D: ??? (in /usr/lib64/libgstbase-0.10.so.0.30.0)
+#==3148==    by 0x116253B1: gst_element_change_state (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11625A22: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11613411: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x1F15393C: ??? (in /usr/lib64/gstreamer-0.10/libgstdecodebin2.so)
+#==3148==    by 0x116253B1: gst_element_change_state (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11625A22: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11613411: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11643551: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x116253B1: gst_element_change_state (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11625A22: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x91C57DC: CvCapture_GStreamer::handleMessage() (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91C5B45: CvCapture_GStreamer::open(int, char const*) (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91C62E9: cvCreateCapture_GStreamer(int, char const*) (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91B614C: cvCreateFileCapture (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91B643E: cv::VideoCapture::open(std::string const&) (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x681F74F: vpVideoReader::getProperties() (vpVideoReader.cpp:136)
+#==3148==    by 0x6820000: vpVideoReader::open(vpImage<vpRGBa>&) (vpVideoReader.cpp:177)
+#==3148==    by 0x4020DA: main (videoReader.cpp:250)
+{
+   visp-linux-CvCapture_GStreamer::open
+   Memcheck:Leak
+   ...
+   fun:_ZN2cv12VideoCapture4openERKSs
+}
+
+#==18766== 74 bytes in 1 blocks are definitely lost in loss record 128 of 274
+#==18766==    at 0x4C27F93: malloc (vg_replace_malloc.c:307)
+#==18766==    by 0x89182D7: cv::fastMalloc(unsigned long) (in /usr/lib64/libopencv_core.so.2.4.5)
+#==18766==    by 0x5F66AC9: vpKltOpencv::operator=(vpKltOpencv const&) (vpKltOpencv.cpp:750)
+#==18766==    by 0x40D3FD: pair (stl_pair.h:96)
+#==18766==    by 0x40D3FD: construct (new_allocator.h:130)
+#==18766==    by 0x40D3FD: _M_create_node (stl_tree.h:382)
+#==18766==    by 0x40D3FD: std::_Rb_tree<std::string, std::pair<std::string const, vpKltOpencv>, std::_Select1st<std::pair<std::string const, vpKltOpencv> >, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::_M_insert_(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<std::string const, vpKltOpencv> const&) (stl_tree.h:1023)
+#==18766==    by 0x40F82B: _M_insert_unique_ (stl_tree.h:1482)
+#==18766==    by 0x40F82B: insert (stl_map.h:648)
+#==18766==    by 0x40F82B: std::map<std::string, vpKltOpencv, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::operator[](std::string const&) (stl_map.h:469)
+#==18766==    by 0x405E53: main (mbtGenericTracking2.cpp:451)
+{
+   visp-linux-cv::fastMalloc
+   Memcheck:Leak
+   ...
+   fun:_ZN2cv10fastMallocEm
+}
+
 ###################################################################
 #
 # Errors that occured on visp-osx-10-9-mavericks ci
