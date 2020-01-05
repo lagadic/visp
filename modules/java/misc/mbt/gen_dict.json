@@ -1,0 +1,170 @@
+{
+  "module_imports": [
+    "java.lang.String"
+  ],
+  "class_ignore_list": [
+    "vpMbDepthNormalTracker",
+    "vpMbKltTracker",
+    "vpMbScanLine",
+    "vpMbTracker",
+    "vpMbtDistanceCylinder",
+    "vpMbtMeEllipse"
+  ],
+  "ManualFuncs": {
+    "VpMbGenericTracker": {
+      "getError": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },
+      "getRobustWeights": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },
+      "getClipping": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },
+      "setNbRayCastingAttemptsForVisibility": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },
+      "setGoodNbRayCastingAttemptsRatio": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },
+      "getModelForDisplay" : {
+        "j_code" : [
+          "//",
+          "// manual port",
+          "// C++: std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, bool displayFullModel)",
+          "//",
+          "//javadoc: VpMbGenericTracker::getModelForDisplay()\n",
+          "public double[][] getModelForDisplay(int width, int height, org.visp.core.VpHomogeneousMatrix cMo, org.visp.core.VpCameraParameters cam, boolean displayFullModel)",
+          "{",
+          "   return getModelForDisplay(nativeObj, width, height, cMo.nativeObj, cam.nativeObj, displayFullModel);",
+          "}"
+        ],
+        "jn_code" : [
+          "// C++: std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, bool displayFullModel)",
+          "private static native double[][] getModelForDisplay(long address, int width, int height, long cMo_nativeObj, long cam_nativeObj, boolean displayFullModel);"
+        ],
+        "cpp_code" : [
+          "//",
+          "// manual port",
+          "// std::vector<std::vector<double> > getModelForDisplay()",
+          "//\n",
+          "JNIEXPORT jobjectArray JNICALL Java_org_visp_mbt_VpMbGenericTracker_getModelForDisplay (JNIEnv*, jclass, jlong, jint, jint, jlong, jlong, jboolean);\n",
+          "JNIEXPORT jobjectArray JNICALL Java_org_visp_mbt_VpMbGenericTracker_getModelForDisplay",
+          "  (JNIEnv* env, jclass , jlong address, jint width, jint height, jlong cMo_nativeObj, jlong cam_nativeObj, jboolean displayFullModel)",
+          "{",
+          "  static const char method_name[] = \"vpMbGenericTracker::getModelForDisplay()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpMbGenericTracker *tracker = (vpMbGenericTracker*) address;",
+          "   vpHomogeneousMatrix& cMo = *((vpHomogeneousMatrix*)cMo_nativeObj);",
+          "   vpCameraParameters& cam = *((vpCameraParameters*)cam_nativeObj);",
+          "   std::vector<std::vector<double> > model = tracker->getModelForDisplay((unsigned int) width, (unsigned int) height, cMo, cam, (bool) displayFullModel);",
+          "   return vector_vector_double_to_List(env, model);",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"
+        ]
+      },
+      "getFeaturesForDisplay" : {
+        "j_code" : [
+          "//",
+          "// manual port",
+          "// C++: std::vector<std::vector<double> > getFeaturesForDisplay()",
+          "//",
+          "//javadoc: VpMbGenericTracker::getFeaturesForDisplay()\n",
+          "public double[][] getFeaturesForDisplay()",
+          "{",
+          "   return getFeaturesForDisplay(nativeObj);",
+          "}"
+        ],
+        "jn_code" : [
+          "// C++: std::vector<std::vector<double> > getFeaturesForDisplay()",
+          "private static native double[][] getFeaturesForDisplay(long address);"
+        ],
+        "cpp_code" : [
+          "//",
+          "// manual port",
+          "// std::vector<std::vector<double> > getFeaturesForDisplay()",
+          "//\n",
+          "JNIEXPORT jobjectArray JNICALL Java_org_visp_mbt_VpMbGenericTracker_getFeaturesForDisplay (JNIEnv*, jclass, jlong);\n",
+          "JNIEXPORT jobjectArray JNICALL Java_org_visp_mbt_VpMbGenericTracker_getFeaturesForDisplay",
+          "  (JNIEnv* env, jclass , jlong address)",
+          "{",
+          "  static const char method_name[] = \"vpMbGenericTracker::getFeaturesForDisplay()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpMbGenericTracker *tracker = (vpMbGenericTracker*) address;",
+          "   std::vector<std::vector<double> > features = tracker->getFeaturesForDisplay();",
+          "   return vector_vector_double_to_List(env, features);",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"
+        ]
+      }
+    }
+  },
+  "type_dict": {
+    "vpColVector": {
+      "j_type": "VpColVector",
+      "jn_args": [
+        [
+          "__int64",
+          ".nativeObj"
+        ]
+      ],
+      "jn_type": "long",
+      "jni_type": "jlong",
+      "jni_var": "vpColVector& %(n)s = *((vpColVector*)%(n)s_nativeObj)",
+      "suffix": "J",
+      "j_import": "org.visp.core.VpColVector"
+    }
+  }
+}

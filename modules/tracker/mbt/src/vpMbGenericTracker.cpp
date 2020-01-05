@@ -768,6 +768,11 @@ std::vector<std::string> vpMbGenericTracker::getCameraNames() const
   return cameraNames;
 }
 
+void vpMbGenericTracker::getCameraParameters(vpCameraParameters &camera) const
+{
+  vpMbTracker::getCameraParameters(camera);
+}
+
 /*!
   Get all the camera parameters.
 
@@ -1323,14 +1328,14 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
   \note It returns the model for the reference camera.
 */
 std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigned int width, unsigned int height,
-                                                                         const vpHomogeneousMatrix &cMo,
-                                                                         const vpCameraParameters &cam,
-                                                                         const bool displayFullModel)
+                                                                         const vpHomogeneousMatrix &cMo_,
+                                                                         const vpCameraParameters &cam_,
+                                                                         bool displayFullModel)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
 
   if (it != m_mapOfTrackers.end()) {
-    return it->second->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+    return it->second->getModelForDisplay(width, height, cMo_, cam_, displayFullModel);
   } else {
     std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
   }
@@ -1619,6 +1624,11 @@ void vpMbGenericTracker::getPolygonFaces(std::map<std::string, std::vector<vpPol
     mapOfPolygons[it->first] = polygonFaces.first;
     mapOfPoints[it->first] = polygonFaces.second;
   }
+}
+
+void vpMbGenericTracker::getPose(vpHomogeneousMatrix &cMo) const
+{
+  vpMbTracker::getPose(cMo);
 }
 
 /*!
@@ -2273,6 +2283,11 @@ void vpMbGenericTracker::initFromPoints(const std::map<std::string, const vpImag
                         it->c_str());
     }
   }
+}
+
+void vpMbGenericTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+{
+  vpMbTracker::initFromPose(I, cMo);
 }
 
 /*!

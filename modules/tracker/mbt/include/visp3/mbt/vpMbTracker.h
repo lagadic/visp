@@ -684,7 +684,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               const bool displayFullModel=false)=0;
+                                                               bool displayFullModel=false)=0;
 
   /*!
     Initialise the tracking.
