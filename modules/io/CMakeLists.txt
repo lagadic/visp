@@ -84,8 +84,10 @@ if(USE_OPENCV)
     # ReleaseWithDebugInfo was requested to detect libopencv-devel under Fedora 20
     # RelWithDebugInfo was requested to detect ros-hydro-opencv2 2.4.9 under Ubuntu 12.04 LTS with ROS hydro
     set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
-    # We import only required OpenCV libraries that are not yet imported from visp_core
-    set(OpenCV_REQUIRED_LIB_COMPONENTS "opencv_videoio" "opencv_imgcodecs")
+    set(OpenCV_REQUIRED_LIB_COMPONENTS ${OpenCV_LIB_COMPONENTS})
+    vp_list_filterout(OpenCV_REQUIRED_LIB_COMPONENTS "opencv_*")
+    # We import only required OpenCV libraries
+    list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_videoio" "opencv_imgcodecs")
 
     foreach(component_ ${OpenCV_REQUIRED_LIB_COMPONENTS})
       string(TOUPPER "${component_}" component_UP)
@@ -116,7 +118,7 @@ if(USE_OPENCV)
           if(EXISTS "${component_property_3rdparty_${imp_config_}_}")
             foreach(3rdparty_ ${component_property_3rdparty_${imp_config_}_})
               #message("3rdparty_ ${3rdparty_}")
-              list(FIND OpenCV_LIB_COMPONENTS ${3rdparty_} 3rdparty_is_opencv_component_)
+              list(FIND OpenCV_REQUIRED_LIB_COMPONENTS ${3rdparty_} 3rdparty_is_opencv_component_)
               if(3rdparty_is_opencv_component_ LESS 0)
                 #message("${3rdparty_} is not an opencv component")
                 get_target_property(3rdparty_opt_location_ ${3rdparty_} IMPORTED_LOCATION_${imp_config_})
