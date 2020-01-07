@@ -105,7 +105,12 @@ if(USE_PCL)
   # with these names.
   # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
   # will be not able to give the names of PCL libraries when used without CMake.
-  foreach(lib_ ${PCL_LIBRARIES})
+
+  set(PCL_REQUIRED_COMPONENTS ${PCL_LIBRARIES})
+  vp_list_filterout(PCL_REQUIRED_COMPONENTS "pcl_*")
+  list(APPEND PCL_REQUIRED_COMPONENTS "pcl_common" "pcl_visualization" "pcl_io")
+
+  foreach(lib_ ${PCL_REQUIRED_COMPONENTS})
     if(TARGET ${lib_})
       # This is a PCL or VTK library
       list(APPEND PCL_VTK_LIBRARIES ${lib_})
@@ -211,7 +216,6 @@ if(USE_PCL)
       endif()
     endforeach()
   endif()
-
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
   mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY RSSDK_DIR DSSDK_DIR VTK_DIR)
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
