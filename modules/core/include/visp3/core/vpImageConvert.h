@@ -59,7 +59,6 @@
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
 #  include <opencv2/imgproc/types_c.h>
 #  include <opencv2/imgproc.hpp>
-#  include <opencv2/imgcodecs.hpp>
 #  include <opencv2/highgui.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #  include <opencv2/core/core.hpp>
@@ -282,9 +281,3 @@ private:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

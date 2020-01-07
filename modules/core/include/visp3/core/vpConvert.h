@@ -49,7 +49,6 @@
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 #include <opencv2/core/core.hpp>
-#include <opencv2/features2d/features2d.hpp>
 #endif
 
 #include <visp3/core/vpImagePoint.h>
