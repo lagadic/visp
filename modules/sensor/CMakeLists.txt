@@ -151,7 +151,6 @@ if(USE_PCL)
         endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
-
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
       # Filter -lm into find_library(m) to get the full path of the library
       foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
@@ -214,8 +213,12 @@ if(USE_PCL)
             list(APPEND opt_libs "${lib_property_${imp_config_}_}")
           endif()
         endforeach()
-      else()
+      elseif(EXISTS ${lib_})
         list(APPEND opt_libs "${lib_}")
+      else()
+        # standalone lib like m
+        find_library(lib_LOCATION ${lib_})
+        set(opt_libs ${lib_LOCATION})
       endif()
     endforeach()
   endif()
