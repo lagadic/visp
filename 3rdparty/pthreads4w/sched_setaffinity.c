@@ -222,9 +222,11 @@ sched_getaffinity (pid_t pid, size_t cpusetsize, cpu_set_t *set)
       * ------------------------------------------------------
       */
 {
+#if ! defined(NEED_PROCESS_AFFINITY_MASK)
   DWORD_PTR vProcessMask;
   DWORD_PTR vSystemMask;
   HANDLE h;
+#endif
   int targetPid = (int)(size_t) pid;
   int result = 0;
 

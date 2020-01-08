@@ -91,7 +91,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input video path>                                %s\n\
      Set video input path.\n\
-     From this path read \"video/video.mpeg\"\n\
+     From this path read \"video/cube.mpeg\"\n\
      video.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -291,6 +291,13 @@ int main(int argc, const char **argv)
       std::cout << "Display frame: " << reader.getFrameIndex() << std::endl;
       if (opt_display) {
         vpDisplay::display(I);
+        if (opt_click_allowed) {
+          vpDisplay::displayText(I, 15, 15, "A click to stop...", vpColor::red);
+
+          if (vpDisplay::getClick(I, false)) {
+            break;
+          }
+        }
         vpDisplay::flush(I);
       }
     }

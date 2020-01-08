@@ -239,11 +239,12 @@ endif()
 include_directories(${VISP_INCLUDE_DIR})
 
 #----------------------------------------------------------------------
-# SSE optimization
+# x86 SIMD optimization
 #----------------------------------------------------------------------
 VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86_64)) ) # X86 disabled since it produces an issue on Debian i386
+VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitely enabled, used in matrix transpose code
 
 #----------------------------------------------------------------------
 # BLAS / LAPACK
@@ -447,7 +448,7 @@ VP_OPTION(BUILD_WITH_STATIC_CRT  "" "" "Enables use of staticaly linked CRT for 
 # ----------------------------------------------------------------------------
 VP_OPTION(ENABLE_SOLUTION_FOLDERS "" "" "Solution folder in Visual Studio or in other IDEs" "" (MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode))
 # Note that it is better to set ENABLE_MOMENTS_COMBINE_MATRICES to OFF
-VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "ENABLE_MOMENTS_COMBINE_MATRICES" OFF)
+VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "" OFF)
 VP_OPTION(ENABLE_TEST_WITHOUT_DISPLAY      "" "" "Don't use display feature when testing" "" ON)
 VP_OPTION(ENABLE_FULL_DOC      "" "" "Build doc with internal classes that are by default not part of the doc" "" OFF)
 
@@ -503,6 +504,10 @@ VP_OPTION(USE_AFMA6       ""          ""    "Include Afma6 robot support"      "
 VP_OPTION(USE_VIPER650    ""          ""    "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIRTUOSE    Virtuose    ""    "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_ARSDK       ARSDK       QUIET "Include Parrot ARSDK support"     "" ON IF NOT WINRT AND NOT IOS)
+if(USE_ARSDK)
+  VP_OPTION(USE_FFMPEG    FFMPEG       ""    "Include ffmpeg support for Parrot Bebop2"  "" ON)
+endif()
 VP_OPTION(USE_FRANKA      Franka      QUIET "Include libfranka SDK support for Franka Emika robots" "" ON IF NOT WINRT AND NOT IOS)
 # Note: libfranka needs c++14 option to build, but to use the library c++11 is enough.
 # That's why, setting USE_CXX_STANDARD=11 (which is the default) allows to use libfranka.
@@ -514,6 +519,7 @@ VP_OPTION(USE_PYLON       Pylon       ""    "Include Pylon SDK support for Basle
 VP_OPTION(USE_COMEDI      Comedi      ""    "Include comedi (linux control and measurement device interface) support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
+VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 #VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
@@ -649,6 +655,8 @@ else()
   set(WITH_STBIMAGE OFF)
 endif()
 
+VP_OPTION(WITH_CATCH2   ""           ""    "Use catch2" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
+
 # ----------------------------------------------------------------------------
 # Check for specific functions. Should be after cxx standard detection in VISPDetectCXXStandard.cmake and potential modification depending on pcl, realsense2, libfranka
 # ----------------------------------------------------------------------------
@@ -662,7 +670,7 @@ VP_CHECK_PACKAGE(Log1p)
 #----------------------------------------------------------------------
 # For Dart server and tests
 # We use CDash set through CTestConfig.cmake file
-# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
+# Dashboards are sent to https://cdash-ci.inria.fr/index.php?project=ViSP
 #----------------------------------------------------------------------
 if(BUILD_TESTS)
   enable_testing()
@@ -880,6 +888,9 @@ VP_SET(VISP_HAVE_FRANKA      TRUE IF (BUILD_MODULE_visp_robot AND USE_FRANKA))
 VP_SET(VISP_HAVE_JACOSDK     TRUE IF (BUILD_MODULE_visp_robot AND USE_JACOSDK))
 VP_SET(VISP_HAVE_BICLOPS     TRUE IF (BUILD_MODULE_visp_robot AND USE_BICLOPS))
 VP_SET(VISP_HAVE_PTU46       TRUE IF (BUILD_MODULE_visp_robot AND USE_PTU46))
+VP_SET(VISP_HAVE_FLIR_PTU_SDK TRUE IF (BUILD_MODULE_visp_robot AND USE_FLIRPTUSDK))
+VP_SET(VISP_HAVE_ARSDK       TRUE IF (BUILD_MODULE_visp_robot AND USE_ARSDK))
+VP_SET(VISP_HAVE_FFMPEG      TRUE IF (BUILD_MODULE_visp_robot AND USE_FFMPEG))
 #VP_SET(VISP_HAVE_PIONEER     TRUE IF (BUILD_MODULE_visp_robot AND USE_ARIA))
 if(BUILD_MODULE_visp_robot AND USE_ARIA)
   if(UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
@@ -915,6 +926,7 @@ VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRIL
 VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
 VP_SET(VISP_HAVE_PUGIXML     TRUE IF (BUILD_MODULE_visp_core AND WITH_PUGIXML))
 VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
+VP_SET(VISP_HAVE_CATCH2      TRUE IF (BUILD_MODULE_visp_core AND WITH_CATCH2))
 
 VP_SET(VISP_BUILD_SHARED_LIBS            TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -1174,6 +1186,10 @@ if(USE_COIN3D)
   vp_parse_header("${COIN3D_INCLUDE_DIRS}/Inventor/C/basic.h" COIN_VERSION_LINES COIN_MAJOR_VERSION COIN_MINOR_VERSION COIN_MICRO_VERSION)
   set(COIN3D_VERSION "${COIN_MAJOR_VERSION}.${COIN_MINOR_VERSION}.${COIN_MICRO_VERSION}")
 endif()
+if(USE_FLIRPTUSDK)
+  vp_parse_header("${FLIRPTUSDK_CPI_INCLUDE_DIR}/cpi.h" CPI_VERSION_LINES CPI_VER_MAJOR CPI_VER_MINOR CPI_VER_REV)
+  set(FLIRPTUSDK_VERSION "${CPI_VER_MAJOR}.${CPI_VER_MINOR}.${CPI_VER_REV}")
+endif()
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
@@ -1430,12 +1446,15 @@ status("  Real robots: ")
 status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")
 status("    Use Afma6:"              USE_AFMA6        THEN "yes" ELSE "no")
 status("    Use Franka:"             USE_FRANKA       THEN "yes (ver ${Franka_VERSION})" ELSE "no")
-status("    Use Viper650:"           USE_VIPER850     THEN "yes" ELSE "no")
+status("    Use Viper650:"           USE_VIPER650     THEN "yes" ELSE "no")
 status("    Use Viper850:"           USE_VIPER850     THEN "yes" ELSE "no")
 status("    Use Jaco SDK:"           USE_JACOSDK      THEN "yes" ELSE "no")
 status("    Use aria (Pioneer):"     USE_ARIA         THEN "yes" ELSE "no")
 status("    Use PTU46:"              USE_PTU46        THEN "yes" ELSE "no")
-status("    Use Biclops PT:"         USE_BICLOPS      THEN "yes" ELSE "no")
+status("    Use Biclops PTU:"        USE_BICLOPS      THEN "yes" ELSE "no")
+status("    Use Flir PTU SDK:"       USE_FLIRPTUSDK   THEN "yes (ver ${FLIRPTUSDK_VERSION})" ELSE "no")
+status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes" ELSE "no")
+status("    \\-Use ffmpeg:"          USE_FFMPEG       THEN "yes" ELSE "no")
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
 status("    Use qbdevice (built-in):" WITH_QBDEVICE   THEN "yes (ver ${QBDEVICE_VERSION})" ELSE "no")
 status("")
@@ -1494,6 +1513,7 @@ status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes" ELSE "no")
 # ========================== samples and tests ==========================
 status("")
 status("  Tests and samples:")
+status("    Use catch2 (built-in):"  WITH_CATCH2      THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
 status("    Tests:"                  BUILD_TESTS      THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS      THEN "yes" ELSE "no")
 status("    Examples:"               BUILD_EXAMPLES   THEN "yes" ELSE "no")

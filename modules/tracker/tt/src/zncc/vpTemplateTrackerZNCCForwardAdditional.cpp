@@ -138,11 +138,6 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
         for (unsigned int jt = 0; jt < nbParam; jt++)
           Hdesire[it][jt] += prod * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
                                      dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
-      /*Hdesire[0][0]+=prod*d_Ixx;
-      Hdesire[1][0]+=prod*d_Ixy;
-      Hdesire[0][1]+=prod*d_Ixy;
-      Hdesire[1][1]+=prod*d_Iyy;*/
-
       denom += (Tij - moyTij) * (Tij - moyTij) * (IW - moyIW) * (IW - moyIW);
       delete[] tempt;
     }
@@ -161,22 +156,21 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
 
-  /*vpImage<double> dIxx,dIxy,dIyx,dIyy;
-  getGradX(dIx, dIxx, fgdG,taillef);
-  getGradY(dIx, dIxy, fgdG,taillef);
-
-  getGradX(dIy, dIyx, fgdG,taillef);
-  getGradY(dIy, dIyy, fgdG,taillef);*/
-
   dW = 0;
 
-  // double lambda=lambdaDep;
   double IW, dIWx, dIWy;
   double Tij;
   unsigned int iteration = 0;
   int i, j;
   double i2, j2;
   double alpha = 2.;
+
+  initPosEvalRMS(p);
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     int Nbpoint = 0;
     double erreur = 0;
@@ -217,8 +211,6 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
 
     moyTij = moyTij / Nbpoint;
     moyIW = moyIW / Nbpoint;
-    // vpMatrix d2Wx(nbParam,nbParam);
-    // vpMatrix d2Wy(nbParam,nbParam);
     for (unsigned int point = 0; point < templateSize; point++) {
       i = ptTemplate[point].y;
       j = ptTemplate[point].x;
@@ -250,45 +242,18 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
         for (unsigned int it = 0; it < nbParam; it++)
           G[it] += prod * tempt[it];
 
-        /*	Warp->d2Warp(X1,X2,p,d2Wx,d2Wy);
-        for(int it=0;it<nbParam;it++)
-          for(int jt=0;jt<nbParam;jt++)
-            H[it][jt]+=prod*(d2Wx[it][jt]*dIWx+d2Wx[it][jt]*dIWy);*/
-        /*double d_Ixx=dIxx.getValue(i2,j2);
-        double d_Iyy=dIyy.getValue(i2,j2);
-        double d_Ixy=dIxy.getValue(i2,j2);
-
-        for(int it=0;it<nbParam;it++)
-          for(int jt=0;jt<nbParam;jt++)
-            H[it][jt] +=prod*(dW[0][it]*(dW[0][jt]*d_Ixx+dW[1][jt]*d_Ixy)
-                +dW[1][it]*(dW[0][jt]*d_Ixy+dW[1][jt]*d_Iyy));*/
-        /*H[0][0]+=prod*d_Ixx;
-        H[1][0]+=prod*d_Ixy;
-        H[0][1]+=prod*d_Ixy;
-        H[1][1]+=prod*d_Iyy;*/
-
         double er = (Tij - IW);
         erreur += (er * er);
         denom += (Tij - moyTij) * (Tij - moyTij) * (IW - moyIW) * (IW - moyIW);
         delete[] tempt;
       }
     }
-    /*std::cout<<"G="<<G<<std::endl;
-    std::cout<<"H="<<H<<std::endl;
-    std::cout<<" denom="<<denom<<std::endl;*/
     G = G / sqrt(denom);
-    // std::cout<<G<<std::endl;
     H = H / sqrt(denom);
 
-    // if(Nbpoint==0)std::cout<<"plus de point dans template
-    // suivi"<<std::endl; // cannot occur
-
     try {
-      // vpMatrix::computeHLM(H,lambda,HLM);
-      // dp=1.*HLM.inverseByLU()*G;
-      dp = 1. * HLMdesireInverse * G;
+      dp = HLMdesireInverse * G;
     } catch (const vpException &e) {
-      // std::cout<<"probleme inversion"<<std::endl;
       throw(e);
     }
 
@@ -299,8 +264,18 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
       dp = alpha * dp;
     }
     p -= dp;
+
+    computeEvalRMS(p);
+
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
     iteration++;
-  } while (/*( erreur_prec-erreur<50) && */ (iteration < iterationMax));
+
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ((iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
 
   // std::cout<<"erreur "<<erreur<<std::endl;
   nbIteration = iteration;

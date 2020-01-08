@@ -12,44 +12,63 @@ This tutorial assumes you have the following software installed and configured: 
 
 \subsection android_sdk_prereq_linux On Ubuntu or debian
 
-- To install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a> follow \ref java_install_jdk tutorial.
-- To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio. Once installed start Android Studio using default settings. This allows to download Android SDK that will be installed in `$HOME/Android/sdk` on Ubuntu or in `$HOME/Library/Android/sdk` folder on OSX. Now to install Android NDK, with Android Studio create a new Android project. As described in this <a href="https://developer.android.com/ndk/guides/#download-ndk">guide</a>, from this new project enter `"Android SDK"` settings, select the `"SDK Tools"` tab and check the boxes next to `LLDB`, `CMake`, and `NDK`. To access to `"Android SDK"` settings pannel on Ubuntu go through `"File > Settings..."` menu, while under OSX, go through `"Android Studio > Preferences"` menu.   
-
-- Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 2.7 or 3.6)</a>, <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
+- Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit 11.0.4 LTS (JDK 11)</a>
+  following \ref java_install_jdk tutorial.
+- To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
+  <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio.
+  Once installed start Android Studio using default settings. This allows to download Android SDK that will be installed
+  in `$HOME/Android/sdk` on Ubuntu. Now to install Android NDK, with Android Studio
+  start a new Native C++ Android project using the default configuration. From this new project enter
+  `"File > Settings... > Appearence > System Settings > Android SDK"` menu. Select the `"SDK Tools"` tab
+  and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
+  Once all the tools are downloaded, you can exit Android Studio.
+- Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 2.7 or 3.6)</a>,
+  <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
+  and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
 \code
 $ sudo apt-get install python ant cmake-curses-gui ninja-build ccache
 \endcode
 
-- At the time this tutorial was written, on Ubuntu 16.04 LTS we got Android Studio 3.2.1, NDK 18.1 (see \ref android_sdk_ndk_version) and the following other tools versions:
+- At the time this tutorial was written, on Ubuntu 18.04 LTS we got Android Studio 3.5.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code
-$ java -version
-openjdk version "1.8.0_191"
+$ java --version
+java 11.0.4 2019-07-16 LTS
 $ python --version
-Python 2.7.12
+Python 2.7.15+
 $ ant -version
-Apache Ant(TM) version 1.9.6 compiled on July 20 2018
+Apache Ant(TM) version 1.10.5 compiled on March 28 2019
 $ cmake -version
-cmake version 3.13.2
+cmake version 3.10.2
 $ ninja --version
-1.5.1
+1.8.2
 $ ccache --version
-ccache version 3.2.4
+ccache version 3.4.1
 \endcode
 
 \subsection android_sdk_prereq_osx On Mac OSX
 
-- To install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a> follow \ref java_install_jdk tutorial.
-- To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio. Once installed start Android Studio using default settings. This allows to download Android SDK that will be installed in `$HOME/Android/sdk` on Ubuntu or in `$HOME/Library/Android/sdk` folder on OSX. Now to install Android NDK, with Android Studio create a new Android project. As described in this <a href="https://developer.android.com/ndk/guides/#download-ndk">guide</a>, from this new project enter `"Android SDK"` settings, select the `"SDK Tools"` tab and check the boxes next to `LLDB`, `CMake`, and `NDK`. To access to `"Android SDK"` settings pannel on Ubuntu go through `"File > Settings..."` menu, while under OSX, go through `"Android Studio > Preferences"` menu.   
-
-- Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 2.7 or 3.6)</a>, <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
+- Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit 11.0.4 LTS (JDK 11)</a>
+  following \ref java_install_jdk tutorial.
+- To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
+  <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio from dmg.
+  Once installed start Android Studio using default settings. This allows to download Android SDK that will
+  be installed in `$HOME/Library/Android/sdk` folder on OSX. Now to install Android NDK, with Android Studio
+  start a new Native C++ Android project using the default configuration. From this new project enter
+  `"Android Studio > Preferences > Appearence > System Settings > Android SDK"` menu. Select the `"SDK Tools"` tab
+  and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
+  Once all the tools are downloaded, you can exit Android Studio.
+- Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 2.7 or 3.6)</a>,
+  <a href="https://cmake.org/download/">CMake</a>,
+  <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
+  and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
 \code
 $ brew install python ant cmake ninja ccache
 \endcode
 
-- At the time this tutorial was written, on macOS Mojave 10.14.2 we got Android Studio 3.2.1, NDK 18.1 (see \ref android_sdk_ndk_version) and the following other tools versions:
+- At the time this tutorial was written, on macOS Mojave 10.14.5 we got Android Studio 3.5.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code
-$ java -version
-java version "11.0.1" 2018-10-16 LTS
+$ java --version
+java 11.0.4 2019-07-16 LTS
 $ python --version
 Python 2.7.15
 $ ant -version
@@ -62,6 +81,42 @@ $ ccache --version
 ccache version 3.5
 \endcode
 
+\subsection android_sdk_prereq_win On Windows
+
+- Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit 11.0.4 LTS (JDK 11)</a>
+  following \ref java_install_jdk tutorial.
+- To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
+  <a href="https://developer.android.com/studio/">Android Studio</a>,
+  download and install Android Studio for Windows 64-bit. Once installed start Android Studio using default settings.
+  This allows to download Android SDK. Now to install Android NDK, with Android Studio create a new Android project.
+  From this new project enter `"File > Settings... > Appearence & Behavior > System Settings > Android SDK"` menu. 
+  Select the `"SDK Tools"` tab and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
+  Once all the tools are downloaded, you can exit Android Studio.
+- Now install <a href="https://www.python.org/downloads/">Python Interpreter</a> without forgetting to add Python to environment variables.
+- Download and install latest <a href="https://cmake.org/download/">CMake release</a> using Windows win64-x64 installer without forgetting
+  to add CMake to the system PATH for all users.
+- Download <a href="https://github.com/ninja-build/ninja/releases">Ninja</a> for windows. Place `ninja.exe` in a suitable spot.
+  For example, in `%%VISP_WS%\Ninja`. Now make sure that CMake can find `ninja.exe` by adding `%%VISP_WS%\Ninja` to your `%%PATH%`.
+- Download `ccache` for Windows from github and add its location (`%%VISP_WS%\ccache-win64`) to your `%%PATH%`
+\code
+C:\> cd %VISP_WS%
+C:\> git clone https://github.com/nagayasu-shinya/ccache-win64.git
+\endcode
+
+- At the time this tutorial was written, on macOS Mojave 10.14.2 we got Android Studio 3.2.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
+\code
+C:\>java -version
+java version 11.0.4 2019-07-16 LTS
+C:\>python --version
+Python 3.7.4
+C:\>cmake -version
+cmake version 3.15.2
+C:\>ninja --version
+1.9.0
+C:\>ccache --version
+ccache version 3.7.2
+\endcode
+  
 \section android_sdk_ws Create a workspace
 
 Create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
@@ -119,7 +174,7 @@ $ python build_sdk.py --config <ndk-*.config.py> --sdk_path <path-to-Android-Sdk
 In `$VISP_WS/visp/platforms/android` folder we provide different NDK config files:
 \code
 $ ls ndk-*.config.py
-ndk-10.config.py	ndk-16.config.py	ndk-17.config.py	ndk-18.config.py
+ndk-10.config.py	ndk-16.config.py	ndk-17.config.py	ndk-18.config.py	ndk-20.config.py
 \endcode
 The file that should be used after `--config` option should match your NDK version (see \ref android_sdk_ndk_version).
 
@@ -159,14 +214,27 @@ $ find . -type d -depth 3
 
 For example, on Ubuntu the command might look like
 \code
-$ python build_sdk.py --config ndk-18.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ mkdir $VISP_WS/visp-build-android-sdk
+$ cd $VISP_WS/visp/platforms/android
+$ python build_sdk.py --config ndk-20.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
 \endcode
 
 \subsection android_sdk_build_osx On Mac OSX
 
 For example, on OSX the command might rather look like
 \code
-$ python build_sdk.py --config ndk-18.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ mkdir $VISP_WS/visp-build-android-sdk
+$ cd $VISP_WS/visp/platforms/android
+$ python build_sdk.py --config ndk-20.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+\endcode
+
+\subsection android_sdk_build_win On Windows
+
+For example, on Windows the command might rather look like
+\code
+C:\> mkdir %VISP_WS%\visp-build-android-sdk
+C:\> cd %VISP_WS%\visp\platforms\android
+C:\> python build_sdk.py --config ndk-20.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\20.0.5594570 %VISP_WS%\visp-build-android-sdk %VISP_WS%\visp
 \endcode
 
 \subsection android_sdk_build_issue Known issue
@@ -180,8 +248,11 @@ $ python build_sdk.py --no_ccache --config ndk-18.config.py --sdk_path $HOME/And
 \subsection android_sdk_ndk_version How to know Android NDK version
 
 - Start Android Studio
-- on Ubuntu enter `File > Settings...` menu, while on Mac OSX enter `Android Studio > Preferences...` menu select `Android SDK` in the left part and selct `SDK Tools` tab to see which is the NDK version that you are using:
-\image html img-android-ndk-version.png
+- on Ubuntu enter `"File > Settings... > Appearance > System Settings"` menu, while on Mac OSX enter `"Android Studio > Preferences... > Appearance & Behavior > System Settings"` menu, then select `Android SDK` in the left part and select `"SDK Tools"` tab to see which is the NDK version that you are using.
+The following swnapshot shows that NDK 18.1 is used:
+\image html img-android-ndk-version-18.1.png
+This other snapshot shows that NDK 20.0 is used:
+\image html img-android-ndk-version-20.0.png
 
 \section android_sdk_next Next tutorial
 

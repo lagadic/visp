@@ -228,6 +228,11 @@ if(WITH_PUGIXML)
   include_directories(${PUGIXML_INCLUDE_DIRS})
 endif()
 
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
+
 if(MSVC)
   # Disable Visual C++ C4996 warning
   # warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead
@@ -237,6 +242,7 @@ if(MSVC)
     vp_set_source_file_compile_flag(src/tools/network/vpClient.cpp /wd"4996")
     vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp /wd"4996")
     vp_set_source_file_compile_flag(src/tools/network/vpNetwork.cpp /wd"4996")
+    vp_set_source_file_compile_flag(src/math/random-generator/vpUniRand.cpp /wd"4146")
     if(BUILD_TESTS)
       vp_set_source_file_compile_flag(test/network/testClient.cpp /wd"4996")
       vp_set_source_file_compile_flag(test/network/testServer.cpp /wd"4996")
@@ -266,6 +272,8 @@ vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow
 
 if(USE_EIGEN3)
   vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
+  vp_set_source_file_compile_flag(test/math/perfMatrixMultiplication.cpp -Wno-strict-overflow -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy)
+  vp_set_source_file_compile_flag(test/math/perfMatrixTranspose.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy)
 endif()
 
 if(USE_XML2)

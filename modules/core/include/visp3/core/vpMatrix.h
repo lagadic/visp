@@ -215,81 +215,9 @@ vpMatrix M(R);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
-
-  /*!
-     Construct a matrix from a list of double values.
-     \param list : List of double.
-     The following code shows how to use this constructor to initialize a 2-by-3 matrix using reshape() function:
-     \code
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpMatrix M( {-1, -2, -3, 4, 5.5, 6.0f} );
-  M.reshape(2, 3);
-  std::cout << "M:\n" << M << std::endl;
-#endif
-}
-     \endcode
-     It produces the following output:
-     \code
-M:
--1  -2  -3
-4  5.5  6
-     \endcode
-   */
-  explicit vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
-
-  /*!
-     Construct a matrix from a list of double values.
-     \param ncols, nrows : Matrix size.
-     \param list : List of double.
-     The following code shows how to use this constructor to initialize a 2-by-3 matrix:
-     \code
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6});
-  std::cout << "M:\n" << M << std::endl;
-#endif
-}
-     \endcode
-     It produces the following output:
-     \code
-M:
--1  -2  -3
-4  5.5  6
-     \endcode
-   */
-  explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list)
-    : vpArray2D<double>(nrows, ncols, list) {}
-
-  /*!
-     Construct a matrix from a list of double values.
-     \param lists : List of double.
-     The following code shows how to use this constructor to initialize a 2-by-3 matrix function:
-     \code
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpMatrix M( { {-1, -2, -3}, {4, 5.5, 6} } );
-  std::cout << "M:\n" << M << std::endl;
-#endif
-}
-     \endcode
-     It produces the following output:
-     \code
-M:
--1  -2  -3
-4  5.5  6
-     \endcode
-   */
-  explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
+  explicit vpMatrix(const std::initializer_list<double> &list);
+  explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list);
+  explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
 
   //! Destructor (Memory de-allocation)
@@ -482,7 +410,7 @@ M:
 
   // Compute the transpose C = A^T
   vpMatrix transpose() const;
-  void transpose(vpMatrix &C) const;
+  void transpose(vpMatrix &At) const;
 
   vpMatrix AAt() const;
   void AAt(vpMatrix &B) const;

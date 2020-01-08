@@ -122,6 +122,12 @@
 #  define RETAIN_WSALASTERROR
 #endif
 
+#if defined(WINRT)
+#  undef HAVE_CPU_AFFINITY
+#  define NEED_PROCESS_AFFINITY_MASK
+#endif
+
+
 #if defined(_UWIN)
 #  define HAVE_MODE_T
 #  define HAVE_STRUCT_TIMESPEC

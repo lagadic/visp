@@ -1185,7 +1185,7 @@ template <class Type> vpImage<Type> vpImage<Type>::operator-(const vpImage<Type>
 
   It is possible to insert the image \f$ src \f$ into the calling vpImage.
   You can set the point in the destination image where the top left corner of
-  the \f$ src \f$ image will belocated.
+  the \f$ src \f$ image will be located.
 
   \param src : Image to insert
   \param topLeft : Upper/left coordinates in the image where the image \e src

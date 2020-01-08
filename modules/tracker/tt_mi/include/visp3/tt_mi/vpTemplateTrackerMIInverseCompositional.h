@@ -66,11 +66,6 @@ private:
   bool CompoInitialised;
   bool useTemplateSelect; // use only the strong gradient pixels to compute
                           // the Jabocian
-  // pour eval evolRMS
-  double evolRMS;
-  double *x_pos;
-  double *y_pos;
-  double threshold_RMS;
   // valeur pour calculer Quasi_Newton
   vpColVector p_prec;
   vpColVector G_prec;
@@ -85,34 +80,12 @@ protected:
   void initCompInverse(const vpImage<unsigned char> &I);
   void initHessienDesired(const vpImage<unsigned char> &I);
   void trackNoPyr(const vpImage<unsigned char> &I);
-  void deletePosEvalRMS();
-  void computeEvalRMS(const vpColVector &p);
-  void initPosEvalRMS(const vpColVector &p);
-
-  // private:
-  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //  vpTemplateTrackerMIInverseCompositional(const
-  //  vpTemplateTrackerMIInverseCompositional &)
-  //    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA),
-  //    CompoInitialised(false), useTemplateSelect(false),
-  //      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(),
-  //      G_prec(), KQuasiNewton()//, useAYOptim(false)
-  //  {
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!");
-  //  }
-  //  vpTemplateTrackerMIInverseCompositional &operator=(const
-  //  vpTemplateTrackerMIInverseCompositional &){
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!"); return *this;
-  //  }
-  //#endif
 
 public:
   //! Default constructor.
   vpTemplateTrackerMIInverseCompositional()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false), evolRMS(0),
-      x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton() //, useAYOptim(false)
+    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
+      p_prec(), G_prec(), KQuasiNewton()
   {
   }
   explicit vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
@@ -120,7 +93,6 @@ public:
   /*! Use only the strong gradient pixels to compute the Jabobian. By default
    * this feature is disabled. */
   void setUseTemplateSelect(bool b) { useTemplateSelect = b; }
-  void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
   void setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method) { minimizationMethod = method; }
 };
 #endif

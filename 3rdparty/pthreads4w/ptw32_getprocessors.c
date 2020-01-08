@@ -57,8 +57,10 @@
 int
 __ptw32_getprocessors (int *count)
 {
+#if ! defined(NEED_PROCESS_AFFINITY_MASK)
   DWORD_PTR vProcessCPUs;
   DWORD_PTR vSystemCPUs;
+#endif
   int result = 0;
 
 #if defined(NEED_PROCESS_AFFINITY_MASK)

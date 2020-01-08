@@ -66,6 +66,28 @@ This behavior can be reproduced running tutorial-ibvs-4pts-plotter-gain-adaptive
     task.setLambda(lambda);
 \endcode
 
+\subsection adaptive_gain_tune How to tune adaptive gain
+
+To adjust the adaptative gain to your current servoing task, you need to proceed step-by-step :
+  - First, switch back to a constant gain by replacing 
+\code
+  task.setLambda(lambda_adapt);
+\endcode
+  by 
+\code
+  task.setLambda(lambda);
+\endcode
+\n 
+  - In order to tune the first parameter \f$\lambda_0 = \lambda(0)\f$, which corresponds to the gain when the error is close to zero, place the robot close to the final desired position of the servoing task.
+  Then, gradually increase lambda (start with lambda = 1.0) until you observe robot oscillations. 
+  A good value for \f$\lambda_0\f$ should be slightly inferior to the lambda for which oscillations start to occur.
+\n
+\n  
+  - For the second parameter \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$, which corresponds to the gain when the error is very high, move the robot further away from the target in order to get a large visual servoing error.
+  Set lambda to a small value, like 0.1, and increase it gradually until vision is no longer able to track your features, or when the robot becomes dangerous with a velocity too high.
+\n 
+\n 
+  - The last value, \f$\lambda'_0\f$, is the slope of the curve \f$ \lambda_{adapt} = f(s-s^*) \f$ where \f$ s-s^* = 0 \f$ . You can keep it at 30.
 
 \section continuous_adaptive_gain Continuous sequencing
 

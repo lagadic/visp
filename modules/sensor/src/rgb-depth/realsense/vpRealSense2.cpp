@@ -45,11 +45,32 @@
 
 #define MANUAL_POINTCLOUD 1
 
+namespace {
+bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
+{
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      if (std::fabs(lhs.rotation[i*3 + j] - rhs.rotation[i*3 + j]) >
+          std::numeric_limits<float>::epsilon()) {
+        return false;
+      }
+    }
+
+    if (std::fabs(lhs.translation[i] - rhs.translation[i]) >
+        std::numeric_limits<float>::epsilon()) {
+      return false;
+    }
+  }
+
+  return true;
+}
+}
+
 /*!
  * Default constructor.
  */
 vpRealSense2::vpRealSense2()
-  : m_colorIntrinsics(), m_depth2ColorExtrinsics(), m_depthIntrinsics(), m_depthScale(0.0f), m_invalidDepthValue(0.0f),
+  : m_depthScale(0.0f), m_invalidDepthValue(0.0f),
     m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(), m_points()
 {
 }
@@ -89,37 +110,13 @@ void vpRealSense2::acquire(vpImage<vpRGBa> &color)
   \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
   \param data_infrared : Infrared image buffer or NULL if not wanted.
   \param align_to : Align to a reference stream or NULL if not wanted.
+  Only depth and color streams can be aligned.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
                            rs2::align *const align_to)
 {
-  auto data = m_pipe.wait_for_frames();
-  if (align_to != NULL)
-#if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
-    data = align_to->process(data);
-#else
-    data = align_to->proccess(data);
-#endif
-
-  if (data_image != NULL) {
-    auto color_frame = data.get_color_frame();
-    getNativeFrameData(color_frame, data_image);
-  }
-
-  if (data_depth != NULL || data_pointCloud != NULL) {
-    auto depth_frame = data.get_depth_frame();
-    if (data_depth != NULL)
-      getNativeFrameData(depth_frame, data_depth);
-
-    if (data_pointCloud != NULL)
-      getPointcloud(depth_frame, *data_pointCloud);
-  }
-
-  if (data_infrared != NULL) {
-    auto infrared_frame = data.first(RS2_STREAM_INFRARED);
-    getNativeFrameData(infrared_frame, data_infrared);
-  }
+  acquire(data_image, data_depth, data_pointCloud, data_infrared, NULL, align_to);
 }
 
 /*!
@@ -128,8 +125,10 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   \param data_depth : Depth image buffer or NULL if not wanted.
   \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
   \param data_infrared1 : First infrared image buffer or NULL if not wanted.
-  \param data_infrared2 : Second infrared image buffer or NULL if not wanted.
+  \param data_infrared2 : Second infrared image buffer (if supported by the device)
+  or NULL if not wanted.
   \param align_to : Align to a reference stream or NULL if not wanted.
+  Only depth and color streams can be aligned.
 
   The following code shows how to use this function to get color, infrared 1 and infrared 2 frames
   acquired by a D435 device:
@@ -181,12 +180,15 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
                            unsigned char *const data_infrared2, rs2::align *const align_to)
 {
   auto data = m_pipe.wait_for_frames();
-  if (align_to != NULL)
+  if (align_to != NULL) {
+    // Infrared stream is not aligned
+    // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
 #if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
     data = align_to->process(data);
 #else
     data = align_to->proccess(data);
 #endif
+  }
 
   if (data_image != NULL) {
     auto color_frame = data.get_color_frame();
@@ -195,15 +197,17 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 
   if (data_depth != NULL || data_pointCloud != NULL) {
     auto depth_frame = data.get_depth_frame();
-    if (data_depth != NULL)
+    if (data_depth != NULL) {
       getNativeFrameData(depth_frame, data_depth);
+    }
 
-    if (data_pointCloud != NULL)
+    if (data_pointCloud != NULL) {
       getPointcloud(depth_frame, *data_pointCloud);
+    }
   }
 
   if (data_infrared1 != NULL) {
-    auto infrared_frame = data.get_infrared_frame(1);
+    auto infrared_frame = data.first(RS2_STREAM_INFRARED);
     getNativeFrameData(infrared_frame, data_infrared1);
   }
 
@@ -223,19 +227,44 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   information) pointer or NULL if not wanted.
   \param data_infrared : Infrared image buffer or NULL if not wanted.
   \param align_to : Align to a reference stream or NULL if not wanted.
+  Only depth and color streams can be aligned.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
                            pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char *const data_infrared,
                            rs2::align *const align_to)
 {
+  acquire(data_image, data_depth, data_pointCloud, pointcloud, data_infrared, NULL, align_to);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param data_image : Color image buffer or NULL if not wanted.
+  \param data_depth : Depth image buffer or NULL if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param pointcloud : Point cloud (in PCL format and without texture
+  information) pointer or NULL if not wanted.
+  \param data_infrared1 : First infrared image buffer or NULL if not wanted.
+  \param data_infrared2 : Second infrared image (if supported by the device)
+  buffer or NULL if not wanted.
+  \param align_to : Align to a reference stream or NULL if not wanted.
+  Only depth and color streams can be aligned.
+ */
+void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                           std::vector<vpColVector> *const data_pointCloud,
+                           pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char *const data_infrared1,
+                           unsigned char *const data_infrared2, rs2::align *const align_to)
+{
   auto data = m_pipe.wait_for_frames();
-  if (align_to != NULL)
+  if (align_to != NULL) {
+    // Infrared stream is not aligned
+    // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
 #if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
     data = align_to->process(data);
 #else
     data = align_to->proccess(data);
 #endif
+  }
 
   if (data_image != NULL) {
     auto color_frame = data.get_color_frame();
@@ -244,19 +273,27 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 
   if (data_depth != NULL || data_pointCloud != NULL || pointcloud != NULL) {
     auto depth_frame = data.get_depth_frame();
-    if (data_depth != NULL)
+    if (data_depth != NULL) {
       getNativeFrameData(depth_frame, data_depth);
+    }
 
-    if (data_pointCloud != NULL)
+    if (data_pointCloud != NULL) {
       getPointcloud(depth_frame, *data_pointCloud);
+    }
 
-    if (pointcloud != NULL)
+    if (pointcloud != NULL) {
       getPointcloud(depth_frame, pointcloud);
+    }
   }
 
-  if (data_infrared != NULL) {
+  if (data_infrared1 != NULL) {
     auto infrared_frame = data.first(RS2_STREAM_INFRARED);
-    getNativeFrameData(infrared_frame, data_infrared);
+    getNativeFrameData(infrared_frame, data_infrared1);
+  }
+
+  if (data_infrared2 != NULL) {
+    auto infrared_frame = data.get_infrared_frame(2);
+    getNativeFrameData(infrared_frame, data_infrared2);
   }
 }
 
@@ -269,19 +306,44 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   pointer or NULL if not wanted.
   \param data_infrared : Infrared image buffer or NULL if not wanted.
   \param align_to : Align to a reference stream or NULL if not wanted.
+  Only depth and color streams can be aligned.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
                            pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char *const data_infrared,
                            rs2::align *const align_to)
 {
+  acquire(data_image, data_depth, data_pointCloud, pointcloud, data_infrared, NULL, align_to);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param data_image : Color image buffer or NULL if not wanted.
+  \param data_depth : Depth image buffer or NULL if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param pointcloud : Point cloud (in PCL format and with texture information)
+  pointer or NULL if not wanted.
+  \param data_infrared1 : First infrared image buffer or NULL if not wanted.
+  \param data_infrared2 : Second infrared image (if supported by the device)
+  buffer or NULL if not wanted.
+  \param align_to : Align to a reference stream or NULL if not wanted.
+  Only depth and color streams can be aligned.
+ */
+void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
+                           std::vector<vpColVector> *const data_pointCloud,
+                           pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char *const data_infrared1,
+                           unsigned char *const data_infrared2, rs2::align *const align_to)
+{
   auto data = m_pipe.wait_for_frames();
-  if (align_to != NULL)
+  if (align_to != NULL) {
+    // Infrared stream is not aligned
+    // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
 #if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
     data = align_to->process(data);
 #else
     data = align_to->proccess(data);
 #endif
+  }
 
   auto color_frame = data.get_color_frame();
   if (data_image != NULL) {
@@ -290,19 +352,27 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 
   if (data_depth != NULL || data_pointCloud != NULL || pointcloud != NULL) {
     auto depth_frame = data.get_depth_frame();
-    if (data_depth != NULL)
+    if (data_depth != NULL) {
       getNativeFrameData(depth_frame, data_depth);
+    }
 
-    if (data_pointCloud != NULL)
+    if (data_pointCloud != NULL) {
       getPointcloud(depth_frame, *data_pointCloud);
+    }
 
-    if (pointcloud != NULL)
+    if (pointcloud != NULL) {
       getPointcloud(depth_frame, color_frame, pointcloud);
+    }
   }
 
-  if (data_infrared != NULL) {
+  if (data_infrared1 != NULL) {
     auto infrared_frame = data.first(RS2_STREAM_INFRARED);
-    getNativeFrameData(infrared_frame, data_infrared);
+    getNativeFrameData(infrared_frame, data_infrared1);
+  }
+
+  if (data_infrared2 != NULL) {
+    auto infrared_frame = data.get_infrared_frame(2);
+    getNativeFrameData(infrared_frame, data_infrared2);
   }
 }
 #endif
@@ -371,11 +441,15 @@ void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color
   color.resize(height, width);
 
   if (frame.get_profile().format() == RS2_FORMAT_RGB8) {
-    vpImageConvert::RGBToRGBa((unsigned char *)frame.get_data(), (unsigned char *)color.bitmap, width, height);
+    vpImageConvert::RGBToRGBa(const_cast<unsigned char *>(static_cast<const unsigned char *>(frame.get_data())),
+                              reinterpret_cast<unsigned char *>(color.bitmap), width, height);
   } else if (frame.get_profile().format() == RS2_FORMAT_RGBA8) {
-    memcpy((unsigned char *)color.bitmap, (unsigned char *)frame.get_data(), width * height * sizeof(vpRGBa));
+    memcpy(reinterpret_cast<unsigned char *>(color.bitmap),
+           const_cast<unsigned char *>(static_cast<const unsigned char *>(frame.get_data())),
+           width * height * sizeof(vpRGBa));
   } else if (frame.get_profile().format() == RS2_FORMAT_BGR8) {
-    vpImageConvert::BGRToRGBa((unsigned char *)frame.get_data(), (unsigned char *)color.bitmap, width, height);
+    vpImageConvert::BGRToRGBa(const_cast<unsigned char *>(static_cast<const unsigned char *>(frame.get_data())),
+                              reinterpret_cast<unsigned char *>(color.bitmap), width, height);
   } else {
     throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
   }
@@ -398,11 +472,14 @@ void vpRealSense2::getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> 
   grey.resize(height, width);
 
   if (frame.get_profile().format() == RS2_FORMAT_RGB8) {
-    vpImageConvert::RGBToGrey((unsigned char *)frame.get_data(), (unsigned char *)grey.bitmap, width, height);
+    vpImageConvert::RGBToGrey(const_cast<unsigned char *>(static_cast<const unsigned char *>(frame.get_data())),
+                              grey.bitmap, width, height);
   } else if (frame.get_profile().format() == RS2_FORMAT_RGBA8) {
-    vpImageConvert::RGBaToGrey((unsigned char *)frame.get_data(), (unsigned char *)grey.bitmap, width * height);
+    vpImageConvert::RGBaToGrey(const_cast<unsigned char *>(static_cast<const unsigned char *>(frame.get_data())),
+                               grey.bitmap, width * height);
   } else if (frame.get_profile().format() == RS2_FORMAT_BGR8) {
-    vpImageConvert::BGRToGrey((unsigned char *)frame.get_data(), (unsigned char *)grey.bitmap, width, height);
+    vpImageConvert::BGRToGrey(const_cast<unsigned char *>(static_cast<const unsigned char *>(frame.get_data())),
+                              grey.bitmap, width, height);
   } else {
     throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
   }
@@ -452,6 +529,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
   pointcloud.resize((size_t)(width * height));
 
   const uint16_t *p_depth_frame = reinterpret_cast<const uint16_t *>(depth_frame.get_data());
+  const rs2_intrinsics depth_intrinsics = depth_frame.get_profile().as<rs2::video_stream_profile>().get_intrinsics();
 
   // Multi-threading if OpenMP
   // Concurrent writes at different locations are safe
@@ -474,7 +552,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
 
       float points[3];
       const float pixel[] = {(float)j, (float)i};
-      rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel, pixels_distance);
+      rs2_deproject_pixel_to_point(points, &depth_intrinsics, pixel, pixels_distance);
 
       if (pixels_distance > m_max_Z)
         points[0] = points[1] = points[2] = m_invalidDepthValue;
@@ -507,6 +585,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
 
 #if MANUAL_POINTCLOUD // faster to compute manually when tested
   const uint16_t *p_depth_frame = reinterpret_cast<const uint16_t *>(depth_frame.get_data());
+  const rs2_intrinsics depth_intrinsics = depth_frame.get_profile().as<rs2::video_stream_profile>().get_intrinsics();
 
   // Multi-threading if OpenMP
   // Concurrent writes at different locations are safe
@@ -527,7 +606,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
 
       float points[3];
       const float pixel[] = {(float)j, (float)i};
-      rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel, pixels_distance);
+      rs2_deproject_pixel_to_point(points, &depth_intrinsics, pixel, pixels_distance);
 
       if (pixels_distance > m_max_Z)
         points[0] = points[1] = points[2] = m_invalidDepthValue;
@@ -559,33 +638,46 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
                                  pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
   if (m_depthScale <= std::numeric_limits<float>::epsilon()) {
-    std::stringstream ss;
-    ss << "Error, depth scale <= 0: " << m_depthScale;
-    throw vpException(vpException::fatalError, ss.str());
+    throw vpException(vpException::fatalError, "Error, depth scale <= 0: %f", m_depthScale);
   }
 
   auto vf = depth_frame.as<rs2::video_frame>();
-  const int width = vf.get_width();
-  const int height = vf.get_height();
-  pointcloud->width = (uint32_t)width;
-  pointcloud->height = (uint32_t)height;
-  pointcloud->resize((size_t)(width * height));
+  const int depth_width = vf.get_width();
+  const int depth_height = vf.get_height();
+  pointcloud->width = static_cast<uint32_t>(depth_width);
+  pointcloud->height = static_cast<uint32_t>(depth_height);
+  pointcloud->resize(static_cast<uint32_t>(depth_width * depth_height));
+
+  vf = color_frame.as<rs2::video_frame>();
+  const int color_width = vf.get_width();
+  const int color_height = vf.get_height();
 
   const uint16_t *p_depth_frame = reinterpret_cast<const uint16_t *>(depth_frame.get_data());
-  const int color_width = m_colorIntrinsics.width;
-  const int color_height = m_colorIntrinsics.height;
+  const rs2_extrinsics depth2ColorExtrinsics = depth_frame.get_profile().as<rs2::video_stream_profile>().
+      get_extrinsics_to(color_frame.get_profile().as<rs2::video_stream_profile>());
+  const rs2_intrinsics depth_intrinsics = depth_frame.get_profile().as<rs2::video_stream_profile>().get_intrinsics();
+  const rs2_intrinsics color_intrinsics = color_frame.get_profile().as<rs2::video_stream_profile>().get_intrinsics();
+
   auto color_format = color_frame.as<rs2::video_frame>().get_profile().format();
-  bool swap_rgb = color_format == RS2_FORMAT_BGR8 || color_format == RS2_FORMAT_BGRA8;
-  unsigned int nb_color_pixel = (color_format == RS2_FORMAT_RGB8 || color_format == RS2_FORMAT_BGR8) ? 3 : 4;
-  const unsigned char *p_color_frame = reinterpret_cast<const unsigned char *>(color_frame.get_data());
+  const bool swap_rb = color_format == RS2_FORMAT_BGR8 || color_format == RS2_FORMAT_BGRA8;
+  const unsigned int nb_color_pixel = (color_format == RS2_FORMAT_RGB8 || color_format == RS2_FORMAT_BGR8) ? 3 : 4;
+  const unsigned char *p_color_frame = static_cast<const unsigned char *>(color_frame.get_data());
+  rs2_extrinsics identity;
+  memset(identity.rotation, 0, sizeof(identity.rotation));
+  memset(identity.translation, 0, sizeof(identity.translation));
+  for (int i = 0; i < 3; i++) {
+    identity.rotation[i*3 + i] = 1;
+  }
+  const bool registered_streams = (depth2ColorExtrinsics == identity) &&
+                                  (color_width == depth_width) && (color_height == depth_height);
 
   // Multi-threading if OpenMP
   // Concurrent writes at different locations are safe
 #pragma omp parallel for schedule(dynamic)
-  for (int i = 0; i < height; i++) {
-    auto depth_pixel_index = i * width;
+  for (int i = 0; i < depth_height; i++) {
+    auto depth_pixel_index = i * depth_width;
 
-    for (int j = 0; j < width; j++, depth_pixel_index++) {
+    for (int j = 0; j < depth_width; j++, depth_pixel_index++) {
       if (p_depth_frame[depth_pixel_index] == 0) {
         pointcloud->points[(size_t)depth_pixel_index].x = m_invalidDepthValue;
         pointcloud->points[(size_t)depth_pixel_index].y = m_invalidDepthValue;
@@ -612,68 +704,103 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
 
       float depth_point[3];
       const float pixel[] = {(float)j, (float)i};
-      rs2_deproject_pixel_to_point(depth_point, &m_depthIntrinsics, pixel, pixels_distance);
+      rs2_deproject_pixel_to_point(depth_point, &depth_intrinsics, pixel, pixels_distance);
 
-      if (pixels_distance > m_max_Z)
+      if (pixels_distance > m_max_Z) {
         depth_point[0] = depth_point[1] = depth_point[2] = m_invalidDepthValue;
+      }
 
       pointcloud->points[(size_t)depth_pixel_index].x = depth_point[0];
       pointcloud->points[(size_t)depth_pixel_index].y = depth_point[1];
       pointcloud->points[(size_t)depth_pixel_index].z = depth_point[2];
 
-      float color_point[3];
-      rs2_transform_point_to_point(color_point, &m_depth2ColorExtrinsics, depth_point);
-      float color_pixel[2];
-      rs2_project_point_to_pixel(color_pixel, &m_colorIntrinsics, color_point);
+      if (!registered_streams) {
+        float color_point[3];
+        rs2_transform_point_to_point(color_point, &depth2ColorExtrinsics, depth_point);
+        float color_pixel[2];
+        rs2_project_point_to_pixel(color_pixel, &color_intrinsics, color_point);
 
-      if (color_pixel[1] < 0 || color_pixel[1] >= color_height || color_pixel[0] < 0 || color_pixel[0] >= color_width) {
-// For out of bounds color data, default to a shade of blue in order to
-// visually distinguish holes. This color value is same as the librealsense
-// out of bounds color value.
+        if (color_pixel[1] < 0 || color_pixel[1] >= color_height || color_pixel[0] < 0 || color_pixel[0] >= color_width) {
+          // For out of bounds color data, default to a shade of blue in order to
+          // visually distinguish holes. This color value is same as the librealsense
+          // out of bounds color value.
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
-        unsigned int r = 96, g = 157, b = 198;
-        uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+          unsigned int r = 96, g = 157, b = 198;
+          uint32_t rgb = (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
-        pointcloud->points[(size_t)depth_pixel_index].rgb = *reinterpret_cast<float *>(&rgb);
+          pointcloud->points[(size_t)depth_pixel_index].rgb = *reinterpret_cast<float *>(&rgb);
 #else
-        pointcloud->points[(size_t)depth_pixel_index].r = (uint8_t)96;
-        pointcloud->points[(size_t)depth_pixel_index].g = (uint8_t)157;
-        pointcloud->points[(size_t)depth_pixel_index].b = (uint8_t)198;
+          pointcloud->points[(size_t)depth_pixel_index].r = (uint8_t)96;
+          pointcloud->points[(size_t)depth_pixel_index].g = (uint8_t)157;
+          pointcloud->points[(size_t)depth_pixel_index].b = (uint8_t)198;
 #endif
-      } else {
-        unsigned int i_ = (unsigned int)color_pixel[1];
-        unsigned int j_ = (unsigned int)color_pixel[0];
+        } else {
+          unsigned int i_ = (unsigned int)color_pixel[1];
+          unsigned int j_ = (unsigned int)color_pixel[0];
 
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
-        uint32_t rgb = 0;
-        if (swap_rgb) {
-          rgb =
-              (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) |
-               static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-               static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]) << 16);
-        } else {
-          rgb = (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) << 16 |
+          uint32_t rgb = 0;
+          if (swap_rb) {
+            rgb =
+                (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) |
                  static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-                 static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]));
-        }
+                 static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]) << 16);
+          } else {
+            rgb = (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) << 16 |
+                   static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
+                   static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]));
+          }
 
-        pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
+          pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
-        if (swap_rgb) {
-          pointcloud->points[(size_t)depth_pixel_index].b =
-              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
-          pointcloud->points[(size_t)depth_pixel_index].g =
-              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
-          pointcloud->points[(size_t)depth_pixel_index].r =
-              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
-        } else {
-          pointcloud->points[(size_t)depth_pixel_index].r =
-              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
-          pointcloud->points[(size_t)depth_pixel_index].g =
-              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
-          pointcloud->points[(size_t)depth_pixel_index].b =
-              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
+          if (swap_rb) {
+            pointcloud->points[(size_t)depth_pixel_index].b =
+                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
+            pointcloud->points[(size_t)depth_pixel_index].g =
+                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
+            pointcloud->points[(size_t)depth_pixel_index].r =
+                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
+          } else {
+            pointcloud->points[(size_t)depth_pixel_index].r =
+                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
+            pointcloud->points[(size_t)depth_pixel_index].g =
+                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
+            pointcloud->points[(size_t)depth_pixel_index].b =
+                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
+          }
+#endif
         }
+      } else {
+#if PCL_VERSION_COMPARE(<, 1, 1, 0)
+          uint32_t rgb = 0;
+          if (swap_rb) {
+            rgb =
+                (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) |
+                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1]) << 8 |
+                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2]) << 16);
+          } else {
+            rgb = (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) << 16 |
+                   static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1]) << 8 |
+                   static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2]));
+          }
+
+          pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
+#else
+          if (swap_rb) {
+            pointcloud->points[(size_t)depth_pixel_index].b =
+                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
+            pointcloud->points[(size_t)depth_pixel_index].g =
+                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
+            pointcloud->points[(size_t)depth_pixel_index].r =
+                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
+          } else {
+            pointcloud->points[(size_t)depth_pixel_index].r =
+                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
+            pointcloud->points[(size_t)depth_pixel_index].g =
+                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
+            pointcloud->points[(size_t)depth_pixel_index].b =
+                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
+          }
 #endif
       }
     }
@@ -720,26 +847,6 @@ void vpRealSense2::open(const rs2::config &cfg)
     if (rs2::depth_sensor dpt = sensor.as<rs2::depth_sensor>()) {
       m_depthScale = dpt.get_depth_scale();
     }
-  }
-
-  try {
-    auto depth_stream = m_pipelineProfile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
-    m_depthIntrinsics = depth_stream.get_intrinsics();
-
-    try {
-      auto color_stream = m_pipelineProfile.get_stream(RS2_STREAM_COLOR);
-      m_depth2ColorExtrinsics = depth_stream.get_extrinsics_to(color_stream);
-    } catch (const std::runtime_error &e) {
-      std::cout << "Error getting depth to color extrinsics: " << e.what() << std::endl;
-    }
-  } catch (const std::runtime_error &e) {
-    std::cout << "Error getting depth intrinsics: " << e.what() << std::endl;
-  }
-
-  try {
-    m_colorIntrinsics = m_pipelineProfile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>().get_intrinsics();
-  } catch (const std::runtime_error &e) {
-    std::cout << "Error getting color intrinsics: " << e.what() << std::endl;
   }
 }
 

@@ -22,7 +22,7 @@ The following example code available in tutorial-klt-tracker.cpp shows how to us
 The video shows the result of the tracking:
 
 \htmlonly
-<iframe width="420" height="315" src="http://www.youtube.com/embed/ZYOG4kJPtaM?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ZYOG4kJPtaM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
 The previous example can be run without command line options. In that case, keypoints are automatically detected before tracking.

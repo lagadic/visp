@@ -49,8 +49,7 @@ void vpTemplateTrackerMIBSpline::PutPVBsplineD(double *Prt, int cr, double er, i
     PutPVBsplineD4(Prt, cr, er, ct, et, Nc, val);
     break;
   default:
-    PutPVBsplineD3(Prt, cr, er, ct, et, Nc,
-                   val); // std::cout<<"DEFAUT"<<std::endl;
+    PutPVBsplineD3(Prt, cr, er, ct, et, Nc, val);
   }
 }
 
@@ -67,11 +66,22 @@ void vpTemplateTrackerMIBSpline::PutPVBsplineD3(double *Prt, int cr, double er, 
     et = et - 1;
   }
   double *pt = &Prt[((cr + sr) * Nc + (ct + st)) * 9];
-  for (int ir = -1; ir <= 1; ir++)
-    for (int it = -1; it <= 1; it++) {
-      *pt++ += Bspline3(ir - er) * Bspline3(it - et) * val;
-      // pt++;
+  if (std::fabs(val - 1.) > std::numeric_limits<double>::epsilon()) {
+    for (int ir = -1; ir <= 1; ir++) {
+      double Bspline3_diff_r_ = Bspline3(ir - er);
+      for (int it = -1; it <= 1; it++) {
+        *pt++ += Bspline3_diff_r_ * Bspline3(it - et) * val;
+      }
     }
+  }
+  else {
+    for (int ir = -1; ir <= 1; ir++) {
+      double Bspline3_diff_r_ = Bspline3(ir - er);
+      for (int it = -1; it <= 1; it++) {
+        *pt++ += Bspline3_diff_r_ * Bspline3(it - et);
+      }
+    }
+  }
 }
 
 void vpTemplateTrackerMIBSpline::PutPVBsplineD4(double *Prt, int cr, double er, int ct, double et, int Nc, double val)
@@ -84,29 +94,36 @@ void vpTemplateTrackerMIBSpline::PutPVBsplineD4(double *Prt, int cr, double er, 
     // pt++;
   }
   double *pt = &Prt[(cr * Nc + ct) * 16];
-  for (int ir = -1; ir <= 2; ir++) {
-    double Br = Bspline4i(ir - er, ir);
-    ptBti = &Bti[0];
-    for (int it = -1; it <= 2; it++) {
-      *pt++ += Br * *ptBti++ * val;
+  if (std::fabs(val - 1.) > std::numeric_limits<double>::epsilon()) {
+    for (int ir = -1; ir <= 2; ir++) {
+      double Br = Bspline4i(ir - er, ir);
+      ptBti = &Bti[0];
+      for (int it = -1; it <= 2; it++) {
+        *pt++ += Br * (*ptBti++) * val;
+      }
+    }
+  }
+  else {
+    for (int ir = -1; ir <= 2; ir++) {
+      double Br = Bspline4i(ir - er, ir);
+      ptBti = &Bti[0];
+      for (int it = -1; it <= 2; it++) {
+        *pt++ += Br * (*ptBti++);
+      }
     }
   }
 }
 
 double vpTemplateTrackerMIBSpline::Bspline3(double diff)
 {
-  // double result;
   double aDiff = std::fabs(diff);
-  //  if(aDiff<0.5)
-  ////    return (-(aDiff-0.5)*(aDiff-0.5)+(-aDiff+0.5)+0.5);
-  //      return (-(aDiff * aDiff) + 0.75);
-  //  else if(aDiff<1.5)
-  //    return (0.5*(1.5-aDiff)*(1.5-aDiff));
 
   if (aDiff < 1.5) {
-    if (aDiff < 0.5)
+    if (aDiff < 0.5) {
       return (-(aDiff * aDiff) + 0.75);
-    return (0.5 * (1.5 - aDiff) * (1.5 - aDiff));
+    }
+    double tmp_ = 1.5 - aDiff;
+    return (0.5 * tmp_ * tmp_);
   }
 
   return 0;
@@ -115,14 +132,19 @@ double vpTemplateTrackerMIBSpline::Bspline3(double diff)
 double vpTemplateTrackerMIBSpline::Bspline4i(double diff, int &interv)
 {
   switch (interv) {
-  case -1:
-    return ((2. + diff) * (2. + diff) * (2. + diff) / 6.);
-  case 0:
-    return (-diff * diff * diff / 2. - diff * diff + 4. / 6.);
-  case 1:
-    return (diff * diff * diff / 2. - diff * diff + 4. / 6.);
   case 2:
-    return ((2. - diff) * (2. - diff) * (2. - diff) / 6.);
+  case -1: {
+    double tmp_ = 2. + diff;
+    return (tmp_ * tmp_ * tmp_ / 6.);
+  }
+  case 0: {
+    double diff2_ = diff * diff;
+    return (-diff2_ * diff / 2. - diff2_ + 4. / 6.);
+  }
+  case 1: {
+    double diff2_ = diff * diff;
+    return (diff2_ * diff / 2. - diff2_ + 4. / 6.);
+  }
   default:
     return 0;
   }
@@ -137,28 +159,28 @@ double vpTemplateTrackerMIBSpline::dBspline3(double diff)
   else if ((diff > 0.5) && (diff <= 1.5))
     return diff - 1.5;
 
-  //  if(fabs(diff + 1.5) <= (-0.5 + 1.5))
-  //    return diff+1.5;
-  //  else if(fabs(diff + 0.5) <= (0.5 + 0.5))
-  //    return -2.*diff;
-  //  else if(fabs(diff - 0.5) <= (1.5 - 0.5))
-  //    return diff-1.5;
-
   return 0;
 }
 
 double vpTemplateTrackerMIBSpline::dBspline4(double diff)
 {
-  if ((diff > -2.) && (diff <= -1.))
-    return (diff + 2.) * (diff + 2.) / 2.;
-  else if ((diff > -1.) && (diff <= 0.))
-    return -3. * diff * diff / 2. - 2. * diff;
-  else if ((diff > 0.) && (diff <= 1.))
-    return 3. * diff * diff / 2. - 2. * diff;
-  else if ((diff > 1.) && (diff <= 2.))
-    return -(diff - 2.) * (diff - 2.) / 2.;
-  else
+  if ((diff > -2.) && (diff <= -1.)) {
+    double diff_2_ = diff + 2.;
+    return (diff_2_ * diff_2_ * 0.5);
+  }
+  else if ((diff > -1.) && (diff <= 0.)) {
+    return -1.5 * diff * diff - 2. * diff;
+  }
+  else if ((diff > 0.) && (diff <= 1.)) {
+    return 1.5 * diff * diff - 2. * diff;
+  }
+  else if ((diff > 1.) && (diff <= 2.)) {
+    double diff_2_ = diff - 2.;
+    return (- 0.5 * diff_2_ * diff_2_);
+  }
+  else {
     return 0;
+  }
 }
 
 double vpTemplateTrackerMIBSpline::d2Bspline3(double diff)
@@ -308,14 +330,6 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3(double *Prt, double *dPrt, dou
 
 void vpTemplateTrackerMIBSpline::PutTotPVBspline3(double *Prt, double &er, double *bt, unsigned int size)
 {
-//  double Br;
-//  for(short int ir=-1;ir<=1;++ir)
-//  {
-//    Br=Bspline3(-ir+er);
-
-//    for(short unsigned int it=0;it < size;++it)
-//        *Prt++ += Br * bt[it];
-//  }
 #define LSIZE 12
 
   double *bt0 = &bt[0];
@@ -377,11 +391,15 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4(double *Prt, int cr, double er
     ptdBti = &dBti[0];
     ptd2Bti = &d2Bti[0];
     for (char it = -1; it <= 2; it++) {
-      *pt++ += Br * *ptBti;
+      double Br_ptBti_ = Br * (*ptBti);
+      double Br_ptdBti_ = Br * (*ptdBti);
+      double Br_ptd2Bti_ = Br * (*ptd2Bti);
+      *pt++ += Br_ptBti_;
       for (short int ip = 0; ip < NbParam_; ip++) {
-        *pt++ -= Br * *ptdBti * val[ip];
-        for (short int ip2 = 0; ip2 < NbParam_; ip2++)
-          *pt++ += Br * *ptd2Bti * val[ip] * val[ip2];
+        *pt++ -= Br_ptdBti_ * val[ip];
+        for (short int ip2 = 0; ip2 < NbParam_; ip2++) {
+          *pt++ += Br_ptd2Bti_ * val[ip] * val[ip2];
+        }
       }
       ptBti++;
       ptdBti++;
@@ -416,15 +434,17 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4(double *Prt, double *dPrt, dou
     ptBti = &Bti[0];
     ptdBti = &dBti[0];
     ptd2Bti = &d2Bti[0];
-
     for (int it = -1; it <= 2; it++) {
       Prt[ind + it] += Br * *ptBti;
       int ind1 = ((cr + irInd) * Ncb + (ct + it)) * NbParam_;
+      int ind2 = ind1 * NbParam_;
+      double Br_ptdBti_ = Br * (*ptdBti);
+      double Br_ptd2Bti_ = Br * (*ptd2Bti);
       for (int ip = 0; ip < NbParam_; ip++) {
-        dPrt[ind1 + ip] -= Br * *ptdBti * val[ip];
-        int ind2 = ((cr + irInd) * Ncb + (ct + it)) * NbParam_ * NbParam_ + ip * NbParam_;
+        dPrt[ind1 + ip] -= Br_ptdBti_ * val[ip];
+        int ind3 = ind2 + ip * NbParam_;
         for (int ip2 = 0; ip2 < NbParam_; ip2++)
-          d2Prt[ind2 + ip2] += Br * *ptd2Bti * val[ip] * val[ip2];
+          d2Prt[ind3 + ip2] += Br_ptd2Bti_ * val[ip] * val[ip2];
       }
       ptBti++;
       ptdBti++;
@@ -525,9 +545,10 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3NoSecond(double *Prt, int &cr, 
     ptdBti = &dBti[0];
     for (char it = -1; it <= 1; it++) {
       *pt++ += Br * *ptBti;
+      double Br_ptdBti_ = Br * (*ptdBti);
       for (unsigned int ip = 0; ip < NbParam; ip++) {
-        *pt++ -= Br * *ptdBti * val[ip];
-        pt = pt + NbParam; // Modif AY
+        *pt++ -= Br_ptdBti_ * val[ip];
+        pt += NbParam; // Modif AY
       }
       //      pt=pt+NbParam*NbParam; // Modif AY
       ptBti++;
@@ -560,21 +581,25 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3NoSecond(double *Prt, double *d
     *ptdBti++ = dBspline3(-it + et);
   }
 
-  int NbParam_ = (int)NbParam;
+  int NbParam_ = static_cast<int>(NbParam);
+  int ct_st_ = ct + st;
+  int cr_sr_ = cr + sr;
 
   for (char ir = -1; ir <= 1; ir++) {
     double Br = Bspline3(-ir + er);
 
     int irInd = ir + 1;
-    int ind = (cr + sr + irInd) * Ncb;
-
+    int ind = (cr_sr_ + irInd) * Ncb;
     ptBti = &Bti[0];
     ptdBti = &dBti[0];
+
+    double Br_ptBti_ = Br * (*ptBti);
+    double Br_ptdBti_ = Br * (*ptdBti);
     for (char it = -1; it <= 1; it++) {
-      Prt[ind + (ct + st + it)] += Br * *ptBti;
-      int ind1 = ((cr + sr + irInd) * Ncb + (ct + st + it)) * NbParam_;
+      Prt[ind + (ct_st_ + it)] += Br_ptBti_;
+      int ind1 = (ind + (ct_st_ + it)) * NbParam_;
       for (short int ip = 0; ip < NbParam_; ip++) {
-        dPrt[ind1 + ip] -= Br * *ptdBti * val[ip];
+        dPrt[ind1 + ip] -= Br_ptdBti_ * val[ip];
       }
       ptBti++;
       ptdBti++;
@@ -601,9 +626,10 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4NoSecond(double *Prt, int &cr, 
     for (int it = 0; it <= 3; it++) {
       (*pt++) += Br * Bti[it];
 
+      double Br_dBti_ = Br * dBti[it];
       for (int ip = 0; ip < NbParam_; ip++) {
-        (*pt++) -= Br * dBti[it] * val[ip];
-        pt = pt + NbParam_; // Modif AY
+        (*pt++) -= Br_dBti_ * val[ip];
+        pt += NbParam_; // Modif AY
       }
       //      pt=pt+NbParam*NbParam; // Modif AY
     }
@@ -621,19 +647,21 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4NoSecond(double *Prt, double *d
     dBti[it + 1] = dBspline4(-it + et);
   }
 
-  int NbParam_ = (int)NbParam;
+  int NbParam_ = static_cast<int>(NbParam);
 
   for (int ir = -1; ir <= 2; ir++) {
     double Br = vpTemplateTrackerBSpline::Bspline4(-ir + er);
     int irInd = ir + 1;
-    int ind = (cr + irInd) * Ncb + ct;
+    int ind = (cr + irInd) * Ncb;
+    int ind1 = ind + ct;
 
     for (int it = 0; it <= 3; it++) {
-      Prt[ind + it] += Br * Bti[it];
-      int ind1 = ((cr + irInd) * Ncb + (ct + it)) * NbParam_;
+      Prt[ind1 + it] += Br * Bti[it];
+      int ind2 = (ind + (ct + it)) * NbParam_;
 
+      double Br_dBti_ = Br * dBti[it];
       for (int ip = 0; ip < NbParam_; ip++) {
-        dPrt[ind1 + ip] -= Br * dBti[it] * val[ip];
+        dPrt[ind2 + ip] -= Br_dBti_ * val[ip];
       }
     }
   }
@@ -671,7 +699,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3PrtTout(double *PrtTout, int &c
     Bti[it + 1] = Bspline3(-it + et);
   }
 
-  int NbParam_ = (int)NbParam;
+  int NbParam_ = static_cast<int>(NbParam);
   int NbParam_val = NbParam_ + NbParam_ * NbParam_;
 
   double *pt = &PrtTout[(unsigned int)(((cr + sr) * Nc + (ct + st)) * 9 * (1 + NbParam_val))];
@@ -679,7 +707,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3PrtTout(double *PrtTout, int &c
     double Br = Bspline3(-ir + er);
     for (int it = 0; it <= 2; it++) {
       (*pt++) += Br * Bti[it];
-      pt = pt + NbParam_val;
+      pt += NbParam_val;
     }
   }
 }
@@ -692,14 +720,14 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4PrtTout(double *PrtTout, int &c
     Bti[it + 1] = vpTemplateTrackerBSpline::Bspline4(-it + et);
   }
 
-  int NbParam_ = (int)NbParam;
+  int NbParam_ = static_cast<int>(NbParam);
   int NbParam_val = NbParam_ + NbParam_ * NbParam_;
   double *pt = &PrtTout[(unsigned int)((cr * Nc + ct) * 16 * (1 + NbParam_val))];
   for (int ir = -1; ir <= 2; ir++) {
     double Br = vpTemplateTrackerBSpline::Bspline4(-ir + er);
     for (int it = 0; it <= 3; it++) {
       (*pt++) += Br * Bti[it];
-      pt = pt + NbParam_val;
+      pt += NbParam_val;
     }
   }
 }
@@ -736,13 +764,15 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3Prt(double *Prt, int &cr, doubl
     Bti[it + 1] = Bspline3(-it + et);
   }
 
+  int ct_st_ = ct + st;
+  int cr_sr_ = cr + sr;
   for (int ir = -1; ir <= 1; ir++) {
     double Br = Bspline3(-ir + er);
 
     int irInd = ir + 1;
-    int ind = (cr + sr + irInd) * Ncb;
+    int ind = (cr_sr_ + irInd) * Ncb;
     for (int it = 0; it <= 2; it++) {
-      Prt[ind + (ct + st + it)] += Br * Bti[it];
+      Prt[ind + (ct_st_ + it)] += Br * Bti[it];
     }
   }
 }
@@ -763,6 +793,23 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4Prt(double *Prt, int &cr, doubl
     for (int it = 0; it <= 3; it++) {
       Prt[ind + it] += Br * Bti[it];
     }
+  }
+}
+
+void vpTemplateTrackerMIBSpline::computeProbabilities(double *Prt, int &cr, double &er, int &ct, double &et,int &Nc, double *dW,
+                                               unsigned int &NbParam, int &bspline, vpTemplateTrackerMI::vpHessienApproximationType &approx, bool use_hessien_des)
+{
+  if (approx == vpTemplateTrackerMI::HESSIAN_NONSECOND || use_hessien_des) {
+    if (bspline==3)
+      PutTotPVBspline3NoSecond(Prt, cr, er, ct, et, Nc, dW, NbParam);
+    else
+      PutTotPVBspline4NoSecond(Prt, cr, er, ct, et, Nc, dW, NbParam);
+  }
+  else {
+    if(bspline==3)
+      PutTotPVBspline3(Prt, cr, er, ct, et, Nc, dW, NbParam);
+    else
+      PutTotPVBspline4(Prt, cr, er, ct, et, Nc, dW, NbParam);
   }
 }
 

@@ -46,10 +46,10 @@ vpTemplateTrackerSSDESM::vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp)
   useCompositionnal = false;
   useInverse = false;
 
-  if (!Warp->isESMcompatible())
-    std::cerr << "The selected warp function is not appropriate for the ESM "
-                 "algorithm..."
-              << std::endl;
+  if (!Warp->isESMcompatible()) {
+    throw(vpException(vpException::badValue,
+                      "The selected warp function is not appropriate for the ESM algorithm..."));
+  }
 
   HInv.resize(nbParam, nbParam);
   HDir.resize(nbParam, nbParam);
@@ -63,8 +63,6 @@ void vpTemplateTrackerSSDESM::initHessienDesired(const vpImage<unsigned char> &I
 
 void vpTemplateTrackerSSDESM::initCompInverse(const vpImage<unsigned char> & /*I*/)
 {
-  // std::cout<<"Initialise precomputed value of ESM with templateSize: "<<
-  // templateSize<<std::endl;
   ptTemplateCompo = new vpTemplateTrackerPointCompo[templateSize];
   int i, j;
   // direct
@@ -72,9 +70,6 @@ void vpTemplateTrackerSSDESM::initCompInverse(const vpImage<unsigned char> & /*I
     i = ptTemplate[point].y;
     j = ptTemplate[point].x;
     ptTemplateCompo[point].dW = new double[2 * nbParam];
-    X1[0] = j;
-    X1[1] = i;
-    Warp->computeDenom(X1, p);
     Warp->getdWdp0(i, j, ptTemplateCompo[point].dW);
   }
 
@@ -84,9 +79,6 @@ void vpTemplateTrackerSSDESM::initCompInverse(const vpImage<unsigned char> & /*I
     i = ptTemplate[point].y;
     j = ptTemplate[point].x;
 
-    X1[0] = j;
-    X1[1] = i;
-    Warp->computeDenom(X1, p);
     ptTemplate[point].dW = new double[nbParam];
     Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx, ptTemplate[point].dW);
 
@@ -112,6 +104,13 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
   int i, j;
   double i2, j2;
   double alpha = 2.;
+
+  initPosEvalRMS(p);
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     unsigned int Nbpoint = 0;
     double erreur = 0;
@@ -145,15 +144,10 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 
         erreur += er * er;
 
-        // DIRECT
-        // dIWx=dIx.getValue(i2,j2);
-        // dIWy=dIy.getValue(i2,j2);
-
         dIWx = dIx.getValue(i2, j2) + ptTemplate[point].dx;
         dIWy = dIy.getValue(i2, j2) + ptTemplate[point].dy;
 
         // Calcul du Hessien
-        // Warp->dWarp(X1,X2,p,dW);
         Warp->dWarpCompo(X1, X2, p, ptTemplateCompo[point].dW, dW);
 
         double *tempt = new double[nbParam];
@@ -170,19 +164,14 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
       }
     }
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
     vpMatrix::computeHLM(HDir, lambdaDep, HLMDir);
 
     try {
-      // dp=(HLMInv+HLMDir).inverseByLU()*(GInv+GDir);
-      // dp=HLMInv.inverseByLU()*GInv+HLMDir.inverseByLU()*GDir;
-      // dp=HLMInv.inverseByLU()*GInv;
       dp = (HLMDir).inverseByLU() * (GDir);
     } catch (const vpException &e) {
-      // std::cout<<"probleme inversion"<<std::endl;
       throw(e);
     }
 
@@ -193,123 +182,20 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
       dp = alpha * dp;
     }
 
-    // Warp->pRondp(p,dp,p);
     p += dp;
+
+    computeEvalRMS(p);
+
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
+
     iteration++;
 
-  } while ((iteration < iterationMax));
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
+  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
 
   nbIteration = iteration;
 }
-
-/*void vpTemplateTrackerSSDESM::InitCompInverse(vpImage<unsigned char> &I)
-{
-  ptTempateCompo=new vpTemplateTrackerPointCompo[taille_template];
-  int i,j;
-  for(int point=0;point<taille_template;point++)
-  {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
-    ptTempateCompo[point].dW=new double[2*nbParam];
-    Warp->getdWdp0(i,j,ptTempateCompo[point].dW);
-  }
-
-}
-
-void vpTemplateTrackerSSDESM::track(vpImage<unsigned char> &I)
-{
-  double erreur=0,erreur_prec=1e38;
-  int Nbpoint=0;
-
-  int taillefiltre=taille_filtre_dgaussien;
-  double *fg=new double[taillefiltre+1] ;
-  getGaussianDerivativeKernel(fg, taillefiltre) ;
-  getGradX(I, dIx,fg,taillefiltre);
-  getGradY(I, dIy,fg,taillefiltre);
-  delete[] fg;
-
-  vpColVector dpinv(nbParam);
-  double lambda=lambdaDep;
-  double IW,dIWx,dIWy;
-  double Tij;
-  int iteration=0;
-  int i,j;
-  double i2,j2;
-  vpTemplateTrackerPoint *pt;
-  do
-  {
-    Nbpoint=0;
-    erreur_prec=erreur;
-    erreur=0;
-    dp=0;
-    HDir=0;
-    GDir=0;
-    GInv=0;
-    Warp->ComputeCoeff(p);
-    for(int point=0;point<taille_template;point++)
-    {
-      pt=&ptTemplate[point];
-      i=pt->y;
-      j=pt->x;
-      X1[0]=j;X1[1]=i;
-
-      Warp->ComputeDenom(X1,p);
-      Warp->warpX(X1,X2,p);
-
-      j2=X2[0];i2=X2[1];
-      if((j2<I.getWidth())&&(i2<I.getHeight())&&(i2>0)&&(j2>0))
-      {
-        //INVERSE
-        Tij=pt->val;
-        IW=I.getPixelBI(j2,i2);
-        Nbpoint++;
-        double er=(Tij-IW);
-        for(int it=0;it<nbParam;it++)
-          GInv[it]+=er*ptTemplate[point].dW[it];
-
-        erreur+=er*er;
-
-        //DIRECT COMPO
-        Tij=ptTemplate[point].val;
-        IW=I.getPixelBI(j2,i2);
-        dIWx=dIx.getPixelBI(j2,i2);
-        dIWy=dIy.getPixelBI(j2,i2);
-        Nbpoint++;
-        Warp->dWarpCompo(X1,X2,p,ptTempateCompo[point].dW,dW);
-        double *tempt=new double[nbParam];
-        for(int it=0;it<nbParam;it++)
-          tempt[it] =dW[0][it]*dIWx+dW[1][it]*dIWy;
-
-        for(int it=0;it<nbParam;it++)
-          for(int jt=0;jt<nbParam;jt++)
-            HDir[it][jt]+=tempt[it]*tempt[jt];
-
-        for(int it=0;it<nbParam;it++)
-          GDir[it]+=er*tempt[it];
-
-        delete[] tempt;
-      }
-
-
-    }
-    if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl;
-    try
-    {
-      dp=(HInv+HDir).inverseByLU()*(GInv+GDir);
-    }
-    catch(...)
-    {
-      std::cout<<"probleme inversion"<<std::endl;
-      break;
-    }
-
-    if(Compare)write_infos(p,erreur/Nbpoint);
-
-    p+=Gain*dp;
-    iteration++;
-
-  }
-  while( (iteration < IterationMax));
-
-  NbIteration=iteration;
-}*/

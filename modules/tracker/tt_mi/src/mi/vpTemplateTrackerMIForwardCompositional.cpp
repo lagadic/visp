@@ -46,7 +46,6 @@ vpTemplateTrackerMIForwardCompositional::vpTemplateTrackerMIForwardCompositional
 
 void vpTemplateTrackerMIForwardCompositional::initCompo()
 {
-  std::cout << "Initialise precomputed value of Compositionnal Direct" << std::endl;
   ptTemplateSupp = new vpTemplateTrackerPointSuppMIInv[templateSize];
   for (unsigned int point = 0; point < templateSize; point++) {
     int i = ptTemplate[point].y;
@@ -75,8 +74,6 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
 {
   initCompo();
 
-  // std::cout<<"Initialise Hessian at Desired position..."<<std::endl;
-
   dW = 0;
 
   if (blur)
@@ -84,16 +81,13 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
 
-  // double erreur=0;
   int Nbpoint = 0;
 
-  // double Tij;
   double IW, dx, dy;
   int cr, ct;
   double er, et;
 
   Nbpoint = 0;
-  // erreur=0;
 
   zeroProbabilities();
 
@@ -112,14 +106,13 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
 
     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
-      // Tij=ptTemplate[point].val;
       if (!blur)
         IW = I.getValue(i2, j2);
       else
         IW = BI.getValue(i2, j2);
 
-      dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-      dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+      dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+      dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
       cr = ptTemplateSupp[point].ct;
       er = ptTemplateSupp[point].et;
@@ -131,9 +124,6 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
       double *tptemp = new double[nbParam];
       for (unsigned int it = 0; it < nbParam; it++)
         tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
-
-      // calcul de l'erreur
-      // erreur+=(Tij-IW)*(Tij-IW);
 
       vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
 
@@ -149,34 +139,30 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
 
   vpMatrix::computeHLM(Hdesire, lambda, HLMdesire);
   HLMdesireInverse = HLMdesire.inverseByLU();
-  // std::cout<<"Hdesire = "<<Hdesire<<std::endl;
-  // std::cout<<"\tEnd initialisation..."<<std::endl;
 }
 
 void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  if (!CompoInitialised)
-    std::cout << "Compositionnal tracking no initialised\nUse "
-                 "initCompo(vpImage<unsigned char> &I) function"
-              << std::endl;
+  if (!CompoInitialised) {
+    std::cout << "Compositionnal tracking not initialised.\nUse initCompo() function." << std::endl;
+  }
   dW = 0;
 
-  if (blur)
+  if (blur) {
     vpImageFilter::filter(I, BI, fgG, taillef);
+  }
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG, fgdG, taillef);
-
-  // double erreur=0;
 
   lambda = lambdaDep;
   double MI = 0, MIprec = -1000;
 
   MI_preEstimation = -getCost(I, p);
 
+  initPosEvalRMS(p);
+
   double i2, j2;
-  // double Tij;
   double IW;
-  // unsigned
   int cr, ct;
   double er, et;
   double dx, dy;
@@ -186,11 +172,15 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
 
   int i, j;
   unsigned int iteration = 0;
+
+  double evolRMS_init = 0;
+  double evolRMS_prec = 0;
+  double evolRMS_delta;
+
   do {
     int Nbpoint = 0;
     MIprec = MI;
     MI = 0;
-    // erreur=0;
 
     zeroProbabilities();
 
@@ -208,14 +198,13 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
       Warp->computeDenom(X1, p);
       if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Nbpoint++;
-        // Tij=ptTemplate[point].val;
         if (!blur)
           IW = I.getValue(i2, j2);
         else
           IW = BI.getValue(i2, j2);
 
-        dx = 1. * dIx.getValue(i2, j2) * (Nc - 1) / 255.;
-        dy = 1. * dIy.getValue(i2, j2) * (Nc - 1) / 255.;
+        dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
+        dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
         ct = (int)((IW * (Nc - 1)) / 255.);
         et = ((double)IW * (Nc - 1)) / 255. - ct;
@@ -228,9 +217,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
         for (unsigned int it = 0; it < nbParam; it++)
           tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
 
-        // calcul de l'erreur
-        // erreur+=(Tij-IW)*(Tij-IW);
-
         if (ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
           vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
         else if (ApproxHessian == HESSIAN_0 || ApproxHessian == HESSIAN_NEW)
@@ -240,7 +226,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
       }
     }
     if (Nbpoint == 0) {
-      // std::cout<<"plus de point dans template suivi"<<std::endl;
       diverge = true;
       MI = 0;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
@@ -269,15 +254,14 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
           break;
         }
       } catch (const vpException &e) {
-        // std::cerr<<"probleme inversion"<<std::endl;
         throw(e);
       }
     }
 
     if (ApproxHessian == HESSIAN_NONSECOND)
       dp = -0.04 * dp;
-    else
-      dp = 1. * dp;
+//    else
+//      dp = 1. * dp;
 
     if (useBrent) {
       alpha = 2.;
@@ -285,12 +269,20 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
       dp = alpha * dp;
     }
     Warp->pRondp(p, dp, p);
+    computeEvalRMS(p);
+
+    if (iteration == 0) {
+      evolRMS_init = evolRMS;
+    }
 
     iteration++;
 
+    evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
+    evolRMS_prec = evolRMS;
+
   } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
-           (iteration < iterationMax));
-  // while( (MI!=MIprec) && (iteration< iterationMax) );
+           (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+
   nbIteration = iteration;
 
   MI_postEstimation = -getCost(I, p);

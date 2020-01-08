@@ -402,6 +402,15 @@ public:
     }
   }
 
+  /*!
+    Equal to comparison operator of a 2D array.
+  */
+  bool operator==(const vpArray2D<Type>& A) const;
+  /*!
+    Not equal to comparison operator of a 2D array.
+  */
+  bool operator!=(const vpArray2D<Type>& A) const;
+
   //! Set all the elements of the array to \e x.
   vpArray2D<Type> &operator=(Type x)
   {
@@ -936,6 +945,56 @@ template <class Type> vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<
   }
 
   return out;
+}
+
+template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type>& A) const
+{
+  if (A.rowNum != rowNum || A.colNum != colNum) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < A.size(); i++) {
+    if (data[i] != A.data[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double>& A) const
+{
+  if (A.rowNum != rowNum || A.colNum != colNum) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < A.size(); i++) {
+    if (fabs(data[i] - A.data[i]) > std::numeric_limits<double>::epsilon()) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float>& A) const
+{
+  if (A.rowNum != rowNum || A.colNum != colNum) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < A.size(); i++) {
+    if (fabsf(data[i] - A.data[i]) > std::numeric_limits<float>::epsilon()) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type>& A) const
+{
+  return !(*this == A);
 }
 
 #endif

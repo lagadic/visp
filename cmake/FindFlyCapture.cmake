@@ -49,24 +49,27 @@ set(FLYCAPTURE_VERSION "n/a")
 if(MSVC)
   if(CMAKE_CL_64)
     list(APPEND FLYCAPTURE_INC_SEARCH_PATH "C:/Program Files/Point Grey Research/FlyCapture2/include")
+    list(APPEND FLYCAPTURE_INC_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/include/flycapture")
     list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "C:/Program Files/Point Grey Research/FlyCapture2/lib64")
+    list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/lib64")
   else()
     list(APPEND FLYCAPTURE_INC_SEARCH_PATH "C:/Program Files (x86)/Point Grey Research/FlyCapture2/include")
+    list(APPEND FLYCAPTURE_INC_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/include/flycapture")
     list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "C:/Program Files (x86)/Point Grey Research/FlyCapture2/lib")
+    list(APPEND FLYCAPTURE_LIB_SEARCH_PATH "$ENV{FLYCAPTURE_HOME}/lib")
   endif()
 endif()
 
 find_path(FLYCAPTURE_INCLUDE_DIRS FlyCapture2.h
   PATHS
-    $ENV{FLYCAPTURE_HOME}/include/flycapture
     ${FLYCAPTURE_INC_SEARCH_PATH}
 )
 
 find_library(FLYCAPTURE_LIBRARIES
   NAMES flycapture FlyCapture2 FlyCapture2_v100
   PATHS 
-    $ENV{FLYCAPTURE_HOME}/lib
     ${FLYCAPTURE_LIB_SEARCH_PATH}
+  NO_DEFAULT_PATH
 )
 
 if(FLYCAPTURE_LIBRARIES AND FLYCAPTURE_INCLUDE_DIRS)

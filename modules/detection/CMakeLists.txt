@@ -69,6 +69,11 @@ if(WITH_APRILTAG)
   endif()
 endif()
 
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
+
 vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES} WRAP java)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})

@@ -50,6 +50,14 @@ class vpMomentCentered; // Required for discrete case of vpMomentObject
 
   \brief Class handling the surface moment.
 
+  For a dense planar object, the area corresponds to the zero-order moment:
+  \f[ a = m_{00} = \mu_{00} \f]
+
+  When considering a discrete set of points, the moment \f$ m_{00} \f$ simply
+  corresponds to the number of points. Since this is of no use in a servoing
+  scheme, this class uses in this case \f$ a = \mu_{20} + \mu_{02} \f$, which is
+  invariant to planar translation and rotation.
+
 */
 class VISP_EXPORT vpMomentArea : public vpMoment
 {

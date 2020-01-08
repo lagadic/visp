@@ -39,10 +39,30 @@
 set(CTEST_PROJECT_NAME "ViSP")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 GMT")
 
-set(CTEST_DROP_METHOD "http")
-set(CTEST_DROP_SITE "cdash.inria.fr")
-set(CTEST_DROP_LOCATION "/CDash/submit.php?project=ViSP")
+set(CTEST_DROP_METHOD "https")
+set(CTEST_DROP_SITE "cdash-ci.inria.fr")
+set(CTEST_DROP_LOCATION "/submit.php?project=ViSP")
 set(CTEST_DROP_SITE_CDASH TRUE)
+
+#--------------------------------------------------------------------
+# Prepare valgrind suppression file
+#--------------------------------------------------------------------
+if(UNIX)
+  # Prepare a temporary file to concatenate to
+  file(WRITE "${VISP_BINARY_DIR}/valgrind.supp.in" "")
+
+  # Concatenate all suppression files in
+  file(GLOB suppression_files "${VISP_SOURCE_DIR}/platforms/scripts/valgrind/*.supp")
+  foreach(f ${suppression_files})
+    vp_cat_file(${f} "${VISP_BINARY_DIR}/valgrind.supp.in")
+  endforeach()
+
+  # Copy the temporary file to the final location
+  configure_file("${VISP_BINARY_DIR}/valgrind.supp.in" "${VISP_BINARY_DIR}/valgrind.supp" COPYONLY)
+
+  # Valgrind false positive suppression file
+  set(MEMORYCHECK_SUPPRESSIONS_FILE "${VISP_BINARY_DIR}/valgrind.supp")
+endif()
 
 #--------------------------------------------------------------------
 # BUILNAME variable construction

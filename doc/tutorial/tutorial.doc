@@ -46,6 +46,7 @@ This page introduces the user to the way to exploit ViSP with iOS devices.
 - \subpage tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \subpage tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices. 
 - \subpage tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker on iOS devices. 
+- \subpage tutorial-detection-apriltag-ios-realtime <br>This tutorial shows how to do detect in realtime an AprilTag marker on iOS devices. 
 
 */
 
@@ -208,6 +209,8 @@ This page introduces the user to the way to achieve a visual servoing.
 - \subpage tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \subpage tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \subpage tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
+- \subpage tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
+- \subpage tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
 
 */
 

@@ -28,6 +28,8 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-but-set-parameter")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-float-equal")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
   endif()
 
   if(CXX_FLAGS_MUTE_WARNINGS)

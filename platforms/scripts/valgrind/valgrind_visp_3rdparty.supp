@@ -1,0 +1,160 @@
+
+###################################################################
+#
+# Errors that occured on visp-osx-10-9-mavericks ci
+#
+###################################################################
+
+#==12048== 432 (80 direct, 352 indirect) bytes in 1 blocks are definitely lost in loss record 94 of 136
+#==12048==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==12048==    by 0xBBFA06: __Balloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0xBC02A5: __d2b_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0xBBCED6: __dtoa (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0xBE48A9: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0xC0B2DA: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0xBF0F66: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0xBF0FC5: vsnprintf_l (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0xBE14DC: snprintf (in /usr/lib/system/libsystem_c.dylib)
+#==12048==    by 0x13747B: pugi::xml_text::set(double) (pugixml.cpp:4668)
+#==12048==    by 0x13788D: pugi::xml_text::operator=(double) (pugixml.cpp:6558)
+#==12048==    by 0x6C55F: vpXmlParserCamera::Impl::write_camera(pugi::xml_node&) (vpXmlParserCamera.cpp:771)
+{
+   visp-osx-pugi
+   Memcheck:Leak
+   ...
+   fun:_ZN4pugi8xml_textaSEd
+}
+
+###################################################################
+#
+# Errors that occured on flylab-gs3 running ubuntu 18.04
+#
+###################################################################
+
+#==11891== 8 bytes in 1 blocks are still reachable in loss record 4 of 15
+#==11891==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==11891==    by 0x533FDA9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+#==11891==    by 0x5352EC5: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+#==11891==    by 0x5353C9F: cv::Mat::zeros(int, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+#==11891==    by 0x10B312: main (testCameraParametersConversion.cpp:130)
+{
+   visp-linux-opencv-cv::Mat::zeros
+   Memcheck:Leak
+   ...
+   fun:_ZN2cv3Mat5zerosEiii
+}
+
+#==12139== 16 bytes in 1 blocks are still reachable in loss record 92 of 282
+#==12139==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==12139==    by 0x5611E59: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+#==12139==    by 0x55BA215: cv::ocl::useOpenCL() (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+#==12139==    by 0x695FD5D: cv::cvtColor(cv::_InputArray const&, cv::_OutputArray const&, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+#==12139==    by 0x50B2B7C: vpImageConvert::convert(vpImage<vpRGBa> const&, cv::Mat&) (vpImageConvert.cpp:888)
+#==12139==    by 0x10C0F3: main (testConversion.cpp:503)
+{
+   visp-linux-opencv-cv::ocl::useOpenCL
+   Memcheck:Leak
+   ...
+   fun:_ZN2cv3ocl9useOpenCLEv
+}
+
+#==12224== 128 bytes in 1 blocks are still reachable in loss record 248 of 282
+#==12224==    at 0x4C3089F: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==12224==    by 0x976573B: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12224==    by 0x975C17B: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12224==    by 0x976597D: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12224==    by 0x9771F74: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12224==    by 0x97678E6: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12224==    by 0x9767928: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12224==    by 0x9765B3C: tbb::internal::allocate_root_with_context_proxy::allocate(unsigned long) const (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12224==    by 0x55CAF8D: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+#==12224==    by 0x695822D: cv::hal::cvtBGRtoBGR(unsigned char const*, unsigned long, unsigned char*, unsigned long, int, int, int, int, int, bool) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+#==12224==    by 0x6960883: cv::cvtColor(cv::_InputArray const&, cv::_OutputArray const&, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+#==12224==    by 0x50B2B7C: vpImageConvert::convert(vpImage<vpRGBa> const&, cv::Mat&) (vpImageConvert.cpp:888)
+#==12224==    by 0x10C0F3: main (testConversion.cpp:503)
+{
+   visp-linux-opencv-tbb::internal::allocate_root_with_context_proxy::allocate
+   Memcheck:Leak
+   ...
+   fun:_ZNK3tbb8internal32allocate_root_with_context_proxy8allocateEm
+}
+
+#==12310== 1,560 bytes in 3 blocks are still reachable in loss record 269 of 282
+#==12310==    at 0x4C3089F: operator new[](unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==12310==    by 0x976B752: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12310==    by 0x976BA6F: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12310==    by 0x9768AFB: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12310==    by 0x9767992: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12310==    by 0x9765D60: tbb::internal::get_initial_auto_partitioner_divisor() (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+#==12310==    by 0x55CAFD6: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+#==12310==    by 0x695822D: cv::hal::cvtBGRtoBGR(unsigned char const*, unsigned long, unsigned char*, unsigned long, int, int, int, int, int, bool) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+#==12310==    by 0x6960883: cv::cvtColor(cv::_InputArray const&, cv::_OutputArray const&, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+#==12310==    by 0x50B2B7C: vpImageConvert::convert(vpImage<vpRGBa> const&, cv::Mat&) (vpImageConvert.cpp:888)
+#==12310==    by 0x10C0F3: main (testConversion.cpp:503)
+{
+   visp-linux-opencv-tbb::internal::get_initial_auto_partitioner_divisor
+   Memcheck:Leak
+   ...
+   fun:_ZN3tbb8internal36get_initial_auto_partitioner_divisorEv
+}
+
+#==13092== 8 bytes in 1 blocks are still reachable in loss record 12 of 345
+#==13092==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==13092==    by 0x57CE259: SoConfigSettings::getInstance() (in /usr/lib/x86_64-linux-gnu/libCoin.so.80.0.0)
+#==13092==    by 0x57D13E0: SoDB::init() (in /usr/lib/x86_64-linux-gnu/libCoin.so.80.0.0)
+#==13092==    by 0x4F81421: vpMbTracker::loadVRMLModel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (vpMbTracker.cpp:1530)
+#==13092==    by 0x4F70064: vpMbTracker::loadModel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, vpHomogeneousMatrix const&) (vpMbTracker.cpp:1485)
+#==13092==    by 0x4F402EC: vpMbGenericTracker::loadModel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, vpHomogeneousMatrix const&, vpHomogeneousMatrix const&) (vpMbGenericTracker.cpp:2866)
+#==13092==    by 0x114931: bool (anonymous namespace)::run<unsigned char>(vpImage<unsigned char>&, vpImage<unsigned char>&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, bool, bool, int, int, bool, bool) [clone .constprop.350] (testGenericTracker.cpp:319)
+#==13092==    by 0x10ED3D: main (testGenericTracker.cpp:605)
+{
+   visa-coin-SoConfigSettings::getInstance
+   Memcheck:Leak
+   ...
+   fun:_ZN16SoConfigSettings11getInstanceEv
+}
+
+#==13232== 16 bytes in 1 blocks are indirectly lost in loss record 106 of 345
+#==13232==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==13232==    by 0x574D37B: SoFieldData::copy(SoFieldData const*) (in /usr/lib/x86_64-linux-gnu/libCoin.so.80.0.0)
+#==13232==    by 0x5783FB6: SoGlobalField::setName(SbName const&) (in /usr/lib/x86_64-linux-gnu/libCoin.so.80.0.0)
+#==13232==    by 0x5784076: SoGlobalField::SoGlobalField(SbName const&, SoField*) (in /usr/lib/x86_64-linux-gnu/libCoin.so.80.0.0)
+#==13232==    by 0x57D0926: SoDB::createGlobalField(SbName const&, SoType) (in /usr/lib/x86_64-linux-gnu/libCoin.so.80.0.0)
+#==13232==    by 0x57D1740: SoDB::init() (in /usr/lib/x86_64-linux-gnu/libCoin.so.80.0.0)
+#==13232==    by 0x4F81421: vpMbTracker::loadVRMLModel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (vpMbTracker.cpp:1530)
+#==13232==    by 0x4F70064: vpMbTracker::loadModel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, vpHomogeneousMatrix const&) (vpMbTracker.cpp:1485)
+#==13232==    by 0x4F402EC: vpMbGenericTracker::loadModel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, vpHomogeneousMatrix const&, vpHomogeneousMatrix const&) (vpMbGenericTracker.cpp:2866)
+#==13232==    by 0x114931: bool (anonymous namespace)::run<unsigned char>(vpImage<unsigned char>&, vpImage<unsigned char>&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool, bool, bool, int, int, bool, bool) [clone .constprop.350] (testGenericTracker.cpp:319)
+#==13232==    by 0x10ED3D: main (testGenericTracker.cpp:605)
+{
+   visp-coin-SoDB::createGlobalField
+   Memcheck:Leak
+   ...
+   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
+}
+
+#==13933== 32 bytes in 1 blocks are still reachable in loss record 118 of 266
+#==13933==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==13933==    by 0x9ABC7E4: _dlerror_run (dlerror.c:140)
+#==13933==    by 0x9ABC050: dlopen@@GLIBC_2.2.5 (dlopen.c:87)
+#==13933==    by 0x22615130: ??? (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
+#==13933==    by 0x22611CA1: ??? (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
+#==13933==    by 0x22613983: ??? (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
+#==13933==    by 0x226141F9: lt_dlopenadvise (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
+#==13933==    by 0x226142BF: lt_dlopenext (in /usr/lib/x86_64-linux-gnu/libltdl.so.7.3.1)
+#==13933==    by 0x10263AA6: gp_abilities_list_load_dir (in /usr/lib/x86_64-linux-gnu/libgphoto2.so.6.0.0)
+#==13933==    by 0x10263E18: gp_abilities_list_load (in /usr/lib/x86_64-linux-gnu/libgphoto2.so.6.0.0)
+#==13933==    by 0x7974D78: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_videoio.so.3.2.0)
+#==13933==    by 0x797AD64: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_videoio.so.3.2.0)
+#==13933==    by 0x797AE97: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_videoio.so.3.2.0)
+#==13933==    by 0x795C3E9: cv::VideoCapture::open(cv::String const&, int) (in /usr/lib/x86_64-linux-gnu/libopencv_videoio.so.3.2.0)
+#==13933==    by 0x507FA50: vpVideoReader::getProperties() (vpVideoReader.cpp:136)
+#==13933==    by 0x5080340: vpVideoReader::open(vpImage<vpRGBa>&) (vpVideoReader.cpp:177)
+#==13933==    by 0x10A01C: main (videoReader.cpp:250)
+{
+   visp-opencv-dlopen
+   Memcheck:Leak
+   ...
+   fun:dlopen@@GLIBC_2.2.5
+}
+

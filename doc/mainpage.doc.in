@@ -60,7 +60,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
-- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker on iOS devices. 
+- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker in an image on iOS devices. 
+- \ref tutorial-detection-apriltag-ios-realtime <br>This tutorial shows how to do detect in realtime an AprilTag marker on iOS devices. 
 
 \subsection tuto_java ViSP for Java
 
@@ -182,6 +183,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \ref tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \ref tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
+- \ref tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
+- \ref tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
 
 \subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB)
 
@@ -603,6 +606,12 @@ scheme, ...</p>
   \defgroup group_robot_real_template New robot interface (template)
   Template for users that want to integrate their own real-robot.
 */
+/*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_drone Drone
+  Flying robot interfaces.
+*/
+
 /*!
   \ingroup module_robot
   \defgroup group_robot_haptic Haptic devices

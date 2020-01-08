@@ -47,67 +47,6 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 
-#ifdef VISP_MOMENTS_COMBINE_MATRICES
-
-class vpMomentDatabase;
-/*!
-  \class vpFeatureMomentAlpha
-
-  \ingroup group_visual_features
-
-  \brief Functionality computation for in-plane rotation moment feature \f$
-  \alpha \f$. Computes the interaction matrix associated with vpMomentAlpha.
-
-  The interaction matrix for the feature can be deduced from \cite Tahri05z.
-
-  This class allows to compute the interaction matrix associated to \f$ \alpha
-  = \frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$ moment
-  primitive.
-
-  The interaction matrix computed is single-dimension (no selection possible)
-  and can be obtained by calling vpFeatureMomentAlpha::interaction().
-
-  This feature is often used in moment-based visual servoing to control the
-  planar rotation parameter.
-
-  Minimum vpMomentObject order needed to compute this feature: 4.
-
-  This feature depends on:
-  - vpMomentCentered
-  - vpFeatureMomentCentered.
-*/
-class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment
-{
-public:
-  /*!
-  Initializes the feature with information about the database of moment
-  primitives, the object plane and feature database. \param moments : Moment
-  database. The database of moment primitives (first parameter) is mandatory.
-  It is used to access different moment values later used to compute the final
-  matrix. \param A : Plane coefficient in a \f$ A \times x+B \times y + C =
-  \frac{1}{Z} \f$ plane. \param B : Plane coefficient in a \f$ A \times x+B
-  \times y + C = \frac{1}{Z} \f$ plane. \param C : Plane coefficient in a \f$
-  A \times x+B \times y + C = \frac{1}{Z} \f$ plane. \param featureMoments :
-  Feature database.
-
-  */
-  vpFeatureMomentAlpha(vpMomentDatabase &moments, double A, double B, double C,
-                       vpFeatureMomentDatabase *featureMoments = NULL)
-    : vpFeatureMoment(moments, A, B, C, featureMoments, 1)
-  {
-  }
-
-  void compute_interaction();
-  /*!
-    associated moment name
-    */
-  const char *momentName() const { return "vpMomentAlpha"; }
-  /*!
-    feature name
-    */
-  const char *name() const { return "vpFeatureMomentAlpha"; }
-};
-#else
 class vpMomentDatabase;
 /*!
   \class vpFeatureMomentAlpha
@@ -116,6 +55,8 @@ class vpMomentDatabase;
 
   \brief Functionality computation for in-plane rotation moment feature \f$
 \alpha \f$: computes the interaction matrix associated with vpMomentAlpha.
+
+The interaction matrix for the feature can be deduced from \cite Tahri05z.
 
   This class computes the interaction matrix associated to \f$ \alpha =
 \frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$ moment primitive.
@@ -193,5 +134,4 @@ public:
 
   vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
 };
-#endif
 #endif

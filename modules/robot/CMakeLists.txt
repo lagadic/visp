@@ -103,6 +103,11 @@ if(USE_JACOSDK)
   list(APPEND opt_libs ${JACOSDK_LIBRARIES})
 endif()
 
+if(USE_FLIRPTUSDK)
+  list(APPEND opt_incs ${FLIRPTUSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${FLIRPTUSDK_LIBRARIES})
+endif()
+
 if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
   # Under Unix we need Aria, pthread, dl and rt libraries
   list(APPEND opt_incs ${ARIA_INCLUDE_DIRS})
@@ -131,6 +136,15 @@ if(USE_FRANKA)
        break()
     endif()
   endforeach()
+endif()
+
+if(USE_ARSDK)
+  list(APPEND opt_incs ${ARSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${ARSDK_LIBRARIES})
+  if(USE_FFMPEG)
+    list(APPEND opt_incs ${FFMPEG_INCLUDE_DIRS})
+    list(APPEND opt_libs ${FFMPEG_LIBRARIES})
+  endif()
 endif()
 
 # for the wireframe simulator we can use optional opengl and coin
@@ -205,8 +219,8 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose
-  CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp )
+  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose bebop2
+  CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp servo-flir-ptu/testRobotFlirPtu.cpp)
 
 if(USE_VIRTUOSE)
   # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
@@ -216,4 +230,12 @@ if(USE_VIRTUOSE)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp -Wno-int-to-pointer-cast)
+endif()
+
+if(USE_ARSDK)
+  vp_set_source_file_compile_flag(src/real-robot/bebop2/vpRobotBebop2.cpp -Wno-old-style-cast -Wno-implicit-fallthrough -Wno-cast-qual -Wno-deprecated-declarations)
+endif()
+
+if(USE_FLIRPTUSDK)
+  vp_set_source_file_compile_flag(test/servo-flir-ptu/testRobotFlirPtu.cpp -Wno-unused-result)
 endif()
