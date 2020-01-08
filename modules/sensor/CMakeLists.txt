@@ -105,12 +105,7 @@ if(USE_PCL)
   # with these names.
   # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
   # will be not able to give the names of PCL libraries when used without CMake.
-
-  set(PCL_REQUIRED_COMPONENTS ${PCL_LIBRARIES})
-  vp_list_filterout(PCL_REQUIRED_COMPONENTS "pcl_*")
-  list(APPEND PCL_REQUIRED_COMPONENTS "pcl_common" "pcl_visualization" "pcl_io")
-
-  foreach(lib_ ${PCL_REQUIRED_COMPONENTS})
+  foreach(lib_ ${PCL_LIBRARIES})
     if(TARGET ${lib_})
       # This is a PCL or VTK library
       list(APPEND PCL_VTK_LIBRARIES ${lib_})
