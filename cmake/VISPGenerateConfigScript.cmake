@@ -239,8 +239,11 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     # prepend with ViSP own modules first
     set(VISP_CONFIG_LIBS_SCRIPT "")
     foreach(m ${VISP_MODULES_BUILD})
-      get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME)
-      list(APPEND VISP_CONFIG_LIBS_SCRIPT "$PREFIX/${VISP_LIB_INSTALL_PATH}/${m_libname}")
+      # exclude visp_java* modules that doesn't lead to a library
+      if(NOT m MATCHES "^visp_java")
+        get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME)
+        list(APPEND VISP_CONFIG_LIBS_SCRIPT "$PREFIX/${VISP_LIB_INSTALL_PATH}/${m_libname}")
+      endif()
     endforeach()
     # append deps
     foreach(m ${VISP_MODULES_BUILD})
@@ -309,8 +312,11 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     # prepend with ViSP own modules first
     set(VISP_CONFIG_LIBS_PC "")
     foreach(m ${VISP_MODULES_BUILD})
-      get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME)
-      list(APPEND VISP_CONFIG_LIBS_PC "\${libdir}/${m_libname}")
+      # exclude visp_java* module that doesn't lead to a library
+      if(NOT m MATCHES "^visp_java")
+        get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME)
+        list(APPEND VISP_CONFIG_LIBS_PC "\${libdir}/${m_libname}")
+      endif()
     endforeach()
     # append deps
     foreach(m ${VISP_MODULES_BUILD})
@@ -378,9 +384,12 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     set(TMP_SCRIPT_LIBS_DBG "")
     set(TMP_SCRIPT_LIBS_OPT "")
     foreach(m ${VISP_MODULES_BUILD})
-      get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME_WE)
-      list(APPEND TMP_SCRIPT_LIBS_DBG "${m_libname}${VISP_DEBUG_POSTFIX}.lib")
-      list(APPEND TMP_SCRIPT_LIBS_OPT "${m_libname}.lib")
+      # exclude visp_java* module that doesn't lead to a library
+      if(NOT m MATCHES "^visp_java")
+        get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME_WE)
+        list(APPEND TMP_SCRIPT_LIBS_DBG "${m_libname}${VISP_DEBUG_POSTFIX}.lib")
+        list(APPEND TMP_SCRIPT_LIBS_OPT "${m_libname}.lib")
+      endif()
     endforeach()
 
     # append deps

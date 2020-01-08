@@ -178,9 +178,17 @@ if(USE_PCL)
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
 
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
+      # Filter -lm into find_library(m) to get the full path of the library
       foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
         string(REGEX REPLACE "\\$<LINK_ONLY:" "" lib_ ${lib_})
         string(REGEX REPLACE ">" "" lib_ ${lib_})
+
+        if(lib_ MATCHES "^-l")
+          string(REGEX REPLACE "-l" "" lib_ ${lib_})
+          find_library(lib_LOCATION ${lib_})
+          set(lib_ ${lib_LOCATION})
+        endif()
+
         list(APPEND PCL_VTK_LIBS ${lib_})
       endforeach()
       vp_list_unique(PCL_VTK_LIBS)
