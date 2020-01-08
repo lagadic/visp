@@ -282,8 +282,8 @@ vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow
 
 if(USE_EIGEN3)
   vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
-  vp_set_source_file_compile_flag(test/math/perfMatrixMultiplication.cpp -Wno-strict-overflow -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy)
-  vp_set_source_file_compile_flag(test/math/perfMatrixTranspose.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy)
+  vp_set_source_file_compile_flag(test/math/perfMatrixMultiplication.cpp -Wno-strict-overflow -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wint-in-bool-context)
+  vp_set_source_file_compile_flag(test/math/perfMatrixTranspose.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wint-in-bool-context)
 endif()
 
 if(USE_XML2)
