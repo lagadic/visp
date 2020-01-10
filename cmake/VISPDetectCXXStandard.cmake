@@ -30,7 +30,8 @@ set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_98})
 set(CMAKE_CXX_STANDARD_REQUIRED FALSE)
 
 if(CMAKE_CXX98_COMPILE_FEATURES)
-  set(CXX98_STANDARD_FOUND ON)
+  set(CXX98_STANDARD_FOUND ON CACHE STRING "cxx98 standard")
+  mark_as_advanced(CXX98_STANDARD_FOUND)
 endif()
 
 if(CMAKE_CXX11_COMPILE_FEATURES)
@@ -38,16 +39,19 @@ if(CMAKE_CXX11_COMPILE_FEATURES)
   # That's why we check more in depth for cxx_override that is not available with g++ 4.6.3
   list (FIND CMAKE_CXX11_COMPILE_FEATURES "cxx_override" _index)
   if (${_index} GREATER -1)
-    set(CXX11_STANDARD_FOUND ON)
+    set(CXX11_STANDARD_FOUND ON CACHE STRING "cxx11 standard")
+    mark_as_advanced(CXX11_STANDARD_FOUND)
   endif()
 endif()
 
 if(CMAKE_CXX14_COMPILE_FEATURES)
-  set(CXX14_STANDARD_FOUND ON)
+  set(CXX14_STANDARD_FOUND ON CACHE STRING "cxx14 standard")
+  mark_as_advanced(CXX14_STANDARD_FOUND)
 endif()
 
 if(CMAKE_CXX17_COMPILE_FEATURES)
-  set(CXX17_STANDARD_FOUND ON)
+  set(CXX17_STANDARD_FOUND ON CACHE STRING "cxx17 standard")
+  mark_as_advanced(CXX17_STANDARD_FOUND)
 endif()
 
 # Set default c++ standard to 11, the first in the list
