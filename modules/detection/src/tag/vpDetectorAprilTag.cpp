@@ -133,6 +133,79 @@ public:
     m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
   }
 
+  Impl(const Impl &o)
+    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily),
+      m_td(NULL), m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
+  {
+    switch (m_tagFamily) {
+    case TAG_36h11:
+      m_tf = tag36h11_create();
+      break;
+
+    case TAG_36h10:
+      m_tf = tag36h10_create();
+      break;
+
+    case TAG_36ARTOOLKIT:
+      break;
+
+    case TAG_25h9:
+      m_tf = tag25h9_create();
+      break;
+
+    case TAG_25h7:
+      m_tf = tag25h7_create();
+      break;
+
+    case TAG_16h5:
+      m_tf = tag16h5_create();
+      break;
+
+    case TAG_CIRCLE21h7:
+      m_tf = tagCircle21h7_create();
+      break;
+
+    case TAG_CIRCLE49h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagCircle49h12_create();
+#endif
+      break;
+
+    case TAG_CUSTOM48h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagCustom48h12_create();
+#endif
+      break;
+
+    case TAG_STANDARD52h13:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagStandard52h13_create();
+#endif
+      break;
+
+    case TAG_STANDARD41h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagStandard41h12_create();
+#endif
+      break;
+
+    default:
+      throw vpException(vpException::fatalError, "Unknow Tag family!");
+    }
+
+    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
+      m_td = apriltag_detector_create();
+      apriltag_detector_add_family(m_td, m_tf);
+    }
+
+    m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
+    m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
+
+    if (o.m_detections != NULL) {
+      m_detections = apriltag_detections_copy(o.m_detections);
+    }
+  }
+
   ~Impl()
   {
     if (m_td) {
@@ -661,6 +734,20 @@ vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
 {
 }
 
+vpDetectorAprilTag::vpDetectorAprilTag(const vpDetectorAprilTag &o)
+  : vpDetectorBase (o),
+    m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
+    m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagFamily(o.m_tagFamily), m_defaultCam(),
+    m_impl(new Impl(*o.m_impl))
+{
+}
+
+vpDetectorAprilTag &vpDetectorAprilTag::operator=(vpDetectorAprilTag o)
+{
+  swap(*this, o);
+  return *this;
+}
+
 vpDetectorAprilTag::~vpDetectorAprilTag() { delete m_impl; }
 
 /*!
@@ -895,6 +982,13 @@ vp_deprecated void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose)
   m_impl->setRefinePose(refinePose);
 }
 #endif
+
+void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
+{
+  using std::swap;
+
+  swap(o1.m_impl, o2.m_impl);
+}
 
 /*!
  * Modify the resulting tag pose returned by getPose() in order to get

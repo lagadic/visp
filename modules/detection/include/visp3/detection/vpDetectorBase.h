@@ -74,6 +74,7 @@ public:
      Default constructor.
    */
   vpDetectorBase();
+  vpDetectorBase(const vpDetectorBase &o);
   /*!
      Default destructor.
      */

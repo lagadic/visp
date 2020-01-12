@@ -244,6 +244,8 @@ public:
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
                      const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
+  vpDetectorAprilTag(const vpDetectorAprilTag &o);
+  vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
   virtual ~vpDetectorAprilTag();
 
   bool detect(const vpImage<unsigned char> &I);
@@ -282,6 +284,8 @@ public:
     m_displayTagThickness = thickness;
   }
 
+  friend void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
+
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
 
 protected:
@@ -292,8 +296,6 @@ protected:
   vpAprilTagFamily m_tagFamily;
 
 private:
-  vpDetectorAprilTag(const vpDetectorAprilTag &);            // noncopyable
-  vpDetectorAprilTag &operator=(const vpDetectorAprilTag &); //
   vpCameraParameters m_defaultCam;
 
   // PIMPL idiom
