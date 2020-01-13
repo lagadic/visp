@@ -56,9 +56,7 @@ int main(int argc, char **argv)
     if (std::string(argv[i]) == "--no-display" || std::string(argv[i]) == "-d")
       opt_no_display = true;
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0]
-                << " [--no-display] [-d] [--help] [-h]\n"
-                << std::endl;
+      std::cout << "\nUsage: " << argv[0] << " [--no-display] [-d] [--help] [-h]\n" << std::endl;
       return 0;
     }
   }
@@ -84,7 +82,7 @@ int main(int argc, char **argv)
   }
 #endif
 
-  if ( ! iit_ft.connected() ) {
+  if (!iit_ft.connected()) {
     std::cout << "Unable to connect to IIT force-torque sensor" << std::endl;
     return EXIT_SUCCESS;
   }

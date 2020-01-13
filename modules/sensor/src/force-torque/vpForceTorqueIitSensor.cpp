@@ -51,9 +51,9 @@
 
   Establish communication with sensor(-s) and start data acquisition thread.
 */
-vpForceTorqueIitSensor::vpForceTorqueIitSensor() :
-  m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false), m_connected(false), m_acquisitionThread(),
-  m_timeCur(), m_timePrev(), m_mutex(), m_warmup_milliseconds(500)
+vpForceTorqueIitSensor::vpForceTorqueIitSensor()
+  : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false),
+    m_connected(false), m_acquisitionThread(), m_timeCur(), m_timePrev(), m_mutex(), m_warmup_milliseconds(500)
 {
   // Get number of connected in library sensors
   m_numSensorsInLib = m_ftLib._getNumberOfConnectedSensors();
@@ -69,7 +69,7 @@ vpForceTorqueIitSensor::vpForceTorqueIitSensor() :
    *      recording will not start with the streaming thread, but
    *      the moment for when the recording will start & stop.
    */
-  if ( m_ftLib._configureStreaming( false, 0 ) == 0 ) {
+  if (m_ftLib._configureStreaming(false, 0) == 0) {
     // Start the main acquisition thread
     m_ftLib._startStreamingThread();
 
@@ -90,16 +90,14 @@ void vpForceTorqueIitSensor::close()
 /*!
   Destructor that stops streaming
  */
-vpForceTorqueIitSensor::~vpForceTorqueIitSensor()
-{
-  this->close();
-}
+vpForceTorqueIitSensor::~vpForceTorqueIitSensor() { this->close(); }
 
 /*!
    Join acquisition thread.
  */
-void vpForceTorqueIitSensor::join() {
-  if ( m_acquisitionThread.joinable() ) {
+void vpForceTorqueIitSensor::join()
+{
+  if (m_acquisitionThread.joinable()) {
     m_acquisitionThread.join();
   }
 }
@@ -113,7 +111,7 @@ void vpForceTorqueIitSensor::acquisitionLoop()
 
   // Main thread
   auto time_init = std::chrono::system_clock::now();
-  while ( m_acquisitionEnabled ) {
+  while (m_acquisitionEnabled) {
 
     // Get time passed since the last acquired sample
     m_timeCur = std::chrono::system_clock::now();
@@ -121,7 +119,7 @@ void vpForceTorqueIitSensor::acquisitionLoop()
     // Calculate delta time
     auto elapsed_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(m_timeCur - m_timePrev).count();
 
-    if ( elapsed_milliseconds >= 1) {
+    if (elapsed_milliseconds >= 1) {
       /*
        * Once a new aquisition started,
        * reset loop timers to keep a relatively fixed sampling time
@@ -134,21 +132,20 @@ void vpForceTorqueIitSensor::acquisitionLoop()
        * call to a mutex method allowing to access the ftsensors' data
        * in streaming mode (1 sample / packet / sensor)
        */
-      m_ftSensorsData = m_ftLib._getFTSensorsData( );
+      m_ftSensorsData = m_ftLib._getFTSensorsData();
 
       // Warm up the sensor. At the beginning we experienced that values returned in m_ftSensorsData.ftSensor->ft
       // are completly wrong like the following:
       // 2.237378396e+11  207.3293304  14291.07715 1.479413346e+19  13.26593399  3380.078613
       auto warmup_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(m_timeCur - time_init).count();
       if (warmup_milliseconds > m_warmup_milliseconds) {
-         m_dataValid = true;
-      }
-      else {
+        m_dataValid = true;
+      } else {
         continue;
       }
 
       const std::lock_guard<std::mutex> lock(m_mutex);
-      for(unsigned int i=0; i < 6 ; i++) {
+      for (unsigned int i = 0; i < 6; i++) {
         m_ft[i] = m_ftSensorsData.ftSensor->ft[i];
         // Note that there exist also m_ftSensorsData.ftSensor->filt_ft[i]; that doesn't sound have filtered values
       }
@@ -159,10 +156,7 @@ void vpForceTorqueIitSensor::acquisitionLoop()
 /*!
   Bias all sensors by TCP.
  */
-void vpForceTorqueIitSensor::bias()
-{
-  m_ftLib._biasAllFTSensorsTCP();
-}
+void vpForceTorqueIitSensor::bias() { m_ftLib._biasAllFTSensorsTCP(); }
 
 /*!
   Return true if communication established with at least one sensor.
@@ -172,14 +166,14 @@ void vpForceTorqueIitSensor::bias()
   \code
 [ ERROR: ] Connection failed! Error Connection refused
   \endcode
-  it means probably that you didn't set the right parameters in the configuration file `configurationSettings.ini`. See class description
-  to get some hints.
+  it means probably that you didn't set the right parameters in the configuration file `configurationSettings.ini`.
+  See class description to get some hints.
  */
 bool vpForceTorqueIitSensor::connected(int timeout_ms) const
 {
   vpChrono chrono;
   chrono.start();
-  while ( ! m_connected && chrono.getDurationMs() < timeout_ms) {
+  while (!m_connected && chrono.getDurationMs() < timeout_ms) {
     vpTime::sleepMs(1);
   }
 
@@ -201,9 +195,9 @@ vpColVector vpForceTorqueIitSensor::getForceTorque()
 void vpForceTorqueIitSensor::startStreaming()
 {
   m_acquisitionEnabled = true;
-  m_acquisitionThread = std::thread( [ this ] { this->acquisitionLoop(); } );
+  m_acquisitionThread = std::thread([this] { this->acquisitionLoop(); });
 
-  while( ! m_dataValid ) {
+  while (!m_dataValid) {
     vpTime::wait(10);
   }
 }
@@ -214,7 +208,7 @@ void vpForceTorqueIitSensor::startStreaming()
 void vpForceTorqueIitSensor::stopStreaming()
 {
   m_acquisitionEnabled = false;
-  if ( m_acquisitionThread.joinable() ) {
+  if (m_acquisitionThread.joinable()) {
     m_acquisitionThread.join();
   }
 }
@@ -224,4 +218,3 @@ void vpForceTorqueIitSensor::stopStreaming()
 // libvisp_sensor.a(vpForceTorqueIitSensor.cpp.o) has no symbols
 void dummy_vpForceTorqueIitSensor(){};
 #endif
-
