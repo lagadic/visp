@@ -516,6 +516,7 @@ VP_OPTION(USE_V4L2        V4L2        ""    "Include v4l2 support"             "
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  ""    "Include FlyCapture SDK support for PointGrey cameras" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PYLON       Pylon       ""    "Include Pylon SDK support for Basler cameras" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COMEDI      Comedi      ""    "Include comedi (linux control and measurement device interface) support" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_FTIITSDK    FTIITSDK    ""    "Include IIT force-torque SDK support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
@@ -631,6 +632,17 @@ if(USE_PCL)
       set(CMAKE_CXX_STANDARD 14)
       set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_14}) # for vpConfig.h
     endif()
+  endif()
+endif()
+
+# Upgrade c++ standard to 14 for IIT force-torque SDK that needs at least c++ 14 standard
+if(USE_FTIITSDK)
+  if((VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14) AND CXX14_STANDARD_FOUND)
+    message(WARNING "IIT force-torque SDK 3rd party was detected and needs c++14 compiler flags that is turned off. Thus to enable IIT SDK usage we turn USE_CXX_STANDARD=14.")
+    set(USE_CXX_STANDARD "14" CACHE STRING "cxx standard" FORCE) # Update cmake-gui option
+    unset(CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+    set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_14}) # for vpConfig.h
   endif()
 endif()
 
@@ -919,6 +931,7 @@ VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTUR
 VP_SET(VISP_HAVE_PYLON       TRUE IF (BUILD_MODULE_visp_sensor AND USE_PYLON))
 VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
+VP_SET(VISP_HAVE_FT_IIT_SDK  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FTIITSDK))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
 VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
 VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
@@ -1484,6 +1497,7 @@ status("")
 status("  F/T sensors: ")
 status("    Use atidaq (built-in):"  WITH_ATIDAQ      THEN "yes (ver ${ATIDAQ_VERSION})" ELSE "no")
 status("    Use comedi:"             USE_COMEDI       THEN "yes (ver ${COMEDI_VERSION})" ELSE "no")
+status("    Use IIT SDK:"            USE_FTIITSDK     THEN "yes" ELSE "no")
 status("")
 status("  Detection: ")
 status("    Use zbar:"                    USE_ZBAR                  THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")
