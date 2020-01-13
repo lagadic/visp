@@ -50,7 +50,7 @@ href="https://visp.inria.fr/software-architecture" target="_parent">https://visp
 <p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
 href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
 
-\section tutorial Tutorials
+\section tutorial Tutorials for ViSP users
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 
@@ -100,7 +100,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-win10-msvc16 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2019 (vc19).
 - \ref tutorial-install-win10-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Mingw-w64.
 - \ref tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
-
 
 \subsection tuto_install_crosscompiling Installation from cross-compiling
 
@@ -199,6 +198,14 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 in one thread and display these images in an other thread.
 
 @VISP_MAINPAGE_EXTENSION@
+
+\section tutorial_dev Tutorials for ViSP developers
+
+<p>Here after you will find a list of tutorials that show how to to modify ViSP.
+
+\subsection tuto_coding Contributing to ViSP source code
+
+- \ref tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
 
 \section Citing_ViSP Citing ViSP
 
