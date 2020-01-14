@@ -345,6 +345,9 @@
 // Defined if ATIDAQ-C is build and available.
 #cmakedefine VISP_HAVE_ATIDAQ
 
+// Defined if IIT force-torque SDK is available.
+#cmakedefine VISP_HAVE_FT_IIT_SDK
+
 // Defined if Irisa's Afma4 robot available.
 #cmakedefine VISP_HAVE_AFMA4
 

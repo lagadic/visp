@@ -88,6 +88,10 @@ if(USE_REALSENSE2)
   list(APPEND opt_incs ${REALSENSE2_INCLUDE_DIRS})
   list(APPEND opt_libs ${REALSENSE2_LIBRARIES})
 endif()
+if(USE_FTIITSDK)
+  list(APPEND opt_incs ${FTIITSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${FTIITSDK_LIBRARIES})
+endif()
 if(USE_PCL)
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
 
@@ -298,3 +302,7 @@ vp_set_source_file_compile_flag(src/force-torque/vpForceTorqueAtiNetFTSensor.cpp
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON visp_io visp_gui)
+
+# Add configuration file for IIT FT sensor besides testForceTorqueIitSensor.cpp binary
+configure_file(test/force-torque/configurationSettings.ini configurationSettings.ini COPYONLY)
+
