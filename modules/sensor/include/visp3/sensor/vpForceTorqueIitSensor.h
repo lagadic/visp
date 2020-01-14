@@ -137,7 +137,7 @@ object file: No such file or directory \endcode
   \code
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04/ftSensorLibReleaseExamples/library/bin/lin-x86_64/release
   \endcode
-  where `$VISP_WS/3rdparty/FT_SDK_01_4\(June2019\)` contains IIT SDK.
+  where `$VISP_WS/3rdparty/FT_SDK_01_4` contains IIT SDK.
  */
 class VISP_EXPORT vpForceTorqueIitSensor
 {
@@ -173,7 +173,7 @@ protected:
   std::chrono::time_point<std::chrono::system_clock> m_timeCur, m_timePrev;
 
   std::mutex m_mutex;
-  int m_warmup_milliseconds;
+  int m_warmupMilliseconds;
 };
 
 #endif

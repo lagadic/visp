@@ -53,7 +53,7 @@
 */
 vpForceTorqueIitSensor::vpForceTorqueIitSensor()
   : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false),
-    m_connected(false), m_acquisitionThread(), m_timeCur(), m_timePrev(), m_mutex(), m_warmup_milliseconds(500)
+    m_connected(false), m_acquisitionThread(), m_timeCur(), m_timePrev(), m_mutex(), m_warmupMilliseconds(500)
 {
   // Get number of connected in library sensors
   m_numSensorsInLib = m_ftLib._getNumberOfConnectedSensors();
@@ -138,7 +138,7 @@ void vpForceTorqueIitSensor::acquisitionLoop()
       // are completly wrong like the following:
       // 2.237378396e+11  207.3293304  14291.07715 1.479413346e+19  13.26593399  3380.078613
       auto warmup_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(m_timeCur - time_init).count();
-      if (warmup_milliseconds > m_warmup_milliseconds) {
+      if (warmup_milliseconds > m_warmupMilliseconds) {
         m_dataValid = true;
       } else {
         continue;
