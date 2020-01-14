@@ -151,11 +151,18 @@ if(USE_PCL)
         endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
-
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
+      # Filter -lm into find_library(m) to get the full path of the library
       foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
         string(REGEX REPLACE "\\$<LINK_ONLY:" "" lib_ ${lib_})
         string(REGEX REPLACE ">" "" lib_ ${lib_})
+
+        if(lib_ MATCHES "^-l")
+          string(REGEX REPLACE "-l" "" lib_ ${lib_})
+          find_library(lib_LOCATION ${lib_})
+          set(lib_ ${lib_LOCATION})
+        endif()
+
         list(APPEND PCL_VTK_LIBS ${lib_})
       endforeach()
       vp_list_unique(PCL_VTK_LIBS)
@@ -206,12 +213,15 @@ if(USE_PCL)
             list(APPEND opt_libs "${lib_property_${imp_config_}_}")
           endif()
         endforeach()
-      else()
+      elseif(EXISTS ${lib_})
         list(APPEND opt_libs "${lib_}")
+      else()
+        # standalone lib like m
+        find_library(lib_LOCATION ${lib_})
+        set(opt_libs ${lib_LOCATION})
       endif()
     endforeach()
   endif()
-
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
   mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY RSSDK_DIR DSSDK_DIR VTK_DIR)
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
