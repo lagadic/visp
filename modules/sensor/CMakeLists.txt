@@ -222,7 +222,7 @@ if(USE_PCL)
       else()
         # standalone lib like m
         find_library(lib_LOCATION ${lib_})
-        set(opt_libs ${lib_LOCATION})
+        list(APPEND opt_libs ${lib_LOCATION})
       endif()
     endforeach()
   endif()
