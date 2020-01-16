@@ -1254,37 +1254,37 @@ void vpDisplayOpenCV::displayCross(const vpImagePoint &ip, unsigned int size, co
   \param color : Line color.
   \param thickness : Line thickness.
 */
-void vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1_, const vpImagePoint &ip2_, const vpColor &color,
+void vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                                      unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    vpImagePoint ip1 = ip1_;
-    vpImagePoint ip2 = ip2_;
+    vpImagePoint ip1_ = ip1;
+    vpImagePoint ip2_ = ip2;
 
     double size = 10. * m_scale;
-    double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
-    bool vertical_line = (int)ip2.get_j() == (int)ip1.get_j();
+    double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
+    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
     if (vertical_line) {
-      if (ip2.get_i() < ip1.get_i()) {
-        std::swap(ip1, ip2);
+      if (ip2_.get_i() < ip1_.get_i()) {
+        std::swap(ip1_, ip2_);
       }
-    } else if (ip2.get_j() < ip1.get_j()) {
-      std::swap(ip1, ip2);
+    } else if (ip2_.get_j() < ip1_.get_j()) {
+      std::swap(ip1_, ip2_);
     }
 
-    double diff_j = vertical_line ? 1 : ip2.get_j() - ip1.get_j();
+    double diff_j = vertical_line ? 1 : ip2_.get_j() - ip1_.get_j();
     double deltaj = size / length * diff_j;
-    double deltai = size / length * (ip2.get_i() - ip1.get_i());
-    double slope = (ip2.get_i() - ip1.get_i()) / diff_j;
-    double orig = ip1.get_i() - slope * ip1.get_j();
+    double deltai = size / length * (ip2_.get_i() - ip1_.get_i());
+    double slope = (ip2_.get_i() - ip1_.get_i()) / diff_j;
+    double orig = ip1_.get_i() - slope * ip1_.get_j();
 
     if (vertical_line) {
-      for (unsigned int i = (unsigned int)ip1.get_i(); i < ip2.get_i(); i += (unsigned int)(2 * deltai)) {
-        double j = ip1.get_j();
+      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+        double j = ip1_.get_j();
         displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness);
       }
     } else {
-      for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
+      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
         double i = slope * j + orig;
         displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness);
       }
