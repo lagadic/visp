@@ -87,15 +87,17 @@ int main(int argc, const char **argv)
     config.disable_stream(RS2_STREAM_INFRARED);
     config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, 30);
     config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, 30);
-    rs2::align align_to = RS2_STREAM_COLOR;
 
     vpImage<unsigned char> I;
     vpImage<vpRGBa> I_color(height, width);
-    vpImage<float> depthMap(height, width);
-    std::vector<vpColVector> vp_pointcloud;
+    vpImage<uint16_t> I_depth_raw(height, width);
+    vpImage<vpRGBa> I_depth;
 
     g.open(config);
-    g.acquire(I_color);
+    const float depth_scale = g.getDepthScale();
+    rs2::align align_to_color = RS2_STREAM_COLOR;
+    g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
+              NULL, NULL, &align_to_color);
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     vpCameraParameters cam;
@@ -108,14 +110,26 @@ int main(int argc, const char **argv)
     std::cout << "nThreads : " << nThreads << std::endl;
     std::cout << "Z aligned: " << align_frame << std::endl;
 
-    vpDisplay *d = NULL;
+    vpImage<vpRGBa> I_color2 = I_color;
+    vpImage<float> depthMap;
+    vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+
+    vpDisplay *d1 = NULL;
+    vpDisplay *d2 = NULL;
+    vpDisplay *d3 = NULL;
     if (! display_off) {
 #ifdef VISP_HAVE_X11
-      d = new vpDisplayX(I_color);
+      d1 = new vpDisplayX(I_color, 100, 30, "Pose from Homography");
+      d2 = new vpDisplayX(I_color2, I_color.getWidth()+120, 30, "Pose from RGBD fusion");
+      d3 = new vpDisplayX(I_depth, 100, I_color.getHeight()+70, "Depth");
 #elif defined(VISP_HAVE_GDI)
-      d = new vpDisplayGDI(I_color);
+      d1 = new vpDisplayGDI(I_color, 100, 30, "Pose from Homography");
+      d2 = new vpDisplayGDI(I_color2, I_color.getWidth()+120, 30, "Pose from RGBD fusion");
+      d3 = new vpDisplayGDI(I_depth, 100, I_color.getHeight()+70, "Depth");
 #elif defined(VISP_HAVE_OPENCV)
-      d = new vpDisplayOpenCV(I_color);
+      d1 = new vpDisplayOpenCV(I_color, 100, 30, "Pose from Homography");
+      d2 = new vpDisplayOpenCV(I_color2, I_color.getWidth()+120, 30, "Pose from RGBD fusion");
+      d3 = new vpDisplayOpenCV(I_depth, 100, I_color.getHeight()+70, "Depth");
 #endif
     }
 
@@ -134,19 +148,34 @@ int main(int argc, const char **argv)
     std::vector<double> time_vec;
     for (;;) {
       //! [Acquisition]
-      g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), NULL, &vp_pointcloud, NULL, &align_to);
-      vpImageConvert::convert(I_color, I);
-      if (depthMap.getSize() != vp_pointcloud.size()) {
-        throw (vpException(vpException::fatalError, "Cannot compute depth map from point cloud"));
-      }
-      for (unsigned int i=0; i < depthMap.getHeight(); i++) {
-        for (unsigned int j=0; j < depthMap.getWidth(); j++) {
-          depthMap[i][j] = static_cast<float>(vp_pointcloud[i*depthMap.getWidth() + j][2]);
-        }
-      }
+      g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
+                NULL, NULL, &align_to_color);
       //! [Acquisition]
+      vpImageConvert::convert(I_color, I);
+
+      I_color2 = I_color;
+      vpImageConvert::convert(I_color, I);
+      vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       vpDisplay::display(I_color);
+      vpDisplay::display(I_color2);
+      vpDisplay::display(I_depth);
+
+      depthMap.resize(I_depth_raw.getHeight(), I_depth_raw.getWidth());
+      for (unsigned int i = 0; i < I_depth_raw.getHeight(); i++) {
+          for (unsigned int j = 0; j < I_depth_raw.getWidth(); j++) {
+              if (I_depth_raw[i][j]) {
+                  float Z = I_depth_raw[i][j] * depth_scale;
+                  depthMap[i][j] = Z;
+              } else {
+                  depthMap[i][j] = 0;
+              }
+          }
+      }
+
+      vpDisplay::display(I_color);
+      vpDisplay::display(I_color2);
+      vpDisplay::display(I_depth);
 
       double t = vpTime::measureTimeMs();
       //! [Detect and compute pose]
@@ -158,23 +187,31 @@ int main(int argc, const char **argv)
 
       std::stringstream ss;
       ss << "Detection time: " << t << " ms for " << detector.getNbObjects() << " tags";
-      vpDisplay::displayText(I_color, 40, 20, ss.str(), vpColor::red);
+      vpDisplay::displayText(I_color, 50, 20, ss.str(), vpColor::red);
 
       //! [Display camera pose for each tag]
       for (size_t i = 0; i < cMo_vec.size(); i++) {
         vpDisplay::displayFrame(I_color, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
+      }
 
-        // Compute pose from depth map
-        vpHomogeneousMatrix cMo_rgbd;
-        std::vector<vpImagePoint> corners = detector.getPolygon(i);
-        bool ret = vpPose::computePoseRGBD(depthMap, corners, cam, tagSize, cMo_rgbd);
-        if(ret) {
-          vpDisplay::displayFrame(I_color, cMo_rgbd, cam, tagSize / 1.5, vpColor::none, 1);
+      std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
+      std::vector<std::vector<vpPoint> > tags_point3d = detector.getPoint3D();
+      for (size_t i = 0; i < tags_corners.size(); i++) {
+        vpHomogeneousMatrix cMo;
+        if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_point3d[i], cMo)) {
+          vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::none, 3);
         }
       }
+
+      vpDisplay::displayText(I_color, 20, 20, "Pose from homography + VVS", vpColor::red);
+      vpDisplay::displayText(I_color2, 20, 20, "Pose from RGBD fusion", vpColor::red);
+
+      vpDisplay::flush(I_color);
+      vpDisplay::flush(I_color2);
+      vpDisplay::flush(I_depth);
       //! [Display camera pose for each tag]
 
-      vpDisplay::displayText(I_color, 20, 20, "Click to quit.", vpColor::red);
+      vpDisplay::displayText(I_color, 35, 20, "Click to quit.", vpColor::red);
       vpDisplay::flush(I_color);
       if (vpDisplay::getClick(I_color, false))
         break;
@@ -185,8 +222,11 @@ int main(int argc, const char **argv)
               << " ; " << vpMath::getMedian(time_vec) << " ms"
               << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
-    if (! display_off)
-      delete d;
+    if (! display_off) {
+      delete d1;
+      delete d2;
+      delete d3;
+    }
 
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;

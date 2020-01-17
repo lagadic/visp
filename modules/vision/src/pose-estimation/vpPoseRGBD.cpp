@@ -225,14 +225,30 @@ bool validPose(const vpHomogeneousMatrix& cMo) {
 }
 }
 
-bool vpPose::computePoseRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
-                             const vpCameraParameters &colorIntrinsics, double tagSize, vpHomogeneousMatrix &cMo)
+/*!
+  Compute the pose of a planar object from corresponding 2D-3D point coordinates and depth map.
+  Depth map is here used to estimate the 3D plane of the object.
+
+  \param[in] depthMap : Depth map aligned to the color image from where \e corners are extracted.
+  \param[in] corners : Vector of 2D pixel coordinates of the object in an image.
+  \param[in] colorIntrinsics : Camera parameters used to convert \e corners from pixel to meters.
+  \param[in] point3d : Vector of 3D points corresponding to the model of the planar object.
+  \param[out] cMo : Computed pose.
+
+  \return true if pose estimation succeed, false otherwise.
+ */
+bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
+                                             const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo)
 {
+  if (corners.size() != point3d.size()) {
+    throw(vpException(vpException::fatalError, "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
+                      point3d.size(), corners.size()));
+  }
   std::vector<vpPoint> pose_points;
-  pose_points.push_back(vpPoint(-tagSize/2, -tagSize/2, 0));
-  pose_points.push_back(vpPoint( tagSize/2, -tagSize/2, 0));
-  pose_points.push_back(vpPoint( tagSize/2,  tagSize/2, 0));
-  pose_points.push_back(vpPoint(-tagSize/2,  tagSize/2, 0));
+
+  for (size_t i = 0; i < point3d.size(); i ++) {
+    pose_points.push_back(point3d[i]);
+  }
 
   vpPolygon polygon(corners);
   vpRect bb = polygon.getBoundingBox();
@@ -278,10 +294,9 @@ bool vpPose::computePoseRGBD(const vpImage<float> &depthMap, const std::vector<v
           pose_points[j].set_y(y);
       }
 
-      q.push_back(vpPoint(-tagSize/2, -tagSize/2, 0));
-      q.push_back(vpPoint( tagSize/2, -tagSize/2, 0));
-      q.push_back(vpPoint( tagSize/2,  tagSize/2, 0));
-      q.push_back(vpPoint(-tagSize/2,  tagSize/2, 0));
+      for (size_t i = 0; i < point3d.size(); i ++) {
+        q.push_back(point3d[i]);
+      }
 
       cMo = compute3d3dTransformation(p, q);
 

@@ -251,6 +251,7 @@ public:
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2=NULL,
               std::vector<double> *projErrors=NULL, std::vector<double> *projErrors2=NULL);
 
+  std::vector<std::vector<vpPoint> > getPoint3D();
   bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam,
                vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2=NULL,
                double *projError=NULL, double *projError2=NULL);
@@ -286,6 +287,7 @@ protected:
   unsigned int m_displayTagThickness;
   vpPoseEstimationMethod m_poseEstimationMethod;
   vpAprilTagFamily m_tagFamily;
+  std::vector<std::vector<vpPoint>> m_point3d;
 
 private:
   vpDetectorAprilTag(const vpDetectorAprilTag &);            // noncopyable

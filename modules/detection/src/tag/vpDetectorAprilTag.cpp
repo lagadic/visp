@@ -554,6 +554,8 @@ public:
       *err2 = err_2;
   }
 
+  bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
+
   void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
 
   void setAprilTagDecodeSharpening(const double decodeSharpening) {
@@ -612,7 +614,7 @@ protected:
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
-    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily),
+    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_point3d(),
     m_impl(new Impl(tagFamily, poseEstimationMethod))
 {
 }
@@ -630,13 +632,13 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
 {
   m_message.clear();
   m_polygon.clear();
+  m_point3d.clear();
   m_nb_objects = 0;
 
   std::vector<vpHomogeneousMatrix> cMo_vec;
   bool detected = m_impl->detect(I, m_polygon, m_message, m_displayTag,
                                  m_displayTagColor, m_displayTagThickness,
                                  NULL, NULL, NULL, NULL);
-  m_nb_objects = m_message.size();
 
   return detected;
 }
@@ -664,6 +666,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
 {
   m_message.clear();
   m_polygon.clear();
+  m_point3d.clear();
   m_nb_objects = 0;
 
   m_impl->setTagSize(tagSize);
@@ -672,6 +675,24 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
                                  m_displayTagColor, m_displayTagThickness,
                                  &cMo_vec, cMo_vec2, projErrors, projErrors2);
   m_nb_objects = m_message.size();
+
+  m_nb_objects = m_message.size();
+  m_point3d.resize(m_nb_objects);
+  for (size_t i = 0; i < m_nb_objects; i ++) {
+    m_point3d[i].resize(4);
+    if (m_impl->getZAlignedWithCameraAxis()) {
+      m_point3d[i][0] = vpPoint(-tagSize/2,  tagSize/2, 0);
+      m_point3d[i][1] = vpPoint( tagSize/2,  tagSize/2, 0);
+      m_point3d[i][2] = vpPoint( tagSize/2, -tagSize/2, 0);
+      m_point3d[i][3] = vpPoint(-tagSize/2, -tagSize/2, 0);
+    }
+    else {
+      m_point3d[i][0] = vpPoint(-tagSize/2, -tagSize/2, 0);
+      m_point3d[i][1] = vpPoint( tagSize/2, -tagSize/2, 0);
+      m_point3d[i][2] = vpPoint( tagSize/2,  tagSize/2, 0);
+      m_point3d[i][3] = vpPoint(-tagSize/2,  tagSize/2, 0);
+    }
+  }
 
   return detected;
 }
@@ -710,6 +731,14 @@ bool vpDetectorAprilTag::getPose(size_t tagIndex, const double tagSize, const vp
                                  double *projError, double *projError2)
 {
   return (m_impl->getPose(tagIndex, tagSize, cam, cMo, cMo2, projError, projError2));
+}
+
+/*!
+  Return 3D coordinates of the tag model for each tag that is detected.
+ */
+std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getPoint3D()
+{
+  return m_point3d;
 }
 
 void vpDetectorAprilTag::setAprilTagDecodeSharpening(const double decodeSharpening)
