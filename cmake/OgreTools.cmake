@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ macro(vp_create_ogre_plugin_config_file)
     if(OGRE_RenderSystem_GL_LIBRARY_REL)
       get_filename_component(OGRE_PLUGIN_DIR_REL ${OGRE_RenderSystem_GL_LIBRARY_REL} PATH)
       #message("set manually OGRE_PLUGIN_DIR_REL to ${OGRE_PLUGIN_DIR_REL}")
-	endif()
+    endif()
     if(OGRE_RenderSystem_GL_LIBRARY_DBG)
       get_filename_component(OGRE_PLUGIN_DIR_DBG ${OGRE_RenderSystem_GL_LIBRARY_DBG} PATH)
       #message("set manually OGRE_PLUGIN_DIR_DBG to ${OGRE_PLUGIN_DIR_DBG}")
@@ -314,11 +314,8 @@ function(vp_set_ogre_media)
     #         If OGRE_MEDIA_DIR is not found, we set it to VISP_INSTALL_DIR_OGRE_RESOURCES in order to use
     #         the minimal requested media to run the examples
     #--------------
-    if(UNIX)
-      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator")
-    else()
-      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
-    endif()
+    set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator")
+
     # make the var global
     set(VISP_INSTALL_DIR_OGRE_RESOURCES ${VISP_INSTALL_DIR_OGRE_RESOURCES} CACHE INTERNAL "Ogre media install dir")
 
@@ -341,14 +338,14 @@ function(vp_set_ogre_media)
       )
       install(FILES
         ${VISP_BINARY_DIR}/unix-install/resources.cfg
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator
+        DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT dev
       )
       if(OGRE_MEDIA_NOT_AVAILABLE)
         install(DIRECTORY
           ${VISP_BINARY_DIR}/data/ogre-simulator/media
-          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator
+          DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
           FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
         )
@@ -361,14 +358,14 @@ function(vp_set_ogre_media)
       )
       install(FILES
         ${VISP_BINARY_DIR}/win-install/resources.cfg
-        DESTINATION data/ogre-simulator
+        DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT dev
       )
       if(OGRE_MEDIA_NOT_AVAILABLE)
         install(DIRECTORY
           ${VISP_BINARY_DIR}/data/ogre-simulator/media
-          DESTINATION data/ogre-simulator
+          DESTINATION ${VISP_INSTALL_DATAROOTDIR}/data/ogre-simulator
           FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
         )
@@ -385,4 +382,8 @@ macro(vp_set_ogre_advanced_var)
     mark_as_advanced(OGRE_${component_}_LIBRARY_REL)
     mark_as_advanced(OGRE_${component_}_LIBRARY_FWK)
   endforeach()
+  mark_as_advanced(pkgcfg_lib_OGRE_PKGC_OgreMain)
+  mark_as_advanced(pkgcfg_lib_OGRE_PKGC_pthread)
+  mark_as_advanced(pkgcfg_lib_OGRE_PKGC_boost_system)
+  mark_as_advanced(pkgcfg_lib_OIS_PKGC_OIS)
 endmacro()

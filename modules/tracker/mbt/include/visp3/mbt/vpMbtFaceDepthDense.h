@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMbtFaceDepthDense_h_
-#define __vpMbtFaceDepthDense_h_
+#ifndef _vpMbtFaceDepthDense_h_
+#define _vpMbtFaceDepthDense_h_
 
 #include <iostream>
 
@@ -122,6 +122,11 @@ public:
                       const double scale = 0.05, const unsigned int thickness = 1);
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const double scale = 0.05, const unsigned int thickness = 1);
+
+  std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                       const vpHomogeneousMatrix &cMo,
+                                                       const vpCameraParameters &cam,
+                                                       const bool displayFullModel = false);
 
   inline unsigned int getNbFeatures() const { return (unsigned int)(m_pointCloudFace.size() / 3); }
 

@@ -45,29 +45,29 @@ The Xcode project \c StartedImageProc contains \c ImageConversion.h and \c Image
 
 The following function implemented in \c ImageConversion.mm show how to convert an UIImage into a vpImage<vpRGBa> instanciated as a color image. 
 
-\snippet ImageConversion.mm vpImageColorFromUIImage
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageColorFromUIImage
 
 \subsection image_ios_convert_uiimage_vpimage_gray UIImage to gray vpImage 
 
 The following function implemented in \c ImageConversion.mm show how to convert an UIImage into a vpImage<unsigned char> instanciated as a grey level image. 
 
-\snippet ImageConversion.mm vpImageGrayFromUIImage
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageGrayFromUIImage
 
 \subsection image_ios_convert_vpimage_color_uiimage Color vpImage to UIImage
 
 The following function implemented in \c ImageConversion.mm show how to convert a gray level vpImage<unsigned char> into an UIImage. 
 
-\snippet ImageConversion.mm UIImageFromVpImageColor
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageColor
 
 \subsection image_ios_convert_vpimage_gray_uiimage Gray vpImage to UIImage
 
 The following function implemented in \c ImageConversion.mm show how to convert a color vpImage<vpRGBa> into an UIImage. 
 
-\snippet ImageConversion.mm UIImageFromVpImageGray
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageGray
 
 \section image_ios_output Application output
 
-- Now we are ready to build <tt>"StartedImaeProc"</tt> application using Xcode <tt>"Product>Build"</tt> menu. If you get build issues, have a look to \ref image_ios_known_issue.
+- Now we are ready to build <tt>"StartedImaeProc"</tt> application using Xcode <tt>"Product>Build"</tt> menu. 
 
 - Once build, if you run \c StartedImageProc application on your device, you should be able to see the following screen shots.
 
@@ -79,22 +79,6 @@ The following function implemented in \c ImageConversion.mm show how to convert 
 \image html img-started-imgproc-ios-output-gradient.png
 - Selecting \c "canny detector" gives the following result:
 \image html img-started-imgproc-ios-output-canny.png
-
-\section image_ios_known_issue Known issues
-\subsection image_ios_known_issue_xml2 libxml/parser.h file not found
-
-When building the project, if you get the following issue `libxml/parser.h file not found` while including `vpXmlParser.h` it means that `visp3.framework` was build with `libxml2` third-party, but that the `libxml2` headers are not found.
-
-\image html img-started-imgproc-ios-issue-libxml.png
-
-In Xcode, the fix consists in modifying the Build Settings in order to add the following to your Header Search Paths:
-\code
-$SDKROOT/usr/include/libxml2
-\endcode
-
-This is done in the next screenshot:
-
-\image html img-started-imgproc-ios-issue-libxml-fix.png
 
 \section image_ios_next Next tutorial
 

@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
 
 set(VIRTUOSE_API $ENV{VIRTUOSE_HOME})
 if(UNIX)
+  list(APPEND VIRTUOSE_API /home/soft/virtuose/VirtuoseAPI_v3_98)
   list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_97/VirtuoseAPI_v3_97)
   list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_90/VirtuoseAPI_v3_93)
   list(APPEND VIRTUOSE_API /local/virtuose-6D/Livraison_3_90/VirtuoseAPI_v3_93)
@@ -54,6 +55,7 @@ if(UNIX)
     list(APPEND VIRTUOSE_ARCH "x86")
   endif()
 elseif(MSVC)
+  list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_98")
   list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_97")
   list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_93")
 

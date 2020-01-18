@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,13 +57,13 @@
   graphics. Each one contains a desired number of curves.
 
   \warning This class is only available if one of the display functionalities
-(X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
-header file, you should have VISP_HAVE_DISPLAY define.
+  (X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
+  header file, you should have VISP_HAVE_DISPLAY define.
 
   The example below shows how to use the vpPlot class. An other example
-provided in tutoral-ibvs-plotter.cpp and described in \ref tutorial-plotter
-shows how to use this class to plot in real-time some curves during an
-image-based visual servo.
+  provided in tutorial-ibvs-plotter.cpp and described in \ref tutorial-plotter
+  shows how to use this class to plot in real-time some curves during an
+  image-based visual servo.
 
   \code
 #include <visp3/gui/vpPlot.h>
@@ -149,7 +149,7 @@ public:
   vpPlot();
   vpPlot(const unsigned int nbGraph, const unsigned int height = 700, const unsigned int width = 700, const int x = -1,
          const int y = -1, const std::string &title = "");
-  ~vpPlot();
+  virtual ~vpPlot();
   void getPixelValue(const bool block);
   void init(const unsigned int nbGraph, const unsigned int height = 700, const unsigned int width = 700,
             const int x = -1, const int y = -1, const std::string &title = "");

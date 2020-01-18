@@ -22,8 +22,8 @@ int main(int argc, char **argv)
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--name")
         videoname = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        std::cout << "\nUsage: " << argv[0] << " [--name <video name> (default: " << videoname << ")] [--help] [-h]\n" << std::endl;
         return 0;
       }
     }
@@ -38,9 +38,9 @@ int main(int argc, char **argv)
     //! [vpVideoReader open]
     g.open(I);
     //! [vpVideoReader open]
-    std::cout << "video name: " << videoname << std::endl;
-    std::cout << "video framerate: " << g.getFramerate() << "Hz" << std::endl;
-    std::cout << "video dimension: " << I.getWidth() << " " << I.getHeight() << std::endl;
+    std::cout << "Video name     : " << videoname << std::endl;
+    std::cout << "Video framerate: " << g.getFramerate() << "Hz" << std::endl;
+    std::cout << "Video dimension: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);
@@ -52,6 +52,8 @@ int main(int argc, char **argv)
     std::cout << "No image viewer is available..." << std::endl;
 #endif
     vpDisplay::setTitle(I, "Video reader");
+
+    unsigned cpt = 1;
     //! [vpVideoReader while loop]
     while (!g.end()) {
       //! [vpVideoReader while loop]
@@ -62,6 +64,10 @@ int main(int argc, char **argv)
       g.acquire(I);
       //! [vpVideoReader acquire]
       vpDisplay::display(I);
+      vpDisplay::displayText(I, 20, 20, "Click to quit", vpColor::red);
+      std::stringstream ss;
+      ss << "Frame: " << cpt ++;
+      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false))
         break;
@@ -69,6 +75,7 @@ int main(int argc, char **argv)
       vpTime::wait(t, 1000. / g.getFramerate());
       //! [vpVideoReader loop rate]
     }
+    std::cout << "End of video was reached" << std::endl;
   } catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
   }

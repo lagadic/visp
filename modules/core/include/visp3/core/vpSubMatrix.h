@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __VP_SUB_MATRIX__
-#define __VP_SUB_MATRIX__
+#ifndef _vpSubMatrix_h_
+#define _vpSubMatrix_h_
 
 #include <visp3/core/vpMatrix.h>
 
@@ -82,7 +82,7 @@ public:
   vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
               const unsigned int &ncols);
   //! Destructor
-  ~vpSubMatrix();
+  virtual ~vpSubMatrix();
 
   //! Initialisation of vpMatrix
   void init(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,

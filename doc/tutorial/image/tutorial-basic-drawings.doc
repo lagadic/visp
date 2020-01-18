@@ -1,0 +1,119 @@
+/**
+  \page tutorial-basic-drawings Tutorial: How to draw basic drawings
+  \tableofcontents
+
+\section basic_drawings_intro Introduction
+
+In this tutorial you will learn how to draw basic drawings with ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
+
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+
+\section basic_drawings_default How to display an image
+
+ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities. This module may use several optional third-party libraries which are: <a href="http://visp.inria.fr/3rdparty_gui/">OpenCV, X11, GTK, GDI, Direct3D</a>. We recommand to use X11 on unix-like systems thanks to vpDisplayX class and GDI on Windows thanks to vpDisplayGDI. 
+
+The following example also available in tutorial-viewer.cpp shows how to read and display an image. 
+
+\include tutorial-viewer.cpp
+
+Here is the detailed explanation of the source, line by line :
+\snippet tutorial-viewer.cpp Include display
+
+Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
+
+\snippet tutorial-viewer.cpp Include io
+Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
+
+\snippet tutorial-viewer.cpp vpImage construction
+Create an instance of a color image where each pixel is coded in RGBa.
+
+\snippet tutorial-viewer.cpp vpImage reading
+The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
+
+\snippet tutorial-viewer.cpp vpDisplay construction
+Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. 
+
+\snippet tutorial-viewer.cpp vpDisplay set title
+The title of the display is then set to \c "My image".  
+
+\snippet tutorial-viewer.cpp vpDisplay display
+First we display the content of the image \c I, then we flush the display to render the image.
+
+\snippet tutorial-viewer.cpp vpDisplay get click
+Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
+
+Here is a screen shot of the resulting output window :
+
+\image html img-monkey.png
+
+\section basic_drawings_draw How to draw basic drawings
+
+\subsection point How to draw a point
+
+As shown in tutorial-draw-point.cpp which source code is given below we use vpDisplay::displayPoint() function to draw a point in the overlay of a windows that displays a 3840 by 2160 grey image that has all the pixels set to 128 gray level.
+
+\include tutorial-draw-point.cpp
+
+Here we draw a point at the center of a grey image with red color and thickness 2.
+
+\subsection line How to draw a line segment
+
+As given in tutorial-draw-line.cpp we use vpDisplay::displayLine() function to draw a line segment on the screen.
+
+\snippet tutorial-draw-line.cpp Line
+
+Here we draw a red coloured line segment with the specified initial and final coordinates and thickness 10.
+
+\subsection circle How to draw a circle
+
+As given in tutorial-image-display-scaled-auto.cpp we use vpDisplay::displayCircle() function to draw a circle on the screen.
+
+\snippet tutorial-image-display-scaled-auto.cpp Circle
+
+Here we draw a red coloured filled circle at the center with radius of 200.
+
+\subsection rectangle How to draw a rectangle
+
+As given in tutorial-draw-rectangle.cpp we use vpDisplay::displayRectangle() function to draw a rectangle on the screen.
+
+\snippet tutorial-draw-rectangle.cpp Rectangle
+
+Here we draw a red coloured filled rectangle with specified top-left coordinates and width and height.
+
+\subsection cross How to draw a cross
+
+As given in tutorial-draw-cross.cpp we use vpDisplay::displayCross() function to draw a rectangle on the screen.
+
+\snippet tutorial-draw-cross.cpp Cross
+
+Here we draw a red coloured cross on the center with speicfied size and thickness 2.
+
+\section basic_drawings_adding_text How to add text in the window overlay
+
+As given in tutorial-draw-text.cpp we use vpDisplay::displayText() function to add text in the window overlay.
+
+\snippet tutorial-draw-text.cpp text
+
+Here `Hello world` is displayed in the middle of the image.
+
+\section basic_drawings_export How to export an image
+
+As given in tutorial-export-image.cpp which source code is given below, we use vpDisplay::getImage() function to update the image with an overlay. 
+
+\include tutorial-export-image.cpp
+
+\section basic_drawings_event_keyboard How to handle keyboard events
+
+As given in tutorial-event-keyboard.cpp which code is given below, we use vpDisplay::getKeyboardEvent() function to get the value of the key pressed.
+
+\include tutorial-event-keyboard.cpp
+
+\section basic_drawings_next Next tutorial
+
+You are now ready to see how to continue with \ref tutorial-grabber.
+
+*/

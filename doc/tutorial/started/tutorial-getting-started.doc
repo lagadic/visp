@@ -5,7 +5,7 @@
 
 \note We assume in this tutorial that you have successfully installed ViSP either with an \ref tuto_install_sdk or with an \ref tuto_install_src.
 
-In this tutorial you will learn how to use ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
+In this tutorial you will learn how to use ViSP either on unix-like operating system (including OSX, Fedora, Ubuntu, Debian, ...) or on windows.
 
 The easiest way of using ViSP in your project is to use <a href="http://www.cmake.org/">CMake</a>. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
@@ -14,13 +14,167 @@ Note also that all the material (source code and images) described in this tutor
 \code
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
 \endcode
- 
-\section image_code Create a program using ViSP
-Let's start to write our first program to see how to read an image and open a window to display the image. This simple program is provided in tutorial-viewer.cpp example and given below:
+
+\section started_quick Quick getting started
+\subsection started_quick_unix On unix-like operating system
+
+In this section we show how to build a CMake project that uses ViSP as third-party on a unix-like OS. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image.
+
+1. If you did \ref tutorial_install_pkg you have to create a workspace. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
+Check if `VISP_WS` environment var exists:
+\code
+$ env | grep VISP_WS
+\endcode
+If it returns an empty string, create a workspace with:
+\code
+$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+$ source ~/.bashrc
+$ mkdir -p $VISP_WS
+\endcode
+
+2. Get the source code using Subversion (`svn`):
+\code
+$ sudo apt-get install subversion
+$ cd $VISP_WS
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+
+3. Create a build folder
+\code
+$ mkdir -p $VISP_WS/image/build
+$ cd $VISP_WS/image/build
+\endcode
+
+4. Run CMake in build directory<br>
+If you did \ref tutorial_install_pkg, run:
+\code
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
+\endcode
+Otherwise if you did \ref tutorial_install_src, indicate where to find ViSP thanks to `VISP_DIR` var:
+\code
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DVISP_DIR=$VISP_WS/visp-build
+\endcode
+
+5. Build `tutorial-viewer` example
+\code
+$ make tutorial-viewer
+\endcode
+
+6. Run `tutorial-viewer` example
+\code
+$ ./tutorial-viewer monkey.pgm
+\endcode
+
+\subsection started_quick_win On windows operating system
+
+In this section we show how to build a CMake project that uses ViSP as third-party on Windows. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image.
+
+1. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
+Open a `cmd` Command Prompt and check if `VISP_WS` environment var exists:
+\code
+C:\> set | findstr VISP_WS
+\endcode
+If it returns an empty string, create a workspace with:
+\code
+C:\> mkdir C:\visp-ws
+C:\> setx VISP_WS=C:\visp-ws
+C:\> exit
+\endcode
+
+2. Get the source code in your workspace either using Subversion (`svn`), either copying the source code from `%%VISP_WS%/tutorial/image` folder if you follow one of the \ref tuto_install_src tutorials, or downloading the source from https://github.com/lagadic/visp/tutorial/image:<br>
+With Subversion:
+\code
+C:\> svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+Or by copy from ViSP source code
+\code
+C:\> xcopy /E /I %VISP_WS%\visp\tutorial\image %VISP_WS%\image 
+\endcode
+
+3. Create a build folder
+\code
+C:\> mkdir %VISP_WS%\image\build
+C:\> cd %VISP_WS%\image\build
+\endcode
+
+4. Run CMake in build folder and indicate where to find ViSP thanks to `VISP_DIR` var.<br>
+If your are using Visual Studio 15 2017 and 64 bits hardware, run:
+\code
+C:\> cmake -G "Visual Studio 15 2017 Win64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc15
+\endcode
+If your are rather using Visual Studio 14 2015 and 64 bits hardware, run:
+\code
+C:\> cmake -G "Visual Studio 14 2015 Win64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc14
+\endcode
+
+5. Build `tutorial-viewer` example
+\code
+C:\> cmake --build . --config Release --target tutorial-viewer
+\endcode
+
+6. Run `tutorial-viewer` example
+\code
+C:\> cd Release
+C:\> tutorial-viewer.exe monkey.pgm
+\endcode
+
+\section started_advanced Advanced getting started
+
+\subsection started_ws Create a workspace
+
+We suppose here that you have already setup a workspace and defined `VISP_WS` environment var.
+
+We recall here after the instructions to create a workspace:
+
+- <b>On unix-like operating system</b><br>
+Check if `VISP_WS` environment var exists:
+\code
+$ env | grep VISP_WS
+\endcode
+If it returns an empty string, create a workspace with:
+\code
+$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+$ source ~/.bashrc
+$ mkdir -p $VISP_WS
+\endcode
+
+- <b>On windows operating system</b><br>
+Open a `cmd` Command Prompt and check if `VISP_WS` environment var exists:
+\code
+C:\> set | findstr VISP_WS
+\endcode
+If it returns an empty string, create a workspace with:
+\code
+C:\> mkdir C:\visp-ws
+C:\> setx VISP_WS=C:\visp-ws
+C:\> exit
+\endcode
+
+Enter `VISP_WS` folder and create a new folder let say `started` that will contain your first project that uses ViSP as third-party:
+
+- <b>On unix-like operating system</b><br>
+\code
+$ cd $VISP_WS
+$ mkdir started
+\endcode
+- <b>On windows operating system</b><br>
+Open a `cmd` Command Prompt and run
+\code
+C:\> cd %VISP_WS%
+C:\> mkdir started
+\endcode
+
+\subsection image_code Get tutorial-viewer.cpp file
+
+Let's start to write our first C++ example to see how to read an image and open a window to display the image with ViSP. This example is provided in tutorial-viewer.cpp example and given below.
+
+Open your favorite editor and copy/paste the content of this example in `VISP_WS/started/tutorial-viewer.cpp` source file.
+
+The code to copy/paste is the following:
 
 \include tutorial-viewer.cpp
 
-Here is the detailed explanation of the source, line by line :
+Here is the detailed explanation of the source, line by line:
 \snippet tutorial-viewer.cpp Include display
 
 Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
@@ -32,24 +186,25 @@ Include the header that allows to read/write PGM, PPM, PNG and JPEG images from 
 Create an instance of a color image where each pixel is coded in RGBa.
 
 \snippet tutorial-viewer.cpp vpImage reading
-The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
+The image `I` is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
 
 \snippet tutorial-viewer.cpp vpDisplay construction
-Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. 
+Create an instance of an image display window for image `I`. The first viewer that is available is used. Here we create the link between the image `I` and the display `d`. Note that an image can only have one display. 
 
 \snippet tutorial-viewer.cpp vpDisplay set title
-The title of the display is then set to \c "My image".  
+The title of the display is then set to "My image".  
 
 \snippet tutorial-viewer.cpp vpDisplay display
-First we display the content of the image \c I, then we flush the display to render the image.
+First we display the content of the image `I`, then we flush the display to render the image.
 
 \snippet tutorial-viewer.cpp vpDisplay get click
 Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
 
-\section image_cmake Create a CMake file
+\subsection image_cmake Get CMakeLists.txt file
 
-Now you have to create your \c CMakeLists.txt file. It should look like this:
+Now you have to create a `CMakeLists.txt` file that gives the instructions on how to build `tutorial-viewer.cpp` example. A minimalistic `CMakeLists.txt` should contain the following lines.
 
+Open your editor and copy/paste the following lines in `VISP_WS/started/CMakeLists.txt` file.
 \code
 project(tutorial-image)
 
@@ -63,11 +218,13 @@ add_executable(tutorial-viewer tutorial-viewer.cpp)
 target_link_libraries(tutorial-viewer ${VISP_LIBRARIES})
 \endcode
 
-The \c find_package() CMake command searches for a \c VISPConfig.cmake file that will define the corresponding variables:
-- \c VISP_INCLUDE_DIRS   : ViSP and third-party headers location
-- \c VISP_LIBRARIES      : ViSP and third-party libraries name and location
+Here after we explain the content of the `CMakeLists.txt` file.
 
-Note that the previous \c CMakeLists.txt file can also be:
+The `find_package()` CMake command searches for a `VISPConfig.cmake` file that will define the corresponding variables:
+- `VISP_INCLUDE_DIRS`   : ViSP and third-party headers location
+- `VISP_LIBRARIES`      : ViSP and third-party libraries name and location
+
+Note that the previous `CMakeLists.txt` file can also be:
 \code
 project(tutorial-image)
 
@@ -81,28 +238,55 @@ endif(VISP_FOUND)
 add_executable(tutorial-viewer tutorial-viewer.cpp)
 \endcode
 
-where \c VISP_USE_FILE variable is set to the full path to \c VISPUse.cmake file that contains all the CMake material that allow to build your project with ViSP. In other terms, the line
+where `VISP_USE_FILE` variable is set to the full path to `VISPUse.cmake` file that contains all the CMake material that allow to build your project with ViSP. In other terms, the line
 \code
   include(${VISP_USE_FILE})
 \endcode
-will include the following lines to your \c CMakeFile.txt
+will include the following lines to your `CMakeFile.txt`
 \code
   include_directories(${VISP_INCLUDE_DIRS})
   link_libraries(${VISP_LIBRARIES})
 \endcode
 
+\subsection image_monkey Get monkey.ppm file
 
-\section image_unix On Unix-like systems
+Get `monkey.ppm` image and copy it to `VISP_WS/started` either:
+- copying it from ViSP source code; the file is in `VISP_WS/tutorial/image/monkey.ppm`
+- using Subversion:
+\code
+svn export https://github.com/lagadic/visp.git/trunk/tutorial/image/monkey.ppm
+\endcode
+- by copy/paste from <a href="https://github.com/lagadic/visp/blob/master/tutorial/image/monkey.ppm">GitHub</a> using the Raw button 
 
-\subsection image_unix_config Configure your project
 
-Proceed as with any other project using CMake:
+\subsection image_unix On unix-like operating system
+
+In this section we supppose that you have created a folder `$VISP_WS/started` that contains `CMakeLists.txt`, `tutorial-viewer.cpp` and `monkey.ppm` files. 
+
+\subsubsection image_unix_build_folder Create a build folder
+
+Proceed now as with any other project using CMake by first creating a build folder:
 
 \code
-$ cmake .
+C:\> cd $VISP_WS/started
+C:\> mkdir build
 \endcode
 
-By default \c cmake searches \c VISPConfig.cmake file in folders like \c /usr/share or \c /usr/local/share. If ViSP was not installed in \c /usr or \c /usr/local it is possible that you get the following error:
+\subsubsection image_unix_config Configure your project
+
+Enter the build folder and launch CMake GUI:
+
+\code
+$ cd build
+$ ccmake .. -DCMAKE_BUILD_TYPE=Release
+Press [c] key to configure
+Then, press [g] to generate Makefiles
+Then, press [q] to quit CMake GUI
+\endcode
+
+\image html img-ccmake-started.png
+
+\note By default `ccmake` searches `VISPConfig.cmake` file in system folders like `/usr/share`, `/usr/local/share`... If ViSP is not installed in `/usr` or `/usr/local` as suggested in \ref tutorial_install_src tutorials, it is possible that you get the following error:
 \code
 CMake Error at CMakeLists.txt:5 (find_package):
   Could not find module FindVISP.cmake or a configuration file for package
@@ -115,88 +299,111 @@ CMake Error at CMakeLists.txt:5 (find_package):
     VISPConfig.cmake
     visp-config.cmake
 \endcode
-
-To help \c cmake to find \c VISPConfig.cmake file, just set \c VISP_DIR environment variable and call \c cmake again:
+If you get the previous error it means that you forget to set `VISP_DIR` environment variable that helps `cmake` to find `VISPConfig.cmake` file.
+- If you install ViSP from source following one of the \ref tutorial_install_src tutorials, set `VISP_DIR` environment variable to the ViSP build folder location and call `ccmake` again:
 \code
-$ export VISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp
-$ cmake .
+$ export VISP_DIR=$VISP_WS/visp-build/lib/cmake/visp
+$ ccmake ..
 \endcode
-or run cmake with the additional VISP_DIR definition
+or run cmake with the additional `VISP_DIR` definition
 \code
-$ cmake -DVISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp .
+$ ccmake -DVISP_DIR=$VISP_WS/visp-build/lib/cmake/visp .
+\endcode
+- If you rather install ViSP from prebuilt packages following one of the \ref tuto_install_sdk tutorials, set `VISP_DIR` environment variable to the installation folder location and call `cmake` again:
+\code
+$ export VISP_DIR=/usr/lib/<multi-arch-folder>/cmake/visp
+$ cmake ..
+\endcode
+or run cmake with the additional `VISP_DIR` definition
+\code
+$ cmake -DVISP_DIR=/usr/lib/<multi-arch-folder>/cmake/visp .
+\endcode
+Depending on the platform `<multi-arch-folder>` can be empty (OSX) or for example equal to `x86_64-linux-gnu` on Ubuntu if you install ViSP using
+\code
+$ sudo apt-get install libvisp-dev.
 \endcode
 
-Depending on the platform \c \<multi-arch-folder\> can be empty (OSX) or for example equal to \c x86_64-linux-gnu on Ubuntu.
-
-\note If you build ViSP from source following one of the tutorials \ref tutorial_install_src, you can avoid the \c make \c install step and set \c VISP_DIR to the build location instead of the install location.
- 
-\subsection image_unix_build Generate the executable
+\subsubsection image_unix_build Generate the executable
 
 Just run:
 \code
 $ make
 \endcode
 
-\subsection image_unix_output Run the executable
+\subsubsection image_unix_output Run the executable
 
-By now you should have an executable called \c tutorial-viewer. You just have to run it giving an image location as an argument:
+By now you should have an executable called `tutorial-viewer`. You just have to run it giving an image location as an argument:
 
 \code
-$ ./tutorial-viewer monkey.ppm
+$ ./tutorial-viewer ../monkey.ppm
 \endcode
-
 
 Here is a screen shot of the resulting output window :
 
-  \image html img-monkey.png
+\image html img-monkey.png
 
-\section image_win On Windows
+\subsection image_win On windows operating system
 
-We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-started) that contains the following files: CMakeLists.txt, tutorial-viewer.cpp and monkey.ppm. These files are also provided in ViSP source code, in \c tutorial/image folder.
+We suppose from now, that you have created a folder `%%VISP_WS%\started` that contains `CMakeLists.txt`, `tutorial-viewer.cpp` and `monkey.ppm` files. 
 
+\subsubsection image_win_build_folder Create a build folder
 
-\subsection image_win_config Configure your project
+Proceed now as with any other project using CMake by first creating a build folder:
 
-- Launch CMake (cmake-gui) from Windows "Start" menu. Set the source code location as \c C:/ViSP/ViSP-started. Here we set the build location to the same folder.
+\code
+C:\> cd %%VISP_WS%\started
+C:\> mkdir build
+\endcode
+
+\subsubsection image_win_config Configure your project
+
+- Launch "CMake (cmake-gui)" from Windows "Start" menu. Set the source code location as `%%VISP_WS%\started` and the build location to `%%VISP_WS%\started\build` folder.
 
 \image html img-started-win-cmake-1.jpg
 
-- Press "Configure" button, and select your compiler. In our case we will use Visual Studio 11 Win64. Press then "Finish". The configuration is now under progress and should lead to the following image.
+- Press "Configure" button and select your compiler. In our case we will use Visual Studio 15 2017 Win64.
+
+\image html img-started-win-msvc15.jpg
+
+- Press then "Finish" button. The configuration is now under progress and should lead to the following image.
 
 \image html img-started-win-cmake-2.jpg
 
-- Note here that CMake has automatically found the location of ViSP install folder; \c C:/ViSP/ViSP-install.
+- In the previous image you may notice that CMake has automatically found the location of ViSP install folder; `%%VISP_WS/visp-build-vc15/install`. This was possible because you \ref install_win10_msvc15_visp_dir.
+\note If at this step you have an error like the one shown in the next image, it means that you forget to set `VISP_DIR` env var. If this is the case, quit CMake Gui, \ref install_win10_msvc15_visp_dir, open CMake Gui and try again to configure your project.
+\image html img-started-win-cmake-error.jpg
 
 - Press then "Configure" button to remove the red lines, and then "Generate" button. As presented in the following image, all the red lines should disappear.
 
 \image html img-started-win-cmake-3.jpg
 
-- From now, in \c C:/ViSP/ViSP-started you should have \c tutorial-image.sln Visual Studio solution file.
+- From now, in `%%VISP_WS%\started\build` folder you should have `tutorial-image.sln` Visual Studio solution file.
 
-\subsection image_win_build Generate the executable
+\subsubsection image_win_build Generate the executable
 
-- To open the project in Visual Studio C++ just double click on \c C:/ViSP/ViSP-started/tutorial-image.sln solution file. 
+- Open the project in Visual Studio C++ just by double click on `%%VISP_WS%\stated\build\tutorial-image.sln` solution file.
+- Modify the configuration to "Release"
 
 \image html img-started-win-msvc-1.jpg
 
-- Now to build the solution, enter "BUILD/Build Solution" menu.
+- Now to build the solution, enter `"BUILD > Build Solution"` menu or hit Ctrl+Shift+B keys.
 
 \image html img-started-win-msvc-2.jpg
 
-- In \c C:/ViSP/ViSP-started/Debug folder you have now \c tutorial-image.exe executable.
+- In `%%VISP_WS%\started\build\Release` folder you have now `tutorial-viewer.exe` executable.
 
+\subsubsection image_win_output Run the executable
 
-\subsection image_win_output Run the executable
-
-- In your "Start" menu click on "Run" and type in \c cmd.exe to run a terminal.
-- Enter in \c C:/ViSP/ViSP-started/Debug folder, and run \c tutorial-viewer.exe with an image location as argument:
-
-\image html img-started-win-run.jpg
-
+- In your "Start" menu click on "Run" and type in `cmd.exe` to run a Command Prompt.
+- Enter in `%%VISP_WS%\started\build\Release` folder, and run `tutorial-viewer.exe` with an image location as argument:
+\code
+C:\> cd %VISP_WS%\started\build\Release
+C:\> tutorial-viewer ..\..\monkey.ppm
+\endcode
 
 - Here is a screen shot of the resulting output window :
 
-  \image html img-monkey-win.jpg
+\image html img-monkey-win.jpg
 
 \section image_next Next tutorial
 

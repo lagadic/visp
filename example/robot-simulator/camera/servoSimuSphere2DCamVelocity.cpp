@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,13 +198,13 @@ int main(int argc, const char **argv)
 
     unsigned int iter = 0;
     // loop
-    while (iter++ < 500) {
+    while (iter++ < 200) {
       std::cout << "---------------------------------------------" << iter << std::endl;
       vpColVector v;
 
       // get the robot position
       robot.getPosition(wMc);
-      // Compute the position of the camera wrt the object frame
+      // Compute the position of the object frame in the camera frame
       cMo = wMc.inverse() * wMo;
 
       // new sphere position: retrieve x,y and Z of the vpSphere structure

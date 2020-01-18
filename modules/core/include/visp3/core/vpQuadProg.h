@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,16 +68,17 @@
   In order to be used sequentially, the decomposition of the equality constraint may be stored.
   The last active set is always stored and used to warm start the next call.
 
-  \warning The solvers are only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning The solvers are only available if c++11 or higher is activated during build.
+  Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 */
 class VISP_EXPORT vpQuadProg
 {
 public:
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /** @name Instanciated solvers  */
   //@{
   bool solveQPe(const vpMatrix &Q, const vpColVector &r,
-                vpColVector &x) const;
+                vpColVector &x, const double &tol = 1e-6) const;
 
   bool solveQPi(const vpMatrix &Q, const vpColVector &r,
                 const vpMatrix &C, const vpColVector &d,
@@ -126,6 +127,8 @@ protected:
   */
   vpMatrix Z;
 
+  static vpColVector solveSVDorQR(const vpMatrix &A, const vpColVector &b);
+
   static bool solveByProjection(const vpMatrix &Q, const vpColVector &r,
                                 vpMatrix &A, vpColVector &b,
                                 vpColVector &x, const double &tol = 1e-6);
@@ -152,8 +155,8 @@ protected:
   {
     // check data consistency
     const unsigned int n = Q.getCols();
-    const bool Ab = (A != NULL && b != NULL && A->getRows());
-    const bool Cd = (C != NULL && d != NULL && C->getRows());
+    const bool Ab = (A != nullptr && b != nullptr && A->getRows());
+    const bool Cd = (C != nullptr && d != nullptr && C->getRows());
 
     if (  (Ab && n != A->getCols()) ||
           (Cd && n != C->getCols()) ||

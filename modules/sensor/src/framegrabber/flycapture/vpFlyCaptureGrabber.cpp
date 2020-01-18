@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1119,8 +1119,7 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeSt
   error = m_camera.RetrieveBuffer(&m_rawImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw(vpException(vpException::fatalError, "Cannot retrieve image from camera with serial %u",
-                      getCameraSerial(m_index)));
+    std::cerr << "Cannot retrieve image from camera with serial " << getCameraSerial(m_index) << std::endl;
   }
   timestamp = m_rawImage.GetTimeStamp();
 
@@ -1171,8 +1170,7 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &ti
   error = m_camera.RetrieveBuffer(&m_rawImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw(vpException(vpException::fatalError, "Cannot retrieve image from camera with serial %u",
-                      getCameraSerial(m_index)));
+    std::cerr << "Cannot retrieve image from camera with serial " << getCameraSerial(m_index) << std::endl;
   }
   timestamp = m_rawImage.GetTimeStamp();
 

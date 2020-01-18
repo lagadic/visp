@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpUDPClient_h__
-#define __vpUDPClient_h__
+#ifndef _vpUDPClient_h_
+#define _vpUDPClient_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -112,14 +112,14 @@ int main() {
   \endcode
 
   If you want to send a complex data type, you can either send the ASCII
-representation or send directly the byte data. In the last case, you should
-have to handle that both the server and the client have the same data type
-representation. Be careful also with the endianness of the network / host.
+  representation or send directly the byte data. In the last case, you should
+  have to handle that both the server and the client have the same data type
+  representation. Be careful also with the endianness of the network / host.
 
   Here an example using a structure of data, assuming that both the server and
-the client have the same architecture (probably you should write your own
-serialization / deserialization functions for the data you want to send /
-receive):
+  the client have the same architecture (probably you should write your own
+  serialization / deserialization functions for the data you want to send /
+  receive):
 
   \code
 #include <cstdlib>
@@ -168,11 +168,22 @@ int main() {
 class VISP_EXPORT vpUDPClient
 {
 public:
+  vpUDPClient();
   vpUDPClient(const std::string &hostname, const int port);
-  ~vpUDPClient();
+  virtual ~vpUDPClient();
+
+  /** @name Inherited functionalities from vpUDPClient */
+  //@{
+  void init(const std::string &hostname, const int port);
 
   int receive(std::string &msg, const int timeoutMs = 0);
+  int receive(void *msg, size_t len, const int timeoutMs = 0);
   int send(const std::string &msg);
+  int send(const void *msg, size_t len);
+  //@}
+
+protected:
+  bool m_is_init;
 
 private:
   char m_buf[VP_MAX_UDP_PAYLOAD];
@@ -185,7 +196,7 @@ private:
   WSADATA m_wsa;
 #endif
 
-  void init(const std::string &hostname, const int port);
+  void close();
 };
 
 #endif

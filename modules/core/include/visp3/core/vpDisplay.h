@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -738,9 +738,9 @@ int main()
                            const vpCameraParameters &cam, double size, const vpColor &color = vpColor::none,
                            unsigned int thickness = 1, const vpImagePoint &offset = vpImagePoint(0, 0));
   static void displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          const vpColor &color, unsigned int thickness = 1);
+                          const vpColor &color, unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color,
-                          unsigned int thickness = 1);
+                          unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
                           const bool closeTheShape, const vpColor &color, unsigned int thickness = 1);
   static void displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color,
@@ -837,9 +837,9 @@ int main()
                            double size, const vpColor &color = vpColor::none, unsigned int thickness = 1,
                            const vpImagePoint &offset = vpImagePoint(0, 0));
   static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                          const vpColor &color, unsigned int thickness = 1);
+                          const vpColor &color, unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color,
-                          unsigned int thickness = 1);
+                          unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape,
                           const vpColor &color, unsigned int thickness = 1);
   static void displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color,

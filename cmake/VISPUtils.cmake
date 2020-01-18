@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,6 +83,60 @@ macro(vp_path_join result_var P1 P2_)
   #message(STATUS "'${P1}' '${P2_}' => '${${result_var}}'")
 endmacro()
 
+# Used to parse Android SDK 'source.properties' files
+# File lines format:
+# - '<var_name>=<value>' (with possible 'space' symbols around '=')
+# - '#<any comment>'
+# Parsed values are saved into CMake variables:
+# - '${var_prefix}_${var_name}'
+# Flags:
+# - 'CACHE_VAR <var1> <var2>' - put these properties into CMake internal cache
+# - 'MSG_PREFIX <msg>' - prefix string for emitted messages
+# - flag 'VALIDATE' - emit messages about missing values from required cached variables
+# - flag 'WARNING' - emit CMake WARNING instead of STATUS messages
+function(vp_parse_properties_file file var_prefix)
+  cmake_parse_arguments(PARSE_PROPERTIES_PARAM "VALIDATE;WARNING" "" "CACHE_VAR;MSG_PREFIX" ${ARGN})
+
+  set(__msg_type STATUS)
+  if(PARSE_PROPERTIES_PARAM_WARNING)
+    set(__msg_type WARNING)
+  endif()
+
+  if(EXISTS "${file}")
+    set(SOURCE_PROPERTIES_REGEX "^[ ]*([^=:\n\"' ]+)[ ]*=[ ]*(.*)$")
+    file(STRINGS "${file}" SOURCE_PROPERTIES_LINES REGEX "^[ ]*[^#].*$")
+    foreach(line ${SOURCE_PROPERTIES_LINES})
+      if(line MATCHES "${SOURCE_PROPERTIES_REGEX}")
+        set(__name "${CMAKE_MATCH_1}")
+        set(__value "${CMAKE_MATCH_2}")
+        string(REGEX REPLACE "[^a-zA-Z0-9_]" "_" __name ${__name})
+        if(";${PARSE_PROPERTIES_PARAM_CACHE_VAR};" MATCHES ";${__name};")
+          set(${var_prefix}_${__name} "${__value}" CACHE INTERNAL "from ${file}")
+        else()
+          set(${var_prefix}_${__name} "${__value}" PARENT_SCOPE)
+        endif()
+      else()
+        message(${__msg_type} "${PARSE_PROPERTIES_PARAM_MSG_PREFIX}Can't parse source property: '${line}' (from ${file})")
+      endif()
+    endforeach()
+    if(PARSE_PROPERTIES_PARAM_VALIDATE)
+      set(__missing "")
+      foreach(__name ${PARSE_PROPERTIES_PARAM_CACHE_VAR})
+        if(NOT DEFINED ${var_prefix}_${__name})
+          list(APPEND __missing ${__name})
+        endif()
+      endforeach()
+      if(__missing)
+        message(${__msg_type} "${PARSE_PROPERTIES_PARAM_MSG_PREFIX}Can't read properties '${__missing}' from '${file}'")
+      endif()
+    endif()
+  else()
+    message(${__msg_type} "${PARSE_PROPERTIES_PARAM_MSG_PREFIX}Can't find file: ${file}")
+  endif()
+endfunction()
+
+
+
 macro(vp_update VAR)
   if(NOT DEFINED ${VAR})
     if("x${ARGN}" STREQUAL "x")
@@ -97,15 +151,15 @@ function(vp_gen_config TMP_DIR NESTED_PATH ROOT_NAME)
   vp_path_join(__install_nested "${VISP_CONFIG_INSTALL_PATH}" "${NESTED_PATH}")
   vp_path_join(__tmp_nested "${TMP_DIR}" "${NESTED_PATH}")
 
-  file(RELATIVE_PATH VISP_INSTALL_PATH_RELATIVE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${__install_nested}" "${CMAKE_INSTALL_PREFIX}/")
-
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig-version.cmake.in" "${TMP_DIR}/VISPConfig-version.cmake" @ONLY)
 
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPConfig.cmake.in" "${__tmp_nested}/VISPConfig.cmake" @ONLY)
-  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModule.cmake COMPONENT dev)
+  configure_file("${VISP_SOURCE_DIR}/cmake/templates/VISPUse.cmake.in" "${__tmp_nested}/VISPUse.cmake" @ONLY)
+  install(EXPORT VISPModules DESTINATION "${__install_nested}" FILE VISPModules.cmake COMPONENT dev)
   install(FILES
       "${TMP_DIR}/VISPConfig-version.cmake"
       "${__tmp_nested}/VISPConfig.cmake"
+      "${__tmp_nested}/VISPUse.cmake"
       DESTINATION "${__install_nested}" COMPONENT dev)
 
   if(ROOT_NAME)
@@ -178,8 +232,8 @@ endmacro()
 # assert macro
 # Note: it doesn't support lists in arguments
 # Usage samples:
-#   ocv_assert(MyLib_FOUND)
-#   ocv_assert(DEFINED MyLib_INCLUDE_DIRS)
+#   vp_assert(MyLib_FOUND)
+#   vp_assert(DEFINED MyLib_INCLUDE_DIRS)
 macro(vp_assert)
   if(NOT (${ARGN}))
     string(REPLACE ";" " " __assert_msg "${ARGN}")
@@ -775,7 +829,9 @@ set(VP_COMPILER_FAIL_REGEX
 macro(vp_check_compiler_flag LANG FLAG RESULT)
   set(_fname "${ARGN}")
   if(NOT DEFINED ${RESULT})
-    if("_${LANG}_" MATCHES "_CXX_")
+    if(_fname)
+      # nothing
+    elseif("_${LANG}_" MATCHES "_CXX_")
       set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx")
       #if("${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror " OR "${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror=unknown-pragmas ")
         file(WRITE "${_fname}" "int main() { return 0; }\n")
@@ -922,26 +978,23 @@ endmacro()
 macro(vp_set_source_file_compile_flag file)
   if(ACTIVATE_WARNING_3PARTY_MUTE)
     set(__cxxflags "")
+    # Set CXX as default language for cpp|cc|cxx|c file extension
     set(__lang "CXX")
-    if("${file}" MATCHES "\\.(c)$")
-      set(__lang "C")
-    elseif("${file}" MATCHES "\\.(cpp|cc|cxx)$")
-      set(__lang "CXX")
-    elseif("${file}" MATCHES "\\.(f|F)$")
+    if("${file}" MATCHES "\\.(f|F)$")
       set(__lang "Fortran")
     endif()
     # Since cxx11 option makes try_compile() result wrong, we remove all the CXX_FLAGS
     # when we check if an option is available or not
-    set(CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
-    set(CMAKE_CXX_FLAGS "")
+    #set(CXX_FLAGS_BACKUP ${CMAKE_CXX_FLAGS})
+    #set(CMAKE_CXX_FLAGS "")
     foreach(cxxflag ${ARGN})
       vp_check_flag_support(${__lang} ${cxxflag} __support_flag "")
       if(${__support_flag})
         set(__cxxflags "${__cxxflags} ${cxxflag}")
       endif()
     endforeach()
-    set(CMAKE_CXX_FLAGS ${CXX_FLAGS_BACKUP})
-    unset(CXX_FLAGS_BACKUP)
+    #set(CMAKE_CXX_FLAGS ${CXX_FLAGS_BACKUP})
+    #unset(CXX_FLAGS_BACKUP)
     if(NOT ${__cxxflags} STREQUAL "")
       if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${file})
         set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/${file} PROPERTIES COMPILE_FLAGS ${__cxxflags})
@@ -1175,3 +1228,124 @@ set(${var_name} \"${${var_name}}\")
 ")
   endforeach()
 endmacro()
+
+# files: A list of input files like headers (in)
+# paths: A list of corresponding paths (out)
+# usage: vp_find_path(type.h paths PATHS /usr/local)
+macro(vp_find_path files paths)
+  set(__paths "")
+  foreach(arg_ ${ARGN})
+    if("${arg_}" STREQUAL "PATHS")
+      set(__varname "__paths")
+    else()
+      list(APPEND ${__varname} ${arg_})
+    endif()
+  endforeach()
+  unset(__varname)
+  foreach(f_ ${${files}})
+    find_path(path_ ${f_} PATHS ${__paths})
+    if(path_)
+      list(APPEND ${paths} ${path_})
+    endif()
+    unset(path_ CACHE)
+  endforeach()
+  vp_list_unique(${paths})
+endmacro()
+
+# A list of libs
+macro(vp_get_interface_link_libraries libs link_libraries)
+  set(__imported_libs ${${libs}})
+  set(__libs ${${libs}})
+  foreach(lib_ ${${libs}})
+#    message("lib_: ${lib_}")
+    if(TARGET ${lib_})
+      get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
+      if(imported_libs_)
+        list(APPEND __imported_libs ${imported_libs_})
+        list(APPEND __libs ${lib_})
+      else()
+        list(APPEND __libs ${lib_})
+      endif()
+    else()
+      list(APPEND __libs ${lib_})
+    endif()
+  endforeach()
+#  message("__imported_libs: ${__imported_libs}")
+#  message("__libs: ${__libs}")
+  vp_list_unique(__imported_libs)
+  vp_list_unique(__libs)
+#  message("fin __imported_libs: ${__imported_libs}")
+#  message("fin __libs: ${__libs}")
+
+
+  while(__imported_libs)
+#    message("begin while __imported_libs: ${__imported_libs}")
+    vp_list_pop_front(__imported_libs elt)
+#    message("Process elt: ${elt}")
+    if(TARGET ${elt} AND NOT elt MATCHES "^-framework") # to avoid precessing -framework ApplicationServices -framework CoreServices
+#      message("elt is a target and not framework: ${elt}")
+      get_target_property(imported_libs_ ${elt} INTERFACE_LINK_LIBRARIES)
+      if(imported_libs_)
+        list(APPEND __imported_libs ${imported_libs_})
+      else()
+        list(APPEND __libs ${elt})
+      endif()
+    else()
+      list(APPEND __libs ${elt})
+    endif()
+    vp_list_unique(__imported_libs)
+  endwhile()
+  vp_list_unique(__libs)
+#  message("fin2 __imported_libs: ${__imported_libs}")
+#  message("fin2 __libs: ${__libs}")
+
+  set(__config "RELEASE" "DEBUG")
+  foreach(config_ ${__config})
+    foreach(lib_ ${__libs})
+#      message("lib_: ${lib_}")
+    if(TARGET ${lib_})
+      get_target_property(imported_libs_ ${lib_} IMPORTED_IMPLIB_${config_})
+      if(NOT EXISTS ${imported_libs_})
+        get_target_property(lib_location_ ${lib_} IMPORTED_LOCATION_${config_})
+      endif()
+#      message("lib_location_: ${lib_location_}")
+      if(WIN32 AND EXISTS "${lib_location_}" AND "${config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
+        list(APPEND ${link_libraries} optimized "${lib_location_}")
+      elseif(WIN32 AND EXISTS "${lib_location_}" AND "${config_}" MATCHES "DEBUG")
+        list(APPEND ${link_libraries} debug     "${lib_location_}")
+      elseif(EXISTS ${lib_location_})
+        list(APPEND ${link_libraries} ${lib_location_})
+      endif()
+
+      get_target_property(lib_deps_ ${lib_} IMPORTED_LINK_INTERFACE_LIBRARIES_${config_})
+#      message("lib_deps_ ---------: ${lib_deps_}")
+      if(lib_deps_)
+        foreach(deps_ ${lib_deps_})
+          get_target_property(deps_location_ ${deps_} IMPORTED_LOCATION_${config_})
+          if(EXISTS "${deps_location_}")
+            if(WIN32 AND "${config_}" MATCHES "RELEASE")
+              list(APPEND ${link_libraries} optimized ${deps_location_})
+            elseif(WIN32 AND "${config_}" MATCHES "DEBUG")
+              list(APPEND ${link_libraries} debug ${deps_location_})
+            else()
+              list(APPEND ${link_libraries} ${deps_location_})
+            endif()
+          endif()
+        endforeach()
+      endif()
+    else()
+      list(APPEND ${link_libraries} ${lib_})
+    endif()
+
+    endforeach()
+  endforeach()
+  vp_list_unique(${link_libraries})
+#  message("link_libraries: ${link_libraries}")
+
+endmacro()
+
+# Concatenate in_file to out_file
+function(vp_cat_file in_file out_file)
+  file(READ ${in_file} CONTENTS)
+  file(APPEND ${out_file} "${CONTENTS}")
+endfunction()

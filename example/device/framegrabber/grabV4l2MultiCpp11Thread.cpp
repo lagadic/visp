@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CPP11_COMPATIBILITY) && defined(VISP_HAVE_V4L2) &&                                               \
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_V4L2) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
 #include <condition_variable>
@@ -551,9 +551,9 @@ int main()
 #else
 int main()
 {
-  std::cout << "You do not build ViSP with C++11 compiler flag" << std::endl;
+  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CPP11=ON, and build again this example" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

@@ -23,7 +23,8 @@ namespace FeatureDetector{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-#if defined _MSC_VER && _MSC_VER <= 1600
+//#if defined(_MSC_VER) && _MSC_VER <= 1600
+#if defined(_MSC_FULL_VER) && _MSC_FULL_VER == 160040219 // == VS2010 SP1
 //ref: https://github.com/webmproject/libwebp/blob/v0.6.0/src/dsp/cpu.c#L82
 //ref: http://forums.codeguru.com/showthread.php?551499-xgetbv
 //note: code to return the uint64_t value
@@ -41,6 +42,11 @@ uint64_t _xgetbv(unsigned int ext_ctrl_reg)
     mov edx_, edx
   }
   return ((uint64_t)edx_ << 32) | eax_;
+}
+#elif defined(_MSC_VER) && _MSC_VER <= 1600 // VS2010 too old
+uint64_t _xgetbv(unsigned int)
+{
+  return 0U;
 }
 #endif
 #if defined(__MINGW32__)
@@ -82,7 +88,14 @@ BOOL IsWow64()
 {
     BOOL bIsWow64 = FALSE;
 
-#ifndef WINRT // Turned off on UWP where GetModuleHandle() doesn't exist
+#if defined(__MINGW__) || defined(__MINGW32__) || defined(__MINGW64__)
+    if (!IsWow64Process(GetCurrentProcess(), &bIsWow64))
+	{
+		printf("Error Detecting Operating System.\n");
+		printf("Defaulting to 32-bit OS.\n\n");
+		bIsWow64 = FALSE;
+	}
+#elif !defined(WINRT) // Turned off on UWP where GetModuleHandle() doesn't exist
     LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
         GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 

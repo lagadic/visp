@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,16 +48,13 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #endif
 
+#ifdef VISP_HAVE_PUGIXML
+#include <pugixml.hpp>
+#endif
+
 namespace
 {
 // Specific Type transformation functions
-///*!
-//   Convert a list of cv::DMatch to a cv::DMatch (extract the first
-//   cv::DMatch, the nearest neighbor).
-//
-//   \param knnMatches : List of cv::DMatch.
-//   \return The nearest neighbor.
-// */
 inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches)
 {
   if (knnMatches.size() > 0) {
@@ -67,26 +64,11 @@ inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches)
   return cv::DMatch();
 }
 
-///*!
-//   Convert a cv::DMatch to an index (extract the train index).
-//
-//   \param match : Point to convert in ViSP type.
-//   \return The train index.
-// */
 inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair)
 {
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
 
-// Keep this function to know how to detect big endian with code
-// bool isBigEndian() {
-//  union {
-//    uint32_t i;
-//    char c[4];
-//  } bint = { 0x01020304 };
-//
-//  return bint.c[0] == 1;
-//}
 }
 
 /*!
@@ -107,14 +89,15 @@ vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatur
     m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
     m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
     m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(), m_ransacOutliers(),
+    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
     m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
     m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
-    m_useSingleMatchFilter(true)
+    m_useSingleMatchFilter(true), m_I()
 {
   initFeatureNames();
 
@@ -142,14 +125,15 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85),
     m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
     m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(), m_ransacOutliers(),
+    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
     m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
     m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
-    m_useSingleMatchFilter(true)
+    m_useSingleMatchFilter(true), m_I()
 {
   initFeatureNames();
 
@@ -177,14 +161,14 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_matcher(), m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0),
     m_matchingRatioThreshold(0.85), m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200),
     m_nbRansacMinInlierCount(100), m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(),
-    m_queryFilteredKeyPoints(), m_queryKeyPoints(), m_ransacConsensusPercentage(20.0), m_ransacInliers(),
-    m_ransacOutliers(), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01), m_trainDescriptors(),
-    m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
+    m_queryFilteredKeyPoints(), m_queryKeyPoints(), m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(),
+    m_ransacOutliers(), m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
+    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
     m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
-    m_useSingleMatchFilter(true)
+    m_useSingleMatchFilter(true), m_I()
 {
   initFeatureNames();
   init();
@@ -256,6 +240,14 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask
 unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I) { return buildReference(I, vpRect()); }
 
 /*!
+   Build the reference keypoints list.
+
+   \param I_color : Input reference image.
+   \return The number of detected keypoints in the image \p I.
+ */
+unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color) { return buildReference(I_color, vpRect()); }
+
+/*!
    Build the reference keypoints list in a region of interest in the image.
 
    \param I : Input reference image
@@ -267,8 +259,22 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I) { retur
 unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
                                         const unsigned int height, const unsigned int width)
 {
-
   return buildReference(I, vpRect(iP, width, height));
+}
+
+/*!
+   Build the reference keypoints list in a region of interest in the image.
+
+   \param I_color : Input reference image
+   \param iP : Position of the top-left corner of the region of interest.
+   \param height : Height of the region of interest.
+   \param width : Width of the region of interest.
+   \return The number of detected keypoints in the current image I.
+ */
+unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP,
+                                        const unsigned int height, const unsigned int width)
+{
+  return buildReference(I_color, vpRect(iP, width, height));
 }
 
 /*!
@@ -338,6 +344,19 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const v
 }
 
 /*!
+   Build the reference keypoints list in a region of interest in the image.
+
+   \param I_color : Input image.
+   \param rectangle : Rectangle of the region of interest.
+   \return The number of detected keypoints in the current image I.
+ */
+unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vpRect &rectangle)
+{
+  vpImageConvert::convert(I_color, m_I);
+  return (buildReference(m_I, rectangle));
+}
+
+/*!
    Build the reference keypoints list and compute the 3D position
    corresponding of the keypoints locations.
 
@@ -380,6 +399,51 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv:
   }
 
   buildReference(I, trainKeyPoints, trainDescriptors, points3f, append, class_id);
+}
+
+/*!
+   Build the reference keypoints list and compute the 3D position
+   corresponding of the keypoints locations.
+
+   \param I_color : Input image
+   \param trainKeyPoints : List of the train keypoints.
+   \param points3f : Output list of the 3D position corresponding of the
+   keypoints locations. \param append : If true, append the supply train
+   keypoints with those already present. \param class_id : The class id to be
+   set to the input cv::KeyPoint if != -1.
+ */
+void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoints,
+                                std::vector<cv::Point3f> &points3f, const bool append, const int class_id)
+{
+  cv::Mat trainDescriptors;
+  // Copy the input list of keypoints
+  std::vector<cv::KeyPoint> trainKeyPoints_tmp = trainKeyPoints;
+
+  extract(I_color, trainKeyPoints, trainDescriptors, m_extractionTime, &points3f);
+
+  if (trainKeyPoints.size() != trainKeyPoints_tmp.size()) {
+    // Keypoints have been removed
+    // Store the hash of a keypoint as the key and the index of the keypoint
+    // as the value
+    std::map<size_t, size_t> mapOfKeypointHashes;
+    size_t cpt = 0;
+    for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end();
+         ++it, cpt++) {
+      mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
+    }
+
+    std::vector<cv::Point3f> trainPoints_tmp;
+    for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
+      if (mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
+        trainPoints_tmp.push_back(points3f[mapOfKeypointHashes[myKeypointHash(*it)]]);
+      }
+    }
+
+    // Copy trainPoints_tmp to points3f
+    points3f = trainPoints_tmp;
+  }
+
+  buildReference(I_color, trainKeyPoints, trainDescriptors, points3f, append, class_id);
 }
 
 /*!
@@ -444,6 +508,26 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
   m_matcher->add(std::vector<cv::Mat>(1, m_trainDescriptors));
 
   _reference_computed = true;
+}
+
+/*!
+   Build the reference keypoints list and compute the 3D position
+   corresponding of the keypoints locations.
+
+   \param I_color : Input image
+   \param trainKeyPoints : List of the train keypoints.
+   \param points3f : List of the 3D position corresponding of the keypoints
+   locations. \param trainDescriptors : List of the train descriptors. \param
+   append : If true, append the supply train keypoints with those already
+   present. \param class_id : The class id to be set to the input cv::KeyPoint
+   if != -1.
+ */
+void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const std::vector<cv::KeyPoint> &trainKeyPoints,
+                                const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                                const bool append, const int class_id)
+{
+  vpImageConvert::convert(I_color, m_I);
+  buildReference(m_I, trainKeyPoints, trainDescriptors, points3f, append, class_id);
 }
 
 /*!
@@ -805,18 +889,18 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
    Compute the pose using the correspondence between 2D points and 3D points
    using OpenCV function with RANSAC method.
 
-   \param imagePoints : List of 2D points corresponding to the location of the
-   detected keypoints. \param  objectPoints : List of the 3D points in the
-   object frame matched. \param cam : Camera parameters. \param cMo :
-   Homogeneous matrix between the object frame and the camera frame. \param
-   inlierIndex : List of indexes of inliers. \param elapsedTime : Elapsed
-   time. \param func : Function pointer to filter the final pose returned by
-   OpenCV pose estimation method. \return True if the pose has been computed,
-   false otherwise (not enough points, or size list mismatch).
+   \param imagePoints : List of 2D points corresponding to the location of the detected keypoints.
+   \param  objectPoints : List of the 3D points in the object frame matched.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
+   \param inlierIndex : List of indexes of inliers.
+   \param elapsedTime : Elapsed time.
+   \param func : Function pointer to filter the final pose returned by OpenCV pose estimation method.
+   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
  */
 bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
                              const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
-                             double &elapsedTime, bool (*func)(vpHomogeneousMatrix *))
+                             double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &))
 {
   double t = vpTime::measureTimeMs();
 
@@ -888,7 +972,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
   if (func != NULL) {
     // Check the final pose returned by solvePnPRansac to discard
     // solutions which do not respect the pose criterion.
-    if (!func(&cMo)) {
+    if (!func(cMo)) {
       elapsedTime = (vpTime::measureTimeMs() - t);
       return false;
     }
@@ -902,16 +986,16 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
    Compute the pose using the correspondence between 2D points and 3D points
    using ViSP function with RANSAC method.
 
-   \param objectVpPoints : List of vpPoint with coordinates expressed in the
-   object and in the camera frame. \param cMo : Homogeneous matrix between the
-   object frame and the camera frame. \param inliers : List of inliers. \param
-   elapsedTime : Elapsed time. \return True if the pose has been computed,
-   false otherwise (not enough points, or size list mismatch). \param func :
-   Function pointer to filter the pose in Ransac pose estimation, if we want
+   \param objectVpPoints : List of vpPoint with coordinates expressed in the object and in the camera frame.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
+   \param inliers : List of inliers.
+   \param elapsedTime : Elapsed time.
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want
    to eliminate the poses which do not respect some criterion
+   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
  */
 bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-                             std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *))
+                             std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &))
 {
   std::vector<unsigned int> inlierIndex;
   return computePose(objectVpPoints, cMo, inliers, inlierIndex, elapsedTime, func);
@@ -921,19 +1005,18 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
    Compute the pose using the correspondence between 2D points and 3D points
    using ViSP function with RANSAC method.
 
-   \param objectVpPoints : List of vpPoint with coordinates expressed in the
-   object and in the camera frame. \param cMo : Homogeneous matrix between the
-   object frame and the camera frame. \param inliers : List of inlier points.
+   \param objectVpPoints : List of vpPoint with coordinates expressed in the object and in the camera frame.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
+   \param inliers : List of inlier points.
    \param inlierIndex : List of inlier index.
    \param elapsedTime : Elapsed time.
-   \return True if the pose has been computed, false otherwise (not enough
-   points, or size list mismatch). \param func : Function pointer to filter
-   the pose in Ransac pose estimation, if we want to eliminate the poses which
+   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
+   \param func : Function pointer to filter  the pose in Ransac pose estimation, if we want to eliminate the poses which
    do not respect some criterion
  */
 bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
                              std::vector<vpPoint> &inliers, std::vector<unsigned int> &inlierIndex, double &elapsedTime,
-                             bool (*func)(vpHomogeneousMatrix *))
+                             bool (*func)(const vpHomogeneousMatrix &))
 {
   double t = vpTime::measureTimeMs();
 
@@ -957,6 +1040,9 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
         (unsigned int)(m_ransacConsensusPercentage / 100.0 * (double)m_queryFilteredKeyPoints.size());
   }
 
+  pose.setRansacFilterFlag(m_ransacFilterFlag);
+  pose.setUseParallelRansac(m_ransacParallel);
+  pose.setNbParallelRansacThreads(m_ransacParallelNbThreads);
   pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
   pose.setRansacThreshold(m_ransacThreshold);
   pose.setRansacMaxTrials(m_nbRansacIterations);
@@ -1051,6 +1137,24 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsig
 }
 
 /*!
+   Initialize the size of the matching image (case with a matching side by
+   side between IRef and ICurrent).
+
+   \param IRef : Reference image.
+   \param ICurrent : Current image.
+   \param IMatching : Image matching.
+ */
+void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef, vpImage<vpRGBa> &ICurrent,
+                                     vpImage<vpRGBa> &IMatching)
+{
+  // Image matching side by side
+  unsigned int width = IRef.getWidth() + ICurrent.getWidth();
+  unsigned int height = ((std::max))(IRef.getHeight(), ICurrent.getHeight());
+
+  IMatching = vpImage<vpRGBa>(height, width);
+}
+
+/*!
    Initialize the size of the matching image with appropriate size according
    to the number of training images. Used to display the matching of keypoints
    detected in the current image with those detected in multiple training
@@ -1106,6 +1210,61 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
 }
 
 /*!
+   Initialize the size of the matching image with appropriate size according
+   to the number of training images. Used to display the matching of keypoints
+   detected in the current image with those detected in multiple training
+   images.
+
+   \param ICurrent : Current image.
+   \param IMatching : Image initialized with appropriate size.
+ */
+void vpKeyPoint::createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching)
+{
+  // Nb images in the training database + the current image we want to detect
+  // the object
+  unsigned int nbImg = (unsigned int)(m_mapOfImages.size() + 1);
+
+  if (m_mapOfImages.empty()) {
+    std::cerr << "There is no training image loaded !" << std::endl;
+    return;
+  }
+
+  if (nbImg == 2) {
+    // Only one training image, so we display them side by side
+    createImageMatching(m_mapOfImages.begin()->second, ICurrent, IMatching);
+  } else {
+    // Multiple training images, display them as a mosaic image
+    //(unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    unsigned int nbImgSqrt = (unsigned int)vpMath::round(std::sqrt((double)nbImg));
+
+    // Number of columns in the mosaic grid
+    unsigned int nbWidth = nbImgSqrt;
+    // Number of rows in the mosaic grid
+    unsigned int nbHeight = nbImgSqrt;
+
+    // Deals with non square mosaic grid and the total number of images
+    if (nbImgSqrt * nbImgSqrt < nbImg) {
+      nbWidth++;
+    }
+
+    unsigned int maxW = ICurrent.getWidth();
+    unsigned int maxH = ICurrent.getHeight();
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it) {
+      if (maxW < it->second.getWidth()) {
+        maxW = it->second.getWidth();
+      }
+
+      if (maxH < it->second.getHeight()) {
+        maxH = it->second.getHeight();
+      }
+    }
+
+    IMatching = vpImage<vpRGBa>(maxH * nbHeight, maxW * nbWidth);
+  }
+}
+
+/*!
    Detect keypoints in the image.
 
    \param I : Input image.
@@ -1116,6 +1275,19 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
 {
   double elapsedTime;
   detect(I, keyPoints, elapsedTime, rectangle);
+}
+
+/*!
+   Detect keypoints in the image.
+
+   \param I_color : Input image.
+   \param keyPoints : Output list of the detected keypoints.
+   \param rectangle : Optional rectangle of the region of interest.
+ */
+void vpKeyPoint::detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, const vpRect &rectangle)
+{
+  double elapsedTime;
+  detect(I_color, keyPoints, elapsedTime, rectangle);
 }
 
 /*!
@@ -1145,6 +1317,32 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
 {
   cv::Mat matImg;
   vpImageConvert::convert(I, matImg, false);
+  cv::Mat mask = cv::Mat::zeros(matImg.rows, matImg.cols, CV_8U);
+
+  if (rectangle.getWidth() > 0 && rectangle.getHeight() > 0) {
+    cv::Point leftTop((int)rectangle.getLeft(), (int)rectangle.getTop()),
+        rightBottom((int)rectangle.getRight(), (int)rectangle.getBottom());
+    cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), CV_FILLED);
+  } else {
+    mask = cv::Mat::ones(matImg.rows, matImg.cols, CV_8U) * 255;
+  }
+
+  detect(matImg, keyPoints, elapsedTime, mask);
+}
+
+/*!
+   Detect keypoints in the image.
+
+   \param I_color : Input image.
+   \param keyPoints : Output list of the detected keypoints.
+   \param elapsedTime : Elapsed time.
+   \param rectangle : Optional rectangle of the region of interest.
+ */
+void vpKeyPoint::detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+                        const vpRect &rectangle)
+{
+  cv::Mat matImg;
+  vpImageConvert::convert(I_color, matImg);
   cv::Mat mask = cv::Mat::zeros(matImg.rows, matImg.cols, CV_8U);
 
   if (rectangle.getWidth() > 0 && rectangle.getHeight() > 0) {
@@ -1204,6 +1402,26 @@ void vpKeyPoint::display(const vpImage<unsigned char> &IRef, const vpImage<unsig
 }
 
 /*!
+   Display the reference and the detected keypoints in the images.
+
+   \param IRef : Input reference image.
+   \param ICurrent : Input current image.
+   \param size : Size of the displayed cross.
+ */
+void vpKeyPoint::display(const vpImage<vpRGBa> &IRef, const vpImage<vpRGBa> &ICurrent, unsigned int size)
+{
+  std::vector<vpImagePoint> vpQueryImageKeyPoints;
+  getQueryKeyPoints(vpQueryImageKeyPoints);
+  std::vector<vpImagePoint> vpTrainImageKeyPoints;
+  getTrainKeyPoints(vpTrainImageKeyPoints);
+
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+    vpDisplay::displayCross(IRef, vpTrainImageKeyPoints[(size_t)(it->trainIdx)], size, vpColor::red);
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, vpColor::green);
+  }
+}
+
+/*!
    Display the reference keypoints.
 
    \param ICurrent : Input current image.
@@ -1211,6 +1429,23 @@ void vpKeyPoint::display(const vpImage<unsigned char> &IRef, const vpImage<unsig
    \param color : Color of the crosses.
  */
 void vpKeyPoint::display(const vpImage<unsigned char> &ICurrent, unsigned int size, const vpColor &color)
+{
+  std::vector<vpImagePoint> vpQueryImageKeyPoints;
+  getQueryKeyPoints(vpQueryImageKeyPoints);
+
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+    vpDisplay::displayCross(ICurrent, vpQueryImageKeyPoints[(size_t)(it->queryIdx)], size, color);
+  }
+}
+
+/*!
+   Display the reference keypoints.
+
+   \param ICurrent : Input current image.
+   \param size : Size of the displayed crosses.
+   \param color : Color of the crosses.
+ */
+void vpKeyPoint::display(const vpImage<vpRGBa> &ICurrent, unsigned int size, const vpColor &color)
 {
   std::vector<vpImagePoint> vpQueryImageKeyPoints;
   getQueryKeyPoints(vpQueryImageKeyPoints);
@@ -1259,17 +1494,214 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<uns
 }
 
 /*!
+  Display the matching lines between the detected keypoints with those
+  detected in one training image.
+
+  \param IRef : Reference image, used to have the x-offset.
+  \param IMatching : Resulting image matching.
+  \param crossSize : Size of the displayed crosses.
+  \param lineThickness : Thickness of the displayed lines.
+  \param color : Color to use, if none, we pick randomly a color for each pair
+  of matching.
+ */
+void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpRGBa> &IMatching,
+                                 unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
+{
+  bool randomColor = (color == vpColor::none);
+  srand((unsigned int)time(NULL));
+  vpColor currentColor = color;
+
+  std::vector<vpImagePoint> queryImageKeyPoints;
+  getQueryKeyPoints(queryImageKeyPoints);
+  std::vector<vpImagePoint> trainImageKeyPoints;
+  getTrainKeyPoints(trainImageKeyPoints);
+
+  vpImagePoint leftPt, rightPt;
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+    if (randomColor) {
+      currentColor = vpColor((rand() % 256), (rand() % 256), (rand() % 256));
+    }
+
+    leftPt = trainImageKeyPoints[(size_t)(it->trainIdx)];
+    rightPt = vpImagePoint(queryImageKeyPoints[(size_t)(it->queryIdx)].get_i(),
+                           queryImageKeyPoints[(size_t)it->queryIdx].get_j() + IRef.getWidth());
+    vpDisplay::displayCross(IMatching, leftPt, crossSize, currentColor);
+    vpDisplay::displayCross(IMatching, rightPt, crossSize, currentColor);
+    vpDisplay::displayLine(IMatching, leftPt, rightPt, currentColor, lineThickness);
+  }
+}
+
+/*!
+  Display the matching lines between the detected keypoints with those
+  detected in one training image.
+
+  \param IRef : Reference image, used to have the x-offset.
+  \param IMatching : Resulting image matching.
+  \param crossSize : Size of the displayed crosses.
+  \param lineThickness : Thickness of the displayed lines.
+  \param color : Color to use, if none, we pick randomly a color for each pair
+  of matching.
+ */
+void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &IMatching,
+                                 unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
+{
+  bool randomColor = (color == vpColor::none);
+  srand((unsigned int)time(NULL));
+  vpColor currentColor = color;
+
+  std::vector<vpImagePoint> queryImageKeyPoints;
+  getQueryKeyPoints(queryImageKeyPoints);
+  std::vector<vpImagePoint> trainImageKeyPoints;
+  getTrainKeyPoints(trainImageKeyPoints);
+
+  vpImagePoint leftPt, rightPt;
+  for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+    if (randomColor) {
+      currentColor = vpColor((rand() % 256), (rand() % 256), (rand() % 256));
+    }
+
+    leftPt = trainImageKeyPoints[(size_t)(it->trainIdx)];
+    rightPt = vpImagePoint(queryImageKeyPoints[(size_t)(it->queryIdx)].get_i(),
+                           queryImageKeyPoints[(size_t)it->queryIdx].get_j() + IRef.getWidth());
+    vpDisplay::displayCross(IMatching, leftPt, crossSize, currentColor);
+    vpDisplay::displayCross(IMatching, rightPt, crossSize, currentColor);
+    vpDisplay::displayLine(IMatching, leftPt, rightPt, currentColor, lineThickness);
+  }
+}
+
+/*!
    Display matching between keypoints detected in the current image and with
    those detected in the multiple training images. Display also RANSAC inliers
    if the list is supplied.
 
    \param ICurrent : Current image.
    \param IMatching : Resulting matching image.
-   \param ransacInliers : List of Ransac inliers or empty list if not
-   available. \param crossSize : Size of the displayed crosses. \param
-   lineThickness : Thickness of the displayed line.
+   \param ransacInliers : List of Ransac inliers or empty list if not available.
+   \param crossSize : Size of the displayed crosses.
+   \param lineThickness : Thickness of the displayed line.
  */
 void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching,
+                                 const std::vector<vpImagePoint> &ransacInliers, unsigned int crossSize,
+                                 unsigned int lineThickness)
+{
+  if (m_mapOfImages.empty() || m_mapOfImageId.empty()) {
+    // No training images so return
+    std::cerr << "There is no training image loaded !" << std::endl;
+    return;
+  }
+
+  // Nb images in the training database + the current image we want to detect
+  // the object
+  int nbImg = (int)(m_mapOfImages.size() + 1);
+
+  if (nbImg == 2) {
+    // Only one training image, so we display the matching result side-by-side
+    displayMatching(m_mapOfImages.begin()->second, IMatching, crossSize);
+  } else {
+    // Multiple training images, display them as a mosaic image
+    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbWidth = nbImgSqrt;
+    int nbHeight = nbImgSqrt;
+
+    if (nbImgSqrt * nbImgSqrt < nbImg) {
+      nbWidth++;
+    }
+
+    std::map<int, int> mapOfImageIdIndex;
+    int cpt = 0;
+    unsigned int maxW = ICurrent.getWidth(), maxH = ICurrent.getHeight();
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it, cpt++) {
+      mapOfImageIdIndex[it->first] = cpt;
+
+      if (maxW < it->second.getWidth()) {
+        maxW = it->second.getWidth();
+      }
+
+      if (maxH < it->second.getHeight()) {
+        maxH = it->second.getHeight();
+      }
+    }
+
+    // Indexes of the current image in the grid computed to put preferably the
+    // image in the center of the mosaic grid
+    int medianI = nbHeight / 2;
+    int medianJ = nbWidth / 2;
+    int medianIndex = medianI * nbWidth + medianJ;
+    for (std::vector<cv::KeyPoint>::const_iterator it = m_trainKeyPoints.begin(); it != m_trainKeyPoints.end(); ++it) {
+      vpImagePoint topLeftCorner;
+      int current_class_id_index = 0;
+      if (mapOfImageIdIndex[m_mapOfImageId[it->class_id]] < medianIndex) {
+        current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]];
+      } else {
+        // Shift of one unity the index of the training images which are after
+        // the current image
+        current_class_id_index = mapOfImageIdIndex[m_mapOfImageId[it->class_id]] + 1;
+      }
+
+      int indexI = current_class_id_index / nbWidth;
+      int indexJ = current_class_id_index - (indexI * nbWidth);
+      topLeftCorner.set_ij((int)maxH * indexI, (int)maxW * indexJ);
+
+      // Display cross for keypoints in the learning database
+      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
+                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+    }
+
+    vpImagePoint topLeftCorner((int)maxH * medianI, (int)maxW * medianJ);
+    for (std::vector<cv::KeyPoint>::const_iterator it = m_queryKeyPoints.begin(); it != m_queryKeyPoints.end(); ++it) {
+      // Display cross for keypoints detected in the current image
+      vpDisplay::displayCross(IMatching, (int)(it->pt.y + topLeftCorner.get_i()),
+                              (int)(it->pt.x + topLeftCorner.get_j()), crossSize, vpColor::red);
+    }
+    for (std::vector<vpImagePoint>::const_iterator it = ransacInliers.begin(); it != ransacInliers.end(); ++it) {
+      // Display green circle for RANSAC inliers
+      vpDisplay::displayCircle(IMatching, (int)(it->get_v() + topLeftCorner.get_i()),
+                               (int)(it->get_u() + topLeftCorner.get_j()), 4, vpColor::green);
+    }
+    for (std::vector<vpImagePoint>::const_iterator it = m_ransacOutliers.begin(); it != m_ransacOutliers.end(); ++it) {
+      // Display red circle for RANSAC outliers
+      vpDisplay::displayCircle(IMatching, (int)(it->get_i() + topLeftCorner.get_i()),
+                               (int)(it->get_j() + topLeftCorner.get_j()), 4, vpColor::red);
+    }
+
+    for (std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+      int current_class_id = 0;
+      if (mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] < medianIndex) {
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]];
+      } else {
+        // Shift of one unity the index of the training images which are after
+        // the current image
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t)it->trainIdx].class_id]] + 1;
+      }
+
+      int indexI = current_class_id / nbWidth;
+      int indexJ = current_class_id - (indexI * nbWidth);
+
+      vpImagePoint end((int)maxH * indexI + m_trainKeyPoints[(size_t)it->trainIdx].pt.y,
+                       (int)maxW * indexJ + m_trainKeyPoints[(size_t)it->trainIdx].pt.x);
+      vpImagePoint start((int)maxH * medianI + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.y,
+                         (int)maxW * medianJ + m_queryFilteredKeyPoints[(size_t)it->queryIdx].pt.x);
+
+      // Draw line for matching keypoints detected in the current image and
+      // those detected  in the training images
+      vpDisplay::displayLine(IMatching, start, end, vpColor::green, lineThickness);
+    }
+  }
+}
+
+/*!
+   Display matching between keypoints detected in the current image and with
+   those detected in the multiple training images. Display also RANSAC inliers
+   if the list is supplied.
+
+   \param ICurrent : Current image.
+   \param IMatching : Resulting matching image.
+   \param ransacInliers : List of Ransac inliers or empty list if not available.
+   \param crossSize : Size of the displayed crosses.
+   \param lineThickness : Thickness of the displayed line.
+ */
+void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching,
                                  const std::vector<vpImagePoint> &ransacInliers, unsigned int crossSize,
                                  unsigned int lineThickness)
 {
@@ -1399,6 +1831,23 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoi
 /*!
    Extract the descriptors for each keypoints of the list.
 
+   \param I_color : Input image.
+   \param keyPoints : List of keypoints we want to extract their descriptors.
+   \param descriptors : Descriptors matrix with at each row the descriptors
+   values for each keypoint. \param trainPoints : Pointer to the list of 3D
+   train points, when a keypoint cannot be extracted, we need to remove the
+   corresponding 3D point.
+ */
+void vpKeyPoint::extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+                         std::vector<cv::Point3f> *trainPoints)
+{
+  double elapsedTime;
+  extract(I_color, keyPoints, descriptors, elapsedTime, trainPoints);
+}
+
+/*!
+   Extract the descriptors for each keypoints of the list.
+
    \param matImg : Input image.
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors
@@ -1428,6 +1877,24 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoi
 {
   cv::Mat matImg;
   vpImageConvert::convert(I, matImg, false);
+  extract(matImg, keyPoints, descriptors, elapsedTime, trainPoints);
+}
+
+/*!
+   Extract the descriptors for each keypoints of the list.
+
+   \param I_color : Input image.
+   \param keyPoints : List of keypoints we want to extract their descriptors.
+   \param descriptors : Descriptors matrix with at each row the descriptors
+   values for each keypoint. \param elapsedTime : Elapsed time. \param
+   trainPoints : Pointer to the list of 3D train points, when a keypoint
+   cannot be extracted, we need to remove the corresponding 3D point.
+ */
+void vpKeyPoint::extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+                         double &elapsedTime, std::vector<cv::Point3f> *trainPoints)
+{
+  cv::Mat matImg;
+  vpImageConvert::convert(I_color, matImg);
   extract(matImg, keyPoints, descriptors, elapsedTime, trainPoints);
 }
 
@@ -1938,9 +2405,11 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 
   bool detectorInitialized = false;
   if (!usePyramid) {
-    detectorInitialized = (m_detectors[detectorNameTmp] != NULL);
+    //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
+    detectorInitialized = !m_detectors[detectorNameTmp].empty();
   } else {
-    detectorInitialized = (m_detectors[detectorName] != NULL);
+    //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
+    detectorInitialized = !m_detectors[detectorName].empty();
   }
 
   if (!detectorInitialized) {
@@ -2087,7 +2556,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
   }
 #endif
 
-  if (m_extractors[extractorName] == NULL) {
+  if (!m_extractors[extractorName]) { //if null
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: " << extractorName
            << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
@@ -2234,7 +2703,7 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
   }
 #endif
 
-  if (m_matcher == NULL) {
+  if (!m_matcher) { //if null
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the matcher: " << matcherName
            << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
@@ -2252,6 +2721,23 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
  */
 void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent,
                                      vpImage<unsigned char> &IMatching)
+{
+  vpImagePoint topLeftCorner(0, 0);
+  IMatching.insert(IRef, topLeftCorner);
+  topLeftCorner = vpImagePoint(0, IRef.getWidth());
+  IMatching.insert(ICurrent, topLeftCorner);
+}
+
+/*!
+   Insert a reference image and a current image side-by-side.
+
+   \param IRef : Reference image.
+   \param ICurrent : Current image.
+   \param IMatching : Matching image for displaying all the matching between
+   the query keypoints and those detected in the training images.
+ */
+void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &IRef, const vpImage<vpRGBa> &ICurrent,
+                                     vpImage<vpRGBa> &IMatching)
 {
   vpImagePoint topLeftCorner(0, 0);
   IMatching.insert(IRef, topLeftCorner);
@@ -2329,7 +2815,81 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
   }
 }
 
-#ifdef VISP_HAVE_XML2
+/*!
+   Insert the different training images in the matching image.
+
+   \param ICurrent : Current image.
+   \param IMatching : Matching image for displaying all the matching between
+   the query keypoints and those detected in the training images
+ */
+void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching)
+{
+  // Nb images in the training database + the current image we want to detect
+  // the object
+  int nbImg = (int)(m_mapOfImages.size() + 1);
+
+  if (m_mapOfImages.empty()) {
+    std::cerr << "There is no training image loaded !" << std::endl;
+    return;
+  }
+
+  if (nbImg == 2) {
+    // Only one training image, so we display them side by side
+    vpImage<vpRGBa> IRef;
+    vpImageConvert::convert(m_mapOfImages.begin()->second, IRef);
+    insertImageMatching(IRef, ICurrent, IMatching);
+  } else {
+    // Multiple training images, display them as a mosaic image
+    int nbImgSqrt = vpMath::round(std::sqrt((double)nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbWidth = nbImgSqrt;
+    int nbHeight = nbImgSqrt;
+
+    if (nbImgSqrt * nbImgSqrt < nbImg) {
+      nbWidth++;
+    }
+
+    unsigned int maxW = ICurrent.getWidth(), maxH = ICurrent.getHeight();
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it) {
+      if (maxW < it->second.getWidth()) {
+        maxW = it->second.getWidth();
+      }
+
+      if (maxH < it->second.getHeight()) {
+        maxH = it->second.getHeight();
+      }
+    }
+
+    // Indexes of the current image in the grid made in order to the image is
+    // in the center square in the mosaic grid
+    int medianI = nbHeight / 2;
+    int medianJ = nbWidth / 2;
+    int medianIndex = medianI * nbWidth + medianJ;
+
+    int cpt = 0;
+    for (std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end();
+         ++it, cpt++) {
+      int local_cpt = cpt;
+      if (cpt >= medianIndex) {
+        // Shift of one unity the index of the training images which are after
+        // the current image
+        local_cpt++;
+      }
+      int indexI = local_cpt / nbWidth;
+      int indexJ = local_cpt - (indexI * nbWidth);
+      vpImagePoint topLeftCorner((int)maxH * indexI, (int)maxW * indexJ);
+
+      vpImage<vpRGBa> IRef;
+      vpImageConvert::convert(it->second, IRef);
+      IMatching.insert(IRef, topLeftCorner);
+    }
+
+    vpImagePoint topLeftCorner((int)maxH * medianI, (int)maxW * medianJ);
+    IMatching.insert(ICurrent, topLeftCorner);
+  }
+}
+
+#ifdef VISP_HAVE_PUGIXML
 /*!
    Load configuration parameters from an XML config file.
 
@@ -2607,28 +3167,15 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
     file.close();
   } else {
-#ifdef VISP_HAVE_XML2
-    xmlDocPtr doc = NULL;
-    xmlNodePtr root_element = NULL;
-
-    /*
-     * this initialize the library and check potential ABI mismatches
-     * between the version it was compiled for and the actual shared
-     * library used.
-     */
-    LIBXML_TEST_VERSION
+#ifdef VISP_HAVE_PUGIXML
+    pugi::xml_document doc;
 
     /*parse the file and get the DOM */
-    doc = xmlReadFile(filename.c_str(), NULL, 0);
-
-    if (doc == NULL) {
-      throw vpException(vpException::ioError, "Error with file " + filename);
+    if (!doc.load_file(filename.c_str())) {
+      throw vpException(vpException::ioError, "Error with file: %s", filename.c_str());
     }
 
-    root_element = xmlDocGetRootElement(doc);
-
-    xmlNodePtr first_level_node = NULL;
-    char *pEnd = NULL;
+    pugi::xml_node root_element = doc.document_element();
 
     int descriptorType = CV_32F; // float
     int nRows = 0, nCols = 0;
@@ -2636,27 +3183,21 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
     cv::Mat trainDescriptorsTmp;
 
-    for (first_level_node = root_element->children; first_level_node; first_level_node = first_level_node->next) {
+    for (pugi::xml_node first_level_node = root_element.first_child(); first_level_node; first_level_node = first_level_node.next_sibling()) {
 
-      std::string name((char *)first_level_node->name);
-      if (first_level_node->type == XML_ELEMENT_NODE && name == "TrainingImageInfo") {
-        xmlNodePtr image_info_node = NULL;
+      std::string name(first_level_node.name());
+      if (first_level_node.type() == pugi::node_element && name == "TrainingImageInfo") {
 
-        for (image_info_node = first_level_node->children; image_info_node; image_info_node = image_info_node->next) {
-          name = std::string((char *)image_info_node->name);
+        for (pugi::xml_node image_info_node = first_level_node.first_child(); image_info_node; image_info_node = image_info_node.next_sibling()) {
+          name = std::string(image_info_node.name());
 
           if (name == "trainImg") {
             // Read image_id
-            xmlChar *image_id_property = xmlGetProp(image_info_node, BAD_CAST "image_id");
-            int id = 0;
-            if (image_id_property) {
-              id = std::atoi((char *)image_id_property);
-            }
-            xmlFree(image_id_property);
+            int id = image_info_node.attribute("image_id").as_int();
 
             vpImage<unsigned char> I;
 #ifdef VISP_HAVE_MODULE_IO
-            std::string path((char *)image_info_node->children->content);
+            std::string path(image_info_node.text().as_string());
             // Read path to the training images
             if (vpIoTools::isAbsolutePathname(std::string(path))) {
               vpImageIo::read(I, path);
@@ -2669,56 +3210,54 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 #endif
           }
         }
-      } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorsInfo") {
-        xmlNodePtr descriptors_info_node = NULL;
-        for (descriptors_info_node = first_level_node->children; descriptors_info_node;
-             descriptors_info_node = descriptors_info_node->next) {
-          if (descriptors_info_node->type == XML_ELEMENT_NODE) {
-            name = std::string((char *)descriptors_info_node->name);
+      } else if (first_level_node.type() == pugi::node_element && name == "DescriptorsInfo") {
+        for (pugi::xml_node descriptors_info_node = first_level_node.first_child(); descriptors_info_node;
+             descriptors_info_node = descriptors_info_node.next_sibling()) {
+          if (descriptors_info_node.type() == pugi::node_element) {
+            name = std::string(descriptors_info_node.name());
 
             if (name == "nrows") {
-              nRows = std::atoi((char *)descriptors_info_node->children->content);
+              nRows = descriptors_info_node.text().as_int();
             } else if (name == "ncols") {
-              nCols = std::atoi((char *)descriptors_info_node->children->content);
+              nCols = descriptors_info_node.text().as_int();
             } else if (name == "type") {
-              descriptorType = std::atoi((char *)descriptors_info_node->children->content);
+              descriptorType = descriptors_info_node.text().as_int();
             }
           }
         }
 
         trainDescriptorsTmp = cv::Mat(nRows, nCols, descriptorType);
-      } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorInfo") {
-        xmlNodePtr point_node = NULL;
+      } else if (first_level_node.type() == pugi::node_element && name == "DescriptorInfo") {
         double u = 0.0, v = 0.0, size = 0.0, angle = 0.0, response = 0.0;
         int octave = 0, class_id = 0, image_id = 0;
         double oX = 0.0, oY = 0.0, oZ = 0.0;
 
         std::stringstream ss;
 
-        for (point_node = first_level_node->children; point_node; point_node = point_node->next) {
-          if (point_node->type == XML_ELEMENT_NODE) {
-            name = std::string((char *)point_node->name);
+        for (pugi::xml_node point_node = first_level_node.first_child(); point_node; point_node = point_node.next_sibling()) {
+          if (point_node.type() == pugi::node_element) {
+            name = std::string(point_node.name());
 
             // Read information about keypoints
             if (name == "u") {
-              u = std::strtod((char *)point_node->children->content, &pEnd);
+              u = point_node.text().as_double();
             } else if (name == "v") {
-              v = std::strtod((char *)point_node->children->content, &pEnd);
+              v = point_node.text().as_double();
             } else if (name == "size") {
-              size = std::strtod((char *)point_node->children->content, &pEnd);
+              size = point_node.text().as_double();
             } else if (name == "angle") {
-              angle = std::strtod((char *)point_node->children->content, &pEnd);
+              angle = point_node.text().as_double();
             } else if (name == "response") {
-              response = std::strtod((char *)point_node->children->content, &pEnd);
+              response = point_node.text().as_double();
             } else if (name == "octave") {
-              octave = std::atoi((char *)point_node->children->content);
+              octave = point_node.text().as_int();
             } else if (name == "class_id") {
-              class_id = std::atoi((char *)point_node->children->content);
+              class_id = point_node.text().as_int();
               cv::KeyPoint keyPoint(cv::Point2f((float)u, (float)v), (float)size, (float)angle, (float)response, octave,
                                     (class_id + startClassId));
               m_trainKeyPoints.push_back(keyPoint);
             } else if (name == "image_id") {
-              image_id = std::atoi((char *)point_node->children->content);
+              image_id = point_node.text().as_int();
               if (image_id != -1) {
 #ifdef VISP_HAVE_MODULE_IO
                 // No training images if image_id == -1
@@ -2726,22 +3265,21 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 #endif
               }
             } else if (name == "oX") {
-              oX = std::atof((char *)point_node->children->content);
+              oX = point_node.text().as_double();
             } else if (name == "oY") {
-              oY = std::atof((char *)point_node->children->content);
+              oY = point_node.text().as_double();
             } else if (name == "oZ") {
-              oZ = std::atof((char *)point_node->children->content);
+              oZ = point_node.text().as_double();
               m_trainPoints.push_back(cv::Point3f((float)oX, (float)oY, (float)oZ));
             } else if (name == "desc") {
-              xmlNodePtr descriptor_value_node = NULL;
               j = 0;
 
-              for (descriptor_value_node = point_node->children; descriptor_value_node;
-                   descriptor_value_node = descriptor_value_node->next) {
+              for (pugi::xml_node descriptor_value_node = point_node.first_child(); descriptor_value_node;
+                   descriptor_value_node = descriptor_value_node.next_sibling()) {
 
-                if (descriptor_value_node->type == XML_ELEMENT_NODE) {
+                if (descriptor_value_node.type() == pugi::node_element) {
                   // Read descriptors values
-                  std::string parseStr((char *)descriptor_value_node->children->content);
+                  std::string parseStr(descriptor_value_node.text().as_string());
                   ss.clear();
                   ss.str(parseStr);
 
@@ -2804,17 +3342,8 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
     } else {
       cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
-
-    /*free the document */
-    xmlFreeDoc(doc);
-
-    /*
-     *Free the global variables that may
-     *have been allocated by the parser.
-     */
-    xmlCleanupParser();
 #else
-    std::cout << "Error: libxml2 is required !" << std::endl;
+    std::cout << "Error: pugixml is not properly built!" << std::endl;
 #endif
   }
 
@@ -2903,6 +3432,15 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
 unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I) { return matchPoint(I, vpRect()); }
 
 /*!
+   Match keypoints detected in the image with those built in the reference
+   list.
+
+   \param I_color : Input current image.
+   \return The number of matched keypoints.
+ */
+unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color) { return matchPoint(I_color, vpRect()); }
+
+/*!
    Match keypoints detected in a region of interest of the image with those
    built in the reference list.
 
@@ -2916,6 +3454,22 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpIma
                                     const unsigned int width)
 {
   return matchPoint(I, vpRect(iP, width, height));
+}
+
+/*!
+   Match keypoints detected in a region of interest of the image with those
+   built in the reference list.
+
+   \param I_color : Input image
+   \param iP : Coordinate of the top-left corner of the region of interest
+   \param height : Height of the region of interest
+   \param width : Width of the region of interest
+   \return The number of matched keypoints
+ */
+unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
+                                    const unsigned int width)
+{
+  return matchPoint(I_color, vpRect(iP, width, height));
 }
 
 /*!
@@ -3009,20 +3563,33 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpRec
 }
 
 /*!
+   Match keypoints detected in a region of interest of the image with those
+   built in the reference list.
+
+   \param I_color : Input image
+   \param rectangle : Rectangle of the region of interest
+   \return The number of matched keypoints
+ */
+unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpRect &rectangle)
+{
+  vpImageConvert::convert(I_color, m_I);
+  return matchPoint(m_I, rectangle);
+}
+
+/*!
    Match keypoints detected in the image with those built in the reference
    list and compute the pose.
 
    \param I : Input image
    \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera
-   frame \param func : Function pointer to filter the pose in Ransac pose
-   estimation, if we want to eliminate the poses which do not respect some
-   criterion \param rectangle : Rectangle corresponding to the ROI (Region of
-   Interest) to consider \return True if the matching and the pose estimation
-   are OK, false otherwise
+   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param func : Function pointer to filter the pose in Ransac pose
+   estimation, if we want to eliminate the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
+   \return True if the matching and the pose estimation are OK, false otherwise
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                            bool (*func)(vpHomogeneousMatrix *), const vpRect &rectangle)
+                            bool (*func)(const vpHomogeneousMatrix &), const vpRect &rectangle)
 {
   double error, elapsedTime;
   return matchPoint(I, cam, cMo, error, elapsedTime, func, rectangle);
@@ -3032,20 +3599,38 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
    Match keypoints detected in the image with those built in the reference
    list and compute the pose.
 
+   \param I_color : Input image
+   \param cam : Camera parameters
+   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param func : Function pointer to filter the pose in Ransac pose
+   estimation, if we want to eliminate the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
+   \return True if the matching and the pose estimation are OK, false otherwise
+ */
+bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                            bool (*func)(const vpHomogeneousMatrix &), const vpRect &rectangle)
+{
+  double error, elapsedTime;
+  return matchPoint(I_color, cam, cMo, error, elapsedTime, func, rectangle);
+}
+
+/*!
+   Match keypoints detected in the image with those built in the reference
+   list and compute the pose.
+
    \param I : Input image
    \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera
-   frame \param error : Reprojection mean square error (in pixel) between the
+   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param error : Reprojection mean square error (in pixel) between the
    2D points and the projection of the 3D points with the estimated pose
    \param elapsedTime : Time to detect, extract, match and compute the pose
    \param func : Function pointer to filter the pose in Ransac pose
-   estimation, if we want to eliminate the poses which do not respect some
-   criterion \param rectangle : Rectangle corresponding to the ROI (Region of
-   Interest) to consider \return True if the matching and the pose estimation
-   are OK, false otherwise
+   estimation, if we want to eliminate the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
+   \return True if the matching and the pose estimation are OK, false otherwise
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                            double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *),
+                            double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &),
                             const vpRect &rectangle)
 {
   // Check if we have training descriptors
@@ -3218,6 +3803,30 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
 
 /*!
    Match keypoints detected in the image with those built in the reference
+   list and compute the pose.
+
+   \param I_color : Input image
+   \param cam : Camera parameters
+   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param error : Reprojection mean square error (in pixel) between the
+   2D points and the projection of the 3D points with the estimated pose
+   \param elapsedTime : Time to detect, extract, match and compute the pose
+   \param func : Function pointer to filter the pose in Ransac pose
+   estimation, if we want to eliminate the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
+   \return True if the matching and the pose estimation are OK, false otherwise
+ */
+bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                            double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &),
+                            const vpRect &rectangle)
+{
+  vpImageConvert::convert(I_color, m_I);
+  return (matchPoint(m_I, cam, cMo, error, elapsedTime, func, rectangle));
+}
+
+
+/*!
+   Match keypoints detected in the image with those built in the reference
    list and return the bounding box and the center of gravity.
 
    \param I : Input image
@@ -3360,22 +3969,21 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
 
    \param I : Input image
    \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera
-   frame \param error : Reprojection mean square error (in pixel) between the
+   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param error : Reprojection mean square error (in pixel) between the
    2D points and the projection of the 3D points with the estimated pose
    \param elapsedTime : Time to detect, extract, match and compute the pose
    \param boundingBox : Bounding box that contains the good matches
    \param centerOfGravity : Center of gravity computed from the location of
-   the good matches (could differ of the center of the bounding box) \param
-   func : Function pointer to filter the pose in Ransac pose estimation, if we
-   want to eliminate the poses which do not respect some criterion \param
-   rectangle : Rectangle corresponding to the ROI (Region of Interest) to
-   consider \return True if the matching and the pose estimation are OK, false
-   otherwise.
+   the good matches (could differ of the center of the bounding box)
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we
+   want to eliminate the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
+   \return True if the matching and the pose estimation are OK, false otherwise.
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
                                      vpHomogeneousMatrix &cMo, double &error, double &elapsedTime, vpRect &boundingBox,
-                                     vpImagePoint &centerOfGravity, bool (*func)(vpHomogeneousMatrix *),
+                                     vpImagePoint &centerOfGravity, bool (*func)(const vpHomogeneousMatrix &),
                                      const vpRect &rectangle)
 {
   bool isMatchOk = matchPoint(I, cam, cMo, error, elapsedTime, func, rectangle);
@@ -3601,8 +4209,11 @@ void vpKeyPoint::reset()
   m_queryFilteredKeyPoints.clear();
   m_queryKeyPoints.clear();
   m_ransacConsensusPercentage = 20.0;
+  m_ransacFilterFlag = vpPose::NO_FILTER;
   m_ransacInliers.clear();
   m_ransacOutliers.clear();
+  m_ransacParallel = true;
+  m_ransacParallelNbThreads = 0;
   m_ransacReprojectionError = 6.0;
   m_ransacThreshold = 0.01;
   m_trainDescriptors = cv::Mat();
@@ -3630,7 +4241,8 @@ void vpKeyPoint::reset()
 
    \param filename : Path of the save file
    \param binaryMode : If true, the data are saved in binary mode, otherwise
-   in XML mode \param saveTrainingImages : If true, save also the training
+   in XML mode
+   \param saveTrainingImages : If true, save also the training
    images on disk
  */
 void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, const bool saveTrainingImages)
@@ -3832,196 +4444,135 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
     file.close();
   } else {
-#ifdef VISP_HAVE_XML2
-    xmlDocPtr doc = NULL;
-    xmlNodePtr root_node = NULL, image_node = NULL, image_info_node = NULL, descriptors_info_node = NULL,
-               descriptor_node = NULL, desc_node = NULL;
+#ifdef VISP_HAVE_PUGIXML
+    pugi::xml_document doc;
+    pugi::xml_node node = doc.append_child(pugi::node_declaration);
+    node.append_attribute("version") = "1.0";
+    node.append_attribute("encoding") = "UTF-8";
 
-    /*
-     * this initialize the library and check potential ABI mismatches
-     * between the version it was compiled for and the actual shared
-     * library used.
-     */
-    LIBXML_TEST_VERSION
-
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    if (doc == NULL) {
-      throw vpException(vpException::ioError, "Error with file " + filename);
+    if (!doc) {
+      throw vpException(vpException::ioError, "Error with file: ", filename.c_str());
     }
 
-    root_node = xmlNewNode(NULL, BAD_CAST "LearningData");
-    xmlDocSetRootElement(doc, root_node);
-
-    std::stringstream ss;
+    pugi::xml_node root_node = doc.append_child("LearningData");
 
     // Write the training images info
-    image_node = xmlNewChild(root_node, NULL, BAD_CAST "TrainingImageInfo", NULL);
+    pugi::xml_node image_node = root_node.append_child("TrainingImageInfo");
 
 #ifdef VISP_HAVE_MODULE_IO
     for (std::map<int, std::string>::const_iterator it = mapOfImgPath.begin(); it != mapOfImgPath.end(); ++it) {
-      image_info_node = xmlNewChild(image_node, NULL, BAD_CAST "trainImg", BAD_CAST it->second.c_str());
-      ss.str("");
+      pugi::xml_node image_info_node = image_node.append_child("trainImg");
+      image_info_node.append_child(pugi::node_pcdata).set_value(it->second.c_str());
+      std::stringstream ss;
       ss << it->first;
-      xmlNewProp(image_info_node, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
+      image_info_node.append_attribute("image_id") = ss.str().c_str();
     }
 #endif
 
     // Write information about descriptors
-    descriptors_info_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorsInfo", NULL);
+    pugi::xml_node descriptors_info_node = root_node.append_child("DescriptorsInfo");
 
     int nRows = m_trainDescriptors.rows, nCols = m_trainDescriptors.cols;
     int descriptorType = m_trainDescriptors.type();
 
     // Write the number of rows
-    ss.str("");
-    ss << nRows;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "nrows", BAD_CAST ss.str().c_str());
+    descriptors_info_node.append_child("nrows").append_child(pugi::node_pcdata).text() = nRows;
 
     // Write the number of cols
-    ss.str("");
-    ss << nCols;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "ncols", BAD_CAST ss.str().c_str());
+    descriptors_info_node.append_child("ncols").append_child(pugi::node_pcdata).text() = nCols;
 
     // Write the descriptors type
-    ss.str("");
-    ss << descriptorType;
-    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "type", BAD_CAST ss.str().c_str());
+    descriptors_info_node.append_child("type").append_child(pugi::node_pcdata).text() = descriptorType;
 
     for (int i = 0; i < nRows; i++) {
       unsigned int i_ = (unsigned int)i;
-      descriptor_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorInfo", NULL);
+      pugi::xml_node descriptor_node = root_node.append_child("DescriptorInfo");
 
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.x;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "u", BAD_CAST ss.str().c_str());
+      descriptor_node.append_child("u").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.x;
+      descriptor_node.append_child("v").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].pt.y;
+      descriptor_node.append_child("size").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].size;
+      descriptor_node.append_child("angle").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].angle;
+      descriptor_node.append_child("response").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].response;
+      descriptor_node.append_child("octave").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].octave;
+      descriptor_node.append_child("class_id").append_child(pugi::node_pcdata).text() = m_trainKeyPoints[i_].class_id;
 
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.y;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "v", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].size;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "size", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].angle;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "angle", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      // max_digits10 == 9 for float
-      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].response;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "response", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      ss << m_trainKeyPoints[i_].octave;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "octave", BAD_CAST ss.str().c_str());
-
-      ss.str("");
-      ss << m_trainKeyPoints[i_].class_id;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "class_id", BAD_CAST ss.str().c_str());
-
-      ss.str("");
 #ifdef VISP_HAVE_MODULE_IO
       std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
-      ss << ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
+      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).text() =
+          ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
 #else
-      ss << -1;
-      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
+      descriptor_node.append_child("image_id").append_child(pugi::node_pcdata).text() = -1;
 #endif
 
       if (have3DInfo) {
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].x;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oX", BAD_CAST ss.str().c_str());
-
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].y;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oY", BAD_CAST ss.str().c_str());
-
-        ss.str("");
-        // max_digits10 == 9 for float
-        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].z;
-        xmlNewChild(descriptor_node, NULL, BAD_CAST "oZ", BAD_CAST ss.str().c_str());
+        descriptor_node.append_child("oX").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].x;
+        descriptor_node.append_child("oY").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].y;
+        descriptor_node.append_child("oZ").append_child(pugi::node_pcdata).text() = m_trainPoints[i_].z;
       }
 
-      desc_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "desc", NULL);
+      pugi::xml_node desc_node = descriptor_node.append_child("desc");
 
       for (int j = 0; j < nCols; j++) {
-        ss.str("");
-
         switch (descriptorType) {
         case CV_8U: {
           // Promote an unsigned char to an int
           // val_tmp holds the numeric value that will be written
-          // We save the value in numeric form otherwise libxml2 will not be
+          // We save the value in numeric form otherwise xml library will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<unsigned char>(i, j);
-          ss << val_tmp;
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;
         } break;
 
         case CV_8S: {
           // Promote a char to an int
           // val_tmp holds the numeric value that will be written
-          // We save the value in numeric form otherwise libxml2 will not be
+          // We save the value in numeric form otherwise xml library will not be
           // able to parse  A better solution could be possible
           int val_tmp = m_trainDescriptors.at<char>(i, j);
-          ss << val_tmp;
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = val_tmp;
         } break;
 
         case CV_16U:
-          ss << m_trainDescriptors.at<unsigned short int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<unsigned short int>(i, j);
           break;
 
         case CV_16S:
-          ss << m_trainDescriptors.at<short int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<short int>(i, j);
           break;
 
         case CV_32S:
-          ss << m_trainDescriptors.at<int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<int>(i, j);
           break;
 
         case CV_32F:
-          // max_digits10 == 9 for float
-          ss << std::fixed << std::setprecision(9) << m_trainDescriptors.at<float>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<float>(i, j);
           break;
 
         case CV_64F:
-          // max_digits10 == 17 for double
-          ss << std::fixed << std::setprecision(17) << m_trainDescriptors.at<double>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
+              m_trainDescriptors.at<double>(i, j);
           break;
 
         default:
           throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
           break;
         }
-        xmlNewChild(desc_node, NULL, BAD_CAST "val", BAD_CAST ss.str().c_str());
       }
     }
 
-    xmlSaveFormatFileEnc(filename.c_str(), doc, "UTF-8", 1);
-
-    /*free the document */
-    xmlFreeDoc(doc);
-
-    /*
-     *Free the global variables that may
-     *have been allocated by the parser.
-     */
-    xmlCleanupParser();
+    doc.save_file(filename.c_str(), PUGIXML_TEXT("  "), pugi::format_default, pugi::encoding_utf8);
 #else
-    std::cerr << "Error: libxml2 is required !" << std::endl;
+    std::cerr << "Error: pugixml is not properly built!" << std::endl;
 #endif
   }
 }
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 // From OpenCV 2.4.11 source code.
 struct KeypointResponseGreaterThanThreshold {
   KeypointResponseGreaterThanThreshold(float _value) : value(_value) {}
@@ -4270,6 +4821,7 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image,
   if (!mask.empty())
     vpKeyPoint::KeyPointsFilter::runByPixelsMask(keypoints, mask);
 }
+#endif
 #endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

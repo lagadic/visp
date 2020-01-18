@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,18 +60,18 @@
   \deprecated This class is deprecated since ViSP 3.0.0.
 
   \brief Class that defines the simplest robot: a free flying camera. We
-recommend to use vpSimulatorCamera instead.
+  recommend to use vpSimulatorCamera instead.
 
   This free flying camera has 6 dof; 3 in translation and 3 in rotation.
-  It evolves as a gentry robot with respect to a world frame. This class
+  It evolves as a gantry robot with respect to a world frame. This class
   is similar to vpSimulatorCamera class except that here the position of the
-robot is provided as the transformation from camera frame to world frame; cMw.
-Since the position of the camera frame evolves, this representation is less
-intuitive than the one implemented in vpSimulatorCamera where the
-transformation from world to camera frame is considered; wMc.
+  robot is provided as the transformation from camera frame to world frame; cMw.
+  Since the position of the camera frame evolves, this representation is less
+  intuitive than the one implemented in vpSimulatorCamera where the
+  transformation from world to camera frame is considered; wMc.
 
   For this particular simulated robot, the end-effector and camera frame are
-confused. That means that the cMe transformation is equal to identity.
+  confused. That means that the cMe transformation is equal to identity.
 
   The robot jacobian expressed in the end-effector frame
   \f$ {^e}{\bf J}_e \f$ is also set to identity (see get_eJe()).
@@ -85,12 +85,12 @@ int main()
   vpHomogeneousMatrix cMw;
   vpRobotCamera robot;
 
-  robot.getPosition(cMw); // Position of the camera in the world frame
-  std::cout << "Default position of the camera in the world frame cMw:\n" << cMw << std::endl;
+  robot.getPosition(cMw); // Position of the world frame in the camera frame
+  std::cout << "Default position of the world frame in the camera frame cMw:\n" << cMw << std::endl;
 
   cMw[2][3] = 1.; // World frame is 1 meter along z axis in front of the camera frame
-  robot.setPosition(cMw); // Set the new position of the camera wrt the world frame
-  std::cout << "New position of the camera wrt the world frame cMw:\n" << cMw << std::endl;
+  robot.setPosition(cMw); // Set the new position of the world frame in the camera frame
+  std::cout << "New position of the world frame in the camera frame cMw:\n" << cMw << std::endl;
 
   robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
   robot.setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
@@ -101,7 +101,7 @@ int main()
   v[2] = 1.; // set v_z to 1 m/s
   robot.setVelocity(vpRobot::CAMERA_FRAME, v);
   // The robot has moved from 0.1 meters along the z axis
-  robot.getPosition(cMw); // Position of the camera wrt the world frame
+  robot.getPosition(cMw); // Position of the world frame in the camera frame
   std::cout << "New position of the camera cMw:\n" << cMw << std::endl;
 }
   \endcode

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@
   \brief Test image resize.
 */
 // List of allowed command line options
-#define GETOPTARGS "cdi:W:H:m:h"
+#define GETOPTARGS "cdi:W:H:m:bh"
 
 namespace
 {
@@ -72,7 +72,7 @@ void usage(const char *name, const char *badparam, std::string ipath, unsigned i
   Test image resize.\n\
   \n\
   SYNOPSIS\n\
-    %s [-i <input image path>] [-W <width>] [-H <height>] [-m <method>] [-c] [-d]\n\
+    %s [-i <input image path>] [-W <width>] [-H <height>] [-m <method>] [-b] [-c] [-d]\n\
        [-h]\n                 \
   ", name);
 
@@ -95,6 +95,9 @@ void usage(const char *name, const char *badparam, std::string ipath, unsigned i
     -m <method>                                          %d\n\
        Set resize interpolation method.\n\
   \n\
+    -b                                                     \n\
+       Run image resize benchmark.\n\
+  \n\
     -c                                   \n\
        Disable mouse click.\n\
   \n\
@@ -116,13 +119,14 @@ void usage(const char *name, const char *badparam, std::string ipath, unsigned i
   \param ipath: Input image path.
   \param w : Resize width.
   \param h : Resize height.
-  \param m : Resize interpolation method.
+  \param method : Resize interpolation method.
+  \param benchmark : Run image resize benchmark.
   \param opt_display : Do not display if set.
   \param opt_click : Do not need click if set.
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &w, unsigned int &h, int &method,
-                bool &opt_display, bool &opt_click)
+                bool &benchmark, bool &opt_display, bool &opt_click)
 {
   const char *optarg_;
   int c;
@@ -140,6 +144,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &w
       break;
     case 'm':
       method = atoi(optarg_);
+      break;
+    case 'b':
+      benchmark = true;
       break;
     case 'h':
       usage(argv[0], NULL, ipath, w, h, method);
@@ -182,6 +189,7 @@ int main(int argc, const char **argv)
     unsigned int width = 101;
     unsigned int height = 207;
     int method = 0;
+    bool benchmark = false;
     bool opt_display = true;
     bool opt_click = true;
 
@@ -194,7 +202,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, width, height, method, opt_display, opt_click) == false) {
+    if (getOptions(argc, argv, opt_ipath, width, height, method, benchmark, opt_display, opt_click) == false) {
       exit(EXIT_FAILURE);
     }
 
@@ -391,6 +399,126 @@ int main(int argc, const char **argv)
       }
     }
     std::cout << "Root Mean Square Error: " << sqrt(root_mean_square_error / (I_color.getSize() * 3)) << std::endl;
+
+    if (benchmark) {
+#if defined(VISP_HAVE_OPENCV) && !defined(__mips__) && !defined(__mips) && !defined(mips) && !defined(__MIPS__)
+      std::vector<double> scales;
+      scales.push_back(2.0);
+      scales.push_back(3.0);
+      scales.push_back(4.0);
+      scales.push_back(5.0);
+      scales.push_back(1 / 2.0);
+      scales.push_back(1 / 3.0);
+      scales.push_back(1 / 4.0);
+      scales.push_back(1 / 5.0);
+
+      std::vector<vpImageTools::vpImageInterpolationType> interpolations;
+      interpolations.push_back(vpImageTools::INTERPOLATION_NEAREST);
+      interpolations.push_back(vpImageTools::INTERPOLATION_LINEAR);
+      interpolations.push_back(vpImageTools::INTERPOLATION_CUBIC);
+
+      std::vector<int> interpolationsCV;
+      interpolationsCV.push_back(cv::INTER_NEAREST);
+      interpolationsCV.push_back(cv::INTER_LINEAR);
+      interpolationsCV.push_back(cv::INTER_CUBIC);
+
+      std::vector<std::string> interpolationNames;
+      interpolationNames.push_back("INTERPOLATION_NEAREST");
+      interpolationNames.push_back("INTERPOLATION_LINEAR");
+      interpolationNames.push_back("INTERPOLATION_CUBIC");
+      {
+        vpImage<unsigned char> I_resize_perf;
+        cv::Mat img, img_resize_perf;
+        vpImageConvert::convert(I, img);
+
+        for (size_t i = 0; i < interpolations.size(); i++) {
+          std::cout << "\nInterpolation (gray): " << interpolationNames[i] << std::endl;
+
+          for (size_t s = 0; s < scales.size(); s++) {
+            unsigned int width_resize = static_cast<unsigned int>(I.getWidth() * scales[s]);
+            unsigned int height_resize = static_cast<unsigned int>(I.getHeight() * scales[s]);
+            cv::Size new_size(static_cast<int>(width_resize), static_cast<int>(height_resize));
+            std::cout << "Resize from " << I.getWidth() << "x" << I.getHeight() << " to "
+                      << width_resize << "x" << height_resize << std::endl;
+
+            double t = vpTime::measureTimeMs();
+            for (int nbIter = 0; nbIter < 10; nbIter++) {
+              vpImageTools::resize(I, I_resize_perf, width_resize, height_resize, interpolations[i]);
+            }
+            t = vpTime::measureTimeMs() - t;
+
+            double t_cv = vpTime::measureTimeMs();
+            for (int nbIter = 0; nbIter < 10; nbIter++) {
+              cv::resize(img, img_resize_perf, new_size, 0.0, 0.0, interpolationsCV[i]);
+            }
+            t_cv = vpTime::measureTimeMs() - t_cv;
+
+            std::cout << "ViSP (10 iterations): " << t << " ms ; Mean: " << t / 10 << " ms" << std::endl;
+            std::cout << "OpenCV (10 iterations): " << t_cv << " ms ; Mean: " << t_cv / 10 << " ms" << std::endl;
+
+            double diff = 0.0, diff_abs = 0.0;
+            for (int i = 0; i < img_resize_perf.rows; i++) {
+              for (int j = 0; j < img_resize_perf.cols; j++) {
+                int d = img_resize_perf.at<uchar>(i, j) - I_resize_perf[i][j];
+                diff += d;
+                diff_abs += vpMath::abs(d);
+              }
+            }
+
+            std::cout << "Mean diff: " << (diff / I_resize_perf.getSize()) << std::endl;
+            std::cout << "Mean abs diff: " << (diff_abs / I_resize_perf.getSize()) << std::endl;
+          }
+        }
+      }
+
+      {
+        vpImage<vpRGBa> I_resize_perf;
+        cv::Mat img, img_resize_perf;
+        vpImageConvert::convert(I_color, img);
+
+        for (size_t i = 0; i < interpolations.size(); i++) {
+          std::cout << "\nInterpolation (color): " << interpolationNames[i] << std::endl;
+
+          for (size_t s = 0; s < scales.size(); s++) {
+            unsigned int width_resize = static_cast<unsigned int>(I.getWidth() * scales[s]);
+            unsigned int height_resize = static_cast<unsigned int>(I.getHeight() * scales[s]);
+            cv::Size new_size(static_cast<int>(width_resize), static_cast<int>(height_resize));
+            std::cout << "Resize from " << I_color.getWidth() << "x" << I_color.getHeight() << " to "
+                      << width_resize << "x" << height_resize << std::endl;
+
+            double t = vpTime::measureTimeMs();
+            for (int nbIter = 0; nbIter < 10; nbIter++) {
+              vpImageTools::resize(I_color, I_resize_perf, width_resize, height_resize, interpolations[i]);
+            }
+            t = vpTime::measureTimeMs() - t;
+
+            double t_cv = vpTime::measureTimeMs();
+            for (int nbIter = 0; nbIter < 10; nbIter++) {
+              cv::resize(img, img_resize_perf, new_size, 0.0, 0.0, interpolationsCV[i]);
+            }
+            t_cv = vpTime::measureTimeMs() - t_cv;
+
+            std::cout << "ViSP (10 iterations): " << t << " ms ; Mean: " << t / 10 << " ms" << std::endl;
+            std::cout << "OpenCV (10 iterations): " << t_cv << " ms ; Mean: " << t_cv / 10 << " ms" << std::endl;
+
+            double diff = 0.0, diff_abs = 0.0;
+            for (int i = 0; i < img_resize_perf.rows; i++) {
+              for (int j = 0; j < img_resize_perf.cols; j++) {
+                int d = (img_resize_perf.at<cv::Vec3b>(i, j)[0] - I_resize_perf[i][j].B) +
+                        (img_resize_perf.at<cv::Vec3b>(i, j)[1] - I_resize_perf[i][j].G) +
+                        (img_resize_perf.at<cv::Vec3b>(i, j)[2] - I_resize_perf[i][j].R);
+                diff += d;
+                diff_abs += vpMath::abs(d);
+              }
+            }
+
+            std::cout << "Mean diff: " << (diff / I_resize_perf.getSize()) << std::endl;
+            std::cout << "Mean abs diff: " << (diff_abs / I_resize_perf.getSize()) << std::endl;
+          }
+        }
+      }
+#endif
+    }
 
     return EXIT_SUCCESS;
   } catch (const vpException &e) {

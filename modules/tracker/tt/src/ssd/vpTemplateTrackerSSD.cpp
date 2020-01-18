@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,11 +78,11 @@ double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I, const vpCo
       else
         IW = BI.getValue(i2, j2);
       // IW=getSubPixBspline4(I,i2,j2);
-      erreur += ((double)Tij - IW) * ((double)Tij - IW);
+      erreur += (Tij - IW) * (Tij - IW);
       Nbpoint++;
     }
   }
-  ratioPixelIn = (double)Nbpoint / (double)templateSize;
+  ratioPixelIn = static_cast<double>(Nbpoint) / static_cast<double>(templateSize);
 
   if (Nbpoint == 0)
     return 10e10;
@@ -115,7 +115,7 @@ double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpCol
       double Tij = ptTemplate[point].val;
       IW = I.getValue(i2, j2);
       // IW=getSubPixBspline4(I,i2,j2);
-      erreur += ((double)Tij - IW) * ((double)Tij - IW);
+      erreur += (Tij - IW) * (Tij - IW);
       Nbpoint++;
     }
   }

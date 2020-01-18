@@ -21,7 +21,7 @@ Script will create <outputdir> if it's missing, and a few subdirectories:
         visp3.framework/
             [the framework content]
 
-The script does not recompile the library from scratch each time.
+The script does not recompile the library from scratc each time.
 However, visp3.framework directory is erased and recreated on each run.
 
 Adding --dynamic parameter will build visp3.framework as App Store dynamic framework. Only iOS 8+ versions are supported.
@@ -162,7 +162,7 @@ class Builder:
         else:
             arch = ";".join(archs)
             buildcmd += [
-                "IPHONEOS_DEPLOYMENT_TARGET=6.0",
+                "IPHONEOS_DEPLOYMENT_TARGET=8.0",
                 "ARCHS=%s" % arch,
             ]
 

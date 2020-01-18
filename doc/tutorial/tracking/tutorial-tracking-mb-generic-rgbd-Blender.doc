@@ -1,0 +1,170 @@
+/**
+
+\page tutorial-tracking-mb-generic-rgbd-Blender Tutorial: How to use Blender to generate simulated data for model-based tracking experiments
+\tableofcontents
+
+\section mb_Blender_intro Introduction
+
+This tutorial will show how to use <a href="https://www.blender.org/">Blender</a>, a free and open source 3D creation suite, to generate color and depth images from a virtual camera and get ground truth camera poses.
+
+The configuration used for this tutorial is:
+- Ubuntu 16.04
+- Blender 2.79b
+
+\warning You are advised to know how to use the basic tools of Blender before reading this tutorial. Some non-exhaustive links:
+- <a href="https://docs.blender.org/manual/en/latest/index.html">Blender Reference Manual</a>
+- <a href="https://en.wikibooks.org/wiki/Blender_3D:_Noob_to_Pro/Parenting">Blender 3D: Noob to Pro</a>
+
+Note that all the material (source code, input video, CAD model or XML settings files) described and used in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic-rgbd-blender
+\endcode
+
+\section mb_Blender_camera_settings Camera settings
+
+In ViSP and in the computer vision community, camera intrinsic parameters are the following:
+
+\f[
+  \begin{bmatrix}
+    p_x & 0 & u_0 \\ 
+    0 & p_y & v_0 \\ 
+    0 & 0 & 1
+  \end{bmatrix}
+\f]
+
+- focal length \f$ \left( p_x, p_y \right) \f$
+- principal point \f$ \left( u_0, v_0 \right) \f$
+- (plus the distortion coefficients)
+
+In Blender, you will have to set the camera resolution, generally `640x480` to have a VGA camera resolution:
+
+\image html img-Blender-camera-settings1.png
+
+Focal length can be set with the camera panel by changing the focal length and/or the sensor size:
+
+\image html img-Blender-camera-settings2.png
+
+The relation is the following:
+
+\f[
+  p_x = \frac{f_{x\text{ in mm}} \times \text{image width in px}}{\text{sensor width in mm}}
+\f]
+
+The Python script to get the camera intrinsic parameters is:
+
+\include get_camera_intrinsics.py
+
+On Ubuntu, to run the Python script:
+- launch Blender from a terminal
+- split or switch from `3D View` to `Text Editor`
+- open the Python script file
+- click on `Run Script`
+
+You should get something similar to:
+
+```
+<Matrix 3x3 (700.0000,   0.0000, 320.0000)
+            (  0.0000, 700.0000, 240.0000)
+            (  0.0000,   0.0000,   1.0000)>
+```
+
+\warning In Blender 2.79b, you may need to switch the `Sensor Fit` from `Auto` to `Vertical` to change the `Sensor Height` to be compatible with a 4/3 ratio and have \f$ p_x == p_y \f$
+
+\note The principal point is always in the middle of the image here.
+
+\section mb_Blender_stereo_camera Stereo camera
+
+To generate the depth map, add a second camera and set the appropriate parameters to match the desired intrinsic parameters.
+Then select one camera (the child object) and the other one (the parent object) and hit `Ctrl + P` to <a href="https://docs.blender.org/manual/en/latest/editors/3dview/object/properties/relations/parents.html">parent</a> them.
+This way, the two cameras will be linked when you will move the cameras.
+
+\image html img-Blender-stereocameras-settings1.png
+
+\note The default camera used for rendering should be the one with the black triangle. You can change this with the `Scene` panel.
+
+\image html img-Blender-stereocameras-settings2.png
+
+\image html img-Blender-stereocameras-settings3.png
+
+\section mb_Blender_create_teabox Create a teabox
+
+To create a teabox with texture, we download directly a 3D model <a href="https://archive3d.net/?a=download&id=9301dbeb">here</a>. Then, the rough instructions should be:
+- select the teabox object
+- switch to the `Texture` panel
+- add a new texture and open the image
+- switch to the edit mode
+- switch to the `UV/Image Editor` and select the image
+
+You should get something similar to this:
+
+\image html img-Blender-texture.png
+
+See <a href="https://docs.blender.org/manual/en/latest/editors/uv_image/uv/editing/unwrapping/index.html">here</a> for more information about texture and UV unwrapping.
+
+\section mb_Blender_create_trajectory Create a camera trajectory
+
+This can be done easily:
+- move the stereo cameras at a desired location / orientation
+- hit `I` then `LocRotScale` to insert a keyframe at the current frame
+- repeat to perform the desired camera or object movement
+
+Do not forget to add some lights to make the object visible.
+
+\section mb_Blender_generate_data Generate the images and the depth maps
+
+Images are generated automatically when rendering the animation (menu `Render` > `Render Animation`) and are saved on Ubuntu by default in the `/tmp` folder.
+To generate the depth maps, switch to the `Compositing` screen layout, next to the menu bar:
+- tick `Use Nodes` and `Backdrop`
+- add a file output node
+- add a link between the `Depth` output of the `Render Layers` node to the `File Output` node
+- select the `OpenEXR` file format
+
+\image html img-Blender-depth.png
+
+The easiest thing is to run the animation first with the camera used to generate color images and a second time with the one for the depth maps.
+To switch the main camera, go to the `Scene` panel and select the desired camera.
+
+\section mb_Blender_get_camera_poses Retrieve the camera poses
+
+The camera poses can be retrieved using the following Python script:
+
+\include get_camera_pose_teabox.py
+
+This script will also automatically generate and save the animation images and write the corresponding camera poses.
+
+\note Data are saved in the `/tmp/` directory by default and the path should be changed accordingly depending on the OS. Camera and object names should also be changed accordingly.
+
+\section mb_Blender_mbt Model-based tracker on simulated data
+
+\subsection mb_Blender_mbt_src Source code
+Since depth data are stored in `OpenEXR` file format, OpenCV is used for the reading.
+The following C++ sample file also available in tutorial-mb-generic-tracker-rgbd-blender.cpp reads color and depth images, pointcloud is recreated using the depth camera intrinsic parameters and the ground truth data are read and printed along with the estimated camera pose from the model-based tracker.
+
+\include tutorial-mb-generic-tracker-rgbd-blender.cpp
+
+\note Here the depth values are manually clipped in order to simulate the depth range of a depth sensor. This probably can be done directly in Blender.
+
+\subsection mb_Blender_mbt_run Usage on simulated data
+
+Once build, to get tutorial-mb-generic-tracker-rgbd-blender.cpp usage, just run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-blender -h
+./tutorial-mb-generic-tracker-rgbd-blender [--input_directory <data directory> (default: .)] [--config_color <object.xml> (default: teabox.xml)] [--config_depth <object.xml> (default: teabox_depth.xml)] [--model_color <object.cao> (default: teabox.cao)] [--model_depth <object.cao> (default: teabox.cao)] [--init_file <object.init> (default: teabox.init)] [--extrinsics <depth to color transformation> (default: depth_M_color.txt)] [--disable_depth] [--display_ground_truth] [--click] [--first_frame_index <index> (default: 1)]
+\endcode
+
+Default parameters allow to run the binary with the data provided in ViSP. Just run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-blender
+\endcode
+
+The next video shows the results that you should obtain:
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AuCHE0cTa6Q" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+\endhtmlonly
+
+\section mb_Blender_next Next tutorial
+You are now ready to see the next \ref tutorial-tracking-tt.
+
+*/

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,13 +53,17 @@
 int main(int argc, char **argv)
 {
   std::string robot_ip = "192.168.1.1";
+  std::string log_folder;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
     }
+    else if (std::string(argv[i]) == "--log_folder" && i + 1 < argc) {
+      log_folder = std::string(argv[i + 1]);
+    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << argv[0] << " [--ip 192.168.1.1] [--help] [-h]"
+      std::cout << argv[0] << " [--ip 192.168.1.1] [--log_folder <folder>] [--help] [-h]"
                            << "\n";
       return EXIT_SUCCESS;
     }
@@ -68,10 +72,16 @@ int main(int argc, char **argv)
   try {
     vpRobotFranka robot;
     robot.connect(robot_ip);
+    robot.setLogFolder(log_folder);
+
+    std::cout << "WARNING: This example will move the robot! "
+              << "Please make sure to have the user stop button at hand!" << std::endl
+              << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
 
     /*
-       * Move to a safe position
-       */
+     * Move to a safe position
+     */
     vpColVector q(7, 0);
     q[3] = -M_PI_2;
     q[5] = M_PI_2;
@@ -81,8 +91,8 @@ int main(int argc, char **argv)
     robot.setPosition(vpRobot::JOINT_STATE, q);
 
     /*
-       * Move in cartesian velocity
-       */
+     * Move in cartesian velocity
+     */
     double t0 = vpTime::measureTimeSecond();
     double delta_t = 4.0; // Time in second
     vpColVector qdot;

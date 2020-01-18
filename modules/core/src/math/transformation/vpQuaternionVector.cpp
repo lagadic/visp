@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -320,3 +320,31 @@ double vpQuaternionVector::y() const { return data[1]; }
 double vpQuaternionVector::z() const { return data[2]; }
 //! Returns w-component of the quaternion.
 double vpQuaternionVector::w() const { return data[3]; }
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/*!
+  Set vector from a list of 4 double angle values.
+  \code
+#include <visp3/core/vpQuaternionVector.cpp>
+
+int main()
+{
+  vpQuaternionVector q = {0, 0, 0, 1};
+  std::cout << "q: " << q.t() << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+q: 0  0  0  1
+  \endcode
+  \sa operator<<()
+*/
+vpQuaternionVector &vpQuaternionVector::operator=(const std::initializer_list<double> &list)
+{
+  if (list.size() > size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set quaternion vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+  }
+  std::copy(list.begin(), list.end(), data);
+  return *this;
+}
+#endif

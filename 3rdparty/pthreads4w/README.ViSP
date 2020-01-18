@@ -1,0 +1,9 @@
+POSIX Threads for Windows: https://sourceforge.net/projects/pthreads4w/
+
+Code: https://git.code.sf.net/p/pthreads4w/code pthreads4w-code
+
+Hash version: 44daa2441137b90477b449663abe9755b2c9a16b
+
+Folder tests has been removed.
+
+Add #include <stdint.h> to ptw32_relmillisecs.c and ptw32_timespec.c for MinGW build.

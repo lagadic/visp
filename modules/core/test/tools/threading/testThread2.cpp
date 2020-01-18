@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,53 +143,46 @@ bool check(const vpColVector &v1, const vpColVector &v2, const vpColVector &res_
 
 int main()
 {
-  std::string use_threading = "true";
-  try {
-    use_threading = vpIoTools::getenv("APPVEYOR_THREADING");
-  } catch (...) {
+  unsigned int nb_threads = 4;
+  unsigned int size = 1000007;
+  srand((unsigned int)time(NULL));
+
+  vpColVector v1(size), v2(size);
+  for (unsigned int i = 0; i < size; i++) {
+    v1[i] = rand() % 101;
+    v2[i] = rand() % 101;
   }
 
-  if (use_threading == "true") {
-    unsigned int nb_threads = 4;
-    unsigned int size = 1000007;
-    srand((unsigned int)time(NULL));
-
-    vpColVector v1(size), v2(size);
-    for (unsigned int i = 0; i < size; i++) {
-      v1[i] = rand() % 101;
-      v2[i] = rand() % 101;
+  //! [functor-thread-example threadCreation]
+  std::vector<vpThread> threads(nb_threads);
+  std::vector<ArithmFunctor> functors(nb_threads);
+  unsigned int split = size / nb_threads;
+  for (unsigned int i = 0; i < nb_threads; i++) {
+    if (i < nb_threads - 1) {
+      functors[i] = ArithmFunctor(v1, v2, i * split, (i + 1) * split);
+    }
+    else {
+      functors[i] = ArithmFunctor(v1, v2, i * split, size);
     }
 
-    //! [functor-thread-example threadCreation]
-    std::vector<vpThread> threads(nb_threads);
-    std::vector<ArithmFunctor> functors(nb_threads);
-    unsigned int split = size / nb_threads;
-    for (unsigned int i = 0; i < nb_threads; i++) {
-      if (i < nb_threads - 1) {
-        functors[i] = ArithmFunctor(v1, v2, i * split, (i + 1) * split);
-      } else {
-        functors[i] = ArithmFunctor(v1, v2, i * split, size);
-      }
+    std::cout << "Create thread: " << i << std::endl;
+    threads[i].create((vpThread::Fn)arithmThread, (vpThread::Args)&functors[i]);
+  }
+  //! [functor-thread-example threadCreation]
 
-      std::cout << "Create thread: " << i << std::endl;
-      threads[i].create((vpThread::Fn)arithmThread, (vpThread::Args)&functors[i]);
-    }
-    //! [functor-thread-example threadCreation]
+  //! [functor-thread-example getResults]
+  vpColVector res_add, res_mul;
+  for (size_t i = 0; i < nb_threads; i++) {
+    std::cout << "Join thread: " << i << std::endl;
+    threads[i].join();
 
-    //! [functor-thread-example getResults]
-    vpColVector res_add, res_mul;
-    for (size_t i = 0; i < nb_threads; i++) {
-      std::cout << "Join thread: " << i << std::endl;
-      threads[i].join();
+    insert(res_add, functors[i].getVectorAdd());
+    insert(res_mul, functors[i].getVectorMul());
+  }
+  //! [functor-thread-example getResults]
 
-      insert(res_add, functors[i].getVectorAdd());
-      insert(res_mul, functors[i].getVectorMul());
-    }
-    //! [functor-thread-example getResults]
-
-    if (!check(v1, v2, res_add, res_mul)) {
-      return EXIT_FAILURE;
-    }
+  if (!check(v1, v2, res_add, res_mul)) {
+    return EXIT_FAILURE;
   }
 
   std::cout << "testThread2 is ok!" << std::endl;

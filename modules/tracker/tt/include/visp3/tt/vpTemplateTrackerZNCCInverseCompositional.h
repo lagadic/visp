@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,24 +59,14 @@ class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional : public vpTemplateT
 {
 protected:
   bool compoInitialised;
-  // pour eval evolRMS
-  double evolRMS;
-  std::vector<double> x_pos;
-  std::vector<double> y_pos;
-  double threshold_RMS;
   vpColVector moydIrefdp;
 
 protected:
   void initCompInverse(const vpImage<unsigned char> &I);
   void initHessienDesired(const vpImage<unsigned char> &I);
   void trackNoPyr(const vpImage<unsigned char> &I);
-  void deletePosEvalRMS();
-  void computeEvalRMS(const vpColVector &p);
-  void initPosEvalRMS(const vpColVector &p);
 
 public:
   explicit vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
-
-  void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
 };
 #endif

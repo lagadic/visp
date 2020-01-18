@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,6 @@
 #include <iostream>
 #include <limits> // numeric_limits
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifdef VISP_HAVE_EIGEN3
 #include <Eigen/SVD>
 #endif
@@ -63,17 +61,21 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
+#  ifdef VISP_HAVE_MKL
+#include <mkl.h>
+typedef MKL_INT integer;
+#  else
+#    if defined(VISP_HAVE_LAPACK_BUILT_IN)
 typedef long int integer;
-#else
+#    else
 typedef int integer;
-#endif
-
+#    endif
 extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu,
                        double *vt, integer *ldvt, double *work, integer *lwork, integer *iwork, integer *info);
 
 #include <stdio.h>
 #include <string.h>
+#  endif
 #endif
 /*---------------------------------------------------------------------
 
@@ -169,7 +171,7 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
 /*!
 
   Singular value decomposition (SVD) using Lapack 3rd party.
@@ -470,5 +472,3 @@ void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
   U_ = svd.matrixU();
 }
 #endif
-
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

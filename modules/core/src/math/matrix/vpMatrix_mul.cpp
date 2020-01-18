@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,28 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#  ifdef VISP_HAVE_MKL
+#include <mkl.h>
+
+void vpMatrix::blas_dgemm(char trans_a, char trans_b, const int M_, const int N_, const int K_, double alpha,
+                          double *a_data, const int lda_, double *b_data, const int ldb_, double beta, double *c_data,
+                          const int ldc_)
+{
+  MKL_INT M = (MKL_INT)M_, K = (MKL_INT)K_, N = (MKL_INT)N_;
+  MKL_INT lda = (MKL_INT)lda_, ldb = (MKL_INT)ldb_, ldc = (MKL_INT)ldc_;
+
+  dgemm(&trans_a, &trans_b, &M, &N, &K, &alpha, a_data, &lda, b_data, &ldb, &beta, c_data, &ldc);
+}
+
+void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, double *a_data, const int lda_,
+                          double *x_data, const int incx_, double beta, double *y_data, const int incy_)
+{
+  MKL_INT M = (MKL_INT)M_, N = (MKL_INT)N_;
+  MKL_INT lda = (MKL_INT)lda_, incx = (MKL_INT)incx_, incy = (MKL_INT)incy_;
+
+  dgemv(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
+}
+#  else
 typedef int integer;
 
 extern "C" void dgemm_(char *transa, char *transb, integer *M, integer *N, integer *K, double *alpha, double *a,
@@ -65,11 +87,11 @@ void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, 
 
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
-
+#  endif
 #else
 // Work arround to avoid warning LNK4221: This object file does not define any
 // previously undefined public symbols
-void dummy_vpMatrix_blas(){};
+void dummy_vpMatrix_blas() {};
 #endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

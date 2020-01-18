@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@
 int main(int argc, char **argv)
 {
   std::string robot_ip = "192.168.1.1";
-  std::string log_folder;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
@@ -69,15 +68,20 @@ int main(int argc, char **argv)
   try {
     vpRobotFranka robot;
     robot.connect(robot_ip);
-    robot.setLogFolder(log_folder);
+
+    std::cout << "WARNING: This example will move the robot! "
+              << "Please make sure to have the user stop button at hand!" << std::endl
+              << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
 
     /*
-       * Move to a safe position
-       */
+     * Move to a safe position
+     */
     vpColVector q(7, 0);
     q[3] = -M_PI_2;
     q[5] = M_PI_2;
     q[6] = M_PI_4;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
     std::cout << "Move to joint position: " << q.t() << std::endl;
     robot.setPosition(vpRobot::JOINT_STATE, q);
   }

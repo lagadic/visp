@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@
   \brief File and directories basic tools.
 */
 #include <algorithm>
+#include <cctype>
+#include <functional>
 #include <cmath>
 #include <errno.h>
 #include <fcntl.h>
@@ -62,11 +64,11 @@
 #include <windows.h>
 #endif
 #if !defined(_WIN32)
-	#ifdef __ANDROID__
-	// Like IOS, wordexp.cpp is not defined for Android
-	#else
-	#include <wordexp.h>
-	#endif
+  #ifdef __ANDROID__
+  // Like IOS, wordexp.cpp is not defined for Android
+  #else
+  #include <wordexp.h>
+  #endif
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
@@ -110,6 +112,9 @@
     // It appears that all Android systems are little endian.
     // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
 #define VISP_LITTLE_ENDIAN
+#elif defined(WINRT) // For UWP
+// Refer https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
+#define VISP_LITTLE_ENDIAN
 #else
 #error Cannot detect host machine endianness.
 #endif
@@ -122,8 +127,10 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
 namespace
 {
-#if TARGET_OS_IOS == 0 // The following code is not working on iOS since
-                       // wordexp() is not available
+// The following code is not working on iOS since wordexp() is not available
+// The function is not used on Android
+#if defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+#if (TARGET_OS_IOS == 0) && !defined(__ANDROID__)
 void replaceAll(std::string &str, const std::string &search, const std::string &replace)
 {
   size_t start_pos = 0;
@@ -133,6 +140,7 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
                                    // substring of 'search'
   }
 }
+#endif
 #endif
 
 #ifdef VISP_BIG_ENDIAN
@@ -189,6 +197,26 @@ double swapDouble(const double d)
   return dat2.d;
 }
 #endif
+
+std::string &ltrim(std::string &s)
+{
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) { return !std::isspace(c); }));
+#else
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+#endif
+  return s;
+}
+
+std::string &rtrim(std::string &s)
+{
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) { return !std::isspace(c); }).base(), s.end());
+#else
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+#endif
+  return s;
+}
 }
 
 /*!
@@ -232,30 +260,26 @@ std::string vpIoTools::getFullName() { return baseDir + baseName; }
 
   - Under unix, get the content of the LOGNAME environment variable.  For most
     purposes (especially in conjunction with crontab), it is more useful to
-  use the environment variable LOGNAME to find out who the user is, rather
-  than the getlogin() function.  This is more flexible precisely because the
-  user can set LOGNAME arbitrarily.
+    use the environment variable LOGNAME to find out who the user is, rather
+    than the getlogin() function.  This is more flexible precisely because the
+    user can set LOGNAME arbitrarily.
   - Under windows, uses the GetUserName() function.
 
-  \param username : The user name.
-
-  \exception vpIoException::cantGetUserName : If this method cannot get the
-  user name.
-
-  \sa getUserName()
+  \param username : The user name. When the username cannot be retrieved, set \e username to
+  "unknown" string.
 */
 void vpIoTools::getUserName(std::string &username)
 {
 // With MinGW, UNIX and _WIN32 are defined
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Get the user name.
-  char *_username = NULL;
-  _username = ::getenv("LOGNAME");
-  if (_username == NULL) {
-    vpERROR_TRACE("Cannot get the username. Check your LOGNAME environment variable");
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
+  char *_username = ::getenv("LOGNAME");
+  if (!_username) {
+    username = "unknown";
   }
-  username = _username;
+  else {
+    username = _username;
+  }
 #elif defined(_WIN32)
 #if (!defined(WINRT))
   unsigned int info_buffer_size = 1024;
@@ -263,17 +287,20 @@ void vpIoTools::getUserName(std::string &username)
   DWORD bufCharCount = (DWORD)info_buffer_size;
   // Get the user name.
   if (!GetUserName(infoBuf, &bufCharCount)) {
-    delete[] infoBuf;
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
+    username = "unknown";
+  } else {
+    username = infoBuf;
   }
-  username = infoBuf;
   delete[] infoBuf;
 #else
-  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal "
-                                                      "Windows Platform"));
+  // Universal platform
+  username = "unknown";
 #endif
+#else
+  username = "unknown";
 #endif
 }
+
 /*!
   Get the user name.
 
@@ -286,92 +313,13 @@ void vpIoTools::getUserName(std::string &username)
 
   \return The user name.
 
-  \exception vpIoException::cantGetUserName : If this method cannot get the
-  user name.
-
   \sa getUserName(std::string &)
 */
 std::string vpIoTools::getUserName()
 {
   std::string username;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Get the user name.
-  char *_username = NULL;
-  _username = ::getenv("LOGNAME");
-  if (_username == NULL) {
-    vpERROR_TRACE("Cannot get the username. Check your LOGNAME environment variable");
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
-  }
-  username = _username;
-#elif defined(_WIN32)
-#if (!defined(WINRT))
-  unsigned int info_buffer_size = 1024;
-  TCHAR *infoBuf = new TCHAR[info_buffer_size];
-  DWORD bufCharCount = (DWORD)info_buffer_size;
-  // Get the user name.
-  if (!GetUserName(infoBuf, &bufCharCount)) {
-    delete[] infoBuf;
-    vpERROR_TRACE("Cannot get the username");
-    throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username"));
-  }
-  username = infoBuf;
-  delete[] infoBuf;
-#else
-  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal "
-                                                      "Windows Platform"));
-#endif
-#endif
+  getUserName(username);
   return username;
-}
-
-/*!
-  Get the content of an environment variable.
-
-  \param env : Environment variable name (HOME, LOGNAME...).
-  \return Value of the environment variable.
-
-  \exception vpIoException::cantGetenv : If an error occur while
-  getting the environment variable value.
-
-  \code
-#include <iostream>
-#include <string>
-#include <visp3/core/vpIoTools.h>
-
-int main()
-{
-  std::string envvalue;
-  try {
-    envvalue = vpIoTools::getenv("HOME");
-    std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
-  }
-  catch (const vpException &e) {
-    std::cout << e.getMessage() << std::endl;
-    return -1;
-  }
-  return 0;
-}
-  \endcode
-
-  \sa getenv(std::string &)
-*/
-std::string vpIoTools::getenv(const char *env)
-{
-#if defined(_WIN32) && defined(WINRT)
-  throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value: not "
-                                                 "implemented on Universal Windows Platform"));
-#else
-  std::string value;
-  // Get the environment variable value.
-  char *_value = NULL;
-  _value = ::getenv(env);
-  if (_value == NULL) {
-    throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value"));
-  }
-  value = _value;
-
-  return value;
-#endif
 }
 
 /*!
@@ -403,10 +351,24 @@ int main()
   return 0;
 }
   \endcode
-
-  \sa getenv(const char *)
 */
-std::string vpIoTools::getenv(const std::string &env) { return (vpIoTools::getenv(env.c_str())); }
+std::string vpIoTools::getenv(const std::string &env)
+{
+#if defined(_WIN32) && defined(WINRT)
+  throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value: not "
+                                                 "implemented on Universal Windows Platform"));
+#else
+  std::string value;
+  // Get the environment variable value.
+  char *_value = ::getenv(env.c_str());
+  if (! _value) {
+    throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value"));
+  }
+  value = _value;
+
+  return value;
+#endif
+}
 
 /*!
   Extract major, minor and patch from a version given as "x.x.x".
@@ -426,16 +388,16 @@ void vpIoTools::getVersion(const std::string &version, unsigned int &major, unsi
   } else {
     size_t major_pos = version.find('.');
     std::string major_str = version.substr(0, major_pos);
-    major = (unsigned)atoi(major_str.c_str());
+    major = static_cast<unsigned>(atoi(major_str.c_str()));
 
     if (major_pos != std::string::npos) {
       size_t minor_pos = version.find('.', major_pos + 1);
       std::string minor_str = version.substr(major_pos + 1, (minor_pos - (major_pos + 1)));
-      minor = (unsigned)atoi(minor_str.c_str());
+      minor = static_cast<unsigned>(atoi(minor_str.c_str()));
 
       if (minor_pos != std::string::npos) {
         std::string patch_str = version.substr(minor_pos + 1);
-        patch = (unsigned)atoi(patch_str.c_str());
+        patch = static_cast<unsigned>(atoi(patch_str.c_str()));
       } else {
         patch = 0;
       }
@@ -447,7 +409,6 @@ void vpIoTools::getVersion(const std::string &version, unsigned int &major, unsi
 }
 
 /*!
-
   Check if a directory exists.
 
   \param dirname : Directory to test if it exists. The directory name
@@ -457,10 +418,8 @@ void vpIoTools::getVersion(const std::string &version, unsigned int &major, unsi
 
   \return false : If dirname string is null, or is not a directory, or
   has no write access.
-
-  \sa checkDirectory(const std::string &)
 */
-bool vpIoTools::checkDirectory(const char *dirname)
+bool vpIoTools::checkDirectory(const std::string &dirname)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
@@ -470,7 +429,7 @@ bool vpIoTools::checkDirectory(const char *dirname)
   struct _stat stbuf;
 #endif
 
-  if (dirname == NULL || dirname[0] == '\0') {
+  if (dirname.empty()) {
     return false;
   }
 
@@ -482,7 +441,7 @@ bool vpIoTools::checkDirectory(const char *dirname)
   // Remove trailing separator character if any
   // AppVeyor: Windows 6.3.9600 AMD64 ; C:/MinGW/bin/g++.exe  (ver 5.3.0) ;
   // GNU Make 3.82.90 Built for i686-pc-mingw32
-  if (!_dirname.empty() && _dirname.at(_dirname.size() - 1) == vpIoTools::separator)
+  if (_dirname.at(_dirname.size() - 1) == vpIoTools::separator)
     _dirname = _dirname.substr(0, _dirname.size() - 1);
   if (stat(_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32)
@@ -509,20 +468,42 @@ bool vpIoTools::checkDirectory(const char *dirname)
 }
 
 /*!
-  Check if a directory exists.
+  Check if a fifo file exists.
 
-  \param dirname : Directory to test if it exists. The directory name
-  is converted to the current system's format; see path().
+  \param fifofilename : Fifo filename to test if it exists.
 
-  \return true : If the directory exists and is accessible with write access.
+  \return true : If the fifo file exists and is accessible with read access.
 
-  \return false : If dirname string is null, or is not a directory, or
-  has no write access.
+  \return false : If fifofilename string is null, or is not a fifo filename, or
+                              has no read access.
 
-  \sa checkDirectory(const char *)
+  \sa checkFilename(const std::string &)
 */
-bool vpIoTools::checkDirectory(const std::string &dirname) { return vpIoTools::checkDirectory(dirname.c_str()); }
+bool vpIoTools::checkFifo(const std::string &fifofilename)
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  struct stat stbuf;
 
+  std::string _filename = path(fifofilename);
+  if (stat(_filename.c_str(), &stbuf) != 0) {
+    return false;
+  }
+  if ((stbuf.st_mode & S_IFIFO) == 0) {
+    return false;
+  }
+  if ((stbuf.st_mode & S_IRUSR) == 0)
+
+  {
+    return false;
+  }
+  return true;
+#elif defined(_WIN32)
+  (void)fifofilename;
+  throw(vpIoException(vpIoException::notImplementedError, "Fifo files are not supported on Windows platforms."));
+#endif
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 // See:
 // https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
 int vpIoTools::mkdir_p(const char *path, const int mode)
@@ -530,7 +511,6 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
   /* Adapted from http://stackoverflow.com/a/2336245/119527 */
   const size_t len = strlen(path);
   char _path[PATH_MAX];
-  char *p = NULL;
   const char sep = vpIoTools::separator;
 
   std::fill(_path, _path + PATH_MAX, 0);
@@ -544,13 +524,13 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
   strcpy(_path, path);
 
   /* Iterate over the string */
-  for (p = _path + 1; *p; p++) { // path cannot be empty
+  for (char *p = _path + 1; *p; p++) { // path cannot be empty
     if (*p == sep) {
       /* Temporarily truncate */
       *p = '\0';
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-      if (mkdir(_path, (mode_t)mode) != 0)
+      if (mkdir(_path, static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
       (void)mode; // var not used
       if (!checkDirectory(_path) && _mkdir(_path) != 0)
@@ -564,7 +544,7 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
   }
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-  if (mkdir(_path, (mode_t)mode) != 0)
+  if (mkdir(_path, static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
   if (_mkdir(_path) != 0)
 #endif
@@ -575,6 +555,7 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
 
   return 0;
 }
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Create a new directory. It will create recursively the parent directories if
@@ -583,14 +564,12 @@ int vpIoTools::mkdir_p(const char *path, const int mode)
   \param dirname : Directory to create. The directory name
   is converted to the current system's format; see path().
 
-  \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
-
   \exception vpIoException::cantCreateDirectory : If the directory cannot be
   created.
 
-  \sa makeDirectory(const std::string &)
+  \sa makeTempDirectory()
 */
-void vpIoTools::makeDirectory(const char *dirname)
+void vpIoTools::makeDirectory(const std::string &dirname)
 {
 #if ((!defined(__unix__) && !defined(__unix) && (!defined(__APPLE__) || !defined(__MACH__)))) && !defined(_WIN32)
   std::cerr << "Unsupported platform for vpIoTools::makeDirectory()!" << std::endl;
@@ -605,8 +584,7 @@ void vpIoTools::makeDirectory(const char *dirname)
   struct _stat stbuf;
 #endif
 
-  if (dirname == NULL || dirname[0] == '\0') {
-    vpERROR_TRACE("invalid directory name\n");
+  if (dirname.empty()) {
     throw(vpIoException(vpIoException::invalidDirectoryName, "invalid directory name"));
   }
 
@@ -621,39 +599,122 @@ void vpIoTools::makeDirectory(const char *dirname)
 #endif
   {
     if (vpIoTools::mkdir_p(_dirname.c_str(), 0755) != 0) {
-      vpERROR_TRACE("unable to create directory '%s'\n", dirname);
-      throw(vpIoException(vpIoException::cantCreateDirectory, "unable to create directory"));
+      throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
     }
-
-    vpDEBUG_TRACE(2, "has created directory '%s'\n", dirname);
   }
 
   if (checkDirectory(dirname) == false) {
-    vpERROR_TRACE("unable to create directory '%s'\n", dirname);
-    throw(vpIoException(vpIoException::cantCreateDirectory, "unable to create directory"));
+    throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
   }
 }
 
 /*!
-  Create a new directory. It will create recursively the parent directories if
-  needed.
+  Create a new FIFO file. A FIFO file is a special file, similar to a pipe, but actually existing on the hard drive. It
+  can be used to communicate data between multiple processes.
 
-  \param dirname : Directory to create. The directory name
-  is converted to the current system's format; see path().
+  \warning This function is only implemented on unix-like OS.
 
-  \exception vpIoException::cantCreateDirectory : If the directory cannot be
-  created.
+  \param[in] fifoname : Pathname of the fifo file to create.
 
-  \sa makeDirectory(const  char *)
+  \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
+
+  \exception vpIoException::cantCreateDirectory : If the file cannot be created.
 */
-void vpIoTools::makeDirectory(const std::string &dirname)
+void vpIoTools::makeFifo(const std::string &fifoname)
 {
-  try {
-    vpIoTools::makeDirectory(dirname.c_str());
-  } catch (...) {
-    vpERROR_TRACE("unable to create directory '%s'\n", dirname.c_str());
-    throw(vpIoException(vpIoException::cantCreateDirectory, "unable to create directory"));
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+
+  // If dirname is a directory, we throw an error
+  if (vpIoTools::checkDirectory(fifoname)) {
+    throw(vpIoException(vpIoException::invalidDirectoryName,
+                        "Unable to create fifo file. '%s' is an existing directory.", fifoname.c_str()));
   }
+
+  // If dirname refers to an already existing file, we throw an error
+  else if (vpIoTools::checkFilename(fifoname)) {
+    throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. File already exists.",
+                        fifoname.c_str()));
+    // If dirname refers to an already existing fifo, we throw an error
+  } else if (vpIoTools::checkFifo(fifoname)) {
+    throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. Fifo already exists.",
+                        fifoname.c_str()));
+  }
+
+  else if (mkfifo(fifoname.c_str(), 0666) < 0) {
+    throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo file '%s'.", fifoname.c_str()));
+  }
+#elif defined(_WIN32)
+  (void)fifoname;
+  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create fifo on Windows platforms."));
+#endif
+}
+
+/*!
+  Create a new temporary directory with a unique name based on dirname parameter.
+
+  \warning This function is only implemented on unix-like OS.
+
+  \param dirname : Name of the directory to create, or location of an existing directory.
+  If \e dirname corresponds to an existing directory, \e dirname is considered as a parent directory.
+  The temporary directory is then created inside the parent directory.
+  Otherwise, \e dirname needs to end with "XXXXXX", which will be converted into random characters in order to create
+  a unique directory name.
+
+  \return String corresponding to the absolute path to the generated directory name.
+
+  \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
+
+  \exception vpIoException::cantCreateDirectory : If the directory cannot be created.
+
+  \sa makeDirectory()
+*/
+std::string vpIoTools::makeTempDirectory(const std::string &dirname)
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+
+  std::string dirname_cpy = std::string(dirname);
+
+  std::string correctEnding = "XXXXXX";
+
+  size_t endingLength = correctEnding.length();
+  size_t dirNameLength = dirname_cpy.length();
+
+  // If dirname is an unexisting directory, it should end with XXXXXX in order to create a temp directory
+  if (!vpIoTools::checkDirectory(dirname_cpy)) {
+    if (endingLength > dirNameLength) {
+      throw(vpIoException(vpIoException::invalidDirectoryName,
+                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
+    }
+
+    if (dirname.compare(dirNameLength - endingLength, endingLength, correctEnding) != 0) {
+      throw(vpIoException(vpIoException::invalidDirectoryName,
+                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
+    }
+
+    // If dirname is an existing directory, we create a temp directory inside
+  } else {
+    if (dirname_cpy.at(dirname_cpy.length() - 1) != '/') {
+      dirname_cpy = dirname_cpy + "/";
+    }
+    dirname_cpy = dirname_cpy + "XXXXXX";
+  }
+  char *dirname_char = new char[dirname_cpy.length() + 1];
+  strcpy(dirname_char, dirname_cpy.c_str());
+
+  char *computedDirname = mkdtemp(dirname_char);
+
+  if (!computedDirname) {
+    delete[] dirname_char;
+    throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'.", dirname_cpy.c_str()));
+  }
+
+  std::string res(computedDirname);
+  delete[] dirname_char;
+  return res;
+#elif defined(_WIN32)
+  (void)dirname;
+  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create temp directory. Not implemented yet."));
+#endif
 }
 
 /*!
@@ -665,10 +726,8 @@ void vpIoTools::makeDirectory(const std::string &dirname)
 
   \return false : If filename string is null, or is not a filename, or
   has no read access.
-
-  \sa checkFilename(const std::string &)
 */
-bool vpIoTools::checkFilename(const char *filename)
+bool vpIoTools::checkFilename(const std::string &filename)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
@@ -676,7 +735,7 @@ bool vpIoTools::checkFilename(const char *filename)
   struct _stat stbuf;
 #endif
 
-  if (filename == NULL || filename[0] == '\0') {
+  if (filename.empty()) {
     return false;
   }
 
@@ -704,32 +763,13 @@ bool vpIoTools::checkFilename(const char *filename)
 }
 
 /*!
-  Check if a file exists.
-
-  \param filename : Filename to test if it exists.
-
-  \return true : If the filename exists and is accessible with read access.
-
-  \return false : If filename string is null, or is not a filename, or
-  has no read access.
-
-  \sa checkFilename(const char *)
-*/
-bool vpIoTools::checkFilename(const std::string &filename) { return vpIoTools::checkFilename(filename.c_str()); }
-
-/*!
 
   Copy a \e src file or directory in \e dst.
 
   \param src : Existing file or directory to copy.
   \param dst : New copied file or directory.
-
-  \return true if the file or the directory was copied, false otherwise.
-
-  \sa copy(const std::string &, const std::string &)
-
 */
-bool vpIoTools::copy(const char *src, const char *dst)
+bool vpIoTools::copy(const std::string &src, const std::string &dst)
 {
   // Check if we have to consider a file or a directory
   if (vpIoTools::checkFilename(src)) {
@@ -739,14 +779,14 @@ bool vpIoTools::copy(const char *src, const char *dst)
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
     int ret;
-    sprintf(cmd, "cp -p %s %s", src, dst);
+    sprintf(cmd, "cp -p %s %s", src.c_str(), dst.c_str());
     ret = system(cmd);
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -762,7 +802,7 @@ bool vpIoTools::copy(const char *src, const char *dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-                        src, dst));
+                        src.c_str(), dst.c_str()));
 #endif
 #endif
   } else if (vpIoTools::checkDirectory(src)) {
@@ -772,14 +812,14 @@ bool vpIoTools::copy(const char *src, const char *dst)
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
     int ret;
-    sprintf(cmd, "cp -p -r %s %s", src, dst);
+    sprintf(cmd, "cp -p -r %s %s", src.c_str(), dst.c_str());
     ret = system(cmd);
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -795,7 +835,7 @@ bool vpIoTools::copy(const char *src, const char *dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-                        src, dst));
+                        src.c_str(), dst.c_str()));
 #endif
 #endif
   } else {
@@ -803,39 +843,25 @@ bool vpIoTools::copy(const char *src, const char *dst)
     return false;
   }
 }
-/*!
-
-  Copy a \e src file or directory in \e dst.
-
-  \param src : Existing file or directory to copy.
-  \param dst : New copied file or directory.
-
-  \return true if the file or the directory was copied, false otherwise.
-
-  \sa copy(const char *, const char *)
-
-*/
-bool vpIoTools::copy(const std::string &src, const std::string &dst)
-{
-  return vpIoTools::copy(src.c_str(), dst.c_str());
-}
 
 /*!
 
   Remove a file or a directory.
 
-  \param file_or_dir : File or directory to remove.
+  \param file_or_dir : File name or directory to remove.
 
   \return true if the file or the directory was removed, false otherwise.
-
-  \sa remove(const std::string &)
 */
-bool vpIoTools::remove(const char *file_or_dir)
+bool vpIoTools::remove(const std::string &file_or_dir)
 {
   // Check if we have to consider a file or a directory
-  if (vpIoTools::checkFilename(file_or_dir)) {
+  if (vpIoTools::checkFilename(file_or_dir)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+    || vpIoTools::checkFifo(std::string(file_or_dir))
+#endif
+    ) {
     // std::cout << "remove file: " << file_or_dir << std::endl;
-    if (::remove(file_or_dir) != 0)
+    if (::remove(file_or_dir.c_str()) != 0)
       return false;
     else
       return true;
@@ -845,14 +871,14 @@ bool vpIoTools::remove(const char *file_or_dir)
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
     char cmd[FILENAME_MAX];
-    sprintf(cmd, "rm -rf \"%s\"", file_or_dir);
+    sprintf(cmd, "rm -rf \"%s\"", file_or_dir.c_str());
     int ret = system(cmd);
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform", file_or_dir));
+    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform", file_or_dir.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -866,7 +892,7 @@ bool vpIoTools::remove(const char *file_or_dir)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on Universal Windows Platform",
-                        file_or_dir));
+                        file_or_dir.c_str()));
 #endif
 #endif
   } else {
@@ -874,18 +900,6 @@ bool vpIoTools::remove(const char *file_or_dir)
     return false;
   }
 }
-/*!
-
-  Remove a file or a directory.
-
-  \param file_or_dir : File or directory to remove.
-
-  \return true if the file or the directory was removed, false otherwise.
-
-  \sa remove(const char *)
-
-*/
-bool vpIoTools::remove(const std::string &file_or_dir) { return vpIoTools::remove(file_or_dir.c_str()); }
 
 /*!
 
@@ -895,46 +909,26 @@ bool vpIoTools::remove(const std::string &file_or_dir) { return vpIoTools::remov
   \param newfilename : New file name.
 
   \return true if the file was renamed, false otherwise.
-
-  \sa rename(const std::string &, const std::string &)
 */
-bool vpIoTools::rename(const char *oldfilename, const char *newfilename)
+bool vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename)
 {
-  if (::rename(oldfilename, newfilename) != 0)
+  if (::rename(oldfilename.c_str(), newfilename.c_str()) != 0)
     return false;
   else
     return true;
 }
 
 /*!
-
-  Rename an existing file \e oldfilename in \e newfilename.
-
-  \param oldfilename : File to rename.
-  \param newfilename : New file name.
-
-  \return true if the file was renamed, false otherwise.
-
-  \sa rename(const char *, const char *)
-*/
-bool vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename)
-{
-  return vpIoTools::rename(oldfilename.c_str(), newfilename.c_str());
-}
-
-/*!
   Converts a path name to the current system's format.
 
-  \param pathname : Path name to convert. Path name to convert. Under
-  windows, converts all the "/" characters in the \e pathname string
-  into "\\" characters. Under Unix systems converts all the "\\"
-  characters in the \e pathname string into "/" characters.
+  \param pathname : Path name to convert. Under windows, converts all
+  the "/" characters in the \e pathname string into "\\"
+  characters. Under Unix systems converts all the "\\" characters in
+  the \e pathname string into "/" characters.
 
   \return The converted path name.
-
-  \sa path(const std::string &)
 */
-std::string vpIoTools::path(const char *pathname)
+std::string vpIoTools::path(const std::string &pathname)
 {
   std::string path(pathname);
 
@@ -948,37 +942,23 @@ std::string vpIoTools::path(const char *pathname)
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
                        // wordexp() is not available
-	#ifdef __ANDROID__
-	// Do nothing
-	#else
-	  wordexp_t exp_result;
+  #ifdef __ANDROID__
+  // Do nothing
+  #else
+    wordexp_t exp_result;
 
-	  // escape quote character
-	  replaceAll(path, "'", "'\\''");
-	  // add quotes to handle special characters like parentheses and spaces
-	  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
-	  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
-	  wordfree(&exp_result);
-	#endif
+    // escape quote character
+    replaceAll(path, "'", "'\\''");
+    // add quotes to handle special characters like parentheses and spaces
+    wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
+    path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
+    wordfree(&exp_result);
+  #endif
 #endif
 #endif
 
   return path;
 }
-
-/*!
-  Converts a path name to the current system's format.
-
-  \param pathname : Path name to convert. Under windows, converts all
-  the "/" characters in the \e pathname string into "\\"
-  characters. Under Unix systems converts all the "\\" characters in
-  the \e pathname string into "/" characters.
-
-  \return The converted path name.
-
-  \sa path(const char *)
-*/
-std::string vpIoTools::path(const std::string &pathname) { return path(pathname.c_str()); }
 
 /*!
  Reads the configuration file and parses it.
@@ -1004,16 +984,16 @@ bool vpIoTools::loadConfigFile(const std::string &confFile)
       if ((line.compare(0, 1, "#") != 0) && (line.size() > 2)) {
         try {
           // name of the variable
-          k = (unsigned long)line.find(" ");
+          k = static_cast<unsigned long>(line.find(" "));
           var = line.substr(0, k);
           // look for the end of the actual value
           c = 200;
           for (unsigned i = 0; i < 3; ++i)
-            c = vpMath::minimum(c, (int)line.find(stop[i], k + 1));
+            c = vpMath::minimum(c, static_cast<int>(line.find(stop[i], static_cast<size_t>(k) + static_cast<size_t>(1))));
           if (c == -1)
-            c = (int)line.size();
-          long unsigned int c_ = (long unsigned int)c;
-          val = line.substr(k + 1, c_ - k - 1);
+            c = static_cast<int>(line.size());
+          long unsigned int c_ = static_cast<long unsigned int>(c);
+          val = line.substr(static_cast<size_t>(k) + static_cast<size_t>(1), static_cast<size_t>(c_) - static_cast<size_t>(k) - static_cast<size_t>(1));
           configVars.push_back(var);
           configValues.push_back(val);
         } catch (...) {
@@ -1041,13 +1021,13 @@ bool vpIoTools::readConfigVar(const std::string &var, float &value)
   for (unsigned int k = 0; k < configVars.size() && found == false; ++k) {
     if (configVars[k] == var) {
       if (configValues[k].compare("PI") == 0)
-        value = (float)M_PI;
+        value = static_cast<float>(M_PI);
       else if (configValues[k].compare("PI/2") == 0)
-        value = (float)(M_PI / 2.0);
+        value = static_cast<float>(M_PI / 2.0);
       else if (configValues[k].compare("-PI/2") == 0)
-        value = (float)(-M_PI / 2.0);
+        value = static_cast<float>(-M_PI / 2.0);
       else
-        value = (float)atof(configValues[k].c_str());
+        value = static_cast<float>(atof(configValues[k].c_str()));
       found = true;
     }
   }
@@ -1118,7 +1098,7 @@ bool vpIoTools::readConfigVar(const std::string &var, unsigned int &value)
 {
   int v = 0;
   bool found = readConfigVar(var, v);
-  value = (unsigned int)v;
+  value = static_cast<unsigned int>(v);
   return found;
 }
 
@@ -1350,11 +1330,29 @@ std::string vpIoTools::getViSPImagesDataPath()
    extension. If checkFile flag is set, it will check first if the pathname
    denotes a directory and so return an empty string and second it will check
    if the file denoted by the pathanme exists. If so, it will return the
-   extension if present. \param pathname : The pathname of the file we want to
-   get the extension. \param checkFile : If true, the file must exist
-   otherwise an empty string will be returned. \return The extension of the
-   file or an empty string if the file has no extension. or if the pathname is
+   extension if present.
+
+   \param pathname : The pathname of the file we want to get the extension.
+   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the pathname is
    empty.
+
+   The following code shows how to use this function:
+   \code
+#include <visp3/core/vpIoTools.h>
+
+int main()
+{
+  std::string filename = "my/path/to/file.xml"
+  std::string ext = vpIoTools::getFileExtension(opt_learning_data);
+  std::cout << "ext: " << ext << std::endl;
+}
+   \endcode
+   It produces the following output:
+   \code
+ext: .xml
+   \endcode
+
  */
 std::string vpIoTools::getFileExtension(const std::string &pathname, const bool checkFile)
 {
@@ -1403,20 +1401,22 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, const bool 
   //
   //    return p, ''
 
-  int sepIndex = (int)pathname.rfind(sep);
+  int sepIndex = static_cast<int>(pathname.rfind(sep));
   if (!altsep.empty()) {
-    int altsepIndex = (int)pathname.rfind(altsep);
+  int altsepIndex = static_cast<int>(pathname.rfind(altsep));
     sepIndex = ((std::max))(sepIndex, altsepIndex);
   }
 
   size_t dotIndex = pathname.rfind(extsep);
   if (dotIndex != std::string::npos) {
     // The extsep character exists
-    if ((sepIndex != (int)std::string::npos && (int)dotIndex > sepIndex) || sepIndex == (int)std::string::npos) {
-      if (sepIndex == (int)std::string::npos) {
-        sepIndex = -1;
+  size_t npos = std::string::npos;
+  if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) || sepIndex == static_cast<int>(npos)) {
+    if (sepIndex == static_cast<int>(npos)) {
+        sepIndex = 0;
+    std::cout << "Debug sepIndex: " << sepIndex << std::endl;
       }
-      size_t filenameIndex = (size_t)(sepIndex + 1);
+    size_t filenameIndex = static_cast<size_t>(sepIndex) + static_cast<size_t>(1);
 
       while (filenameIndex < dotIndex) {
         if (pathname.compare(filenameIndex, 1, extsep) != 0) {
@@ -1499,7 +1499,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
   std::string real_path_str = pathname;
   char *real_path = realpath(pathname.c_str(), NULL);
 
-  if (real_path != NULL) {
+  if (real_path) {
     real_path_str = real_path;
     free(real_path);
   }
@@ -2014,4 +2014,23 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const double double_valu
 #else
   file.write((char *)(&double_value), sizeof(double_value));
 #endif
+}
+
+bool vpIoTools::parseBoolean(std::string input)
+{
+  std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+  std::istringstream is(input);
+  bool b;
+  // Parse string to boolean either in the textual representation
+  // (True/False)  or in numeric representation (1/0)
+  is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
+  return b;
+}
+
+/*!
+   Remove leading and trailing whitespaces from a string.
+ */
+std::string vpIoTools::trim(std::string s)
+{
+  return ltrim(rtrim(s));
 }

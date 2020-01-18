@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -622,15 +622,15 @@ vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, const unsigned 
 */
 void vpFeatureThetaU::print(const unsigned int select) const
 {
-  std::cout << "ThetaU: ";
+  std::cout << "ThetaU:";
   if (vpFeatureThetaU::selectTUx() & select) {
-    std::cout << s[0] << " ";
+    std::cout << " tux=" << s[0];
   }
   if (vpFeatureThetaU::selectTUy() & select) {
-    std::cout << s[1] << " ";
+    std::cout << " tuy=" << s[1];
   }
   if (vpFeatureThetaU::selectTUz() & select) {
-    std::cout << s[2] << " ";
+    std::cout << " tuz=" << s[2];
   }
   std::cout << std::endl;
 }

@@ -2069,6 +2069,8 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_APRILTAG \
+                         VISP_HAVE_ARSDK \
+                         VISP_HAVE_APRILTAG_BIG_FAMILY \
                          VISP_HAVE_ATIDAQ \
                          VISP_HAVE_CMU1394 \
                          VISP_HAVE_BICLOPS \
@@ -2078,14 +2080,24 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_COMEDI \
                          VISP_HAVE_CPPBASE64 \
                          VISP_HAVE_CPP11_COMPATIBILITY \
+                         VISP_HAVE_CXX11 \
+                         VISP_CXX_STANDARD_98=@VISP_CXX_STANDARD_98@ \
+                         VISP_CXX_STANDARD_11=@VISP_CXX_STANDARD_11@ \
+                         VISP_CXX_STANDARD_14=@VISP_CXX_STANDARD_14@ \
+                         VISP_CXX_STANDARD_17=@VISP_CXX_STANDARD_17@ \
+                         VISP_CXX_STANDARD=@VISP_CXX_STANDARD_11@ \
                          VISP_HAVE_D3D9 \
                          VISP_HAVE_DC1394 \
                          VISP_HAVE_DIRECTSHOW \
                          VISP_HAVE_DISPLAY \
                          VISP_HAVE_DMTX \
                          VISP_HAVE_EIGEN3 \
+                         VISP_HAVE_FFMPEG \
+                         VISP_HAVE_FLIR_PTU_SDK \
                          VISP_HAVE_FRANKA \
+                         VISP_HAVE_FRANKA_VERSION=0x000500 \
                          VISP_HAVE_FLYCAPTURE \
+                         VISP_HAVE_FT_IIT_SDK \
                          VISP_HAVE_GDI \
                          VISP_HAVE_GTK \
                          VISP_HAVE_GSL \
@@ -2101,7 +2113,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_OIS \
                          VISP_HAVE_OPENCV \
                          VISP_HAVE_OPENCV_NONFREE \
-                         VISP_HAVE_OPENCV_VERSION=0x020408 \
+                         VISP_HAVE_OPENCV_VERSION=0x030403 \
                          VISP_HAVE_OPENGL \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_PCL \
@@ -2109,7 +2121,9 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PNG \
                          VISP_HAVE_PTHREAD \
                          VISP_HAVE_PTU46 \
+                         VISP_HAVE_PUGIXML \
                          VISP_HAVE_PYLON \
+                         VISP_HAVE_QBDEVICE \
                          VISP_HAVE_QT \
                          VISP_HAVE_REALSENSE \
                          VISP_HAVE_REALSENSE_VERSION=0x020000 \

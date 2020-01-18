@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,15 +99,20 @@ int main()
 
     vpTime::wait(5);
 
+    vpChrono chrono;
+    chrono.start();
     double t6 = vpTime::measureTimeMs();
 
     vpTime::wait(21);
 
+    chrono.stop();
+    chrono.start(false);
     double t7 = vpTime::measureTimeMs();
 
     vpTime::wait(2);
 
     double t8 = vpTime::measureTimeMs();
+    chrono.stop();
 
     std::cout << "t1-t0: computation time: " << t1 - t0 << std::endl;
 
@@ -118,6 +123,7 @@ int main()
     std::cout << "t6-t5: wait(5 ms): " << t6 - t5 << std::endl;
     std::cout << "t7-t6: wait(21 ms): " << t7 - t6 << std::endl;
     std::cout << "t8-t7: wait(2 ms): " << t8 - t7 << std::endl;
+    std::cout << "t8-t6: ; chrono: " << chrono.getDurationMs() << std::endl;
 
     return 0;
   } catch (const vpException &e) {

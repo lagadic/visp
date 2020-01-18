@@ -21,7 +21,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/tag
 
 \section apriltag_detection_print Print an AprilTag marker
 
-We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a>.
+We provide a ready to print `36h11` tag that is 9.5 by 9.5 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a>.
 
 If you prefer, you can also directly download on the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
 - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended)</a>

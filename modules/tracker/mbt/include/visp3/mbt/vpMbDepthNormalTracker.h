@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMbDepthNormalTracker_h_
-#define __vpMbDepthNormalTracker_h_
+#ifndef _vpMbDepthNormalTracker_h_
+#define _vpMbDepthNormalTracker_h_
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPlane.h>
@@ -63,6 +63,11 @@ public:
   }
 
   virtual inline vpColVector getError() const { return m_error_depthNormal; }
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
 
   virtual inline vpColVector getRobustWeights() const { return m_w_depthNormal; }
 
@@ -98,6 +103,7 @@ public:
   virtual void setOgreVisibilityTest(const bool &v);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 #if defined(VISP_HAVE_PCL)
   virtual void setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const vpHomogeneousMatrix &cdMo);
 #endif
@@ -109,6 +115,7 @@ public:
   virtual void testTracking();
 
   virtual void track(const vpImage<unsigned char> &);
+  virtual void track(const vpImage<vpRGBa> &I_color);
 #if defined(VISP_HAVE_PCL)
   virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
@@ -119,8 +126,6 @@ protected:
   vpMbtFaceDepthNormal::vpFeatureEstimationType m_depthNormalFeatureEstimationMethod;
   //! Set of faces describing the object used only for display with scan line.
   vpMbHiddenFaces<vpMbtPolygon> m_depthNormalHiddenFacesDisplay;
-  //! Dummy image used to compute the visibility
-  vpImage<unsigned char> m_depthNormalI_dummyVisibility;
   //! List of current active (visible and with features extracted) faces
   std::vector<vpMbtFaceDepthNormal *> m_depthNormalListOfActiveFaces;
   //! List of desired features
@@ -141,6 +146,8 @@ protected:
   bool m_depthNormalUseRobust;
   //! (s - s*)
   vpColVector m_error_depthNormal;
+  //! Display features
+  std::vector<std::vector<double> > m_featuresToBeDisplayedDepthNormal;
   //! Interaction matrix
   vpMatrix m_L_depthNormal;
   //! Robust
@@ -161,6 +168,8 @@ protected:
   void computeVVS();
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
+
+  virtual std::vector<std::vector<double> > getFeaturesForDisplayDepthNormal();
 
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "");

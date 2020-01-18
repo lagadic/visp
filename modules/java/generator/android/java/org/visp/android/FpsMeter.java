@@ -2,8 +2,6 @@ package org.visp.android;
 
 import java.text.DecimalFormat;
 
-import org.visp.core.Core;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -23,10 +21,10 @@ public class FpsMeter {
     int                         mWidth = 0;
     int                         mHeight = 0;
 
-    public void init() {
+    public void init(int tickFreq, long tickCount) {
         mFramesCouner = 0;
-        mFrequency = Core.getTickFrequency();
-        mprevFrameTime = Core.getTickCount();
+        mFrequency = tickFreq;
+        mprevFrameTime = tickCount;
         mStrfps = "";
 
         mPaint = new Paint();
@@ -34,14 +32,14 @@ public class FpsMeter {
         mPaint.setTextSize(20);
     }
 
-    public void measure() {
+    public void measure(int tickFreq, long tickCount) {
         if (!mIsInitialized) {
-            init();
+            init(tickFreq,tickCount);
             mIsInitialized = true;
         } else {
             mFramesCouner++;
             if (mFramesCouner % STEP == 0) {
-                long time = Core.getTickCount();
+                long time = tickCount;
                 double fps = STEP * mFrequency / (time - mprevFrameTime);
                 mprevFrameTime = time;
                 if (mWidth != 0 && mHeight != 0)

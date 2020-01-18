@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <visp3/core/vpQuadProg.h>
 #include <visp3/core/vpTime.h>
@@ -62,19 +62,26 @@ int main (int argc, char **argv)
   const int m = 10;   // equality m < n
   const int p = 30;   // inequality
   const int o = 16;   // cost function
+#ifdef VISP_HAVE_DISPLAY
   bool opt_display = true;
+#endif
 
   for (int i = 0; i < argc; i++) {
+#ifdef VISP_HAVE_DISPLAY
     if (std::string(argv[i]) == "-d")
       opt_display = false;
-    else if (std::string(argv[i]) == "-h") {
+    else
+#endif
+    if (std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [-d] [-h]" << std::endl;
       std::cout << "\nOptions: \n"
+#ifdef VISP_HAVE_DISPLAY
                    "  -d \n"
                    "     Disable the image display. This can be useful \n"
                    "     for automatic tests using crontab under Unix or \n"
                    "     using the task manager under Windows.\n"
                    "\n"
+#endif
                    "  -h\n"
                    "     Print the help.\n"<< std::endl;
 
@@ -106,8 +113,8 @@ int main (int argc, char **argv)
   qp_ineq_WS.setEqualityConstraint(A, b);
 
   // timing
-  int total = 1000;
-  double t, t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
+  int total = 100;
+  double t_WS(0), t_noWS(0), t_ineq_WS(0), t_ineq_noWS(0);
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
@@ -127,7 +134,7 @@ int main (int argc, char **argv)
     // solve only equalities
     // without warm start
     x = 0;
-    t = vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     vpQuadProg::solveQPe(Q, r, A, b, x);
 
     t_noWS += vpTime::measureTimeMs() - t;
@@ -191,9 +198,9 @@ int main (int argc, char **argv)
 #else
 int main()
 {
-  std::cout << "You did not build ViSP with C++11 compiler flag" << std::endl;
+  std::cout << "You did not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CPP11=ON, and build again this example" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

@@ -6,7 +6,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
 #include <visp3/core/vpXmlParserCamera.h>
 #endif
 
@@ -27,6 +27,7 @@ int main(int argc, const char **argv)
   bool display_tag = false;
   int color_id = -1;
   unsigned int thickness = 2;
+  bool z_aligned = false;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
@@ -46,25 +47,26 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
     } else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
-      color_id = atoi(argv[i+1]);
+      color_id = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = (unsigned int) atoi(argv[i+1]);
+      thickness = (unsigned int)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--z_aligned") {
+      z_aligned = true;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--input <input file>] [--tag_size <tag_size in m>]"
                    " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
                    " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-                   " [--pose_method <method> (0: HOMOGRAPHY, 1: "
-                   "HOMOGRAPHY_VIRTUAL_VS,"
-                   " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS,"
-                   " 4: BEST_RESIDUAL_VIRTUAL_VS)]"
-                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: "
-                   "TAG_36ARTOOLKIT,"
-                   " 3: TAG_25h9, 4: TAG_25h7)]"
+                   " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
+                   " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
+                   " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
+                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
+                   " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
+                   " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
                    " [--display_tag] [--color <color_id (0, 1, ...)>]"
-                   " [--thickness <thickness>]"
+                   " [--thickness <thickness>] [--z_aligned]"
                    " [--help]"
                 << std::endl;
       return EXIT_SUCCESS;
@@ -73,14 +75,16 @@ int main(int argc, const char **argv)
 
   vpCameraParameters cam;
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
-#ifdef VISP_HAVE_XML2
+#ifdef VISP_HAVE_PUGIXML
   vpXmlParserCamera parser;
   if (!intrinsic_file.empty() && !camera_name.empty())
     parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
 #endif
-  std::cout << "cam:\n" << cam << std::endl;
+  std::cout << cam << std::endl;
   std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
   std::cout << "tagFamily: " << tagFamily << std::endl;
+  std::cout << "nThreads : " << nThreads << std::endl;
+  std::cout << "Z aligned: " << z_aligned << std::endl;
 
   try {
     vpImage<unsigned char> I;
@@ -103,6 +107,7 @@ int main(int argc, const char **argv)
     detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
     detector.setAprilTagNbThreads(nThreads);
     detector.setDisplayTag(display_tag, color_id < 0 ? vpColor::none : vpColor::getColor(color_id), thickness);
+    detector.setZAlignedWithCameraAxis(z_aligned);
     //! [AprilTag detector settings]
 
     vpDisplay::display(I);
@@ -135,8 +140,7 @@ int main(int argc, const char **argv)
         int tag_id = atoi(message.substr(tag_id_pos + 4).c_str());
         ss.str("");
         ss << "Tag id: " << tag_id;
-        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(),
-                               ss.str(), vpColor::red);
+        vpDisplay::displayText(I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(), ss.str(), vpColor::red);
       }
       //! [Get tag id]
       for (size_t j = 0; j < p.size(); j++) {

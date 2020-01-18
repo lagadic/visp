@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,100 +54,93 @@
 #include <visp3/core/vpImagePoint.h>
 
 /*!
-  \param x,y : Point coordinates in meters.
+  Display a 2D point with coordinates (x, y) expressed in the image plane.
+  These coordinates are obtained after perspective projection of the point.
+
+  \param x, y : Point coordinates in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
 
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                                     const vpColor &color, unsigned int thickness)
 {
-  try {
-    vpImagePoint ip; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam, x, y, ip);
-
-    vpDisplay::displayCross(I, ip, 15, color, thickness);
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  vpImagePoint ip; // pixel coordinates in float
+  vpMeterPixelConversion::convertPoint(cam, x, y, ip);
+  vpDisplay::displayCross(I, ip, 15, color, thickness);
 }
+
 /*!
-  \param rho, theta : Line parameters.
+  Display a 2D line with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
+  These coordinates are obtained after perspective projection of the line.
+
+  \param rho, theta : Line parameters \f$(\rho, \theta)\f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam,
                                    const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
+  //    x cos(theta) + y sin(theta) - rho = 0
+  double rhop, thetap;
+  vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
 
-  try {
-    //    x cos(theta) + y sin(theta) - rho = 0
+  //    u cos(thetap) + v sin(thetap) - rhop = 0
+  double co = cos(thetap);
+  double si = sin(thetap);
+  double c = -rhop;
 
-    double rhop, thetap;
-    vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
+  double a = si;
+  double b = co;
+  vpImagePoint ip1, ip2;
 
-    //    u cos(thetap) + v sin(thetap) - rhop = 0
-
-    double co = cos(thetap);
-    double si = sin(thetap);
-    double c = -rhop;
-
-    // vpTRACE("rhop %f %f ",rhop, atan2(si,co)) ;
-    // double u1,v1,u2,v2 ;
-
-    double a = si;
-    double b = co;
-    vpImagePoint ip1, ip2;
-
-    if (fabs(a) < fabs(b)) {
-      ip1.set_ij(0, (-c) / b);
-      double h = I.getHeight() - 1;
-      ip2.set_ij(h, (-c - a * h) / b);
-      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-    } else {
-      ip1.set_ij((-c) / a, 0);
-      double w = I.getWidth() - 1;
-      ip2.set_ij((-c - b * w) / a, w);
-      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-    }
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
+  if (fabs(a) < fabs(b)) {
+    ip1.set_ij(0, (-c) / b);
+    double h = I.getHeight() - 1;
+    ip2.set_ij(h, (-c - a * h) / b);
+    vpDisplay::displayLine(I, ip1, ip2, color, thickness);
+  } else {
+    ip1.set_ij((-c) / a, 0);
+    double w = I.getWidth() - 1;
+    ip2.set_ij((-c - b * w) / a, w);
+    vpDisplay::displayLine(I, ip1, ip2, color, thickness);
   }
 }
+
 /*!
-  \param rho1, theta1 : Cylinder limb1 parameters.
-  \param rho2, theta2 : Cylinder limb2 parameters.
+  Display cylinder limbs as two 2D lines with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
+  These coordinates are obtained after perspective projection of the cylinder.
+
+  \param rho1, theta1 : Cylinder first limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
+  \param rho2, theta2 : Cylinder second limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, double theta2,
                                        const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                                        const vpColor &color, unsigned int thickness)
 {
-  try {
-    displayLine(rho1, theta1, cam, I, color, thickness);
-    displayLine(rho2, theta2, cam, I, color, thickness);
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  displayLine(rho1, theta1, cam, I, color, thickness);
+  displayLine(rho2, theta2, cam, I, color, thickness);
 }
+
 /*!
+  Display an ellipse with parameters \f$(x, y, \mu_{20}, \mu_{11}, \mu_{02})\f$ expressed in the image plane.
+  These parameters are obtained after perspective projection of a 3D circle (see vpCircle) or a sphere (see vpSphere).
+
   \param x, y, mu20, mu11, mu02 : Ellipse parameters where:
   - \f$(x,y)\f$ are the normalized coordinates of the ellipse center,
-  respectively along the horizontal and vertical axis in the image.
-  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments.
+  respectively along the horizontal and vertical axis in the image plane.
+  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 
   \sa vpDisplay::displayEllipse()
@@ -156,158 +149,108 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu
                                       const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                                       const vpColor &color, unsigned int thickness)
 {
-  try {
-    unsigned int number_of_points = 45;
-    const double incr = 2 * M_PI / (double)number_of_points; // angle increment
-    unsigned int i = 0;
+  vpImagePoint center;
+  double mu20_p, mu11_p, mu02_p;
+  vpCircle circle;
+  circle.p[0] = x;
+  circle.p[1] = y;
+  circle.p[2] = mu20;
+  circle.p[3] = mu11;
+  circle.p[4] = mu02;
 
-    double s = sqrt(vpMath::sqr(mu20 - mu02) + 4 * mu11 * mu11);
-    double a, b, e;
-
-    // if (fabs(mu11)<1e-6) e =0 ;
-    if (fabs(mu11) < std::numeric_limits<double>::epsilon()) {
-      e = 0;
-      a = sqrt(mu20);
-      b = sqrt(mu02);
-    } else {
-      e = (mu02 - mu20 + s) / (2 * mu11);
-      a = sqrt((mu02 + mu20 + s) / 2.0);
-      b = sqrt((mu02 + mu20 - s) / 2.0);
-    }
-
-    double e1 = atan(e);
-
-    double k = 0.0;
-
-    double ce = cos(e1);
-    double se = sin(e1);
-
-    double x2 = 0;
-    double y2 = 0;
-    vpImagePoint ip1, ip2;
-
-    for (i = 0; i < number_of_points + 2; i++) {
-      double x1 = a * cos(k); // equation of an ellipse
-      double y1 = b * sin(k); // equation of an ellipse
-      double x11 = x + ce * x1 - se * y1;
-      double y11 = y + se * x1 + ce * y1;
-
-      vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
-
-      if (i > 1) {
-        ip2.set_u(x2);
-        ip2.set_v(y2);
-
-        vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-      }
-
-      ip2 = ip1;
-      y2 = y1;
-      x2 = x1;
-      k += incr;
-    } // end for loop
-  } catch (const vpException &e) {
-    throw(e);
-  }
+  vpMeterPixelConversion::convertEllipse(cam, circle, center, mu20_p, mu11_p, mu02_p);
+  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, color, thickness);
 }
 
 /*!
-  \param x, y : Point coordinates in meters.
+  Display a 2D point with coordinates (x, y) expressed in the image plane.
+  These coordinates are obtained after perspective projection of the point.
+
+  \param x, y : Point coordinates in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
 
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
                                     const vpColor &color, unsigned int thickness)
 {
-  try {
-    vpImagePoint ip; // pixel coordinates in float
-    vpMeterPixelConversion::convertPoint(cam, x, y, ip);
+  vpImagePoint ip; // pixel coordinates in float
+  vpMeterPixelConversion::convertPoint(cam, x, y, ip);
 
-    vpDisplay::displayCross(I, ip, 15, color, thickness);
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  vpDisplay::displayCross(I, ip, 15, color, thickness);
 }
 
 /*!
-  \param rho, theta : Line parameters.
+  Display a 2D line with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
+  These coordinates are obtained after perspective projection of the line.
+
+  \param rho, theta : Line parameters \f$(\rho, \theta)\f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
                                    const vpColor &color, unsigned int thickness)
 {
+  //    x cos(theta) + y sin(theta) - rho = 0
+  double rhop, thetap;
+  vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
 
-  try {
-    //    x cos(theta) + y sin(theta) - rho = 0
+  //    u cos(thetap) + v sin(thetap) - rhop = 0
+  double co = cos(thetap);
+  double si = sin(thetap);
+  double c = -rhop;
 
-    double rhop, thetap;
-    vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
+  double a = si;
+  double b = co;
+  vpImagePoint ip1, ip2;
 
-    //    u cos(thetap) + v sin(thetap) - rhop = 0
-
-    double co = cos(thetap);
-    double si = sin(thetap);
-    double c = -rhop;
-
-    // vpTRACE("rhop %f %f ",rhop, atan2(si,co)) ;
-    // double u1,v1,u2,v2 ;
-
-    double a = si;
-    double b = co;
-    vpImagePoint ip1, ip2;
-
-    if (fabs(a) < fabs(b)) {
-      ip1.set_ij(0, (-c) / b);
-      double h = I.getHeight() - 1;
-      ip2.set_ij(h, (-c - a * h) / b);
-      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-    } else {
-      ip1.set_ij((-c) / a, 0);
-      double w = I.getWidth() - 1;
-      ip2.set_ij((-c - b * w) / a, w);
-      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-    }
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
+  if (fabs(a) < fabs(b)) {
+    ip1.set_ij(0, (-c) / b);
+    double h = I.getHeight() - 1;
+    ip2.set_ij(h, (-c - a * h) / b);
+    vpDisplay::displayLine(I, ip1, ip2, color, thickness);
+  } else {
+    ip1.set_ij((-c) / a, 0);
+    double w = I.getWidth() - 1;
+    ip2.set_ij((-c - b * w) / a, w);
+    vpDisplay::displayLine(I, ip1, ip2, color, thickness);
   }
 }
+
 /*!
-  \param rho1, theta1 : Cylinder limb1 parameters.
-  \param rho2, theta2 : Cylinder limb2 parameters.
+  Display cylinder limbs as two 2D lines with coordinates \f$(\rho, \theta)\f$ expressed in the image plane.
+  These coordinates are obtained after perspective projection of the cylinder.
+
+  \param rho1, theta1 : Cylinder first limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
+  \param rho2, theta2 : Cylinder second limb parameters \f$(\rho, \theta)\f$ expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, double theta2,
                                        const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                        unsigned int thickness)
 {
-  try {
-    displayLine(rho1, theta1, cam, I, color, thickness);
-    displayLine(rho2, theta2, cam, I, color, thickness);
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  displayLine(rho1, theta1, cam, I, color, thickness);
+  displayLine(rho2, theta2, cam, I, color, thickness);
 }
 
 /*!
+  Display an ellipse with parameters \f$(x, y, \mu_{20}, \mu_{11}, \mu_{02})\f$ expressed in the image plane.
+  These parameters are obtained after perspective projection of a 3D circle (see vpCircle) or a sphere (see vpSphere).
+
   \param x, y, mu20, mu11, mu02 : Ellipse parameters where:
   - \f$(x,y)\f$ are the normalized coordinates of the ellipse center,
-  respectively along the horizontal and vertical axis in the image.
-  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments.
+  respectively along the horizontal and vertical axis in the image plane.
+  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
-  \param color : Color to use to display the feature
+  \param color : Color to use to display the feature.
   \param thickness : Thickness of the feature representation.
 
   \sa vpDisplay::displayEllipse()
@@ -316,57 +259,15 @@ void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu
                                       const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                       unsigned int thickness)
 {
-  try {
-    unsigned int number_of_points = 45;
-    const double incr = 2 * M_PI / (double)number_of_points; // angle increment
-    unsigned int i = 0;
+  vpImagePoint center;
+  double mu20_p, mu11_p, mu02_p;
+  vpCircle circle;
+  circle.p[0] = x;
+  circle.p[1] = y;
+  circle.p[2] = mu20;
+  circle.p[3] = mu11;
+  circle.p[4] = mu02;
 
-    double s = sqrt(vpMath::sqr(mu20 - mu02) + 4 * mu11 * mu11);
-    double a, b, e;
-
-    // if (fabs(mu11)<1e-6) e =0 ;
-    if (fabs(mu11) < std::numeric_limits<double>::epsilon()) {
-      e = 0;
-      a = sqrt(mu20);
-      b = sqrt(mu02);
-    } else {
-      e = (mu02 - mu20 + s) / (2 * mu11);
-      a = sqrt((mu02 + mu20 + s) / 2.0);
-      b = sqrt((mu02 + mu20 - s) / 2.0);
-    }
-
-    double e1 = atan(e);
-
-    double k = 0.0;
-
-    double ce = cos(e1);
-    double se = sin(e1);
-
-    double x2 = 0;
-    double y2 = 0;
-    vpImagePoint ip1, ip2;
-
-    for (i = 0; i < number_of_points + 2; i++) {
-      double x1 = a * cos(k); // equation of an ellipse
-      double y1 = b * sin(k); // equation of an ellipse
-      double x11 = x + ce * x1 - se * y1;
-      double y11 = y + se * x1 + ce * y1;
-
-      vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
-
-      if (i > 1) {
-        ip2.set_u(x2);
-        ip2.set_v(y2);
-
-        vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-      }
-
-      ip2 = ip1;
-      y2 = y1;
-      x2 = x1;
-      k += incr;
-    } // end for loop
-  } catch (const vpException &e) {
-    throw(e);
-  }
+  vpMeterPixelConversion::convertEllipse(cam, circle, center, mu20_p, mu11_p, mu02_p);
+  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, color, thickness);
 }

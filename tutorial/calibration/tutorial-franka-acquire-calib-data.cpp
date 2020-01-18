@@ -9,7 +9,7 @@
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/robot/vpRobotFranka.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
 
 int main(int argc, char **argv)
 {
@@ -102,8 +102,8 @@ int main()
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense-2.x." << std::endl;
 #endif
-#if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
-  std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON)." << std::endl;
+#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
 #endif
 #if !defined(VISP_HAVE_FRANKA)
   std::cout << "Install libfranka." << std::endl;

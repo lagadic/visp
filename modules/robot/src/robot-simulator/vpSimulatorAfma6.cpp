@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2451,7 +2451,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   vpVelocityTwistMatrix cVe;
 
   unsigned int i, iter = 0;
-  while ((iter++ < 300) & (err.euclideanNorm() > errMax)) {
+  while ((iter++ < 300) & (err.frobeniusNorm() > errMax)) {
     double t = vpTime::measureTimeMs();
 
     // update image
@@ -2490,7 +2490,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   setMaxRotationVelocity(wMax);
 
   // std::cout << "setPosition: final error " << err.t() << std::endl;
-  return (err.euclideanNorm() <= errMax);
+  return (err.frobeniusNorm() <= errMax);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

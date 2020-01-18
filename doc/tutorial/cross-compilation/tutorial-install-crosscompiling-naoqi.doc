@@ -78,14 +78,13 @@ $ cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/softbank/ctc-linux64-atom-2.4.3.28/toolchai
 $ cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/softbank/ctc-linux64-atom-2.4.3.28/toolchain.cmake ../visp -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DQI_WITH_TESTS=OFF
 \endcode 
 
-- At this step, the following third-parties should be found: \c OpenCV, \c v4l2, \c libjpeg, \c libpng, \c libxml2, \c pthread, \c zbar. This could be checked in \c ViSP-third-party.txt file where the you should find something similar to:
+- At this step, the following third-parties should be found: \c OpenCV, \c v4l2, \c libjpeg, \c libpng, \c pthread, \c zbar. This could be checked in \c ViSP-third-party.txt file where the you should find something similar to:
 \code
 $ more ViSP-third-party.txt
   OpenCV                      : yes 
   Video For Linux Two         : yes
   libjpeg                     : yes
   libpng                      : yes
-  XML2                        : yes
   pthread                     : yes
   zbar                        : yes
 \endcode

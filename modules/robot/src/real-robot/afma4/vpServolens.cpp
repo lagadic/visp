@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,7 +352,7 @@ void vpServolens::setPosition(vpServoType servo, unsigned int position) const
     vpERROR_TRACE("Cannot dial with Servolens.");
     throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
-  char commande[10];
+  std::stringstream command;
 
 /* attente du prompt pour envoyer une commande */
 /*
@@ -399,21 +399,21 @@ this->wait();
   /* commande a envoyer aux servomoteurs */
   switch (servo) {
   case ZOOM:
-    sprintf(commande, "ZD%u", position);
+    command << "ZD" << position;
     break;
   case FOCUS:
-    sprintf(commande, "FD%u", position);
+    command << "FD" << position;
     break;
   case IRIS:
-    sprintf(commande, "DD%u", position);
+    command << "DD" << position;
     break;
   }
 /* envoie de la commande */
 #ifdef PRINT
-  printf("\ncommande: %s", commande);
+  printf("\ncommand: %s", command.str());
 #endif
 
-  this->write(commande);
+  this->write(command.str().c_str());
 
 #ifdef FINSERVO
   /* on attend la fin du mouvement des objectifs */

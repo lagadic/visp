@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,10 +39,30 @@
 set(CTEST_PROJECT_NAME "ViSP")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 GMT")
 
-set(CTEST_DROP_METHOD "http")
-set(CTEST_DROP_SITE "cdash.inria.fr")
-set(CTEST_DROP_LOCATION "/CDash/submit.php?project=ViSP")
+set(CTEST_DROP_METHOD "https")
+set(CTEST_DROP_SITE "cdash-ci.inria.fr")
+set(CTEST_DROP_LOCATION "/submit.php?project=ViSP")
 set(CTEST_DROP_SITE_CDASH TRUE)
+
+#--------------------------------------------------------------------
+# Prepare valgrind suppression file
+#--------------------------------------------------------------------
+if(UNIX)
+  # Prepare a temporary file to concatenate to
+  file(WRITE "${VISP_BINARY_DIR}/valgrind.supp.in" "")
+
+  # Concatenate all suppression files in
+  file(GLOB suppression_files "${VISP_SOURCE_DIR}/platforms/scripts/valgrind/*.supp")
+  foreach(f ${suppression_files})
+    vp_cat_file(${f} "${VISP_BINARY_DIR}/valgrind.supp.in")
+  endforeach()
+
+  # Copy the temporary file to the final location
+  configure_file("${VISP_BINARY_DIR}/valgrind.supp.in" "${VISP_BINARY_DIR}/valgrind.supp" COPYONLY)
+
+  # Valgrind false positive suppression file
+  set(MEMORYCHECK_SUPPRESSIONS_FILE "${VISP_BINARY_DIR}/valgrind.supp")
+endif()
 
 #--------------------------------------------------------------------
 # BUILNAME variable construction
@@ -64,31 +84,10 @@ else()
   set(BUILDNAME "${BUILDNAME}-i386")
 endif()
 
-# Add the compiler name, e.g. "g++, msvc7..."
-if(MSVC70)
-  set(BUILDNAME "${BUILDNAME}-msvc70")
-elseif(MSVC71)
-  set(BUILDNAME "${BUILDNAME}-msvc71")
-elseif(MSVC80)
-  set(BUILDNAME "${BUILDNAME}-msvc80")
-elseif(MSVC90)
-  set(BUILDNAME "${BUILDNAME}-msvc90")
-elseif(MSVC10)
-  set(BUILDNAME "${BUILDNAME}-msvc10")
-elseif(MSVC11)
-  set(BUILDNAME "${BUILDNAME}-msvc11")
-elseif(MSVC12)
-  set(BUILDNAME "${BUILDNAME}-msvc12")
-elseif(MSVC14)
-  set(BUILDNAME "${BUILDNAME}-msvc14")
-elseif(MSVC15)
-  set(BUILDNAME "${BUILDNAME}-msvc15")
-elseif(MSVC)
-  set(BUILDNAME "${BUILDNAME}-msvc")
-elseif(BORLAND)
-  set(BUILDNAME "${BUILDNAME}-borland")
-elseif(MINGW)
-  set(BUILDNAME "${BUILDNAME}-mingw")
+# Add the compiler name, e.g. "g++, msvc..."
+if(VISP_RUNTIME)
+  # msvc, mingw
+  set(BUILDNAME "${BUILDNAME}-${VISP_RUNTIME}")
 else()
   # g++
   set(BUILDNAME "${BUILDNAME}-${CMAKE_BASE_NAME}")
@@ -307,8 +306,12 @@ endif()
 if(ACTIVATE_WARNING_FLOAT_EQUAL)
   set(BUILDNAME "${BUILDNAME}-Weq")
 endif()
-if(USE_CPP11)
+if(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11)
   set(BUILDNAME "${BUILDNAME}-c11")
+elseif(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14)
+  set(BUILDNAME "${BUILDNAME}-c14")
+elseif(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17)
+  set(BUILDNAME "${BUILDNAME}-c17")
 endif()
 if(ENABLE_MOMENTS_COMBINE_MATRICES)
   set(BUILDNAME "${BUILDNAME}-Moment")

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpMbtFaceDepthNormal_h_
-#define __vpMbtFaceDepthNormal_h_
+#ifndef _vpMbtFaceDepthNormal_h_
+#define _vpMbtFaceDepthNormal_h_
 
 #include <iostream>
 
@@ -133,6 +133,14 @@ public:
                       const double scale = 0.05, const unsigned int thickness = 1);
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const double scale = 0.05, const unsigned int thickness = 1);
+
+  std::vector<std::vector<double> > getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                                          const double scale = 0.05);
+
+  std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                       const vpHomogeneousMatrix &cMo,
+                                                       const vpCameraParameters &cam,
+                                                       const bool displayFullModel = false);
 
   inline bool isTracked() const { return m_isTrackedDepthNormalFace; }
 

@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,8 +84,8 @@ set(example_cpp
 )
 
 if(NOT DEFINED WINRT_8_1)
-  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp)
-  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp)
+  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityLs_des.cpp)
+  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityLs_cur.cpp)
   list(APPEND example_cpp servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp)
 endif()
 

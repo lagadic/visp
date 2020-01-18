@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,9 @@ pour faire du calcul de pose par difference methode
 #include <limits> // numeric_limits
 
 #define DEBUG_LEVEL1 0
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
-  Basic initialisation that is called by the constructors.
+  \deprecated This function is deprecated since same initialisation is done in constructors.
 */
 void vpPose::init()
 {
@@ -68,7 +69,7 @@ void vpPose::init()
   npt = 0;
   listP.clear();
   residual = 0;
-  lambda = 0.25;
+  lambda = 0.9;
   vvsIterMax = 200;
   c3d.clear();
   computeCovariance = false;
@@ -79,7 +80,7 @@ void vpPose::init()
   ransacInlierIndex.clear();
   ransacThreshold = 0.0001;
   distanceToPlaneForCoplanarityTest = 0.001;
-  ransacFlags = PREFILTER_DUPLICATE_POINTS;
+  ransacFlag = NO_FILTER;
   listOfPoints.clear();
   useParallelRansac = false;
   nbParallelRansacThreads = 0;
@@ -89,14 +90,25 @@ void vpPose::init()
   std::cout << "end vpPose::Init() " << std::endl;
 #endif
 }
+#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*! Default constructor. */
 vpPose::vpPose()
-  : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
+  : npt(0), listP(), residual(0), lambda(0.9), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
-    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS), listOfPoints(),
+    distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(),
     useParallelRansac(false),
-    nbParallelRansacThreads(0), // 0 means that OpenMP is used to get the number of CPU threads
+    nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
+    vvsEpsilon(1e-8)
+{
+}
+
+vpPose::vpPose(const std::vector<vpPoint>& lP)
+  : npt(static_cast<unsigned int>(lP.size())), listP(lP.begin(), lP.end()), residual(0), lambda(0.9), vvsIterMax(200), c3d(),
+    computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(),
+    ransacInlierIndex(), ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER),
+    listOfPoints(lP), useParallelRansac(false),
+    nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
     vvsEpsilon(1e-8)
 {
 }
@@ -313,17 +325,17 @@ bool vpPose::coplanar(int &coplanar_plane_type)
 }
 
 /*!
-\brief Compute and return the residual expressed in meter for
-the pose matrix 'cMo'.
+  \brief Compute and return the sum of squared residuals expressed in meter^2 for
+  the pose matrix \e cMo.
 
-\param cMo : Input pose. The matrix that defines the pose to be tested.
+  \param cMo : Input pose. The matrix that defines the pose to be tested.
 
-\return The value of he residual in meter.
+  \return The value of the sum of squared residuals in meter^2.
 
 */
 double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
-  double residual_ = 0;
+  double squared_error = 0;
   vpPoint P;
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
     P = *it;
@@ -332,9 +344,9 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 
     P.track(cMo);
 
-    residual_ += vpMath::sqr(x - P.get_x()) + vpMath::sqr(y - P.get_y());
+    squared_error += vpMath::sqr(x - P.get_x()) + vpMath::sqr(y - P.get_y());
   }
-  return residual_;
+  return (squared_error);
 }
 
 /*!
@@ -356,14 +368,14 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
   initialized by Dementhon approach
   - vpPose::LAGRANGE_VIRTUAL_VS: Non linear virtual visual servoing approach
   initialized by Lagrange approach
-  - vpPose::RANSAC: Robust Ransac aproach (does't need an initialization)
+  - vpPose::RANSAC: Robust Ransac aproach (doesn't need an initialization)
 
 */
-bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *))
+bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
   if (npt < 4) {
-    vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-    throw(vpPoseException(vpPoseException::notEnoughPointError, "No enough point "));
+    throw(vpPoseException(vpPoseException::notEnoughPointError,
+                          "Not enough point (%d) to compute the pose  ", npt));
   }
 
   switch (method) {
@@ -371,33 +383,19 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case DEMENTHON_VIRTUAL_VS:
   case DEMENTHON_LOWE: {
     if (npt < 4) {
-      vpERROR_TRACE("Dementhon method cannot be used in that case ");
-      vpERROR_TRACE("(at least 4 points are required)");
-      vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-      throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+                            "Dementhon method cannot be used in that case "
+                            "(at least 4 points are required)"
+                            "Not enough point (%d) to compute the pose  ", npt));
     }
 
     // test si les point 3D sont coplanaires
     int coplanar_plane_type = 0;
     bool plan = coplanar(coplanar_plane_type);
     if (plan == true) {
-      // std::cout << "Plan" << std::endl;
-      try {
-        poseDementhonPlan(cMo);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
-      // std::cout << "Fin Plan" << std::endl;
+      poseDementhonPlan(cMo);
     } else {
-      // std::cout << "No Plan" << std::endl;
-      try {
-        poseDementhonNonPlan(cMo);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
-      // std::cout << "Fin No Plan" << std::endl;
+      poseDementhonNonPlan(cMo);
     }
   } break;
   case LAGRANGE:
@@ -407,54 +405,39 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     int coplanar_plane_type;
     bool plan = coplanar(coplanar_plane_type);
 
-    if (plan == true && coplanar_plane_type > 0) // only plane oX=d, oY=d or oZ=d
+    if (plan == true)
     {
 
       if (coplanar_plane_type == 4) {
-        vpERROR_TRACE("Lagrange method cannot be used in that case ");
-        vpERROR_TRACE("(points are collinear)");
-        throw(vpPoseException(vpPoseException::notEnoughPointError, "Points are collinear "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError,
+                              "Lagrange method cannot be used in that case "
+                              "(points are collinear)"));
       }
       if (npt < 4) {
-        vpERROR_TRACE("Lagrange method cannot be used in that case ");
-        vpERROR_TRACE("(at least 4 points are required)");
-        vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-        throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+        throw(vpPoseException(vpPoseException::notEnoughPointError,
+                              "Lagrange method cannot be used in that case "
+                              "(at least 4 points are required). "
+                              "Not enough point (%d) to compute the pose  ", npt));
       }
-      try {
-        poseLagrangePlan(cMo, coplanar_plane_type);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
+      poseLagrangePlan(cMo);
     } else {
-      if (npt < 4) {
-        vpERROR_TRACE("Lagrange method cannot be used in that case ");
-        vpERROR_TRACE("(at least 4 points are required)");
-        vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-        throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+      if (npt < 6) {
+        throw(vpPoseException(vpPoseException::notEnoughPointError,
+                              "Lagrange method cannot be used in that case "
+                              "(at least 6 points are required when 3D points are non coplanar). "
+                              "Not enough point (%d) to compute the pose  ", npt));
       }
-      try {
-        poseLagrangeNonPlan(cMo);
-      } catch (...) {
-        //          vpERROR_TRACE(" ") ;
-        throw;
-      }
+      poseLagrangeNonPlan(cMo);
     }
   } break;
   case RANSAC:
     if (npt < 4) {
-      vpERROR_TRACE("Ransac method cannot be used in that case ");
-      vpERROR_TRACE("(at least 4 points are required)");
-      vpERROR_TRACE("Not enough point (%d) to compute the pose  ", npt);
-      throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough points "));
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+                            "Ransac method cannot be used in that case "
+                            "(at least 4 points are required). "
+                            "Not enough point (%d) to compute the pose  ", npt));
     }
-    try {
       return poseRansac(cMo, func);
-    } catch (...) {
-      //      vpERROR_TRACE(" ") ;
-      throw;
-    }
     break;
   case LOWE:
   case VIRTUAL_VS:
@@ -469,22 +452,12 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case VIRTUAL_VS:
   case LAGRANGE_VIRTUAL_VS:
   case DEMENTHON_VIRTUAL_VS: {
-    try {
-      poseVirtualVS(cMo);
-    } catch (...) {
-      //        vpERROR_TRACE(" ") ;
-      throw;
-    }
+    poseVirtualVS(cMo);
   } break;
   case LOWE:
   case LAGRANGE_LOWE:
   case DEMENTHON_LOWE: {
-    try {
-      poseLowe(cMo);
-    } catch (...) {
-      //        vpERROR_TRACE(" ") ;
-      throw;
-    }
+    poseLowe(cMo);
   } break;
   }
 

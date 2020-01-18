@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,8 +55,7 @@ foreach(cpp ${example_cpp})
 
   if(VISP_HAVE_PIONEER)
     # Add specific build flag to turn off warnings coming from libaria 3rd party
-    visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter)
-    visp_set_source_file_compile_flag(${cpp} -Wno-type-limits)
+    visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter -Wno-type-limits)
   endif()
 
   if(COMMAND visp_add_dependency)

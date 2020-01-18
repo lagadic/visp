@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,7 +387,7 @@ int main(int argc, const char **argv)
     vpCameraParameters cam1, cam2;
 
 // Initialise the tracker: camera parameters, moving edge and KLT settings
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
     // From the xml file
     tracker.loadConfigFile(configFile, configFile);
 #else
@@ -505,7 +505,7 @@ int main(int argc, const char **argv)
           vpDisplay::display(I2);
         }
         tracker.resetTracker();
-#if defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFile, configFile);
 #else
         // By setting the parameters:
@@ -605,13 +605,7 @@ int main(int argc, const char **argv)
     }
     reader.close();
 
-#if defined(VISP_HAVE_XML2)
-    // Cleanup memory allocated by xml library used to parse the xml config
-    // file in vpMbEdgeKltTracker::loadConfigFile()
-    vpXmlParser::cleanup();
-#endif
-
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
     // Cleanup memory allocated by Coin library used to load a vrml model in
     // vpMbEdgeKltTracker::loadModel() We clean only if Coin was used.
     if (!cao3DModel)

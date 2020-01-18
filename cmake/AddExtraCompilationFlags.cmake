@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -97,8 +97,12 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
-if(USE_CPP11)
-  add_extra_compiler_option("${CPP11_CXX_FLAGS}")
+if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
+  add_extra_compiler_option("${CXX11_CXX_FLAGS}")
+elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
+  add_extra_compiler_option("${CXX14_CXX_FLAGS}")
+elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
+  add_extra_compiler_option("${CXX17_CXX_FLAGS}")
 endif()
 
 if(BUILD_COVERAGE)
@@ -108,26 +112,36 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
   add_extra_compiler_option(-fvisibility=hidden)
 
-  if(ENABLE_SSE2)
-    add_extra_compiler_option(-msse2)
-  elseif(X86 OR X86_64)
-    add_extra_compiler_option(-mno-sse2)
+  if(ENABLE_AVX AND X86_64)
+    add_extra_compiler_option(-mavx)
+  else()
+    if(ENABLE_SSE2)
+      add_extra_compiler_option(-msse2)
+    elseif(X86 OR X86_64)
+      add_extra_compiler_option(-mno-sse2)
+    endif()
+
+    if(ENABLE_SSE3)
+      add_extra_compiler_option(-msse3)
+    elseif(X86 OR X86_64)
+      #add_extra_compiler_option(-mno-sse3)
+    endif()
+
+    if(ENABLE_SSSE3)
+      add_extra_compiler_option(-mssse3)
+    elseif(X86 OR X86_64)
+      add_extra_compiler_option(-mno-ssse3)
+    endif()
   endif()
 
-  if(ENABLE_SSE3)
-    add_extra_compiler_option(-msse3)
-  elseif(X86 OR X86_64)
-    #add_extra_compiler_option(-mno-sse3)
+  if(X86 AND NOT IOS)
+    add_extra_compiler_option(-ffloat-store) #to not use the x87 FPU on x86, see PR #442 for more information
   endif()
+endif()
 
-  if(ENABLE_SSSE3)
-    add_extra_compiler_option(-mssse3)
-  elseif(X86 OR X86_64)
-    add_extra_compiler_option(-mno-ssse3)
-  endif()
-
-  if(X86)
-    add_extra_compiler_option(-ffloat-store)
+if(MSVC AND X86_64)
+  if(ENABLE_AVX AND NOT MSVC_VERSION LESS 1600)
+    add_extra_compiler_option("/arch:AVX")
   endif()
 endif()
 
@@ -139,6 +153,15 @@ endif()
 
 if(DEFINED WINRT_8_1)
   add_extra_compiler_option(/ZW) # do not use with 8.0
+endif()
+
+if(MSVC)
+  # Remove unreferenced functions: function level linking
+  list(APPEND VISP_EXTRA_CXX_FLAGS "/Gy")
+  if(NOT MSVC_VERSION LESS 1400)
+    # Avoid build error C1128
+    list(APPEND VISP_EXTRA_CXX_FLAGS "/bigobj")
+  endif()
 endif()
 
 # Add user supplied extra options (optimization, etc...)

@@ -1,0 +1,331 @@
+/**
+
+\page tutorial-bebop2-vs Tutorial: Visual-servoing with Parrot Bebop 2 drone 
+\tableofcontents
+
+\section bebop2_intro Introduction
+
+This tutorial explains how to do an image-based servoing with a Parrot Bebop 2 drone on Ubuntu or OSX.
+
+\image html img-bebop2.jpg
+
+\section bebop2_prereq Prerequisites
+
+The following material is necessary :
+- Parrot Bebop 2 drone
+- An AprilTag from 36h11 family that will serve as target for the visual servoing. \ref franka_prereq_target. 
+
+ViSP must be built with OpenCV support if you want to get the video streamed by the drone, which needs to be decoded.
+
+\note Before continuing, we recommend that you succeed to complete \ref tutorial-detection-apriltag.
+
+\section bebop2_arsdk3 Build Parrot ARSDK3 
+In order to use Parrot Bebop 2 drone with ViSP, you first need to build Parrot's SDK <a href="https://developer.parrot.com/docs/SDK3/">ARDroneSDK3</a> (as explained <a href="https://developer.parrot.com/docs/SDK3/#how-to-build-the-sdk">here</a>) :
+
+\subsection bebop2_arsdk3_ubuntu On Ubuntu
+The following steps allow to build ARSDK3 on Ubuntu (tested on 18.04).
+
+<b>1. Get the SDK source code</b>
+
+Create a workspace.
+\code
+$ cd ${VISP_WS}
+$ mkdir ARDroneSDK3 && cd ARDroneSDK3
+\endcode
+
+Initialize the repo.
+\code
+$ sudo apt install repo
+$ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
+\endcode
+
+You can then download all the repositories automatically, by executing the following command.
+\code
+$ repo sync
+\endcode
+
+<b>2. Build the SDK</b>
+
+Install required 3rd parties:
+\code
+$ sudo apt-get install git build-essential autoconf libtool libavahi-client-dev libavcodec-dev libavformat-dev libswscale-dev libncurses5-dev mplayer
+\endcode
+Build the SDK:
+\code
+$ ./build.sh -p arsdk-native -t build-sdk -j
+\endcode
+The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/usr`
+
+<b>3. Set `ARSDK_DIR` environment variable</b>
+
+In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
+\code
+$ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
+\endcode
+
+<b>4. Modify `LD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
+
+In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `LD_LIBRARY_PATH` with:
+\code
+$ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
+\endcode
+
+
+\subsection bebop2_arsdk3_osx On Mac OSX
+The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
+
+<b>1. Get the SDK source code</b>
+
+Create a workspace.
+\code
+$ cd ${VISP_WS}
+$ mkdir ARDroneSDK3 && cd ARDroneSDK3
+\endcode
+
+Initialize the repo.
+\code
+$ brew install repo
+$ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
+\endcode
+
+You can then download all the repositories automatically, by executing the following command.
+\code
+$ repo sync
+\endcode
+
+<b>2. Build the SDK</b>
+
+Install required 3rd parties:
+\code
+$ brew install ffmpeg
+\endcode
+Build the SDK:
+\code
+$ ./build.sh -p arsdk-native -t build-sdk -j
+\endcode
+The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/usr`
+
+<b>3. Set `ARSDK_DIR` environment variable</b>
+
+In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
+\code
+$ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
+\endcode
+
+<b>4. Modify `DYLD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
+
+In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `DYLD_LIBRARY_PATH` with:
+\code
+$ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
+\endcode
+
+\section bebop2_visp_build Build ViSP to detect ARSDK3
+
+In order that ViSP takes into account ARSDK3 fresh installation you need to configure and build ViSP again.
+
+- Enter ViSP build folder:
+\code
+$ cd $VISP_WS/visp-build
+\endcode
+
+- Configure ViSP to detect ARSDK3 and ffmpeg used to decode images from Bebop2 camera stream:
+\code
+$ cmake ../visp
+\endcode
+At this point you should see in `Real robots` section that ARSDK and ffmpeg are enabled 
+\code
+  Real robots: 
+    ...
+    Use Parrot ARSDK:            yes
+    \-Use ffmpeg:                yes
+    ...
+\endcode
+
+- Now build ViSP using:
+\code
+$ make -j4
+\endcode
+
+
+\section bebop2_ibvs Image-based visual-servoing
+
+\subsection bebop2_ibvs_code Source code access
+
+An example of image-based visual servoing is implemented in servoBebop2.cpp.
+
+The corresponding source code and `CMakeLists.txt` file can be downloaded using:
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/example/servo-bebop2
+\endcode
+
+\subsection bebop2_ibvs_controller Understanding the controller
+First, to get the basics of image-based visual servoing, you can read \ref tutorial-ibvs.
+
+The following image shows the frames attached to the drone:
+\htmlonly <style>div.image img[src="img-bebop2-coord-system.png"]{width:600px;}</style> 
+\endhtmlonly 
+@image html img-bebop2-coord-system.png
+- There is the drone control frame, also called end-effector frame, in which we can control the drone in velocity applying \f$\dot{\bf q}_e = (v_x, v_y, v_z, w_z)\f$ corresponding respectively to the 3 translational velocities along \f$X_e, Y_e, Z_e\f$ axis, and the rotational velocity along \f$Z_e\f$ axis. The vpRobotBebop2 class allows to send these velocities. Note that the 6-dim velocity skew vector is named \f${\bf v_e}\f$
+- There is the also the camera frame with \f$X_c, Y_c, Z_c\f$ axis in which we define the velocities skew vector \f${\bf v_c} = (v_x, v_y, v_z, w_x, w_y, w_z)\f$.
+- The homogeneous transformation between the camera frame and the end-effector frame is named \f${^c}{\bf M}_e\f$. This transformation is implemented as a vpHomogeneousMatrix.
+
+In servoBebop2.cpp example, we use four visual features \f${\bf s}=(n_{g_x}, n_{g_y}, n_a, \arctan(1/\rho))\f$ for the servoing in order to control the four drone dof \f$\dot{\bf q}_e\f$.
+These visual features are:
+- Centered and normalized gravity center moment \f${\bf n_g}=(n_{g_x}, n_{g_y})\f$ of the tag along camera \f$X_c\f$ and \f$Y_c\f$ axis. This feature is implemented in vpFeatureMomentGravityCenterNormalized and used to center the tag in the image.
+- Normalized area moment of the tag \f$n_a\f$. This feature implemented in vpFeatureMomentAreaNormalized is used to control the distance between the drone and the tag.
+- Horizontal vanishing point position corresponding to the intersection of the two lines passing through top and bottom tag edges. From the polar coordinates \f$(\rho, \theta)\f$ of this point, we use \f$\arctan(1/\rho)\f$ visual feature.  This feature implemented in vpFeatureVanishingPoint is used to control the orientation of the drone along its vertical axis based on the tag orientation.
+
+The corresponding controller is given by:
+
+\f[ \dot{\bf q}_e = -\lambda {\left({\bf L_s} {^c}{\bf V}_e {^e}{\bf J}_e\right)}^{+}({\bf s} - {\bf s}^*) \f]
+
+where:
+- \f$\lambda\f$ is the controller gain implemented in vpAdaptiveGain
+- \f${\bf L_s}\f$ is the interaction matrix corresponding to the visual features \f${\bf s}\f$. This matrix is updated in vpServo
+- \f${^c}{\bf V}_e\f$ is the velocity twist matrix build using \f${^c}{\bf M}_e\f$. Implemented in vpVelocityTwistMatrix it allows to transform a velocity skew from end-effector frame into the camera frame: \f${\bf v_c} = {^c}{\bf V}_e  \; {\bf v_e}\f$
+- \f${^e}{\bf J}_e\f$ the robot Jacobian that makes the link between the velocity skew \f${\bf v_e}\f$ and the control dof \f${\bf q_e}\f$ in the end-effector frame: \f${\bf v_e} = {^e}{\bf J}_e \; \dot{\bf q}_e\f$
+- \f${\bf s}\f$ and \f${\bf s}^*\f$ are respectively current and desired visual feature vectors.
+
+To make the relation between this controller description and the code, check the comments in servoBebop2.cpp.
+
+\subsection bebop2_ibvs_run Running the program
+
+The next step is now to run the image-based visual servoing example implemented in servoBebop2.cpp.
+
+\note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi, as shown in the following pictures :\n
+On Ubuntu:\n
+\htmlonly <style>div.image img[src="drone_connexion.png"]{width:400px;}</style> 
+\endhtmlonly
+@image html drone_connexion.png
+\n
+On Mac OSX :\n
+\htmlonly <style>div.image img[src="img-bebop2-osx-wifi.jpg"]{width:400px;}</style> 
+\endhtmlonly
+@image html img-bebop2-osx-wifi.jpg
+
+\warning CAUTION : It's is strongly recommended to use this program outside or in a large room with non-uniform flooring, as the drone uses a downward-facing camera to estimate its motion from optical flow. If the surface under the drone is uniform, its movements will be inaccurate and dangerous.
+
+If you built ViSP with ffmpeg and Parrot ARSDK3 support, the corresponding binary is available in `${VISP_WS}/visp-build/example/servo-bebop2` folder.
+\code
+$ cd ${VISP_WS}/visp-build/example/servo-bebop2
+$ ./servoBebop2 --tag_size 0.14
+\endcode
+\note Passing the tag size (in meters) as a parameter is required.
+
+On Mac OSX, you may need to allow servoBebop2 to accept incoming network connections : 
+\htmlonly <style>div.image img[src="img-bebop2-osx-accept-connection.jpg"]{width:400px;}</style> 
+\endhtmlonly
+@image html img-bebop2-osx-accept-connection.jpg
+
+Running the previous command should allow to get same results as the one presented in the video:
+
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/le07g-RRsJM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
+Run `./servoBebop2 --help` to see which are the command line options available.
+- Adding option `--ip` allows you to specify the ip of the drone on the network (default is 192.168.42.1). This is useful if you changed your drone ip (see \ref bebop2_change_ip), if you want to fly multiple drones at once, for instance.
+- Adding option `--distance_to_tag 1.5` allows to specify the desired distance (in meters) to the tag for the drone servoing. Values between 0.5 and 2 are recommended (default is 1 meter).
+- Adding option `--intrinsic ~/path-to-calibration-file/camera.xml` allows you to specify the intrinsic camera calibration parameters. This file can be obtained by completing \ref tutorial-calibration-intrinsic. Without this option, default parameters that are enough for a trial will be used..
+- Adding option `--hd_stream` enables HD 720p stream resolution instead of default 480p. Increase range and accuracy of the tag detection, but increases latency and computation time.
+\note Camera calibration settings are different for the two resolutions.\n  Make sure that if you pass custom intrinsic camera parameters, they were obtained with the correct resolution.
+- Adding option `--verbose` or `-v` enables the display of information messages from the drone, and the velocity commands sent to the drone.
+
+The program will first connect to the drone, start the video streaming and decoding, and then the drone will take off and hover until it detects one (and one only) 36h11 AprilTag in the image.
+
+\htmlonly <style>div.image img[src="img-drone_tag.jpg"]{width:600px;}</style> 
+\endhtmlonly 
+@image html img-drone_tag.jpg
+
+We then display the drone video stream with the visible features, as well as the error for each feature :
+\htmlonly <style>div.image img[src="drone_view.png"]{width:600px;}</style> 
+\endhtmlonly 
+@image html drone_view.png
+
+\htmlonly <style>div.image img[src="servoing_task.png"]{width:600px;}</style> 
+\endhtmlonly 
+@image html servoing_task.png
+
+In this graph :
+- Xn corresponds to the error \f$(n_{g_x} - {n_{g_x}}^*)\f$ that allows to control the tag center of gravity along \f$X_c\f$ axis,
+- Yn corresponds to the error \f$(n_{g_y} - {n_{g_y}}^*)\f$ that allows to control the tag center of gravity along \f$Y_c\f$ axis,
+- an corresponds to the error \f$(a_{n} - {a_{n}}^*)\f$, used to regulate the distance between the drone and the tag along \f$Z_c\f$ axis,
+- atan(1/rho) corresponds to the error \f$(atan(1/rho) - atan(1/rho^*))\f$ related to vanishing point. This feature will make the drone move its orientation along \f$Y_c\f$ axis to ensure that the two horizontal lines remain parallel.
+
+Clicking on the drone view display will make the drone land, safely disconnect everything and quit the program.
+
+
+\section bebop2_tips Tips & Tricks
+\subsection bebop2_change_ip Changing Bebop 2 IP address
+If you need to change the drone IP address, for flying multiple drones for instance, you can follow these steps :
+- Turn on your drone and connect to its WiFi network.
+- Press the drone on/off button 4 times.
+- Connect to the drone file system using telnet (if you haven't changed the drone IP yet, the default IP should be 192.168.42.1):
+\code
+$ telnet 192.168.42.1
+\endcode
+\note If you get the message "Connection refused", you haven't properly pressed the on/off button 4 times.\n
+If you get the message "Connection timed out", you haven't used the right IP. You can try with 192.168.43.1 .
+
+- Once you're connected to the drone file system, you need to get write access to the files. You can do so with :
+\code
+mount –o remount,rw /
+\endcode
+\warning You now have permissions to move, edit or delete any file. Proceed at your own discretion, as you could irreversibly make your drone unusable !
+
+- Edit `/sbin/broadcom_setup.sh` :
+\code
+cd sbin
+vi broadcom_setup.sh
+\endcode
+
+\note If you don't know how to use `VI` text editor : 
+  - move the cursor using arrow keys, 
+  - edit the text using `i` and `escape` to cancel, 
+  - press `:` and enter `wq` to save and quit, or `q!` to quit without saving.
+
+- Edit line `IFACE IP AP=”192.168.42.1”` to `IFACE IP AP=”192.168.x.1”`, where x represents any number that you have not assigned to any other drone yet.
+- Save and exit the text editor.
+- Exit Bebop 2 file system by entering `exit`.
+- Restart your drone. It's IP should now be changed. You will have to adapt your programs accordingly.
+
+\subsection bebop2_connect_multiple Connecting multiple Bebop 2 drones to a single computer
+If you want to control multiple drones using one single computer, you're going to need to change the drones ip, by following \ref bebop2_change_ip.
+
+Once every drone you want to use has a unique IP address, you need to connect your PC to each drone WiFi network. You can use multiple WiFi dongles and you PC WiFi card, if it has one.
+
+For two drones, it should look like this (on Ubuntu) : 
+\htmlonly <style>div.image img[src="img_multiple_drones_connection.png"]{width:300px;}</style> 
+\endhtmlonly 
+@image html img_multiple_drones_connection.png
+
+In ViSP programs that use the drone, you can then use option `--ip` to specify the IP of the drone to which you want to connect :
+\code
+$ cd ${VISP_WS}/visp-build/example/servo-bebop2
+$ ./keyboardControlBebop2.cpp --ip 192.168.42.1
+\endcode
+
+and in another terminal :
+\code
+$ cd ${VISP_WS}/visp-build/example/servo-bebop2
+$ ./keyboardControlBebop2.cpp --ip 192.168.43.1
+\endcode
+
+In your own programs, you can specify the IP in the constructor of vpRobotBebop2 class :
+\code
+vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with low verbose level, settings reset and corresponding IP
+\endcode
+\n\n
+
+\section bebop2_next Next tutorial
+If needed, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the calibration grid.\n
+You can also calibrate your drone camera and generate an XML file usable in the servoing program (see \ref tutorial-calibration-intrinsic).\n
+If you need more details about this program, check the comments in servoBebop2.cpp.\n
+You can check example program keyboardControlBebop2.cpp if you want to see how to control a Bebop 2 drone with the keyboard.\n
+You can also check \ref vpRobotBebop2 to see the full documentation of the Bebop 2 ViSP class.
+
+Finally, if you are more interested to do the same experiment with ROS framework, you can follow [How to do visual servoing with Parrot Bebop 2 drone using visp_ros](http://wiki.ros.org/visp_ros/Tutorials/How%20to%20do%20visual%20servoing%20with%20Parrot%20Bebop%202%20drone%20and%20visp_ros) tutorial.
+
+*/

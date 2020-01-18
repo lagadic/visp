@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,6 +41,15 @@ if(USE_PCL)
     mark_as_advanced(PCL_DIR)
     mark_as_advanced(PCL_APPS_LIBRARY)
     mark_as_advanced(PCL_APPS_LIBRARY_DEBUG)
+    mark_as_advanced(pkgcfg_lib_FLANN_flann)
+    mark_as_advanced(pkgcfg_lib_FLANN_flann_cpp)
+    mark_as_advanced(pkgcfg_lib_FLANN_lz4)
+    mark_as_advanced(pkgcfg_lib_GLEW_GLEW)
+    mark_as_advanced(pkgcfg_lib_PC_OPENNI2_DummyDev)
+    mark_as_advanced(pkgcfg_lib_PC_OPENNI2_OniFile)
+    mark_as_advanced(pkgcfg_lib_PC_OPENNI2_PS1080)
+    mark_as_advanced(pkgcfg_lib_PC_USB_10_usb-1.0)
+    mark_as_advanced(pkgcfg_lib_PC_OPENNI2_DummyDevice)
     foreach(component ${PCL_TO_FIND_COMPONENTS})
       string(TOUPPER "${component}" COMPONENT)
       if(PCL_${COMPONENT}_INCLUDE_DIR)
@@ -49,26 +58,25 @@ if(USE_PCL)
     endforeach()
   endif()
 
-  if(EIGEN_FOUND)
-    mark_as_advanced(EIGEN_INCLUDE_DIRS)
-  endif()
+  mark_as_advanced(EIGEN_INCLUDE_DIRS)
 
-  if(FLANN_FOUND)
-    mark_as_advanced(FLANN_INCLUDE_DIRS)
-    mark_as_advanced(FLANN_LIBRARY)
-    mark_as_advanced(FLANN_LIBRARY_DEBUG)
-  endif()
+  mark_as_advanced(FLANN_INCLUDE_DIR)
+  mark_as_advanced(FLANN_INCLUDE_DIRS)
+  mark_as_advanced(FLANN_LIBRARY)
+  mark_as_advanced(FLANN_LIBRARY_DEBUG)
 
-  if(QHULL_FOUND)
-    mark_as_advanced(QHULL_INCLUDE_DIRS)
-    mark_as_advanced(QHULL_LIBRARY)
-    mark_as_advanced(QHULL_LIBRARY_DEBUG)
-  endif()
-  
+  mark_as_advanced(QHULL_INCLUDE_DIRS)
+  mark_as_advanced(QHULL_LIBRARY)
+  mark_as_advanced(QHULL_LIBRARY_DEBUG)
+
+  mark_as_advanced(OPENNI2_INCLUDE_DIR)
   mark_as_advanced(OPENNI2_INCLUDE_DIRS)
   mark_as_advanced(OPENNI2_LIBRARY)
 
+  mark_as_advanced(OPENNI_INCLUDE_DIR)
   mark_as_advanced(OPENNI_INCLUDE_DIRS)
   mark_as_advanced(OPENNI_LIBRARY)
-  
+
+  mark_as_advanced(USB_10_INCLUDE_DIR)
+  mark_as_advanced(USB_10_LIBRARY)
 endif()

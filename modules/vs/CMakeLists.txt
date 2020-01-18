@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@
 #############################################################################
 
 # visp_robot is optional to run testFeatureSegment.cpp
-vp_add_module(vs visp_core visp_visual_features OPTIONAL visp_robot visp_io)
+vp_add_module(vs visp_core visp_visual_features)
 vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
-vp_add_tests(DEPENDS_ON visp_blob visp_io visp_gui)
+vp_add_tests(DEPENDS_ON visp_blob visp_io visp_gui visp_robot)

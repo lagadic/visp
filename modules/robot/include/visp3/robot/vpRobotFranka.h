@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpRobotFranka_h__
-#define __vpRobotFranka_h__
+#ifndef _vpRobotFranka_h_
+#define _vpRobotFranka_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -53,6 +53,7 @@
 #include <franka/exception.h>
 #include <franka/robot.h>
 #include <franka/model.h>
+#include <franka/gripper.h>
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/robot/vpRobot.h>
@@ -230,15 +231,27 @@ private:
     This function is not implemented.
    */
   void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) {};
-  franka::RobotState getRobotInternalState();
+
   void init();
 
   franka::Robot *m_handler; //!< Robot handler
+  franka::Gripper *m_gripper; //!< Gripper handler
+  franka::Model *m_model;
   double m_positionningVelocity;
 
-  std::thread m_controlThread;
-  std::atomic_bool m_controlThreadIsRunning;
-  std::atomic_bool m_controlThreadStopAsked;
+  // Velocity controller
+  std::thread m_velControlThread;
+  std::atomic_bool m_velControlThreadIsRunning;
+  std::atomic_bool m_velControlThreadStopAsked;
+  std::array<double, 7> m_dq_des;   // Desired joint velocity
+  vpColVector m_v_cart_des;         // Desired cartesian velocity either in reference, end-effector, camera, or tool frame
+
+  // Force/torque controller
+  std::thread m_ftControlThread;
+  std::atomic_bool m_ftControlThreadIsRunning;
+  std::atomic_bool m_ftControlThreadStopAsked;
+  std::array<double, 7> m_tau_J_des; // Desired joint torques
+  vpColVector m_ft_cart_des;         // Desired cartesian force/torque either in reference, end-effector, camera, or tool frame
 
   std::array<double, 7> m_q_min;    // Joint min position
   std::array<double, 7> m_q_max;    // Joint max position
@@ -248,10 +261,9 @@ private:
   franka::RobotState m_robot_state; // Robot state protected by mutex
   std::mutex m_mutex;               // Mutex to protect m_robot_state
 
-  std::array<double, 7> m_dq_des;   // Desired joint velocity
-  vpColVector m_v_cart_des;             // Desired cartesian velocity either in reference, end-effector, camera, or tool frame
   vpHomogeneousMatrix m_eMc;
   std::string m_log_folder;
+  std::string m_franka_address;
 
 public:
   vpRobotFranka();
@@ -269,7 +281,30 @@ public:
   vpHomogeneousMatrix get_eMc() const;
 
   void get_eJe(vpMatrix &eJe);
+  void get_eJe(const vpColVector &q, vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
+  void get_fJe(const vpColVector &q, vpMatrix &fJe);
+
+  void getCoriolis(vpColVector &coriolis);
+  void getForceTorque(const vpRobot::vpControlFrameType frame, vpColVector &force);
+
+  void getGravity(vpColVector &gravity);
+
+  franka::RobotState getRobotInternalState();
+
+  /*!
+   * Get gripper handler to access native libfranka functions.
+   *
+   * \return Robot handler if it exists, an exception otherwise.
+   */
+  franka::Gripper *getGripperHandler() {
+    if (!m_gripper) {
+      throw(vpException(vpException::fatalError, "Cannot get Franka gripper handler: gripper is not connected"));
+    }
+
+    return m_gripper;
+  }
+
 
   /*!
    * Get robot handler to access native libfranka functions.
@@ -287,17 +322,37 @@ public:
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
 
+  void getMass(vpMatrix &mass);
+
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose);
 
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &d_position);
+
+  int gripperClose();
+  int gripperGrasp(double grasping_width, double force=60.);
+  void gripperHoming();
+  int gripperMove(double width);
+  int gripperOpen();
+  void gripperRelease();
+
+  void move(const std::string &filename, double velocity_percentage=10.);
+
+  bool readPosFile(const std::string &filename, vpColVector &q);
+  bool savePosFile(const std::string &filename, const vpColVector &q);
+
   void set_eMc(const vpHomogeneousMatrix &eMc);
+  void setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft,
+                      const double &filter_gain=0.1, const bool &activate_pi_controller=false);
   void setLogFolder(const std::string &folder);
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
   void setPositioningVelocity(const double velocity);
 
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
+
+  void stopMotion();
 };
 
 #endif
-#endif // #ifndef __vpRobotFranka_h__
+#endif // #ifndef __vpRobotFranka_h_

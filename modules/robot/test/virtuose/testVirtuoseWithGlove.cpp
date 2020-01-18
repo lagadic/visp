@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@
 
 int main()
 {
-  int port = 5000;
+  int port = 53210;
 
   std::vector<vpVirtuose> virtuose(4); // 0: virtuose, 1: thumb, 2: index, 3: middle
   std::vector<vpHomogeneousMatrix> wMd(4);

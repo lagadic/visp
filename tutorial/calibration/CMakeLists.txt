@@ -7,8 +7,10 @@ find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui)
 set(tutorial_cpp
   tutorial-chessboard-pose.cpp
   tutorial-franka-acquire-calib-data.cpp
-  tutorial-tsai.cpp
+  tutorial-hand-eye-calibration.cpp
 )
+
+file(GLOB tutorial_data "*.yaml")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -18,6 +20,14 @@ foreach(cpp ${tutorial_cpp})
 endforeach()
 
 if(VISP_HAVE_REALSENSE2)
-    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter)
+  if(UNIX)
+    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter -Wno-overloaded-virtual)
+  else()
+    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp /wd4244)
+  endif()
 endif()
 
+# Copy the data files to the same location than the target
+foreach(data ${tutorial_data})
+  visp_copy_data(tutorial-hand-eye-calibration.cpp ${data})
+endforeach()

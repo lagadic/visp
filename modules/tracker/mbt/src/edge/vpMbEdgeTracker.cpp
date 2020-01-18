@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbtDistanceLine.h>
-#include <visp3/mbt/vpMbtXmlParser.h>
+#include <visp3/mbt/vpMbtXmlGenericParser.h>
 #include <visp3/vision/vpPose.h>
 
 #include <float.h>
@@ -71,11 +71,8 @@ vpMbEdgeTracker::vpMbEdgeTracker()
     percentageGdPt(0.4), scales(1), Ipyramid(0), scaleLevel(0), nbFeaturesForProjErrorComputation(0), m_factor(),
     m_robustLines(), m_robustCylinders(), m_robustCircles(), m_wLines(), m_wCylinders(), m_wCircles(), m_errorLines(),
     m_errorCylinders(), m_errorCircles(), m_L_edge(), m_error_edge(), m_w_edge(), m_weightedError_edge(),
-    m_robust_edge()
+    m_robust_edge(), m_featuresToBeDisplayedEdge()
 {
-  angleAppears = vpMath::rad(89);
-  angleDisappears = vpMath::rad(89);
-
   scales[0] = true;
 
 #ifdef VISP_HAVE_OGRE
@@ -1033,7 +1030,6 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 {
   initPyramid(I, Ipyramid);
 
-  //  for (int lvl = ((int)scales.size()-1); lvl >= 0; lvl -= 1)
   unsigned int lvl = (unsigned int)scales.size();
   do {
     lvl--;
@@ -1086,7 +1082,7 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         testTracking();
 
         if (displayFeatures) {
-          displayFeaturesOnImage(I, lvl);
+          m_featuresToBeDisplayedEdge = getFeaturesForDisplayEdge();
         }
 
         // Looking for new visible face
@@ -1123,6 +1119,12 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
   } while (lvl != 0);
 
   cleanPyramid(Ipyramid);
+}
+
+void vpMbEdgeTracker::track(const vpImage<vpRGBa> &I)
+{
+  vpImageConvert::convert(I, m_I);
+  track(m_I);
 }
 
 /*!
@@ -1184,7 +1186,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cdMo : Pose to affect.
 */
 void vpMbEdgeTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
@@ -1195,30 +1197,42 @@ void vpMbEdgeTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneo
 }
 
 /*!
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
+
+  \param I_color : color image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void vpMbEdgeTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
+{
+  cMo = cdMo;
+
+  vpImageConvert::convert(I_color, m_I);
+  init(m_I);
+}
+
+/*!
   Load the xml configuration file.
   From the configuration file
   initialize the parameters corresponding to the objects: moving-edges, camera
   and visibility angles.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param configFile : full name of the xml file.
 
-  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
+  \sa loadConfigFile(const char*)
 */
 void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
 {
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile);
 
-#ifdef VISP_HAVE_XML2
-  vpMbtXmlParser xmlp;
+#ifdef VISP_HAVE_PUGIXML
+  vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER);
 
   xmlp.setCameraParameters(cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
-  xmlp.setMovingEdge(me);
+  xmlp.setEdgeMe(me);
 
   try {
     std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
@@ -1230,7 +1244,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
   vpCameraParameters camera;
   vpMe meParser;
   xmlp.getCameraParameters(camera);
-  xmlp.getMe(meParser);
+  xmlp.getEdgeMe(meParser);
 
   setCameraParameters(camera);
   setMovingEdge(meParser);
@@ -1247,8 +1261,8 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
     setClipping(clippingFlag | vpPolygon3D::FOV_CLIPPING);
 
   useLodGeneral = xmlp.getLodState();
-  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
-  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+  minLineLengthThresholdGeneral = xmlp.getLodMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getLodMinPolygonAreaThreshold();
 
   applyLodSettingInConfig = false;
   if (this->getNbPolygon() > 0) {
@@ -1259,7 +1273,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
   }
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile.c_str());
+  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
 #endif
 }
 
@@ -1278,24 +1292,24 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
                               const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                               const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
-           ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  //Display first the Moving-Edges
+  if (displayFeatures) {
+    displayFeaturesOnImage(I);
+  }
 
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-           it != cylinders[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
 
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-           it != circles[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-
-      break; // displaying model on one scale only
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
   }
 
@@ -1320,23 +1334,24 @@ void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatri
                               const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                               const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < scales.size(); i += 1) {
-    if (scales[i]) {
-      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
-           ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  //Display first the Moving-Edges
+  if (displayFeatures) {
+    displayFeaturesOnImage(I);
+  }
 
-      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
-           it != cylinders[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
+  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
 
-      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
-           it != circles[scaleLevel].end(); ++it) {
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
-      }
-      break; // displaying model on one scale only
+  for (size_t i = 0; i < models.size(); i++) {
+    if (vpMath::equal(models[i][0], 0)) {
+      vpImagePoint ip1(models[i][1], models[i][2]);
+      vpImagePoint ip2(models[i][3], models[i][4]);
+      vpDisplay::displayLine(I, ip1, ip2, col, thickness);
+    } else if (vpMath::equal(models[i][0], 1)) {
+      vpImagePoint center(models[i][1], models[i][2]);
+      double mu20 = models[i][3];
+      double mu11 = models[i][4];
+      double mu02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
     }
   }
 
@@ -1346,28 +1361,152 @@ void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatri
 #endif
 }
 
-void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<unsigned char> &I, const unsigned int lvl)
+std::vector<std::vector<double> > vpMbEdgeTracker::getFeaturesForDisplayEdge()
 {
-  if (lvl == 0) {
-    for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[lvl].begin(); it != lines[lvl].end(); ++it) {
-      vpMbtDistanceLine *l = *it;
-      if (l->isVisible() && l->isTracked()) {
-        l->displayMovingEdges(I);
+  std::vector<std::vector<double> > features;
+
+  const unsigned int lvl = 0;
+  for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[lvl].begin(); it != lines[lvl].end(); ++it) {
+    vpMbtDistanceLine *l = *it;
+    if (l->isVisible() && l->isTracked()) {
+      std::vector<std::vector<double> > currentFeatures = l->getFeaturesForDisplay();
+      features.insert(features.end(), currentFeatures.begin(), currentFeatures.end());
+    }
+  }
+
+  for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[lvl].begin(); it != cylinders[lvl].end();
+       ++it) {
+    vpMbtDistanceCylinder *cy = *it;
+    if (cy->isVisible() && cy->isTracked()) {
+      std::vector<std::vector<double> > currentFeatures = cy->getFeaturesForDisplay();
+      features.insert(features.end(), currentFeatures.begin(), currentFeatures.end());
+    }
+  }
+
+  for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[lvl].begin(); it != circles[lvl].end(); ++it) {
+    vpMbtDistanceCircle *ci = *it;
+    if (ci->isVisible() && ci->isTracked()) {
+      std::vector<std::vector<double> > currentFeatures = ci->getFeaturesForDisplay();
+      features.insert(features.end(), currentFeatures.begin(), currentFeatures.end());
+    }
+  }
+
+  return features;
+}
+
+/*!
+  Return a list of primitives parameters to display the model at a given pose and camera parameters.
+  - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`
+  - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
+  `<mu20>`, `<mu11>`, `<mu02>`
+
+  \param width : Image width.
+  \param height : Image height.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
+  \param displayFullModel : If true, the line is displayed even if it is not
+*/
+std::vector<std::vector<double> > vpMbEdgeTracker::getModelForDisplay(unsigned int width, unsigned int height,
+                                                                      const vpHomogeneousMatrix &cMo_,
+                                                                      const vpCameraParameters &camera,
+                                                                      const bool displayFullModel)
+{
+  std::vector<std::vector<double> > models;
+
+  for (unsigned int i = 0; i < scales.size(); i += 1) {
+    if (scales[i]) {
+      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
+           ++it) {
+        std::vector<std::vector<double> > currentModel =
+          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+        models.insert(models.end(), currentModel.begin(), currentModel.end());
+      }
+
+      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
+           it != cylinders[scaleLevel].end(); ++it) {
+        std::vector<std::vector<double> > currentModel =
+          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+        models.insert(models.end(), currentModel.begin(), currentModel.end());
+      }
+
+      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
+           it != circles[scaleLevel].end(); ++it) {
+        std::vector<double> paramsCircle = (*it)->getModelForDisplay(cMo_, camera, displayFullModel);
+        models.push_back(paramsCircle);
+      }
+      break; // displaying model on one scale only
+    }
+  }
+
+  return models;
+}
+
+void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<unsigned char> &I)
+{
+  for (size_t i = 0; i < m_featuresToBeDisplayedEdge.size(); i++) {
+    if (vpMath::equal(m_featuresToBeDisplayedEdge[i][0], 0)) {
+      vpImagePoint ip(m_featuresToBeDisplayedEdge[i][1], m_featuresToBeDisplayedEdge[i][2]);
+      int state = static_cast<int>(m_featuresToBeDisplayedEdge[i][3]);
+
+      switch (state) {
+      case vpMeSite::NO_SUPPRESSION:
+        vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
+        break;
+
+      case vpMeSite::CONSTRAST:
+        vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
+        break;
+
+      case vpMeSite::THRESHOLD:
+        vpDisplay::displayCross(I, ip, 3, vpColor::purple, 1);
+        break;
+
+      case vpMeSite::M_ESTIMATOR:
+        vpDisplay::displayCross(I, ip, 3, vpColor::red, 1);
+        break;
+
+      case vpMeSite::TOO_NEAR:
+        vpDisplay::displayCross(I, ip, 3, vpColor::cyan, 1);
+        break;
+
+      default:
+        vpDisplay::displayCross(I, ip, 3, vpColor::yellow, 1);
       }
     }
+  }
+}
 
-    for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[lvl].begin(); it != cylinders[lvl].end();
-         ++it) {
-      vpMbtDistanceCylinder *cy = *it;
-      if (cy->isVisible() && cy->isTracked()) {
-        cy->displayMovingEdges(I);
-      }
-    }
+void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<vpRGBa> &I)
+{
+  for (size_t i = 0; i < m_featuresToBeDisplayedEdge.size(); i++) {
+    if (vpMath::equal(m_featuresToBeDisplayedEdge[i][0], 0)) {
+      vpImagePoint ip(m_featuresToBeDisplayedEdge[i][1], m_featuresToBeDisplayedEdge[i][2]);
+      int state = static_cast<int>(m_featuresToBeDisplayedEdge[i][3]);
 
-    for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[lvl].begin(); it != circles[lvl].end(); ++it) {
-      vpMbtDistanceCircle *ci = *it;
-      if (ci->isVisible() && ci->isTracked()) {
-        ci->displayMovingEdges(I);
+      switch (state) {
+      case vpMeSite::NO_SUPPRESSION:
+        vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
+        break;
+
+      case vpMeSite::CONSTRAST:
+        vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
+        break;
+
+      case vpMeSite::THRESHOLD:
+        vpDisplay::displayCross(I, ip, 3, vpColor::purple, 1);
+        break;
+
+      case vpMeSite::M_ESTIMATOR:
+        vpDisplay::displayCross(I, ip, 3, vpColor::red, 1);
+        break;
+
+      case vpMeSite::TOO_NEAR:
+        vpDisplay::displayCross(I, ip, 3, vpColor::cyan, 1);
+        break;
+
+      default:
+        vpDisplay::displayCross(I, ip, 3, vpColor::yellow, 1);
       }
     }
   }
@@ -2084,14 +2223,14 @@ void vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &_I, const vpHomo
   bool changed = false;
 
   if (!useOgre) {
-    // n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89),
+    // n = faces.setVisible(_I.getWidth(), _I.getHeight(), cam, _cMo, vpMath::rad(89), vpMath::rad(89),
     // changed);
-    n = faces.setVisible(_I, cam, _cMo, angleAppears, angleDisappears, changed);
+    n = faces.setVisible(_I.getWidth(), _I.getHeight(), cam, _cMo, angleAppears, angleDisappears, changed);
   } else {
 #ifdef VISP_HAVE_OGRE
-    n = faces.setVisibleOgre(_I, cam, _cMo, angleAppears, angleDisappears, changed);
+    n = faces.setVisibleOgre(_I.getWidth(), _I.getHeight(), cam, _cMo, angleAppears, angleDisappears, changed);
 #else
-    n = faces.setVisible(_I, cam, _cMo, angleAppears, angleDisappears, changed);
+    n = faces.setVisible(_I.getWidth(), _I.getHeight(), cam, _cMo, angleAppears, angleDisappears, changed);
 #endif
   }
 

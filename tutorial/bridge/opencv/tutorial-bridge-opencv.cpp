@@ -3,7 +3,11 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if VISP_HAVE_OPENCV_VERSION >= 0x040000
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020300
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #endif

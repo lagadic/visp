@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,6 +387,7 @@ void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
 vpPoint &vpPoint::operator=(const vpPoint &vpp)
 {
   p = vpp.p;
@@ -396,6 +397,7 @@ vpPoint &vpPoint::operator=(const vpPoint &vpp)
 
   return *this;
 }
+#endif
 
 /*!
   Display the point in the image.

@@ -42,37 +42,25 @@ The Xcode project \c StartedAprilTag contains \c ImageDisplay.h and \c ImageDisp
 
 \subsection apriltag_detection_display_line Display a line
 
-The following function implemented in \c ImageDisplay.mm show how to display a line. 
+The following function implemented in `ImageDisplay.mm` show how to display a line. 
 
-\snippet ImageDisplay.mm display line
+\snippet StartedAprilTag/ImageDisplay.mm display line
 
 \subsection apriltag_detection_display_frame Display a 3D frame
 
-The following function implemented in \c ImageDisplay.mm show how to display a 3D frame; red line for x, green for y and blue for z axis. 
+The following function implemented in `ImageDisplay.mm` show how to display a 3D frame; red line for x, green for y and blue for z axis. 
 
-\snippet ImageDisplay.mm display frame
+\snippet StartedAprilTag/ImageDisplay.mm display frame
 
 \section apriltag_detection_basic_output Application output
 
-- Now we are ready to build <tt>"StartedAprilTag"</tt> application using Xcode <tt>"Product>Build"</tt> menu. If you get build issues, have a look to \ref apriltag_detection_known_issue.
+- Now we are ready to build <tt>"StartedAprilTag"</tt> application using Xcode <tt>"Product>Build"</tt> menu. 
 - Once build, if you run \c StartedAprilTag application on your device, you should be able to see the following screen shot:
 
 \image html img-detection-apriltag-ios-output.png
 
-\section apriltag_detection_known_issue Known issues
-\subsection apriltag_detection_known_issue_xml2 libxml/parser.h file not found
+\section apriltag_detection_ios_next Next tutorial
 
-When building the project, if you get the following issue `libxml/parser.h file not found` while including `vpXmlParser.h` it means that `visp3.framework` was build with `libxml2` third-party, but that the `libxml2` headers are not found.
-
-\image html img-detection-apriltag-ios-issue-libxml.png
-
-In Xcode, the fix consists in modifying the Build Settings in order to add the following to your Header Search Paths:
-\code
-$SDKROOT/usr/include/libxml2
-\endcode
-
-This is done in the next screenshot:
-
-\image html img-detection-apriltag-ios-issue-libxml-fix.png
+You are now ready to follow \ref tutorial-detection-apriltag-ios-realtime that shows how to detect in realtime AprilTags from your iOS device camera.
 
 */

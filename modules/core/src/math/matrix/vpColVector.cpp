@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -323,7 +323,10 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/*!
+  Move constructor that take rvalue.
+ */
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -626,6 +629,56 @@ vpColVector &vpColVector::operator<<(double *x)
   return *this;
 }
 
+/*!
+  This operator could be used to set column vector elements:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+v: -1  -2.1  -3
+  \endcode
+  \sa operator,()
+*/
+vpColVector& vpColVector::operator<<(double val)
+{
+  resize(1, false);
+  data[0] = val;
+  return *this;
+}
+
+/*!
+  This operator could be used to set column vector elements:
+  \code
+#include <visp3/code/vpColVector.h
+
+int main()
+{
+  vpColVector v;
+  v << -1, -2.1, -3;
+  std::cout << "v:" << v << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+v: -1  -2.1  -3
+  \endcode
+  \sa operator<<()
+*/
+vpColVector& vpColVector::operator,(double val)
+{
+  resize(rowNum + 1, false);
+  data[rowNum - 1] = val;
+  return *this;
+}
+
 //! Set each element of the column vector to x.
 vpColVector &vpColVector::operator=(double x)
 {
@@ -649,7 +702,10 @@ std::vector<double> vpColVector::toStdVector() const
   return v;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/*!
+  Overloaded move assignment operator taking rvalue.
+ */
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
@@ -669,6 +725,36 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
     other.data = NULL;
   }
 
+  return *this;
+}
+
+/*!
+  Set vector elements and size from a list of values.
+  \param list : List of double. Vector size matches the number of elements.
+  \return The modified vector.
+  \code
+#include <visp3/core/vpColVector.h>
+
+int main()
+{
+  vpColVector c;
+  c = { 0, -1, -2 };
+  std::cout << "c:\n" << c << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+c:
+0
+-1
+-2
+  \endcode
+  \sa operator<<()
+ */
+vpColVector& vpColVector::operator=(const std::initializer_list<double> &list)
+{
+  resize(static_cast<unsigned int>(list.size()), false);
+  std::copy(list.begin(), list.end(), data);
   return *this;
 }
 #endif
@@ -796,7 +882,7 @@ vpColVector &vpColVector::normalize()
 
    Example:
    \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
@@ -849,7 +935,7 @@ vpColVector vpColVector::invSort(const vpColVector &v)
 
    Example:
    \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
@@ -1165,7 +1251,7 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 
   \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpColVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
+vpMatrix vpColVector::reshape(unsigned int nrows, unsigned int ncols)
 {
   vpMatrix M(nrows, ncols);
   reshape(M, nrows, ncols);
@@ -1183,7 +1269,7 @@ have not the same size.
 
   The following example shows how to use this method.
   \code
-#include <visp/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 int main()
 {
@@ -1475,20 +1561,31 @@ double vpColVector::sumSquare() const
 }
 
 /*!
-  Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm(), infinityNorm()
 
 */
 double vpColVector::euclideanNorm() const
 {
-  // Use directly sumSquare() function
-  double norm = sumSquare();
+  return frobeniusNorm();
+}
 
-  // Old code used
-  //  for (unsigned int i=0;i<dsize;i++) {
-  //    double x = *(data +i); norm += x*x;
-  //  }
+/*!
+  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+
+  \sa infinityNorm()
+
+*/
+double vpColVector::frobeniusNorm() const
+{
+  double norm = sumSquare();
 
   return sqrt(norm);
 }
@@ -1528,14 +1625,14 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
 
 /*!
 
-  Compute and return the infinity norm \f$ {||x||}_{\infty} =
-  max\left({\mid x_{i} \mid}\right) \f$ with \f$i \in
-  \{0, ..., m-1\}\f$ where \e m is the vector size and \f$x_i\f$ an element of
+  Compute and return the infinity norm \f$ {||v||}_{\infty} =
+  max\left({\mid v_{i} \mid}\right) \f$ with \f$i \in
+  \{0, ..., m-1\}\f$ where \e m is the vector size and \f$v_i\f$ an element of
   the vector.
 
   \return The infinity norm if the matrix is initialized, 0 otherwise.
 
-  \sa euclideanNorm()
+  \sa frobeniusNorm()
 */
 double vpColVector::infinityNorm() const
 {

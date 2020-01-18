@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,11 +42,7 @@ set(data_location_ ${VISP_BINARY_DIR})
 set(VISP_SCENES_DIR ${data_location_}/data/wireframe-simulator)
 set(VISP_ROBOT_ARMS_DIR ${data_location_}/data/robot-simulator)
 # Note that VISP_HAVE_OGRE_RESOURCES_PATH and VISP_HAVE_OGRE_PLUGINS_PATH are set in OgreTools.cmake
-if(UNIX)
-  set(data_location_ "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
-else()
-  set(data_location_ "${CMAKE_INSTALL_PREFIX}")
-endif()
+set(data_location_ "${CMAKE_INSTALL_PREFIX}/${VISP_INSTALL_DATAROOTDIR}")
 list(APPEND VISP_SCENES_DIR ${data_location_}/data/wireframe-simulator)
 list(APPEND VISP_ROBOT_ARMS_DIR ${data_location_}/data/robot-simulator)
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
@@ -97,7 +93,7 @@ endif()
 # ----------------------------------------------------------------------------
 # visp_modules.h that contains all the build modules defines
 # ----------------------------------------------------------------------------
-set(VISP_MODULE_DEFINITIONS_CONFIGMAKE "#ifndef __visp_modules_h__\n#define __visp_modules_h__\n\n")
+set(VISP_MODULE_DEFINITIONS_CONFIGMAKE "#ifndef _visp_modules_h_\n#define _visp_modules_h_\n\n")
 
 set(VISP_MOD_LIST ${VISP_MODULES_PUBLIC})
 vp_list_sort(VISP_MOD_LIST)
@@ -121,7 +117,7 @@ install(FILES "${VISP_INCLUDE_DIR}/visp3/visp_modules.h"
 # visp.h that includes all build modules headers
 # Note: for other meta headers visp3/visp_<module>.h see vp_create_global_module_header() macro
 # ----------------------------------------------------------------------------
-set(VISP_ALL_HEADERS_CONFIGMAKE "#ifndef __visp_h__\n#define __visp_h__\n\n")
+set(VISP_ALL_HEADERS_CONFIGMAKE "#ifndef _visp_h_\n#define _visp_h_\n\n")
 
 set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}// File that defines which modules where included during ViSP build\n")
 set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}// It contains the defines of the correct VISP_HAVE_MODULE_<modulename> values\n")

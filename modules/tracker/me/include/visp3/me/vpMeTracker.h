@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,7 @@ public:
 
   virtual void display(const vpImage<unsigned char> &I, vpColor col) = 0;
   virtual void display(const vpImage<unsigned char> &I);
+  virtual void display(const vpImage<vpRGBa> &I);
   void display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w);
 
   void setDisplay(vpMeSite::vpMeSiteDisplayType select) { selectDisplay = select; }

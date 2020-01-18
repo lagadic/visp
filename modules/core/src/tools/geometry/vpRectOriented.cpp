@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,7 @@ vpRectOriented::vpRectOriented(const vpRect &rect)
   m_topRight.set_j(m_center.get_j() + m_width / 2.0);
 }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
 /** Assignement operator.
  * @param rectOriented Oriented rectangle to copy.
  */
@@ -102,6 +103,7 @@ vpRectOriented &vpRectOriented::operator=(const vpRectOriented &rectOriented)
   m_topRight = rectOriented.getTopRight();
   return *this;
 }
+#endif
 
 /** Assignement operator from vpRect.
  * @param rect Rectangle to copy.

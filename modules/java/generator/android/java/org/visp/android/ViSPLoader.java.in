@@ -41,17 +41,7 @@ public class ViSPLoader
      */
     public static boolean initDebug()
     {
-        return StaticHelper.initViSP(false);
-    }
-
-    /**
-     * Loads and initializes ViSP library from current application package. Roughly, it's an analog of system.loadLibrary("visp_java").
-     * @param InitCuda load and initialize CUDA runtime libraries.
-     * @return Returns true is initialization of ViSP was successful.
-     */
-    public static boolean initDebug(boolean InitCuda)
-    {
-        return StaticHelper.initViSP(InitCuda);
+        return StaticHelper.initViSP();
     }
 
     /**

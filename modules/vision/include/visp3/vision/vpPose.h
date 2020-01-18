@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,10 @@
 /*!
   \file vpPose.h
   \brief Tools for pose computation (pose from point only).
-
-  \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
-  \date   April, 6 1999 (first issue)
 */
 
-#ifndef vpPOSE_HH
-#define vpPOSE_HH
+#ifndef _vpPose_h_
+#define _vpPose_h_
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
@@ -61,6 +58,11 @@
 #include <list>
 #include <math.h>
 #include <vector>
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <atomic>
+#endif
+
+#include <visp3/core/vpUniRand.h>
 
 /*!
   \class vpPose
@@ -72,8 +74,7 @@
   \note It is also possible to estimate a pose from other features using
   vpPoseFeatures class.
 
-  To see how to use this class you can follow the \ref
-  tutorial-pose-estimation.
+  To see how to use this class you can follow the \ref tutorial-pose-estimation.
 */
 
 class VISP_EXPORT vpPose
@@ -81,13 +82,12 @@ class VISP_EXPORT vpPose
 public:
   //! Methods that could be used to estimate the pose from points.
   typedef enum {
-    LAGRANGE,             /*!< Linear Lagrange approach (does't need an initialization) */
-    DEMENTHON,            /*!< Linear Dementhon aproach (does't need an initialization)
-                           */
+    LAGRANGE,             /*!< Linear Lagrange approach (doesn't need an initialization) */
+    DEMENTHON,            /*!< Linear Dementhon aproach (doesn't need an initialization) */
     LOWE,                 /*!< Lowe aproach based on a Levenberg Marquartd non linear
                              minimization scheme that needs an initialization from Lagrange or
                              Dementhon aproach */
-    RANSAC,               /*!< Robust Ransac aproach (does't need an initialization) */
+    RANSAC,               /*!< Robust Ransac aproach (doesn't need an initialization) */
     LAGRANGE_LOWE,        /*!< Non linear Lowe aproach initialized by Lagrange
                              approach */
     DEMENTHON_LOWE,       /*!< Non linear Lowe aproach initialized by Dementhon
@@ -100,15 +100,10 @@ public:
                              initialized by Lagrange approach */
   } vpPoseMethodType;
 
-  enum FILTERING_RANSAC_FLAGS {
-    PREFILTER_DUPLICATE_POINTS = 0x1,        /*!< Remove duplicate points before the RANSAC. */
-    PREFILTER_ALMOST_DUPLICATE_POINTS = 0x2, /*!< Remove almost duplicate
-                                                points (up to a tolerance)
-                                                before the RANSAC. */
-    PREFILTER_DEGENERATE_POINTS = 0x4,       /*!< Remove degenerate points (same 3D
-                                                or 2D coordinates) before the
-                                                RANSAC. */
-    CHECK_DEGENERATE_POINTS = 0x8            /*!< Check for degenerate points during the RANSAC. */
+  enum RANSAC_FILTER_FLAGS {
+    NO_FILTER,
+    PREFILTER_DEGENERATE_POINTS, /*!< Remove degenerate points (same 3D or 2D coordinates) before the RANSAC. */
+    CHECK_DEGENERATE_POINTS      /*!< Check for degenerate points during the RANSAC. */
   };
 
   unsigned int npt;         //!< Number of point used in pose computation
@@ -142,8 +137,8 @@ private:
   //! Minimal distance point to plane to consider if the point belongs or not
   //! to the plane
   double distanceToPlaneForCoplanarityTest;
-  //! RANSAC flags to remove or not degenerate points
-  int ransacFlags;
+  //! RANSAC flag to remove or not degenerate points
+  RANSAC_FILTER_FLAGS ransacFlag;
   //! List of points used for the RANSAC (std::vector is contiguous whereas
   //! std::list is a linked list)
   std::vector<vpPoint> listOfPoints;
@@ -162,18 +157,19 @@ private:
     RansacFunctor(const vpHomogeneousMatrix &cMo_, const unsigned int ransacNbInlierConsensus_,
                   const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
                   const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
-                  bool (*func_)(vpHomogeneousMatrix *))
-      : m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
-        m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
+                  bool (*func_)(const vpHomogeneousMatrix &)
+              #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+                  , std::atomic<bool> &abort
+              #endif
+                  )
+      :
+    #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        m_abort(abort),
+    #endif
+        m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
+        m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
-        m_ransacThreshold(ransacThreshold_)
-    {
-    }
-
-    RansacFunctor()
-      : m_best_consensus(), m_checkDegeneratePoints(false), m_cMo(), m_foundSolution(false), m_func(NULL),
-        m_initial_seed(0), m_listOfUniquePoints(), m_nbInliers(0), m_ransacMaxTrials(), m_ransacNbInlierConsensus(),
-        m_ransacThreshold()
+        m_ransacThreshold(ransacThreshold_), m_uniRand(initial_seed_)
     {
     }
 
@@ -189,24 +185,23 @@ private:
     unsigned int getNbInliers() const { return m_nbInliers; }
 
   private:
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::atomic<bool> &m_abort;
+#endif
     std::vector<unsigned int> m_best_consensus;
     bool m_checkDegeneratePoints;
     vpHomogeneousMatrix m_cMo;
     bool m_foundSolution;
-    bool (*m_func)(vpHomogeneousMatrix *);
-    unsigned int m_initial_seed;
+    bool (*m_func)(const vpHomogeneousMatrix &);
     std::vector<vpPoint> m_listOfUniquePoints;
     unsigned int m_nbInliers;
     int m_ransacMaxTrials;
     unsigned int m_ransacNbInlierConsensus;
     double m_ransacThreshold;
+    vpUniRand m_uniRand;
 
     bool poseRansacImpl();
   };
-
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-  static vpThread::Return poseRansacImplThread(vpThread::Args arg);
-#endif
 
 protected:
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo);
@@ -216,23 +211,31 @@ protected:
 
 public:
   vpPose();
+  vpPose(const std::vector<vpPoint>& lP);
   virtual ~vpPose();
   void addPoint(const vpPoint &P);
   void addPoints(const std::vector<vpPoint> &lP);
   void clearPoint();
 
-  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *) = NULL);
+  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
   bool coplanar(int &coplanar_plane_type);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
   void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
-  void init();
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated void init();
+  //@}
+#endif
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
-  void poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type = 0);
+  void poseLagrangePlan(vpHomogeneousMatrix &cMo);
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo);
   void poseLowe(vpHomogeneousMatrix &cMo);
-  bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *) = NULL);
+  bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
   void poseVirtualVSrobust(vpHomogeneousMatrix &cMo);
   void poseVirtualVS(vpHomogeneousMatrix &cMo);
   void printPoint();
@@ -290,13 +293,17 @@ public:
   }
 
   /*!
-    Set RANSAC filtering flags.
+    Set RANSAC filter flag.
 
-    \param flags : Flags to use, e.g. \e
-    setRansacFilterFlags(PREFILTER_DUPLICATE_POINTS +
-    CHECK_DEGENERATE_POINTS). \sa FILTERING_RANSAC_FLAGS
+    \param flag : RANSAC flag to use to prefilter or perform degenerate configuration check.
+    \sa RANSAC_FILTER_FLAGS
+    \warning Prefilter degenerate points consists to not add subsequent degenerate points. This means that
+    it is possible to discard a valid point and keep an invalid point if the invalid point
+    is added first. It is faster to prefilter for duplicate points instead of checking for degenerate
+    configuration at each time.
+    \note By default the flag is set to NO_FILTER.
   */
-  inline void setRansacFilterFlags(const int flags) { ransacFlags = flags; }
+  inline void setRansacFilterFlag(const RANSAC_FILTER_FLAGS &flag) { ransacFlag = flag; }
 
   /*!
     Get the number of threads for the parallel RANSAC implementation.
@@ -310,21 +317,22 @@ public:
 
     \note You have to enable the parallel version with setUseParallelRansac().
     If the number of threads is 0, the number of threads to use is
-    automatically determined with OpenMP. \sa setUseParallelRansac
+    automatically determined with C++11.
+    \sa setUseParallelRansac
   */
   inline void setNbParallelRansacThreads(const int nb) { nbParallelRansacThreads = nb; }
 
   /*!
-    \return True if the parallel RANSAC version should be used.
+    \return True if the parallel RANSAC version should be used (depends also to C++11 availability).
 
     \sa setUseParallelRansac
   */
   inline bool getUseParallelRansac() const { return useParallelRansac; }
 
   /*!
-    Set if parallel RANSAC version should be used or not.
+    Set if parallel RANSAC version should be used or not (only if C++11).
 
-    \note Need Pthread.
+    \note Need C++11 or higher.
   */
   inline void setUseParallelRansac(const bool use) { useParallelRansac = use; }
 
@@ -352,13 +360,8 @@ public:
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials = 10000);
+                        const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
+                        bool (*func)(const vpHomogeneousMatrix &)=NULL);
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

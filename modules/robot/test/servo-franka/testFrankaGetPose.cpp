@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
   }
 
   try {
-    std::cout << "Start test 1/2" << std::endl;
+    std::cout << "-- Start test 1/4" << std::endl;
     vpRobotFranka robot;
     robot.connect(robot_ip);
 
@@ -84,7 +84,6 @@ int main(int argc, char **argv)
     robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
     std::cout << "fMe pose vector: " << fPe.t() << std::endl;
     std::cout << "fMe pose matrix: \n" << vpHomogeneousMatrix(fPe) << std::endl;
-
   }
   catch(const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
@@ -103,7 +102,7 @@ int main(int argc, char **argv)
   }
 
   try {
-    std::cout << "Start test 2/2" << std::endl;
+    std::cout << "-- Start test 2/4" << std::endl;
     vpRobotFranka robot(robot_ip);
 
     franka::Robot *handler = robot.getHandler();
@@ -137,6 +136,76 @@ int main(int argc, char **argv)
       }
     }
     std::cout << "eeMk: \n" << eeMk << std::endl;
+  }
+  catch(const vpException &e) {
+    std::cout << "ViSP exception: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+  catch(const franka::NetworkException &e) {
+    std::cout << "Franka network exception: " << e.what() << std::endl;
+    std::cout << "Check if you are connected to the Franka robot"
+              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
+    return EXIT_FAILURE;
+  }
+  catch(const std::exception &e) {
+    std::cout << "Franka exception: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  try {
+    std::cout << "-- Start test 3/4" << std::endl;
+    vpRobotFranka robot;
+    robot.connect(robot_ip);
+
+    vpMatrix mass;
+    robot.getMass(mass);
+    std::cout << "Mass matrix:\n" << mass << std::endl;
+
+    vpColVector gravity;
+    robot.getGravity(gravity);
+    std::cout << "Gravity vector: " << gravity.t() << std::endl;
+
+    vpColVector coriolis;
+    robot.getCoriolis(coriolis);
+    std::cout << "Coriolis vector: " << coriolis.t() << std::endl;
+  }
+  catch(const vpException &e) {
+    std::cout << "ViSP exception: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+  catch(const franka::NetworkException &e) {
+    std::cout << "Franka network exception: " << e.what() << std::endl;
+    std::cout << "Check if you are connected to the Franka robot"
+              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
+    return EXIT_FAILURE;
+  }
+  catch(const std::exception &e) {
+    std::cout << "Franka exception: " << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  try {
+    std::cout << "-- Start test 4/4" << std::endl;
+    vpRobotFranka robot;
+    robot.connect(robot_ip);
+
+    vpColVector q;
+    robot.getPosition(vpRobot::JOINT_STATE, q);
+    std::cout << "Joint position: " << q.t() << std::endl;
+
+    vpMatrix fJe;
+    robot.get_fJe(fJe);
+    std::cout << "Jacobian fJe:\n" << fJe << std::endl;
+
+    robot.get_fJe(q, fJe);
+    std::cout << "Jacobian fJe:\n" << fJe << std::endl;
+
+    vpMatrix eJe;
+    robot.get_eJe(eJe);
+    std::cout << "Jacobian eJe:\n" << eJe << std::endl;
+
+    robot.get_eJe(q, eJe);
+    std::cout << "Jacobian eJe:\n" << eJe << std::endl;
   }
   catch(const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;

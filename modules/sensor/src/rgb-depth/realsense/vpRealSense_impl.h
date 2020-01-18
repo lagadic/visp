@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +91,7 @@ void vp_rs_get_native_frame_data_impl(const rs::device *m_device,
     // 8 bits
     case rs::format::raw8:
       std::cout << "Stream: raw8 not tested!" << std::endl;
+      /* FALLTHRU */
     case rs::format::y8:
       memcpy(data, (unsigned char *)m_device->get_frame_data(stream), size);
       break;

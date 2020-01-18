@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -563,15 +563,15 @@ vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, const unsi
 */
 void vpFeatureTranslation::print(const unsigned int select) const
 {
-  std::cout << "Translation 3D: ";
+  std::cout << "Translation 3D:";
   if (vpFeatureTranslation::selectTx() & select) {
-    std::cout << s[0] << " ";
+    std::cout << " tx=" << s[0];
   }
   if (vpFeatureTranslation::selectTy() & select) {
-    std::cout << s[1] << " ";
+    std::cout << " ty=" << s[1];
   }
   if (vpFeatureTranslation::selectTz() & select) {
-    std::cout << s[2] << " ";
+    std::cout << " tz=" << s[2];
   }
   std::cout << std::endl;
 }

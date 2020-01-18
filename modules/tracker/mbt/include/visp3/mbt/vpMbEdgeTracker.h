@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,6 @@
 #define vpMbEdgeTracker_HH
 
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/mbt/vpMbTracker.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceCylinder.h>
@@ -106,13 +105,12 @@ used to compute the pose at the very first image.
   The following code shows the simplest way to use the tracker.
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpException.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbEdgeTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 
 int main()
 {
@@ -129,7 +127,7 @@ int main()
   display.init(I,100,100,"Mb Edge Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
@@ -147,9 +145,6 @@ int main()
     tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
    vpDisplay::flush(I);
   }
-
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -173,8 +168,6 @@ not) them using a vector of booleans, as presented in the following code:
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
   ...
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
 \endcode
 
   The tracker can also be used without display, in that case the initial pose
@@ -182,11 +175,11 @@ not) them using a vector of booleans, as presented in the following code:
 computed using another method:
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbEdgeTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 
 int main()
 {
@@ -197,7 +190,7 @@ int main()
   //acquire an image
   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
@@ -210,9 +203,6 @@ int main()
     tracker.getPose(cMo); // get the pose
   }
 
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
-
   return 0;
 }
 \endcode
@@ -221,12 +211,12 @@ int main()
 a given pose:
 
 \code
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpMbEdgeTracker.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 
 int main()
 {
@@ -243,7 +233,7 @@ int main()
   display.init(I,100,100,"Mb Edge Tracker");
 #endif
 
-#if defined VISP_HAVE_XML2
+#if defined VISP_HAVE_PUGIXML
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
@@ -258,9 +248,6 @@ int main()
     tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
     vpDisplay::flush(I);
   }
-
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -342,6 +329,8 @@ protected:
   vpColVector m_weightedError_edge;
   //! Robust
   vpRobust m_robust_edge;
+  //! Display features
+  std::vector<std::vector<double> > m_featuresToBeDisplayedEdge;
 
 public:
   vpMbEdgeTracker();
@@ -350,14 +339,19 @@ public:
   /** @name Inherited functionalities from vpMbEdgeTracker */
   //@{
 
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
   void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
   void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
+
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false);
 
   /*!
     Get the moving edge parameters.
@@ -488,12 +482,14 @@ public:
   void setMovingEdge(const vpMe &me);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
 
   void setScales(const std::vector<bool> &_scales);
 
   void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
 
-  void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<unsigned char> &I);
+  virtual void track(const vpImage<vpRGBa> &I);
   //@}
 
 protected:
@@ -519,9 +515,11 @@ protected:
   virtual void computeVVSWeights();
   using vpMbTracker::computeVVSWeights;
 
-  void displayFeaturesOnImage(const vpImage<unsigned char> &I, const unsigned int lvl);
+  void displayFeaturesOnImage(const vpImage<unsigned char> &I);
+  void displayFeaturesOnImage(const vpImage<vpRGBa> &I);
   void downScale(const unsigned int _scale);
-  void init(const vpImage<unsigned char> &I);
+  virtual std::vector<std::vector<double> > getFeaturesForDisplayEdge();
+  virtual void init(const vpImage<unsigned char> &I);
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "");
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
@@ -538,7 +536,7 @@ protected:
   void removeCylinder(const std::string &name);
   void removeLine(const std::string &name);
   void resetMovingEdge();
-  void testTracking();
+  virtual void testTracking();
   void trackMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdgeWeights();

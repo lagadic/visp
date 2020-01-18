@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@
 */
 vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(NULL), euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(),
+    visible_result(1.), visible(false), X0_2_optim(NULL), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
     vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(col), Ig(), Ic(),
     rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
 {
@@ -98,7 +98,7 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
 */
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(NULL), euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(),
+    visible_result(1.), visible(false), X0_2_optim(NULL), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
     vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(GRAY_SCALED), Ig(),
     Ic(), rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(),
     needClipping(false)
@@ -120,8 +120,8 @@ vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   focal[2] = 1;
 
   normal_obj = text.normal_obj;
-  euclideanNorm_u = text.euclideanNorm_u;
-  euclideanNorm_v = text.euclideanNorm_v;
+  frobeniusNorm_u = text.frobeniusNorm_u;
+  fronbniusNorm_v = text.fronbniusNorm_v;
 
   normal_Cam.resize(3);
   vbase_u.resize(3);
@@ -170,8 +170,8 @@ vpImageSimulator &vpImageSimulator::operator=(const vpImageSimulator &sim)
   focal = sim.focal;
 
   normal_obj = sim.normal_obj;
-  euclideanNorm_u = sim.euclideanNorm_u;
-  euclideanNorm_v = sim.euclideanNorm_v;
+  frobeniusNorm_u = sim.frobeniusNorm_u;
+  fronbniusNorm_v = sim.fronbniusNorm_v;
 
   colorI = sim.colorI;
   interp = sim.interp;
@@ -1058,10 +1058,10 @@ void vpImageSimulator::initPlan(vpColVector *X_)
   }
 
   normal_obj = vpColVector::crossProd(X[1] - X[0], X[3] - X[0]);
-  normal_obj = normal_obj / normal_obj.euclideanNorm();
+  normal_obj = normal_obj / normal_obj.frobeniusNorm();
 
-  euclideanNorm_u = (X[1] - X[0]).euclideanNorm();
-  euclideanNorm_v = (X[3] - X[0]).euclideanNorm();
+  frobeniusNorm_u = (X[1] - X[0]).frobeniusNorm();
+  fronbniusNorm_v = (X[3] - X[0]).frobeniusNorm();
 }
 
 /*!
@@ -1271,8 +1271,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelpla
     u += diff * vbase_u_optim[i];
     v += diff * vbase_v_optim[i];
   }
-  u = u / (euclideanNorm_u * euclideanNorm_u);
-  v = v / (euclideanNorm_v * euclideanNorm_v);
+  u = u / (frobeniusNorm_u * frobeniusNorm_u);
+  v = v / (fronbniusNorm_v * fronbniusNorm_v);
 
   if (u > 0 && v > 0 && u < 1. && v < 1.) {
     double i2, j2;
@@ -1324,8 +1324,8 @@ bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint
     u += diff * vbase_u_optim[i];
     v += diff * vbase_v_optim[i];
   }
-  u = u / (euclideanNorm_u * euclideanNorm_u);
-  v = v / (euclideanNorm_v * euclideanNorm_v);
+  u = u / (frobeniusNorm_u * frobeniusNorm_u);
+  v = v / (fronbniusNorm_v * fronbniusNorm_v);
 
   if (u > 0 && v > 0 && u < 1. && v < 1.) {
     double i2, j2;
@@ -1376,8 +1376,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
     u += diff * vbase_u_optim[i];
     v += diff * vbase_v_optim[i];
   }
-  u = u / (euclideanNorm_u * euclideanNorm_u);
-  v = v / (euclideanNorm_v * euclideanNorm_v);
+  u = u / (frobeniusNorm_u * frobeniusNorm_u);
+  v = v / (fronbniusNorm_v * fronbniusNorm_v);
 
   if (u > 0 && v > 0 && u < 1. && v < 1.) {
     double i2, j2;
@@ -1428,8 +1428,8 @@ bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP, v
     u += diff * vbase_u_optim[i];
     v += diff * vbase_v_optim[i];
   }
-  u = u / (euclideanNorm_u * euclideanNorm_u);
-  v = v / (euclideanNorm_v * euclideanNorm_v);
+  u = u / (frobeniusNorm_u * frobeniusNorm_u);
+  v = v / (fronbniusNorm_v * fronbniusNorm_v);
 
   if (u > 0 && v > 0 && u < 1. && v < 1.) {
     double i2, j2;

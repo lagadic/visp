@@ -15,18 +15,22 @@ extern "C" {
 // Java Method:    VpImageUChar()
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar__
 (JNIEnv *env, jclass, jstring type){
+  (void)env;
+  (void)type;
   return (jlong) new vpImage<u_char>();
 }
 
 // Java Method:    VpImageUChar(int r, int c)
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar__II
 (JNIEnv *env, jclass, jint r, jint c){
+  (void)env;
   return (jlong) new vpImage<u_char>(r,c);
 }
 
 // Java Method:    VpImageUChar(int r, int c, byte val)
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar__IIB
 (JNIEnv *env, jclass, jint r, jint c, jbyte value){
+  (void)env;
   return (jlong) new vpImage<u_char>(r,c, (u_char) value);
 }
 
@@ -44,6 +48,7 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar___3BIIZ
 // Java Method:    getCols()
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1cols
 (JNIEnv *env, jclass, jlong address){
+  (void)env;
   vpImage<u_char>* me = (vpImage<u_char>*) address; //TODO: check for NULL
   return me->getCols();
 }
@@ -51,6 +56,7 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1cols
 // Java Method:    getRows()
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1rows
 (JNIEnv *env, jclass, jlong address){
+  (void)env;
   vpImage<u_char>* me = (vpImage<u_char>*) address; //TODO: check for NULL
   return me->getRows();
 }
@@ -58,6 +64,7 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1rows
 // Java Method:    getPixel(int i, int j)
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1getPixel
 (JNIEnv *env, jclass, jlong address, jint i, jint j){
+  (void)env;
   vpImage<u_char>* me = (vpImage<u_char>*) address; //TODO: check for NULL
   return (*me)(i,j);
 }
@@ -66,7 +73,7 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1getPixel
 JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageUChar_n_1getPixels
 (JNIEnv *env, jclass, jlong address){
   vpImage<u_char>* me = (vpImage<u_char>*) address; //TODO: check for NULL
-	jbyteArray ret = env->NewByteArray(me->getNumberOfPixel());
+  jbyteArray ret = env->NewByteArray(me->getNumberOfPixel());
   env->SetByteArrayRegion (ret, 0, me->getNumberOfPixel(), (jbyte*) me->bitmap);
   return ret;
 }

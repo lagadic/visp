@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpJointVelTrajGenerator_impl_h_
-#define __vpJointVelTrajGenerator_impl_h_
+#ifndef _vpJointVelTrajGenerator_impl_h_
+#define _vpJointVelTrajGenerator_impl_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -62,8 +62,8 @@ public:
     m_status(), m_delta_q(), m_delta_q_max(), m_delta_q_acc(),
     m_q_final(), m_sign(), m_q_cmd(), m_q_cmd_prev(), m_dist_AD(), m_dq_des(), m_dq_des_prev(), m_dist_to_final(),
     m_flagSpeed(),
-    m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_njoints(7), m_delta_t(0.001), m_flagJointLimit(false)  {}
-  ~vpJointVelTrajGenerator() {}
+    m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_njoints(7), m_delta_t(0.001), m_flagJointLimit(false) {}
+  virtual ~vpJointVelTrajGenerator() {}
 
   void applyVel(const std::array<double, 7> &dq_des,
                 std::array<double, 7> &q_cmd,

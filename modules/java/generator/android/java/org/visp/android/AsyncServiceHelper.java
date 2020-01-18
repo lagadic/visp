@@ -3,7 +3,6 @@ package org.visp.android;
 import java.io.File;
 import java.util.StringTokenizer;
 
-import org.visp.core.Core;
 import org.visp.engine.ViSPEngineInterface;
 
 import android.content.ComponentName;
@@ -300,10 +299,6 @@ class AsyncServiceHelper
                         if (initViSPLibs(path, libs))
                         {
                             Log.d(TAG, "First attempt to load libs is OK");
-                            String eol = System.getProperty("line.separator");
-                            for (String str : Core.getBuildInformation().split(eol))
-                                Log.i(TAG, str);
-
                             status = LoaderCallbackInterface.SUCCESS;
                         }
                         else

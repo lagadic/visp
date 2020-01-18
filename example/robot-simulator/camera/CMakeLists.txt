@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP configuration file. 
+# ViSP configuration file.
 #
 # Authors:
 # Fabien Spindler
@@ -46,7 +46,7 @@ endif(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES Window
 
 if(WINRT)
   add_definitions(-DWINRT)
-  
+
   if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone)
     set(WINRT_PHONE TRUE)
     add_definitions(-DWINRT_PHONE)
@@ -86,6 +86,7 @@ set(example_cpp
   servoSimuPoint2DhalfCamVelocity3.cpp
   servoSimuPoint3DCamVelocity.cpp
   servoSimuSphere2DCamVelocity.cpp
+  servoSimuSphere2DCamVelocityDisplay.cpp
   servoSimuSquareLine2DCamVelocityDisplay.cpp
   servoSimuThetaUCamVelocity.cpp
 )
@@ -94,7 +95,7 @@ if(NOT DEFINED WINRT_8_1)
   list(APPEND example_cpp servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp)
   list(APPEND example_cpp servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp)
   list(APPEND example_cpp servoSimuCylinder2DCamVelocityDisplaySecondaryTask.cpp)
-  list(APPEND example_cpp servoSimuSphere2DCamVelocitySecondaryTask.cpp)
+  list(APPEND example_cpp servoSimuSphere2DCamVelocityDisplaySecondaryTask.cpp)
   list(APPEND example_cpp servoSimuFourPoints2DPolarCamVelocityDisplay.cpp)
 endif()
 
@@ -124,5 +125,6 @@ add_test(servoSimuPoint2DhalfCamVelocity2		servoSimuPoint2DhalfCamVelocity2		)
 add_test(servoSimuPoint2DhalfCamVelocity3		servoSimuPoint2DhalfCamVelocity3		)
 add_test(servoSimuPoint3DCamVelocity			servoSimuPoint3DCamVelocity			)
 add_test(servoSimuSphere2DCamVelocity			servoSimuSphere2DCamVelocity			)
-add_test(servoSimuSphere2DCamVelocitySecondaryTask	servoSimuSphere2DCamVelocitySecondaryTask	)
+add_test(servoSimuSphere2DCamVelocityDisplay		servoSimuSphere2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+add_test(servoSimuSphere2DCamVelocityDisplaySecondaryTask servoSimuSphere2DCamVelocityDisplaySecondaryTask -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
 add_test(servoSimuThetaUCamVelocity			servoSimuThetaUCamVelocity			)

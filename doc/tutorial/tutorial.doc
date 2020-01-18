@@ -1,9 +1,13 @@
-/*! \page tutorial_mainpage Tutorials
-This page references all the tutorials.
+/*! \page tutorial_mainpage Tutorials for ViSP users
+This page references all the tutorials in user zone.
 
 - \subpage tutorial_ios
 
 - \subpage tutorial_java
+
+- \subpage tutorial_android
+
+- \subpage tutorial_unity
 
 - \subpage tutorial_install_pkg
 
@@ -33,6 +37,13 @@ This page references all the tutorials.
 
 */
 
+/*! \page tutorial_mainpage_dev Tutorials for ViSP developers
+This page references all the tutorials in developer zone.
+
+- \subpage tutorial_coding
+
+*/
+
 /*! \page tutorial_ios ViSP for iOS
 
 This page introduces the user to the way to exploit ViSP with iOS devices.
@@ -41,7 +52,8 @@ This page introduces the user to the way to exploit ViSP with iOS devices.
 - \subpage tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \subpage tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \subpage tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices. 
-- \subpage tutorial-detection-apriltag-ios <br>This tutorial shows how to do detct an AprilTag marker on iOS devices. 
+- \subpage tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker on iOS devices. 
+- \subpage tutorial-detection-apriltag-ios-realtime <br>This tutorial shows how to do detect in realtime an AprilTag marker on iOS devices. 
 
 */
 
@@ -51,6 +63,26 @@ This page introduces the user to the way to exploit ViSP for Java.
 
 - \subpage tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
 - \subpage tutorial-java-started <br>This tutorial explains how to create a Java application that uses some functionalities from ViSP core module.
+
+*/
+
+/*! \page tutorial_android ViSP for Android
+
+This page introduces the user to the way to exploit ViSP for Android platform.
+
+- \subpage tutorial-create-android-sdk <br>In this tutorial you will learn how to build ViSP Android SDK to be used in an Android app.
+- \subpage tutorial-android-getting-started <br>This tutorial explains how to create a simple Android application that uses some functionalities from ViSP core module.
+
+*/
+
+/*! \page tutorial_unity ViSP for Unity
+
+This page introduces the user to the way to exploit ViSP with Unity.
+
+- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Developement of an interface and demo between ViSP and Unity engine.</a><br>This is the link to a project achieved during GSoC 2018 that shows how to use ViSP in Unity engine to achieve AR.
+- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction.</a><br>This is a brief introduction that explains the interaction between ViSP and Unity engine.
+- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-DLL">Generating a DLL for Unity</a>.<br>This page explains how to generate DLLs for your Unity project.
+- <a href="https://github.com/lagadic/visp_unity/wiki/Running-in-Unity">Unity demo based on ViSP</a>.<br>This page shows how to track an AprilTag for an AR application and how to track an object using the generic model-based tracker implemented in VISP.
 
 */
 
@@ -67,19 +99,16 @@ This page introduces the user to the way to install ViSP from existing prebuild 
 /*! \page tutorial_install_src Installation from source code
 This page introduces the user to the way to install ViSP from source code.
 
-- \subpage tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \subpage tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu or Debian.
 - \subpage tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
 - \subpage tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
 - \subpage tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
 - \subpage tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
 - \subpage tutorial-install-jetson <br>In this tutorial you will learn how to install ViSP from source on Jetson equipped with a Connect Tech Orbitty Carrier board.
-- \subpage tutorial-install-win7 <br>In this tutorial you will learn how to install ViSP from source on Windows 7 with Visual C++ 2012 (vc11).
-- \subpage tutorial-install-win10-msvc12 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2013 (vc12).
 - \subpage tutorial-install-win10-msvc14 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2015 (vc14).
 - \subpage tutorial-install-win10-msvc15 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2017 (vc15).
-- \subpage tutorial-install-win10-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 8.1 or Windows 10 with Mingw-w64.
-- \subpage tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to install ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015 (vc14).
-- \subpage tutorial-install-win10-msvc15-uwp <br>In this tutorial you will learn how to install ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2017 (vc15).
+- \subpage tutorial-install-win10-msvc16 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2019 (vc16).
+- \subpage tutorial-install-win10-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Mingw-w64.
 - \subpage tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
 
 */
@@ -87,8 +116,11 @@ This page introduces the user to the way to install ViSP from source code.
 /*! \page tutorial_install_crosscompiling Installation from cross-compiling
 This page introduces the user to the way to cross-compile ViSP from source code.
 
-- \subpage tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for Raspberry Pi target.
-- \subpage tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
+- \subpage tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for Raspberry Pi target.
+- \subpage tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
+- \subpage tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015 (vc14).
+- \subpage tutorial-install-win10-msvc15-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2017 (vc15).
+- \subpage tutorial-install-win10-msvc16-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2019 (vc16).
 
 */
 /*! \page tutorial_started Getting started
@@ -105,6 +137,7 @@ This page introduces the user to the way to start with ViSP.
 This page introduces the user to the way to get, to filter or to render images.
 
 - \subpage tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
+- \subpage tutorial-basic-drawings <br>In this tutorial you will learn how to display basic primitives such as points, lines, circles, rectangles in an image display window.
 - \subpage tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \subpage tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \subpage tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
@@ -144,6 +177,7 @@ This page introduces the user to the way to track objects in images.
 - \subpage tutorial-tracking-mb-deprecated <br>This deprecated tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
 - \subpage tutorial-tracking-mb-stereo-deprecated <br>This deprecated tutorial focuses on model-based trackers using stereo cameras.
 - \subpage tutorial-tracking-mb-CAO-editor <br>This tutorial presents the project done during the GSoC 2017: two Blender plugins to import/export .cao model file and a Qt-based .cao editor.
+- \subpage tutorial-tracking-mb-generic-rgbd-Blender <br>This tutorial shows how to use Blender to generate simulated data to test the model-based tracker.
 - \subpage tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
 */
@@ -158,12 +192,14 @@ This page introduces the user to the way to detect features or objects in images
 - \subpage tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
 - \subpage tutorial-detection-object-deprecated <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. We recommend to follow rather \ref tutorial-detection-object that uses vpMbGenericTracker class.
 - \subpage tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
+- \subpage tutorial-detection-dnn <br>This tutorial shows how to do deep learning object detection.
 
 */
 
 /*! \page tutorial_computer_vision Computer vision
 This page introduces the user to the way to estimate a pose or an homography.
 
+- <a href="https://visp-doc.inria.fr/doxygen/camera_localization/">Pose estimation for augmented reality</a> <br>This tutorial is a self contented introduction to the most important approaches dedicated to camera localization along with a survey of the extension that have been proposed in the recent years. We also try to link these methodological concepts to the main libraries and SDK available on the market.
 - \subpage tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \subpage tutorial-pose-estimation-qrcode <br>This tutorial focuses on pose estimation of a QRcode using it's four corners location.
 - \subpage tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
@@ -178,7 +214,10 @@ This page introduces the user to the way to achieve a visual servoing.
 - \subpage tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \subpage tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
 - \subpage tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
+- \subpage tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \subpage tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
+- \subpage tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
+- \subpage tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
 
 */
 
@@ -200,3 +239,9 @@ in one thread and display these images in an other thread.
 
 */
 
+/*! \page tutorial_coding Contributing to ViSP source code
+This page introduces the way ViSP source code can be modified with new contributions.
+
+- \subpage tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
+
+*/

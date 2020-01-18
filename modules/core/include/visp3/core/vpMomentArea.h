@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
  * Manikandan Bakthavatchalam
  *
  *****************************************************************************/
-#ifndef __MOMENTAREA_H__
-#define __MOMENTAREA_H__
+#ifndef _vpMomentArea_h_
+#define _vpMomentArea_h_
 
 #include <visp3/core/vpMoment.h>
 
@@ -49,6 +49,14 @@ class vpMomentCentered; // Required for discrete case of vpMomentObject
   \ingroup group_core_moments
 
   \brief Class handling the surface moment.
+
+  For a dense planar object, the area corresponds to the zero-order moment:
+  \f[ a = m_{00} = \mu_{00} \f]
+
+  When considering a discrete set of points, the moment \f$ m_{00} \f$ simply
+  corresponds to the number of points. Since this is of no use in a servoing
+  scheme, this class uses in this case \f$ a = \mu_{20} + \mu_{02} \f$, which is
+  invariant to planar translation and rotation.
 
 */
 class VISP_EXPORT vpMomentArea : public vpMoment

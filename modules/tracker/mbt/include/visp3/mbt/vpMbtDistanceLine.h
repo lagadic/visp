@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ public:
 
 public:
   vpMbtDistanceLine();
-  ~vpMbtDistanceLine();
+  virtual ~vpMbtDistanceLine();
 
   void addPolygon(const int &index);
 
@@ -145,6 +145,7 @@ public:
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
   void displayMovingEdges(const vpImage<unsigned char> &I);
+  void displayMovingEdges(const vpImage<vpRGBa> &I);
 
   /*!
    Get the camera paramters.
@@ -168,6 +169,13 @@ public:
    \return The mean weight of the line.
   */
   inline double getMeanWeight() const { return wmean; }
+
+  std::vector<std::vector<double> > getFeaturesForDisplay();
+
+  std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                       const vpHomogeneousMatrix &cMo,
+                                                       const vpCameraParameters &cam,
+                                                       const bool displayFullModel = false);
 
   /*!
     Get the name of the line.

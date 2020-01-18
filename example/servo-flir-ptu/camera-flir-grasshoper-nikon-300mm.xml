@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<root>
+  <!-- Calibration results obtained with OpenCV -->
+  <camera>
+    <!--Name of the camera-->
+    <name>Camera</name>
+    <!--Size of the image on which camera calibration was performed-->
+    <image_width>960</image_width>
+    <image_height>600</image_height>
+    <!--Intrinsic camera parameters computed for each projection model-->
+    <model>
+      <!--Projection model type-->
+      <type>perspectiveProjWithoutDistortion</type>
+      <!--Pixel ratio-->
+      <px>35218.6524</px>
+      <py>35218.6524</py>
+      <!--Principal point-->
+      <u0>480</u0>
+      <v0>300</v0>
+    </model>
+  </camera>
+</root>

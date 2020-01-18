@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpVirtuose_h_
-#define __vpVirtuose_h_
+#ifndef _vpVirtuose_h_
+#define _vpVirtuose_h_
 
 #include <ostream>
 #include <visp3/core/vpConfig.h>
@@ -144,7 +144,7 @@ class VISP_EXPORT vpVirtuose
 {
 public:
   vpVirtuose();
-  ~vpVirtuose();
+  virtual ~vpVirtuose();
 
   void addForce(vpColVector &force);
   void close();

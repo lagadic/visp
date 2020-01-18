@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -98,6 +98,11 @@ if(USE_PTU46)
   list(APPEND opt_libs ${PTU46_LIBRARIES})
 endif()
 
+if(USE_FLIRPTUSDK)
+  list(APPEND opt_incs ${FLIRPTUSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${FLIRPTUSDK_LIBRARIES})
+endif()
+
 if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
   # Under Unix we need Aria, pthread, dl and rt libraries
   list(APPEND opt_incs ${ARIA_INCLUDE_DIRS})
@@ -128,6 +133,15 @@ if(USE_FRANKA)
   endforeach()
 endif()
 
+if(USE_ARSDK)
+  list(APPEND opt_incs ${ARSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${ARSDK_LIBRARIES})
+  if(USE_FFMPEG)
+    list(APPEND opt_incs ${FFMPEG_INCLUDE_DIRS})
+    list(APPEND opt_libs ${FFMPEG_LIBRARIES})
+  endif()
+endif()
+
 # for the wireframe simulator we can use optional opengl and coin
 if(USE_COIN3D)
   if(WIN32)
@@ -150,7 +164,12 @@ if(WITH_CPPBASE64)
   include_directories(${CPPBASE64_INCLUDE_DIRS})
 endif()
 
-vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${CPPBASE64_LIBRARIES})
+if(WITH_QBDEVICE)
+  # qbdevice is private
+  include_directories(${QBDEVICE_INCLUDE_DIRS})
+endif()
+
+vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${CPPBASE64_LIBRARIES} ${QBDEVICE_LIBRARIES})
 vp_glob_module_sources()
 
 # To allow vpVisaSocketAdapter class to work with and without ViSP
@@ -182,7 +201,17 @@ if(USE_COIN3D)
   if(USE_VIPER850)
     vp_set_source_file_compile_flag(src/real-robot/viper/vpRobotViper850.cpp -Wno-unused-parameter)
   endif()
+else()
+  vp_set_source_file_compile_flag(src/wireframe-simulator/vpWireFrameSimulator.cpp -Wno-strict-overflow)
 endif()
+
+vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpClipping.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpBoundio.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpCoreDisplay.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpLex.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpBound.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpArit.cpp -Wno-strict-overflow)
 
 # copy robot and wireframe simulator data
 vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd"      data/robot-simulator)
@@ -193,8 +222,8 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH virtuose servo-franka visa-simulator
-  CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp )
+  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose bebop2 visa-simulator
+  CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp servo-flir-ptu/testRobotFlirPtu.cpp)
 
 if(USE_VIRTUOSE)
   # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
@@ -204,4 +233,12 @@ if(USE_VIRTUOSE)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp -Wno-int-to-pointer-cast)
   vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp -Wno-int-to-pointer-cast)
+endif()
+
+if(USE_ARSDK)
+  vp_set_source_file_compile_flag(src/real-robot/bebop2/vpRobotBebop2.cpp -Wno-old-style-cast -Wno-implicit-fallthrough -Wno-cast-qual -Wno-deprecated-declarations)
+endif()
+
+if(USE_FLIRPTUSDK)
+  vp_set_source_file_compile_flag(test/servo-flir-ptu/testRobotFlirPtu.cpp -Wno-unused-result)
 endif()

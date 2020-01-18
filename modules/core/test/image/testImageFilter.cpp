@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@
 #include <iostream>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
@@ -147,7 +148,39 @@ bool check_results(const cv::Mat &mat, const vpImage<double> &I, const unsigned 
 {
   for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
     for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x; j++) {
-      if (!vpMath::equal(mat.at<double>((int)i, (int)j), I[i][j], std::numeric_limits<double>::epsilon())) {
+      if (!vpMath::equal(mat.at<double>(static_cast<int>(i), static_cast<int>(j)), I[i][j], std::numeric_limits<double>::epsilon())) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+bool check_results(const cv::Mat &mat, const vpImage<double> &I, unsigned int margin, double threshold)
+{
+  for (unsigned int i = margin; i < I.getHeight() - margin; i++) {
+    for (unsigned int j = margin; j < I.getWidth() - margin; j++) {
+      if (!vpMath::equal(mat.at<unsigned char>(static_cast<int>(i), static_cast<int>(j)), I[i][j], threshold)) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+bool check_results(const cv::Mat &mat, const vpImage<vpRGBa> &I, unsigned int margin, double threshold)
+{
+  for (unsigned int i = margin; i < I.getHeight() - margin; i++) {
+    for (unsigned int j = margin; j < I.getWidth() - margin; j++) {
+      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[2]), I[i][j].R, threshold)) {
+        return false;
+      }
+      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[1]), I[i][j].G, threshold)) {
+        return false;
+      }
+      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[0]), I[i][j].B, threshold)) {
         return false;
       }
     }
@@ -323,8 +356,6 @@ int main(int argc, const char *argv[])
               << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
               << std::endl;
 #endif
-
-    // Test on real image
     if (opt_ppath.empty()) {
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       vpImageIo::read(I, filename);
@@ -492,6 +523,94 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 #endif
+
+    {
+      // Test Gaussian blur on grayscale image
+
+      std::cout << "\nTest Gaussian Blur on Klimt grayscale image:" << std::endl;
+      vpImage<unsigned char> I;
+      vpImage<double> I_blur;
+      // Test on real image
+
+      if (opt_ppath.empty()) {
+        filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
+        vpImageIo::read(I, filename);
+      } else {
+        filename = opt_ppath;
+        vpImageIo::read(I, filename);
+        printf("Image \"%s\" read successfully\n", filename.c_str());
+      }
+
+      unsigned int gaussian_filter_size = 7;
+      double sigma = 3;
+      t = vpTime::measureTimeMs();
+      vpImageFilter::gaussianBlur(I, I_blur, gaussian_filter_size, sigma);
+      t = vpTime::measureTimeMs() - t;
+      std::cout << "Time to do ViSP Gaussian Blur on grayscale images: " << t << " ms" << std::endl;
+
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+      cv::Mat matImg, matImg_blur;
+      vpImageConvert::convert(I, matImg);
+      t = vpTime::measureTimeMs();
+      cv::GaussianBlur(matImg, matImg_blur, cv::Size(gaussian_filter_size, gaussian_filter_size), sigma, 0);
+      t = vpTime::measureTimeMs() - t;
+      std::cout << "Time to do OpenCV Gaussian Blur on grayscale images: " << t << " ms" << std::endl;
+
+      double threshold = 3.;
+      unsigned int margin = 3;
+      test = check_results(matImg_blur, I_blur, margin, threshold);
+      std::cout << "(I_blur == matImg_blur)? " << test << std::endl;
+
+      if (!test) {
+        std::cerr << "Failed Gaussian blur filter on grayscale image!" << std::endl;
+        return EXIT_FAILURE;
+      }
+#endif
+    }
+
+    {
+      // Test Gaussian blur on color image
+      std::cout << "\nTest Gaussian Blur on Klimt color image:" << std::endl;
+
+      vpImage<vpRGBa> I_rgb, I_rgb_blur;
+      // Test on real image
+
+      if (opt_ppath.empty()) {
+        filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+        vpImageIo::read(I_rgb, filename);
+      } else {
+        filename = opt_ppath;
+        vpImageIo::read(I_rgb, filename);
+        printf("Image \"%s\" read successfully\n", filename.c_str());
+      }
+
+      unsigned int gaussian_filter_size = 7;
+      double sigma = 3;
+      t = vpTime::measureTimeMs();
+      vpImageFilter::gaussianBlur(I_rgb, I_rgb_blur, gaussian_filter_size, sigma);
+      t = vpTime::measureTimeMs() - t;
+      std::cout << "Time to do ViSP Gaussian Blur on color images: " << t << " ms" << std::endl;
+
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+      cv::Mat matImg_rgb, matImg_rgb_blur;
+      vpImageConvert::convert(I_rgb, matImg_rgb);
+      t = vpTime::measureTimeMs();
+      cv::GaussianBlur(matImg_rgb, matImg_rgb_blur, cv::Size(gaussian_filter_size, gaussian_filter_size), sigma, 0);
+      t = vpTime::measureTimeMs() - t;
+      std::cout << "Time to do OpenCV Gaussian Blur on color images: " << t << " ms" << std::endl;
+
+      double threshold = 3.;
+      unsigned int margin = 3;
+      test = check_results(matImg_rgb_blur, I_rgb_blur, margin, threshold);
+      std::cout << "(I_rgb_blur == matImg_rgb_blur)? " << test << std::endl;
+
+      if (!test) {
+        std::cerr << "Failed Gaussian blur filter on color image!" << std::endl;
+        return EXIT_FAILURE;
+      }
+#endif
+    }
+
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;

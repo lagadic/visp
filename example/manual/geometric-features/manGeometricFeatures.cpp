@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,10 @@
 #include <visp3/core/vpImage.h>
 // Video device interface
 #include <visp3/core/vpDisplay.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 
 // For frame transformation and projection
 #include <visp3/core/vpCameraParameters.h>
@@ -72,7 +75,6 @@
 
 int main()
 {
-#ifdef VISP_HAVE_GTK
   try {
     std::cout << "ViSP geometric features display example" << std::endl;
     unsigned int height = 288;
@@ -81,9 +83,24 @@ int main()
     I = 255; // I is a white image
 
     // create a display window
+#if defined(VISP_HAVE_X11)
+    vpDisplayX display;
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI display;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display;
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
+#else
+  std::cout << "Please install X11, GDI, OpenCV or GTK to see the result of this example" << std::endl;
+#endif
+
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
     // initialize a display attached to image I
     display.init(I, 100, 100, "ViSP geometric features display");
+#endif
+
     // camera parameters to digitalize the image plane
     vpCameraParameters cam(600, 600, width / 2, height / 2); // px,py,u0,v0
 
@@ -126,19 +143,20 @@ int main()
     sphere.display(I, cam, vpColor::black);  // draw a black ellipse over I
 
     vpDisplay::flush(I); // flush the display buffer
-    std::cout << "A click in the display to exit" << std::endl;
+    vpDisplay::displayText(I, 10, 10, "Click in the display to exit", vpColor::red);
     vpDisplay::getClick(I); // wait for a click in the display to exit
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
     // save the drawing
     vpImage<vpRGBa> Ic;
     vpDisplay::getImage(I, Ic);
-    std::cout << "ViSP creates \"./geometricFeatures.ppm\" B&W image " << std::endl;
+    std::cout << "ViSP creates \"./geometricFeatures.ppm\" image" << std::endl;
     vpImageIo::write(Ic, "./geometricFeatures.ppm");
-    return EXIT_SUCCESS;
+#endif
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 
-#endif
+  return EXIT_SUCCESS;
 }

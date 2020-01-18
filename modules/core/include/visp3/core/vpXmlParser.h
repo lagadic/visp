@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@
 /*!
   \class vpXmlParser
 
-  \brief This class intends to simplify the creation of xml parser based on
+  This class intends to simplify the creation of xml parser based on
   the libxml2 third party library.
 
   This class can be useful to manage external data parameters (for example for
@@ -71,6 +71,10 @@
   \warning This class is only available if libxml2 is installed and detected
   by ViSP. Installation instructions are provided here
   https://visp.inria.fr/3rd_xml2.
+
+  \note After ViSP 3.2.0 release we introduce pugixml built-in 3rd party library
+  that replaces favorably libxml2. For example vpXmlParserCamera uses now pugixml instead
+  of inheriting from vpXmlParser.
 
   In order to use this class, you have to create a new class inheriting from
   this one. In the child class, you have to implement the methods:

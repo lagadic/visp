@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ private:
     */
   void set_cMe()
   {
-    // Position of the camera in the mobile platform frame
+    // Position of mobile platform end effector frame in the camera frame
     double l = 0.13;         // distance between the camera frame and the mobile robot frame
     vpTranslationVector cte; // meters
     vpRxyzVector cre;        // radian

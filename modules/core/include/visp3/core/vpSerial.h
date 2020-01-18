@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpSerial_h_
-#define __vpSerial_h_
+#ifndef _vpSerial_h_
+#define _vpSerial_h_
 
 #if !defined(_WIN32)
 
@@ -109,7 +109,7 @@ public:
   vpSerial(const std::string &port="", unsigned long baudrate = 9600,
            bytesize_t bytesize = eightbits, parity_t parity = parity_none, stopbits_t stopbits = stopbits_one,
            flowcontrol_t flowcontrol = flowcontrol_none);
-  ~vpSerial();
+  virtual ~vpSerial();
 
   int available();
   void close();

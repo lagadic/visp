@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,9 @@
 #include <visp3/core/vpMomentObject.h>
 
 /*!
-  Has the area \f$ a = m_{00} = \mu_{00} \f$.
-  Gets the value of m00 from vpMomentCentered.
+  Has the area \f$ a = m_{00} = \mu_{00} \f$ for dense objects,
+  \f$ \mu_{20}+\mu_{02} \f$ for a discrete set of points.
+  Gets the value of \f$ m_{00} \f$ from vpMomentCentered.
 */
 void vpMomentArea::compute()
 {

@@ -2,19 +2,111 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright (C) 2005 - 2018 by Inria. All rights reserved.
+     Copyright (C) 2005 - 2019 by Inria. All rights reserved.
                       https://visp.inria.fr
 
-ViSP 3.2.0 (under development)
+
+ViSP 3.2.1 (under work)
+  - Contributors:
+    . This release was possible thanks to contributions from Fabien Spindler,
+      Souriya Trinh, Gatien Gaumerais, Yasutomo Shirahama, Yash Kapoor, Noura Neji,
+      Rahaf Rahal, Romain Lagneau, ahfuzhang, Franco Fusco, Olivier Kermorgant,
+      Alexander Oliva
+  - New features and improvements
+    . Upgrade to new AprilTag3 version. Note that TAG_36h10, TAG_25h7 and
+      TAG_36ARTOOLKIT are deprecated and that new families: TAG_CIRCLE21h7,
+      TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12, TAG_STANDARD52h13
+      are supported. AprilTag detection time is reduced
+    . Remove libxml2 3rd party dependency to use pugixml built-in 
+    . Replace pthreads-win32 for POSIX threads for windows 3rd party with
+      pthreads4w implementation
+    . New matrix and vector initialization methods to ease setting elements
+    . Introduce Eigen <-> ViSP conversion functions in vp namespace
+    . Add OpenBLAS, Intel MKL and Atlas explicit support
+    . Add support of vpImage<vpRGBa> to vpMbGenericTracker
+    . Add support of vpImage<vpRGBa> to vpKeyPoint
+    . Introduce force/torque controller for Franka Emika Panda robot in
+      vpRobotFranka class
+    . New vpQbDevice and vpQbSoftHand classes and examples to control
+      qbrobotics devices
+    . Compatibility with Microsoft Visual C++ 2019 (MSCV 16)
+    . Compatibility with FlyCapture 2.13 to enable vpFlyCaptureGrabber usage
+    . Compatibility with PCL > 1.9.1 to enable additional features in
+      vpRealSense2 class
+    . Compatibility with Windows 10 SDK latest version to enable vpDisplayGDI
+      usage
+    . Compatibility with Fedora 30
+    . New option to select CXX standard set by default to c++11
+    . Introduce a timeout (default to 50ms) during DataMatrix code detection
+      implemented in vpDetectorDataMatrixCode class
+    . New vpForceTorqueAtiNetFTSensor class to get F/T measurements from an
+      ATI F/T sensor connected to a Net FT box
+    . New vpRobotBebop2 class a wrapper over ARSDK3 to control Parrot Bebop2
+      drone
+    . New vpRobotFlirPtu class, a wrapper over Flir pan-tilt unit SDK
+    . New vpForceTorqueIitSensor class, a wrapper over IIT force-torque sensor
+    . Optimize template tracker
+    . Modify vpVideoReader to support MTS video format
+    . Upgrade to AprilTag 3.1.1 last release
+    . Introduce performance tests using Catch2
+    . Modify vpVideoReader to enable MTS video format reading
+    . Use only OpenCV required modules to reduce the number of dependencies
+    . Remove valgrind false positive memory leaks adding a suppression file
+  - Tutorials
+    . New tutorial: Installation from source for Windows with Visual C++ 2019
+      (vc16)
+    . New tutorial: Cross-compilation for UWP from Windows host with Visual
+      C++ 2019 (vc16)
+    . New tutorial: IBVS with Panda 7-dof robot from Franka Emika
+    . New tutorial: Visual-servoing with Parrot Bebop 2 drone
+    . New tutorial: Visual servoing with FLIR Pan Tilt Unit
+    . New tutorial: AprilTag marker real-time detection on iOS
+    . New tutorial: Introduce a new class with 3rd-party dependencies
+  - Bug fixed
+    . [#523] dpkg-shlibdeps produces an error during Debian packaging
+    . [#525] Tests are failing during Debian package build in a container
+    . [#546] ViSP doesn't build when C++11 off and PCL on
+    . [#549] Bug in unsigned int vpBSpline::findSpan(double u)
+    . [#554] Bug in SaveRealSenseData.cpp prevents install on windows
+    . [#559] AprilTag detector freeze with msvc built when more than 1 thread
+      is used
+    . [#564] visp_java build fails when OpenCV and libjpeg or libpng are not
+      used
+    . [#570] Could not get left and right Infrared images from RealSense D435
+    . [#573] VISP fails to build with cmake 3.14.3 and PCL 1.9.1
+    . [#574] Compatibility problem with PCL > 1.9.1
+    . [#597] Fix vpImage bitmap deletion when copyData = false
+    . [#614] Performance issues in vpTemplateTrackerMIInverseCompositional
+    . [#621] Fix pointcloud computation when align with librealsense2
+    . [#650] Video reader ends prematurely on some mp4
+    . [#651] visp_ros installation error
+    . [#655] Build error with Ubuntu 12.04.5 LTS
+    . [#661] Possible issues in image Moments calculations
+    . [#665] Build error with Ubuntu 12.04.5 LTS
+    . [#667] Tutorial-apriltag-detector seg fault
+    . [#668] April Tags and depth image
+    . [#669] Fix segfault and memory leak when BEST_RESIDUAL_VIRTUAL_VS or
+      HOMOGRAPHY_ORTHOGONAL_ITERATION pose estimation method are used
+    . [#679] Fix display
+----------------------------------------------
+ViSP 3.2.0 (released January 23, 2019)
+  - Contributors:
+    . This release was possible thanks to contributions from Fabien Spindler,
+      Souriya Trinh, Olivier Kermorgant, Mathieu Simon, Francois Chaumette,
+      Marc Pouliquen, Jason Chevrie, Yash Kapoor, Tianhuanyu, Yasutomo Shirahama,
+      ashwinpathak20
+    . Google Summer of Code 2018: Akshay Sharma that ported ViSP to Java and Android,
+      and Utkarsh Tripathi that developped the wrapper between ViSP and Unity.
   - New features
+    . Turn cxx11 on by default
     . Introduce vpSerial class to handle serial communication
     . New vpRobotFranka class, examples and test showing how to use Panda robot
       from Franka Emika
     . In MBT:
       - Improve the generic tracker implemented in vpMbGenericTracker class
       - Add possibility to introduce a homogeneous transformation matrix
-        when loading model and init files, useful to change the origin of the 3D cad model;
-        see vpMbTracker::loadModel() and vpMbTracker::initClick()
+        when loading model and init files, useful to change the origin of the 3D
+        cad model; see vpMbTracker::loadModel() and vpMbTracker::initClick()
       - Add support of pgm, png, jpg image format for initClick helper
       - Introduce a new confidence indicator that is working with all the visual
         features types to detect tracking failures;
@@ -24,9 +116,19 @@ ViSP 3.2.0 (under development)
     . QR matrix decomposition introduced in vpMatrix
     . New solvers for Linear Programs and Quadratic Programs implemented in vpLinProg and
       vpQuadProg classes
+    . Add vpDetectorDNN wrapper for deep learning object detection. The idea is to have a
+      small wrapper over the OpenCV DNN module as much as possible light and simple.
+      vpDetectorDNN is specialized to handle object detection tasks and provide a
+      "convenient" way to have the detection bounding boxes.
+    . Improve eye to hand calibration
+    . Improve PnP pose estimation
+    . Compat with OpenCV 4
+    . Compat with Fedora 29
+    . Introduce SonarQube code quality analysis tool. Analysis reports are available on
+      https://sonarqube.bordeaux.inria.fr/sonarqube/dashboard/index/rainbow:visp:master
   - Tutorials
-    . New tutorial: Installation from source on a Jetson equipped with an Orbitty Carrier board
-      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
+    . New tutorial: Installation from source on a Jetson equipped with an Orbitty Carrier
+      board http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-jetson.html
     . New tutorial: Using ViSP and Matlab
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-visp-matlab.html
     . New tutorial: PBVS with Panda 7-dof robot from Franka Emika
@@ -41,8 +143,31 @@ ViSP 3.2.0 (under development)
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-stereo.html
     . New tutorial: Markerless generic model-based tracking using a RGB-D camera
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd.html
-    . New tutorial: Markerless generic model-based tracking using AprilTag for initialization (use case)
+    . New tutorial: Markerless generic model-based tracking using AprilTag for
+      initialization (use case)
       http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-apriltag-live.html
+    . New tutorial: Developement of an interface and demo between ViSP and Unity engine
+      https://github.com/lagadic/visp_unity/blob/master/README.md
+    . New tutorial: ViSP for Unity introduction
+      https://github.com/lagadic/visp_unity/wiki
+    . New tutorial: Generating a DLL for Unity
+      https://github.com/lagadic/visp_unity/wiki/Generating-DLL
+    . New tutorial: Unity demo based on ViSP
+      https://github.com/lagadic/visp_unity/wiki/Running-in-Unity
+    . New tutorial: Installing ViSP for Java
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-java.html
+    . New tutorial: First java application with ViSP
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-java-started.html
+    . New tutorial: Building ViSP SDK for Android
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-create-android-sdk.html
+    . New tutorial: Creating a simple Android App with ViSP
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-android-getting-started.html
+    . New tutorial: Deep learning object detection
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html
+    . New tutorial: Draw basic drawings
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-basic-drawings.html
+    . New tutorial: How to use Blender to generate simulated data for model-based tracking experiments
+      http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
   - Bug fixed
     . [#279] Unable to build ViSP with Visual Studio 2010
     . [#281] Segfault in mbtGenericTrackingDepth.cpp when run on big endian arch
@@ -53,13 +178,28 @@ ViSP 3.2.0 (under development)
     . [#302] Fix build issue with librealsense 2.9.1 or higher
     . [#324] How to compile ViSP within Visual Studio 2013 on windows 7?
     . [#348] ViSP-third-party.txt is erased after make
+    . [#353] Test imageSequenceReader not working
     . [#355] Segmentation fault with vpRealSense2 acquire
     . [#368] ViSP Contrib Module including non-existant vpConfig.h header
     . [#371] Wrong conversion from vpRotationMatrix to vpThetaUVector for rotations around pi
     . [#373] ViSP doesn't build with OpenCV 4.0.0
     . [#382] Meaningless camera parameters when calibrating built-in auto-focusing camera
     . [#389] CMake error with Xcode generator
-
+    . [#391] Tutorial command error
+    . [#400] vpCircle::display() didn't work as expected
+    . [#422] Two #include lines, <linux/kernel.h> and <linux/types.h>, aren't needed for V4L
+    . [#423] Man page location should be man/man1
+    . [#424] Please have one cmake variablefor DATADIR
+    . [#425] Please remove the 'register' specifier everywhere: it is deprecated and incompatible with C++17
+    . [#433] Can not build android SDK
+    . [#435] vpRobot::END_EFFECTOR_FRAME not implemented in vpRobotViper650
+    . [#442] Unable to build ios framework
+    . [#453] CMake error when building tutorials and examples with ViSP from installation folder
+    . [#466] Build error with libboost_thread-mt.a
+    . [#429] vpRobotViper650 getPosition(vpRobot::REFERENCE_FRAME) error
+    . [#485] CMake error when PCL is build with VTK option VTK_ENABLE_KITS=ON
+    . [#515] Model-based tracking stops throwing an exception: the image of the straight line is a point!
+    . [#519] Cannot build java bindings when lapack is not used
 ----------------------------------------------
 ViSP 3.1.0 (released December 22nd, 2017)
   - Contributors:

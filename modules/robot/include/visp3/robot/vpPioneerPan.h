@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,7 +174,7 @@ protected:
     */
   void set_cMe()
   {
-    // Position of the camera in the pan frame
+    // Position of pan head end effector frame in the camera frame
     double cx = 0;
     double cy = -0.065; // distance between camera and tilt axis
     double cz = 0;

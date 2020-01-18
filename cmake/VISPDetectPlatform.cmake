@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -120,9 +120,13 @@ if(NOT DEFINED VISP_STATIC)
   endif()
 endif()
 
-if(MSVC)
+if(DEFINED VISP_ARCH AND DEFINED VISP_RUNTIME)
+  # custom overridden values
+elseif(MSVC)
   if(CMAKE_CL_64)
     set(VISP_ARCH x64)
+  elseif((CMAKE_GENERATOR MATCHES "ARM") OR ("${arch_hint}" STREQUAL "ARM") OR (CMAKE_VS_EFFECTIVE_PLATFORMS MATCHES "ARM|arm"))
+    set(VISP_ARCH ARM)
   else()
     set(VISP_ARCH x86)
   endif()
@@ -140,6 +144,8 @@ if(MSVC)
     set(VISP_RUNTIME vc14)
   elseif(MSVC_VERSION MATCHES "^191[0-9]$")
     set(VISP_RUNTIME vc15)
+  elseif(MSVC_VERSION MATCHES "^192[0-9]$")
+    set(VISP_RUNTIME vc16)
   else()
     message(WARNING "ViSP does not recognize MSVC_VERSION \"${MSVC_VERSION}\". Cannot set VISP_RUNTIME")
   endif()

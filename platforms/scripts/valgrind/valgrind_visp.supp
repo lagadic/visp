@@ -1,0 +1,670 @@
+###################################################################
+#
+# Error that occured on flylab-gs3 ci running ubuntu 18.04
+#
+###################################################################
+
+#==25946== 40 bytes in 1 blocks are still reachable in loss record 142 of 268
+#==25946==    at 0x4C2FA3F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==25946==    by 0x4C31D84: realloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+#==25946==    by 0x673AAE8: ??? (in /usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0)
+#==25946==    by 0x674880E: ??? (in /usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0)
+#==25946==    by 0x673EEC9: GOMP_parallel (in /usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0)
+#==25946==    by 0x10F6C9: resize<unsigned char> (vpImageTools.h:1145)
+#==25946==    by 0x10F6C9: main (testImageResize.cpp:247)
+{
+   visp-linux-GOMP_parallel
+   Memcheck:Leak
+   ...
+   fun:GOMP_parallel
+}
+
+###################################################################
+#
+# Error that occured on ViSP-ubuntu-12.04-i386 ci running ubuntu 12.04
+#
+###################################################################
+
+#==4465== 12 bytes in 1 blocks are still reachable in loss record 1 of 10
+#==4465==    at 0x402CCDF: malloc (vg_replace_malloc.c:306)
+#==4465==    by 0x402CE65: realloc (vg_replace_malloc.c:833)
+#==4465==    by 0x437FA09: ??? (in /usr/lib/i386-linux-gnu/libgomp.so.1.0.0)
+#==4465==    by 0x4384A61: ??? (in /usr/lib/i386-linux-gnu/libgomp.so.1.0.0)
+#==4465==    by 0x438350D: GOMP_parallel_start (in /usr/lib/i386-linux-gnu/libgomp.so.1.0.0)
+#==4465==    by 0x4129D12: vpImageTools::remap(vpImage<vpRGBa> const&, vpArray2D<int> const&, vpArray2D<int> const&, vpArray2D<float> const&, vpArray2D<float> const&, vpImage<vpRGBa>&) (vpImageTools.cpp:1048)
+#==4465==    by 0x804B37D: main (testUndistortImage.cpp:309)
+{
+   visp-linux-GOMP_parallel_start
+   Memcheck:Leak
+   ...
+   fun:GOMP_parallel_start
+}
+
+#==4944== Conditional jump or move depends on uninitialised value(s)
+#==4944==    at 0x5BCADD8: inflateReset2 (in /lib/i386-linux-gnu/libz.so.1.2.3.4)
+#==4944==    by 0x5BCAEC7: inflateInit2_ (in /lib/i386-linux-gnu/libz.so.1.2.3.4)
+#==4944==    by 0x5BCAF72: inflateInit_ (in /lib/i386-linux-gnu/libz.so.1.2.3.4)
+#==4944==    by 0x4EC10B0: png_create_read_struct_2 (in /lib/i386-linux-gnu/libpng12.so.0.46.0)
+#==4944==    by 0x4EC12BA: png_create_read_struct (in /lib/i386-linux-gnu/libpng12.so.0.46.0)
+#==4944==    by 0x41AC41E: vpImageIo::readPNG(vpImage<unsigned char>&, std::string const&) (vpImageIo.cpp:1750)
+#==4944==    by 0x41ACF23: vpImageIo::read(vpImage<unsigned char>&, std::string const&) (vpImageIo.cpp:272)
+#==4944==    by 0x804D206: void run_test<unsigned char>(std::string const&, bool, bool, vpImage<unsigned char>&, vpImage<unsigned char>&) (testKeyPoint-5.cpp:151)
+#==4944==    by 0x804A8AF: main (testKeyPoint-5.cpp:319)
+{
+   visp-linux-png_create_read_struct
+   Memcheck:Cond
+   ...
+   fun:png_create_read_struct
+}
+
+#==4944== Invalid read of size 1
+#==4944==    at 0x49A144C: cv::ORB::computeOrientation(cv::Mat const&, cv::Mat const&, unsigned int, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&) const (in /usr/lib/libopencv_features2d.so.2.3.1)
+#==4944==    by 0x49A9612: cv::ORB::operator()(cv::Mat const&, cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat&, bool, bool) (in /usr/lib/libopencv_features2d.so.2.3.1)
+#==4944==    by 0x49AA55D: cv::ORB::operator()(cv::Mat const&, cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&) (in /usr/lib/libopencv_features2d.so.2.3.1)
+#==4944==    by 0x498FA66: cv::OrbFeatureDetector::detectImpl(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat const&) const (in /usr/lib/libopencv_features2d.so.2.3.1)
+#==4944==    by 0x4995839: cv::FeatureDetector::detect(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat const&) const (in /usr/lib/libopencv_features2d.so.2.3.1)
+#==4944==    by 0x499D37F: cv::PyramidAdaptedFeatureDetector::detectImpl(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat const&) const (in /usr/lib/libopencv_features2d.so.2.3.1)
+#==4944==    by 0x4995839: cv::FeatureDetector::detect(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat const&) const (in /usr/lib/libopencv_features2d.so.2.3.1)
+#==4944==    by 0x40DF5E4: vpKeyPoint::detect(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, double&, cv::Mat const&) (vpKeyPoint.cpp:1377)
+#==4944==    by 0x40DFEF0: vpKeyPoint::detect(vpImage<unsigned char> const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, double&, vpRect const&) (vpKeyPoint.cpp:1330)
+#==4944==    by 0x40E016A: vpKeyPoint::detect(vpImage<unsigned char> const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, vpRect const&) (vpKeyPoint.cpp:1277)
+#==4944==    by 0x804DE2F: void run_test<unsigned char>(std::string const&, bool, bool, vpImage<unsigned char>&, vpImage<unsigned char>&) (testKeyPoint-5.cpp:223)
+#==4944==    by 0x804A8AF: main (testKeyPoint-5.cpp:319)
+#==4944==  Address 0x9b8809e is 22 bytes after a block of size 4,928 in arena "client"
+{
+   visp-linux-cv::ORB::computeOrientation
+   Memcheck:Addr1
+   fun:_ZNK2cv3ORB18computeOrientationERKNS_3MatES3_jRSt6vectorINS_8KeyPointESaIS5_EE
+}
+
+#==4959== 18 bytes in 1 blocks are still reachable in loss record 35 of 127
+#==4959==    at 0x402C7D1: operator new(unsigned int) (vg_replace_malloc.c:334)
+#==4959==    by 0x42FB7D3: std::string::_Rep::_S_create(unsigned int, unsigned int, std::allocator<char> const&) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4959==    by 0x42FBAB3: std::string::_M_mutate(unsigned int, unsigned int, unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4959==    by 0x42FBC41: std::string::_M_replace_safe(unsigned int, unsigned int, char const*, unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4959==    by 0x42FBCF8: std::string::assign(char const*, unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4959==    by 0x42FBE05: std::string::assign(char const*) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4959==    by 0x8049A94: operator= (basic_string.h:550)
+#==4959==    by 0x8049A94: main (testMomentAlpha.cpp:191)
+{
+   visp-linux-std::string::assign
+   Memcheck:Leak
+   ...
+   fun:_ZNSs6assignEPKc
+}
+
+#==4965== 29 bytes in 1 blocks are still reachable in loss record 68 of 127
+#==4965==    at 0x402C7D1: operator new(unsigned int) (vg_replace_malloc.c:334)
+#==4965==    by 0x42FB7D3: std::string::_Rep::_S_create(unsigned int, unsigned int, std::allocator<char> const&) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4965==    by 0x804D0E7: _S_construct<char*> (basic_string.tcc:140)
+#==4965==    by 0x804D0E7: _S_construct_aux<char*> (basic_string.h:1692)
+#==4965==    by 0x804D0E7: _S_construct<char*> (basic_string.h:1713)
+#==4965==    by 0x804D0E7: std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<char*>(char*, char*, std::allocator<char> const&) (basic_string.tcc:231)
+#==4965==    by 0x804A2F0: str (sstream:129)
+#==4965==    by 0x804A2F0: str (sstream:564)
+#==4965==    by 0x804A2F0: test_moment_alpha(std::string const&, bool, std::vector<int, std::allocator<int> > const&, double, double) (testMomentAlpha.cpp:70)
+#==4965==    by 0x8049B60: main (testMomentAlpha.cpp:204)
+{
+   visp-linux-std::stringstream::str
+   Memcheck:Leak
+   ...
+   fun:str
+}
+
+#==4968== 32 bytes in 1 blocks are still reachable in loss record 72 of 127
+#==4968==    at 0x402C7D1: operator new(unsigned int) (vg_replace_malloc.c:334)
+#==4968==    by 0x804CF9C: allocate (new_allocator.h:92)
+#==4968==    by 0x804CF9C: _M_allocate (stl_vector.h:150)
+#==4968==    by 0x804CF9C: std::vector<int, std::allocator<int> >::_M_insert_aux(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, int const&) (vector.tcc:327)
+#==4968==    by 0x8049F2F: push_back (stl_vector.h:834)
+#==4968==    by 0x8049F2F: std::vector<int, std::allocator<int> >::push_back(int const&) [clone .constprop.92] (stl_vector.h:826)
+#==4968==    by 0x8049AFF: main (testMomentAlpha.cpp:199)
+{
+   visp-linux-std::vector::push_back
+   Memcheck:Leak
+   ...
+   fun:_ZNSt6vectorIiSaIiEE9push_backERKi.constprop.92
+}
+
+#==4976== 83 bytes in 1 blocks are still reachable in loss record 94 of 127
+#==4976==    at 0x402C7D1: operator new(unsigned int) (vg_replace_malloc.c:334)
+#==4976==    by 0x42FB7D3: std::string::_Rep::_S_create(unsigned int, unsigned int, std::allocator<char> const&) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4976==    by 0x42FCACE: std::string::_Rep::_M_clone(std::allocator<char> const&, unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4976==    by 0x42FCBFD: std::string::reserve(unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4976==    by 0x42FCF87: std::string::append(char const*, unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4976==    by 0x404C559: append (basic_string.h:1000)
+#==4976==    by 0x404C559: std::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*) (basic_string.h:2347)
+#==4976==    by 0x404B088: vpImageIo::read(vpImage<unsigned char>&, std::string const&) (vpImageIo.cpp:247)
+#==4976==    by 0x804A327: test_moment_alpha(std::string const&, bool, std::vector<int, std::allocator<int> > const&, double, double) (testMomentAlpha.cpp:70)
+#==4976==    by 0x8049B60: main (testMomentAlpha.cpp:204)
+{
+   visp-linux-std::basic_string
+   Memcheck:Leak
+   ...
+   fun:_ZStplIcSt11char_traitsIcESaIcEESbIT_T0_T1_ERKS6_PKS3_
+}
+
+#==4979== 108 bytes in 1 blocks are possibly lost in loss record 101 of 127
+#==4979==    at 0x402CCDF: malloc (vg_replace_malloc.c:306)
+#==4979==    by 0x431472C: __cxa_allocate_exception (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4979==    by 0x404B0A5: vpImageIo::read(vpImage<unsigned char>&, std::string const&) (vpImageIo.cpp:248)
+#==4979==    by 0x804A327: test_moment_alpha(std::string const&, bool, std::vector<int, std::allocator<int> > const&, double, double) (testMomentAlpha.cpp:70)
+#==4979==    by 0x8049B60: main (testMomentAlpha.cpp:204)
+{
+   visp-linux-__cxa_allocate_exception
+   Memcheck:Leak
+   ...
+   fun:__cxa_allocate_exception
+}
+
+#==4982== 525 bytes in 1 blocks are still reachable in loss record 118 of 127
+#==4982==    at 0x402C7D1: operator new(unsigned int) (vg_replace_malloc.c:334)
+#==4982==    by 0x42FB7D3: std::string::_Rep::_S_create(unsigned int, unsigned int, std::allocator<char> const&) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4982==    by 0x42FCACE: std::string::_Rep::_M_clone(std::allocator<char> const&, unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4982==    by 0x42FCBFD: std::string::reserve(unsigned int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4982==    by 0x42F4B0B: std::basic_stringbuf<char, std::char_traits<char>, std::allocator<char> >::overflow(int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4982==    by 0x42F980B: std::basic_streambuf<char, std::char_traits<char> >::xsputn(char const*, int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4982==    by 0x42EF9AA: std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, int) (in /usr/lib/i386-linux-gnu/libstdc++.so.6.0.16)
+#==4982==    by 0x804ABB4: operator<< <char, std::char_traits<char>, std::allocator<char> > (basic_string.h:2698)
+#==4982==    by 0x804ABB4: test_moment_alpha(std::string const&, bool, std::vector<int, std::allocator<int> > const&, double, double) (testMomentAlpha.cpp:68)
+#==4982==    by 0x8049B60: main (testMomentAlpha.cpp:204)
+{
+   visp-linux-operator<<
+   Memcheck:Leak
+   ...
+   fun:operator<< <char, std::char_traits<char>, std::allocator<char> >
+}
+
+#==5052== Conditional jump or move depends on uninitialised value(s)
+#==5052==    at 0x5785DD8: inflateReset2 (in /lib/i386-linux-gnu/libz.so.1.2.3.4)
+#==5052==    by 0x5785EC7: inflateInit2_ (in /lib/i386-linux-gnu/libz.so.1.2.3.4)
+#==5052==    by 0x577F9C5: ??? (in /lib/i386-linux-gnu/libz.so.1.2.3.4)
+#==5052==    by 0x42A0594: ??? (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x42A05F4: ??? (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x42A0CB3: __xmlParserInputBufferCreateFilename (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x42A10EB: xmlParserInputBufferCreateFilename (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x4274CFE: xmlNewInputFromFile (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x42A2E29: xmlLoadExternalEntity (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x4289476: xmlCreateURLParserCtxt (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x428F822: xmlReadFile (in /usr/lib/i386-linux-gnu/libxml2.so.2.7.8)
+#==5052==    by 0x415ACA9: vpXmlParser::save(std::string const&, bool) (vpXmlParser.cpp:458)
+#==5052==    by 0x8049C57: main (testXmlParser.cpp:348)
+{
+   visp-linux-xmlParserInputBufferCreateFilename
+   Memcheck:Cond
+   ...
+   fun:xmlParserInputBufferCreateFilename
+   fun:xmlNewInputFromFile
+}
+
+#==5075== 70 bytes in 1 blocks are definitely lost in loss record 1 of 42
+#==5075==    at 0x402CCDF: malloc (vg_replace_malloc.c:306)
+#==5075==    by 0x4C02994: cv::fastMalloc(unsigned int) (in /usr/lib/libopencv_core.so.2.3.1)
+#==5075==    by 0x4C02D7B: cvAlloc (in /usr/lib/libopencv_core.so.2.3.1)
+#==5075==    by 0x4187193: vpKltOpencv::operator=(vpKltOpencv const&) (vpKltOpencv.cpp:750)
+#==5075==    by 0x4187312: vpKltOpencv::vpKltOpencv(vpKltOpencv const&) (vpKltOpencv.cpp:657)
+#==5075==    by 0x80567AF: pair (stl_pair.h:87)
+#==5075==    by 0x80567AF: construct (new_allocator.h:108)
+#==5075==    by 0x80567AF: _M_create_node (stl_tree.h:381)
+#==5075==    by 0x80567AF: std::_Rb_tree<std::string, std::pair<std::string const, vpKltOpencv>, std::_Select1st<std::pair<std::string const, vpKltOpencv> >, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::_M_insert_(std::_Rb_tree_node_base const*, std::_Rb_tree_node_base const*, std::pair<std::string const, vpKltOpencv> const&) (stl_tree.h:971)
+#==5075==    by 0x80569BF: std::_Rb_tree<std::string, std::pair<std::string const, vpKltOpencv>, std::_Select1st<std::pair<std::string const, vpKltOpencv> >, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::_M_insert_unique(std::pair<std::string const, vpKltOpencv> const&) (stl_tree.h:1291)
+#==5075==    by 0x8056C13: std::_Rb_tree<std::string, std::pair<std::string const, vpKltOpencv>, std::_Select1st<std::pair<std::string const, vpKltOpencv> >, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::_M_insert_unique_(std::_Rb_tree_const_iterator<std::pair<std::string const, vpKltOpencv> >, std::pair<std::string const, vpKltOpencv> const&) (stl_tree.h:1340)
+#==5075==    by 0x8056DE0: insert (stl_map.h:571)
+#==5075==    by 0x8056DE0: std::map<std::string, vpKltOpencv, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::operator[](std::string const&) (stl_map.h:453)
+#==5075==    by 0x804D1C2: main (mbtGenericTracking2.cpp:451)
+{
+   visp-linux-cvAlloc
+   Memcheck:Leak
+   ...
+   fun:cvAlloc
+}
+
+###################################################################
+#
+# Error that occured on visp-centos-7-2-amd64 ci
+#
+###################################################################
+
+#==28232== 16 bytes in 1 blocks are possibly lost in loss record 90 of 238
+#==28232==    at 0x4C2A0A9: calloc (vg_replace_malloc.c:760)
+#==28232==    by 0xE50A365: g_malloc0 (in /usr/lib64/libglib-2.0.so.0.4600.2)
+#==28232==    by 0xE29779A: ??? (in /usr/lib64/libgobject-2.0.so.0.4600.2)
+#==28232==    by 0xE29AFD1: g_type_register_fundamental (in /usr/lib64/libgobject-2.0.so.0.4600.2)
+#==28232==    by 0xE27BCAB: ??? (in /usr/lib64/libgobject-2.0.so.0.4600.2)
+#==28232==    by 0xE275A0D: ??? (in /usr/lib64/libgobject-2.0.so.0.4600.2)
+#==28232==    by 0x400F1E2: _dl_init (in /usr/lib64/ld-2.17.so)
+#==28232==    by 0x4001219: ??? (in /usr/lib64/ld-2.17.so)
+{
+   visp-linux-dl_init
+   Memcheck:Leak
+   ...
+   fun:_dl_init
+}
+
+#==20589== 24 bytes in 1 blocks are still reachable in loss record 98 of 242
+#==20589==    at 0x4C27EDD: malloc (vg_replace_malloc.c:306)
+#==20589==    by 0x4C2A230: realloc (vg_replace_malloc.c:834)
+#==20589==    by 0xA9738B8: ??? (in /usr/lib64/libgomp.so.1.0.0)
+#==20589==    by 0xA980CFE: ??? (in /usr/lib64/libgomp.so.1.0.0)
+#==20589==    by 0x4F2AA6D: vpImageTools::remap(vpImage<vpRGBa> const&, vpArray2D<int> const&, vpArray2D<int> const&, vpArray2D<float> const&, vpArray2D<float> const&, vpImage<vpRGBa>&) (vpImageTools.cpp:995)
+#==20589==    by 0x403E20: main (testUndistortImage.cpp:309)
+{
+   visp-linux-libgomp
+   Memcheck:Leak
+   ...
+   fun:realloc
+   ...
+   obj:/usr/lib64/libgomp.so.1.0.0
+}
+
+#==20834== 192 bytes in 1 blocks are still reachable in loss record 226 of 242
+#==20834==    at 0x4C27F93: malloc (vg_replace_malloc.c:307)
+#==20834==    by 0xA973868: ??? (in /usr/lib64/libgomp.so.1.0.0)
+#==20834==    by 0xA9814D9: ??? (in /usr/lib64/libgomp.so.1.0.0)
+#==20834==    by 0x4F2AA6D: vpImageTools::remap(vpImage<vpRGBa> const&, vpArray2D<int> const&, vpArray2D<int> const&, vpArray2D<float> const&, vpArray2D<float> const&, vpImage<vpRGBa>&) (vpImageTools.cpp:995)
+#==20834==    by 0x403E20: main (testUndistortImage.cpp:309)
+{
+   visp-linux-libgomp-2
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib64/libgomp.so.1.0.0
+}
+
+#==21351== 672 bytes in 1 blocks are possibly lost in loss record 233 of 242
+#==21351==    at 0x4C2A0A9: calloc (vg_replace_malloc.c:760)
+#==21351==    by 0x4011C24: _dl_allocate_tls (in /usr/lib64/ld-2.17.so)
+#==21351==    by 0x9BF7960: pthread_create@@GLIBC_2.2.5 (in /usr/lib64/libpthread-2.17.so)
+#==21351==    by 0x407941: void vpImageTools::undistort<vpRGBa>(vpImage<vpRGBa> const&, vpCameraParameters const&, vpImage<vpRGBa>&, unsigned int) (vpImageTools.h:681)
+#==21351==    by 0x403B54: main (testUndistortImage.cpp:280)
+{
+   visp-linux-dl_allocate_tls
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_dl_allocate_tls
+}
+
+#==21832== Conditional jump or move depends on uninitialised value(s)
+#==21832==    at 0x76B01D6: cv::FREAK::buildPattern() (in /usr/lib64/libopencv_features2d.so.2.4.5)
+#==21832==    by 0x76B0F82: cv::FREAK::computeImpl(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat&) const (in /usr/lib64/libopencv_features2d.so.2.4.5)
+#==21832==    by 0x76F7A81: cv::DescriptorExtractor::compute(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat&) const (in /usr/lib64/libopencv_features2d.so.2.4.5)
+#==21832==    by 0x4EBE6DE: vpKeyPoint::extract(cv::Mat const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat&, double&, std::vector<cv::Point3_<float>, std::allocator<cv::Point3_<float> > >*) (vpKeyPoint.cpp:1953)
+#==21832==    by 0x4EBE95E: vpKeyPoint::extract(vpImage<unsigned char> const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat&, double&, std::vector<cv::Point3_<float>, std::allocator<cv::Point3_<float> > >*) (vpKeyPoint.cpp:1880)
+#==21832==    by 0x4EBF050: vpKeyPoint::extract(vpImage<unsigned char> const&, std::vector<cv::KeyPoint, std::allocator<cv::KeyPoint> >&, cv::Mat&, std::vector<cv::Point3_<float>, std::allocator<cv::Point3_<float> > >*) (vpKeyPoint.cpp:1828)
+#==21832==    by 0x4074C9: void run_test<unsigned char>(std::string const&, bool, bool, vpImage<unsigned char>&, vpImage<unsigned char>&) (testKeyPoint-6.cpp:289)
+#==21832==    by 0x403A1A: main (testKeyPoint-6.cpp:431)
+{
+   visp-linux-cv::FREAK::buildPattern()
+   Memcheck:Cond
+   fun:_ZN2cv5FREAK12buildPatternEv
+}
+
+#==3148== 4 bytes in 1 blocks are still reachable in loss record 81 of 3,705
+#==3148==    at 0x4C27F93: malloc (vg_replace_malloc.c:307)
+#==3148==    by 0x10BCC548: ??? (in /usr/lib64/libglib-2.0.so.0.4600.2)
+#==3148==    by 0x10C3D3DB: g_private_get (in /usr/lib64/libglib-2.0.so.0.4600.2)
+#==3148==    by 0x10C205AF: g_thread_self (in /usr/lib64/libglib-2.0.so.0.4600.2)
+#==3148==    by 0x116665AF: gst_task_join (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11641BB2: gst_pad_stop_task (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x113B5B2A: ??? (in /usr/lib64/libgstbase-0.10.so.0.30.0)
+#==3148==    by 0x1163EB87: gst_pad_activate_push (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x1163F116: gst_pad_set_active (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11620F20: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x1163225C: gst_iterator_fold (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11620FAA: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11623521: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11623873: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x113B840D: ??? (in /usr/lib64/libgstbase-0.10.so.0.30.0)
+#==3148==    by 0x116253B1: gst_element_change_state (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11625A22: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11613411: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x1F15393C: ??? (in /usr/lib64/gstreamer-0.10/libgstdecodebin2.so)
+#==3148==    by 0x116253B1: gst_element_change_state (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11625A22: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11613411: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11643551: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x116253B1: gst_element_change_state (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x11625A22: ??? (in /usr/lib64/libgstreamer-0.10.so.0.30.0)
+#==3148==    by 0x91C57DC: CvCapture_GStreamer::handleMessage() (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91C5B45: CvCapture_GStreamer::open(int, char const*) (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91C62E9: cvCreateCapture_GStreamer(int, char const*) (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91B614C: cvCreateFileCapture (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x91B643E: cv::VideoCapture::open(std::string const&) (in /usr/lib64/libopencv_highgui.so.2.4.5)
+#==3148==    by 0x681F74F: vpVideoReader::getProperties() (vpVideoReader.cpp:136)
+#==3148==    by 0x6820000: vpVideoReader::open(vpImage<vpRGBa>&) (vpVideoReader.cpp:177)
+#==3148==    by 0x4020DA: main (videoReader.cpp:250)
+{
+   visp-linux-CvCapture_GStreamer::open
+   Memcheck:Leak
+   ...
+   fun:_ZN2cv12VideoCapture4openERKSs
+}
+
+#==18766== 74 bytes in 1 blocks are definitely lost in loss record 128 of 274
+#==18766==    at 0x4C27F93: malloc (vg_replace_malloc.c:307)
+#==18766==    by 0x89182D7: cv::fastMalloc(unsigned long) (in /usr/lib64/libopencv_core.so.2.4.5)
+#==18766==    by 0x5F66AC9: vpKltOpencv::operator=(vpKltOpencv const&) (vpKltOpencv.cpp:750)
+#==18766==    by 0x40D3FD: pair (stl_pair.h:96)
+#==18766==    by 0x40D3FD: construct (new_allocator.h:130)
+#==18766==    by 0x40D3FD: _M_create_node (stl_tree.h:382)
+#==18766==    by 0x40D3FD: std::_Rb_tree<std::string, std::pair<std::string const, vpKltOpencv>, std::_Select1st<std::pair<std::string const, vpKltOpencv> >, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::_M_insert_(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<std::string const, vpKltOpencv> const&) (stl_tree.h:1023)
+#==18766==    by 0x40F82B: _M_insert_unique_ (stl_tree.h:1482)
+#==18766==    by 0x40F82B: insert (stl_map.h:648)
+#==18766==    by 0x40F82B: std::map<std::string, vpKltOpencv, std::less<std::string>, std::allocator<std::pair<std::string const, vpKltOpencv> > >::operator[](std::string const&) (stl_map.h:469)
+#==18766==    by 0x405E53: main (mbtGenericTracking2.cpp:451)
+{
+   visp-linux-cv::fastMalloc
+   Memcheck:Leak
+   ...
+   fun:_ZN2cv10fastMallocEm
+}
+
+###################################################################
+#
+# Errors that occured on visp-osx-10-9-mavericks ci
+#
+###################################################################
+
+#==5791== 72 (24 direct, 48 indirect) bytes in 1 blocks are definitely lost in loss record 36 of 85
+#==5791==    at 0x68A1: malloc_zone_calloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==5791==    by 0xE326DE: _objc_fetch_pthread_data (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xE3A6EA: _fetchInitializingClassList(signed char) (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xE32296: _class_initialize (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xE32134: _class_initialize (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xE32134: _class_initialize (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xE32134: _class_initialize (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xE3E253: lookUpImpOrForward (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xE31168: objc_msgSend (in /usr/lib/libobjc.A.dylib)
+#==5791==    by 0xDECD41: _libxpc_initializer (in /usr/lib/system/libxpc.dylib)
+#==5791==    by 0x2ACAA7: libSystem_initializer (in /usr/lib/libSystem.B.dylib)
+#==5791==    by 0x7FFF5FC11C2D: ImageLoaderMachO::doModInitFunctions(ImageLoader::LinkContext const&) (in /usr/lib/dyld)
+{
+   visp-osx-ImageLoader
+   Memcheck:Leak
+   ...
+   fun:_ZN16ImageLoaderMachO18doModInitFunctionsERKN11ImageLoader11LinkContextE
+}
+
+#==5804== 136 (32 direct, 104 indirect) bytes in 1 blocks are definitely lost in loss record 41 of 85
+#==5804==    at 0x6292: malloc_zone_malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==5804==    by 0xE2F01B: NXCreateHashTableFromZone (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0xE2EFCB: NXCreateHashTable (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0xE2EE7B: NXCreateMapTableFromZone (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0xE36806: NXCreateMapTable (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0xE420F6: __sel_registerName(char const*, int, int) (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0xE2DD5C: sel_init (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0xE2D91C: map_images_nolock (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0xE2D414: map_images (in /usr/lib/libobjc.A.dylib)
+#==5804==    by 0x7FFF5FC04533: dyld::notifyBatchPartial(dyld_image_states, bool, char const* (*)(dyld_image_states, unsigned int, dyld_image_info const*)) (in /usr/lib/dyld)
+#==5804==    by 0x7FFF5FC0427B: dyld::registerImageStateBatchChangeHandler(dyld_image_states, char const* (*)(dyld_image_states, unsigned int, dyld_image_info const*)) (in /usr/lib/dyld)
+#==5804==    by 0xB478EF: dyld_register_image_state_change_handler (in /usr/lib/system/libdyld.dylib)
+{
+   visp-osx-dyld_register_image_state_change_handler
+   Memcheck:Leak
+   ...
+   fun:dyld_register_image_state_change_handler
+}
+
+#==5813== 148 (80 direct, 68 indirect) bytes in 1 blocks are definitely lost in loss record 43 of 85
+#==5813==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==5813==    by 0xBBFA06: __Balloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0xBC02A5: __d2b_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0xBBCED6: __dtoa (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0xBE48A9: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0xC0B2DA: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0xBF0F66: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0xBF0FC5: vsnprintf_l (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0xBE157A: snprintf_l (in /usr/lib/system/libsystem_c.dylib)
+#==5813==    by 0x9EC75A: std::__1::num_put<char, std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> > >::do_put(std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> >, std::__1::ios_base&, char, double) const (in /usr/lib/libc++.1.dylib)
+#==5813==    by 0x9D3221: std::__1::basic_ostream<char, std::__1::char_traits<char> >::operator<<(double) (in /usr/lib/libc++.1.dylib)
+#==5813==    by 0x10000301F: main (testTime.cpp:72)
+{
+   visp-osx-std::basic_ostream
+   Memcheck:Leak
+   ...
+   fun:_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEd
+}
+
+#==5823== 552 (24 direct, 528 indirect) bytes in 1 blocks are definitely lost in loss record 60 of 85
+#==5823==    at 0x6292: malloc_zone_malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==5823==    by 0xE2EE30: NXCreateMapTableFromZone (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE3F931: unattachedCategories() (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE3C292: realizeClass(objc_class*) (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE3B641: realizeClass(objc_class*) (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE3B62D: realizeClass(objc_class*) (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE3B62D: realizeClass(objc_class*) (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE3B62D: realizeClass(objc_class*) (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE2EB66: _read_images (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE2D943: map_images_nolock (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0xE2D414: map_images (in /usr/lib/libobjc.A.dylib)
+#==5823==    by 0x7FFF5FC04533: dyld::notifyBatchPartial(dyld_image_states, bool, char const* (*)(dyld_image_states, unsigned int, dyld_image_info const*)) (in /usr/lib/dyld)
+{
+   visp-osx-dyld::notifyBatchPartial
+   Memcheck:Leak
+   ...
+   fun:_ZN4dyldL18notifyBatchPartialE17dyld_image_statesbPFPKcS0_jPK15dyld_image_infoE
+}
+
+#==58568== 4,096 bytes in 1 blocks are still reachable in loss record 83 of 83
+#==58568==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==58568==    by 0xBD0855: __smakebuf (in /usr/lib/system/libsystem_c.dylib)
+#==58568==    by 0xBE5217: __swsetup (in /usr/lib/system/libsystem_c.dylib)
+#==58568==    by 0xBCFB14: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+#==58568==    by 0xBD0101: fwrite (in /usr/lib/system/libsystem_c.dylib)
+#==58568==    by 0x9C9BD9: std::__1::__stdoutbuf<char>::overflow(int) (in /usr/lib/libc++.1.dylib)
+#==58568==    by 0x9BF96A: std::__1::basic_streambuf<char, std::__1::char_traits<char> >::xsputn(char const*, long) (in /usr/lib/libc++.1.dylib)
+#==58568==    by 0x10000490B: std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> > std::__1::__pad_and_output<char, std::__1::char_traits<char> >(std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> >, char const*, char const*, char const*, std::__1::ios_base&, char) (streambuf:360)
+#==58568==    by 0x10000477C: std::__1::basic_ostream<char, std::__1::char_traits<char> >& std::__1::__put_character_sequence<char, std::__1::char_traits<char> >(std::__1::basic_ostream<char, std::__1::char_traits<char> >&, char const*, unsigned long) (ios:743)
+#==58568==    by 0x100003A07: main (ostream:1021)
+{
+   visp-osx-std::basic_ostream
+   Memcheck:Leak
+   ...
+   fun:_ZNSt3__124__put_character_sequenceIcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_PKS4_m
+}
+
+#==58590== 4 bytes in 1 blocks are still reachable in loss record 1 of 137
+#==58590==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==58590==    by 0xC03486: tre_compile (in /usr/lib/system/libsystem_c.dylib)
+#==58590==    by 0xC017EE: regncomp_l (in /usr/lib/system/libsystem_c.dylib)
+#==58590==    by 0xDA98D5: __pthread_once_handler (in /usr/lib/system/libsystem_pthread.dylib)
+#==58590==    by 0xD91155: _os_once (in /usr/lib/system/libsystem_platform.dylib)
+#==58590==    by 0xDA9874: pthread_once (in /usr/lib/system/libsystem_pthread.dylib)
+#==58590==    by 0xB99A7C: wordexp (in /usr/lib/system/libsystem_c.dylib)
+#==58590==    by 0xECF5B: vpIoTools::path(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpIoTools.cpp:953)
+#==58590==    by 0xED533: vpIoTools::checkFilename(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpIoTools.cpp:742)
+#==58590==    by 0xEDB25: vpIoTools::remove(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpIoTools.cpp:858)
+#==58590==    by 0x1000037FC: main (testXmlParserCamera.cpp:59)
+{
+   visp-osx-wordexp
+   Memcheck:Leak
+   ...
+   fun:wordexp
+}
+
+#==56157== 16 bytes in 1 blocks are definitely lost in loss record 10 of 87
+#==56157==    at 0x66CF: calloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56157==    by 0x106A815: __cxa_get_globals (in /usr/lib/libc++abi.dylib)
+#==56157==    by 0x106ABFA: __cxa_throw (in /usr/lib/libc++abi.dylib)
+#==56157==    by 0x100006C8E: vpImage<unsigned char>::getValue(double, double) const (vpImage.h:1518)
+#==56157==    by 0x10000624D: unsigned char (anonymous namespace)::checkPixelAccess<unsigned char>(unsigned int, unsigned int, double, double) (testImageGetValue.cpp:54)
+#==56157==    by 0x1000037DD: main (testImageGetValue.cpp:118)
+{
+   visp-osx-throw
+   Memcheck:Leak
+   ...
+   fun:__cxa_throw
+}
+
+#==56172== 32 bytes in 1 blocks are indirectly lost in loss record 21 of 90
+#==56172==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56172==    by 0xBB2AB0: __Balloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBAFBE3: __rv_alloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBAFC04: __nrv_alloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBAFEB1: __dtoa (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBD78A9: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBFE2DA: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBE3F66: _vsnprintf (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBE3FC5: vsnprintf_l (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0xBD457A: snprintf_l (in /usr/lib/system/libsystem_c.dylib)
+#==56172==    by 0x9DF75A: std::__1::num_put<char, std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> > >::do_put(std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> >, std::__1::ios_base&, char, double) const (in /usr/lib/libc++.1.dylib)
+#==56172==    by 0x9C609D: std::__1::basic_ostream<char, std::__1::char_traits<char> >::operator<<(float) (in /usr/lib/libc++.1.dylib)
+#==56172==    by 0x100003F61: main (vpImage.h:443)
+{
+   visp-osx-std::ostream
+   Memcheck:Leak
+   ...
+   fun:_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEf
+}
+
+#==56235== 4,096 bytes in 1 blocks are still reachable in loss record 150 of 151
+#==56235==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56235==    by 0xBD0855: __smakebuf (in /usr/lib/system/libsystem_c.dylib)
+#==56235==    by 0xBE5217: __swsetup (in /usr/lib/system/libsystem_c.dylib)
+#==56235==    by 0xBCFB14: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+#==56235==    by 0xBD3C2A: puts (in /usr/lib/system/libsystem_c.dylib)
+#==56235==    by 0x1000038B0: main (testReadImage.cpp:201)
+{
+   visp-osx-puts
+   Memcheck:Leak
+   ...
+   fun:puts
+}
+
+#==56319== 64 bytes in 1 blocks are still reachable in loss record 31 of 84
+#==56319==    at 0x68A1: malloc_zone_calloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56319==    by 0xE2B1FC: cache_t::reallocate(unsigned int, unsigned int) (in /usr/lib/libobjc.A.dylib)
+#==56319==    by 0xE2B636: cache_fill (in /usr/lib/libobjc.A.dylib)
+#==56319==    by 0xE31398: lookUpImpOrForward (in /usr/lib/libobjc.A.dylib)
+#==56319==    by 0xE24168: objc_msgSend (in /usr/lib/libobjc.A.dylib)
+#==56319==    by 0x72F730: APL_dgemm (in /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib)
+#==56319==    by 0x71C1CF: cblas_dgemm (in /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib)
+#==56319==    by 0x6FABE3: DGEMM (in /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib)
+#==56319==    by 0xAA8C1: vpMatrix::blas_dgemm(char, char, int, int, int, double, double*, int, double*, int, double, double*, int) (vpMatrix_mul.cpp:79)
+#==56319==    by 0x929F2: vpMatrix::mult2Matrices(vpMatrix const&, vpMatrix const&, vpMatrix&) (vpMatrix.cpp:1079)
+#==56319==    by 0x92D2C: vpMatrix::operator*(vpMatrix const&) const (vpMatrix.cpp:1203)
+#==56319==    by 0x100033FD7: ____C_A_T_C_H____T_E_S_T____0() (perfMatrixMultiplication.cpp:296)
+#==56319==    by 0x10001BF10: Catch::RunContext::invokeActiveTestCase() (catch.hpp:13591)
+#==56319==    by 0x10001A6C3: Catch::RunContext::runCurrentTest(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&) (catch.hpp:12379)
+#==56319==    by 0x100019E6F: Catch::RunContext::runTest(Catch::TestCase const&) (catch.hpp:12140)
+#==56319==    by 0x10001F680: Catch::Session::runInternal() (catch.hpp:12701)
+#==56319==    by 0x10001EA27: Catch::Session::run() (catch.hpp:12876)
+#==56319==    by 0x100039C3E: main (perfMatrixMultiplication.cpp:558)
+{
+   visp-osx-cblas_dgemm
+   Memcheck:Leak
+   ...
+   fun:cblas_dgemm
+}
+
+#==56334== 32 bytes in 1 blocks are indirectly lost in loss record 22 of 92
+#==56334==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56334==    by 0xBB2AB0: __Balloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56334==    by 0xBB5F18: __strtodg (in /usr/lib/system/libsystem_c.dylib)
+#==56334==    by 0xBB7029: __strtopx (in /usr/lib/system/libsystem_c.dylib)
+#==56334==    by 0xBF6A1E: strtold_l (in /usr/lib/system/libsystem_c.dylib)
+#==56334==    by 0x9DAC19: double std::__1::__num_get_float<double>(char const*, char const*, unsigned int&) (in /usr/lib/libc++.1.dylib)
+#==56334==    by 0x9DAAE6: std::__1::num_get<char, std::__1::istreambuf_iterator<char, std::__1::char_traits<char> > >::do_get(std::__1::istreambuf_iterator<char, std::__1::char_traits<char> >, std::__1::istreambuf_iterator<char, std::__1::char_traits<char> >, std::__1::ios_base&, unsigned int&, double&) const (in /usr/lib/libc++.1.dylib)
+#==56334==    by 0x9C147D: std::__1::basic_istream<char, std::__1::char_traits<char> >::operator>>(double&) (in /usr/lib/libc++.1.dylib)
+#==56334==    by 0x10001837A: vpArray2D<double>::load(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, vpArray2D<double>&, bool, char*) (vpArray2D.h:604)
+#==56334==    by 0x100004503: main (vpMatrix.h:180)
+{
+   visp-osx-std::basic_istream
+   Memcheck:Leak
+   ...
+   fun:_ZNSt3__113basic_istreamIcNS_11char_traitsIcEEErsERd
+}
+
+#==56350== 4,096 bytes in 1 blocks are still reachable in loss record 86 of 86
+#==56350==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56350==    by 0xBD0855: __smakebuf (in /usr/lib/system/libsystem_c.dylib)
+#==56350==    by 0xBE5217: __swsetup (in /usr/lib/system/libsystem_c.dylib)
+#==56350==    by 0xBCFB14: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+#==56350==    by 0xBD0101: fwrite (in /usr/lib/system/libsystem_c.dylib)
+#==56350==    by 0x9C9BD9: std::__1::__stdoutbuf<char>::overflow(int) (in /usr/lib/libc++.1.dylib)
+#==56350==    by 0x9BF96A: std::__1::basic_streambuf<char, std::__1::char_traits<char> >::xsputn(char const*, long) (in /usr/lib/libc++.1.dylib)
+#==56350==    by 0x9DF24A: std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> > std::__1::__pad_and_output<char, std::__1::char_traits<char> >(std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> >, char const*, char const*, char const*, std::__1::ios_base&, char) (in /usr/lib/libc++.1.dylib)
+#==56350==    by 0x9DF521: std::__1::num_put<char, std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> > >::do_put(std::__1::ostreambuf_iterator<char, std::__1::char_traits<char> >, std::__1::ios_base&, char, unsigned long) const (in /usr/lib/libc++.1.dylib)
+#==56350==    by 0x9C5C0B: std::__1::basic_ostream<char, std::__1::char_traits<char> >::operator<<(unsigned long) (in /usr/lib/libc++.1.dylib)
+#==56350==    by 0x100030927: ____C_A_T_C_H____T_E_S_T____0() (testRand.cpp:132)
+#==56350==    by 0x10001B090: Catch::RunContext::invokeActiveTestCase() (catch.hpp:13591)
+#==56350==    by 0x1000198C3: Catch::RunContext::runCurrentTest(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> >&) (catch.hpp:12379)
+#==56350==    by 0x10001906F: Catch::RunContext::runTest(Catch::TestCase const&) (catch.hpp:12140)
+#==56350==    by 0x10001E800: Catch::Session::runInternal() (catch.hpp:12701)
+#==56350==    by 0x10001DBA7: Catch::Session::run() (catch.hpp:12876)
+#==56350==    by 0x1000364FC: main (testRand.cpp:370)
+{
+   visp-osx-std::basic_ostream
+   Memcheck:Leak
+   ...
+   fun:_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEElsEm
+}
+
+#==56364== 36 bytes in 1 blocks are still reachable in loss record 36 of 136
+#==56364==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56364==    by 0xBB2AB0: __Balloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56364==    by 0xBB2E7D: __pow5mult_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56364==    by 0xBB42DF: strtod_l (in /usr/lib/system/libsystem_c.dylib)
+#==56364==    by 0xEAE41: vpXmlParserHomogeneousMatrix::Impl::read_values(pugi::xml_node const&, vpHomogeneousMatrix&) (vpXmlParserHomogeneousMatrix.cpp:257)
+#==56364==    by 0xEABAD: vpXmlParserHomogeneousMatrix::Impl::read_matrix(pugi::xml_node const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpXmlParserHomogeneousMatrix.cpp:191)
+#==56364==    by 0xEB047: vpXmlParserHomogeneousMatrix::Impl::read(pugi::xml_node const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpXmlParserHomogeneousMatrix.cpp:137)
+#==56364==    by 0xE9D24: vpXmlParserHomogeneousMatrix::Impl::parse(vpHomogeneousMatrix&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpXmlParserHomogeneousMatrix.cpp:106)
+#==56364==    by 0x100003D00: main (testXmlParserHomogeneousMatrix.cpp:79)
+{
+   visp-osx-strtod_l
+   Memcheck:Leak
+   ...
+   fun:strtod_l
+}
+
+#==56523== 32 bytes in 1 blocks are indirectly lost in loss record 35 of 123
+#==56523==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56523==    by 0xBB2AB0: __Balloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56523==    by 0xBAFBE3: __rv_alloc_D2A (in /usr/lib/system/libsystem_c.dylib)
+#==56523==    by 0xBB0129: __dtoa (in /usr/lib/system/libsystem_c.dylib)
+#==56523==    by 0xBD78A9: __vfprintf (in /usr/lib/system/libsystem_c.dylib)
+#==56523==    by 0xBFE2DA: __v2printf (in /usr/lib/system/libsystem_c.dylib)
+#==56523==    by 0xBE41DC: vsprintf_l (in /usr/lib/system/libsystem_c.dylib)
+#==56523==    by 0xBD464C: sprintf (in /usr/lib/system/libsystem_c.dylib)
+#==56523==    by 0x11B2CB: vpXmlParser::xmlWriteDoubleChild(_xmlNode*, char const*, double) (vpXmlParser.cpp:369)
+#==56523==    by 0x1000037DD: vpExampleDataParser::writeMainClass(_xmlNode*) (testXmlParser.cpp:178)
+#==56523==    by 0x11B577: vpXmlParser::save(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, bool) (vpXmlParser.cpp:481)
+#==56523==    by 0x100004316: main (testXmlParser.cpp:348)
+{
+   visp-osx-sprintf
+   Memcheck:Leak
+   ...
+   fun:sprintf
+}
+
+#==56688== 4,096 bytes in 1 blocks are still reachable in loss record 134 of 135
+#==56688==    at 0x6FF0: malloc_zone_memalign (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==56688==    by 0x1128858: (anonymous namespace)::AutoreleasePoolPage::push() (in /usr/lib/libobjc.A.dylib)
+#==56688==    by 0xDF3F7A: _dispatch_root_queue_drain (in /usr/lib/system/libdispatch.dylib)
+#==56688==    by 0xDF5176: _dispatch_worker_thread2 (in /usr/lib/system/libdispatch.dylib)
+#==56688==    by 0x1096EF7: _pthread_wqthread (in /usr/lib/system/libsystem_pthread.dylib)
+#==56688==    by 0x1099FB8: start_wqthread (in /usr/lib/system/libsystem_pthread.dylib)
+{
+   visp-osx-start_wqthread
+   Memcheck:Leak
+   ...
+   fun:start_wqthread
+}
+
+#==58032== 4,096 bytes in 1 blocks are still reachable in loss record 119 of 120
+#==58032==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==58032==    by 0x10A8855: __smakebuf (in /usr/lib/system/libsystem_c.dylib)
+#==58032==    by 0x10BD217: __swsetup (in /usr/lib/system/libsystem_c.dylib)
+#==58032==    by 0x10A7B14: __sfvwrite (in /usr/lib/system/libsystem_c.dylib)
+#==58032==    by 0x10A8101: fwrite (in /usr/lib/system/libsystem_c.dylib)
+#==58032==    by 0xEA1BD9: std::__1::__stdoutbuf<char>::overflow(int) (in /usr/lib/libc++.1.dylib)
+#==58032==    by 0xE9E7EB: std::__1::basic_ostream<char, std::__1::char_traits<char> >::put(char) (in /usr/lib/libc++.1.dylib)
+#==58032==    by 0x100007173: main (ios:734)
+{
+   visp-ios-std::basic_ostream
+   Memcheck:Leak
+   ...
+   fun:_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEE3putEc
+}
+

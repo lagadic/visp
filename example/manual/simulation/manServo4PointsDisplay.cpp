@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,10 @@ int main()
 #elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV disp;
 #endif
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
     disp.init(I, 100, 100, "Simulation display");
+#endif
 
     ////////////////////////////////////////
     // Desired visual features initialization
@@ -150,7 +153,7 @@ int main()
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
-    // Set the position of the camera in the end-effector frame
+    // Set the position of the end-effector frame in the camera frame as identity
     vpHomogeneousMatrix cMe;
     vpVelocityTwistMatrix cVe(cMe);
     task.set_cVe(cVe);

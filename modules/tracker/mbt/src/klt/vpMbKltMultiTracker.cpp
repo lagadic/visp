@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,24 +11,22 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional
+ * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See https://visp.inria.fr/download/ for more information.
+ * See http://visp.inria.fr for more information.
  *
  * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
+ * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
  * 35042 Rennes Cedex
  * France
- * http://www.irisa.fr/lagadic
  *
  * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
+ * Inria at visp@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * Description:
  * Model-based klt tracker with multiple cameras.
@@ -60,7 +58,7 @@ vpMbKltMultiTracker::vpMbKltMultiTracker()
   : m_mapOfCameraTransformationMatrix(), m_mapOfKltTrackers(), m_referenceCameraName("Camera"), m_L_kltMulti(),
     m_error_kltMulti(), m_w_kltMulti(), m_weightedError_kltMulti()
 {
-  m_mapOfKltTrackers["Camera"] = new vpMbKltTracker();
+  m_mapOfKltTrackers["Camera"] = new vpMbKltTracker;
 
   // Add default camera transformation matrix
   m_mapOfCameraTransformationMatrix["Camera"] = vpHomogeneousMatrix();
@@ -79,13 +77,13 @@ vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras)
   if (nbCameras == 0) {
     throw vpException(vpTrackingException::fatalError, "Cannot construct a vpMbkltMultiTracker with no camera !");
   } else if (nbCameras == 1) {
-    m_mapOfKltTrackers["Camera"] = new vpMbKltTracker();
+    m_mapOfKltTrackers["Camera"] = new vpMbKltTracker;
 
     // Add default camera transformation matrix
     m_mapOfCameraTransformationMatrix["Camera"] = vpHomogeneousMatrix();
   } else if (nbCameras == 2) {
-    m_mapOfKltTrackers["Camera1"] = new vpMbKltTracker();
-    m_mapOfKltTrackers["Camera2"] = new vpMbKltTracker();
+    m_mapOfKltTrackers["Camera1"] = new vpMbKltTracker;
+    m_mapOfKltTrackers["Camera2"] = new vpMbKltTracker;
 
     // Add default camera transformation matrix
     m_mapOfCameraTransformationMatrix["Camera1"] = vpHomogeneousMatrix();
@@ -97,7 +95,7 @@ vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras)
     for (unsigned int i = 1; i <= nbCameras; i++) {
       std::stringstream ss;
       ss << "Camera" << i;
-      m_mapOfKltTrackers[ss.str()] = new vpMbKltTracker();
+      m_mapOfKltTrackers[ss.str()] = new vpMbKltTracker;
 
       // Add default camera transformation matrix
       m_mapOfCameraTransformationMatrix[ss.str()] = vpHomogeneousMatrix();
@@ -122,7 +120,7 @@ vpMbKltMultiTracker::vpMbKltMultiTracker(const std::vector<std::string> &cameraN
   }
 
   for (std::vector<std::string>::const_iterator it = cameraNames.begin(); it != cameraNames.end(); ++it) {
-    m_mapOfKltTrackers[*it] = new vpMbKltTracker();
+    m_mapOfKltTrackers[*it] = new vpMbKltTracker;
   }
 
   // Set by default the reference camera
@@ -1515,9 +1513,6 @@ void vpMbKltMultiTracker::initFromPose(const std::map<std::string, const vpImage
   From the configuration file initialize the parameters corresponding to the
 objects: KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-call vpXmlParser::cleanup() before the exit().
-
   \throw vpException::ioError if the file has not been properly parsed (file
 not found or wrong format for the data).
 
@@ -1554,8 +1549,6 @@ not found or wrong format for the data).
   </klt>
 </conf>
   \endcode
-
-  \sa vpXmlParser::cleanup()
 */
 void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile)
 {
@@ -1582,15 +1575,12 @@ void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile)
   documentation. From the configuration file initialize the parameters
   corresponding to the objects: KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param configFile1 : Full name of the xml file for the first camera.
   \param configFile2 : Full name of the xml file for the second camera.
   \param firstCameraIsReference : If true, the first camera is the reference,
   otherwise it is the second one.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
                                          const bool firstCameraIsReference)
@@ -1632,12 +1622,9 @@ void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile1, const s
   the configuration file initialize the parameters corresponding to the
   objects: KLT, camera.
 
-  \warning To clean up memory allocated by the xml library, the user has to
-  call vpXmlParser::cleanup() before the exit().
-
   \param mapOfConfigFiles : Map of xml files.
 
-  \sa loadConfigFile(const std::string &), vpXmlParser::cleanup()
+  \sa loadConfigFile(const std::string &)
 */
 void vpMbKltMultiTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles)
 {
@@ -1680,7 +1667,7 @@ void vpMbKltMultiTracker::loadConfigFile(const std::map<std::string, std::string
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
   SoDB::finish();
 #endif
 }
@@ -1727,7 +1714,6 @@ void vpMbKltMultiTracker::preTracking(std::map<std::string, const vpImage<unsign
 
 void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages)
 {
-
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
        it != m_mapOfKltTrackers.end(); ++it) {
     vpMbKltTracker *klt = it->second;
@@ -1742,6 +1728,10 @@ void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsig
       if (it->first == m_referenceCameraName) {
         reinit(/*mapOfImages[it->first]*/);
       }
+    }
+
+    if (displayFeatures) {
+      klt->m_featuresToBeDisplayedKlt = klt->getFeaturesForDisplayKlt();
     }
   }
 }
@@ -1917,8 +1907,8 @@ void vpMbKltMultiTracker::resetTracker()
   firstInitialisation = true;
   computeCovariance = false;
 
-  angleAppears = vpMath::rad(65);
-  angleDisappears = vpMath::rad(75);
+  angleAppears = vpMath::rad(89);
+  angleDisappears = vpMath::rad(89);
 
   clippingFlag = vpPolygon3D::NO_CLIPPING;
 
@@ -2484,7 +2474,7 @@ void vpMbKltMultiTracker::setOptimizationMethod(const vpMbtOptimizationMethod &o
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
 
-  \param I : image corresponding to the desired pose.
+  \param I : grayscale image corresponding to the desired pose.
   \param cMo_ : Pose to affect.
 */
 void vpMbKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
@@ -2493,6 +2483,37 @@ void vpMbKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomog
     std::map<std::string, vpMbKltTracker *>::iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
     if (it != m_mapOfKltTrackers.end()) {
       it->second->setPose(I, cMo_);
+      this->cMo = cMo_;
+
+      c0Mo = this->cMo;
+      ctTc0.eye();
+    } else {
+      std::stringstream ss;
+      ss << "Cannot find the reference camera: " << m_referenceCameraName << " !";
+      throw vpException(vpTrackingException::fatalError, ss.str());
+    }
+  } else {
+    std::stringstream ss;
+    ss << "You are trying to set the pose with only one image and cMo "
+          "but there are multiple cameras !";
+    throw vpException(vpTrackingException::fatalError, ss.str());
+  }
+}
+
+/*!
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
+
+  \param I_color : color image corresponding to the desired pose.
+  \param cMo_ : Pose to affect.
+*/
+void vpMbKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+{
+  if (m_mapOfKltTrackers.size() == 1) {
+    std::map<std::string, vpMbKltTracker *>::iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
+    if (it != m_mapOfKltTrackers.end()) {
+      vpImageConvert::convert(I_color, m_I);
+      it->second->setPose(m_I, cMo_);
       this->cMo = cMo_;
 
       c0Mo = this->cMo;
@@ -2735,7 +2756,7 @@ void vpMbKltMultiTracker::setUseKltTracking(const std::string &name, const bool 
 
   \throw vpException : if the tracking is supposed to have failed
 
-  \param I : the input image
+  \param I : the input grayscale image
 */
 void vpMbKltMultiTracker::track(const vpImage<unsigned char> &I)
 {
@@ -2751,6 +2772,14 @@ void vpMbKltMultiTracker::track(const vpImage<unsigned char> &I)
     ss << "The reference camera: " << m_referenceCameraName << " does not exist !";
     throw vpException(vpTrackingException::fatalError, ss.str().c_str());
   }
+}
+
+/*!
+  Not supported interface, this class is deprecated.
+*/
+void vpMbKltMultiTracker::track(const vpImage<vpRGBa> &)
+{
+  std::cout << "Not supported interface, this class is deprecated." << std::endl;
 }
 
 /*!

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpRGBa.h>
 
 #include <fstream>
 #include <iostream>
@@ -179,6 +180,10 @@ public:
 
   static void filterX(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *filter, unsigned int size);
   static void filterX(const vpImage<double> &I, vpImage<double> &dIx, const double *filter, unsigned int size);
+  static void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
 
   static inline double filterX(const vpImage<unsigned char> &I, unsigned int r, unsigned int c, const double *filter,
                                unsigned int size)
@@ -191,6 +196,45 @@ public:
       result += filter[i] * (I[r][c + i] + I[r][c - i]);
     }
     return result + filter[0] * I[r][c];
+  }
+
+  static inline double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter,
+                               unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      result += filter[i] * (I[r][c + i].R + I[r][c - i].R);
+    }
+    return result + filter[0] * I[r][c].R;
+  }
+
+  static inline double filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter,
+                               unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      result += filter[i] * (I[r][c + i].G + I[r][c - i].G);
+    }
+    return result + filter[0] * I[r][c].G;
+  }
+
+  static inline double filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter,
+                               unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      result += filter[i] * (I[r][c + i].B + I[r][c - i].B);
+    }
+    return result + filter[0] * I[r][c].B;
   }
 
   static inline double filterXLeftBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
@@ -209,6 +253,54 @@ public:
     return result + filter[0] * I[r][c];
   }
 
+  static inline double filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                         const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (c > i)
+        result += filter[i] * (I[r][c + i].R + I[r][c - i].R);
+      else
+        result += filter[i] * (I[r][c + i].R + I[r][i - c].R);
+    }
+    return result + filter[0] * I[r][c].R;
+  }
+
+  static inline double filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                         const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (c > i)
+        result += filter[i] * (I[r][c + i].G + I[r][c - i].G);
+      else
+        result += filter[i] * (I[r][c + i].G + I[r][i - c].G);
+    }
+    return result + filter[0] * I[r][c].G;
+  }
+
+  static inline double filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                         const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (c > i)
+        result += filter[i] * (I[r][c + i].B + I[r][c - i].B);
+      else
+        result += filter[i] * (I[r][c + i].B + I[r][i - c].B);
+    }
+    return result + filter[0] * I[r][c].B;
+  }
+
   static inline double filterXRightBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
                                           const double *filter, unsigned int size)
   {
@@ -223,6 +315,54 @@ public:
         result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1] + I[r][c - i]);
     }
     return result + filter[0] * I[r][c];
+  }
+
+  static inline double filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                          const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (c + i < I.getWidth())
+        result += filter[i] * (I[r][c + i].R + I[r][c - i].R);
+      else
+        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1].R + I[r][c - i].R);
+    }
+    return result + filter[0] * I[r][c].R;
+  }
+
+  static inline double filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                          const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (c + i < I.getWidth())
+        result += filter[i] * (I[r][c + i].G + I[r][c - i].G);
+      else
+        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1].G + I[r][c - i].G);
+    }
+    return result + filter[0] * I[r][c].G;
+  }
+
+  static inline double filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                          const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (c + i < I.getWidth())
+        result += filter[i] * (I[r][c + i].B + I[r][c - i].B);
+      else
+        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1].B + I[r][c - i].B);
+    }
+    return result + filter[0] * I[r][c].B;
   }
 
   static inline double filterX(const vpImage<double> &I, unsigned int r, unsigned int c, const double *filter,
@@ -271,6 +411,10 @@ public:
   }
 
   static void filterY(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *filter, unsigned int size);
+  static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterY(const vpImage<double> &I, vpImage<double> &dIx, const double *filter, unsigned int size);
   static inline double filterY(const vpImage<unsigned char> &I, unsigned int r, unsigned int c, const double *filter,
                                unsigned int size)
@@ -283,6 +427,43 @@ public:
       result += filter[i] * (I[r + i][c] + I[r - i][c]);
     }
     return result + filter[0] * I[r][c];
+  }
+
+  static inline double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter,
+                               unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      result += filter[i] * (I[r + i][c].R + I[r - i][c].R);
+    }
+    return result + filter[0] * I[r][c].R;
+  }
+  static inline double filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter,
+                               unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      result += filter[i] * (I[r + i][c].G + I[r - i][c].G);
+    }
+    return result + filter[0] * I[r][c].G;
+  }
+  static inline double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter,
+                               unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      result += filter[i] * (I[r + i][c].B + I[r - i][c].B);
+    }
+    return result + filter[0] * I[r][c].B;
   }
 
   double static inline filterYTopBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
@@ -301,6 +482,54 @@ public:
     return result + filter[0] * I[r][c];
   }
 
+  double static inline filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                        const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (r > i)
+        result += filter[i] * (I[r + i][c].R + I[r - i][c].R);
+      else
+        result += filter[i] * (I[r + i][c].R + I[i - r][c].R);
+    }
+    return result + filter[0] * I[r][c].R;
+  }
+
+  double static inline filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                        const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (r > i)
+        result += filter[i] * (I[r + i][c].G + I[r - i][c].G);
+      else
+        result += filter[i] * (I[r + i][c].G + I[i - r][c].G);
+    }
+    return result + filter[0] * I[r][c].G;
+  }
+
+  double static inline filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                        const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (r > i)
+        result += filter[i] * (I[r + i][c].B + I[r - i][c].B);
+      else
+        result += filter[i] * (I[r + i][c].B + I[i - r][c].B);
+    }
+    return result + filter[0] * I[r][c].B;
+  }
+
   double static inline filterYBottomBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
                                            const double *filter, unsigned int size)
   {
@@ -315,6 +544,54 @@ public:
         result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c] + I[r - i][c]);
     }
     return result + filter[0] * I[r][c];
+  }
+
+  double static inline filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                           const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (r + i < I.getHeight())
+        result += filter[i] * (I[r + i][c].R + I[r - i][c].R);
+      else
+        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c].R + I[r - i][c].R);
+    }
+    return result + filter[0] * I[r][c].R;
+  }
+
+  double static inline filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                           const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (r + i < I.getHeight())
+        result += filter[i] * (I[r + i][c].G + I[r - i][c].G);
+      else
+        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c].G + I[r - i][c].G);
+    }
+    return result + filter[0] * I[r][c].G;
+  }
+
+  double static inline filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
+                                           const double *filter, unsigned int size)
+  {
+    double result;
+
+    result = 0;
+
+    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
+      if (r + i < I.getHeight())
+        result += filter[i] * (I[r + i][c].B + I[r - i][c].B);
+      else
+        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c].B + I[r - i][c].B);
+    }
+    return result + filter[0] * I[r][c].B;
   }
 
   static inline double filterYTopBorder(const vpImage<double> &I, unsigned int r, unsigned int c, const double *filter,
@@ -363,6 +640,8 @@ public:
   }
 
   static void gaussianBlur(const vpImage<unsigned char> &I, vpImage<double> &GI, unsigned int size = 7,
+                           double sigma = 0., bool normalize = true);
+  static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7,
                            double sigma = 0., bool normalize = true);
   static void gaussianBlur(const vpImage<double> &I, vpImage<double> &GI, unsigned int size = 7, double sigma = 0.,
                            bool normalize = true);

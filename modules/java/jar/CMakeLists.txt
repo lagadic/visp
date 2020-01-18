@@ -12,15 +12,18 @@ file(MAKE_DIRECTORY "${java_src_dir}")
 set(JAR_NAME visp-${VISP_JAVA_LIB_NAME_SUFFIX}.jar)
 set(VISP_JAR_FILE "${VISP_BINARY_DIR}/bin/${JAR_NAME}" CACHE INTERNAL "")
 
-# TODO: Some strange error. VISP_JAVA_BINDINGS_DIR is null at this line of execution. I dont know why its happening
-# Currently using a temporary workaround 
-set(VISP_JAVA_BINDINGS_DIR "${VISP_BINARY_DIR}/modules/java_bindings_generator")
-
 vp_copyfiles_append_dir(JAVA_SRC_COPY "${VISP_JAVA_BINDINGS_DIR}/gen/java" "${java_src_dir}")
 
 set(depends gen_visp_java_source "${VISP_DEPHELPER}/gen_visp_java_source")
 vp_copyfiles_add_target(${the_module}_jar_source_copy JAVA_SRC_COPY "Copy Java(JAR) source files" ${depends})
 set(depends ${the_module}_jar_source_copy "${VISP_DEPHELPER}/${the_module}_jar_source_copy")
+
+if(VISP_JAVA_SOURCE_VERSION)
+  set(VISP_ANT_JAVAC_EXTRA_ATTRS "${VISP_ANT_JAVAC_EXTRA_ATTRS} source=\"${VISP_JAVA_SOURCE_VERSION}\"")
+endif()
+if(VISP_JAVA_TARGET_VERSION)
+  set(VISP_ANT_JAVAC_EXTRA_ATTRS "${VISP_ANT_JAVAC_EXTRA_ATTRS} target=\"${VISP_JAVA_TARGET_VERSION}\"")
+endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build.xml.in" "${VISP_JAVA_DIR}/build.xml" @ONLY)
 list(APPEND depends "${VISP_JAVA_DIR}/build.xml")

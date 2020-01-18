@@ -140,7 +140,7 @@ int main(int argc, char **argv)
       //! [Get pose]
       //! [Display]
       tracker->getCameraParameters(cam);
-      tracker->display(I, cMo, cam, vpColor::red, 2, true);
+      tracker->display(I, cMo, cam, vpColor::red, 2);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);

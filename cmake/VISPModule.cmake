@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -608,6 +608,23 @@ macro(vp_target_include_modules target)
   vp_list_unique(VISP_MODULE_${the_module}_INC_DEPS)
 endmacro()
 
+# setup include paths for the list of passed modules and recursively add dependent modules
+macro(vp_target_include_modules_recurse target)
+  foreach(d ${ARGN})
+    if(d MATCHES "^visp_" AND HAVE_${d})
+      if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
+        vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
+      endif()
+      if(VISP_MODULE_${d}_DEPS)
+        vp_target_include_modules(${target} ${VISP_MODULE_${d}_DEPS})
+      endif()
+    elseif(EXISTS "${d}")
+      vp_target_include_directories(${target} "${d}")
+    endif()
+  endforeach()
+endmacro()
+
+
 # setup include path for ViSP headers for specified module
 # vp_module_include_directories(<extra include directories/extra include modules>)
 macro(vp_module_include_directories)
@@ -677,7 +694,7 @@ endmacro()
 
 # finds and copy data from a source to a destination
 # Usage:
-# vp_glob_module_data(<source> <destination>)
+# vp_glob_module_data(<source> <destination> <NO_INSTALL>)
 macro(vp_glob_module_copy_data src dst)
   set(__data "")
   file(GLOB_RECURSE __data
@@ -692,17 +709,15 @@ macro(vp_glob_module_copy_data src dst)
     )
 
     # install
-    if(UNIX)
-      set(__install_dst "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/${dst}")
-    else()
-      set(__install_dst "${dst}")
-    endif()
+    set(__install_dst "${VISP_INSTALL_DATAROOTDIR}/${dst}")
 
-    install(FILES ${__d}
-       DESTINATION "${__install_dst}"
-       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-       OWNER_WRITE
-    )
+    if(NOT "x${ARGN}" STREQUAL "xNO_INSTALL")
+      install(FILES ${__d}
+        DESTINATION "${__install_dst}"
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+        OWNER_WRITE
+      )
+    endif()
   endforeach()
 endmacro()
 
@@ -845,11 +860,15 @@ macro(_vp_create_module)
     set_target_properties(${the_module} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:libc /DEBUG")
   endif()
 
-  vp_install_target(${the_module} EXPORT VISPModules OPTIONAL
-    RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libs
-    LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
-    ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT dev
-    )
+  get_target_property(_target_type ${the_module} TYPE)
+  if(VISP_MODULE_${the_module}_CLASS STREQUAL "PUBLIC" AND
+      ("${_target_type}" STREQUAL "SHARED_LIBRARY" OR (NOT BUILD_SHARED_LIBS OR NOT INSTALL_CREATE_DISTRIB)))
+    vp_install_target(${the_module} EXPORT VISPModules OPTIONAL
+      RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libs
+      LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libs
+      ARCHIVE DESTINATION ${VISP_LIB_ARCHIVE_INSTALL_PATH} COMPONENT dev
+      )
+  endif()
 
   foreach(m ${VISP_MODULE_${the_module}_CHILDREN} ${the_module})
     # only "public" headers need to be installed
@@ -992,7 +1011,11 @@ macro(vp_add_tests)
           # ctest only if not in the exclude list
           list(FIND __exclude_ctest ${t} __to_exclude_from_ctest)
           if(${__to_exclude_from_ctest} EQUAL -1)
-            add_test(${the_target} ${the_target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
+            if(${t} MATCHES "perf*")
+              add_test(${the_target} ${the_target})
+            else()
+              add_test(${the_target} ${the_target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
+            endif()
           endif()
           # TODO FS add visp_test_${name} target to group all the tests
           add_dependencies(visp_tests ${the_target})

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ int main()
 {
   try {
     vpVirtuose virtuose;
-    virtuose.setIpAddress("localhost#5000");
+    virtuose.setIpAddress("localhost#53210");
     virtuose.setVerbose(true);
     virtuose.setPowerOn();
     virtuose.setPeriodicFunction(CallBackVirtuose);

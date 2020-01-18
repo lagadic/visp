@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,25 +160,21 @@ public:
   static const std::string &getBuildInformation();
   static void getUserName(std::string &username);
   static std::string getUserName();
-  static std::string getenv(const char *env);
   static std::string getenv(const std::string &env);
   static std::string getViSPImagesDataPath();
   static void getVersion(const std::string &version, unsigned int &major, unsigned int &minor, unsigned int &patch);
-  static bool checkDirectory(const char *dirname);
   static bool checkDirectory(const std::string &dirname);
-  static bool checkFilename(const char *filename);
+  static bool checkFifo(const std::string &filename);
   static bool checkFilename(const std::string &filename);
-  static bool copy(const char *src, const char *dst);
   static bool copy(const std::string &src, const std::string &dst);
-  static void makeDirectory(const char *dirname);
-  static void makeDirectory(const std::string &dirname);
-  static bool remove(const char *filename);
-  static bool remove(const std::string &filename);
-  static bool rename(const char *oldfilename, const char *newfilename);
-  static bool rename(const std::string &oldfilename, const std::string &newfilename);
 
-  static std::string path(const char *pathname);
+  static void makeDirectory(const std::string &dirname);
+  static void makeFifo(const std::string &dirname);
+  static std::string makeTempDirectory(const std::string &dirname);
   static std::string path(const std::string &pathname);
+
+  static bool remove(const std::string &filename);
+  static bool rename(const std::string &oldfilename, const std::string &newfilename);
 
   /*!
          Define the directory separator character, backslash ('\') for windows
@@ -246,6 +242,9 @@ public:
   static void writeBinaryValueLE(std::ofstream &file, const float float_value);
   static void writeBinaryValueLE(std::ofstream &file, const double double_value);
 
+  static bool parseBoolean(std::string input);
+  static std::string trim(std::string s);
+
 protected:
   static std::string baseName;
   static std::string baseDir;
@@ -253,6 +252,8 @@ protected:
   static std::vector<std::string> configVars;
   static std::vector<std::string> configValues;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static int mkdir_p(const char *path, const int mode);
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 };
 #endif

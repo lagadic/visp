@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1258,15 +1258,36 @@ void vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, const vpImagePoint
                                      unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
+    vpImagePoint ip1_ = ip1;
+    vpImagePoint ip2_ = ip2;
+
     double size = 10. * m_scale;
-    double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
-    double deltaj = size / length * (ip2.get_j() - ip1.get_j());
-    double deltai = size / length * (ip2.get_i() - ip1.get_i());
-    double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
-    double orig = ip1.get_i() - slope * ip1.get_j();
-    for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
-      double i = slope * j + orig;
-      displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness);
+    double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
+    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+    if (vertical_line) {
+      if (ip2_.get_i() < ip1_.get_i()) {
+        std::swap(ip1_, ip2_);
+      }
+    } else if (ip2_.get_j() < ip1_.get_j()) {
+      std::swap(ip1_, ip2_);
+    }
+
+    double diff_j = vertical_line ? 1 : ip2_.get_j() - ip1_.get_j();
+    double deltaj = size / length * diff_j;
+    double deltai = size / length * (ip2_.get_i() - ip1_.get_i());
+    double slope = (ip2_.get_i() - ip1_.get_i()) / diff_j;
+    double orig = ip1_.get_i() - slope * ip1_.get_j();
+
+    if (vertical_line) {
+      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+        double j = ip1_.get_j();
+        displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness);
+      }
+    } else {
+      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+        double i = slope * j + orig;
+        displayLine(vpImagePoint(i, j), vpImagePoint(i + deltai, j + deltaj), color, thickness);
+      }
     }
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));
@@ -1520,7 +1541,6 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
   \param thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
   false.
-
 */
 void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
@@ -1652,7 +1672,6 @@ bool vpDisplayOpenCV::getClick(bool blocking)
 }
 
 /*!
-
   Wait for a click from one of the mouse button and get the position
   of the clicked image point.
 
@@ -1666,7 +1685,6 @@ bool vpDisplayOpenCV::getClick(bool blocking)
     to \e true.
   - false if no button was clicked. This can occur if blocking is set
     to \e false.
-
 */
 bool vpDisplayOpenCV::getClick(vpImagePoint &ip, bool blocking)
 {
@@ -1721,7 +1739,6 @@ bool vpDisplayOpenCV::getClick(vpImagePoint &ip, bool blocking)
 }
 
 /*!
-
   Wait for a mouse button click and get the position of the clicked
   pixel. The button used to click is also set.
 
@@ -1793,7 +1810,6 @@ bool vpDisplayOpenCV::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonTyp
 }
 
 /*!
-
   Wait for a mouse button click release and get the position of the
   image point were the click release occurs.  The button used to click is
   also set. Same method as getClick(unsigned int&, unsigned int&,
@@ -1813,7 +1829,6 @@ bool vpDisplayOpenCV::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonTyp
     to \e false.
 
   \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
-
 */
 bool vpDisplayOpenCV::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking)
 {
@@ -1965,7 +1980,6 @@ void vpDisplayOpenCV::on_mouse(int event, int x, int y, int /*flags*/, void *dis
 }
 
 /*!
-
   Get a keyboard event.
 
   \param blocking [in] : Blocking behavior.
@@ -2005,7 +2019,6 @@ bool vpDisplayOpenCV::getKeyboardEvent(bool blocking)
   // return false; // Never reached after throw()
 }
 /*!
-
   Get a keyboard event.
 
   \param blocking [in] : Blocking behavior.

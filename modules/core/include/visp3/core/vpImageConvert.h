@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,6 @@
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
 #  include <opencv2/imgproc/types_c.h>
 #  include <opencv2/imgproc.hpp>
-#  include <opencv2/imgcodecs.hpp>
 #  include <opencv2/highgui.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #  include <opencv2/core/core.hpp>
@@ -282,9 +281,3 @@ private:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

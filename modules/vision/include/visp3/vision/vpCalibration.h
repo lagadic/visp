@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,20 +90,20 @@ public:
                                        estimation of the distortion. */
   } vpCalibrationMethodType;
 
-  vpHomogeneousMatrix cMo; //!< the pose computed for the model without distortion
+  vpHomogeneousMatrix cMo; //!< Pose computed using camera parameters without distorsion
   //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_dist; //!< the pose computed for perspective projection
+  vpHomogeneousMatrix cMo_dist; //!< Pose computed using camera parameters with distorsion
   //!< with distortion model
   //!< (as a 3x4 matrix [R T])
-  vpCameraParameters cam; //!< camera intrinsic parameters for perspective
+  vpCameraParameters cam; //!< Camera intrinsic parameters for perspective
   //!< projection model without distortion
-  vpCameraParameters cam_dist; //!< camera intrinsic parameters for perspective
+  vpCameraParameters cam_dist; //!< Camera intrinsic parameters for perspective
   //!< projection model with distortion
 
-  vpHomogeneousMatrix rMe; //!< position of the effector in relation to the
+  vpHomogeneousMatrix rMe; //!< Position of the effector in relation to the
   //!< reference coordinates (manipulator base coordinates)
-  vpHomogeneousMatrix eMc; //!< position of the camera in relation to the effector
-  vpHomogeneousMatrix eMc_dist;
+  vpHomogeneousMatrix eMc; //!< Position of the camera in end-effector frame using camera parameters without distorsion
+  vpHomogeneousMatrix eMc_dist; //!< Position of the camera in end-effector frame using camera parameters with distorsion
 
 public:
   // Constructor
@@ -119,8 +119,18 @@ public:
   // = operator
   vpCalibration &operator=(const vpCalibration &twinCalibration);
 
-  static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                              vpHomogeneousMatrix &eMc);
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
+                                            const std::vector<vpHomogeneousMatrix> &rMe,
+                                            vpHomogeneousMatrix &eMc);
+  vp_deprecated static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
+                                                  vpHomogeneousMatrix &eMc_dist);
+  //@}
+  #endif
 
   //! Suppress all the point in the array of point
   int clearPoint();
@@ -131,8 +141,6 @@ public:
   static int computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
                                      vpCameraParameters &cam, double &globalReprojectionError, bool verbose = false);
 
-  static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
-                                    vpHomogeneousMatrix &eMc_dist);
   double computeStdDeviation(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera);
   double computeStdDeviation_dist(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
   int displayData(vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1,

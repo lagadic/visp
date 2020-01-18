@@ -1,14 +1,10 @@
 package org.visp.android;
 
-import org.visp.core.Core;
-
 import java.util.StringTokenizer;
 import android.util.Log;
 
 class StaticHelper {
-
-	// open-cv had cuda support. ViSP java wont
-    public static boolean initViSP(boolean InitCuda)
+    public static boolean initViSP()
     {
         boolean result;
         String libs = "";
@@ -17,7 +13,7 @@ class StaticHelper {
 
         try
         {
-            System.loadLibrary("visp_info");
+            System.loadLibrary("visp_core");
             libs = getLibraryList();
         }
         catch(UnsatisfiedLinkError e)
@@ -30,10 +26,6 @@ class StaticHelper {
         if (initViSPLibs(libs))
         {
             Log.d(TAG, "First attempt to load libs is OK");
-            String eol = System.getProperty("line.separator");
-            for (String str : Core.getBuildInformation().split(eol))
-                Log.i(TAG, str);
-
             result = true;
         }
         else

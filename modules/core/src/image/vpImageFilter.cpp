@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpRGBa.h>
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 #include <opencv2/imgproc/imgproc.hpp>
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -361,6 +362,28 @@ void vpImageFilter::filterX(const vpImage<unsigned char> &I, vpImage<double> &dI
     }
   }
 }
+void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter,
+                            unsigned int size)
+{
+  dIx.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+      dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderR(I, i, j, filter, size));
+      dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderG(I, i, j, filter, size));
+      dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderB(I, i, j, filter, size));
+    }
+    for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
+      dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXR(I, i, j, filter, size));
+      dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXG(I, i, j, filter, size));
+      dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXB(I, i, j, filter, size));
+    }
+    for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
+      dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXRightBorderR(I, i, j, filter, size));
+      dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXRightBorderG(I, i, j, filter, size));
+      dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXRightBorderB(I, i, j, filter, size));
+    }
+  }
+}
 void vpImageFilter::filterX(const vpImage<double> &I, vpImage<double> &dIx, const double *filter, unsigned int size)
 {
   dIx.resize(I.getHeight(), I.getWidth());
@@ -398,6 +421,32 @@ void vpImageFilter::filterY(const vpImage<unsigned char> &I, vpImage<double> &dI
     }
   }
 }
+void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter,
+                            unsigned int size)
+{
+  dIy.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYTopBorderR(I, i, j, filter, size));
+      dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYTopBorderG(I, i, j, filter, size));
+      dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYTopBorderB(I, i, j, filter, size));
+    }
+  }
+  for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYR(I, i, j, filter, size));
+      dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYG(I, i, j, filter, size));
+      dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYB(I, i, j, filter, size));
+    }
+  }
+  for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderR(I, i, j, filter, size));
+      dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderG(I, i, j, filter, size));
+      dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderB(I, i, j, filter, size));
+    }
+  }
+}
 void vpImageFilter::filterY(const vpImage<double> &I, vpImage<double> &dIy, const double *filter, unsigned int size)
 {
   dIy.resize(I.getHeight(), I.getWidth());
@@ -424,10 +473,11 @@ void vpImageFilter::filterY(const vpImage<double> &I, vpImage<double> &dIy, cons
   \param GI : Filtered image.
   \param size : Filter size. This value should be odd.
   \param sigma : Gaussian standard deviation. If it is equal to zero or
-  negative, it is computed from filter size as sigma = (size-1)/6. \param
-  normalize : Flag indicating whether to normalize the filter coefficients or
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or
   not.
 
+  \sa getGaussianKernel() to know which kernel is used.
  */
 void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double> &GI, unsigned int size, double sigma,
                                  bool normalize)
@@ -442,15 +492,38 @@ void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double
 }
 
 /*!
+  Apply a Gaussian blur to RGB color image.
+  \param I : Input image.
+  \param GI : Filtered image.
+  \param size : Filter size. This value should be odd.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+
+  \sa getGaussianKernel() to know which kernel is used.
+ */
+void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma,
+                                 bool normalize)
+{
+  double *fg = new double[(size + 1) / 2];
+  vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
+  vpImage<vpRGBa> GIx;
+  vpImageFilter::filterX(I, GIx, fg, size);
+  vpImageFilter::filterY(GIx, GI, fg, size);
+  GIx.destroy();
+  delete[] fg;
+}
+
+/*!
   Apply a Gaussian blur to a double image.
   \param I : Input double image.
   \param GI : Filtered image.
   \param size : Filter size. This value should be odd.
   \param sigma : Gaussian standard deviation. If it is equal to zero or
-  negative, it is computed from filter size as sigma = (size-1)/6. \param
-  normalize : Flag indicating whether to normalize the filter coefficients or
-  not.
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 
+  \sa getGaussianKernel() to know which kernel is used.
  */
 void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double> &GI, unsigned int size, double sigma,
                                  bool normalize)
@@ -465,15 +538,19 @@ void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double> &GI, 
 }
 
 /*!
-  Return the coefficients of a Gaussian filter.
+  Return the coefficients \f$G_i\f$ of a Gaussian filter.
 
-  \param filter : Pointer to the filter kernel that should refer to a
+  \param[out] filter : Pointer to the half size filter kernel that should refer to a
   (size+1)/2 array. The first value refers to the central coefficient, the
   next one to the right coefficients. Left coefficients could be deduced by
-  symmetry. \param size : Filter size. This value should be odd. \param sigma
-  : Gaussian standard deviation. If it is equal to zero or negative, it is
-  computed from filter size as sigma = (size-1)/6. \param normalize : Flag
-  indicating whether to normalize the filter coefficients or not.
+  symmetry.
+  \param[in] size : Filter size. This value should be odd and positive.
+  \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
+  computed from filter size as sigma = (size-1)/6.
+  \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case \f$\Sigma G_i = 1 \f$.
+
+  The function computes the \e (size+1)/2 values of the Gaussian filter cooefficients \f$ G_i \f$ as:
+  \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
 */
 void vpImageFilter::getGaussianKernel(double *filter, unsigned int size, double sigma, bool normalize)
 {
@@ -509,10 +586,11 @@ void vpImageFilter::getGaussianKernel(double *filter, unsigned int size, double 
   \param filter : Pointer to the filter kernel that should refer to a
   (size+1)/2 array. The first value refers to the central coefficient, the
   next one to the right coefficients. Left coefficients could be deduced by
-  symmetry. \param size : Filter size. This value should be odd. \param sigma
-  : Gaussian standard deviation. If it is equal to zero or negative, it is
-  computed from filter size as sigma = (size-1)/6. \param normalize : Flag
-  indicating whether to normalize the filter coefficients or not.
+  symmetry.
+  \param size : Filter size. This value should be odd.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is
+  computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 */
 void vpImageFilter::getGaussianDerivativeKernel(double *filter, unsigned int size, double sigma, bool normalize)
 {
@@ -664,11 +742,10 @@ void vpImageFilter::getGradY(const vpImage<double> &I, vpImage<double> &dIy, con
    Compute the gradient along X after applying a gaussian filter along Y.
    \param I : Input image
    \param dIx : Gradient along X.
-   \param gaussianKernel : Gaussian kernel which values should be computed
-   using vpImageFilter::getGaussianKernel(). \param gaussianDerivativeKernel :
-   Gaussian derivative kernel which values should be computed using
-   vpImageFilter::getGaussianDerivativeKernel(). \param size : Size of the
-   Gaussian and Gaussian derivative kernels.
+   \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
+   \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+   vpImageFilter::getGaussianDerivativeKernel().
+   \param size : Size of the Gaussian and Gaussian derivative kernels.
  */
 void vpImageFilter::getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *gaussianKernel,
                                     const double *gaussianDerivativeKernel, unsigned int size)
@@ -682,11 +759,10 @@ void vpImageFilter::getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<dou
    Compute the gradient along Y after applying a gaussian filter along X.
    \param I : Input image
    \param dIy : Gradient along Y.
-   \param gaussianKernel : Gaussian kernel which values should be computed
-   using vpImageFilter::getGaussianKernel(). \param gaussianDerivativeKernel :
-   Gaussian derivative kernel which values should be computed using
-   vpImageFilter::getGaussianDerivativeKernel(). \param size : Size of the
-   Gaussian and Gaussian derivative kernels.
+   \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
+   \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+   vpImageFilter::getGaussianDerivativeKernel().
+   \param size : Size of the Gaussian and Gaussian derivative kernels.
  */
 void vpImageFilter::getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *gaussianKernel,
                                     const double *gaussianDerivativeKernel, unsigned int size)

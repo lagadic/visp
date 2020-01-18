@@ -7,7 +7,7 @@ $includes
 using namespace std;
 
 #undef LOG_TAG
-#define LOG_TAG "org.opencv.$m"
+#define LOG_TAG "org.visp.$m"
 
 /// throw java exception
 #undef throwJavaException

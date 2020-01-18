@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input video path>                                %s\n\
      Set video input path.\n\
-     From this path read \"video/video.mpeg\"\n\
+     From this path read \"video/cube.mpeg\"\n\
      video.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -291,6 +291,13 @@ int main(int argc, const char **argv)
       std::cout << "Display frame: " << reader.getFrameIndex() << std::endl;
       if (opt_display) {
         vpDisplay::display(I);
+        if (opt_click_allowed) {
+          vpDisplay::displayText(I, 15, 15, "A click to stop...", vpColor::red);
+
+          if (vpDisplay::getClick(I, false)) {
+            break;
+          }
+        }
         vpDisplay::flush(I);
       }
     }

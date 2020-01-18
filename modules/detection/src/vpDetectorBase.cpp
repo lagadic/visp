@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 /*!
         Default constructor.
 */
-vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0) {}
+vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0), m_timeout_ms(0) {}
 
 /*!
         Returns ith object container box as a vector of points.

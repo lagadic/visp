@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,8 +139,15 @@
 // Defined if cpp-base64 is build and available.
 #cmakedefine VISP_HAVE_CPPBASE64
 
+// Defined if AprilTag big family (41h12, 48h12, 49h12, 52h13) known to produce long build time issue
+// with gcc < 5.5 in RelWithDebInfo and Visual Studio 12 2013 in Release are available
+#cmakedefine VISP_HAVE_APRILTAG_BIG_FAMILY
+
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
+
+// Defined if pugixml is build and available.
+#cmakedefine VISP_HAVE_PUGIXML
 
 // Defined if XML2 library available.
 #cmakedefine VISP_HAVE_XML2
@@ -179,13 +186,28 @@
 #  define VISP_HAVE_DISPLAY
 #endif
 
+// Defined if Catch2 library available
+#cmakedefine VISP_HAVE_CATCH2
+
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3
+
+// Defined if Intel MKL library available
+#cmakedefine VISP_HAVE_MKL
+
+// Defined if OpenBLAS library available
+#cmakedefine VISP_HAVE_OPENBLAS
+
+// Defined if Atlas library available
+#cmakedefine VISP_HAVE_ATLAS
+
+// Defined if LAPACK Netlib library available (-lblas -llapack)
+#cmakedefine VISP_HAVE_LAPACK_NETLIB
 
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 
-// Defined if lapack/blas libraries are available (-lblas -llapack)
+// Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas, Netlib or built-in)
 #cmakedefine VISP_HAVE_LAPACK
 // To keep compat with previous versions
 #ifdef VISP_HAVE_LAPACK
@@ -326,6 +348,9 @@
 // Defined if ATIDAQ-C is build and available.
 #cmakedefine VISP_HAVE_ATIDAQ
 
+// Defined if IIT force-torque SDK is available.
+#cmakedefine VISP_HAVE_FT_IIT_SDK
+
 // Defined if Irisa's Afma4 robot available.
 #cmakedefine VISP_HAVE_AFMA4
 
@@ -343,6 +368,9 @@
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
 
+// Defined if Flir PTU SDK is available to control Flir PTU robot.
+#cmakedefine VISP_HAVE_FLIR_PTU_SDK
+
 // Defined if Irisa's Viper S650 robot available.
 #cmakedefine VISP_HAVE_VIPER650
 
@@ -357,15 +385,29 @@
 #cmakedefine VISP_HAVE_VIPER850_DATA
 #define VISP_VIPER850_DATA_PATH "${VISP_VIPER850_DATA_PATH}"
 
-// Defined if Franka Emika robot available.
+// Defined if libfranka from Franka Emika available to control Panda robot.
 #cmakedefine VISP_HAVE_FRANKA
+
+// libfranka version in hexadecimal (for example 0.5.0 gives 0x000500).
+#ifdef VISP_HAVE_FRANKA
+#  define VISP_HAVE_FRANKA_VERSION ${VISP_HAVE_FRANKA_VERSION}
+#endif
 
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER
 
+// Defined if the Parrot ARSDK is found.
+// This library is used to control Bebop2 drone.
+#cmakedefine VISP_HAVE_ARSDK
+// Defined if the Parrot ARSDK is found but also ffmpeg to get camera stream.
+#cmakedefine VISP_HAVE_FFMPEG
+
 // Defined if Haption Virtuose SDK available.
 #cmakedefine VISP_HAVE_VIRTUOSE
+
+// Defined if qbdevice api from qb-robotics available.
+#cmakedefine VISP_HAVE_QBDEVICE
 
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
@@ -386,11 +428,22 @@
 // other interaction matrices
 #cmakedefine VISP_MOMENTS_COMBINE_MATRICES
 
-//Defined if we want to use openmp
+// Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
-//Defined if we want to use c++ 11
-#cmakedefine VISP_HAVE_CPP11_COMPATIBILITY
+// Define c++ standard values also available in __cplusplus when gcc is used
+#define VISP_CXX_STANDARD_98 ${VISP_CXX_STANDARD_98}
+#define VISP_CXX_STANDARD_11 ${VISP_CXX_STANDARD_11}
+#define VISP_CXX_STANDARD_14 ${VISP_CXX_STANDARD_14}
+#define VISP_CXX_STANDARD_17 ${VISP_CXX_STANDARD_17}
+
+#define VISP_CXX_STANDARD ${VISP_CXX_STANDARD}
+
+// Defined to keep compat with previous releases when c++ 11 available
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#  define VISP_HAVE_CXX11
+#  define VISP_HAVE_CPP11_COMPATIBILITY
+#endif
 
 // Defined if isnan macro is available
 #cmakedefine VISP_HAVE_FUNC_ISNAN

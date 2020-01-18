@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,11 @@ public:
   void init();
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint &vpp);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpPoint &operator=(const vpPoint &vpp) = default;
+#else
   vpPoint &operator=(const vpPoint &vpp);
+#endif
 
   //! Projection onto the image plane of a point. Input: the 3D coordinates in
   //! the camera frame _cP, output : the 2D coordinates _p.

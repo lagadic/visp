@@ -12,7 +12,6 @@ ViSP allows simultaneously the tracking of a markerless object using the knowled
 
 To follow this tutorial depending on your interest you should be sure that ViSP was build with the following third-parties:
 - \c OpenCV: Useful if you want to investigate the KLT keypoint tracker implemented in vpMbKltTracker or its hybrid version vpMbEdgeKltTracker. We recommend to install \c OpenCV. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
-- \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mbdep_settings_xml.
 - \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mbdep_settings_visibility_ogre.
 - \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mbdep_advanced_wrml  instead of the home-made \ref mbdep_advanced_cao.
 
@@ -45,7 +44,7 @@ The following example that comes from tutorial-mb-tracker.cpp allows to track a 
 The previous example uses the following data as input:
 - a video file; "teabox.mpg" is the default video.
 - a cad model that describes the object to track. In our case the file \c "teabox.cao" is the default one. See \ref mbdep_model section to learn how the teabox is modelled and section \ref mbdep_advanced_cao to learn how to model an other object.
-- a file with extension "*.init" that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named "teabox.init". The content of this file is detailed in \ref mbdep_started_src_explained section.
+- a file with extension "*.init" that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named `teabox.init`. The content of this file is detailed in \ref mbdep_started_src_explained section.
 - an optional image with extension "*.ppm" that may help the user to remember the location of the corresponding 3D points specified in "*.init" file.
 
 
@@ -64,7 +63,9 @@ $ ./tutorial-mb-tracker --tracker 0
 will produce results similar to:
 \htmlonly
 <br>
-<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/b__u_yGEbmc?rel=0" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/b__u_yGEbmc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 - Using vpMbKltTracker to track only keypoints:
 \code
@@ -73,7 +74,9 @@ $ ./tutorial-mb-tracker --tracker 1
 will produce results similar to:
 \htmlonly
 <br>
-<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/eZmUw9r6Idw?rel=0" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/eZmUw9r6Idw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 - Using vpMbEdgeKltTracker to track moving-edges and keypoints in an hybrid scheme:
 \code
@@ -82,7 +85,9 @@ $ ./tutorial-mb-tracker --tracker 2
 will produce results similar to:
 \htmlonly
 <br>
-<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/a-RX9NPF2k0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
 \endhtmlonly
 
 With this example it is also possible to work on an other data set using "--video" and "--model" command line options. For example, if you run:
@@ -148,7 +153,7 @@ Matched 2D and 3D coordinates are then used to compute an initial pose used to i
 
 The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
 
-\includelineno teabox.init
+\includelineno tracking/model-based/generic/model/teabox/teabox.init
 
 We give now the signification of each line of this file:
 - line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number of points requested to compute a pose.
@@ -182,7 +187,7 @@ ViSP supports two different ways to describe CAD models, either in cao or in vrm
 
 The content of the file teabox.cao used in the getting started \ref mbdep_started_src but also in tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
 
-\includelineno teabox.cao
+\includelineno tracking/model-based/generic/model/teabox/teabox.cao
 
 This file describes the model of the tea box corresponding to the next image:
 
@@ -207,7 +212,7 @@ We make the choice to describe the faces of the box from the 3D points that corr
 
 The content of the file teabox-triangle.cao used in the tutorial-mb-klt-tracker.cpp example is given here:
 
-\includelineno teabox-triangle.cao
+\includelineno tutorial/tracking/model-based/old/keypoint/teabox-triangle.cao
 
 This file describes the model of the tea box corresponding to the next image:
 
@@ -222,7 +227,7 @@ Until line 15, the content of this file is similar to the one described in
 
 The content of the \c teabox.wrl file used in tutorial-mb-tracker-full.cpp and tutorial-mb-edge-tracker.cpp when \c teabox.cao is missing is given hereafter. This content is to make into relation with \c teabox.cao described in \ref mbdep_teabox_cao. As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. 
 
-\includelineno teabox.wrl
+\includelineno tracking/model-based/generic/model/teabox/teabox.wrl
 
 This file describes the model of the tea box corresponding to the next image:
 
@@ -239,7 +244,7 @@ We provide now a line by line description of the file where the faces of the box
 \subsection mbdep_settings_xml Settings from an XML file
 
 
-Instead of setting the tracker parameters from source code, if libxml2 is available it is possible to specify the settings from an XML file. As done in tutorial-mb-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
+Instead of setting the tracker parameters from source code, it is possible to specify the settings from an XML file. As done in tutorial-mb-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
 \snippet tutorial-mb-tracker-full.cpp Load xml
 The content of the XML file teabox.xml that is considered by default is the following:
 \code
@@ -872,7 +877,8 @@ $ ./tutorial-mb-tracker-full --video /your-path-to-model/cubesat/video/00%2d.png
 You should be able to obtain these kind of results:
 
 \htmlonly
-<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe></p>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
 \subsection mbdep_use_case_mmicro mmicro model
@@ -892,9 +898,9 @@ You should be able to obtain these kind of results:
 \section mbdep_known_issues Known issues
 \subsection mbdep_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility ckeck
 
-If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win10-msvc12 :
+If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
+C:\> mbtEdgeTracking.exe -c -o
 ...
 OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
 ...
@@ -905,7 +911,7 @@ and then a wonderful runtime issue as in the next image:
 
 It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
+C:\> mbtEdgeTracking.exe -c -o -w
 \endcode
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg

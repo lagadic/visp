@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,13 +158,8 @@ public:
                               const unsigned int length, const unsigned int thickness);
 
   void display(const vpImage<unsigned char> &I, vpColor col);
-  void display(const vpImage<unsigned char> &I)
-  {
-    vpMeTracker::display(I);
-  } // Shouldn't be here since it's already in vpMeTracker
-  /*!
-    \return Expected number of moving edges to track along the ellipse.
-   */
+  using vpMeTracker::display;
+
   int getExpectedDensity() { return (int)expecteddensity; }
 
   /*!

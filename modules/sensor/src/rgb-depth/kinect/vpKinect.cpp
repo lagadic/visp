@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ void vpKinect::start(vpKinect::vpDMResolution res)
     wd = 640;
   }
 
-#if defined(VISP_HAVE_VIPER850_DATA) && defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_VIPER850_DATA) && defined(VISP_HAVE_PUGIXML)
   vpXmlParserCamera cameraParser;
   std::string cameraXmlFile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_camera_Viper850.xml");
   cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera", vpCameraParameters::perspectiveProjWithDistortion, width,

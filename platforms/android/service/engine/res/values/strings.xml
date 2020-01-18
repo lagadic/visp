@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VISP Manager</string>
+    <string name="app_name">ViSP Manager</string>
     <string name="about">About</string>
     <string name="checkUpdate">Check for update</string>
     <string name="intro">ViSP standing for Visual Servoing Platform is a modular cross platform library that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done by Inria Lagadic team. ViSP is able to compute control laws that can be applied to robotic systems. See https://visp.inria.fr/ for details.</string>

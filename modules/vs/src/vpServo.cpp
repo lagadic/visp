@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1388,7 +1388,7 @@ void vpServo::computeProjectionOperators()
   double e1_ = 0.7;
   double sig = 0.0;
 
-  double norm_e = error.euclideanNorm();
+  double norm_e = error.frobeniusNorm();
   if (norm_e > e1_)
     sig = 1.0;
   else if (e0_ <= norm_e && norm_e <= e1_)

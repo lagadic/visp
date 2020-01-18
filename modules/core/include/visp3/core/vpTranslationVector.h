@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,35 @@
   from frame \f$ a \f$ to frame \f$ b \f$.  The representation of a
   translation is a column vector of dimension 3.
 
-  Translations are expressed in meters.
+  Translations along x,y,z axis are expressed in meters.
+
+  From the implementation point of view, it is nothing more than an
+  array of three doubles with values in [meters].
+
+  You can set values [meters] accessing each element:
+  \code
+  vpTranslationVector t;
+  t[0] = 0;
+  t[1] = 0.1;
+  t[2] = 0.5;
+  \endcode
+  You can also initialize the vector using operator<<(double):
+  \code
+  t << 0, 0.1, 05;
+  \endcode
+  Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
+  \code
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  t = {0, 0.1, 0.5};
+#endif
+  \endcode
+
+  To get the values [meters] use:
+  \code
+  double tx = t[0];
+  double ty = t[1];
+  double tz = t[2];
+  \endcode
 
   The code below shows how to use a translation vector to build an
   homogeneous matrix.
@@ -95,7 +123,7 @@ public:
       Default constructor.
       The translation vector is initialized to zero.
     */
-  vpTranslationVector() : vpArray2D<double>(3, 1){};
+  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) {};
   vpTranslationVector(const double tx, const double ty, const double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
@@ -107,7 +135,8 @@ public:
   vpTranslationVector buildFrom(const vpPoseVector &p);
   vpTranslationVector buildFrom(const vpColVector &v);
 
-  double euclideanNorm() const;
+  vp_deprecated double euclideanNorm() const;
+  double frobeniusNorm() const;
 
   // operators
 
@@ -127,13 +156,19 @@ public:
   // Copy operator.   Allow operation such as A = v
   vpTranslationVector &operator=(const vpColVector &tv);
   vpTranslationVector &operator=(const vpTranslationVector &tv);
-
   vpTranslationVector &operator=(double x);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpTranslationVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   //! Operator that allows to set a value of an element \f$t_i\f$: t[i] = x
   inline double &operator[](unsigned int n) { return *(data + n); }
   //! Operator that allows to get the value of an element \f$t_i\f$: x = t[i]
   inline const double &operator[](unsigned int n) const { return *(data + n); }
+
+  vpTranslationVector &operator<<(double val);
+  vpTranslationVector &operator,(double val);
+
 
   /*!
     This function is not applicable to a translation vector that is always a
@@ -158,8 +193,13 @@ public:
   vpRowVector t() const;
 
   static vpTranslationVector cross(const vpTranslationVector &a, const vpTranslationVector &b);
+  static vpTranslationVector mean(const std::vector<vpHomogeneousMatrix> &vec_M);
+  static vpTranslationVector mean(const std::vector<vpTranslationVector> &vec_t);
   static vpMatrix skew(const vpTranslationVector &tv);
   static void skew(const vpTranslationVector &tv, vpMatrix &M);
+
+protected:
+  unsigned int m_index; // index used for operator<< and operator, to fill a vector
 };
 
 #endif

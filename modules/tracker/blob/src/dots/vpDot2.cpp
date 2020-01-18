@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,8 +252,7 @@ void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned in
 */
 void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 {
-  while (vpDisplay::getClick(I, cog) != true)
-    ;
+  while (vpDisplay::getClick(I, cog) != true) {}
 
   unsigned int i = (unsigned int)cog.get_i();
   unsigned int j = (unsigned int)cog.get_j();
@@ -411,6 +410,10 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 
   \param I : Image.
 
+  \param canMakeTheWindowGrow: if true, the size of the searching area is
+  increased if the blob is not found, otherwise it stays the same. Default
+  value is true.
+
   \exception vpTrackingException::featureLostError : If the dot tracking
   failed. The tracking can fail if the following characteristics are not
   valid;
@@ -434,9 +437,8 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
   To get the pixels coordinates on the dot boundary, see getList_u() and
   getList_v().
 
-
 */
-void vpDot2::track(const vpImage<unsigned char> &I)
+void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
 {
   m00 = m11 = m02 = m20 = m10 = m01 = 0;
 
@@ -478,16 +480,20 @@ void vpDot2::track(const vpImage<unsigned char> &I)
     // get the first element in the area.
 
     // first get the size of the search window from the dot size
-    double searchWindowWidth, searchWindowHeight;
+    double searchWindowWidth = 0.0, searchWindowHeight = 0.0;
     // if( getWidth() == 0 || getHeight() == 0 )
     if (std::fabs(getWidth()) <= std::numeric_limits<double>::epsilon() ||
         std::fabs(getHeight()) <= std::numeric_limits<double>::epsilon()) {
       searchWindowWidth = 80.;
       searchWindowHeight = 80.;
-    } else {
+    } else if (canMakeTheWindowGrow) {
       searchWindowWidth = getWidth() * 5;
       searchWindowHeight = getHeight() * 5;
+    } else {
+      searchWindowWidth = getWidth();
+      searchWindowHeight = getHeight();
     }
+
     std::list<vpDot2> candidates;
     searchDotsInArea(I, (int)(this->cog.get_u() - searchWindowWidth / 2.0),
                      (int)(this->cog.get_v() - searchWindowHeight / 2.0), (unsigned int)searchWindowWidth,
@@ -582,9 +588,13 @@ void vpDot2::track(const vpImage<unsigned char> &I)
   Track and get the new dot coordinates. See track() for a more complete
   description
 
-  \param I : Image to process.
+  \param[in] I : Image to process.
 
-  \param ip [out] : Sub pixel coordinate of the tracked dot center of gravity.
+  \param[out] ip : Sub pixel coordinate of the tracked dot center of gravity.
+
+  \param[in] canMakeTheWindowGrow : if true, the size of the searching area is
+  increased if the blob is not found, otherwise it stays the same. Default
+  value is true.
 
   The behavior of this method is similar to the following code:
   \code
@@ -595,9 +605,9 @@ void vpDot2::track(const vpImage<unsigned char> &I)
 
   \sa track()
 */
-void vpDot2::track(const vpImage<unsigned char> &I, vpImagePoint &ip)
+void vpDot2::track(const vpImage<unsigned char> &I, vpImagePoint &ip, bool canMakeTheWindowGrow)
 {
-  track(I);
+  track(I, canMakeTheWindowGrow);
 
   ip = this->cog;
 }
@@ -628,21 +638,21 @@ double vpDot2::getArea() const { return fabs(surface); }
 
 /*!
   Return the precision of the gray level of the dot. It is a double
-  precision float witch value is in ]0,1]. 1 means full precision, whereas
+  precision float which value is in [0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 */
 double vpDot2::getGrayLevelPrecision() const { return grayLevelPrecision; }
 
 /*!
   Return the precision of the size of the dot. It is a double
-  precision float witch value is in ]0,1]. 1 means full precision, whereas
+  precision float which value is in [0.05,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 */
 double vpDot2::getSizePrecision() const { return sizePrecision; }
 
 /*!
   Return the precision of the ellipsoid shape of the dot. It is a double
-  precision float witch value is in [0,1]. 1 means full precision, whereas
+  precision float which value is in [0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
 
   \sa setEllipsoidShapePrecision()
@@ -651,7 +661,7 @@ double vpDot2::getEllipsoidShapePrecision() const { return ellipsoidShapePrecisi
 
 /*!
   Return the precision of the search maximum distance to get the starting
-  point on a dot border. It is a double precision float witch value is in
+  point on a dot border. It is a double precision float which value is in
   [0.05,1]. 1 means full precision, whereas values close to 0 show a very bad
   precision.
 */
@@ -709,10 +719,10 @@ void vpDot2::setArea(const double &a) { this->surface = a; }
 
   Set the precision of the gray level of the dot.
 
-  \param precision : It is a double precision float which value is in ]0,1]:
+  \param precision : It is a double precision float which value is in [0.05,1]:
   - 1 means full precision, whereas values close to 0 show a very bad
   accuracy.
-  - Values lower or equal to 0 are brought back to an epsilon>0
+  - Values lower or equal to 0.05 are brought back to 0.05.
   - Values higher than  1 are brought back to 1
   If the initial gray level is I, the gray levels of the dot will be between :
   \f$Imin=255*\big((\frac{I}{255})^{{\gamma}^{-1}}-(1-grayLevelPrecision)\big)^{\gamma}\f$
@@ -1351,10 +1361,10 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
       u = (unsigned int)(cog_u + innerCoef * (a1 * cos(alpha) * cos(theta) - a2 * sin(alpha) * sin(theta)));
       v = (unsigned int)(cog_v + innerCoef * (a1 * sin(alpha) * cos(theta) + a2 * cos(alpha) * sin(theta)));
       if (!this->hasGoodLevel(I, u, v)) {
-// 	vpTRACE("Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
+// 	vpTRACE("Inner circle pixel (%d, %d) has bad level for dot (%g, %g)",
 // 		u, v, cog_u, cog_v);
 #ifdef DEBUG
-        printf("Inner cercle pixel (%u, %u) has bad level for dot (%g, %g): "
+        printf("Inner circle pixel (%u, %u) has bad level for dot (%g, %g): "
                "%d not in [%u, %u]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
@@ -1400,10 +1410,10 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
         continue;
       }
       if (!this->hasReverseLevel(I, u, v)) {
-// 	vpTRACE("Outside cercle pixel (%d, %d) has bad level for dot (%g,
+// 	vpTRACE("Outside circle pixel (%d, %d) has bad level for dot (%g,
 // %g)", 		u, v, cog_u, cog_v);
 #ifdef DEBUG
-        printf("Outside cercle pixel (%u, %u) has bad level for dot (%g, "
+        printf("Outside circle pixel (%u, %u) has bad level for dot (%g, "
                "%g): %d not in [%u, %u]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif

@@ -1,7 +1,7 @@
 #############################################################################
 #
-# This file is part of the ViSP software.
-# Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ else()
     C:/mingw/lib64
     )
 
-  FIND_LIBRARY(ZLIB_LIBRARY_DEBUG zlibd
+  find_library(ZLIB_LIBRARY_DEBUG zlibd
     $ENV{ZLIB_DIR}/lib
     $ENV{ZLIB_LIBRARY_DEBUG_DIR}
     /lib
@@ -125,7 +125,5 @@ mark_as_advanced(
   ZLIB_LIBRARY_RELEASE
   ZLIB_LIBRARY_DEBUG
   )
-
-
 
 

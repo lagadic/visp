@@ -3,6 +3,23 @@ project(${the_module})
 glob_more_specific_sources(H "${CMAKE_CURRENT_SOURCE_DIR}/../generator/src" handwritten_h_sources)
 glob_more_specific_sources(CPP "${CMAKE_CURRENT_SOURCE_DIR}/../generator/src" handwritten_cpp_sources)
 
+# TODO: If introduced, it creates build errors on android
+# grab C++ files from misc/java
+#foreach(m ${VISP_MODULES_BUILD})
+#  if (";${VISP_MODULE_${m}_WRAPPERS};" MATCHES ";java;" AND HAVE_${m})
+#    set(module_java_dir "${VISP_MODULE_${m}_LOCATION}/misc/java")
+#    include_directories("${module_java_dir}/src/cpp")
+#    file(GLOB _result "${module_java_dir}/src/cpp/*.h" "${module_java_dir}/src/cpp/*.hpp" "${module_java_dir}/src/cpp/*.cpp")
+#    list(APPEND handwritten_cpp_sources ${_result})
+#  endif()
+#endforeach()
+
+if(ANDROID)
+  vp_update(JNI_OUTPUT_PATH  "${VISP_BINARY_DIR}/jni/${ANDROID_NDK_ABI_NAME}")
+else()
+  vp_update(JNI_OUTPUT_PATH  "${LIBRARY_OUTPUT_PATH}")
+endif()
+
 set(__type MODULE)
 if(BUILD_FAT_JAVA_LIB)
   set(__type SHARED) # samples link to libvisp_java
@@ -14,10 +31,6 @@ vp_add_library(${the_module} ${__type}
     ${copied_files}
 )
 add_dependencies(${the_module} gen_visp_java_source)
-
-# TODO: Some strange error. VISP_JAVA_BINDINGS_DIR is null at this line of execution. I dont know why its happening 
-# Currently using a temporary workaround  
-set(VISP_JAVA_BINDINGS_DIR "${VISP_BINARY_DIR}/modules/java_bindings_generator") 
  
 vp_target_include_directories(${the_module} "${CMAKE_CURRENT_SOURCE_DIR}/../generator/src/cpp")
 vp_target_include_directories(${the_module} "${VISP_JAVA_BINDINGS_DIR}/gen/cpp")
@@ -40,7 +53,7 @@ if(BUILD_FAT_JAVA_LIB)
     foreach(_dep ${__deps})
       vp_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-force_load "${_dep}")
     endforeach()
-	# TODO: Just check open-cv's file once, they had a condition I ignored
+	# TODO: Just check visp's file once, they had a condition I ignored
   elseif(((UNIX) OR (VISP_FORCE_FAT_JAVA_LIB_LD_RULES)) AND (NOT VISP_SKIP_FAT_JAVA_LIB_LD_RULES))
     vp_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-whole-archive ${__deps} -Wl,-no-whole-archive)
   else()
@@ -61,7 +74,7 @@ set_target_properties(${the_module} PROPERTIES
     )
 
 if(ANDROID)
-  vp_target_link_libraries(${the_module} LINK_PUBLIC jnigraphics) # for Mat <=> Bitmap converters
+  vp_target_link_libraries(${the_module} LINK_PUBLIC jnigraphics)
   vp_target_link_libraries(${the_module} LINK_PUBLIC log dl z)
 
   # force strip library after the build command

@@ -1,0 +1,427 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		303072F022AE2DD900F019D0 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 303072EE22AE2DD900F019D0 /* opencv2.framework */; };
+		303072F122AE2DD900F019D0 /* visp3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 303072EF22AE2DD900F019D0 /* visp3.framework */; };
+		3040DA44221F988200C72347 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA43221F988200C72347 /* AppDelegate.swift */; };
+		3040DA46221F988200C72347 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA45221F988200C72347 /* ViewController.swift */; };
+		3040DA49221F988200C72347 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3040DA47221F988200C72347 /* Main.storyboard */; };
+		3040DA4B221F988300C72347 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3040DA4A221F988300C72347 /* Assets.xcassets */; };
+		3040DA4E221F988300C72347 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3040DA4C221F988300C72347 /* LaunchScreen.storyboard */; };
+		3040DA5A221F991300C72347 /* VideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA56221F991200C72347 /* VideoCapture.swift */; };
+		3040DA5B221F991300C72347 /* VispDetector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA58221F991300C72347 /* VispDetector.mm */; };
+		3040DA61221F99DC00C72347 /* ImageConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA5E221F99DC00C72347 /* ImageConversion.mm */; };
+		3040DA62221F99DC00C72347 /* ImageDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA60221F99DC00C72347 /* ImageDisplay.mm */; };
+		30E9DA38222E16B50044ACD3 /* ImageDisplay+withContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30E9DA37222E16B50044ACD3 /* ImageDisplay+withContext.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		303072EE22AE2DD900F019D0 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		303072EF22AE2DD900F019D0 /* visp3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = visp3.framework; sourceTree = "<group>"; };
+		3040DA40221F988200C72347 /* AprilTagLiveCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AprilTagLiveCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3040DA43221F988200C72347 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3040DA45221F988200C72347 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3040DA48221F988200C72347 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3040DA4A221F988300C72347 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3040DA4D221F988300C72347 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3040DA4F221F988300C72347 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3040DA56221F991200C72347 /* VideoCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCapture.swift; sourceTree = "<group>"; };
+		3040DA57221F991300C72347 /* VispDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VispDetector.h; sourceTree = "<group>"; };
+		3040DA58221F991300C72347 /* VispDetector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VispDetector.mm; sourceTree = "<group>"; };
+		3040DA5D221F99DC00C72347 /* ImageConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageConversion.h; sourceTree = "<group>"; };
+		3040DA5E221F99DC00C72347 /* ImageConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageConversion.mm; sourceTree = "<group>"; };
+		3040DA5F221F99DC00C72347 /* ImageDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDisplay.h; sourceTree = "<group>"; };
+		3040DA60221F99DC00C72347 /* ImageDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDisplay.mm; sourceTree = "<group>"; };
+		3040DA64221F9A3000C72347 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = "../../../../Library/visp/visp-3.1.0.framework/opencv2.framework"; sourceTree = "<group>"; };
+		3040DA65221F9A3000C72347 /* visp3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = visp3.framework; path = "../../../../Library/visp/visp-3.1.0.framework/visp3.framework"; sourceTree = "<group>"; };
+		30E9DA36222E16B50044ACD3 /* ImageDisplay+withContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageDisplay+withContext.h"; sourceTree = "<group>"; };
+		30E9DA37222E16B50044ACD3 /* ImageDisplay+withContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ImageDisplay+withContext.mm"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3040DA3D221F988200C72347 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				303072F122AE2DD900F019D0 /* visp3.framework in Frameworks */,
+				303072F022AE2DD900F019D0 /* opencv2.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		30015B0F22A777A100834B9B /* 3rdparty */ = {
+			isa = PBXGroup;
+			children = (
+				3040DA56221F991200C72347 /* VideoCapture.swift */,
+			);
+			path = 3rdparty;
+			sourceTree = "<group>";
+		};
+		3040DA37221F988200C72347 = {
+			isa = PBXGroup;
+			children = (
+				303072EE22AE2DD900F019D0 /* opencv2.framework */,
+				303072EF22AE2DD900F019D0 /* visp3.framework */,
+				3040DA42221F988200C72347 /* AprilTagLiveCamera */,
+				3040DA5C221F99BB00C72347 /* VispHelper */,
+				3040DA41221F988200C72347 /* Products */,
+				3040DA63221F9A3000C72347 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		3040DA41221F988200C72347 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3040DA40221F988200C72347 /* AprilTagLiveCamera.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3040DA42221F988200C72347 /* AprilTagLiveCamera */ = {
+			isa = PBXGroup;
+			children = (
+				30015B0F22A777A100834B9B /* 3rdparty */,
+				3040DA4A221F988300C72347 /* Assets.xcassets */,
+				3040DA4F221F988300C72347 /* Info.plist */,
+				3040DA43221F988200C72347 /* AppDelegate.swift */,
+				3040DA57221F991300C72347 /* VispDetector.h */,
+				3040DA58221F991300C72347 /* VispDetector.mm */,
+				3040DA45221F988200C72347 /* ViewController.swift */,
+				3040DA4C221F988300C72347 /* LaunchScreen.storyboard */,
+				3040DA47221F988200C72347 /* Main.storyboard */,
+			);
+			path = AprilTagLiveCamera;
+			sourceTree = "<group>";
+		};
+		3040DA5C221F99BB00C72347 /* VispHelper */ = {
+			isa = PBXGroup;
+			children = (
+				3040DA5D221F99DC00C72347 /* ImageConversion.h */,
+				3040DA5E221F99DC00C72347 /* ImageConversion.mm */,
+				3040DA5F221F99DC00C72347 /* ImageDisplay.h */,
+				3040DA60221F99DC00C72347 /* ImageDisplay.mm */,
+				30E9DA36222E16B50044ACD3 /* ImageDisplay+withContext.h */,
+				30E9DA37222E16B50044ACD3 /* ImageDisplay+withContext.mm */,
+			);
+			path = VispHelper;
+			sourceTree = "<group>";
+		};
+		3040DA63221F9A3000C72347 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3040DA64221F9A3000C72347 /* opencv2.framework */,
+				3040DA65221F9A3000C72347 /* visp3.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3040DA3F221F988200C72347 /* AprilTagLiveCamera */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3040DA52221F988300C72347 /* Build configuration list for PBXNativeTarget "AprilTagLiveCamera" */;
+			buildPhases = (
+				3040DA3C221F988200C72347 /* Sources */,
+				3040DA3D221F988200C72347 /* Frameworks */,
+				3040DA3E221F988200C72347 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AprilTagLiveCamera;
+			productName = testSwiftDetector;
+			productReference = 3040DA40221F988200C72347 /* AprilTagLiveCamera.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3040DA38221F988200C72347 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1010;
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = MyOrganization;
+				TargetAttributes = {
+					3040DA3F221F988200C72347 = {
+						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1010;
+					};
+				};
+			};
+			buildConfigurationList = 3040DA3B221F988200C72347 /* Build configuration list for PBXProject "AprilTagLiveCamera" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3040DA37221F988200C72347;
+			productRefGroup = 3040DA41221F988200C72347 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3040DA3F221F988200C72347 /* AprilTagLiveCamera */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3040DA3E221F988200C72347 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3040DA4E221F988300C72347 /* LaunchScreen.storyboard in Resources */,
+				3040DA4B221F988300C72347 /* Assets.xcassets in Resources */,
+				3040DA49221F988200C72347 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3040DA3C221F988200C72347 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3040DA5A221F991300C72347 /* VideoCapture.swift in Sources */,
+				3040DA5B221F991300C72347 /* VispDetector.mm in Sources */,
+				3040DA62221F99DC00C72347 /* ImageDisplay.mm in Sources */,
+				3040DA61221F99DC00C72347 /* ImageConversion.mm in Sources */,
+				3040DA46221F988200C72347 /* ViewController.swift in Sources */,
+				3040DA44221F988200C72347 /* AppDelegate.swift in Sources */,
+				30E9DA38222E16B50044ACD3 /* ImageDisplay+withContext.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		3040DA47221F988200C72347 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3040DA48221F988200C72347 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		3040DA4C221F988300C72347 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3040DA4D221F988300C72347 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3040DA50221F988300C72347 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3040DA51221F988300C72347 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3040DA53221F988300C72347 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Z7689KDQMR;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				INFOPLIST_FILE = AprilTagLiveCamera/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = MyOrg.AprilTagLiveCamera;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = AprilTagLiveCamera/VispDetector.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3040DA54221F988300C72347 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Z7689KDQMR;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
+				INFOPLIST_FILE = AprilTagLiveCamera/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = MyOrg.AprilTagLiveCamera;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = AprilTagLiveCamera/VispDetector.h;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3040DA3B221F988200C72347 /* Build configuration list for PBXProject "AprilTagLiveCamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3040DA50221F988300C72347 /* Debug */,
+				3040DA51221F988300C72347 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3040DA52221F988300C72347 /* Build configuration list for PBXNativeTarget "AprilTagLiveCamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3040DA53221F988300C72347 /* Debug */,
+				3040DA54221F988300C72347 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3040DA38221F988200C72347 /* Project object */;
+}

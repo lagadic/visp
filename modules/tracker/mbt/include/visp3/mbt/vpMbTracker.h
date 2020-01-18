@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,13 +45,7 @@
 #ifndef vpMbTracker_hh
 #define vpMbTracker_hh
 
-#include <algorithm>
-#include <cctype>
-#include <fstream>
-#include <functional> // std::not1
-#include <locale>
 #include <map>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -225,6 +219,8 @@ protected:
   vpCameraParameters m_projectionErrorCam;
   //! Mask used to disable tracking on a part of image
   const vpImage<bool> *m_mask;
+  //! Grayscale image buffer, used when passing color images
+  vpImage<unsigned char> m_I;
 
 public:
   vpMbTracker();
@@ -429,17 +425,31 @@ public:
 #ifdef VISP_HAVE_MODULE_GUI
   virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false,
                          const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  virtual void initClick(const vpImage<vpRGBa> &I_color, const std::string &initFile, const bool displayHelp = false,
+                         const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
+
   virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
+                         const std::string &displayFile = "");
+  virtual void initClick(const vpImage<vpRGBa> &I_color, const std::vector<vpPoint> &points3D_list,
                          const std::string &displayFile = "");
 #endif
 
   virtual void initFromPoints(const vpImage<unsigned char> &I, const std::string &initFile);
+  virtual void initFromPoints(const vpImage<vpRGBa> &I_color, const std::string &initFile);
+
   virtual void initFromPoints(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &points2D_list,
+                              const std::vector<vpPoint> &points3D_list);
+  virtual void initFromPoints(const vpImage<vpRGBa> &I_color, const std::vector<vpImagePoint> &points2D_list,
                               const std::vector<vpPoint> &points3D_list);
 
   virtual void initFromPose(const vpImage<unsigned char> &I, const std::string &initFile);
+  virtual void initFromPose(const vpImage<vpRGBa> &I_color, const std::string &initFile);
+
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  virtual void initFromPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo);
+
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo);
+  virtual void initFromPose(const vpImage<vpRGBa> &I_color, const vpPoseVector &cPo);
 
   virtual void loadModel(const std::string &modelFile, const bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
@@ -671,6 +681,11 @@ public:
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false) = 0;
 
+  virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
+                                                               const vpHomogeneousMatrix &cMo,
+                                                               const vpCameraParameters &cam,
+                                                               const bool displayFullModel=false)=0;
+
   /*!
     Initialise the tracking.
 
@@ -699,10 +714,22 @@ public:
     \warning This function has to be called after the initialisation of the
     tracker.
 
-    \param I : image corresponding to the desired pose.
+    \param I : grayscale image corresponding to the desired pose.
     \param cdMo : Pose to affect.
   */
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) = 0;
+
+  /*!
+    Set the pose to be used in entry of the next call to the track() function.
+    This pose will be just used once.
+
+    \warning This function has to be called after the initialisation of the
+    tracker.
+
+    \param I_color : color image corresponding to the desired pose.
+    \param cdMo : Pose to affect.
+  */
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) = 0;
 
   /*!
     Test the quality of the tracking.
@@ -717,6 +744,13 @@ public:
     \param I : The current image.
   */
   virtual void track(const vpImage<unsigned char> &I) = 0;
+
+  /*!
+    Track the object in the given image
+
+    \param I : The current image.
+  */
+  virtual void track(const vpImage<vpRGBa> &I) = 0;
 
 protected:
   /** @name Protected Member Functions Inherited from vpMbTracker */
@@ -792,12 +826,31 @@ protected:
     \param p2 : A point on the plane containing the circle.
     \param p3 : An other point on the plane containing the circle. With the
     center of the circle \e p1, \e p2 and \e p3 we have 3 points defining the
-    plane that contains the circle. \param radius : Radius of the circle.
+    plane that contains the circle.
+    \param radius : Radius of the circle.
     \param idFace : Id of the face associated to the circle.
     \param name : Name of the circle.
   */
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
                           const int idFace = 0, const std::string &name = "") = 0;
+
+#ifdef VISP_HAVE_MODULE_GUI
+  virtual void initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color, const std::string &initFile,
+                         const bool displayHelp = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
+
+  virtual void initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                         const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "");
+#endif
+
+  virtual void initFromPoints(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                              const std::string &initFile);
+
+  virtual void initFromPoints(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                              const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list);
+
+  virtual void initFromPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+                            const std::string &initFile);
+
   /*!
     Add a cylinder to track from two points on the axis (defining the length
     of the cylinder) and its radius.
@@ -840,36 +893,11 @@ protected:
 
   void projectionErrorInitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
   void projectionErrorResetMovingEdges();
-  void projectionErrorVisibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo);
+  void projectionErrorVisibleFace(unsigned int width, unsigned int height, const vpHomogeneousMatrix &_cMo);
 
   void removeComment(std::ifstream &fileId);
 
-  inline bool parseBoolean(std::string &input)
-  {
-    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
-    std::istringstream is(input);
-    bool b;
-    // Parse string to boolean either in the textual representation
-    // (True/False)  or in numeric representation (1/0)
-    is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
-    return b;
-  }
-
   std::map<std::string, std::string> parseParameters(std::string &endLine);
-
-  inline std::string &ltrim(std::string &s) const
-  {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-    return s;
-  }
-
-  inline std::string &rtrim(std::string &s) const
-  {
-    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-    return s;
-  }
-
-  inline std::string &trim(std::string &s) const { return ltrim(rtrim(s)); }
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };

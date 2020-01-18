@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef __vpDetectorDataMatrixCode_h__
-#define __vpDetectorDataMatrixCode_h__
+#ifndef _vpDetectorDataMatrixCode_h_
+#define _vpDetectorDataMatrixCode_h_
 
 #include <string>
 #include <utility>
@@ -55,15 +55,15 @@
   \ingroup group_detection_barcode
   Base class for bar code detector. This class is a wrapper over libdmtx
   available from http://www.libdmtx.org. Installation instructions are
-provided here https://visp.inria.fr/3rd_dmtx.
+  provided here https://visp.inria.fr/3rd_dmtx.
 
   The detect() function allows to detect multiple QR codes in an image. Once
-detected, for each QR code it is possible to retrieve the location of the
-corners using getPolygon(), the encoded message using getMessage(), the
-bounding box using getBBox() and the center of gravity using getCog().
+  detected, for each QR code it is possible to retrieve the location of the
+  corners using getPolygon(), the encoded message using getMessage(), the
+  bounding box using getBBox() and the center of gravity using getCog().
 
   The following sample code shows how to use this class to detect QR codes in
-an image.
+  an image.
 \code
 #include <visp3/detection/vpDetectorDataMatrixCode.h>
 #include <visp3/io/vpImageIo.h>

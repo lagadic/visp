@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,19 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   const unsigned int m = A.getRows();
   const unsigned int n = A.getCols();
 
+  // degeneracy if A is actually null
+  if(A.infinityNorm() < tol)
+  {
+    if(b.infinityNorm() < tol)
+    {
+      b.resize(n);
+      A.eye(n);
+      return true;
+    }
+    else
+      return false;
+  }
+
   // try with standard QR
   vpMatrix Q, R;
   unsigned int r;
@@ -128,13 +141,13 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         IQQt[j][j] += 1;
       // most of the time the first n-m columns are just fine
       A = IQQt.extract(0,0,n,n-m);
-      if (std::fabs((A.t()*A).detByLU()) <= std::numeric_limits<double>::epsilon())
+      if(A.qr(Q, R, false, false, tol) != n-m)
       {
         // rank deficiency, manually find n-m independent columns
         unsigned int j0;
-        for (j0 = 0; j0 < n; ++j0)
+        for(j0 = 0; j0 < n; ++j0)
         {
-          if(!vpLinProg::allZero(IQQt.getCol(j0)))
+          if(!allZero(IQQt.getCol(j0)))
           {
             A = IQQt.getCol(j0);
             break;
@@ -145,10 +158,10 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         while(A.getCols() < n-m)
         {
           // add next column and check rank of A^T.A
-          if (!vpLinProg::allZero(IQQt.getCol(j)))
+          if(!allZero(IQQt.getCol(j)))
           {
             A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-            if (std::fabs((A.t()*A).detByLU()) <= std::numeric_limits<double>::epsilon())
+            if(A.qr(Q, R, false, false, tol) != A.getCols())
               A.resize(n,A.getCols()-1, false);
           }
           j++;
@@ -179,13 +192,13 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       IQQt[j][j] += 1;
     // most of the time the first n-r columns are just fine
     A = IQQt.extract(0,0,n,n-r);
-    if (std::fabs((A.t()*A).detByLU()) <= std::numeric_limits<double>::epsilon())
+    if(A.qr(Q, R, false, false, tol) != n-r)
     {
       // rank deficiency, manually find n-r independent columns
       unsigned int j0;
       for(j0 = 0; j0 < n; ++j0)
       {
-        if(!vpLinProg::allZero(IQQt.getCol(j0)))
+        if(!allZero(IQQt.getCol(j0)))
         {
           A = IQQt.getCol(j0);
           break;
@@ -196,10 +209,10 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       while(A.getCols() < n-r)
       {
         // add next column and check rank of A^T.A
-        if(!vpLinProg::allZero(IQQt.getCol(j)))
+        if(!allZero(IQQt.getCol(j)))
         {
           A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-          if (std::fabs((A.t()*A).detByLU()) <= std::numeric_limits<double>::epsilon())
+          if(A.qr(Q, R, false, false, tol) != A.getCols())
             A.resize(n,A.getCols()-1, false);
         }
         j++;
@@ -253,6 +266,19 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   const unsigned int m = A.getRows();
   const unsigned int n = A.getCols();
 
+  // degeneracy if A is actually null
+  if(A.infinityNorm() < tol)
+  {
+    if(b.infinityNorm() < tol)
+    {
+      b.resize(0);
+      A.resize(0,n);
+      return true;
+    }
+    else
+      return false;
+  }
+
   vpMatrix Q, R, P;
   const unsigned int r = A.qrPivot(Q, R, P, false, false, tol);
   const vpColVector x = P.transpose() *
@@ -271,7 +297,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   return false;
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Solves a Linear Program under various constraints
 
@@ -297,7 +323,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 
   Lower and upper bounds may be passed as a list of (index, bound) with C++11's braced initialization.
 
-  \warning This function is only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 
@@ -495,9 +521,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & \mathbf{c}^T\mathbf{x}\\
                & \text{s.t.}& \mathbf{A}\mathbf{x} = \mathbf{b}\\
-                & \text{s.t.}& \mathbf{x} \geq 0
-\end{array}
-\f$
+               & \text{s.t.}& \mathbf{x} \geq 0
+  \end{array}
+  \f$
   \param c : cost vector (dimension n)
   \param A : equality matrix (dimension m x n)
   \param b : equality vector (dimension m)
@@ -506,7 +532,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
 
   \return True if the solution was found.
 
-  \warning This function is only available if C++11 is activated during compilation. Configure ViSP using cmake -DUSE_CPP11=ON.
+  \warning This function is only available if c++11 or higher is activated during build.
+  Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 

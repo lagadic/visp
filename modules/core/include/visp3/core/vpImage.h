@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,14 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+
+// Visual Studio 2010 or previous is missing inttypes.h
+#if defined(_MSC_VER) && (_MSC_VER < 1700)
+typedef long long int64_t;
+typedef unsigned short uint16_t;
+#else
+#  include <inttypes.h>
+#endif
 
 class vpDisplay;
 
@@ -137,7 +145,7 @@ public:
   vpImage();
   //! copy constructor
   vpImage(const vpImage<Type> &);
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   //! move constructor
   vpImage(vpImage<Type> &&);
 #endif
@@ -189,19 +197,16 @@ public:
   void getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal = NULL, Type *maxVal = NULL) const;
 
   /*!
-
     Get the image number of pixels which corresponds to the image
     width multiplied by the image height.
 
     \return The image number of pixels or image size.
-
 
     \sa getWidth(), getHeight()
    */
   inline unsigned int getNumberOfPixel() const { return npixels; }
 
   /*!
-
     Get the number of rows in the image.
 
     \return The image number of rows, or image height.
@@ -209,6 +214,7 @@ public:
     \sa getHeight()
   */
   inline unsigned int getRows() const { return height; }
+
   /*!
     Get the image size.
 
@@ -223,7 +229,7 @@ public:
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
-  Type getValue(vpImagePoint &ip) const;
+  Type getValue(const vpImagePoint &ip) const;
 
   // Get image pixels sum
   double getSum() const;
@@ -234,7 +240,6 @@ public:
     \return The image width.
 
     \sa getHeight()
-
   */
   inline unsigned int getWidth() const { return width; }
 
@@ -265,15 +270,15 @@ public:
     position and j the column position.
 
     \return Value of the image point (i, j).
-
   */
   inline Type operator()(const unsigned int i, const unsigned int j) const { return bitmap[i * width + j]; }
+
   /*!
     Set the value \e v of an image point with coordinates (i, j), with i the
     row position and j the column position.
-
   */
   inline void operator()(const unsigned int i, const unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
+
   /*!
     Get the value of an image point.
 
@@ -283,7 +288,6 @@ public:
     \return Value of the image point \e ip.
 
     \sa getValue(const vpImagePoint &)
-
   */
   inline Type operator()(const vpImagePoint &ip) const
   {
@@ -292,6 +296,7 @@ public:
 
     return bitmap[i * width + j];
   }
+
   /*!
     Set the value of an image point.
 
@@ -299,7 +304,6 @@ public:
     coordinates are roughly transformed to insigned int coordinates by cast.
 
     \param v : Value to set for the image point.
-
   */
   inline void operator()(const vpImagePoint &ip, const Type &v)
   {
@@ -317,7 +321,7 @@ public:
   vpImage<Type> &operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
   bool operator!=(const vpImage<Type> &I);
-  friend std::ostream &operator<<<>(std::ostream &s, const vpImage<Type> &I);
+  friend std::ostream &operator<< <>(std::ostream &s, const vpImage<Type> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<char> &I);
   friend std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
@@ -347,6 +351,7 @@ private:
   unsigned int width;   ///! number of columns
   unsigned int height;  ///! number of rows
   Type **row;           ///! points the row pointer array
+  bool hasOwnership;    ///! true if this instance owns the bitmap, false otherwise (e.g. copyData=false)
 };
 
 template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Type> &I)
@@ -670,7 +675,9 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
   if ((h != this->height) || (w != this->width)) {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10, "Destruction bitmap[]");
-      delete[] bitmap;
+      if (hasOwnership) {
+        delete[] bitmap;
+      }
       bitmap = NULL;
     }
   }
@@ -680,8 +687,10 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 
   npixels = width * height;
 
-  if (bitmap == NULL)
+  if (bitmap == NULL) {
     bitmap = new Type[npixels];
+    hasOwnership = true;
+  }
 
   if (bitmap == NULL) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
@@ -723,11 +732,14 @@ void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned
   // Delete bitmap if copyData==false, otherwise only if the dimension differs
   if ((copyData && ((h != this->height) || (w != this->width))) || !copyData) {
     if (bitmap != NULL) {
-      delete[] bitmap;
+      if (hasOwnership) {
+        delete[] bitmap;
+      }
       bitmap = NULL;
     }
   }
 
+  hasOwnership = copyData;
   this->width = w;
   this->height = h;
 
@@ -742,7 +754,7 @@ void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned
     }
 
     // Copy the image data
-    memcpy(bitmap, array, (size_t)(npixels * sizeof(Type)));
+    memcpy(static_cast<void*>(bitmap), static_cast<void*>(array), (size_t)(npixels * sizeof(Type)));
   } else {
     // Copy the address of the array in the bitmap
     bitmap = array;
@@ -779,7 +791,7 @@ void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(h, w, 0);
 }
@@ -803,7 +815,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w)
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(h, w, value);
 }
@@ -825,7 +837,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
 */
 template <class Type>
 vpImage<Type>::vpImage(Type *const array, const unsigned int h, const unsigned int w, const bool copyData)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(array, h, w, copyData);
 }
@@ -839,7 +851,8 @@ vpImage<Type>::vpImage(Type *const array, const unsigned int h, const unsigned i
 
   \sa vpImage::resize(height, width) for memory allocation
 */
-template <class Type> vpImage<Type>::vpImage() : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+template <class Type> vpImage<Type>::vpImage() :
+  bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
 }
 
@@ -899,7 +912,9 @@ template <class Type> void vpImage<Type>::destroy()
   if (bitmap != NULL) {
     //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
     //    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
-    delete[] bitmap;
+    if (hasOwnership) {
+      delete[] bitmap;
+    }
     bitmap = NULL;
   }
 
@@ -923,19 +938,20 @@ template <class Type> vpImage<Type>::~vpImage() { destroy(); }
   Copy constructor
 */
 template <class Type>
-vpImage<Type>::vpImage(const vpImage<Type> &I) : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+vpImage<Type>::vpImage(const vpImage<Type> &I)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   resize(I.getHeight(), I.getWidth());
-  memcpy(bitmap, I.bitmap, I.npixels * sizeof(Type));
+  memcpy(static_cast<void*>(bitmap), static_cast<void*>(I.bitmap), I.npixels * sizeof(Type));
 }
 
-#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move constructor
 */
 template <class Type>
 vpImage<Type>::vpImage(vpImage<Type> &&I)
-  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row)
+  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row), hasOwnership(I.hasOwnership)
 {
   I.bitmap = NULL;
   I.display = NULL;
@@ -943,6 +959,7 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
   I.width = 0;
   I.height = 0;
   I.row = NULL;
+  I.hasOwnership = false;
 }
 #endif
 
@@ -1128,17 +1145,6 @@ template <class Type> bool vpImage<Type>::operator==(const vpImage<Type> &I)
 */
 template <class Type> bool vpImage<Type>::operator!=(const vpImage<Type> &I)
 {
-  //  if (this->width != I.getWidth())
-  //    return true;
-  //  if (this->height != I.getHeight())
-  //    return true;
-
-  //  for (unsigned int i=0 ; i < npixels ; i++)
-  //  {
-  //    if (bitmap[i] != I.bitmap[i])
-  //      return true;
-  //  }
-  //  return false;
   return !(*this == I);
 }
 
@@ -1179,7 +1185,7 @@ template <class Type> vpImage<Type> vpImage<Type>::operator-(const vpImage<Type>
 
   It is possible to insert the image \f$ src \f$ into the calling vpImage.
   You can set the point in the destination image where the top left corner of
-  the \f$ src \f$ image will belocated.
+  the \f$ src \f$ image will be located.
 
   \param src : Image to insert
   \param topLeft : Upper/left coordinates in the image where the image \e src
@@ -1228,7 +1234,7 @@ template <class Type> void vpImage<Type>::insert(const vpImage<Type> &src, const
     Type *srcBitmap = src.bitmap + ((src_ibegin + i) * src_w + src_jbegin);
     Type *destBitmap = this->bitmap + ((dest_ibegin + i) * dest_w + dest_jbegin);
 
-    memcpy(destBitmap, srcBitmap, (size_t)wsize * sizeof(Type));
+    memcpy(static_cast<void*>(destBitmap), static_cast<void*>(srcBitmap), (size_t)wsize * sizeof(Type));
   }
 }
 
@@ -1321,9 +1327,7 @@ void vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale, vpImag
   See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.
 
   \sa subsample()
-
 */
-
 template <class Type> void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) const
 {
   unsigned int h = height / 4;
@@ -1365,7 +1369,6 @@ template <class Type> void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) c
   \endcode
 
   See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.
-
 */
 template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 {
@@ -1415,7 +1418,6 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 
   \exception vpImageException::notInTheImage : If (i,j) is out
   of the image.
-
 */
 template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsigned int j) const
 {
@@ -1427,13 +1429,11 @@ template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsign
 }
 
 /*!
-
   Retrieves pixel value from an image containing values of type \e Type with
   sub-pixel accuracy.
 
   Gets the value of a sub-pixel with coordinates (i,j) with bilinear
-  interpolation. If location is out of bounds, then return the value of the
-  closest pixel.
+  interpolation.
 
   See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
 
@@ -1444,48 +1444,39 @@ template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsign
 
   \exception vpImageException::notInTheImage : If (i,j) is out
   of the image.
-
 */
 template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 {
-  unsigned int iround, jround;
-  double rfrac, cfrac;
-
-  iround = (unsigned int)floor(i);
-  jround = (unsigned int)floor(j);
-
-  if (iround >= height || jround >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
+  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if (height * width == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
-  if (i > height - 1)
-    i = (double)(height - 1);
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
 
-  if (j > width - 1)
-    j = (double)(width - 1);
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
 
-  double rratio = i - (double)iround;
-  if (rratio < 0)
-    rratio = -rratio;
-  double cratio = j - (double)jround;
-  if (cratio < 0)
-    cratio = -cratio;
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
 
-  rfrac = 1.0f - rratio;
-  cfrac = 1.0f - cratio;
+  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
+  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
 
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround + 1][jround] * rratio) * cfrac +
-                 ((double)row[iround][jround + 1] * rfrac + (double)row[iround + 1][jround + 1] * rratio) * cratio;
-  return (Type)vpMath::round(value);
+  double value = (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
+                 (static_cast<double>(row[iround][jround_1]) * rfrac + static_cast<double>(row[iround_1][jround_1]) * rratio) * cratio;
+
+  return static_cast<Type>(vpMath::round(value));
 }
 
 /*!
-
   Retrieves pixel value from an image of double with sub-pixel accuracy.
 
   Gets the value of a sub-pixel with coordinates (i,j) with bilinear
-  interpolation. If location is out of bounds, then return value of
-  closest pixel.
+  interpolation.
 
   See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
 
@@ -1496,200 +1487,140 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 
   \exception vpImageException::notInTheImage : If (i,j) is out
   of the image.
-
 */
 template <> inline double vpImage<double>::getValue(double i, double j) const
 {
-  unsigned int iround, jround;
-  double rfrac, cfrac;
-
-  iround = (unsigned int)floor(i);
-  jround = (unsigned int)floor(j);
-
-  if (iround >= height || jround >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
+  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if (height * width == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
-  if (i > height - 1)
-    i = (double)(height - 1);
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
 
-  if (j > width - 1)
-    j = (double)(width - 1);
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
 
-  double rratio = i - (double)iround;
-  if (rratio < 0)
-    rratio = -rratio;
-  double cratio = j - (double)jround;
-  if (cratio < 0)
-    cratio = -cratio;
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
 
-  rfrac = 1.0f - rratio;
-  cfrac = 1.0f - cratio;
+  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
+  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
 
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround + 1][jround] * rratio) * cfrac +
-                 ((double)row[iround][jround + 1] * rfrac + (double)row[iround + 1][jround + 1] * rratio) * cratio;
-  return value;
+  return (row[iround][jround] * rfrac + row[iround_1][jround] * rratio) * cfrac +
+         (row[iround][jround_1] * rfrac + row[iround_1][jround_1] * rratio) * cratio;
+}
+
+template <> inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const {
+  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if (height * width == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
+  }
+
+  //Fixed-point arithmetic
+  const int precision = 1 << 16;
+  int64_t y = static_cast<int64_t>(i * precision);
+  int64_t x = static_cast<int64_t>(j * precision);
+
+  int64_t iround = y & (~0xFFFF);
+  int64_t jround = x & (~0xFFFF);
+
+  int64_t rratio = y - iround;
+  int64_t cratio = x - jround;
+
+  int64_t rfrac = precision - rratio;
+  int64_t cfrac = precision - cratio;
+
+  int64_t x_ = x >> 16;
+  int64_t y_ = y >> 16;
+
+  if (y_ + 1 < height && x_ + 1 < width) {
+    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
+    uint16_t down = *reinterpret_cast<uint16_t *>(bitmap + (y_ + 1) * width + x_);
+
+    return static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
+                                       ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >> 32);
+  } else if (y_ + 1 < height) {
+    return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
+  } else if (x_ + 1 < width) {
+    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
+    return static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
+  } else {
+    return row[y_][x_];
+  }
 }
 
 template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 {
-  unsigned int iround, jround;
-  double rfrac, cfrac;
-
-  iround = (unsigned int)floor(i);
-  jround = (unsigned int)floor(j);
-
-  if (iround >= height || jround >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
+  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if (height * width == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
-  if (i > height - 1)
-    i = (double)(height - 1);
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
 
-  if (j > width - 1)
-    j = (double)(width - 1);
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
 
-  double rratio = i - (double)iround;
-  if (rratio < 0)
-    rratio = -rratio;
-  double cratio = j - (double)jround;
-  if (cratio < 0)
-    cratio = -cratio;
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
 
-  rfrac = 1.0f - rratio;
-  cfrac = 1.0f - cratio;
+  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
+  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
 
-  double valueR = ((double)row[iround][jround].R * rfrac + (double)row[iround + 1][jround].R * rratio) * cfrac +
-                  ((double)row[iround][jround + 1].R * rfrac + (double)row[iround + 1][jround + 1].R * rratio) * cratio;
-  double valueG = ((double)row[iround][jround].G * rfrac + (double)row[iround + 1][jround].G * rratio) * cfrac +
-                  ((double)row[iround][jround + 1].G * rfrac + (double)row[iround + 1][jround + 1].G * rratio) * cratio;
-  double valueB = ((double)row[iround][jround].B * rfrac + (double)row[iround + 1][jround].B * rratio) * cfrac +
-                  ((double)row[iround][jround + 1].B * rfrac + (double)row[iround + 1][jround + 1].B * rratio) * cratio;
-  return vpRGBa((unsigned char)vpMath::round(valueR), (unsigned char)vpMath::round(valueG),
-                (unsigned char)vpMath::round(valueB));
+  double valueR = (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) * cfrac +
+                  (static_cast<double>(row[iround][jround_1].R) * rfrac + static_cast<double>(row[iround_1][jround_1].R) * rratio) * cratio;
+  double valueG = (static_cast<double>(row[iround][jround].G) * rfrac + static_cast<double>(row[iround_1][jround].G) * rratio) * cfrac +
+                  (static_cast<double>(row[iround][jround_1].G) * rfrac + static_cast<double>(row[iround_1][jround_1].G) * rratio) * cratio;
+  double valueB = (static_cast<double>(row[iround][jround].B) * rfrac + static_cast<double>(row[iround_1][jround].B) * rratio) * cfrac +
+                  (static_cast<double>(row[iround][jround_1].B) * rfrac + static_cast<double>(row[iround_1][jround_1].B) * rratio) * cratio;
+
+  return vpRGBa(static_cast<unsigned char>(vpMath::round(valueR)),
+                static_cast<unsigned char>(vpMath::round(valueG)),
+                static_cast<unsigned char>(vpMath::round(valueB)));
 }
 
 /*!
+  Retrieves pixel value from an image containing values of type \e Type with
+  sub-pixel accuracy.
 
-Retrieves pixel value from an image containing values of type \e Type with
-sub-pixel accuracy.
+  Gets the value of a sub-pixel with coordinates (i,j) with bilinear
+  interpolation.
 
-Gets the value of a sub-pixel with coordinates (i,j) with bilinear
-interpolation. If location is out of bounds, then return the value of the
-closest pixel.
+  See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
 
-See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
+  \param ip : Sub-pixel coordinates of a point in the image.
 
-\param ip : Sub-pixel coordinates of a point in the image.
+  \return Interpolated sub-pixel value from the four neighbours.
 
-\return Interpolated sub-pixel value from the four neighbours.
-
-\exception vpImageException::notInTheImage : If the image point \e ip is out
-of the image.
-
+  \exception vpImageException::notInTheImage : If the image point \e ip is out
+  of the image.
 */
-template <class Type> inline Type vpImage<Type>::getValue(vpImagePoint &ip) const
+template <class Type> inline Type vpImage<Type>::getValue(const vpImagePoint &ip) const
 {
-  unsigned int iround, jround;
-  double rfrac, cfrac;
-
-  iround = (unsigned int)floor(ip.get_i());
-  jround = (unsigned int)floor(ip.get_j());
-
-  if (iround >= height || jround >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
-  }
-
-  if (ip.get_i() > height - 1)
-    ip.set_i((double)(height - 1));
-
-  if (ip.get_j() > width - 1)
-    ip.set_j((double)(width - 1));
-
-  double rratio = ip.get_i() - (double)iround;
-  if (rratio < 0)
-    rratio = -rratio;
-  double cratio = ip.get_j() - (double)jround;
-  if (cratio < 0)
-    cratio = -cratio;
-
-  rfrac = 1.0f - rratio;
-  cfrac = 1.0f - cratio;
-
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround + 1][jround] * rratio) * cfrac +
-                 ((double)row[iround][jround + 1] * rfrac + (double)row[iround + 1][jround + 1] * rratio) * cratio;
-  return (Type)vpMath::round(value);
+  return getValue(ip.get_i(), ip.get_j());
 }
 
-template <> inline double vpImage<double>::getValue(vpImagePoint &ip) const
+template <> inline double vpImage<double>::getValue(const vpImagePoint &ip) const
 {
-  unsigned int iround, jround;
-  double rfrac, cfrac;
-
-  iround = (unsigned int)floor(ip.get_i());
-  jround = (unsigned int)floor(ip.get_j());
-
-  if (iround >= height || jround >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
-  }
-
-  if (ip.get_i() > height - 1)
-    ip.set_i((double)(height - 1));
-
-  if (ip.get_j() > width - 1)
-    ip.set_j((double)(width - 1));
-
-  double rratio = ip.get_i() - (double)iround;
-  if (rratio < 0)
-    rratio = -rratio;
-  double cratio = ip.get_j() - (double)jround;
-  if (cratio < 0)
-    cratio = -cratio;
-
-  rfrac = 1.0f - rratio;
-  cfrac = 1.0f - cratio;
-
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround + 1][jround] * rratio) * cfrac +
-                 ((double)row[iround][jround + 1] * rfrac + (double)row[iround + 1][jround + 1] * rratio) * cratio;
-  return value;
+  return getValue(ip.get_i(), ip.get_j());
 }
 
-template <> inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
+template <> inline unsigned char vpImage<unsigned char>::getValue(const vpImagePoint &ip) const
 {
-  unsigned int iround, jround;
-  double rfrac, cfrac;
+  return getValue(ip.get_i(), ip.get_j());
+}
 
-  iround = (unsigned int)floor(ip.get_i());
-  jround = (unsigned int)floor(ip.get_j());
-
-  if (iround >= height || jround >= width) {
-    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
-  }
-
-  if (ip.get_i() > height - 1)
-    ip.set_i((double)(height - 1));
-
-  if (ip.get_j() > width - 1)
-    ip.set_j((double)(width - 1));
-
-  double rratio = ip.get_i() - (double)iround;
-  if (rratio < 0)
-    rratio = -rratio;
-  double cratio = ip.get_j() - (double)jround;
-  if (cratio < 0)
-    cratio = -cratio;
-
-  rfrac = 1.0f - rratio;
-  cfrac = 1.0f - cratio;
-
-  double valueR = ((double)row[iround][jround].R * rfrac + (double)row[iround + 1][jround].R * rratio) * cfrac +
-                  ((double)row[iround][jround + 1].R * rfrac + (double)row[iround + 1][jround + 1].R * rratio) * cratio;
-  double valueG = ((double)row[iround][jround].G * rfrac + (double)row[iround + 1][jround].G * rratio) * cfrac +
-                  ((double)row[iround][jround + 1].G * rfrac + (double)row[iround + 1][jround + 1].G * rratio) * cratio;
-  double valueB = ((double)row[iround][jround].B * rfrac + (double)row[iround + 1][jround].B * rratio) * cfrac +
-                  ((double)row[iround][jround + 1].B * rfrac + (double)row[iround + 1][jround + 1].B * rratio) * cratio;
-  return vpRGBa((unsigned char)vpMath::round(valueR), (unsigned char)vpMath::round(valueG),
-                (unsigned char)vpMath::round(valueB));
+template <> inline vpRGBa vpImage<vpRGBa>::getValue(const vpImagePoint &ip) const
+{
+  return getValue(ip.get_i(), ip.get_j());
 }
 
 /**

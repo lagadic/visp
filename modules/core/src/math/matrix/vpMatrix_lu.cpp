@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,15 +52,19 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#ifdef VISP_HAVE_LAPACK_BUILT_IN
+#  ifdef VISP_HAVE_MKL
+#include <mkl.h>
+typedef MKL_INT integer;
+#  else
+#    ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#else
+#    else
 typedef int integer;
-#endif
-
+#    endif
 extern "C" int dgetrf_(integer *m, integer *n, double *a, integer *lda, integer *ipiv, integer *info);
 extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, integer *lwork,
                         integer *info);
+#  endif
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
@@ -201,7 +205,6 @@ double vpMatrix::detByLU() const
   }
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if defined(VISP_HAVE_GSL)
 /*!
@@ -332,7 +335,7 @@ double vpMatrix::detByLUGsl() const
 }
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with
 Lapack 3rd party.
@@ -635,5 +638,3 @@ double vpMatrix::detByLUEigen3() const
   return M.determinant();
 }
 #endif
-
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

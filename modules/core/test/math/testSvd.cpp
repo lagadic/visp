@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,7 +224,7 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
     S.diag(s[i]);
     vpMatrix U_S_V = U[i] * S * V[i].t();
     vpMatrix D = M[i] - U_S_V;
-    if (D.euclideanNorm() > 1e-6) {
+    if (D.frobeniusNorm() > 1e-6) {
       std::cout << "SVD decomposition failed" << std::endl;
       return EXIT_FAILURE;
     }

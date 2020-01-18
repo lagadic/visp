@@ -1,7 +1,7 @@
 /****************************************************************************
  *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,8 +247,8 @@ int main(int argc, const char **argv)
 
     // Initialize simulator frames
     sim.set_fMo(wMo);                   // Position of the object in the world reference frame
-    sim.setCameraPositionRelObj(cMo);   // initial position of the camera
-    sim.setDesiredCameraPosition(cdMo); // desired position of the camera
+    sim.setCameraPositionRelObj(cMo);   // Initial position of the object in the camera frame
+    sim.setDesiredCameraPosition(cdMo); // Desired position of the object in the camera frame
 
     // Set the External camera position
     vpHomogeneousMatrix camMf(vpHomogeneousMatrix(0.0, 0, 3.5, vpMath::rad(0), vpMath::rad(30), 0));
