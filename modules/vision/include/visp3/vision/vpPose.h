@@ -364,7 +364,7 @@ public:
                         bool (*func)(const vpHomogeneousMatrix &)=NULL);
 
   static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
-                                              const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo);
+                                              const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo, double &confidence);
 };
 
 #endif

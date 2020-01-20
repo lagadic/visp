@@ -198,8 +198,17 @@ int main(int argc, const char **argv)
       std::vector<std::vector<vpPoint> > tags_point3d = detector.getPoint3D();
       for (size_t i = 0; i < tags_corners.size(); i++) {
         vpHomogeneousMatrix cMo;
-        if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_point3d[i], cMo)) {
-          vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::none, 3);
+        double confidence;
+        if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_point3d[i], cMo, confidence)) {
+          if (confidence > 0.5) {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::none, 3);
+          }
+          else if (confidence > 0.25) {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::orange, 3);
+          }
+          else {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::red, 3);
+          }
         }
       }
 

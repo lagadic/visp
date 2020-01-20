@@ -234,17 +234,21 @@ bool validPose(const vpHomogeneousMatrix& cMo) {
   \param[in] colorIntrinsics : Camera parameters used to convert \e corners from pixel to meters.
   \param[in] point3d : Vector of 3D points corresponding to the model of the planar object.
   \param[out] cMo : Computed pose.
+  \param[out] confidence : Pose estimation confidence index in range [0, 1]. When values are close to zero
+  it means that confidence is very low. Values close to 1 indicate a high level of confidence in the pose
+  estimation.
 
   \return true if pose estimation succeed, false otherwise.
  */
 bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
-                                             const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo)
+                                             const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo, double &confidence)
 {
   if (corners.size() != point3d.size()) {
     throw(vpException(vpException::fatalError, "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
                       point3d.size(), corners.size()));
   }
   std::vector<vpPoint> pose_points;
+  confidence = 0.0;
 
   for (size_t i = 0; i < point3d.size(); i ++) {
     pose_points.push_back(point3d[i]);
@@ -273,7 +277,9 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       }
   }
 
-  if (points_3d.size() > 4) {
+  const unsigned int nb_points_3d = static_cast<unsigned int>(points_3d.size() / 3);
+
+  if (nb_points_3d > 4) {
       std::vector<vpPoint> p, q;
 
       // Plane equation
@@ -304,6 +310,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
           vpPose pose;
           pose.addPoints(pose_points);
           if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
+            confidence = std::min(1.0, static_cast<double>(nb_points_3d) / polygon.getArea());
             return true;
           }
       }
