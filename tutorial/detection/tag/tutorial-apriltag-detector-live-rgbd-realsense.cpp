@@ -194,6 +194,7 @@ int main(int argc, const char **argv)
         vpDisplay::displayFrame(I_color, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
       }
 
+      //! [Pose from depth map]
       std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
       std::vector<std::vector<vpPoint> > tags_point3d = detector.getPoint3D();
       for (size_t i = 0; i < tags_corners.size(); i++) {
@@ -211,6 +212,7 @@ int main(int argc, const char **argv)
           }
         }
       }
+      //! [Pose from depth map]
 
       vpDisplay::displayText(I_color, 20, 20, "Pose from homography + VVS", vpColor::red);
       vpDisplay::displayText(I_color2, 20, 20, "Pose from RGBD fusion", vpColor::red);
