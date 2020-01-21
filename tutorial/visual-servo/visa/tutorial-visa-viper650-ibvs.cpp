@@ -93,9 +93,33 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters ca
   cro.buildFrom(cRo);
 }
 
-int main()
+int main(int argc, char **argv)
 {
   try {
+    std::string opt_hostname = "127.0.0.1";
+    unsigned int opt_port = 2408;
+
+    for (int i = 0; i < argc; i++) {
+      if (std::string(argv[i]) == "--hostname")
+        opt_hostname = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--port")
+        opt_port = std::atoi(argv[i + 1]);
+      else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {
+        std::cout << "SYNOPSIS" << std::endl
+                  << "  " << argv[0]
+                  << " [--hostname <host name>] [--port <port>] [--help] [-h]\n"
+                  << std::endl;
+        std::cout << "DESCRIPTION" << std::endl
+                  << "  --host <host name>" << std::endl
+                  << "    Computer host name running ViSA simulator." << std::endl << std::endl
+                  << "  --port <port>" << std::endl
+                  << "    Port to connect to ViSA simulator." << std::endl << std::endl
+                  << "  --help, -h" << std::endl
+                  << "    Print this helper message. " << std::endl << std::endl;
+        return 0;
+      }
+    }
+
     vpViper650 robot;
 
     vpHomogeneousMatrix eMc(vpTranslationVector(0, 0, 0), vpRotationMatrix(vpRxyzVector(0, 0, -M_PI/2.)));
@@ -105,7 +129,7 @@ int main()
 
     // init communication with simulator
     vpVisaSocketAdapter visa;
-    visa.connect();
+    visa.connect(opt_hostname, opt_port);
 
     vpCameraParameters cam = visa.getCameraParameters();
 
@@ -196,6 +220,9 @@ int main()
     bool quit = false;
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
+
+    std::vector<std::vector<vpImagePoint> > traj_cog(4);
+
     while (! quit) {
       double t = vpTime::measureTimeMs();
 
@@ -214,6 +241,7 @@ int main()
           // image
           cog = dot[i].getCog();
           vpDisplay::displayCross(I, cog, 10, vpColor::green);
+          traj_cog[i].push_back(cog);
         }
       } catch (...) {
         quit = true;
@@ -260,6 +288,9 @@ int main()
 
       // Display the current and desired feature points in the image display
       vpServoDisplay::display(task, cam, I);
+      for (size_t i = 0; i < traj_cog.size(); i ++) {
+        vpDisplay::displayPolygon(I, traj_cog[i], vpColor::green, 1, false);
+      }
 
       std::cout << "Joint vel: " << v.t() << std::endl;
 
@@ -274,7 +305,9 @@ int main()
       vpTime::wait(t, 40); // Loop time is set to 40 ms, ie 25 Hz
     }
 
-    visa.setJointVel({0,0,0,0,0,0}); // stop robot
+    vpColVector v(6);
+    v = 0;
+    visa.setJointVel(v); // stop robot
 
     std::cout << "Display task information: " << std::endl;
     task.print();
