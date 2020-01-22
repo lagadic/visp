@@ -30,8 +30,8 @@ steps:
     - export CC=/usr/bin/clang
     - export CXX=/usr/bin/clang++
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j testFindMatch
+    - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -63,8 +63,8 @@ steps:
     - cd src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j testFindMatch
+    - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -96,8 +96,8 @@ steps:
     - cd src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j testFindMatch
+    - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -129,8 +129,8 @@ steps:
     - cd src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j testFindMatch
+    - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -162,5 +162,5 @@ steps:
     - cd src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j testFindMatch
+    - ctest -I 107,107 -V -VV --output-on-failure
