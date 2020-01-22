@@ -31,6 +31,8 @@ steps:
     - export CXX=/usr/bin/clang++
     - cmake $CMAKE_FLAGS ..
     - make -j testFindMatch
+    - ldd modules/vision/testFindMatch
+    - ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -64,6 +66,8 @@ steps:
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
     - make -j testFindMatch
+    - ldd modules/vision/testFindMatch
+    - ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -97,6 +101,8 @@ steps:
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
     - make -j testFindMatch
+    - ldd modules/vision/testFindMatch
+    - ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -130,6 +136,8 @@ steps:
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
     - make -j testFindMatch
+    - ldd modules/vision/testFindMatch
+    - ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -163,4 +171,6 @@ steps:
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
     - make -j testFindMatch
+    - ldd modules/vision/testFindMatch
+    - ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
