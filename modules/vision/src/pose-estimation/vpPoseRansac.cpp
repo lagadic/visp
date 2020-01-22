@@ -319,7 +319,6 @@ bool vpPose::RansacFunctor::poseRansacImpl()
 */
 bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
-  std::cout << "In vpPose::poseRansac()" << std::endl;
   // Check only for adding / removing problem
   // Do not take into account problem with element modification here
   if (listP.size() != listOfPoints.size()) {
@@ -346,10 +345,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   bool prefilterDegeneratePoints = ransacFlag == PREFILTER_DEGENERATE_POINTS;
   bool checkDegeneratePoints = ransacFlag == CHECK_DEGENERATE_POINTS;
 
-  std::cout << "prefilterDegeneratePoints: " << prefilterDegeneratePoints << std::endl;
-
   if (prefilterDegeneratePoints) {
-    std::cout << "Remove degenerate object points" << std::endl;
     // Remove degenerate object points
     std::map<vpPoint, size_t, CompareObjectPointDegenerate> filterObjectPointMap;
     size_t index_pt = 0;
@@ -371,7 +367,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       }
     }
   } else {
-    std::cout << "No prefiltering" << std::endl;
     // No prefiltering
     listOfUniquePoints = listOfPoints;
 
@@ -406,11 +401,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #endif
   }
 
-  std::cout << "nbThreads: " << nbThreads << std::endl;
-
   bool foundSolution = false;
 
-  std::cout << "executeParallelVersion: " << executeParallelVersion << std::endl;
   if (executeParallelVersion) {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<std::thread> threadpool;
@@ -418,7 +410,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     const unsigned int nthreads = std::thread::hardware_concurrency();
 
     int splitTrials = ransacMaxTrials / nthreads;
-    std::cout << "splitTrials: " << splitTrials << std::endl;
     std::atomic<bool> abort{false};
     for (size_t i = 0; i < (size_t)nthreads; i++) {
       unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(NULL) ^ i);
@@ -461,7 +452,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::atomic<bool> abort{false};
 #endif
-    std::cout << "call sequentialRansac()" << std::endl;
     RansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
                                    checkDegeneratePoints, listOfUniquePoints, func
                                #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -477,7 +467,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
   }
 
-  std::cout << "foundSolution: " << foundSolution << std::endl;
   if (foundSolution) {
     const unsigned int nbMinRandom = 4;
     //    std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
