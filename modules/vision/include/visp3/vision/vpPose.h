@@ -222,14 +222,7 @@ public:
   bool coplanar(int &coplanar_plane_type);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
   void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  /*!
-    @name Deprecated functions
-  */
-  //@{
-  vp_deprecated void init();
-  //@}
-#endif
+
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
   void poseLagrangePlan(vpHomogeneousMatrix &cMo);
@@ -362,6 +355,15 @@ public:
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                         const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
                         bool (*func)(const vpHomogeneousMatrix &)=NULL);
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated void init();
+  //@}
+#endif
 };
 
 #endif

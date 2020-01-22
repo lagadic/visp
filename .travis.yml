@@ -39,11 +39,25 @@ before_install:
   #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install gcc || brew link --overwrite gcc; fi"
   #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew upgrade; fi"
   # end work around
+
   # Work around for issue:
   # dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
   # Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
   # Reason: image not found
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install glog; fi"
+  # end work around
+
+  # Work around for issue:
+  #==> Pouring python-3.7.6_1.high_sierra.bottle.tar.gz
+  # Error: The `brew link` step did not complete successfully
+  # The formula built, but is not symlinked into /usr/local
+  # Could not symlink Frameworks/Python.framework/Headers
+  # Target /usr/local/Frameworks/Python.framework/Headers
+  # is a symlink belonging to python@2. You can unlink it:
+  #   brew unlink python@2
+  # To force the link and overwrite all conflicting files:
+  #   brew link --overwrite python
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew unlink python@2; fi"
   # end work around
 
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv; fi"

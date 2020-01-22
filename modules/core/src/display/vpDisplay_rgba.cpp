@@ -515,11 +515,12 @@ void vpDisplay::displayPoint(const vpImage<vpRGBa> &I, int i, int j, const vpCol
   \param vip : Vector of image point that define the vertexes of the polygon.
   \param color : Line color.
   \param thickness : Line thickness.
+  \param closed : When true display a closed polygon with a segment between first and last image point.
 */
 void vpDisplay::displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
-                               unsigned int thickness)
+                               unsigned int thickness, bool closed)
 {
-  vp_display_display_polygon(I, vip, color, thickness);
+  vp_display_display_polygon(I, vip, color, thickness, closed);
 }
 
 /*!
