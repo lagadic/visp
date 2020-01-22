@@ -11,7 +11,7 @@ steps:
   image: ubuntu:19.04
   environment:
     CC: clang
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -20,7 +20,7 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libopenblas-dev
+    - apt-get install -y make $CC cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libopenblas-dev valgrind
     - $CC --version
     - cd ..
     - git clone --depth 1 https://github.com/lagadic/visp-images
@@ -33,6 +33,7 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
+    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -48,7 +49,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500 -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -57,7 +58,7 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC g++ cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libopenblas-dev
+    - apt-get install -y make $CC g++ cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libopenblas-dev valgrind
     - $CC --version
     - cd ..
     - git clone --depth 1 https://github.com/lagadic/visp-images
@@ -68,6 +69,7 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
+    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -83,7 +85,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500 -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -92,7 +94,7 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC g++ cmake git-core libx11-dev libv4l-dev liblapack-dev libopenblas-dev
+    - apt-get install -y make $CC g++ cmake git-core libx11-dev libv4l-dev liblapack-dev libopenblas-dev valgrind
     - $CC --version
     - cd ..
     - git clone --depth 1 https://github.com/lagadic/visp-images
@@ -103,6 +105,7 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
+    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -118,7 +121,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -127,7 +130,7 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC g++ cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libopenblas-dev
+    - apt-get install -y make $CC g++ cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libopenblas-dev valgrind
     - $CC --version
     - cd ..
     - git clone --depth 1 https://github.com/lagadic/visp-images
@@ -138,6 +141,7 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
+    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -153,7 +157,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -162,7 +166,7 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC g++ cmake git-core libx11-dev libv4l-dev liblapack-dev libopenblas-dev
+    - apt-get install -y make $CC g++ cmake git-core libx11-dev libv4l-dev liblapack-dev libopenblas-dev valgrind
     - $CC --version
     - cd ..
     - git clone --depth 1 https://github.com/lagadic/visp-images
@@ -173,4 +177,5 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
+    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../visp/platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
