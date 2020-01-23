@@ -61,7 +61,6 @@ int main()
     std::cout << "Find Matches using Ransac" << std::endl;
     std::vector<vpPoint> P;
 
-    std::cout << "Create 3D point vector" << std::endl;
     P.push_back(vpPoint(-L, -L, 0));
     P.push_back(vpPoint(L, -L, 0));
     P.push_back(vpPoint(L, L, 0));
@@ -70,7 +69,6 @@ int main()
 
     vpHomogeneousMatrix cMo_ref(0, 0.2, 1, vpMath::rad(3), vpMath::rad(-2), vpMath::rad(10));
 
-    std::cout << "Create 2D point vector" << std::endl;
     std::vector<vpPoint> p(P.size());
     for (unsigned int i = 0; i < P.size(); i++) {
       vpPoint pt = P[i];
@@ -86,7 +84,6 @@ int main()
 
     vpHomogeneousMatrix cMo;
 
-    std::cout << "Call vpPose::findMatch()" << std::endl;
     vpPose::findMatch(p, P, nbInlierToReachConsensus, threshold, ninliers, inliers, cMo);
 
     std::cout << "Inliers: " << std::endl;
