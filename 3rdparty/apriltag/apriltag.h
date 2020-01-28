@@ -264,6 +264,11 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
 // Call this method on each of the tags returned by apriltag_detector_detect
 void apriltag_detection_destroy(apriltag_detection_t *det);
 
+void apriltag_detection_copy(apriltag_detection_t *src, apriltag_detection_t *dst);
+
+// copy the array AND the detections within it.
+zarray_t * apriltag_detections_copy(zarray_t *detections);
+
 // destroys the array AND the detections within it.
 void apriltag_detections_destroy(zarray_t *detections);
 
