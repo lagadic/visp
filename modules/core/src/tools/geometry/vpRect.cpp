@@ -248,10 +248,10 @@ bool vpRect::operator!=(const vpRect &r) const
 }
 
 /*!
- Intersection operator.
- \param r : Rectangle to insert.
- \return Intersection rectangle or null rectangle if the two rectangles do not
- intersect.
+  Intersection operator.
+  \param r : Rectangle to insert.
+  \return Intersection rectangle or null rectangle if the two rectangles do not
+  intersect.
  */
 vpRect &vpRect::operator&=(const vpRect &r)
 {
@@ -270,9 +270,9 @@ vpRect &vpRect::operator&=(const vpRect &r)
 }
 
 /*!
- Intersection operator.
- \return Intersection rectangle or null rectangle if the two rectangles do not
- intersect.
+  Intersection operator.
+  \return Intersection rectangle or null rectangle if the two rectangles do not
+  intersect.
  */
 vpRect vpRect::operator&(const vpRect &r) const
 {

@@ -1,0 +1,453 @@
+/**\page tutorial-add-new-dependency Tutorial: Introduce a new class with 3rd-party dependencies 
+\tableofcontents
+
+\section add_new_dep_intro Introduction
+
+This tutorial gives some guide lines to explain how to introduce a new class that depends on an external 3rd-party that has its own SDK.
+
+We suppose here that you followed one of the \ref tutorial_install_src tutorials.
+
+\section add_new_dep_overview Overview
+
+Let us consider the case where we want to implement a new class with name `vpDummyWrapper` that belongs to `visp_robot` module and that is a wrapper over a 3rd-party SDK called `DummySDK`. This SDK contains headers and libraries that are organized like:
+
+\code
+<dummy sdk root path> --- include --- dummy_sdk_header.h
+                       |           |- dummy_sdk_header_other.h
+                       |
+                       |- lib     --- libdummy_sdk.so
+\endcode
+
+To illustrate this tutorial, let us consider that `<dummy sdk root path>` is equal to `/home/user/visp_ws/3rdparty/dummy-sdk` folder.
+
+In order that ViSP remains cross-platform, here we should consider that this dummy SDK is used only if `VISP_HAVE_DUMMY_SDK` macro is defined. We suppose here that this macro is automatically defined (or not) in `visp3/core/vpConfig.h` file that is located in ViSP build tree, more precisely in `$VISP_WS/visp-build/include` folder.
+
+The class declaration is implemented in `vpDummyWrapper.h`. Since we want that the class belongs to `visp_robot` module, you have to put this file in `$VISP_WS/visp/modules/robot/include/visp3/robot/` folder. The content of this file looks like: 
+\code
+#ifndef vpDummyWrapper_h
+#define vpDummyWrapper_h
+
+#include <visp3/core/vpConfig.h>
+ 
+#ifdef VISP_HAVE_DUMMY_SDK
+
+#include <dummy_sdk_header.h> 
+
+/*!
+  \class vpDummyWrapper Dummy wrapper example.
+*/
+class VISP_EXPORT vpDummyWrapper
+{
+public:
+   vpDummyWrapper();
+   virtual ~vpDummyWrapper();
+   ...
+};
+
+#endif
+#endif
+\endcode
+
+The corresponding class definition is implemented in `vpDummyWrapper.cpp` located for example in a new folder `dummy_sdk` that belongs to `visp_robot` module like `$VISP_WS/visp/modules/robot/src/real-robot/dummy_sdk/vpDummyWrapper.cpp`:
+
+\code
+#include <visp3/robot/vpDummyWrapper.h>
+
+#ifdef VISP_HAVE_DUMMY_SDK
+
+vpDummyWrapper::vpDummyWrapper() {}
+vpDummyWrapper::~vpDummyWrapper() {}
+
+#endif
+\endcode
+
+\section add_new_dep_modif Modify ViSP source code
+\subsection add_new_dep_modif_detect_sdk Add new 3rd-party detection
+
+- The first step is to write the cmake file that allows finding `DummySDK` package. To this end you should introduce `FindDummySDK.cmake` file in ViSP `cmake` folder. The content of `$VISP_WS/visp/cmake/FindDummySDK.cmake` looks like:
+\code
+find_path(DUMMYSDK_INCLUDE_DIR dummy_sdk_header.h
+  PATHS
+    "$ENV{DUMMYSDK_HOME}/include"
+)
+
+find_library(DUMMYSDK_LIBRARY
+  NAMES dummy_sdk
+  PATHS
+    "$ENV{DUMMYSDK_HOME}/lib"
+)
+
+include(FindPackageHandleStandardArgs)
+# Handle the QUIETLY and REQUIRED arguments and set the DUMMYSDK_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(DUMMYSDK DEFAULT_MSG DUMMYSDK_LIBRARY DUMMYSDK_INCLUDE_DIR)
+
+if(DUMMYSDK_FOUND)
+  set(DUMMYSDK_INCLUDE_DIRS ${DUMMYSDK_INCLUDE_DIR})
+  set(DUMMYSDK_LIBRARIES ${DUMMYSDK_LIBRARY})
+endif()
+
+mark_as_advanced(DUMMYSDK_INCLUDE_DIRSDUMMY SDK_LIBRARIES)
+\endcode
+
+- Then you should modify `$VISP_WS/visp/CMakeLists.txt` CMake root file to call `FindDummySDK.cmake`. This is done adding a line like:
+\code
+VP_OPTION(USE_DUMMYSDK  DummySDK  ""    "Include dummy SDK support"     "" ON IF NOT WINRT AND NOT IOS)
+\endcode
+- To give user feedback in `$VISP_WS/visp/CMakeLists.txt` add also a line like:
+\code
+status("  Real robots: ")
+...
+status("    Use Dummy SDK:"        USE_DUMMYSDK      THEN "yes" ELSE "no")
+\endcode
+
+- At this point before continuing, test if your SDK is detected. First set `DUMMYSDK_HOME` environment variable and run cmake over ViSP source code. On unix-like OS, this could be achieved running:
+\code
+$ cd $VISP_WS/visp-build
+$ export DUMMYSDK_HOME=/home/user/visp_ws/3rdparty/dummy-sdk
+$ ccmake ../visp
+\endcode
+Here you should see appearing a new line like the following that shows that your `DummySDK` package is found by CMake:
+\code
+ USE_DUMMYSDK                *ON                                                                                                         
+\endcode
+Entering advanced mode by pressing `[t]` key, you should be also able to see the following lines that indicate the full path to `DummySDK` headers folder and library:
+\code
+ DUMMYSDK_INCLUDE_DIR             /home/user/visp_ws/3rdparty/dummy-sdk/include/dummy_sdk_header.h
+ DUMMYSDK_LIBRARY                 /home/user/visp_ws/3rdparty/dummy-sdk/lib/libdummy_sdk.so
+\endcode
+
+\subsection add_new_dep_modif_macro Add VISP_HAVE 3rd-party macro
+
+Now you should modify ViSP source code to define `VISP_HAVE_DUMMY_SDK` macro when `DummySDK` package is found. We recall that this macro is used to protect the class that should be build only if this macro is defined.
+
+- Modify `$VISP_WS/visp/CMakeLists.txt` CMake root file to add a line like:
+\code
+VP_SET(VISP_HAVE_DUMMY_SDK TRUE IF (BUILD_MODULE_visp_robot AND USE_FTIITSDK))
+\endcode 
+- Modify `$VISP_WS/visp/cmake/templates/VISPConfig.cmake.in` to set `VISP_HAVE_DUMMY_SDK` as a CMake var that could be used later in all `CMakeFiles.txt` files that are using ViSP as 3rd-party: 
+\code
+set(VISP_HAVE_DUMMY_SDK   "@VISP_HAVE_DUMMY_SDK@")
+\endcode
+- Modify `$VISP_WS/visp/cmake/templates/vpConfig.h.in` to set `VISP_HAVE_DUMMY_SDK` as a C++ compiler macro that could be used later in all `*.h` header and `*.cpp` source files: 
+\code
+// Defined if Dummy SDK is available
+#cmakedefine VISP_HAVE_DUMMY_SDK
+\endcode
+- Modify `$VISP_WS/visp/doc/config-doxygen.in` to set `VISP_HAVE_DUMMY_SDK` as a predefined macro for Doxygen. It allows to see `vpDummySDK` class in generated Doxygen documentation: 
+\code
+PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
+                         ...
+                         VISP_HAVE_DUMMY_SDK \
+                         ...
+\endcode
+- At this point, you can test if `VISP_HAVE_DUMMY_SDK` macro is correctly set after CMake configuration in `$VISP_WS/visp-build/include/visp3/core/vpConfig.h`. To this end, under linux-like OS run simply:
+\code
+$ cd $VISP_WS/visp-build
+$ export DUMMYSDK_HOME=/home/user/visp_ws/3rdparty/dummy-sdk
+$ cmake ../visp
+\endcode
+Here you should see that `DummySDK` is well detected:
+\code
+--   Real robots: 
+--     ...
+--     Use Dummy SDK:               yes
+\endcode
+You should also find `VISP_HAVE_DUMMY_SDK` macro in `$VISP_WS/visp-build/include/visp3/core/vpConfig.h` generated file:
+\code
+$ grep VISP_HAVE_DUMMY_SDK include/visp3/core/vpConfig.h 
+#define VISP_HAVE_DUMMY_SDK
+\endcode
+
+\subsection add_new_dep_modif_class_header Add new class declaration
+
+- You are now ready to introduce a new header file implemented in `$VISP_WS/visp/modules/robot/include/visp3/robot/vpDummyWrapper.h` that contains `vpDummyWrapper` class declaration.
+
+- As given in \ref add_new_dep_overview section we recall the content of this file: 
+\verbatim
+#ifndef vpDummyWrapper_h
+#define vpDummyWrapper_h
+
+#include <visp3/core/vpConfig.h>
+ 
+#ifdef VISP_HAVE_DUMMY_SDK
+
+#include <dummy_sdk_header.h> 
+
+/*!
+  \class vpDummyWrapper Dummy wrapper example.
+*/
+class VISP_EXPORT vpDummyWrapper
+{
+public:
+   vpDummyWrapper();
+   virtual ~vpDummyWrapper();
+   ...
+};
+
+#endif
+#endif
+\endverbatim
+where `VISP_HAVE_DUMMY_SDK` macro is used to ensure that the build doesn't fail when `DummySDK` package is not detected or not used. There is also the "\class" Doxygen directive that allows to expose `vpDummyWrapper` class in Doxygen documentation that is generated using `make visp_doc`.
+
+\subsection add_new_dep_modif_class_h Add new class definition
+
+- Similarly, introduce a new source file implemented in `$VISP_WS/visp/modules/robot/src/real-robot/dummy_sdk/vpDummyWrapper.cpp` that contains `vpDummyWrapper` class definition.
+
+- As given in \ref add_new_dep_overview section we recall the content of this file: 
+\verbatim
+#include <visp3/robot/vpDummyWrapper.h>
+
+#ifdef VISP_HAVE_DUMMY_SDK
+
+/*!
+  Default constructor.
+ */
+vpDummyWrapper::vpDummyWrapper() {}
+/*!
+  Default destructor.
+ */
+vpDummyWrapper::~vpDummyWrapper() {}
+
+#endif
+\endverbatim
+- Here you should be able to generate Doxygen documentation and see `vpDummyWrapper` appearing in the class list and class index:
+\code
+$ cd $VISP_WS/visp-build
+$ make visp_doc
+\endcode
+- Use Firefox or any other browser and navigate to `$VISP_WS/visp-build/doc/html/classes.html` to see the new class in the class index.
+
+\subsection add_new_dep_modif_class_cpp Link with 3rd-party
+
+- Now we have to indicate how to build `vpDummyWrapper.h` and `vpDummyWrapper.cpp` files that belong to `visp_robot` module tree by making a link to `DummySDK` headers and library. This is simply achieved in `visp_robot` root `CMakeLists.txt` file adding the following lines in $VISP_WS/visp/modules/robot/CMakeLists.txt:
+\code
+if(USE_DUMMYSDK)
+  list(APPEND opt_incs ${DUMMYSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${DUMMYSDK_LIBRARIES})
+endif()
+\endcode
+
+- At this point, you should be able to build `visp_robot` module
+\code
+$ cd $VISP_WS/visp-build
+$ make visp_robot
+\endcode
+
+\subsection add_new_dep_modif_test Add a new test
+
+- Adding a test is as simple as adding a new file in the module test folder. In our example we could create a new `modules/robot/dummy` folder and add the following file in `$VISP_WS/visp/modules/robot/test/dummy/testDummySDK.cpp` which contains for example:
+\verbatim
+//! \example testForceTorqueIitSensor.cpp
+#include <iostream>
+
+#include <visp3/robot/vpDummyWrapper.h>
+
+int main()
+{
+#ifdef VISP_HAVE_DUMMY_SDK
+  vpDummyWrapper wrapper;
+  ...
+#else
+  std::cout << "ViSP is not build with DummySDK support" << std::endl;
+#endif
+  return EXIT_SUCCESS;
+}
+\endverbatim
+- At this point you should be able to build this test running:
+\code
+$ cd $VISP_WS/visp-build
+$ make testDummySDK
+\endcode
+- Note that the test will be launched during continuous integration testing mechanism running for example:
+\code
+$ cd $VISP_WS/visp-build
+$ ctest
+\endcode
+If the test needs human interaction or validation (this is for example the case before moving a robot), it is possible to exclude the test from continuous integration. This could be done modifying `$VISP_WS/visp/modules/robot/CMakeLists.txt` file adding a `CTEST_EXCLUDE_FILE` parameter to `vp_add_tests()` cmake function:
+\code
+vp_add_tests(
+  DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
+  CTEST_EXCLUDE_FILE dummy/testDummySDK.cpp)
+\endcode
+
+\subsection add_new_dep_modif_example Add a new example
+
+Here we explain how to introduce a new example in ViSP example folder.
+
+- To illustrate this section we explain how to add a new `$VISP_WS/visp/example/servo-dummy` folder that contains `exampleDummy.cpp` file:
+\code
+$ cd $VISP_WS/visp/example/servo-dummy
+$ more exampleDummy.cpp
+\endcode
+\verbatim
+//! \example exampleDummy.cpp
+#include <iostream>
+
+#include <visp3/robot/vpDummyWrapper.h>
+
+int main()
+{
+#ifdef VISP_HAVE_DUMMY_SDK
+  vpDummyWrapper wrapper;
+  ...
+#else
+  std::cout << "ViSP is not build with DummySDK support" << std::endl;
+#endif
+  return EXIT_SUCCESS;
+}
+\endverbatim
+- You have also to add in the same folder a `CMakeLists.txt` file that allows to build this new example:
+\code
+$ cd $VISP_WS/visp/example/servo-dummy
+$ more CMakeLists.txt
+\endcode
+\code
+project(example-dummy)
+
+cmake_minimum_required(VERSION 2.6)
+
+find_package(VISP REQUIRED visp_core visp_robot)
+
+set(example_cpp
+  exampleDymmy.cpp
+)
+
+foreach(cpp ${example_cpp})
+  visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "examples")
+  endif()
+endforeach()
+\endcode
+where `visp_core` and `visp_robot` are the required modules that need to be linked with to build this example. The list of required module could be extended by simply adding the `visp_<module>` name after the `REQUIRED` keyword.
+- Finally, you may also modify `$VISP_WS/visp/example/CMakeLists.txt` to indicate that CMake has to parse the new folder called `dummy` that contains the new example:
+\code
+$ cd $VISP_WS/visp/example
+$ more CMakeLists.txt
+\endcode
+\code
+visp_add_subdirectory(dummy REQUIRED_DEPS visp_core visp_robot)
+\endcode
+CMake will enter this new `dummy` folder only if all the required modules are enabled during CMake configuration step.
+- Finally, to build this new example, you may first configure ViSP project and then build:
+\code
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+$ make exampleDummy
+\endcode
+
+\subsection add_new_dep_modif_doxy_tuto Add a new Doxygen tutorial
+
+This sections explains how to add a new Doxygen tutorial like this one, that may appear in [ViSP main page documentation](https://visp-doc.inria.fr/doxygen/visp-daily/index.html#tutorial) 
+
+- The first step is to start to write the tutorial. To illustrate this section we will consider a new tutorial file in `$VISP_WS/visp/doc/tutorial/robot/dummy/tutorial-dummy-robot.doc` that may contain something like:
+\verbatim
+/**\page tutorial-dummy-robot Tutorial: How to start with dummy robot  
+\tableofcontents
+\section dummy_intro Introduction
+
+Bla Bla...
+
+*/
+\endverbatim
+
+- The next step is to reference this new page called `tutorial-dummy-robot` in ViSP main page documentation modifying `$VISP_WS/visp/doc/mainpage.doc.in`, either adding as bellow a new section (here called "Playing with robots"), either introducing the reference to this new page in an existing section:
+\verbatim
+\subsection tuto_robot Playing with robots
+
+\ref tutorial-dummy-robot <br>This tutorial explains how to start with dummy robot.
+\endverbatim
+- The same has to be done in the page summarizing all the tutorials modifying `$VISP_WS/visp/doc/tutorial/tutorial.doc`:
+\verbatim
+/*! \page tutorial_mainpage Tutorials
+This page references all the tutorials.
+... 
+\subpage tutorial_robot
+
+*/
+/*! \page tutorial_robot Playing with robots
+This page introduces the way toplay with robots.
+
+\subpage tutorial-dummy-robot <br>This tutorial explains how to start with dummy robot.
+*/
+\endverbatim
+- Here you can generate the documentation using:
+\code
+$ cd $VISP_WS/visp-build
+$ make visp_doc
+\endcode
+- Open `$VISP_WS/visp-build/doc/html/tutorial-dummy-robot.html` in Firefox or any other browser to see the corresponding tutorial.
+
+\section add_new_ext_project Create your own project
+
+We suppose here that you \ref add_new_dep_modif and that you want to create your own external project that uses the new `dummyWrapper` class. This as simple as adding a new example inside ViSP as described in \ref add_new_dep_modif_example.
+- The first step is to create your external project. This could be done creating a new folder called `$VISP_WS/my-project` that may contain your main example and a `CMakeLists.txt` file. They could be simply the same as the one described in \ref add_new_dep_modif_example section:
+\code
+$ cd $VISP_WS/my-project
+$ more exampleDummy.cpp
+\endcode
+\verbatim
+//! \example exampleDummy.cpp
+#include <iostream>
+
+#include <visp3/robot/vpDummyWrapper.h>
+
+int main()
+{
+#ifdef VISP_HAVE_DUMMY_SDK
+  vpDummyWrapper wrapper;
+  ...
+#else
+  std::cout << "ViSP is not build with DummySDK support" << std::endl;
+#endif
+  return EXIT_SUCCESS;
+}
+\endverbatim
+\code
+$ cd $VISP_WS/my-project
+$ more CMakeLists.txt
+\endcode
+\code
+project(example-dummy)
+
+cmake_minimum_required(VERSION 2.6)
+
+find_package(VISP REQUIRED visp_core visp_robot)
+
+set(example_cpp
+  exampleDymmy.cpp
+)
+
+foreach(cpp ${example_cpp})
+  visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "examples")
+  endif()
+endforeach()
+\endcode
+- To build your external project, you need first to build ViSP modules
+\code
+$ cd $VISP_WS/visp-build/
+$ make visp_modules
+\endcode
+- Now you can configure your new project indicating where to find ViSP setting `VISP_DIR` var:
+\code
+$ mkdir $VISP_WS/my-project-build
+$ cd $VISP_WS/my-project-build
+$ cmake ../my-project -DVISP_DIR=$VISP_WS/visp-build
+\endcode
+- Finally to build your project just run:
+\code
+$ cd $VISP_WS/my-project-build
+$ make
+\endcode
+
+\section add_new_use_case Use cases
+
+Bellow we give a list of some Pull Request to illustrate this tutorial with real use cases:
+- To see the changes introduced to support IIT force-torque sensor 3rd-party SDK, introducing vpForceTorqueIitSensor class and testForceTorqueIitSensor.cpp test, see [PR #686](https://github.com/lagadic/visp/pull/686)
+- To see the changes done to detect FLIR Pan-Tilt Unit 3rd-party SDK with the corresponding wrapper implemented in vpRobotFlirPtu class, and introduce testRobotFlirPtu.cpp test and servoFlirPtuIBVS.cpp example, see [PR #673](https://github.com/lagadic/visp/pull/673)
+- To see the changes introduced to detect Jaco Kinova 3rd-party SDK and implement vpRobotJaco2 class, see [PR #625](https://github.com/lagadic/visp/pull/625)
+
+*/

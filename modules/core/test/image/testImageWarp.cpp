@@ -53,7 +53,7 @@
 namespace
 {
 static const double g_threshold_value = 0.5;
-static const double g_threshold_percentage = 0.99;
+static const double g_threshold_percentage = 0.9;
 static const double g_threshold_percentage_bilinear = 0.75;
 static const double g_threshold_percentage_pers = 0.75;
 static const double g_threshold_percentage_pers_bilinear = 0.65;
@@ -510,7 +510,8 @@ TEST_CASE("Perspective warp on grayscale", "[warp_image]") {
           vpImageTools::warpImage(I, M, I_perspective, interp_methods[i]);
 
           double percentage = 0.0;
-          bool equal = almostEqual(I_ref, I_perspective, g_threshold_value, g_threshold_percentage_pers, percentage);
+          bool equal = almostEqual(I_ref, I_perspective, g_threshold_value,
+                                   (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " Ref): " << percentage << std::endl;
           CHECK(equal);
         }
@@ -609,7 +610,8 @@ TEST_CASE("Perspective warp on color", "[warp_image]") {
           vpImageTools::warpImage(I, M, I_perspective, interp_methods[i]);
 
           double percentage = 0.0;
-          bool equal = almostEqual(I_ref, I_perspective, g_threshold_value, g_threshold_percentage_pers, percentage);
+          bool equal = almostEqual(I_ref, I_perspective, g_threshold_value,
+                                   (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " Ref): " << percentage << std::endl;
           CHECK(equal);
         }

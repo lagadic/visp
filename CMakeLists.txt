@@ -516,8 +516,10 @@ VP_OPTION(USE_V4L2        V4L2        ""    "Include v4l2 support"             "
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  ""    "Include FlyCapture SDK support for PointGrey cameras" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PYLON       Pylon       ""    "Include Pylon SDK support for Basler cameras" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COMEDI      Comedi      ""    "Include comedi (linux control and measurement device interface) support" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_FTIITSDK    FTIITSDK    ""    "Include IIT force-torque SDK support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
+VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 #VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
@@ -633,6 +635,17 @@ if(USE_PCL)
   endif()
 endif()
 
+# Upgrade c++ standard to 14 for IIT force-torque SDK that needs at least c++ 14 standard
+if(USE_FTIITSDK)
+  if((VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14) AND CXX14_STANDARD_FOUND)
+    message(WARNING "IIT force-torque SDK 3rd party was detected and needs c++14 compiler flags that is turned off. Thus to enable IIT SDK usage we turn USE_CXX_STANDARD=14.")
+    set(USE_CXX_STANDARD "14" CACHE STRING "cxx standard" FORCE) # Update cmake-gui option
+    unset(CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+    set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_14}) # for vpConfig.h
+  endif()
+endif()
+
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
@@ -668,7 +681,7 @@ VP_CHECK_PACKAGE(Log1p)
 #----------------------------------------------------------------------
 # For Dart server and tests
 # We use CDash set through CTestConfig.cmake file
-# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
+# Dashboards are sent to https://cdash-ci.inria.fr/index.php?project=ViSP
 #----------------------------------------------------------------------
 if(BUILD_TESTS)
   enable_testing()
@@ -885,6 +898,7 @@ VP_SET(VISP_HAVE_VIPER850    TRUE IF (BUILD_MODULE_visp_robot AND USE_VIPER850))
 VP_SET(VISP_HAVE_FRANKA      TRUE IF (BUILD_MODULE_visp_robot AND USE_FRANKA))
 VP_SET(VISP_HAVE_BICLOPS     TRUE IF (BUILD_MODULE_visp_robot AND USE_BICLOPS))
 VP_SET(VISP_HAVE_PTU46       TRUE IF (BUILD_MODULE_visp_robot AND USE_PTU46))
+VP_SET(VISP_HAVE_FLIR_PTU_SDK TRUE IF (BUILD_MODULE_visp_robot AND USE_FLIRPTUSDK))
 VP_SET(VISP_HAVE_ARSDK       TRUE IF (BUILD_MODULE_visp_robot AND USE_ARSDK))
 VP_SET(VISP_HAVE_FFMPEG      TRUE IF (BUILD_MODULE_visp_robot AND USE_FFMPEG))
 #VP_SET(VISP_HAVE_PIONEER     TRUE IF (BUILD_MODULE_visp_robot AND USE_ARIA))
@@ -917,6 +931,7 @@ VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTUR
 VP_SET(VISP_HAVE_PYLON       TRUE IF (BUILD_MODULE_visp_sensor AND USE_PYLON))
 VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
+VP_SET(VISP_HAVE_FT_IIT_SDK  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FTIITSDK))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
 VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
 VP_SET(VISP_HAVE_APRILTAG_BIG_FAMILY TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG AND WITH_APRILTAG_BIG_FAMILY))
@@ -1182,6 +1197,10 @@ if(USE_COIN3D)
   vp_parse_header("${COIN3D_INCLUDE_DIRS}/Inventor/C/basic.h" COIN_VERSION_LINES COIN_MAJOR_VERSION COIN_MINOR_VERSION COIN_MICRO_VERSION)
   set(COIN3D_VERSION "${COIN_MAJOR_VERSION}.${COIN_MINOR_VERSION}.${COIN_MICRO_VERSION}")
 endif()
+if(USE_FLIRPTUSDK)
+  vp_parse_header("${FLIRPTUSDK_CPI_INCLUDE_DIR}/cpi.h" CPI_VERSION_LINES CPI_VER_MAJOR CPI_VER_MINOR CPI_VER_REV)
+  set(FLIRPTUSDK_VERSION "${CPI_VER_MAJOR}.${CPI_VER_MINOR}.${CPI_VER_REV}")
+endif()
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
@@ -1442,7 +1461,8 @@ status("    Use Viper650:"           USE_VIPER650     THEN "yes" ELSE "no")
 status("    Use Viper850:"           USE_VIPER850     THEN "yes" ELSE "no")
 status("    Use aria (Pioneer):"     USE_ARIA         THEN "yes" ELSE "no")
 status("    Use PTU46:"              USE_PTU46        THEN "yes" ELSE "no")
-status("    Use Biclops PT:"         USE_BICLOPS      THEN "yes" ELSE "no")
+status("    Use Biclops PTU:"        USE_BICLOPS      THEN "yes" ELSE "no")
+status("    Use Flir PTU SDK:"       USE_FLIRPTUSDK   THEN "yes (ver ${FLIRPTUSDK_VERSION})" ELSE "no")
 status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes" ELSE "no")
 status("    \\-Use ffmpeg:"          USE_FFMPEG       THEN "yes" ELSE "no")
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
@@ -1477,6 +1497,7 @@ status("")
 status("  F/T sensors: ")
 status("    Use atidaq (built-in):"  WITH_ATIDAQ      THEN "yes (ver ${ATIDAQ_VERSION})" ELSE "no")
 status("    Use comedi:"             USE_COMEDI       THEN "yes (ver ${COMEDI_VERSION})" ELSE "no")
+status("    Use IIT SDK:"            USE_FTIITSDK     THEN "yes" ELSE "no")
 status("")
 status("  Detection: ")
 status("    Use zbar:"                    USE_ZBAR                  THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")

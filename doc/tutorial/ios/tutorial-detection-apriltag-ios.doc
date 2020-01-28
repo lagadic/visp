@@ -42,15 +42,15 @@ The Xcode project \c StartedAprilTag contains \c ImageDisplay.h and \c ImageDisp
 
 \subsection apriltag_detection_display_line Display a line
 
-The following function implemented in \c ImageDisplay.mm show how to display a line. 
+The following function implemented in `ImageDisplay.mm` show how to display a line. 
 
-\snippet ImageDisplay.mm display line
+\snippet StartedAprilTag/ImageDisplay.mm display line
 
 \subsection apriltag_detection_display_frame Display a 3D frame
 
-The following function implemented in \c ImageDisplay.mm show how to display a 3D frame; red line for x, green for y and blue for z axis. 
+The following function implemented in `ImageDisplay.mm` show how to display a 3D frame; red line for x, green for y and blue for z axis. 
 
-\snippet ImageDisplay.mm display frame
+\snippet StartedAprilTag/ImageDisplay.mm display frame
 
 \section apriltag_detection_basic_output Application output
 
@@ -58,5 +58,9 @@ The following function implemented in \c ImageDisplay.mm show how to display a 3
 - Once build, if you run \c StartedAprilTag application on your device, you should be able to see the following screen shot:
 
 \image html img-detection-apriltag-ios-output.png
+
+\section apriltag_detection_ios_next Next tutorial
+
+You are now ready to follow \ref tutorial-detection-apriltag-ios-realtime that shows how to detect in realtime AprilTags from your iOS device camera.
 
 */

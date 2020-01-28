@@ -42,7 +42,7 @@
 
 /*!
   \file vpMeterPixelConversion.h
-  \brief meter to pixel  conversion
+  \brief Meter to pixel conversion.
 
 */
 
