@@ -37,7 +37,7 @@ Check the checkbox of the ViSP library and press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
 
-\section java_tag_app Create an AprilTag detection application
+\section java_tag_app Import AprilTag detection application
 
 Now import AprilTagDetection.java file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu. 
 
@@ -55,11 +55,13 @@ Now expanding what's behind `src` you should see something similar to:
 
 \image html img-java-apriltag-project-complete.png
 
+\section java_tag_run Run AprilTag detection application
+
 We can now run this application entering`"Run > Run"` menu. Here you should see the application appearing:
 
 \image html img-java-apriltag-app-empty.png
 
-Press `Open` button, browse to `$ViSP_WS/visp-images/AprilTag/benchmark/640x480` folder and select `tag36_11_640x480.png` image.
+\ref install_ubuntu_dataset, press `Open` button, browse to `$ViSP_WS/visp-images/AprilTag/benchmark/640x480` folder and select `tag36_11_640x480.png` image.
 
 \image html img-java-apriltag-app-open-image.png
 
