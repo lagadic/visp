@@ -19,44 +19,44 @@ $ mkdir -p $VISP_WS
 
 \note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) was version 13. We experienced that JDK 13 and JDK 12 are not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk.
 
-That's why we recommand to install Java SE Development Kit 11.0.4 LTS (JDK 11). 
+That's why we recommand to install Java SE Development Kit 11.0.6 LTS (JDK 11). 
 
 \subsection java_install_jdk_unix On Ubuntu or Debian platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.4_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.6_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
 \code
-$ tar xvzf jdk-11.0.4_linux-x64_bin.tar.gz -C $VISP_WS
-$ echo "export JAVA_HOME=$VISP_VS/jdk-11.0.4" >> ~/.bashrc
-$ echo "export PATH=${PATH}:${JAVA_HOME}/bin" >> ~/.bashrc
+$ tar xvzf jdk-11.0.6_linux-x64_bin.tar.gz -C $VISP_WS
+$ echo 'export JAVA_HOME=$VISP_VS/jdk-11.0.6' >> ~/.bashrc
+$ echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
 
 After installation check JDK version:
 \code
 $ java --version
-java 11.0.4 2019-07-16 LTS
+java 11.0.6 2020-01-14 LTS
 \endcode
 
 \subsection java_install_jdk_osx On Mac OSX platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.4_osx-x64_bin.dmg` and install the package.
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.6_osx-x64_bin.dmg` and install the package.
 
 After installation check JDK version:
 \code
 $ java --version
-java 11.0.4 2019-07-16 LTS
+java 11.0.6 2020-01-14 LTS
 \endcode
 
 \note If you have a more recent version like java 13 (that comes with JDK 13) or java 12 (that comes with JDK 12), you need to uninstall it. See \ref java_install_tips_uninstall_jdk to proceed.
 
 \subsection java_install_jdk_win On Windows platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.4_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location `C:\Program Files\Java\jdk-11.0.4\bin` to the `%%PATH%` environment variable.
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.6_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location `C:\Program Files\Java\jdk-11.0.6\bin` to the `%%PATH%` environment variable.
 
 After installation check JDK version:
 \code
 $ java -version
-java version 11.0.4 2019-07-16 LTS
+java version 11.0.6 2020-01-14 LTS
 \endcode
 
 \note If you have a more recent version like JDK 13 or JDK 12, you need to uninstall it. See \ref java_install_tips_uninstall_jdk to proceed.
@@ -131,79 +131,82 @@ The following image shows that this command allows to configure (just by pressin
 In `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following snapshot that shows that `python`, `ant` and `JNI` are found:
 \code
 $ more ViSP-third-party.txt
-
 ==========================================================
-General configuration information for ViSP 3.2.0
+General configuration information for ViSP 3.3.0
 
-  Version control:               3.2.0-rc1-86-gfcd39c4
+  Version control:               1041074e9-dirty
 
   Platform:
-    Timestamp:                   2019-01-09T14:36:00Z
-    Host:                        Linux 4.15.0-42-generic x86_64
-    CMake:                       3.5.1
+    Timestamp:                   2020-01-27T15:37:47Z
+    Host:                        Linux 5.3.0-26-generic x86_64
+    CMake:                       3.10.2
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 5.4.0)
+    C++ Compiler:                /usr/bin/c++  (ver 7.4.0)
     C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
     C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     C Compiler:                  /usr/bin/cc
     C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
     C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
-    Linker flags (Release):     
-    Linker flags (Debug):       
+    Linker flags (Release):      
+    Linker flags (Debug):        
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection
- java mbt tt tt_mi
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection java mbt tt tt
+_mi
     Disabled:                    -
     Disabled by dependency:      -
     Unavailable:                 -
 
   Python (for build):            /usr/bin/python2.7
 
-  Java:                         
-    ant:                         /usr/bin/ant (ver 1.9.6)
-    JNI:                         /usr/lib/jvm/default-java/include /usr/lib/jvm/default-java/include/linux /usr/lib/jvm/default-java/include
+  Java:                          
+    ant:                         /usr/bin/ant (ver 1.10.5)
+    JNI:                         $VISP_WS/jdk-11.0.6/include $VISP_WS/jdk-11.0.6/include/linux $VISP_WS/jdk-11.0.6/include
 \endcode
 
 
 \subsection install_java_visp_build Building ViSP libraries
 
-- To build ViSP libraries on Linux, proceed with:
+- To build ViSP Java libraries on Linux, proceed with:
 \code
 $ cd $VISP_WS/visp-build
-$ make -j$(nproc)
+$ make -j$(nproc) visp_java
 \endcode
 
-- To build ViSP libraries on MacOS/OSX, proceed with:
+- To build ViSP Java libraries on MacOS/OSX, proceed with:
 \code
 $ cd $VISP_WS/visp-build
-$ make -j$(sysctl -n hw.ncpu)
+$ make -j$(sysctl -n hw.ncpu) visp_java
 \endcode
 
-Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-320.jar`.
+Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-330.jar`.
 
 \section set_up_visp_java_eclipse Setting Up ViSP Java in Eclipse
 
 \subsection install_eclipse Install the latest Eclipse version
 
-Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/) choosing the <b> Eclipse IDE for Java Developers </b> version. You don’t need to install anything. Extract the downloaded compressed file and put the resulting folder wherever you want to.  
+Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/) choosing the <b> Eclipse IDE for Java Developers </b> version. You don’t need to install anything. Extract the downloaded compressed file and put the resulting folder wherever you want to, for example in `$VISP_WS/eclipse`.  
 
 \subsection create_user_library Creating a user library
 
-Open Eclipse and select a workspace of your choice. Create a User Library, ready to be used on all your next projects: go to `"Window > Preferences"` menu:
+Open Eclipse and select a workspace location of your choice, for example in `$VISP_WS/eclipse/eclipse-workspace` and press `Launch` button.
+
+\image html img-tutorial-java-eclipse-workspace.png
+
+Now we propose to create a ViSP user library ready to be used on all your next Java projects. To this end enter `"Window > Preferences"` menu:
 
 \image html img-tutorial-java-eclipse1.jpeg Open Preferences panel in Eclipse
 
-In the Preferences panel navigate under `"Java > Build Path > User Libraries"` and choose <b>New</b>. Enter a name for the library (e.g visp) and select the newly created user library.
+In the Preferences panel navigate under `"Java > Build Path > User Libraries"` and choose **New**. Enter a name for the library (e.g visp) and press **OK** button.
 
 \image html img-tutorial-java-eclipse2.jpeg Create a new User Library
 
-Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-320.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, then press `"External Folder"` and finaly browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows).
+Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-330.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, press `"External Folder"`, browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries and finally press **OK** button. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows.
 
 \image html img-tutorial-java-eclipse3.jpeg Add jar and native libraries to User Library
 
@@ -215,6 +218,13 @@ Once done, press `"Apply and Close"` button.
 
 \note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) was version 13. We experienced that JDK 13 and JDK 12 are not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk. That's why we give here some tips to uninstall JDK to be able to downgrade JDK version.
 
+<b>On Ubuntu or Debian platform</b>
+
+On Ubuntu or Debian platform there is nothing more to do than removing the folder containing JDK.
+\code
+$ rm -rf $VISP_VS/jdk-11.0.6
+\endcode
+ 
 <b>On Mac OSX platform</b>
 
 To uninstall JDK on Mac OSX, you must have administrator privileges and remove the directory whose name matches the following format: `/Library/Java/JavaVirtualMachines/jdkmajor.minor.macro[_update].jdk`. You can proceed using:
@@ -229,6 +239,14 @@ sudo mv /Library/Java/JavaVirtualMachines/jdk-12.0.2.jdk/ /tmp
 <b>On Windows platform</b>
 
 To uninstall JDK on Windows, click Start menu, select `"Settings > System > Apps & features"`. Select the program to unsinstall like `Java(TM) SE Development Kit 13.0 (64-bit)`, then click its Uninstall button. Respond to the prompts to complete the uninstall. 
+
+\subsection java_install_tips_rm_workspace How to delete an Eclipse workspace
+
+To remove existing Eclipse workspaces, enter `"Preferences > General > Startup & Shudown > Workspaces"` menu, select the workspace to remove and press `Remove` button and then `Apply and Close` button.
+
+\image html img-tutorial-java-eclipse-remove-workspace.jpeg
+
+Note that this does not actually delete the files from the system, it simply removes it from the list of suggested workspaces. You need to remove the workspace directory by hand. 
 
 \section java_install_next Next tutorial
 
