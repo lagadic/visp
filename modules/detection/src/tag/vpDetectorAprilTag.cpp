@@ -655,7 +655,7 @@ public:
     }
     return false;
   }
-
+  
   bool getQuadSigma(float &quadSigma) const {
     if (m_td) {
       quadSigma = m_td->quad_sigma;

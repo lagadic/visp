@@ -1,7 +1,8 @@
-include/visp3/core/vpMatrix.h 
-include/visp3/core/vpCameraParameters.h 
-include/visp3/core/vpRotationVector.h 
-include/visp3/core/vpColVector.h 
-include/visp3/core/vpRowVector.h 
+include/visp3/core/vpMatrix.h
+include/visp3/core/vpCameraParameters.h
+include/visp3/core/vpRotationVector.h
+include/visp3/core/vpColVector.h
+include/visp3/core/vpRowVector.h
 include/visp3/core/vpHomogeneousMatrix.h
+include/visp3/core/vpImagePoint.h
 include/visp3/core/vpPoint.h
