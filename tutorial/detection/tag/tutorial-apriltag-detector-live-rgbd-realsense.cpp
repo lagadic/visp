@@ -147,6 +147,8 @@ int main(int argc, const char **argv)
 
     std::vector<double> time_vec;
     for (;;) {
+      double t = vpTime::measureTimeMs();
+
       //! [Acquisition]
       g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
                 NULL, NULL, &align_to_color);
@@ -177,11 +179,43 @@ int main(int argc, const char **argv)
       vpDisplay::display(I_color2);
       vpDisplay::display(I_depth);
 
-      double t = vpTime::measureTimeMs();
-      //! [Detect and compute pose]
       std::vector<vpHomogeneousMatrix> cMo_vec;
       detector.detect(I, tagSize, cam, cMo_vec);
-      //! [Detect and compute pose]
+
+      // Display camera pose for each tag
+      for (size_t i = 0; i < cMo_vec.size(); i++) {
+        vpDisplay::displayFrame(I_color, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
+      }
+
+      //! [Pose from depth map]
+      std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
+      std::vector<int> tags_id = detector.getTagsId();
+      std::map<int, double> tags_size;
+      tags_size[-1] = tagSize; // Default tag size
+      std::vector<std::vector<vpPoint> > tags_points3d = detector.getTagsPoints3D(tags_id, tags_size);
+      for (size_t i = 0; i < tags_corners.size(); i++) {
+        vpHomogeneousMatrix cMo;
+        double confidence_index;
+        if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_points3d[i], cMo, &confidence_index)) {
+          if (confidence_index > 0.5) {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::none, 3);
+          }
+          else if (confidence_index > 0.25) {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::orange, 3);
+          }
+          else {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::red, 3);
+          }
+          std::stringstream ss;
+          ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
+          vpDisplay::displayText(I_color2, 35 + i*15, 20, ss.str(), vpColor::red);
+        }
+      }
+      //! [Pose from depth map]
+
+      vpDisplay::displayText(I_color, 20, 20, "Pose from homography + VVS", vpColor::red);
+      vpDisplay::displayText(I_color2, 20, 20, "Pose from RGBD fusion", vpColor::red);
+      vpDisplay::displayText(I_color, 35, 20, "Click to quit.", vpColor::red);
       t = vpTime::measureTimeMs() - t;
       time_vec.push_back(t);
 
@@ -189,46 +223,15 @@ int main(int argc, const char **argv)
       ss << "Detection time: " << t << " ms for " << detector.getNbObjects() << " tags";
       vpDisplay::displayText(I_color, 50, 20, ss.str(), vpColor::red);
 
-      //! [Display camera pose for each tag]
-      for (size_t i = 0; i < cMo_vec.size(); i++) {
-        vpDisplay::displayFrame(I_color, cMo_vec[i], cam, tagSize / 2, vpColor::none, 3);
-      }
-
-      //! [Pose from depth map]
-      std::vector<std::vector<vpImagePoint> > tags_corners = detector.getPolygon();
-      std::vector<std::vector<vpPoint> > tags_point3d = detector.getPoint3D();
-      for (size_t i = 0; i < tags_corners.size(); i++) {
-        vpHomogeneousMatrix cMo;
-        double confidence;
-        if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_point3d[i], cMo, confidence)) {
-          if (confidence > 0.5) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::none, 3);
-          }
-          else if (confidence > 0.25) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::orange, 3);
-          }
-          else {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::red, 3);
-          }
-        }
-      }
-      //! [Pose from depth map]
-
-      vpDisplay::displayText(I_color, 20, 20, "Pose from homography + VVS", vpColor::red);
-      vpDisplay::displayText(I_color2, 20, 20, "Pose from RGBD fusion", vpColor::red);
+      if (vpDisplay::getClick(I_color, false))
+        break;
 
       vpDisplay::flush(I_color);
       vpDisplay::flush(I_color2);
       vpDisplay::flush(I_depth);
-      //! [Display camera pose for each tag]
-
-      vpDisplay::displayText(I_color, 35, 20, "Click to quit.", vpColor::red);
-      vpDisplay::flush(I_color);
-      if (vpDisplay::getClick(I_color, false))
-        break;
     }
 
-    std::cout << "Benchmark computation time" << std::endl;
+    std::cout << "Benchmark loop processing time" << std::endl;
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
               << " ; " << vpMath::getMedian(time_vec) << " ms"
               << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
