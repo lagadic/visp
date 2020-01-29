@@ -35,6 +35,8 @@
 #ifndef _vpDetectorAprilTag_h_
 #define _vpDetectorAprilTag_h_
 
+#include <map>
+
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_APRILTAG
@@ -253,7 +255,6 @@ public:
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2=NULL,
               std::vector<double> *projErrors=NULL, std::vector<double> *projErrors2=NULL);
 
-  std::vector<std::vector<vpPoint> > getPoint3D() const;
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam,
                vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2=NULL,
                double *projError=NULL, double *projError2=NULL);
@@ -263,8 +264,9 @@ public:
   */
   inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
-  std::vector<int> getTagsId() const;
   std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
+  std::vector<int> getTagsId() const;
+  std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int>& tagsId, const std::map<int, double>& tagsSize) const;
 
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
@@ -295,7 +297,6 @@ protected:
   unsigned int m_displayTagThickness;
   vpPoseEstimationMethod m_poseEstimationMethod;
   vpAprilTagFamily m_tagFamily;
-  std::vector<std::vector<vpPoint>> m_point3d;
 
 private:
   vpCameraParameters m_defaultCam;
