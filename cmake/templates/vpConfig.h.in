@@ -345,6 +345,9 @@
 // Defined if ATIDAQ-C is build and available.
 #cmakedefine VISP_HAVE_ATIDAQ
 
+// Defined if IIT force-torque SDK is available.
+#cmakedefine VISP_HAVE_FT_IIT_SDK
+
 // Defined if Irisa's Afma4 robot available.
 #cmakedefine VISP_HAVE_AFMA4
 
@@ -361,6 +364,9 @@
 
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
+
+// Defined if Flir PTU SDK is available to control Flir PTU robot.
+#cmakedefine VISP_HAVE_FLIR_PTU_SDK
 
 // Defined if Irisa's Viper S650 robot available.
 #cmakedefine VISP_HAVE_VIPER650

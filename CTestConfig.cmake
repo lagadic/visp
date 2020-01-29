@@ -45,6 +45,26 @@ set(CTEST_DROP_LOCATION "/submit.php?project=ViSP")
 set(CTEST_DROP_SITE_CDASH TRUE)
 
 #--------------------------------------------------------------------
+# Prepare valgrind suppression file
+#--------------------------------------------------------------------
+if(UNIX)
+  # Prepare a temporary file to concatenate to
+  file(WRITE "${VISP_BINARY_DIR}/valgrind.supp.in" "")
+
+  # Concatenate all suppression files in
+  file(GLOB suppression_files "${VISP_SOURCE_DIR}/platforms/scripts/valgrind/*.supp")
+  foreach(f ${suppression_files})
+    vp_cat_file(${f} "${VISP_BINARY_DIR}/valgrind.supp.in")
+  endforeach()
+
+  # Copy the temporary file to the final location
+  configure_file("${VISP_BINARY_DIR}/valgrind.supp.in" "${VISP_BINARY_DIR}/valgrind.supp" COPYONLY)
+
+  # Valgrind false positive suppression file
+  set(MEMORYCHECK_SUPPRESSIONS_FILE "${VISP_BINARY_DIR}/valgrind.supp")
+endif()
+
+#--------------------------------------------------------------------
 # BUILNAME variable construction
 # This variable will be used to set the build name which will appear
 # on the ViSP dashboard http://cdash.irisa.fr/CDash/

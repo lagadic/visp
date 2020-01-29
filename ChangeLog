@@ -8,6 +8,10 @@
 
 ViSP 3.2.1 (under work)
   - Contributors:
+    . This release was possible thanks to contributions from Fabien Spindler,
+      Souriya Trinh, Gatien Gaumerais, Yasutomo Shirahama, Yash Kapoor, Noura Neji,
+      Rahaf Rahal, Romain Lagneau, ahfuzhang, Franco Fusco, Olivier Kermorgant,
+      Alexander Oliva
   - New features and improvements
     . Upgrade to new AprilTag3 version. Note that TAG_36h10, TAG_25h7 and
       TAG_36ARTOOLKIT are deprecated and that new families: TAG_CIRCLE21h7,
@@ -39,10 +43,15 @@ ViSP 3.2.1 (under work)
       ATI F/T sensor connected to a Net FT box
     . New vpRobotBebop2 class a wrapper over ARSDK3 to control Parrot Bebop2
       drone
+    . New vpRobotFlirPtu class, a wrapper over Flir pan-tilt unit SDK
+    . New vpForceTorqueIitSensor class, a wrapper over IIT force-torque sensor
     . Optimize template tracker
     . Modify vpVideoReader to support MTS video format
     . Upgrade to AprilTag 3.1.1 last release
     . Introduce performance tests using Catch2
+    . Modify vpVideoReader to enable MTS video format reading
+    . Use only OpenCV required modules to reduce the number of dependencies
+    . Remove valgrind false positive memory leaks adding a suppression file
   - Tutorials
     . New tutorial: Installation from source for Windows with Visual C++ 2019
       (vc16)
@@ -50,6 +59,9 @@ ViSP 3.2.1 (under work)
       C++ 2019 (vc16)
     . New tutorial: IBVS with Panda 7-dof robot from Franka Emika
     . New tutorial: Visual-servoing with Parrot Bebop 2 drone
+    . New tutorial: Visual servoing with FLIR Pan Tilt Unit
+    . New tutorial: AprilTag marker real-time detection on iOS
+    . New tutorial: Introduce a new class with 3rd-party dependencies
   - Bug fixed
     . [#523] dpkg-shlibdeps produces an error during Debian packaging
     . [#525] Tests are failing during Debian package build in a container
@@ -67,7 +79,15 @@ ViSP 3.2.1 (under work)
     . [#614] Performance issues in vpTemplateTrackerMIInverseCompositional
     . [#621] Fix pointcloud computation when align with librealsense2
     . [#650] Video reader ends prematurely on some mp4
+    . [#651] visp_ros installation error
+    . [#655] Build error with Ubuntu 12.04.5 LTS
+    . [#661] Possible issues in image Moments calculations
     . [#665] Build error with Ubuntu 12.04.5 LTS
+    . [#667] Tutorial-apriltag-detector seg fault
+    . [#668] April Tags and depth image
+    . [#669] Fix segfault and memory leak when BEST_RESIDUAL_VIRTUAL_VS or
+      HOMOGRAPHY_ORTHOGONAL_ITERATION pose estimation method are used
+    . [#679] Fix display
 ----------------------------------------------
 ViSP 3.2.0 (released January 23, 2019)
   - Contributors:

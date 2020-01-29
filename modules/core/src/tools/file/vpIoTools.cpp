@@ -200,13 +200,21 @@ double swapDouble(const double d)
 
 std::string &ltrim(std::string &s)
 {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) { return !std::isspace(c); }));
+#else
   s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+#endif
   return s;
 }
 
 std::string &rtrim(std::string &s)
 {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) { return !std::isspace(c); }).base(), s.end());
+#else
   s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+#endif
   return s;
 }
 }
@@ -2020,7 +2028,7 @@ bool vpIoTools::parseBoolean(std::string input)
 }
 
 /*!
-   Remove whitespaces on both sides.
+   Remove leading and trailing whitespaces from a string.
  */
 std::string vpIoTools::trim(std::string s)
 {

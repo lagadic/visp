@@ -64,6 +64,15 @@
 
 #if !defined(VISP_HAVE_OPENCV)
 #if !defined(VISP_HAVE_JPEG) || !defined(VISP_HAVE_PNG)
+
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#  define VISP_HAVE_SSE2 1
+#endif
+
+#ifndef VISP_HAVE_SSE2
+#  define STBI_NO_SIMD
+#endif
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 

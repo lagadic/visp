@@ -258,7 +258,12 @@ double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrec
   double mean = getMean(v);
 
   std::vector<double> diff(v.size());
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  std::transform(v.begin(), v.end(), diff.begin(), std::bind(std::minus<double>(), std::placeholders::_1, mean));
+#else
   std::transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), mean));
+#endif
+
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double divisor = (double)v.size();
   if (useBesselCorrection && v.size() > 1) {
