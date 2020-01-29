@@ -97,7 +97,8 @@ vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint>& p, con
 }
 
 void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
-                              vpColVector &plane_equation_estimated, vpColVector &centroid)
+                              vpColVector &plane_equation_estimated, vpColVector &centroid,
+                              double &normalized_weights)
 {
   const unsigned int max_iter = 10;
   double prev_error = 1e3;
@@ -204,6 +205,8 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
   plane_equation_estimated[1] = B;
   plane_equation_estimated[2] = C;
   plane_equation_estimated[3] = D;
+
+  normalized_weights = total_w / nPoints;
 }
 
 double computeZMethod1(const vpColVector& plane_equation, double x, double y) {
@@ -234,21 +237,29 @@ bool validPose(const vpHomogeneousMatrix& cMo) {
   \param[in] colorIntrinsics : Camera parameters used to convert \e corners from pixel to meters.
   \param[in] point3d : Vector of 3D points corresponding to the model of the planar object.
   \param[out] cMo : Computed pose.
-  \param[out] confidence : Pose estimation confidence index in range [0, 1]. When values are close to zero
-  it means that confidence is very low. Values close to 1 indicate a high level of confidence in the pose
-  estimation.
+  \param[out] confidence_index : Confidence index in range [0, 1]. When values are close to 1, it means
+  that pose estimation confidence is high. Values close to 0 indicate that pose is not well estimated.
+  This confidence index corresponds to the product between the normalized number of depth data covering the tag
+  and the normalized M-estimator weights returned by the robust estimation of the tag 3D plane.
+
+  The following code snippet implemented in tutorial-apriltag-detector-live-rgbd-realsense.cpp shows how
+  to use this function to estimate the pose of an AprilTag using this method:
+  \snippet tutorial-apriltag-detector-live-rgbd-realsense.cpp Pose from depth map
 
   \return true if pose estimation succeed, false otherwise.
  */
 bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
-                                             const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo, double &confidence)
+                                             const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d,
+                                             vpHomogeneousMatrix &cMo, double *confidence_index)
 {
   if (corners.size() != point3d.size()) {
     throw(vpException(vpException::fatalError, "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
                       point3d.size(), corners.size()));
   }
   std::vector<vpPoint> pose_points;
-  confidence = 0.0;
+  if (confidence_index != NULL) {
+    *confidence_index = 0.0;
+  }
 
   for (size_t i = 0; i < point3d.size(); i ++) {
     pose_points.push_back(point3d[i]);
@@ -284,7 +295,8 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
 
       // Plane equation
       vpColVector plane_equation, centroid;
-      estimatePlaneEquationSVD(points_3d, plane_equation, centroid);
+      double normalized_weights = 0;
+      estimatePlaneEquationSVD(points_3d, plane_equation, centroid, normalized_weights);
 
       for (size_t j = 0; j < corners.size(); j++) {
           const vpImagePoint& imPt = corners[j];
@@ -310,7 +322,9 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
           vpPose pose;
           pose.addPoints(pose_points);
           if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
-            confidence = std::min(1.0, static_cast<double>(nb_points_3d) / polygon.getArea());
+            if (confidence_index != NULL) {
+              *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / polygon.getArea());
+            }
             return true;
           }
       }
