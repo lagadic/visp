@@ -354,7 +354,11 @@ public:
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                         const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
-                        bool (*func)(const vpHomogeneousMatrix &)=NULL);
+                        bool (*func)(const vpHomogeneousMatrix &) = NULL);
+
+  static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
+                                              const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
+                                              double *confidence_index = NULL);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

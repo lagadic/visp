@@ -35,6 +35,8 @@
 #ifndef _vpDetectorAprilTag_h_
 #define _vpDetectorAprilTag_h_
 
+#include <map>
+
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_APRILTAG
@@ -262,8 +264,9 @@ public:
   */
   inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
-  std::vector<int> getTagsId() const;
   std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
+  std::vector<int> getTagsId() const;
+  std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int>& tagsId, const std::map<int, double>& tagsSize) const;
 
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);

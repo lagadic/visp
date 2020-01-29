@@ -630,6 +630,8 @@ public:
       *err2 = err_2;
   }
 
+  bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
+
   bool getAprilTagDecodeSharpening(double &decodeSharpening) const {
     if (m_td) {
       decodeSharpening = m_td->decode_sharpening;
@@ -653,7 +655,7 @@ public:
     }
     return false;
   }
-
+  
   bool getQuadSigma(float &quadSigma) const {
     if (m_td) {
       quadSigma = m_td->quad_sigma;
@@ -813,6 +815,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, double tagSize,
   considers that all the tags have the same size.
 
   \param[in] tagIndex : Index of the tag. Value should be in range [0, nb tags-1] with nb_tags = getNbObjects().
+  Note that this index doesn't correspond to the tag id.
   \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param[in] cam : Camera intrinsic parameters.
   \param[out] cMo : Pose of the tag.
@@ -824,16 +827,17 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, double tagSize,
   The following code shows how to use this function:
   \code
   vpCameraParameters cam;
-  vpDetectorAprilTag detector(tagFamily);
+  vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
   detector.detect(I);
   for (size_t i = 0; i < detector.getNbObjects(); i++) {
     vpHomogeneousMatrix cMo;
-    double tagSize;
+    double tagSize = 0.1;
     detector.getPose(i, tagSize, cam, cMo);
   }
   \endcode
 
-  \sa detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &)
+  \sa detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> *,
+             std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
  */
 bool vpDetectorAprilTag::getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam,
                                  vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2,
@@ -843,7 +847,69 @@ bool vpDetectorAprilTag::getPose(size_t tagIndex, double tagSize, const vpCamera
 }
 
 /*!
+  Return a vector that contains for each tag id the corresponding tag 3D corners coordinates in the tag frame.
+
+  \param tagsId : A vector containing the id of each tag that is detected. It's size corresponds
+  to the number of tags that are detected. This vector is returned by getTagsId().
+
+  \param tagsSize : a map that contains as first element a tag id and as second elements its 3D size in meter.
+  When first element of this map is -1, the second element corresponds to the default tag size.
+  \code
+  std::map<int, double> tagsSize;
+  tagsSize[-1] = 0.05; // Default tag size in meter, used when detected tag id is not in this map
+  tagsSize[10] = 0.1;  // All tags with id 10 are 0.1 meter large
+  tagsSize[20] = 0.2;  // All tags with id 20 are 0.2 meter large
+  \endcode
+
+  \sa getTagsCorners(), getTagsId()
+ */
+std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std::vector<int>& tagsId,
+                                                                       const std::map<int, double>& tagsSize) const
+{
+  std::vector<std::vector<vpPoint> > tagsPoints3D;
+
+  double default_size = -1;
+  {
+    std::map<int, double>::const_iterator it = tagsSize.find(-1);
+    if (it != tagsSize.end()) {
+      default_size = tagsSize.begin()->second; // Default size
+    }
+  }
+  for (size_t i = 0; i < tagsId.size(); i++) {
+    std::map<int, double>::const_iterator it = tagsSize.find(tagsId[i]);
+    double tagSize;
+    if (it == tagsSize.end()) {
+      if (default_size < 0) { // no default size found
+        throw(vpException(vpException::fatalError, "Tag with id %d has no 3D size or there is no default 3D size defined", tagsId[i]));
+      }
+      tagSize = default_size; // Default size
+    }
+    else {
+      tagSize = it->second;
+    }
+    std::vector<vpPoint> points3D(4);
+    if (m_impl->getZAlignedWithCameraAxis()) {
+      points3D[0] = vpPoint(-tagSize/2,  tagSize/2, 0);
+      points3D[1] = vpPoint( tagSize/2,  tagSize/2, 0);
+      points3D[2] = vpPoint( tagSize/2, -tagSize/2, 0);
+      points3D[3] = vpPoint(-tagSize/2, -tagSize/2, 0);
+    }
+    else {
+      points3D[0] = vpPoint(-tagSize/2, -tagSize/2, 0);
+      points3D[1] = vpPoint( tagSize/2, -tagSize/2, 0);
+      points3D[2] = vpPoint( tagSize/2,  tagSize/2, 0);
+      points3D[3] = vpPoint(-tagSize/2,  tagSize/2, 0);
+    }
+    tagsPoints3D.push_back(points3D);
+  }
+
+  return tagsPoints3D;
+}
+
+/*!
   Return the corners coordinates for the detected tags.
+
+  \sa getTagsId(), getTagsPoints3D()
 */
 std::vector<std::vector<vpImagePoint> > vpDetectorAprilTag::getTagsCorners() const
 {
@@ -852,6 +918,8 @@ std::vector<std::vector<vpImagePoint> > vpDetectorAprilTag::getTagsCorners() con
 
 /*!
   Return the decoded Apriltag id for each detection.
+
+  \sa getTagsCorners(), getTagsPoints3D()
 */
 std::vector<int> vpDetectorAprilTag::getTagsId() const
 {
