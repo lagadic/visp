@@ -46,7 +46,7 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpUniRand.h>
 /*!
-   Default constructor that creates an empty polygon
+   Default constructor that creates an empty polygon.
 */
 vpPolygon::vpPolygon()
   : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
