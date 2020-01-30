@@ -46,19 +46,11 @@
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpUniRand.h>
 /*!
-  Basic constructor.
-
-  By default, it defines a triangle with the three 2D points coordinates :
-  \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
+   Default constructor that creates an empty polygon.
 */
 vpPolygon::vpPolygon()
   : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
-  std::vector<vpImagePoint> corners;
-  corners.push_back(vpImagePoint(0, 0));
-  corners.push_back(vpImagePoint(1, 0));
-  corners.push_back(vpImagePoint(0, 1));
-  init(corners);
 }
 
 /*!
