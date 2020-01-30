@@ -178,7 +178,6 @@ void vpMbDepthDenseTracker::computeVVS()
       if (computeCovariance) {
         L_true = m_L_depthDense;
         if (!isoJoIdentity_) {
-          vpVelocityTwistMatrix cVo;
           cVo.buildFrom(cMo);
           LVJ_true = (m_L_depthDense * cVo * oJo);
         }

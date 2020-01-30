@@ -82,9 +82,9 @@ protected:
   //! Factor for edge trackers.
   double m_factorMBT;
   //! The threshold used in the robust estimation of KLT.
-  double thresholdKLT;
+  double m_thresholdKLT;
   //! The threshold used in the robust estimation of MBT.
-  double thresholdMBT;
+  double m_thresholdMBT;
 
   //! Map of camera transformation matrix between the current camera frame to
   //! the reference camera frame (cCurrent_M_cRef)
@@ -133,7 +133,7 @@ public:
   virtual void display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                        const std::map<std::string, vpCameraParameters> &mapOfCameraParameters, const vpColor &col,
-                       const unsigned int thickness = 1, const bool displayFullModel = false);  
+                       const unsigned int thickness = 1, const bool displayFullModel = false);
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int, unsigned int,
                                                                const vpHomogeneousMatrix &,

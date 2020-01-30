@@ -1727,7 +1727,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     //////////////////////////Read the header part if present//////////////////////////
     std::string line;
-    std::string prefix = "load";
+    const std::string prefix_load = "load";
 
     fileId.get(c);
     fileId.unget();
@@ -1735,7 +1735,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     while (c == 'l' || c == 'L') {
       getline(fileId, line);
 
-      if (!line.compare(0, prefix.size(), prefix)) {
+      if (!line.compare(0, prefix_load.size(), prefix_load)) {
         //remove "load("
         std::string paramsStr = line.substr(5);
         //get parameters inside load()

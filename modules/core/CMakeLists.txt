@@ -265,7 +265,7 @@ endif()
 if(USE_EIGEN3)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-deprecated-copy)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-deprecated-copy)
-  vp_set_source_file_compile_flag(src/math/matrix/vpEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
+  vp_set_source_file_compile_flag(src/math/matrix/vpEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-shadow)
 endif()
 
 vp_set_source_file_compile_flag(src/image/vpImageConvert.cpp -Wno-strict-overflow)
@@ -281,9 +281,9 @@ vp_set_source_file_compile_flag(test/network/testClient.cpp -Wno-strict-overflow
 vp_set_source_file_compile_flag(test/network/testServer.cpp -Wno-strict-overflow)
 
 if(USE_EIGEN3)
-  vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context)
-  vp_set_source_file_compile_flag(test/math/perfMatrixMultiplication.cpp -Wno-strict-overflow -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wno-int-in-bool-context)
-  vp_set_source_file_compile_flag(test/math/perfMatrixTranspose.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wno-int-in-bool-context)
+  vp_set_source_file_compile_flag(test/math/testEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-shadow)
+  vp_set_source_file_compile_flag(test/math/perfMatrixMultiplication.cpp -Wno-strict-overflow -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wno-int-in-bool-context -Wno-shadow)
+  vp_set_source_file_compile_flag(test/math/perfMatrixTranspose.cpp -Wno-misleading-indentation -Wno-float-equal -Wno-deprecated-copy -Wno-int-in-bool-context -Wno-shadow)
 endif()
 
 if(USE_XML2)

@@ -48,7 +48,7 @@
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
-  : thresholdKLT(2.), thresholdMBT(2.), m_maxIterKlt(30), w_mbt(), w_klt(), m_error_hybrid(), m_w_hybrid()
+  : m_thresholdKLT(2.), m_thresholdMBT(2.), m_maxIterKlt(30), m_w_mbt(), m_w_klt(), m_error_hybrid(), m_w_hybrid()
 {
   computeCovariance = false;
 
@@ -704,14 +704,14 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
   m_w_hybrid.resize(totalNbRows, false);
 
   if (nbrow != 0) {
-    w_mbt.resize(nbrow, false);
-    w_mbt = 1; // needed in vpRobust::psiTukey()
+    m_w_mbt.resize(nbrow, false);
+    m_w_mbt = 1; // needed in vpRobust::psiTukey()
     robust_mbt.resize(nbrow);
   }
 
   if (nbInfos != 0) {
-    w_klt.resize(2 * nbInfos, false);
-    w_klt = 1; // needed in vpRobust::psiTukey()
+    m_w_klt.resize(2 * nbInfos, false);
+    m_w_klt = 1; // needed in vpRobust::psiTukey()
     robust_klt.resize(2 * nbInfos);
   }
 
@@ -766,9 +766,9 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
     unsigned int cpt = 0;
     while (cpt < (nbrow + 2 * nbInfos)) {
       if (cpt < (unsigned)nbrow) {
-        m_w_hybrid[cpt] = ((w_mbt[cpt] * factor[cpt]) * factorMBT);
+        m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
       } else {
-        m_w_hybrid[cpt] = (w_klt[cpt - nbrow] * factorKLT);
+        m_w_hybrid[cpt] = (m_w_klt[cpt - nbrow] * factorKLT);
       }
       cpt++;
     }
@@ -788,8 +788,8 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
           residuMBT += fabs(R_mbt[i]);
         residuMBT /= R_mbt.getRows();
 
-        robust_mbt.setThreshold(thresholdMBT / cam.get_px());
-        robust_mbt.MEstimator(vpRobust::TUKEY, R_mbt, w_mbt);
+        robust_mbt.setThreshold(m_thresholdMBT / cam.get_px());
+        robust_mbt.MEstimator(vpRobust::TUKEY, R_mbt, m_w_mbt);
 
         L.insert(L_mbt, 0, 0);
       }
@@ -800,18 +800,18 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
           residuKLT += fabs(R_klt[i]);
         residuKLT /= R_klt.getRows();
 
-        robust_klt.setThreshold(thresholdKLT / cam.get_px());
-        robust_klt.MEstimator(vpRobust::TUKEY, R_klt, w_klt);
+        robust_klt.setThreshold(m_thresholdKLT / cam.get_px());
+        robust_klt.MEstimator(vpRobust::TUKEY, R_klt, m_w_klt);
 
         L.insert(L_klt, nbrow, 0);
       }
 
-      unsigned int cpt = 0;
+      cpt = 0;
       while (cpt < (nbrow + 2 * nbInfos)) {
         if (cpt < (unsigned)nbrow) {
-          m_w_hybrid[cpt] = ((w_mbt[cpt] * factor[cpt]) * factorMBT);
+          m_w_hybrid[cpt] = ((m_w_mbt[cpt] * factor[cpt]) * factorMBT);
         } else {
-          m_w_hybrid[cpt] = (w_klt[cpt - nbrow] * factorKLT);
+          m_w_hybrid[cpt] = (m_w_klt[cpt - nbrow] * factorKLT);
         }
         cpt++;
       }
@@ -900,7 +900,7 @@ void vpMbEdgeKltTracker::track(const vpImage<unsigned char> &I)
   unsigned int nbrow = 0;
   computeVVS(I, m_nbInfos, nbrow);
 
-  if (postTracking(I, w_mbt, w_klt)) {
+  if (postTracking(I, m_w_mbt, m_w_klt)) {
     vpMbKltTracker::reinit(I);
 
     // AY : Removed as edge tracked, if necessary, is reinitialized in
@@ -956,7 +956,7 @@ void vpMbEdgeKltTracker::track(const vpImage<vpRGBa> &I_color)
   unsigned int nbrow = 0;
   computeVVS(m_I, m_nbInfos, nbrow);
 
-  if (postTracking(I_color, w_mbt, w_klt)) {
+  if (postTracking(I_color, m_w_mbt, m_w_klt)) {
     vpMbKltTracker::reinit(m_I);
 
     // AY : Removed as edge tracked, if necessary, is reinitialized in

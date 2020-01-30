@@ -220,15 +220,15 @@ class VISP_EXPORT vpMbEdgeKltTracker : public vpMbKltTracker, public vpMbEdgeTra
 {
 protected:
   //! The threshold used in the robust estimation of KLT.
-  double thresholdKLT;
+  double m_thresholdKLT;
   //! The threshold used in the robust estimation of MBT.
-  double thresholdMBT;
+  double m_thresholdMBT;
   //! The maximum iteration of the virtual visual servoing stage.
   unsigned int m_maxIterKlt;
   //! Robust weights for Edge
-  vpColVector w_mbt;
+  vpColVector m_w_mbt;
   //! Robust weights for KLT
-  vpColVector w_klt;
+  vpColVector m_w_klt;
   //! (s - s*)
   vpColVector m_error_hybrid;
   //! Robust weights

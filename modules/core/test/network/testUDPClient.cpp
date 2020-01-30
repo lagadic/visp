@@ -96,7 +96,7 @@ int main(int argc, char **argv)
     // Send user message
     while (true) {
       std::cout << "Enter the message to send:" << std::endl;
-      std::string msg = "";
+      msg.clear();
       std::getline(std::cin, msg);
       if (client.send(msg) != (int)msg.size())
         std::cerr << "Error client.send()!" << std::endl;

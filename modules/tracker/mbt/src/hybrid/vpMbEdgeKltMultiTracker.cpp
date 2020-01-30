@@ -55,8 +55,8 @@
   Basic constructor
 */
 vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker()
-  : vpMbEdgeMultiTracker(), vpMbKltMultiTracker(), m_factorKLT(0.65), m_factorMBT(0.35), thresholdKLT(2.),
-    thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"), m_nbrow(0),
+  : vpMbEdgeMultiTracker(), vpMbKltMultiTracker(), m_factorKLT(0.65), m_factorMBT(0.35), m_thresholdKLT(2.),
+    m_thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"), m_nbrow(0),
     m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()
 {
   // Add default camera transformation matrix
@@ -73,7 +73,7 @@ vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker()
 */
 vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const unsigned int nbCameras)
   : vpMbEdgeMultiTracker(nbCameras), vpMbKltMultiTracker(nbCameras), m_factorKLT(0.65), m_factorMBT(0.35),
-    thresholdKLT(2.), thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"),
+    m_thresholdKLT(2.), m_thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"),
     m_nbrow(0), m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()
 {
 
@@ -113,7 +113,7 @@ vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const unsigned int nbCameras)
 */
 vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const std::vector<std::string> &cameraNames)
   : vpMbEdgeMultiTracker(cameraNames), vpMbKltMultiTracker(cameraNames), m_factorKLT(0.65), m_factorMBT(0.35),
-    thresholdKLT(2.), thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName(cameraNames.front()),
+    m_thresholdKLT(2.), m_thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName(cameraNames.front()),
     m_nbrow(0), m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()
 {
   m_lambda = 0.8;

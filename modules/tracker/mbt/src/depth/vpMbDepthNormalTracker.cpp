@@ -183,7 +183,6 @@ void vpMbDepthNormalTracker::computeVVS()
       if (computeCovariance) {
         L_true = m_L_depthNormal;
         if (!isoJoIdentity_) {
-          vpVelocityTwistMatrix cVo;
           cVo.buildFrom(cMo);
           LVJ_true = (m_L_depthNormal * (cVo * oJo));
         }
