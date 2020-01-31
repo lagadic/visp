@@ -1321,8 +1321,8 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
 
   \param width : Image width.
   \param height : Image height.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param cam_ : The camera parameters.
   \param displayFullModel : If true, the line is displayed even if it is not
 
   \note It returns the model for the reference camera.
@@ -1335,7 +1335,7 @@ std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigne
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
 
   if (it != m_mapOfTrackers.end()) {
-    return it->second->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+    return it->second->getModelForDisplay(width, height, cMo_, cam_, displayFullModel);
   } else {
     std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
   }
@@ -1355,14 +1355,14 @@ std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigne
   \param mapOfModels : Map of models.
   \param width : Image width.
   \param height : Image height.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param cam_ : The camera parameters.
   \param displayFullModel : If true, the line is displayed even if it is not
 */
 void vpMbGenericTracker::getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
                                             unsigned int width, unsigned int height,
-                                            const vpHomogeneousMatrix &cMo,
-                                            const vpCameraParameters &cam,
+                                            const vpHomogeneousMatrix &cMo_,
+                                            const vpCameraParameters &cam_,
                                             const bool displayFullModel)
 {
   // Clear the input map
@@ -1370,7 +1370,7 @@ void vpMbGenericTracker::getModelForDisplay(std::map<std::string, std::vector<st
 
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
-    mapOfModels[it->first] = it->second->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+    mapOfModels[it->first] = it->second->getModelForDisplay(width, height, cMo_, cam_, displayFullModel);
   }
 }
 
