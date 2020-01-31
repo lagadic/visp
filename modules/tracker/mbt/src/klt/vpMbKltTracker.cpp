@@ -147,7 +147,7 @@ void vpMbKltTracker::init(const vpImage<unsigned char> &I)
     faces.setVisibleOgre(I.getWidth(), I.getHeight(), m_cam, m_cMo, angleAppears, angleDisappears, reInitialisation);
 
 #else
-    faces.setVisible(I.getWidth(), I.getHeight(), cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I.getWidth(), I.getHeight(), m_cam, m_cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
   }
   reinit(I);
