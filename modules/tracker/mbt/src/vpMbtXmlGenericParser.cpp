@@ -1447,6 +1447,7 @@ protected:
 
 vpMbtXmlGenericParser::vpMbtXmlGenericParser(int type) :  m_impl(new Impl(type))
 {
+  std::setlocale(LC_ALL, "en_US.UTF-8");
 }
 
 vpMbtXmlGenericParser::~vpMbtXmlGenericParser()

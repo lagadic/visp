@@ -108,3 +108,27 @@ jobjectArray vector_vector_vpImagePoint_to_List(JNIEnv *env, const std::vector<s
 
   return outerArray;
 }
+
+jobjectArray vector_vector_double_to_List(JNIEnv *env, const std::vector<std::vector<double> >& V) {
+  if (V.empty()) {
+    return NULL;
+  }
+
+  size_t outerSize = V.size();
+  jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), NULL);
+
+  for (int i = 0; i < env->GetArrayLength(outerArray); i++) {
+    size_t innerSize = V[i].size();
+    jdoubleArray doubleArray = env->NewDoubleArray(innerSize);
+    jdouble *doubleArrayElements = env->GetDoubleArrayElements(doubleArray, 0);
+
+    for (int j = 0; j < env->GetArrayLength(doubleArray); j++) {
+      doubleArrayElements[j] = (jdouble) V[i][j];
+    }
+
+    env->ReleaseDoubleArrayElements(doubleArray, doubleArrayElements, 0);
+    env->SetObjectArrayElement(outerArray, i, doubleArray);
+  }
+
+  return outerArray;
+}

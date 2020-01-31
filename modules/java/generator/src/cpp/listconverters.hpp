@@ -19,4 +19,6 @@ std::vector<double> List_to_vector_double(JNIEnv* env, jdoubleArray arr);
 
 jobjectArray vector_vector_vpImagePoint_to_List(JNIEnv *env, const std::vector<std::vector<vpImagePoint> >&);
 
+jobjectArray vector_vector_double_to_List(JNIEnv *env, const std::vector<std::vector<double> >& V);
+
 #endif  /* LISTCONVERTERS_HPP */

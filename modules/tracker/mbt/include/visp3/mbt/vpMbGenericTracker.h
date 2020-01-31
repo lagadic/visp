@@ -126,6 +126,7 @@ public:
   virtual std::vector<std::string> getCameraNames() const;
 
   using vpMbTracker::getCameraParameters;
+  virtual void getCameraParameters(vpCameraParameters &camera) const;
   virtual void getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const;
   virtual void getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const;
 
@@ -182,7 +183,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               const bool displayFullModel=false);
+                                                               bool displayFullModel=false);
   virtual void getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
                                   unsigned int width, unsigned int height,
                                   const vpHomogeneousMatrix &cMo,
@@ -196,7 +197,7 @@ public:
   virtual unsigned int getNbPoints(const unsigned int level = 0) const;
   virtual void getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, const unsigned int level = 0) const;
 
-  virtual inline unsigned int getNbPolygon() const;
+  virtual unsigned int getNbPolygon() const;
   virtual void getNbPolygon(std::map<std::string, unsigned int> &mapOfNbPolygons) const;
 
   virtual vpMbtPolygon *getPolygon(const unsigned int index);
@@ -210,6 +211,7 @@ public:
                                const bool clipPolygon = false);
 
   using vpMbTracker::getPose;
+  virtual void getPose(vpHomogeneousMatrix &cMo) const;
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
@@ -248,6 +250,7 @@ public:
                               const std::map<std::string, std::string> &mapOfInitPoints);
 
   using vpMbTracker::initFromPose;
+  virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
   virtual void initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             const std::string &initFile1, const std::string &initFile2);
   virtual void initFromPose(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
