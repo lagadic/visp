@@ -52,6 +52,7 @@ ViSP 3.2.1 (under work)
     . Modify vpVideoReader to enable MTS video format reading
     . Use only OpenCV required modules to reduce the number of dependencies
     . Remove valgrind false positive memory leaks adding a suppression file
+    . Introduce Java bindings for vpGenericTracker and vpDetectorAprilTag classes
   - Tutorials
     . New tutorial: Installation from source for Windows with Visual C++ 2019
       (vc16)
@@ -62,6 +63,8 @@ ViSP 3.2.1 (under work)
     . New tutorial: Visual servoing with FLIR Pan Tilt Unit
     . New tutorial: AprilTag marker real-time detection on iOS
     . New tutorial: Introduce a new class with 3rd-party dependencies
+    . New tutorial: AprilTag detection in java with ViSP
+    . New tutorial: Generic model-based tracking in java with ViSP
   - Bug fixed
     . [#523] dpkg-shlibdeps produces an error during Debian packaging
     . [#525] Tests are failing during Debian package build in a container
