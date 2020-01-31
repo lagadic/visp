@@ -107,10 +107,10 @@ public:
 
   /** @name Inherited functionalities from vpMbEdgeMultiTracker */
   //@{
-  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
-  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   virtual void display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
@@ -188,7 +188,7 @@ public:
 
   using vpMbTracker::getPose;
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
-  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const;
+  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
   virtual inline vpColVector getError() const { return m_error_edgeMulti; }
@@ -225,7 +225,7 @@ public:
                             const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                             const bool firstCameraIsReference = true);
   virtual void initFromPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                            const vpHomogeneousMatrix &cMo_);
+                            const vpHomogeneousMatrix &cMo);
   virtual void initFromPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                             const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
@@ -240,7 +240,7 @@ public:
                          const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, const bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
@@ -318,8 +318,8 @@ public:
   virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &cameraName,
                                        const std::string &name);
 
-  virtual void setMovingEdge(const vpMe &me);
-  virtual void setMovingEdge(const std::string &cameraName, const vpMe &me);
+  virtual void setMovingEdge(const vpMe &moving_edge);
+  virtual void setMovingEdge(const std::string &cameraName, const vpMe &moving_edge);
 
   virtual void setNearClippingDistance(const double &dist);
   virtual void setNearClippingDistance(const std::string &cameraName, const double &dist);
@@ -348,7 +348,7 @@ public:
                        const bool firstCameraIsReference = true);
 
   virtual void setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                       const vpHomogeneousMatrix &cMo_);
+                       const vpHomogeneousMatrix &cMo);
 
   virtual void setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);

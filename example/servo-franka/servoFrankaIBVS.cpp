@@ -278,9 +278,11 @@ int main(int argc, char **argv)
       std::vector<vpHomogeneousMatrix> cMo_vec;
       detector.detect(I, opt_tagSize, cam, cMo_vec);
 
-      std::stringstream ss;
-      ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
-      vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
+        vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
+      }
 
       vpColVector v_c(6);
 
@@ -306,12 +308,12 @@ int main(int argc, char **argv)
 
           // Compute the desired position of the features from the desired pose
           for (size_t i = 0; i < point.size(); i++) {
-            vpColVector cP, p;
+            vpColVector cP, p_;
             point[i].changeFrame(cdMo * oMo, cP);
-            point[i].projection(cP, p);
+            point[i].projection(cP, p_);
 
-            pd[i].set_x(p[0]);
-            pd[i].set_y(p[1]);
+            pd[i].set_x(p_[0]);
+            pd[i].set_y(p_[1]);
             pd[i].set_Z(cP[2]);
           }
         }
@@ -372,7 +374,7 @@ int main(int argc, char **argv)
         }
 
         double error = task.getError().sumSquare();
-        ss.str("");
+        std::stringstream ss;
         ss << "error: " << error;
         vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
 
@@ -399,9 +401,11 @@ int main(int argc, char **argv)
       // Send to the robot
       robot.setVelocity(vpRobot::CAMERA_FRAME, v_c);
 
-      ss.str("");
-      ss << "Loop time: " << vpTime::measureTimeMs() - t_start << " ms";
-      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Loop time: " << vpTime::measureTimeMs() - t_start << " ms";
+        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      }
       vpDisplay::flush(I);
 
       vpMouseButton::vpMouseButtonType button;

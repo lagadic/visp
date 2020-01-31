@@ -353,9 +353,11 @@ void display(const unsigned int width, const unsigned int height, const int win_
 #endif
 
   // Init Display
-  std::stringstream ss;
-  ss << "Camera stream " << deviceId;
-  display.init(local_img, win_x, win_y, ss.str());
+  {
+    std::stringstream ss;
+    ss << "Camera stream " << deviceId;
+    display.init(local_img, win_x, win_y, ss.str());
+  }
 
   try {
     vpMouseButton::vpMouseButtonType button;

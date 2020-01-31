@@ -261,7 +261,7 @@ public:
 
   virtual void loadConfigFile(const std::string &configFile);
 
-  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo_,
+  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                    const bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 
@@ -355,7 +355,7 @@ protected:
   void postTrackingMbt(vpColVector &w, const unsigned int level = 0);
 
   unsigned int trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, const unsigned int lvl = 0);
-  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error, vpHomogeneousMatrix &cMo,
+  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error, const vpHomogeneousMatrix &cMo,
                        const unsigned int lvl = 0);
 };
 

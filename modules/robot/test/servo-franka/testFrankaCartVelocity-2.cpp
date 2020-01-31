@@ -95,7 +95,6 @@ int main(int argc, char **argv)
      */
     double t0 = vpTime::measureTimeSecond();
     double delta_t = 4.0; // Time in second
-    vpColVector qdot;
     vpColVector ve(6);
     //      ve[0] = -0.01; // vx goes toward the user
     //      ve[1] = 0.01; // vy goes left

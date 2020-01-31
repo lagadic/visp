@@ -868,7 +868,7 @@ std::pair<unsigned int, unsigned int> vpFlyCaptureGrabber::centerRoi(unsigned in
   Set format7 video mode.
   \param format7_mode : Format 7 mode.
   \param pixel_format : Pixel format.
-  \param width,height : Size of the centered roi. If set to 0, use the max
+  \param w,h : Width and height of the centered roi. If set to 0, use the max
 allowed size.
 
   If the format7 video mode and pixel format are not supported, return an
@@ -898,7 +898,7 @@ int main()
   \endcode
  */
 void vpFlyCaptureGrabber::setFormat7VideoMode(FlyCapture2::Mode format7_mode, FlyCapture2::PixelFormat pixel_format,
-                                              unsigned int width, unsigned int height)
+                                              unsigned int w, unsigned int h)
 {
   this->connect();
 
@@ -920,8 +920,8 @@ void vpFlyCaptureGrabber::setFormat7VideoMode(FlyCapture2::Mode format7_mode, Fl
   fmt7_settings.mode = format7_mode;
   fmt7_settings.pixelFormat = pixel_format;
   // Set centered roi
-  std::pair<unsigned int, unsigned int> roi_w = this->centerRoi(width, fmt7_info.maxWidth, fmt7_info.imageHStepSize);
-  std::pair<unsigned int, unsigned int> roi_h = this->centerRoi(height, fmt7_info.maxHeight, fmt7_info.imageVStepSize);
+  std::pair<unsigned int, unsigned int> roi_w = this->centerRoi(w, fmt7_info.maxWidth, fmt7_info.imageHStepSize);
+  std::pair<unsigned int, unsigned int> roi_h = this->centerRoi(h, fmt7_info.maxHeight, fmt7_info.imageVStepSize);
   fmt7_settings.width = roi_w.first;
   fmt7_settings.offsetX = roi_w.second;
   fmt7_settings.height = roi_h.first;

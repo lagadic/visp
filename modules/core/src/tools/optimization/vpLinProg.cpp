@@ -407,7 +407,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   unsigned int s1 = 0, s2 = 0;
   for(unsigned int i = 0; i < n; ++i)
   {
-    const auto cmp = [&](const BoundedIndex &p){return p.first == i;};
+    const auto cmp = [&](const BoundedIndex &bi) {
+      return bi.first == i;
+    };
     // look for lower bound
     const bool has_low = find_if(l.begin(), l.end(), cmp) != l.end();
     // look for upper bound
@@ -448,8 +450,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   for(unsigned int i = 0; i < n; ++i)
   {
     // lambda to find a bound for this index
-    const auto cmp = [&](const BoundedIndex &p)
-    {return p.first == i;};
+    const auto cmp = [&](const BoundedIndex &bi) {
+      return bi.first == i;
+    };
 
     // look for lower bound
     const auto low = find_if(l.begin(), l.end(), cmp);

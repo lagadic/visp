@@ -1146,7 +1146,7 @@ public:
 
   void getCameraParameters(vpCameraParameters &cam) const { cam = m_cam; }
 
-  void getEdgeMe(vpMe &ecm) const { ecm = m_ecm; }
+  void getEdgeMe(vpMe &moving_edge) const { moving_edge = m_ecm; }
 
   unsigned int getDepthDenseSamplingStepX() const { return m_depthDenseSamplingStepX; }
   unsigned int getDepthDenseSamplingStepY() const { return m_depthDenseSamplingStepY; }
@@ -1217,7 +1217,7 @@ public:
   void setDepthNormalSamplingStepX(const unsigned int stepX) { m_depthNormalSamplingStepX = stepX; }
   void setDepthNormalSamplingStepY(const unsigned int stepY) { m_depthNormalSamplingStepY = stepY; }
 
-  void setEdgeMe(const vpMe &ecm) { m_ecm = ecm; }
+  void setEdgeMe(const vpMe &moving_edge) { m_ecm = moving_edge; }
 
   void setFarClippingDistance(const double &fclip) { m_farClipping = fclip; }
 
@@ -1233,7 +1233,7 @@ public:
   void setNearClippingDistance(const double &nclip) { m_nearClipping = nclip; }
 
   void setProjectionErrorMe(const vpMe &me) { m_projectionErrorMe = me; }
-  void setProjectionErrorKernelSize(const unsigned int &size) { m_projectionErrorKernelSize = size; }
+  void setProjectionErrorKernelSize(const unsigned int &kernel_size) { m_projectionErrorKernelSize = kernel_size; }
 
 protected:
   //! Parser type
