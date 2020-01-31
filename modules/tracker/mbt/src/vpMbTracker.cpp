@@ -138,7 +138,7 @@ struct PolygonFaceInfo {
 
 */
 vpMbTracker::vpMbTracker()
-  : cam(), cMo(), oJo(6, 6), isoJoIdentity(true), modelFileName(), modelInitialised(false), poseSavingFilename(),
+  : m_cam(), m_cMo(), oJo(6, 6), isoJoIdentity(true), modelFileName(), modelInitialised(false), poseSavingFilename(),
     computeCovariance(false), covarianceMatrix(), computeProjError(false), projectionError(90.0),
     displayFeatures(false), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT), faces(), angleAppears(vpMath::rad(89)),
     angleDisappears(vpMath::rad(89)), distNearClip(0.001), distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING),
@@ -231,13 +231,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
 
     if (I) {
       vpDisplay::display(*I);
-      display(*I, last_cMo, cam, vpColor::green, 1, true);
-      vpDisplay::displayFrame(*I, last_cMo, cam, 0.05, vpColor::green);
+      display(*I, last_cMo, m_cam, vpColor::green, 1, true);
+      vpDisplay::displayFrame(*I, last_cMo, m_cam, 0.05, vpColor::green);
       vpDisplay::flush(*I);
     } else {
       vpDisplay::display(*I_color);
-      display(*I_color, last_cMo, cam, vpColor::green, 1, true);
-      vpDisplay::displayFrame(*I_color, last_cMo, cam, 0.05, vpColor::green);
+      display(*I_color, last_cMo, m_cam, vpColor::green, 1, true);
+      vpDisplay::displayFrame(*I_color, last_cMo, m_cam, 0.05, vpColor::green);
       vpDisplay::flush(*I_color);
     }
 
@@ -263,7 +263,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
   }
 
   if (!finitpos.fail() && button == vpMouseButton::button1) {
-    cMo = last_cMo;
+    m_cMo = last_cMo;
   } else {
     vpDisplay *d_help = NULL;
 
@@ -410,7 +410,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
           mem_ip.push_back(ip);
           vpDisplay::flush(*I_color);
         }
-        vpPixelMeterConversion::convertPoint(cam, ip, x, y);
+        vpPixelMeterConversion::convertPoint(m_cam, ip, x, y);
         P[i].set_x(x);
         P[i].set_y(y);
 
@@ -445,14 +445,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
       }
 
       if (d1 < d2) {
-        cMo = cMo1;
+        m_cMo = cMo1;
       } else {
-        cMo = cMo2;
+        m_cMo = cMo2;
       }
-      pose.computePose(vpPose::VIRTUAL_VS, cMo);
+      pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
 
       if (I) {
-        display(*I, cMo, cam, vpColor::green, 1, true);
+        display(*I, m_cMo, m_cam, vpColor::green, 1, true);
         vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
         vpDisplay::flush(*I);
@@ -469,7 +469,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
           vpDisplay::flush(*I);
         }
       } else {
-        display(*I_color, cMo, cam, vpColor::green, 1, true);
+        display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
         vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
         vpDisplay::flush(*I_color);
@@ -488,9 +488,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
       }
     }
     if (I)
-      vpDisplay::displayFrame(*I, cMo, cam, 0.05, vpColor::red);
+      vpDisplay::displayFrame(*I, m_cMo, m_cam, 0.05, vpColor::red);
     else
-      vpDisplay::displayFrame(*I_color, cMo, cam, 0.05, vpColor::red);
+      vpDisplay::displayFrame(*I_color, m_cMo, m_cam, 0.05, vpColor::red);
 
     // save the pose into file
     if (poseSavingFilename.empty())
@@ -504,7 +504,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
     }
   }
 
-  std::cout << "cMo : " << std::endl << cMo << std::endl;
+  std::cout << "cMo : " << std::endl << m_cMo << std::endl;
 
   if (I)
     init(*I);
@@ -658,7 +658,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
         vpDisplay::displayCross(*I_color, ip, 5, vpColor::green);
         vpDisplay::flush(*I_color);
       }
-      vpPixelMeterConversion::convertPoint(cam, ip, x, y);
+      vpPixelMeterConversion::convertPoint(m_cam, ip, x, y);
       P[i].set_x(x);
       P[i].set_y(y);
 
@@ -696,14 +696,14 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
     }
 
     if (d1 < d2) {
-      cMo = cMo1;
+      m_cMo = cMo1;
     } else {
-      cMo = cMo2;
+      m_cMo = cMo2;
     }
-    pose.computePose(vpPose::VIRTUAL_VS, cMo);
+    pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
 
     if (I) {
-      display(*I, cMo, cam, vpColor::green, 1, true);
+      display(*I, m_cMo, m_cam, vpColor::green, 1, true);
       vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
       vpDisplay::flush(*I);
@@ -720,7 +720,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
         vpDisplay::flush(*I);
       }
     } else {
-      display(*I_color, cMo, cam, vpColor::green, 1, true);
+      display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
       vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
 
       vpDisplay::flush(*I_color);
@@ -740,9 +740,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
   }
 
   if (I) {
-    vpDisplay::displayFrame(*I, cMo, cam, 0.05, vpColor::red);
+    vpDisplay::displayFrame(*I, m_cMo, m_cam, 0.05, vpColor::red);
   } else {
-    vpDisplay::displayFrame(*I_color, cMo, cam, 0.05, vpColor::red);
+    vpDisplay::displayFrame(*I_color, m_cMo, m_cam, 0.05, vpColor::red);
   }
 
   if (d_help != NULL) {
@@ -897,7 +897,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const v
 
     vpImagePoint ip(v, u);
     std::cout << "Point " << i + 1 << " with 2D coordinates: " << ip << std::endl;
-    vpPixelMeterConversion::convertPoint(cam, ip, x, y);
+    vpPixelMeterConversion::convertPoint(m_cam, ip, x, y);
     P[i].set_x(x);
     P[i].set_y(y);
     pose.addPoint(P[i]);
@@ -924,11 +924,11 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const v
   }
 
   if (d1 < d2)
-    cMo = cMo1;
+    m_cMo = cMo1;
   else
-    cMo = cMo2;
+    m_cMo = cMo2;
 
-  pose.computePose(vpPose::VIRTUAL_VS, cMo);
+  pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
 
   delete[] P;
 
@@ -1012,7 +1012,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const v
   for (size_t i = 0; i < size; i++) {
     P.push_back(vpPoint(points3D_list[i].get_oX(), points3D_list[i].get_oY(), points3D_list[i].get_oZ()));
     double x = 0, y = 0;
-    vpPixelMeterConversion::convertPoint(cam, points2D_list[i], x, y);
+    vpPixelMeterConversion::convertPoint(m_cam, points2D_list[i], x, y);
     P[i].set_x(x);
     P[i].set_y(y);
     pose.addPoint(P[i]);
@@ -1037,11 +1037,11 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const v
   }
 
   if (d1 < d2)
-    cMo = cMo1;
+    m_cMo = cMo1;
   else
-    cMo = cMo2;
+    m_cMo = cMo2;
 
-  pose.computePose(vpPose::VIRTUAL_VS, cMo);
+  pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
 
   if (I) {
     init(*I);
@@ -1104,7 +1104,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> * const I, const vpI
     finit >> init_pos[i];
   }
 
-  cMo.buildFrom(init_pos);
+  m_cMo.buildFrom(init_pos);
 
   if (I) {
     init(*I);
@@ -1164,11 +1164,11 @@ void vpMbTracker::initFromPose(const vpImage<vpRGBa> &I_color, const std::string
   Initialise the tracking thanks to the pose.
 
   \param I : Input grayscale image
-  \param cMo_ : Pose matrix.
+  \param cMo : Pose matrix.
 */
-void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
+void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  this->cMo = cMo_;
+  m_cMo = cMo;
   init(I);
 }
 
@@ -1176,11 +1176,11 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogene
   Initialise the tracking thanks to the pose.
 
   \param I_color : Input color image
-  \param cMo_ : Pose matrix.
+  \param cMo : Pose matrix.
 */
-void vpMbTracker::initFromPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+void vpMbTracker::initFromPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo)
 {
-  this->cMo = cMo_;
+  m_cMo = cMo;
   vpImageConvert::convert(I_color, m_I);
   init(m_I);
 }
@@ -1224,7 +1224,7 @@ void vpMbTracker::savePose(const std::string &filename) const
   sprintf(s, "%s", filename.c_str());
   finitpos.open(s, std::ios::out);
 
-  init_pos.buildFrom(cMo);
+  init_pos.buildFrom(m_cMo);
   finitpos << init_pos;
   finitpos.close();
 }
@@ -1727,7 +1727,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     //////////////////////////Read the header part if present//////////////////////////
     std::string line;
-    std::string prefix = "load";
+    const std::string prefix_load = "load";
 
     fileId.get(c);
     fileId.unget();
@@ -1735,7 +1735,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     while (c == 'l' || c == 'L') {
       getline(fileId, line);
 
-      if (!line.compare(0, prefix.size(), prefix)) {
+      if (!line.compare(0, prefix_load.size(), prefix_load)) {
         //remove "load("
         std::string paramsStr = line.substr(5);
         //get parameters inside load()
@@ -2615,9 +2615,9 @@ vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility,
         std::vector<vpImagePoint> roiPts;
 
         if (clipPolygon) {
-          faces.getPolygon()[i]->getRoiClipped(cam, roiPts, cMo);
+          faces.getPolygon()[i]->getRoiClipped(m_cam, roiPts, m_cMo);
         } else {
-          roiPts = faces.getPolygon()[i]->getRoi(cam, cMo);
+          roiPts = faces.getPolygon()[i]->getRoi(m_cam, m_cMo);
         }
 
         if (roiPts.size() <= 2) {
@@ -2912,7 +2912,7 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(const unsigned int iter, vpC
       if (mu > 1.0)
         throw vpTrackingException(vpTrackingException::fatalError, "Optimization diverged");
 
-      cMo = cMoPrev;
+      m_cMo = cMoPrev;
       error = m_error_prev;
       if (w != NULL && m_w_prev != NULL) {
         *w = *m_w_prev;
@@ -2954,7 +2954,7 @@ void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, const unsi
     }
   } else {
     vpVelocityTwistMatrix cVo;
-    cVo.buildFrom(cMo);
+    cVo.buildFrom(m_cMo);
     vpMatrix LVJ = (L * (cVo * oJo));
     vpMatrix LVJTLVJ = (LVJ).AtA();
     vpColVector LVJTR;
@@ -3353,7 +3353,7 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
   if (!already_here) {
     l = new vpMbtDistanceLine;
 
-    l->setCameraParameters(cam);
+    l->setCameraParameters(m_cam);
     l->buildFrom(P1, P2);
     l->addPolygon(polygon);
     l->setMovingEdge(&m_projectionErrorMe);
@@ -3394,7 +3394,7 @@ void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2,
   if (!already_here) {
     ci = new vpMbtDistanceCircle;
 
-    ci->setCameraParameters(cam);
+    ci->setCameraParameters(m_cam);
     ci->buildFrom(P1, P2, P3, r);
     ci->setMovingEdge(&m_projectionErrorMe);
     ci->setIndex((unsigned int)m_projectionErrorCircles.size());
@@ -3425,7 +3425,7 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
   if (!already_here) {
     cy = new vpMbtDistanceCylinder;
 
-    cy->setCameraParameters(cam);
+    cy->setCameraParameters(m_cam);
     cy->buildFrom(P1, P2, r);
     cy->setMovingEdge(&m_projectionErrorMe);
     cy->setIndex((unsigned int)m_projectionErrorCylinders.size());

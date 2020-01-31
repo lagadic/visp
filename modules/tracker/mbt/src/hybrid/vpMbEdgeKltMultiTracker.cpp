@@ -55,8 +55,8 @@
   Basic constructor
 */
 vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker()
-  : vpMbEdgeMultiTracker(), vpMbKltMultiTracker(), m_factorKLT(0.65), m_factorMBT(0.35), thresholdKLT(2.),
-    thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"), m_nbrow(0),
+  : vpMbEdgeMultiTracker(), vpMbKltMultiTracker(), m_factorKLT(0.65), m_factorMBT(0.35), m_thresholdKLT(2.),
+    m_thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"), m_nbrow(0),
     m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()
 {
   // Add default camera transformation matrix
@@ -73,7 +73,7 @@ vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker()
 */
 vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const unsigned int nbCameras)
   : vpMbEdgeMultiTracker(nbCameras), vpMbKltMultiTracker(nbCameras), m_factorKLT(0.65), m_factorMBT(0.35),
-    thresholdKLT(2.), thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"),
+    m_thresholdKLT(2.), m_thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"),
     m_nbrow(0), m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()
 {
 
@@ -113,7 +113,7 @@ vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const unsigned int nbCameras)
 */
 vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const std::vector<std::string> &cameraNames)
   : vpMbEdgeMultiTracker(cameraNames), vpMbKltMultiTracker(cameraNames), m_factorKLT(0.65), m_factorMBT(0.35),
-    thresholdKLT(2.), thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName(cameraNames.front()),
+    m_thresholdKLT(2.), m_thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName(cameraNames.front()),
     m_nbrow(0), m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()
 {
   m_lambda = 0.8;
@@ -205,7 +205,7 @@ void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<uns
         L_true = m_L_hybridMulti;
         if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
-          cVo.buildFrom(cMo);
+          cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_hybridMulti * cVo * oJo);
         }
       }
@@ -232,10 +232,10 @@ void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<uns
       computeVVSPoseEstimation(isoJoIdentity, iter, m_L_hybridMulti, LTL, m_weightedError_hybridMulti,
                                m_error_hybridMulti, m_error_prev, LTR, mu, v, &m_w_hybridMulti, &m_w_prev);
 
-      cMoPrev = cMo;
+      cMoPrev = m_cMo;
       ctTc0_Prev = ctTc0;
       ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
-      cMo = ctTc0 * c0Mo;
+      m_cMo = ctTc0 * c0Mo;
     }
 
     iter++;
@@ -281,7 +281,7 @@ void vpMbEdgeKltMultiTracker::computeVVSInteractionMatrixAndResidu(
       vpMbEdgeTracker *edge = it->second;
 
       // Set the corresponding cMo for the current camera
-      it->second->cMo = m_mapOfCameraTransformationMatrix[it->first] * cMo;
+      it->second->m_cMo = m_mapOfCameraTransformationMatrix[it->first] * m_cMo;
 
       edge->computeVVSInteractionMatrixAndResidu(*mapOfImages[it->first]);
 
@@ -307,7 +307,7 @@ void vpMbEdgeKltMultiTracker::computeVVSInteractionMatrixAndResidu(
         klt->ctTc0 = ctTc0;
         klt->computeVVSInteractionMatrixAndResidu();
       } else {
-        vpHomogeneousMatrix c_curr_tTc_curr0 = m_mapOfCameraTransformationMatrix[it->first] * cMo * klt->c0Mo.inverse();
+        vpHomogeneousMatrix c_curr_tTc_curr0 = m_mapOfCameraTransformationMatrix[it->first] * m_cMo * klt->c0Mo.inverse();
         klt->ctTc0 = c_curr_tTc_curr0;
         klt->computeVVSInteractionMatrixAndResidu();
       }
@@ -352,18 +352,18 @@ void vpMbEdgeKltMultiTracker::computeVVSWeights()
   Display the 3D model from a given position of the camera.
 
   \param I : The grayscale image.
-  \param cMo_ : Pose used to project the 3D model into the image.
-  \param cam_ : The camera parameters.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non
   visible faces).
 */
-void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_,
-                                      const vpCameraParameters &cam_, const vpColor &col, const unsigned int thickness,
+void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                      const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                                       const bool displayFullModel)
 {
-  vpMbEdgeMultiTracker::display(I, cMo_, cam_, col, thickness, displayFullModel);
+  vpMbEdgeMultiTracker::display(I, cMo, cam, col, thickness, displayFullModel);
 
   // Display only features for KLT trackers
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.begin();
@@ -390,18 +390,18 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char> &I, const vpH
   Display the 3D model from a given position of the camera.
 
   \param I : The color image.
-  \param cMo_ : Pose used to project the 3D model into the image.
-  \param cam_ : The camera parameters.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
   \param color : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non
   visible faces).
 */
-void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo_,
-                                      const vpCameraParameters &cam_, const vpColor &color,
+void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                                      const vpCameraParameters &cam, const vpColor &color,
                                       const unsigned int thickness, const bool displayFullModel)
 {
-  vpMbEdgeMultiTracker::display(I, cMo_, cam_, color, thickness, displayFullModel);
+  vpMbEdgeMultiTracker::display(I, cMo, cam, color, thickness, displayFullModel);
   //  vpMbKltMultiTracker::display(I, cMo_, cam_, color, thickness,
   //  displayFullModel);
 
@@ -637,9 +637,9 @@ std::vector<std::string> vpMbEdgeKltMultiTracker::getCameraNames() const
 /*!
   Get the camera parameters for the reference camera.
 
-  \param camera : Copy of the camera parameters used by the tracker.
+  \param cam : Copy of the camera parameters used by the tracker.
 */
-void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &camera) const { camera = this->cam; }
+void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &cam) const { cam = m_cam; }
 
 /*!
   Get the camera parameters for the stereo cameras case.
@@ -801,12 +801,12 @@ void vpMbEdgeKltMultiTracker::getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMa
   coordinates from the object frame to camera frame.
 
   \param cameraName : The name of the camera.
-  \param cMo_ : The camera pose for the specified camera.
+  \param cMo : The camera pose for the specified camera.
 */
-void vpMbEdgeKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const
+void vpMbEdgeKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo) const
 {
   // We could use either the vpMbEdgeMultiTracker or vpMbKltMultiTracker class
-  vpMbEdgeMultiTracker::getPose(cameraName, cMo_);
+  vpMbEdgeMultiTracker::getPose(cameraName, cMo);
 }
 
 /*!
@@ -850,7 +850,7 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I, const s
 
   // Set pose for Edge (setPose or initFromPose is equivalent with
   // vpMbEdgeTracker)  And it avoids to click a second time
-  vpMbEdgeMultiTracker::setPose(I, cMo);
+  vpMbEdgeMultiTracker::setPose(I, m_cMo);
 }
 
 /*!
@@ -893,7 +893,7 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I, const s
 
   // Set pose for Edge (setPose or initFromPose is equivalent with
   // vpMbEdgeTracker)  And it avoids to click a second time
-  vpMbEdgeMultiTracker::setPose(I, cMo);
+  vpMbEdgeMultiTracker::setPose(I, m_cMo);
 }
 
 /*!
@@ -949,7 +949,7 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I1, const 
 
   // Set pose for Edge (setPose or initFromPose is equivalent with
   // vpMbEdgeTracker)
-  vpMbEdgeMultiTracker::setPose(I1, I2, cMo, c2Mo, firstCameraIsReference);
+  vpMbEdgeMultiTracker::setPose(I1, I2, m_cMo, c2Mo, firstCameraIsReference);
 }
 
 /*!
@@ -1111,27 +1111,27 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I, cons
     finit >> init_pos[i];
   }
 
-  cMo.buildFrom(init_pos);
-  vpMbEdgeMultiTracker::initFromPose(I, cMo);
-  vpMbKltMultiTracker::initFromPose(I, cMo);
+  m_cMo.buildFrom(init_pos);
+  vpMbEdgeMultiTracker::initFromPose(I, m_cMo);
+  vpMbKltMultiTracker::initFromPose(I, m_cMo);
 }
 
 /*!
   Initialise the tracking thanks to the pose.
 
   \param I : Input image
-  \param cMo_ : Pose matrix.
+  \param cMo : Pose matrix.
 */
-void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
+void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   // Monocular case only !
   if (m_mapOfKltTrackers.size() > 1) {
     throw vpException(vpTrackingException::fatalError, "This function can only be used for the monocular case !");
   }
 
-  this->cMo = cMo_;
-  vpMbEdgeMultiTracker::initFromPose(I, cMo);
-  vpMbKltMultiTracker::initFromPose(I, cMo);
+  m_cMo = cMo;
+  vpMbEdgeMultiTracker::initFromPose(I, m_cMo);
+  vpMbKltMultiTracker::initFromPose(I, m_cMo);
 }
 
 /*!
@@ -1142,8 +1142,8 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I, cons
 */
 void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo)
 {
-  vpHomogeneousMatrix _cMo(cPo);
-  initFromPose(I, _cMo);
+  vpHomogeneousMatrix cMo(cPo);
+  initFromPose(I, cMo);
 }
 
 /*!
@@ -1169,13 +1169,13 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I1, con
   matrices have to be set before.
 
   \param mapOfImages : Map of images.
-  \param cMo_ : Pose matrix for the reference camera.
+  \param cMo : Pose matrix for the reference camera.
 */
 void vpMbEdgeKltMultiTracker::initFromPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                           const vpHomogeneousMatrix &cMo_)
+                                           const vpHomogeneousMatrix &cMo)
 {
-  vpMbEdgeMultiTracker::initFromPose(mapOfImages, cMo_);
-  vpMbKltMultiTracker::initFromPose(mapOfImages, cMo_);
+  vpMbEdgeMultiTracker::initFromPose(mapOfImages, cMo);
+  vpMbKltMultiTracker::initFromPose(mapOfImages, cMo);
 }
 
 /*!
@@ -1211,7 +1211,7 @@ vpMbEdgeKltMultiTracker::initMbtTracking(std::map<std::string, const vpImage<uns
 
       // Set the corresponding cMo for each camera
       // Used in computeVVSFirstPhaseFactor with computeInteractionMatrixError
-      edge->cMo = m_mapOfCameraTransformationMatrix[it->first] * cMo;
+      edge->m_cMo = m_mapOfCameraTransformationMatrix[it->first] * m_cMo;
 
       edge->computeVVSFirstPhaseFactor(*mapOfImages[it->first], lvl);
       m_factor.stack(edge->m_factor);
@@ -1243,10 +1243,10 @@ vpMbEdgeKltMultiTracker::initMbtTracking(std::map<std::string, const vpImage<uns
 /*!
   Load the xml configuration file.
   From the configuration file initialize the parameters corresponding to the
-objects: KLT, camera.
+  objects: KLT, camera.
 
   \throw vpException::ioError if the file has not been properly parsed (file
-not found or wrong format for the data).
+  not found or wrong format for the data).
 
   \param configFile : full name of the xml file.
 
@@ -1342,12 +1342,12 @@ int main()
   \endcode
 
   \throw vpException::ioError if the file cannot be open, or if its extension
-is not wrl or cao.
+  is not wrl or cao.
 
   \param modelFile : the file containing the the 3D model description.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
+  CAO model files which include other CAO model files.
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
@@ -1383,7 +1383,7 @@ void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<u
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
     edge = it->second;
-    edge->visibleFace(*mapOfImages[it->first], it->second->cMo, newvisibleface);
+    edge->visibleFace(*mapOfImages[it->first], it->second->m_cMo, newvisibleface);
   }
 
   if (useScanLine) {
@@ -1391,8 +1391,8 @@ void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<u
          it != m_mapOfEdgeTrackers.end(); ++it) {
       edge = it->second;
 
-      edge->faces.computeClippedPolygons(it->second->cMo, it->second->cam);
-      edge->faces.computeScanLineRender(it->second->cam, mapOfImages[it->first]->getWidth(),
+      edge->faces.computeClippedPolygons(it->second->m_cMo, it->second->m_cam);
+      edge->faces.computeScanLineRender(it->second->m_cam, mapOfImages[it->first]->getWidth(),
                                         mapOfImages[it->first]->getHeight());
     }
   }
@@ -1406,10 +1406,10 @@ void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<u
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
     edge = it->second;
-    edge->initMovingEdge(*mapOfImages[it->first], it->second->cMo);
+    edge->initMovingEdge(*mapOfImages[it->first], it->second->m_cMo);
 
     // Reinit the moving edge for the lines which need it.
-    edge->reinitMovingEdge(*mapOfImages[it->first], it->second->cMo);
+    edge->reinitMovingEdge(*mapOfImages[it->first], it->second->m_cMo);
 
     if (computeProjError) {
       edge->computeProjectionError(*mapOfImages[it->first]);
@@ -1428,7 +1428,7 @@ void vpMbEdgeKltMultiTracker::reinit(/*const vpImage<unsigned char>& I */)
 
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
-  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
+  \param cMo : The new vpHomogeneousMatrix between the camera and the new
   model
   \param verbose : verbose option to print additional information when
   loading CAO model files which include other CAO model files.
@@ -1436,11 +1436,11 @@ void vpMbEdgeKltMultiTracker::reinit(/*const vpImage<unsigned char>& I */)
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                          const vpHomogeneousMatrix &cMo_, const bool verbose,
+                                          const vpHomogeneousMatrix &cMo, const bool verbose,
                                           const vpHomogeneousMatrix &T)
 {
-  vpMbEdgeMultiTracker::reInitModel(I, cad_name, cMo_, verbose, T);
-  vpMbKltMultiTracker::reInitModel(I, cad_name, cMo_, verbose, T);
+  vpMbEdgeMultiTracker::reInitModel(I, cad_name, cMo, verbose, T);
+  vpMbKltMultiTracker::reInitModel(I, cad_name, cMo, verbose, T);
 }
 
 /*!
@@ -1527,14 +1527,14 @@ void vpMbEdgeKltMultiTracker::setAngleDisappear(const double &a)
 /*!
   Set the camera parameters for the monocular case.
 
-  \param camera : The new camera parameters.
+  \param cam : The new camera parameters.
 */
-void vpMbEdgeKltMultiTracker::setCameraParameters(const vpCameraParameters &camera)
+void vpMbEdgeKltMultiTracker::setCameraParameters(const vpCameraParameters &cam)
 {
-  vpMbEdgeMultiTracker::setCameraParameters(camera);
-  vpMbKltMultiTracker::setCameraParameters(camera);
+  vpMbEdgeMultiTracker::setCameraParameters(cam);
+  vpMbKltMultiTracker::setCameraParameters(cam);
 
-  this->cam = camera;
+  m_cam = cam;
 }
 
 /*!
@@ -1552,9 +1552,9 @@ void vpMbEdgeKltMultiTracker::setCameraParameters(const vpCameraParameters &came
   vpMbKltMultiTracker::setCameraParameters(camera1, camera2, firstCameraIsReference);
 
   if (firstCameraIsReference) {
-    this->cam = camera1;
+    m_cam = camera1;
   } else {
-    this->cam = camera2;
+    m_cam = camera2;
   }
 }
 
@@ -1562,15 +1562,15 @@ void vpMbEdgeKltMultiTracker::setCameraParameters(const vpCameraParameters &came
   Set the camera parameters for the specified camera.
 
   \param cameraName : Camera name.
-  \param camera : The new camera parameters.
+  \param cam : The new camera parameters.
 */
-void vpMbEdgeKltMultiTracker::setCameraParameters(const std::string &cameraName, const vpCameraParameters &camera)
+void vpMbEdgeKltMultiTracker::setCameraParameters(const std::string &cameraName, const vpCameraParameters &cam)
 {
-  vpMbEdgeMultiTracker::setCameraParameters(cameraName, camera);
-  vpMbKltMultiTracker::setCameraParameters(cameraName, camera);
+  vpMbEdgeMultiTracker::setCameraParameters(cameraName, cam);
+  vpMbKltMultiTracker::setCameraParameters(cameraName, cam);
 
   if (cameraName == m_referenceCameraName) {
-    this->cam = camera;
+    m_cam = cam;
   }
 }
 
@@ -1588,7 +1588,7 @@ void vpMbEdgeKltMultiTracker::setCameraParameters(
   for (std::map<std::string, vpCameraParameters>::const_iterator it = mapOfCameraParameters.begin();
        it != mapOfCameraParameters.end(); ++it) {
     if (it->first == m_referenceCameraName) {
-      this->cam = it->second;
+      m_cam = it->second;
     }
   }
 }
@@ -1937,9 +1937,9 @@ void vpMbEdgeKltMultiTracker::setOptimizationMethod(const vpMbtOptimizationMetho
   This pose will be just used once.
 
   \param I : grayscale image corresponding to the desired pose.
-  \param cMo_ : Pose to affect.
+  \param cMo : Pose to affect.
 */
-void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_)
+void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   if (m_mapOfEdgeTrackers.size() != 1 || m_mapOfKltTrackers.size() != 1) {
     std::cerr << "This method requires only 1 camera !" << std::endl;
@@ -1947,11 +1947,11 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpH
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
     std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
     if (it_edge != m_mapOfEdgeTrackers.end() && it_klt != m_mapOfKltTrackers.end()) {
-      it_edge->second->setPose(I, cMo_);
-      it_klt->second->setPose(I, cMo_);
+      it_edge->second->setPose(I, cMo);
+      it_klt->second->setPose(I, cMo);
 
-      this->cMo = cMo_;
-      c0Mo = this->cMo;
+      m_cMo = cMo;
+      c0Mo = m_cMo;
       ctTc0.eye();
     } else {
       std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << " !" << std::endl;
@@ -1964,9 +1964,9 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpH
   This pose will be just used once.
 
   \param I_color : color image corresponding to the desired pose.
-  \param cMo_ : Pose to affect.
+  \param cMo : Pose to affect.
 */
-void vpMbEdgeKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo_)
+void vpMbEdgeKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cMo)
 {
   if (m_mapOfEdgeTrackers.size() != 1 || m_mapOfKltTrackers.size() != 1) {
     std::cerr << "This method requires only 1 camera !" << std::endl;
@@ -1975,11 +1975,11 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHo
     std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
     if (it_edge != m_mapOfEdgeTrackers.end() && it_klt != m_mapOfKltTrackers.end()) {
       vpImageConvert::convert(I_color, m_I);
-      it_edge->second->setPose(m_I, cMo_);
-      it_klt->second->setPose(m_I, cMo_);
+      it_edge->second->setPose(m_I, cMo);
+      it_klt->second->setPose(m_I, cMo);
 
-      this->cMo = cMo_;
-      c0Mo = this->cMo;
+      m_cMo = cMo;
+      c0Mo = m_cMo;
       ctTc0.eye();
     } else {
       std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << " !" << std::endl;
@@ -2012,13 +2012,13 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I1, const vp
   The camera transformation matrices have to be set before.
 
   \param mapOfImages : Map of images.
-  \param cMo_ : Pose to affect to the reference camera.
+  \param cMo : Pose to affect to the reference camera.
 */
 void vpMbEdgeKltMultiTracker::setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                      const vpHomogeneousMatrix &cMo_)
+                                      const vpHomogeneousMatrix &cMo)
 {
-  vpMbEdgeMultiTracker::setPose(mapOfImages, cMo_);
-  vpMbKltMultiTracker::setPose(mapOfImages, cMo_);
+  vpMbEdgeMultiTracker::setPose(mapOfImages, cMo);
+  vpMbKltMultiTracker::setPose(mapOfImages, cMo);
 }
 
 /*!

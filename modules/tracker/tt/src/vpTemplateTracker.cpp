@@ -918,15 +918,15 @@ void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)
 
 /*!
   Compute residual. Before using this function you need to call initPosEvalRMS() once.
-  \param[in] p : Warp function parameters.
+  \param[in] param : Warp function parameters.
 
   \sa initPosEvalRMS()
  */
-void vpTemplateTracker::computeEvalRMS(const vpColVector &p)
+void vpTemplateTracker::computeEvalRMS(const vpColVector &param)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 
-  Warp->computeCoeff(p);
+  Warp->computeCoeff(param);
   evolRMS = 0;
   vpTemplateTrackerTriangle triangle;
 
@@ -935,8 +935,8 @@ void vpTemplateTracker::computeEvalRMS(const vpColVector &p)
     for (unsigned int j = 0; j < 3; j++) {
       triangle.getCorner(j, X1[0], X1[1]);
 
-      Warp->computeDenom(X1, p);
-      Warp->warpX(X1, X2, p);
+      Warp->computeDenom(X1, param);
+      Warp->warpX(X1, X2, param);
 
       unsigned int index = i * 3 + j;
       double x_ = x_pos[index] - X2[0];
@@ -951,17 +951,17 @@ void vpTemplateTracker::computeEvalRMS(const vpColVector &p)
 
 /*!
   Initialize residual computed using computeEvalRMS().
-  \param[in] p : Warp function parameters.
+  \param[in] param : Warp function parameters.
 
   \sa computeEvalRMS()
  */
-void vpTemplateTracker::initPosEvalRMS(const vpColVector &p)
+void vpTemplateTracker::initPosEvalRMS(const vpColVector &param)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos.resize(nb_corners);
   y_pos.resize(nb_corners);
 
-  Warp->computeCoeff(p);
+  Warp->computeCoeff(param);
   vpTemplateTrackerTriangle triangle;
 
   for (unsigned int i = 0; i < zoneTracked->getNbTriangle(); i++) {
@@ -970,8 +970,8 @@ void vpTemplateTracker::initPosEvalRMS(const vpColVector &p)
     for (unsigned int j = 0; j < 3; j++) {
       triangle.getCorner(j, X1[0], X1[1]);
 
-      Warp->computeDenom(X1, p);
-      Warp->warpX(X1, X2, p);
+      Warp->computeDenom(X1, param);
+      Warp->warpX(X1, X2, param);
       x_pos[i3 + j] = X2[0];
       y_pos[i3 + j] = X2[1];
     }

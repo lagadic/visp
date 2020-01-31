@@ -1054,7 +1054,7 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix 
   if (I.getHeight() != mWindow->getHeight() || I.getWidth() != mWindow->getWidth()) {
     I.resize(mWindow->getHeight(), mWindow->getWidth());
   }
-  Ogre::HardwarePixelBufferSharedPtr mPixelBuffer = dynTexPtr->getBuffer();
+  mPixelBuffer = dynTexPtr->getBuffer();
   mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
   const Ogre::PixelBox &pixelBox = mPixelBuffer->getCurrentLock();
   dynTexPtr->getBuffer()->blitToMemory(pixelBox);

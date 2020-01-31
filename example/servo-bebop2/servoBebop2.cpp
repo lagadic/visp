@@ -404,9 +404,11 @@ int main(int argc, char **argv)
         detector.detect(I, tagSize, cam, cMo_vec); // Detect AprilTags in current image
         double t = vpTime::measureTimeMs() - startTime;
 
-        std::stringstream ss;
-        ss << "Detection time: " << t << " ms";
-        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+        {
+          std::stringstream ss;
+          ss << "Detection time: " << t << " ms";
+          vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+        }
 
         if (detector.getNbObjects() == 1) {
 

@@ -93,7 +93,7 @@ int main()
 
     // Receive and send message
     while (true) {
-      int res = server.receive(msg, hostInfo, 5000);
+      res = server.receive(msg, hostInfo, 5000);
       if (res) {
         std::cout << "Server received: " << msg << " from: " << hostInfo << std::endl;
         std::cout << "Reply to the client: Echo: " << msg << std::endl;

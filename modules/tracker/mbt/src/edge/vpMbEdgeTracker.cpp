@@ -235,7 +235,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, const unsigne
       if (computeCovariance) {
         L_true = m_L_edge;
         if (!isoJoIdentity_) {
-          cVo.buildFrom(cMo);
+          cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_edge * cVo * oJo);
         }
       }
@@ -274,8 +274,8 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, const unsigne
       computeVVSPoseEstimation(isoJoIdentity_, iter, m_L_edge, LTL, m_weightedError_edge, m_error_edge, m_error_prev,
                                LTR, mu, v, &m_w_edge, &m_w_prev);
 
-      cMoPrev = cMo;
-      cMo = vpExponentialMap::direct(v).inverse() * cMo;
+      cMoPrev = m_cMo;
+      m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
 
     } // endif(!restartFromLast)
 
@@ -295,7 +295,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, con
   vpMbtDistanceCircle *ci;
 
   double limite = 3;              // Une limite de 3 pixels
-  limite = limite / cam.get_px(); // Transformation limite pixel en limite metre.
+  limite = limite / m_cam.get_px(); // Transformation limite pixel en limite metre.
 
   unsigned int n = 0;
 
@@ -305,7 +305,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, con
   for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[lvl].begin(); it != lines[lvl].end(); ++it) {
     if ((*it)->isTracked()) {
       l = *it;
-      l->computeInteractionMatrixError(cMo);
+      l->computeInteractionMatrixError(m_cMo);
 
       double fac = 1;
       if (iter == 0) {
@@ -393,7 +393,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, con
        ++it) {
     if ((*it)->isTracked()) {
       cy = *it;
-      cy->computeInteractionMatrixError(cMo, _I);
+      cy->computeInteractionMatrixError(m_cMo, _I);
       double fac = 1.0;
 
       std::list<vpMeSite>::const_iterator itCyl1;
@@ -487,7 +487,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, con
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[lvl].begin(); it != circles[lvl].end(); ++it) {
     if ((*it)->isTracked()) {
       ci = *it;
-      ci->computeInteractionMatrixError(cMo);
+      ci->computeInteractionMatrixError(m_cMo);
       double fac = 1.0;
 
       std::list<vpMeSite>::const_iterator itCir;
@@ -563,7 +563,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
   for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[lvl].begin(); it != lines[lvl].end(); ++it) {
     if ((*it)->isTracked()) {
       l = *it;
-      l->computeInteractionMatrixError(cMo);
+      l->computeInteractionMatrixError(m_cMo);
 
       double fac = 1;
       for (std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex != l->Lindex_polygon.end();
@@ -603,7 +603,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
        ++it) {
     if ((*it)->isTracked()) {
       cy = *it;
-      cy->computeInteractionMatrixError(cMo, I);
+      cy->computeInteractionMatrixError(m_cMo, I);
 
       std::list<vpMeSite>::const_iterator itCyl1;
       std::list<vpMeSite>::const_iterator itCyl2;
@@ -633,7 +633,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[lvl].begin(); it != circles[lvl].end(); ++it) {
     if ((*it)->isTracked()) {
       ci = *it;
-      ci->computeInteractionMatrixError(cMo);
+      ci->computeInteractionMatrixError(m_cMo);
 
       std::list<vpMeSite>::const_iterator itCir;
       if (ci->meEllipse != NULL) {
@@ -685,7 +685,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(const unsigned int iter
   // estimated This is particularly useful when consering circles (rank 5) and
   // cylinders (rank 4)
   if (isoJoIdentity_) {
-    cVo.buildFrom(cMo);
+    cVo.buildFrom(m_cMo);
 
     vpMatrix K; // kernel
     unsigned int rank = (m_L_edge * cVo).kernel(K);
@@ -710,7 +710,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(const unsigned int iter
     computeJTR(m_L_edge, m_weightedError_edge, LTR);
     v = -0.7 * LTL.pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR;
   } else {
-    cVo.buildFrom(cMo);
+    cVo.buildFrom(m_cMo);
     vpMatrix LVJ = (m_L_edge * cVo * oJo);
     vpMatrix LVJTLVJ = (LVJ).AtA();
     vpColVector LVJTR;
@@ -719,7 +719,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(const unsigned int iter
     v = cVo * v;
   }
 
-  cMo = vpExponentialMap::direct(v).inverse() * cMo;
+  m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
 }
 
 void vpMbEdgeTracker::computeVVSInit()
@@ -749,9 +749,9 @@ void vpMbEdgeTracker::computeVVSInit()
   m_robustLines.resize(nberrors_lines);
   m_robustCylinders.resize(nberrors_cylinders);
   m_robustCircles.resize(nberrors_circles);
-  m_robustLines.setThreshold(2.0 / cam.get_px());
-  m_robustCylinders.setThreshold(2.0 / cam.get_px());
-  m_robustCircles.setThreshold(vpMath::sqr(2.0 / cam.get_px()));
+  m_robustLines.setThreshold(2.0 / m_cam.get_px());
+  m_robustCylinders.setThreshold(2.0 / m_cam.get_px());
+  m_robustCircles.setThreshold(vpMath::sqr(2.0 / m_cam.get_px()));
 
   m_wLines.resize(nberrors_lines, false);
   m_wLines = 1;
@@ -787,7 +787,7 @@ void vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(const vpImage<unsigne
        ++it) {
     if ((*it)->isTracked()) {
       l = *it;
-      l->computeInteractionMatrixError(cMo);
+      l->computeInteractionMatrixError(m_cMo);
       for (unsigned int i = 0; i < l->nbFeatureTotal; i++) {
         for (unsigned int j = 0; j < 6; j++) {
           m_L_edge[n + i][j] = l->L[i][j];
@@ -804,7 +804,7 @@ void vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(const vpImage<unsigne
        it != cylinders[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       cy = *it;
-      cy->computeInteractionMatrixError(cMo, _I);
+      cy->computeInteractionMatrixError(m_cMo, _I);
       for (unsigned int i = 0; i < cy->nbFeature; i++) {
         for (unsigned int j = 0; j < 6; j++) {
           m_L_edge[n + i][j] = cy->L[i][j];
@@ -822,7 +822,7 @@ void vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(const vpImage<unsigne
        it != circles[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       ci = *it;
-      ci->computeInteractionMatrixError(cMo);
+      ci->computeInteractionMatrixError(m_cMo);
       for (unsigned int i = 0; i < ci->nbFeature; i++) {
         for (unsigned int j = 0; j < 6; j++) {
           m_L_edge[n + i][j] = ci->L[i][j];
@@ -1037,7 +1037,7 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
     projectionError = 90.0;
 
     if (scales[lvl]) {
-      vpHomogeneousMatrix cMo_1 = cMo;
+      vpHomogeneousMatrix cMo_1 = m_cMo;
       try {
         downScale(lvl);
 
@@ -1087,19 +1087,19 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 
         // Looking for new visible face
         bool newvisibleface = false;
-        visibleFace(I, cMo, newvisibleface);
+        visibleFace(I, m_cMo, newvisibleface);
 
         // cam.computeFov(I.getWidth(), I.getHeight());
         if (useScanLine) {
-          faces.computeClippedPolygons(cMo, cam);
-          faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
+          faces.computeClippedPolygons(m_cMo, m_cam);
+          faces.computeScanLineRender(m_cam, I.getWidth(), I.getHeight());
         }
 
         updateMovingEdge(I);
 
-        initMovingEdge(I, cMo);
+        initMovingEdge(I, m_cMo);
         // Reinit the moving edge for the lines which need it.
-        reinitMovingEdge(I, cMo);
+        reinitMovingEdge(I, m_cMo);
 
         if (computeProjError)
           computeProjectionError(I);
@@ -1107,7 +1107,7 @@ void vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         upScale(lvl);
       } catch (const vpException &e) {
         if (lvl != 0) {
-          cMo = cMo_1;
+          m_cMo = cMo_1;
           reInitLevel(lvl);
           upScale(lvl);
         } else {
@@ -1145,7 +1145,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
     if (!faces.isOgreInitialised()) {
       faces.setBackgroundSizeOgre(I.getHeight(), I.getWidth());
       faces.setOgreShowConfigDialog(ogreShowConfigDialog);
-      faces.initOgre(cam);
+      faces.initOgre(m_cam);
       // Turn off Ogre config dialog display for the next call to this
       // function since settings are saved in the ogre.cfg file and used
       // during the next call
@@ -1155,17 +1155,17 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
 #endif
 
   if (clippingFlag > 2)
-    cam.computeFov(I.getWidth(), I.getHeight());
+    m_cam.computeFov(I.getWidth(), I.getHeight());
 
-  visibleFace(I, cMo, a);
+  visibleFace(I, m_cMo, a);
   resetMovingEdge();
 
   if (useScanLine) {
     if (clippingFlag <= 2)
-      cam.computeFov(I.getWidth(), I.getHeight());
+      m_cam.computeFov(I.getWidth(), I.getHeight());
 
-    faces.computeClippedPolygons(cMo, cam);
-    faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
+    faces.computeClippedPolygons(m_cMo, m_cam);
+    faces.computeScanLineRender(m_cam, I.getWidth(), I.getHeight());
   }
 
   initPyramid(I, Ipyramid);
@@ -1174,7 +1174,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
     i--;
     if (scales[i]) {
       downScale(i);
-      initMovingEdge(*Ipyramid[i], cMo);
+      initMovingEdge(*Ipyramid[i], m_cMo);
       upScale(i);
     }
   } while (i != 0);
@@ -1191,7 +1191,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char> &I)
 */
 void vpMbEdgeTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
 {
-  cMo = cdMo;
+  m_cMo = cdMo;
 
   init(I);
 }
@@ -1205,7 +1205,7 @@ void vpMbEdgeTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneo
 */
 void vpMbEdgeTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
 {
-  cMo = cdMo;
+  m_cMo = cdMo;
 
   vpImageConvert::convert(I_color, m_I);
   init(m_I);
@@ -1229,7 +1229,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
 #ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER);
 
-  xmlp.setCameraParameters(cam);
+  xmlp.setCameraParameters(m_cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
   xmlp.setEdgeMe(me);
@@ -1281,15 +1281,15 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
   Display the 3D model from a given position of the camera.
 
   \param I : The image.
-  \param cMo_ : Pose used to project the 3D model into the image.
-  \param camera : The camera parameters.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non
   visible faces).
 */
-void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_,
-                              const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                              const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                               const bool displayFullModel)
 {
   //Display first the Moving-Edges
@@ -1297,7 +1297,7 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
     displayFeaturesOnImage(I);
   }
 
-  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
+  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1315,7 +1315,7 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
 
 #ifdef VISP_HAVE_OGRE
   if (useOgre)
-    faces.displayOgre(cMo_);
+    faces.displayOgre(cMo);
 #endif
 }
 
@@ -1323,15 +1323,15 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
   Display the 3D model from a given position of the camera.
 
   \param I : The image.
-  \param cMo_ : Pose used to project the 3D model into the image.
-  \param camera : The camera parameters.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non
   visible surfaces).
 */
-void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo_,
-                              const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                              const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
                               const bool displayFullModel)
 {
   //Display first the Moving-Edges
@@ -1339,7 +1339,7 @@ void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatri
     displayFeaturesOnImage(I);
   }
 
-  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo_, camera, displayFullModel);
+  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1357,7 +1357,7 @@ void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatri
 
 #ifdef VISP_HAVE_OGRE
   if (useOgre)
-    faces.displayOgre(cMo_);
+    faces.displayOgre(cMo);
 #endif
 }
 
@@ -1403,13 +1403,13 @@ std::vector<std::vector<double> > vpMbEdgeTracker::getFeaturesForDisplayEdge()
 
   \param width : Image width.
   \param height : Image height.
-  \param cMo_ : Pose used to project the 3D model into the image.
-  \param camera : The camera parameters.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
   \param displayFullModel : If true, the line is displayed even if it is not
 */
 std::vector<std::vector<double> > vpMbEdgeTracker::getModelForDisplay(unsigned int width, unsigned int height,
-                                                                      const vpHomogeneousMatrix &cMo_,
-                                                                      const vpCameraParameters &camera,
+                                                                      const vpHomogeneousMatrix &cMo,
+                                                                      const vpCameraParameters &cam,
                                                                       const bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
@@ -1419,20 +1419,20 @@ std::vector<std::vector<double> > vpMbEdgeTracker::getModelForDisplay(unsigned i
       for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
            ++it) {
         std::vector<std::vector<double> > currentModel =
-          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+          (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
         models.insert(models.end(), currentModel.begin(), currentModel.end());
       }
 
       for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
            it != cylinders[scaleLevel].end(); ++it) {
         std::vector<std::vector<double> > currentModel =
-          (*it)->getModelForDisplay(width, height, cMo_, camera, displayFullModel);
+          (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
         models.insert(models.end(), currentModel.begin(), currentModel.end());
       }
 
       for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
            it != circles[scaleLevel].end(); ++it) {
-        std::vector<double> paramsCircle = (*it)->getModelForDisplay(cMo_, camera, displayFullModel);
+        std::vector<double> paramsCircle = (*it)->getModelForDisplay(cMo, cam, displayFullModel);
         models.push_back(paramsCircle);
       }
       break; // displaying model on one scale only
@@ -1642,7 +1642,7 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
       if (l->meline.empty()) {
-        l->initMovingEdge(I, cMo, doNotTrack, m_mask);
+        l->initMovingEdge(I, m_cMo, doNotTrack, m_mask);
       }
       l->trackMovingEdge(I);
     }
@@ -1653,9 +1653,9 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceCylinder *cy = *it;
     if (cy->isVisible() && cy->isTracked()) {
       if (cy->meline1 == NULL || cy->meline2 == NULL) {
-        cy->initMovingEdge(I, cMo, doNotTrack, m_mask);
+        cy->initMovingEdge(I, m_cMo, doNotTrack, m_mask);
       }
-      cy->trackMovingEdge(I, cMo);
+      cy->trackMovingEdge(I, m_cMo);
     }
   }
 
@@ -1664,9 +1664,9 @@ void vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     vpMbtDistanceCircle *ci = *it;
     if (ci->isVisible() && ci->isTracked()) {
       if (ci->meEllipse == NULL) {
-        ci->initMovingEdge(I, cMo, doNotTrack, m_mask);
+        ci->initMovingEdge(I, m_cMo, doNotTrack, m_mask);
       }
-      ci->trackMovingEdge(I, cMo);
+      ci->trackMovingEdge(I, m_cMo);
     }
   }
 }
@@ -1683,7 +1683,7 @@ void vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
        ++it) {
     if ((*it)->isTracked()) {
       l = *it;
-      l->updateMovingEdge(I, cMo);
+      l->updateMovingEdge(I, m_cMo);
       if (l->nbFeatureTotal == 0 && l->isVisible()) {
         l->Reinit = true;
       }
@@ -1695,7 +1695,7 @@ void vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
        it != cylinders[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       cy = *it;
-      cy->updateMovingEdge(I, cMo);
+      cy->updateMovingEdge(I, m_cMo);
       if ((cy->nbFeaturel1 == 0 || cy->nbFeaturel2 == 0) && cy->isVisible()) {
         cy->Reinit = true;
       }
@@ -1707,7 +1707,7 @@ void vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
        it != circles[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       ci = *it;
-      ci->updateMovingEdge(I, cMo);
+      ci->updateMovingEdge(I, m_cMo);
       if (ci->nbFeature == 0 && ci->isVisible()) {
         ci->Reinit = true;
       }
@@ -1988,7 +1988,7 @@ void vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string
         if (!already_here) {
           l = new vpMbtDistanceLine;
 
-          l->setCameraParameters(cam);
+          l->setCameraParameters(m_cam);
           l->buildFrom(P1, P2);
           l->addPolygon(polygon);
           l->setMovingEdge(&me);
@@ -2070,7 +2070,7 @@ void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPo
         if (!already_here) {
           ci = new vpMbtDistanceCircle;
 
-          ci->setCameraParameters(cam);
+          ci->setCameraParameters(m_cam);
           ci->buildFrom(P1, P2, P3, r);
           ci->setMovingEdge(&me);
           ci->setIndex(ncircle);
@@ -2130,7 +2130,7 @@ void vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const do
         if (!already_here) {
           cy = new vpMbtDistanceCylinder;
 
-          cy->setCameraParameters(cam);
+          cy->setCameraParameters(m_cam);
           cy->buildFrom(P1, P2, r);
           cy->setMovingEdge(&me);
           cy->setIndex(ncylinder);
@@ -2211,26 +2211,26 @@ void vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
   \warning If in one iteration one face appears and one disappears, then the
   function will not detect the new face.
 
-  \param _I : Image to test if a face is entirely in the image.
-  \param _cMo : The pose of the camera used to project the 3D model into the
+  \param I : Image to test if a face is entirely in the image.
+  \param cMo : The pose of the camera used to project the 3D model into the
   image. \param newvisibleline : This parameter is set to true if a new face
   appeared.
 */
-void vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo,
+void vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                   bool &newvisibleline)
 {
   unsigned int n;
   bool changed = false;
 
   if (!useOgre) {
-    // n = faces.setVisible(_I.getWidth(), _I.getHeight(), cam, _cMo, vpMath::rad(89), vpMath::rad(89),
+    // n = faces.setVisible(_I.getWidth(), I.getHeight(), m_cam, cMo, vpMath::rad(89), vpMath::rad(89),
     // changed);
-    n = faces.setVisible(_I.getWidth(), _I.getHeight(), cam, _cMo, angleAppears, angleDisappears, changed);
+    n = faces.setVisible(I.getWidth(), I.getHeight(), m_cam, cMo, angleAppears, angleDisappears, changed);
   } else {
 #ifdef VISP_HAVE_OGRE
-    n = faces.setVisibleOgre(_I.getWidth(), _I.getHeight(), cam, _cMo, angleAppears, angleDisappears, changed);
+    n = faces.setVisibleOgre(I.getWidth(), I.getHeight(), m_cam, cMo, angleAppears, angleDisappears, changed);
 #else
-    n = faces.setVisible(_I.getWidth(), _I.getHeight(), cam, _cMo, angleAppears, angleDisappears, changed);
+    n = faces.setVisible(I.getWidth(), I.getHeight(), m_cam, cMo, angleAppears, angleDisappears, changed);
 #endif
   }
 
@@ -2376,7 +2376,7 @@ void vpMbEdgeTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const d
 */
 void vpMbEdgeTracker::resetTracker()
 {
-  this->cMo.eye();
+  m_cMo.eye();
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;
@@ -2440,7 +2440,7 @@ void vpMbEdgeTracker::resetTracker()
 
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
-  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new
+  \param cMo : The new vpHomogeneousMatrix between the camera and the new
   model
   \param verbose : verbose option to print additional information when
   loading CAO model files which include other CAO model files.
@@ -2448,10 +2448,10 @@ void vpMbEdgeTracker::resetTracker()
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                  const vpHomogeneousMatrix &cMo_, const bool verbose,
+                                  const vpHomogeneousMatrix &cMo, const bool verbose,
                                   const vpHomogeneousMatrix &T)
 {
-  this->cMo.eye();
+  m_cMo.eye();
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;
@@ -2496,7 +2496,7 @@ void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const std::st
   nbvisiblepolygone = 0;
 
   loadModel(cad_name, verbose, T);
-  initFromPose(I, cMo_);
+  initFromPose(I, cMo);
 }
 
 /*!
@@ -2858,14 +2858,14 @@ void vpMbEdgeTracker::downScale(const unsigned int _scale)
   const double ratio = pow(2., (int)_scale);
   scaleLevel = _scale;
 
-  vpMatrix K = cam.get_K();
+  vpMatrix K = m_cam.get_K();
 
   K[0][0] /= ratio;
   K[1][1] /= ratio;
   K[0][2] /= ratio;
   K[1][2] /= ratio;
 
-  cam.initFromCalibrationMatrix(K);
+  m_cam.initFromCalibrationMatrix(K);
 }
 
 /*!
@@ -2879,14 +2879,14 @@ void vpMbEdgeTracker::upScale(const unsigned int _scale)
   const double ratio = pow(2., (int)_scale);
   scaleLevel = 0;
 
-  vpMatrix K = cam.get_K();
+  vpMatrix K = m_cam.get_K();
 
   K[0][0] *= ratio;
   K[1][1] *= ratio;
   K[0][2] *= ratio;
   K[1][2] *= ratio;
 
-  cam.initFromCalibrationMatrix(K);
+  m_cam.initFromCalibrationMatrix(K);
 }
 
 /*!
@@ -2906,7 +2906,7 @@ void vpMbEdgeTracker::reInitLevel(const unsigned int _lvl)
        ++it) {
     if ((*it)->isTracked()) {
       l = *it;
-      l->reinitMovingEdge(*Ipyramid[_lvl], cMo, m_mask);
+      l->reinitMovingEdge(*Ipyramid[_lvl], m_cMo, m_mask);
     }
   }
 
@@ -2915,7 +2915,7 @@ void vpMbEdgeTracker::reInitLevel(const unsigned int _lvl)
        it != cylinders[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       cy = *it;
-      cy->reinitMovingEdge(*Ipyramid[_lvl], cMo, m_mask);
+      cy->reinitMovingEdge(*Ipyramid[_lvl], m_cMo, m_mask);
     }
   }
 
@@ -2924,7 +2924,7 @@ void vpMbEdgeTracker::reInitLevel(const unsigned int _lvl)
        it != circles[scaleLevel].end(); ++it) {
     if ((*it)->isTracked()) {
       ci = *it;
-      ci->reinitMovingEdge(*Ipyramid[_lvl], cMo, m_mask);
+      ci->reinitMovingEdge(*Ipyramid[_lvl], m_cMo, m_mask);
     }
   }
 

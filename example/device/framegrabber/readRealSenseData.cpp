@@ -157,7 +157,7 @@ private:
 bool readData(const int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_color, vpImage<uint16_t> &I_depth_raw,
               const bool pointcloud_binary_format
 #ifdef USE_PCL_VIEWER
-              , pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud
+              , pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
 #endif
               ) {
   char buffer[256];
@@ -217,10 +217,10 @@ bool readData(const int cpt, const std::string &input_directory, vpImage<vpRGBa>
     vpIoTools::readBinaryValueLE(file_pointcloud, width);
     file_pointcloud.read( (char *)(&is_dense), sizeof(is_dense) );
 
-    pointcloud->width = width;
-    pointcloud->height = height;
-    pointcloud->is_dense = (is_dense != 0);
-    pointcloud->resize((size_t) width*height);
+    point_cloud->width = width;
+    point_cloud->height = height;
+    point_cloud->is_dense = (is_dense != 0);
+    point_cloud->resize((size_t) width*height);
 
     float x = 0.0f, y = 0.0f, z = 0.0f;
     for (uint32_t i = 0; i < height; i++) {
@@ -229,13 +229,13 @@ bool readData(const int cpt, const std::string &input_directory, vpImage<vpRGBa>
         vpIoTools::readBinaryValueLE(file_pointcloud, y);
         vpIoTools::readBinaryValueLE(file_pointcloud, z);
 
-        pointcloud->points[(size_t) (i*width + j)].x = x;
-        pointcloud->points[(size_t) (i*width + j)].y = y;
-        pointcloud->points[(size_t) (i*width + j)].z = z;
+        point_cloud->points[(size_t) (i*width + j)].x = x;
+        point_cloud->points[(size_t) (i*width + j)].y = y;
+        point_cloud->points[(size_t) (i*width + j)].z = z;
       }
     }
   } else {
-    if (pcl::io::loadPCDFile<pcl::PointXYZ> (filename_pointcloud, *pointcloud) == -1) {
+    if (pcl::io::loadPCDFile<pcl::PointXYZ> (filename_pointcloud, *point_cloud) == -1) {
       std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
     }
   }

@@ -144,12 +144,12 @@ private:
   std::mutex &m_mutex;
 };
 
-void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &pointcloud)
+void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &point_cloud)
 {
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
-  pointcloud.resize((size_t)(width * height));
+  point_cloud.resize((size_t)(width * height));
 
   rs2::pointcloud pc;
   rs2::points points = pc.calculate(depth_frame);
@@ -168,7 +168,7 @@ void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector>
       v[3] = 1.0;
     }
 
-    pointcloud[i] = v;
+    point_cloud[i] = v;
   }
 }
 #endif

@@ -393,32 +393,32 @@ public:
   void loadConfigFile(const std::string &configFile);
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, const bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 
   /*!
     Set the camera parameters.
 
-    \param camera : the new camera parameters
+    \param cam : The new camera parameters.
   */
-  virtual void setCameraParameters(const vpCameraParameters &camera)
+  virtual void setCameraParameters(const vpCameraParameters &cam)
   {
-    this->cam = camera;
+    m_cam = cam;
 
     for (unsigned int i = 0; i < scales.size(); i += 1) {
       if (scales[i]) {
         for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
-          (*it)->setCameraParameters(cam);
+          (*it)->setCameraParameters(m_cam);
         }
 
         for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
              ++it) {
-          (*it)->setCameraParameters(cam);
+          (*it)->setCameraParameters(m_cam);
         }
 
         for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
-          (*it)->setCameraParameters(cam);
+          (*it)->setCameraParameters(m_cam);
         }
       }
     }

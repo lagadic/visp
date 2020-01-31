@@ -482,9 +482,9 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in row-major
  * format and computed from the robot current joint position.
- * \param[out] eJe : Body Jacobian expressed in the end-effector frame.
+ * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
  */
-void vpRobotFranka::get_eJe(vpMatrix &eJe)
+void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 {
   if (!m_handler) {
     throw(vpException(vpException::fatalError, "Cannot get Franka robot eJe jacobian: robot is not connected"));
@@ -493,23 +493,22 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, robot_state); // column-major
-  eJe.resize(6, 7); // row-major
+  eJe_.resize(6, 7); // row-major
   for (size_t i = 0; i < 6; i ++) {
     for (size_t j = 0; j < 7; j ++) {
-      eJe[i][j] = jacobian[j*6 + i];
+      eJe_[i][j] = jacobian[j*6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable
-
 }
 
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in row-major
  * format and computed from the robot current joint position.
  * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
- * \param[out] eJe : Body Jacobian expressed in the end-effector frame.
+ * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
  */
-void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe)
+void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
 {
   if (!m_handler) {
     throw(vpException(vpException::fatalError, "Cannot get Franka robot eJe jacobian: robot is not connected"));
@@ -522,10 +521,10 @@ void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe)
     q_array[i] = q[i];
 
   std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K); // column-major
-  eJe.resize(6, 7); // row-major
+  eJe_.resize(6, 7); // row-major
   for (size_t i = 0; i < 6; i ++) {
     for (size_t j = 0; j < 7; j ++) {
-      eJe[i][j] = jacobian[j*6 + i];
+      eJe_[i][j] = jacobian[j*6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable
@@ -535,9 +534,9 @@ void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe)
 /*!
  * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major format and computed
  * from the robot current joint position.
- * \param[out] fJe : Zero Jacobian expressed in the base frame.
+ * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
  */
-void vpRobotFranka::get_fJe(vpMatrix &fJe)
+void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 {
   if (!m_handler) {
     throw(vpException(vpException::fatalError, "Cannot get Franka robot fJe jacobian: robot is not connected"));
@@ -546,10 +545,10 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, robot_state); // column-major
-  fJe.resize(6, 7); // row-major
+  fJe_.resize(6, 7); // row-major
   for (size_t i = 0; i < 6; i ++) {
     for (size_t j = 0; j < 7; j ++) {
-      fJe[i][j] = jacobian[j*6 + i];
+      fJe_[i][j] = jacobian[j*6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable
@@ -559,9 +558,9 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe)
  * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major format and computed
  * from the robot joint position given as input.
  * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
- * \param[out] fJe : Zero Jacobian expressed in the base frame.
+ * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
  */
-void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe)
+void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
 {
   if (!m_handler) {
     throw(vpException(vpException::fatalError, "Cannot get Franka robot fJe jacobian: robot is not connected"));
@@ -577,10 +576,10 @@ void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe)
     q_array[i] = q[i];
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K); // column-major
-  fJe.resize(6, 7); // row-major
+  fJe_.resize(6, 7); // row-major
   for (size_t i = 0; i < 6; i ++) {
     for (size_t j = 0; j < 7; j ++) {
-      fJe[i][j] = jacobian[j*6 + i];
+      fJe_[i][j] = jacobian[j*6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable

@@ -32,6 +32,7 @@ foreach(cpp ${tutorial_cpp})
 
   if(VISP_HAVE_PCL)
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-shadow")
   endif()
 
   if(CXX_FLAGS_MUTE_WARNINGS)
