@@ -2096,6 +2096,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_FRANKA \
                          VISP_HAVE_FRANKA_VERSION=0x000500 \
                          VISP_HAVE_FLYCAPTURE \
+                         VISP_HAVE_FT_IIT_SDK \
                          VISP_HAVE_GDI \
                          VISP_HAVE_GTK \
                          VISP_HAVE_GSL \

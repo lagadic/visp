@@ -82,9 +82,9 @@ protected:
   //! Factor for edge trackers.
   double m_factorMBT;
   //! The threshold used in the robust estimation of KLT.
-  double thresholdKLT;
+  double m_thresholdKLT;
   //! The threshold used in the robust estimation of MBT.
-  double thresholdMBT;
+  double m_thresholdMBT;
 
   //! Map of camera transformation matrix between the current camera frame to
   //! the reference camera frame (cCurrent_M_cRef)
@@ -110,10 +110,10 @@ public:
 
   virtual ~vpMbEdgeKltMultiTracker();
 
-  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
+  virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
-  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
+  virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
 
   virtual void display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
@@ -133,7 +133,7 @@ public:
   virtual void display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                        const std::map<std::string, vpCameraParameters> &mapOfCameraParameters, const vpColor &col,
-                       const unsigned int thickness = 1, const bool displayFullModel = false);  
+                       const unsigned int thickness = 1, const bool displayFullModel = false);
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int, unsigned int,
                                                                const vpHomogeneousMatrix &,
@@ -187,7 +187,7 @@ public:
 
   using vpMbKltMultiTracker::getPose;
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
-  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const;
+  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
   virtual inline vpColVector getError() const { return m_error_hybridMulti; }
@@ -226,7 +226,7 @@ public:
                             const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                             const bool firstCameraIsReference = true);
   virtual void initFromPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                            const vpHomogeneousMatrix &cMo_);
+                            const vpHomogeneousMatrix &cMo);
   virtual void initFromPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                             const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
@@ -244,7 +244,7 @@ public:
                          const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, const bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
@@ -351,7 +351,7 @@ public:
                        const bool firstCameraIsReference = true);
 
   virtual void setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                       const vpHomogeneousMatrix &cMo_);
+                       const vpHomogeneousMatrix &cMo);
 
   virtual void setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);

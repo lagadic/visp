@@ -748,7 +748,7 @@ int main()
   static void displayPoint(const vpImage<unsigned char> &I, int i, int j, const vpColor &color,
                            unsigned int thickness = 1);
   static void displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
-                             const vpColor &color, unsigned int thickness = 1);
+                             const vpColor &color, unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
                                unsigned int thickness = 1);
@@ -846,7 +846,7 @@ int main()
                            unsigned int thickness = 1);
   static void displayPoint(const vpImage<vpRGBa> &I, int i, int j, const vpColor &color, unsigned int thickness = 1);
   static void displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
-                             unsigned int thickness = 1);
+                             unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
                                unsigned int thickness = 1);

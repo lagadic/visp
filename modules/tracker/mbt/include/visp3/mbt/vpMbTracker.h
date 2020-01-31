@@ -108,9 +108,9 @@ public:
 
 protected:
   //! The camera parameters.
-  vpCameraParameters cam;
+  vpCameraParameters m_cam;
   //! The current pose.
-  vpHomogeneousMatrix cMo;
+  vpHomogeneousMatrix m_cMo;
   //! The Degrees of Freedom to estimate
   vpMatrix oJo;
   //! Boolean to know if oJo is identity (for fast computation)
@@ -239,9 +239,9 @@ public:
   /*!
     Get the camera parameters.
 
-    \param camera : copy of the camera parameters used by the tracker.
+    \param cam : copy of the camera parameters used by the tracker.
   */
-  virtual void getCameraParameters(vpCameraParameters &camera) const { camera = this->cam; }
+  virtual void getCameraParameters(vpCameraParameters &cam) const { cam = m_cam; }
 
   /*!
     Get the clipping used and defined in
@@ -405,9 +405,9 @@ public:
     cMo is the matrix which can be used to express
     coordinates from the object frame to camera frame.
 
-    \param cMo_ : the pose
+    \param cMo : the pose
   */
-  virtual inline void getPose(vpHomogeneousMatrix &cMo_) const { cMo_ = this->cMo; }
+  virtual inline void getPose(vpHomogeneousMatrix &cMo) const { cMo = m_cMo; }
 
   /*!
     Get the current pose between the object and the camera.
@@ -416,7 +416,7 @@ public:
 
     \return the current pose
   */
-  virtual inline vpHomogeneousMatrix getPose() const { return this->cMo; }
+  virtual inline vpHomogeneousMatrix getPose() const { return m_cMo; }
 
   virtual inline double getStopCriteriaEpsilon() const { return m_stopCriteriaEpsilon; }
 
@@ -478,9 +478,9 @@ public:
   /*!
     Set the camera parameters.
 
-    \param camera : the new camera parameters
+    \param cam : The new camera parameters.
   */
-  virtual void setCameraParameters(const vpCameraParameters &camera) { this->cam = camera; }
+  virtual void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
 
   virtual void setClipping(const unsigned int &flags);
 

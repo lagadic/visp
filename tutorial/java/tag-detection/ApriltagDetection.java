@@ -8,6 +8,7 @@ import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +33,7 @@ import org.visp.io.VpImageIo;
 
 public class ApriltagDetection extends JFrame {
     static {
-        System.loadLibrary("visp_java321");
+        System.loadLibrary("visp_java330");
     }
 
     private static final long serialVersionUID = 1L;
@@ -80,18 +81,15 @@ public class ApriltagDetection extends JFrame {
                     File file = fc.getSelectedFile();
                     VpImageIo.read(I, file.getAbsolutePath());
 
-                    try {
-                        BufferedImage tmp = ImageIO.read(new File(file.getAbsolutePath()));
-                        if (tmp.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_RGB) {
-                            canvas = tmp;
-                        } else {
-                            Graphics2D g2d = canvas.createGraphics();
-                            g2d.drawImage(tmp, 0, 0, null);
-                            g2d.dispose();
-                        }
-                    } catch (IOException e1) {
-                        System.err.println("Cannot read: " + file.getAbsolutePath());
+                    BufferedImage tmp = toBufferedImage(I);
+                    if (tmp.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_RGB) {
+                        canvas = tmp;
+                    } else {
+                        Graphics2D g2d = canvas.createGraphics();
+                        g2d.drawImage(tmp, 0, 0, null);
+                        g2d.dispose();
                     }
+
                     canvasLabel.setIcon(new ImageIcon(canvas));
                     repaint();
                     pack();
@@ -179,6 +177,15 @@ public class ApriltagDetection extends JFrame {
         return centroid;
     }
 
+    public static BufferedImage toBufferedImage(VpImageUChar image) {
+        int type = BufferedImage.TYPE_BYTE_GRAY;
+        byte[] b = image.getPixels(); // get all the pixels
+        BufferedImage I = new BufferedImage(image.cols(), image.rows(), type);
+        final byte[] targetPixels = ((DataBufferByte) I.getRaster().getDataBuffer()).getData();
+        System.arraycopy(b, 0, targetPixels, 0, b.length);
+        return I;
+    }
+
     public void displayLine(BufferedImage I, double i1, double j1, double i2, double j2, Color color, int thickness) {
         displayLine(I, (int) i1, (int) j1, (int) i2, (int) j2, color, thickness);
     }
@@ -191,7 +198,7 @@ public class ApriltagDetection extends JFrame {
     }
 
     public void displayArrow(BufferedImage I, double i1, double j1, double i2, double j2, Color color, int w, int h, int thickness) {
-        displayArrow(I, (int) i1, (int) j1, (int) i2, (int) j2,color,w,h,thickness);
+        displayArrow(I, (int) i1, (int) j1, (int) i2, (int) j2, color, w, h,thickness);
     }
 
     public void displayArrow(BufferedImage I, int i1, int j1, int i2, int j2, Color color, int w, int h, int thickness) {
@@ -285,3 +292,4 @@ public class ApriltagDetection extends JFrame {
         });
     }
 }
+

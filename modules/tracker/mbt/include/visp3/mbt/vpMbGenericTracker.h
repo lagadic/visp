@@ -282,10 +282,10 @@ public:
                          const std::map<std::string, vpHomogeneousMatrix> &mapOfT=std::map<std::string, vpHomogeneousMatrix>());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, const bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, const bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
@@ -534,10 +534,10 @@ private:
     virtual void loadConfigFile(const std::string &configFile);
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                             const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                             const vpHomogeneousMatrix &cMo, const bool verbose = false,
                              const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
     virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                             const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                             const vpHomogeneousMatrix &cMo, const bool verbose = false,
                              const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
     virtual void resetTracker();
@@ -611,7 +611,7 @@ private:
                              const unsigned int pointcloud_width = 0, const unsigned int pointcloud_height = 0);
 
     virtual void reInitModel(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                             const std::string &cad_name, const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                             const std::string &cad_name, const vpHomogeneousMatrix &cMo, const bool verbose = false,
                              const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
 #ifdef VISP_HAVE_PCL

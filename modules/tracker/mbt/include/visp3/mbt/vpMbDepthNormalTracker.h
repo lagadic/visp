@@ -75,11 +75,11 @@ public:
 
   virtual void loadConfigFile(const std::string &configFile);
 
-  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo_,
+  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                    const bool verbose = false);
 #if defined(VISP_HAVE_PCL)
   void reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const std::string &cad_name,
-                   const vpHomogeneousMatrix &cMo_, const bool verbose = false);
+                   const vpHomogeneousMatrix &cMo, const bool verbose = false);
 #endif
 
   virtual void resetTracker();

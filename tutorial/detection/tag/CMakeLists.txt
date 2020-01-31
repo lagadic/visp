@@ -7,6 +7,7 @@ find_package(VISP REQUIRED visp_core visp_detection visp_io visp_gui visp_sensor
 set(tutorial_cpp
   tutorial-apriltag-detector.cpp
   tutorial-apriltag-detector-live.cpp
+  tutorial-apriltag-detector-live-rgbd-realsense.cpp
 )
 
 set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/AprilTag.pgm")

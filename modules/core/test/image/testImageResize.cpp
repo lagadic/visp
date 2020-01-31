@@ -431,8 +431,8 @@ int main(int argc, const char **argv)
         cv::Mat img, img_resize_perf;
         vpImageConvert::convert(I, img);
 
-        for (size_t i = 0; i < interpolations.size(); i++) {
-          std::cout << "\nInterpolation (gray): " << interpolationNames[i] << std::endl;
+        for (size_t iter = 0; iter < interpolations.size(); iter ++) {
+          std::cout << "\nInterpolation (gray): " << interpolationNames[iter] << std::endl;
 
           for (size_t s = 0; s < scales.size(); s++) {
             unsigned int width_resize = static_cast<unsigned int>(I.getWidth() * scales[s]);
@@ -441,15 +441,15 @@ int main(int argc, const char **argv)
             std::cout << "Resize from " << I.getWidth() << "x" << I.getHeight() << " to "
                       << width_resize << "x" << height_resize << std::endl;
 
-            double t = vpTime::measureTimeMs();
+            t = vpTime::measureTimeMs();
             for (int nbIter = 0; nbIter < 10; nbIter++) {
-              vpImageTools::resize(I, I_resize_perf, width_resize, height_resize, interpolations[i]);
+              vpImageTools::resize(I, I_resize_perf, width_resize, height_resize, interpolations[iter]);
             }
             t = vpTime::measureTimeMs() - t;
 
             double t_cv = vpTime::measureTimeMs();
             for (int nbIter = 0; nbIter < 10; nbIter++) {
-              cv::resize(img, img_resize_perf, new_size, 0.0, 0.0, interpolationsCV[i]);
+              cv::resize(img, img_resize_perf, new_size, 0.0, 0.0, interpolationsCV[iter]);
             }
             t_cv = vpTime::measureTimeMs() - t_cv;
 
@@ -476,8 +476,8 @@ int main(int argc, const char **argv)
         cv::Mat img, img_resize_perf;
         vpImageConvert::convert(I_color, img);
 
-        for (size_t i = 0; i < interpolations.size(); i++) {
-          std::cout << "\nInterpolation (color): " << interpolationNames[i] << std::endl;
+        for (size_t iter = 0; iter < interpolations.size(); iter++) {
+          std::cout << "\nInterpolation (color): " << interpolationNames[iter] << std::endl;
 
           for (size_t s = 0; s < scales.size(); s++) {
             unsigned int width_resize = static_cast<unsigned int>(I.getWidth() * scales[s]);
@@ -486,15 +486,15 @@ int main(int argc, const char **argv)
             std::cout << "Resize from " << I_color.getWidth() << "x" << I_color.getHeight() << " to "
                       << width_resize << "x" << height_resize << std::endl;
 
-            double t = vpTime::measureTimeMs();
+            t = vpTime::measureTimeMs();
             for (int nbIter = 0; nbIter < 10; nbIter++) {
-              vpImageTools::resize(I_color, I_resize_perf, width_resize, height_resize, interpolations[i]);
+              vpImageTools::resize(I_color, I_resize_perf, width_resize, height_resize, interpolations[iter]);
             }
             t = vpTime::measureTimeMs() - t;
 
             double t_cv = vpTime::measureTimeMs();
             for (int nbIter = 0; nbIter < 10; nbIter++) {
-              cv::resize(img, img_resize_perf, new_size, 0.0, 0.0, interpolationsCV[i]);
+              cv::resize(img, img_resize_perf, new_size, 0.0, 0.0, interpolationsCV[iter]);
             }
             t_cv = vpTime::measureTimeMs() - t_cv;
 

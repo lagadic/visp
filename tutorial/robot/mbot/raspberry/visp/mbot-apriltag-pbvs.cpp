@@ -170,9 +170,11 @@ int main(int argc, const char **argv)
       t = vpTime::measureTimeMs() - t;
       time_vec.push_back(t);
 
-      std::stringstream ss;
-      ss << "Detection time: " << t << " ms";
-      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Detection time: " << t << " ms";
+        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      }
 
       if (detector.getNbObjects() == 1) {
         // Display visual features
@@ -184,9 +186,9 @@ int main(int argc, const char **argv)
           serial->write("LED_RING=2,0,10,0\n"); // Switch on led 2 to green: tag detected
         }
 
-        double X = cMo_vec[0][0][3];
-        double Y = cMo_vec[0][1][3];
-        double Z = cMo_vec[0][2][3];
+        X = cMo_vec[0][0][3];
+        Y = cMo_vec[0][1][3];
+        Z = cMo_vec[0][2][3];
 
         // Update Point 3D feature
         s_XZ.set_XYZ(X, Y, Z);

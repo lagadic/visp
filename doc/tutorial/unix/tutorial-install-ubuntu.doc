@@ -141,7 +141,7 @@ FlyCapture is the SDK provided by <a href="https://www.ptgrey.com/">FLIR (previo
         $ sudo apt-get install libraw1394-11 libavcodec57 libavformat57  \
         libswscale4 libswresample2 libavutil55 libgtkmm-2.4-1v5          \
         libglademm-2.4-1v5 libgtkglextmm-x11-1.2-0v5 libgtkmm-2.4-dev    \
-        libglademm-2.4-dev libgtkglextmm-x11-1.2-dev libusb-1.0-0``
+        libglademm-2.4-dev libgtkglextmm-x11-1.2-dev libusb-1.0-0
 
 4. Run the install script in the same directory into which you unpacked the software.
 
