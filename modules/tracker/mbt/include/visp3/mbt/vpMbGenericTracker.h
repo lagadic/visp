@@ -185,10 +185,11 @@ public:
                                                                const vpCameraParameters &cam,
                                                                bool displayFullModel=false);
   virtual void getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
-                                  unsigned int width, unsigned int height,
-                                  const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam,
-                                  const bool displayFullModel=false);
+                                  const std::map<std::string, unsigned int> &mapOfwidths,
+                                  const std::map<std::string, unsigned int> &mapOfheights,
+                                  const std::map<std::string, vpHomogeneousMatrix> &mapOfcMos,
+                                  const std::map<std::string, vpCameraParameters> &mapOfCams,
+                                  bool displayFullModel=false);
 
   virtual vpMe getMovingEdge() const;
   virtual void getMovingEdge(vpMe &me1, vpMe &me2) const;
@@ -527,7 +528,7 @@ private:
     virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                  const vpHomogeneousMatrix &cMo,
                                                                  const vpCameraParameters &cam,
-                                                                 const bool displayFullModel=false);
+                                                                 bool displayFullModel=false);
 
     virtual void init(const vpImage<unsigned char> &I);
 
