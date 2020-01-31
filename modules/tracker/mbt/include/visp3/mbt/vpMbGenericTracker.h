@@ -197,7 +197,7 @@ public:
   virtual unsigned int getNbPoints(const unsigned int level = 0) const;
   virtual void getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, const unsigned int level = 0) const;
 
-  virtual inline unsigned int getNbPolygon() const;
+  virtual unsigned int getNbPolygon() const;
   virtual void getNbPolygon(std::map<std::string, unsigned int> &mapOfNbPolygons) const;
 
   virtual vpMbtPolygon *getPolygon(const unsigned int index);
