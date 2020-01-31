@@ -1328,14 +1328,14 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
   \note It returns the model for the reference camera.
 */
 std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigned int width, unsigned int height,
-                                                                         const vpHomogeneousMatrix &cMo_,
-                                                                         const vpCameraParameters &cam_,
+                                                                         const vpHomogeneousMatrix &cMo,
+                                                                         const vpCameraParameters &cam,
                                                                          bool displayFullModel)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
 
   if (it != m_mapOfTrackers.end()) {
-    return it->second->getModelForDisplay(width, height, cMo_, cam_, displayFullModel);
+    return it->second->getModelForDisplay(width, height, cMo, cam, displayFullModel);
   } else {
     std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
   }
