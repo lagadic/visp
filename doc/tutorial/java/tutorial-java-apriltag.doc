@@ -5,7 +5,7 @@
 
 \section java_tag_intro Introduction
 
-We assume that you have already followed the previous tutorial \ref tutorial-java-started. It could be also useful to follow \ref tutorial-detection-apriltag to get an overview of AprilTag detection in ViSP.
+We assume that you have already followed the previous tutorial \ref tutorial-java-started. It could be also useful to follow \ref tutorial-detection-apriltag to get an overview on AprilTag detection in ViSP.
 
 In this tutorial, you will see how to develop an application that allows to load an image and run AprilTag detection in java using ViSP library in Eclipse.
 
@@ -37,7 +37,7 @@ Check the checkbox of the ViSP library and press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
 
-\section java_tag_app Import AprilTag detection application
+\section java_tag_app Import AprilTag application java code
 
 Now import AprilTagDetection.java file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu. 
 
@@ -70,5 +70,9 @@ Now press `Detect` button to run AprilTag detection and pose computation over th
 \image html img-java-apriltag-app-detect.png
 
 This application allows to select tag format (default tag is 36h11) and pose estimation algorithm (default is homography). Just try it... 
+
+\section java_tag_next Next tutorial
+
+You are now ready to continue with \ref tutorial-java-mbt-generic.
 
 */
