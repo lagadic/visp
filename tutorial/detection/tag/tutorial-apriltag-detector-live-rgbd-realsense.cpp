@@ -10,6 +10,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/core/vpImageConvert.h>
 #include <visp3/vision/vpPose.h>
 
 int main(int argc, const char **argv)
@@ -193,7 +194,7 @@ int main(int argc, const char **argv)
       std::map<int, double> tags_size;
       tags_size[-1] = tagSize; // Default tag size
       std::vector<std::vector<vpPoint> > tags_points3d = detector.getTagsPoints3D(tags_id, tags_size);
-      for (size_t i = 0; i < tags_corners.size(); i++) {
+      for (int i = 0; i < tags_corners.size(); i++) {
         vpHomogeneousMatrix cMo;
         double confidence_index;
         if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_points3d[i], cMo, &confidence_index)) {

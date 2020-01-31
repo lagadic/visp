@@ -40,7 +40,7 @@
 
 namespace {
 vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint>& p, const std::vector<vpPoint>& q) {
-  double N = p.size();
+  double N = static_cast<double>(p.size());
 
   vpColVector p_bar(3, 0.0);
   vpColVector q_bar(3, 0.0);
