@@ -38,6 +38,7 @@
 
 #include <iostream>
 #include <map>
+#include <clocale>
 
 #include <visp3/mbt/vpMbtXmlGenericParser.h>
 
@@ -1447,7 +1448,13 @@ protected:
 
 vpMbtXmlGenericParser::vpMbtXmlGenericParser(int type) :  m_impl(new Impl(type))
 {
-  std::setlocale(LC_ALL, "en_US.UTF-8");
+  //https://pugixml.org/docs/manual.html#access.attrdata
+  //https://en.cppreference.com/w/cpp/locale/setlocale
+  //When called from Java binding, the locale seems to be changed to the default system locale
+  //It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
+  if (std::setlocale(LC_ALL, "C") == NULL) {
+    std::cerr << "Cannot set locale to C" << std::endl;
+  }
 }
 
 vpMbtXmlGenericParser::~vpMbtXmlGenericParser()
