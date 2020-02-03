@@ -246,6 +246,20 @@ template <typename Type> static void draw(vpImage<Type> &I)
   iP1.set_i(380);
   iP1.set_j(400);
   vpDisplay::displayRectangle(I, iP1, 45, w, h, vpColor::green, 3);
+
+  std::vector<vpImagePoint> polygon;
+  polygon.push_back(vpImagePoint(250, 500));
+  polygon.push_back(vpImagePoint(350, 600));
+  polygon.push_back(vpImagePoint(450, 500));
+  polygon.push_back(vpImagePoint(350, 400));
+  vpDisplay::displayPolygon(I, polygon, vpColor::green, 3);
+
+  polygon.clear();
+  polygon.push_back(vpImagePoint(300, 500));
+  polygon.push_back(vpImagePoint(350, 550));
+  polygon.push_back(vpImagePoint(400, 500));
+  polygon.push_back(vpImagePoint(350, 450));
+  vpDisplay::displayPolygon(I, polygon, vpColor::cyan, 3, false);
 }
 
 template <typename Type> static void runTest(bool opt_display, bool opt_click_allowed)
