@@ -748,7 +748,7 @@ void vpHomogeneousMatrix::load(std::ifstream &f)
       }
     }
   } else {
-    throw(vpException(vpException::ioError, "Cannot laad homogeneous matrix: ifstream not open"));
+    throw(vpException(vpException::ioError, "Cannot load homogeneous matrix: ifstream not open"));
   }
 }
 
