@@ -1353,24 +1353,36 @@ std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigne
   It can be used to display the 3D model with a render engine of your choice.
 
   \param mapOfModels : Map of models.
-  \param width : Image width.
-  \param height : Image height.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param mapOfwidths : Map of images width.
+  \param mapOfheights : Map of images height.
+  \param mapOfcMos : Map of poses used to project the 3D model into the images.
+  \param mapOfCams : The camera parameters.
   \param displayFullModel : If true, the line is displayed even if it is not
 */
 void vpMbGenericTracker::getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
-                                            unsigned int width, unsigned int height,
-                                            const vpHomogeneousMatrix &cMo,
-                                            const vpCameraParameters &cam,
-                                            const bool displayFullModel)
+                                            const std::map<std::string, unsigned int> &mapOfwidths,
+                                            const std::map<std::string, unsigned int> &mapOfheights,
+                                            const std::map<std::string, vpHomogeneousMatrix> &mapOfcMos,
+                                            const std::map<std::string, vpCameraParameters> &mapOfCams,
+                                            bool displayFullModel)
 {
   // Clear the input map
   mapOfModels.clear();
 
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
-    mapOfModels[it->first] = it->second->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+    std::map<std::string, unsigned int>::const_iterator findWidth = mapOfwidths.find(it->first);
+    std::map<std::string, unsigned int>::const_iterator findHeight = mapOfheights.find(it->first);
+    std::map<std::string, vpHomogeneousMatrix>::const_iterator findcMo = mapOfcMos.find(it->first);
+    std::map<std::string, vpCameraParameters>::const_iterator findCam = mapOfCams.find(it->first);
+
+    if (findWidth != mapOfwidths.end() &&
+        findHeight != mapOfheights.end() &&
+        findcMo != mapOfcMos.end() &&
+        findCam != mapOfCams.end()) {
+      mapOfModels[it->first] = it->second->getModelForDisplay(findWidth->second, findHeight->second,
+                                                              findcMo->second, findCam->second, displayFullModel);
+    }
   }
 }
 

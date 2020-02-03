@@ -121,7 +121,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 \subsection tuto_image Image manipulation
 
 - \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
-- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to display basic primitives such as points, lines, circles, rectangles in an image display window.
+- \ref tutorial-image-display-overlay <br>In this tutorial you will learn how to display points, lines, circles, rectangles in overlay in an image display window.
+- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to modify an image to draw points, lines, circles, rectangles.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.

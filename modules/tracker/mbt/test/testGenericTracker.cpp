@@ -50,6 +50,8 @@
 #endif
 
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpImageDraw.h>
+#include <visp3/core/vpFont.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -59,7 +61,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS "i:dclt:e:DmCh"
+#define GETOPTARGS "i:dsclt:e:DmCh"
 
 namespace
 {
@@ -69,7 +71,7 @@ namespace
     Regression test for vpGenericTracker.\n\
     \n\
     SYNOPSIS\n\
-      %s [-i <test image path>] [-c] [-d] [-h] [-l] \n\
+      %s [-i <test image path>] [-c] [-d] [-s] [-h] [-l] \n\
      [-t <tracker type>] [-e <last frame index>] [-D] [-m] [-C]\n", name);
 
     fprintf(stdout, "\n\
@@ -84,6 +86,9 @@ namespace
     \n\
       -d \n\
          Turn off the display.\n\
+    \n\
+      -s \n\
+         If display is turn off, tracking results are saved in a video folder.\n\
     \n\
       -c\n\
          Disable the mouse click. Useful to automate the \n\
@@ -114,7 +119,7 @@ namespace
       fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
   }
 
-  bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
+  bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, bool &save,
                   bool &useScanline, int &trackerType, int &lastFrame, bool &use_depth, bool &use_mask,
                   bool &use_color_image)
   {
@@ -131,6 +136,9 @@ namespace
         break;
       case 'd':
         display = false;
+        break;
+      case 's':
+        save = true;
         break;
       case 'l':
         useScanline = true;
@@ -236,10 +244,20 @@ namespace
     return true;
   }
 
+  void convert(const vpImage<vpRGBa> &src, vpImage<vpRGBa> &dst)
+  {
+    dst = src;
+  }
+
+  void convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> &dst)
+  {
+    vpImageConvert::convert(src, dst);
+  }
+
   template <typename Type>
-  bool run(vpImage<Type> &I, vpImage<Type> &I_depth, const std::string &input_directory,
+  bool run(const std::string &input_directory,
            bool opt_click_allowed, bool opt_display, bool useScanline, int trackerType_image,
-           int opt_lastFrame, bool use_depth, bool use_mask) {
+           int opt_lastFrame, bool use_depth, bool use_mask, bool save) {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                   "Template function supports only unsigned char and vpRGBa images!");
@@ -373,6 +391,7 @@ namespace
 #endif
 #endif
 
+    vpImage<Type> I, I_depth;
     vpImage<uint16_t> I_depth_raw;
     vpHomogeneousMatrix cMo_truth;
     std::vector<vpColVector> pointcloud;
@@ -396,6 +415,13 @@ namespace
     }
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+
+    vpImage<vpRGBa> results(I.getHeight(), I.getWidth() + I_depth.getWidth());
+    vpImage<vpRGBa> resultsColor(I.getHeight(), I.getWidth());
+    vpImage<vpRGBa> resultsDepth(I_depth.getHeight(), I_depth.getWidth());
+    if (save) {
+      vpIoTools::makeDirectory("results");
+    }
     if (opt_display) {
 #ifdef VISP_HAVE_DISPLAY
       display1.init(I, 0, 0, "Image");
@@ -408,6 +434,7 @@ namespace
     tracker.setCameraTransformationMatrix("Camera2", depth_M_color);
     tracker.initFromPose(I, cMo_truth);
 
+    vpFont font(24);
     bool click = false, quit = false;
     std::vector<double> vec_err_t, vec_err_tu;
     std::vector<double> time_vec;
@@ -418,6 +445,9 @@ namespace
       if (opt_display) {
         vpDisplay::display(I);
         vpDisplay::display(I_depth);
+      } else if (save) {
+        convert(I, resultsColor);
+        convert(I_depth, resultsDepth);
       }
 
       double t = vpTime::measureTimeMs();
@@ -450,6 +480,64 @@ namespace
         ss.str("");
         ss << "Nb features: " << tracker.getError().getRows();
         vpDisplay::displayText(I_depth, 40, 20, ss.str(), vpColor::red);
+      } else if (save) {
+        //Models
+        std::map<std::string, std::vector<std::vector<double> > > mapOfModels;
+        std::map<std::string, unsigned int> mapOfW;
+        mapOfW["Camera1"] = I.getWidth();
+        mapOfW["Camera2"] = I.getHeight();
+        std::map<std::string, unsigned int> mapOfH;
+        mapOfH["Camera1"] = I_depth.getWidth();
+        mapOfH["Camera2"] = I_depth.getHeight();
+        std::map<std::string, vpHomogeneousMatrix> mapOfcMos;
+        mapOfcMos["Camera1"] = cMo;
+        mapOfcMos["Camera2"] = depth_M_color*cMo;
+        std::map<std::string, vpCameraParameters> mapOfCams;
+        mapOfCams["Camera1"] = cam_color;
+        mapOfCams["Camera2"] = cam_depth;
+        tracker.getModelForDisplay(mapOfModels, mapOfW, mapOfH, mapOfcMos, mapOfCams);
+        for (std::map<std::string, std::vector<std::vector<double> > >::const_iterator it = mapOfModels.begin();
+             it != mapOfModels.end(); ++it) {
+          for (size_t i = 0; i < it->second.size(); i++) {
+            if (it->second[i][0] == 0) {
+              vpImageDraw::drawLine(it->first == "Camera1" ? resultsColor : resultsDepth, vpImagePoint(it->second[i][1], it->second[i][2]),
+                                    vpImagePoint(it->second[i][3], it->second[i][4]), vpColor::red, 3);
+            }
+          }
+        }
+
+        //Features
+        std::map<std::string, std::vector<std::vector<double> > > mapOfFeatures;
+        tracker.getFeaturesForDisplay(mapOfFeatures);
+        for (std::map<std::string, std::vector<std::vector<double> > >::const_iterator it = mapOfFeatures.begin();
+             it != mapOfFeatures.end(); ++it) {
+          for (size_t i = 0; i < it->second.size(); i++) {
+            if (it->second[i][0] == 0) {
+              vpColor color = vpColor::yellow;
+              if (it->second[i][3] == 0) {
+                color = vpColor::green;
+              } else if (it->second[i][3] == 1) {
+                color = vpColor::blue;
+              } else if (it->second[i][3] == 2) {
+                color = vpColor::purple;
+              } else if (it->second[i][3] == 3) {
+                color = vpColor::red;
+              } else if (it->second[i][3] == 4) {
+                color = vpColor::cyan;
+              }
+              vpImageDraw::drawCross(it->first == "Camera1" ? resultsColor : resultsDepth, vpImagePoint(it->second[i][1], it->second[i][2]),
+                                     3, color, 1);
+            } else if (it->second[i][0] == 1) {
+              vpImageDraw::drawCross(it->first == "Camera1" ? resultsColor : resultsDepth, vpImagePoint(it->second[i][1], it->second[i][2]),
+                                     10, vpColor::red, 1);
+            }
+          }
+        }
+
+        //Computation time
+        std::ostringstream oss;
+        oss << "Tracking time: " << t << " ms";
+        font.drawText(resultsColor, oss.str(), vpImagePoint(20,20), vpColor::red);
       }
 
       vpPoseVector pose_est(cMo);
@@ -486,6 +574,16 @@ namespace
 
         vpDisplay::flush(I);
         vpDisplay::flush(I_depth);
+      } else if (save) {
+        char buffer[256];
+        std::ostringstream oss;
+        oss << "results/image_%04d.png";
+        sprintf(buffer, oss.str().c_str(), cpt_frame);
+
+        results.insert(resultsColor, vpImagePoint());
+        results.insert(resultsDepth, vpImagePoint(0, resultsColor.getWidth()));
+
+        vpImageIo::write(results, buffer);
       }
 
       if (opt_display && opt_click_allowed) {
@@ -535,6 +633,7 @@ int main(int argc, const char *argv[])
     std::string opt_ipath = "";
     bool opt_click_allowed = true;
     bool opt_display = true;
+    bool opt_save = false;
     bool useScanline = false;
     int trackerType_image = vpMbGenericTracker::EDGE_TRACKER;
 #if defined(__mips__) || defined(__mips) || defined(mips) || defined(__MIPS__)
@@ -552,7 +651,7 @@ int main(int argc, const char *argv[])
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display,
+    if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_save,
                     useScanline, trackerType_image, opt_lastFrame, use_depth,
                     use_mask, use_color_image)) {
       return EXIT_FAILURE;
@@ -595,13 +694,11 @@ int main(int argc, const char *argv[])
     }
 
     if (use_color_image) {
-      vpImage<vpRGBa> I_color, I_depth_color;
-      return run(I_color, I_depth_color, input_directory, opt_click_allowed, opt_display, useScanline,
-                 trackerType_image, opt_lastFrame, use_depth, use_mask);
+      return run<vpRGBa>(input_directory, opt_click_allowed, opt_display, useScanline,
+                         trackerType_image, opt_lastFrame, use_depth, use_mask, opt_save);
     } else {
-      vpImage<unsigned char> I_gray, I_depth_gray;
-      return run(I_gray, I_depth_gray, input_directory, opt_click_allowed, opt_display, useScanline,
-                 trackerType_image, opt_lastFrame, use_depth, use_mask);
+      return run<unsigned char>(input_directory, opt_click_allowed, opt_display, useScanline,
+                                trackerType_image, opt_lastFrame, use_depth, use_mask, opt_save);
     }
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
