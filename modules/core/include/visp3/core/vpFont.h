@@ -58,14 +58,14 @@ public:
   vpFont(unsigned int height = 16);
   ~vpFont();
 
-  bool Draw(vpImage<unsigned char> & canvas, const std::string & text, const vpImagePoint & position, unsigned char color) const;
-  bool Draw(vpImage<unsigned char> & canvas, const std::string & text, const vpImagePoint & position, unsigned char color, unsigned char background) const;
+  bool drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position, unsigned char color) const;
+  bool drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position, unsigned char color, unsigned char background) const;
 
-  bool Draw(vpImage<vpRGBa> & canvas, const std::string & text, const vpImagePoint & position, const vpColor & color) const;
-  bool Draw(vpImage<vpRGBa> & canvas, const std::string & text, const vpImagePoint & position, const vpColor & color, const vpColor & background) const;
+  bool drawText(vpImage<vpRGBa> & I, const std::string & text, const vpImagePoint & position, const vpColor & color) const;
+  bool drawText(vpImage<vpRGBa> & I, const std::string & text, const vpImagePoint & position, const vpColor & color, const vpColor & background) const;
 
-  unsigned int Height() const;
-  bool Resize(unsigned int height);
+  unsigned int getHeight() const;
+  bool setHeight(unsigned int height);
 
 private:
   vpFont(const vpFont &);            // noncopyable

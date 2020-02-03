@@ -195,12 +195,21 @@ template<class Type> void DrawFilledRectangle(vpImage<Type> & canvas, vpRect rec
   }
 }
 
-template<class Type> void DrawPolygon(vpImage<Type> & canvas, const std::vector<vpImagePoint> & polygon, const Type & color, unsigned int width = 1)
+template<class Type> void DrawPolygon(vpImage<Type> & canvas, const std::vector<vpImagePoint> & polygon,
+                                      const Type & color, unsigned int width = 1, bool closed = true)
 {
-  for (size_t i = 0; i < polygon.size(); i++) {
-    const vpImagePoint & p1 = (i ? polygon[i - 1] : polygon.back()), p2 = polygon[i];
-    DrawLine(canvas, static_cast<int>(p1.get_u()), static_cast<int>(p1.get_v()),
-             static_cast<int>(p2.get_u()), static_cast<int>(p2.get_v()), color, width);
+  if (closed) {
+    for (size_t i = 0; i < polygon.size(); i++) {
+      const vpImagePoint & p1 = (i ? polygon[i - 1] : polygon.back()), p2 = polygon[i];
+      DrawLine(canvas, static_cast<int>(p1.get_u()), static_cast<int>(p1.get_v()),
+               static_cast<int>(p2.get_u()), static_cast<int>(p2.get_v()), color, width);
+    }
+  }
+  else {
+    for (size_t i = 1; i < polygon.size(); i++) {
+      DrawLine(canvas, polygon[i-1].get_u(), polygon[i-1].get_v(),
+          polygon[i].get_u(), polygon[i].get_v(), color, width);
+    }
   }
 }
 
@@ -217,6 +226,14 @@ template<class Type> void DrawRectangle(vpImage<Type> & canvas, const vpRect & r
 }
 }
 
+/*!
+  Draw an arrow from image point \e ip1 to image point \e ip2.
+  \param[in,out] I : Image where to draw the arrow.
+  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] color : Arrow color.
+  \param[in] w,h : Width and height of the arrow.
+  \param[in] thickness : Thickness of the lines used to display the arrow.
+*/
 void vpImageDraw::drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                             unsigned char color, unsigned int w, unsigned int h, unsigned int thickness)
 {
@@ -254,6 +271,14 @@ void vpImageDraw::drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, 
   }
 }
 
+/*!
+  Draw an arrow from image point \e ip1 to image point \e ip2.
+  \param[in,out] I : Image where to draw the arrow.
+  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] color : Arrow color.
+  \param[in] w,h : Width and height of the arrow.
+  \param[in] thickness : Thickness of the lines used to display the arrow.
+*/
 void vpImageDraw::drawArrow(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                             const vpColor &color, unsigned int w, unsigned int h, unsigned int thickness)
 {
@@ -291,18 +316,42 @@ void vpImageDraw::drawArrow(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const v
   }
 }
 
+/*!
+  Draw a circle in an image.
+  \param[in,out] I : Image where to draw the circle.
+  \param[in] center : Circle center position.
+  \param[in] radius : Circle radius.
+  \param[in] color : Circle color.
+  \param[in] thickness : Thickness of the circle.
+*/
 void vpImageDraw::drawCircle(vpImage<unsigned char> &I, const vpImagePoint &center,
                              unsigned int radius, unsigned char color, unsigned int thickness)
 {
   DrawCircle(I, center, static_cast<int>(radius), color, thickness);
 }
 
+/*!
+  Draw a circle in an image.
+  \param[in,out] I : Image where to draw the circle.
+  \param[in] center : Circle center position.
+  \param[in] radius : Circle radius.
+  \param[in] color : Circle color.
+  \param[in] thickness : Thickness of the circle.
+*/
 void vpImageDraw::drawCircle(vpImage<vpRGBa> &I, const vpImagePoint &center,
                              unsigned int radius, const vpColor &color, unsigned int thickness)
 {
   DrawCircle(I, center, static_cast<int>(radius), vpRGBa(color.R, color.G, color.B), thickness);
 }
 
+/*!
+  Draw a cross in an image at position given by \e ip location.
+  \param[in,out] I : Image where to draw the cross.
+  \param[in] ip : Cross location.
+  \param[in] size : Size (width and height) of the cross.
+  \param[in] color : Cross color.
+  \param[in] thickness : Thickness of the lines used to display the cross.
+*/
 void vpImageDraw::drawCross(vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size,
                             unsigned char color, unsigned int thickness)
 {
@@ -319,6 +368,14 @@ void vpImageDraw::drawCross(vpImage<unsigned char> &I, const vpImagePoint &ip, u
   drawLine(I, left, right, color, thickness);
 }
 
+/*!
+  Draw a cross in an image at position given by \e ip location.
+  \param[in,out] I : Image where to draw the cross.
+  \param[in] ip : Cross location.
+  \param[in] size : Size (width and height) of the cross.
+  \param[in] color : Cross color.
+  \param[in] thickness : Thickness of the lines used to display the cross.
+*/
 void vpImageDraw::drawCross(vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned int size,
                             const vpColor &color, unsigned int thickness)
 {
@@ -335,6 +392,13 @@ void vpImageDraw::drawCross(vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned
   drawLine(I, left, right, color, thickness);
 }
 
+/*!
+  Draw a dashed line in an image between two image points.
+  \param[in,out] I : Image where to draw the dashed line.
+  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] color : Line color.
+  \param[in] thickness : Dashed line thickness.
+*/
 void vpImageDraw::drawDottedLine(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                                  unsigned char color, unsigned int thickness)
 {
@@ -371,6 +435,13 @@ void vpImageDraw::drawDottedLine(vpImage<unsigned char> &I, const vpImagePoint &
   }
 }
 
+/*!
+  Draw a dashed line in an image between two image points.
+  \param[in,out] I : Image where to draw the dashed line.
+  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] color : Line color.
+  \param[in] thickness : Dashed line thickness.
+*/
 void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness)
 {
   vpImagePoint ip1_ = ip1;
@@ -406,6 +477,61 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
   }
 }
 
+/*!
+  Draw an ellipse in an image from its parameters expressed in pixels.
+  \param[in,out] I : Image where to draw the ellipse.
+  \param[in] center : Center \f$(u_c, v_c)\f$ of the ellipse.
+  \param[in] coef1, coef2, coef3 : Depending on the parameter \e
+  use_centered_moments these parameters are:
+  - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
+  \mu_{02}\f$;
+  - the major and minor axis lenght in pixels and the excentricity of the
+  ellipse in radians: \f$a, b, e\f$.
+  \param[in] theta1, theta2 : Angles
+  \f$(\theta_1, \theta_2)\f$ in radians used to select a portion of the
+  ellipse. If theta1=0 and theta2=vpMath::rad(360) all the ellipse is
+  displayed.
+  \param[in] use_centered_moments : When false, the parameters coef1, coef2, coef3
+  are the parameters \f$a, b, e\f$. When true, the parameters coef1, coef2,
+  coef3 are rather the centered moments \f$\mu_{20}, \mu_{11}, \mu_{02}\f$
+  expressed in pixels. In that case, we compute the parameters \e a, \e b and
+  \e e from the centered moments.
+  \param[in] color : Ellipse color.
+  \param[in] thickness : Ellipse thickness.
+
+  All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
+  its parametric representation:
+
+  \f[ \left(\begin{array}{c}
+  u_\theta \\
+  v_\theta
+  \end{array} \right) = \left(\begin{array}{c}
+  u_c \\
+  v_c
+  \end{array} \right) + \left(\begin{array}{cc}
+  \cos(e) & -\sin(e) \\
+  \sin(e) & \cos(e)
+  \end{array} \right) \left(\begin{array}{c}
+  a \cos(\theta) \\
+  b \sin(\theta)
+  \end{array} \right) \f]
+
+  with \f$\theta_1 \leq \theta \leq \theta_2\f$.
+
+  The following example shows how to use for example this function to draw
+  the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
+    ...
+    vpDisplay::display(I);
+    ellipse.track(I);
+
+    vpImageDraw::DrawEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
+                             ellipse.get_mu11(), ellipse.get_mu02(),
+                             ellipse.getSmallestAngle(),
+                             ellipse.getHighestAngle(), true, vpColor::orange, 1);
+  \endcode
+*/
 void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &center, double coef1,
                               double coef2, double coef3, bool use_centered_moments, unsigned char color,
                               double theta1, double theta2, unsigned int thickness)
@@ -480,6 +606,61 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
   }
 }
 
+/*!
+  Draw an ellipse in an image from its parameters expressed in pixels.
+  \param[in,out] I : Image where to draw the ellipse.
+  \param[in] center : Center \f$(u_c, v_c)\f$ of the ellipse.
+  \param[in] coef1, coef2, coef3 : Depending on the parameter \e
+  use_centered_moments these parameters are:
+  - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
+  \mu_{02}\f$;
+  - the major and minor axis lenght in pixels and the excentricity of the
+  ellipse in radians: \f$a, b, e\f$.
+  \param[in] theta1, theta2 : Angles
+  \f$(\theta_1, \theta_2)\f$ in radians used to select a portion of the
+  ellipse. If theta1=0 and theta2=vpMath::rad(360) all the ellipse is
+  displayed.
+  \param[in] use_centered_moments : When false, the parameters coef1, coef2, coef3
+  are the parameters \f$a, b, e\f$. When true, the parameters coef1, coef2,
+  coef3 are rather the centered moments \f$\mu_{20}, \mu_{11}, \mu_{02}\f$
+  expressed in pixels. In that case, we compute the parameters \e a, \e b and
+  \e e from the centered moments.
+  \param[in] color : Ellipse color.
+  \param[in] thickness : Ellipse thickness.
+
+  All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
+  its parametric representation:
+
+  \f[ \left(\begin{array}{c}
+  u_\theta \\
+  v_\theta
+  \end{array} \right) = \left(\begin{array}{c}
+  u_c \\
+  v_c
+  \end{array} \right) + \left(\begin{array}{cc}
+  \cos(e) & -\sin(e) \\
+  \sin(e) & \cos(e)
+  \end{array} \right) \left(\begin{array}{c}
+  a \cos(\theta) \\
+  b \sin(\theta)
+  \end{array} \right) \f]
+
+  with \f$\theta_1 \leq \theta \leq \theta_2\f$.
+
+  The following example shows how to use for example this function to draw
+  the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
+    ...
+    vpDisplay::display(I);
+    ellipse.track(I);
+
+    vpImageDraw::DrawEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
+                             ellipse.get_mu11(), ellipse.get_mu02(),
+                             ellipse.getSmallestAngle(),
+                             ellipse.getHighestAngle(), true, vpColor::orange, 1);
+  \endcode
+*/
 void vpImageDraw::drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, double coef1,
                               double coef2, double coef3, bool use_centered_moments, const vpColor &color,
                               double theta1, double theta2, unsigned int thickness)
@@ -553,6 +734,21 @@ void vpImageDraw::drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, do
   }
 }
 
+/*!
+  Draw the projection in an image of an object frame represented by 3 arrows in
+  the image. Red, green and blue arrows correspond to frame X, Y and Z axis respectively.
+
+  \param[in,out] I : Image where to draw the ellipse.
+  \param[in] cMo : Homogeneous matrix that gives the transformation
+  between the camera frame and the object frame to project in the
+  image.
+  \param[in] cam : Camera intrinsic parameters.
+  \param[in] size : Size of the object frame.
+  \param[in] color : Color used to display the frame in the image.
+  \param[in] thickness : the thickness of the line.
+  \param[in] offset : Offset in pixels applied to the frame origin location in the
+  image.
+*/
 void vpImageDraw::drawFrame(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                             double size, unsigned char color, unsigned int thickness, const vpImagePoint &offset)
 {
@@ -580,6 +776,21 @@ void vpImageDraw::drawFrame(vpImage<unsigned char> &I, const vpHomogeneousMatrix
   drawArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
 }
 
+/*!
+  Draw the projection in an image of an object frame represented by 3 arrows in
+  the image. Red, green and blue arrows correspond to frame X, Y and Z axis respectively.
+
+  \param[in,out] I : Image where to draw the ellipse.
+  \param[in] cMo : Homogeneous matrix that gives the transformation
+  between the camera frame and the object frame to project in the
+  image.
+  \param[in] cam : Camera intrinsic parameters.
+  \param[in] size : Size of the object frame.
+  \param[in] color : Color used to display the frame in the image.
+  \param[in] thickness : the thickness of the line.
+  \param[in] offset : Offset in pixels applied to the frame origin location in the
+  image.
+*/
 void vpImageDraw::drawFrame(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                             double size, const vpColor &color, unsigned int thickness, const vpImagePoint &offset)
 {
@@ -620,6 +831,13 @@ void vpImageDraw::drawFrame(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
   }
 }
 
+/*!
+  Draw a line in an image between two image points.
+  \param[in,out] I : Image where to draw the line.
+  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] color : Line color.
+  \param[in] thickness : Dashed line thickness.
+*/
 void vpImageDraw::drawLine(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                            unsigned char color, unsigned int thickness)
 {
@@ -628,6 +846,13 @@ void vpImageDraw::drawLine(vpImage<unsigned char> &I, const vpImagePoint &ip1, c
            thickness);
 }
 
+/*!
+  Draw a line in an image between two image points.
+  \param[in,out] I : Image where to draw the line.
+  \param[in] ip1,ip2 : Initial and final image points.
+  \param[in] color : Line color.
+  \param[in] thickness : Dashed line thickness.
+*/
 void vpImageDraw::drawLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness)
 {
   DrawLine(I, static_cast<int>(ip1.get_u()), static_cast<int>(ip1.get_v()),
@@ -635,28 +860,70 @@ void vpImageDraw::drawLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vp
            thickness);
 }
 
+/*!
+  Draw in an image a point at the image point \e ip location.
+  \param[in,out] I : Image where to draw the point.
+  \param[in] ip : Point location.
+  \param[in] color : Point color.
+  \param[in] thickness : Thickness of the point
+*/
 void vpImageDraw::drawPoint(vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned char color, unsigned int thickness)
 {
   drawRectangle(I, vpRect(ip, thickness, thickness), color, true);
 }
 
+/*!
+  Draw in an image a point at the image point \e ip location.
+  \param[in,out] I : Image where to draw the point.
+  \param[in] ip : Point location.
+  \param[in] color : Point color.
+  \param[in] thickness : Thickness of the point
+*/
 void vpImageDraw::drawPoint(vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
   drawRectangle(I, vpRect(ip, thickness, thickness), color, true);
 }
 
+/*!
+  Draw in an image a polygon defined by a vector of image points.
+  \param[in,out] I : Image where to draw the polygon.
+  \param[in] vip : Vector of image point that define the vertexes of the polygon.
+  \param[in] color : Polygon color.
+  \param[in] thickness : Polygon thickness.
+  \param[in] closed : When true display a closed polygon with a segment between first and last image point.
+*/
 void vpImageDraw::drawPolygon(vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
-                              unsigned char color, unsigned int thickness)
+                              unsigned char color, unsigned int thickness, bool closed)
 {
-  DrawPolygon(I, vip, color, thickness);
+  DrawPolygon(I, vip, color, thickness, closed);
 }
 
+/*!
+  Draw in an image a polygon defined by a vector of image points.
+  \param[in,out] I : Image where to draw the polygon.
+  \param[in] vip : Vector of image point that define the vertexes of the polygon.
+  \param[in] color : Polygon color.
+  \param[in] thickness : Polygon thickness.
+  \param[in] closed : When true display a closed polygon with a segment between first and last image point.
+*/
 void vpImageDraw::drawPolygon(vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip,
-                              const vpColor &color, unsigned int thickness)
+                              const vpColor &color, unsigned int thickness, bool closed)
 {
-  DrawPolygon(I, vip, vpRGBa(color.R, color.G, color.B), thickness);
+  DrawPolygon(I, vip, vpRGBa(color.R, color.G, color.B), thickness, closed);
 }
 
+/*!
+  Draw in an image a rectangle with \e topLeft as the top-left corner and \e
+  width and \e height the rectangle size.
+
+  \param[in,out] I : Image where to draw the rectangle.
+  \param[in] rectangle : Rectangle characteristics.
+  \param[in] color : Rectangle color.
+  \param[in] fill : When set to true fill the rectangle.
+  \param[in] thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+*/
 void vpImageDraw::drawRectangle(vpImage<unsigned char> &I, const vpRect &rectangle, unsigned char color, bool fill, unsigned int thickness)
 {
   if (fill) {
@@ -666,6 +933,18 @@ void vpImageDraw::drawRectangle(vpImage<unsigned char> &I, const vpRect &rectang
   }
 }
 
+/*!
+  Draw in an image a rectangle with \e topLeft as the top-left corner and \e
+  width and \e height the rectangle size.
+
+  \param[in,out] I : Image where to draw the rectangle.
+  \param[in] rectangle : Rectangle characteristics.
+  \param[in] color : Rectangle color.
+  \param[in] fill : When set to true fill the rectangle.
+  \param[in] thickness : Thickness of the four lines used to display the
+  rectangle. This parameter is only useful when \e fill is set to
+  false.
+*/
 void vpImageDraw::drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   if (fill) {

@@ -50,6 +50,12 @@ int main(int argc ,char *argv[])
     if (std::string(argv[i]) == "--save") {
       save = true;
     }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0]
+                << " [--save] [--help] [-h]\n"
+                << std::endl;
+      return 0;
+    }
   }
   std::cout << "Save: " << save << std::endl;
 
@@ -67,11 +73,11 @@ int main(int argc ,char *argv[])
     iP1.set_i(20);
     iP1.set_j(60);
     vpFont font(32);
-    font.Draw(I, "Test...", iP1, vpColor::blue);
+    font.drawText(I, "Test...", iP1, vpColor::blue);
 
     iP1.set_i(200);
     iP1.set_j(200);
-    font.Draw(I, "Test...", iP1, vpColor::white, vpColor::black);
+    font.drawText(I, "Test...", iP1, vpColor::white, vpColor::black);
 
     iP1.set_i(80);
     iP1.set_j(220);
@@ -150,8 +156,24 @@ int main(int argc ,char *argv[])
     vpRect rectangle(iP1, iP2);
     vpImageDraw::drawRectangle(I, rectangle, vpColor::yellow, false, 3);
 
+    std::vector<vpImagePoint> polygon;
+    polygon.push_back(vpImagePoint(250, 500));
+    polygon.push_back(vpImagePoint(350, 600));
+    polygon.push_back(vpImagePoint(450, 500));
+    polygon.push_back(vpImagePoint(350, 400));
+    vpImageDraw::drawPolygon(I, polygon, vpColor::green, 3);
+
+    polygon.clear();
+    polygon.push_back(vpImagePoint(300, 500));
+    polygon.push_back(vpImagePoint(350, 550));
+    polygon.push_back(vpImagePoint(400, 500));
+    polygon.push_back(vpImagePoint(350, 450));
+    vpImageDraw::drawPolygon(I, polygon, vpColor::cyan, 3, false);
+
     if (save) {
-      vpImageIo::write(I, "canvas_color.png");
+      std::string filename = "canvas_color.png";
+      std::cout << "Save " << filename << std::endl;
+      vpImageIo::write(I, filename);
     }
   }
 
@@ -170,11 +192,11 @@ int main(int argc ,char *argv[])
     iP1.set_i(20);
     iP1.set_j(60);
     vpFont font(32);
-    font.Draw(I, "Test...", iP1, color);
+    font.drawText(I, "Test...", iP1, color);
 
     iP1.set_i(200);
     iP1.set_j(200);
-    font.Draw(I, "Test...", iP1, 0, 255);
+    font.drawText(I, "Test...", iP1, 0, 255);
 
     iP1.set_i(80);
     iP1.set_j(220);
@@ -253,8 +275,24 @@ int main(int argc ,char *argv[])
     vpRect rectangle(iP1, iP2);
     vpImageDraw::drawRectangle(I, rectangle, color, false, 3);
 
+    std::vector<vpImagePoint> polygon;
+    polygon.push_back(vpImagePoint(250, 500));
+    polygon.push_back(vpImagePoint(350, 600));
+    polygon.push_back(vpImagePoint(450, 500));
+    polygon.push_back(vpImagePoint(350, 400));
+    vpImageDraw::drawPolygon(I, polygon, color, 3);
+
+    polygon.clear();
+    polygon.push_back(vpImagePoint(300, 500));
+    polygon.push_back(vpImagePoint(350, 550));
+    polygon.push_back(vpImagePoint(400, 500));
+    polygon.push_back(vpImagePoint(350, 450));
+    vpImageDraw::drawPolygon(I, polygon, color, 3, false);
+
     if (save) {
-      vpImageIo::write(I, "canvas_gray.png");
+      std::string filename = "canvas_gray.png";
+      std::cout << "Save " << filename << std::endl;
+      vpImageIo::write(I, filename);
     }
   }
 

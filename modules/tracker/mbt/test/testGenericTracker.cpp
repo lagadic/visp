@@ -537,7 +537,7 @@ namespace
         //Computation time
         std::ostringstream oss;
         oss << "Tracking time: " << t << " ms";
-        font.Draw(resultsColor, oss.str(), vpImagePoint(20,20), vpColor::red);
+        font.drawText(resultsColor, oss.str(), vpImagePoint(20,20), vpColor::red);
       }
 
       vpPoseVector pose_est(cMo);

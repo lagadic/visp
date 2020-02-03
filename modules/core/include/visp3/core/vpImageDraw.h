@@ -37,7 +37,7 @@
 #define _vpImageDraw_h_
 
 /*!
-  \file _vpImageDraw_h_.h
+  \file vpImageDraw.h
 
   \brief Drawing functions for image.
 */
@@ -100,9 +100,9 @@ public:
   static void drawPoint(vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);
 
   static void drawPolygon(vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
-                          unsigned char color, unsigned int thickness = 1);
+                          unsigned char color, unsigned int thickness = 1, bool closed = true);
   static void drawPolygon(vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip,
-                          const vpColor &color, unsigned int thickness = 1);
+                          const vpColor &color, unsigned int thickness = 1, bool closed = true);
 
   static void drawRectangle(vpImage<unsigned char> &I, const vpRect &rectangle, unsigned char color,
                             bool fill = false, unsigned int thickness = 1);

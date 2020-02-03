@@ -58,7 +58,7 @@
 */
 
 #include <visp3/core/vpFont.h>
-#include "Font.hpp"
+#include "private/Font.hpp"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpFont::Impl
@@ -1934,12 +1934,15 @@ private:
 
   \note The font supports ASCII characters only. It was generated on the base of the generic monospace font from Gdiplus.
 
-  \param [in] height - initial height value. By default it is equal to 16.
+  \param [in] height : Initial font height value in pixels. By default it is equal to 16 pixels.
 */
 vpFont::vpFont(unsigned int height) : m_impl(new Impl(height))
 {
 }
 
+/*!
+  Destructor.
+ */
 vpFont::~vpFont()
 {
   delete m_impl;
@@ -1948,72 +1951,75 @@ vpFont::~vpFont()
 /*!
   Draws a text at the image.
 
-  \param [out] canvas - a canvas (image where we draw text).
-  \param [in] text - a text to draw.
-  \param [in] position - a position to draw text.
-  \param [in] color - a color of the text.
+  \param [in,out] I : Image where we draw text.
+  \param [in] text : A text to draw.
+  \param [in] position : A position to draw text.
+  \param [in] color : A color of the text.
 
-  \return a result of the operation.
+  \return A result of the operation.
 */
-bool vpFont::Draw(vpImage<unsigned char> & canvas, const std::string & text, const vpImagePoint & position, unsigned char color) const
+bool vpFont::drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position,
+                      unsigned char color) const
 {
-  return m_impl->Draw(canvas, text, position, color);
+  return m_impl->Draw(I, text, position, color);
 }
 
 /*!
   Draws a text at the image. Fills the text background by given color.
 
-  \param [out] canvas - a canvas (image where we draw text).
-  \param [in] text - a text to draw.
-  \param [in] position - a position to draw text.
-  \param [in] color - a color of the text.
-  \param [in] background - background color.
+  \param [in,out] I : Image where we draw text.
+  \param [in] text : A text to draw.
+  \param [in] position : A position to draw text.
+  \param [in] color : A color of the text.
+  \param [in] background : Background color.
 
   \return a result of the operation.
 */
-bool vpFont::Draw(vpImage<unsigned char> & canvas, const std::string & text, const vpImagePoint & position,
-                  unsigned char color, unsigned char background) const
+bool vpFont::drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position,
+                      unsigned char color, unsigned char background) const
 {
-  return m_impl->Draw(canvas, text, position, color, background);
+  return m_impl->Draw(I, text, position, color, background);
 }
 
 /*!
   Draws a text at the image.
 
-  \param [out] canvas - a canvas (image where we draw text).
-  \param [in] text - a text to draw.
-  \param [in] position - a position to draw text.
-  \param [in] color - a color of the text.
+  \param [in,out] I : Image where we draw text.
+  \param [in] text : A text to draw.
+  \param [in] position : A position to draw text.
+  \param [in] color : A color of the text.
 
-  \return a result of the operation.
+  \return A result of the operation.
 */
-bool vpFont::Draw(vpImage<vpRGBa> & canvas, const std::string & text, const vpImagePoint & position, const vpColor & color) const
+bool vpFont::drawText(vpImage<vpRGBa> & I, const std::string & text, const vpImagePoint & position,
+                      const vpColor & color) const
 {
-  return m_impl->Draw(canvas, text, position, color);
+  return m_impl->Draw(I, text, position, color);
 }
 
 /*!
   Draws a text at the image. Fills the text background by given color.
 
-  \param [out] canvas - a canvas (image where we draw text).
-  \param [in] text - a text to draw.
-  \param [in] position - a position to draw text.
-  \param [in] color - a color of the text.
-  \param [in] background - background color.
+  \param [in,out] I : Image where we draw text.
+  \param [in] text : A text to draw.
+  \param [in] position : A position to draw text.
+  \param [in] color : A color of the text.
+  \param [in] background : Background color.
 
   \return a result of the operation.
 */
-bool vpFont::Draw(vpImage<vpRGBa> & canvas, const std::string & text, const vpImagePoint & position, const vpColor & color, const vpColor & background) const
+bool vpFont::drawText(vpImage<vpRGBa> & I, const std::string & text, const vpImagePoint & position,
+                      const vpColor & color, const vpColor & background) const
 {
-  return m_impl->Draw(canvas, text, position, color, background);
+  return m_impl->Draw(I, text, position, color, background);
 }
 
 /*!
-  Gets height of the font.
+  Gets height of the font in pixels.
 
-  \return current height of the font.
+  \return Current height of the font.
 */
-unsigned int vpFont::Height() const
+unsigned int vpFont::getHeight() const
 {
   return static_cast<unsigned int>(m_impl->Height());
 }
@@ -2021,11 +2027,11 @@ unsigned int vpFont::Height() const
 /*!
   Sets a new height value to font.
 
-  \param [in] height - a new height value.
+  \param [in] height : A new height value in pixels.
 
-  \return a result of the operation.
+  \return A result of the operation.
 */
-bool vpFont::Resize(unsigned int height)
+bool vpFont::setHeight(unsigned int height)
 {
   return m_impl->Resize(height);
 }
