@@ -1,27 +1,51 @@
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
-import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
+import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
 import org.visp.core.VpCameraParameters;
 import org.visp.core.VpHomogeneousMatrix;
@@ -41,13 +65,14 @@ public class ApriltagDetection extends JFrame {
     private VpImageUChar I;
     private VpDetectorAprilTag detector;
     private BufferedImage canvas;
-    private double tagSize = 0.053;
     private VpCameraParameters cam = new VpCameraParameters(615.1674805, 615.1675415, 312.1889954, 243.4373779);
     private static String[] tagFamilyNames = {"TAG_36h11", "TAG_25h9", "TAG_16h5", "TAG_CIRCLE21h7",
             "TAG_CIRCLE49h12", "TAG_CUSTOM48h12", "TAG_STANDARD41h12", "TAG_STANDARD52h13"};
     private static int[] tagFamilies = {0, 3, 5, 6, 7, 8, 9, 10};
     private static String[] poseEstimationMethodNames = {"HOMOGRAPHY", "HOMOGRAPHY_VIRTUAL_VS", "DEMENTHON_VIRTUAL_VS",
             "LAGRANGE_VIRTUAL_VS", "BEST_RESIDUAL_VIRTUAL_VS", "HOMOGRAPHY_ORTHOGONAL_ITERATION"};
+    private Object[][] data = { { new Integer(-1), new Double(0.053) } };
+    private JTextArea poseArea;
 
     public ApriltagDetection() {
         super("Apriltag detection");
@@ -68,7 +93,7 @@ public class ApriltagDetection extends JFrame {
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
-        JPanel south = new JPanel();
+        JPanel south1 = new JPanel();
         JButton openButton = new JButton("Open");
         JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileNameExtensionFilter("Image Files (*.jpg, *.jpeg, *.png, *.pgm, *.ppm)",
@@ -96,41 +121,332 @@ public class ApriltagDetection extends JFrame {
                 }
             }
         });
-        south.add(openButton);
+        south1.add(openButton);
 
         JButton detectButton = new JButton("Detect");
         detectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<VpHomogeneousMatrix> cMo_vec = detector.detect(I, tagSize, cam);
-                for (VpHomogeneousMatrix cMo : cMo_vec) {
-                    displayFrame(canvas, cMo, cam, tagSize/2, 3);
-                }
+                if (I.cols() * I.rows() > 0) {
+                    StringBuilder info = new StringBuilder();
+                    if (detector.detect(I)) {
+                        int[] tagsId = detector.getTagsId();
 
-                List<List<VpImagePoint>> tags_corners = detector.getTagsCorners();
-                for (List<VpImagePoint> corners : tags_corners) {
-                    displayLine(canvas, corners.get(0).get_i(), corners.get(0).get_j(),
-                            corners.get(1).get_i(), corners.get(1).get_j(), Color.RED, 3);
-                    displayLine(canvas, corners.get(0).get_i(), corners.get(0).get_j(),
-                            corners.get(3).get_i(), corners.get(3).get_j(), Color.GREEN, 3);
-                    displayLine(canvas, corners.get(1).get_i(), corners.get(1).get_j(),
-                            corners.get(2).get_i(), corners.get(2).get_j(), Color.YELLOW, 3);
-                    displayLine(canvas, corners.get(2).get_i(), corners.get(2).get_j(),
-                            corners.get(3).get_i(), corners.get(3).get_j(), Color.BLUE, 3);
-                }
+                        List<VpHomogeneousMatrix> cMo_vec = new ArrayList<>();
+                        for (int i = 0; i < tagsId.length; i++) {
+                            VpHomogeneousMatrix cMo = new VpHomogeneousMatrix();
+                            double tagSize = Double.parseDouble(data[0][1].toString());
+                            for (Object[] d : data) {
+                                if (Integer.parseInt(d[0].toString()) == tagsId[i]) {
+                                    tagSize = Double.parseDouble(d[1].toString());
+                                }
+                            }
+                            detector.getPose(i, tagSize, cam, cMo);
+                            cMo_vec.add(cMo);
+                            displayFrame(canvas, cMo, cam, tagSize/2, 3);
+                        }
 
-                int[] tagsId = detector.getTagsId();
-                for (int i = 0; i < tagsId.length; i++) {
-                    double[] centroid = computeCentroid(tags_corners.get(i));
-                    displayText(canvas, new String("Id: " + String.valueOf(tagsId[i])),
-                            centroid[0] + 10, centroid[1] + 20, Color.RED, 3);
-                }
+                        List<List<VpImagePoint>> tags_corners = detector.getTagsCorners();
+                        for (List<VpImagePoint> corners : tags_corners) {
+                            displayLine(canvas, corners.get(0).get_i(), corners.get(0).get_j(),
+                                    corners.get(1).get_i(), corners.get(1).get_j(), Color.RED, 3);
+                            displayLine(canvas, corners.get(0).get_i(), corners.get(0).get_j(),
+                                    corners.get(3).get_i(), corners.get(3).get_j(), Color.GREEN, 3);
+                            displayLine(canvas, corners.get(1).get_i(), corners.get(1).get_j(),
+                                    corners.get(2).get_i(), corners.get(2).get_j(), Color.YELLOW, 3);
+                            displayLine(canvas, corners.get(2).get_i(), corners.get(2).get_j(),
+                                    corners.get(3).get_i(), corners.get(3).get_j(), Color.BLUE, 3);
+                        }
 
-                repaint();
+                        for (int i = 0; i < tagsId.length; i++) {
+                            double[] centroid = computeCentroid(tags_corners.get(i));
+                            displayText(canvas, new String("Id: " + String.valueOf(tagsId[i])),
+                                    centroid[0] + 10, centroid[1] + 20, Color.RED, 3);
+
+                            info.append("Tag id: ");
+                            info.append(tagsId[i]);
+                            VpHomogeneousMatrix cMo = cMo_vec.get(i);
+                            info.append("\ncMo:\n" + cMo);
+                            info.append("\n");
+                            info.append("\n");
+                        }
+
+                        poseArea.setText(info.toString());
+                        repaint();
+                    }
+                }
             }
         });
-        south.add(detectButton);
+        south1.add(detectButton);
 
+        JButton sizeButton = new JButton("Set tag size");
+        JDialog sizeDialog = new JDialog(this, Dialog.ModalityType.DOCUMENT_MODAL);
+        sizeDialog.setTitle("Add tag id <==> tag size");
+        sizeDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                e.getWindow().dispose();
+            }
+
+        });
+        Container sizeContainer = sizeDialog.getContentPane();
+        DefaultTableModel tableModel = new DefaultTableModel(data, new Object[]{"Tag Id", "Size"}) {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (row == 0 && column == 0) {
+                    return false;
+                }
+                return true;
+            }
+        };
+        final InputVerifier iv = new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                JTextField field = (JTextField) input;
+                try {
+                    Double.parseDouble(field.getText());
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public boolean shouldYieldFocus(JComponent input) {
+                boolean valid = verify(input);
+                if (!valid) {
+                    JOptionPane.showMessageDialog(null, "Invalid input!\nNumber is expected.");
+                }
+                return valid;
+            }
+
+        };
+        DefaultCellEditor editor = new DefaultCellEditor(new JTextField()) {
+            private static final long serialVersionUID = 1L;
+            {
+                getComponent().setInputVerifier(iv);
+            }
+
+            @Override
+            public boolean stopCellEditing() {
+                if (!iv.shouldYieldFocus(getComponent())) return false;
+                return super.stopCellEditing();
+            }
+
+            @Override
+            public JTextField getComponent() {
+                return (JTextField) super.getComponent();
+            }
+
+        };
+
+        JTable table = new JTable(tableModel);
+        table.setDefaultEditor(Object.class, editor);
+        table.setToolTipText("Double click in a cell to add tag id or tag size. Right click to delete a row.");
+        final JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.addPopupMenuListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        int rowAtPoint = table.rowAtPoint(SwingUtilities.convertPoint(popupMenu, new Point(0, 0), table));
+                        if (rowAtPoint > -1) {
+                            table.setRowSelectionInterval(rowAtPoint, rowAtPoint);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+            }
+        });
+        JMenuItem deleteItem = new JMenuItem("Delete the row?");
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int[] rows = table.getSelectedRows();
+                for (int i = 0; i < rows.length; i++) {
+                    if (rows[i] > 0) {
+                        tableModel.removeRow(rows[i] - i);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Tag Id: -1 must not be deleted.");
+                    }
+                }
+                tableModel.fireTableDataChanged();
+            }
+        });
+        popupMenu.add(deleteItem);
+        table.setComponentPopupMenu(popupMenu);
+        sizeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sizeDialog.setLocationRelativeTo(sizeDialog.getParent());
+                sizeDialog.setVisible(true);
+            }
+        });
+
+        sizeDialog.setMinimumSize(new Dimension(300, 200));
+        JPanel sizePanel = new JPanel();
+        sizePanel.setLayout(new BoxLayout(sizePanel, BoxLayout.Y_AXIS));
+        JScrollPane sizeScroll = new JScrollPane(table);
+        sizePanel.add(sizeScroll);
+        JButton addSize = new JButton("Add size");
+        addSize.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableModel.addRow(new Object[] {"", ""});
+            }
+        });
+
+        JButton validateSize = new JButton("Validate");
+        validateSize.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (table.isEditing()) {
+                    table.getCellEditor().stopCellEditing();
+                }
+
+                List<Object[]> currentData = new ArrayList<>();
+                for (int count = 0; count < table.getModel().getRowCount(); count++) {
+                    try {
+                        int id = Integer.parseInt(table.getModel().getValueAt(count, 0).toString());
+                        double sz = Double.parseDouble(table.getModel().getValueAt(count, 1).toString());
+                        currentData.add(new Object[] {id, sz});
+                    } catch (NumberFormatException ex) {
+                    }
+                }
+                data = new Object[currentData.size()][2];
+                for (int i = 0; i < currentData.size(); i++) {
+                    data[i][0] = currentData.get(i)[0];
+                    data[i][1] = currentData.get(i)[1];
+                }
+
+                sizeDialog.dispose();
+            }
+        });
+
+        JPanel addSizePanel = new JPanel();
+        addSizePanel.add(addSize);
+        addSizePanel.add(validateSize);
+        sizePanel.add(addSizePanel);
+        sizeContainer.add(sizePanel);
+        south1.add(sizeButton);
+
+        JButton camButton = new JButton("Set camera parameters");
+        JDialog camDialog = new JDialog(this, Dialog.ModalityType.DOCUMENT_MODAL);
+        camDialog.setTitle("Set intrinsics");
+        camDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                e.getWindow().dispose();
+            }
+
+        });
+        camButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                camDialog.setLocationRelativeTo(camDialog.getParent());
+                camDialog.setVisible(true);
+            }
+        });
+        Container camContainer = camDialog.getContentPane();
+        camContainer.setLayout(new BorderLayout());
+        //Intrinsics labels
+        JLabel pxLabel = new JLabel("px:");
+        JLabel pyLabel = new JLabel("py:");
+        JLabel u0Label = new JLabel("u0:");
+        JLabel v0Label = new JLabel("v0:");
+        //Intrinsics input
+        JFormattedTextField pxField = new JFormattedTextField(NumberFormat.getNumberInstance());
+        pxField.setValue(new Double(cam.get_py()));
+        pxField.setColumns(10);
+        JFormattedTextField pyField = new JFormattedTextField(NumberFormat.getNumberInstance());
+        pyField.setValue(new Double(cam.get_py()));
+        pyField.setColumns(10);
+        JFormattedTextField u0Field = new JFormattedTextField(NumberFormat.getNumberInstance());
+        u0Field.setValue(new Double(cam.get_u0()));
+        u0Field.setColumns(10);
+        JFormattedTextField v0Field = new JFormattedTextField(NumberFormat.getNumberInstance());
+        v0Field.setValue(new Double(cam.get_v0()));
+        v0Field.setColumns(10);
+        //Tell accessibility tools about label/textfield pairs.
+        pxLabel.setLabelFor(pxField);
+        pyLabel.setLabelFor(pyField);
+        u0Label.setLabelFor(u0Field);
+        v0Label.setLabelFor(v0Field);
+        //Lay out the labels in a panel.
+        JPanel camLabelPane = new JPanel(new GridLayout(0,1));
+        camLabelPane.add(pxLabel);
+        camLabelPane.add(pyLabel);
+        camLabelPane.add(u0Label);
+        camLabelPane.add(v0Label);
+        //Layout the text fields in a panel.
+        JPanel camFieldPane = new JPanel(new GridLayout(0,1));
+        camFieldPane.add(pxField);
+        camFieldPane.add(pyField);
+        camFieldPane.add(u0Field);
+        camFieldPane.add(v0Field);
+        camContainer.add(camLabelPane, BorderLayout.CENTER);
+        camContainer.add(camFieldPane, BorderLayout.LINE_END);
+        JButton camOk = new JButton("Ok");
+        camOk.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cam = new VpCameraParameters(((Number)pxField.getValue()).doubleValue(),
+                        ((Number)pyField.getValue()).doubleValue(),
+                        ((Number)u0Field.getValue()).doubleValue(),
+                        ((Number)v0Field.getValue()).doubleValue());
+                camDialog.dispose();
+            }
+        });
+        JButton camNok = new JButton("Cancel");
+        camNok.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                camDialog.dispose();
+            }
+        });
+
+        JPanel camButtonPane = new JPanel();
+        camButtonPane.add(camOk);
+        camButtonPane.add(camNok);
+        camContainer.add(camButtonPane, BorderLayout.PAGE_END);
+        camDialog.setMinimumSize(new Dimension(180, 120));
+        south1.add(camButton);
+
+        JButton poseButton = new JButton("Show estimated poses");
+        JDialog poseDialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+        poseDialog.setTitle("Show estimated poses");
+        poseDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                e.getWindow().dispose();
+            }
+
+        });
+        poseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                poseDialog.setLocationRelativeTo(poseDialog.getParent());
+                poseDialog.setVisible(true);
+            }
+        });
+        Container poseContainer = poseDialog.getContentPane();
+        poseArea = new JTextArea();
+        poseArea.setEditable(false);
+        poseContainer.add(new JScrollPane(poseArea));
+
+        poseDialog.setMinimumSize(new Dimension(450, 400));
+        south1.add(poseButton);
+
+        JPanel south2 = new JPanel();
         JComboBox<String> tagFamilyComboBox = new JComboBox<>(tagFamilyNames);
         tagFamilyComboBox.addActionListener(new ActionListener() {
             @Override
@@ -140,7 +456,7 @@ public class ApriltagDetection extends JFrame {
                 detector.setAprilTagFamily(tagFamilies[cb.getSelectedIndex()]);
             }
         });
-        south.add(tagFamilyComboBox);
+        south2.add(tagFamilyComboBox);
 
         JComboBox<String> poseEstimationComboBox = new JComboBox<>(poseEstimationMethodNames);
         poseEstimationComboBox.addActionListener(new ActionListener() {
@@ -151,8 +467,12 @@ public class ApriltagDetection extends JFrame {
                 detector.setAprilTagPoseEstimationMethod(cb.getSelectedIndex());
             }
         });
-        south.add(poseEstimationComboBox);
+        south2.add(poseEstimationComboBox);
 
+        JPanel south = new JPanel();
+        south.setLayout(new BoxLayout(south, BoxLayout.Y_AXIS));
+        south.add(south1);
+        south.add(south2);
         newContentPane.add(south, c);
         setContentPane(newContentPane);
 
@@ -177,7 +497,7 @@ public class ApriltagDetection extends JFrame {
         return centroid;
     }
 
-    public static BufferedImage toBufferedImage(VpImageUChar image) {
+    public BufferedImage toBufferedImage(VpImageUChar image) {
         int type = BufferedImage.TYPE_BYTE_GRAY;
         byte[] b = image.getPixels(); // get all the pixels
         BufferedImage I = new BufferedImage(image.cols(), image.rows(), type);
@@ -292,4 +612,3 @@ public class ApriltagDetection extends JFrame {
         });
     }
 }
-
