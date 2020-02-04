@@ -872,19 +872,17 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
   {
     std::map<int, double>::const_iterator it = tagsSize.find(-1);
     if (it != tagsSize.end()) {
-      default_size = tagsSize.begin()->second; // Default size
+      default_size = it->second; // Default size
     }
   }
   for (size_t i = 0; i < tagsId.size(); i++) {
     std::map<int, double>::const_iterator it = tagsSize.find(tagsId[i]);
-    double tagSize;
+    double tagSize = default_size; // Default size
     if (it == tagsSize.end()) {
       if (default_size < 0) { // no default size found
         throw(vpException(vpException::fatalError, "Tag with id %d has no 3D size or there is no default 3D size defined", tagsId[i]));
       }
-      tagSize = default_size; // Default size
-    }
-    else {
+    } else {
       tagSize = it->second;
     }
     std::vector<vpPoint> points3D(4);
@@ -893,8 +891,7 @@ std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std
       points3D[1] = vpPoint( tagSize/2,  tagSize/2, 0);
       points3D[2] = vpPoint( tagSize/2, -tagSize/2, 0);
       points3D[3] = vpPoint(-tagSize/2, -tagSize/2, 0);
-    }
-    else {
+    } else {
       points3D[0] = vpPoint(-tagSize/2, -tagSize/2, 0);
       points3D[1] = vpPoint( tagSize/2, -tagSize/2, 0);
       points3D[2] = vpPoint( tagSize/2,  tagSize/2, 0);

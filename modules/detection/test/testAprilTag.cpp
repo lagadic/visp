@@ -47,9 +47,11 @@
 #include <iostream>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/io/vpImageIo.h>
-
+#include <visp3/vision/vpPose.h>
 namespace
 {
 struct TagGroundTruth {
@@ -655,6 +657,77 @@ TEST_CASE("Apriltag assignment operator test", "[apriltag_assignment_operator_te
       for (int j = 0; j < 4; j++) {
         CHECK(vpMath::equal(cMo[i][j], cMo_copy[i][j],
                             std::numeric_limits<double>::epsilon()));
+      }
+    }
+  }
+}
+
+TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]") {
+  const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+                                                         "AprilTag/benchmark/640x480/tag21_07_640x480.png");
+  REQUIRE(vpIoTools::checkFilename(filename));
+
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, filename);
+  REQUIRE(I.getSize() == 640*480);
+
+  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_CIRCLE21h7;
+  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS;
+  const double familyScale = 5.0/9;
+  const double tagSize = 0.25;
+  std::map<int, double> tagsSize = {
+    {-1, tagSize * familyScale},
+    {3, tagSize / 2 * familyScale},
+    {4, tagSize / 2 * familyScale}
+  };
+
+  vpDetectorAprilTag detector(tagFamily, poseEstimationMethod);
+
+  vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(700, 700, 320, 240);
+
+  std::vector<vpHomogeneousMatrix> cMo_vec;
+  REQUIRE(detector.detect(I));
+
+  //Compute pose with getPose
+  std::vector<int> tagsId = detector.getTagsId();
+  for (size_t i = 0; i < tagsId.size(); i++) {
+    int id = tagsId[i];
+    double size = tagsSize[-1];
+    if (tagsSize.find(id) != tagsSize.end()) {
+      size = tagsSize[id];
+    }
+
+    vpHomogeneousMatrix cMo;
+    detector.getPose(i, size, cam, cMo);
+    cMo_vec.push_back(cMo);
+  }
+
+  //Compute pose manually
+  std::vector<std::vector<vpPoint>> tagsPoints = detector.getTagsPoints3D(tagsId, tagsSize);
+  std::vector<std::vector<vpImagePoint>> tagsCorners = detector.getTagsCorners();
+  REQUIRE(tagsPoints.size() == tagsCorners.size());
+
+  for (size_t i = 0; i < tagsPoints.size(); i++) {
+    REQUIRE(tagsPoints[i].size() == tagsCorners[i].size());
+
+    for (size_t j = 0; j < tagsPoints[i].size(); j++) {
+      vpPoint& pt = tagsPoints[i][j];
+      const vpImagePoint& imPt = tagsCorners[i][j];
+      double x = 0, y = 0;
+      vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
+      pt.set_x(x);
+      pt.set_y(y);
+    }
+
+    vpPose pose(tagsPoints[i]);
+    vpHomogeneousMatrix cMo_manual;
+    pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_manual);
+
+    const vpHomogeneousMatrix& cMo = cMo_vec[i];
+    for (unsigned int row = 0; row < cMo.getRows(); row++) {
+      for (unsigned int col = 0; col < cMo.getCols(); col++) {
+        CHECK(vpMath::equal(cMo[row][col], cMo_manual[row][col], std::numeric_limits<double>::epsilon()));
       }
     }
   }
