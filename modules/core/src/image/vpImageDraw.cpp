@@ -68,8 +68,8 @@ template<class Type> void DrawLine(vpImage<Type> & canvas, int x1, int y1, int x
   const int w = static_cast<int>(canvas.getWidth()) - 1;
   const int h = static_cast<int>(canvas.getHeight()) - 1;
 
-  if (x1 < 0 || y1 < 0 || x1 > w || y1 > h || x2 < 0 || y2 < 0 || x2 > w || y2 > h) {
-    if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) || (x1 > w && x2 > w) || (y1 > h && y2 > h)) {
+  if (x1 < 0 || y1 < 0 || (x1 - w) > 0 || (y1 - h) > 0 || x2 < 0 || y2 < 0 || (x2 - w) > 0 || (y2 - h) > 0) {
+    if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) || ((x1 - w) > 0 && (x2 - w) > 0) || ((y1 - h) > 0 && (y2 -h) > 0)) {
       return;
     }
 
@@ -125,7 +125,7 @@ template<class Type> void DrawLine(vpImage<Type> & canvas, int x1, int y1, int x
     }
   }
 
-  const bool inverse = std::abs(y2 - y1) > std::abs(x2 - x1);
+  const bool inverse = ((std::abs(y2 - y1) - std::abs(x2 - x1)) > 0);
   if (inverse) {
     std::swap(x1, y1);
     std::swap(x2, y2);
