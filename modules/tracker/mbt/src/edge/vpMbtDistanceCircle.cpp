@@ -322,7 +322,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),
                                     static_cast<double>(p_me.getState())};
-#else   
+#else
       std::vector<double> params;
       params.push_back(0); //ME
       params.push_back(p_me.get_ifloat());
@@ -376,18 +376,15 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
 }
 
 /*!
-    Enable to display the points along the ellipse with a color corresponding
+   Enable to display the points along the ellipse with a color corresponding
    to their state.
 
-    - If green : The vpMeSite is a good point.
-    - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
-    - If purple : The point is removed because of the vpMeSite tracking phase
-   (threshold problem).
-    - If blue : The point is removed because of the robust method in the
-   virtual visual servoing.
+   - If green : The vpMeSite is a good point.
+   - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
+   - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+   - If blue : The point is removed because of the robust method in the virtual visual servoing.
 
-    \param I : The image.
+   \param I : The image.
 */
 void vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 {

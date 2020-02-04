@@ -499,7 +499,8 @@ namespace
         for (std::map<std::string, std::vector<std::vector<double> > >::const_iterator it = mapOfModels.begin();
              it != mapOfModels.end(); ++it) {
           for (size_t i = 0; i < it->second.size(); i++) {
-            if (it->second[i][0] == 0) {
+            // test if it->second[i][0] = 0
+            if (std::fabs(it->second[i][0]) <= std::numeric_limits<double>::epsilon()) {
               vpImageDraw::drawLine(it->first == "Camera1" ? resultsColor : resultsDepth, vpImagePoint(it->second[i][1], it->second[i][2]),
                                     vpImagePoint(it->second[i][3], it->second[i][4]), vpColor::red, 3);
             }
@@ -512,22 +513,22 @@ namespace
         for (std::map<std::string, std::vector<std::vector<double> > >::const_iterator it = mapOfFeatures.begin();
              it != mapOfFeatures.end(); ++it) {
           for (size_t i = 0; i < it->second.size(); i++) {
-            if (it->second[i][0] == 0) {
+            if (std::fabs(it->second[i][0]) <= std::numeric_limits<double>::epsilon()) { // test it->second[i][0] = 0 for ME
               vpColor color = vpColor::yellow;
-              if (it->second[i][3] == 0) {
+              if (std::fabs(it->second[i][3]) <= std::numeric_limits<double>::epsilon()) { // test it->second[i][3] = 0
                 color = vpColor::green;
-              } else if (it->second[i][3] == 1) {
+              } else if (std::fabs(it->second[i][3] - 1) <= std::numeric_limits<double>::epsilon()) { // test it->second[i][3] = 1
                 color = vpColor::blue;
-              } else if (it->second[i][3] == 2) {
+              } else if (std::fabs(it->second[i][3] - 2) <= std::numeric_limits<double>::epsilon()) { // test it->second[i][3] = 2
                 color = vpColor::purple;
-              } else if (it->second[i][3] == 3) {
+              } else if (std::fabs(it->second[i][3] - 3) <= std::numeric_limits<double>::epsilon()) { // test it->second[i][3] = 3
                 color = vpColor::red;
-              } else if (it->second[i][3] == 4) {
+              } else if (std::fabs(it->second[i][3] - 4) <= std::numeric_limits<double>::epsilon()) { // test it->second[i][3] = 4
                 color = vpColor::cyan;
               }
               vpImageDraw::drawCross(it->first == "Camera1" ? resultsColor : resultsDepth, vpImagePoint(it->second[i][1], it->second[i][2]),
                                      3, color, 1);
-            } else if (it->second[i][0] == 1) {
+            } else if (std::fabs(it->second[i][0] - 1) <= std::numeric_limits<double>::epsilon()) { // test it->second[i][0] = 1 for KLT
               vpImageDraw::drawCross(it->first == "Camera1" ? resultsColor : resultsDepth, vpImagePoint(it->second[i][1], it->second[i][2]),
                                      10, vpColor::red, 1);
             }
