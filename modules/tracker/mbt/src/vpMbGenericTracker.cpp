@@ -951,14 +951,29 @@ std::list<vpMbtDistanceKltPoints *> &vpMbGenericTracker::getFeaturesKlt()
 #endif
 
 /*!
-  Return a list of features parameters.
-  - ME parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>`
+  Returns a list of visual features parameters for the reference camera.
+  The first element of the vector indicates the feature type that is either a moving-edge (ME) when
+  value is 0, or a keypoint (KLT) when value is 1.
+  Then behind, the second element of the vector gives the corresponding feature
+  parameters.
+  - Moving-edges parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>` where `pt.i(), pt.j()`
+    are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the state of the ME
+    - 0 for vpMeSite::NO_SUPPRESSION
+    - 1 for vpMeSite::CONSTRAST
+    - 2 for vpMeSite::THRESHOLD
+    - 3 for vpMeSite::M_ESTIMATOR
+    - 4 for vpMeSite::TOO_NEAR
   - KLT parameters are: `<feature id (here 1 for KLT)>`, `<pt.i()>`, `<pt.j()>`,
   `<klt_id.i()>`, `<klt_id.j()>`, `<klt_id.id>`
 
+  When the tracking is achieved with features from multiple cameras you can use rather
+  getFeaturesForDisplay(std::map<std::string, std::vector<std::vector<double> > > &).
+
   It can be used to display the 3D model with a render engine of your choice.
 
-  \note It returns the model for the reference camera.
+  \note It returns the visual features for the reference camera.
+
+  \sa getModelForDisplay(unsigned int, unsigned int, const vpHomogeneousMatrix &, const vpCameraParameters &, bool)
 */
 std::vector<std::vector<double> > vpMbGenericTracker::getFeaturesForDisplay()
 {
@@ -974,11 +989,27 @@ std::vector<std::vector<double> > vpMbGenericTracker::getFeaturesForDisplay()
 }
 
 /*!
-  Get a list of features parameters.
-  - ME parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>`
+  Get a list of visual features parameters for multiple cameras. The considered camera name is the first element of the map.
+  The second element of the map contains the visual features parameters where
+  the first element of the vector indicates the feature type that is either a moving-edge (ME) when
+  value is 0, or a keypoint (KLT) when value is 1.
+  Then behind, the second element of the vector gives the corresponding feature
+  parameters.
+  - Moving-edges parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>` where `pt.i(), pt.j()`
+    are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the state of the ME
+    - 0 for vpMeSite::NO_SUPPRESSION
+    - 1 for vpMeSite::CONSTRAST
+    - 2 for vpMeSite::THRESHOLD
+    - 3 for vpMeSite::M_ESTIMATOR
+    - 4 for vpMeSite::TOO_NEAR
   - KLT parameters are: `<feature id (here 1 for KLT)>`, `<pt.i()>`, `<pt.j()>`,
   `<klt_id.i()>`, `<klt_id.j()>`, `<klt_id.id>`
   It can be used to display the 3D model with a render engine of your choice.
+
+  When the tracking is achieved with features from a single camera you can use rather
+  getFeaturesForDisplay().
+
+  \sa getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &, const std::map<std::string, unsigned int> &, const std::map<std::string, unsigned int> &, const std::map<std::string, vpHomogeneousMatrix> &, const std::map<std::string, vpCameraParameters> &, bool)
 */
 void vpMbGenericTracker::getFeaturesForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfFeatures)
 {
@@ -1311,11 +1342,7 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
 }
 
 /*!
-  Return a list of primitives parameters to display the model at a given pose and camera parameters.
-  - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
-  `<pt_end.i()>`, `<pt_end.j()>`.
-  - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
-  `<mu20>`, `<mu11>`, `<mu02>`.
+  Get primitive parameters to display the object CAD model for the reference camera.
 
   It can be used to display the 3D model with a render engine of your choice.
 
@@ -1325,7 +1352,19 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
   \param cam : The camera parameters.
   \param displayFullModel : If true, the line is displayed even if it is not
 
-  \note It returns the model for the reference camera.
+  \return List of primitives parameters corresponding to the reference camera in order
+  to display the model to a given pose with camera parameters.
+  The first element of the vector indicates the type of parameters: 0 for a line and 1 for an ellipse.
+  Then the second element gives the corresponding parameters.
+  - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
+  `<pt_end.i()>`, `<pt_end.j()>`.
+  - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
+  `<mu20>`, `<mu11>`, `<mu02>`.
+
+  When tracking is performed using multiple cameras, you should rather use
+  getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &, const std::map<std::string, unsigned int> &, const std::map<std::string, unsigned int> &, const std::map<std::string, vpHomogeneousMatrix> &, const std::map<std::string, vpCameraParameters> &, bool)
+
+  \sa getFeaturesForDisplay()
 */
 std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                          const vpHomogeneousMatrix &cMo,
@@ -1344,20 +1383,30 @@ std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigne
 }
 
 /*!
-  Get a list of primitives parameters to display the model at a given pose and camera parameters.
+  Get primitive parameters to display the object CAD model for the multiple cameras.
+
+  It can be used to display the 3D model with a render engine of your choice.
+
+  Each first element of the map correspond to the camera name.
+
+  \param mapOfModels : Map of models. The second element of the map contains a list of primitives parameters
+  to display the model at a given pose with corresponding camera parameters.
+  The first element of the vector indicates the type of parameters: 0 for a line and 1 for an ellipse.
+  Then the second element gives the corresponding parameters.
   - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
   `<pt_end.i()>`, `<pt_end.j()>`.
   - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
   `<mu20>`, `<mu11>`, `<mu02>`.
-
-  It can be used to display the 3D model with a render engine of your choice.
-
-  \param mapOfModels : Map of models.
   \param mapOfwidths : Map of images width.
   \param mapOfheights : Map of images height.
   \param mapOfcMos : Map of poses used to project the 3D model into the images.
   \param mapOfCams : The camera parameters.
   \param displayFullModel : If true, the line is displayed even if it is not
+
+  If you are using a single camera you should rather use
+  getModelForDisplay(unsigned int, unsigned int, const vpHomogeneousMatrix &, const vpCameraParameters &, bool)
+
+  \sa getFeaturesForDisplay(std::map<std::string, std::vector<std::vector<double> > > &)
 */
 void vpMbGenericTracker::getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
                                             const std::map<std::string, unsigned int> &mapOfwidths,

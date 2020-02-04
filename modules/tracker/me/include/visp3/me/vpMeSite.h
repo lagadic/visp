@@ -73,13 +73,14 @@ class VISP_EXPORT vpMeSite
 public:
   typedef enum { NONE, RANGE, RESULT, RANGE_RESULT } vpMeSiteDisplayType;
 
+  /// Moving-edge site state
   typedef enum {
-    NO_SUPPRESSION = 0,
-    CONSTRAST = 1,
-    THRESHOLD = 2,
-    M_ESTIMATOR = 3,
-    TOO_NEAR = 4,
-    UNKNOW = 5
+    NO_SUPPRESSION = 0, ///< Point used by the tracker.
+    CONSTRAST = 1,      ///< Point removed due to a contrast problem.
+    THRESHOLD = 2,      ///< Point removed due to a threshold problem.
+    M_ESTIMATOR = 3,    ///< Point removed during virtual visual-servoing because considered as an outlier.
+    TOO_NEAR = 4,       ///< Point removed because too near image borders.
+    UNKNOW = 5          ///< Reserved.
   } vpMeSiteState;
 
 public:
