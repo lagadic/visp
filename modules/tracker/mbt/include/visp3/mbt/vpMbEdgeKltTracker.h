@@ -212,7 +212,6 @@ int main()
 #endif
 
   return 0;
-#endif
 }
 \endcode
 */

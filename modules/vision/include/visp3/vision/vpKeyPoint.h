@@ -131,7 +131,6 @@ keypoints and the index of the query keypoints.
 between current and reference keypoints.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPoint.h>
 
@@ -168,7 +167,6 @@ int main()
 image. The small following example shows how to do this:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPoint.h>

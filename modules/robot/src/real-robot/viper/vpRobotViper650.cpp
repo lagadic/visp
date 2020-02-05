@@ -136,7 +136,6 @@ void emergencyStopViper650(int signo)
 
   \code
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -367,7 +366,6 @@ void vpRobotViper650::init(void)
 
   \code
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -1000,7 +998,6 @@ void vpRobotViper650::get_fJe(vpMatrix &fJe)
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -1069,7 +1066,6 @@ double vpRobotViper650::getPositioningVelocity(void) const { return positioningV
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -1266,7 +1262,6 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const
   position is out of range.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -1328,7 +1323,6 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const
   This method has the same behavior than the sample code given below;
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -1394,7 +1388,6 @@ void vpRobotViper650::setPosition(const std::string &filename)
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
@@ -1612,7 +1605,6 @@ reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper650.h>
 
@@ -1786,7 +1778,6 @@ u}_z]\f$.
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -1948,7 +1939,6 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -2046,7 +2036,6 @@ The code below shows how to read a position from a file and move the robot to
 this position.
 \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -2320,7 +2309,6 @@ bias.
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpRobotViper650.h>
 
@@ -2375,7 +2363,6 @@ bias.
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpRobotViper650.h>
 

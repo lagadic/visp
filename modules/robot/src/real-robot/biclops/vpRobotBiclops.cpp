@@ -83,7 +83,6 @@ static pthread_mutex_t vpMeasure_mutex;
   using init() function.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotBiclops.h>
 
 int main()
@@ -136,7 +135,6 @@ vpRobotBiclops::vpRobotBiclops()
   The following example shows how to use the constructor.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotBiclops.h>
 
 int main()

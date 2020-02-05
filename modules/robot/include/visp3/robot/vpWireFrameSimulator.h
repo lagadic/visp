@@ -49,7 +49,6 @@
 #include <list>
 #include <stdio.h>
 #include <string>
-#include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>

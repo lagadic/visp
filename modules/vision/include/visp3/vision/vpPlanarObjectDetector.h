@@ -86,7 +86,6 @@
   The following example shows how to use the class.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpPlanarObjectDetector.h>

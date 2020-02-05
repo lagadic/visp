@@ -62,7 +62,6 @@ here https://visp.inria.fr/3rd_d3d/
 
   The example below shows how to display an image with this video device.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/io/vpImageIo.h>
 

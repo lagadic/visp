@@ -720,7 +720,7 @@ void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
 
   The following example shows how to use this function:
   \code
-#include <visp/vpRowVector.h>
+#include <visp3/core/vpRowVector.h>
 
 int main()
 {

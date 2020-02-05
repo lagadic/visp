@@ -194,7 +194,6 @@ protected:
 #endif
 #endif
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>

@@ -122,7 +122,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 
@@ -154,7 +153,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 

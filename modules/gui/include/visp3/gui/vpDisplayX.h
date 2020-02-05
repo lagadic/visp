@@ -81,7 +81,6 @@ circle) in the image.
 
   The example below shows how to display an image with this video device.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>

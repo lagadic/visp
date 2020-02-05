@@ -96,8 +96,8 @@ int main(int argc, const char ** argv)
   \code
 #include <stdio.h>
 #include <stdlib.h>
-#include <visp3/core/vpMath.h>
 #include <visp3/io/vpParseArgv.h>
+#include <visp3/core/vpMath.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the preceding option request an argument
@@ -123,25 +123,24 @@ int main(int argc, const char ** argv)
     case 'b': b_val = true; break;
     case 'i': i_val = atoi(optarg); break;
     case 'l': l_val = atol(optarg); break;
-    case 'f': f_val = (float) atof(optarg); break;
+    case 'f': f_val = static_cast<float>(atof(optarg)); break;
     case 'd': d_val = atof(optarg); break;
     case 's': sprintf(s_val, "%s", optarg); break;
-    case 'h': printf("Usage: ...\n"); return true; break;
+    case 'h': printf("Usage: ...\n"); return EXIT_SUCCESS; break;
 
     default:
-      printf("Usage: ...\n"); return true; break;
+      printf("Usage: ...\n"); return EXIT_SUCCESS; break;
     }
   }
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     printf("Usage: ...\n");
-    return false;
+    return EXIT_FAILURE;
   }
 
   // b_val, i_val, l_val, f_val, d_val, s_val may have new values
 }
   \endcode
-
 
 */
 
@@ -152,35 +151,30 @@ public:
     Legal values for the type field of a vpArgvInfo.
   */
   typedef enum {
-    ARGV_CONSTANT,      /*!< Stand alone argument. Same as ARGV_CONSTANT_INT. */
-    ARGV_CONSTANT_INT,  /*!< Stand alone argument associated to an int var that
-                           is set to 1. */
-    ARGV_CONSTANT_BOOL, /*!< Stand alone argument associated to a bool var
-                           that is set to true. */
-    ARGV_INT,           /*!< Argument is associated to an int. */
-    ARGV_LONG,          /*!< Argument is associated to a long. */
-    ARGV_STRING,        /*!< Argument is associated to a char * string. */
+    ARGV_CONSTANT,      ///< Stand alone argument. Same as vpParseArgv::ARGV_CONSTANT_INT.
+    ARGV_CONSTANT_INT,  ///< Stand alone argument associated to an int var that is set to 1.
+    ARGV_CONSTANT_BOOL, ///< Stand alone argument associated to a bool var that is set to true.
+    ARGV_INT,           ///< Argument is associated to an int.
+    ARGV_LONG,          ///< Argument is associated to a long.
+    ARGV_STRING,        ///< Argument is associated to a char * string.
     ARGV_REST,
-    ARGV_FLOAT,  /*!< Argument is associated to a float. */
-    ARGV_DOUBLE, /*!< Argument is associated to a double. */
+    ARGV_FLOAT,         ///< Argument is associated to a float.
+    ARGV_DOUBLE,        ///< Argument is associated to a double.
     ARGV_FUNC,
     ARGV_GENFUNC,
-    ARGV_HELP, /*!< Argument is for help displaying. */
-    ARGV_END   /*!< End of the argument list. */
+    ARGV_HELP,          ///< Argument is for help displaying.
+    ARGV_END            ///< End of the argument list.
   } vpArgvType;
 
   /*!
     Flag bits.
    */
   typedef enum {
-    ARGV_NO_DEFAULTS = 0x1,         /*!< No default options like -help. */
-    ARGV_NO_LEFTOVERS = 0x2,        /*!< Print an error message if an option is not
-                                       in the argument list. */
-    ARGV_NO_ABBREV = 0x4,           /*!< No abrevation. Print an error message if an
-                                       option is abrevated (ie "-i" in place of "-int"
-                                       which is requested). */
-    ARGV_DONT_SKIP_FIRST_ARG = 0x8, /*!< Don't skip first argument. */
-    ARGV_NO_PRINT = 0x10            /*!< No printings. */
+    ARGV_NO_DEFAULTS = 0x1,         ///< No default options like -help.
+    ARGV_NO_LEFTOVERS = 0x2,        ///< Print an error message if an option is not in the argument list.
+    ARGV_NO_ABBREV = 0x4,           ///< No abrevation. Print an error message if an option is abrevated (ie "-i" in place of "-int" which is requested).
+    ARGV_DONT_SKIP_FIRST_ARG = 0x8, ///< Don't skip first argument.
+    ARGV_NO_PRINT = 0x10            ///< No printings.
   } vpArgvFlags;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -189,14 +183,11 @@ public:
     Structure used to specify how to handle argv options.
   */
   typedef struct {
-    const char *key;  /*!< The key string that flags the option in the
-                       * argv array. */
-    vpArgvType type;  /*!< Indicates option type;  see below. */
-    const char *src;  /*!< Value to be used in setting dst;  usage
-                       * depends on type. */
-    const char *dst;  /*!< Address of value to be modified;  usage
-                       * depends on type. */
-    const char *help; /*!< Documentation message describing this option. */
+    const char *key;  ///< The key string that flags the option in the argv array.
+    vpArgvType type;  ///< Indicates option type.
+    const char *src;  ///< Value to be used in setting dst; usage depends on type.
+    const char *dst;  ///< Address of value to be modified; usage depends on type.
+    const char *help; ///< Documentation message describing this option.
   } vpArgvInfo;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 

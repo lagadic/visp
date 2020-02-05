@@ -250,7 +250,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
 
 int main()
 {
-  pImage<unsigned char> I;
+  vpImage<unsigned char> I;
 
   // Acquire an image
   vpImageIo::read(I, "my-image.pgm");
@@ -269,8 +269,6 @@ int main()
   while (true) {
     // tracking loop
   }
-
-  return 0;
 }
   \endcode
 

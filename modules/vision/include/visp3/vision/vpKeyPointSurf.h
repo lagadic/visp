@@ -131,7 +131,6 @@ int main()
   part of the current image. The small following example shows how to this
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPointSurf.h>

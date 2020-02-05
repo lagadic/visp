@@ -89,7 +89,6 @@
   \code
 #include <visp3/ar/vpAR.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 

@@ -82,7 +82,7 @@ int main()
      }
      catch (...) {
        std::cout << "Cannot create " << username << " directory" << std::endl;
-       return false;
+       return EXIT_FAILURE;
      }
    }
   // Create a empty filename with name "username/file.txt"
@@ -104,6 +104,8 @@ int main()
   std::cout << "Remove: " << newfilename << std::endl;
   if (vpIoTools::remove(newfilename) == false)
     std::cout << "Unable to remove: " << newfilename << std::endl;
+
+  return EXIT_SUCCESS;
 }
   \endcode
 

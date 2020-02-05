@@ -101,8 +101,7 @@ int main()
 
 #ifdef VISP_HAVE_PUGIXML
   vpXmlParserCamera p; // Create a XML parser
-  vpCameraParameters::vpCameraParametersProjType projModel; // Projection
-model
+  vpCameraParameters::vpCameraParametersProjType projModel; // Projection model
   // Use a perspective projection model without distortion
   projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
   // Parse the xml file "myXmlFile.xml" to find the intrinsic camera

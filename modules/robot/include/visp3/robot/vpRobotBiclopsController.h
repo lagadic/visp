@@ -53,8 +53,6 @@
 #include <pthread.h> /* Classe std::ostream.              */
 #include <stdio.h>   /* Classe std::ostream.              */
 
-#include <visp3/core/vpConfig.h>
-
 #include "Biclops.h"  // Contrib for Biclops robot
 #include "PMDUtils.h" // Contrib for Biclops robot
 

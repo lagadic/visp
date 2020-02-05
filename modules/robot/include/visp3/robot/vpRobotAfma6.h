@@ -102,7 +102,6 @@ extern "C" {
   class by calling the default constructor:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotAfma6.h>
 
 #ifdef VISP_HAVE_AFMA6

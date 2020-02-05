@@ -138,7 +138,6 @@ tool frame \f$ {\cal F}_c \f$ .
   class by calling the default constructor:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -156,7 +155,6 @@ int main()
   distortion you need to initialize the robot with:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -177,7 +175,6 @@ int main()
 
   \code
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -207,7 +204,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper650.h>
 
@@ -241,7 +237,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper650.h>
 
@@ -273,7 +268,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper650.h>
 

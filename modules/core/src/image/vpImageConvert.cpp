@@ -280,7 +280,6 @@ vpRGBa::alpha_default.
   \param flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -376,7 +375,6 @@ void vpImageConvert::convert(const IplImage *src, vpImage<vpRGBa> &dest, bool fl
   \param flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -470,7 +468,6 @@ void vpImageConvert::convert(const IplImage *src, vpImage<unsigned char> &dest, 
   \param dest : destination image
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -553,7 +550,6 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, IplImage *&dest)
   \param dest : destination image
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -635,7 +631,6 @@ greater) was detected during the configuration step.
   \param flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -785,7 +780,6 @@ are converted.
   \param flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -954,7 +948,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -999,7 +992,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -1047,7 +1039,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -1092,7 +1083,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -1139,7 +1129,6 @@ YARP image class documentation.
   \param dest : Destination image in YARP format.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -1186,7 +1175,6 @@ YARP image class documentation.
   \param dest : Destination image in ViSP format.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
