@@ -45,6 +45,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <sys/select.h>
 #include <vector>
 
 // inet_ntop() not supported on win XP
