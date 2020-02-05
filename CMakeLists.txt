@@ -809,7 +809,7 @@ if(UNIX AND NOT ANDROID)
     file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
     add_custom_command(
       OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-      COMMAND ${GZIP} --best -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+      COMMAND ${GZIP} -9 -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1
     )
     add_custom_target(man ALL
