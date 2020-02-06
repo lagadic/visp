@@ -76,12 +76,12 @@ public:
     \section Set coordinates
   */
   //! basic constructor
-  vpFeatureEllipse(double x, double y, const double mu20, const double mu11, const double mu02);
+  vpFeatureEllipse(double x, double y, double mu20, double mu11, double mu02);
 
   // void buildFrom(const vpEllipse &p) ;
-  void buildFrom(double x, double y, const double mu20, const double mu11, const double mu02);
-  void buildFrom(double x, double y, const double mu20, const double mu11, const double mu02,
-                 const double A, const double B, const double C);
+  void buildFrom(double x, double y, double mu20, double mu11, double mu02);
+  void buildFrom(double x, double y, double mu20, double mu11, double mu02,
+                 double A, double B, double C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -113,8 +113,8 @@ public:
   void set_x(double x);
   void set_y(double y);
   void set_xy(double x, double y);
-  void setABC(const double A, const double B, const double C);
-  void setMu(const double mu20, const double mu11, const double mu02);
+  void setABC(double A, double B, double C);
+  void setMu(double mu20, double mu11, double mu02);
 
 public:
   /*!

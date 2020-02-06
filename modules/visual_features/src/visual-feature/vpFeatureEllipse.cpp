@@ -285,8 +285,7 @@ void vpFeatureEllipse::print(const unsigned int select) const
   std::cout << "A = " << A << " B = " << B << " C = " << C << std::endl;
 }
 
-void vpFeatureEllipse::buildFrom(double x, double y, const double mu20, const double mu11,
-                                 const double mu02)
+void vpFeatureEllipse::buildFrom(double x, double y, double mu20, double mu11, double mu02)
 {
 
   s[0] = x;
@@ -299,8 +298,8 @@ void vpFeatureEllipse::buildFrom(double x, double y, const double mu20, const do
     flags[i] = true;
 }
 
-void vpFeatureEllipse::buildFrom(double x, double y, const double mu20, const double mu11,
-                                 const double mu02, const double a, const double b, const double c)
+void vpFeatureEllipse::buildFrom(double x, double y, double mu20, double mu11,
+                                 double mu02, double a, double b, double c)
 {
 
   s[0] = x;
@@ -337,7 +336,7 @@ void vpFeatureEllipse::set_xy(double x, double y)
     flags[i] = true;
 }
 
-void vpFeatureEllipse::setABC(const double a, const double b, const double c)
+void vpFeatureEllipse::setABC(double a, double b, double c)
 {
   this->A = a;
   this->B = b;
@@ -346,7 +345,7 @@ void vpFeatureEllipse::setABC(const double a, const double b, const double c)
     flags[i] = true;
 }
 
-void vpFeatureEllipse::setMu(const double mu20, const double mu11, const double mu02)
+void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02)
 {
 
   s[2] = mu20;

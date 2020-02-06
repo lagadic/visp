@@ -521,7 +521,7 @@ public:
 
     \param mu : initial mu.
   */
-  virtual inline void setInitialMu(const double mu) { m_initialMu = mu; }
+  virtual inline void setInitialMu(double mu) { m_initialMu = mu; }
 
   /*!
     Set the value of the gain used to compute the control law.
