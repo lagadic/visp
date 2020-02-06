@@ -186,7 +186,7 @@ protected:
   //@}
 
 public:
-  static unsigned int njoint; ///< Number of joint.
+  static const unsigned int njoint; ///< Number of joint.
 
 protected:
   double _coupl_56;     // coupling between join 5 and 6

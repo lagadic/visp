@@ -123,7 +123,7 @@ public:
   } DenavitHartenbergModel;
 
 public:                           /* Constants */
-  static unsigned int ndof; /*!< Number of dof */
+  static const unsigned int ndof; /*!< Number of dof */
 
   /* Geometric model */
   static const float h;

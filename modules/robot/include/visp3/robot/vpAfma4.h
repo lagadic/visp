@@ -139,7 +139,7 @@ public:
   //@}
 
 public:
-  static unsigned int njoint; ///< Number of joint.
+  static const unsigned int njoint; ///< Number of joint.
 
 protected:
   // Denavit Hartenberg parameters
